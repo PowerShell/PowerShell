@@ -9,9 +9,21 @@ namespace Microsoft {
 
     void PalTestSuite::testDatatypes() {
 
+        // check basic pointer lengths
+        CPPUNIT_ASSERT_EQUAL(sizeof(void*), sizeof(PVOID));
+
         // windows datatypes
         CPPUNIT_ASSERT_EQUAL(sizeof(WORD),(std::size_t)2);
         CPPUNIT_ASSERT_EQUAL(sizeof(DWORD),(std::size_t)4);
+        CPPUNIT_ASSERT_EQUAL(sizeof(HANDLE),sizeof(void*));
+        CPPUNIT_ASSERT_EQUAL(sizeof(HWND),sizeof(void*));
+        CPPUNIT_ASSERT_EQUAL(sizeof(HMODULE),sizeof(void*));
+        CPPUNIT_ASSERT_EQUAL(sizeof(HINSTANCE),sizeof(void*));
+        CPPUNIT_ASSERT_EQUAL(sizeof(HGLOBAL),sizeof(void*));
+        CPPUNIT_ASSERT_EQUAL(sizeof(HLOCAL),sizeof(void*));
+        CPPUNIT_ASSERT_EQUAL(sizeof(HRSRC),sizeof(void*));
+        CPPUNIT_ASSERT_EQUAL(sizeof(HRESULT),sizeof(LONG));
+        CPPUNIT_ASSERT_EQUAL(sizeof(NTSTATUS),sizeof(LONG));
 
         // windows integer datatypes
         CPPUNIT_ASSERT_EQUAL(sizeof(INT),(std::size_t)4);
@@ -39,6 +51,16 @@ namespace Microsoft {
         CPPUNIT_ASSERT_EQUAL(LONG_MIN,-2147483647L-1);
         CPPUNIT_ASSERT_EQUAL(LONG_MAX,2147483647L);
         CPPUNIT_ASSERT_EQUAL(ULONG_MAX,0xffffffff);
+
+        CPPUNIT_ASSERT_EQUAL(MAXSHORT,0x7fff);
+        CPPUNIT_ASSERT_EQUAL(MAXLONG,0x7fffffff);
+        CPPUNIT_ASSERT_EQUAL(MAXCHAR,0x7f);
+        CPPUNIT_ASSERT_EQUAL(MAXDWORD,0xffffffff);
+
+        // character data types
+        CPPUNIT_ASSERT_EQUAL(sizeof(CHAR),(std::size_t)1);
+        CPPUNIT_ASSERT_EQUAL(sizeof(TCHAR),(std::size_t)1);
+
 
     }
 
