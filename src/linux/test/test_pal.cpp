@@ -1,7 +1,5 @@
-#include "test_pal.h"
-
 #include "pal.h"
-//#include <cppunit/config/SourcePrefix.h>
+#include "test_pal.h"
 
 namespace Microsoft {
 
@@ -38,6 +36,7 @@ namespace Microsoft {
         CPPUNIT_ASSERT_EQUAL(sizeof(UINT64),(std::size_t)8);
 
         // windows integer max and min size constants
+
         CPPUNIT_ASSERT_EQUAL(CHAR_BIT,8);
         CPPUNIT_ASSERT_EQUAL(SCHAR_MIN,-127-1);
         CPPUNIT_ASSERT_EQUAL(SCHAR_MAX,127);
@@ -48,9 +47,11 @@ namespace Microsoft {
         CPPUNIT_ASSERT_EQUAL(INT_MIN,-2147483647-1);
         CPPUNIT_ASSERT_EQUAL(INT_MAX,2147483647);
         CPPUNIT_ASSERT_EQUAL(UINT_MAX,0xffffffff);
-        CPPUNIT_ASSERT_EQUAL(LONG_MIN,-2147483647L-1);
-        CPPUNIT_ASSERT_EQUAL(LONG_MAX,2147483647L);
-        CPPUNIT_ASSERT_EQUAL(ULONG_MAX,0xffffffff);
+
+        // TODO: these are part of limits.h and will never fit windows values
+//        CPPUNIT_ASSERT_EQUAL(LONG_MIN,-2147483647L-1);
+//        CPPUNIT_ASSERT_EQUAL(LONG_MAX,2147483647L);
+//        CPPUNIT_ASSERT_EQUAL(ULONG_MAX,0xffffffffUL);
 
         CPPUNIT_ASSERT_EQUAL(MAXSHORT,0x7fff);
         CPPUNIT_ASSERT_EQUAL(MAXLONG,0x7fffffff);
