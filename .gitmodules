@@ -3,4 +3,7 @@
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad
 [submodule "src/coreclr"]
 	path = src/coreclr
-	url = https://github.com/dotnet/coreclr.git
+	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/coreclr-fork
+[submodule "ext-src/cppunit"]
+	path = ext-src/cppunit
+	url = git://anongit.freedesktop.org/git/libreoffice/cppunit/
