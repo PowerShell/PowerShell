@@ -1,9 +1,30 @@
 #include "pal.h"
 #include "test_pal.h"
 
+// pull in some more headers
+#include "NativeMshConstants.h"
+#include "ClrHostWrapper.h"
+#include "IPwrshCommonOutput.h"
+#include "ConfigFileReader.h"
+#include "NativeMsh.h"
+#include "SystemCallFacade.h"
+#include "WinSystemCallFacade.h"
+
 namespace Microsoft {
 
     CPPUNIT_TEST_SUITE_REGISTRATION(PalTestSuite);
+
+    // this unit test is used to test if stuff from different headers was pulled in correctly
+    // this is for porting compatbility tests, not really functional tests
+    void PalTestSuite::testHeaders() {
+
+        // check NativeMshConstants.h
+        CPPUNIT_ASSERT_EQUAL(NativeMsh::g_MISSING_COMMAND_LINE_ARGUMENT,1);
+
+        // check ClrHostWrapper.h
+        NativeMsh::ICLRRuntimeHost2Wrapper clrHostWrapper;
+
+    }
 
     void PalTestSuite::testDatatypes() {
 
