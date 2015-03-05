@@ -1,0 +1,3 @@
+[submodule "ext-src/gtest"]
+	path = ext-src/gtest
+	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/ext-gtest
