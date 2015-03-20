@@ -6,7 +6,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 #include gtest
 include_directories(../ext-src/gtest/fused-src impl)
 
-set(SOURCE_FILES main.cpp tests/test-getcurrentprocessid.cpp impl/getcurrentprocessorid.cpp ../ext-src/gtest/fused-src/gtest/gtest-all.cc)
+set(SOURCE_FILES main.cpp tests/test-getcurrentprocessid.cpp impl/getcurrentprocessorid.cpp tests/test-getcpinfo.cpp impl/getcpinfo.cpp
+../ext-src/gtest/fused-src/gtest/gtest-all.cc)
 add_executable(monad_native ${SOURCE_FILES})
 
 # add pthread
