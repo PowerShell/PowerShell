@@ -30,6 +30,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <limits.h>
+#include <stdint.h>
 
 #ifndef NAME_MAX
 #  define NAME_MAX 255
@@ -59,6 +60,8 @@
     typedef char *PSTR;
     typedef void *PVOID;
     typedef PVOID HANDLE;
+    typedef uint32_t UINT;
+    typedef char BYTE;
     #define NO_ERROR 0
     #define INFINITE 0xFFFFFFFF
     #define WINAPI
@@ -585,3 +588,29 @@ typedef unsigned char PAL_Boolean;
 # define PAL_COUNT(ARR) (sizeof(ARR) / sizeof(ARR[0]))
 #endif
 
+/*
+**==============================================================================
+**
+** NameSpace
+**
+**==============================================================================
+*/
+
+namespace const_cpinfo{
+ constexpr int MAX_DEFAULTCHAR =   2;
+ constexpr int MAX_LEADBYTES   =  12;
+}
+
+/*
+**==============================================================================
+**
+** Structs
+**
+**==============================================================================
+*/
+
+typedef struct _cpinfo {
+    UINT MaxCharSize;
+    BYTE DefaultChar[const_cpinfo::MAX_DEFAULTCHAR];
+    BYTE LeadByte[const_cpinfo::MAX_LEADBYTES];
+} CPINFO;
