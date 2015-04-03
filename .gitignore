@@ -1,1 +1,7 @@
 .idea
+src/.kdev4/
+src/CMakeFiles/
+src/build/
+src/monad_native
+src/src.kdev4
+
