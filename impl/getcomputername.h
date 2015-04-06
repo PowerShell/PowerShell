@@ -4,6 +4,6 @@
 
 PAL_BEGIN_EXTERNC
 
-int GetComputerName(char * name, size_t len);
+BOOL GetComputerName(LPTSTR name, LPDWORD len);
 
 PAL_END_EXTERNC
