@@ -2,22 +2,27 @@
 #include "getcomputername.h"
 
 TEST(GetComputerName,simple)
-{
-	
-	char hostname[128];
-	char hostnameFunctionTest[128];
+{	
+    char hostname[HOST_NAME_MAX];
+    TCHAR hostnameFunctionTest[HOST_NAME_MAX];
+    DWORD hostSize = HOST_NAME_MAX;
 
-	int getComputerName = GetComputerName(hostnameFunctionTest, sizeof hostnameFunctionTest);
-	int host =  gethostname(hostname, sizeof hostname);
+    BOOL getComputerName = GetComputerName(hostnameFunctionTest, &hostSize);
+    BOOL host =  gethostname(hostname, sizeof hostname);
 
-	// first make sure that on this platform those types are of the same size
-	
-	ASSERT_TRUE(getComputerName == 0);
-	ASSERT_TRUE(host == 0);
-	
-	// now compare the actual values
-	for(int i =0; hostname[i] != '\0'; i++)
-	{
-	  ASSERT_EQ(hostnameFunctionTest[i],hostname[i]);
-	}
+    if(host == 0)
+    {
+      host = TRUE;    
+    }
+    else
+    {
+      host = FALSE;
+    }
+
+    std::string hostnameSting(hostname);
+    std::string hostnameStingTest(hostnameFunctionTest);
+  
+    ASSERT_TRUE(getComputerName == TRUE);
+    ASSERT_EQ(host,TRUE);
+    ASSERT_EQ(hostnameSting,hostnameFunctionTest);
 }

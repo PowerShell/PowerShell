@@ -59,6 +59,9 @@
     typedef char *PSTR;
     typedef void *PVOID;
     typedef PVOID HANDLE;
+    typedef char TCHAR;
+    typedef TCHAR *LPTSTR;
+    typedef DWORD *LPDWORD;
     #define NO_ERROR 0
     #define INFINITE 0xFFFFFFFF
     #define WINAPI
