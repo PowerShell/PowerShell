@@ -4,25 +4,24 @@
 TEST(GetComputerName,simple)
 {	
     char hostname[HOST_NAME_MAX];
-    TCHAR hostnameFunctionTest[HOST_NAME_MAX];
+    std::string hostnameFunctionTest;
     DWORD hostSize = HOST_NAME_MAX;
-
-    BOOL getComputerName = GetComputerName(hostnameFunctionTest, &hostSize);
+    BOOL getComputerName = GetComputerName(&hostnameFunctionTest[0], &hostSize);
     BOOL host =  gethostname(hostname, sizeof hostname);
 
     if(host == 0)
     {
-      host = TRUE;    
+        host = TRUE;    
     }
     else
     {
-      host = FALSE;
+        host = FALSE;
     }
 
-    std::string hostnameSting(hostname);
-    std::string hostnameStingTest(hostnameFunctionTest);
+    std::string hostnameString(hostname);
+    std::string hostnameStringTest(&hostnameFunctionTest[0]);
   
     ASSERT_TRUE(getComputerName == TRUE);
     ASSERT_EQ(host,TRUE);
-    ASSERT_EQ(hostnameSting,hostnameFunctionTest);
+    ASSERT_EQ(hostnameString,hostnameStringTest);
 }
