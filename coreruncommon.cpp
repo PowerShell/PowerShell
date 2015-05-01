@@ -7,6 +7,7 @@
 // Code that is used by both the Unix corerun and coreconsole.
 //
 
+#include <cstdlib>
 #include <assert.h>
 #include <dirent.h>
 #include <dlfcn.h>
