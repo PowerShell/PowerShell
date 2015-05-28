@@ -290,6 +290,7 @@ int ExecuteManagedAssembly(
             if (!SUCCEEDED(st))
             {
                 fprintf(stderr, "ExecuteAssembly failed - status: 0x%08x\n", st);
+                exitCode = -1;
             }
         }
         else
