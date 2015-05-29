@@ -7,3 +7,12 @@
 [submodule "ext-src/cppunit"]
 	path = ext-src/cppunit
 	url = git://anongit.freedesktop.org/git/libreoffice/cppunit/
+[submodule "src/monad-native"]
+	path = src/monad-native
+	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-native
+[submodule "src/monad-ext"]
+	path = src/monad-ext
+	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-ext
+[submodule "src/monad_app_base"]
+	path = src/monad_app_base
+	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad_app_base

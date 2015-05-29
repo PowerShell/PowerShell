@@ -2,5 +2,6 @@
 CMakeCache.txt
 CMakeFiles/
 Makefile
+!scripts/Makefile
 cmake_install.cmake
 externals

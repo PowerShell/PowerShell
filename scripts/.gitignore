@@ -1,0 +1,12 @@
+System.Collections.Immutable.*/
+System.Reflection.Metadata.*/
+dotnetlibs/
+gen-all-files.txt
+monad-src.diff
+output.txt
+string-resources-files.txt
+string-resources-orig.txt
+xunit.abstractions.*/
+xunit.core.*/
+xunit.extensibility.core.*/
+xunit.runner.console.*/
