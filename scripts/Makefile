@@ -2,6 +2,11 @@
 PSRC = ../src/monad/monad/src
 MONAD_EXT=../src/monad-ext
 
+# this variable is needed by module specific include makefiles below
+ADMIN_GIT_ROOT=../src/monad
+
+phony_all: all
+
 # include all the external makefiles
 include all-files.mk
 include string-resources.mk
@@ -17,7 +22,8 @@ NUGETREF=-r:System.Reflection.Metadata.dll -r:System.Collections.Immutable.dll
 
 MI_NATIVE_REF=-r:dotnetlibs/Microsoft.Management.Infrastructure.Native.dll
 MI_REF_ASSEMBLY=-r:$(MONAD_EXT)/PS/PS_refs_modil/microsoft.management.infrastructure.metadata_dll
-MI_REF=-r:dotnetlibs/Microsoft.Management.Infrastructure.dll
+MI_ASSEMBLY=dotnetlibs/Microsoft.Management.Infrastructure.dll
+MI_REF=-r:$(MI_ASSEMBLY)
 
 PRODUCT_BASE_REFS=${COREREF}
 PRODUCT_MI_REFS=${COREREF} ${MI_NATIVE_REF}
@@ -51,8 +57,8 @@ dotnetlibs/Microsoft.Management.Infrastructure.dll: ${WMI_SRCS} dotnetlibs/Micro
 
 # Commands
 
-dotnetlibs/Microsoft.PowerShell.Commands.Management.dll: ${COMMANDS_MANAGEMENT_SRCS} dotnetlibs/System.Management.Automation.dll ${COMMAND_MANAGEMENT_RES_SRCS} ${COMMAND_MANAGEMENT_RES_CS_SRCS}
-	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_MANAGEMENT_SRCS} ${COMMAND_MANAGEMENT_RES} ${COMMANDS_MANAGEMENT_RES_CS_SRCS}
+dotnetlibs/Microsoft.PowerShell.Commands.Management.dll: ${COMMANDS_MANAGEMENT_SRCS} dotnetlibs/System.Management.Automation.dll ${COMMAND_MANAGEMENT_RES_SRCS} ${COMMAND_MANAGEMENT_RES_CS_SRCS} $(MI_ASSEMBLY)
+	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_MANAGEMENT_SRCS} ${COMMAND_MANAGEMENT_RES} ${COMMANDS_MANAGEMENT_RES_CS_SRCS} $(MI_REF)
 
 dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll: ${COMMANDS_UTILITY_SRCS} dotnetlibs/System.Management.Automation.dll ${COMMAND_UTILITY_RES_SRCS} ${COMMAND_UTILITY_RES_CS_SRCS}
 	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_UTILITY_SRCS} ${COMMAND_UTILITY_RES} ${COMMANDS_UTILITY_RES_CS_SRCS}

@@ -1,141 +1,222 @@
+# This is an automatically generated file for the make dependency: COMMANDS_UTILITY
 
-COMMANDS_UTILITY_RES_SRCS = \
-    ../src/monad/monad/src/commands/utility/resources/CsvCommandStrings.resources      \
-    ../src/monad/monad/src/commands/utility/resources/Debugger.resources               \
-    ../src/monad/monad/src/commands/utility/resources/EventingStrings.resources        \
-    ../src/monad/monad/src/commands/utility/resources/NewObjectStrings.resources       \
-    ../src/monad/monad/src/commands/utility/resources/MeasureObjectStrings.resources   \
-    ../src/monad/monad/src/commands/utility/resources/SelectObjectStrings.resources    \
-    ../src/monad/monad/src/commands/utility/resources/SortObjectStrings.resources      \
-    ../src/monad/monad/src/commands/utility/resources/WriteErrorStrings.resources      \
-    ../src/monad/monad/src/commands/utility/resources/VariableCommandStrings.resources \
-    ../src/monad/monad/src/commands/utility/resources/AddTypeStrings.resources         \
-    ../src/monad/monad/src/commands/utility/resources/GetMember.resources              \
-    ../src/monad/monad/src/commands/utility/resources/GetRandomCommandStrings.resources\
-    ../src/monad/monad/src/commands/utility/resources/UtilityCommonStrings.resources   \
-    ../src/monad/monad/src/commands/utility/resources/HostStrings.resources            \
-    ../src/monad/monad/src/commands/utility/resources/AddMember.resources              \
-    ../src/monad/monad/src/commands/utility/resources/ConvertFromStringData.resources  \
-    ../src/monad/monad/src/commands/utility/resources/ImportLocalizedDataStrings.resources    \
-    ../src/monad/monad/src/commands/utility/resources/WriteProgressResourceStrings.resources  \
-    ../src/monad/monad/src/commands/utility/resources/AliasCommandStrings.resources
+COMMANDS_UTILITY_SRCS_WIN=\
+	../../../jws/pswin/admin/monad/src/commands/utility/new-object.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/Measure-Object.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/select-object.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/sort-object.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/ObjectCommandComparer.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/OrderObjectBase.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/write.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/Var.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/GetMember.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/group-object.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/WriteConsoleCmdlet.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/ConsoleColorCmdlet.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/AddMember.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/Write-Object.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/StartSleepCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/Get-PSCallStack.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/GetUnique.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/GetDateCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/compare-object.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/GetHostCmdlet.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/GetRandomCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/InvokeCommandCmdlet.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/NewTimeSpanCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/tee-object.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/TimeExpressionCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/UtilityCommon.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/SetAliasCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/GetAliasCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/NewAliasCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/WriteAliasCommandBase.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/ExportAliasCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/ImportAliasCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/Import-LocalizedData.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/ConvertFrom-StringData.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/ReadConsoleCmdlet.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/Csv.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/CSVCommands.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/Set-PSBreakpoint.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/Get-PSBreakpoint.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/Remove-PSBreakpoint.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/Enable-PSBreakpoint.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/Disable-PSBreakpoint.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/DebugRunspaceCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/GetRunspaceCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/EnableDisableRunspaceDebugCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/WriteProgressCmdlet.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/common/GetFormatDataCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/common/WriteFormatDataCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/format-list/Format-List.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/format-object/format-object.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/format-table/Format-Table.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/format-wide/Format-Wide.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/out-file/Out-File.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/out-string/out-string.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/RegisterObjectEventCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/RegisterPSEventCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/WaitEventCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/GetEventCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/RemoveEventCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/GetEventSubscriberCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/UnregisterEventCommand.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/neweventcommand.cs	\
 
-COMMANDS_UTILITY_RESX_SRCS = \
-    ../src/monad/monad/src/commands/utility/resources/CsvCommandStrings.resx      \
-    ../src/monad/monad/src/commands/utility/resources/Debugger.resx               \
-    ../src/monad/monad/src/commands/utility/resources/EventingStrings.resx        \
-    ../src/monad/monad/src/commands/utility/resources/NewObjectStrings.resx       \
-    ../src/monad/monad/src/commands/utility/resources/MeasureObjectStrings.resx   \
-    ../src/monad/monad/src/commands/utility/resources/SelectObjectStrings.resx    \
-    ../src/monad/monad/src/commands/utility/resources/SortObjectStrings.resx      \
-    ../src/monad/monad/src/commands/utility/resources/WriteErrorStrings.resx      \
-    ../src/monad/monad/src/commands/utility/resources/VariableCommandStrings.resx \
-    ../src/monad/monad/src/commands/utility/resources/AddTypeStrings.resx         \
-    ../src/monad/monad/src/commands/utility/resources/GetMember.resx              \
-    ../src/monad/monad/src/commands/utility/resources/GetRandomCommandStrings.resx\
-    ../src/monad/monad/src/commands/utility/resources/UtilityCommonStrings.resx   \
-    ../src/monad/monad/src/commands/utility/resources/HostStrings.resx            \
-    ../src/monad/monad/src/commands/utility/resources/AddMember.resx              \
-    ../src/monad/monad/src/commands/utility/resources/ConvertFromStringData.resx  \
-    ../src/monad/monad/src/commands/utility/resources/ImportLocalizedDataStrings.resx    \
-    ../src/monad/monad/src/commands/utility/resources/WriteProgressResourceStrings.resx  \
-    ../src/monad/monad/src/commands/utility/resources/AliasCommandStrings.resources
-
-
-COMMANDS_UTILITY_RES_BASE_PATH = ../src/monad/monad/src/commands/utility/resources
-
-$(COMMANDS_UTILITY_RES_BASE_PATH)/%.resources: $(COMMANDS_UTILITY_RES_BASE_PATH)/%.resx
-	resgen2 $<
-
-COMMANDS_UTILITY_RES_CS_SRCS = \
-    commands-utility-strings/CsvCommandStrings.cs        \
-    commands-utility-strings/Debugger.cs                 \
-    commands-utility-strings/EventingStrings.cs          \
-    commands-utility-strings/NewObjectStrings.cs         \
-    commands-utility-strings/MeasureObjectStrings.cs     \
-    commands-utility-strings/SelectObjectStrings.cs      \
-    commands-utility-strings/SortObjectStrings.cs        \
-    commands-utility-strings/WriteErrorStrings.cs        \
-    commands-utility-strings/VariableCommandStrings.cs   \
-    commands-utility-strings/GetMember.cs                \
-    commands-utility-strings/GetRandomCommandStrings.cs  \
-    commands-utility-strings/UtilityCommonStrings.cs     \
-    commands-utility-strings/HostStrings.cs              \
-    commands-utility-strings/AddMember.cs                \
-    commands-utility-strings/AliasCommandStrings.cs      \
-    commands-utility-strings/ConvertFromStringData.cs    \
-    commands-utility-strings/ImportLocalizedDataStrings.cs    \
-    commands-utility-strings/WriteProgressResourceStrings.cs
- 
-SOURCES_PATH=../src/monad/monad/src/commands/utility
-FORMAT_AND_OUT_SOURCES_PATH=$(SOURCES_PATH)/FormatAndOutput
-
-FORMAT_AND_OUT_SOURCES=\
-    $(FORMAT_AND_OUT_SOURCES_PATH)/common/GetFormatDataCommand.cs        \
-    $(FORMAT_AND_OUT_SOURCES_PATH)/common/WriteFormatDataCommand.cs      \
-    $(FORMAT_AND_OUT_SOURCES_PATH)/format-list/Format-List.cs            \
-    $(FORMAT_AND_OUT_SOURCES_PATH)/format-object/format-object.cs        \
-    $(FORMAT_AND_OUT_SOURCES_PATH)/format-table/Format-Table.cs          \
-    $(FORMAT_AND_OUT_SOURCES_PATH)/format-wide/Format-Wide.cs            \
-    $(FORMAT_AND_OUT_SOURCES_PATH)/out-file/Out-File.cs                  \
-    $(FORMAT_AND_OUT_SOURCES_PATH)/out-string/out-string.cs              
-
-EVENTING_SOURCES=\
-    $(SOURCES_PATH)/RegisterObjectEventCommand.cs     \
-    $(SOURCES_PATH)/RegisterPSEventCommand.cs         \
-    $(SOURCES_PATH)/WaitEventCommand.cs               \
-    $(SOURCES_PATH)/GetEventCommand.cs                \
-    $(SOURCES_PATH)/RemoveEventCommand.cs             \
-    $(SOURCES_PATH)/GetEventSubscriberCommand.cs      \
-    $(SOURCES_PATH)/UnregisterEventCommand.cs         \
-    $(SOURCES_PATH)/neweventcommand.cs                
 
 COMMANDS_UTILITY_SRCS=\
-    $(SOURCES_PATH)/new-object.cs                  \
-    $(SOURCES_PATH)/Measure-Object.cs              \
-    $(SOURCES_PATH)/select-object.cs               \
-    $(SOURCES_PATH)/sort-object.cs                 \
-    $(SOURCES_PATH)/ObjectCommandComparer.cs       \
-    $(SOURCES_PATH)/OrderObjectBase.cs             \
-    $(SOURCES_PATH)/write.cs                       \
-    $(SOURCES_PATH)/Var.cs                         \
-    $(SOURCES_PATH)/GetMember.cs                   \
-    $(SOURCES_PATH)/group-object.cs                \
-    $(SOURCES_PATH)/WriteConsoleCmdlet.cs          \
-    $(SOURCES_PATH)/ConsoleColorCmdlet.cs          \
-    $(SOURCES_PATH)/AddMember.cs                   \
-    $(SOURCES_PATH)/Write-Object.cs                \
-    $(SOURCES_PATH)/StartSleepCommand.cs           \
-    $(SOURCES_PATH)/Get-PSCallStack.cs             \
-    $(SOURCES_PATH)/GetUnique.cs                   \
-    $(SOURCES_PATH)/GetDateCommand.cs              \
-    $(SOURCES_PATH)/compare-object.cs              \
-    $(SOURCES_PATH)/GetHostCmdlet.cs               \
-    $(SOURCES_PATH)/GetRandomCommand.cs            \
-    $(SOURCES_PATH)/InvokeCommandCmdlet.cs         \
-    $(SOURCES_PATH)/NewTimeSpanCommand.cs          \
-    $(SOURCES_PATH)/tee-object.cs                  \
-    $(SOURCES_PATH)/TimeExpressionCommand.cs       \
-    $(SOURCES_PATH)/UtilityCommon.cs               \
-    $(SOURCES_PATH)/SetAliasCommand.cs             \
-    $(SOURCES_PATH)/GetAliasCommand.cs             \
-    $(SOURCES_PATH)/NewAliasCommand.cs             \
-    $(SOURCES_PATH)/WriteAliasCommandBase.cs       \
-    $(SOURCES_PATH)/ExportAliasCommand.cs          \
-    $(SOURCES_PATH)/ImportAliasCommand.cs          \
-    $(SOURCES_PATH)/Import-LocalizedData.cs        \
-    $(SOURCES_PATH)/ConvertFrom-StringData.cs      \
-    $(SOURCES_PATH)/ReadConsoleCmdlet.cs           \
-    $(SOURCES_PATH)/Csv.cs                         \
-    $(SOURCES_PATH)/CSVCommands.cs                 \
-    $(SOURCES_PATH)/Set-PSBreakpoint.cs            \
-    $(SOURCES_PATH)/Get-PSBreakpoint.cs            \
-    $(SOURCES_PATH)/Remove-PSBreakpoint.cs         \
-    $(SOURCES_PATH)/Enable-PSBreakpoint.cs         \
-    $(SOURCES_PATH)/Disable-PSBreakpoint.cs        \
-    $(SOURCES_PATH)/DebugRunspaceCommand.cs        \
-    $(SOURCES_PATH)/GetRunspaceCommand.cs          \
-    $(SOURCES_PATH)/EnableDisableRunspaceDebugCommand.cs \
-    $(SOURCES_PATH)/WriteProgressCmdlet.cs         \
-    $(FORMAT_AND_OUT_SOURCES)                      \
-    $(EVENTING_SOURCES)                            
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/new-object.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/Measure-Object.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/select-object.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/sort-object.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/ObjectCommandComparer.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/OrderObjectBase.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/write.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/Var.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/GetMember.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/group-object.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/WriteConsoleCmdlet.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/ConsoleColorCmdlet.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/AddMember.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/Write-Object.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/StartSleepCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/Get-PSCallStack.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/GetUnique.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/GetDateCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/compare-object.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/GetHostCmdlet.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/GetRandomCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/InvokeCommandCmdlet.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/NewTimeSpanCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/tee-object.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/TimeExpressionCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/UtilityCommon.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/SetAliasCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/GetAliasCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/NewAliasCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/WriteAliasCommandBase.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/ExportAliasCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/ImportAliasCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/Import-LocalizedData.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/ConvertFrom-StringData.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/ReadConsoleCmdlet.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/Csv.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/CSVCommands.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/Set-PSBreakpoint.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/Get-PSBreakpoint.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/Remove-PSBreakpoint.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/Enable-PSBreakpoint.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/Disable-PSBreakpoint.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/DebugRunspaceCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/GetRunspaceCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/EnableDisableRunspaceDebugCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/WriteProgressCmdlet.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/common/GetFormatDataCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/common/WriteFormatDataCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/format-list/Format-List.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/format-object/format-object.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/format-table/Format-Table.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/format-wide/Format-Wide.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/out-file/Out-File.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/out-string/out-string.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/RegisterObjectEventCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/RegisterPSEventCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/WaitEventCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/GetEventCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/RemoveEventCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/GetEventSubscriberCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/UnregisterEventCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/neweventcommand.cs	\
+
+
+COMMANDS_UTILITY_RES_BASE_PATH=../../../jws/pswin/admin/monad/src/commands/utility/resources
+
+COMMANDS_UTILITY_RES_GEN_PATH=gen/COMMANDS_UTILITY
+
+COMMANDS_UTILITY_RES_GEN_PATH_WIN=gen\COMMANDS_UTILITY
+
+COMMANDS_UTILITY_RESX_SRCS=\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/CsvCommandStrings.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/Debugger.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/EventingStrings.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/NewObjectStrings.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/MeasureObjectStrings.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/SelectObjectStrings.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/SortObjectStrings.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/WriteErrorStrings.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/VariableCommandStrings.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/AddTypeStrings.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/GetMember.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/GetRandomCommandStrings.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/UtilityCommonStrings.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/HostStrings.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/AddMember.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/ConvertFromStringData.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/ImportLocalizedDataStrings.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/WriteProgressResourceStrings.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/AliasCommandStrings.resx	\
+
+
+COMMANDS_UTILITY_RES_SRCS=\
+	gen/COMMANDS_UTILITY/CsvCommandStrings.resources	\
+	gen/COMMANDS_UTILITY/Debugger.resources	\
+	gen/COMMANDS_UTILITY/EventingStrings.resources	\
+	gen/COMMANDS_UTILITY/NewObjectStrings.resources	\
+	gen/COMMANDS_UTILITY/MeasureObjectStrings.resources	\
+	gen/COMMANDS_UTILITY/SelectObjectStrings.resources	\
+	gen/COMMANDS_UTILITY/SortObjectStrings.resources	\
+	gen/COMMANDS_UTILITY/WriteErrorStrings.resources	\
+	gen/COMMANDS_UTILITY/VariableCommandStrings.resources	\
+	gen/COMMANDS_UTILITY/AddTypeStrings.resources	\
+	gen/COMMANDS_UTILITY/GetMember.resources	\
+	gen/COMMANDS_UTILITY/GetRandomCommandStrings.resources	\
+	gen/COMMANDS_UTILITY/UtilityCommonStrings.resources	\
+	gen/COMMANDS_UTILITY/HostStrings.resources	\
+	gen/COMMANDS_UTILITY/AddMember.resources	\
+	gen/COMMANDS_UTILITY/ConvertFromStringData.resources	\
+	gen/COMMANDS_UTILITY/ImportLocalizedDataStrings.resources	\
+	gen/COMMANDS_UTILITY/WriteProgressResourceStrings.resources	\
+	gen/COMMANDS_UTILITY/AliasCommandStrings.resources	\
+
+
+COMMANDS_UTILITY_RES_CS_SRCS=\
+	gen/COMMANDS_UTILITY/CsvCommandStrings.cs	\
+	gen/COMMANDS_UTILITY/Debugger.cs	\
+	gen/COMMANDS_UTILITY/EventingStrings.cs	\
+	gen/COMMANDS_UTILITY/NewObjectStrings.cs	\
+	gen/COMMANDS_UTILITY/MeasureObjectStrings.cs	\
+	gen/COMMANDS_UTILITY/SelectObjectStrings.cs	\
+	gen/COMMANDS_UTILITY/SortObjectStrings.cs	\
+	gen/COMMANDS_UTILITY/WriteErrorStrings.cs	\
+	gen/COMMANDS_UTILITY/VariableCommandStrings.cs	\
+	gen/COMMANDS_UTILITY/AddTypeStrings.cs	\
+	gen/COMMANDS_UTILITY/GetMember.cs	\
+	gen/COMMANDS_UTILITY/GetRandomCommandStrings.cs	\
+	gen/COMMANDS_UTILITY/UtilityCommonStrings.cs	\
+	gen/COMMANDS_UTILITY/HostStrings.cs	\
+	gen/COMMANDS_UTILITY/AddMember.cs	\
+	gen/COMMANDS_UTILITY/ConvertFromStringData.cs	\
+	gen/COMMANDS_UTILITY/ImportLocalizedDataStrings.cs	\
+	gen/COMMANDS_UTILITY/WriteProgressResourceStrings.cs	\
+	gen/COMMANDS_UTILITY/AliasCommandStrings.cs	\
+
+
+# this command below needs the make variable SHELL to be set to "cmd", this is best done
+# as a command line option to make
+$(COMMANDS_UTILITY_RES_GEN_PATH)/%.resources: $(COMMANDS_UTILITY_RES_BASE_PATH)/%.resx
+	mkdir $(COMMANDS_UTILITY_RES_GEN_PATH_WIN) || exit /b 0
+	resgen /useSourcePath $< $@
+
+$(COMMANDS_UTILITY_RES_GEN_PATH)/%.cs: $(COMMANDS_UTILITY_RES_GEN_PATH)/%.resources
+	resgen /useSourcePath /str:cs $<
+	sed -i -- 's/using System;/using System;\r\nusing System.Reflection;/g' $@
+	sed -i -- 's/)\.Assembly/).GetTypeInfo().Assembly/g' $@
+
+COMMANDS_UTILITY_make_rule_RES_SRCS: $(COMMANDS_UTILITY_RES_SRCS)
+
+COMMANDS_UTILITY_make_rule_RES_CS_SRCS: $(COMMANDS_UTILITY_RES_CS_SRCS)
+
+COMMANDS_UTILITY_TARGET=Microsoft.PowerShell.Commands.Utility
+
+
