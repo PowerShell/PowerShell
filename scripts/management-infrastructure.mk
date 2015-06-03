@@ -193,6 +193,9 @@ MAN_INFRA_RES_SRCS=\
 MAN_INFRA_RES_CS_SRCS=\
 
 
+MAN_INFRA_RES_REF=\
+
+
 # this command below needs the make variable SHELL to be set to "cmd", this is best done
 # as a command line option to make
 $(MAN_INFRA_RES_GEN_PATH)/%.resources: $(MAN_INFRA_RES_BASE_PATH)/%.resx

@@ -128,6 +128,12 @@ COMMANDS_MANAGEMENT_RES_CS_SRCS=\
 	gen/COMMANDS_MANAGEMENT/NavigationResources.cs	\
 
 
+COMMANDS_MANAGEMENT_RES_REF=\
+	-resource:gen/COMMANDS_MANAGEMENT/CmdletizationResources.resources	\
+	-resource:gen/COMMANDS_MANAGEMENT/ProcessResources.resources	\
+	-resource:gen/COMMANDS_MANAGEMENT/NavigationResources.resources	\
+
+
 # this command below needs the make variable SHELL to be set to "cmd", this is best done
 # as a command line option to make
 $(COMMANDS_MANAGEMENT_RES_GEN_PATH)/%.resources: $(COMMANDS_MANAGEMENT_RES_BASE_PATH)/%.resx

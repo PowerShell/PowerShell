@@ -202,6 +202,28 @@ COMMANDS_UTILITY_RES_CS_SRCS=\
 	gen/COMMANDS_UTILITY/AliasCommandStrings.cs	\
 
 
+COMMANDS_UTILITY_RES_REF=\
+	-resource:gen/COMMANDS_UTILITY/CsvCommandStrings.resources	\
+	-resource:gen/COMMANDS_UTILITY/Debugger.resources	\
+	-resource:gen/COMMANDS_UTILITY/EventingStrings.resources	\
+	-resource:gen/COMMANDS_UTILITY/NewObjectStrings.resources	\
+	-resource:gen/COMMANDS_UTILITY/MeasureObjectStrings.resources	\
+	-resource:gen/COMMANDS_UTILITY/SelectObjectStrings.resources	\
+	-resource:gen/COMMANDS_UTILITY/SortObjectStrings.resources	\
+	-resource:gen/COMMANDS_UTILITY/WriteErrorStrings.resources	\
+	-resource:gen/COMMANDS_UTILITY/VariableCommandStrings.resources	\
+	-resource:gen/COMMANDS_UTILITY/AddTypeStrings.resources	\
+	-resource:gen/COMMANDS_UTILITY/GetMember.resources	\
+	-resource:gen/COMMANDS_UTILITY/GetRandomCommandStrings.resources	\
+	-resource:gen/COMMANDS_UTILITY/UtilityCommonStrings.resources	\
+	-resource:gen/COMMANDS_UTILITY/HostStrings.resources	\
+	-resource:gen/COMMANDS_UTILITY/AddMember.resources	\
+	-resource:gen/COMMANDS_UTILITY/ConvertFromStringData.resources	\
+	-resource:gen/COMMANDS_UTILITY/ImportLocalizedDataStrings.resources	\
+	-resource:gen/COMMANDS_UTILITY/WriteProgressResourceStrings.resources	\
+	-resource:gen/COMMANDS_UTILITY/AliasCommandStrings.resources	\
+
+
 # this command below needs the make variable SHELL to be set to "cmd", this is best done
 # as a command line option to make
 $(COMMANDS_UTILITY_RES_GEN_PATH)/%.resources: $(COMMANDS_UTILITY_RES_BASE_PATH)/%.resx
