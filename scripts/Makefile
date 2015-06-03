@@ -51,7 +51,7 @@ MCSOPTS_PS=${STRING_RESOURCES_ORIG} ${MCSOPTS_BASE} -target:library
 SRCS_ALL=${STRING_RESOURCES} ${SRCS}
 
 
-all: string-resources.dll dotnetlibs/System.Management.Automation.dll dotnetlibs/ps_hello_world.exe dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
+all: dotnetlibs/System.Management.Automation.dll dotnetlibs/ps_hello_world.exe dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 
 dotnetlibs/test.exe: test.cs ${STRING_RESOURCES}
 	mcs -out:$@ -target:exe ${MCSOPTS_BASE} ${PRODUCT_BASE_REFS} $^
@@ -59,12 +59,14 @@ dotnetlibs/test.exe: test.cs ${STRING_RESOURCES}
 runtest: dotnetlibs/test.exe dotnetlibs/System.Management.Automation.dll
 	LD_LIBRARY_PATH=dotnetlibs dotnetlibs/corerun dotnetlibs/test.exe
 
-string-resources.dll: ${STRING_RESOURCES}
-	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_BASE_REFS} $^
+#string-resources.dll: ${STRING_RESOURCES}
+#	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_BASE_REFS} $^
 
+# this is the new build rule for SMA.dll
 #dotnetlibs/System.Management.Automation.dll: ${SYS_AUTO_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS) ${SYS_AUTO_RES_SRCS} ${SYS_AUTO_RES_CS_SRCS}
 #	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_PS_REFS} ${SYS_AUTO_SRCS} ${SYS_AUTO_RES} ${SYS_AUTO_RES_CS_SRCS} $(PLATFORM_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
 
+# this is the old build rule for SMA.dll until system-automation.mk can be used
 dotnetlibs/System.Management.Automation.dll: ${SRCS_ALL} dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS)
 	mcs -out:$@ ${MCSOPTS_PS} ${PRODUCT_PS_REFS} ${SRCS_ALL} $(PLATFORM_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
 
