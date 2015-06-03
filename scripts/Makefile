@@ -8,15 +8,28 @@ ADMIN_GIT_ROOT=../src/monad
 phony_all: all
 
 # include all the external makefiles
+
+# these should go away with the makefile restructuring
 include all-files.mk
 include string-resources.mk
 include string-resources-orig.mk
 include wmi-sources.mk
+include assembly-load-context.mk
+
+# main references to the CoreCLR reference assemblies
 include coreref.mk
+
+# make file which adds things that are necessary for the platform we are building for
+include platform.mk
+
+# These are the main PS dlls:
+# - System.Management.Automation.dll (the main PS dll)
+# - commands/modules (they contain cmdlets): management and utility
+# - Microsoft.Management.Infrastructure.dll (the first dll in the remoting code paths)
+#include system-automation.mk
 include commands-management.mk
 include commands-utility.mk
-include assembly-load-context.mk
-include platform.mk
+#include management-infrastructure.mk
 
 NUGETREF=-r:System.Reflection.Metadata.dll -r:System.Collections.Immutable.dll
 
@@ -48,6 +61,9 @@ runtest: dotnetlibs/test.exe dotnetlibs/System.Management.Automation.dll
 
 string-resources.dll: ${STRING_RESOURCES}
 	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_BASE_REFS} $^
+
+#dotnetlibs/System.Management.Automation.dll: ${SYS_AUTO_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS) ${SYS_AUTO_RES_SRCS} ${SYS_AUTO_RES_CS_SRCS}
+#	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_PS_REFS} ${SYS_AUTO_SRCS} ${SYS_AUTO_RES} ${SYS_AUTO_RES_CS_SRCS} $(PLATFORM_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
 
 dotnetlibs/System.Management.Automation.dll: ${SRCS_ALL} dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS)
 	mcs -out:$@ ${MCSOPTS_PS} ${PRODUCT_PS_REFS} ${SRCS_ALL} $(PLATFORM_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
