@@ -150,6 +150,9 @@ prepare:
 	rm -rf System.Reflection.Metadata.* System.Collections.Immutable.*
 	nuget install System.Reflection.Metadata
 	nuget install System.Collections.Immutable
+	# this is a total hack (TODO linux), it's just needed because those .cs files are generated on windows,
+	# in fact the better solution probably is to eliminate the make rule for the linux builds
+	touch gen/*/*.cs
 
 run: dotnetlibs/ps_hello_world.exe dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll
 	rm -rf exec_env
