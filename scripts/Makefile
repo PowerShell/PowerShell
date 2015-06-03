@@ -154,7 +154,7 @@ prepare:
 	nuget install System.Reflection.Metadata
 	nuget install System.Collections.Immutable
 
-run: dotnetlibs/ps_hello_world.exe dotnetlibs/corerun
+run: dotnetlibs/ps_hello_world.exe dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll
 	rm -rf exec_env
 	mkdir exec_env
 	cp -r ../src/monad_app_base/app_base exec_env
