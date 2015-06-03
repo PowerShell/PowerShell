@@ -61,7 +61,7 @@ runtest: dotnetlibs/test.exe dotnetlibs/System.Management.Automation.dll
 
 # this is the new build rule for SMA.dll
 dotnetlibs/System.Management.Automation.dll: ${SYS_AUTO_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS) ${SYS_AUTO_RES_SRCS} ${SYS_AUTO_RES_CS_SRCS}
-	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_PS_REFS} ${SYS_AUTO_SRCS} ${SYS_AUTO_RES} ${SYS_AUTO_RES_CS_SRCS} $(PLATFORM_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
+	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_PS_REFS} ${SYS_AUTO_SRCS} ${SYS_AUTO_RES_REF} ${SYS_AUTO_RES_CS_SRCS} $(PLATFORM_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
 
 # this is the old build rule for SMA.dll until system-automation.mk can be used
 #dotnetlibs/System.Management.Automation.dll: ${SRCS_ALL} dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS)
@@ -73,10 +73,10 @@ dotnetlibs/Microsoft.Management.Infrastructure.dll: ${WMI_SRCS} dotnetlibs/Micro
 # Commands
 
 dotnetlibs/Microsoft.PowerShell.Commands.Management.dll: ${COMMANDS_MANAGEMENT_SRCS} dotnetlibs/System.Management.Automation.dll ${COMMAND_MANAGEMENT_RES_SRCS} ${COMMAND_MANAGEMENT_RES_CS_SRCS} $(MI_ASSEMBLY)
-	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_MANAGEMENT_SRCS} ${COMMAND_MANAGEMENT_RES} ${COMMANDS_MANAGEMENT_RES_CS_SRCS} $(MI_REF)
+	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_MANAGEMENT_SRCS} ${COMMAND_MANAGEMENT_RES} ${COMMANDS_MANAGEMENT_RES_CS_SRCS} $(COMMANDS_MANAGEMENT_RES_REF) $(MI_REF)
 
 dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll: ${COMMANDS_UTILITY_SRCS} dotnetlibs/System.Management.Automation.dll ${COMMAND_UTILITY_RES_SRCS} ${COMMAND_UTILITY_RES_CS_SRCS}
-	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_UTILITY_SRCS} ${COMMAND_UTILITY_RES} ${COMMANDS_UTILITY_RES_CS_SRCS}
+	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_UTILITY_SRCS} ${COMMAND_UTILITY_RES} ${COMMANDS_UTILITY_RES_CS_SRCS} $(COMMANDS_UTILITY_RES_REF)
 
 # assembly load context
 

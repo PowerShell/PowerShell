@@ -1230,6 +1230,74 @@ SYS_AUTO_RES_CS_SRCS=\
 	gen/SYS_AUTO/Modules.cs	\
 
 
+SYS_AUTO_RES_REF=\
+	-resource:gen/SYS_AUTO/Authenticode.resources	\
+	-resource:gen/SYS_AUTO/AutomationExceptions.resources	\
+	-resource:gen/SYS_AUTO/CimInstanceTypeAdapterResources.resources	\
+	-resource:gen/SYS_AUTO/CmdletizationCoreResources.resources	\
+	-resource:gen/SYS_AUTO/CommandBaseStrings.resources	\
+	-resource:gen/SYS_AUTO/Credential.resources	\
+	-resource:gen/SYS_AUTO/CredentialAttributeStrings.resources	\
+	-resource:gen/SYS_AUTO/ConsoleInfoErrorStrings.resources	\
+	-resource:gen/SYS_AUTO/CredUI.resources	\
+	-resource:gen/SYS_AUTO/DescriptionsStrings.resources	\
+	-resource:gen/SYS_AUTO/DiscoveryExceptions.resources	\
+	-resource:gen/SYS_AUTO/EnumExpressionEvaluatorStrings.resources	\
+	-resource:gen/SYS_AUTO/ErrorCategoryStrings.resources	\
+	-resource:gen/SYS_AUTO/ErrorPackage.resources	\
+	-resource:gen/SYS_AUTO/ExtendedTypeSystem.resources	\
+	-resource:gen/SYS_AUTO/EventingResources.resources	\
+	-resource:gen/SYS_AUTO/FileSystemProviderStrings.resources	\
+	-resource:gen/SYS_AUTO/FormatAndOutXmlLoadingStrings.resources	\
+	-resource:gen/SYS_AUTO/GetErrorText.resources	\
+	-resource:gen/SYS_AUTO/HelpDisplayStrings.resources	\
+	-resource:gen/SYS_AUTO/HostInterfaceExceptionsStrings.resources	\
+	-resource:gen/SYS_AUTO/HistoryStrings.resources	\
+	-resource:gen/SYS_AUTO/InternalHostStrings.resources	\
+	-resource:gen/SYS_AUTO/InternalCommandStrings.resources	\
+	-resource:gen/SYS_AUTO/InternalHostUserInterfaceStrings.resources	\
+	-resource:gen/SYS_AUTO/Logging.resources	\
+	-resource:gen/SYS_AUTO/Metadata.resources	\
+	-resource:gen/SYS_AUTO/MshSignature.resources	\
+	-resource:gen/SYS_AUTO/ParameterBinderStrings.resources	\
+	-resource:gen/SYS_AUTO/ParserStrings.resources	\
+	-resource:gen/SYS_AUTO/PathUtilsStrings.resources	\
+	-resource:gen/SYS_AUTO/PipelineStrings.resources	\
+	-resource:gen/SYS_AUTO/PowerShellStrings.resources	\
+	-resource:gen/SYS_AUTO/ProgressRecordStrings.resources	\
+	-resource:gen/SYS_AUTO/ProviderBaseSecurity.resources	\
+	-resource:gen/SYS_AUTO/ProxyCommandStrings.resources	\
+	-resource:gen/SYS_AUTO/PSCommandStrings.resources	\
+	-resource:gen/SYS_AUTO/PSDataBufferStrings.resources	\
+	-resource:gen/SYS_AUTO/PSListModifierStrings.resources	\
+	-resource:gen/SYS_AUTO/RunspaceStrings.resources	\
+	-resource:gen/SYS_AUTO/RunspaceInit.resources	\
+	-resource:gen/SYS_AUTO/RunspacePoolStrings.resources	\
+	-resource:gen/SYS_AUTO/AuthorizationManagerBase.resources	\
+	-resource:gen/SYS_AUTO/SecuritySupportStrings.resources	\
+	-resource:gen/SYS_AUTO/Serialization.resources	\
+	-resource:gen/SYS_AUTO/SessionStateProviderBaseStrings.resources	\
+	-resource:gen/SYS_AUTO/SessionStateStrings.resources	\
+	-resource:gen/SYS_AUTO/SuggestionStrings.resources	\
+	-resource:gen/SYS_AUTO/MiniShellErrors.resources	\
+	-resource:gen/SYS_AUTO/MshHostRawUserInterfaceStrings.resources	\
+	-resource:gen/SYS_AUTO/MshSnapInCmdletResources.resources	\
+	-resource:gen/SYS_AUTO/MshSnapinInfo.resources	\
+	-resource:gen/SYS_AUTO/TypesXmlStrings.resources	\
+	-resource:gen/SYS_AUTO/TransactionStrings.resources	\
+	-resource:gen/SYS_AUTO/WildcardPatternStrings.resources	\
+	-resource:gen/SYS_AUTO/RemotingErrorIdStrings.resources	\
+	-resource:gen/SYS_AUTO/DebuggerStrings.resources	\
+	-resource:gen/SYS_AUTO/FormatAndOut_MshParameter.resources	\
+	-resource:gen/SYS_AUTO/FormatAndOut_format_xxx.resources	\
+	-resource:gen/SYS_AUTO/FormatAndOut_out_xxx.resources	\
+	-resource:gen/SYS_AUTO/NativeCP.resources	\
+	-resource:gen/SYS_AUTO/RegistryProviderStrings.resources	\
+	-resource:gen/SYS_AUTO/TabCompletionStrings.resources	\
+	-resource:gen/SYS_AUTO/CoreClrStubResources.resources	\
+	-resource:gen/SYS_AUTO/Modules.resources	\
+
+
 # this command below needs the make variable SHELL to be set to "cmd", this is best done
 # as a command line option to make
 $(SYS_AUTO_RES_GEN_PATH)/%.resources: $(SYS_AUTO_RES_BASE_PATH)/%.resx
