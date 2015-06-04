@@ -10,7 +10,7 @@ phony_all: all
 # include all the external makefiles
 
 # these should go away with the makefile restructuring
-include wmi-sources.mk
+#include wmi-sources.mk
 include assembly-load-context.mk
 
 # main references to the CoreCLR reference assemblies
@@ -26,7 +26,7 @@ include platform.mk
 include system-automation.mk
 include commands-management.mk
 include commands-utility.mk
-#include management-infrastructure.mk
+include management-infrastructure.mk
 
 NUGETREF=-r:System.Reflection.Metadata.dll -r:System.Collections.Immutable.dll
 
@@ -56,9 +56,6 @@ dotnetlibs/test.exe: test.cs ${STRING_RESOURCES}
 runtest: dotnetlibs/test.exe dotnetlibs/System.Management.Automation.dll
 	LD_LIBRARY_PATH=dotnetlibs dotnetlibs/corerun dotnetlibs/test.exe
 
-#string-resources.dll: ${STRING_RESOURCES}
-#	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_BASE_REFS} $^
-
 # this is the new build rule for SMA.dll
 dotnetlibs/System.Management.Automation.dll: ${SYS_AUTO_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS) ${SYS_AUTO_RES_SRCS} ${SYS_AUTO_RES_CS_SRCS}
 	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_PS_REFS} ${SYS_AUTO_SRCS} ${SYS_AUTO_RES_REF} ${SYS_AUTO_RES_CS_SRCS} $(PLATFORM_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
@@ -67,8 +64,11 @@ dotnetlibs/System.Management.Automation.dll: ${SYS_AUTO_SRCS} dotnetlibs/Microso
 #dotnetlibs/System.Management.Automation.dll: ${SRCS_ALL} dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS)
 #	mcs -out:$@ ${MCSOPTS_PS} ${PRODUCT_PS_REFS} ${SRCS_ALL} $(PLATFORM_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
 
-dotnetlibs/Microsoft.Management.Infrastructure.dll: ${WMI_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.Native.dll ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
-	mcs -out:$@ ${MCSOPTS_MI} ${PRODUCT_MI_REFS} ${WMI_SRCS} ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
+#dotnetlibs/Microsoft.Management.Infrastructure.dll: ${WMI_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.Native.dll ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
+#	mcs -out:$@ ${MCSOPTS_MI} ${PRODUCT_MI_REFS} ${WMI_SRCS} ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
+
+dotnetlibs/Microsoft.Management.Infrastructure.dll: ${MAN_INFRA_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.Native.dll ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs $(MAN_INFRA_RES_SRCS) $(MAN_INFRA_RES_CS_SRCS)
+	mcs -out:$@ $(MCSOPTS_MI) $(PRODUCT_MI_REFS) $(MAN_INFRA_SRCS) $(MAN_INFRA_RES_REF) $(MAN_INFRA_RES_CS_SRCS) ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
 
 # Commands
 
