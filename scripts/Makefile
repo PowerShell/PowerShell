@@ -109,19 +109,22 @@ dotnetlibs/ps_hello_world.exe: ../src/ps_hello_world/ps_hello_world.cs dotnetlib
 
 # testing c# stuff
 
-dotnetlibs/xunit.core.dll: xunit.extensibility.core.2.0.0/lib/portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS/xunit.core.dll
+dotnetlibs/xunit.core.dll: $(MONAD_EXT)/xunit/xunit.core.dll
 	cp -f $^ $@
 
-dotnetlibs/xunit.abstractions.dll: xunit.abstractions.2.0.0/lib/portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS/xunit.abstractions.dll
+dotnetlibs/xunit.abstractions.dll: $(MONAD_EXT)/xunit/xunit.abstractions.dll
 	cp -f $^ $@
 
-dotnetlibs/xunit.console.exe: xunit.runner.console.2.0.0/tools/xunit.console.exe
+dotnetlibs/xunit.assert.dll: $(MONAD_EXT)/xunit/xunit.assert.dll
 	cp -f $^ $@
 
-dotnetlibs/ps_test.exe: ../src/ps_test/ps_test.cs dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
-	mcs -out:$@ -noconfig -nostdlib -target:exe -r:dotnetlibs/System.Management.Automation.dll -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) -r:dotnetlibs/xunit.core.dll ${COREREF} ../src/ps_test/ps_test.cs
+dotnetlibs/xunit.console.exe: $(MONAD_EXT)/xunit/xunit.console.netcore.exe
+	cp -f $^ $@
 
-run-test: dotnetlibs/ps_test.exe dotnetlibs/libps.so
+dotnetlibs/ps_test.exe: ../src/ps_test/ps_test.cs dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) dotnetlibs/xunit.core.dll dotnetlibs/xunit.assert.dll
+	mcs -out:$@ -noconfig -nostdlib -target:exe -r:dotnetlibs/System.Management.Automation.dll -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) -r:dotnetlibs/xunit.core.dll -r:dotnetlibs/xunit.assert.dll ${COREREF} ../src/ps_test/ps_test.cs
+
+run-test: dotnetlibs/ps_test.exe dotnetlibs/corerun
 	cd dotnetlibs && LD_LIBRARY_PATH=. ./corerun ps_test.exe
 
 # the pinvoke library libps.so
