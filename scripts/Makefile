@@ -134,6 +134,13 @@ dotnetlibs/libps.so dotnetlibs/monad_native: libps-build/Makefile
 libps.so-test: dotnetlibs/libps.so dotnetlibs/monad_native
 	cd dotnetlibs && LD_LIBRARY_PATH=. ./monad_native
 
+# this is a windows dll that is needed because CoreCLR tries to access
+# registry functions that don't exist on Linux and there is no other good
+# way of fixing this right now
+# (TODO linux: this should be removed by addressing it in CoreCLR)
+dotnetlibs/api-ms-win-core-registry-l1-1-0.dll: ../src/win-dll/lib-api-ms-win-core-registry-l1-1-0.c
+	gcc -o $@ -fPIC -shared -Wall $^
+
 # this is the rule to copy over updated CoreCLR + .net libraries
 dotnetlibs/corerun: $(MONAD_EXT)/coreclr/Release/corerun
 	cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs
@@ -155,7 +162,7 @@ prepare-exec_env:
 	cp -r dotnetlibs/lib* exec_env/app_base
 	cp -r dotnetlibs/corerun exec_env/app_base
 
-run: dotnetlibs/powershell-run.exe dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll prepare-exec_env
+run: dotnetlibs/powershell-run.exe dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll prepare-exec_env
 	# check if corerun is the right one (could be the debug version)
 	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
 	#cd exec_env/app_base && PSMODULEPATH=. LD_LIBRARY_PATH=. ./corerun powershell-run.exe "\"test blah\""
@@ -168,16 +175,16 @@ run: dotnetlibs/powershell-run.exe dotnetlibs/corerun dotnetlibs/Microsoft.Power
 prepare-debugclr:
 	cp -r $(MONAD_EXT)/coreclr/Debug/* dotnetlibs
 
-run-debugclr: dotnetlibs/powershell-run.exe prepare-debugclr dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll prepare-exec_env
+run-debugclr: dotnetlibs/powershell-run.exe prepare-debugclr dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll prepare-exec_env
 	#cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-run.exe "import-module -name Microsoft.PowerShell.Utility" '"a","b","c","a","a" | Select-Object -Unique'
 	cd exec_env/app_base && PAL_DBG_CHANNELS="+LOADER.TRACE" PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-run.exe "\"test blah\""
 
 trace:
 	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. strace -e trace=file ./corerun powershell-run.exe "import-module -name Microsoft.PowerShell.Utility" '"a","b","c","a","a" | Select-Object -Unique'
 
-debug: dotnetlibs/powershell-run.exe
+debug: dotnetlibs/powershell-run.exe dotnetlibs/corerun prepare-exec_env dotnetlibs/api-ms-win-core-registry-l1-1-0.dll
 	#LD_LIBRARY_PATH=dotnetlibs lldb-3.6 dotnetlibs/corerun dotnetlibs/powershell-run.exe
-	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. lldb-3.6 ./corerun powershell-run.exe "import-module -name Microsoft.PowerShell.Utility"
+	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=.:/usr/lib/llvm-3.6/lib lldb-3.6 ./corerun powershell-run.exe "\"hello world\""
 
 clean:
 	rm -f dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/powershell-run.exe dotnetlibs/Microsoft.Management.Infrastructure.Native.dll CorePsTypeCatalog.cs TypeCatalogGen.exe string-resources.dll test.dll System.Reflection.Metadata.dll System.Collections.Immutable.dll

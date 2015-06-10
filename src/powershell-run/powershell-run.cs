@@ -494,13 +494,9 @@ namespace ps_hello_world
         static void Main(string[] args)
         {
             init();
-
 			
-
 			//test1(args);
 			test2(args);
-
-        	throw new Exception("planned app exit");
         }
     }
 }
