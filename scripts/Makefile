@@ -145,9 +145,6 @@ prepare:
 	nuget install System.Reflection.Metadata
 	nuget install System.Collections.Immutable
 	nuget install Microsoft.Net.ToolsetCompilers -pre
-	# this is a total hack (TODO linux), it's just needed because those .cs files are generated on windows,
-	# in fact the better solution probably is to eliminate the make rule for the linux builds
-	touch gen/*/*.cs
 
 run: dotnetlibs/powershell-run.exe dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll
 	rm -rf exec_env

@@ -14,3 +14,8 @@ xunit.runner.console.*/
 TypeCatalogGen.exe
 System.Collections.Immutable.dll
 System.Reflection.Metadata.dll
+commands-management-win.mk
+commands-utility-win.mk
+management-infrastructure-win.mk
+system-automation-win.mk
+CorePsTypeCatalog.cs

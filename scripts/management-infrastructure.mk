@@ -196,21 +196,9 @@ MAN_INFRA_RES_CS_SRCS=\
 MAN_INFRA_RES_REF=\
 
 
-# this command below needs the make variable SHELL to be set to "cmd", this is best done
-# as a command line option to make
-$(MAN_INFRA_RES_GEN_PATH)/%.resources: $(MAN_INFRA_RES_BASE_PATH)/%.resx
-	mkdir $(MAN_INFRA_RES_GEN_PATH_WIN) || exit /b 0
-	resgen /useSourcePath $< $@
-
-$(MAN_INFRA_RES_GEN_PATH)/%.cs: $(MAN_INFRA_RES_GEN_PATH)/%.resources
-	resgen /useSourcePath /str:cs $<
-	sed -i -- 's/using System;/using System;\r\nusing System.Reflection;/g' $@
-	sed -i -- 's/)\.Assembly/).GetTypeInfo().Assembly/g' $@
-
 MAN_INFRA_make_rule_RES_SRCS: $(MAN_INFRA_RES_SRCS)
 
 MAN_INFRA_make_rule_RES_CS_SRCS: $(MAN_INFRA_RES_CS_SRCS)
 
 MAN_INFRA_TARGET=Microsoft.Management.Infrastructure
-
 
