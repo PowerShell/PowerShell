@@ -1,5 +1,6 @@
 System.Collections.Immutable.*/
 System.Reflection.Metadata.*/
+Microsoft.Net.ToolsetCompilers.*/
 dotnetlibs/
 gen-all-files.txt
 monad-src.diff
@@ -10,3 +11,6 @@ xunit.abstractions.*/
 xunit.core.*/
 xunit.extensibility.core.*/
 xunit.runner.console.*/
+TypeCatalogGen.exe
+System.Collections.Immutable.dll
+System.Reflection.Metadata.dll
