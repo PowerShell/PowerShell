@@ -38,7 +38,6 @@ MI_REF=-r:$(MI_ASSEMBLY)
 PRODUCT_BASE_REFS=${COREREF}
 PRODUCT_MI_REFS=${COREREF} ${MI_NATIVE_REF}
 PRODUCT_PS_REFS=${COREREF} ${MI_REF_ASSEMBLY} -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
-#PRODUCT_PS_REFS=${COREREF} ${MI_REF} -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 PRODUCT_COMMANDS_REFS=${COREREF} -r:dotnetlibs/System.Management.Automation.dll
 
 MCSOPTS_BASE=-unsafe -nostdlib -noconfig -define:CORECLR -define:_CORECLR
@@ -50,13 +49,7 @@ SRCS_ALL=${STRING_RESOURCES} ${SRCS}
 
 all: dotnetlibs/System.Management.Automation.dll dotnetlibs/ps_hello_world.exe dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 
-dotnetlibs/test.exe: test.cs ${STRING_RESOURCES}
-	mcs -out:$@ -target:exe ${MCSOPTS_BASE} ${PRODUCT_BASE_REFS} $^
-
-runtest: dotnetlibs/test.exe dotnetlibs/System.Management.Automation.dll
-	LD_LIBRARY_PATH=dotnetlibs dotnetlibs/corerun dotnetlibs/test.exe
-
-# this is the new build rule for SMA.dll
+# this is the build rule for SMA.dll
 dotnetlibs/System.Management.Automation.dll: ${SYS_AUTO_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS) ${SYS_AUTO_RES_SRCS} ${SYS_AUTO_RES_CS_SRCS}
 	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_PS_REFS} ${SYS_AUTO_SRCS} ${SYS_AUTO_RES_REF} ${SYS_AUTO_RES_CS_SRCS} $(PLATFORM_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
 
@@ -67,6 +60,7 @@ dotnetlibs/System.Management.Automation.dll: ${SYS_AUTO_SRCS} dotnetlibs/Microso
 #dotnetlibs/Microsoft.Management.Infrastructure.dll: ${WMI_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.Native.dll ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
 #	mcs -out:$@ ${MCSOPTS_MI} ${PRODUCT_MI_REFS} ${WMI_SRCS} ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
 
+# this is the build rule for MMI.dll
 dotnetlibs/Microsoft.Management.Infrastructure.dll: ${MAN_INFRA_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.Native.dll ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs $(MAN_INFRA_RES_SRCS) $(MAN_INFRA_RES_CS_SRCS)
 	mcs -out:$@ $(MCSOPTS_MI) $(PRODUCT_MI_REFS) $(MAN_INFRA_SRCS) $(MAN_INFRA_RES_REF) $(MAN_INFRA_RES_CS_SRCS) ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
 
