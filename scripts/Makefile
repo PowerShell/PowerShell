@@ -10,7 +10,6 @@ phony_all: all
 # include all the external makefiles
 
 # these should go away with the makefile restructuring
-#include wmi-sources.mk
 include assembly-load-context.mk
 
 # main references to the CoreCLR reference assemblies
@@ -46,36 +45,34 @@ MCSOPTS_LIB=${MCSOPTS_BASE} -target:library
 MCSOPTS_PS=${STRING_RESOURCES_ORIG} ${MCSOPTS_BASE} -target:library
 SRCS_ALL=${STRING_RESOURCES} ${SRCS}
 
+# compilers
+# - Roslyn's csc is used for all the PS code
+# - Mono's mcs is used for build helper tools
+CSC=mono Microsoft.Net.ToolsetCompilers.*/tools/csc.exe
+MCS=mcs
 
 all: dotnetlibs/System.Management.Automation.dll dotnetlibs/ps_hello_world.exe dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 
 # this is the build rule for SMA.dll
 dotnetlibs/System.Management.Automation.dll: ${SYS_AUTO_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS) ${SYS_AUTO_RES_SRCS} ${SYS_AUTO_RES_CS_SRCS}
-	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_PS_REFS} ${SYS_AUTO_SRCS} ${SYS_AUTO_RES_REF} ${SYS_AUTO_RES_CS_SRCS} $(PLATFORM_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
-
-# this is the old build rule for SMA.dll until system-automation.mk can be used
-#dotnetlibs/System.Management.Automation.dll: ${SRCS_ALL} dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS)
-#	mcs -out:$@ ${MCSOPTS_PS} ${PRODUCT_PS_REFS} ${SRCS_ALL} $(PLATFORM_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
-
-#dotnetlibs/Microsoft.Management.Infrastructure.dll: ${WMI_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.Native.dll ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
-#	mcs -out:$@ ${MCSOPTS_MI} ${PRODUCT_MI_REFS} ${WMI_SRCS} ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
+	$(CSC) -out:$@ ${MCSOPTS_LIB} ${PRODUCT_PS_REFS} ${SYS_AUTO_SRCS} ${SYS_AUTO_RES_REF} ${SYS_AUTO_RES_CS_SRCS} $(PLATFORM_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
 
 # this is the build rule for MMI.dll
 dotnetlibs/Microsoft.Management.Infrastructure.dll: ${MAN_INFRA_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.Native.dll ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs $(MAN_INFRA_RES_SRCS) $(MAN_INFRA_RES_CS_SRCS)
-	mcs -out:$@ $(MCSOPTS_MI) $(PRODUCT_MI_REFS) $(MAN_INFRA_SRCS) $(MAN_INFRA_RES_REF) $(MAN_INFRA_RES_CS_SRCS) ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
+	$(CSC) -out:$@ $(MCSOPTS_MI) $(PRODUCT_MI_REFS) $(MAN_INFRA_SRCS) $(MAN_INFRA_RES_REF) $(MAN_INFRA_RES_CS_SRCS) ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
 
 # Commands
 
 dotnetlibs/Microsoft.PowerShell.Commands.Management.dll: ${COMMANDS_MANAGEMENT_SRCS} dotnetlibs/System.Management.Automation.dll ${COMMAND_MANAGEMENT_RES_SRCS} ${COMMAND_MANAGEMENT_RES_CS_SRCS} $(MI_ASSEMBLY)
-	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_MANAGEMENT_SRCS} ${COMMAND_MANAGEMENT_RES} ${COMMANDS_MANAGEMENT_RES_CS_SRCS} $(COMMANDS_MANAGEMENT_RES_REF) $(MI_REF)
+	$(CSC) -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_MANAGEMENT_SRCS} ${COMMAND_MANAGEMENT_RES} ${COMMANDS_MANAGEMENT_RES_CS_SRCS} $(COMMANDS_MANAGEMENT_RES_REF) $(MI_REF)
 
 dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll: ${COMMANDS_UTILITY_SRCS} dotnetlibs/System.Management.Automation.dll ${COMMAND_UTILITY_RES_SRCS} ${COMMAND_UTILITY_RES_CS_SRCS}
-	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_UTILITY_SRCS} ${COMMAND_UTILITY_RES} ${COMMANDS_UTILITY_RES_CS_SRCS} $(COMMANDS_UTILITY_RES_REF)
+	$(CSC) -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_UTILITY_SRCS} ${COMMAND_UTILITY_RES} ${COMMANDS_UTILITY_RES_CS_SRCS} $(COMMANDS_UTILITY_RES_REF)
 
 # assembly load context
 
 dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET): $(ASSEMBLY_LOAD_CONTEXT_SRCS)
-	mcs -out:$@ ${MCSOPTS_LIB} ${PRODUCT_BASE_REFS} $(ASSEMBLY_LOAD_CONTEXT_SRCS)
+	$(CSC) -out:$@ ${MCSOPTS_LIB} ${PRODUCT_BASE_REFS} $(ASSEMBLY_LOAD_CONTEXT_SRCS)
 
 # this will copy whatever the first version of the dll in the globber is
 System.Reflection.Metadata.dll: System.Reflection.Metadata.*/lib/portable-net45+win8/System.Reflection.Metadata.dll
@@ -91,7 +88,7 @@ dotnetlibs/Microsoft.Management.Infrastructure.Native.dll: $(MONAD_EXT)/PS/windo
 MPATH=/usr/lib/mono/4.5/Facades
 
 TypeCatalogGen.exe: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/TypeCatalogGen/TypeCatalogGen.cs System.Reflection.Metadata.dll System.Collections.Immutable.dll
-	mcs -out:$@ -target:exe ${NUGETREF} -pkg:dotnet -r:${MPATH}/System.Runtime.dll -r:${MPATH}/System.Reflection.Primitives.dll -r:${MPATH}/System.IO.dll $<
+	$(MCS) -out:$@ -target:exe ${NUGETREF} -pkg:dotnet -r:${MPATH}/System.Runtime.dll -r:${MPATH}/System.Reflection.Primitives.dll -r:${MPATH}/System.IO.dll $<
 
 # generate the Core PS type catalog
 # this comes from: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/makefile.inc
@@ -99,7 +96,7 @@ CorePsTypeCatalog.cs: powershell-linux.inc TypeCatalogGen.exe System.Reflection.
 	LD_LIBRARY_PATH=. mono TypeCatalogGen.exe powershell-linux.inc $@ $(MONAD_EXT)/coreclr/TargetingPack
 
 dotnetlibs/ps_hello_world.exe: ../src/ps_hello_world/ps_hello_world.cs dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
-	mcs -out:$@ -noconfig -nostdlib -target:exe -r:dotnetlibs/System.Management.Automation.dll -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) ${COREREF} ../src/ps_hello_world/ps_hello_world.cs
+	$(CSC) -out:$@ -noconfig -nostdlib -target:exe -r:dotnetlibs/System.Management.Automation.dll -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) ${COREREF} ../src/ps_hello_world/ps_hello_world.cs
 
 # testing c# stuff
 
@@ -113,7 +110,7 @@ dotnetlibs/xunit.console.exe: xunit.runner.console.2.0.0/tools/xunit.console.exe
 	cp -f $^ $@
 
 dotnetlibs/ps_test.exe: ../src/ps_test/ps_test.cs dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
-	mcs -out:$@ -noconfig -nostdlib -target:exe -r:dotnetlibs/System.Management.Automation.dll -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) -r:dotnetlibs/xunit.core.dll ${COREREF} ../src/ps_test/ps_test.cs
+	$(CSC) -out:$@ -noconfig -nostdlib -target:exe -r:dotnetlibs/System.Management.Automation.dll -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) -r:dotnetlibs/xunit.core.dll ${COREREF} ../src/ps_test/ps_test.cs
 
 run-test: dotnetlibs/ps_test.exe dotnetlibs/libps.so
 	cd dotnetlibs && LD_LIBRARY_PATH=. ./corerun ps_test.exe
@@ -141,9 +138,10 @@ dotnetlibs/corerun: $(MONAD_EXT)/coreclr/Release/corerun
 # this is the manual step that will install some stuff using nuget and do other things that can't be dependency
 # tracked that easily
 prepare:
-	rm -rf System.Reflection.Metadata.* System.Collections.Immutable.*
+	rm -rf System.Reflection.Metadata.* System.Collections.Immutable.* Microsoft.Net.ToolsetCompilers.*
 	nuget install System.Reflection.Metadata
 	nuget install System.Collections.Immutable
+	nuget install Microsoft.Net.ToolsetCompilers -pre
 	# this is a total hack (TODO linux), it's just needed because those .cs files are generated on windows,
 	# in fact the better solution probably is to eliminate the make rule for the linux builds
 	touch gen/*/*.cs
