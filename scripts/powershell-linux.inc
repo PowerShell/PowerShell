@@ -1,0 +1,136 @@
+#
+# This file includes OneCore powershell CoreCLR references. Do not import this file directly. It is automatically imported
+# when MANAGED_PROFILE=PowerShell is specified in sources file.
+#
+# This file is also depended on by the tool 'TypeCatalogGen.exe'. The tool tries to parse this file to get the list of reference 
+# assemblies used by OneCore powershell, and then use that list to generate the CSharp code for initializing the CoreCLR type
+# catalog cache. That CSharp code will be compiled into 'Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll' during the build.
+# For more information about 'TypeCatalogGen.exe', see its source code under 'PSAssemblyLoadContext\TypeCatalogGen'.
+#
+# The parsing rule of this file in 'TypeCatalogGen.exe' is very simple:
+#   - Read each line of this file and trim it;
+#   - Skip comment lines;
+#   - Match the line with the regular expression pattern '^\$\(PS_PROFILE_REF_PATH\)\\(.+);\s*\\$'
+# So when adding new reference assembly entries, please make sure the new lines match the above pattern.
+#
+PROFILE_REF_PATH=$(SDK_REF_PATH)\Profiles
+PS_PROFILE_REF_PATH=$(PROFILE_REF_PATH)\PowerShell
+
+PROFILE_REFERENCES=\
+	$(PS_PROFILE_REF_PATH)\Microsoft.CSharp.dll;\
+	$(PS_PROFILE_REF_PATH)\Microsoft.VisualBasic.dll;\
+	$(PS_PROFILE_REF_PATH)\Microsoft.Win32.Primitives.dll;\
+	$(PS_PROFILE_REF_PATH)\Microsoft.Win32.Registry.AccessControl.dll;\
+	$(PS_PROFILE_REF_PATH)\Microsoft.Win32.Registry.dll;\
+	$(PS_PROFILE_REF_PATH)\System.AppContext.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Collections.Concurrent.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Collections.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Collections.NonGeneric.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Collections.Specialized.dll;\
+	$(PS_PROFILE_REF_PATH)\System.ComponentModel.Annotations.dll;\
+	$(PS_PROFILE_REF_PATH)\System.ComponentModel.dll;\
+	$(PS_PROFILE_REF_PATH)\System.ComponentModel.EventBasedAsync.dll;\
+	$(PS_PROFILE_REF_PATH)\System.ComponentModel.Primitives.dll;\
+	$(PS_PROFILE_REF_PATH)\System.ComponentModel.TypeConverter.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Console.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Data.Common.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Data.SqlClient.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Diagnostics.Contracts.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Diagnostics.Debug.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Diagnostics.FileVersionInfo.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Diagnostics.Process.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Diagnostics.TextWriterTraceListener.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Diagnostics.Tools.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Diagnostics.TraceSource.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Diagnostics.Tracing.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Dynamic.Runtime.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Globalization.Calendars.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Globalization.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Globalization.Extensions.dll;\
+	$(PS_PROFILE_REF_PATH)\System.IO.Compression.dll;\
+	$(PS_PROFILE_REF_PATH)\System.IO.Compression.ZipFile.dll;\
+	$(PS_PROFILE_REF_PATH)\System.IO.dll;\
+	$(PS_PROFILE_REF_PATH)\System.IO.FileSystem.AccessControl.dll;\
+	$(PS_PROFILE_REF_PATH)\System.IO.FileSystem.dll;\
+	$(PS_PROFILE_REF_PATH)\System.IO.FileSystem.DriveInfo.dll;\
+	$(PS_PROFILE_REF_PATH)\System.IO.FileSystem.Primitives.dll;\
+	$(PS_PROFILE_REF_PATH)\System.IO.FileSystem.Watcher.dll;\
+	$(PS_PROFILE_REF_PATH)\System.IO.MemoryMappedFiles.dll;\
+	$(PS_PROFILE_REF_PATH)\System.IO.Pipes.dll;\
+	$(PS_PROFILE_REF_PATH)\System.IO.UnmanagedMemoryStream.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Linq.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Linq.Expressions.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Linq.Parallel.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Linq.Queryable.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Net.Http.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Net.Http.WinHttpHandler.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Net.NameResolution.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Net.NetworkInformation.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Net.Primitives.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Net.Security.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Net.Sockets.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Net.Utilities.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Net.WebHeaderCollection.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Net.WebSockets.Client.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Net.WebSockets.dll;\
+	$(PS_PROFILE_REF_PATH)\System.ObjectModel.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Reflection.DispatchProxy.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Reflection.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Reflection.Emit.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Reflection.Emit.ILGeneration.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Reflection.Emit.Lightweight.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Reflection.Extensions.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Reflection.Primitives.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Reflection.TypeExtensions.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Resources.ReaderWriter.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Resources.ResourceManager.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Runtime.CompilerServices.VisualC.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Runtime.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Runtime.Extensions.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Runtime.Handles.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Runtime.InteropServices.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Runtime.InteropServices.WindowsRuntime.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Runtime.Loader.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Runtime.Numerics.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Runtime.Serialization.Json.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Runtime.Serialization.Primitives.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Runtime.Serialization.Xml.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Security.AccessControl.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Security.Claims.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Security.Cryptography.DeriveBytes.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Security.Cryptography.Encoding.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Security.Cryptography.Encryption.Aes.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Security.Cryptography.Encryption.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Security.Cryptography.Hashing.Algorithms.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Security.Cryptography.Hashing.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Security.Cryptography.RandomNumberGenerator.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Security.Cryptography.RSA.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Security.Cryptography.X509Certificates.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Security.Principal.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Security.Principal.Windows.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Security.SecureString.dll;\
+	$(PS_PROFILE_REF_PATH)\System.ServiceModel.Duplex.dll;\
+	$(PS_PROFILE_REF_PATH)\System.ServiceModel.Http.dll;\
+	$(PS_PROFILE_REF_PATH)\System.ServiceModel.NetTcp.dll;\
+	$(PS_PROFILE_REF_PATH)\System.ServiceModel.Primitives.dll;\
+	$(PS_PROFILE_REF_PATH)\System.ServiceModel.Security.dll;\
+	$(PS_PROFILE_REF_PATH)\System.ServiceProcess.ServiceController.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Text.Encoding.CodePages.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Text.Encoding.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Text.Encoding.Extensions.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Text.RegularExpressions.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Threading.AccessControl.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Threading.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Threading.Overlapped.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Threading.Tasks.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Threading.Tasks.Parallel.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Threading.Thread.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Threading.ThreadPool.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Threading.Timer.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Xml.ReaderWriter.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Xml.XDocument.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Xml.XmlDocument.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Xml.XmlSerializer.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Xml.XPath.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Xml.XPath.XDocument.dll;\
+	$(PS_PROFILE_REF_PATH)\System.Xml.XPath.XmlDocument.dll;\
