@@ -9,7 +9,11 @@ namespace PSTests
         // - Remove static keywords
         static void Main()
         {
-            PlatformTests.testIsLinux();
+            PlatformTests.TestIsLinux();
+            PlatformTests.TestHasCom();
+
+            PSTypeExtensionsTests.TestIsComObject();
+
             Console.WriteLine("Finished running tests");
         }
     }

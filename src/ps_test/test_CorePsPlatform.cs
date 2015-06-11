@@ -1,13 +1,19 @@
 using Xunit;
 using System;
+using System.Management.Automation;
 
 namespace PSTests
 {
     public static class PlatformTests
     {
-        public static void testIsLinux()
+        public static void TestIsLinux()
         {
-            Assert.Equal(System.Management.Automation.Platform.IsLinux(), true);
+            Assert.True(Platform.IsLinux());
+        }
+
+        public static void TestHasCom()
+        {
+            Assert.False(Platform.HasCom());
         }
     }
 }
