@@ -159,7 +159,8 @@ prepare:
 	nuget install System.Collections.Immutable
 	nuget install Microsoft.Net.ToolsetCompilers -pre
 
-prepare-exec_env:
+# this is an internal target, it's not intended to be called manually
+internal-prepare-exec_env:
 	rm -rf exec_env
 	mkdir exec_env
 	cp -r ../src/monad_app_base/app_base exec_env
@@ -168,7 +169,7 @@ prepare-exec_env:
 	cp -r dotnetlibs/lib* exec_env/app_base
 	cp -r dotnetlibs/corerun exec_env/app_base
 
-run: dotnetlibs/powershell-run.exe dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll prepare-exec_env
+run: dotnetlibs/powershell-run.exe dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
 	# check if corerun is the right one (could be the debug version)
 	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
 	#cd exec_env/app_base && PSMODULEPATH=. LD_LIBRARY_PATH=. ./corerun powershell-run.exe "\"test blah\""
@@ -178,17 +179,18 @@ run: dotnetlibs/powershell-run.exe dotnetlibs/corerun dotnetlibs/Microsoft.Power
 	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-run.exe "import-module -name Microsoft.PowerShell.Utility" '"a","b","c","a","a" | Select-Object -Unique'
 	#LD_LIBRARY_PATH=exec_env/app_base exec_env/app_base/corerun exec_env/app_base/powershell-run.exe "\"Hello World!\" |out-default"
 
-prepare-debugclr:
+# this is an internal target, it's not intended to be called manually
+internal-prepare-debugclr:
 	cp -r $(MONAD_EXT)/coreclr/Debug/* dotnetlibs
 
-run-debugclr: dotnetlibs/powershell-run.exe prepare-debugclr dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll prepare-exec_env
+run-debugclr: dotnetlibs/powershell-run.exe internal-prepare-debugclr dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
 	#cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-run.exe "import-module -name Microsoft.PowerShell.Utility" '"a","b","c","a","a" | Select-Object -Unique'
 	cd exec_env/app_base && PAL_DBG_CHANNELS="+LOADER.TRACE" PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-run.exe "\"test blah\""
 
 trace:
 	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. strace -e trace=file ./corerun powershell-run.exe "import-module -name Microsoft.PowerShell.Utility" '"a","b","c","a","a" | Select-Object -Unique'
 
-debug: dotnetlibs/powershell-run.exe dotnetlibs/corerun prepare-exec_env dotnetlibs/api-ms-win-core-registry-l1-1-0.dll
+debug: dotnetlibs/powershell-run.exe dotnetlibs/corerun internal-prepare-exec_env dotnetlibs/api-ms-win-core-registry-l1-1-0.dll
 	#LD_LIBRARY_PATH=dotnetlibs lldb-3.6 dotnetlibs/corerun dotnetlibs/powershell-run.exe
 	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=.:/usr/lib/llvm-3.6/lib lldb-3.6 ./corerun powershell-run.exe "\"hello world\""
 
