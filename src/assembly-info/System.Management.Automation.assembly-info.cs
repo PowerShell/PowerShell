@@ -7,7 +7,7 @@ using System.Reflection;
 [assembly:InternalsVisibleTo("Microsoft.PowerShell.Security")]
 [assembly:InternalsVisibleTo("Microsoft.PowerShell.CoreCLR.AssemblyLoadContext")]
 //[assembly:InternalsVisibleTo("ps_hello_world")]
-[assembly:InternalsVisibleTo("test_CorePsPlatform")]
+[assembly:InternalsVisibleTo("ps_test")]
 
 
 //
