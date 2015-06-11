@@ -112,8 +112,15 @@ dotnetlibs/xunit.assert.dll: $(MONAD_EXT)/xunit/xunit.assert.dll
 dotnetlibs/xunit.console.exe: $(MONAD_EXT)/xunit/xunit.console.netcore.exe
 	cp -f $^ $@
 
-dotnetlibs/ps_test.exe: ../src/ps_test/ps_test.cs dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) dotnetlibs/xunit.core.dll dotnetlibs/xunit.assert.dll
-	$(CSC) -out:$@ -noconfig -nostdlib -target:exe -r:dotnetlibs/System.Management.Automation.dll -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) -r:dotnetlibs/xunit.core.dll -r:dotnetlibs/xunit.assert.dll ${COREREF} ../src/ps_test/ps_test.cs
+TEST_FOLDER=../src/ps_test
+TEST_SRCS=$(addprefix $(TEST_FOLDER)/, test_CorePsPlatform.cs)
+TEST_DLLS=$(addprefix dotnetlibs/, $(notdir $(TEST_SRCS:.cs=.dll)))
+
+dotnetlibs/%.dll: $(TEST_FOLDER)/%.cs dotnetlibs/xunit.core.dll dotnetlibs/xunit.assert.dll dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
+	$(CSC) -out:$@ -noconfig -nostdlib -target:library -r:dotnetlibs/System.Management.Automation.dll -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) -r:dotnetlibs/xunit.core.dll -r:dotnetlibs/xunit.assert.dll ${COREREF} $<
+
+dotnetlibs/ps_test.exe: $(TEST_FOLDER)/ps_test.cs $(TEST_DLLS) dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) dotnetlibs/xunit.core.dll dotnetlibs/xunit.assert.dll
+	$(CSC) -out:$@ -noconfig -nostdlib -target:exe $(addprefix -r:, $(TEST_DLLS)) -r:dotnetlibs/System.Management.Automation.dll -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) -r:dotnetlibs/xunit.core.dll -r:dotnetlibs/xunit.assert.dll ${COREREF} $<
 
 run-test: dotnetlibs/ps_test.exe dotnetlibs/corerun
 	cd dotnetlibs && LD_LIBRARY_PATH=. ./corerun ps_test.exe
