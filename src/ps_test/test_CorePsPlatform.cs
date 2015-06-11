@@ -15,5 +15,10 @@ namespace PSTests
         {
             Assert.False(Platform.HasCom());
         }
+
+        public static void TestHasAmsi()
+        {
+            Assert.False(Platform.HasAmsi());
+        }
     }
 }

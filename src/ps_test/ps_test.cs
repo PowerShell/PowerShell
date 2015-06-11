@@ -11,8 +11,14 @@ namespace PSTests
         {
             PlatformTests.TestIsLinux();
             PlatformTests.TestHasCom();
+            PlatformTests.TestHasAmsi();
 
             PSTypeExtensionsTests.TestIsComObject();
+
+            SecuritySupportTests.TestScanContent();
+            SecuritySupportTests.TestCurrentDomain_ProcessExit();
+            SecuritySupportTests.TestCloseSession();
+            SecuritySupportTests.TestUninitialize();
 
             Console.WriteLine("Finished running tests");
         }

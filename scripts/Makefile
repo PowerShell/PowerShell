@@ -113,7 +113,7 @@ dotnetlibs/xunit.console.exe: $(MONAD_EXT)/xunit/xunit.console.netcore.exe
 	cp -f $^ $@
 
 TEST_FOLDER=../src/ps_test
-TEST_SRCS=$(addprefix $(TEST_FOLDER)/, test_CorePsPlatform.cs test_ExtensionMethods.cs)
+TEST_SRCS=$(addprefix $(TEST_FOLDER)/, test_CorePsPlatform.cs test_ExtensionMethods.cs test_SecuritySupport.cs)
 
 dotnetlibs/ps_test.dll: $(TEST_SRCS) dotnetlibs/xunit.core.dll dotnetlibs/xunit.assert.dll dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 	$(CSC) -out:$@ -noconfig -nostdlib -target:library -r:dotnetlibs/System.Management.Automation.dll -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) -r:dotnetlibs/xunit.core.dll -r:dotnetlibs/xunit.assert.dll ${COREREF} $(TEST_SRCS)
