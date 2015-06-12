@@ -155,7 +155,7 @@ run: dotnetlibs/powershell-run.exe dotnetlibs/corerun dotnetlibs/Microsoft.Power
 	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-run.exe "import-module -name Microsoft.PowerShell.Utility" '"a","b","c","a","a" | Select-Object -Unique'
 	#LD_LIBRARY_PATH=exec_env/app_base exec_env/app_base/corerun exec_env/app_base/powershell-run.exe "\"Hello World!\" |out-default"
 
-run-test: dotnetlibs/ps_test_runner.exe dotnetlibs/corerun dotnetlibs/api-ms-win-core-registry-l1-1-0.dll
+test: dotnetlibs/ps_test_runner.exe dotnetlibs/corerun dotnetlibs/api-ms-win-core-registry-l1-1-0.dll
 	cd dotnetlibs && LD_LIBRARY_PATH=. ./corerun ps_test_runner.exe
 
 prepare-debugclr:
