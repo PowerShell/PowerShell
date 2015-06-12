@@ -18,6 +18,9 @@ include coreref.mk
 # make file which adds things that are necessary for the platform we are building for
 include platform.mk
 
+# builds unit tests
+include tests.mk
+
 # These are the main PS dlls:
 # - System.Management.Automation.dll (the main PS dll)
 # - commands/modules (they contain cmdlets): management and utility
@@ -98,32 +101,6 @@ CorePsTypeCatalog.cs: powershell-linux.inc TypeCatalogGen.exe System.Reflection.
 dotnetlibs/powershell-run.exe: ../src/powershell-run/powershell-run.cs dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 	$(CSC) -out:$@ -noconfig -nostdlib -target:exe -r:dotnetlibs/System.Management.Automation.dll -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) ${COREREF} ../src/powershell-run/powershell-run.cs
 
-# testing c# stuff
-
-dotnetlibs/xunit.core.dll: $(MONAD_EXT)/xunit/xunit.core.dll
-	cp -f $^ $@
-
-dotnetlibs/xunit.abstractions.dll: $(MONAD_EXT)/xunit/xunit.abstractions.dll
-	cp -f $^ $@
-
-dotnetlibs/xunit.assert.dll: $(MONAD_EXT)/xunit/xunit.assert.dll
-	cp -f $^ $@
-
-dotnetlibs/xunit.console.exe: $(MONAD_EXT)/xunit/xunit.console.netcore.exe
-	cp -f $^ $@
-
-TEST_FOLDER=../src/ps_test
-TEST_SRCS=$(addprefix $(TEST_FOLDER)/, test_CorePsPlatform.cs test_ExtensionMethods.cs test_SecuritySupport.cs)
-
-dotnetlibs/ps_test.dll: $(TEST_SRCS) dotnetlibs/xunit.core.dll dotnetlibs/xunit.assert.dll dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
-	$(CSC) -out:$@ -noconfig -nostdlib -target:library -r:dotnetlibs/System.Management.Automation.dll -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) -r:dotnetlibs/xunit.core.dll -r:dotnetlibs/xunit.assert.dll ${COREREF} $(TEST_SRCS)
-
-dotnetlibs/ps_test_runner.exe: $(TEST_FOLDER)/ps_test.cs dotnetlibs/ps_test.dll dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) dotnetlibs/xunit.core.dll dotnetlibs/xunit.assert.dll
-	$(CSC) -out:$@ -noconfig -nostdlib -target:exe -r:dotnetlibs/ps_test.dll -r:dotnetlibs/System.Management.Automation.dll -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) -r:dotnetlibs/xunit.core.dll -r:dotnetlibs/xunit.assert.dll ${COREREF} $<
-
-run-test: dotnetlibs/ps_test_runner.exe dotnetlibs/corerun
-	cd dotnetlibs && LD_LIBRARY_PATH=. ./corerun ps_test_runner.exe
-
 # the pinvoke library libps.so
 
 libps-build/Makefile: ../src/monad-native/src/CMakeLists.txt
@@ -177,6 +154,9 @@ run: dotnetlibs/powershell-run.exe dotnetlibs/corerun dotnetlibs/Microsoft.Power
 	#cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-run.exe "import-module -name Microsoft.PowerShell.Utility"
 	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-run.exe "import-module -name Microsoft.PowerShell.Utility" '"a","b","c","a","a" | Select-Object -Unique'
 	#LD_LIBRARY_PATH=exec_env/app_base exec_env/app_base/corerun exec_env/app_base/powershell-run.exe "\"Hello World!\" |out-default"
+
+run-test: dotnetlibs/ps_test_runner.exe dotnetlibs/corerun
+	cd dotnetlibs && LD_LIBRARY_PATH=. ./corerun ps_test_runner.exe
 
 prepare-debugclr:
 	cp -r $(MONAD_EXT)/coreclr/Debug/* dotnetlibs
