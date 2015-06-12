@@ -20,5 +20,10 @@ namespace PSTests
         {
             Assert.False(Platform.HasAmsi());
         }
+
+        public static void TestUsesCodeSignedAssemblies()
+        {
+            Assert.False(Platform.UsesCodeSignedAssemblies());
+        }
     }
 }

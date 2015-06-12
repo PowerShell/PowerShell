@@ -12,6 +12,7 @@ namespace PSTests
             PlatformTests.TestIsLinux();
             PlatformTests.TestHasCom();
             PlatformTests.TestHasAmsi();
+            PlatformTests.TestUsesCodeSignedAssemblies();
 
             PSTypeExtensionsTests.TestIsComObject();
 
@@ -19,6 +20,10 @@ namespace PSTests
             SecuritySupportTests.TestCurrentDomain_ProcessExit();
             SecuritySupportTests.TestCloseSession();
             SecuritySupportTests.TestUninitialize();
+
+            MshSnapinInfoTests mshSnapinInfoTests = new MshSnapinInfoTests();
+            mshSnapinInfoTests.TestReadRegistryInfo();
+            mshSnapinInfoTests.TestReadCoreEngineSnapIn();
 
             Console.WriteLine("Finished running tests");
         }
