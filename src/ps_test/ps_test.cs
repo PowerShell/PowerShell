@@ -13,6 +13,7 @@ namespace PSTests
             PlatformTests.TestHasCom();
             PlatformTests.TestHasAmsi();
             PlatformTests.TestUsesCodeSignedAssemblies();
+            PlatformTests.TestHasDriveAutoMounting();
 
             PSTypeExtensionsTests.TestIsComObject();
 
