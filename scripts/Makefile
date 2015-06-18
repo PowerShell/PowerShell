@@ -21,6 +21,9 @@ include platform.mk
 # builds unit tests
 include tests.mk
 
+# powershell-run is the main powershell executable
+include powershell-run.mk
+
 # These are the main PS dlls:
 # - System.Management.Automation.dll (the main PS dll)
 # - commands/modules (they contain cmdlets): management and utility
@@ -54,7 +57,7 @@ SRCS_ALL=${STRING_RESOURCES} ${SRCS}
 CSC=mono Microsoft.Net.ToolsetCompilers.*/tools/csc.exe
 MCS=mcs
 
-all: dotnetlibs/System.Management.Automation.dll dotnetlibs/powershell-run.exe dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
+all: dotnetlibs/System.Management.Automation.dll $(POWERSHELL_RUN_TARGETS) dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 
 # this is the build rule for SMA.dll
 dotnetlibs/System.Management.Automation.dll: ${SYS_AUTO_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS) ${SYS_AUTO_RES_SRCS} ${SYS_AUTO_RES_CS_SRCS}
@@ -98,9 +101,6 @@ TypeCatalogGen.exe: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadC
 CorePsTypeCatalog.cs: powershell-linux.inc TypeCatalogGen.exe System.Reflection.Metadata.dll System.Collections.Immutable.dll
 	LD_LIBRARY_PATH=. mono TypeCatalogGen.exe powershell-linux.inc $@ $(MONAD_EXT)/coreclr/TargetingPack
 
-dotnetlibs/powershell-run.exe: ../src/powershell-run/powershell-run.cs dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
-	$(CSC) -out:$@ -noconfig -nostdlib -target:exe -r:dotnetlibs/System.Management.Automation.dll -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) ${COREREF} ../src/powershell-run/powershell-run.cs
-
 # the pinvoke library libps.so
 
 libps-build/Makefile: ../src/monad-native/src/CMakeLists.txt
@@ -137,7 +137,7 @@ prepare:
 	nuget install Microsoft.Net.ToolsetCompilers -pre
 
 # this is an internal target, it's not intended to be called manually
-internal-prepare-exec_env:
+internal-prepare-exec_env: runps.sh
 	rm -rf exec_env
 	mkdir exec_env
 	cp -r ../src/monad_app_base/app_base exec_env
@@ -145,16 +145,22 @@ internal-prepare-exec_env:
 	cp -r dotnetlibs/*.exe exec_env/app_base
 	cp -r dotnetlibs/lib* exec_env/app_base
 	cp -r dotnetlibs/corerun exec_env/app_base
+	cp runps.sh exec_env/app_base
 
-run: dotnetlibs/powershell-run.exe dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
+run: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
 	# check if corerun is the right one (could be the debug version)
 	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
 	#cd exec_env/app_base && PSMODULEPATH=. LD_LIBRARY_PATH=. ./corerun powershell-run.exe "\"test blah\""
 	#cd exec_env/app_base && PSMODULEPATH=. LD_LIBRARY_PATH=. ./corerun powershell-run.exe "get-module -listavailable"
 	#cd exec_env/app_base && PSMODULEPATH=. LD_LIBRARY_PATH=. ./corerun powershell-run.exe "get-module -listavailable -all"
 	#cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-run.exe "import-module -name Microsoft.PowerShell.Utility"
-	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-run.exe "import-module -name Microsoft.PowerShell.Utility" '"a","b","c","a","a" | Select-Object -Unique'
+	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-simple.exe "import-module -name Microsoft.PowerShell.Utility" '"a","b","c","a","a" | Select-Object -Unique'
 	#LD_LIBRARY_PATH=exec_env/app_base exec_env/app_base/corerun exec_env/app_base/powershell-run.exe "\"Hello World!\" |out-default"
+
+run-interactive: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
+	# check if corerun is the right one (could be the debug version)
+	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
+	cd exec_env/app_base && ./runps.sh
 
 test: dotnetlibs/ps_test_runner.exe dotnetlibs/corerun dotnetlibs/api-ms-win-core-registry-l1-1-0.dll
 	cd dotnetlibs && LD_LIBRARY_PATH=. ./corerun ps_test_runner.exe
@@ -183,4 +189,18 @@ clean:
 # clean built stuff + prepare step
 cleanall: clean
 	rm -rf System.Reflection.Metadata.* System.Collections.Immutable.*
+
+docker-build:
+	sudo docker build --no-cache=false -t image_ps .
+	$(eval INSTANCE_ID := $(shell sudo docker inspect -f '{{.Id}}' image_ps))
+	rm -rf 
+
+docker-run: docker-build
+	sudo docker run -d -P --name test_ps image_ps
+	sudo docker port test_ps 22
+	sudo docker port test_ps 4201
+
+docker-stop:
+	sudo docker stop test_ps
+	sudo docker rm test_ps
 
