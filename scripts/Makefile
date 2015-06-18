@@ -193,7 +193,6 @@ cleanall: clean
 docker-build:
 	sudo docker build --no-cache=false -t image_ps .
 	$(eval INSTANCE_ID := $(shell sudo docker inspect -f '{{.Id}}' image_ps))
-	rm -rf 
 
 docker-run: docker-build
 	sudo docker run -d -P --name test_ps image_ps

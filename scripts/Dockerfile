@@ -1,6 +1,6 @@
 # image_ps
 #
-# VERSION               0.0.2
+# VERSION               0.0.1
 
 FROM ubuntu:14.04
 MAINTAINER Peter Honeder <peterhon@microsoft.com>
@@ -8,7 +8,6 @@ MAINTAINER Peter Honeder <peterhon@microsoft.com>
 RUN apt-get update
 RUN apt-get install -y openssh-server wget libstdc++6 libunwind8
 RUN mkdir /var/run/sshd
-#RUN echo 'root:asldkfj23l4kj2lkajsdf' | chpasswd
 RUN echo 'root:pass' | chpasswd
 RUN adduser --shell /opt/app_base/runps.sh --disabled-password --gecos "" test1
 RUN echo 'test1:pass' | chpasswd
@@ -28,6 +27,7 @@ RUN chmod -R ugo+rX /opt/app_base
 
 EXPOSE 22
 EXPOSE 4201
-#CMD /usr/sbin/sshd && /usr/bin/shellinaboxd -s /:AUTH:HOME:/home/test1/app_base/runps.sh -p 4201 -t -v
+
+# start sshd in daemonized mode, start shellinaboxd in interactive mode (must be started that way using docker's CMD)
 CMD /usr/sbin/sshd && /usr/bin/shellinaboxd -s /:LOGIN -p 4201 -t -v
 
