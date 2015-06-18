@@ -191,15 +191,15 @@ cleanall: clean
 	rm -rf System.Reflection.Metadata.* System.Collections.Immutable.*
 
 docker-build:
-	sudo docker build --no-cache=false -t image_ps .
-	$(eval INSTANCE_ID := $(shell sudo docker inspect -f '{{.Id}}' image_ps))
+	docker build --no-cache=false -t image_ps .
+	$(eval INSTANCE_ID := $(shell docker inspect -f '{{.Id}}' image_ps))
 
 docker-run: docker-build
-	sudo docker run -d -P --name test_ps image_ps
-	sudo docker port test_ps 22
-	sudo docker port test_ps 4201
+	docker run -d -P --name test_ps image_ps
+	docker port test_ps 22
+	docker port test_ps 4201
 
 docker-stop:
-	sudo docker stop test_ps
-	sudo docker rm test_ps
+	docker stop test_ps
+	docker rm test_ps
 
