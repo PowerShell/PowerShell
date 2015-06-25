@@ -191,11 +191,11 @@ cleanall: clean
 	rm -rf System.Reflection.Metadata.* System.Collections.Immutable.*
 
 docker-build:
-	docker build --no-cache=true -t image_ps .
+	docker build --no-cache=false -t image_ps .
 	$(eval INSTANCE_ID := $(shell docker inspect -f '{{.Id}}' image_ps))
 
 docker-run: docker-build
-	docker run -d -P --name test_ps image_ps
+	docker run -d -P -p 4201:4201 --name test_ps image_ps
 	docker port test_ps 22
 	docker port test_ps 4201
 
