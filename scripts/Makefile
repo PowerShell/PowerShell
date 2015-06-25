@@ -191,7 +191,7 @@ cleanall: clean
 	rm -rf System.Reflection.Metadata.* System.Collections.Immutable.*
 
 docker-build:
-	docker build --no-cache=false -t image_ps .
+	docker build --no-cache=true -t image_ps .
 	$(eval INSTANCE_ID := $(shell docker inspect -f '{{.Id}}' image_ps))
 
 docker-run: docker-build
