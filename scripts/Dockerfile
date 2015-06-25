@@ -8,6 +8,9 @@ MAINTAINER Peter Honeder <peterhon@microsoft.com>
 
 CMD ["/sbin/my_init"]
 
+RUN ifconfig
+RUN cat /etc/resolv.conf
+RUN ping -c 1 8.8.8.8
 RUN apt-get update
 RUN apt-get install -y openssh-server wget libstdc++6 libunwind8
 #RUN mkdir /var/run/sshd
