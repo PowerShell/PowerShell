@@ -1,6 +1,6 @@
 [submodule "src/monad"]
 	path = src/monad
-	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad
+	url = https://microsoft.visualstudio.com/DefaultCollection/PowerShell.Monad/_git/monad-sync1
 [submodule "src/coreclr"]
 	path = src/coreclr
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/coreclr-fork
