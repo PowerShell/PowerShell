@@ -62,6 +62,15 @@ internal class UtilityCommonStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to Algorithm &apos;{0}&apos; is not supported in this system..
+    /// </summary>
+    internal static string AlgorithmTypeNotSupported {
+        get {
+            return ResourceManager.GetString("AlgorithmTypeNotSupported", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to This command cannot be run because &apos;{0}&apos; is empty or blank. Please specify CSSUri and then run the command..
     /// </summary>
     internal static string EmptyCSSUri {
@@ -94,6 +103,33 @@ internal class UtilityCommonStrings {
     internal static string FileReadError {
         get {
             return ResourceManager.GetString("FileReadError", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Path: .
+    /// </summary>
+    internal static string FormatHexPathPrefix {
+        get {
+            return ResourceManager.GetString("FormatHexPathPrefix", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Cannot display the context of {0} as hex. The path resolves to multiple files..
+    /// </summary>
+    internal static string FormatHexResolvePathError {
+        get {
+            return ResourceManager.GetString("FormatHexResolvePathError", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Cannot convert input of type {0} to hexadecimal. To view the hexadecimal formatting of its string representation, pipe it to the Out-String cmdlet before piping it to Format-Hex..
+    /// </summary>
+    internal static string FormatHexTypeNotSupported {
+        get {
+            return ResourceManager.GetString("FormatHexTypeNotSupported", resourceCulture);
         }
     }
     

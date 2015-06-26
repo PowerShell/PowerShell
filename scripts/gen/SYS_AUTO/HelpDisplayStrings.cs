@@ -494,6 +494,15 @@ internal class HelpDisplayStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to METHODS.
+    /// </summary>
+    internal static string Methods {
+        get {
+            return ResourceManager.GetString("Methods", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to The ModuleBase directory cannot be found. Verify the directory and try again..
     /// </summary>
     internal static string ModuleBaseMustExist {

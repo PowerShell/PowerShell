@@ -27,6 +27,8 @@ COMMANDS_MANAGEMENT_SRCS_WIN=\
 	../../../jws/pswin/admin/monad/src/commands/management/SetPropertyCommand.cs	\
 	../../../jws/pswin/admin/monad/src/commands/management/WriteContentCommandBase.cs	\
 	../../../jws/pswin/admin/monad/src/commands/management/Process.cs	\
+	../../../jws/pswin/admin/monad/src/commands/management/Service.cs	\
+	../../../jws/pswin/admin/monad/src/commands/management/Computer.cs	\
 	../../../jws/pswin/admin/monad/src/cimSupport/cmdletization/SessionBasedWrapper.cs	\
 	../../../jws/pswin/admin/monad/src/cimSupport/cmdletization/cim/cimWrapper.cs	\
 	../../../jws/pswin/admin/monad/src/cimSupport/cmdletization/cim/cimQuery.cs	\
@@ -79,6 +81,8 @@ COMMANDS_MANAGEMENT_SRCS=\
 	$(ADMIN_GIT_ROOT)/monad/src/commands/management/SetPropertyCommand.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/commands/management/WriteContentCommandBase.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/commands/management/Process.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/management/Service.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/management/Computer.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/cimSupport/cmdletization/SessionBasedWrapper.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/cimSupport/cmdletization/cim/cimWrapper.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/cimSupport/cmdletization/cim/cimQuery.cs	\
@@ -113,24 +117,32 @@ COMMANDS_MANAGEMENT_RES_GEN_PATH_WIN=gen\COMMANDS_MANAGEMENT
 COMMANDS_MANAGEMENT_RESX_SRCS=\
 	../../../jws/pswin/admin/monad/src/commands/management/resources/CmdletizationResources.resx	\
 	../../../jws/pswin/admin/monad/src/commands/management/resources/ProcessResources.resx	\
+	../../../jws/pswin/admin/monad/src/commands/management/resources/ServiceResources.resx	\
+	../../../jws/pswin/admin/monad/src/commands/management/resources/ComputerResources.resx	\
 	../../../jws/pswin/admin/monad/src/commands/management/resources/NavigationResources.resx	\
 
 
 COMMANDS_MANAGEMENT_RES_SRCS=\
 	gen/COMMANDS_MANAGEMENT/CmdletizationResources.resources	\
 	gen/COMMANDS_MANAGEMENT/ProcessResources.resources	\
+	gen/COMMANDS_MANAGEMENT/ServiceResources.resources	\
+	gen/COMMANDS_MANAGEMENT/ComputerResources.resources	\
 	gen/COMMANDS_MANAGEMENT/NavigationResources.resources	\
 
 
 COMMANDS_MANAGEMENT_RES_CS_SRCS=\
 	gen/COMMANDS_MANAGEMENT/CmdletizationResources.cs	\
 	gen/COMMANDS_MANAGEMENT/ProcessResources.cs	\
+	gen/COMMANDS_MANAGEMENT/ServiceResources.cs	\
+	gen/COMMANDS_MANAGEMENT/ComputerResources.cs	\
 	gen/COMMANDS_MANAGEMENT/NavigationResources.cs	\
 
 
 COMMANDS_MANAGEMENT_RES_REF=\
 	-resource:gen/COMMANDS_MANAGEMENT/CmdletizationResources.resources	\
 	-resource:gen/COMMANDS_MANAGEMENT/ProcessResources.resources	\
+	-resource:gen/COMMANDS_MANAGEMENT/ServiceResources.resources	\
+	-resource:gen/COMMANDS_MANAGEMENT/ComputerResources.resources	\
 	-resource:gen/COMMANDS_MANAGEMENT/NavigationResources.resources	\
 
 

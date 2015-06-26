@@ -197,6 +197,105 @@ internal class FileSystemProviderStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to Destination path {0} is a file that already exists on the target destination..
+    /// </summary>
+    internal static string CopyItemRemoteDestinationIsFile {
+        get {
+            return ResourceManager.GetString("CopyItemRemoteDestinationIsFile", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Cannot copy a directory &apos;{0}&apos; to file {0}&apos;.
+    /// </summary>
+    internal static string CopyItemRemotelyDestinationIsFile {
+        get {
+            return ResourceManager.GetString("CopyItemRemotelyDestinationIsFile", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Failed to copy file {0} to remote target destination..
+    /// </summary>
+    internal static string CopyItemRemotelyFailed {
+        get {
+            return ResourceManager.GetString("CopyItemRemotelyFailed", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Failed to create directory &apos;{0}&apos; on remote destination..
+    /// </summary>
+    internal static string CopyItemRemotelyFailedToCreateDirectory {
+        get {
+            return ResourceManager.GetString("CopyItemRemotelyFailedToCreateDirectory", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Failed to get directory {0} child items..
+    /// </summary>
+    internal static string CopyItemRemotelyFailedToGetDirectoryChildItems {
+        get {
+            return ResourceManager.GetString("CopyItemRemotelyFailedToGetDirectoryChildItems", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Failed to read remote file &apos;{0}&apos;..
+    /// </summary>
+    internal static string CopyItemRemotelyFailedToReadFile {
+        get {
+            return ResourceManager.GetString("CopyItemRemotelyFailedToReadFile", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Failed to validate remote destination &apos;{0}&apos;..
+    /// </summary>
+    internal static string CopyItemRemotelyFailedToValidateDestination {
+        get {
+            return ResourceManager.GetString("CopyItemRemotelyFailedToValidateDestination", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Cannot validate if remote destination {0} is a file..
+    /// </summary>
+    internal static string CopyItemRemotelyFailedToValidateIfDestinationIsFile {
+        get {
+            return ResourceManager.GetString("CopyItemRemotelyFailedToValidateIfDestinationIsFile", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Remote copy with {0} is not supported..
+    /// </summary>
+    internal static string CopyItemRemotelyOperationNotSupported {
+        get {
+            return ResourceManager.GetString("CopyItemRemotelyOperationNotSupported", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Copying {0} to {1}.
+    /// </summary>
+    internal static string CopyItemRemotelyProgressActivity {
+        get {
+            return ResourceManager.GetString("CopyItemRemotelyProgressActivity", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to From {0} to {1}.
+    /// </summary>
+    internal static string CopyItemRemotelyStatusDescription {
+        get {
+            return ResourceManager.GetString("CopyItemRemotelyStatusDescription", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Item: {0} Destination: {1}.
     /// </summary>
     internal static string CopyItemResourceFileTemplate {

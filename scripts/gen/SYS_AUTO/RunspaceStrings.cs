@@ -371,6 +371,15 @@ internal class RunspaceStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to DefaultRunspace must be a LocalRunspace.
+    /// </summary>
+    internal static string RunspaceNotLocal {
+        get {
+            return ResourceManager.GetString("RunspaceNotLocal", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Cannot invoke the pipeline because the runspace is not in the Opened state. Current state of the runspace is &apos;{0}&apos;..
     /// </summary>
     internal static string RunspaceNotOpenForPipeline {

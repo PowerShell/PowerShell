@@ -87,6 +87,8 @@ MAN_INFRA_SRCS_WIN=\
 	../../../jws/pswin/admin/wmi/WMIv2/Client/DotNetAPI/cs/SharedInstanceHandle.cs	\
 	../../../jws/pswin/admin/wmi/WMIv2/Client/DotNetAPI/cs/WSManSessionOptions.cs	\
 	../../../jws/pswin/admin/wmi/WMIv2/Client/DotNetAPI/cs/Strings.Designer.cs	\
+	../../../jws/pswin/admin/wmi/WMIv2/Client/DotNetAPI/cs/CimMofSerializer.cs	\
+	../../../jws/pswin/admin/wmi/WMIv2/Client/DotNetAPI/cs/CimMofDeserializer.cs	\
 
 
 MAN_INFRA_SRCS=\
@@ -176,6 +178,8 @@ MAN_INFRA_SRCS=\
 	$(ADMIN_GIT_ROOT)/wmi/WMIv2/Client/DotNetAPI/cs/SharedInstanceHandle.cs	\
 	$(ADMIN_GIT_ROOT)/wmi/WMIv2/Client/DotNetAPI/cs/WSManSessionOptions.cs	\
 	$(ADMIN_GIT_ROOT)/wmi/WMIv2/Client/DotNetAPI/cs/Strings.Designer.cs	\
+	$(ADMIN_GIT_ROOT)/wmi/WMIv2/Client/DotNetAPI/cs/CimMofSerializer.cs	\
+	$(ADMIN_GIT_ROOT)/wmi/WMIv2/Client/DotNetAPI/cs/CimMofDeserializer.cs	\
 
 
 MAN_INFRA_RES_BASE_PATH=.

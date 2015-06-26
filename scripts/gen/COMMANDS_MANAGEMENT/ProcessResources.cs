@@ -62,6 +62,51 @@ internal class ProcessResources {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to The user does not have access to the requested information..
+    /// </summary>
+    internal static string AttachDebuggerReturnCode2 {
+        get {
+            return ResourceManager.GetString("AttachDebuggerReturnCode2", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The specified parameter is not valid..
+    /// </summary>
+    internal static string AttachDebuggerReturnCode21 {
+        get {
+            return ResourceManager.GetString("AttachDebuggerReturnCode21", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The user does not have sufficient privilege..
+    /// </summary>
+    internal static string AttachDebuggerReturnCode3 {
+        get {
+            return ResourceManager.GetString("AttachDebuggerReturnCode3", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Unknown failure..
+    /// </summary>
+    internal static string AttachDebuggerReturnCode8 {
+        get {
+            return ResourceManager.GetString("AttachDebuggerReturnCode8", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The path specified does not exist..
+    /// </summary>
+    internal static string AttachDebuggerReturnCode9 {
+        get {
+            return ResourceManager.GetString("AttachDebuggerReturnCode9", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to This command cannot be run completely because the system cannot find all the information required..
     /// </summary>
     internal static string CannotStarttheProcess {
@@ -85,6 +130,15 @@ internal class ProcessResources {
     internal static string ContradictParametersSpecified {
         get {
             return ResourceManager.GetString("ContradictParametersSpecified", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Cannot debug process &quot;{0} ({1})&quot; because of the following error: {2}.
+    /// </summary>
+    internal static string CouldNotDebugProcess {
+        get {
+            return ResourceManager.GetString("CouldNotDebugProcess", resourceCulture);
         }
     }
     
@@ -229,6 +283,15 @@ internal class ProcessResources {
     internal static string NoProcessFoundForGivenName {
         get {
             return ResourceManager.GetString("NoProcessFoundForGivenName", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The parameter &apos;{0}&apos; is not supported for the cmdlet &apos;{1}&apos; on this edition of Windows..
+    /// </summary>
+    internal static string ParameterNotSupported {
+        get {
+            return ResourceManager.GetString("ParameterNotSupported", resourceCulture);
         }
     }
     

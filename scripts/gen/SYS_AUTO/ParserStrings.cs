@@ -370,6 +370,24 @@ internal class ParserStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to Cannot use assembly with an UNC path: &apos;{0}&apos;..
+    /// </summary>
+    internal static string CannotLoadAssemblyFromUncPath {
+        get {
+            return ResourceManager.GetString("CannotLoadAssemblyFromUncPath", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Cannot use assembly with uri schema &apos;{0}&apos;..
+    /// </summary>
+    internal static string CannotLoadAssemblyWithUriSchema {
+        get {
+            return ResourceManager.GetString("CannotLoadAssemblyWithUriSchema", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Failed to load the PowerShell data file &apos;{0}&apos; with the following error:
     ///{1}.
     /// </summary>
@@ -632,6 +650,15 @@ internal class ParserStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to DebugMode should only have one value..
+    /// </summary>
+    internal static string DebugModeShouldHaveOneValue {
+        get {
+            return ResourceManager.GetString("DebugModeShouldHaveOneValue", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to debug stream.
     /// </summary>
     internal static string DebugStream {
@@ -785,7 +812,7 @@ internal class ParserStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to A second CIM class definition for &apos;{0}&apos; was found while processing the schema file &apos;{1}&apos;. This class was already defined in the file &apos;{2}&apos;. Remove the redundant definition, and then try again..
+    ///   Looks up a localized string similar to A second CIM class definition for &apos;{0}&apos; was found while processing the schema file &apos;{1}&apos;. This class was already defined in the file(s) &apos;{2}&apos;. Remove the redundant definition, and then try again..
     /// </summary>
     internal static string DuplicateCimClassDefinition {
         get {
@@ -997,6 +1024,15 @@ internal class ParserStrings {
     internal static string ErrorCollection {
         get {
             return ResourceManager.GetString("ErrorCollection", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Cannot load assembly &apos;{0}&apos;..
+    /// </summary>
+    internal static string ErrorLoadingAssembly {
+        get {
+            return ResourceManager.GetString("ErrorLoadingAssembly", resourceCulture);
         }
     }
     
@@ -1272,7 +1308,13 @@ internal class ParserStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to The Import-DscResource dynamic keyword requires resource name(s) and/or name(s) of the module to import. The syntax of Import-DscResource dynamic keyword is: &quot;Import-DscResource  [-Name &lt;ResourceName(s)&gt;]  [-ModuleName  &lt;ModuleName(s)&gt;]..
+    ///   Looks up a localized string similar to The syntax of the Import-DscResource dynamic keyword is: 
+    ///   
+    ///Import-DscResource  [-Name &lt;ResourceName(s)&gt;]  [-ModuleName  &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;].
+    ///  
+    ///Name          : Names of one or more resources to import.
+    ///ModuleName    : Module names or ModuleSpecification objects of one or more modules to import.
+    ///ModuleVersion : Version of module to import. If used, ModuleName must represent only one module by name..
     /// </summary>
     internal static string ImportDscResourceNeedParams {
         get {
@@ -1281,7 +1323,7 @@ internal class ParserStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Positional parameters are not supported for the Import-DscResource dynamic keyword. The syntax of Import-DscResource dynamic keyword is: &quot;Import-DscResource  [-Name &lt;ResourceName(s)&gt;] [-ModuleName &lt;ModuleName(s)&gt;].
+    ///   Looks up a localized string similar to Positional parameters are not supported for the Import-DscResource dynamic keyword. The syntax of Import-DscResource dynamic keyword is: &quot;Import-DscResource  [-Name &lt;ResourceName(s)&gt;] [-ModuleName &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;].
     /// </summary>
     internal static string ImportDscResourcePositionalParamsNotSupported {
         get {
@@ -1642,6 +1684,15 @@ internal class ParserStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid value for using name..
+    /// </summary>
+    internal static string InvalidValueForUsingItemName {
+        get {
+            return ResourceManager.GetString("InvalidValueForUsingItemName", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Variable reference is not valid. &apos;$&apos; was not followed by a valid variable name character. Consider using ${} to delimit the name..
     /// </summary>
     internal static string InvalidVariableReference {
@@ -1692,6 +1743,15 @@ internal class ParserStrings {
     internal static string KeyTypeMismatch {
         get {
             return ResourceManager.GetString("KeyTypeMismatch", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Label &apos;{0}&apos; not found inside the method..
+    /// </summary>
+    internal static string LabelNotFound {
+        get {
+            return ResourceManager.GetString("LabelNotFound", resourceCulture);
         }
     }
     
@@ -2263,6 +2323,15 @@ internal class ParserStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to Missing a newline or semicolon..
+    /// </summary>
+    internal static string MissingStatementTerminator {
+        get {
+            return ResourceManager.GetString("MissingStatementTerminator", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Missing condition in switch statement clause..
     /// </summary>
     internal static string MissingSwitchConditionExpression {
@@ -2295,6 +2364,15 @@ internal class ParserStrings {
     internal static string MissingTerminatorMultiLineComment {
         get {
             return ResourceManager.GetString("MissingTerminatorMultiLineComment", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Cannot assign property, use &apos;{0}{1}&apos;..
+    /// </summary>
+    internal static string MissingThis {
+        get {
+            return ResourceManager.GetString("MissingThis", resourceCulture);
         }
     }
     
@@ -2349,6 +2427,15 @@ internal class ParserStrings {
     internal static string MissingTypeBody {
         get {
             return ResourceManager.GetString("MissingTypeBody", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Cannot assign property, use &apos;{0}{1}&apos;..
+    /// </summary>
+    internal static string MissingTypeInStaticPropertyAssignment {
+        get {
+            return ResourceManager.GetString("MissingTypeInStaticPropertyAssignment", resourceCulture);
         }
     }
     
@@ -2434,7 +2521,7 @@ internal class ParserStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Unable to load module &apos;{0}&apos;: module not found..
+    ///   Looks up a localized string similar to The DSC engine could not load the module &apos;{0}&apos;. It was not found on the system..
     /// </summary>
     internal static string ModuleNotFoundDuringParse {
         get {
@@ -2452,7 +2539,16 @@ internal class ParserStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Multiple modules named &apos;{0}&apos; were found. You can run &apos;Get-Module -ListAvailable -Name {1}&apos; to get the version numbers of modules with the same name, and then run Import-DscResource again, specifying the version you want using a ModuleSpecification hash table..
+    ///   Looks up a localized string similar to The DSC engine could not load the module &lt;{0}, {1}&gt;. It was not found on the system..
+    /// </summary>
+    internal static string ModuleWithVersionNotFoundDuringParse {
+        get {
+            return ResourceManager.GetString("ModuleWithVersionNotFoundDuringParse", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Multiple versions of the module &apos;{0}&apos; were found. You can run &apos;Get-DscResource -Module {0}&apos; to see available versions on the system, and then use the fully qualified name in the following command to specify the desired version: &apos;Import-DscResource –ModuleName @{{ModuleName=&quot;{0}&quot;;ModuleVersion=&quot;Version&quot;}}&apos;..
     /// </summary>
     internal static string MultipleModuleEntriesFoundDuringParse {
         get {
@@ -2839,7 +2935,7 @@ internal class ParserStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Property &apos;{0}&apos; cannot be found for attribute &apos;{1}&apos;..
+    ///   Looks up a localized string similar to Property &apos;{0}&apos; cannot be found for attribute &apos;{1}&apos;. Specify one of the following properties: {2}..
     /// </summary>
     internal static string PropertyNotFoundForAttribute {
         get {

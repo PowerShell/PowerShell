@@ -70,6 +70,8 @@ SYS_AUTO_SRCS_WIN=\
 	../../../jws/pswin/admin/monad/src/engine/NativeCommandParameterBinderController.cs	\
 	../../../jws/pswin/admin/monad/src/engine/NativeCommandProcessor.cs	\
 	../../../jws/pswin/admin/monad/src/engine/DscResourceSearcher.cs	\
+	../../../jws/pswin/admin/monad/src/engine/PSClassSearcher.cs	\
+	../../../jws/pswin/admin/monad/src/engine/PSClassInfo.cs	\
 	../../../jws/pswin/admin/monad/src/engine/Modules/AnalysisCache.cs	\
 	../../../jws/pswin/admin/monad/src/engine/Modules/ExportModuleMemberCommand.cs	\
 	../../../jws/pswin/admin/monad/src/engine/Modules/GetModuleCommand.cs	\
@@ -105,6 +107,52 @@ SYS_AUTO_SRCS_WIN=\
 	../../../jws/pswin/admin/monad/src/engine/WinRT/IInspectable.cs	\
 	../../../jws/pswin/admin/monad/src/help/CabinetAPI.cs	\
 	../../../jws/pswin/admin/monad/src/help/CabinetNativeApi.cs	\
+	../../../jws/pswin/admin/monad/src/help/MamlUtil.cs	\
+	../../../jws/pswin/admin/monad/src/help/ProviderCommandHelpInfo.cs	\
+	../../../jws/pswin/admin/monad/src/help/ProviderContext.cs	\
+	../../../jws/pswin/admin/monad/src/help/HelpCommands.cs	\
+	../../../jws/pswin/admin/monad/src/help/HelpSystem.cs	\
+	../../../jws/pswin/admin/monad/src/help/HelpInfo.cs	\
+	../../../jws/pswin/admin/monad/src/help/HelpProvider.cs	\
+	../../../jws/pswin/admin/monad/src/help/HelpProviderWithCache.cs	\
+	../../../jws/pswin/admin/monad/src/help/MamlCommandHelpInfo.cs	\
+	../../../jws/pswin/admin/monad/src/help/CommandHelpProvider.cs	\
+	../../../jws/pswin/admin/monad/src/help/AliasHelpInfo.cs	\
+	../../../jws/pswin/admin/monad/src/help/AliasHelpProvider.cs	\
+	../../../jws/pswin/admin/monad/src/help/HelpFileHelpInfo.cs	\
+	../../../jws/pswin/admin/monad/src/help/HelpFileHelpProvider.cs	\
+	../../../jws/pswin/admin/monad/src/help/DefaultHelpProvider.cs	\
+	../../../jws/pswin/admin/monad/src/help/ProviderHelpInfo.cs	\
+	../../../jws/pswin/admin/monad/src/help/ProviderHelpProvider.cs	\
+	../../../jws/pswin/admin/monad/src/help/MamlNode.cs	\
+	../../../jws/pswin/admin/monad/src/help/HelpCategoryInvalidException.cs	\
+	../../../jws/pswin/admin/monad/src/help/HelpNotFoundException.cs	\
+	../../../jws/pswin/admin/monad/src/help/HelpProviderWithFullCache.cs	\
+	../../../jws/pswin/admin/monad/src/help/FaqHelpProvider.cs	\
+	../../../jws/pswin/admin/monad/src/help/FaqHelpInfo.cs	\
+	../../../jws/pswin/admin/monad/src/help/GlossaryHelpProvider.cs	\
+	../../../jws/pswin/admin/monad/src/help/GlossaryHelpInfo.cs	\
+	../../../jws/pswin/admin/monad/src/help/GeneralHelpProvider.cs	\
+	../../../jws/pswin/admin/monad/src/help/GeneralHelpInfo.cs	\
+	../../../jws/pswin/admin/monad/src/help/HelpErrorTracer.cs	\
+	../../../jws/pswin/admin/monad/src/help/HelpRequest.cs	\
+	../../../jws/pswin/admin/monad/src/help/MUIFileSearcher.cs	\
+	../../../jws/pswin/admin/monad/src/help/HelpCommentsParser.cs	\
+	../../../jws/pswin/admin/monad/src/help/BaseCommandHelpInfo.cs	\
+	../../../jws/pswin/admin/monad/src/help/RemoteHelpInfo.cs	\
+	../../../jws/pswin/admin/monad/src/help/ScriptCommandHelpProvider.cs	\
+	../../../jws/pswin/admin/monad/src/help/SyntaxHelpInfo.cs	\
+	../../../jws/pswin/admin/monad/src/help/DefaultCommandHelpObjectBuilder.cs	\
+	../../../jws/pswin/admin/monad/src/help/UpdatableHelpCommandBase.cs	\
+	../../../jws/pswin/admin/monad/src/help/UpdatableHelpInfo.cs	\
+	../../../jws/pswin/admin/monad/src/help/UpdatableHelpModuleInfo.cs	\
+	../../../jws/pswin/admin/monad/src/help/UpdatableHelpSystem.cs	\
+	../../../jws/pswin/admin/monad/src/help/UpdatableHelpUri.cs	\
+	../../../jws/pswin/admin/monad/src/help/UpdateHelpCommand.cs	\
+	../../../jws/pswin/admin/monad/src/help/SaveHelpCommand.cs	\
+	../../../jws/pswin/admin/monad/src/help/DscResourceHelpProvider.cs	\
+	../../../jws/pswin/admin/monad/src/help/PSClassHelpProvider.cs	\
+	../../../jws/pswin/admin/monad/src/help/MamlClassHelpInfo.cs	\
 	../../../jws/pswin/admin/monad/src/engine/hostifaces/AsyncResult.cs	\
 	../../../jws/pswin/admin/monad/src/engine/hostifaces/ChoiceDescription.cs	\
 	../../../jws/pswin/admin/monad/src/engine/hostifaces/Command.cs	\
@@ -135,6 +183,7 @@ SYS_AUTO_SRCS_WIN=\
 	../../../jws/pswin/admin/monad/src/engine/hostifaces/RunspacePool.cs	\
 	../../../jws/pswin/admin/monad/src/engine/hostifaces/RunspacePoolInternal.cs	\
 	../../../jws/pswin/admin/monad/src/engine/hostifaces/PowerShellProcessInstance.cs	\
+	../../../jws/pswin/admin/monad/src/engine/hostifaces/HostUtilities.cs	\
 	../../../jws/pswin/admin/monad/src/engine/remoting/common/ObjectRef.cs	\
 	../../../jws/pswin/admin/monad/src/engine/remoting/common/RunspacePoolStateInfo.cs	\
 	../../../jws/pswin/admin/monad/src/engine/remoting/common/PSETWTracer.cs	\
@@ -177,6 +226,7 @@ SYS_AUTO_SRCS_WIN=\
 	../../../jws/pswin/admin/monad/src/engine/remoting/common/WireDataFormat/RemoteSessionCapability.cs	\
 	../../../jws/pswin/admin/monad/src/engine/remoting/common/WireDataFormat/RemotingDataObject.cs	\
 	../../../jws/pswin/admin/monad/src/engine/remoting/common/RemoteSessionNamedPipe.cs	\
+	../../../jws/pswin/admin/monad/src/engine/remoting/common/RemoteSessionHyperVSocket.cs	\
 	../../../jws/pswin/admin/monad/src/engine/remoting/server/OutOfProcServerMediator.cs	\
 	../../../jws/pswin/admin/monad/src/engine/remoting/server/ServerMethodExecutor.cs	\
 	../../../jws/pswin/admin/monad/src/engine/remoting/server/serverremotesession.cs	\
@@ -336,6 +386,8 @@ SYS_AUTO_SRCS_WIN=\
 	../../../jws/pswin/admin/monad/src/engine/runtime/Operations/StringOps.cs	\
 	../../../jws/pswin/admin/monad/src/engine/runtime/Operations/VariableOps.cs	\
 	../../../jws/pswin/admin/monad/src/engine/parser/PSType.cs	\
+	../../../jws/pswin/admin/monad/src/engine/parser/GlobalAssemblyCache.cs	\
+	../../../jws/pswin/admin/monad/src/engine/parser/FusionAssemblyIdentity.cs	\
 	../../../jws/pswin/admin/monad/src/engine/interpreter/AddInstruction.cs	\
 	../../../jws/pswin/admin/monad/src/engine/interpreter/ArrayOperations.cs	\
 	../../../jws/pswin/admin/monad/src/engine/interpreter/BranchLabel.cs	\
@@ -397,6 +449,7 @@ SYS_AUTO_SRCS_WIN=\
 	../../../jws/pswin/admin/monad/src/security/MshSignature.cs	\
 	../../../jws/pswin/admin/monad/src/security/SecuritySupport.cs	\
 	../../../jws/pswin/admin/monad/src/security/SecurityManager.cs	\
+	../../../jws/pswin/admin/monad/src/security/SecureStringHelper.cs	\
 	../../../jws/pswin/admin/monad/src/engine/ArgumentTypeConverterAttribute.cs	\
 	../../../jws/pswin/admin/monad/src/engine/DriveNames.cs	\
 	../../../jws/pswin/admin/monad/src/engine/ProviderNames.cs	\
@@ -491,12 +544,13 @@ SYS_AUTO_SRCS_WIN=\
 	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/common/DisplayDatabase/typeDataXmlLoader_Table.cs	\
 	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/common/DisplayDatabase/typeDataXmlLoader_Views.cs	\
 	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/common/DisplayDatabase/typeDataXmlLoader_Wide.cs	\
-	../../../jws/pswin/admin/monad/src/engine/CommandCompletion/PseudoParameterBinder.cs	\
 	../../../jws/pswin/admin/monad/src/engine/CommandCompletion/CommandCompletion.cs	\
 	../../../jws/pswin/admin/monad/src/engine/CommandCompletion/CompletionAnalysis.cs	\
 	../../../jws/pswin/admin/monad/src/engine/CommandCompletion/CompletionCompleters.cs	\
 	../../../jws/pswin/admin/monad/src/engine/CommandCompletion/CompletionExecutionHelper.cs	\
 	../../../jws/pswin/admin/monad/src/engine/CommandCompletion/CompletionResult.cs	\
+	../../../jws/pswin/admin/monad/src/engine/CommandCompletion/ExtensibleCompletion.cs	\
+	../../../jws/pswin/admin/monad/src/engine/CommandCompletion/PseudoParameterBinder.cs	\
 	../../../jws/pswin/admin/monad/src/cimSupport/cmdletization/MethodInvocationInfo.cs	\
 	../../../jws/pswin/admin/monad/src/cimSupport/cmdletization/MethodParameter.cs	\
 	../../../jws/pswin/admin/monad/src/cimSupport/cmdletization/MethodParametersCollection.cs	\
@@ -508,6 +562,7 @@ SYS_AUTO_SRCS_WIN=\
 	../../../jws/pswin/admin/monad/src/cimSupport/cmdletization/xml/CoreCLR/cmdlets-over-objects.objectModel.autogen.cs	\
 	../../../jws/pswin/admin/monad/src/cimSupport/cmdletization/xml/CoreCLR/cmdlets-over-objects.xmlSerializer.autogen.cs	\
 	../../../jws/pswin/admin/monad/src/cimSupport/other/ciminstancetypeadapter.cs	\
+	../../../jws/pswin/admin/monad/src/DscSupport/CimDSCParser.cs	\
 
 
 SYS_AUTO_SRCS=\
@@ -580,6 +635,8 @@ SYS_AUTO_SRCS=\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/NativeCommandParameterBinderController.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/NativeCommandProcessor.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/DscResourceSearcher.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/PSClassSearcher.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/PSClassInfo.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/Modules/AnalysisCache.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/Modules/ExportModuleMemberCommand.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/Modules/GetModuleCommand.cs	\
@@ -615,6 +672,52 @@ SYS_AUTO_SRCS=\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/WinRT/IInspectable.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/help/CabinetAPI.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/help/CabinetNativeApi.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/MamlUtil.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/ProviderCommandHelpInfo.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/ProviderContext.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/HelpCommands.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/HelpSystem.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/HelpInfo.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/HelpProvider.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/HelpProviderWithCache.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/MamlCommandHelpInfo.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/CommandHelpProvider.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/AliasHelpInfo.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/AliasHelpProvider.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/HelpFileHelpInfo.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/HelpFileHelpProvider.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/DefaultHelpProvider.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/ProviderHelpInfo.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/ProviderHelpProvider.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/MamlNode.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/HelpCategoryInvalidException.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/HelpNotFoundException.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/HelpProviderWithFullCache.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/FaqHelpProvider.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/FaqHelpInfo.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/GlossaryHelpProvider.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/GlossaryHelpInfo.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/GeneralHelpProvider.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/GeneralHelpInfo.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/HelpErrorTracer.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/HelpRequest.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/MUIFileSearcher.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/HelpCommentsParser.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/BaseCommandHelpInfo.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/RemoteHelpInfo.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/ScriptCommandHelpProvider.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/SyntaxHelpInfo.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/DefaultCommandHelpObjectBuilder.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/UpdatableHelpCommandBase.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/UpdatableHelpInfo.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/UpdatableHelpModuleInfo.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/UpdatableHelpSystem.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/UpdatableHelpUri.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/UpdateHelpCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/SaveHelpCommand.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/DscResourceHelpProvider.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/PSClassHelpProvider.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/help/MamlClassHelpInfo.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/hostifaces/AsyncResult.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/hostifaces/ChoiceDescription.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/hostifaces/Command.cs	\
@@ -645,6 +748,7 @@ SYS_AUTO_SRCS=\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/hostifaces/RunspacePool.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/hostifaces/RunspacePoolInternal.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/hostifaces/PowerShellProcessInstance.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/hostifaces/HostUtilities.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/remoting/common/ObjectRef.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/remoting/common/RunspacePoolStateInfo.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/remoting/common/PSETWTracer.cs	\
@@ -687,6 +791,7 @@ SYS_AUTO_SRCS=\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/remoting/common/WireDataFormat/RemoteSessionCapability.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/remoting/common/WireDataFormat/RemotingDataObject.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/remoting/common/RemoteSessionNamedPipe.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/remoting/common/RemoteSessionHyperVSocket.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/remoting/server/OutOfProcServerMediator.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/remoting/server/ServerMethodExecutor.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/remoting/server/serverremotesession.cs	\
@@ -846,6 +951,8 @@ SYS_AUTO_SRCS=\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/runtime/Operations/StringOps.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/runtime/Operations/VariableOps.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/parser/PSType.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/parser/GlobalAssemblyCache.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/parser/FusionAssemblyIdentity.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/interpreter/AddInstruction.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/interpreter/ArrayOperations.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/interpreter/BranchLabel.cs	\
@@ -907,6 +1014,7 @@ SYS_AUTO_SRCS=\
 	$(ADMIN_GIT_ROOT)/monad/src/security/MshSignature.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/security/SecuritySupport.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/security/SecurityManager.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/security/SecureStringHelper.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/ArgumentTypeConverterAttribute.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/DriveNames.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/ProviderNames.cs	\
@@ -1001,12 +1109,13 @@ SYS_AUTO_SRCS=\
 	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/common/DisplayDatabase/typeDataXmlLoader_Table.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/common/DisplayDatabase/typeDataXmlLoader_Views.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/common/DisplayDatabase/typeDataXmlLoader_Wide.cs	\
-	$(ADMIN_GIT_ROOT)/monad/src/engine/CommandCompletion/PseudoParameterBinder.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/CommandCompletion/CommandCompletion.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/CommandCompletion/CompletionAnalysis.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/CommandCompletion/CompletionCompleters.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/CommandCompletion/CompletionExecutionHelper.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/CommandCompletion/CompletionResult.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/CommandCompletion/ExtensibleCompletion.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/CommandCompletion/PseudoParameterBinder.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/cimSupport/cmdletization/MethodInvocationInfo.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/cimSupport/cmdletization/MethodParameter.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/cimSupport/cmdletization/MethodParametersCollection.cs	\
@@ -1018,6 +1127,7 @@ SYS_AUTO_SRCS=\
 	$(ADMIN_GIT_ROOT)/monad/src/cimSupport/cmdletization/xml/CoreCLR/cmdlets-over-objects.objectModel.autogen.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/cimSupport/cmdletization/xml/CoreCLR/cmdlets-over-objects.xmlSerializer.autogen.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/cimSupport/other/ciminstancetypeadapter.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/DscSupport/CimDSCParser.cs	\
 
 
 SYS_AUTO_RES_BASE_PATH=../../../jws/pswin/admin/monad/src/engine/resources
@@ -1077,12 +1187,12 @@ SYS_AUTO_RESX_SRCS=\
 	../../../jws/pswin/admin/monad/src/engine/resources/SuggestionStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/MiniShellErrors.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/MshHostRawUserInterfaceStrings.resx	\
-	../../../jws/pswin/admin/monad/src/engine/resources/MshSnapInCmdletResources.resx	\
+	../../../jws/pswin/admin/monad/src/engine/resources/MshSnapinCmdletResources.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/MshSnapinInfo.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/TypesXmlStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/TransactionStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/WildcardPatternStrings.resx	\
-	../../../jws/pswin/admin/monad/src/engine/resources/RemotingErrorIdStrings.resx	\
+	../../../jws/pswin/admin/monad/src/engine/resources/remotingerroridstrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/DebuggerStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/FormatAndOut_MshParameter.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/FormatAndOut_format_xxx.resx	\
@@ -1090,8 +1200,9 @@ SYS_AUTO_RESX_SRCS=\
 	../../../jws/pswin/admin/monad/src/engine/resources/NativeCP.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/RegistryProviderStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/TabCompletionStrings.resx	\
+	../../../jws/pswin/admin/monad/src/engine/resources/HelpErrors.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/CoreClrStubResources.resx	\
-	../../../jws/pswin/admin/monad/src/engine/resources/Modules.resx	\
+	../../../jws/pswin/admin/monad/src/engine/resources/modules.resx	\
 
 
 SYS_AUTO_RES_SRCS=\
@@ -1145,12 +1256,12 @@ SYS_AUTO_RES_SRCS=\
 	gen/SYS_AUTO/SuggestionStrings.resources	\
 	gen/SYS_AUTO/MiniShellErrors.resources	\
 	gen/SYS_AUTO/MshHostRawUserInterfaceStrings.resources	\
-	gen/SYS_AUTO/MshSnapInCmdletResources.resources	\
+	gen/SYS_AUTO/MshSnapinCmdletResources.resources	\
 	gen/SYS_AUTO/MshSnapinInfo.resources	\
 	gen/SYS_AUTO/TypesXmlStrings.resources	\
 	gen/SYS_AUTO/TransactionStrings.resources	\
 	gen/SYS_AUTO/WildcardPatternStrings.resources	\
-	gen/SYS_AUTO/RemotingErrorIdStrings.resources	\
+	gen/SYS_AUTO/remotingerroridstrings.resources	\
 	gen/SYS_AUTO/DebuggerStrings.resources	\
 	gen/SYS_AUTO/FormatAndOut_MshParameter.resources	\
 	gen/SYS_AUTO/FormatAndOut_format_xxx.resources	\
@@ -1158,8 +1269,9 @@ SYS_AUTO_RES_SRCS=\
 	gen/SYS_AUTO/NativeCP.resources	\
 	gen/SYS_AUTO/RegistryProviderStrings.resources	\
 	gen/SYS_AUTO/TabCompletionStrings.resources	\
+	gen/SYS_AUTO/HelpErrors.resources	\
 	gen/SYS_AUTO/CoreClrStubResources.resources	\
-	gen/SYS_AUTO/Modules.resources	\
+	gen/SYS_AUTO/modules.resources	\
 
 
 SYS_AUTO_RES_CS_SRCS=\
@@ -1213,12 +1325,12 @@ SYS_AUTO_RES_CS_SRCS=\
 	gen/SYS_AUTO/SuggestionStrings.cs	\
 	gen/SYS_AUTO/MiniShellErrors.cs	\
 	gen/SYS_AUTO/MshHostRawUserInterfaceStrings.cs	\
-	gen/SYS_AUTO/MshSnapInCmdletResources.cs	\
+	gen/SYS_AUTO/MshSnapinCmdletResources.cs	\
 	gen/SYS_AUTO/MshSnapinInfo.cs	\
 	gen/SYS_AUTO/TypesXmlStrings.cs	\
 	gen/SYS_AUTO/TransactionStrings.cs	\
 	gen/SYS_AUTO/WildcardPatternStrings.cs	\
-	gen/SYS_AUTO/RemotingErrorIdStrings.cs	\
+	gen/SYS_AUTO/remotingerroridstrings.cs	\
 	gen/SYS_AUTO/DebuggerStrings.cs	\
 	gen/SYS_AUTO/FormatAndOut_MshParameter.cs	\
 	gen/SYS_AUTO/FormatAndOut_format_xxx.cs	\
@@ -1226,8 +1338,9 @@ SYS_AUTO_RES_CS_SRCS=\
 	gen/SYS_AUTO/NativeCP.cs	\
 	gen/SYS_AUTO/RegistryProviderStrings.cs	\
 	gen/SYS_AUTO/TabCompletionStrings.cs	\
+	gen/SYS_AUTO/HelpErrors.cs	\
 	gen/SYS_AUTO/CoreClrStubResources.cs	\
-	gen/SYS_AUTO/Modules.cs	\
+	gen/SYS_AUTO/modules.cs	\
 
 
 SYS_AUTO_RES_REF=\
@@ -1281,12 +1394,12 @@ SYS_AUTO_RES_REF=\
 	-resource:gen/SYS_AUTO/SuggestionStrings.resources	\
 	-resource:gen/SYS_AUTO/MiniShellErrors.resources	\
 	-resource:gen/SYS_AUTO/MshHostRawUserInterfaceStrings.resources	\
-	-resource:gen/SYS_AUTO/MshSnapInCmdletResources.resources	\
+	-resource:gen/SYS_AUTO/MshSnapinCmdletResources.resources	\
 	-resource:gen/SYS_AUTO/MshSnapinInfo.resources	\
 	-resource:gen/SYS_AUTO/TypesXmlStrings.resources	\
 	-resource:gen/SYS_AUTO/TransactionStrings.resources	\
 	-resource:gen/SYS_AUTO/WildcardPatternStrings.resources	\
-	-resource:gen/SYS_AUTO/RemotingErrorIdStrings.resources	\
+	-resource:gen/SYS_AUTO/remotingerroridstrings.resources	\
 	-resource:gen/SYS_AUTO/DebuggerStrings.resources	\
 	-resource:gen/SYS_AUTO/FormatAndOut_MshParameter.resources	\
 	-resource:gen/SYS_AUTO/FormatAndOut_format_xxx.resources	\
@@ -1294,8 +1407,9 @@ SYS_AUTO_RES_REF=\
 	-resource:gen/SYS_AUTO/NativeCP.resources	\
 	-resource:gen/SYS_AUTO/RegistryProviderStrings.resources	\
 	-resource:gen/SYS_AUTO/TabCompletionStrings.resources	\
+	-resource:gen/SYS_AUTO/HelpErrors.resources	\
 	-resource:gen/SYS_AUTO/CoreClrStubResources.resources	\
-	-resource:gen/SYS_AUTO/Modules.resources	\
+	-resource:gen/SYS_AUTO/modules.resources	\
 
 
 SYS_AUTO_make_rule_RES_SRCS: $(SYS_AUTO_RES_SRCS)

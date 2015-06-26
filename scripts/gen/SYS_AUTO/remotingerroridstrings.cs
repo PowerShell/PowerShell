@@ -23,14 +23,14 @@ using System.Reflection;
 [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
 [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
 [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-internal class RemotingErrorIdStrings {
+internal class remotingerroridstrings {
     
     private static global::System.Resources.ResourceManager resourceMan;
     
     private static global::System.Globalization.CultureInfo resourceCulture;
     
     [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-    internal RemotingErrorIdStrings() {
+    internal remotingerroridstrings() {
     }
     
     /// <summary>
@@ -40,7 +40,7 @@ internal class RemotingErrorIdStrings {
     internal static global::System.Resources.ResourceManager ResourceManager {
         get {
             if (object.ReferenceEquals(resourceMan, null)) {
-                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("RemotingErrorIdStrings", typeof(RemotingErrorIdStrings).GetTypeInfo().Assembly);
+                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("remotingerroridstrings", typeof(remotingerroridstrings).GetTypeInfo().Assembly);
                 resourceMan = temp;
             }
             return resourceMan;
@@ -121,6 +121,24 @@ internal class RemotingErrorIdStrings {
     internal static string BlockCannotBeUsedWithKeep {
         get {
             return ResourceManager.GetString("BlockCannotBeUsedWithKeep", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Unable to open pipe connection for PowerShell IPC. Error code: {0}..
+    /// </summary>
+    internal static string CannotConnectNamedPipe {
+        get {
+            return ResourceManager.GetString("CannotConnectNamedPipe", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Unable to create PowerShell IPC named pipe. Error code: {0}..
+    /// </summary>
+    internal static string CannotCreateNamedPipe {
+        get {
+            return ResourceManager.GetString("CannotCreateNamedPipe", resourceCulture);
         }
     }
     
@@ -481,6 +499,15 @@ internal class RemotingErrorIdStrings {
     internal static string ConnectFailed {
         get {
             return ResourceManager.GetString("ConnectFailed", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Timeout expired before connection could be made to named pipe..
+    /// </summary>
+    internal static string ConnectNamedPipeTimeout {
+        get {
+            return ResourceManager.GetString("ConnectNamedPipeTimeout", resourceCulture);
         }
     }
     
@@ -1495,6 +1522,15 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to The credential is invalid..
+    /// </summary>
+    internal static string InvalidCredential {
+        get {
+            return ResourceManager.GetString("InvalidCredential", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to The specified IdleTimeout session option {0} (seconds) is not a valid period.  Specify an IdleTimeout value that is greater than or equal to the minimum allowed {1} (seconds)..
     /// </summary>
     internal static string InvalidIdleTimeoutOption {
@@ -1563,6 +1599,15 @@ internal class RemotingErrorIdStrings {
     internal static string InvalidSchemeValue {
         get {
             return ResourceManager.GetString("InvalidSchemeValue", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The input username cannot be empty..
+    /// </summary>
+    internal static string InvalidUsername {
+        get {
+            return ResourceManager.GetString("InvalidUsername", resourceCulture);
         }
     }
     

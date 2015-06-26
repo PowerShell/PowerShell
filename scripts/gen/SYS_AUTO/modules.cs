@@ -23,14 +23,14 @@ using System.Reflection;
 [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
 [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
 [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-internal class Modules {
+internal class modules {
     
     private static global::System.Resources.ResourceManager resourceMan;
     
     private static global::System.Globalization.CultureInfo resourceCulture;
     
     [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-    internal Modules() {
+    internal modules() {
     }
     
     /// <summary>
@@ -40,7 +40,7 @@ internal class Modules {
     internal static global::System.Resources.ResourceManager ResourceManager {
         get {
             if (object.ReferenceEquals(resourceMan, null)) {
-                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Modules", typeof(Modules).GetTypeInfo().Assembly);
+                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("modules", typeof(modules).GetTypeInfo().Assembly);
                 resourceMan = temp;
             }
             return resourceMan;
@@ -1004,6 +1004,15 @@ internal class Modules {
     internal static string NoModulesRemoved {
         get {
             return ResourceManager.GetString("NoModulesRemoved", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Populating RepositorySourceLocation property for module {0}..
+    /// </summary>
+    internal static string PopulatingRepositorySourceLocation {
+        get {
+            return ResourceManager.GetString("PopulatingRepositorySourceLocation", resourceCulture);
         }
     }
     

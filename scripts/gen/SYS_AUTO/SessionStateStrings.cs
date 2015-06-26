@@ -350,6 +350,15 @@ internal class SessionStateStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to &apos;-{0}&apos; and &apos;-{1}&apos; are mutually exclusive and cannot be specified at the same time..
+    /// </summary>
+    internal static string CopyItemFromSessionToSession {
+        get {
+            return ResourceManager.GetString("CopyItemFromSessionToSession", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Attempting to perform the CopyItem operation on the &apos;{0}&apos; provider failed for path &apos;{1}&apos;. {2}.
     /// </summary>
     internal static string CopyItemProviderException {
@@ -359,11 +368,56 @@ internal class SessionStateStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to The path &apos;{0}&apos; is not valid. Only absolute paths are supported on remote copy operations..
+    /// </summary>
+    internal static string CopyItemRemotelyPathIsNotAbsolute {
+        get {
+            return ResourceManager.GetString("CopyItemRemotelyPathIsNotAbsolute", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The remote path &apos;{0}&apos; is not valid..
+    /// </summary>
+    internal static string CopyItemRemotelyPathIsNotValid {
+        get {
+            return ResourceManager.GetString("CopyItemRemotelyPathIsNotValid", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to &apos;{0}&apos; parameter cannot be null or empty..
+    /// </summary>
+    internal static string CopyItemRemotelyPathIsNullOrEmpty {
+        get {
+            return ResourceManager.GetString("CopyItemRemotelyPathIsNullOrEmpty", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Cannot perform operation because the session {0} is set to {1}..
+    /// </summary>
+    internal static string CopyItemSessionProperties {
+        get {
+            return ResourceManager.GetString("CopyItemSessionProperties", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Source and destination path did not resolve to the same provider..
     /// </summary>
     internal static string CopyItemSourceAndDestinationNotSameProvider {
         get {
             return ResourceManager.GetString("CopyItemSourceAndDestinationNotSameProvider", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Cannot validate remote path &apos;{0}&apos;..
+    /// </summary>
+    internal static string CopyItemValidateRemotePath {
+        get {
+            return ResourceManager.GetString("CopyItemValidateRemotePath", resourceCulture);
         }
     }
     

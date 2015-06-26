@@ -280,6 +280,7 @@ internal class InternalHostUserInterfaceStrings {
     ///Machine: {3} ({4})
     ///Host Application: {5}
     ///Process ID: {6}
+    ///{7}
     ///**********************.
     /// </summary>
     internal static string TranscriptPrologue {

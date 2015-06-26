@@ -179,6 +179,15 @@ internal class RunspacePoolStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to ResetRunspaceState is not supported on the server.  The server must be running Windows PowerShell 5.0 or greater..
+    /// </summary>
+    internal static string ResetRunspaceStateNotSupportedOnServer {
+        get {
+            return ResourceManager.GetString("ResetRunspaceStateNotSupportedOnServer", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to This runspace does not support disconnect and connect operations..
     /// </summary>
     internal static string RunspaceDisconnectConnectNotSupported {

@@ -233,6 +233,15 @@ internal class DiscoveryExceptions {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to The ShowCommandInfo and Syntax parameters cannot be specified together..
+    /// </summary>
+    internal static string GetCommandShowCommandInfoParamError {
+        get {
+            return ResourceManager.GetString("GetCommandShowCommandInfoParamError", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Cannot process the cmdlet. A cmdlet name must consist of a verb and noun pair separated by &apos;-&apos;..
     /// </summary>
     internal static string InvalidCmdletNameFormat {
