@@ -88,8 +88,9 @@ System.Reflection.Metadata.dll: System.Reflection.Metadata.*/lib/portable-net45+
 System.Collections.Immutable.dll: System.Collections.Immutable.*/lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.dll
 	cp -f $< $@
 
-dotnetlibs/Microsoft.Management.Infrastructure.Native.dll: $(MONAD_EXT)/PS/windows_libs_modil/Microsoft.Management.Infrastructure.Native.dll
-	cp -f $^ $@
+# this one is built from stubs
+dotnetlibs/Microsoft.Management.Infrastructure.Native.dll: ../src/stubs/Microsoft.Management.Infrastructure.Native-stub.cs ../src/stubs/Microsoft.Management.Infrastructure.Native-stub-assembly-info.cs
+	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_BASE_REFS) $^
 
 MPATH=/usr/lib/mono/4.5/Facades
 
