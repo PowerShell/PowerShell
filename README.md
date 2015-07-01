@@ -9,8 +9,7 @@ These instructions assume Ubuntu 14.04 LTS, the same as our dependency, [CoreCLR
 
 ### Installing dependencies
 
-1. Setup the Mono package [repository][] because Ubuntu's Mono
-   packages are out of date.
+Setup the Mono package [repository][] because Ubuntu's Mono packages are out of date.
 
 ```sh
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
@@ -18,7 +17,7 @@ echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /
 sudo apt-get update
 ```
 
-2. Install necessary packages.
+Install necessary packages.
 
 - [Git][], the version control system
 - [Mono][], the C# compiler for Linux
@@ -43,8 +42,6 @@ sudo apt-get install git mono-devel nuget libunwind8 gcc g++ make cmake nodejs n
 
 ### Obtaining sources
 
-1. Configure Git.
-
 The user name and email must be set to do just about anything with Git. The URL mapping (and mshttps itself) is needed for the two factor authentication that internal VSO imposes.
 
 ```sh
@@ -54,7 +51,7 @@ git config --global url.mshttps://msostc.visualstudio.com/.insteadof https://mso
 git config --global url.mshttps://microsoft.visualstudio.com/.insteadof https://microsoft.visualstudio.com/
 ```
 
-2. Install VSO's Git mshttps remote helper, and update the system time (necessary for authentication with VSO).
+Install VSO's Git mshttps remote helper, and update the system time (necessary for authentication with VSO).
 
 ```sh
 smbclient --user=domain\\username --directory=drops\\RemoteHelper.NodeJS\\latest \\\\gitdrop\\ProjectJ -c "get git-remote-mshttps.tar.gz"
@@ -63,9 +60,9 @@ sudo chmod +x /usr/local/bin/git-remote-mshttps
 sudo ntpdate time.nist.gov
 ```
 
-If the file transfer fails with `tree connect failed: NT_STATUS_DUPLICATE_NAME`, use `nslookup gitdrop` to obtain its canonical name (currently `osgbldarcfs02.redmond.corp.microsoft.com`) and use it instead.
+> If the file transfer fails with `tree connect failed: NT_STATUS_DUPLICATE_NAME`, use `nslookup gitdrop` to obtain its canonical name (currently `osgbldarcfs02.redmond.corp.microsoft.com`) and use it instead.
 
-3. Clone our [monad-linux][] source from Visual Studio Online. We use the `develop` branch, and several submodules, necessitating the arguments.
+Clone our [monad-linux][] source from Visual Studio Online. We use the `develop` branch, and several submodules, necessitating the arguments.
 
 ```sh
 git clone -b develop --recursive https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-linux
