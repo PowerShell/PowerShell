@@ -433,6 +433,27 @@ namespace ps_hello_world
 
     class Program
     {
+
+        private static void ReportException(Exception e)
+        {
+            if (e != null)
+            {
+                object error;
+                IContainsErrorRecord icer = e as IContainsErrorRecord;
+                if (icer != null)
+                {
+                    error = icer.ErrorRecord;
+                }
+                else
+                {
+                    error = (object)new ErrorRecord(e, "Host.ReportException", ErrorCategory.NotSpecified, null);
+                }
+
+                // this should be output through PowerShell, but for simplicity just output it here
+                Console.WriteLine(error.ToString());
+            }
+        }
+
         public static void init()
         {
             string psBasePath = System.IO.Directory.GetCurrentDirectory();
@@ -468,31 +489,44 @@ namespace ps_hello_world
 
         static void test2(string[] args)
         {
-            MyHost myHost = new MyHost(new Program());
-
-            InitialSessionState iss = InitialSessionState.CreateDefault2();
-
-            using (Runspace rs = RunspaceFactory.CreateRunspace(myHost,iss))
+            try
             {
-                rs.Open();
-                using (PowerShell ps = PowerShell.Create())
-                {
-                    ps.Runspace = rs;
+                MyHost myHost = new MyHost(new Program());
 
+                InitialSessionState iss = InitialSessionState.CreateDefault2();
+
+                using (Runspace rs = RunspaceFactory.CreateRunspace(myHost,iss))
+                {
+                    rs.Open();
                     foreach (var arg in args)
                     {
-                        Console.WriteLine("script: " + arg);
-                        ps.AddScript(arg);
+                        using (PowerShell ps = PowerShell.Create())
+                        {
+                            ps.Runspace = rs;
+
+                            Console.WriteLine("script: " + arg);
+                            ps.AddScript(arg);
+                            ps.AddCommand("out-default");
+                            ps.Commands.Commands[0].MergeMyResults(PipelineResultTypes.Error,PipelineResultTypes.Output);
+                            ps.Invoke();
+                            ps.Dispose();
+                        }
                     }
-                    ps.AddCommand("out-default");
-                    ps.Commands.Commands[0].MergeMyResults(PipelineResultTypes.Error,PipelineResultTypes.Output);
-                    ps.Invoke();
                 }
+            }
+            catch (RuntimeException ex)
+            {
+                ReportException(ex);
             }
         }
 
         static void Main(string[] args)
         {
+            // important:
+            // - this function must be called for the current version of PowerShell for Linux
+            //   in order to load the assembly load context before anything else is loaded
+            // - this requirement will be removed through future updates to the native
+            //   CLR hosting code (currently corerun)
             init();
 
             //test1(args);
