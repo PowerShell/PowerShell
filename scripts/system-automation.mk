@@ -1187,12 +1187,12 @@ SYS_AUTO_RESX_SRCS=\
 	../../../jws/pswin/admin/monad/src/engine/resources/SuggestionStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/MiniShellErrors.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/MshHostRawUserInterfaceStrings.resx	\
-	../../../jws/pswin/admin/monad/src/engine/resources/MshSnapinCmdletResources.resx	\
+	../../../jws/pswin/admin/monad/src/engine/resources/MshSnapInCmdletResources.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/MshSnapinInfo.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/TypesXmlStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/TransactionStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/WildcardPatternStrings.resx	\
-	../../../jws/pswin/admin/monad/src/engine/resources/remotingerroridstrings.resx	\
+	../../../jws/pswin/admin/monad/src/engine/resources/RemotingErrorIdStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/DebuggerStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/FormatAndOut_MshParameter.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/FormatAndOut_format_xxx.resx	\
@@ -1202,7 +1202,7 @@ SYS_AUTO_RESX_SRCS=\
 	../../../jws/pswin/admin/monad/src/engine/resources/TabCompletionStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/HelpErrors.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/CoreClrStubResources.resx	\
-	../../../jws/pswin/admin/monad/src/engine/resources/modules.resx	\
+	../../../jws/pswin/admin/monad/src/engine/resources/Modules.resx	\
 
 
 SYS_AUTO_RES_SRCS=\
@@ -1256,12 +1256,12 @@ SYS_AUTO_RES_SRCS=\
 	gen/SYS_AUTO/SuggestionStrings.resources	\
 	gen/SYS_AUTO/MiniShellErrors.resources	\
 	gen/SYS_AUTO/MshHostRawUserInterfaceStrings.resources	\
-	gen/SYS_AUTO/MshSnapinCmdletResources.resources	\
+	gen/SYS_AUTO/MshSnapInCmdletResources.resources	\
 	gen/SYS_AUTO/MshSnapinInfo.resources	\
 	gen/SYS_AUTO/TypesXmlStrings.resources	\
 	gen/SYS_AUTO/TransactionStrings.resources	\
 	gen/SYS_AUTO/WildcardPatternStrings.resources	\
-	gen/SYS_AUTO/remotingerroridstrings.resources	\
+	gen/SYS_AUTO/RemotingErrorIdStrings.resources	\
 	gen/SYS_AUTO/DebuggerStrings.resources	\
 	gen/SYS_AUTO/FormatAndOut_MshParameter.resources	\
 	gen/SYS_AUTO/FormatAndOut_format_xxx.resources	\
@@ -1271,7 +1271,7 @@ SYS_AUTO_RES_SRCS=\
 	gen/SYS_AUTO/TabCompletionStrings.resources	\
 	gen/SYS_AUTO/HelpErrors.resources	\
 	gen/SYS_AUTO/CoreClrStubResources.resources	\
-	gen/SYS_AUTO/modules.resources	\
+	gen/SYS_AUTO/Modules.resources	\
 
 
 SYS_AUTO_RES_CS_SRCS=\
@@ -1325,12 +1325,12 @@ SYS_AUTO_RES_CS_SRCS=\
 	gen/SYS_AUTO/SuggestionStrings.cs	\
 	gen/SYS_AUTO/MiniShellErrors.cs	\
 	gen/SYS_AUTO/MshHostRawUserInterfaceStrings.cs	\
-	gen/SYS_AUTO/MshSnapinCmdletResources.cs	\
+	gen/SYS_AUTO/MshSnapInCmdletResources.cs	\
 	gen/SYS_AUTO/MshSnapinInfo.cs	\
 	gen/SYS_AUTO/TypesXmlStrings.cs	\
 	gen/SYS_AUTO/TransactionStrings.cs	\
 	gen/SYS_AUTO/WildcardPatternStrings.cs	\
-	gen/SYS_AUTO/remotingerroridstrings.cs	\
+	gen/SYS_AUTO/RemotingErrorIdStrings.cs	\
 	gen/SYS_AUTO/DebuggerStrings.cs	\
 	gen/SYS_AUTO/FormatAndOut_MshParameter.cs	\
 	gen/SYS_AUTO/FormatAndOut_format_xxx.cs	\
@@ -1340,7 +1340,7 @@ SYS_AUTO_RES_CS_SRCS=\
 	gen/SYS_AUTO/TabCompletionStrings.cs	\
 	gen/SYS_AUTO/HelpErrors.cs	\
 	gen/SYS_AUTO/CoreClrStubResources.cs	\
-	gen/SYS_AUTO/modules.cs	\
+	gen/SYS_AUTO/Modules.cs	\
 
 
 SYS_AUTO_RES_REF=\
@@ -1394,12 +1394,12 @@ SYS_AUTO_RES_REF=\
 	-resource:gen/SYS_AUTO/SuggestionStrings.resources	\
 	-resource:gen/SYS_AUTO/MiniShellErrors.resources	\
 	-resource:gen/SYS_AUTO/MshHostRawUserInterfaceStrings.resources	\
-	-resource:gen/SYS_AUTO/MshSnapinCmdletResources.resources	\
+	-resource:gen/SYS_AUTO/MshSnapInCmdletResources.resources	\
 	-resource:gen/SYS_AUTO/MshSnapinInfo.resources	\
 	-resource:gen/SYS_AUTO/TypesXmlStrings.resources	\
 	-resource:gen/SYS_AUTO/TransactionStrings.resources	\
 	-resource:gen/SYS_AUTO/WildcardPatternStrings.resources	\
-	-resource:gen/SYS_AUTO/remotingerroridstrings.resources	\
+	-resource:gen/SYS_AUTO/RemotingErrorIdStrings.resources	\
 	-resource:gen/SYS_AUTO/DebuggerStrings.resources	\
 	-resource:gen/SYS_AUTO/FormatAndOut_MshParameter.resources	\
 	-resource:gen/SYS_AUTO/FormatAndOut_format_xxx.resources	\
@@ -1409,7 +1409,7 @@ SYS_AUTO_RES_REF=\
 	-resource:gen/SYS_AUTO/TabCompletionStrings.resources	\
 	-resource:gen/SYS_AUTO/HelpErrors.resources	\
 	-resource:gen/SYS_AUTO/CoreClrStubResources.resources	\
-	-resource:gen/SYS_AUTO/modules.resources	\
+	-resource:gen/SYS_AUTO/Modules.resources	\
 
 
 SYS_AUTO_make_rule_RES_SRCS: $(SYS_AUTO_RES_SRCS)

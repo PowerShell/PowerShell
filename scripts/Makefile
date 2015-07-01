@@ -42,7 +42,7 @@ MI_REF=-r:$(MI_ASSEMBLY)
 
 PRODUCT_BASE_REFS=${COREREF}
 PRODUCT_MI_REFS=${COREREF} ${MI_NATIVE_REF}
-PRODUCT_PS_REFS=${COREREF} ${MI_REF_ASSEMBLY} -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
+PRODUCT_PS_REFS=${COREREF} ${MI_REF} -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 PRODUCT_COMMANDS_REFS=${COREREF} -r:dotnetlibs/System.Management.Automation.dll
 
 MCSOPTS_BASE=-unsafe -nostdlib -noconfig -define:CORECLR -define:_CORECLR
@@ -172,14 +172,14 @@ internal-prepare-debugclr:
 
 run-debugclr: dotnetlibs/powershell-run.exe internal-prepare-debugclr dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
 	#cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-run.exe "import-module -name Microsoft.PowerShell.Utility" '"a","b","c","a","a" | Select-Object -Unique'
-	cd exec_env/app_base && PAL_DBG_CHANNELS="+LOADER.TRACE" PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-run.exe "\"test blah\""
+	cd exec_env/app_base && PAL_DBG_CHANNELS="+LOADER.TRACE" PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-simple.exe "\"test blah\""
 
 trace:
-	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. strace -e trace=file ./corerun powershell-run.exe "import-module -name Microsoft.PowerShell.Utility" '"a","b","c","a","a" | Select-Object -Unique'
+	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. strace -e trace=file ./corerun powershell-simple.exe "import-module -name Microsoft.PowerShell.Utility" '"a","b","c","a","a" | Select-Object -Unique'
 
 debug: dotnetlibs/powershell-run.exe dotnetlibs/corerun internal-prepare-exec_env dotnetlibs/api-ms-win-core-registry-l1-1-0.dll
 	#LD_LIBRARY_PATH=dotnetlibs lldb-3.6 dotnetlibs/corerun dotnetlibs/powershell-run.exe
-	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=.:/usr/lib/llvm-3.6/lib lldb-3.6 ./corerun powershell-run.exe "\"hello world\""
+	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=.:/usr/lib/llvm-3.6/lib lldb-3.6 ./corerun powershell-simple.exe "\"hello world\""
 
 clean:
 	rm -f dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/powershell-run.exe dotnetlibs/Microsoft.Management.Infrastructure.Native.dll CorePsTypeCatalog.cs TypeCatalogGen.exe string-resources.dll test.dll System.Reflection.Metadata.dll System.Collections.Immutable.dll
