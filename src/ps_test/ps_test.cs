@@ -17,6 +17,8 @@ namespace PSTests
 
             PSTypeExtensionsTests.TestIsComObject();
 
+            PSEnumerableBinderTests.TestIsComObject();
+
             SecuritySupportTests.TestScanContent();
             SecuritySupportTests.TestCurrentDomain_ProcessExit();
             SecuritySupportTests.TestCloseSession();
