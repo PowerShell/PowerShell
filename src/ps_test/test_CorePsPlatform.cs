@@ -30,5 +30,10 @@ namespace PSTests
         {
             Assert.False(Platform.HasDriveAutoMounting());
         }
+
+        public static void TestHasRegistrySupport()
+        {
+            Assert.False(Platform.HasRegistrySupport());
+        }
     }
 }
