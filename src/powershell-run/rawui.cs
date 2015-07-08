@@ -8,6 +8,7 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Host;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.Samples.PowerShell.Host
 {
@@ -15,6 +16,15 @@ namespace Microsoft.Samples.PowerShell.Host
 
 	internal class MyRawUserInterface : PSHostRawUserInterface
     {
+        // this class provides features otherwise not available through .net
+        internal class Native
+        {
+            [DllImport("libps")]
+            internal static extern int GetTerminalWidth();
+            [DllImport("libps")]
+            internal static extern int GetTerminalHeight();
+        }
+
         /// <summary>
         /// Gets or sets the background color of the displayed text.
         /// This maps to the corresponding Console.Background property.
@@ -31,7 +41,7 @@ namespace Microsoft.Samples.PowerShell.Host
         /// </summary>
         public override Size BufferSize
         {
-            get { return new Size(200,500); }
+            get { return new Size(Native.GetTerminalWidth()-1,Native.GetTerminalHeight()-1); }
             set {  }
             //get { return new Size(Console.BufferWidth, Console.BufferHeight); }
             //set { Console.SetBufferSize(value.Width, value.Height); }

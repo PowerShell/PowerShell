@@ -11,7 +11,7 @@ POWERSHELL_RUN_SRCS=$(addprefix $(POWERSHELL_RUN_FOLDER)/, main.cs host.cs ui.cs
 POWERSHELL_RUN_DEPS=dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 POWERSHELL_RUN_REFS=$(addprefix -r:,$(POWERSHELL_RUN_DEPS))
 
-POWERSHELL_RUN_TARGETS=dotnetlibs/powershell-run.exe dotnetlibs/powershell-simple.exe
+POWERSHELL_RUN_TARGETS=dotnetlibs/powershell-run.exe dotnetlibs/powershell-simple.exe dotnetlibs/libps.so
 
 dotnetlibs/powershell-run.exe: $(POWERSHELL_RUN_SRCS) $(POWERSHELL_RUN_DEPS)
 	    $(CSC) -out:$@ -noconfig -nostdlib -target:exe $(POWERSHELL_RUN_REFS) $(COREREF) $(POWERSHELL_RUN_SRCS)
