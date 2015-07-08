@@ -5,13 +5,18 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 #include gtest
 include_directories(../ext-src/gtest/fused-src impl)
+link_directories(${monad_native_BINARY_DIR})
 
-set(SOURCE_FILES main.cpp tests/test-getcurrentprocessid.cpp impl/getcurrentprocessorid.cpp ../ext-src/gtest/fused-src/gtest/gtest-all.cc)
-add_executable(monad_native ${SOURCE_FILES})
+set(LIB_SOURCE_FILES impl/getcurrentprocessorid.cpp impl/getusername.cpp)
+set(TEST_SOURCE_FILES tests/test-getcurrentprocessid.cpp)
+set(SOURCE_FILES main.cpp ../ext-src/gtest/fused-src/gtest/gtest-all.cc)
 
-# add pthread
+add_library(ps SHARED ${LIB_SOURCE_FILES})
+add_executable(monad_native ${SOURCE_FILES} ${TEST_SOURCE_FILES})
+
+# add pthread and other libs
 find_package(Threads)
-target_link_libraries(monad_native ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(monad_native ${CMAKE_THREAD_LIBS_INIT} ps)
 
 
 
