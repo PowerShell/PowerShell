@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 include_directories(../ext-src/gtest/fused-src impl)
 link_directories(${monad_native_BINARY_DIR})
 
-set(LIB_SOURCE_FILES impl/getcurrentprocessorid.cpp impl/getusername.cpp)
+set(LIB_SOURCE_FILES impl/getcurrentprocessorid.cpp impl/getusername.cpp impl/terminal.cpp)
 set(TEST_SOURCE_FILES tests/test-getcurrentprocessid.cpp)
 set(SOURCE_FILES main.cpp ../ext-src/gtest/fused-src/gtest/gtest-all.cc)
 

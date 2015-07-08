@@ -54,6 +54,7 @@
     typedef char BOOL;
 	typedef unsigned short WCHAR_T;
 	typedef unsigned int UINT32;
+    typedef int INT32;
     typedef unsigned long HRESULT;
     typedef const wchar_t *PCWSTR;
     typedef wchar_t *PWSTR;
