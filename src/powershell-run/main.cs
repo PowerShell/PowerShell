@@ -7,6 +7,7 @@ namespace Microsoft.Samples.PowerShell.Host
     using System.Management.Automation.Host;
     using System.Management.Automation.Runspaces;
     using System.Text;
+    using System.IO;
     using PowerShell = System.Management.Automation.PowerShell;
 
     /// <summary>
@@ -95,17 +96,25 @@ namespace Microsoft.Samples.PowerShell.Host
             Console.WriteLine("- Type 'exit' to exit");
             Console.WriteLine("- Utility and Management cmdlet modules are loadable");
             Console.WriteLine();
-            //Console.ForegroundColor = oldFg;
+
+            String initialScript = null;
+            if (args.Length > 0 && args[0] == "--file")
+            {
+                initialScript = File.ReadAllText(args[1]);
+            }
 
             // Create the listener and run it. This method never returns.
-            PSListenerConsoleSample listener = new PSListenerConsoleSample();
-            listener.Run();
+            PSListenerConsoleSample listener = new PSListenerConsoleSample(initialScript);
+
+            // only run if there was no script file passed in
+            if (initialScript == null)
+                listener.Run();
         }
 
         /// <summary>
         /// Initializes a new instance of the PSListenerConsoleSample class.
         /// </summary>
-        public PSListenerConsoleSample()
+        public PSListenerConsoleSample(string initialScript)
         {
             // Create the host and runspace instances for this interpreter. 
             // Note that this application does not support console files so 
@@ -115,35 +124,9 @@ namespace Microsoft.Samples.PowerShell.Host
             this.myRunSpace = RunspaceFactory.CreateRunspace(this.myHost,iss);
             this.myRunSpace.Open();
 
-            // Create a PowerShell object to run the commands used to create 
-            // $profile and load the profiles.
-            lock (this.instanceLock)
-            {
-                this.currentPowerShell = PowerShell.Create();
-            }
-
-            try
-            {
-                this.currentPowerShell.Runspace = this.myRunSpace;
-
-/*                PSCommand[] profileCommands = Microsoft.Samples.PowerShell.Host.HostUtilities.GetProfileCommands("SampleHost06");
-                foreach (PSCommand command in profileCommands)
-                {
-                    this.currentPowerShell.Commands = command;
-                    this.currentPowerShell.Invoke();
-                }*/
-            }
-            finally
-            {
-                // Dispose the PowerShell object and set currentPowerShell 
-                // to null. It is locked because currentPowerShell may be 
-                // accessed by the ctrl-C handler.
-                lock (this.instanceLock)
-                {
-                    this.currentPowerShell.Dispose();
-                    this.currentPowerShell = null;
-                }
-            }
+            // run the initial script
+            if (initialScript != null)
+                executeHelper(initialScript,null);
         }
 
         /// <summary>

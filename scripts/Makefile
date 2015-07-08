@@ -159,6 +159,11 @@ run-interactive: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microso
 	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
 	cd exec_env/app_base && ./runps.sh
 
+run-file: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
+	# check if corerun is the right one (could be the debug version)
+	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
+	cd exec_env/app_base && ./runps.sh --file $(PSSCRIPT)
+
 test: dotnetlibs/ps_test_runner.exe dotnetlibs/corerun dotnetlibs/api-ms-win-core-registry-l1-1-0.dll
 	cd dotnetlibs && LD_LIBRARY_PATH=. ./corerun ps_test_runner.exe
 
