@@ -749,7 +749,7 @@ internal class ParserStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Invalid key property. The key property must be of [string] or signed/unsigned integer types..
+    ///   Looks up a localized string similar to Invalid key property. The key property must be of [string], signed/unsigned integer, or Enum types..
     /// </summary>
     internal static string DscResourceInvalidKeyProperty {
         get {

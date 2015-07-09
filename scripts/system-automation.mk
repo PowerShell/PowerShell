@@ -1187,12 +1187,12 @@ SYS_AUTO_RESX_SRCS=\
 	../../../jws/pswin/admin/monad/src/engine/resources/SuggestionStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/MiniShellErrors.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/MshHostRawUserInterfaceStrings.resx	\
-	../../../jws/pswin/admin/monad/src/engine/resources/MshSnapInCmdletResources.resx	\
+	../../../jws/pswin/admin/monad/src/engine/resources/MshSnapinCmdletResources.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/MshSnapinInfo.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/TypesXmlStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/TransactionStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/WildcardPatternStrings.resx	\
-	../../../jws/pswin/admin/monad/src/engine/resources/RemotingErrorIdStrings.resx	\
+	../../../jws/pswin/admin/monad/src/engine/resources/remotingerroridstrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/DebuggerStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/FormatAndOut_MshParameter.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/FormatAndOut_format_xxx.resx	\
@@ -1202,7 +1202,7 @@ SYS_AUTO_RESX_SRCS=\
 	../../../jws/pswin/admin/monad/src/engine/resources/TabCompletionStrings.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/HelpErrors.resx	\
 	../../../jws/pswin/admin/monad/src/engine/resources/CoreClrStubResources.resx	\
-	../../../jws/pswin/admin/monad/src/engine/resources/Modules.resx	\
+	../../../jws/pswin/admin/monad/src/engine/resources/modules.resx	\
 
 
 SYS_AUTO_RES_SRCS=\
