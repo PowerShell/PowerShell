@@ -146,6 +146,7 @@ internal-prepare-exec_env: runps.sh
 	cp -r dotnetlibs/*.exe exec_env/app_base
 	cp -r dotnetlibs/lib* exec_env/app_base
 	cp -r dotnetlibs/corerun exec_env/app_base
+	cp -r ../ext-src/pester exec_env/app_base/Modules/Pester
 	cp runps.sh exec_env/app_base
 
 run: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
