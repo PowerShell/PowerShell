@@ -210,6 +210,7 @@ docker-run: docker-build
 	docker port test_ps 4201
 	$(eval HOST_IP := $(shell ifconfig eth0 | awk '/inet addr/{print substr($$2,6)}'))
 	@echo "connect to docker at: http://${HOST_IP}:${SHELLINABOX_PORT}/"
+	@echo "use username: 'test1' and password: 'pass' to connect"
 
 docker-stop:
 	docker stop test_ps
