@@ -153,6 +153,14 @@ If you're using the Docker container, just prefix all build steps like so: `./bu
 
 ## TODO: Unit tests
 
+### Adding Pester tests
+
+Pester tests are located in the src/pester-tests folder. The makefile targets "test" and "pester-tests" will run all Pester-based tests.
+
+The steps to add your pester tests are:
+- add *.Tests.ps1  files to src/pester-tests
+- run "make pester-tests" to run the tests
+
 ## TODO: Docker shell-in-a-box
 
 ## TODO: Architecture
