@@ -201,9 +201,14 @@ docker-build:
 	$(eval INSTANCE_ID := $(shell docker inspect -f '{{.Id}}' image_ps))
 
 docker-run: docker-build
-	docker run -d -P -p 4201:4201 --name test_ps image_ps
+	#docker port is 4201 for shellinabox by default, but can be overridden
+	$(eval SHELLINABOX_PORT := $(shell if [ "${SHELLINABOX_PORT}" = "" ]; then echo 4201; else echo ${SHELLINABOX_PORT}; fi))
+	@echo "SHELLINABOX_PORT=${SHELLINABOX_PORT}"
+	docker run -d -P -p $(SHELLINABOX_PORT):4201 --name test_ps image_ps
 	docker port test_ps 22
-	docker port test_ps 4201
+	docker port test_ps $(SHELLINABOX_PORT)
+	$(eval HOST_IP := $(shell ifconfig eth0 | awk '/inet addr/{print substr($$2,6)}'))
+	@echo "connect to docker at: http://${HOST_IP}:${SHELLINABOX_PORT}/"
 
 docker-stop:
 	docker stop test_ps
