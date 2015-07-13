@@ -169,7 +169,13 @@ run-file: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.Powe
 	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
 	cd exec_env/app_base && ./runps.sh --file $(PSSCRIPT)
 
-test: dotnetlibs/ps_test_runner.exe dotnetlibs/corerun dotnetlibs/api-ms-win-core-registry-l1-1-0.dll
+pester-tests: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
+	# check if corerun is the right one (could be the debug version)
+	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
+	# execute the pester tests, pester needs a TEMP environment variable to be set
+	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-simple.exe 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
+
+test: dotnetlibs/ps_test_runner.exe dotnetlibs/corerun dotnetlibs/api-ms-win-core-registry-l1-1-0.dll pester-tests
 	cd dotnetlibs && LD_LIBRARY_PATH=. ./corerun ps_test_runner.exe
 
 # this is an internal target, it's not intended to be called manually
