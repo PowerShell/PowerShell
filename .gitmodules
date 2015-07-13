@@ -16,3 +16,6 @@
 [submodule "src/monad_app_base"]
 	path = src/monad_app_base
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad_app_base
+[submodule "ext-src/pester"]
+	path = ext-src/pester
+	url = mshttps://msostc.visualstudio.com/DefaultCollection/PS/_git/Pester
