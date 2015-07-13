@@ -3639,6 +3639,15 @@ internal class ParserStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to There is no whitespace between the name and the scriptblock in dynamic keyword &apos;{0}&apos; body statement..
+    /// </summary>
+    internal static string UnexpectedTokenInDynamicKeyword {
+        get {
+            return ResourceManager.GetString("UnexpectedTokenInDynamicKeyword", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Internal error - unexpected unary operator {0}..
     /// </summary>
     internal static string UnexpectedUnaryOperator {

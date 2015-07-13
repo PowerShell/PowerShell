@@ -125,6 +125,15 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to Unable to open pipe connection for PowerShell in container. Error code: {0}..
+    /// </summary>
+    internal static string CannotConnectContainerNamedPipe {
+        get {
+            return ResourceManager.GetString("CannotConnectContainerNamedPipe", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Unable to open pipe connection for PowerShell IPC. Error code: {0}..
     /// </summary>
     internal static string CannotConnectNamedPipe {
@@ -139,6 +148,15 @@ internal class RemotingErrorIdStrings {
     internal static string CannotCreateNamedPipe {
         get {
             return ResourceManager.GetString("CannotCreateNamedPipe", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Failed to launch PowerShell process inside container with id {0}..
+    /// </summary>
+    internal static string CannotCreateProcessInContainer {
+        get {
+            return ResourceManager.GetString("CannotCreateProcessInContainer", resourceCulture);
         }
     }
     
@@ -283,6 +301,15 @@ internal class RemotingErrorIdStrings {
     internal static string CannotStartJobInconsistentLanguageMode {
         get {
             return ResourceManager.GetString("CannotStartJobInconsistentLanguageMode", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Failed to terminate PowerShell process with id {0} inside container with id {1}..
+    /// </summary>
+    internal static string CannotTerminateProcessInContainer {
+        get {
+            return ResourceManager.GetString("CannotTerminateProcessInContainer", resourceCulture);
         }
     }
     
@@ -1518,6 +1545,15 @@ internal class RemotingErrorIdStrings {
     internal static string InvalidConfigurationXMLAttribute {
         get {
             return ResourceManager.GetString("InvalidConfigurationXMLAttribute", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The input ContainerId {0} does not exist..
+    /// </summary>
+    internal static string InvalidContainerId {
+        get {
+            return ResourceManager.GetString("InvalidContainerId", resourceCulture);
         }
     }
     
