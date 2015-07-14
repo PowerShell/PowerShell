@@ -64,6 +64,12 @@ Clone our [monad-linux][] source from Visual Studio Online. We use the `develop`
 git clone -b develop --recursive https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-linux
 ```
 
+When checking out a commit (or pulling in commits), you need to update all the submodules too.
+
+```sh
+git submodule update --init --recursive
+```
+
 [monad-linux]: https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-linux
 
 ### Setup build environment
