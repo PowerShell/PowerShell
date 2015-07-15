@@ -1,3 +1,3 @@
-function Get-HelloWorld {
-   'Hello world!'
+﻿function Get-HelloWorld{
+	'HelloWorld!'
 }
