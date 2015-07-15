@@ -9,7 +9,7 @@ Describe "Test-Get-Content" {
         Get-Content . -ErrorAction SilentlyContinue | Should Throw
         cat . -ErrorAction SilentlyContinue         | Should Throw
         gc . -ErrorAction SilentlyContinue          | Should Throw
-        type . -ErrorAction SilentlyContinue         | Should Throw
+        type . -ErrorAction SilentlyContinue        | Should Throw
 
     }
 
