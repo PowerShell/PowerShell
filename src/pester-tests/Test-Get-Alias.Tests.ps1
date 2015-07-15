@@ -4,7 +4,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
 
 Describe "Get-Alias" {
     It "should return an array of 3 objects" {
-		$val =  Microsoft.PowerShell.Utility\Get-Alias a*
+		$val = Get-Alias a*
         $val.CommandType | Should Not BeNullOrEmpty
         $val.Name 	 | Should Not BeNullOrEmpty
         $val.ModuleName  | Should BeNullOrEmpty
