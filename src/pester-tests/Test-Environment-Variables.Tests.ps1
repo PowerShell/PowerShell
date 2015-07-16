@@ -8,8 +8,12 @@ Describe "Test-Environment-Variables" {
     }
 
     It "Should be able to access the members of the environment variable in two ways" {
-        (Get-Item ENV:os).Value | Should Match 'Windows' -or 'Linux'
-        
-        $env:os | Should Match 'Windows' -or '*nux'
+        (Get-Item ENV:HOME).Value     | Should be "/root"
+	(Get-Item ENV:HOSTNAME).Value | Should Not BeNullOrEmpty
+	(Get-Item ENV:PATH).Value     | Should Not BeNullOrEmpty
+
+        (ls ENV:HOME).Value     | Should be "/root"
+	(ls ENV:HOSTNAME).Value | Should Not BeNullOrEmpty
+	(ls ENV:PATH).Value     | Should Not BeNullOrEmpty
     }
 }
