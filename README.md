@@ -134,7 +134,7 @@ Install necessary packages.
 - [CMake][], for building `src/monad-native`
 
 ```sh
-sudo apt-get install mono-devel nuget libunwind8 gcc g++ make cmake
+sudo apt-get install mono-devel libunwind8 gcc g++ make cmake
 ```
 
 [repository]: http://www.mono-project.com/docs/getting-started/install/linux/#debian-ubuntu-and-derivatives
