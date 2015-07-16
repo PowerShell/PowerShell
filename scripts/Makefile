@@ -145,7 +145,11 @@ prepare:
 internal-prepare-exec_env: runps.sh
 	rm -rf exec_env
 	mkdir exec_env
-	cp -r ../src/monad_app_base/app_base exec_env
+	mkdir exec_env/app_base
+	mkdir exec_env/app_base/Modules
+	cp ../src/monad/monad/miscfiles/display/*.ps1xml exec_env/app_base
+	cp ../src/monad/monad/miscfiles/types/CoreClr/*.ps1xml exec_env/app_base
+	cp -r ../src/monad/monad/miscfiles/modules/* exec_env/app_base/Modules
 	cp -r dotnetlibs/*.dll exec_env/app_base
 	cp -r dotnetlibs/*.exe exec_env/app_base
 	cp -r dotnetlibs/lib* exec_env/app_base
