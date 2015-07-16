@@ -136,13 +136,14 @@ dotnetlibs/corerun: $(MONAD_EXT)/coreclr/Release/corerun
 # this is the manual step that will install some stuff using nuget and do other things that can't be dependency
 # tracked that easily
 prepare:
-	rm -rf System.Reflection.Metadata.* System.Collections.Immutable.* Microsoft.Net.ToolsetCompilers.*
-	nuget install System.Reflection.Metadata
-	nuget install System.Collections.Immutable
-	nuget install Microsoft.Net.ToolsetCompilers -pre
+	rm -rf System.Reflection.Metadata.* System.Collections.Immutable.* Microsoft.Net.ToolsetCompilers.* buildtemp/nuget.exe
+	wget -O buildtemp/nuget.exe https://nuget.org/nuget.exe
+	mono buildtemp/nuget.exe install System.Reflection.Metadata
+	mono buildtemp/nuget.exe install System.Collections.Immutable
+	mono buildtemp/nuget.exe install Microsoft.Net.ToolsetCompilers -pre
 
 # this is an internal target, it's not intended to be called manually
-internal-prepare-exec_env: runps.sh
+internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS)
 	rm -rf exec_env
 	mkdir exec_env
 	mkdir exec_env/app_base
