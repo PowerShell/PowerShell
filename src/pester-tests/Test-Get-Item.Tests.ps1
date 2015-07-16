@@ -10,7 +10,7 @@ Describe "Test-Get-Item" {
 
     It "Should return the name of the current working directory when a dot is used" {
         (Get-Item .).GetType().BaseType | Should Be 'System.IO.FileSystemInfo'
-        (Get-Item .).Name | Should Be 'Tests'
+        (Get-Item .).Name | Should Be 'pester-tests'
     }
 
     It "Should return the proper Name and BaseType for directory objects vs file system objects" {
@@ -19,7 +19,7 @@ Describe "Test-Get-Item" {
     }
 
     It "Should return a different directory when a path argument is used" {
-        (Get-Item $HOME) | Should Not BeNullOrEmpty
+        (Get-Item /usr/bin) | Should Not BeNullOrEmpty
         (Get-Item ..) | Should Not BeNullOrEmpty
     }
 }
