@@ -15,15 +15,14 @@ Describe "Test-Split-Path" {
         (Split-Path .).GetType().Name |Should Be "String"
         (Split-Path . -Leaf).GetType().Name | Should Be "String"
         (Split-Path . -Resolve).GetType().Name | Should Be "String"
-        (Split-Path $HOME -Qualifier).GetType().Name | Should Be "String"
     }
 
     It "Should return the name of the drive when the qualifier switch is used" {
-        Split-Path $HOME -Qualifier | Should Be "C:"
+        Split-Path / -Qualifier | Should Be "/"
     }
 
     It "Should return the parent folder name when the leaf switch is used" {
-        Split-Path . -Leaf | Should be "Tests"
+        Split-Path . -Leaf | Should be "pester-tests"
     }
 
     It "Should be able to accept regular expression input and output an array for multiple objects" {
@@ -31,11 +30,11 @@ Describe "Test-Split-Path" {
     }
 
     It "Should be able to tell if a given path is an absolute path" {
-        (Split-Path $HOME -IsAbsolute) |Should be $true
+        (Split-Path /usr/bin -IsAbsolute) |Should be $true
         (Split-Path . -IsAbsolute) | Should be $false
     }
 
     It "Should support piping" {
-        ($HOME | Split-Path) | Should Be "C:\Users"
+        ("." | Split-Path -leaf) | Should Be "pester-tests"
     }
 }
