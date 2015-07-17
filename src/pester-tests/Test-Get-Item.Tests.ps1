@@ -1,6 +1,6 @@
 ﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
-. "$here\$sut"
+. "$here/$sut"
 
 Describe "Test-Get-Item" {
     It "Should list all the items in the current working directory when asterisk is used" {

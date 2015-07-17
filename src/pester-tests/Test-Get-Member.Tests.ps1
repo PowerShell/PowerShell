@@ -1,6 +1,6 @@
 ﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
-. "$here\$sut"
+. "$here/$sut"
 
 Describe "Test-Get-Member" {
     It "Should be able to be called on string objects, ints, arrays, etc" {

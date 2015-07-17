@@ -1,6 +1,6 @@
 ﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
-. "$here\$sut"
+. "$here/$sut"
 
 Describe "Test-Environment-Variables" {
     It "Should have environment variable" {

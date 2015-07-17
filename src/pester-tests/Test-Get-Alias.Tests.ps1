@@ -1,6 +1,6 @@
 ﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
-. "$here\$sut"
+. "$here/$sut"
 
 Describe "Get-Alias" {
     It "Should have a return type of System.Array when gal returns more than one object" {
