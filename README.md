@@ -64,7 +64,7 @@ Clone our [monad-linux][] source from Visual Studio Online. We use the `develop`
 git clone -b develop --recursive https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-linux
 ```
 
-When checking out a commit (or pulling in commits), you need to update all the submodules too.
+When checking out a commit (or pulling in commits), you **must** update all the submodules too. Not doing so is the cause of many headaches.
 
 ```sh
 git submodule update --init --recursive
@@ -102,6 +102,8 @@ Check the official [installation documentation][] first if you have problems set
 We have an [automated build repository][] on the Docker Hub that provisions an image from this [Dockerfile][]. This image contains all the necessary build dependencies, and is based on Ubuntu 14.04.
 
 Using this image amounts to running an ephemeral container with the local source code mounted as a shared volume, which is precisely what `build.sh` does (as well as pass on command-line arguments). If the `andschwa/magrathea` image is not already present, it is automatically pulled from the Hub.
+
+This is what `build.sh` looks like (there is no need to run this command manually):
 
 ```sh
 docker run --rm --interactive --tty --volume /absolute/path/to/monad-linux/:/opt/monad --workdir /opt/monad/scripts andschwa/magrathea make run
