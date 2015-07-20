@@ -6,6 +6,7 @@ namespace PSTests
 {
     public static class PSTypeExtensionsTests
     {
+        [Fact]
         public static void TestIsComObject()
         {
             // It just needs an arbitrary type

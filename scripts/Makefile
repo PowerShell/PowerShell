@@ -157,7 +157,9 @@ internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun
 	cp -r ../ext-src/pester exec_env/app_base/Modules/Pester
 	cp runps.sh exec_env/app_base
 
-run: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
+RUN_TARGETS=$(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll
+
+run: $(RUN_TARGETS) internal-prepare-exec_env
 	# check if corerun is the right one (could be the debug version)
 	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
 	# execute a cmdlet, this will auto-load the utility module and print a, b and c in 3 lines
@@ -179,7 +181,7 @@ pester-tests: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.
 	# execute the pester tests, pester needs a TEMP environment variable to be set
 	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-simple.exe 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
 
-test: internal-prepare-exec_env $(addprefix $(TESTRUN_FOLDER)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll) dotnetlibs/corerun
+test: $(RUN_TARGETS) internal-prepare-exec_env $(addprefix $(TESTRUN_FOLDER)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll) dotnetlibs/corerun
 	cd exec_env/testrun && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=../app_base ../app_base/corerun xunit.console.netcore.exe ps_test.dll
 
 # this is an internal target, it's not intended to be called manually

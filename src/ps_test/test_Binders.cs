@@ -6,6 +6,7 @@ namespace PSTests
 {
     public static class PSEnumerableBinderTests
     {
+        [Fact]
         public static void TestIsComObject()
         {
             // It just needs an arbitrary object
