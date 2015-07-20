@@ -1,3 +1,4 @@
 using System.Runtime.CompilerServices;
+using System.Reflection;
 [assembly:InternalsVisibleTo("System.Management.Automation")]
-//[assembly:InternalsVisibleTo("ps_hello_world")]
+[assembly:AssemblyFileVersionAttribute("1.0.0.0")]
