@@ -143,11 +143,10 @@ prepare:
 	mono buildtemp/nuget.exe install Microsoft.Net.ToolsetCompilers -pre
 
 # this is an internal target, it's not intended to be called manually
-internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS)
+internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun
 	rm -rf exec_env
-	mkdir exec_env
-	mkdir exec_env/app_base
-	mkdir exec_env/app_base/Modules
+	mkdir -p exec_env/app_base/Modules
+	mkdir -p exec_env/testrun
 	cp ../src/monad/monad/miscfiles/display/*.ps1xml exec_env/app_base
 	cp ../src/monad/monad/miscfiles/types/CoreClr/*.ps1xml exec_env/app_base
 	cp -r ../src/monad/monad/miscfiles/modules/* exec_env/app_base/Modules
@@ -180,8 +179,8 @@ pester-tests: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.
 	# execute the pester tests, pester needs a TEMP environment variable to be set
 	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-simple.exe 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
 
-test: dotnetlibs/ps_test_runner.exe dotnetlibs/corerun dotnetlibs/api-ms-win-core-registry-l1-1-0.dll pester-tests
-	cd dotnetlibs && LD_LIBRARY_PATH=. ./corerun ps_test_runner.exe
+test: internal-prepare-exec_env $(addprefix $(TESTRUN_FOLDER)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll) dotnetlibs/corerun
+	cd exec_env/testrun && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=../app_base ../app_base/corerun xunit.console.netcore.exe ps_test.dll
 
 # this is an internal target, it's not intended to be called manually
 internal-prepare-debugclr:
