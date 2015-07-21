@@ -1,7 +1,3 @@
-﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
-. "$here/$sut"
-
 Describe "test-Add-Member" {
    
     It "should be able to see a newly added member of an object" {
