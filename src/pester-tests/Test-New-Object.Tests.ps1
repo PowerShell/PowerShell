@@ -1,6 +1,6 @@
-﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
-. "$here/$sut"
+﻿ 
+ 
+ 
 
 Describe "New-Object" {
     It "should create an object with 4 fields" {
