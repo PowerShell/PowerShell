@@ -5,3 +5,4 @@ Makefile
 !scripts/Makefile
 cmake_install.cmake
 externals
+scripts/xunittests.xml
