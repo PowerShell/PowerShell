@@ -1,3 +1,0 @@
-﻿function test-New-Object {
-
-}

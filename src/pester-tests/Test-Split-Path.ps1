@@ -1,3 +1,0 @@
-﻿function Test-Split-Path {
-
-}
