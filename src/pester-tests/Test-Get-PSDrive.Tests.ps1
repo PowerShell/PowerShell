@@ -11,13 +11,13 @@ Describe "Test-Get-PSDrive" {
     }
 
     It "Should return drive info"{
-        (Get-PSDrive D).Name | Should Be D
-        (Get-PSDrive D).Root | Should Be D:\
-        (Get-PSDrive D).Provider.Name | Should Be FileSystem
+        (Get-PSDrive Env).Name | Should Be Env
+        (Get-PSDrive /).Root | Should Be /
+        (Get-PSDrive /).Provider.Name | Should Be FileSystem
 
-        (gdr D).Name | Should Be D
-        (gdr D).Root | Should Be D:\
-        (gdr D).Provider.Name | Should Be FileSystem
+        (gdr Env).Name | Should Be Env
+        (gdr /).Root | Should Be /
+        (gdr /).Provider.Name | Should Be FileSystem
     }
 
     It "Should be able to access switches"{
