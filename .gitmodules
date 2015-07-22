@@ -1,9 +1,6 @@
 [submodule "src/monad"]
 	path = src/monad
 	url = https://microsoft.visualstudio.com/DefaultCollection/PowerShell.Monad/_git/monad-sync1
-[submodule "src/coreclr"]
-	path = src/coreclr
-	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/coreclr-fork
 [submodule "ext-src/cppunit"]
 	path = ext-src/cppunit
 	url = git://anongit.freedesktop.org/git/libreoffice/cppunit/
