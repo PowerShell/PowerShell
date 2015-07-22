@@ -11,6 +11,7 @@ const string utf8 = "UTF-8";
 
 // https://msdn.microsoft.com/en-us/library/windows/desktop/ms724432(v=vs.85).aspx
 // Sets errno to:
+//     ERROR_INVALID_PARAMETER - parameter is not valid
 //     ERROR_BAD_ENVIRONMENT - locale is not UTF-8
 //     ERROR_TOO_MANY_OPEN_FILES - already have the maximum allowed number of open files
 //     ERROR_NO_ASSOCIATION - calling process has no controlling terminal
@@ -23,9 +24,15 @@ const string utf8 = "UTF-8";
 // Returns:
 //     1 - succeeded
 //     0 - failed
-BOOL GetUserName(WCHAR_T* lpBuffer, LPDWORD lpnSize)
+BOOL GetUserName(WCHAR_T *lpBuffer, LPDWORD lpnSize)
 {
 	errno = 0;
+
+	// Check parameters
+	if (!lpBuffer || !lpnSize) {
+		errno = ERROR_INVALID_PARAMETER;
+		return 0;
+	}
 
 	// Select locale from environment
 	setlocale(LC_ALL, "");
