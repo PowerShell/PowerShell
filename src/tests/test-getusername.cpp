@@ -8,7 +8,7 @@
 TEST(GetUserName,simple)
 {
 	// allocate a WCHAR_T buffer to receive username
-	DWORD lpnSize = 64;
+	DWORD lpnSize = L_cuserid;
 	WCHAR_T lpBuffer[lpnSize];
 
 	BOOL result = GetUserName(lpBuffer, &lpnSize);
