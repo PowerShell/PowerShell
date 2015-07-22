@@ -7,11 +7,6 @@
 #include <vector>
 #include <scxcorelib/scxstrencodingconv.h>
 
-using std::string;
-using std::vector;
-
-using SCXCoreLib::Utf8ToUtf16le;
-
 // https://msdn.microsoft.com/en-us/library/windows/desktop/ms724432(v=vs.85).aspx
 // Sets errno to:
 //     ERROR_INVALID_PARAMETER - parameter is not valid
@@ -79,9 +74,9 @@ BOOL GetUserName(WCHAR_T *lpBuffer, LPDWORD lpnSize)
 	}
 
 	// Convert to char * to WCHAR_T * (UTF-8 to UTF-16 LE w/o BOM)
-	string input = string(userName);
-	vector<unsigned char> output;
-	Utf8ToUtf16le(input, output);
+	std::string input(userName);
+	std::vector<unsigned char> output;
+	SCXCoreLib::Utf8ToUtf16le(input, output);
 
 	if (output.size()/2 + 1 > *lpnSize) {
 		errno = ERROR_INSUFFICIENT_BUFFER;
