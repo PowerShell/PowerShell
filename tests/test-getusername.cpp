@@ -26,9 +26,11 @@ TEST(GetUserName,simple)
 	// GetUserName sets lpnSize to length of username including null
 	ASSERT_EQ(username.size()+1, lpnSize);
 
-	// copy UTF-16 bytes from lpBuffer to vector for conversion
-	vector<unsigned char> input(reinterpret_cast<unsigned char *>(&lpBuffer[0]),
-	                            reinterpret_cast<unsigned char *>(&lpBuffer[lpnSize-1]));
+	// copy UTF-16 bytes (excluding null) from lpBuffer to vector for conversion
+	unsigned char *begin = reinterpret_cast<unsigned char *>(&lpBuffer[0]);
+	// -1 to skip null; *2 because UTF-16 encodes two bytes per character
+	unsigned char *end = begin + (lpnSize-1)*2;
+	vector<unsigned char> input(begin, end);
 	// convert to UTF-8 for assertion
 	string output;
 	Utf16leToUtf8(input, output);
