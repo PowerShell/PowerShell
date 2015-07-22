@@ -5,22 +5,31 @@
 #include <scxcorelib/scxstrencodingconv.h>
 #include "getusername.h"
 
-TEST(GetUserName,simple)
-{
-	// allocate a WCHAR_T buffer to receive username
-	DWORD lpnSize = L_cuserid;
-	WCHAR_T lpBuffer[lpnSize];
+class GetUserNameTest : public ::testing::Test {
+protected:
+	DWORD lpnSize;
+	std::vector<WCHAR_T> lpBuffer;
+	BOOL result;
+	std::string userName;
 
-	BOOL result = GetUserName(lpBuffer, &lpnSize);
+	GetUserNameTest(): userName(std::string(getlogin())) {}
+
+	void GetUserNameWithSize(DWORD size) {
+		lpnSize = size;
+		// allocate a WCHAR_T buffer to receive username
+		lpBuffer.assign(lpnSize, '\0');
+		result = GetUserName(&lpBuffer[0], &lpnSize);
+	}
+};
+
+TEST_F(GetUserNameTest, NormalUse) {
+	GetUserNameWithSize(L_cuserid);
 
 	// GetUserName returns 1 on success
 	ASSERT_EQ(1, result);
 
-	// get expected username
-	std::string username(getlogin());
-
 	// GetUserName sets lpnSize to length of username including null
-	ASSERT_EQ(username.size()+1, lpnSize);
+	ASSERT_EQ(userName.size()+1, lpnSize);
 
 	// copy UTF-16 bytes (excluding null) from lpBuffer to vector for conversion
 	unsigned char *begin = reinterpret_cast<unsigned char *>(&lpBuffer[0]);
@@ -31,5 +40,5 @@ TEST(GetUserName,simple)
 	std::string output;
 	SCXCoreLib::Utf16leToUtf8(input, output);
 
-	EXPECT_EQ(username, output);
+	EXPECT_EQ(userName, output);
 }
