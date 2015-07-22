@@ -5,10 +5,6 @@
 #include <scxcorelib/scxstrencodingconv.h>
 #include "getusername.h"
 
-using std::string;
-using std::vector;
-using SCXCoreLib::Utf16leToUtf8;
-
 TEST(GetUserName,simple)
 {
 	// allocate a WCHAR_T buffer to receive username
@@ -21,7 +17,7 @@ TEST(GetUserName,simple)
 	ASSERT_EQ(1, result);
 
 	// get expected username
-	string username = string(getlogin());
+	std::string username(getlogin());
 
 	// GetUserName sets lpnSize to length of username including null
 	ASSERT_EQ(username.size()+1, lpnSize);
@@ -30,10 +26,10 @@ TEST(GetUserName,simple)
 	unsigned char *begin = reinterpret_cast<unsigned char *>(&lpBuffer[0]);
 	// -1 to skip null; *2 because UTF-16 encodes two bytes per character
 	unsigned char *end = begin + (lpnSize-1)*2;
-	vector<unsigned char> input(begin, end);
+	std::vector<unsigned char> input(begin, end);
 	// convert to UTF-8 for assertion
-	string output;
-	Utf16leToUtf8(input, output);
+	std::string output;
+	SCXCoreLib::Utf16leToUtf8(input, output);
 
 	EXPECT_EQ(username, output);
 }
