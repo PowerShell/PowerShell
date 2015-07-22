@@ -43,8 +43,8 @@ BOOL GetUserName(WCHAR_T *lpBuffer, LPDWORD lpnSize)
 	}
 
 	// Get username from system in a thread-safe manner
-	char userName[L_cuserid];
-	int err = getlogin_r(userName, L_cuserid);
+	char userName[LOGIN_NAME_MAX];
+	int err = getlogin_r(userName, LOGIN_NAME_MAX);
 	// Map errno to Win32 Error Codes
 	if (err != 0) {
 		switch (errno) {

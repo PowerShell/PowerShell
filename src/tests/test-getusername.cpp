@@ -114,8 +114,8 @@ TEST_F(GetUserNameTest, BufferSizeAsUserNamePlusOne) {
 	TestSuccess();
 }
 
-TEST_F(GetUserNameTest, L_cuseridSize) {
-	// L_cuserid is big enough to hold any username
-	TestWithSize(L_cuserid);
+TEST_F(GetUserNameTest, BufferSizeAsLoginNameMax) {
+	// LoginNameMax is big enough to hold any username
+	TestWithSize(LOGIN_NAME_MAX);
 	TestSuccess();
 }
