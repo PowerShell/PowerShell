@@ -1,3 +1,6 @@
 [submodule "ext-src/gtest"]
 	path = ext-src/gtest
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/ext-gtest
+[submodule "ext-src/pal"]
+	path = ext-src/pal
+	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/ext-pal
