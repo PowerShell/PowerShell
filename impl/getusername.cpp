@@ -85,9 +85,15 @@ BOOL GetUserName(WCHAR_T *lpBuffer, LPDWORD lpnSize)
 	std::vector<unsigned char> output;
 	SCXCoreLib::Utf8ToUtf16le(username, output);
 
-	if (output.size()/2 + 1 > *lpnSize) {
+	// The length is the number of characters in the string, which
+	// is half the string size because UTF-16 encodes two bytes
+	// per character, plus one for the trailing null.
+	const DWORD length = output.size()/2 + 1;
+	if (length > *lpnSize) {
 		errno = ERROR_INSUFFICIENT_BUFFER;
-		*lpnSize = output.size()/2 + 1;
+		// Set lpnSize if buffer is too small to inform user
+		// of necessary size
+		*lpnSize = length;
 		return 0;
 	}
 
