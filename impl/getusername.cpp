@@ -80,6 +80,7 @@ BOOL GetUserName(WCHAR_T *lpBuffer, LPDWORD lpnSize)
 
 	if (output.size()/2 + 1 > *lpnSize) {
 		errno = ERROR_INSUFFICIENT_BUFFER;
+		*lpnSize = output.size()/2 + 1;
 		return 0;
 	}
 
