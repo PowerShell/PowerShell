@@ -24,7 +24,7 @@
 //     0 - failed
 BOOL GetUserName(WCHAR_T *lpBuffer, LPDWORD lpnSize)
 {
-	static const std::string utf8 = "UTF-8";
+	const std::string utf8 = "UTF-8";
 
 	errno = 0;
 
