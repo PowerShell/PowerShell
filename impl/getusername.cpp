@@ -12,8 +12,6 @@ using std::vector;
 
 using SCXCoreLib::Utf8ToUtf16le;
 
-const string utf8 = "UTF-8";
-
 // https://msdn.microsoft.com/en-us/library/windows/desktop/ms724432(v=vs.85).aspx
 // Sets errno to:
 //     ERROR_INVALID_PARAMETER - parameter is not valid
@@ -31,6 +29,8 @@ const string utf8 = "UTF-8";
 //     0 - failed
 BOOL GetUserName(WCHAR_T *lpBuffer, LPDWORD lpnSize)
 {
+	static const std::string utf8 = "UTF-8";
+
 	errno = 0;
 
 	// Check parameters
