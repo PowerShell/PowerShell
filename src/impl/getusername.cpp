@@ -43,8 +43,8 @@ BOOL GetUserName(WCHAR_T *lpBuffer, LPDWORD lpnSize)
 	}
 
 	// Get username from system in a thread-safe manner
-	char userName[LOGIN_NAME_MAX];
-	int err = getlogin_r(userName, LOGIN_NAME_MAX);
+	std::string username(LOGIN_NAME_MAX, '\0');
+	int err = getlogin_r(&username[0], username.size());
 	// Map errno to Win32 Error Codes
 	if (err != 0) {
 		switch (errno) {
@@ -73,10 +73,17 @@ BOOL GetUserName(WCHAR_T *lpBuffer, LPDWORD lpnSize)
 		return 0;
 	}
 
+	// "Trim" the username to the first trailing null because
+	// otherwise the std::string with repeated null characters is
+	// valid, and the conversion will still include all the null
+	// characters. Creating a std::string from the C string of the
+	// original effectively trims it to the first null, without
+	// the need to manually trim whitespace (nor using Boost).
+	username = std::string(username.c_str());
+
 	// Convert to char * to WCHAR_T * (UTF-8 to UTF-16 LE w/o BOM)
-	std::string input(userName);
 	std::vector<unsigned char> output;
-	SCXCoreLib::Utf8ToUtf16le(input, output);
+	SCXCoreLib::Utf8ToUtf16le(username, output);
 
 	if (output.size()/2 + 1 > *lpnSize) {
 		errno = ERROR_INSUFFICIENT_BUFFER;
