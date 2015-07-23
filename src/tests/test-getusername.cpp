@@ -10,9 +10,9 @@ protected:
 	DWORD lpnSize;
 	std::vector<WCHAR_T> lpBuffer;
 	BOOL result;
-	std::string userName;
+	std::string expectedUsername;
 
-	GetUserNameTest(): userName(std::string(getlogin())) {}
+	GetUserNameTest(): expectedUsername(std::string(getlogin())) {}
 
 	void TestWithSize(DWORD size) {
 		lpnSize = size;
@@ -27,7 +27,7 @@ protected:
 		EXPECT_EQ(1, result);
 
 		// sets lpnSize to length of username + null
-		ASSERT_EQ(userName.size()+1, lpnSize);
+		ASSERT_EQ(expectedUsername.size()+1, lpnSize);
 
 		// copy UTF-16 bytes (excluding null) from lpBuffer to vector for conversion
 		unsigned char *begin = reinterpret_cast<unsigned char *>(&lpBuffer[0]);
@@ -38,7 +38,7 @@ protected:
 		std::string output;
 		SCXCoreLib::Utf16leToUtf8(input, output);
 
-		EXPECT_EQ(userName, output);
+		EXPECT_EQ(expectedUsername, output);
 	}
 
 	void TestInvalidParameter() {
@@ -62,7 +62,7 @@ protected:
 		EXPECT_EQ(errno, ERROR_INSUFFICIENT_BUFFER);
 
 		// sets lpnSize to length of username + null
-		EXPECT_EQ(userName.size()+1, lpnSize);
+		EXPECT_EQ(expectedUsername.size()+1, lpnSize);
 	}
 };
 
@@ -98,19 +98,19 @@ TEST_F(GetUserNameTest, BufferSizeAsOne) {
 
 TEST_F(GetUserNameTest, BufferSizeAsUserName) {
 	// the buffer is too small because this does not include null
-	TestWithSize(userName.size());
+	TestWithSize(expectedUsername.size());
 	TestInsufficientBuffer();
 }
 
 TEST_F(GetUserNameTest, BufferSizeAsUserNameMinusOne) {
 	// the buffer is also too small
-	TestWithSize(userName.size()-1);
+	TestWithSize(expectedUsername.size()-1);
 	TestInsufficientBuffer();
 }
 
 TEST_F(GetUserNameTest, BufferSizeAsUserNamePlusOne) {
 	// the buffer is exactly big enough will null
-	TestWithSize(userName.size()+1);
+	TestWithSize(expectedUsername.size()+1);
 	TestSuccess();
 }
 
