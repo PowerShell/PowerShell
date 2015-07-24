@@ -41,5 +41,13 @@ namespace PSTests
         {
             Assert.False(Platform.HasRegistrySupport());
         }
+
+        [Fact]
+        public static void TestGetUserName()
+        {
+            // Use Assert.Equal("yourusername",
+            // Platform.NonWindowsGetUserName()) to test without regex
+            Assert.Matches("^[a-z][a-z0-9\\-]*$", Platform.NonWindowsGetUserName());
+        }
     }
 }
