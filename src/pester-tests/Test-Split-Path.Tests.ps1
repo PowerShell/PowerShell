@@ -1,8 +1,4 @@
-﻿ 
- 
- 
-
-Describe "Test-Split-Path" {
+﻿Describe "Test-Split-Path" {
 <#
     Dependencies:
     1. Split-Path - FUT
@@ -12,8 +8,8 @@ Describe "Test-Split-Path" {
 
 #>
     It "Should return a string object when invoked" {
-        (Split-Path .).GetType().Name |Should Be "String"
-        (Split-Path . -Leaf).GetType().Name | Should Be "String"
+        (Split-Path .).GetType().Name          | Should Be "String"
+        (Split-Path . -Leaf).GetType().Name    | Should Be "String"
         (Split-Path . -Resolve).GetType().Name | Should Be "String"
     }
 
@@ -30,8 +26,8 @@ Describe "Test-Split-Path" {
     }
 
     It "Should be able to tell if a given path is an absolute path" {
-        (Split-Path /usr/bin -IsAbsolute) |Should be $true
-        (Split-Path . -IsAbsolute) | Should be $false
+        (Split-Path /usr/bin -IsAbsolute) | Should be $true
+        (Split-Path . -IsAbsolute)        | Should be $false
     }
 
     It "Should support piping" {

@@ -1,5 +1,5 @@
 Describe "test-Add-Member" {
-   
+
     It "should be able to see a newly added member of an object" {
         $o = New-Object psobject
         Add-Member -InputObject $o -MemberType NoteProperty -Name proppy -Value "superVal"

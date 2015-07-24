@@ -1,8 +1,4 @@
-﻿ 
- 
- 
-
-Describe "Test-Get-Member" {
+﻿Describe "Test-Get-Member" {
     It "Should be able to be called on string objects, ints, arrays, etc" {
         $a = 1 #test numbers
         $b = 1.3
@@ -10,7 +6,7 @@ Describe "Test-Get-Member" {
         $d = @(1,3) # test arrays
         $e = "anoeduntodeu" #test strings
         $f = 'asntoheusth' #test strings
-        
+
         Get-Member -InputObject $a | Should Not BeNullOrEmpty
         Get-Member -InputObject $b | Should Not BeNullOrEmpty
         Get-Member -InputObject $c | Should Not BeNullOrEmpty

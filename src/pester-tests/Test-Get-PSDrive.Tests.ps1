@@ -1,22 +1,21 @@
-﻿
-Describe "Test-Get-PSDrive" {
+﻿Describe "Test-Get-PSDrive" {
     It "Should not throw" {
-        Get-PSDrive | Should Not BeNullOrEmpty
-        (Get-PSDrive).Name | Should Not BeNullOrEmpty 
+        Get-PSDrive               | Should Not BeNullOrEmpty
+        (Get-PSDrive).Name        | Should Not BeNullOrEmpty 
         (Get-PSDrive).Root.Length | Should Not BeLessThan 1
 
-        gdr | Should Not BeNullOrEmpty
-        (gdr).Name | Should Not BeNullOrEmpty 
+        gdr               | Should Not BeNullOrEmpty
+        (gdr).Name        | Should Not BeNullOrEmpty 
         (gdr).Root.Length | Should Not BeLessThan 1
     }
 
     It "Should return drive info"{
-        (Get-PSDrive Env).Name | Should Be Env
-        (Get-PSDrive /).Root | Should Be /
+        (Get-PSDrive Env).Name        | Should Be Env
+        (Get-PSDrive /).Root          | Should Be /
         (Get-PSDrive /).Provider.Name | Should Be FileSystem
 
-        (gdr Env).Name | Should Be Env
-        (gdr /).Root | Should Be /
+        (gdr Env).Name        | Should Be Env
+        (gdr /).Root          | Should Be /
         (gdr /).Provider.Name | Should Be FileSystem
     }
 
