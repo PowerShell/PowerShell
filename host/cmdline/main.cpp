@@ -172,22 +172,23 @@ int main(int argc, char** argv)
     std::cout << "returnValue=" << returnValue << std::endl;
 
 
-    typedef void (*UnmanagedEntry)();
-    UnmanagedEntry unmanagedEntry = nullptr;
+    typedef void (*UnmanagedMain)(int argc, const char** argv);
+    UnmanagedMain unmanagedMain = nullptr;
     status = createDelegate(
                         hostHandle,
                         domainId,
                         "powershell-simple, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
                         "ps_hello_world.Program",
-                        "UnmanagedEntry",
-                        (void**)&unmanagedEntry);
+                        "UnmanagedMain",
+                        (void**)&unmanagedMain);
     if (0 > status)
     {
-        std::cerr << "could not create delegate for UnmanagedEntry - status: " << std::hex << status << std::endl;
+        std::cerr << "could not create delegate for UnmanagedMain - status: " << std::hex << status << std::endl;
         return 4;
     }
 
-    unmanagedEntry();
+    const char* testargs[] = { "get-process | out-host", "get-module" };
+    unmanagedMain(2,testargs);
 
     return 0;
 }
