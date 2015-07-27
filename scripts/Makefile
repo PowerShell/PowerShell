@@ -116,8 +116,8 @@ libps-build/Makefile: ../src/monad-native/src/CMakeLists.txt
 	rm -f ../src/monad-native/src/cmake_install.cmake 
 	cd libps-build && cmake ../../src/monad-native/src/
 
-dotnetlibs/libps.so dotnetlibs/monad_native: libps-build/Makefile
-	cd libps-build && make VERBOSE=0 && cp monad_native ../dotnetlibs && cp libps.so ../dotnetlibs
+dotnetlibs/libps.so dotnetlibs/monad_native dotnetlibs/host_cmdline: libps-build/Makefile
+	cd libps-build && make VERBOSE=0 && cp monad_native ../dotnetlibs && cp libps.so ../dotnetlibs && cp host_cmdline ../dotnetlibs
 
 libps.so-test: dotnetlibs/libps.so dotnetlibs/monad_native
 	cd dotnetlibs && LD_LIBRARY_PATH=. ./monad_native
@@ -154,6 +154,7 @@ internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun
 	cp -r dotnetlibs/*.exe exec_env/app_base
 	cp -r dotnetlibs/lib* exec_env/app_base
 	cp -r dotnetlibs/corerun exec_env/app_base
+	cp dotnetlibs/host_cmdline exec_env/app_base
 	cp -r ../ext-src/pester exec_env/app_base/Modules/Pester
 	cp runps.sh exec_env/app_base
 
@@ -164,6 +165,12 @@ run: $(RUN_TARGETS) internal-prepare-exec_env
 	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
 	# execute a cmdlet, this will auto-load the utility module and print a, b and c in 3 lines
 	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-simple.exe '"a","b","c","a","a" | Select-Object -Unique'
+
+run-host: $(RUN_TARGETS) dotnetlibs/host_cmdline internal-prepare-exec_env
+	# check if corerun is the right one (could be the debug version)
+	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
+	# execute a cmdlet, this will auto-load the utility module and print a, b and c in 3 lines
+	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./host_cmdline powershell-simple.exe '"a","b","c","a","a" | Select-Object -Unique'
 
 run-interactive: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
 	# check if corerun is the right one (could be the debug version)

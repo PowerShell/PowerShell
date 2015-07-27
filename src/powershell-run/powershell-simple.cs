@@ -8,6 +8,7 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Host;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace ps_hello_world
 {
@@ -456,8 +457,11 @@ namespace ps_hello_world
 
         public static void init()
         {
-            string psBasePath = System.IO.Directory.GetCurrentDirectory();
-            PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(psBasePath);
+            //string psBasePath = System.IO.Directory.GetCurrentDirectory();
+            //PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(psBasePath);
+            
+            //Assembly a = Assembly.Load(new AssemblyName("System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
+            //Console.WriteLine("##########################\nloaded assembly a=" + a + " during init\n#########################");
 
             // PH: this debugging requires a change in the core PS stuff that was stashed away
             //     during source cleanup
@@ -518,6 +522,19 @@ namespace ps_hello_world
             {
                 ReportException(ex);
             }
+        }
+
+        public static void UnmanagedMain(int argc, [MarshalAs(UnmanagedType.LPArray,ArraySubType=UnmanagedType.LPStr,SizeParamIndex=0)] String[] argv)
+        {
+            init();
+            List<String> allArgs = new List<String>();
+
+            for (int i = 0; i < argc; ++i)
+            {
+                allArgs.Add(argv[i]);
+            }
+
+            test2(allArgs.ToArray());
         }
 
         static void Main(string[] args)
