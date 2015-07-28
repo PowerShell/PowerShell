@@ -170,9 +170,7 @@ run-host: $(RUN_TARGETS) dotnetlibs/host_cmdline internal-prepare-exec_env
 	# check if corerun is the right one (could be the debug version)
 	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
 	# execute a cmdlet, this will auto-load the utility module and print a, b and c in 3 lines
-	#cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./host_cmdline
-	#cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./host_cmdline powershell-simple.exe '"a","b","c","a","a" | Select-Object -Unique'
-	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./host_cmdline -b /tmp "powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null" "ps_hello_world.Program" "UnmanagedMain" '"a","b","c","a","a" | Select-Object -Unique'
+	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./host_cmdline "powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null" "ps_hello_world.Program" "UnmanagedMain" '"a","b","c","a","a" | Select-Object -Unique'
 
 run-interactive: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
 	# check if corerun is the right one (could be the debug version)
