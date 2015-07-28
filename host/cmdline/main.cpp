@@ -3,62 +3,172 @@
 #include "coreclrutil.h"
 #include <limits.h>
 #include <dlfcn.h>
+#include <unicode/utypes.h>
+#include <unicode/ucnv.h>
+#include <unicode/ustring.h>
+#include <unicode/uchar.h>
+
+namespace Cmdline
+{
+    
+void printHelp()
+{
+    std::cerr << "PS CoreCLR host" << std::endl;
+    std::cerr << "Usage: host_cmdline [-c coreclr_path] [-alc load_context_assembly] [-s search_paths]" << std::endl;
+    std::cerr << "                    [-b base_path] assembly_name type_name function_name [...]" << std::endl;
+    std::cerr << std::endl;
+    std::cerr << "What it does:" << std::endl;
+    std::cerr << "- by default the host assumes that CoreCLR is located in the same folder" << std::endl;
+    std::cerr << "  as host_cmdline" << std::endl;
+    std::cerr << "  + this behavior can be overridden with the -c command line argument" << std::endl;
+    std::cerr << "- by default the host assumes that the assembly named" << std::endl;
+    std::cerr << "  Microsoft.PowerShell.CoreCLR.AssemblyLoadContext is part of the" << std::endl;
+    std::cerr << "  platform assemblies" << std::endl;
+    std::cerr << "  + a custom assembly containing the PowerShellAssemblyLoadContext can" << std::endl;
+    std::cerr << "    be provided with the -alc command line argument" << std::endl;
+    std::cerr << "- all additional parameters at the end of the command line are forwarded" << std::endl;
+    std::cerr << "  to the specified entry function in the assembly" << std::endl;
+    std::cerr << "- the host will execute the specified entry function in the specified assembly" << std::endl;
+    std::cerr << "  + this assembly has to be located in the search path" << std::endl;
+    std::cerr << "- by default the host will add the current working directory to the assembly search path" << std::endl;
+    std::cerr << "  + this can be overridden with the -s command line argument" << std::endl;
+    std::cerr << "- by default the host assumes the PS base path for the assembly load context is the current" << std::endl;
+    std::cerr << "  working directory" << std::endl;
+    std::cerr << "  + this can be overridden with the -b command line argument" << std::endl;
+    std::cerr << "- the function signature of the function that gets executed must be:" << std::endl;
+    std::cerr << "  public static int UnmanagedMain(int argc, [MarshalAs(UnmanagedType.LPArray,ArraySubType=UnmanagedType.LPStr,SizeParamIndex=0)] String[] argv)" << std::endl;
+    std::cerr << std::endl;
+    std::cerr << "Options:" << std::endl;
+    std::cerr << "-c, --clr-path    path to libcoreclr.so and the managed CLR assemblies" << std::endl;
+    std::cerr << "-alc              path to a dll containing Microsoft.PowerShell.CoreCLR.AssemblyLoadContext" << std::endl;
+    std::cerr << "-s                a list of assembly search paths, separated by :" << std::endl;
+    std::cerr << "-b                the powershell assembly base path" << std::endl;
+    std::cerr << "assembly_name     the assembly name of the assembly to execute" << std::endl;
+    std::cerr << "                  must be available in the search path" << std::endl;
+    std::cerr << "type_name         the type name where the function can be found" << std::endl;
+    std::cerr << "function_name     the function to execute (must have the function signature described above!)" << std::endl;
+    std::cerr << std::endl;
+    std::cerr << "Example:" << std::endl;
+    std::cerr << "./host_cmdline -c /test/coreclr -alc /test/ps/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll -s /test/ps -b /test/ps 'powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null' 'ps_hello_world.Program' 'UnmanagedMain' 'get-process'" << std::endl;
+}
+
+struct Args
+{
+    Args() :
+        argc(0),
+        argv(nullptr)
+    {
+    }
+
+    std::string clrPath;
+    std::string assemblyLoadContextFilePath;
+    std::string searchPaths;
+    std::string basePath;
+    std::string entryAssemblyName;
+    std::string entryTypeName;
+    std::string entryFunctionName;
+    int argc;
+    char** argv;
+
+    void debugPrint() const
+    {
+        std::cerr << "Args:" << std::endl;
+        std::cerr << "- clrPath                       " << clrPath << std::endl;
+        std::cerr << "- assemblyLoadContextFilePath   " << assemblyLoadContextFilePath << std::endl;
+        std::cerr << "- searchPaths                   " << searchPaths << std::endl;
+        std::cerr << "- basePath                      " << basePath << std::endl;
+        std::cerr << "- entryAssemblyName             " << entryAssemblyName << std::endl;
+        std::cerr << "- entryTypeName                 " << entryTypeName << std::endl;
+        std::cerr << "- entryFunctionName             " << entryFunctionName << std::endl;
+        std::cerr << "- argc                          " << argc << std::endl;
+    }
+};
+
+// this is implemented without any 3rd party lib to keep the list
+// of dependencies low
+bool parseCmdline(const int argc, char** argv, Args& args)
+{
+    if (argc <= 1)
+    {
+        std::cerr << "error: missing arguments" << std::endl;
+        return false;
+    }
+
+    for (int i = 1; i < argc; ++i)
+    {
+        const std::string arg = argv[i];
+        const bool hasNextArg = i+1 < argc;
+        const std::string nextArg = hasNextArg ? std::string(argv[i+1]) : std::string("");
+
+        if (hasNextArg && (arg == "-c" || arg == "--clr-path"))
+        {
+            args.clrPath = nextArg;
+            ++i;
+        }
+        else if (hasNextArg && arg == "-alc")
+        {
+            args.assemblyLoadContextFilePath = nextArg;
+            ++i;
+        }
+        else if (hasNextArg && arg == "-s")
+        {
+            args.searchPaths = nextArg;
+            ++i;
+        }
+        else if (hasNextArg && arg == "-b")
+        {
+            args.basePath = nextArg;
+            ++i;
+        }
+        else if (args.entryAssemblyName == "")
+        {
+            args.entryAssemblyName = arg;
+        }
+        else if (args.entryTypeName == "")
+        {
+            args.entryTypeName = arg;
+        }
+        else if (args.entryFunctionName == "")
+        {
+            args.entryFunctionName = arg;
+        }
+        else
+        {
+            // forward command line parameters
+            args.argc = argc-i;
+            args.argv = &argv[i];
+        }
+    }
+
+    // check for mandatory parameters
+    if (args.entryAssemblyName == "")
+    {
+        std::cerr << "error: assembly_name argument missing" << std::endl;
+    }
+    if (args.entryTypeName == "")
+    {
+        std::cerr << "error: type_name argument missing" << std::endl;
+    }
+    if (args.entryFunctionName == "")
+    {
+        std::cerr << "error: function_name argument missing" << std::endl;
+    }
+
+    return true;
+}
+
+}
 
 int main(int argc, char** argv)
 {
-    // TODO: read from command line args
-    std::string clrAbsolutePath = "/home/peter/gitwd/monad-linux/scripts/exec_env/app_base";
-
-    // managed assembly arguments
-    int managedAssemblyArgc = 0;
-    const char* managedAssemblyArgv[] = { "" };
-
-    // there are two assemblies involved in hosting PowerShell:
-    // - Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll
-    //   + this assembly has to be listed as platform assembly
-    // - System.Management.Automation.dll
-    std::string powershellBaseAbsolutePath = "/home/peter/gitwd/monad-linux/scripts/exec_env/app_base";
-    std::string assemblyLoadContextAssemblyName = "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext";
-    std::string assemblyLoadContextAbsolutePath = powershellBaseAbsolutePath + "/" + assemblyLoadContextAssemblyName + ".dll";
-    std::string systemManagementAutomationAssemblyName = "System.Management.Automation";
-    std::string systemManagementAutomationAbsolutePath = powershellBaseAbsolutePath + "/" + systemManagementAutomationAssemblyName + ".dll";
-
-    std::string coreClrDllPath = clrAbsolutePath + "/" + CoreCLRUtil::coreClrDll;
-    if (coreClrDllPath.size() >= PATH_MAX)
+    // parse the command line arguments
+    Cmdline::Args args;
+    if (!Cmdline::parseCmdline(argc,argv,args))
     {
-        std::cerr << "Absolute path to CoreCLR library too long" << std::endl;
+        Cmdline::printHelp();
         return 1;
     }
-    std::cout << "coreClrDllPath: " << coreClrDllPath << std::endl;
-
-    // TPA list
-    //
-    // The list of platform assemblies must include all CoreCLR assemblies
-    // and the Microsoft.PowerShell.CoreCLR.AssemblyLoadContext
-    //
-    // TODO: move CLR assemblies to separate path during build&run make steps
-    // TODO: only add assembly load context to TPA list, not any other PS dll
-    
-    std::string tpaList;
-    CoreCLRUtil::AddFilesFromDirectoryToTpaList(clrAbsolutePath.c_str(),tpaList);
-    std::cout << "tpaList: " << tpaList << std::endl;
-
-    // assembly load paths
-    //
-    // All PowerShell assemblies are assumed to be in the same path
-
-    std::string appPath;
-    if (!CoreCLRUtil::GetDirectory(assemblyLoadContextAbsolutePath.c_str(),appPath))
-    {
-        std::cerr << "failed to get assembly search directory from assembly absolute path" << std::endl;
-        return 1;
-    }
-    std::cout << "appPath: " << appPath << std::endl;
-
-    // search paths for native dlls
-    //
-    // Add both the CoreCLR directory and the PowerShell directory to this list
-    std::string nativeDllSearchDirs = appPath + ":" + clrAbsolutePath;
+    args.debugPrint();
 
     // get the absolute path of the current executable
     std::string currentExeAbsolutePath;
@@ -67,6 +177,91 @@ int main(int argc, char** argv)
         std::cerr << "could not get absolute path of current executable" << std::endl;
         return 1;
     }
+    std::cerr << "currentExeAbsolutePath=" << currentExeAbsolutePath << std::endl;
+ 
+    // CLR absolute folder path
+    //
+    // This path is created from the location of this executable or a path
+    // specified with the -c command line argument
+    std::string clrAbsolutePath;
+    const char* clrPathArg = args.clrPath == "" ? nullptr : args.clrPath.c_str();
+    if (!CoreCLRUtil::GetClrFilesAbsolutePath(currentExeAbsolutePath.c_str(),clrPathArg,clrAbsolutePath))
+    {
+        std::cerr << "could not find absolute CLR path" << std::endl;
+        return 1;
+    }
+
+    // the path to the CoreCLR library
+    //
+    // This is typically libcoreclr.so on Linux and libcoreclr.dylib on Mac
+
+    std::string coreClrDllPath = clrAbsolutePath + "/" + CoreCLRUtil::coreClrDll;
+    if (coreClrDllPath.size() >= PATH_MAX)
+    {
+        std::cerr << "Absolute path to CoreCLR library too long" << std::endl;
+        return 1;
+    }
+    std::cerr << "coreClrDllPath: " << coreClrDllPath << std::endl;
+
+    // TPA list
+    //
+    // The list of platform assemblies must include all CoreCLR assemblies
+    // and the Microsoft.PowerShell.CoreCLR.AssemblyLoadContext
+    //
+    // if the -alc parameter was specified, add it to the TPA list here
+    
+    std::string tpaList;
+    CoreCLRUtil::AddFilesFromDirectoryToTpaList(clrAbsolutePath.c_str(),tpaList);
+    
+    if (args.assemblyLoadContextFilePath != "")
+        tpaList += ":" + args.assemblyLoadContextFilePath;
+
+    std::cerr << "tpaList: " << tpaList << std::endl;
+
+    // get the absolute path of the current directory
+
+    std::string currentDirAbsolutePath;
+    if (!CoreCLRUtil::GetAbsolutePath(".",currentDirAbsolutePath))
+    {
+        std::cerr << "failed to get the absolute path from current working directory" << std::endl;
+        return 1;
+    }
+
+    // assembly search paths
+    //
+    // add the current directory and anything specified with the -s option
+
+    std::string appPath = currentDirAbsolutePath;
+    if (args.searchPaths != "")
+        appPath += ":" + args.searchPaths;
+    std::cerr << "appPath: " << appPath << std::endl;
+
+    // search paths for native dlls
+    //
+    // Add both the CoreCLR directory and the regular search paths to this list
+    std::string nativeDllSearchDirs = appPath + ":" + clrAbsolutePath;
+
+    // convert the app base to utf-16
+    //
+    // this is needed as a utf-16 LE string by CoreCLR/PS's assembly load context interface
+    // it is either:
+    // - the current dir's absolute path
+    // - the path specified through the -b argument
+    std::string psBasePath = currentDirAbsolutePath;
+    if (args.basePath != "")
+    {
+        if (!CoreCLRUtil::GetAbsolutePath(args.basePath.c_str(),psBasePath))
+        {
+            std::cerr << "failed to get the absolute path from the base_path argument" << std::endl;
+            return 1;
+        }
+    }
+    std::basic_string<char16_t> psBasePath16(PATH_MAX,0);
+
+    UnicodeString u8str = UnicodeString(psBasePath.c_str(),"UTF-8");
+    int32_t targetSize = u8str.extract(0,u8str.length(),(char*)&psBasePath16[0],psBasePath16.size()*sizeof(char16_t),"UTF-16LE");
+    psBasePath16.resize(targetSize/sizeof(char16_t)+1);
+    std::cerr << "targetSize=" << targetSize << std::endl;
 
     // open the shared library
     void* coreclrLib = dlopen(coreClrDllPath.c_str(), RTLD_NOW|RTLD_LOCAL);
@@ -155,31 +350,17 @@ int main(int argc, char** argv)
         std::cerr << "could not create delegate for SetPowerShellAssemblyLoadContext - status: " << std::hex << status << std::endl;
         return 4;
     }
+    loaderDelegate(psBasePath16.c_str());
 
-    loaderDelegate(u"/home/peter/gitwd/monad-linux/scripts/exec_env/app_base");
-
-
-    typedef int (*TestDelegate)();
-    TestDelegate testDelegate = nullptr;
-    status = createDelegate(
-                        hostHandle,
-                        domainId,
-                        "System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-                        "System.Management.Automation.Platform",
-                        "IsLinux",
-                        (void**)&testDelegate);
-    int returnValue = testDelegate();
-    std::cout << "returnValue=" << returnValue << std::endl;
-
-
-    typedef void (*UnmanagedMain)(int argc, const char** argv);
+    // call the unmanaged entry point for PowerShell
+    typedef int (*UnmanagedMain)(int argc, char const* const* argv);
     UnmanagedMain unmanagedMain = nullptr;
     status = createDelegate(
                         hostHandle,
                         domainId,
-                        "powershell-simple, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-                        "ps_hello_world.Program",
-                        "UnmanagedMain",
+                        args.entryAssemblyName.c_str(),
+                        args.entryTypeName.c_str(),
+                        args.entryFunctionName.c_str(),
                         (void**)&unmanagedMain);
     if (0 > status)
     {
@@ -187,9 +368,21 @@ int main(int argc, char** argv)
         return 4;
     }
 
-    const char* testargs[] = { "get-process | out-host", "get-module" };
-    unmanagedMain(2,testargs);
+    int exitCode = unmanagedMain(args.argc,args.argv);
 
-    return 0;
+    // shutdown CoreCLR
+    status = shutdownCoreCLR(hostHandle,domainId);
+    if (0 > status)
+    {
+        std::cerr << "coreclr_shutdown failed - status: " << std::hex << status << std::endl;
+    }
+
+    // close the dynamic library
+    if (0 != dlclose(coreclrLib))
+    {
+        std::cerr << "failed to close CoreCLR library" << std::endl;
+    }
+
+    return exitCode;
 }
 

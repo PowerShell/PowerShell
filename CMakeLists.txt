@@ -21,7 +21,7 @@ add_executable(host_cmdline ${HOST_CMDLINE_SOURCE_FILES})
 # add pthread and other libs
 find_package(Threads)
 target_link_libraries(monad_native ${CMAKE_THREAD_LIBS_INIT} ps)
-target_link_libraries(host_cmdline dl)
+target_link_libraries(host_cmdline dl icuuc)
 
 
 
