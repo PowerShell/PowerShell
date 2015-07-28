@@ -164,12 +164,6 @@ run: $(RUN_TARGETS) internal-prepare-exec_env
 	# check if corerun is the right one (could be the debug version)
 	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
 	# execute a cmdlet, this will auto-load the utility module and print a, b and c in 3 lines
-	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-simple.exe '"a","b","c","a","a" | Select-Object -Unique'
-
-run-host: $(RUN_TARGETS) dotnetlibs/host_cmdline internal-prepare-exec_env
-	# check if corerun is the right one (could be the debug version)
-	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
-	# execute a cmdlet, this will auto-load the utility module and print a, b and c in 3 lines
 	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./host_cmdline "powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null" "ps_hello_world.Program" "UnmanagedMain" '"a","b","c","a","a" | Select-Object -Unique'
 
 run-interactive: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
@@ -186,7 +180,7 @@ pester-tests: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.
 	# check if corerun is the right one (could be the debug version)
 	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
 	# execute the pester tests, pester needs a TEMP environment variable to be set
-	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-simple.exe 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
+	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./host_cmdline "powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null" "ps_hello_world.Program" "UnmanagedMain" 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
 
 test: $(RUN_TARGETS) internal-prepare-exec_env $(addprefix $(TESTRUN_FOLDER)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll) dotnetlibs/corerun pester-tests
 	cd exec_env/testrun && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=../app_base ../app_base/corerun xunit.console.netcore.exe ps_test.dll -xml ../../xunittests.xml
@@ -196,14 +190,13 @@ internal-prepare-debugclr:
 	cp -r $(MONAD_EXT)/coreclr/Debug/* dotnetlibs
 
 run-debugclr: dotnetlibs/powershell-run.exe internal-prepare-debugclr dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
-	#cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-run.exe "import-module -name Microsoft.PowerShell.Utility" '"a","b","c","a","a" | Select-Object -Unique'
-	cd exec_env/app_base && PAL_DBG_CHANNELS="+LOADER.TRACE" PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./corerun powershell-simple.exe "\"test blah\""
+	cd exec_env/app_base && PAL_DBG_CHANNELS="+LOADER.TRACE" PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./host_cmdline "powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null" "ps_hello_world.Program" "UnmanagedMain" "test"
 
 trace:
-	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. strace -e trace=file ./corerun powershell-simple.exe "import-module -name Microsoft.PowerShell.Utility" '"a","b","c","a","a" | Select-Object -Unique'
+	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. strace -e trace=file ./host_cmdline "powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null" "ps_hello_world.Program" "UnmanagedMain" '"a","b","c","a","a" | Select-Object -Unique'
 
 debug: dotnetlibs/powershell-run.exe dotnetlibs/corerun internal-prepare-exec_env dotnetlibs/api-ms-win-core-registry-l1-1-0.dll
-	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=.:/usr/lib/llvm-3.6/lib lldb-3.6 ./corerun powershell-simple.exe "\"hello world\""
+	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=.:/usr/lib/llvm-3.6/lib lldb-3.6 ./host_cmdline "powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null" "ps_hello_world.Program" "UnmanagedMain" '"hello world"'
 
 clean:
 	rm -f dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/powershell-run.exe dotnetlibs/Microsoft.Management.Infrastructure.Native.dll CorePsTypeCatalog.cs buildtemp/TypeCatalogGen.exe string-resources.dll test.dll buildtemp/System.Reflection.Metadata.dll buildtemp/System.Collections.Immutable.dll
