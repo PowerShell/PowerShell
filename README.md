@@ -134,9 +134,10 @@ Install necessary packages.
 - GCC and G++, for compiling C and C++ native code
 - [GNU Make][], for building `monad-linux`
 - [CMake][], for building `src/monad-native`
+- libicu-dev, for building `src/monad-native`
 
 ```sh
-sudo apt-get install mono-devel libunwind8 gcc g++ make cmake
+sudo apt-get install mono-devel libunwind8 gcc g++ make cmake libicu-dev
 ```
 
 [repository]: http://www.mono-project.com/docs/getting-started/install/linux/#debian-ubuntu-and-derivatives
