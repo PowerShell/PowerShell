@@ -12,7 +12,7 @@ RUN ifconfig
 RUN cat /etc/resolv.conf
 RUN ping -c 1 8.8.8.8
 RUN apt-get update
-RUN apt-get install -y openssh-server wget libstdc++6 libunwind8
+RUN apt-get install -y openssh-server wget libstdc++6 libunwind8 libicu52
 #RUN mkdir /var/run/sshd
 RUN echo 'root:pass' | chpasswd
 RUN adduser --shell /opt/app_base/runps.sh --disabled-password --gecos "" test1
