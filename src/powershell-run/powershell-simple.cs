@@ -524,7 +524,7 @@ namespace ps_hello_world
             }
         }
 
-        public static void UnmanagedMain(int argc, [MarshalAs(UnmanagedType.LPArray,ArraySubType=UnmanagedType.LPStr,SizeParamIndex=0)] String[] argv)
+        public static int UnmanagedMain(int argc, [MarshalAs(UnmanagedType.LPArray,ArraySubType=UnmanagedType.LPStr,SizeParamIndex=0)] String[] argv)
         {
             init();
             List<String> allArgs = new List<String>();
@@ -535,6 +535,8 @@ namespace ps_hello_world
             }
 
             test2(allArgs.ToArray());
+
+            return 0;
         }
 
         static void Main(string[] args)
