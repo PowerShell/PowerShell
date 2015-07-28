@@ -43,6 +43,7 @@ void printHelp()
     std::cerr << "-alc              path to a dll containing Microsoft.PowerShell.CoreCLR.AssemblyLoadContext" << std::endl;
     std::cerr << "-s                a list of assembly search paths, separated by :" << std::endl;
     std::cerr << "-b                the powershell assembly base path" << std::endl;
+    std::cerr << "-v                verbose output, show paths" << std::endl;
     std::cerr << "assembly_name     the assembly name of the assembly to execute" << std::endl;
     std::cerr << "                  must be available in the search path" << std::endl;
     std::cerr << "type_name         the type name where the function can be found" << std::endl;
@@ -56,7 +57,8 @@ struct Args
 {
     Args() :
         argc(0),
-        argv(nullptr)
+        argv(nullptr),
+        verbose(false)
     {
     }
 
@@ -69,6 +71,7 @@ struct Args
     std::string entryFunctionName;
     int argc;
     char** argv;
+    bool verbose;
 
     void debugPrint() const
     {
@@ -81,6 +84,7 @@ struct Args
         std::cerr << "- entryTypeName                 " << entryTypeName << std::endl;
         std::cerr << "- entryFunctionName             " << entryFunctionName << std::endl;
         std::cerr << "- argc                          " << argc << std::endl;
+        std::cerr << "- verbose                       " << (verbose ? "true" : "false") << std::endl;
     }
 };
 
@@ -168,7 +172,8 @@ int main(int argc, char** argv)
         Cmdline::printHelp();
         return 1;
     }
-    args.debugPrint();
+    if (args.verbose)
+        args.debugPrint();
 
     // get the absolute path of the current executable
     std::string currentExeAbsolutePath;
@@ -177,7 +182,8 @@ int main(int argc, char** argv)
         std::cerr << "could not get absolute path of current executable" << std::endl;
         return 1;
     }
-    std::cerr << "currentExeAbsolutePath=" << currentExeAbsolutePath << std::endl;
+    if (args.verbose)
+        std::cerr << "currentExeAbsolutePath=" << currentExeAbsolutePath << std::endl;
  
     // CLR absolute folder path
     //
@@ -201,7 +207,8 @@ int main(int argc, char** argv)
         std::cerr << "Absolute path to CoreCLR library too long" << std::endl;
         return 1;
     }
-    std::cerr << "coreClrDllPath: " << coreClrDllPath << std::endl;
+    if (args.verbose)
+        std::cerr << "coreClrDllPath: " << coreClrDllPath << std::endl;
 
     // TPA list
     //
@@ -216,7 +223,8 @@ int main(int argc, char** argv)
     if (args.assemblyLoadContextFilePath != "")
         tpaList += ":" + args.assemblyLoadContextFilePath;
 
-    std::cerr << "tpaList: " << tpaList << std::endl;
+    if (args.verbose)
+        std::cerr << "tpaList: " << tpaList << std::endl;
 
     // get the absolute path of the current directory
 
@@ -234,7 +242,9 @@ int main(int argc, char** argv)
     std::string appPath = currentDirAbsolutePath;
     if (args.searchPaths != "")
         appPath += ":" + args.searchPaths;
-    std::cerr << "appPath: " << appPath << std::endl;
+
+    if (args.verbose)
+        std::cerr << "appPath: " << appPath << std::endl;
 
     // search paths for native dlls
     //
@@ -256,12 +266,13 @@ int main(int argc, char** argv)
             return 1;
         }
     }
-    std::basic_string<char16_t> psBasePath16(PATH_MAX,0);
+
+    // make sure to leave 1 byte at the end for null termination
+    std::basic_string<char16_t> psBasePath16(PATH_MAX+1,0);
 
     UnicodeString u8str = UnicodeString(psBasePath.c_str(),"UTF-8");
-    int32_t targetSize = u8str.extract(0,u8str.length(),(char*)&psBasePath16[0],psBasePath16.size()*sizeof(char16_t),"UTF-16LE");
+    int32_t targetSize = u8str.extract(0,u8str.length(),(char*)&psBasePath16[0],(psBasePath16.size()-1)*sizeof(char16_t),"UTF-16LE");
     psBasePath16.resize(targetSize/sizeof(char16_t)+1);
-    std::cerr << "targetSize=" << targetSize << std::endl;
 
     // open the shared library
     void* coreclrLib = dlopen(coreClrDllPath.c_str(), RTLD_NOW|RTLD_LOCAL);
