@@ -34,7 +34,7 @@ include commands-utility.mk
 include management-infrastructure.mk
 include security.mk
 
-NUGETREF=-r:System.Reflection.Metadata.dll -r:System.Collections.Immutable.dll
+NUGETREF=-r:buildtemp/System.Reflection.Metadata.dll -r:buildtemp/System.Collections.Immutable.dll
 
 MI_NATIVE_REF=-r:dotnetlibs/Microsoft.Management.Infrastructure.Native.dll
 MI_REF_ASSEMBLY=-r:$(MONAD_EXT)/PS/PS_refs_modil/microsoft.management.infrastructure.metadata_dll
@@ -85,11 +85,11 @@ dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET): $(ASSEMBLY_LOAD_CONTEXT_SRCS)
 	$(CSC) -out:$@ ${MCSOPTS_LIB} ${PRODUCT_BASE_REFS} $(ASSEMBLY_LOAD_CONTEXT_SRCS)
 
 # this will copy whatever the first version of the dll in the globber is
-System.Reflection.Metadata.dll: System.Reflection.Metadata.*/lib/portable-net45+win8/System.Reflection.Metadata.dll
+buildtemp/System.Reflection.Metadata.dll: System.Reflection.Metadata.*/lib/portable-net45+win8/System.Reflection.Metadata.dll
 	cp -f $< $@
 
 # this will copy whatever the first version of the dll in the globber is
-System.Collections.Immutable.dll: System.Collections.Immutable.*/lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.dll
+buildtemp/System.Collections.Immutable.dll: System.Collections.Immutable.*/lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.dll
 	cp -f $< $@
 
 # this one is built from stubs
@@ -98,13 +98,13 @@ dotnetlibs/Microsoft.Management.Infrastructure.Native.dll: ../src/stubs/Microsof
 
 MPATH=/usr/lib/mono/4.5/Facades
 
-TypeCatalogGen.exe: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/TypeCatalogGen/TypeCatalogGen.cs System.Reflection.Metadata.dll System.Collections.Immutable.dll
+buildtemp/TypeCatalogGen.exe: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/TypeCatalogGen/TypeCatalogGen.cs buildtemp/System.Reflection.Metadata.dll buildtemp/System.Collections.Immutable.dll
 	$(MCS) -out:$@ -target:exe ${NUGETREF} -pkg:dotnet -r:${MPATH}/System.Runtime.dll -r:${MPATH}/System.Reflection.Primitives.dll -r:${MPATH}/System.IO.dll $<
 
 # generate the Core PS type catalog
 # this comes from: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/makefile.inc
-CorePsTypeCatalog.cs: powershell-linux.inc TypeCatalogGen.exe System.Reflection.Metadata.dll System.Collections.Immutable.dll
-	LD_LIBRARY_PATH=. mono TypeCatalogGen.exe powershell-linux.inc $@ $(MONAD_EXT)/coreclr/TargetingPack
+CorePsTypeCatalog.cs: powershell-linux.inc buildtemp/TypeCatalogGen.exe buildtemp/System.Reflection.Metadata.dll buildtemp/System.Collections.Immutable.dll
+	LD_LIBRARY_PATH=. mono buildtemp/TypeCatalogGen.exe powershell-linux.inc $@ $(MONAD_EXT)/coreclr/TargetingPack
 
 # the pinvoke library libps.so
 
@@ -199,7 +199,7 @@ debug: dotnetlibs/powershell-run.exe dotnetlibs/corerun internal-prepare-exec_en
 	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=.:/usr/lib/llvm-3.6/lib lldb-3.6 ./corerun powershell-simple.exe "\"hello world\""
 
 clean:
-	rm -f dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/powershell-run.exe dotnetlibs/Microsoft.Management.Infrastructure.Native.dll CorePsTypeCatalog.cs TypeCatalogGen.exe string-resources.dll test.dll System.Reflection.Metadata.dll System.Collections.Immutable.dll
+	rm -f dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/powershell-run.exe dotnetlibs/Microsoft.Management.Infrastructure.Native.dll CorePsTypeCatalog.cs buildtemp/TypeCatalogGen.exe string-resources.dll test.dll buildtemp/System.Reflection.Metadata.dll buildtemp/System.Collections.Immutable.dll
 	rm -rf exec_env
 	rm -rf libps-build
 	rm -rf dotnetlibs/*
