@@ -19,3 +19,4 @@ commands-utility-win.mk
 management-infrastructure-win.mk
 system-automation-win.mk
 CorePsTypeCatalog.cs
+buildtemp/

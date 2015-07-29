@@ -55,7 +55,7 @@ SRCS_ALL=${STRING_RESOURCES} ${SRCS}
 # compilers
 # - Roslyn's csc is used for all the PS code
 # - Mono's mcs is used for build helper tools
-CSC=mono Microsoft.Net.ToolsetCompilers.*/tools/csc.exe
+CSC=mono buildtemp/Microsoft.Net.ToolsetCompilers.*/tools/csc.exe
 MCS=mcs
 
 all: dotnetlibs/System.Management.Automation.dll $(POWERSHELL_RUN_TARGETS) dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
@@ -85,11 +85,11 @@ dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET): $(ASSEMBLY_LOAD_CONTEXT_SRCS)
 	$(CSC) -out:$@ ${MCSOPTS_LIB} ${PRODUCT_BASE_REFS} $(ASSEMBLY_LOAD_CONTEXT_SRCS)
 
 # this will copy whatever the first version of the dll in the globber is
-buildtemp/System.Reflection.Metadata.dll: System.Reflection.Metadata.*/lib/portable-net45+win8/System.Reflection.Metadata.dll
+buildtemp/System.Reflection.Metadata.dll: buildtemp/System.Reflection.Metadata.*/lib/portable-net45+win8/System.Reflection.Metadata.dll
 	cp -f $< $@
 
 # this will copy whatever the first version of the dll in the globber is
-buildtemp/System.Collections.Immutable.dll: System.Collections.Immutable.*/lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.dll
+buildtemp/System.Collections.Immutable.dll: buildtemp/System.Collections.Immutable.*/lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.dll
 	cp -f $< $@
 
 # this one is built from stubs
@@ -136,11 +136,11 @@ dotnetlibs/corerun: $(MONAD_EXT)/coreclr/Release/corerun
 # this is the manual step that will install some stuff using nuget and do other things that can't be dependency
 # tracked that easily
 prepare:
-	rm -rf System.Reflection.Metadata.* System.Collections.Immutable.* Microsoft.Net.ToolsetCompilers.* buildtemp/nuget.exe
+	rm -rf buildtemp/System.Reflection.Metadata.* buildtemp/System.Collections.Immutable.* buildtemp/Microsoft.Net.ToolsetCompilers.* buildtemp/nuget.exe
 	wget -O buildtemp/nuget.exe https://nuget.org/nuget.exe
-	mono buildtemp/nuget.exe install System.Reflection.Metadata
-	mono buildtemp/nuget.exe install System.Collections.Immutable
-	mono buildtemp/nuget.exe install Microsoft.Net.ToolsetCompilers -pre
+	cd buildtemp && mono nuget.exe install System.Reflection.Metadata
+	cd buildtemp && mono nuget.exe install System.Collections.Immutable
+	cd buildtemp && mono nuget.exe install Microsoft.Net.ToolsetCompilers -pre
 
 # this is an internal target, it's not intended to be called manually
 internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun
@@ -206,7 +206,7 @@ clean:
 
 # clean built stuff + prepare step
 cleanall: clean
-	rm -rf System.Reflection.Metadata.* System.Collections.Immutable.*
+	rm -rf buildtemp/*
 
 docker-build:
 	docker build --no-cache=false -t image_ps .
