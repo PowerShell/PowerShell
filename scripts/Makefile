@@ -158,7 +158,7 @@ internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun
 	cp -r ../ext-src/pester exec_env/app_base/Modules/Pester
 	cp runps.sh exec_env/app_base
 
-RUN_TARGETS=$(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll
+RUN_TARGETS=$(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll dotnetlibs/host_cmdline
 
 run: $(RUN_TARGETS) internal-prepare-exec_env
 	# check if corerun is the right one (could be the debug version)
