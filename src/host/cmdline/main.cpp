@@ -124,6 +124,10 @@ bool parseCmdline(const int argc, char** argv, Args& args)
             args.basePath = nextArg;
             ++i;
         }
+        else if (arg == "-v")
+        {
+            args.verbose = true;
+        }
         else if (args.entryAssemblyName == "")
         {
             args.entryAssemblyName = arg;
