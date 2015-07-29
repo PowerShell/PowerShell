@@ -137,10 +137,10 @@ dotnetlibs/corerun: $(MONAD_EXT)/coreclr/Release/corerun
 # tracked that easily
 prepare:
 	rm -rf buildtemp/System.Reflection.Metadata.* buildtemp/System.Collections.Immutable.* buildtemp/Microsoft.Net.ToolsetCompilers.* buildtemp/nuget.exe
-	wget -O buildtemp/nuget.exe https://nuget.org/nuget.exe
+	cp $(MONAD_EXT)/nuget/nuget.exe buildtemp/nuget.exe
 	cd buildtemp && mono nuget.exe install -Version 1.0.21 System.Reflection.Metadata
 	cd buildtemp && mono nuget.exe install -Version 1.1.36 System.Collections.Immutable
-	cd buildtemp && mono nuget.exe install Microsoft.Net.ToolsetCompilers -pre
+	cd buildtemp && mono nuget.exe install -Version 1.0.0-rc3-20150520-02 Microsoft.Net.ToolsetCompilers
 
 # this is an internal target, it's not intended to be called manually
 internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun
