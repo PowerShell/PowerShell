@@ -410,6 +410,13 @@ int main(int argc, char** argv)
     }
     loaderDelegate(psBasePath16.c_str());
 
+    // NOTE:
+    // this code is intended for testing purposes only, it calls into the Main
+    // function of the powershell-simple.exe assembly, because that's what would
+    // be nice to have.
+    unsigned int exitCode2;
+    executeAssembly(hostHandle,domainId,args.argc,(const char**)args.argv,(currentDirAbsolutePath+"/powershell-simple.exe").c_str(),&exitCode2);
+
     // call the unmanaged entry point for PowerShell
     typedef int (*UnmanagedMain)(int argc, char const* const* argv);
     UnmanagedMain unmanagedMain = nullptr;
