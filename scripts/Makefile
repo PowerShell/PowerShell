@@ -138,8 +138,8 @@ dotnetlibs/corerun: $(MONAD_EXT)/coreclr/Release/corerun
 prepare:
 	rm -rf buildtemp/System.Reflection.Metadata.* buildtemp/System.Collections.Immutable.* buildtemp/Microsoft.Net.ToolsetCompilers.* buildtemp/nuget.exe
 	wget -O buildtemp/nuget.exe https://nuget.org/nuget.exe
-	cd buildtemp && mono nuget.exe install System.Reflection.Metadata
-	cd buildtemp && mono nuget.exe install System.Collections.Immutable
+	cd buildtemp && mono nuget.exe install -Version 1.0.21 System.Reflection.Metadata
+	cd buildtemp && mono nuget.exe install -Version 1.1.36 System.Collections.Immutable
 	cd buildtemp && mono nuget.exe install Microsoft.Net.ToolsetCompilers -pre
 
 # this is an internal target, it's not intended to be called manually
