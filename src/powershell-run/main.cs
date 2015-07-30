@@ -109,28 +109,46 @@ namespace Microsoft.Samples.PowerShell.Host
         private static void ManagedMain(string[] args)
         {
 
-            // Display the welcome message.
-            Console.WriteLine();
-            Console.WriteLine("PowerShell for Linux interactive console");
-            Console.WriteLine("========================================");
-            Console.WriteLine();
-            Console.WriteLine("Current status:");
-            Console.WriteLine("- Type 'exit' to exit");
-            Console.WriteLine("- Utility and Management cmdlet modules are loadable");
-            Console.WriteLine();
-
             String initialScript = null;
-            if (args.Length > 0 && args[0] == "--file")
+            if (args.Length > 0)
             {
-                initialScript = File.ReadAllText(args[1]);
+                for (int i = 0; i < args.Length; ++i)
+                {
+                    string arg = args[i];
+                    bool hasNext = (i+1)<args.Length;
+                    string nextArg = hasNext ? args[i+1] : "";
+
+                    if (hasNext && arg == "--file")
+                    {
+                        initialScript = File.ReadAllText(nextArg);
+                        ++i;
+                    }
+                    else if (hasNext && arg == "--working-dir")
+                    {
+                        Directory.SetCurrentDirectory(nextArg);
+                        ++i;
+                    }
+                }
             }
 
-            // Create the listener and run it. This method never returns.
+            // Create the listener and run it
             PSListenerConsoleSample listener = new PSListenerConsoleSample(initialScript);
 
             // only run if there was no script file passed in
             if (initialScript == null)
+            {
+                // Display the welcome message.
+                Console.WriteLine();
+                Console.WriteLine("PowerShell for Linux interactive console");
+                Console.WriteLine("========================================");
+                Console.WriteLine();
+                Console.WriteLine("Current status:");
+                Console.WriteLine("- Type 'exit' to exit");
+                Console.WriteLine("- Utility and Management cmdlet modules are loadable");
+                Console.WriteLine();
+
                 listener.Run();
+            }
         }
 
         /// <summary>

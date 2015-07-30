@@ -9,6 +9,7 @@ using System.Management.Automation.Host;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace ps_hello_world
 {
@@ -534,7 +535,27 @@ namespace ps_hello_world
                 allArgs.Add(argv[i]);
             }
 
-            test2(allArgs.ToArray());
+            List<string> filteredArgs = new List<string>();
+            if (allArgs.Count > 0)
+            {
+                for (int i = 0; i < allArgs.Count; ++i)
+                {
+                    string arg = allArgs[i];
+                    bool hasNext = (i+1)<allArgs.Count;
+                    string nextArg = hasNext ? allArgs[i+1] : "";
+
+                    if (hasNext && arg == "--working-dir")
+                    {
+                        Console.WriteLine("working dir set to: " + nextArg);
+                        Directory.SetCurrentDirectory(nextArg);
+                        ++i;
+                    }
+                    else
+                        filteredArgs.Add(arg);
+                }
+            }
+
+            test2(filteredArgs.ToArray());
 
             return 0;
         }
