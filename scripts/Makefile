@@ -159,6 +159,7 @@ internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS)
 	cp -r ../src/monad/monad/miscfiles/modules/* exec_env/app_base/Modules
 	cp -r dotnetlibs/*.dll exec_env/app_base
 	cp -r dotnetlibs/*.exe exec_env/app_base
+	cp -r dotnetlibs/*.so exec_env/app_base
 	cp dotnetlibs/host_cmdline exec_env/app_base
 	cp -r ../ext-src/pester exec_env/app_base/Modules/Pester
 	cp runps*.sh exec_env/app_base
