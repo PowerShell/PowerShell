@@ -71,6 +71,7 @@
     #define FALSE 0
     #define ERROR_INVALID_PARAMETER 87
     #define ERROR_OUTOFMEMORY 14
+    #define ERROR_BUFFER_OVERFLOW 111
     #define MAX_PATH 0x00000104
     typedef unsigned long long uint64;
 #endif
