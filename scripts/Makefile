@@ -58,7 +58,9 @@ SRCS_ALL=${STRING_RESOURCES} ${SRCS}
 CSC=mono buildtemp/Microsoft.Net.ToolsetCompilers.*/tools/csc.exe
 MCS=mcs
 
-all: dotnetlibs/System.Management.Automation.dll $(POWERSHELL_RUN_TARGETS) dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
+RUN_TARGETS=$(POWERSHELL_RUN_TARGETS) dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll dotnetlibs/host_cmdline
+
+all: dotnetlibs/System.Management.Automation.dll $(RUN_TARGETS) dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 
 # this is the build rule for SMA.dll
 dotnetlibs/System.Management.Automation.dll: ${SYS_AUTO_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS) ${SYS_AUTO_RES_SRCS} ${SYS_AUTO_RES_CS_SRCS}
@@ -129,10 +131,6 @@ libps.so-test: dotnetlibs/libps.so dotnetlibs/monad_native
 dotnetlibs/api-ms-win-core-registry-l1-1-0.dll: ../src/win-dll/lib-api-ms-win-core-registry-l1-1-0.c
 	gcc -o $@ -fPIC -shared -Wall $^
 
-# this is the rule to copy over updated CoreCLR + .net libraries
-dotnetlibs/corerun: $(MONAD_EXT)/coreclr/Release/corerun
-	cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs
-
 # this is the manual step that will install some stuff using nuget and do other things that can't be dependency
 # tracked that easily
 prepare:
@@ -143,60 +141,62 @@ prepare:
 	cd buildtemp && mono nuget.exe install -Version 1.0.0-rc3-20150520-02 Microsoft.Net.ToolsetCompilers
 
 # this is an internal target, it's not intended to be called manually
-internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun
+#
+# it will:
+# - create necessary directories for deployment layout
+# - copy all the PowerShell stuff into PowerShell's app_base
+# - copy the custom host and other scripts into PowerShell's app_base
+# - copy PS modules
+#
+# This rule does not copy coreclr, because the selection of debug or
+# release CoreCLR depends on the actual run target.
+internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS)
 	rm -rf exec_env
 	mkdir -p exec_env/app_base/Modules
-	mkdir -p exec_env/testrun
+	mkdir -p exec_env/coreclr
 	cp ../src/monad/monad/miscfiles/display/*.ps1xml exec_env/app_base
 	cp ../src/monad/monad/miscfiles/types/CoreClr/*.ps1xml exec_env/app_base
 	cp -r ../src/monad/monad/miscfiles/modules/* exec_env/app_base/Modules
 	cp -r dotnetlibs/*.dll exec_env/app_base
 	cp -r dotnetlibs/*.exe exec_env/app_base
-	cp -r dotnetlibs/lib* exec_env/app_base
-	cp -r dotnetlibs/corerun exec_env/app_base
 	cp dotnetlibs/host_cmdline exec_env/app_base
 	cp -r ../ext-src/pester exec_env/app_base/Modules/Pester
-	cp runps.sh exec_env/app_base
+	cp runps*.sh exec_env/app_base
 
-RUN_TARGETS=$(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll dotnetlibs/host_cmdline
-
-run: $(RUN_TARGETS) internal-prepare-exec_env
-	# check if corerun is the right one (could be the debug version)
-	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
-	# execute a cmdlet, this will auto-load the utility module and print a, b and c in 3 lines
-	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./host_cmdline "powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null" "ps_hello_world.Program" "UnmanagedMain" '"a","b","c","a","a" | Select-Object -Unique'
-
-run-interactive: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
-	# check if corerun is the right one (could be the debug version)
-	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
-	cd exec_env/app_base && ./runps.sh
-
-run-file: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
-	# check if corerun is the right one (could be the debug version)
-	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
-	cd exec_env/app_base && ./runps.sh --file $(PSSCRIPT)
-
-pester-tests: $(POWERSHELL_RUN_TARGETS) dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
-	# check if corerun is the right one (could be the debug version)
-	if ! diff dotnetlibs/corerun $(MONAD_EXT)/coreclr/Release/corerun; then cp -r $(MONAD_EXT)/coreclr/Release/* dotnetlibs; fi
-	# execute the pester tests, pester needs a TEMP environment variable to be set
-	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./host_cmdline "powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null" "ps_hello_world.Program" "UnmanagedMain" 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
-
-test: $(RUN_TARGETS) internal-prepare-exec_env $(addprefix $(TESTRUN_FOLDER)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll) dotnetlibs/corerun pester-tests
-	cd exec_env/testrun && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=../app_base ../app_base/corerun xunit.console.netcore.exe ps_test.dll -xml ../../xunittests.xml
+internal-prepare-release-clr:
+	cp -r $(MONAD_EXT)/coreclr/Release/* exec_env/coreclr/
 
 # this is an internal target, it's not intended to be called manually
-internal-prepare-debugclr:
-	cp -r $(MONAD_EXT)/coreclr/Debug/* dotnetlibs
+internal-prepare-debug-clr:
+	cp -r $(MONAD_EXT)/coreclr/Debug/* exec_env/coreclr/
 
-run-debugclr: dotnetlibs/powershell-run.exe internal-prepare-debugclr dotnetlibs/corerun dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll internal-prepare-exec_env
-	cd exec_env/app_base && PAL_DBG_CHANNELS="+LOADER.TRACE" PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. ./host_cmdline "powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null" "ps_hello_world.Program" "UnmanagedMain" "test"
+run: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+	# execute a cmdlet, this will auto-load the utility module and print a, b and c in 3 lines
+	exec_env/app_base/runps-simple.sh '"a","b","c","a","a" | Select-Object -Unique'
 
-trace:
-	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=. strace -e trace=file ./host_cmdline "powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null" "ps_hello_world.Program" "UnmanagedMain" '"a","b","c","a","a" | Select-Object -Unique'
+run-interactive: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+	exec_env/app_base/runps.sh
 
-debug: dotnetlibs/powershell-run.exe dotnetlibs/corerun internal-prepare-exec_env dotnetlibs/api-ms-win-core-registry-l1-1-0.dll
-	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=.:/usr/lib/llvm-3.6/lib lldb-3.6 ./host_cmdline "powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null" "ps_hello_world.Program" "UnmanagedMain" '"hello world"'
+run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+	exec_env/app_base/runps.sh --file $(PSSCRIPT)
+
+pester-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+	# execute the pester tests, pester needs a TEMP environment variable to be set
+	exec_env/app_base/runps-simple.sh 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
+
+test: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr $(addprefix $(TESTRUN_FOLDER)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll) pester-tests dotnetlibs/monad_native
+	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=../coreclr:. ../coreclr/corerun xunit.console.netcore.exe ps_test.dll -xml ../../xunittests.xml
+	cd dotnetlibs && ./monad_native
+
+run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-debug-clr
+	PAL_DBG_CHANNELS="+LOADER.TRACE" exec_env/app_base/runps-simple.sh get-location
+
+trace: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+	exec_env/app_base/runps-simple-trace.sh get-location
+
+debug: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+	# quoting here is a bit special if strings are passed in, because lldb seems to forward arguments strangely
+	exec_env/app_base/runps-simple-debug.sh get-location
 
 clean:
 	rm -f dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/powershell-run.exe dotnetlibs/Microsoft.Management.Infrastructure.Native.dll CorePsTypeCatalog.cs buildtemp/TypeCatalogGen.exe string-resources.dll test.dll buildtemp/System.Reflection.Metadata.dll buildtemp/System.Collections.Immutable.dll

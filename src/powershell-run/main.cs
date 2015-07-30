@@ -8,6 +8,7 @@ namespace Microsoft.Samples.PowerShell.Host
     using System.Management.Automation.Runspaces;
     using System.Text;
     using System.IO;
+    using System.Runtime.InteropServices;
     using PowerShell = System.Management.Automation.PowerShell;
 
     /// <summary>
@@ -73,10 +74,26 @@ namespace Microsoft.Samples.PowerShell.Host
             set { this.exitCode = value; }
         }
 
+        // TODO:PSL this needs to be removed, it is only here for legacy testing purposes
         public static void init()
         {
             string psBasePath = System.IO.Directory.GetCurrentDirectory();
             PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(psBasePath);
+        }
+
+        // this is the unmanaged main entry point used by the CoreCLR host
+        public static int UnmanagedMain(int argc, [MarshalAs(UnmanagedType.LPArray,ArraySubType=UnmanagedType.LPStr,SizeParamIndex=0)] String[] argv)
+        {
+            List<String> allArgs = new List<String>();
+
+            for (int i = 0; i < argc; ++i)
+            {
+                allArgs.Add(argv[i]);
+            }
+
+            ManagedMain(allArgs.ToArray());
+
+            return 0;
         }
 
         /// <summary>
@@ -86,6 +103,11 @@ namespace Microsoft.Samples.PowerShell.Host
         private static void Main(string[] args)
         {
             init();
+            ManagedMain(args);
+        }
+
+        private static void ManagedMain(string[] args)
+        {
 
             // Display the welcome message.
             Console.WriteLine();

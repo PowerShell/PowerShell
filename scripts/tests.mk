@@ -1,5 +1,5 @@
 TEST_FOLDER=../src/ps_test
-TESTRUN_FOLDER=exec_env/testrun
+TESTRUN_FOLDER=exec_env/app_base
 TEST_SRCS=$(addprefix $(TEST_FOLDER)/, test_*.cs)
 
 $(TESTRUN_FOLDER)/xunit%: $(MONAD_EXT)/xunit/xunit%
