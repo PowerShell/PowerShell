@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "getcomputername.h"
+#include <iostream>
 
 TEST(GetComputerName,simple)
 {	
@@ -26,11 +27,13 @@ TEST(GetComputerName,simple)
     ASSERT_EQ(hostnameString,hostnameStringTest);
 }
 
-TEST(GetComputerName,buffertosmall)
+TEST(GetComputerName,bufferttoosmall)
 {
     char hostname[HOST_NAME_MAX];
     std::string hostnameFunctionTest;
     DWORD hostSize = 0;
     BOOL getComputerName = GetComputerName(&hostnameFunctionTest[0], &hostSize);
-    ASSERT_TRUE(getComputerName != 0);
+    ASSERT_TRUE(getComputerName == 0);
+    char buffer[ 256 ];
+    EXPECT_EQ(errno, ERROR_BUFFER_OVERFLOW);
 }
