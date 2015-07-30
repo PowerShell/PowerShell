@@ -5,8 +5,8 @@
 BOOL GetComputerName(LPTSTR name, LPDWORD len)
 {
     errno = 0;
-    
-    int host =  gethostname(name, HOST_NAME_MAX);
+    size_t len2 = *len; 
+    int host =  gethostname(name, len2);
     if(host == 0)
     {
         return TRUE;
