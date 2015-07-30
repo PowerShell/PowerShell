@@ -157,6 +157,10 @@ void AddFilesFromDirectoryToTpaList(const char* directory, std::string& tpaList)
     }
     
     closedir(dir);
+
+    // strip any trailing : from the tpaList
+    if (tpaList.size() > 0 && tpaList[tpaList.size()-1] == ':')
+        tpaList.resize(tpaList.size()-1);
 }
 
 } // namespace CoreCLRUtil

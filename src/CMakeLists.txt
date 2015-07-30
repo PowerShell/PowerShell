@@ -9,9 +9,11 @@ link_directories(${monad_native_BINARY_DIR})
 
 # source file definitions
 set(LIB_SOURCE_FILES impl/getcurrentprocessorid.cpp impl/getusername.cpp impl/terminal.cpp)
-set(TEST_SOURCE_FILES tests/test-getcurrentprocessid.cpp)
+set(HOST_COMMON_SOURCE_FILES host/common/coreclrutil.cpp)
+set(HOST_COMMON_TEST_SOURCE_FILES tests/host/test-hostutil.cpp)
+set(TEST_SOURCE_FILES tests/test-getcurrentprocessid.cpp ${HOST_COMMON_SOURCE_FILES} ${HOST_COMMON_TEST_SOURCE_FILES})
 set(SOURCE_FILES main.cpp ../ext-src/gtest/fused-src/gtest/gtest-all.cc)
-SET(HOST_CMDLINE_SOURCE_FILES host/cmdline/main.cpp host/cmdline/coreclrutil.cpp)
+SET(HOST_CMDLINE_SOURCE_FILES host/cmdline/main.cpp ${HOST_COMMON_SOURCE_FILES})
 
 # target definitions
 add_library(ps SHARED ${LIB_SOURCE_FILES})
@@ -23,5 +25,8 @@ find_package(Threads)
 target_link_libraries(monad_native ${CMAKE_THREAD_LIBS_INIT} ps)
 target_link_libraries(host_cmdline dl icuuc)
 
+# target specific include directories
+target_include_directories(monad_native PRIVATE host)
+target_include_directories(host_cmdline PRIVATE host)
 
 
