@@ -25,3 +25,12 @@ TEST(GetComputerName,simple)
     ASSERT_EQ(host,TRUE);
     ASSERT_EQ(hostnameString,hostnameStringTest);
 }
+
+TEST(GetComputerName,buffertosmall)
+{
+    char hostname[HOST_NAME_MAX];
+    std::string hostnameFunctionTest;
+    DWORD hostSize = 0;
+    BOOL getComputerName = GetComputerName(&hostnameFunctionTest[0], &hostSize);
+    ASSERT_TRUE(getComputerName != 0);
+}
