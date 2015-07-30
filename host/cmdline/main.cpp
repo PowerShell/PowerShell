@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
-#include "coreclrutil.h"
+#include "common/coreclrutil.h"
+#include "common/hostutil.h"
 #include <limits.h>
 #include <dlfcn.h>
 #include <unicode/utypes.h>
@@ -32,6 +33,7 @@ void printHelp()
     std::cerr << "  + this assembly has to be located in the search path" << std::endl;
     std::cerr << "- by default the host will add the current working directory to the assembly search path" << std::endl;
     std::cerr << "  + this can be overridden with the -s command line argument" << std::endl;
+    std::cerr << "  + if -c is specified, it will be added to the search path instead of the current directory" << std::endl;
     std::cerr << "- by default the host assumes the PS base path for the assembly load context is the current" << std::endl;
     std::cerr << "  working directory" << std::endl;
     std::cerr << "  + this can be overridden with the -b command line argument" << std::endl;
@@ -44,13 +46,17 @@ void printHelp()
     std::cerr << "-s                a list of assembly search paths, separated by :" << std::endl;
     std::cerr << "-b                the powershell assembly base path" << std::endl;
     std::cerr << "-v                verbose output, show paths" << std::endl;
+    std::cerr << "-tpa              additional list of trusted platform assemblies, this references dll and exe files" << std::endl;
+    std::cerr << "                  separated by :" << std::endl;
+    std::cerr << "                  unless part of the same folder as CoreCLR, the main assembly referenced with the assembly_name" << std::endl;
+    std::cerr << "                  argument, must always be added to the TPA list with this parameter" << std::endl;
     std::cerr << "assembly_name     the assembly name of the assembly to execute" << std::endl;
     std::cerr << "                  must be available in the search path" << std::endl;
     std::cerr << "type_name         the type name where the function can be found" << std::endl;
     std::cerr << "function_name     the function to execute (must have the function signature described above!)" << std::endl;
     std::cerr << std::endl;
     std::cerr << "Example:" << std::endl;
-    std::cerr << "./host_cmdline -c /test/coreclr -alc /test/ps/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll -s /test/ps -b /test/ps 'powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null' 'ps_hello_world.Program' 'UnmanagedMain' 'get-process'" << std::endl;
+    std::cerr << "./host_cmdline -c /test/coreclr -alc /test/ps/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll -s /test/ps -b /test/ps -tpa /test/ps/powershell-simple.exe 'powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null' 'ps_hello_world.Program' 'UnmanagedMain' 'get-process'" << std::endl;
 }
 
 struct Args
@@ -66,6 +72,7 @@ struct Args
     std::string assemblyLoadContextFilePath;
     std::string searchPaths;
     std::string basePath;
+    std::string tpaList;
     std::string entryAssemblyName;
     std::string entryTypeName;
     std::string entryFunctionName;
@@ -80,6 +87,7 @@ struct Args
         std::cerr << "- assemblyLoadContextFilePath   " << assemblyLoadContextFilePath << std::endl;
         std::cerr << "- searchPaths                   " << searchPaths << std::endl;
         std::cerr << "- basePath                      " << basePath << std::endl;
+        std::cerr << "- tpaList                       " << tpaList << std::endl;
         std::cerr << "- entryAssemblyName             " << entryAssemblyName << std::endl;
         std::cerr << "- entryTypeName                 " << entryTypeName << std::endl;
         std::cerr << "- entryFunctionName             " << entryFunctionName << std::endl;
@@ -124,6 +132,11 @@ bool parseCmdline(const int argc, char** argv, Args& args)
             args.basePath = nextArg;
             ++i;
         }
+        else if (hasNextArg && arg == "-tpa")
+        {
+            args.tpaList = nextArg;
+            ++i;
+        }
         else if (arg == "-v")
         {
             args.verbose = true;
@@ -145,6 +158,9 @@ bool parseCmdline(const int argc, char** argv, Args& args)
             // forward command line parameters
             args.argc = argc-i;
             args.argv = &argv[i];
+
+            // explicitly break here because the lines above consume all remaining arguments
+            break;
         }
     }
 
@@ -200,6 +216,8 @@ int main(int argc, char** argv)
         std::cerr << "could not find absolute CLR path" << std::endl;
         return 1;
     }
+    if (args.verbose)
+        std::cerr << "clrAbsolutePath=" << clrAbsolutePath << std::endl;
 
     // the path to the CoreCLR library
     //
@@ -225,7 +243,23 @@ int main(int argc, char** argv)
     CoreCLRUtil::AddFilesFromDirectoryToTpaList(clrAbsolutePath.c_str(),tpaList);
     
     if (args.assemblyLoadContextFilePath != "")
-        tpaList += ":" + args.assemblyLoadContextFilePath;
+    {
+        std::string assemblyLoadContextAbsoluteFilePath;
+        if (!CoreCLRUtil::GetAbsolutePath(args.assemblyLoadContextFilePath.c_str(),assemblyLoadContextAbsoluteFilePath))
+        {
+            std::cerr << "Failed to get absolute file path for assembly load context" << std::endl;
+            return 1;
+        }
+        tpaList += ":" + assemblyLoadContextAbsoluteFilePath;
+    }
+
+    // add the -tpa command line argument
+    if (args.tpaList != "")
+    {
+        std::string tpaAbsolutePathList = HostUtil::getAbsolutePathList(args.tpaList);
+        if (tpaAbsolutePathList != "")
+            tpaList += ":" + tpaAbsolutePathList;
+    }
 
     if (args.verbose)
         std::cerr << "tpaList: " << tpaList << std::endl;
@@ -241,11 +275,18 @@ int main(int argc, char** argv)
 
     // assembly search paths
     //
-    // add the current directory and anything specified with the -s option
+    // add the current directory, and optionally the CoreCLR directory if -c was specified
+    // and anything specified with the -s option
 
     std::string appPath = currentDirAbsolutePath;
+    if (args.clrPath != "")
+        appPath += ":" + clrAbsolutePath;
     if (args.searchPaths != "")
-        appPath += ":" + args.searchPaths;
+    {
+        std::string searchAbsolutePathList = HostUtil::getAbsolutePathList(args.searchPaths);
+        if (searchAbsolutePathList != "")
+            appPath += ":" + searchAbsolutePathList;
+    }
 
     if (args.verbose)
         std::cerr << "appPath: " << appPath << std::endl;
@@ -270,6 +311,8 @@ int main(int argc, char** argv)
             return 1;
         }
     }
+    if (args.verbose)
+        std::cerr << "psBasePath=" << psBasePath << std::endl;
 
     // make sure to leave 1 byte at the end for null termination
     std::basic_string<char16_t> psBasePath16(PATH_MAX+1,0);
