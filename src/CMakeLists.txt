@@ -5,14 +5,29 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 #include gtest
 include_directories(../ext-src/gtest/fused-src impl)
+link_directories(${monad_native_BINARY_DIR})
 
-set(SOURCE_FILES main.cpp tests/test-getcurrentprocessid.cpp impl/getcurrentprocessorid.cpp tests/test-getcomputername.cpp impl/getcomputername.cpp
-../ext-src/gtest/fused-src/gtest/gtest-all.cc)
-add_executable(monad_native ${SOURCE_FILES})
+# source file definitions
+set(LIB_SOURCE_FILES impl/getcurrentprocessorid.cpp impl/getusername.cpp impl/terminal.cpp)
+set(HOST_COMMON_SOURCE_FILES host/common/coreclrutil.cpp)
+set(HOST_COMMON_TEST_SOURCE_FILES tests/host/test-hostutil.cpp)
+set(TEST_SOURCE_FILES tests/test-getcurrentprocessid.cpp ${HOST_COMMON_SOURCE_FILES} ${HOST_COMMON_TEST_SOURCE_FILES})
+set(SOURCE_FILES main.cpp ../ext-src/gtest/fused-src/gtest/gtest-all.cc)
+SET(HOST_CMDLINE_SOURCE_FILES host/cmdline/main.cpp ${HOST_COMMON_SOURCE_FILES})
 
-# add pthread
+
+# target definitions
+add_library(ps SHARED ${LIB_SOURCE_FILES})
+add_executable(monad_native ${SOURCE_FILES} ${TEST_SOURCE_FILES})
+add_executable(host_cmdline ${HOST_CMDLINE_SOURCE_FILES})
+
+# add pthread and other libs
 find_package(Threads)
-target_link_libraries(monad_native ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(monad_native ${CMAKE_THREAD_LIBS_INIT} ps)
+target_link_libraries(host_cmdline dl icuuc)
 
+# target specific include directories
+target_include_directories(monad_native PRIVATE host)
+target_include_directories(host_cmdline PRIVATE host)
 
 
