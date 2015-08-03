@@ -63,8 +63,7 @@
     typedef void *PVOID;
     typedef PVOID HANDLE;
     typedef char TCHAR;
-    typedef TCHAR *LPTSTR;
-    typedef DWORD *LPDWORD;
+    typedef char *LPTSTR;
     #define NO_ERROR 0
     #define INFINITE 0xFFFFFFFF
     #define WINAPI
@@ -74,6 +73,7 @@
     #define FALSE 0
     #define ERROR_INVALID_PARAMETER 87
     #define ERROR_OUTOFMEMORY 14
+    #define ERROR_BAD_ENVIRONMENT 10;
     #define ERROR_BUFFER_OVERFLOW 111
     #define MAX_PATH 0x00000104
     typedef unsigned long long uint64;
