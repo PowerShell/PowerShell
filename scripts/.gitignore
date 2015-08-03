@@ -20,6 +20,5 @@ management-infrastructure-win.mk
 system-automation-win.mk
 CorePsTypeCatalog.cs
 buildtemp/
-libps-build/
 exec_env/
 

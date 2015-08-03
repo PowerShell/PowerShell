@@ -110,16 +110,16 @@ CorePsTypeCatalog.cs: powershell-linux.inc buildtemp/TypeCatalogGen.exe buildtem
 
 # the pinvoke library libps.so
 
-libps-build/Makefile: ../src/monad-native/src/CMakeLists.txt
-	rm -rf libps-build
-	mkdir libps-build
+buildtemp/libps-build/Makefile: ../src/monad-native/src/CMakeLists.txt
+	rm -rf buildtemp/libps-build
+	mkdir buildtemp/libps-build
 	# cached files can change the path to be incorrect, this must be cleaned
 	rm -f ../src/monad-native/src/CMakeCache.txt
 	rm -f ../src/monad-native/src/cmake_install.cmake 
-	cd libps-build && cmake ../../src/monad-native/src/
+	cd buildtemp/libps-build && cmake ../../../src/monad-native/src/
 
-dotnetlibs/libps.so dotnetlibs/monad_native dotnetlibs/host_cmdline: libps-build/Makefile
-	cd libps-build && make VERBOSE=0 && cp monad_native ../dotnetlibs && cp libps.so ../dotnetlibs && cp host_cmdline ../dotnetlibs
+dotnetlibs/libps.so dotnetlibs/monad_native dotnetlibs/host_cmdline: buildtemp/libps-build/Makefile
+	cd buildtemp/libps-build && make VERBOSE=0 && cp monad_native ../../dotnetlibs && cp libps.so ../../dotnetlibs && cp host_cmdline ../../dotnetlibs
 
 libps.so-test: dotnetlibs/libps.so dotnetlibs/monad_native
 	cd dotnetlibs && LD_LIBRARY_PATH=. ./monad_native
@@ -203,9 +203,9 @@ debug: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
 	exec_env/app_base/runps-simple-debug.sh get-location
 
 clean:
-	rm -f dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/powershell-run.exe dotnetlibs/Microsoft.Management.Infrastructure.Native.dll CorePsTypeCatalog.cs buildtemp/TypeCatalogGen.exe string-resources.dll test.dll buildtemp/System.Reflection.Metadata.dll buildtemp/System.Collections.Immutable.dll
+	rm -rf dotnetlibs/*
 	rm -rf exec_env
-	rm -rf libps-build
+	rm -rf buildtemp/libps-build
 	rm -rf dotnetlibs/*
 
 # clean built stuff + prepare step
