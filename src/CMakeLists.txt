@@ -8,10 +8,10 @@ include_directories(../ext-src/gtest/fused-src impl)
 link_directories(${monad_native_BINARY_DIR})
 
 # source file definitions
-set(LIB_SOURCE_FILES impl/getcurrentprocessorid.cpp impl/getusername.cpp impl/terminal.cpp)
+set(LIB_SOURCE_FILES impl/getcurrentprocessorid.cpp impl/getusername.cpp impl/terminal.cpp impl/getcomputername.cpp)
 set(HOST_COMMON_SOURCE_FILES host/common/coreclrutil.cpp)
 set(HOST_COMMON_TEST_SOURCE_FILES tests/host/test-hostutil.cpp)
-set(TEST_SOURCE_FILES tests/test-getcurrentprocessid.cpp ${HOST_COMMON_SOURCE_FILES} ${HOST_COMMON_TEST_SOURCE_FILES})
+set(TEST_SOURCE_FILES tests/test-getcurrentprocessid.cpp tests/test-getcomputername ${HOST_COMMON_SOURCE_FILES} ${HOST_COMMON_TEST_SOURCE_FILES})
 set(SOURCE_FILES main.cpp ../ext-src/gtest/fused-src/gtest/gtest-all.cc)
 SET(HOST_CMDLINE_SOURCE_FILES host/cmdline/main.cpp ${HOST_COMMON_SOURCE_FILES})
 
