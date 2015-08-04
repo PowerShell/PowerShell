@@ -4,7 +4,7 @@ project(monad_native)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 #include gtest
-include_directories(../ext-src/gtest/fused-src ../ext-src/pal/include impl)
+include_directories(../ext-src/gtest/fused-src impl)
 link_directories(${monad_native_BINARY_DIR})
 
 # source file definitions
