@@ -4,24 +4,65 @@
 #include <locale.h>
 #include <unistd.h>
 #include <string>
-#include <vector>
-#include <scxcorelib/scxstrencodingconv.h>
+#include <unicode/utypes.h>
+#include <unicode/ucnv.h>
+#include <unicode/ustring.h>
+#include <unicode/uchar.h>
 
-// https://msdn.microsoft.com/en-us/library/windows/desktop/ms724432(v=vs.85).aspx
-// Sets errno to:
-//     ERROR_INVALID_PARAMETER - parameter is not valid
-//     ERROR_BAD_ENVIRONMENT - locale is not UTF-8
-//     ERROR_TOO_MANY_OPEN_FILES - already have the maximum allowed number of open files
-//     ERROR_NO_ASSOCIATION - calling process has no controlling terminal
-//     ERROR_INSUFFICIENT_BUFFER - buffer not large enough to hold username string
-//     ERROR_NO_SUCH_USER - there was no corresponding entry in the utmp-file
-//     ERROR_OUTOFMEMORY - insufficient memory to allocate passwd structure
-//     ERROR_NO_ASSOCIATION - standard input didn't refer to a terminal
-//     ERROR_INVALID_FUNCTION - getlogin_r() returned an unrecognized error code
-//
-// Returns:
-//     1 - succeeded
-//     0 - failed
+/*
+  GetUserName function
+
+  https://msdn.microsoft.com/en-us/library/windows/desktop/ms724432(v=vs.85).aspx
+
+  Retrieves the name of the user associated with the current thread.
+
+  Parameters
+
+  lpBuffer [out]
+
+  A pointer to the buffer to receive the user's logon name. If this
+  buffer is not large enough to contain the entire user name, the
+  function fails. A buffer size of (UNLEN + 1) characters will hold
+  the maximum length user name including the terminating null
+  character. UNLEN is defined in Lmcons.h.
+
+  lpnSize [in, out]
+
+  On input, this variable specifies the size of the lpBuffer buffer,
+  in TCHARs. On output, the variable receives the number of TCHARs
+  copied to the buffer, including the terminating null character.
+
+  Note that TCHAR is CHAR here because UNICODE is defined, and so a
+  TCHAR is a byte.
+
+  https://msdn.microsoft.com/en-us/library/windows/desktop/aa383751(v=vs.85).aspx#CHAR
+
+  If lpBuffer is too small, the function fails and GetLastError
+  returns ERROR_INSUFFICIENT_BUFFER. This parameter receives the
+  required buffer size, including the terminating null character.
+
+
+  Sets errno to:
+  ERROR_INVALID_PARAMETER - parameter is not valid
+  ERROR_BAD_ENVIRONMENT - locale is not UTF-8
+  ERROR_TOO_MANY_OPEN_FILES - already have the maximum allowed number of open files
+  ERROR_NO_ASSOCIATION - calling process has no controlling terminal
+  ERROR_INSUFFICIENT_BUFFER - buffer not large enough to hold username string
+  ERROR_NO_SUCH_USER - there was no corresponding entry in the utmp-file
+  ERROR_OUTOFMEMORY - insufficient memory to allocate passwd structure
+  ERROR_NO_ASSOCIATION - standard input didn't refer to a terminal
+  ERROR_INVALID_FUNCTION - getlogin_r() returned an unrecognized error code
+
+  Return value
+
+  If the function succeeds, the return value is a nonzero value, and
+  the variable pointed to by lpnSize contains the number of TCHARs
+  copied to the buffer specified by lpBuffer, including the
+  terminating null character.
+
+  If the function fails, the return value is zero. To get extended
+  error information, call GetLastError.
+*/
 BOOL GetUserName(WCHAR_T *lpBuffer, LPDWORD lpnSize)
 {
 	const std::string utf8 = "UTF-8";
@@ -73,36 +114,29 @@ BOOL GetUserName(WCHAR_T *lpBuffer, LPDWORD lpnSize)
 		return 0;
 	}
 
-	// "Trim" the username to the first trailing null because
-	// otherwise the std::string with repeated null characters is
-	// valid, and the conversion will still include all the null
-	// characters. Creating a std::string from the C string of the
-	// original effectively trims it to the first null, without
-	// the need to manually trim whitespace (nor using Boost).
-	username = std::string(username.c_str());
-
 	// Convert to char * to WCHAR_T * (UTF-8 to UTF-16 LE w/o BOM)
-	std::vector<unsigned char> output;
-	SCXCoreLib::Utf8ToUtf16le(username, output);
+	std::basic_string<char16_t> username16(LOGIN_NAME_MAX+1, 0);
+	icu::UnicodeString username8(username.c_str(), "UTF-8");
+	int32_t targetSize = username8.extract(0, username8.length(),
+	                                       reinterpret_cast<char *>(&username16[0]),
+	                                       (username16.size()-1)*sizeof(char16_t),
+	                                       "UTF-16LE");
+	// number of characters including null
+	username16.resize(targetSize/sizeof(char16_t)+1);
 
-	// The length is the number of characters in the string, which
-	// is half the string size because UTF-16 encodes two bytes
-	// per character, plus one for the trailing null.
-	const DWORD length = output.size()/2 + 1;
-	if (length > *lpnSize) {
+	// Size in bytes including null
+	const DWORD size = username16.length()*sizeof(char16_t);
+	if (size > *lpnSize) {
 		errno = ERROR_INSUFFICIENT_BUFFER;
 		// Set lpnSize if buffer is too small to inform user
 		// of necessary size
-		*lpnSize = length;
+		*lpnSize = size;
 		return 0;
 	}
 
-	// Add two null bytes (because it's UTF-16)
-	output.push_back('\0');
-	output.push_back('\0');
-
-	memcpy(lpBuffer, &output[0], output.size());
-	*lpnSize = output.size()/2;
+	// Copy bytes from string to buffer
+	memcpy(lpBuffer, &username16[0], size);
+	*lpnSize = size;
 
 	return 1;
 }
