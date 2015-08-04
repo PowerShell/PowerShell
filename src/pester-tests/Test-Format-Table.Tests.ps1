@@ -12,7 +12,7 @@
 
         $val.TypeName | Should Match "Microsoft.Powershell.Commands.Internal.Format"
 
-        $val2.TypeName | Should Not Match "Microsoft.Powershell.Commands.Internal.Format"
+        $val2.TypeName | Should Match "Microsoft.Powershell.Commands.Internal.Format"
     }
 
     It "Should be able to be called with optional parameters" {
