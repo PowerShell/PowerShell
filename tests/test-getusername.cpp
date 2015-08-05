@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 #include <unistd.h>
 #include <gtest/gtest.h>
 #include <unicode/utypes.h>
@@ -16,7 +17,7 @@ protected:
 	DWORD expectedSize;
 
 	GetUserNameTest(): expectedUsername(std::string(getlogin())),
-	                   expectedSize((expectedUsername.length()+1)*sizeof(char16_t))
+	                   expectedSize(expectedUsername.length()+1)
 	{}
 
 	void TestWithSize(DWORD size) {
@@ -32,22 +33,21 @@ protected:
 		// returns 1 on success
 		EXPECT_EQ(1, result);
 
-		// sets lpnSize to number of bytes including null,
-		// note that this is (length+1)*sizeof(char16_t)
+		// sets lpnSize to number of WCHARs including null
 		ASSERT_EQ(expectedSize, lpnSize);
 
 		// setup for conversion from UTF-16LE
 		const char *begin = reinterpret_cast<char *>(&lpBuffer[0]);
-		icu::UnicodeString username16(begin, lpnSize, "UTF-16LE");
+		// multiply to get number of bytes
+		icu::UnicodeString username16(begin, lpnSize*sizeof(char16_t), "UTF-16LE");
 		// username16 length includes null and is number of characters
-		ASSERT_EQ(expectedUsername.length()+1, username16.length());
+		ASSERT_EQ(expectedSize, username16.length());
 
 		// convert (minus null) to UTF-8 for comparison
-		std::string username(lpnSize/sizeof(char16_t)-1, 0);
+		std::string username(lpnSize-1, 0);
 		ASSERT_EQ(expectedUsername.length(), username.length());
 		int32_t targetSize = username16.extract(0, username.length(),
-		                                        reinterpret_cast<char *>(&username[0]),
-		                                        "UTF-8");
+		                                        reinterpret_cast<char *>(&username[0]), "UTF-8");
 
 		EXPECT_EQ(expectedUsername, username);
 	}
@@ -109,30 +109,18 @@ TEST_F(GetUserNameTest, BufferSizeAsOne) {
 
 TEST_F(GetUserNameTest, BufferSizeAsUsername) {
 	// the buffer is too small because this is a UTF-8 size
-	TestWithSize(expectedUsername.size());
+	TestWithSize(expectedUsername.length());
 	TestInsufficientBuffer();
 }
 
 TEST_F(GetUserNameTest, BufferSizeAsUsernamePlusOne) {
-	// the buffer is still too small even with null
-	TestWithSize(expectedUsername.size()+1);
-	TestInsufficientBuffer();
-}
-
-TEST_F(GetUserNameTest, BufferSizeAsUsernameInUTF16) {
-	// the buffer is still too small because it is missing null
-	TestWithSize(expectedUsername.size()*sizeof(char16_t));
-	TestInsufficientBuffer();
-}
-
-TEST_F(GetUserNameTest, BufferSizeAsUsernamePlusOneInUTF16) {
-	// the buffer is exactly big enough
-	TestWithSize((expectedUsername.size()+1)*sizeof(char16_t));
+	// includes null and so should be sufficient
+	TestWithSize(expectedUsername.length()+1);
 	TestSuccess();
 }
 
 TEST_F(GetUserNameTest, BufferSizeAsExpectedSize) {
-	// expectedSize is the same as username.size()+1 in UTF16
+	// expectedSize is the same as username.size()+1
 	TestWithSize(expectedSize);
 	TestSuccess();
 }

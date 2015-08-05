@@ -32,7 +32,7 @@
   in TCHARs. On output, the variable receives the number of TCHARs
   copied to the buffer, including the terminating null character.
 
-  Note that TCHAR is CHAR here because UNICODE is defined, and so a
+  Note that TCHAR is WCHAR here because UNICODE is defined, and so a
   TCHAR is a byte.
 
   https://msdn.microsoft.com/en-us/library/windows/desktop/aa383751(v=vs.85).aspx#CHAR
@@ -121,11 +121,11 @@ BOOL GetUserName(WCHAR_T *lpBuffer, LPDWORD lpnSize)
 	                                       reinterpret_cast<char *>(&username16[0]),
 	                                       (username16.size()-1)*sizeof(char16_t),
 	                                       "UTF-16LE");
-	// number of characters including null
+	// Number of characters including null
 	username16.resize(targetSize/sizeof(char16_t)+1);
 
-	// Size in bytes including null
-	const DWORD size = username16.length()*sizeof(char16_t);
+	// Size in WCHARs including null
+	const DWORD size = username16.length();
 	if (size > *lpnSize) {
 		errno = ERROR_INSUFFICIENT_BUFFER;
 		// Set lpnSize if buffer is too small to inform user
@@ -135,7 +135,7 @@ BOOL GetUserName(WCHAR_T *lpBuffer, LPDWORD lpnSize)
 	}
 
 	// Copy bytes from string to buffer
-	memcpy(lpBuffer, &username16[0], size);
+	memcpy(lpBuffer, &username16[0], size*sizeof(char16_t));
 	*lpnSize = size;
 
 	return 1;
