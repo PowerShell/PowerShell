@@ -75,6 +75,8 @@
     #define ERROR_INVALID_PARAMETER 87
     #define ERROR_OUTOFMEMORY 14
     #define MAX_PATH 0x00000104
+    #define UTF8 65001
+    #define ERROR_BAD_ENVIRONMENT 0x0000000A
     typedef unsigned long long uint64;
 #endif
 

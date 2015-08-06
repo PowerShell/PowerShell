@@ -4,6 +4,6 @@
 
 PAL_BEGIN_EXTERNC
 
-BOOL GetCPInfo(UINT codepage, CPINFO &cpinfo);
+BOOL GetCPInfoW(UINT codepage, CPINFO &cpinfo);
 
 PAL_END_EXTERNC
