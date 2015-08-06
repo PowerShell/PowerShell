@@ -36,7 +36,13 @@ Describe "Test-Format-List" {
 
     It "Should not show anything other than the requested props" {
         $testCommand = Get-Process
+        <# the structure of the output of format-list, although iterable, is not a proper collection of objects we can test
 
+        gps | fl | ForEach-Object{$_.ToString()}  confirms that each item is a format object.
+
+        (Get-Process | Format-List | Out-String).split("\n") | ForEach-Object { $_} will list objects, but not allow interaction with them.
+
+        #>
         ( $testCommand | Format-List                | Out-String).Contains("CPU") | Should Be $true
         ( $testCommand | Format-List -Property Name | Out-String).Contains("CPU") | Should Be $false
 
