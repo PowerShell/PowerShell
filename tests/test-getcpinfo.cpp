@@ -1,14 +1,14 @@
 #include <gtest/gtest.h>
 #include "getcpinfo.h"
 
-// This is a very simple test case to show how tests can be written
-TEST(GetCPInfo,utf8)
+// This test is with correct parameters
+TEST(GetCPInfo,Utf8)
 {
     CPINFO cpinfo;
-    BOOL utf8 = GetCPInfo(65001, cpinfo);
+    BOOL result = GetCPInfoW(UTF8, cpinfo);
 
     // first make sure that the function worked
-    ASSERT_TRUE(utf8 == TRUE);
+    ASSERT_TRUE(result == TRUE);
     
     // now compare the actual values
     ASSERT_EQ(cpinfo.DefaultChar[0],'?');
@@ -18,18 +18,24 @@ TEST(GetCPInfo,utf8)
     ASSERT_EQ(cpinfo.MaxCharSize,4);
 }
 
-TEST(GetCPInfo,utf7)
+// This test is with codepage being null
+TEST(GetCPInfo, NullForCodePageUINTButNotCpinfo)
 {
     CPINFO cpinfo;
-    BOOL utf7 = GetCPInfo(65000, cpinfo);
+    BOOL result = GetCPInfoW(NULL, cpinfo);
     
-    // first make sure that the function worked
-    ASSERT_TRUE(utf7 == TRUE);
+    ASSERT_TRUE(result == FALSE);
+    EXPECT_EQ(errno, ERROR_INVALID_PARAMETER);
+    
+}
 
-    // now compare the actual values
-    ASSERT_EQ(cpinfo.DefaultChar[0],'?');
-    ASSERT_EQ(cpinfo.DefaultChar[1],'0');
-    ASSERT_EQ(cpinfo.LeadByte[0],'0');
-    ASSERT_EQ(cpinfo.LeadByte[1],'0');
-    ASSERT_EQ(cpinfo.MaxCharSize,5);
+// This test is with codepage not being utf8
+TEST(GetCPInfo, CodePageNotUTF8)
+{
+    CPINFO cpinfo;
+    BOOL result = GetCPInfoW(65000, cpinfo);
+    
+    ASSERT_TRUE(result == FALSE);
+    EXPECT_EQ(errno, ERROR_INVALID_PARAMETER);
+    
 }

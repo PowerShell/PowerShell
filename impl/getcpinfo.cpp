@@ -1,28 +1,50 @@
 #include "getcpinfo.h"
-#include <unistd.h>
+#include <errno.h>
 #include <string>
+#include <langinfo.h>
 
-BOOL GetCPInfo(UINT codepage, CPINFO &cpinfo)
+
+// https://msdn.microsoft.com/en-us/library/windows/desktop/ms724432(v=vs.85).aspx
+// Sets errno to:
+//     ERROR_INVALID_PARAMETER - parameter is not valid
+//     ERROR_BAD_ENVIRONMENT - locale is not UTF-8
+//
+// Returns:
+//     TRUE - succeeded
+//     FALSE - failed
+
+BOOL GetCPInfoW(UINT codepage, CPINFO &cpinfo)
 {
-    std::string test;
-    switch(codepage)
-    {
-    case 65000:
-        cpinfo.DefaultChar[0] = '?';
-        cpinfo.DefaultChar[1] = '0';
-        cpinfo.LeadByte[0] = '0';
-        cpinfo.LeadByte[1] = '0';
-        cpinfo.MaxCharSize = 5;
-        return TRUE;
-    case 65001:
+    
+    const std::string utf8 = "UTF-8";
+    errno = 0;
+       
+    //Check that codepage is not null
+    if(!codepage) {
+        errno = ERROR_INVALID_PARAMETER;
+        return FALSE;
+    }
+    
+    // Select locale from environment
+    setlocale(LC_ALL, "");
+    // Check that locale is UTF-8
+    if (nl_langinfo(CODESET) != utf8) {
+        errno = ERROR_BAD_ENVIRONMENT;
+        return 0;
+    }
+    
+    //if codepage is utf8
+    if(codepage == 65001) {
         cpinfo.DefaultChar[0] = '?';
         cpinfo.DefaultChar[1] = '0';
         cpinfo.LeadByte[0] = '0';
         cpinfo.LeadByte[1] = '0';
         cpinfo.MaxCharSize = 4;
         return TRUE;
-    default:
+    }
+    else{
+        errno = ERROR_INVALID_PARAMETER;
         return FALSE;
-  }
+    }
 }
 
