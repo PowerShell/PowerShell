@@ -34,14 +34,12 @@ Describe "Test-Format-List" {
         { $testCommand | fl -Property Name,BasePriority } | Should Not Throw
     }
 
-    It "Should not show only the requested props" {
+    It "Should not show anything other than the requested props" {
         $testCommand = Get-Process
 
         ( $testCommand | Format-List                | Out-String).Contains("CPU") | Should Be $true
         ( $testCommand | Format-List -Property Name | Out-String).Contains("CPU") | Should Be $false
 
-        ( $testCommand | fl                 | Out-String).Contains("CPU") | Should Be $true
-        ( $testCommand | fl -Property Name  | Out-String).Contains("CPU") | Should Be $false
     }
 
     It "Should be able to take input without piping objects to it" {
