@@ -10,7 +10,7 @@
 #include <unicode/uchar.h>
 
 /*
-  GetUserName function
+  GetUserNameW function
 
   https://msdn.microsoft.com/en-us/library/windows/desktop/ms724432(v=vs.85).aspx
 
@@ -63,7 +63,7 @@
   If the function fails, the return value is zero. To get extended
   error information, call GetLastError.
 */
-BOOL GetUserName(WCHAR_T *lpBuffer, LPDWORD lpnSize)
+BOOL GetUserNameW(WCHAR_T *lpBuffer, LPDWORD lpnSize)
 {
 	const std::string utf8 = "UTF-8";
 

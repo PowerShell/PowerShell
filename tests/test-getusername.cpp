@@ -24,7 +24,7 @@ protected:
 		lpnSize = size;
 		// allocate a WCHAR_T buffer to receive username
 		lpBuffer.assign(lpnSize, '\0');
-		result = GetUserName(&lpBuffer[0], &lpnSize);
+		result = GetUserNameW(&lpBuffer[0], &lpnSize);
 	}
 
 	void TestSuccess() {
@@ -79,7 +79,7 @@ protected:
 
 TEST_F(GetUserNameTest, BufferAsNullButNotBufferSize) {
 	lpnSize = 1;
-	result = GetUserName(NULL, &lpnSize);
+	result = GetUserNameW(NULL, &lpnSize);
 
 	TestInvalidParameter();
 	// does not reset lpnSize
@@ -88,7 +88,7 @@ TEST_F(GetUserNameTest, BufferAsNullButNotBufferSize) {
 
 TEST_F(GetUserNameTest, BufferSizeAsNullButNotBuffer) {
 	lpBuffer.push_back('\0');
-	result = GetUserName(&lpBuffer[0], NULL);
+	result = GetUserNameW(&lpBuffer[0], NULL);
 
 	TestInvalidParameter();
 }
