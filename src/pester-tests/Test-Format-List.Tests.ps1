@@ -71,9 +71,20 @@ Describe "Test-Format-List" {
 
         $output = ( Get-Process | Format-List -Property Name | Out-String)
 
-        $output.Contains("CPU")     | Should Be $false
-        $output.Contains("Id")      | Should Be $false
-        $output.Contains("Handle")  | Should Be $false
+        $output | Should Not Match "CPU"
+        $output | Should Not Match "Id"
+        $output | Should Not Match "Handle"
+
+        # Testing each element of format-list, using a for-each loop since the Format-List is so opaque
+        (Get-Process | Format-List -Property CPU | Out-String) -Split "`n" | 
+            Where-Object {
+                $_.trim() -ne ""
+            } | 
+
+            ForEach-Object{
+                $_ | Should Match "CPU :"
+            }
+
     }
 
     It "Should be able to take input without piping objects to it" {
