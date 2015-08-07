@@ -58,9 +58,9 @@ Describe "Test-Format-List" {
     It "Should not show anything other than the requested props" {
         $output = Get-Process | Format-List -Property Name | Out-String
 
-        $output | Should Not Match "CPU"
-        $output | Should Not Match "Id"
-        $output | Should Not Match "Handle"
+        $output | Should Not Match "CPU :"
+        $output | Should Not Match "Id :"
+        $output | Should Not Match "Handle :"
     }
 
     It "Should be able to take input without piping objects to it" {
