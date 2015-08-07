@@ -19,7 +19,11 @@ Describe "Test-Format-List" {
         $input = New-Object PSObject
         Add-Member -InputObject $input -MemberType NoteProperty -Name testName -Value testValue
 
-        $input | fl | Out-String | Should Be ($input | Format-List | Out-String)
+        $expected = $input | Format-List | Out-String
+        $actual   = $input | fl          | Out-String
+
+        $actual | Should Be $expected
+
     }
 
     It "Should produce the expected output" {
@@ -27,33 +31,29 @@ Describe "Test-Format-List" {
         $input = New-Object PSObject
         Add-Member -InputObject $input -MemberType NoteProperty -Name testName -Value testValue
 
-        ($input | Format-List ) | Should Not BeNullOrEmpty
-        ($input | Format-List   | Out-String) | Should Not BeNullOrEmpty
-        ($input | Format-List   | Out-String) | Should Be $expected
-    }
-
-    It "Should be able to call format list on piped in variable objects" {
-        $a = Get-Process
-
-        { $a | Format-List } | Should Not Throw
-
+        $input | Format-List                  | Should Not BeNullOrEmpty
+        $input | Format-List   | Out-String   | Should Not BeNullOrEmpty
+        $input | Format-List   | Out-String   | Should Be $expected
     }
 
     It "Should be able to call a property of the piped input" {
         # Tested on two input commands to verify functionality.
 
-        { Get-Process| Format-List -Property Name }        | Should Not Throw
-        { Get-Date   | Format-List -Property DisplayName } | Should Not Throw
+        { Get-Process | Format-List -Property Name }        | Should Not Throw
+        { Get-Process | Format-List -Property Name }        | Should Not BeNullOrEmpty
+
+        { Get-Date    | Format-List -Property DisplayName } | Should Not Throw
+        { Get-Date    | Format-List -Property DisplayName } | Should Not BeNullOrEmpty
 
     }
 
     It "Should be able to display a list of props when separated by a comma" {
         { Get-Process | Format-List -Property Name,BasePriority } | Should Not Throw
 
+        $output = ( Get-Process | Format-List -Property Name,BasePriority | Out-String)
 
-        ( Get-Process | Format-List -Property Name,BasePriority | Out-String).Contains("Name")         | Should Be $true
-        ( Get-Process | Format-List -Property Name,BasePriority | Out-String).Contains("BasePriority") | Should Be $true
-
+        $output.Contains("Name")         | Should Be $true
+        $output.Contains("BasePriority") | Should Be $true
     }
 
     It "Should not show anything other than the requested props" {
@@ -66,20 +66,24 @@ Describe "Test-Format-List" {
            but not allow interaction with them.
         #>
 
+        ( Get-Process | Format-List | Out-String).Contains("CPU") | Should Be $true
 
 
-        ( Get-Process | Format-List                | Out-String).Contains("CPU") | Should Be $true
-        ( Get-Process | Format-List -Property Name | Out-String).Contains("CPU") | Should Be $false
+        $output = ( Get-Process | Format-List -Property Name | Out-String)
 
-        ( Get-Process | Format-List -Property Name | Out-String).Contains("Id")           | Should Be $false
-        ( Get-Process | Format-List -Property Name | Out-String).Contains("Handle")       | Should Be $false
+        $output.Contains("CPU")     | Should Be $false
+        $output.Contains("Id")      | Should Be $false
+        $output.Contains("Handle")  | Should Be $false
     }
 
     It "Should be able to take input without piping objects to it" {
         $input = New-Object PSObject
         Add-Member -InputObject $input -MemberType NoteProperty -Name testName -Value testValue
 
-        { Format-List -InputObject $input } | Should Not Throw
+        $output = { Format-List -InputObject $input }
+
+       $output | Should Not Throw
+       $output | Should Not BeNullOrEmpty
 
     }
 
