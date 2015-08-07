@@ -96,7 +96,7 @@ BOOL GetUserNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
 			errno = ERROR_NO_ASSOCIATION;
 			break;
 		case ERANGE:
-			errno = ERROR_INSUFFICIENT_BUFFER;
+			errno = ERROR_GEN_FAILURE;
 			break;
 		case ENOENT:
 			errno = ERROR_NO_SUCH_USER;
