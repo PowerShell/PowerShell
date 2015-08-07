@@ -12,4 +12,4 @@
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-ext
 [submodule "ext-src/pester"]
 	path = ext-src/pester
-	url = mshttps://msostc.visualstudio.com/DefaultCollection/PS/_git/Pester
+	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/Pester
