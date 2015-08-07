@@ -1,5 +1,6 @@
 using Xunit;
 using System;
+using System.Diagnostics;
 using System.Management.Automation;
 
 namespace PSTests
@@ -45,9 +46,22 @@ namespace PSTests
         [Fact]
         public static void TestGetUserName()
         {
-            // Use Assert.Equal("yourusername",
-            // Platform.NonWindowsGetUserName()) to test without regex
-            Assert.Matches("^[a-z][a-z0-9\\-]*$", Platform.NonWindowsGetUserName());
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = @"/usr/bin/env",
+                Arguments = "whoami",
+                RedirectStandardOutput = true,
+                UseShellExecute = false
+            };
+            Process process = Process.Start(startInfo);
+            // The process should always exit, but wait a set time just in case
+            process.WaitForExit(1000);
+            // The process should return an exit code of 0 on success
+            Assert.Equal(0, process.ExitCode);
+            // Get output of call to whoami without trailing newline
+            string username = process.StandardOutput.ReadToEnd().Trim();
+            // It should be the same as what our platform code returns
+            Assert.Equal(username, Platform.NonWindowsGetUserName());
         }
     }
 }
