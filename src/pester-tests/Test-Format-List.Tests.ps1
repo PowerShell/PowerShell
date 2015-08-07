@@ -4,6 +4,7 @@ Describe "Test-Format-List" {
         Add-Member -InputObject $input -MemberType NoteProperty -Name testName -Value testValue
 
         { $input | Format-List } | Should Not Throw
+	{ $input | Format-List } | Should Not BeNullOrEmpty
 
     }
 
@@ -12,6 +13,7 @@ Describe "Test-Format-List" {
         Add-Member -InputObject $input -MemberType NoteProperty -Name testName -Value testValue
 
         { $input | fl } | Should Not Throw
+	{ $input | fl } | Should Not BeNullOrEmpty
 
     }
 
@@ -51,41 +53,30 @@ Describe "Test-Format-List" {
         { Get-Process | Format-List -Property Name,BasePriority } | Should Not Throw
 
         $output = ( Get-Process | Format-List -Property Name,BasePriority | Out-String)
+    }
 
-        $output.Contains("Name")         | Should Be $true
-        $output.Contains("BasePriority") | Should Be $true
+    It "Should show the requested prop in every element" {
+        # Testing each element of format-list, using a for-each loop since the Format-List is so opaque
+        (Get-Process | Format-List -Property CPU | Out-String) -Split "`n" |
+          Where-Object { $_.trim() -ne "" } |
+	  ForEach-Object {$_ | Should Match "CPU :" }
     }
 
     It "Should not show anything other than the requested props" {
-        ( Get-Process | Format-List | Out-String) | Should Match "CPU"
-
-        $output = ( Get-Process | Format-List -Property Name | Out-String)
+        $output = Get-Process | Format-List -Property Name | Out-String
 
         $output | Should Not Match "CPU"
         $output | Should Not Match "Id"
         $output | Should Not Match "Handle"
-
-        # Testing each element of format-list, using a for-each loop since the Format-List is so opaque
-        (Get-Process | Format-List -Property CPU | Out-String) -Split "`n" | 
-            Where-Object {
-                $_.trim() -ne ""
-            } | 
-
-            ForEach-Object{
-                $_ | Should Match "CPU :"
-            }
-
     }
 
     It "Should be able to take input without piping objects to it" {
         $input = New-Object PSObject
         Add-Member -InputObject $input -MemberType NoteProperty -Name testName -Value testValue
-
         $output = { Format-List -InputObject $input }
 
-       $output | Should Not Throw
-       $output | Should Not BeNullOrEmpty
+	$output | Should Not Throw
+	$output | Should Not BeNullOrEmpty
 
     }
-
 }
