@@ -1,24 +1,18 @@
 Describe "Test-Format-List" {
-    It "Should call format list without error" {
+    BeforeEach {
         $input = New-Object PSObject
         Add-Member -InputObject $input -MemberType NoteProperty -Name testName -Value testValue
+    }
 
+    It "Should call format list without error" {
         { $input | Format-List } | Should Not Throw
-
     }
 
     It "Should be able to call the alias" {
-        $input = New-Object PSObject
-        Add-Member -InputObject $input -MemberType NoteProperty -Name testName -Value testValue
-
         { $input | fl } | Should Not Throw
-
     }
 
     It "Should have the same output whether choosing alias or not" {
-        $input = New-Object PSObject
-        Add-Member -InputObject $input -MemberType NoteProperty -Name testName -Value testValue
-
         $expected = $input | Format-List | Out-String
         $actual   = $input | fl          | Out-String
 
@@ -78,10 +72,7 @@ Describe "Test-Format-List" {
     }
 
     It "Should be able to take input without piping objects to it" {
-        $input = New-Object PSObject
-        Add-Member -InputObject $input -MemberType NoteProperty -Name testName -Value testValue
-
-        $output = { Format-List -InputObject $input }
+       $output = { Format-List -InputObject $input }
 
        $output | Should Not Throw
        $output | Should Not BeNullOrEmpty
