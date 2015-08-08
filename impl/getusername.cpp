@@ -64,78 +64,83 @@
 //! [LPTSTR]: https://msdn.microsoft.com/en-us/library/windows/desktop/aa383751(v=vs.85).aspx#LPTSTR
 BOOL GetUserNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
 {
-	const std::string utf8 = "UTF-8";
+    const std::string utf8 = "UTF-8";
 
-	errno = FALSE;
+    errno = FALSE;
 
-	// Check parameters
-	if (!lpBuffer || !lpnSize) {
-		errno = ERROR_INVALID_PARAMETER;
-		return 0;
-	}
+    // Check parameters
+    if (!lpBuffer || !lpnSize)
+    {
+        errno = ERROR_INVALID_PARAMETER;
+        return 0;
+    }
 
-	// Select locale from environment
-	setlocale(LC_ALL, "");
-	// Check that locale is UTF-8
-	if (nl_langinfo(CODESET) != utf8) {
-		errno = ERROR_BAD_ENVIRONMENT;
-		return FALSE;
-	}
+    // Select locale from environment
+    setlocale(LC_ALL, "");
+    // Check that locale is UTF-8
+    if (nl_langinfo(CODESET) != utf8)
+    {
+        errno = ERROR_BAD_ENVIRONMENT;
+        return FALSE;
+    }
 
-	// Get username from system in a thread-safe manner
-	std::string username(LOGIN_NAME_MAX, '\0');
-	int ret = getlogin_r(&username[0], username.size());
-	// Map errno to Win32 Error Codes
-	if (ret) {
-		switch (errno) {
-		case EMFILE:
-		case ENFILE:
-			errno = ERROR_TOO_MANY_OPEN_FILES;
-			break;
-		case ENXIO:
-			errno = ERROR_NO_ASSOCIATION;
-			break;
-		case ERANGE:
-			errno = ERROR_GEN_FAILURE;
-			break;
-		case ENOENT:
-			errno = ERROR_NO_SUCH_USER;
-			break;
-		case ENOMEM:
-			errno = ERROR_OUTOFMEMORY;
-			break;
-		case ENOTTY:
-			errno = ERROR_NO_ASSOCIATION;
-			break;
-		default:
-			errno = ERROR_INVALID_FUNCTION;
-		}
-		return FALSE;
-	}
+    // Get username from system in a thread-safe manner
+    std::string username(LOGIN_NAME_MAX, '\0');
+    int ret = getlogin_r(&username[0], username.size());
+    // Map errno to Win32 Error Codes
+    if (ret)
+    {
+        switch (errno)
+        {
+        case EMFILE:
+        case ENFILE:
+            errno = ERROR_TOO_MANY_OPEN_FILES;
+            break;
+        case ENXIO:
+            errno = ERROR_NO_ASSOCIATION;
+            break;
+        case ERANGE:
+            errno = ERROR_GEN_FAILURE;
+            break;
+        case ENOENT:
+            errno = ERROR_NO_SUCH_USER;
+            break;
+        case ENOMEM:
+            errno = ERROR_OUTOFMEMORY;
+            break;
+        case ENOTTY:
+            errno = ERROR_NO_ASSOCIATION;
+            break;
+        default:
+            errno = ERROR_INVALID_FUNCTION;
+        }
+        return FALSE;
+    }
 
-	// Convert to char* to WCHAR_T* (UTF-8 to UTF-16 LE w/o BOM)
-	std::basic_string<char16_t> username16(LOGIN_NAME_MAX+1, 0);
-	icu::UnicodeString username8(username.c_str(), "UTF-8");
-	int32_t targetSize = username8.extract(0, username8.length(),
-	                                       reinterpret_cast<char*>(&username16[0]),
-	                                       (username16.size()-1)*sizeof(char16_t),
-	                                       "UTF-16LE");
-	// Number of characters including null
-	username16.resize(targetSize/sizeof(char16_t)+1);
+    // Convert to char* to WCHAR_T* (UTF-8 to UTF-16 LE w/o BOM)
+    std::basic_string<char16_t> username16(LOGIN_NAME_MAX+1, 0);
+    icu::UnicodeString username8(username.c_str(), "UTF-8");
+    int32_t targetSize = username8.extract(0, username8.length(),
+                                           reinterpret_cast<char*>(&username16[0]),
+                                           (username16.size()-1)*sizeof(char16_t),
+                                           "UTF-16LE");
+    // Number of characters including null
+    username16.resize(targetSize/sizeof(char16_t)+1);
 
-	// Size in WCHARs including null
-	const DWORD size = username16.length();
-	if (size > *lpnSize) {
-		errno = ERROR_INSUFFICIENT_BUFFER;
-		// Set lpnSize if buffer is too small to inform user
-		// of necessary size
-		*lpnSize = size;
-		return 0;
-	}
+    // Size in WCHARs including null
+    const DWORD size = username16.length();
+    if (size > *lpnSize)
+    {
+        errno = ERROR_INSUFFICIENT_BUFFER;
+        // Set lpnSize if buffer is too small to inform user
+        // of necessary size
+        *lpnSize = size;
+        return 0;
+    }
 
-	// Copy bytes from string to buffer
-	memcpy(lpBuffer, &username16[0], size*sizeof(char16_t));
-	*lpnSize = size;
+    // Copy bytes from string to buffer
+    memcpy(lpBuffer, &username16[0], size*sizeof(char16_t));
+    *lpnSize = size;
 
-	return TRUE;
+    return TRUE;
 }
