@@ -136,9 +136,9 @@ dotnetlibs/api-ms-win-core-registry-l1-1-0.dll: ../src/win-dll/lib-api-ms-win-co
 prepare:
 	rm -rf buildtemp/System.Reflection.Metadata.* buildtemp/System.Collections.Immutable.* buildtemp/Microsoft.Net.ToolsetCompilers.* buildtemp/nuget.exe
 	cp $(MONAD_EXT)/nuget/nuget.exe buildtemp/nuget.exe
-	cd buildtemp && mono nuget.exe install -Source 'https://nuget.org/api/v2' -Version 1.0.21 System.Reflection.Metadata
-	cd buildtemp && mono nuget.exe install -Source 'https://nuget.org/api/v2' -Version 1.1.36 System.Collections.Immutable
-	cd buildtemp && mono nuget.exe install -Source 'https://nuget.org/api/v2' -Version 1.0.0-rc3-20150520-02 Microsoft.Net.ToolsetCompilers
+	cd buildtemp && mono nuget.exe install -Source 'https://api.nuget.org/v3/index.json' -Version 1.0.21 System.Reflection.Metadata
+	cd buildtemp && mono nuget.exe install -Source 'https://api.nuget.org/v3/index.json' -Version 1.1.36 System.Collections.Immutable
+	cd buildtemp && mono nuget.exe install -Source 'https://api.nuget.org/v3/index.json' -Version 1.0.0-rc3-20150520-02 Microsoft.Net.ToolsetCompilers
 
 # this is an internal target, it's not intended to be called manually
 #
