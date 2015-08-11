@@ -18,4 +18,8 @@
         (Get-Item /usr/bin) | Should Not BeNullOrEmpty
         (Get-Item ..) | Should Not BeNullOrEmpty
     }
+
+    It "Should have mode flags set" {
+        ls / | foreach-object { $_.Mode | Should Not BeNullOrEmpty }
+    }
 }
