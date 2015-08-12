@@ -63,7 +63,7 @@
     typedef void *PVOID;
     typedef PVOID HANDLE;
     typedef char TCHAR;
-    typedef char *LPTSTR;
+    typedef char* LPTSTR;
     #define NO_ERROR 0
     #define INFINITE 0xFFFFFFFF
     #define WINAPI
