@@ -13,7 +13,8 @@
 #include "getcomputername.h"
 
 //! Test fixture for GetComputerNameTest
-class GetComputerNameTest : public ::testing::Test {
+class GetComputerNameTest : public ::testing::Test
+{
 protected:
     DWORD lpnSize;
     std::vector<WCHAR_T> lpBuffer;
@@ -22,21 +23,24 @@ protected:
     DWORD expectedSize;
     
     //Get expected result from using linux call
-    GetComputerNameTest(){
+    GetComputerNameTest()
+    {
         char hostname[HOST_NAME_MAX];
         BOOL host =  gethostname(hostname, sizeof hostname);
         expectedComputerName = hostname;
         expectedSize = expectedComputerName.length() + 1;
     }
     
-    void TestWithSize(DWORD size) {
+    void TestWithSize(DWORD size) 
+    {
         lpnSize = size;
         // allocate a DWORD buffer to receive computername
         lpBuffer.assign(lpnSize, '\0');
         result = GetComputerNameW(&lpBuffer[0], &lpnSize);
     }
     
-    void TestSuccess() {
+    void TestSuccess()
+    {
         SCOPED_TRACE("");
         
         //! Returns TRUE on success.
@@ -62,7 +66,8 @@ protected:
         EXPECT_EQ(expectedComputerName, computername);
     }
     
-    void TestInvalidParameter() {
+    void TestInvalidParameter() 
+    {
         SCOPED_TRACE("");
         
         // returns 0 on failure
@@ -72,7 +77,8 @@ protected:
         EXPECT_EQ(errno, ERROR_INVALID_PARAMETER);
     }
     
-    void TestInsufficientBuffer() {
+    void TestInsufficientBuffer() 
+    {
         SCOPED_TRACE("");
         
         // returns 0 on failure
@@ -86,7 +92,8 @@ protected:
     }
 };
 
-TEST_F(GetComputerNameTest, BufferAsNullButNotBufferSize) {
+TEST_F(GetComputerNameTest, BufferAsNullButNotBufferSize) 
+{
     lpnSize = 1;
     result = GetComputerNameW(NULL, &lpnSize);
     TestInvalidParameter();
@@ -94,30 +101,35 @@ TEST_F(GetComputerNameTest, BufferAsNullButNotBufferSize) {
     EXPECT_EQ(1, lpnSize);
 }
 
-TEST_F(GetComputerNameTest, BufferSizeAsNullButNotBuffer) {
+TEST_F(GetComputerNameTest, BufferSizeAsNullButNotBuffer) 
+{
     lpBuffer.push_back('\0');
     result = GetComputerNameW(&lpBuffer[0], NULL);
     TestInvalidParameter();
 }
 
-TEST_F(GetComputerNameTest, BufferSizeAsZero) {
+TEST_F(GetComputerNameTest, BufferSizeAsZero) 
+{
     TestWithSize(0);
     EXPECT_EQ(errno, ERROR_INVALID_PARAMETER);
 }
 
-TEST_F(GetComputerNameTest, BufferSizeAsUserNameMinusOne) {  
+TEST_F(GetComputerNameTest, BufferSizeAsUserNameMinusOne)
+{  
     // the buffer is also too small
     TestWithSize(expectedComputerName.size()-1);
     TestInsufficientBuffer();
 }
 
-TEST_F(GetComputerNameTest, BufferSizeAsUserNamePlusOne) {
+TEST_F(GetComputerNameTest, BufferSizeAsUserNamePlusOne)
+{
     // the buffer is exactly big enough
     TestWithSize(expectedComputerName.size()+1);
     TestSuccess();
 }
 
-TEST_F(GetComputerNameTest, BufferSizeAsLoginNameMax) {
+TEST_F(GetComputerNameTest, BufferSizeAsLoginNameMax) 
+{
     // the buffer larger than needed
     TestWithSize(HOST_NAME_MAX);
     TestSuccess();

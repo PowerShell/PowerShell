@@ -68,7 +68,8 @@ BOOL GetComputerNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
     errno = 0;
     
     // Check parameters
-    if (!lpBuffer || !lpnSize) {
+    if (!lpBuffer || !lpnSize) 
+    {
         errno = ERROR_INVALID_PARAMETER;
         return 0;
     }
@@ -76,7 +77,8 @@ BOOL GetComputerNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
     // Select locale from environment
     setlocale(LC_ALL, "");
     // Check that locale is UTF-8
-    if (nl_langinfo(CODESET) != utf8) {
+    if (nl_langinfo(CODESET) != utf8)
+    {
         errno = ERROR_BAD_ENVIRONMENT;
         return 0;
     }
@@ -85,8 +87,10 @@ BOOL GetComputerNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
     std::string computername(HOST_NAME_MAX, '\0');
     int err = gethostname(&computername[0], computername.size());
     // Map errno to Win32 Error Codes
-    if (err != 0) {
-        switch (errno) {
+    if (err != 0) 
+    {
+        switch (errno) 
+        {
             case EMFILE:
             case ENFILE:
                 errno = ERROR_TOO_MANY_OPEN_FILES;
@@ -127,7 +131,8 @@ BOOL GetComputerNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
     const DWORD size = computername16.length();
     
     //Check if parameters passed enough buffer space
-    if (size > *lpnSize) {
+    if (size > *lpnSize)
+    {
         errno = ERROR_INSUFFICIENT_BUFFER;
         // Set lpnSize if buffer is too small to inform user
         // of necessary size
