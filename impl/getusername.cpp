@@ -116,7 +116,7 @@ BOOL GetUserNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
     }
 
     // Convert to char* to WCHAR_T* (UTF-8 to UTF-16 LE w/o BOM)
-    std::basic_string<char16_t> username16(LOGIN_NAME_MAX+1, 0);
+    std::basic_string<char16_t> username16(LOGIN_NAME_MAX, 0);
     icu::UnicodeString username8(username.c_str(), "UTF-8");
     int32_t targetSize = username8.extract(0, username8.length(),
                                            reinterpret_cast<char*>(&username16[0]),
