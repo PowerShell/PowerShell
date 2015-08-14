@@ -7,10 +7,7 @@
 #include <locale.h>
 #include <unistd.h>
 #include <string>
-#include <unicode/utypes.h>
-#include <unicode/ucnv.h>
-#include <unicode/ustring.h>
-#include <unicode/uchar.h>
+#include <unicode/unistr.h>
 #include "getcomputername.h"
 
 //! @brief GetComputerName retrieves the name of the host associated with
@@ -51,12 +48,12 @@
 //! - ERROR_NO_ASSOCIATION: standard input didn't refer to a terminal
 //! - ERROR_INVALID_FUNCTION: getlogin_r() returned an unrecognized error code
 //!
-//! @retval 1 If the function succeeds, the return value is a nonzero
+//! @retval TRUE If the function succeeds, the return value is a nonzero
 //! value, and the variable pointed to by lpnSize contains the number
 //! of TCHARs copied to the buffer specified by lpBuffer, including
 //! the terminating null character.
 //!
-//! @retval 0 If the function fails, the return value is zero. To get
+//! @retval FALSE If the function fails, the return value is zero. To get
 //! extended error information, call GetLastError.
 //!
 //! [MSDN documentation]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms724295%28v=vs.85%29.aspx
@@ -64,28 +61,27 @@
 //! [LPTSTR]: https://msdn.microsoft.com/en-us/library/windows/desktop/aa383751(v=vs.85).aspx#LPTSTR
 BOOL GetComputerNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
 {
-    const std::string utf8 = "UTF-8";
     errno = 0;
     
     // Check parameters
     if (!lpBuffer || !lpnSize) 
     {
         errno = ERROR_INVALID_PARAMETER;
-        return 0;
+        return FALSE;
     }
     
     // Select locale from environment
     setlocale(LC_ALL, "");
     // Check that locale is UTF-8
-    if (nl_langinfo(CODESET) != utf8)
+    if (nl_langinfo(CODESET) != std::string("UTF-8"))
     {
         errno = ERROR_BAD_ENVIRONMENT;
-        return 0;
+        return FALSE;
     }
     
     // Get computername from system in a thread-safe manner
-    std::string computername(HOST_NAME_MAX, '\0');
-    int err = gethostname(&computername[0], computername.size());
+    std::string computername(HOST_NAME_MAX, 0);
+    int err = gethostname(&computername[0], computername.length());
     // Map errno to Win32 Error Codes
     if (err != 0) 
     {
@@ -114,18 +110,13 @@ BOOL GetComputerNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
             default:
                 errno = ERROR_INVALID_FUNCTION;
         }
-        return 0;
+        return FALSE;
     }
     
-    // Convert to char* to WCHAR_T* (UTF-8 to UTF-16 LE w/o BOM)
-    std::basic_string<char16_t> computername16(HOST_NAME_MAX + 1, 0);
-    icu::UnicodeString computername8(computername.c_str(), "UTF-8");
-    int32_t targetSize = computername8.extract(0, computername8.length(),
-                                           reinterpret_cast<char*>(&computername16[0]),
-                                           (computername16.size()-1)*sizeof(char16_t),
-                                           "UTF-16LE");
-    // Number of characters including null
-    computername16.resize(targetSize/sizeof(char16_t)+1);
+    // Convert to UnicodeString
+    auto computername16 = icu::UnicodeString::fromUTF8(computername.c_str());
+    // Terminate string with null
+    computername16.append('\0');
     
     // Size in WCHARs including null
     const DWORD size = computername16.length();
@@ -137,13 +128,14 @@ BOOL GetComputerNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
         // Set lpnSize if buffer is too small to inform user
         // of necessary size
         *lpnSize= size;
-        return 0;
+        return FALSE;
     }
     
-    // Copy bytes from string to buffer
-    memcpy(lpBuffer, &computername16[0],  size*sizeof(char16_t));
+    // Extract string as UTF-16LE to buffer
+    computername16.extract(0, size, reinterpret_cast<char*>(lpBuffer), "UTF-16LE");
+    
     *lpnSize = size;
-    return 1;
+    return TRUE;
     
 }
 
