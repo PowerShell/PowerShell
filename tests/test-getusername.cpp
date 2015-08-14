@@ -35,7 +35,7 @@ protected:
     {
         lpnSize = size;
         // allocate a WCHAR_T buffer to receive username
-        lpBuffer.assign(lpnSize, '\0');
+        lpBuffer.assign(lpnSize, 0);
         result = GetUserNameW(&lpBuffer[0], &lpnSize);
     }
 
