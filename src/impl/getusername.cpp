@@ -7,10 +7,7 @@
 #include <locale.h>
 #include <unistd.h>
 #include <string>
-#include <unicode/utypes.h>
-#include <unicode/ucnv.h>
-#include <unicode/ustring.h>
-#include <unicode/uchar.h>
+#include <unicode/unistr.h>
 #include "getusername.h"
 
 //! @brief GetUserName retrieves the name of the user associated with
@@ -115,14 +112,10 @@ BOOL GetUserNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
         return FALSE;
     }
 
-    // Convert to char* to WCHAR_T* (UTF-8 to UTF-16 LE w/o BOM)
-    std::basic_string<char16_t> username16(LOGIN_NAME_MAX, 0);
-    icu::UnicodeString username8(username.c_str(), "UTF-8");
-    int32_t targetSize = username8.extract(0, username8.length(),
-                                           reinterpret_cast<char*>(&username16[0]),
-                                           LOGIN_NAME_MAX, "UTF-16LE");
-    // Number of characters including null
-    username16.resize(targetSize/sizeof(char16_t)+1);
+    // Convert to UnicodeString
+    auto username16 = icu::UnicodeString::fromUTF8(username.c_str());
+    // Terminate string with null
+    username16.append('\0');
 
     // Size in WCHARs including null
     const DWORD size = username16.length();
@@ -135,8 +128,9 @@ BOOL GetUserNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
         return FALSE;
     }
 
-    // Copy bytes from string to buffer
-    memcpy(lpBuffer, &username16[0], size*sizeof(char16_t));
+    // Extract string as UTF-16LE to buffer
+    username16.extract(0, size, reinterpret_cast<char*>(lpBuffer), "UTF-16LE");
+
     *lpnSize = size;
 
     return TRUE;
