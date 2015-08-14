@@ -6,10 +6,7 @@
 #include <vector>
 #include <unistd.h>
 #include <gtest/gtest.h>
-#include <unicode/utypes.h>
-#include <unicode/ucnv.h>
-#include <unicode/ustring.h>
-#include <unicode/uchar.h>
+#include <unicode/unistr.h>
 #include "getusername.h"
 
 //! Test fixture for GetUserNameW
@@ -35,7 +32,7 @@ protected:
     {
         lpnSize = size;
         // allocate a WCHAR_T buffer to receive username
-        lpBuffer.assign(lpnSize, '\0');
+        lpBuffer.assign(lpnSize, 0);
         result = GetUserNameW(&lpBuffer[0], &lpnSize);
     }
 
@@ -50,18 +47,14 @@ protected:
         //! Sets lpnSize to number of WCHARs including null.
         ASSERT_EQ(expectedSize, lpnSize);
 
-        // setup for conversion from UTF-16LE
+        // Read lpBuffer into UnicodeString (without null)
         const char* begin = reinterpret_cast<char*>(&lpBuffer[0]);
-        // multiply to get number of bytes
-        icu::UnicodeString username16(begin, lpnSize*sizeof(char16_t), "UTF-16LE");
-        // username16 length includes null and is number of characters
-        ASSERT_EQ(expectedSize, username16.length());
-
-        // convert (minus null) to UTF-8 for comparison
-        std::string username(lpnSize-1, 0);
+        icu::UnicodeString username16(begin, (lpnSize-1)*sizeof(UChar), "UTF-16LE");
+        ASSERT_EQ(expectedUsername.length(), username16.length());
+        // Convert to UTF-8 for comparison
+        std::string username;
+        username16.toUTF8String(username);
         ASSERT_EQ(expectedUsername.length(), username.length());
-        username16.extract(0, username.length(),
-                           reinterpret_cast<char*>(&username[0]), "UTF-8");
 
         //! Returned username (after conversion) is what was expected.
         EXPECT_EQ(expectedUsername, username);
