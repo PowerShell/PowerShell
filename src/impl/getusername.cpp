@@ -64,8 +64,6 @@
 //! [LPTSTR]: https://msdn.microsoft.com/en-us/library/windows/desktop/aa383751(v=vs.85).aspx#LPTSTR
 BOOL GetUserNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
 {
-    const std::string utf8 = "UTF-8";
-
     errno = FALSE;
 
     // Check parameters
@@ -78,7 +76,7 @@ BOOL GetUserNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
     // Select locale from environment
     setlocale(LC_ALL, "");
     // Check that locale is UTF-8
-    if (nl_langinfo(CODESET) != utf8)
+    if (nl_langinfo(CODESET) != std::string("UTF-8"))
     {
         errno = ERROR_BAD_ENVIRONMENT;
         return FALSE;
