@@ -81,7 +81,6 @@
     #define ERROR_NO_SUCH_USER 0x00000525
     #define ERROR_INVALID_FUNCTION 0x00000001
     #define MAX_PATH 0x00000104
-    #define UTF8 65001
     #define ERROR_BAD_ENVIRONMENT 0x0000000A
     typedef unsigned long long uint64;
 #endif
@@ -608,8 +607,8 @@ typedef unsigned char PAL_Boolean;
 */
 
 namespace const_cpinfo{
- constexpr int MAX_DEFAULTCHAR =   2;
- constexpr int MAX_LEADBYTES   =  12;
+    constexpr int MAX_DEFAULTCHAR =   2;
+    constexpr int MAX_LEADBYTES   =  12;
 }
 
 /*
