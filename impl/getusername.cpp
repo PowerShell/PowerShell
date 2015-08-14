@@ -83,8 +83,8 @@ BOOL GetUserNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
     }
 
     // Get username from system in a thread-safe manner
-    int ret = getlogin_r(&username[0], username.size());
     std::string username(LOGIN_NAME_MAX, 0);
+    int ret = getlogin_r(&username[0], username.length());
     // Map errno to Win32 Error Codes
     if (ret)
     {
