@@ -6,10 +6,7 @@
 #include <vector>
 #include <unistd.h>
 #include <gtest/gtest.h>
-#include <unicode/utypes.h>
-#include <unicode/ucnv.h>
-#include <unicode/ustring.h>
-#include <unicode/uchar.h>
+#include <unicode/unistr.h>
 #include "getcomputername.h"
 
 //! Test fixture for GetComputerNameTest
@@ -35,7 +32,7 @@ protected:
     {
         lpnSize = size;
         // allocate a DWORD buffer to receive computername
-        lpBuffer.assign(lpnSize, '\0');
+        lpBuffer.assign(lpnSize, 0);
         result = GetComputerNameW(&lpBuffer[0], &lpnSize);
     }
     
@@ -49,18 +46,15 @@ protected:
         //! Sets lpnSize to number of WCHARs including null.
         ASSERT_EQ(expectedSize, lpnSize);
         
-        // setup for conversion from UTF-16LE
+        // Read lpBuffer into UnicodeString (without null)
         const char* begin = reinterpret_cast<char*>(&lpBuffer[0]);
-        // multiply to get number of bytes
-        icu::UnicodeString usercomputer16(begin, lpnSize*sizeof(char16_t), "UTF-16LE");
-        // username16 length includes null and is number of characters
-        ASSERT_EQ(expectedSize, usercomputer16.length());
+        icu::UnicodeString computername16(begin, (lpnSize-1)*sizeof(UChar), "UTF-16LE");
+        ASSERT_EQ(expectedComputerName.length(), computername16.length());
+        // Convert to UTF-8 for comparison
+        std::string computername;
+        computername16.toUTF8String(computername);
         
-        // convert (minus null) to UTF-8 for comparison
-        std::string computername(lpnSize-1, 0);
         ASSERT_EQ(expectedComputerName.length(), computername.length());
-        usercomputer16.extract(0, computername.length(),
-                               reinterpret_cast<char*>(&computername[0]), "UTF-8");
         
         //! Returned computername(after conversion) is what was expected.
         EXPECT_EQ(expectedComputerName, computername);
