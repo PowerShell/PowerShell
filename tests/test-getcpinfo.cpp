@@ -30,7 +30,7 @@ TEST(GetCPInfo, CodePageNotUTF8)
     CPINFO* cpinfo;
     BOOL result = GetCPInfoW(65000, cpinfo);
     
-    ASSERT_TRUE(result == FALSE);
+    ASSERT_EQ(result, FALSE);
     EXPECT_EQ(errno, ERROR_INVALID_PARAMETER);
     
 }
