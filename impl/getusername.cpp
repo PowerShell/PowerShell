@@ -120,8 +120,7 @@ BOOL GetUserNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
     icu::UnicodeString username8(username.c_str(), "UTF-8");
     int32_t targetSize = username8.extract(0, username8.length(),
                                            reinterpret_cast<char*>(&username16[0]),
-                                           (username16.size()-1)*sizeof(char16_t),
-                                           "UTF-16LE");
+                                           LOGIN_NAME_MAX, "UTF-16LE");
     // Number of characters including null
     username16.resize(targetSize/sizeof(char16_t)+1);
 
