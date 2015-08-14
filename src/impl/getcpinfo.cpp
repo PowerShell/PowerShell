@@ -55,7 +55,7 @@ BOOL GetCPInfoW(UINT codepage, CPINFO* cpinfo)
         return 0;
     }
     
-    //if codepage is utf8
+    // if codepage is utf8
     if(codepage == 65001) 
     {
         cpinfo->DefaultChar[0] = '?';

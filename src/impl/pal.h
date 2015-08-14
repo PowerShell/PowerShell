@@ -598,26 +598,14 @@ typedef unsigned char PAL_Boolean;
 # define PAL_COUNT(ARR) (sizeof(ARR) / sizeof(ARR[0]))
 #endif
 
-/*
-**==============================================================================
-**
-** NameSpace
-**
-**==============================================================================
-*/
+//!* NameSpace
 
 namespace const_cpinfo{
     constexpr int MAX_DEFAULTCHAR =   2;
     constexpr int MAX_LEADBYTES   =  12;
 }
 
-/*
-**==============================================================================
-**
-** Structs
-**
-**==============================================================================
-*/
+//!* Structs
 
 typedef struct _cpinfo {
     UINT MaxCharSize;
