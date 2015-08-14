@@ -51,12 +51,12 @@
 //! - ERROR_NO_ASSOCIATION: standard input didn't refer to a terminal
 //! - ERROR_INVALID_FUNCTION: getlogin_r() returned an unrecognized error code
 //!
-//! @retval 1 If the function succeeds, the return value is a nonzero
+//! @retval TRUE If the function succeeds, the return value is a nonzero
 //! value, and the variable pointed to by lpnSize contains the number
 //! of TCHARs copied to the buffer specified by lpBuffer, including
 //! the terminating null character.
 //!
-//! @retval 0 If the function fails, the return value is zero. To get
+//! @retval FALSE If the function fails, the return value is zero. To get
 //! extended error information, call GetLastError.
 //!
 //! [MSDN documentation]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms724432(v=vs.85).aspx
@@ -72,7 +72,7 @@ BOOL GetUserNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
     if (!lpBuffer || !lpnSize)
     {
         errno = ERROR_INVALID_PARAMETER;
-        return 0;
+        return FALSE;
     }
 
     // Select locale from environment
@@ -135,7 +135,7 @@ BOOL GetUserNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
         // Set lpnSize if buffer is too small to inform user
         // of necessary size
         *lpnSize = size;
-        return 0;
+        return FALSE;
     }
 
     // Copy bytes from string to buffer
