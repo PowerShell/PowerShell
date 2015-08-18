@@ -87,26 +87,12 @@ BOOL GetComputerNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
     {
         switch (errno) 
         {
-            case EMFILE:
-            case ENFILE:
-                errno = ERROR_TOO_MANY_OPEN_FILES;
+            case EFAULT:
+                errno = ERROR_INVALID_ADDRESS;
                 break;
-            case ENXIO:
-                errno = ERROR_NO_ASSOCIATION;
-                break;
-            case ERANGE:
-                errno = ERROR_INSUFFICIENT_BUFFER;
-                break;
-            case ENOENT:
-                errno = ERROR_NO_SUCH_USER;
-                break;
-            case ENOMEM:
-                errno = ERROR_OUTOFMEMORY;
-                break;
-            case ENOTTY:
-                errno = ERROR_NO_ASSOCIATION;
-                break;
-                errno = ERROR_NO_ASSOCIATION;
+            case ENAMETOOLONG:
+                errno = ERROR_BUFFER_OVERFLOW;
+                break; 
             default:
                 errno = ERROR_INVALID_FUNCTION;
         }

@@ -3,6 +3,7 @@
 //! @brief Unit tests for GetComputerNameW
 
 #include <string>
+#include <cstring>
 #include <vector>
 #include <unistd.h>
 #include <gtest/gtest.h>
@@ -21,17 +22,21 @@ protected:
     
     //Get expected result from using linux call
     GetComputerNameTest()
-    {
-        char hostname[HOST_NAME_MAX];
-        BOOL host =  gethostname(hostname, sizeof hostname);
-        expectedComputerName = hostname;
-        expectedSize = expectedComputerName.length() + 1;
+    {     
+        expectedComputerName.resize(HOST_NAME_MAX);
+        BOOL ret = gethostname(&expectedComputerName[0], expectedComputerName.length());
+        EXPECT_EQ(ret, 0);
+        expectedSize = std::strlen(expectedComputerName.c_str()) + 1;
+        expectedComputerName.resize(expectedSize - 1);
     }
-    
+
+    //! Invokes GetComputerNameW with lpnSize and lpBuffer, saves result.
+    //!
+    //! @param size Assigns to lpnSize and allocates lpBuffer with
+    //! size number of null characters.
     void TestWithSize(DWORD size) 
     {
         lpnSize = size;
-        // allocate a DWORD buffer to receive computername
         lpBuffer.assign(lpnSize, 0);
         result = GetComputerNameW(&lpBuffer[0], &lpnSize);
     }
@@ -49,12 +54,11 @@ protected:
         // Read lpBuffer into UnicodeString (without null)
         const char* begin = reinterpret_cast<char*>(&lpBuffer[0]);
         icu::UnicodeString computername16(begin, (lpnSize-1)*sizeof(UChar), "UTF-16LE");
-        ASSERT_EQ(expectedComputerName.length(), computername16.length());
         // Convert to UTF-8 for comparison
         std::string computername;
         computername16.toUTF8String(computername);
         
-        ASSERT_EQ(expectedComputerName.length(), computername.length());
+        ASSERT_EQ(expectedSize, computername.length() + 1);
         
         //! Returned computername(after conversion) is what was expected.
         EXPECT_EQ(expectedComputerName, computername);
@@ -64,8 +68,8 @@ protected:
     {
         SCOPED_TRACE("");
         
-        // returns 0 on failure
-        EXPECT_EQ(0, result);
+        // returns FALSE on failure
+        EXPECT_EQ(FALSE, result);
         
         // sets errno to ERROR_INVALID_PARAMETER when lpBuffer is null
         EXPECT_EQ(errno, ERROR_INVALID_PARAMETER);
@@ -75,14 +79,14 @@ protected:
     {
         SCOPED_TRACE("");
         
-        // returns 0 on failure
-        EXPECT_EQ(0, result);
+        // returns FALSE on failure
+        EXPECT_EQ(FALSE, result);
         
         // sets errno to ERROR_INSUFFICIENT_BUFFER
         EXPECT_EQ(errno, ERROR_INSUFFICIENT_BUFFER);
         
         // sets lpnSize to length of username + null
-        ASSERT_EQ(expectedComputerName.size()+1, lpnSize); 
+        ASSERT_EQ(expectedSize, lpnSize); 
     }
 };
 
@@ -111,14 +115,14 @@ TEST_F(GetComputerNameTest, BufferSizeAsZero)
 TEST_F(GetComputerNameTest, BufferSizeAsUserNameMinusOne)
 {  
     // the buffer is also too small
-    TestWithSize(expectedComputerName.size()-1);
+    TestWithSize(expectedSize-1);
     TestInsufficientBuffer();
 }
 
 TEST_F(GetComputerNameTest, BufferSizeAsUserNamePlusOne)
 {
     // the buffer is exactly big enough
-    TestWithSize(expectedComputerName.size()+1);
+    TestWithSize(expectedSize+1);
     TestSuccess();
 }
 
