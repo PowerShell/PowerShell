@@ -9,18 +9,19 @@
 TEST(GetCPInfo,Utf8)
 {
     CPINFO* cpinfo;
-    int UTF8CodePageNumber = 65001;
+    int UTF8CodePageNumber = const_cpinfo::UTF8;
     BOOL result = GetCPInfoW(UTF8CodePageNumber, cpinfo);
 
     // first make sure that the function worked
-    ASSERT_EQ(result, TRUE);
+    ASSERT_EQ(TRUE, result);
     
     // now compare the actual values
-    ASSERT_EQ(cpinfo->DefaultChar[0],'?');
-    ASSERT_EQ(cpinfo->DefaultChar[1],'0');
-    ASSERT_EQ(cpinfo->MaxCharSize,4);
-    for(int i = 0; i < const_cpinfo::MAX_LEADBYTES; i++ ){
-        ASSERT_EQ(cpinfo->LeadByte[i],'0');
+    EXPECT_EQ(cpinfo->DefaultChar[0], '?');
+    EXPECT_EQ(cpinfo->DefaultChar[1], '0');
+    EXPECT_EQ(cpinfo->MaxCharSize,4);
+    for(int i = 0; i < const_cpinfo::MAX_LEADBYTES; i++ )
+    {
+        EXPECT_EQ(cpinfo->LeadByte[i], '0');
     }
 }
 
@@ -30,7 +31,7 @@ TEST(GetCPInfo, CodePageNotUTF8)
     CPINFO* cpinfo;
     BOOL result = GetCPInfoW(65000, cpinfo);
     
-    ASSERT_EQ(result, FALSE);
-    EXPECT_EQ(errno, ERROR_INVALID_PARAMETER);
+    ASSERT_EQ(FALSE, result);
+    ASSERT_EQ(errno, ERROR_INVALID_PARAMETER);
     
 }
