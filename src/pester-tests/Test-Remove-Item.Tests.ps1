@@ -50,68 +50,68 @@
         }
 
         It "Should not be able to remove a read-only document without using the force switch" {
-        # Set to read only
-        Set-ItemProperty -Path $testfilepath -Name IsReadOnly -Value $true
+            # Set to read only
+            Set-ItemProperty -Path $testfilepath -Name IsReadOnly -Value $true
 
-        # attempt to remove the file
-        { Remove-Item $testfilepath -ErrorAction SilentlyContinue } | Should Not Throw
+            # attempt to remove the file
+            { Remove-Item $testfilepath -ErrorAction SilentlyContinue } | Should Not Throw
 
-        # validate
-        Test-Path $testfilepath | Should Be $true
+            # validate
+            Test-Path $testfilepath | Should Be $true
 
-        # set to not be read only
-        Set-ItemProperty -Path $testfilepath -Name IsReadOnly -Value $false
+            # set to not be read only
+            Set-ItemProperty -Path $testfilepath -Name IsReadOnly -Value $false
 
-        # remove
-        Remove-Item  $testfilepath -Force
+            # remove
+            Remove-Item  $testfilepath -Force
 
-        # Validate 
-        Test-Path $testfilepath | Should Be $false
-    }
+            # Validate 
+            Test-Path $testfilepath | Should Be $false
+        }
 
         It "Should be able to remove all files matching a regular expression with the include switch" {
-         # Create multiple files with specific string
-         New-Item -Name file1.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
-         New-Item -Name file2.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
-         New-Item -Name file3.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
-         # Create a single file that does not match that string - already done in BeforeEach
+            # Create multiple files with specific string
+            New-Item -Name file1.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
+            New-Item -Name file2.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
+            New-Item -Name file3.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
+            # Create a single file that does not match that string - already done in BeforeEach
 
-         # Delete the specific string
-         Remove-Item /tmp/* -Include file*.txt
-         # validate that the string under test was deleted, and the nonmatching strings still exist
-         Test-path /tmp/file1.txt | Should Be $false
-         Test-path /tmp/file2.txt | Should Be $false
-         Test-path /tmp/file3.txt | Should Be $false
-         Test-Path $testfilepath   | Should Be $true
+            # Delete the specific string
+            Remove-Item /tmp/* -Include file*.txt
+            # validate that the string under test was deleted, and the nonmatching strings still exist
+            Test-path /tmp/file1.txt | Should Be $false
+            Test-path /tmp/file2.txt | Should Be $false
+            Test-path /tmp/file3.txt | Should Be $false
+            Test-Path $testfilepath   | Should Be $true
 
-         # Delete the non-matching strings
-         Remove-Item $testfilepath
+            # Delete the non-matching strings
+            Remove-Item $testfilepath
         }
 
         It "Should be able to not remove any files matching a regular expression with the exclude switch" {
-         # Create multiple files with specific string
-         New-Item -Name file1.wav -Path $testpath -ItemType "file" -Value "lorem ipsum"
-         New-Item -Name file2.wav -Path $testpath -ItemType "file" -Value "lorem ipsum"
+            # Create multiple files with specific string
+            New-Item -Name file1.wav -Path $testpath -ItemType "file" -Value "lorem ipsum"
+            New-Item -Name file2.wav -Path $testpath -ItemType "file" -Value "lorem ipsum"
 
-         # Create a single file that does not match that string
-         New-Item -Name file1.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
-         New-Item -Name file2.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
+            # Create a single file that does not match that string
+            New-Item -Name file1.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
+            New-Item -Name file2.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
 
-         # Delete the specific string
-         Remove-Item /tmp/file* -Exclude *.wav -Include *.txt
+            # Delete the specific string
+            Remove-Item /tmp/file* -Exclude *.wav -Include *.txt
 
-         # validate that the string under test was deleted, and the nonmatching strings still exist
-         Test-Path /tmp/file1.wav | Should Be $true
-         Test-Path /tmp/file2.wav | Should Be $true
-         Test-Path /tmp/file1.txt | Should Be $false
-         Test-path /tmp/file2.txt | Should Be $false
+            # validate that the string under test was deleted, and the nonmatching strings still exist
+            Test-Path /tmp/file1.wav | Should Be $true
+            Test-Path /tmp/file2.wav | Should Be $true
+            Test-Path /tmp/file1.txt | Should Be $false
+            Test-path /tmp/file2.txt | Should Be $false
 
-         # Delete the non-matching strings
-         Remove-Item /tmp/file1.wav
-         Remove-Item /tmp/file2.wav
+            # Delete the non-matching strings
+            Remove-Item /tmp/file1.wav
+            Remove-Item /tmp/file2.wav
 
-         Test-Path /tmp/file1.wav | Should Be $false
-         Test-Path /tmp/file2.wav | Should Be $false
+            Test-Path /tmp/file1.wav | Should Be $false
+            Test-Path /tmp/file2.wav | Should Be $false
         }
     }
 
@@ -131,17 +131,10 @@
             test-path $testdirectory | Should Be $true
         }
 
-        AfterEach {
-            if (Test-Path $testdirectory)
-            {
-                Remove-Item $testdirectory -Recurse -Force
-            }
-
-            Test-Path $testdirectory | Should Be $false
-        }
-
         It "Should be able to remove a directory" {
             { Remove-Item $testdirectory } | Should Not Throw
+
+            Test-Path $testdirectory | Should Be $false
         }
 
         It "Should be able to recursively delete subfolders" {
@@ -152,6 +145,8 @@
             test-path $complexDirectory | Should Be $true
 
             { Remove-Item $testdirectory -Recurse} | Should Not Throw
+
+            Test-Path $testdirectory | Should Be $false
         }
     }
 }
