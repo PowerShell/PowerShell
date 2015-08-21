@@ -11,55 +11,60 @@
             }
 
             New-Item -Name $testfile -Path $testpath -ItemType "file" -Value "lorem ipsum"
-
-            Test-path $testfilepath | Should Be $true
-        }
-
-        AfterEach {
-            if (Test-Path $testfilepath)
-            {
-                Remove-Item $testfilepath -Force
-            }
-
-            Test-Path $testfilepath | Should Be $false
         }
 
         It "Should be able to be called on a regular file without error using the Path switch" {
             { Remove-Item -Path $testfilepath } | Should Not Throw
+
+            Test-Path $testfilepath | Should Be $false
         }
 
         It "Should be able to be called on a file without the Path switch" {
             { Remove-Item $testfilepath } | Should Not Throw
+
+            Test-Path $testfilepath | Should Be $false
         }
 
         It "Should be able to call the rm alias" {
             { rm $testfilepath } | Should Not Throw
+
+            Test-Path $testfilepath | Should Be $false
         }
 
         It "Should be able to call the del alias" {
             { del $testfilepath } | Should Not Throw
+
+            Test-Path $testfilepath | Should Be $false
         }
 
         It "Should be able to call the erase alias" {
             { erase $testfilepath } | Should Not Throw
+
+            Test-Path $testfilepath | Should Be $false
         }
 
         It "Should be able to call the ri alias" {
             { ri $testfilepath } | Should Not Throw
+
+            Test-Path $testfilepath | Should Be $false
         }
 
         It "Should not be able to remove a read-only document without using the force switch" {
         # Set to read only
         Set-ItemProperty -Path $testfilepath -Name IsReadOnly -Value $true
+
         # attempt to remove the file
         { Remove-Item $testfilepath -ErrorAction SilentlyContinue } | Should Not Throw
+
         # validate
         Test-Path $testfilepath | Should Be $true
 
         # set to not be read only
         Set-ItemProperty -Path $testfilepath -Name IsReadOnly -Value $false
+
         # remove
         Remove-Item  $testfilepath -Force
+
         # Validate 
         Test-Path $testfilepath | Should Be $false
     }
