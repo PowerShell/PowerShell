@@ -29,9 +29,9 @@
          Split-Path "abadTest" -Qualifier -ErrorAction SilentlyContinue  | Should Throw
     }
 
-    It "Should return the path minus the drive when the noqualifier switch is used" { 
+    It "Should return the path when the noqualifier switch is used on a linux system" { 
         { Split-Path /usr/bin -NoQualifier } | Should Not Throw
-        Split-Path /usr/bin -NoQualifier | Should Be "usr/bin"
+        Split-Path /usr/bin -NoQualifier | Should Be "/usr/bin"
     }
 
     It "Should return the parent folder name when the leaf switch is used" {
