@@ -410,23 +410,12 @@ int main(int argc, char** argv)
     }
     loaderDelegate(psBasePath16.c_str());
 
-    // call the unmanaged entry point for PowerShell
-    typedef int (*UnmanagedMain)(int argc, char const* const* argv);
-    UnmanagedMain unmanagedMain = nullptr;
-    status = createDelegate(
-                        hostHandle,
-                        domainId,
-                        args.entryAssemblyName.c_str(),
-                        args.entryTypeName.c_str(),
-                        args.entryFunctionName.c_str(),
-                        (void**)&unmanagedMain);
-    if (0 > status)
-    {
-        std::cerr << "could not create delegate for UnmanagedMain - status: " << std::hex << status << std::endl;
-        return 4;
-    }
-
-    int exitCode = unmanagedMain(args.argc,args.argv);
+    // call into Main of powershell-simple.exe
+    unsigned int exitCode;
+    executeAssembly(hostHandle, domainId, args.argc,
+		    (const char**)args.argv,
+		    (currentDirAbsolutePath+"/powershell-simple.exe").c_str(),
+		    &exitCode);
 
     // shutdown CoreCLR
     status = shutdownCoreCLR(hostHandle,domainId);
