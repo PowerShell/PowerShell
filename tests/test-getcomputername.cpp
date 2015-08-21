@@ -25,7 +25,7 @@ protected:
     {     
         expectedComputerName.resize(HOST_NAME_MAX);
         BOOL ret = gethostname(&expectedComputerName[0], expectedComputerName.length());
-        EXPECT_EQ(ret, 0);
+        EXPECT_EQ(0, ret);
         expectedSize = std::strlen(expectedComputerName.c_str()) + 1;
         expectedComputerName.resize(expectedSize - 1);
     }

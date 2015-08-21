@@ -91,7 +91,7 @@ BOOL GetComputerNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
                 errno = ERROR_INVALID_ADDRESS;
                 break;
             case ENAMETOOLONG:
-                errno = ERROR_BUFFER_OVERFLOW;
+                errno = ERROR_GEN_FAILURE;
                 break; 
             default:
                 errno = ERROR_INVALID_FUNCTION;
