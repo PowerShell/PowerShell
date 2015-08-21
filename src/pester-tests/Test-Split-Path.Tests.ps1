@@ -52,7 +52,7 @@
     }
 
     It "Should return the path up to the parent of the directory when Parent switch is used" {
-        Split-Path "/usr/bin" | Should Be ( Split-Path "/usr/bin" -Parent )
+        Split-Path "/usr/bin" -Parent | Should Be ( Split-Path "/usr/bin" -Parent )
     }
 
     It "Should not throw if a parameterSetName is correct" {
