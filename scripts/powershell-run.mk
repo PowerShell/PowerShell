@@ -19,5 +19,3 @@ dotnetlibs/powershell-run.exe: $(POWERSHELL_RUN_SRCS) $(POWERSHELL_RUN_DEPS)
 
 dotnetlibs/powershell-simple.exe: $(POWERSHELL_SIMPLE_SRCS) $(POWERSHELL_RUN_DEPS)
 	    $(CSC) -out:$@ -noconfig -nostdlib -target:exe $(POWERSHELL_RUN_REFS) $(COREREF) $(POWERSHELL_SIMPLE_SRCS)
-
-
