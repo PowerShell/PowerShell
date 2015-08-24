@@ -183,14 +183,14 @@ run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
 
 pester-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
 	# execute the pester tests, pester needs a TEMP environment variable to be set
-	exec_env/app_base/runps-simple.sh 'cd ../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
+	exec_env/app_base/runps-simple.sh 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
 
 test: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr $(addprefix $(TESTRUN_FOLDER)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll) pester-tests dotnetlibs/monad_native
 	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=../coreclr:. ../coreclr/corerun xunit.console.netcore.exe ps_test.dll -xml ../../xunittests.xml
 	# run the c++ tests
 	cd dotnetlibs && ./monad_native
 	# test the 3rdparty/hashbang sample
-	PATH=$(PATH):$(shell pwd)/exec_env/app_base 3rdparty/hashbang/script.ps1
+	PATH=$(PATH):$(shell pwd)/exec_env/app_base $(shell pwd)/3rdparty/hashbang/script.ps1
 
 run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-debug-clr
 	PAL_DBG_CHANNELS="+LOADER.TRACE" exec_env/app_base/runps-simple.sh get-location
