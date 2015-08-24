@@ -81,7 +81,6 @@
 
     }
 
-    ### -force switch override
     It "Should allow the cmdlet to overwrite an existing read-only file" {
         # create a read-only text file
         { Out-File -FilePath $testfile -InputObject $b }                | Should Not Throw
@@ -108,5 +107,4 @@
         # reset to not read only so it can be deleted
         Set-ItemProperty -Path $testfile -Name IsReadOnly -Value $false
     }
-    ###These commands show how to use the Out-File cmdlet when you are not in a FileSystem drive.
 }
