@@ -7,7 +7,6 @@
         $expected = /bin/bash -c "cd ~ && pwd"
 
         (Get-Item ENV:HOME).Value     | Should Be $expected
-        (Get-Item ENV:HOSTNAME).Value | Should Not BeNullOrEmpty
         (Get-Item ENV:PATH).Value     | Should Not BeNullOrEmpty
     }
 
