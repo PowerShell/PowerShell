@@ -7,7 +7,6 @@
         $expected = /bin/bash -c "cd ~ && pwd"
 
         (Get-Item ENV:HOME).Value     | Should Be $expected
-        (Get-Item ENV:PATH).Value     | Should Not BeNullOrEmpty
     }
 
     It "Should be able to set the environment variables" {
@@ -16,5 +15,19 @@
         $ENV:TESTENVIRONMENTVARIABLE | Should Not BeNullOrEmpty
         $ENV:TESTENVIRONMENTVARIABLE | Should Be "this is a test environment variable"
 
+    }
+
+    It "Should contain /bin in the PATH" {
+        $ENV:PATH | Should Match "/bin"
+    }
+
+    It "Should have the correct HOSTNAME" {
+        $expected = /bin/bash -c hostname
+
+        $ENV:HOSTNAME | Should Be $expected
+    }
+
+    It "Should have a nonempty PATH" {
+        $ENV:PATH | Should Not BeNullOrEmpty
     }
 }
