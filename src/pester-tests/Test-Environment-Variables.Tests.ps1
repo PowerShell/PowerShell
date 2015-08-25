@@ -18,10 +18,11 @@
     }
 
     It "Should be able to set the environment variables" {
-        { $ENV:TESTENVIRONMENTVARIABLE = "this is a test environment variable" } | Should Not Throw
+        $expected = "this is a test environment variable"
+        { $ENV:TESTENVIRONMENTVARIABLE = $expected  } | Should Not Throw
 
         $ENV:TESTENVIRONMENTVARIABLE | Should Not BeNullOrEmpty
-        $ENV:TESTENVIRONMENTVARIABLE | Should Be "this is a test environment variable"
+        $ENV:TESTENVIRONMENTVARIABLE | Should Be $expected
 
     }
 
