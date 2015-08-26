@@ -15,7 +15,6 @@ set(TEST_SOURCE_FILES tests/test-getcurrentprocessid.cpp tests/test-getusername.
 set(SOURCE_FILES main.cpp ../ext-src/gtest/fused-src/gtest/gtest-all.cc)
 set(HOST_CMDLINE_SOURCE_FILES host/cmdline/main.cpp ${HOST_COMMON_SOURCE_FILES})
 
-
 # target definitions
 add_library(ps SHARED ${LIB_SOURCE_FILES})
 add_executable(monad_native ${SOURCE_FILES} ${TEST_SOURCE_FILES})
