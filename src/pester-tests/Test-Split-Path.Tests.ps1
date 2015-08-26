@@ -40,7 +40,7 @@
         $testfile2               = "testfilenumber2.ps1"
         $FullyQualifiedTestFile2 = $testDir + "/" + $testfile2
 
-        New-Item -ItemType file -Path $FullyQualifiedTestFile, $FullyQualifiedTestFile2
+        New-Item -ItemType file -Path $FullyQualifiedTestFile, $FullyQualifiedTestFile2 -Force
 
         Test-Path $FullyQualifiedTestFile  | Should Be $true
         Test-Path $FullyQualifiedTestFile2 | Should Be $true
