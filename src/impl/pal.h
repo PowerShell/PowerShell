@@ -69,7 +69,6 @@
     #define INFINITE 0xFFFFFFFF
     #define WINAPI
     #define S_OK 0
-    #define ERROR_GEN_FAILURE 31
     #define TRUE 1
     #define FALSE 0
     #define ERROR_INVALID_PARAMETER 87
@@ -81,7 +80,8 @@
     #define ERROR_NO_SUCH_USER 0x00000525
     #define ERROR_INVALID_FUNCTION 0x00000001
     #define MAX_PATH 0x00000104
-    #define ERROR_BAD_ENVIRONMENT 0x0000000A
+    #define ERROR_INVALID_ADDRESS 0x000001e7
+    #define ERROR_GEN_FAILURE 0x0000001F
     typedef unsigned long long uint64;
 #endif
 

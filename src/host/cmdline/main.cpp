@@ -16,7 +16,7 @@ void printHelp()
 {
     std::cerr << "PS CoreCLR host" << std::endl;
     std::cerr << "Usage: host_cmdline [-c coreclr_path] [-alc load_context_assembly] [-s search_paths]" << std::endl;
-    std::cerr << "                    [-b base_path] assembly_name type_name function_name [...]" << std::endl;
+    std::cerr << "                    [-b base_path] assembly [...]" << std::endl;
     std::cerr << std::endl;
     std::cerr << "What it does:" << std::endl;
     std::cerr << "- by default the host assumes that CoreCLR is located in the same folder" << std::endl;
@@ -28,8 +28,8 @@ void printHelp()
     std::cerr << "  + a custom assembly containing the PowerShellAssemblyLoadContext can" << std::endl;
     std::cerr << "    be provided with the -alc command line argument" << std::endl;
     std::cerr << "- all additional parameters at the end of the command line are forwarded" << std::endl;
-    std::cerr << "  to the specified entry function in the assembly" << std::endl;
-    std::cerr << "- the host will execute the specified entry function in the specified assembly" << std::endl;
+    std::cerr << "  to the Main function in the assembly" << std::endl;
+    std::cerr << "- the host will execute the Main function in the specified assembly" << std::endl;
     std::cerr << "  + this assembly has to be located in the search path" << std::endl;
     std::cerr << "- by default the host will add the current working directory to the assembly search path" << std::endl;
     std::cerr << "  + this can be overridden with the -s command line argument" << std::endl;
@@ -37,8 +37,8 @@ void printHelp()
     std::cerr << "- by default the host assumes the PS base path for the assembly load context is the current" << std::endl;
     std::cerr << "  working directory" << std::endl;
     std::cerr << "  + this can be overridden with the -b command line argument" << std::endl;
-    std::cerr << "- the function signature of the function that gets executed must be:" << std::endl;
-    std::cerr << "  public static int UnmanagedMain(int argc, [MarshalAs(UnmanagedType.LPArray,ArraySubType=UnmanagedType.LPStr,SizeParamIndex=0)] String[] argv)" << std::endl;
+    std::cerr << "- the function signature of the Main function that gets executed must be:" << std::endl;
+    std::cerr << "  static void Main(string[] args)" << std::endl;
     std::cerr << std::endl;
     std::cerr << "Options:" << std::endl;
     std::cerr << "-c, --clr-path    path to libcoreclr.so and the managed CLR assemblies" << std::endl;
@@ -50,13 +50,10 @@ void printHelp()
     std::cerr << "                  separated by :" << std::endl;
     std::cerr << "                  unless part of the same folder as CoreCLR, the main assembly referenced with the assembly_name" << std::endl;
     std::cerr << "                  argument, must always be added to the TPA list with this parameter" << std::endl;
-    std::cerr << "assembly_name     the assembly name of the assembly to execute" << std::endl;
-    std::cerr << "                  must be available in the search path" << std::endl;
-    std::cerr << "type_name         the type name where the function can be found" << std::endl;
-    std::cerr << "function_name     the function to execute (must have the function signature described above!)" << std::endl;
+    std::cerr << "assembly          the path of the assembly to execute relative to current directory" << std::endl;
     std::cerr << std::endl;
     std::cerr << "Example:" << std::endl;
-    std::cerr << "./host_cmdline -c /test/coreclr -alc /test/ps/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll -s /test/ps -b /test/ps -tpa /test/ps/powershell-simple.exe 'powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null' 'ps_hello_world.Program' 'UnmanagedMain' 'get-process'" << std::endl;
+    std::cerr << "./host_cmdline -c /test/coreclr -alc /test/ps/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll -s /test/ps -b /test/ps -tpa /test/ps/powershell-simple.exe 'powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null' 'get-process'" << std::endl;
 }
 
 struct Args
@@ -73,9 +70,7 @@ struct Args
     std::string searchPaths;
     std::string basePath;
     std::string tpaList;
-    std::string entryAssemblyName;
-    std::string entryTypeName;
-    std::string entryFunctionName;
+    std::string entryAssemblyPath;
     int argc;
     char** argv;
     bool verbose;
@@ -88,9 +83,7 @@ struct Args
         std::cerr << "- searchPaths                   " << searchPaths << std::endl;
         std::cerr << "- basePath                      " << basePath << std::endl;
         std::cerr << "- tpaList                       " << tpaList << std::endl;
-        std::cerr << "- entryAssemblyName             " << entryAssemblyName << std::endl;
-        std::cerr << "- entryTypeName                 " << entryTypeName << std::endl;
-        std::cerr << "- entryFunctionName             " << entryFunctionName << std::endl;
+        std::cerr << "- entryAssemblyPath             " << entryAssemblyPath << std::endl;
         std::cerr << "- argc                          " << argc << std::endl;
         std::cerr << "- verbose                       " << (verbose ? "true" : "false") << std::endl;
     }
@@ -141,17 +134,9 @@ bool parseCmdline(const int argc, char** argv, Args& args)
         {
             args.verbose = true;
         }
-        else if (args.entryAssemblyName == "")
+        else if (args.entryAssemblyPath == "")
         {
-            args.entryAssemblyName = arg;
-        }
-        else if (args.entryTypeName == "")
-        {
-            args.entryTypeName = arg;
-        }
-        else if (args.entryFunctionName == "")
-        {
-            args.entryFunctionName = arg;
+            args.entryAssemblyPath = arg;
         }
         else
         {
@@ -165,17 +150,9 @@ bool parseCmdline(const int argc, char** argv, Args& args)
     }
 
     // check for mandatory parameters
-    if (args.entryAssemblyName == "")
+    if (args.entryAssemblyPath == "")
     {
         std::cerr << "error: assembly_name argument missing" << std::endl;
-    }
-    if (args.entryTypeName == "")
-    {
-        std::cerr << "error: type_name argument missing" << std::endl;
-    }
-    if (args.entryFunctionName == "")
-    {
-        std::cerr << "error: function_name argument missing" << std::endl;
     }
 
     return true;
@@ -410,23 +387,12 @@ int main(int argc, char** argv)
     }
     loaderDelegate(psBasePath16.c_str());
 
-    // call the unmanaged entry point for PowerShell
-    typedef int (*UnmanagedMain)(int argc, char const* const* argv);
-    UnmanagedMain unmanagedMain = nullptr;
-    status = createDelegate(
-                        hostHandle,
-                        domainId,
-                        args.entryAssemblyName.c_str(),
-                        args.entryTypeName.c_str(),
-                        args.entryFunctionName.c_str(),
-                        (void**)&unmanagedMain);
-    if (0 > status)
-    {
-        std::cerr << "could not create delegate for UnmanagedMain - status: " << std::hex << status << std::endl;
-        return 4;
-    }
-
-    int exitCode = unmanagedMain(args.argc,args.argv);
+    // call into Main of powershell-simple.exe
+    unsigned int exitCode;
+    executeAssembly(hostHandle, domainId, args.argc,
+		    (const char**)args.argv,
+		    (currentDirAbsolutePath+"/"+args.entryAssemblyPath).c_str(),
+		    &exitCode);
 
     // shutdown CoreCLR
     status = shutdownCoreCLR(hostHandle,domainId);
