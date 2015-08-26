@@ -51,7 +51,7 @@
             Set-ItemProperty -Path $testfilepath -Name IsReadOnly -Value $true
 
             # attempt to remove the file
-            { Remove-Item $testfilepath  } | Should Not Throw
+            { Remove-Item $testfilepath -ErrorAction SilentlyContinue } | Should Not Throw
 
             # validate
             Test-Path $testfilepath | Should Be $true
