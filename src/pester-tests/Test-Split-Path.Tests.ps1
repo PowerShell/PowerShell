@@ -1,8 +1,9 @@
 ﻿Describe "Test-Split-Path" {
-    $testDir                = "/tmp"
+    # Use the local directory because it's renewed each time with the correct privileges
+    $testDir                = "./tmp"
     $testfile               = "testfile.ps1"
     $FullyQualifiedTestFile = $testDir + "/" + $testFile
-
+ls
     It "Should return a string object when invoked" {
         ( Split-Path . ).GetType().Name          | Should Be "String"
         ( Split-Path . -Leaf ).GetType().Name    | Should Be "String"
@@ -45,11 +46,14 @@
         Test-Path $FullyQualifiedTestFile  | Should Be $true
         Test-Path $FullyQualifiedTestFile2 | Should Be $true
 
-        ( Split-Path /tmp/*estf*.ps1 -Leaf -Resolve ).GetType().BaseType.Name | Should Be "Array"
-        ( Split-path /tmp/*estf*.ps1 -Leaf -Resolve )[0]                      | Should Be $testfile
-        ( Split-path /tmp/*estf*.ps1 -Leaf -Resolve )[1]                      | Should Be $testfile2
+        ( Split-Path ./tmp/*estf*.ps1 -Leaf -Resolve ).GetType().BaseType.Name | Should Be "Array"
+        ( Split-path ./tmp/*estf*.ps1 -Leaf -Resolve )[0]                      | Should Be $testfile
+        ( Split-path ./tmp/*estf*.ps1 -Leaf -Resolve )[1]                      | Should Be $testfile2
 
         Remove-Item $FullyQualifiedTestFile, $FullyQualifiedTestFile2
+
+        Test-Path $FullyQualifiedTestFile  | Should Be $false
+        Test-Path $FullyQualifiedTestFile2 | Should Be $false
     }
 
     It "Should be able to tell if a given path is an absolute path" {
@@ -78,5 +82,4 @@
     It "Should throw if a parameterSetName is incorrect" {
         { Split-Path "/usr/bin/" -Parentaoeu } | Should Throw "A parameter cannot be found that matches parameter name"
     }
-
 }
