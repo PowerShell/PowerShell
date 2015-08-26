@@ -600,7 +600,8 @@ typedef unsigned char PAL_Boolean;
 
 //!* NameSpace
 
-namespace const_cpinfo{
+namespace const_cpinfo
+{
     constexpr int MAX_DEFAULTCHAR = 2;
     constexpr int MAX_LEADBYTES = 12;
     constexpr int UTF8 = 65001;
@@ -608,7 +609,8 @@ namespace const_cpinfo{
 
 //!* Structs
 
-typedef struct _cpinfo {
+typedef struct _cpinfo
+{
     UINT MaxCharSize;
     BYTE DefaultChar[const_cpinfo::MAX_DEFAULTCHAR];
     BYTE LeadByte[const_cpinfo::MAX_LEADBYTES];
