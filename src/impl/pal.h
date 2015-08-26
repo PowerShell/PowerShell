@@ -601,9 +601,9 @@ typedef unsigned char PAL_Boolean;
 //!* NameSpace
 
 namespace const_cpinfo{
-    constexpr int MAX_DEFAULTCHAR =   2;
-    constexpr int MAX_LEADBYTES   =  12;
-    constexpr int UTF8   =  65001;
+    constexpr int MAX_DEFAULTCHAR = 2;
+    constexpr int MAX_LEADBYTES = 12;
+    constexpr int UTF8 = 65001;
 }
 
 //!* Structs

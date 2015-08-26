@@ -19,7 +19,7 @@ TEST(GetCPInfo,Utf8)
     EXPECT_EQ(cpinfo->DefaultChar[0], '?');
     EXPECT_EQ(cpinfo->DefaultChar[1], '0');
     EXPECT_EQ(cpinfo->MaxCharSize,4);
-    for(int i = 0; i < const_cpinfo::MAX_LEADBYTES; i++)
+    for (int i = 0; i < const_cpinfo::MAX_LEADBYTES; i++)
     {
         EXPECT_EQ(cpinfo->LeadByte[i], '0');
     }
