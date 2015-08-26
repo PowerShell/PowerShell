@@ -31,7 +31,9 @@
     }
 
     It "Should return the parent folder name when the leaf switch is used" {
-        Split-Path /usr/bin -Leaf | Should be "bin"
+        Split-Path /usr/bin -Leaf       | Should be "bin"
+        Split-Path /usr/local/bin -Leaf | Should be "bin"
+        Split-Path usr/bin -Leaf        | Should be "bin"
     }
 
     It "Should be able to accept regular expression input and output an array for multiple objects" {
@@ -68,7 +70,9 @@
     }
 
     It "Should return the path up to the parent of the directory when Parent switch is used" {
-        Split-Path "/usr/bin" -Parent | Should Be "/usr"
+        Split-Path "/usr/bin" -Parent       | Should Be "/usr"
+        Split-Path "/usr/local/bin" -Parent | Should Be "/usr/local"
+        Split-Path "usr/local/bin" -Parent  | Should Be "usr/local"
     }
 
     It "Should throw if a parameterSetName is incorrect" {
