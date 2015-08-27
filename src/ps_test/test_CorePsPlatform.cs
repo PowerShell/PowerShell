@@ -65,5 +65,29 @@ namespace PSTests
                 Assert.Equal(username, Platform.NonWindowsGetUserName());
             }
         }
+
+        [Fact]
+        public static void TestGetMachineName()
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = @"/usr/hostname",
+                RedirectStandardOutput = true,
+                UseShellExecute = false
+            };
+            using (Process process = Process.Start(startInfo))
+            {
+                 // Get output of call to hostname without trailing newline
+                string hostname = process.StandardOutput.ReadToEnd().Trim();
+                process.WaitForExit();
+
+                // The process should return an exit code of 0 on success
+                Assert.Equal(0, process.ExitCode);
+                // It should be the same as what our platform code returns
+                Assert.Equal(hostname, Platform.NonWindowsGetMachineName());
+            }
+
+
+        }
     }
 }
