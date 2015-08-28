@@ -16,7 +16,7 @@
 //! @parblock
 //! An UINT Identifier for the code page for which to retrieve information.
 //! See Code Page Identifiers for details
-//! 65001 in the number for UTF8.  It is the only valid inpur parameter
+//! 65001 in the number for UTF8.  It is the only valid input parameter
 //!because Linux and Unix only use UTF8 for codepage
 //!
 //! @endparblock
@@ -28,6 +28,13 @@
 //! LPCPINFO is a pointer to the structure _cpinfo used to contain the information 
 //! about a code page
 //!
+//!
+//! typedef struct _cpinfo {
+//!    UINT MaxCharSize;
+//!    BYTE DefaultChar[MAX_DEFAULTCHAR];
+//!    BYTE LeadByte[MAX_LEADBYTES];
+//! } CPINFO, *LPCPINFO;
+//! 
 //! _cpinfo is a struct that comprises
 //!
 //! UINT MaxCharSize;
@@ -70,8 +77,8 @@
 //! extended error information, call GetLastError.
 //!
 //! [MSDN documentation]:https://msdn.microsoft.com/en-us/library/windows/desktop/dd318078%28v=vs.85%29.aspx
-//! [_cpinfo]: https://msdn.microsoft.com/en-us/library/windows/desktop/dd317780%28v=vs.85%29.aspx
-//! [CodePageIdentifiers] https://msdn.microsoft.com/en-us/library/windows/desktop/dd317756%28v=vs.85%29.aspx
+//! [_cpinfo]: https://msdn.microsoft.com/en-us/library/windows/desktop/dd317780(v=vs.85).aspx
+//! [CodePageIdentifiers] https://msdn.microsoft.com/en-us/library/windows/desktop/dd317756(v=vs.85).aspx
 
 BOOL GetCPInfoW(UINT codepage, CPINFO* cpinfo)
 {
@@ -87,7 +94,6 @@ BOOL GetCPInfoW(UINT codepage, CPINFO* cpinfo)
         return FALSE;
     }
     
-    // 65001 is the code page for UTF8, Linux and Unix default it UTF8
     if (codepage != const_cpinfo::UTF8) 
     {
         //If other value is used return error because Linux and Unix only used UTF-8 for codepage
@@ -99,12 +105,13 @@ BOOL GetCPInfoW(UINT codepage, CPINFO* cpinfo)
     cpinfo->DefaultChar[0] = '?';
     cpinfo->DefaultChar[1] = '0';
     cpinfo->MaxCharSize = 4;
+    
     for (int i = 0; i < const_cpinfo::MAX_LEADBYTES; i++ ) 
     {
         // UTF-8 uses the default has no LeadByte as result LeadByte is '0'
-        cpinfo->LeadByte[i] = '0';
-        
+        cpinfo->LeadByte[i] = '0'; 
     }
+    
     return TRUE;
 
 }
