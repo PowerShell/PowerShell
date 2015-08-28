@@ -71,7 +71,8 @@ namespace PSTests
         {
             var startInfo = new ProcessStartInfo
             {
-                FileName = @"/usr/hostname",
+                FileName = @"/usr/bin/env",
+                Arguments = "hostname",
                 RedirectStandardOutput = true,
                 UseShellExecute = false
             };
