@@ -46,9 +46,10 @@ ls
         Test-Path $FullyQualifiedTestFile  | Should Be $true
         Test-Path $FullyQualifiedTestFile2 | Should Be $true
 
-        ( Split-Path ./tmp/*estf*.ps1 -Leaf -Resolve ).GetType().BaseType.Name | Should Be "Array"
-        ( Split-path ./tmp/*estf*.ps1 -Leaf -Resolve )[0]                      | Should Be $testfile
-        ( Split-path ./tmp/*estf*.ps1 -Leaf -Resolve )[1]                      | Should Be $testfile2
+        $actual = ( Split-Path ./tmp/*estf*.ps1 -Leaf -Resolve )
+        $actual.GetType().BaseType.Name | Should Be "Array"
+        $actual                         | Should Match $testfile
+        $actual                         | Should Match $testfile2
 
         Remove-Item $FullyQualifiedTestFile, $FullyQualifiedTestFile2
 
