@@ -251,6 +251,15 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to Failed to find vmcompute.dll. The Hyper-V role may not be enabled on this machine..
+    /// </summary>
+    internal static string CannotFindVmComputeDll {
+        get {
+            return ResourceManager.GetString("CannotFindVmComputeDll", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to The call to Windows API GetStdHandle to get the Standard Error handle resulted in an error code: {0}..
     /// </summary>
     internal static string CannotGetStdErrHandle {
@@ -539,6 +548,15 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to Could not find the toolkit, &apos;{0}&apos;. The toolkit must be a file named &apos;{1}&apos; within a &apos;Toolkits&apos; directory in a module in the current module path..
+    /// </summary>
+    internal static string CouldNotFindToolkit {
+        get {
+            return ResourceManager.GetString("CouldNotFindToolkit", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to {0} is not a valid value for the parameter {1}. The value must be greater than or equal to 0..
     /// </summary>
     internal static string CSCDoubleParameterOutOfRange {
@@ -768,6 +786,15 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to Could not parse visible command defintion for &apos;{0}&apos;. The visible command definition must be a hashtable with the keys of &apos;Name&apos; and &apos;Parameters&apos;. The value of the &apos;Parameters&apos; key must be a collection of hashtables with the keys &apos;Name&apos;, and optionally either &apos;ValidateSet&apos; or &apos;ValidatePattern&apos;..
+    /// </summary>
+    internal static string DISCCommandModificationSyntax {
+        get {
+            return ResourceManager.GetString("DISCCommandModificationSyntax", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Company associated with this session configuration.
     /// </summary>
     internal static string DISCCompanyNameComment {
@@ -957,6 +984,15 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to User roles (security groups), and the additional configuration settings that should be applied to them.
+    /// </summary>
+    internal static string DISCRoleDefinitionsComment {
+        get {
+            return ResourceManager.GetString("DISCRoleDefinitionsComment", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Version number of the schema used for this configuration file.
     /// </summary>
     internal static string DISCSchemaVersionComment {
@@ -971,6 +1007,15 @@ internal class RemotingErrorIdStrings {
     internal static string DISCScriptsToProcessComment {
         get {
             return ResourceManager.GetString("DISCScriptsToProcessComment", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Toolkits to apply to this session configuration. This toolkit must be defined as a session configuration file named after that toolkit within a &apos;Toolkits&apos; directory in a module in the current module path..
+    /// </summary>
+    internal static string DISCToolkitsToLoadComment {
+        get {
+            return ResourceManager.GetString("DISCToolkitsToLoadComment", resourceCulture);
         }
     }
     
@@ -1626,6 +1671,33 @@ internal class RemotingErrorIdStrings {
     internal static string InvalidRegisterPSSessionConfigurationModulePath {
         get {
             return ResourceManager.GetString("InvalidRegisterPSSessionConfigurationModulePath", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The &apos;Roles&apos; entry must be a hashtable, but was a {0}..
+    /// </summary>
+    internal static string InvalidRoleEntry {
+        get {
+            return ResourceManager.GetString("InvalidRoleEntry", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The key &apos;{0}&apos; is not valid in a toolkit or role definition..
+    /// </summary>
+    internal static string InvalidRoleToolkitKey {
+        get {
+            return ResourceManager.GetString("InvalidRoleToolkitKey", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Could not convert the value of the &apos;{0}&apos; role entry to a hashtable. The &apos;Roles&apos; entry must be a hashtable with group names for keys, where the value associated with each key is another hashtable of session configuration properties for that role..
+    /// </summary>
+    internal static string InvalidRoleValue {
+        get {
+            return ResourceManager.GetString("InvalidRoleValue", resourceCulture);
         }
     }
     
@@ -3054,6 +3126,15 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to Failed to create an instance of RemoteSessionHyperVSocketServer..
+    /// </summary>
+    internal static string RemoteSessionHyperVSocketServerConstructorFailure {
+        get {
+            return ResourceManager.GetString("RemoteSessionHyperVSocketServerConstructorFailure", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Remote transport error: {0}.
     /// </summary>
     internal static string RemoteTransportError {
@@ -3834,6 +3915,15 @@ internal class RemotingErrorIdStrings {
     internal static string WrongSessionOptionValue {
         get {
             return ResourceManager.GetString("WrongSessionOptionValue", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to WSMan Initialization failed with error code: {0}..
+    /// </summary>
+    internal static string WSManInitFailed {
+        get {
+            return ResourceManager.GetString("WSManInitFailed", resourceCulture);
         }
     }
     
