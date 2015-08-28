@@ -8,7 +8,7 @@
 // This test is with correct parameters
 TEST(GetCPInfo,Utf8)
 {
-    CPINFO* cpinfo;
+    CPINFO* cpinfo = new CPINFO();
     int UTF8CodePageNumber = const_cpinfo::UTF8;
     BOOL result = GetCPInfoW(UTF8CodePageNumber, cpinfo);
 
@@ -28,7 +28,7 @@ TEST(GetCPInfo,Utf8)
 // This test is with codepage not being utf8
 TEST(GetCPInfo, CodePageNotUTF8)
 {
-    CPINFO* cpinfo;
+    CPINFO* cpinfo = new CPINFO();;
     BOOL result = GetCPInfoW(65000, cpinfo);
     
     ASSERT_EQ(FALSE, result);
