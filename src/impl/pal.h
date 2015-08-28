@@ -30,6 +30,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <limits.h>
+#include <stdint.h>
 
 #ifndef NAME_MAX
 #  define NAME_MAX 255
@@ -62,11 +63,12 @@
     typedef char *PSTR;
     typedef void *PVOID;
     typedef PVOID HANDLE;
+    typedef uint32_t UINT;
+    typedef char BYTE;
     #define NO_ERROR 0
     #define INFINITE 0xFFFFFFFF
     #define WINAPI
     #define S_OK 0
-    #define ERROR_GEN_FAILURE 31
     #define TRUE 1
     #define FALSE 0
     #define ERROR_INVALID_PARAMETER 87
@@ -595,4 +597,3 @@ typedef unsigned char PAL_Boolean;
 #else
 # define PAL_COUNT(ARR) (sizeof(ARR) / sizeof(ARR[0]))
 #endif
-
