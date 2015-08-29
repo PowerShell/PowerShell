@@ -1,9 +1,4 @@
 ﻿Describe "Test-Split-Path" {
-    # Use the local directory because it's renewed each time with the correct privileges
-    $testDir                = "./tmp"
-    $testfile               = "testfile.ps1"
-    $FullyQualifiedTestFile = $testDir + "/" + $testFile
-ls
     It "Should return a string object when invoked" {
         ( Split-Path . ).GetType().Name          | Should Be "String"
         ( Split-Path . -Leaf ).GetType().Name    | Should Be "String"
@@ -38,23 +33,26 @@ ls
     }
 
     It "Should be able to accept regular expression input and output an array for multiple objects" {
-        $testfile2               = "testfilenumber2.ps1"
-        $FullyQualifiedTestFile2 = $testDir + "/" + $testfile2
+        $testDir = "./tmp"
+        Remove-Item $testDir -Recurse -Force
 
-        New-Item -ItemType file -Path $FullyQualifiedTestFile, $FullyQualifiedTestFile2 -Force
+	$testFile1     = "testfile1.ps1"
+	$testFile2     = "testfile2.ps1"
+        $testFilePath1 = $testDir + "/" + $testFile1
+        $testFilePath2 = $testDir + "/" + $testFile2
 
-        Test-Path $FullyQualifiedTestFile  | Should Be $true
-        Test-Path $FullyQualifiedTestFile2 | Should Be $true
+        New-Item -ItemType file -Path $testFilePath1, $testFilePath2 -Force
 
-        $actual = ( Split-Path ./tmp/*estf*.ps1 -Leaf -Resolve )
+        Test-Path $testFilePath1 | Should Be $true
+        Test-Path $testFilePath2 | Should Be $true
+
+        $actual = ( Split-Path $testDir/*file*.ps1 -Leaf -Resolve ) | Sort-Object
         $actual.GetType().BaseType.Name | Should Be "Array"
-        $actual                         | Should Match $testfile
-        $actual                         | Should Match $testfile2
+        $actual[0]                      | Should Be $testFile1
+        $actual[1]                      | Should Be $testFile2
 
-        Remove-Item $FullyQualifiedTestFile, $FullyQualifiedTestFile2
-
-        Test-Path $FullyQualifiedTestFile  | Should Be $false
-        Test-Path $FullyQualifiedTestFile2 | Should Be $false
+        Remove-Item $testDir -Recurse -Force
+        Test-Path $testDir | Should Be $false
     }
 
     It "Should be able to tell if a given path is an absolute path" {
