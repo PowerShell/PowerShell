@@ -1,15 +1,34 @@
 ﻿Describe "Test-Environment-Variables" {
-    It "Should have environment variable" {
+    It "Should have environment variables" {
         Get-Item ENV: | Should Not BeNullOrEmpty
     }
 
-    It "Should be able to access the members of the environment variable in two ways" {
-        (Get-Item ENV:HOME).Value     | Should be "/root"
-        (Get-Item ENV:HOSTNAME).Value | Should Not BeNullOrEmpty
-        (Get-Item ENV:PATH).Value     | Should Not BeNullOrEmpty
+    It "Should have a nonempty PATH" {
+        $ENV:PATH | Should Not BeNullOrEmpty
+    }
 
-        (ls ENV:HOME).Value     | Should be "/root"
-        (ls ENV:HOSTNAME).Value | Should Not BeNullOrEmpty
-        (ls ENV:PATH).Value     | Should Not BeNullOrEmpty
+    It "Should contain /bin in the PATH" {
+        $ENV:PATH | Should Match "/bin"
+    }
+
+    It "Should be able to access the members of the environment variable" {
+        $expected = /bin/bash -c "cd ~ && pwd"
+
+        (Get-Item ENV:HOME).Value | Should Be $expected
+    }
+
+    It "Should be able to set the environment variables" {
+        $expected = "this is a test environment variable"
+        { $ENV:TESTENVIRONMENTVARIABLE = $expected  } | Should Not Throw
+
+        $ENV:TESTENVIRONMENTVARIABLE | Should Not BeNullOrEmpty
+        $ENV:TESTENVIRONMENTVARIABLE | Should Be $expected
+
+    }
+
+    It "Should have the correct HOSTNAME" {
+        $expected = /bin/hostname
+
+        $ENV:HOSTNAME | Should Be $expected
     }
 }

@@ -596,6 +596,15 @@ internal class ParserStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to Failed to convert the value of CimProperty {0} to the property value of class {1}..
+    /// </summary>
+    internal static string ConvertCimPropertyToObjectPropertyFailed {
+        get {
+            return ResourceManager.GetString("ConvertCimPropertyToObjectPropertyFailed", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Could not get dispatch ID for {0} (error: {1})..
     /// </summary>
     internal static string CouldNotGetDispId {
@@ -835,6 +844,15 @@ internal class ParserStrings {
     internal static string DuplicateKeyInHashLiteral {
         get {
             return ResourceManager.GetString("DuplicateKeyInHashLiteral", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Keyword &apos;{0}&apos; already defined in the configuration..
+    /// </summary>
+    internal static string DuplicateKeywordDefinition {
+        get {
+            return ResourceManager.GetString("DuplicateKeywordDefinition", resourceCulture);
         }
     }
     
@@ -1087,6 +1105,15 @@ internal class ParserStrings {
     internal static string ExpandableStringsNotSupportedInDataSectionCmdletList {
         get {
             return ResourceManager.GetString("ExpandableStringsNotSupportedInDataSectionCmdletList", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Property {0} of PowerShell class {1} is not declared as array type, but defined in its configuration instance as instance array type..
+    /// </summary>
+    internal static string ExpectArrayTypeOfPropertyInPSClass {
+        get {
+            return ResourceManager.GetString("ExpectArrayTypeOfPropertyInPSClass", resourceCulture);
         }
     }
     
@@ -1431,6 +1458,15 @@ internal class ParserStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to Failed to create an object of PowerShell class {0}..
+    /// </summary>
+    internal static string InstantiatePSClassObjectFailed {
+        get {
+            return ResourceManager.GetString("InstantiatePSClassObjectFailed", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to &apos;{0}&apos;: Interface name expected..
     /// </summary>
     internal static string InterfaceNameExpected {
@@ -1539,6 +1575,15 @@ internal class ParserStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to The hashtable supplied to the Desired State Configuration resource {0} is not valid. The key or value cannot be null or empty..
+    /// </summary>
+    internal static string InvalidHashtable {
+        get {
+            return ResourceManager.GetString("InvalidHashtable", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to The member &apos;{0}&apos; is not valid. Valid members are
     ///&apos;{1}&apos;..
     /// </summary>
@@ -1603,6 +1648,15 @@ internal class ParserStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to The username supplied to the Desired State Configuration resource {0} is not valid. The username cannot be null or empty..
+    /// </summary>
+    internal static string InvalidPassword {
+        get {
+            return ResourceManager.GetString("InvalidPassword", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to The PowerShell data file &apos;{0}&apos; is invalid since it cannot be evaluated into a Hashtable object..
     /// </summary>
     internal static string InvalidPowerShellDataFile {
@@ -1662,6 +1716,15 @@ internal class ParserStrings {
     internal static string InvalidTokenForDataSectionCmdletList {
         get {
             return ResourceManager.GetString("InvalidTokenForDataSectionCmdletList", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The username supplied to the Desired State Configuration resource {0} is not valid. The username cannot be null or empty..
+    /// </summary>
+    internal static string InvalidUserName {
+        get {
+            return ResourceManager.GetString("InvalidUserName", resourceCulture);
         }
     }
     
@@ -2922,6 +2985,15 @@ internal class ParserStrings {
     internal static string PropertyIsReadOnly {
         get {
             return ResourceManager.GetString("PropertyIsReadOnly", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Property {0} is not declared in PowerShell class {1}, but defined in its configuration instance..
+    /// </summary>
+    internal static string PropertyNotDeclaredInPSClass {
+        get {
+            return ResourceManager.GetString("PropertyNotDeclaredInPSClass", resourceCulture);
         }
     }
     
