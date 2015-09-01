@@ -1,5 +1,6 @@
 using Xunit;
 using System;
+using System.IO;
 using System.Diagnostics;
 using System.Management.Automation;
 
@@ -90,5 +91,38 @@ namespace PSTests
 
 
         }
+
+        [Fact]
+        public static void TestIsHardLink()
+        {
+            // a file that should exist on every *nix distro
+
+            string path = @"/tmp/MyTest";
+            if (!File.Exists(path))
+            {
+                File.Create(path);
+            }
+
+            // Create a file to write to using StreamWriter. 
+            // convert string to stream.  On Windows, this appears to be handled, but on *nix, we apparently need to convert to UTF8.
+            byte[] byteArray    = System.Text.Encoding.UTF8.GetBytes(path);
+            MemoryStream stream = new MemoryStream(byteArray);
+
+            using (StreamWriter sw = new StreamWriter(stream))
+            {
+                sw.Write("Hello");
+            }
+
+            // Convert `path` string to FileSystemInfo data type. And now, it should return true
+            FileSystemInfo fd = new FileInfo(path);
+            Assert.True(Platform.NonWindowsIsHardLink(fd));
+        }
+
+        [Fact]
+        public static void TestIsHardLinkFailsWithDirectory()
+        {
+             
+        }
+
     }
 }
