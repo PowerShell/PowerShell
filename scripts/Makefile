@@ -181,6 +181,10 @@ run-interactive: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-relea
 run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
 	exec_env/app_base/runps.sh --file $(PSSCRIPT)
 
+# easy way to run individual PowerShell scripts, `make script.ps1` where the path is relative from monad-linux
+%.ps1: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+	TEMP=/tmp exec_env/app_base/runps.sh --file ../../../$@
+
 run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-debug-clr
 	PAL_DBG_CHANNELS="+LOADER.TRACE" exec_env/app_base/runps-simple.sh get-location
 
