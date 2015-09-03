@@ -93,25 +93,17 @@ namespace PSTests
         }
 
         [Fact]
-        public static void TestIsHardLinkWithFileSystemInfo()
+        public static void TestExistantFileIsHardLink()
         {
-            // a file that should exist on every *nix distro
-
             string path = @"/tmp/MyTest";
             if (!File.Exists(path))
             {
                 File.Create(path);
             }
-
             // Create a file to write to using StreamWriter. 
             // convert string to stream.  On Windows, this appears to be handled, but on *nix, we apparently need to convert to UTF8.
             byte[] byteArray    = System.Text.Encoding.UTF8.GetBytes(path);
             MemoryStream stream = new MemoryStream(byteArray);
-
-            using (StreamWriter sw = new StreamWriter(stream))
-            {
-                sw.Write("Hello");
-            }
 
             // Convert `path` string to FileSystemInfo data type. And now, it should return true
             FileSystemInfo fd = new FileInfo(path);
@@ -119,9 +111,8 @@ namespace PSTests
         }
 
         [Fact]
-        public static void TestIsHardLinkFailsWithDirectoryWithFileSystemInfo()
+        public static void TestDirectoryIsHardLink()
         {
-            // A folder that should exist on every *nix system
             string path = @"/tmp";
 
             // Convert `path` string to FileSystemInfo data type. And now, it should return true
@@ -130,7 +121,7 @@ namespace PSTests
         }
 
         [Fact]
-        public static void TestIsHardLinkFailsWithNonexistantFileWithFileSystemInfo()
+        public static void TestNonExistantIsHardLink()
         {
             // A file that should *never* exist on a test machine:
             string path = @"/tmp/ThisFileShouldNotExistOnTestMachines";
