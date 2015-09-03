@@ -1,29 +1,37 @@
 ﻿Describe "Test-Out-File" {
     $a = "some test text"
     $b = New-Object psobject -Property @{text=$a}
-    $Testfile = "/tmp/outfileTest.txt"
+    $testfile = "/tmp/outfileTest.txt"
 
     BeforeEach {
         if (Test-Path -Path $testfile)
         {
-            Set-ItemProperty -Path $testfile -Name IsReadOnly -Value $false
-            rm $testfile
+            Remove-Item -Path $testfile -Force
         }
     }
 
     AfterEach {
-        # implement in *nix to remove test files after each test if they exist
-        rm $testfile
+            Remove-Item -Path $testfile -Force
     }
 
     It "Should be able to be called without error" {
          { Out-File -FilePath $testfile }   | Should Not Throw
     }
 
-    It "Should be able to accept string input" {
+    It "Should be able to accept string input via piping" {
         { $a | Out-File -FilePath $testfile } | Should Not Throw
 
+        $actual = Get-Content $testfile
+
+        $actual | Should Be $a
+    }
+
+    It "Should be able to accept string input via the InputObject swictch" {
         { Out-File -FilePath $testfile -InputObject $a } | Should Not Throw
+
+        $actual = Get-Content $testfile
+
+        $actual | Should Be $a
     }
 
     It "Should be able to accept object input" {
