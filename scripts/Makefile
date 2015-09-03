@@ -72,13 +72,13 @@ dotnetlibs/Microsoft.Management.Infrastructure.dll: ${MAN_INFRA_SRCS} dotnetlibs
 
 # Commands
 
-dotnetlibs/Microsoft.PowerShell.Commands.Management.dll: ${COMMANDS_MANAGEMENT_SRCS} dotnetlibs/System.Management.Automation.dll ${COMMANDS_MANAGEMENT_RES_SRCS} ${COMMANDS_MANAGEMENT_RES_CS_SRCS} $(MI_ASSEMBLY)
-	$(CSC) -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_MANAGEMENT_SRCS} ${COMMANDS_MANAGEMENT_RES_CS_SRCS} $(COMMANDS_MANAGEMENT_RES_REF) $(MI_REF)
+dotnetlibs/Microsoft.PowerShell.Commands.Management.dll: ${COMMANDS_MANAGEMENT_SRCS} dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Security.dll ${COMMANDS_MANAGEMENT_RES_SRCS} ${COMMANDS_MANAGEMENT_RES_CS_SRCS} $(MI_ASSEMBLY)
+	$(CSC) -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_MANAGEMENT_SRCS} ${COMMANDS_MANAGEMENT_RES_CS_SRCS} $(COMMANDS_MANAGEMENT_RES_REF) $(MI_REF) -r:dotnetlibs/Microsoft.PowerShell.Security.dll
 
 dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll: ${COMMANDS_UTILITY_SRCS} dotnetlibs/System.Management.Automation.dll ${COMMANDS_UTILITY_RES_SRCS} ${COMMANDS_UTILITY_RES_CS_SRCS}
 	$(CSC) -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_UTILITY_SRCS} ${COMMANDS_UTILITY_RES_CS_SRCS} $(COMMANDS_UTILITY_RES_REF)
 
-dotnetlibs/Microsoft.PowerShell.Security.dll: ${SECURITY_SRCS} dotnetlibs/System.Management.Automation.dll ${SECURITY_RES_SRCS} ${SECURITY_RES_CS_SRCS}
+dotnetlibs/Microsoft.PowerShell.Security.dll: ${SECURITY_SRCS} ${SECURITY_RES_SRCS} ${SECURITY_RES_CS_SRCS}
 	$(CSC) -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${SECURITY_SRCS} ${SECURITY_RES_CS_SRCS} $(SECURITY_RES_REF)
 
 # assembly load context
