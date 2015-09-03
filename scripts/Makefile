@@ -41,16 +41,16 @@ MI_REF_ASSEMBLY=-r:$(MONAD_EXT)/PS/PS_refs_modil/microsoft.management.infrastruc
 MI_ASSEMBLY=dotnetlibs/Microsoft.Management.Infrastructure.dll
 MI_REF=-r:$(MI_ASSEMBLY)
 
-PRODUCT_BASE_REFS=${COREREF}
-PRODUCT_MI_REFS=${COREREF} ${MI_NATIVE_REF}
-PRODUCT_PS_REFS=${COREREF} ${MI_REF} -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
-PRODUCT_COMMANDS_REFS=${COREREF} -r:dotnetlibs/System.Management.Automation.dll
+PRODUCT_BASE_REFS=$(COREREF)
+PRODUCT_MI_REFS=$(COREREF) $(MI_NATIVE_REF)
+PRODUCT_PS_REFS=$(COREREF) $(MI_REF) -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
+PRODUCT_COMMANDS_REFS=$(COREREF) -r:dotnetlibs/System.Management.Automation.dll
 
 MCSOPTS_BASE=-unsafe -nostdlib -noconfig -define:CORECLR -define:_CORECLR
-MCSOPTS_MI=${MCSOPTS_BASE} -target:library
-MCSOPTS_LIB=${MCSOPTS_BASE} -target:library
-MCSOPTS_PS=${STRING_RESOURCES_ORIG} ${MCSOPTS_BASE} -target:library
-SRCS_ALL=${STRING_RESOURCES} ${SRCS}
+MCSOPTS_MI=$(MCSOPTS_BASE) -target:library
+MCSOPTS_LIB=$(MCSOPTS_BASE) -target:library
+MCSOPTS_PS=$(STRING_RESOURCES_ORIG) $(MCSOPTS_BASE) -target:library
+SRCS_ALL=$(STRING_RESOURCES) $(SRCS)
 
 # compilers
 # - Roslyn's csc is used for all the PS code
@@ -63,28 +63,28 @@ RUN_TARGETS=$(POWERSHELL_RUN_TARGETS) dotnetlibs/Microsoft.PowerShell.Commands.M
 all: dotnetlibs/System.Management.Automation.dll $(RUN_TARGETS) dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 
 # this is the build rule for SMA.dll
-dotnetlibs/System.Management.Automation.dll: ${SYS_AUTO_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS) ${SYS_AUTO_RES_SRCS} ${SYS_AUTO_RES_CS_SRCS}
-	$(CSC) -out:$@ ${MCSOPTS_LIB} ${PRODUCT_PS_REFS} ${SYS_AUTO_SRCS} ${SYS_AUTO_RES_REF} ${SYS_AUTO_RES_CS_SRCS} $(PLATFORM_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
+dotnetlibs/System.Management.Automation.dll: $(SYS_AUTO_SRCS) dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS) $(SYS_AUTO_RES_SRCS) $(SYS_AUTO_RES_CS_SRCS)
+	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_PS_REFS) $(SYS_AUTO_SRCS) $(SYS_AUTO_RES_REF) $(SYS_AUTO_RES_CS_SRCS) $(PLATFORM_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
 
 # this is the build rule for MMI.dll
-dotnetlibs/Microsoft.Management.Infrastructure.dll: ${MAN_INFRA_SRCS} dotnetlibs/Microsoft.Management.Infrastructure.Native.dll ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs $(MAN_INFRA_RES_SRCS) $(MAN_INFRA_RES_CS_SRCS)
+dotnetlibs/Microsoft.Management.Infrastructure.dll: $(MAN_INFRA_SRCS) dotnetlibs/Microsoft.Management.Infrastructure.Native.dll ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs $(MAN_INFRA_RES_SRCS) $(MAN_INFRA_RES_CS_SRCS)
 	$(CSC) -out:$@ $(MCSOPTS_MI) $(PRODUCT_MI_REFS) $(MAN_INFRA_SRCS) $(MAN_INFRA_RES_REF) $(MAN_INFRA_RES_CS_SRCS) ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
 
 # Commands
 
-dotnetlibs/Microsoft.PowerShell.Commands.Management.dll: ${COMMANDS_MANAGEMENT_SRCS} dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Security.dll ${COMMANDS_MANAGEMENT_RES_SRCS} ${COMMANDS_MANAGEMENT_RES_CS_SRCS} $(MI_ASSEMBLY)
-	$(CSC) -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_MANAGEMENT_SRCS} ${COMMANDS_MANAGEMENT_RES_CS_SRCS} $(COMMANDS_MANAGEMENT_RES_REF) $(MI_REF) -r:dotnetlibs/Microsoft.PowerShell.Security.dll
+dotnetlibs/Microsoft.PowerShell.Commands.Management.dll: $(COMMANDS_MANAGEMENT_SRCS) dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Security.dll $(COMMANDS_MANAGEMENT_RES_SRCS) $(COMMANDS_MANAGEMENT_RES_CS_SRCS) $(MI_ASSEMBLY)
+	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_COMMANDS_REFS) $(COMMANDS_MANAGEMENT_SRCS) $(COMMANDS_MANAGEMENT_RES_CS_SRCS) $(COMMANDS_MANAGEMENT_RES_REF) $(MI_REF) -r:dotnetlibs/Microsoft.PowerShell.Security.dll
 
-dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll: ${COMMANDS_UTILITY_SRCS} dotnetlibs/System.Management.Automation.dll ${COMMANDS_UTILITY_RES_SRCS} ${COMMANDS_UTILITY_RES_CS_SRCS}
-	$(CSC) -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${COMMANDS_UTILITY_SRCS} ${COMMANDS_UTILITY_RES_CS_SRCS} $(COMMANDS_UTILITY_RES_REF)
+dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll: $(COMMANDS_UTILITY_SRCS) dotnetlibs/System.Management.Automation.dll $(COMMANDS_UTILITY_RES_SRCS) $(COMMANDS_UTILITY_RES_CS_SRCS)
+	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_COMMANDS_REFS) $(COMMANDS_UTILITY_SRCS) $(COMMANDS_UTILITY_RES_CS_SRCS) $(COMMANDS_UTILITY_RES_REF)
 
-dotnetlibs/Microsoft.PowerShell.Security.dll: ${SECURITY_SRCS} ${SECURITY_RES_SRCS} ${SECURITY_RES_CS_SRCS}
-	$(CSC) -out:$@ ${MCSOPTS_LIB} ${PRODUCT_COMMANDS_REFS} ${SECURITY_SRCS} ${SECURITY_RES_CS_SRCS} $(SECURITY_RES_REF)
+dotnetlibs/Microsoft.PowerShell.Security.dll: $(SECURITY_SRCS) $(SECURITY_RES_SRCS) $(SECURITY_RES_CS_SRCS)
+	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_COMMANDS_REFS) $(SECURITY_SRCS) $(SECURITY_RES_CS_SRCS) $(SECURITY_RES_REF)
 
 # assembly load context
 
 dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET): $(ASSEMBLY_LOAD_CONTEXT_SRCS)
-	$(CSC) -out:$@ ${MCSOPTS_LIB} ${PRODUCT_BASE_REFS} $(ASSEMBLY_LOAD_CONTEXT_SRCS)
+	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_BASE_REFS) $(ASSEMBLY_LOAD_CONTEXT_SRCS)
 
 # this will copy whatever the first version of the dll in the globber is
 buildtemp/System.Reflection.Metadata.dll: buildtemp/System.Reflection.Metadata.*/lib/portable-net45+win8/System.Reflection.Metadata.dll
@@ -101,7 +101,7 @@ dotnetlibs/Microsoft.Management.Infrastructure.Native.dll: ../src/stubs/Microsof
 MPATH=/usr/lib/mono/4.5/Facades
 
 buildtemp/TypeCatalogGen.exe: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/TypeCatalogGen/TypeCatalogGen.cs buildtemp/System.Reflection.Metadata.dll buildtemp/System.Collections.Immutable.dll
-	$(MCS) -out:$@ -target:exe ${NUGETREF} -pkg:dotnet -r:${MPATH}/System.Runtime.dll -r:${MPATH}/System.Reflection.Primitives.dll -r:${MPATH}/System.IO.dll $<
+	$(MCS) -out:$@ -target:exe $(NUGETREF) -pkg:dotnet -r:$(MPATH)/System.Runtime.dll -r:$(MPATH)/System.Reflection.Primitives.dll -r:$(MPATH)/System.IO.dll $<
 
 # generate the Core PS type catalog
 # this comes from: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/makefile.inc
