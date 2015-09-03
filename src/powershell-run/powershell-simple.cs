@@ -456,25 +456,6 @@ namespace ps_hello_world
             }
         }
 
-        public static void init()
-        {
-            //string psBasePath = System.IO.Directory.GetCurrentDirectory();
-            //PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(psBasePath);
-            
-            //Assembly a = Assembly.Load(new AssemblyName("System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"));
-            //Console.WriteLine("##########################\nloaded assembly a=" + a + " during init\n#########################");
-
-            // PH: this debugging requires a change in the core PS stuff that was stashed away
-            //     during source cleanup
-            /*
-              PowerShellAssemblyLoadContext asmLoadContext = PowerShellAssemblyLoadContextInitializer.AsmLoadContext;
-              IEnumerable<Assembly> assemblies = asmLoadContext.GetAssemblies("System.Management.Automation");
-              foreach (Assembly a in assemblies)
-              {
-              Console.WriteLine("a: " + a);
-              }*/
-        }
-
         static void test1(string[] args)
         {
             InitialSessionState iss = InitialSessionState.CreateDefault2();
@@ -525,50 +506,8 @@ namespace ps_hello_world
             }
         }
 
-        public static int UnmanagedMain(int argc, [MarshalAs(UnmanagedType.LPArray,ArraySubType=UnmanagedType.LPStr,SizeParamIndex=0)] String[] argv)
-        {
-            init();
-            List<String> allArgs = new List<String>();
-
-            for (int i = 0; i < argc; ++i)
-            {
-                allArgs.Add(argv[i]);
-            }
-
-            List<string> filteredArgs = new List<string>();
-            if (allArgs.Count > 0)
-            {
-                for (int i = 0; i < allArgs.Count; ++i)
-                {
-                    string arg = allArgs[i];
-                    bool hasNext = (i+1)<allArgs.Count;
-                    string nextArg = hasNext ? allArgs[i+1] : "";
-
-                    if (hasNext && arg == "--working-dir")
-                    {
-                        Console.WriteLine("working dir set to: " + nextArg);
-                        Directory.SetCurrentDirectory(nextArg);
-                        ++i;
-                    }
-                    else
-                        filteredArgs.Add(arg);
-                }
-            }
-
-            test2(filteredArgs.ToArray());
-
-            return 0;
-        }
-
         static void Main(string[] args)
         {
-            // important:
-            // - this function must be called for the current version of PowerShell for Linux
-            //   in order to load the assembly load context before anything else is loaded
-            // - this requirement will be removed through future updates to the native
-            //   CLR hosting code (currently corerun)
-            init();
-
             //test1(args);
             test2(args);
         }

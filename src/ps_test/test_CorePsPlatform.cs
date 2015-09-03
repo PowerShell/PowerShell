@@ -53,15 +53,42 @@ namespace PSTests
                 RedirectStandardOutput = true,
                 UseShellExecute = false
             };
-            Process process = Process.Start(startInfo);
-            // The process should always exit, but wait a set time just in case
-            process.WaitForExit(1000);
-            // The process should return an exit code of 0 on success
-            Assert.Equal(0, process.ExitCode);
-            // Get output of call to whoami without trailing newline
-            string username = process.StandardOutput.ReadToEnd().Trim();
-            // It should be the same as what our platform code returns
-            Assert.Equal(username, Platform.NonWindowsGetUserName());
+            using (Process process = Process.Start(startInfo))
+            {
+                // Get output of call to whoami without trailing newline
+                string username = process.StandardOutput.ReadToEnd().Trim();
+                process.WaitForExit();
+
+                // The process should return an exit code of 0 on success
+                Assert.Equal(0, process.ExitCode);
+                // It should be the same as what our platform code returns
+                Assert.Equal(username, Platform.NonWindowsGetUserName());
+            }
+        }
+
+        [Fact]
+        public static void TestGetMachineName()
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = @"/usr/bin/env",
+                Arguments = "hostname",
+                RedirectStandardOutput = true,
+                UseShellExecute = false
+            };
+            using (Process process = Process.Start(startInfo))
+            {
+                 // Get output of call to hostname without trailing newline
+                string hostname = process.StandardOutput.ReadToEnd().Trim();
+                process.WaitForExit();
+
+                // The process should return an exit code of 0 on success
+                Assert.Equal(0, process.ExitCode);
+                // It should be the same as what our platform code returns
+                Assert.Equal(hostname, Platform.NonWindowsGetMachineName());
+            }
+
+
         }
     }
 }
