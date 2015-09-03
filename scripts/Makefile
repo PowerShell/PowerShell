@@ -194,7 +194,7 @@ native-tests: dotnetlibs/monad_native
 
 xunit-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr $(addprefix $(TESTRUN_FOLDER)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll)
 	# execute the xUnit runner, with XML output
-	cd exec_env/app_base && PSMODULEPATH=$(shell pwd)/exec_env/app_base/Modules LD_LIBRARY_PATH=../coreclr:. ../coreclr/corerun xunit.console.netcore.exe ps_test.dll -xml ../../xunittests.xml
+	exec_env/app_base/runps-test.sh ps_test.dll -xml ../../xunittests.xml
 
 pester-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
 	# execute the Pester tests, which needs a TEMP environment variable to be set
