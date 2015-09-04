@@ -1,21 +1,31 @@
-﻿Describe "Test-New-Item" {
-    $tmpDirectory = "/tmp"
-    $testfile = "testfile.txt"
-    $testfolder = "newDirectory"
+﻿function Clean-State
+{
+    if (Test-Path $FullyQualifiedFile)
+    {
+        Remove-Item $FullyQualifiedFile -Force
+    }
 
-    $FullyQualifiedFile = $tmpDirectory + "/" + $testfile
-    $FullyQualifiedFolder = $tmpDirectory +"/" + $testfolder
+    if (Test-Path $FullyQualifiedFolder)
+    {
+        Remove-Item $FullyQualifiedFolder -Recurse -Force
+    }
+}
+
+Describe "Test-New-Item" {
+    $tmpDirectory         = "/tmp"
+    $testfile             = "testfile.txt"
+    $testfolder           = "newDirectory"
+    $FullyQualifiedFile   = $tmpDirectory + "/" + $testfile
+    $FullyQualifiedFolder = $tmpDirectory + "/" + $testfolder
+
+    BeforeEach {
+        Clean-State
+    }
 
     AfterEach {
-        if (Test-Path $FullyQualifiedFile)
-        {
-            { Remove-Item $FullyQualifiedFile -Force} | Should Not Throw
-        }
-
-        if (Test-Path $FullyQualifiedFolder)
-        {
-            { Remove-Item $FullyQualifiedFolder -Recurse -Force } | Should Not Throw
-        }
+        Clean-State
+        Test-Path $FullyQualifiedFile   | Should Be $false
+        Test-Path $FullyQualifiedFolder | Should Be $false
     }
 
     It "should call the function without error" {
@@ -77,5 +87,23 @@
         Test-Path $FullyQualifiedFile2 | Should Be $true
 
         Remove-Item $FullyQualifiedFile2
+    }
+
+    It "Should be able to call the whatif switch without error" {
+       ( Out-Null -inputobject (New-Item -Name testfile.txt -Path /tmp -ItemType file -WhatIf))
+        { $a } | Should Not Throw
+    }
+
+    It "Should not create a new file when the whatif switch is used" { 
+        # suppress the output of the whatif statement
+        $a = New-Item -Name $testfile -Path $tmpDirectory -ItemType file -WhatIf
+
+        Out-Null -inputobject $a
+
+        Test-Path $FullyQualifiedFile | Should Be $false 
+    }
+
+    It "Should produce an error when the credentials switch is thrown" {
+        { New-Item -Name $testfile -Path $tmpDirectory -ItemType file -Credential redmond/USER } | Should Throw "not implemented"
     }
 }
