@@ -128,6 +128,7 @@
             pushd $testDirectory
 
             Select-String matches $testDirectory/testfile1.txt  | Should Match $expected
+	    popd
         }
 
         It "Should return the fourth line in testfile1 when a regular expression is used"{
