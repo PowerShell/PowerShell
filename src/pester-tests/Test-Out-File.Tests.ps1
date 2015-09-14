@@ -1,17 +1,10 @@
 ﻿Describe "Test-Out-File" {
-    $a = "some test text"
-    $b = New-Object psobject -Property @{text=$a}
+    $expectedContent = "some test text"
+    $inputObject = New-Object psobject -Property @{text=$expectedContent}
     $testfile = "/tmp/outfileTest.txt"
 
-    BeforeEach {
-        if (Test-Path -Path $testfile)
-        {
-            Remove-Item -Path $testfile -Force
-        }
-    }
-
     AfterEach {
-            Remove-Item -Path $testfile -Force
+         Remove-Item -Path $testfile -Force
     }
 
     It "Should be able to be called without error" {
@@ -19,33 +12,33 @@
     }
 
     It "Should be able to accept string input via piping" {
-        { $a | Out-File -FilePath $testfile } | Should Not Throw
+        { $expectedContent | Out-File -FilePath $testfile } | Should Not Throw
 
         $actual = Get-Content $testfile
 
-        $actual | Should Be $a
+        $actual | Should Be $expectedContent
     }
 
     It "Should be able to accept string input via the InputObject swictch" {
-        { Out-File -FilePath $testfile -InputObject $a } | Should Not Throw
+        { Out-File -FilePath $testfile -InputObject $expectedContent } | Should Not Throw
 
         $actual = Get-Content $testfile
 
-        $actual | Should Be $a
+        $actual | Should Be $expectedContent
     }
 
     It "Should be able to accept object input" {
-        { $b | Out-File -FilePath $testfile } | Should Not Throw
+        { $inputObject | Out-File -FilePath $testfile } | Should Not Throw
 
-        { Out-File -FilePath $testfile -InputObject $b } | Should Not Throw
+        { Out-File -FilePath $testfile -InputObject $inputObject } | Should Not Throw
     }
 
     It "Should not overwrite when the noclobber switch is used" {
 
-        Out-File -FilePath $testfile -InputObject $b
+        Out-File -FilePath $testfile -InputObject $inputObject
 
-        { Out-File -FilePath $testfile -InputObject $b -NoClobber -ErrorAction SilentlyContinue }   | Should Throw "already exists."
-        { Out-File -FilePath $testfile -InputObject $b -NoOverWrite -ErrorAction SilentlyContinue } | Should Throw "already exists."
+        { Out-File -FilePath $testfile -InputObject $inputObject -NoClobber -ErrorAction SilentlyContinue }   | Should Throw "already exists."
+        { Out-File -FilePath $testfile -InputObject $inputObject -NoOverWrite -ErrorAction SilentlyContinue } | Should Throw "already exists."
 
         $actual = Get-Content $testfile
 
@@ -56,8 +49,8 @@
     }
 
     It "Should Append a new line when the append switch is used" {
-        { Out-File -FilePath $testfile -InputObject $b }         | Should Not Throw
-        { Out-File -FilePath $testfile -InputObject $b -Append } | Should Not Throw
+        { Out-File -FilePath $testfile -InputObject $inputObject }         | Should Not Throw
+        { Out-File -FilePath $testfile -InputObject $inputObject -Append } | Should Not Throw
 
         $actual = Get-Content $testfile
 
@@ -78,7 +71,7 @@
 
     It "Should limit each line to the specified number of characters when the width switch is used on objects" {
 
-        Out-File -FilePath $testfile -Width 10 -InputObject $b
+        Out-File -FilePath $testfile -Width 10 -InputObject $inputObject
 
         $actual = Get-Content $testfile
 
@@ -91,11 +84,11 @@
 
     It "Should allow the cmdlet to overwrite an existing read-only file" {
         # create a read-only text file
-        { Out-File -FilePath $testfile -InputObject $b }                | Should Not Throw
+        { Out-File -FilePath $testfile -InputObject $inputObject }                | Should Not Throw
         Set-ItemProperty -Path $testfile -Name IsReadOnly -Value $true
 
         # write information to the RO file
-        { Out-File -FilePath $testfile -InputObject $b -Append -Force } | Should Not Throw
+        { Out-File -FilePath $testfile -InputObject $inputObject -Append -Force } | Should Not Throw
 
         $actual = Get-Content $testfile
 
