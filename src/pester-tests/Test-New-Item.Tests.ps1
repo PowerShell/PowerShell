@@ -22,12 +22,6 @@ Describe "Test-New-Item" {
         Clean-State
     }
 
-    AfterEach {
-        Clean-State
-        Test-Path $FullyQualifiedFile   | Should Be $false
-        Test-Path $FullyQualifiedFolder | Should Be $false
-    }
-
     It "should call the function without error" {
         { New-Item -Name $testfile -Path $tmpDirectory -ItemType file } | Should Not Throw
     }
@@ -90,20 +84,16 @@ Describe "Test-New-Item" {
     }
 
     It "Should be able to call the whatif switch without error" {
-       ( Out-Null -inputobject (New-Item -Name testfile.txt -Path /tmp -ItemType file -WhatIf))
-        { $a } | Should Not Throw
+       { New-Item -Name testfile.txt -Path /tmp -ItemType file -WhatIf } | Should Not Throw
     }
 
     It "Should not create a new file when the whatif switch is used" { 
-        # suppress the output of the whatif statement
-        $a = New-Item -Name $testfile -Path $tmpDirectory -ItemType file -WhatIf
-
-        Out-Null -inputobject $a
+        New-Item -Name $testfile -Path $tmpDirectory -ItemType file -WhatIf
 
         Test-Path $FullyQualifiedFile | Should Be $false 
     }
 
     It "Should produce an error when the credentials switch is thrown" {
-        { New-Item -Name $testfile -Path $tmpDirectory -ItemType file -Credential redmond/USER } | Should Throw "not implemented"
+        { New-Item -Name $testfile -Path $tmpDirectory -ItemType file -Credential domain/USER } | Should Throw "not implemented"
     }
 }
