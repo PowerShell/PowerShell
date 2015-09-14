@@ -15,7 +15,9 @@ namespace PSTests
         [Fact]
         public static void TestCurrentDomain_ProcessExit()
         {
-            AmsiUtils.CurrentDomain_ProcessExit(null, EventArgs.Empty);
+            Assert.Throws<PlatformNotSupportedException>(delegate {
+                    AmsiUtils.CurrentDomain_ProcessExit(null, EventArgs.Empty);
+                });
         }
 
         [Fact]
