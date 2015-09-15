@@ -46,7 +46,7 @@ PRODUCT_MI_REFS=$(COREREF) $(MI_NATIVE_REF)
 PRODUCT_PS_REFS=$(COREREF) $(MI_REF) -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 PRODUCT_COMMANDS_REFS=$(COREREF) -r:dotnetlibs/System.Management.Automation.dll
 
-MCSOPTS_BASE=-unsafe -nostdlib -noconfig -define:CORECLR -define:_CORECLR
+MCSOPTS_BASE=-unsafe -nostdlib -noconfig -define:CORECLR -define:_CORECLR /nowarn:CS1701,CS1702
 MCSOPTS_MI=$(MCSOPTS_BASE) -target:library
 MCSOPTS_LIB=$(MCSOPTS_BASE) -target:library
 MCSOPTS_PS=$(STRING_RESOURCES_ORIG) $(MCSOPTS_BASE) -target:library
