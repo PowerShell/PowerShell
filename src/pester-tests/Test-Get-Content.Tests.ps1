@@ -1,26 +1,82 @@
 ﻿Describe "Test-Get-Content" {
-    It "Should throw an error on a directory  " {
-        # also tests that -erroraction SilentlyContinue will work.
+    $testString = "This is a test content for a file"
+    $secondline = "Here's a first line `n here's a second line`nmore text`njust to make sure`n there's plenty to work with"
+    $testPath   = "/tmp/testfile1"
+    $testPath2  = "/tmp/testfile2"
 
-        Get-Content . -ErrorAction SilentlyContinue | Should Throw
-        cat . -ErrorAction SilentlyContinue         | Should Throw
-        gc . -ErrorAction SilentlyContinue          | Should Throw
-        type . -ErrorAction SilentlyContinue        | Should Throw
-
+    BeforeEach {
+        New-Item -Path $testPath -Force -Value $testString
+        New-Item -Path $testPath2 -Force -Value $secondline
     }
 
-    It "Should deliver an array object when listing a file" {
-        (Get-Content -Path ./Test-Get-Content.Tests.ps1).GetType().BaseType.Name | Should Be "Array"
-        (Get-Content -Path ./Test-Get-Content.Tests.ps1)[0]                      |Should be "Describe `"Test-Get-Content`" `{"
+    It "Should throw an error on a directory  " {
+        # also tests that -erroraction SilentlyContinue will work.
+        Get-Content . -ErrorAction SilentlyContinue | Should Throw
+    }
 
-        (gc -Path ./Test-Get-Content.Tests.ps1).GetType().BaseType.Name | Should Be "Array"
-        (gc -Path ./Test-Get-Content.Tests.ps1)[0]                      |Should be "Describe `"Test-Get-Content`" `{"
+    It "Should return an Object when listing only a single line" {
+        (Get-Content -Path $testPath).GetType().BaseType.Name | Should Be "Object"
+    }
 
-        (type -Path ./Test-Get-Content.Tests.ps1).GetType().BaseType.Name | Should Be "Array"
-        (type -Path ./Test-Get-Content.Tests.ps1)[0]                      |Should be "Describe `"Test-Get-Content`" `{"
+    It "Should deliver an array object when listing a file with multiple lines" {
+        (Get-Content -Path $testPath2).GetType().BaseType.Name | Should Be "Array"
+    }
 
-        (cat -Path ./Test-Get-Content.Tests.ps1).GetType().BaseType.Name | Should Be "Array"
-        (cat -Path ./Test-Get-Content.Tests.ps1)[0]                      |Should be "Describe `"Test-Get-Content`" `{"
+    It "Should return the correct information from a file" {
+        (Get-Content -Path $testPath) | Should Be $testString
+    }
 
+    It "Should be able to call using the cat alias" {
+        { cat -Path $testPath } | Should Not Throw
+    }
+
+    It "Should be able to call using the gc alias" {
+        { gc -Path $testPath } | Should Not Throw
+    }
+
+    It "Should be able to call using the type alias" {
+        { type -Path $testPath } | Should Not Throw
+    }
+
+    It "Should be able to return a specific line from a file" {
+        (cat -Path $testPath2)[1] | Should be " here's a second line"
+    }
+
+    It "Should be able to specify the number of lines to get the content of using the TotalCount switch" {
+        $returnArray = (cat -Path $testPath2 -TotalCount 2)
+
+        $returnArray[0] | Should Be "Here's a first line "
+        $returnArray[1] | Should Be " here's a second line"
+    }
+
+    It "Should be able to specify the number of lines to get the content of using the Head switch" {
+        $returnArray = (cat -Path $testPath2 -Head 2)
+
+        $returnArray[0] | Should Be "Here's a first line "
+        $returnArray[1] | Should Be " here's a second line"
+    }
+
+    It "Should be able to specify the number of lines to get the content of using the First switch" {
+        $returnArray = (cat -Path $testPath2 -First 2)
+
+        $returnArray[0] | Should Be "Here's a first line "
+        $returnArray[1] | Should Be " here's a second line"
+    }
+
+    It "Should return the last line of a file using the Tail switch" {
+        Get-Content -Path $testPath -Tail 1 | Should Be " there's plenty to work with"
+    }
+
+    It "Should return the last lines of a file using the Last alias" {
+        Get-Content -Path $testPath2 -Tail 1 | Should Be " there's plenty to work with"
+    }
+
+    It "Should be able to get content within a different drive" {
+        Set-Location env:
+
+        { Get-Content PATH } | Should Not Throw
+        Get-Content PATH     | Should Be "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+        Set-Location /
     }
 }
