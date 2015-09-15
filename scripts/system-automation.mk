@@ -102,9 +102,19 @@ SYS_AUTO_SRCS_WIN=\
 	../../../jws/pswin/admin/monad/src/engine/MshMemberInfo.cs	\
 	../../../jws/pswin/admin/monad/src/engine/MshObject.cs	\
 	../../../jws/pswin/admin/monad/src/engine/TypeTable.cs	\
+	../../../jws/pswin/admin/monad/src/engine/Types_Ps1Xml.generated.cs	\
+	../../../jws/pswin/admin/monad/src/engine/TypesV3_Ps1Xml.generated.cs	\
+	../../../jws/pswin/admin/monad/src/engine/GetEvent_Types_Ps1Xml.generated.cs	\
 	../../../jws/pswin/admin/monad/src/engine/ExtendedTypeSystemException.cs	\
 	../../../jws/pswin/admin/monad/src/engine/MshReference.cs	\
 	../../../jws/pswin/admin/monad/src/engine/WinRT/IInspectable.cs	\
+	../../../jws/pswin/admin/monad/src/engine/COM/ComAdapter.cs	\
+	../../../jws/pswin/admin/monad/src/engine/COM/ComDispatch.cs	\
+	../../../jws/pswin/admin/monad/src/engine/COM/ComInvoker.cs	\
+	../../../jws/pswin/admin/monad/src/engine/COM/ComMethod.cs	\
+	../../../jws/pswin/admin/monad/src/engine/COM/ComProperty.cs	\
+	../../../jws/pswin/admin/monad/src/engine/COM/ComTypeInfo.cs	\
+	../../../jws/pswin/admin/monad/src/engine/COM/ComUtil.cs	\
 	../../../jws/pswin/admin/monad/src/help/CabinetAPI.cs	\
 	../../../jws/pswin/admin/monad/src/help/CabinetNativeApi.cs	\
 	../../../jws/pswin/admin/monad/src/help/MamlUtil.cs	\
@@ -300,6 +310,7 @@ SYS_AUTO_SRCS_WIN=\
 	../../../jws/pswin/admin/monad/src/engine/Utils.cs	\
 	../../../jws/pswin/admin/monad/src/engine/regex.cs	\
 	../../../jws/pswin/admin/monad/src/engine/serialization.cs	\
+	../../../jws/pswin/admin/monad/src/CoreCLR/CorePsPlatform.cs	\
 	../../../jws/pswin/admin/monad/src/engine/DataStoreAdapter.cs	\
 	../../../jws/pswin/admin/monad/src/engine/DataStoreAdapterProvider.cs	\
 	../../../jws/pswin/admin/monad/src/namespaces/ContainerProviderBase.cs	\
@@ -523,6 +534,8 @@ SYS_AUTO_SRCS_WIN=\
 	../../../jws/pswin/admin/monad/src/utils/PInvokeDllNames.cs	\
 	../../../jws/pswin/admin/monad/src/utils/PlatformInvokes.cs	\
 	../../../jws/pswin/admin/monad/src/utils/ClrFacade.cs	\
+	../../../jws/pswin/admin/monad/src/utils/PSTelemetryWrapper.cs	\
+	../../../jws/pswin/admin/monad/src/utils/PSTelemetryMethods.cs	\
 	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/common/Utilities/MshObjectUtil.cs	\
 	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/common/Utilities/Mshexpression.cs	\
 	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/common/DisplayDatabase/XmlLoaderBase.cs	\
@@ -667,9 +680,19 @@ SYS_AUTO_SRCS=\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/MshMemberInfo.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/MshObject.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/TypeTable.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/Types_Ps1Xml.generated.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/TypesV3_Ps1Xml.generated.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/GetEvent_Types_Ps1Xml.generated.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/ExtendedTypeSystemException.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/MshReference.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/WinRT/IInspectable.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/COM/ComAdapter.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/COM/ComDispatch.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/COM/ComInvoker.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/COM/ComMethod.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/COM/ComProperty.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/COM/ComTypeInfo.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/engine/COM/ComUtil.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/help/CabinetAPI.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/help/CabinetNativeApi.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/help/MamlUtil.cs	\
@@ -865,6 +888,7 @@ SYS_AUTO_SRCS=\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/Utils.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/regex.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/serialization.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/CoreCLR/CorePsPlatform.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/DataStoreAdapter.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/engine/DataStoreAdapterProvider.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/namespaces/ContainerProviderBase.cs	\
@@ -1088,6 +1112,8 @@ SYS_AUTO_SRCS=\
 	$(ADMIN_GIT_ROOT)/monad/src/utils/PInvokeDllNames.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/utils/PlatformInvokes.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/utils/ClrFacade.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/utils/PSTelemetryWrapper.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/utils/PSTelemetryMethods.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/common/Utilities/MshObjectUtil.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/common/Utilities/Mshexpression.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/common/DisplayDatabase/XmlLoaderBase.cs	\
