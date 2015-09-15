@@ -425,7 +425,7 @@ internal class ParserStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Cannot run a document in OneCore powershell: {0}..
+    ///   Looks up a localized string similar to Cannot run a document in OneCore PowerShell: {0}..
     /// </summary>
     internal static string CantActivateDocumentOnOneCore {
         get {
@@ -551,7 +551,7 @@ internal class ParserStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Configuration keyword is not supported in OneCore powershell..
+    ///   Looks up a localized string similar to Configuration keyword is not supported in OneCore PowerShell..
     /// </summary>
     internal static string ConfigurationNotSupportedOnOneCore {
         get {
@@ -1272,7 +1272,7 @@ internal class ParserStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to The format of the resource reference &apos;{0}&apos; in the Requires list for resource &apos;{1}&apos; is not valid. A required resource name should be in the format &apos;[&lt;typename&gt;]&lt;name&gt;&apos;, with no spaces..
+    ///   Looks up a localized string similar to The format of the resource reference &apos;{0}&apos; in the Requires list for resource &apos;{1}&apos; is not valid. A required resource name should be in the format &apos;[&lt;typename&gt;]&lt;name&gt;&apos;, with alphanumeric characters, spaces, &apos;_&apos;, &apos;-&apos;, &apos;.&apos; and &apos;\&apos;..
     /// </summary>
     internal static string GetBadlyFormedRequiredResourceId {
         get {
@@ -1476,7 +1476,7 @@ internal class ParserStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to The default AssemblyLoadContext in use is invalid. The default AssemblyLoadContext for OneCore powershell should be of type &apos;PowerShellAssemblyLoadContext&apos;..
+    ///   Looks up a localized string similar to The default AssemblyLoadContext in use is invalid. The default AssemblyLoadContext for OneCore PowerShell should be of type &apos;PowerShellAssemblyLoadContext&apos;..
     /// </summary>
     internal static string InvalidAssemblyLoadContextInUse {
         get {
@@ -2584,7 +2584,7 @@ internal class ParserStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to The DSC engine could not load the module &apos;{0}&apos;. It was not found on the system..
+    ///   Looks up a localized string similar to Could not find the module &apos;{0}&apos;..
     /// </summary>
     internal static string ModuleNotFoundDuringParse {
         get {
@@ -2593,25 +2593,7 @@ internal class ParserStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Unable to load module &apos;{0}&apos; : {1}.
-    /// </summary>
-    internal static string ModuleNotFoundDuringParseDueToException {
-        get {
-            return ResourceManager.GetString("ModuleNotFoundDuringParseDueToException", resourceCulture);
-        }
-    }
-    
-    /// <summary>
-    ///   Looks up a localized string similar to The DSC engine could not load the module &lt;{0}, {1}&gt;. It was not found on the system..
-    /// </summary>
-    internal static string ModuleWithVersionNotFoundDuringParse {
-        get {
-            return ResourceManager.GetString("ModuleWithVersionNotFoundDuringParse", resourceCulture);
-        }
-    }
-    
-    /// <summary>
-    ///   Looks up a localized string similar to Multiple versions of the module &apos;{0}&apos; were found. You can run &apos;Get-DscResource -Module {0}&apos; to see available versions on the system, and then use the fully qualified name in the following command to specify the desired version: &apos;Import-DscResource –ModuleName @{{ModuleName=&quot;{0}&quot;;ModuleVersion=&quot;Version&quot;}}&apos;..
+    ///   Looks up a localized string similar to Multiple versions of the module &apos;{0}&apos; were found. You can run &apos;Get-Module -ListAvailable -FullyQualifiedName {0}&apos; to see available versions on the system, and then use the fully qualified name &apos;@{{ModuleName=&quot;{0}&quot;; RequiredVersion=&quot;Version&quot;}}&apos;..
     /// </summary>
     internal static string MultipleModuleEntriesFoundDuringParse {
         get {
@@ -2895,15 +2877,6 @@ internal class ParserStrings {
     internal static string ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock {
         get {
             return ResourceManager.GetString("ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock", resourceCulture);
-        }
-    }
-    
-    /// <summary>
-    ///   Looks up a localized string similar to The parameter attribute is not allowed on a method parameter..
-    /// </summary>
-    internal static string ParameterAttributeNotAllowedInMethod {
-        get {
-            return ResourceManager.GetString("ParameterAttributeNotAllowedInMethod", resourceCulture);
         }
     }
     
@@ -3946,7 +3919,7 @@ internal class ParserStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Workflow is not supported in OneCore powershell..
+    ///   Looks up a localized string similar to Workflow is not supported in OneCore PowerShell..
     /// </summary>
     internal static string WorkflowNotSupportedOnOneCore {
         get {
