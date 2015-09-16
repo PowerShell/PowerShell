@@ -15,9 +15,6 @@ include assembly-load-context.mk
 # main references to the CoreCLR reference assemblies
 include coreref.mk
 
-# make file which adds things that are necessary for the platform we are building for
-include platform.mk
-
 # builds unit tests
 include tests.mk
 
@@ -46,7 +43,7 @@ PRODUCT_MI_REFS=$(COREREF) $(MI_NATIVE_REF)
 PRODUCT_PS_REFS=$(COREREF) $(MI_REF) -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 PRODUCT_COMMANDS_REFS=$(COREREF) -r:dotnetlibs/System.Management.Automation.dll
 
-MCSOPTS_BASE=-unsafe -nostdlib -noconfig -define:CORECLR -define:_CORECLR
+MCSOPTS_BASE=-unsafe -nostdlib -noconfig -define:CORECLR -define:_CORECLR /nowarn:CS1701,CS1702
 MCSOPTS_MI=$(MCSOPTS_BASE) -target:library
 MCSOPTS_LIB=$(MCSOPTS_BASE) -target:library
 MCSOPTS_PS=$(STRING_RESOURCES_ORIG) $(MCSOPTS_BASE) -target:library
@@ -63,8 +60,8 @@ RUN_TARGETS=$(POWERSHELL_RUN_TARGETS) dotnetlibs/Microsoft.PowerShell.Commands.M
 all: dotnetlibs/System.Management.Automation.dll $(RUN_TARGETS) dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 
 # this is the build rule for SMA.dll
-dotnetlibs/System.Management.Automation.dll: $(SYS_AUTO_SRCS) dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(PLATFORM_SRCS) $(SYS_AUTO_RES_SRCS) $(SYS_AUTO_RES_CS_SRCS)
-	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_PS_REFS) $(SYS_AUTO_SRCS) $(SYS_AUTO_RES_REF) $(SYS_AUTO_RES_CS_SRCS) $(PLATFORM_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
+dotnetlibs/System.Management.Automation.dll: $(SYS_AUTO_SRCS) dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(SYS_AUTO_RES_SRCS) $(SYS_AUTO_RES_CS_SRCS)
+	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_PS_REFS) $(SYS_AUTO_SRCS) $(SYS_AUTO_RES_REF) $(SYS_AUTO_RES_CS_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
 
 # this is the build rule for MMI.dll
 dotnetlibs/Microsoft.Management.Infrastructure.dll: $(MAN_INFRA_SRCS) dotnetlibs/Microsoft.Management.Infrastructure.Native.dll ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs $(MAN_INFRA_RES_SRCS) $(MAN_INFRA_RES_CS_SRCS)

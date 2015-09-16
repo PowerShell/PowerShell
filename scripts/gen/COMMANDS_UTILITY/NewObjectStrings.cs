@@ -62,6 +62,15 @@ internal class NewObjectStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to {0} Please note that Single-Threaded Apartment is not supported in OneCore PowerShell..
+    /// </summary>
+    internal static string ApartmentNotSupported {
+        get {
+            return ResourceManager.GetString("ApartmentNotSupported", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Cannot create type. Only core types are supported in this language mode..
     /// </summary>
     internal static string CannotCreateTypeConstrainedLanguage {
@@ -103,15 +112,6 @@ internal class NewObjectStrings {
     internal static string ComInteropLoaded {
         get {
             return ResourceManager.GetString("ComInteropLoaded", resourceCulture);
-        }
-    }
-    
-    /// <summary>
-    ///   Looks up a localized string similar to Cannot create the COM object. COM object is not supported in OneCore PowerShell..
-    /// </summary>
-    internal static string ComObjectNotSupportedInOneCorePowerShell {
-        get {
-            return ResourceManager.GetString("ComObjectNotSupportedInOneCorePowerShell", resourceCulture);
         }
     }
     
