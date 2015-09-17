@@ -84,7 +84,7 @@
     }
 
     It "Should return the last line of a file using the Tail switch" {
-        Get-Content -Path $testPath -Tail 1 | Should Be $fifthline
+        Get-Content -Path $testPath -Tail 1 | Should Be $testString
     }
 
     It "Should return the last lines of a file using the Last alias" {
