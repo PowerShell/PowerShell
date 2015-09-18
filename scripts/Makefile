@@ -219,7 +219,7 @@ clean:
 	rm -rf exec_env
 	rm -rf buildtemp/libps-build
 	rm -rf dotnetlibs/*
-	rm xunittests.xml
+	rm -f xunittests.xml
 
 # clean built stuff + prepare step
 cleanall: clean
