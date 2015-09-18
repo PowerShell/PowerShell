@@ -1,27 +1,21 @@
-# global configuration needed by some of the included makefiles
-PSRC = ../src/monad/monad/src
-MONAD_EXT=../src/monad-ext
+.PHONY: all
 
-# this variable is needed by module specific include makefiles below
-ADMIN_GIT_ROOT=../src/monad
-
-phony_all: all
-
-# include all the external makefiles
-
-# these should go away with the makefile restructuring
+# this should go away and be automatically generated
 include assembly-load-context.mk
 
 # main references to the CoreCLR reference assemblies
-include coreref.mk
-
-# builds unit tests
-include tests.mk
+MONAD_EXT=../src/monad-ext
+TARGETING_PACK=$(MONAD_EXT)/coreclr/TargetingPack
+COREREF=$(addprefix -r:, $(shell ls $(TARGETING_PACK)/*.dll))
+CORECLR_ASSEMBLY_BASE=$(MONAD_EXT)/coreclr/Release
 
 # powershell-run is the main powershell executable
 include powershell-run.mk
 
-# These are the main PS dlls:
+# this variable is needed by module specific include makefiles below
+ADMIN_GIT_ROOT=../src/monad
+
+# these are automatically generated from the PowerShell build sytem
 # - System.Management.Automation.dll (the main PS dll)
 # - commands/modules (they contain cmdlets): management and utility
 # - Microsoft.Management.Infrastructure.dll (the first dll in the remoting code paths)
@@ -43,45 +37,43 @@ PRODUCT_MI_REFS=$(COREREF) $(MI_NATIVE_REF)
 PRODUCT_PS_REFS=$(COREREF) $(MI_REF) -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 PRODUCT_COMMANDS_REFS=$(COREREF) -r:dotnetlibs/System.Management.Automation.dll
 
-MCSOPTS_BASE=-unsafe -nostdlib -noconfig -define:CORECLR -define:_CORECLR /nowarn:CS1701,CS1702
-MCSOPTS_MI=$(MCSOPTS_BASE) -target:library
-MCSOPTS_LIB=$(MCSOPTS_BASE) -target:library
-MCSOPTS_PS=$(STRING_RESOURCES_ORIG) $(MCSOPTS_BASE) -target:library
-SRCS_ALL=$(STRING_RESOURCES) $(SRCS)
-
 # compilers
 # - Roslyn's csc is used for all the PS code
 # - Mono's mcs is used for build helper tools
 CSC=mono buildtemp/Microsoft.Net.ToolsetCompilers.*/tools/csc.exe
 MCS=mcs
 
-RUN_TARGETS=$(POWERSHELL_RUN_TARGETS) dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll dotnetlibs/host_cmdline
+CSCOPTS_BASE=-noconfig -nostdlib
+CSCOPTS_LIB=$(CSCOPTS_BASE) -target:library
+CSCOPTS_LIB_PS=$(CSCOPTS_LIB) -unsafe -define:CORECLR -define:_CORECLR /nowarn:CS1701,CS1702
+
+RUN_TARGETS=$(POWERSHELL_RUN_TARGETS) $(addprefix dotnetlibs/, Microsoft.PowerShell.Commands.Management.dll Microsoft.PowerShell.Commands.Utility.dll Microsoft.PowerShell.Security.dll api-ms-win-core-registry-l1-1-0.dll host_cmdline)
 
 all: dotnetlibs/System.Management.Automation.dll $(RUN_TARGETS) dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 
 # this is the build rule for SMA.dll
 dotnetlibs/System.Management.Automation.dll: $(SYS_AUTO_SRCS) dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(SYS_AUTO_RES_SRCS) $(SYS_AUTO_RES_CS_SRCS)
-	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_PS_REFS) $(SYS_AUTO_SRCS) $(SYS_AUTO_RES_REF) $(SYS_AUTO_RES_CS_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_PS_REFS) $(SYS_AUTO_SRCS) $(SYS_AUTO_RES_REF) $(SYS_AUTO_RES_CS_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
 
 # this is the build rule for MMI.dll
 dotnetlibs/Microsoft.Management.Infrastructure.dll: $(MAN_INFRA_SRCS) dotnetlibs/Microsoft.Management.Infrastructure.Native.dll ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs $(MAN_INFRA_RES_SRCS) $(MAN_INFRA_RES_CS_SRCS)
-	$(CSC) -out:$@ $(MCSOPTS_MI) $(PRODUCT_MI_REFS) $(MAN_INFRA_SRCS) $(MAN_INFRA_RES_REF) $(MAN_INFRA_RES_CS_SRCS) ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_MI_REFS) $(MAN_INFRA_SRCS) $(MAN_INFRA_RES_REF) $(MAN_INFRA_RES_CS_SRCS) ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
 
 # Commands
 
 dotnetlibs/Microsoft.PowerShell.Commands.Management.dll: $(COMMANDS_MANAGEMENT_SRCS) dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Security.dll $(COMMANDS_MANAGEMENT_RES_SRCS) $(COMMANDS_MANAGEMENT_RES_CS_SRCS) $(MI_ASSEMBLY)
-	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_COMMANDS_REFS) $(COMMANDS_MANAGEMENT_SRCS) $(COMMANDS_MANAGEMENT_RES_CS_SRCS) $(COMMANDS_MANAGEMENT_RES_REF) $(MI_REF) -r:dotnetlibs/Microsoft.PowerShell.Security.dll
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_COMMANDS_REFS) $(COMMANDS_MANAGEMENT_SRCS) $(COMMANDS_MANAGEMENT_RES_CS_SRCS) $(COMMANDS_MANAGEMENT_RES_REF) $(MI_REF) -r:dotnetlibs/Microsoft.PowerShell.Security.dll
 
 dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll: $(COMMANDS_UTILITY_SRCS) dotnetlibs/System.Management.Automation.dll $(COMMANDS_UTILITY_RES_SRCS) $(COMMANDS_UTILITY_RES_CS_SRCS)
-	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_COMMANDS_REFS) $(COMMANDS_UTILITY_SRCS) $(COMMANDS_UTILITY_RES_CS_SRCS) $(COMMANDS_UTILITY_RES_REF)
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_COMMANDS_REFS) $(COMMANDS_UTILITY_SRCS) $(COMMANDS_UTILITY_RES_CS_SRCS) $(COMMANDS_UTILITY_RES_REF)
 
 dotnetlibs/Microsoft.PowerShell.Security.dll: $(SECURITY_SRCS) $(SECURITY_RES_SRCS) $(SECURITY_RES_CS_SRCS)
-	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_COMMANDS_REFS) $(SECURITY_SRCS) $(SECURITY_RES_CS_SRCS) $(SECURITY_RES_REF)
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_COMMANDS_REFS) $(SECURITY_SRCS) $(SECURITY_RES_CS_SRCS) $(SECURITY_RES_REF)
 
 # assembly load context
 
 dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET): $(ASSEMBLY_LOAD_CONTEXT_SRCS)
-	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_BASE_REFS) $(ASSEMBLY_LOAD_CONTEXT_SRCS)
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_BASE_REFS) $(ASSEMBLY_LOAD_CONTEXT_SRCS)
 
 # this will copy whatever the first version of the dll in the globber is
 buildtemp/System.Reflection.Metadata.dll: buildtemp/System.Reflection.Metadata.*/lib/portable-net45+win8/System.Reflection.Metadata.dll
@@ -93,7 +85,7 @@ buildtemp/System.Collections.Immutable.dll: buildtemp/System.Collections.Immutab
 
 # this one is built from stubs
 dotnetlibs/Microsoft.Management.Infrastructure.Native.dll: ../src/stubs/Microsoft.Management.Infrastructure.Native-stub.cs ../src/stubs/Microsoft.Management.Infrastructure.Native-stub-assembly-info.cs
-	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_BASE_REFS) $^
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_BASE_REFS) $^
 
 MPATH=/usr/lib/mono/4.5/Facades
 
@@ -188,6 +180,17 @@ run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-debug-cl
 native-tests: dotnetlibs/monad_native
 	# execute the native C++ tests
 	cd dotnetlibs && ./monad_native
+
+# xUnit tests
+TEST_FOLDER=../src/ps_test
+TESTRUN_FOLDER=exec_env/app_base
+TEST_SRCS=$(addprefix $(TEST_FOLDER)/, test_*.cs)
+
+$(TESTRUN_FOLDER)/xunit%: $(MONAD_EXT)/xunit/xunit%
+	cp -f $^ $@
+
+$(TESTRUN_FOLDER)/ps_test.dll: $(TEST_SRCS) $(addprefix $(TESTRUN_FOLDER)/, xunit.core.dll xunit.assert.dll) $(addprefix dotnetlibs/, System.Management.Automation.dll Microsoft.PowerShell.Commands.Management.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET))
+	$(CSC) $(CSCOPTS_LIB) -out:$@ $(addprefix -r:$(TESTRUN_FOLDER)/, xunit.core.dll xunit.assert.dll) $(addprefix -r:dotnetlibs/, System.Management.Automation.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET)) $(COREREF) $(TEST_SRCS)
 
 xunit-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr $(addprefix $(TESTRUN_FOLDER)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll)
 	# execute the xUnit runner, with XML output
