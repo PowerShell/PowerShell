@@ -87,16 +87,18 @@
         Get-Content -Path $testPath -Tail 1 | Should Be $testString
     }
 
+
     It "Should return the last lines of a file using the Last alias" {
         Get-Content -Path $testPath2 -Last 1 | Should Be $fifthline
     }
 
     It "Should be able to get content within a different drive" {
-        Set-Location env:
+        pushd env:
+        $expectedoutput = [Environment]::GetEnvironmentVariable("PATH");
 
         { Get-Content PATH } | Should Not Throw
-        Get-Content PATH     | Should Be "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        Get-Content PATH     | Should Be $expectedoutput
 
-        Set-Location /
+        popd
     }
 }
