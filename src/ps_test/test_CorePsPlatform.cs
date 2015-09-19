@@ -134,5 +134,24 @@ namespace PSTests
             FileSystemInfo fd = new FileInfo(path);
             Assert.False(Platform.NonWindowsIsHardLink(fd));
         }
+
+        [Fact]
+        public static void TestCommandLineArgvW()
+        {
+            string testCommand= "Today is a \\\"good day\" or is it";
+
+            int count = 0;
+
+            string[] retval = Platform.NonWindowsCommandLineToArgvW(testCommand, out count);
+
+            Assert.Equal("Today", retval[0]);
+            Assert.Equal("is", retval[1]);
+            Assert.Equal("a", retval[2]);
+            Assert.Equal("\\\"good", retval[3]);
+            Assert.Equal("day\"", retval[4]);
+            Assert.Equal("or", retval[5]);
+            Assert.Equal("is", retval[6]);
+            Assert.Equal("it", retval[7]);
+        }
     }
 }
