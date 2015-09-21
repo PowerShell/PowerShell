@@ -130,6 +130,9 @@ prepare:
 	$(NUGET_INSTALL) 1.1.36 System.Collections.Immutable
 	$(NUGET_INSTALL) 1.0.0-rc3-20150520-02 Microsoft.Net.ToolsetCompilers
 
+# this is the execution environment from which all managed code is run
+APP_BASE=exec_env/app_base
+
 # this is an internal target, it's not intended to be called manually
 #
 # it will:
@@ -142,17 +145,17 @@ prepare:
 # release CoreCLR depends on the actual run target.
 internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS)
 	rm -rf exec_env
-	mkdir -p exec_env/app_base/Modules
+	mkdir -p $(APP_BASE)/Modules
 	mkdir -p exec_env/coreclr
-	cp ../src/monad/monad/miscfiles/display/*.ps1xml exec_env/app_base
-	cp ../src/monad/monad/miscfiles/types/CoreClr/*.ps1xml exec_env/app_base
-	cp -r ../src/monad/monad/miscfiles/modules/* exec_env/app_base/Modules
-	cp -r dotnetlibs/*.dll exec_env/app_base
-	cp -r dotnetlibs/*.exe exec_env/app_base
-	cp -r dotnetlibs/*.so exec_env/app_base
-	cp dotnetlibs/host_cmdline exec_env/app_base
-	cp -r ../ext-src/pester exec_env/app_base/Modules/Pester
-	cp runps*.sh exec_env/app_base
+	cp ../src/monad/monad/miscfiles/display/*.ps1xml $(APP_BASE)
+	cp ../src/monad/monad/miscfiles/types/CoreClr/*.ps1xml $(APP_BASE)
+	cp -r ../src/monad/monad/miscfiles/modules/* $(APP_BASE)/Modules
+	cp -r dotnetlibs/*.dll $(APP_BASE)
+	cp -r dotnetlibs/*.exe $(APP_BASE)
+	cp -r dotnetlibs/*.so $(APP_BASE)
+	cp dotnetlibs/host_cmdline $(APP_BASE)
+	cp -r ../ext-src/pester $(APP_BASE)/Modules/Pester
+	cp runps*.sh $(APP_BASE)
 
 internal-prepare-release-clr:
 	cp -r $(MONAD_EXT)/coreclr/Release/* exec_env/coreclr/
@@ -163,20 +166,20 @@ internal-prepare-debug-clr:
 
 run: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
 	# execute a cmdlet, this will auto-load the utility module and print a, b and c in 3 lines
-	exec_env/app_base/runps-simple.sh '"a","b","c","a","a" | Select-Object -Unique'
+	$(APP_BASE)/runps-simple.sh '"a","b","c","a","a" | Select-Object -Unique'
 
 run-interactive: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
-	exec_env/app_base/runps.sh
+	$(APP_BASE)/runps.sh
 
 run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
-	exec_env/app_base/runps.sh --file $(PSSCRIPT)
+	$(APP_BASE)/runps.sh --file $(PSSCRIPT)
 
 # easy way to run individual PowerShell scripts, `make script.ps1` where the path is relative to monad-linux/scripts (with TEMP set for Pester)
 %.ps1: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
-	TEMP=/tmp exec_env/app_base/runps.sh --file ../../$@
+	TEMP=/tmp $(APP_BASE)/runps.sh --file ../../$@
 
 run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-debug-clr
-	PAL_DBG_CHANNELS="+LOADER.TRACE" exec_env/app_base/runps-simple.sh get-location
+	PAL_DBG_CHANNELS="+LOADER.TRACE" $(APP_BASE)/runps-simple.sh get-location
 
 native-tests: dotnetlibs/monad_native
 	# execute the native C++ tests
@@ -184,35 +187,34 @@ native-tests: dotnetlibs/monad_native
 
 # xUnit tests
 TEST_FOLDER=../src/ps_test
-TESTRUN_FOLDER=exec_env/app_base
 TEST_SRCS=$(addprefix $(TEST_FOLDER)/, test_*.cs)
 
-$(TESTRUN_FOLDER)/xunit%: $(MONAD_EXT)/xunit/xunit%
+$(APP_BASE)/xunit%: $(MONAD_EXT)/xunit/xunit%
 	cp -f $^ $@
 
-$(TESTRUN_FOLDER)/ps_test.dll: $(TEST_SRCS) $(addprefix $(TESTRUN_FOLDER)/, xunit.core.dll xunit.assert.dll) $(addprefix dotnetlibs/, System.Management.Automation.dll Microsoft.PowerShell.Commands.Management.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET))
-	$(CSC) $(CSCOPTS_LIB) -out:$@ $(addprefix -r:$(TESTRUN_FOLDER)/, xunit.core.dll xunit.assert.dll) $(addprefix -r:dotnetlibs/, System.Management.Automation.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET)) $(COREREF) $(TEST_SRCS)
+$(APP_BASE)/ps_test.dll: $(TEST_SRCS) $(addprefix $(APP_BASE)/, xunit.core.dll xunit.assert.dll) $(addprefix dotnetlibs/, System.Management.Automation.dll Microsoft.PowerShell.Commands.Management.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET))
+	$(CSC) $(CSCOPTS_LIB) -out:$@ $(addprefix -r:$(APP_BASE)/, xunit.core.dll xunit.assert.dll) $(addprefix -r:dotnetlibs/, System.Management.Automation.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET)) $(COREREF) $(TEST_SRCS)
 
-xunit-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr $(addprefix $(TESTRUN_FOLDER)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll)
+xunit-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr $(addprefix $(APP_BASE)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll)
 	# execute the xUnit runner, with XML output
-	exec_env/app_base/runps-test.sh ps_test.dll -xml ../../xunittests.xml
+	$(APP_BASE)/runps-test.sh ps_test.dll -xml ../../xunittests.xml
 
 pester-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
 	# execute the Pester tests, which needs a TEMP environment variable to be set
-	exec_env/app_base/runps-simple.sh 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
+	$(APP_BASE)/runps-simple.sh 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
 
 hashbang-tests:
 	# execute the 3rdparty/hashbang example
-	PATH=$(PATH):$(shell pwd)/exec_env/app_base $(shell pwd)/3rdparty/hashbang/script.ps1
+	PATH=$(PATH):$(shell pwd)/$(APP_BASE) $(shell pwd)/3rdparty/hashbang/script.ps1
 
 test: native-tests xunit-tests pester-tests hashbang-tests
 
 trace: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
-	exec_env/app_base/runps-simple-trace.sh get-location
+	$(APP_BASE)/runps-simple-trace.sh get-location
 
 debug: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
 	# quoting here is a bit special if strings are passed in, because lldb seems to forward arguments strangely
-	exec_env/app_base/runps-simple-debug.sh get-location
+	$(APP_BASE)/runps-simple-debug.sh get-location
 
 clean:
 	rm -rf dotnetlibs/*
