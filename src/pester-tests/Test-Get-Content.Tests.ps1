@@ -50,8 +50,8 @@
     It "Should return the same values for aliases" {
         $getContentAlias = Get-Content -Path $testPath
         $gcAlias         = gc -Path $testPath
-        $catAlias        = gc -Path $testPath
-        $typeAlias       = gc -Path $testPath
+        $catAlias        = cat -Path $testPath
+        $typeAlias       = type -Path $testPath
 
         $getContentAlias | Should Be $gcAlias
         $getContentAlias | Should Be $catAlias
