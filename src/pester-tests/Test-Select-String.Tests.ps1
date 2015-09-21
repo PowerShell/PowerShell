@@ -3,7 +3,7 @@
     $testinputone = "hello","Hello","goodbye"
     $testinputtwo = "hello","Hello"
 
-        it "Should be called with out errors" {
+        it "Should be called without errors" {
             { $testinputone | Select-String -Pattern "hello" } | Should Not Throw
         }
 
@@ -12,7 +12,6 @@
         }
 
         it "Should return an array data type when multiple matches are found" {
-            # array is case insensitive
             ( $testinputtwo | Select-String -Pattern "hello").gettype().basetype | Should Be Array
         }
 
