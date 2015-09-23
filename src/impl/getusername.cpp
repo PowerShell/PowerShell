@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <string>
 #include <unicode/unistr.h>
+#include <pwd.h>
 #include "getusername.h"
 
 //! @brief GetUserName retrieves the name of the user associated with
@@ -40,13 +41,9 @@
 //! @exception errno Passes these errors via errno to GetLastError:
 //! - ERROR_INVALID_PARAMETER: parameter is not valid
 //! - ERROR_BAD_ENVIRONMENT: locale is not UTF-8
-//! - ERROR_TOO_MANY_OPEN_FILES: already have the maximum allowed number of open files
-//! - ERROR_NO_ASSOCIATION: calling process has no controlling terminal
 //! - ERROR_INSUFFICIENT_BUFFER: buffer not large enough to hold username string
-//! - ERROR_NO_SUCH_USER: there was no corresponding entry in the utmp-file
-//! - ERROR_OUTOFMEMORY: insufficient memory to allocate passwd structure
-//! - ERROR_NO_ASSOCIATION: standard input didn't refer to a terminal
-//! - ERROR_INVALID_FUNCTION: getlogin_r() returned an unrecognized error code
+//! - ERROR_NO_SUCH_USER: there was no corresponding user
+//! - ERROR_GEN_FAILURE: sysconf() or getpwuid() failed for unknown reasons
 //!
 //! @retval TRUE If the function succeeds, the return value is a nonzero
 //! value, and the variable pointed to by lpnSize contains the number
@@ -61,8 +58,6 @@
 //! [LPTSTR]: https://msdn.microsoft.com/en-us/library/windows/desktop/aa383751(v=vs.85).aspx#LPTSTR
 BOOL GetUserNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
 {
-    errno = FALSE;
-
     // Check parameters
     if (!lpBuffer || !lpnSize)
     {
@@ -79,38 +74,46 @@ BOOL GetUserNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize)
         return FALSE;
     }
 
-    // Get username from system in a thread-safe manner
-    std::string username(LOGIN_NAME_MAX, 0);
-    int ret = getlogin_r(&username[0], username.length());
+    struct passwd pwd;
+    struct passwd* result;
+    // gets the initial suggested size for buf
+    int buflen = sysconf(_SC_GETPW_R_SIZE_MAX);
+    if (buflen == -1)
+    {
+        errno = ERROR_GEN_FAILURE;
+        return FALSE;
+    }
+    std::string buf(buflen, 0);
+
+    // geteuid() gets the effective user ID of the calling process, and is always successful
+    errno = 0;
+    int ret = getpwuid_r(geteuid(), &pwd, &buf[0], buflen, &result);
+
     // Map errno to Win32 Error Codes
     if (ret)
     {
         switch (errno)
         {
-        case EMFILE:
-        case ENFILE:
-            errno = ERROR_TOO_MANY_OPEN_FILES;
-            break;
-        case ENXIO:
-            errno = ERROR_NO_ASSOCIATION;
-            break;
-        case ERANGE:
-            errno = ERROR_GEN_FAILURE;
-            break;
         case ENOENT:
+        case ESRCH:
+        case EBADF:
+        case EPERM:
             errno = ERROR_NO_SUCH_USER;
             break;
-        case ENOMEM:
-            errno = ERROR_OUTOFMEMORY;
-            break;
-        case ENOTTY:
-            errno = ERROR_NO_ASSOCIATION;
-            break;
         default:
-            errno = ERROR_INVALID_FUNCTION;
+            errno = ERROR_GEN_FAILURE;
         }
         return FALSE;
     }
+
+    // Check if no user matched
+    if (result == NULL)
+    {
+        errno = ERROR_NO_SUCH_USER;
+        return FALSE;
+    }
+
+    std::string username(result->pw_name);
 
     // Convert to UnicodeString
     auto username16 = icu::UnicodeString::fromUTF8(username.c_str());

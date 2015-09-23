@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <gtest/gtest.h>
 #include <unicode/unistr.h>
+#include <pwd.h>
 #include "getusername.h"
 
 //! Test fixture for GetUserNameW
@@ -19,7 +20,7 @@ protected:
     std::string expectedUsername;
     DWORD expectedSize;
 
-    GetUserNameTest(): expectedUsername(std::string(getlogin())),
+    GetUserNameTest(): expectedUsername(std::string(getpwuid(geteuid())->pw_name)),
                        expectedSize(expectedUsername.length()+1)
     {
     }
