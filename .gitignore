@@ -1,4 +1,6 @@
 .idea
+.config/
+.nuget\\packages\\/
 CMakeCache.txt
 CMakeFiles/
 Makefile
