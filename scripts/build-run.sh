@@ -8,9 +8,12 @@ DIR=/opt/monad-linux
 VOLUME=$(dirname $(pwd))/:$DIR
 
 # creates new user in container matching the local user so that
-# artifacts will be owned by the local user (instead of root)
+# artifacts will be owned by the local user; set IMPERSONATE to false
+# to disable and run as root, defaults to true
+if [[ ! $IMPERSONATE ]]; then IMPERSONATE=true; fi
 impersonate()
 {
+    if ! $IMPERSONATE; then return; fi
     echo \
 	groupadd -g $CGID $CGROUP '&&' \
 	useradd -u $CUID -g $CGID -d $DIR $CUSER '&&' \
