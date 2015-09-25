@@ -1,14 +1,25 @@
 #!/usr/bin/env sh
 
-# --rm: always run ephemerally
-# --volume: path must be absolute, so resolve it
-# --workdir: start location for Make
-# $DOCKERFLAGS: additional flags
-# magrathea: contains all dependencies
-# bash: use $* over $@ so that multi-word parameters aren't split up
+CUID=$(id -u)
+CUSER=$(id -un)
+CGID=$(id -g)
+CGROUP=$(id -gn)
+DIR=/opt/monad-linux
+VOLUME=$(dirname $(pwd))/:$DIR
+
+# creates new user in container matching the local user so that
+# artifacts will be owned by the local user (instead of root)
+impersonate()
+{
+    echo \
+	groupadd -g $CGID $CGROUP '&&' \
+	useradd -u $CUID -g $CGID -d $DIR $CUSER '&&' \
+	sudo -u $CUSER -g $CGROUP
+}
+
 docker run --rm \
-       --volume $(dirname $(pwd))/:/opt/monad-linux \
-       --workdir /opt/monad-linux/scripts \
+       --volume $VOLUME \
+       --workdir $DIR/scripts \
        $DOCKERFLAGS \
        andschwa/magrathea:latest \
-       bash -c "$*"
+       bash -c "$(impersonate) $*"
