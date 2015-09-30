@@ -12,6 +12,7 @@ PowerShell is required to enable and run the test suites.
 
 ### Testing technology
 
+Technology | Purpose
 -------|------
 Pester | default cmdlet test framework
 xUnit | default C# test framework
@@ -23,6 +24,7 @@ Tests can be run from the `scripts` folder. If you are currently in `monad-linux
 
 It is strongly recommended that before major changes are tested, that users run `./build.sh make clean cleanall prepare` to ensure the environment is completely clean.
 
+Technology | Run Method
 ------|---------
 Pester | ./build.sh make pester-tests
 xUnit | ./build.sh make xunit-tests
