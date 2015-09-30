@@ -5,3 +5,4 @@ src/build/
 src/monad_native
 src/src.kdev4
 
+libps.so
