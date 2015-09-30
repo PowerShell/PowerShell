@@ -34,19 +34,44 @@ MyFirstCondition  | Should Be 0
 MySecondCondition | Should Be 1
 ```
 
-So the second section of code should instead be used. 
+So the second section of code should instead be used. The same style should be followed for assignments of variables on consecutive lines:
+
+```sh
+$var1 = <expression 1>
+$variable2 = <expression 2>
+$var3 = <expression 3>
+$typeCollection1 = <expression 4>
+$object1 = <expression>
+... etc
+```
+
+is much less readable than
+```sh
+$var1            = <expression 1>
+$variable2       = <expression 2>
+$var3            = <expression 3>
+$typeCollection1 = <expression 4>
+$object1         = <expression 5>
+... etc
+```
+
+So all assignment statements must be aligned.
+
+Other style standards are no less important to readability of the code:
 
 2) Use readable and meaningful variable name when assigning variables. 
 
 3) Do not make large functions. Tests should be simple: define -> manipulate -> assert
 
-4) Remove the first 3 auto-generated lines of each .Tests.ps1 file. This is created automatically by Pester and is unnecessary.  Each .Test.ps1 file should begin with a Describe block. 
+4) Do not use tabs.  Tabs are rendered differently depending upon the machine.  This greatly affects readability.
 
-5) Discard the auto-generated function file that is generated in tandem with the .Tests.ps1 file 
+5) Remove the first 3 auto-generated lines of each .Tests.ps1 file. This is created automatically by Pester and is unnecessary.  Each .Test.ps1 file should begin with a Describe block. 
 
-6) Name the test file "Test-<cmdlet name > when you create a new test fixture.
+6) Discard the auto-generated function file that is generated in tandem with the .Tests.ps1 file 
 
-7) Each test describes a behavior- use the word "Should" at the beginning of each test description- so it reads "It 'Should..."
+7) Name the test file "Test-<cmdlet name > when you create a new test fixture.
+
+8) Each test describes a behavior- use the word "Should" at the beginning of each test description- so it reads "It 'Should..."
 	
 ### Basic Unit Tests
 
