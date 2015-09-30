@@ -31,4 +31,4 @@ xUnit | ./build.sh make xunit-tests
 cppunit | ./build.sh make native-tests
 hashbang tests | ./build.sh make hashbang-tests
 
-within the `scripts` directory, you may also wish to run Pester tests on a single file.  This can be done easily using `./build.sh make {path/from/scripts/to/pester/test} (E.g, `./build.sh make ../src/pester-test/Test-TESTFILE.Test.ps1`).
+within the `scripts` directory, you may also wish to run Pester tests on a single file.  This can be done easily using `./build.sh make {path/from/scripts/to/pester/test}` (E.g, `./build.sh make ../src/pester-test/Test-TESTFILE.Test.ps1`).
