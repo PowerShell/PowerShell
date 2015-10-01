@@ -17,7 +17,7 @@ impersonate()
     echo \
 	groupadd -g $CGID $CGROUP '&&' \
 	useradd -u $CUID -g $CGID -d $DIR $CUSER '&&' \
-	sudo -u $CUSER -g $CGROUP
+	sudo --set-home -u $CUSER -g $CGROUP
 }
 
 docker run --rm \
