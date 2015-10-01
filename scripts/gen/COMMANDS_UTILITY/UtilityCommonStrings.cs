@@ -71,6 +71,15 @@ internal class UtilityCommonStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to The file &apos;{0}&apos; could not be parsed as a PowerShell Data File..
+    /// </summary>
+    internal static string CouldNotParseAsPowerShellDataFile {
+        get {
+            return ResourceManager.GetString("CouldNotParseAsPowerShellDataFile", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to This command cannot be run because &apos;{0}&apos; is empty or blank. Please specify CSSUri and then run the command..
     /// </summary>
     internal static string EmptyCSSUri {

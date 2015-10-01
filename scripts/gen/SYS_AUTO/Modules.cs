@@ -765,6 +765,51 @@ internal class Modules {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to The module to process &apos;{0}&apos;, listed in field &apos;{1}&apos; of module manifest &apos;{2}&apos; was not processed. {3}.
+    /// </summary>
+    internal static string ManifestMemberNotValid {
+        get {
+            return ResourceManager.GetString("ManifestMemberNotValid", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The specified MaximumVersion &apos;{0}&apos; was incorrect. If you are using &apos;*&apos;, MaximumVersion only supports one &apos;*&apos; and should always be placed at the end of MaximumVersion..
+    /// </summary>
+    internal static string MaximumVersionFormatIncorrect {
+        get {
+            return ResourceManager.GetString("MaximumVersionFormatIncorrect", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The specified module &apos;{0}&apos; with MaximumVersion &apos;{1}&apos; was not loaded because no valid module file was found in any module directory..
+    /// </summary>
+    internal static string MaximumVersionNotFound {
+        get {
+            return ResourceManager.GetString("MaximumVersionNotFound", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The MinimumVersion &apos;{0}&apos; should not be greater than MaximumVersion &apos;{1}&apos;..
+    /// </summary>
+    internal static string MinimumVersionAndMaximumVersionInvalidRange {
+        get {
+            return ResourceManager.GetString("MinimumVersionAndMaximumVersionInvalidRange", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The specified module &apos;{0}&apos; with MinimumVersion &apos;{1}&apos; and MaximumVersion &apos;{2}&apos; was not loaded because no valid module file was found in any module directory..
+    /// </summary>
+    internal static string MinimumVersionAndMaximumVersionNotFound {
+        get {
+            return ResourceManager.GetString("MinimumVersionAndMaximumVersionNotFound", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Some commands from module {0} cannot be imported over a CimSession.  To get all the commands, verify that the remote server has Windows PowerShell remote management enabled, and then try adding the PSSession parameter to an Import-Module cmdlet..
     /// </summary>
     internal static string MixedModuleOverCimSessionWarning {
@@ -1224,7 +1269,7 @@ internal class Modules {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to The &apos;ModuleVersion&apos; and &apos;RequiredVersion&apos; members do not exist in the hashtable that describes this module. One of these two members must exist, and be assigned a version number in the format &apos;n.n.n.n&apos;..
+    ///   Looks up a localized string similar to The &apos;ModuleVersion&apos;, &apos;MaximumVersion&apos; and &apos;RequiredVersion&apos; members do not exist in the hashtable that describes this module. One of these three members must exist, and be assigned a version number in the format &apos;n.n.n.n&apos;..
     /// </summary>
     internal static string RequiredModuleMissingModuleVersion {
         get {
@@ -1265,6 +1310,24 @@ internal class Modules {
     internal static string RequiredModuleNotLoadedWrongGuid {
         get {
             return ResourceManager.GetString("RequiredModuleNotLoadedWrongGuid", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The required module &apos;{1}&apos; with MaximumVersion &apos;{2}&apos; is not loaded. Load the module or remove the module from &apos;RequiredModules&apos; in the file &apos;{0}&apos;..
+    /// </summary>
+    internal static string RequiredModuleNotLoadedWrongMaximumVersion {
+        get {
+            return ResourceManager.GetString("RequiredModuleNotLoadedWrongMaximumVersion", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The required module &apos;{1}&apos; with MinimumVersion &apos;{2}&apos; and MaximumVersion &apos;{3}&apos; is not loaded. Load the module or remove the module from &apos;RequiredModules&apos; in the file &apos;{0}&apos;..
+    /// </summary>
+    internal static string RequiredModuleNotLoadedWrongMinimumVersionAndMaximumVersion {
+        get {
+            return ResourceManager.GetString("RequiredModuleNotLoadedWrongMinimumVersionAndMaximumVersion", resourceCulture);
         }
     }
     

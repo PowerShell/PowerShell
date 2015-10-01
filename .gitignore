@@ -1,4 +1,6 @@
 .idea
+.config/
+.nuget\\packages\\/
 CMakeCache.txt
 CMakeFiles/
 Makefile
@@ -6,3 +8,4 @@ Makefile
 cmake_install.cmake
 externals
 scripts/xunittests.xml
+/scripts/powershell.inc
