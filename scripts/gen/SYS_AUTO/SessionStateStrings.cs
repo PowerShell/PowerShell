@@ -377,15 +377,6 @@ internal class SessionStateStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to The remote path &apos;{0}&apos; is not valid..
-    /// </summary>
-    internal static string CopyItemRemotelyPathIsNotValid {
-        get {
-            return ResourceManager.GetString("CopyItemRemotelyPathIsNotValid", resourceCulture);
-        }
-    }
-    
-    /// <summary>
     ///   Looks up a localized string similar to &apos;{0}&apos; parameter cannot be null or empty..
     /// </summary>
     internal static string CopyItemRemotelyPathIsNullOrEmpty {
