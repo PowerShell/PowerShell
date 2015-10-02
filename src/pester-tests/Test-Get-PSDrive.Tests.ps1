@@ -14,6 +14,13 @@
         gdr | Should Not BeNullOrEmpty
     }
 
+    It "Should be the same output between Get-PSDrive and gdr" {
+        $alias  = gdr
+        $actual = Get-PSDrive
+
+        $alias | Should Be $actual
+    }
+
     It "Should return drive info"{
         (Get-PSDrive Env).Name        | Should Be Env
         (Get-PSDrive /).Root          | Should Be /
