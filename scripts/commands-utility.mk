@@ -54,6 +54,7 @@ COMMANDS_UTILITY_SRCS_WIN=\
 	../../../jws/pswin/admin/monad/src/commands/utility/WriteProgressCmdlet.cs	\
 	../../../jws/pswin/admin/monad/src/commands/utility/Update-Data.cs	\
 	../../../jws/pswin/admin/monad/src/commands/utility/Update-TypeData.cs	\
+	../../../jws/pswin/admin/monad/src/commands/utility/AddAssembly.cs	\
 	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/common/GetFormatDataCommand.cs	\
 	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/common/WriteFormatDataCommand.cs	\
 	../../../jws/pswin/admin/monad/src/commands/utility/FormatAndOutput/format-list/Format-List.cs	\
@@ -126,6 +127,7 @@ COMMANDS_UTILITY_SRCS=\
 	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/WriteProgressCmdlet.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/Update-Data.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/Update-TypeData.cs	\
+	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/AddAssembly.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/common/GetFormatDataCommand.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/common/WriteFormatDataCommand.cs	\
 	$(ADMIN_GIT_ROOT)/monad/src/commands/utility/FormatAndOutput/format-list/Format-List.cs	\
@@ -171,6 +173,7 @@ COMMANDS_UTILITY_RESX_SRCS=\
 	../../../jws/pswin/admin/monad/src/commands/utility/resources/UpdateDataStrings.resx	\
 	../../../jws/pswin/admin/monad/src/commands/utility/resources/ImportLocalizedDataStrings.resx	\
 	../../../jws/pswin/admin/monad/src/commands/utility/resources/WriteProgressResourceStrings.resx	\
+	../../../jws/pswin/admin/monad/src/commands/utility/resources/AddAssemblyStrings.resx	\
 	../../../jws/pswin/admin/monad/src/commands/utility/resources/AliasCommandStrings.resx	\
 
 
@@ -195,6 +198,7 @@ COMMANDS_UTILITY_RES_SRCS=\
 	gen/COMMANDS_UTILITY/UpdateDataStrings.resources	\
 	gen/COMMANDS_UTILITY/ImportLocalizedDataStrings.resources	\
 	gen/COMMANDS_UTILITY/WriteProgressResourceStrings.resources	\
+	gen/COMMANDS_UTILITY/AddAssemblyStrings.resources	\
 	gen/COMMANDS_UTILITY/AliasCommandStrings.resources	\
 
 
@@ -219,6 +223,7 @@ COMMANDS_UTILITY_RES_CS_SRCS=\
 	gen/COMMANDS_UTILITY/UpdateDataStrings.cs	\
 	gen/COMMANDS_UTILITY/ImportLocalizedDataStrings.cs	\
 	gen/COMMANDS_UTILITY/WriteProgressResourceStrings.cs	\
+	gen/COMMANDS_UTILITY/AddAssemblyStrings.cs	\
 	gen/COMMANDS_UTILITY/AliasCommandStrings.cs	\
 
 
@@ -243,6 +248,7 @@ COMMANDS_UTILITY_RES_REF=\
 	-resource:gen/COMMANDS_UTILITY/UpdateDataStrings.resources	\
 	-resource:gen/COMMANDS_UTILITY/ImportLocalizedDataStrings.resources	\
 	-resource:gen/COMMANDS_UTILITY/WriteProgressResourceStrings.resources	\
+	-resource:gen/COMMANDS_UTILITY/AddAssemblyStrings.resources	\
 	-resource:gen/COMMANDS_UTILITY/AliasCommandStrings.resources	\
 
 

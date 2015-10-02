@@ -343,6 +343,15 @@ internal class ParserStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to Cannot create type. Only core types are supported in this language mode..
+    /// </summary>
+    internal static string CannotCreateTypeConstrainedLanguage {
+        get {
+            return ResourceManager.GetString("CannotCreateTypeConstrainedLanguage", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Cannot find an appropriate constructor to instantiate the custom attribute object for type &apos;{0}&apos;..
     /// </summary>
     internal static string CannotFindConstructorForCustomAttribute {
@@ -673,6 +682,15 @@ internal class ParserStrings {
     internal static string DebugStream {
         get {
             return ResourceManager.GetString("DebugStream", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to PartialConfiguration &apos;{0}&apos; has a Refresh Mode set to Disabled which is not a valid mode for Partial Configurations. Use Pull or Push refresh mode. .
+    /// </summary>
+    internal static string DisabledRefreshModeNotValidForPartialConfig {
+        get {
+            return ResourceManager.GetString("DisabledRefreshModeNotValidForPartialConfig", resourceCulture);
         }
     }
     
@@ -1286,6 +1304,15 @@ internal class ParserStrings {
     internal static string GetIDsOfNamesInvalid {
         get {
             return ResourceManager.GetString("GetIDsOfNamesInvalid", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The PartialConfiguration &apos;{0}&apos; is set to pull mode which requires a ConfigurationSource property..
+    /// </summary>
+    internal static string GetPullModeNeedConfigurationSource {
+        get {
+            return ResourceManager.GetString("GetPullModeNeedConfigurationSource", resourceCulture);
         }
     }
     
