@@ -1002,15 +1002,6 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Role Capabilities to apply to this session configuration. This role capability must be defined as a PowerShell Role Capability (.psrc) file named after that role capability within a &apos;RoleCapabilities&apos; directory in a module in the current module path..
-    /// </summary>
-    internal static string DISCRoleCapabilitiesToLoadComment {
-        get {
-            return ResourceManager.GetString("DISCRoleCapabilitiesToLoadComment", resourceCulture);
-        }
-    }
-    
-    /// <summary>
     ///   Looks up a localized string similar to User roles (security groups), and the role capabilities that should be applied to them when applied to a session.
     /// </summary>
     internal static string DISCRoleDefinitionsComment {
@@ -1025,6 +1016,15 @@ internal class RemotingErrorIdStrings {
     internal static string DISCRunAsVirtualAccountComment {
         get {
             return ResourceManager.GetString("DISCRunAsVirtualAccountComment", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Groups associated with machine&apos;s (virtual) administrator account.
+    /// </summary>
+    internal static string DISCRunAsVirtualAccountGroupsComment {
+        get {
+            return ResourceManager.GetString("DISCRunAsVirtualAccountGroupsComment", resourceCulture);
         }
     }
     
