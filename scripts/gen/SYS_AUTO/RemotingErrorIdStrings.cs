@@ -251,15 +251,6 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Failed to find vmcompute.dll. The Hyper-V role may not be enabled on this machine..
-    /// </summary>
-    internal static string CannotFindVmComputeDll {
-        get {
-            return ResourceManager.GetString("CannotFindVmComputeDll", resourceCulture);
-        }
-    }
-    
-    /// <summary>
     ///   Looks up a localized string similar to The call to Windows API GetStdHandle to get the Standard Error handle resulted in an error code: {0}..
     /// </summary>
     internal static string CannotGetStdErrHandle {
@@ -548,11 +539,38 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Could not find the toolkit, &apos;{0}&apos;. The toolkit must be a file named &apos;{1}&apos; within a &apos;Toolkits&apos; directory in a module in the current module path..
+    ///   Looks up a localized string similar to The Containers feature may not be enabled on this machine..
     /// </summary>
-    internal static string CouldNotFindToolkit {
+    internal static string ContainersFeatureNotEnabled {
         get {
-            return ResourceManager.GetString("CouldNotFindToolkit", resourceCulture);
+            return ResourceManager.GetString("ContainersFeatureNotEnabled", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Could not find the role capability, &apos;{0}&apos;. The role capability must be a file named &apos;{1}&apos; within a &apos;RoleCapabilities&apos; directory in a module in the current module path..
+    /// </summary>
+    internal static string CouldNotFindRoleCapability {
+        get {
+            return ResourceManager.GetString("CouldNotFindRoleCapability", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Could not grant remote access to &apos;{0}&apos;: &apos;{1}&apos;. The session configuration has been registered, but this group does not have access. To resolve this error, provide a valid group name and register the session configuration again..
+    /// </summary>
+    internal static string CouldNotResolveRoleDefinitionPrincipal {
+        get {
+            return ResourceManager.GetString("CouldNotResolveRoleDefinitionPrincipal", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Could not resolve username &apos;{0}&apos;. Verify the username and try again..
+    /// </summary>
+    internal static string CouldNotResolveUsername {
+        get {
+            return ResourceManager.GetString("CouldNotResolveUsername", resourceCulture);
         }
     }
     
@@ -750,7 +768,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Aliases defined in this session configuration.
+    ///   Looks up a localized string similar to Aliases to be defined when applied to a session.
     /// </summary>
     internal static string DISCAliasDefinitionsComment {
         get {
@@ -759,7 +777,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Assemblies that will be loaded in this session configuration.
+    ///   Looks up a localized string similar to Assemblies to load when applied to a session.
     /// </summary>
     internal static string DISCAssembliesToLoadComment {
         get {
@@ -768,7 +786,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Author of this session configuration.
+    ///   Looks up a localized string similar to Author of this document.
     /// </summary>
     internal static string DISCAuthorComment {
         get {
@@ -777,7 +795,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Version of the CLR used by this session configuration.
+    ///   Looks up a localized string similar to Version of the CLR to use when applied to a session.
     /// </summary>
     internal static string DISCCLRVersionComment {
         get {
@@ -795,7 +813,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Company associated with this session configuration.
+    ///   Looks up a localized string similar to Company associated with this document.
     /// </summary>
     internal static string DISCCompanyNameComment {
         get {
@@ -804,7 +822,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Copyright statement for this session configuration.
+    ///   Looks up a localized string similar to Copyright statement for this document.
     /// </summary>
     internal static string DISCCopyrightComment {
         get {
@@ -813,7 +831,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Description of the functionality provided by this session configuration.
+    ///   Looks up a localized string similar to Description of the functionality provided by these settings.
     /// </summary>
     internal static string DISCDescriptionComment {
         get {
@@ -822,7 +840,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Environment variables defined in this session configuration.
+    ///   Looks up a localized string similar to Environment variables to define when applied to a session.
     /// </summary>
     internal static string DISCEnvironmentVariablesComment {
         get {
@@ -840,7 +858,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Specifies the execution policy for this session configuration.
+    ///   Looks up a localized string similar to Execution policy to apply when applied to a session.
     /// </summary>
     internal static string DISCExecutionPolicyComment {
         get {
@@ -849,7 +867,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Format files (.ps1xml) that will be loaded in this session configuration..
+    ///   Looks up a localized string similar to Format files (.ps1xml) to load when applied to a session.
     /// </summary>
     internal static string DISCFormatsToProcessComment {
         get {
@@ -858,7 +876,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Functions defined in this session configuration.
+    ///   Looks up a localized string similar to Functions to define when applied to a session.
     /// </summary>
     internal static string DISCFunctionDefinitionsComment {
         get {
@@ -867,7 +885,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to ID used to uniquely identify this session configuration..
+    ///   Looks up a localized string similar to ID used to uniquely identify this document.
     /// </summary>
     internal static string DISCGUIDComment {
         get {
@@ -876,7 +894,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Initial state of this session configuration.
+    ///   Looks up a localized string similar to Session type defaults to apply for this session configuration.
     /// </summary>
     internal static string DISCInitialSessionStateComment {
         get {
@@ -912,7 +930,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Modules that will be imported.
+    ///   Looks up a localized string similar to Language mode to apply when applied to a session.
     /// </summary>
     internal static string DISCLanguageModeComment {
         get {
@@ -930,7 +948,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Modules that will be imported..
+    ///   Looks up a localized string similar to Modules to import when applied to a session.
     /// </summary>
     internal static string DISCModulesToImportComment {
         get {
@@ -966,7 +984,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Version of the Windows PowerShell engine used by this session configuration.
+    ///   Looks up a localized string similar to Version of the Windows PowerShell engine to use  when applied to a session.
     /// </summary>
     internal static string DISCPowerShellVersionComment {
         get {
@@ -975,7 +993,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Processor architecture used by this session configuration.
+    ///   Looks up a localized string similar to Processor architecture to use when applied to a session.
     /// </summary>
     internal static string DISCProcessorArchitectureComment {
         get {
@@ -984,7 +1002,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to User roles (security groups), and the additional configuration settings that should be applied to them.
+    ///   Looks up a localized string similar to User roles (security groups), and the role capabilities that should be applied to them when applied to a session.
     /// </summary>
     internal static string DISCRoleDefinitionsComment {
         get {
@@ -993,7 +1011,25 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Version number of the schema used for this configuration file.
+    ///   Looks up a localized string similar to Whether to run this session configuration as the machine&apos;s (virtual) administrator account.
+    /// </summary>
+    internal static string DISCRunAsVirtualAccountComment {
+        get {
+            return ResourceManager.GetString("DISCRunAsVirtualAccountComment", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Groups associated with machine&apos;s (virtual) administrator account.
+    /// </summary>
+    internal static string DISCRunAsVirtualAccountGroupsComment {
+        get {
+            return ResourceManager.GetString("DISCRunAsVirtualAccountGroupsComment", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Version number of the schema used for this document.
     /// </summary>
     internal static string DISCSchemaVersionComment {
         get {
@@ -1002,7 +1038,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Specifies the scripts to run after the session is configured.
+    ///   Looks up a localized string similar to Scripts to run when applied to a session.
     /// </summary>
     internal static string DISCScriptsToProcessComment {
         get {
@@ -1011,20 +1047,11 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Toolkits to apply to this session configuration. This toolkit must be defined as a session configuration file named after that toolkit within a &apos;Toolkits&apos; directory in a module in the current module path..
+    ///   Looks up a localized string similar to Directory to place session transcripts for this session configuration.
     /// </summary>
-    internal static string DISCToolkitsToLoadComment {
+    internal static string DISCTranscriptDirectoryComment {
         get {
-            return ResourceManager.GetString("DISCToolkitsToLoadComment", resourceCulture);
-        }
-    }
-    
-    /// <summary>
-    ///   Looks up a localized string similar to Specifies the transport options for this session configuration.
-    /// </summary>
-    internal static string DISCTransportOptionsComment {
-        get {
-            return ResourceManager.GetString("DISCTransportOptionsComment", resourceCulture);
+            return ResourceManager.GetString("DISCTranscriptDirectoryComment", resourceCulture);
         }
     }
     
@@ -1110,7 +1137,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Types to add to this session configuration.
+    ///   Looks up a localized string similar to Types to add when applied to a session.
     /// </summary>
     internal static string DISCTypesToAddComment {
         get {
@@ -1119,7 +1146,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Type files (.ps1xml) that will be loaded in this session configuration.
+    ///   Looks up a localized string similar to Type files (.ps1xml) to load when applied to a session.
     /// </summary>
     internal static string DISCTypesToProcessComment {
         get {
@@ -1128,7 +1155,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Variables defined in this session configuration.
+    ///   Looks up a localized string similar to Variables to define when applied to a session.
     /// </summary>
     internal static string DISCVariableDefinitionsComment {
         get {
@@ -1146,7 +1173,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Aliases visible in this session configuration.
+    ///   Looks up a localized string similar to Aliases to make visible when applied to a session.
     /// </summary>
     internal static string DISCVisibleAliasesComment {
         get {
@@ -1155,7 +1182,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Cmdlets visible in this session configuration.
+    ///   Looks up a localized string similar to Cmdlets to make visible when applied to a session.
     /// </summary>
     internal static string DISCVisibleCmdletsComment {
         get {
@@ -1164,7 +1191,16 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Functions visible in this session configuration.
+    ///   Looks up a localized string similar to External commands (scripts and applications) to make visible when applied to a session.
+    /// </summary>
+    internal static string DISCVisibleExternalCommandsComment {
+        get {
+            return ResourceManager.GetString("DISCVisibleExternalCommandsComment", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Functions to make visible when applied to a session.
     /// </summary>
     internal static string DISCVisibleFunctionsComment {
         get {
@@ -1173,7 +1209,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Providers visible in this session configuration.
+    ///   Looks up a localized string similar to Providers to make visible when applied to a session.
     /// </summary>
     internal static string DISCVisibleProvidersComment {
         get {
@@ -1657,7 +1693,7 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to PSSession Configuration File path &apos;{0}&apos; is not valid. The path argument must resolve to a single file in the file system with a &apos;.pssc&apos; extension. Please fix the path specification and try again..
+    ///   Looks up a localized string similar to PSSession Configuration file path &apos;{0}&apos; is not valid. The path argument must resolve to a single file in the file system with a &apos;.pssc&apos; extension. Please fix the path specification and try again..
     /// </summary>
     internal static string InvalidPSSessionConfigurationFilePath {
         get {
@@ -1675,20 +1711,29 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to Role Capability file path &apos;{0}&apos; is not valid. The path argument must resolve to a single file in the file system with a &apos;.psrc&apos; extension. Please fix the path specification and try again..
+    /// </summary>
+    internal static string InvalidRoleCapabilityFilePath {
+        get {
+            return ResourceManager.GetString("InvalidRoleCapabilityFilePath", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The key &apos;{0}&apos; is not valid in a role capability or role definition..
+    /// </summary>
+    internal static string InvalidRoleCapabilityKey {
+        get {
+            return ResourceManager.GetString("InvalidRoleCapabilityKey", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to The &apos;Roles&apos; entry must be a hashtable, but was a {0}..
     /// </summary>
     internal static string InvalidRoleEntry {
         get {
             return ResourceManager.GetString("InvalidRoleEntry", resourceCulture);
-        }
-    }
-    
-    /// <summary>
-    ///   Looks up a localized string similar to The key &apos;{0}&apos; is not valid in a toolkit or role definition..
-    /// </summary>
-    internal static string InvalidRoleToolkitKey {
-        get {
-            return ResourceManager.GetString("InvalidRoleToolkitKey", resourceCulture);
         }
     }
     
@@ -2247,6 +2292,15 @@ internal class RemotingErrorIdStrings {
     internal static string NamedPipeAlreadyListening {
         get {
             return ResourceManager.GetString("NamedPipeAlreadyListening", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Unable to start named pipe server while in server mode..
+    /// </summary>
+    internal static string NamedPipeServerCannotStart {
+        get {
+            return ResourceManager.GetString("NamedPipeServerCannotStart", resourceCulture);
         }
     }
     
@@ -3518,6 +3572,15 @@ internal class RemotingErrorIdStrings {
     internal static string ServerSideNestedCommandInvokeFailed {
         get {
             return ResourceManager.GetString("ServerSideNestedCommandInvokeFailed", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to Could not get the session capabilities for the session configuration &apos;{0}&apos;: this configuration was not registered with a session configuration file (.pssc), such as one created by the New-PSSessionConfigurationFile cmdlet..
+    /// </summary>
+    internal static string SessionConfigurationMustBeFileBased {
+        get {
+            return ResourceManager.GetString("SessionConfigurationMustBeFileBased", resourceCulture);
         }
     }
     

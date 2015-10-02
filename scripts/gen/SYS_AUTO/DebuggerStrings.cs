@@ -89,7 +89,7 @@ internal class DebuggerStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to The line count must be a positive integer no greater than {0}..
+    ///   Looks up a localized string similar to The line count must be a positive integer..
     /// </summary>
     internal static string BadCountFormat {
         get {

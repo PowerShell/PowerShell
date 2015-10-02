@@ -197,6 +197,15 @@ internal class FileSystemProviderStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to Destination folder &apos;{0}&apos; does not exist..
+    /// </summary>
+    internal static string CopyItemDirectoryNotFound {
+        get {
+            return ResourceManager.GetString("CopyItemDirectoryNotFound", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Destination path {0} is a file that already exists on the target destination..
     /// </summary>
     internal static string CopyItemRemoteDestinationIsFile {
@@ -206,7 +215,7 @@ internal class FileSystemProviderStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Cannot copy a directory &apos;{0}&apos; to file {0}&apos;.
+    ///   Looks up a localized string similar to Cannot copy a directory &apos;{0}&apos; to file &apos;{0}&apos;.
     /// </summary>
     internal static string CopyItemRemotelyDestinationIsFile {
         get {

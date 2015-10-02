@@ -269,6 +269,15 @@ internal class AutomationExceptions {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to Cannot process argument because the value of argument &quot;{0}&quot; is not valid. Valid values are &quot;Global&quot;, &quot;Local&quot;, or &quot;Script&quot;, or a number relative to the current scope (0 through the number of scopes where 0 is the current scope and 1 is its parent). Change the value of the &quot;{0}&quot; argument and run the operation again..
+    /// </summary>
+    internal static string InvalidScopeIdArgument {
+        get {
+            return ResourceManager.GetString("InvalidScopeIdArgument", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to Cannot perform operation because operation &quot;{0}&quot; is not implemented..
     /// </summary>
     internal static string NotImplemented {
