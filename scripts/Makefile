@@ -1,27 +1,21 @@
-# global configuration needed by some of the included makefiles
-PSRC = ../src/monad/monad/src
-MONAD_EXT=../src/monad-ext
+.PHONY: all
 
-# this variable is needed by module specific include makefiles below
-ADMIN_GIT_ROOT=../src/monad
-
-phony_all: all
-
-# include all the external makefiles
-
-# these should go away with the makefile restructuring
+# this should go away and be automatically generated
 include assembly-load-context.mk
 
 # main references to the CoreCLR reference assemblies
-include coreref.mk
-
-# builds unit tests
-include tests.mk
+MONAD_EXT=../src/monad-ext
+TARGETING_PACK=$(MONAD_EXT)/coreclr/TargetingPack
+COREREF=$(addprefix -r:, $(shell ls $(TARGETING_PACK)/*.dll))
+CORECLR_ASSEMBLY_BASE=$(MONAD_EXT)/coreclr/Release
 
 # powershell-run is the main powershell executable
 include powershell-run.mk
 
-# These are the main PS dlls:
+# this variable is needed by module specific include makefiles below
+ADMIN_GIT_ROOT=../src/monad
+
+# these are automatically generated from the PowerShell build sytem
 # - System.Management.Automation.dll (the main PS dll)
 # - commands/modules (they contain cmdlets): management and utility
 # - Microsoft.Management.Infrastructure.dll (the first dll in the remoting code paths)
@@ -43,45 +37,43 @@ PRODUCT_MI_REFS=$(COREREF) $(MI_NATIVE_REF)
 PRODUCT_PS_REFS=$(COREREF) $(MI_REF) -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 PRODUCT_COMMANDS_REFS=$(COREREF) -r:dotnetlibs/System.Management.Automation.dll
 
-MCSOPTS_BASE=-unsafe -nostdlib -noconfig -define:CORECLR -define:_CORECLR /nowarn:CS1701,CS1702
-MCSOPTS_MI=$(MCSOPTS_BASE) -target:library
-MCSOPTS_LIB=$(MCSOPTS_BASE) -target:library
-MCSOPTS_PS=$(STRING_RESOURCES_ORIG) $(MCSOPTS_BASE) -target:library
-SRCS_ALL=$(STRING_RESOURCES) $(SRCS)
-
 # compilers
 # - Roslyn's csc is used for all the PS code
 # - Mono's mcs is used for build helper tools
 CSC=mono buildtemp/Microsoft.Net.ToolsetCompilers.*/tools/csc.exe
 MCS=mcs
 
-RUN_TARGETS=$(POWERSHELL_RUN_TARGETS) dotnetlibs/Microsoft.PowerShell.Commands.Management.dll dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll dotnetlibs/Microsoft.PowerShell.Security.dll dotnetlibs/api-ms-win-core-registry-l1-1-0.dll dotnetlibs/host_cmdline
+CSCOPTS_BASE=-noconfig -nostdlib
+CSCOPTS_LIB=$(CSCOPTS_BASE) -target:library
+CSCOPTS_LIB_PS=$(CSCOPTS_LIB) -unsafe -define:CORECLR -define:_CORECLR /nowarn:CS1701,CS1702
+
+RUN_TARGETS=$(POWERSHELL_RUN_TARGETS) $(addprefix dotnetlibs/, Microsoft.PowerShell.Commands.Management.dll Microsoft.PowerShell.Commands.Utility.dll Microsoft.PowerShell.Security.dll api-ms-win-core-registry-l1-1-0.dll host_cmdline)
 
 all: dotnetlibs/System.Management.Automation.dll $(RUN_TARGETS) dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 
 # this is the build rule for SMA.dll
 dotnetlibs/System.Management.Automation.dll: $(SYS_AUTO_SRCS) dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(SYS_AUTO_RES_SRCS) $(SYS_AUTO_RES_CS_SRCS)
-	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_PS_REFS) $(SYS_AUTO_SRCS) $(SYS_AUTO_RES_REF) $(SYS_AUTO_RES_CS_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_PS_REFS) $(SYS_AUTO_SRCS) $(SYS_AUTO_RES_REF) $(SYS_AUTO_RES_CS_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
 
 # this is the build rule for MMI.dll
 dotnetlibs/Microsoft.Management.Infrastructure.dll: $(MAN_INFRA_SRCS) dotnetlibs/Microsoft.Management.Infrastructure.Native.dll ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs $(MAN_INFRA_RES_SRCS) $(MAN_INFRA_RES_CS_SRCS)
-	$(CSC) -out:$@ $(MCSOPTS_MI) $(PRODUCT_MI_REFS) $(MAN_INFRA_SRCS) $(MAN_INFRA_RES_REF) $(MAN_INFRA_RES_CS_SRCS) ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_MI_REFS) $(MAN_INFRA_SRCS) $(MAN_INFRA_RES_REF) $(MAN_INFRA_RES_CS_SRCS) ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
 
 # Commands
 
 dotnetlibs/Microsoft.PowerShell.Commands.Management.dll: $(COMMANDS_MANAGEMENT_SRCS) dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Security.dll $(COMMANDS_MANAGEMENT_RES_SRCS) $(COMMANDS_MANAGEMENT_RES_CS_SRCS) $(MI_ASSEMBLY)
-	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_COMMANDS_REFS) $(COMMANDS_MANAGEMENT_SRCS) $(COMMANDS_MANAGEMENT_RES_CS_SRCS) $(COMMANDS_MANAGEMENT_RES_REF) $(MI_REF) -r:dotnetlibs/Microsoft.PowerShell.Security.dll
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_COMMANDS_REFS) $(COMMANDS_MANAGEMENT_SRCS) $(COMMANDS_MANAGEMENT_RES_CS_SRCS) $(COMMANDS_MANAGEMENT_RES_REF) $(MI_REF) -r:dotnetlibs/Microsoft.PowerShell.Security.dll
 
 dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll: $(COMMANDS_UTILITY_SRCS) dotnetlibs/System.Management.Automation.dll $(COMMANDS_UTILITY_RES_SRCS) $(COMMANDS_UTILITY_RES_CS_SRCS)
-	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_COMMANDS_REFS) $(COMMANDS_UTILITY_SRCS) $(COMMANDS_UTILITY_RES_CS_SRCS) $(COMMANDS_UTILITY_RES_REF)
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_COMMANDS_REFS) $(COMMANDS_UTILITY_SRCS) $(COMMANDS_UTILITY_RES_CS_SRCS) $(COMMANDS_UTILITY_RES_REF)
 
 dotnetlibs/Microsoft.PowerShell.Security.dll: $(SECURITY_SRCS) $(SECURITY_RES_SRCS) $(SECURITY_RES_CS_SRCS)
-	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_COMMANDS_REFS) $(SECURITY_SRCS) $(SECURITY_RES_CS_SRCS) $(SECURITY_RES_REF)
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_COMMANDS_REFS) $(SECURITY_SRCS) $(SECURITY_RES_CS_SRCS) $(SECURITY_RES_REF)
 
 # assembly load context
 
 dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET): $(ASSEMBLY_LOAD_CONTEXT_SRCS)
-	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_BASE_REFS) $(ASSEMBLY_LOAD_CONTEXT_SRCS)
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_BASE_REFS) $(ASSEMBLY_LOAD_CONTEXT_SRCS)
 
 # this will copy whatever the first version of the dll in the globber is
 buildtemp/System.Reflection.Metadata.dll: buildtemp/System.Reflection.Metadata.*/lib/portable-net45+win8/System.Reflection.Metadata.dll
@@ -93,17 +85,28 @@ buildtemp/System.Collections.Immutable.dll: buildtemp/System.Collections.Immutab
 
 # this one is built from stubs
 dotnetlibs/Microsoft.Management.Infrastructure.Native.dll: ../src/stubs/Microsoft.Management.Infrastructure.Native-stub.cs ../src/stubs/Microsoft.Management.Infrastructure.Native-stub-assembly-info.cs
-	$(CSC) -out:$@ $(MCSOPTS_LIB) $(PRODUCT_BASE_REFS) $^
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_BASE_REFS) $^
 
 MPATH=/usr/lib/mono/4.5/Facades
 
 buildtemp/TypeCatalogGen.exe: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/TypeCatalogGen/TypeCatalogGen.cs buildtemp/System.Reflection.Metadata.dll buildtemp/System.Collections.Immutable.dll
 	$(MCS) -out:$@ -target:exe $(NUGETREF) -pkg:dotnet -r:$(MPATH)/System.Runtime.dll -r:$(MPATH)/System.Reflection.Primitives.dll -r:$(MPATH)/System.IO.dll $<
 
+# this generates the necessary file of CoreCLR references that is an artifact of the Windows build process
+# since we don't have Make 4.1, we can't use $(file), and using @echo makes the escaping tricky
+# the list of references MUST be line-by-line, to match '^\$\(PS_PROFILE_REF_PATH\)\\(.+);\s*\\$'
+REFERENCE_ASSEMBLIES=$(notdir $(shell ls $(TARGETING_PACK)/*.dll))
+PROFILE_REFERENCES=$(addsuffix ;\\\n, $(addprefix $$(PS_PROFILE_REF_PATH)\, $(REFERENCE_ASSEMBLIES)))
+powershell.inc:
+	@echo 'PROFILE_REF_PATH=$$(SDK_REF_PATH)\Profiles' > $@
+	@echo 'PS_PROFILE_REF_PATH=$$(PROFILE_REF_PATH)\PowerShell' >> $@
+	@echo 'PROFILE_REFERENCES=\\' >> $@
+	@echo '$(PROFILE_REFERENCES)' >> $@
+
 # generate the Core PS type catalog
 # this comes from: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/makefile.inc
-CorePsTypeCatalog.cs: powershell-linux.inc buildtemp/TypeCatalogGen.exe buildtemp/System.Reflection.Metadata.dll buildtemp/System.Collections.Immutable.dll
-	LD_LIBRARY_PATH=. mono buildtemp/TypeCatalogGen.exe powershell-linux.inc $@ $(MONAD_EXT)/coreclr/TargetingPack
+CorePsTypeCatalog.cs: powershell.inc buildtemp/TypeCatalogGen.exe buildtemp/System.Reflection.Metadata.dll buildtemp/System.Collections.Immutable.dll
+	LD_LIBRARY_PATH=. mono buildtemp/TypeCatalogGen.exe $< $@ $(MONAD_EXT)/coreclr/TargetingPack
 
 # the pinvoke library libps.so
 
@@ -130,12 +133,16 @@ dotnetlibs/api-ms-win-core-registry-l1-1-0.dll: ../src/win-dll/lib-api-ms-win-co
 
 # this is the manual step that will install some stuff using nuget and do other things that can't be dependency
 # tracked that easily
+NUGET_INSTALL=cd buildtemp && mono nuget.exe install -Source 'https://api.nuget.org/v3/index.json' -Version
 prepare:
 	rm -rf buildtemp/System.Reflection.Metadata.* buildtemp/System.Collections.Immutable.* buildtemp/Microsoft.Net.ToolsetCompilers.* buildtemp/nuget.exe
 	cp $(MONAD_EXT)/nuget/nuget.exe buildtemp/nuget.exe
-	cd buildtemp && mono nuget.exe install -Source 'https://api.nuget.org/v3/index.json' -Version 1.0.21 System.Reflection.Metadata
-	cd buildtemp && mono nuget.exe install -Source 'https://api.nuget.org/v3/index.json' -Version 1.1.36 System.Collections.Immutable
-	cd buildtemp && mono nuget.exe install -Source 'https://api.nuget.org/v3/index.json' -Version 1.0.0-rc3-20150520-02 Microsoft.Net.ToolsetCompilers
+	$(NUGET_INSTALL) 1.0.21 System.Reflection.Metadata
+	$(NUGET_INSTALL) 1.1.36 System.Collections.Immutable
+	$(NUGET_INSTALL) 1.0.0-rc3-20150520-02 Microsoft.Net.ToolsetCompilers
+
+# this is the execution environment from which all managed code is run
+APP_BASE=exec_env/app_base
 
 # this is an internal target, it's not intended to be called manually
 #
@@ -149,17 +156,17 @@ prepare:
 # release CoreCLR depends on the actual run target.
 internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS)
 	rm -rf exec_env
-	mkdir -p exec_env/app_base/Modules
+	mkdir -p $(APP_BASE)/Modules
 	mkdir -p exec_env/coreclr
-	cp ../src/monad/monad/miscfiles/display/*.ps1xml exec_env/app_base
-	cp ../src/monad/monad/miscfiles/types/CoreClr/*.ps1xml exec_env/app_base
-	cp -r ../src/monad/monad/miscfiles/modules/* exec_env/app_base/Modules
-	cp -r dotnetlibs/*.dll exec_env/app_base
-	cp -r dotnetlibs/*.exe exec_env/app_base
-	cp -r dotnetlibs/*.so exec_env/app_base
-	cp dotnetlibs/host_cmdline exec_env/app_base
-	cp -r ../ext-src/pester exec_env/app_base/Modules/Pester
-	cp runps*.sh exec_env/app_base
+	cp ../src/monad/monad/miscfiles/display/*.ps1xml $(APP_BASE)
+	cp ../src/monad/monad/miscfiles/types/CoreClr/*.ps1xml $(APP_BASE)
+	cp -r ../src/monad/monad/miscfiles/modules/* $(APP_BASE)/Modules
+	cp -r dotnetlibs/*.dll $(APP_BASE)
+	cp -r dotnetlibs/*.exe $(APP_BASE)
+	cp -r dotnetlibs/*.so $(APP_BASE)
+	cp dotnetlibs/host_cmdline $(APP_BASE)
+	cp -r ../ext-src/pester $(APP_BASE)/Modules/Pester
+	cp runps*.sh $(APP_BASE)
 
 internal-prepare-release-clr:
 	cp -r $(MONAD_EXT)/coreclr/Release/* exec_env/coreclr/
@@ -170,51 +177,62 @@ internal-prepare-debug-clr:
 
 run: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
 	# execute a cmdlet, this will auto-load the utility module and print a, b and c in 3 lines
-	exec_env/app_base/runps-simple.sh '"a","b","c","a","a" | Select-Object -Unique'
+	$(APP_BASE)/runps-simple.sh '"a","b","c","a","a" | Select-Object -Unique'
 
 run-interactive: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
-	exec_env/app_base/runps.sh
+	$(APP_BASE)/runps.sh
 
 run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
-	exec_env/app_base/runps.sh --file $(PSSCRIPT)
+	$(APP_BASE)/runps.sh --file $(PSSCRIPT)
 
 # easy way to run individual PowerShell scripts, `make script.ps1` where the path is relative to monad-linux/scripts (with TEMP set for Pester)
 %.ps1: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
-	TEMP=/tmp exec_env/app_base/runps.sh --file ../../$@
+	TEMP=/tmp $(APP_BASE)/runps.sh --file ../../$@
 
 run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-debug-clr
-	PAL_DBG_CHANNELS="+LOADER.TRACE" exec_env/app_base/runps-simple.sh get-location
+	PAL_DBG_CHANNELS="+LOADER.TRACE" $(APP_BASE)/runps-simple.sh get-location
 
 native-tests: dotnetlibs/monad_native
 	# execute the native C++ tests
 	cd dotnetlibs && ./monad_native
 
-xunit-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr $(addprefix $(TESTRUN_FOLDER)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll)
+# xUnit tests
+TEST_FOLDER=../src/ps_test
+TEST_SRCS=$(addprefix $(TEST_FOLDER)/, test_*.cs)
+
+$(APP_BASE)/xunit%: $(MONAD_EXT)/xunit/xunit%
+	cp -f $^ $@
+
+$(APP_BASE)/ps_test.dll: $(TEST_SRCS) $(addprefix $(APP_BASE)/, xunit.core.dll xunit.assert.dll) $(addprefix dotnetlibs/, System.Management.Automation.dll Microsoft.PowerShell.Commands.Management.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET))
+	$(CSC) $(CSCOPTS_LIB) -out:$@ $(addprefix -r:$(APP_BASE)/, xunit.core.dll xunit.assert.dll) $(addprefix -r:dotnetlibs/, System.Management.Automation.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET)) $(COREREF) $(TEST_SRCS)
+
+xunit-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr $(addprefix $(APP_BASE)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll)
 	# execute the xUnit runner, with XML output
-	exec_env/app_base/runps-test.sh ps_test.dll -xml ../../xunittests.xml
+	$(APP_BASE)/runps-test.sh ps_test.dll -xml ../../xunittests.xml
 
 pester-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
 	# execute the Pester tests, which needs a TEMP environment variable to be set
-	exec_env/app_base/runps-simple.sh 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
+	$(APP_BASE)/runps-simple.sh 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
 
 hashbang-tests:
 	# execute the 3rdparty/hashbang example
-	PATH=$(PATH):$(shell pwd)/exec_env/app_base $(shell pwd)/3rdparty/hashbang/script.ps1
+	PATH=$(PATH):$(shell pwd)/$(APP_BASE) $(shell pwd)/3rdparty/hashbang/script.ps1
 
 test: native-tests xunit-tests pester-tests hashbang-tests
 
 trace: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
-	exec_env/app_base/runps-simple-trace.sh get-location
+	$(APP_BASE)/runps-simple-trace.sh get-location
 
 debug: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
 	# quoting here is a bit special if strings are passed in, because lldb seems to forward arguments strangely
-	exec_env/app_base/runps-simple-debug.sh get-location
+	$(APP_BASE)/runps-simple-debug.sh get-location
 
 clean:
 	rm -rf dotnetlibs/*
 	rm -rf exec_env
 	rm -rf buildtemp/libps-build
 	rm -rf dotnetlibs/*
+	rm -f xunittests.xml powershell.inc
 
 # clean built stuff + prepare step
 cleanall: clean
