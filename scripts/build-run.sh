@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 CUID=$(id -u)
 CUSER=$(id -un)
