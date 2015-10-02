@@ -765,6 +765,15 @@ internal class Modules {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to The module to process &apos;{0}&apos;, listed in field &apos;{1}&apos; of module manifest &apos;{2}&apos; was not processed. {3}.
+    /// </summary>
+    internal static string ManifestMemberNotValid {
+        get {
+            return ResourceManager.GetString("ManifestMemberNotValid", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to The specified MaximumVersion &apos;{0}&apos; was incorrect. If you are using &apos;*&apos;, MaximumVersion only supports one &apos;*&apos; and should always be placed at the end of MaximumVersion..
     /// </summary>
     internal static string MaximumVersionFormatIncorrect {

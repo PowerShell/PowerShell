@@ -92,10 +92,21 @@ MPATH=/usr/lib/mono/4.5/Facades
 buildtemp/TypeCatalogGen.exe: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/TypeCatalogGen/TypeCatalogGen.cs buildtemp/System.Reflection.Metadata.dll buildtemp/System.Collections.Immutable.dll
 	$(MCS) -out:$@ -target:exe $(NUGETREF) -pkg:dotnet -r:$(MPATH)/System.Runtime.dll -r:$(MPATH)/System.Reflection.Primitives.dll -r:$(MPATH)/System.IO.dll $<
 
+# this generates the necessary file of CoreCLR references that is an artifact of the Windows build process
+# since we don't have Make 4.1, we can't use $(file), and using @echo makes the escaping tricky
+# the list of references MUST be line-by-line, to match '^\$\(PS_PROFILE_REF_PATH\)\\(.+);\s*\\$'
+REFERENCE_ASSEMBLIES=$(notdir $(shell ls $(TARGETING_PACK)/*.dll))
+PROFILE_REFERENCES=$(addsuffix ;\\\n, $(addprefix $$(PS_PROFILE_REF_PATH)\, $(REFERENCE_ASSEMBLIES)))
+powershell.inc:
+	@echo 'PROFILE_REF_PATH=$$(SDK_REF_PATH)\Profiles' > $@
+	@echo 'PS_PROFILE_REF_PATH=$$(PROFILE_REF_PATH)\PowerShell' >> $@
+	@echo 'PROFILE_REFERENCES=\\' >> $@
+	@echo '$(PROFILE_REFERENCES)' >> $@
+
 # generate the Core PS type catalog
 # this comes from: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/makefile.inc
-CorePsTypeCatalog.cs: powershell-linux.inc buildtemp/TypeCatalogGen.exe buildtemp/System.Reflection.Metadata.dll buildtemp/System.Collections.Immutable.dll
-	LD_LIBRARY_PATH=. mono buildtemp/TypeCatalogGen.exe powershell-linux.inc $@ $(MONAD_EXT)/coreclr/TargetingPack
+CorePsTypeCatalog.cs: powershell.inc buildtemp/TypeCatalogGen.exe buildtemp/System.Reflection.Metadata.dll buildtemp/System.Collections.Immutable.dll
+	LD_LIBRARY_PATH=. mono buildtemp/TypeCatalogGen.exe $< $@ $(MONAD_EXT)/coreclr/TargetingPack
 
 # the pinvoke library libps.so
 
@@ -221,7 +232,7 @@ clean:
 	rm -rf exec_env
 	rm -rf buildtemp/libps-build
 	rm -rf dotnetlibs/*
-	rm -f xunittests.xml
+	rm -f xunittests.xml powershell.inc
 
 # clean built stuff + prepare step
 cleanall: clean
