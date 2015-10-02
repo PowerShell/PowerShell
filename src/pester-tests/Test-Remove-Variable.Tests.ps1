@@ -182,12 +182,12 @@ Describe "Test-Remove-Variable" {
             $var1 | Should Be # Nothing
         }
 
-        It "Should be able to remove a global script variable that was created using the script scope switch" {
+        It "Should not be able to remove a global script variable that was created using the script scope switch" {
             New-Variable -Name var1 -Value "context" -Scope script
 
             Remove-Variable -Name var1 -Scope global -ErrorAction SilentlyContinue | Should Throw
 
-            $var1 | Should Be # Nothing
+            $var1 | Should Be "context"
         }
     }
 }
