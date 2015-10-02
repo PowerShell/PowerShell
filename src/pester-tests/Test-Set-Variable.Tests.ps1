@@ -1,10 +1,12 @@
 ﻿Describe "Test-Set-Variable" {
     It "Should create a new variable with no parameters" {
         { Set-Variable testVar } | Should Not Throw
+
+        { Get-Variable testVar } | Should Not Throw
     }
 
     It "Should assign a value to a variable it has to create" {
-        $testVar=4
+        Set-Variable -Name testVar -Value 4
 
         Get-Variable testVar -ValueOnly | Should Be 4
     }
