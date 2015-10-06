@@ -7,7 +7,7 @@ include assembly-load-context.mk
 MONAD_EXT=../src/monad-ext
 TARGETING_PACK=$(MONAD_EXT)/coreclr/TargetingPack
 COREREF=$(addprefix -r:, $(shell ls $(TARGETING_PACK)/*.dll))
-CORECLR_ASSEMBLY_BASE=$(MONAD_EXT)/coreclr/Release
+CORECLR_ASSEMBLY_BASE=$(MONAD_EXT)/coreclr/Runtime
 
 # powershell-run is the main powershell executable
 include powershell-run.mk
@@ -168,28 +168,24 @@ internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS)
 	cp -r ../ext-src/pester $(APP_BASE)/Modules/Pester
 	cp runps*.sh $(APP_BASE)
 
-internal-prepare-release-clr:
-	cp -r $(MONAD_EXT)/coreclr/Release/* exec_env/coreclr/
+internal-prepare-clr:
+	cp -r $(CORECLR_ASSEMBLY_BASE)/* exec_env/coreclr/
 
-# this is an internal target, it's not intended to be called manually
-internal-prepare-debug-clr:
-	cp -r $(MONAD_EXT)/coreclr/Debug/* exec_env/coreclr/
-
-run: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+run: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	# execute a cmdlet, this will auto-load the utility module and print a, b and c in 3 lines
 	$(APP_BASE)/runps-simple.sh '"a","b","c","a","a" | Select-Object -Unique'
 
-run-interactive: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+run-interactive: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	$(APP_BASE)/runps.sh
 
-run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	$(APP_BASE)/runps.sh --file $(PSSCRIPT)
 
 # easy way to run individual PowerShell scripts, `make script.ps1` where the path is relative to monad-linux/scripts (with TEMP set for Pester)
-%.ps1: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+%.ps1: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	TEMP=/tmp $(APP_BASE)/runps.sh --file ../../$@
 
-run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-debug-clr
+run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	PAL_DBG_CHANNELS="+LOADER.TRACE" $(APP_BASE)/runps-simple.sh get-location
 
 native-tests: dotnetlibs/monad_native
@@ -206,11 +202,11 @@ $(APP_BASE)/xunit%: $(MONAD_EXT)/xunit/xunit%
 $(APP_BASE)/ps_test.dll: $(TEST_SRCS) $(addprefix $(APP_BASE)/, xunit.core.dll xunit.assert.dll) $(addprefix dotnetlibs/, System.Management.Automation.dll Microsoft.PowerShell.Commands.Management.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET))
 	$(CSC) $(CSCOPTS_LIB) -out:$@ $(addprefix -r:$(APP_BASE)/, xunit.core.dll xunit.assert.dll) $(addprefix -r:dotnetlibs/, System.Management.Automation.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET)) $(COREREF) $(TEST_SRCS)
 
-xunit-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr $(addprefix $(APP_BASE)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll)
+xunit-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr $(addprefix $(APP_BASE)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll)
 	# execute the xUnit runner, with XML output
 	$(APP_BASE)/runps-test.sh ps_test.dll -xml ../../xunittests.xml
 
-pester-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+pester-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	# execute the Pester tests, which needs a TEMP environment variable to be set
 	$(APP_BASE)/runps-simple.sh 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
 
@@ -220,10 +216,10 @@ hashbang-tests:
 
 test: native-tests xunit-tests pester-tests hashbang-tests
 
-trace: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+trace: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	$(APP_BASE)/runps-simple-trace.sh get-location
 
-debug: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+debug: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	# quoting here is a bit special if strings are passed in, because lldb seems to forward arguments strangely
 	$(APP_BASE)/runps-simple-debug.sh get-location
 

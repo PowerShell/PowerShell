@@ -1639,6 +1639,24 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to The input ContainerName {0} does not resolve to a single container..
+    /// </summary>
+    internal static string InvalidContainerNameMultiple {
+        get {
+            return ResourceManager.GetString("InvalidContainerNameMultiple", resourceCulture);
+        }
+    }
+    
+    /// <summary>
+    ///   Looks up a localized string similar to The input ContainerName {0} does not exist..
+    /// </summary>
+    internal static string InvalidContainerNameNotExist {
+        get {
+            return ResourceManager.GetString("InvalidContainerNameNotExist", resourceCulture);
+        }
+    }
+    
+    /// <summary>
     ///   Looks up a localized string similar to The credential is invalid..
     /// </summary>
     internal static string InvalidCredential {
@@ -1765,20 +1783,20 @@ internal class RemotingErrorIdStrings {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to The input VMGuid parameter does not resolve to a single virtual machine..
+    ///   Looks up a localized string similar to The input VMId parameter does not resolve to a single virtual machine..
     /// </summary>
-    internal static string InvalidVMGuid {
+    internal static string InvalidVMId {
         get {
-            return ResourceManager.GetString("InvalidVMGuid", resourceCulture);
+            return ResourceManager.GetString("InvalidVMId", resourceCulture);
         }
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to The input VMGuid {0} does not resolve to a single virtual machine..
+    ///   Looks up a localized string similar to The input VMId {0} does not resolve to a single virtual machine..
     /// </summary>
-    internal static string InvalidVMGuidNotSingle {
+    internal static string InvalidVMIdNotSingle {
         get {
-            return ResourceManager.GetString("InvalidVMGuidNotSingle", resourceCulture);
+            return ResourceManager.GetString("InvalidVMIdNotSingle", resourceCulture);
         }
     }
     
