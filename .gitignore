@@ -9,3 +9,4 @@ cmake_install.cmake
 externals
 scripts/xunittests.xml
 /scripts/powershell.inc
+.bash_history
