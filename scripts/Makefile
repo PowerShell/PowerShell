@@ -7,7 +7,7 @@ include assembly-load-context.mk
 MONAD_EXT=../src/monad-ext
 TARGETING_PACK=$(MONAD_EXT)/coreclr/TargetingPack
 COREREF=$(addprefix -r:, $(shell ls $(TARGETING_PACK)/*.dll))
-CORECLR_ASSEMBLY_BASE=$(MONAD_EXT)/coreclr/Release
+CORECLR_ASSEMBLY_BASE=$(MONAD_EXT)/coreclr/Runtime
 
 # powershell-run is the main powershell executable
 include powershell-run.mk
@@ -40,7 +40,7 @@ PRODUCT_COMMANDS_REFS=$(COREREF) -r:dotnetlibs/System.Management.Automation.dll
 # compilers
 # - Roslyn's csc is used for all the PS code
 # - Mono's mcs is used for build helper tools
-CSC=mono buildtemp/Microsoft.Net.ToolsetCompilers.*/tools/csc.exe
+CSC=mono buildtemp/Microsoft.Net.Compilers.*/tools/csc.exe
 MCS=mcs
 
 CSCOPTS_BASE=-noconfig -nostdlib
@@ -76,11 +76,11 @@ dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET): $(ASSEMBLY_LOAD_CONTEXT_SRCS)
 	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_BASE_REFS) $(ASSEMBLY_LOAD_CONTEXT_SRCS)
 
 # this will copy whatever the first version of the dll in the globber is
-buildtemp/System.Reflection.Metadata.dll: buildtemp/System.Reflection.Metadata.*/lib/portable-net45+win8/System.Reflection.Metadata.dll
+buildtemp/System.Reflection.Metadata.dll: buildtemp/System.Reflection.Metadata.*/lib/*/System.Reflection.Metadata.dll prepare
 	cp -f $< $@
 
 # this will copy whatever the first version of the dll in the globber is
-buildtemp/System.Collections.Immutable.dll: buildtemp/System.Collections.Immutable.*/lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.dll
+buildtemp/System.Collections.Immutable.dll: buildtemp/System.Collections.Immutable.*/lib/*/System.Collections.Immutable.dll prepare
 	cp -f $< $@
 
 # this one is built from stubs
@@ -110,18 +110,21 @@ CorePsTypeCatalog.cs: powershell.inc buildtemp/TypeCatalogGen.exe buildtemp/Syst
 
 # the pinvoke library libps.so
 
-buildtemp/libps-build/Makefile: ../src/monad-native/src/CMakeLists.txt
-	rm -rf buildtemp/libps-build
-	mkdir buildtemp/libps-build
+LIBPS_BUILD=buildtemp/libps-build
+$(LIBPS_BUILD)/Makefile: ../src/monad-native/src/CMakeLists.txt
+	mkdir -p $(LIBPS_BUILD)
 	# cached files can change the path to be incorrect, this must be cleaned
 	rm -f ../src/monad-native/src/CMakeCache.txt
 	rm -f ../src/monad-native/src/cmake_install.cmake 
-	cd buildtemp/libps-build && cmake ../../../src/monad-native/src/
+	cd $(LIBPS_BUILD) && cmake ../../../src/monad-native/src/
 
-dotnetlibs/libps.so dotnetlibs/monad_native dotnetlibs/host_cmdline: buildtemp/libps-build/Makefile
-	cd buildtemp/libps-build && make VERBOSE=0 && cp monad_native ../../dotnetlibs && cp libps.so ../../dotnetlibs && cp host_cmdline ../../dotnetlibs
+NATIVE_BINARIES=libps.so monad_native host_cmdline
+$(addprefix dotnetlibs/, $(NATIVE_BINARIES)): $(LIBPS_BUILD)/Makefile
+	$(MAKE) -j -C $(LIBPS_BUILD)
+	mkdir -p dotnetlibs
+	cp $(addprefix $(LIBPS_BUILD)/, $(notdir $@)) dotnetlibs
 
-libps.so-test: dotnetlibs/libps.so dotnetlibs/monad_native
+libps.so-test: $(addprefix dotnetlibs/, libps.so monad_native)
 	cd dotnetlibs && LD_LIBRARY_PATH=. ./monad_native
 
 # this is a windows dll that is needed because CoreCLR tries to access
@@ -133,13 +136,14 @@ dotnetlibs/api-ms-win-core-registry-l1-1-0.dll: ../src/win-dll/lib-api-ms-win-co
 
 # this is the manual step that will install some stuff using nuget and do other things that can't be dependency
 # tracked that easily
-NUGET_INSTALL=cd buildtemp && mono nuget.exe install -Source 'https://api.nuget.org/v3/index.json' -Version
-prepare:
-	rm -rf buildtemp/System.Reflection.Metadata.* buildtemp/System.Collections.Immutable.* buildtemp/Microsoft.Net.ToolsetCompilers.* buildtemp/nuget.exe
-	cp $(MONAD_EXT)/nuget/nuget.exe buildtemp/nuget.exe
-	$(NUGET_INSTALL) 1.0.21 System.Reflection.Metadata
-	$(NUGET_INSTALL) 1.1.36 System.Collections.Immutable
-	$(NUGET_INSTALL) 1.0.0-rc3-20150520-02 Microsoft.Net.ToolsetCompilers
+nuget.exe:
+	wget 'https://nuget.org/nuget.exe'
+
+NUGET_INSTALL=cd buildtemp && mono nuget.exe install
+
+prepare: nuget.exe
+	mkdir -p buildtemp
+	mono nuget.exe restore -PackagesDirectory buildtemp
 
 # this is the execution environment from which all managed code is run
 APP_BASE=exec_env/app_base
@@ -168,28 +172,24 @@ internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS)
 	cp -r ../ext-src/pester $(APP_BASE)/Modules/Pester
 	cp runps*.sh $(APP_BASE)
 
-internal-prepare-release-clr:
-	cp -r $(MONAD_EXT)/coreclr/Release/* exec_env/coreclr/
+internal-prepare-clr:
+	cp -r $(CORECLR_ASSEMBLY_BASE)/* exec_env/coreclr/
 
-# this is an internal target, it's not intended to be called manually
-internal-prepare-debug-clr:
-	cp -r $(MONAD_EXT)/coreclr/Debug/* exec_env/coreclr/
-
-run: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+run: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	# execute a cmdlet, this will auto-load the utility module and print a, b and c in 3 lines
 	$(APP_BASE)/runps-simple.sh '"a","b","c","a","a" | Select-Object -Unique'
 
-run-interactive: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+run-interactive: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	$(APP_BASE)/runps.sh
 
-run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	$(APP_BASE)/runps.sh --file $(PSSCRIPT)
 
 # easy way to run individual PowerShell scripts, `make script.ps1` where the path is relative to monad-linux/scripts (with TEMP set for Pester)
-%.ps1: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+%.ps1: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	TEMP=/tmp $(APP_BASE)/runps.sh --file ../../$@
 
-run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-debug-clr
+run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	PAL_DBG_CHANNELS="+LOADER.TRACE" $(APP_BASE)/runps-simple.sh get-location
 
 native-tests: dotnetlibs/monad_native
@@ -206,11 +206,11 @@ $(APP_BASE)/xunit%: $(MONAD_EXT)/xunit/xunit%
 $(APP_BASE)/ps_test.dll: $(TEST_SRCS) $(addprefix $(APP_BASE)/, xunit.core.dll xunit.assert.dll) $(addprefix dotnetlibs/, System.Management.Automation.dll Microsoft.PowerShell.Commands.Management.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET))
 	$(CSC) $(CSCOPTS_LIB) -out:$@ $(addprefix -r:$(APP_BASE)/, xunit.core.dll xunit.assert.dll) $(addprefix -r:dotnetlibs/, System.Management.Automation.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET)) $(COREREF) $(TEST_SRCS)
 
-xunit-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr $(addprefix $(APP_BASE)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll)
+xunit-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr $(addprefix $(APP_BASE)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll)
 	# execute the xUnit runner, with XML output
 	$(APP_BASE)/runps-test.sh ps_test.dll -xml ../../xunittests.xml
 
-pester-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+pester-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	# execute the Pester tests, which needs a TEMP environment variable to be set
 	$(APP_BASE)/runps-simple.sh 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
 
@@ -220,23 +220,23 @@ hashbang-tests:
 
 test: native-tests xunit-tests pester-tests hashbang-tests
 
-trace: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+trace: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	$(APP_BASE)/runps-simple-trace.sh get-location
 
-debug: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-release-clr
+debug: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	# quoting here is a bit special if strings are passed in, because lldb seems to forward arguments strangely
 	$(APP_BASE)/runps-simple-debug.sh get-location
 
-clean:
-	rm -rf dotnetlibs/*
-	rm -rf exec_env
+# clean native library, libps
+clean-native:
 	rm -rf buildtemp/libps-build
-	rm -rf dotnetlibs/*
-	rm -f xunittests.xml powershell.inc
+
+clean:
+	rm -rf dotnetlibs exec_env powershell.inc
 
 # clean built stuff + prepare step
-cleanall: clean
-	rm -rf buildtemp/*
+cleanall: clean clean-native
+	rm -rf buildtemp xunittests.xml
 
 docker-build:
 	docker build --no-cache=false -t image_ps .
