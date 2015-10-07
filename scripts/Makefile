@@ -40,7 +40,7 @@ PRODUCT_COMMANDS_REFS=$(COREREF) -r:dotnetlibs/System.Management.Automation.dll
 # compilers
 # - Roslyn's csc is used for all the PS code
 # - Mono's mcs is used for build helper tools
-CSC=mono buildtemp/Microsoft.Net.ToolsetCompilers.*/tools/csc.exe
+CSC=mono buildtemp/Microsoft.Net.Compilers.*/tools/csc.exe
 MCS=mcs
 
 CSCOPTS_BASE=-noconfig -nostdlib
@@ -143,7 +143,7 @@ prepare: cleanall
 	cp $(MONAD_EXT)/nuget/nuget.exe buildtemp/nuget.exe
 	$(NUGET_INSTALL) 1.0.21 System.Reflection.Metadata
 	$(NUGET_INSTALL) 1.1.36 System.Collections.Immutable
-	$(NUGET_INSTALL) 1.0.0-rc3-20150520-02 Microsoft.Net.ToolsetCompilers
+	$(NUGET_INSTALL) 1.0.0 Microsoft.Net.Compilers
 
 # this is the execution environment from which all managed code is run
 APP_BASE=exec_env/app_base
