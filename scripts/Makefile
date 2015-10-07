@@ -134,8 +134,9 @@ dotnetlibs/api-ms-win-core-registry-l1-1-0.dll: ../src/win-dll/lib-api-ms-win-co
 # this is the manual step that will install some stuff using nuget and do other things that can't be dependency
 # tracked that easily
 NUGET_INSTALL=cd buildtemp && mono nuget.exe install -Source 'https://api.nuget.org/v3/index.json' -Version
-prepare:
-	rm -rf buildtemp/System.Reflection.Metadata.* buildtemp/System.Collections.Immutable.* buildtemp/Microsoft.Net.ToolsetCompilers.* buildtemp/nuget.exe
+
+prepare: cleanall
+	mkdir -p buildtemp dotnetlibs
 	cp $(MONAD_EXT)/nuget/nuget.exe buildtemp/nuget.exe
 	$(NUGET_INSTALL) 1.0.21 System.Reflection.Metadata
 	$(NUGET_INSTALL) 1.1.36 System.Collections.Immutable
@@ -223,16 +224,16 @@ debug: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	# quoting here is a bit special if strings are passed in, because lldb seems to forward arguments strangely
 	$(APP_BASE)/runps-simple-debug.sh get-location
 
-clean:
-	rm -rf dotnetlibs/*
-	rm -rf exec_env
+# clean native library, libps
+clean-native:
 	rm -rf buildtemp/libps-build
-	rm -rf dotnetlibs/*
-	rm -f xunittests.xml powershell.inc
+
+clean:
+	rm -rf dotnetlibs exec_env powershell.inc
 
 # clean built stuff + prepare step
-cleanall: clean
-	rm -rf buildtemp/*
+cleanall: clean clean-native
+	rm -rf buildtemp xunittests.xml
 
 docker-build:
 	docker build --no-cache=false -t image_ps .
