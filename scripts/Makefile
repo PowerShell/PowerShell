@@ -127,10 +127,8 @@ libps.so-test: $(addprefix dotnetlibs/, libps.so monad_native)
 dotnetlibs/api-ms-win-core-registry-l1-1-0.dll: ../src/win-dll/lib-api-ms-win-core-registry-l1-1-0.c
 	gcc -o $@ -fPIC -shared -Wall $^
 
-# this is the manual step that will install some stuff using nuget and do other things that can't be dependency
-# tracked that easily
 nuget.exe:
-	wget 'https://nuget.org/nuget.exe'
+	wget 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
 
 buildtemp:
 	mkdir -p buildtemp
@@ -229,7 +227,7 @@ clean:
 
 # clean built stuff + prepare step
 cleanall: clean clean-native
-	rm -rf nuget.exe buildtemp xunittests.xml
+	rm -rf buildtemp xunittests.xml
 
 docker-build:
 	docker build --no-cache=false -t image_ps .
