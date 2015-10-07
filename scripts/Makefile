@@ -110,18 +110,21 @@ CorePsTypeCatalog.cs: powershell.inc buildtemp/TypeCatalogGen.exe buildtemp/Syst
 
 # the pinvoke library libps.so
 
-buildtemp/libps-build/Makefile: ../src/monad-native/src/CMakeLists.txt
-	rm -rf buildtemp/libps-build
-	mkdir buildtemp/libps-build
+LIBPS_BUILD=buildtemp/libps-build
+$(LIBPS_BUILD)/Makefile: ../src/monad-native/src/CMakeLists.txt
+	mkdir -p $(LIBPS_BUILD)
 	# cached files can change the path to be incorrect, this must be cleaned
 	rm -f ../src/monad-native/src/CMakeCache.txt
 	rm -f ../src/monad-native/src/cmake_install.cmake 
-	cd buildtemp/libps-build && cmake ../../../src/monad-native/src/
+	cd $(LIBPS_BUILD) && cmake ../../../src/monad-native/src/
 
-dotnetlibs/libps.so dotnetlibs/monad_native dotnetlibs/host_cmdline: buildtemp/libps-build/Makefile
-	cd buildtemp/libps-build && make VERBOSE=0 && cp monad_native ../../dotnetlibs && cp libps.so ../../dotnetlibs && cp host_cmdline ../../dotnetlibs
+NATIVE_BINARIES=libps.so monad_native host_cmdline
+$(addprefix dotnetlibs/, $(NATIVE_BINARIES)): $(LIBPS_BUILD)/Makefile
+	$(MAKE) -j -C $(LIBPS_BUILD)
+	mkdir -p dotnetlibs
+	cp $(addprefix $(LIBPS_BUILD)/, $(notdir $@)) dotnetlibs
 
-libps.so-test: dotnetlibs/libps.so dotnetlibs/monad_native
+libps.so-test: $(addprefix dotnetlibs/, libps.so monad_native)
 	cd dotnetlibs && LD_LIBRARY_PATH=. ./monad_native
 
 # this is a windows dll that is needed because CoreCLR tries to access
