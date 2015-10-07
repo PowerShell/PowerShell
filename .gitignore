@@ -1,12 +1,11 @@
 .idea
 .config/
-.nuget\\packages\\/
+.local/
 CMakeCache.txt
 CMakeFiles/
 Makefile
 !scripts/Makefile
 cmake_install.cmake
-externals
 scripts/xunittests.xml
-/scripts/powershell.inc
+scripts/powershell.inc
 .bash_history

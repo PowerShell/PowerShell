@@ -76,11 +76,11 @@ dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET): $(ASSEMBLY_LOAD_CONTEXT_SRCS)
 	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_BASE_REFS) $(ASSEMBLY_LOAD_CONTEXT_SRCS)
 
 # this will copy whatever the first version of the dll in the globber is
-buildtemp/System.Reflection.Metadata.dll: buildtemp/System.Reflection.Metadata.*/lib/portable-net45+win8/System.Reflection.Metadata.dll
+buildtemp/System.Reflection.Metadata.dll: buildtemp/System.Reflection.Metadata.*/lib/*/System.Reflection.Metadata.dll prepare
 	cp -f $< $@
 
 # this will copy whatever the first version of the dll in the globber is
-buildtemp/System.Collections.Immutable.dll: buildtemp/System.Collections.Immutable.*/lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.dll
+buildtemp/System.Collections.Immutable.dll: buildtemp/System.Collections.Immutable.*/lib/*/System.Collections.Immutable.dll prepare
 	cp -f $< $@
 
 # this one is built from stubs
@@ -136,14 +136,14 @@ dotnetlibs/api-ms-win-core-registry-l1-1-0.dll: ../src/win-dll/lib-api-ms-win-co
 
 # this is the manual step that will install some stuff using nuget and do other things that can't be dependency
 # tracked that easily
-NUGET_INSTALL=cd buildtemp && mono nuget.exe install -Source 'https://api.nuget.org/v3/index.json' -Version
+nuget.exe:
+	wget 'https://nuget.org/nuget.exe'
 
-prepare: cleanall
-	mkdir -p buildtemp dotnetlibs
-	cp $(MONAD_EXT)/nuget/nuget.exe buildtemp/nuget.exe
-	$(NUGET_INSTALL) 1.0.21 System.Reflection.Metadata
-	$(NUGET_INSTALL) 1.1.36 System.Collections.Immutable
-	$(NUGET_INSTALL) 1.0.0 Microsoft.Net.Compilers
+NUGET_INSTALL=cd buildtemp && mono nuget.exe install
+
+prepare: nuget.exe
+	mkdir -p buildtemp
+	mono nuget.exe restore -PackagesDirectory buildtemp
 
 # this is the execution environment from which all managed code is run
 APP_BASE=exec_env/app_base
