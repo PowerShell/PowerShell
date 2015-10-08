@@ -2,25 +2,11 @@
 
 ## Getting started
 
-These instructions assume Ubuntu 14.04 LTS, the same as our dependency, [CoreCLR][]. Fortunately you do not have to [build CoreCLR][], as we bundle the dependencies in submodules.
-
-[CoreCLR]: https://github.com/dotnet/coreclr
-[build CoreCLR]: https://github.com/dotnet/coreclr/blob/master/Documentation/building/linux-instructions.md
-
 ### Obtain the source code
 
-#### Install source control tools
-
-- [Git][], the version control system
-- Node.js, to run the Visual Studio Online `mshttps` Git remote helper
-- `smbclient`, to obtain mshttps
-- `ntpdate`, to update the system time
-
-```sh
-sudo apt-get install git nodejs nodejs-legacy smbclient ntpdate
-```
-
 #### Setup Git
+
+Install [Git][], the version control system. If you're new to Git, peruse the documentation and go through some tutorials; I recommend familiarizing yourself with `checkout`, `branch`, `pull`, `push`, `merge`, and after a while, `rebase` and `cherry-pick`.
 
 The user name and email must be set to do just about anything with Git.
 
@@ -29,138 +15,81 @@ git config --global user.name "First Last"
 git config --global user.email "alias@microsoft.com"
 ```
 
-#### Setup Visual Studio Online
-
-Teach Git to use the `mshttps` protocol for Visual Studio Online. The URL mapping (and `mshttps` itself) is needed for the two factor authentication that internal VSO imposes.
+I highly recommend these configurations to help deal with whitespace, rebasing, and general use of Git.
 
 ```sh
-git config --global url.mshttps://msostc.visualstudio.com/.insteadof https://msostc.visualstudio.com/
-git config --global url.mshttps://microsoft.visualstudio.com/.insteadof https://microsoft.visualstudio.com/
+git config --global am.threeWay true
+git config --global apply.ignoreWhitespace change
+git config --global help.autoCorrect -1
+git config --global log.abbrevCommit true
+git config --global log.decorate short
+git config --global pull.ff only
+git config --global push.default current
+git config --global rerere.enabled true
+git config --global rerere.autoUpdate true
 ```
 
-Download `mshttps` using SMB from a Windows share.
+[Git]: https://git-scm.com/documentation
 
-> Alternatively you can get `git-remote-mshttps.tar.gz` on Windows and upload it to your Linux machine.
+#### Setup Visual Studio Online authentication
 
-```sh
-smbclient --user=domain\\username --directory=drops\\RemoteHelper.NodeJS\\latest \\\\gitdrop\\ProjectJ -c "get git-remote-mshttps.tar.gz"
-```
+To use Git's `https` protocol with VSO, you'll want to setup tokens, and have Git remember them.
 
-> If the file transfer fails with `tree connect failed: NT_STATUS_DUPLICATE_NAME`, use `nslookup gitdrop` to obtain its canonical name (currently `osgbldarcfs02.redmond.corp.microsoft.com`) and use it instead.
-
-Install `mshttps`, and update the system time (necessary for authentication with VSO).
-
-```sh
-sudo tar -xvf git-remote-mshttps.tar.gz -C /usr/local/bin
-sudo chmod +x /usr/local/bin/git-remote-mshttps
-sudo ntpdate time.nist.gov
-```
+1. `git config --global credential.helper store`
+2. Login to <https://msostc.visualstudio.com>
+3. Click your name in the upper left corner and click 'My profile'
+4. Click the "Security" tab in the left pane (under "Details")
+5. Click "Add"
+6. Enter "msostc" for "Description"
+7. Set "Expires In" to "1 year"
+8. Choose " msostc" for "Accounts"
+9. Choose "All scopes"
+10. Click "Create Token" (you may want to copy this token somewhere safe, as VSO will not show it again!)
+11. Use this token as the password when cloning
+12. Make a token for <https://microsoft.visualstudio.com> and use it when the `monad` submodule is cloned
 
 #### Download source code
 
-Clone our [monad-linux][] source from Visual Studio Online. We use the `develop` branch, and several submodules, necessitating the arguments.
+Clone our [monad-linux][] source from Visual Studio Online, it's the superproject with a number of submodules.
 
 ```sh
-git clone -b develop --recursive https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-linux
+git clone --recursive https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-linux
 ```
 
-When checking out a commit (or pulling in commits), you **must** update all the submodules too. Not doing so is the cause of many headaches.
-
-```sh
-git submodule update --init --recursive
-```
+Please read the documentation on [submodules][] if you're not familiar with them.
 
 [monad-linux]: https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-linux
+[submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
 
 ### Setup build environment
 
-If you use Docker, this part is already done for you; just prefix your build commands with `./build.sh`. But you do need Docker.
+#### Docker
 
-#### Use Docker
+See the official [installation documentation][] on how to install Docker, and don't forget to setup a [Docker group][].
 
-Setting up Docker has been made as simple as running a script.
+The Docker container can be updated with `docker pull andschwa/magrathea`, which downloads it from the [automated build repository][].
 
-```sh
-wget -qO- https://get.docker.com/ | sh
-```
+This container isolates all our build dependencies, including Ubuntu 14.04 and Mono. See the [Dockerfile][] to look under the hood.
 
-To make Docker work better on Ubuntu, you should also setup a [Docker group][].
-
-```sh
-sudo usermod -aG docker <your local user>
-```
-
-Then log out and back in. This eliminates the need to `sudo` before every Docker command.
-
-Check the official [installation documentation][] first if you have problems setting it up.
+The `build.sh` script is a wrapper that starts a temporary container with `monad-linux` mounted and runs the arguments given to the script as your current user, but inside the container. The build artifacts will exist in your local folder and be owned by your user, essentially making the use of the container invisible. The `build-tty.sh` allocates a shell for the container, and so allows you to launch Bash or an interactive PowerShell session.
 
 [Docker group]: https://docs.docker.com/installation/ubuntulinux/#create-a-docker-group
 [installation documentation]: https://docs.docker.com/installation/ubuntulinux/
-
-##### Technical info
-
-We have an [automated build repository][] on the Docker Hub that provisions an image from this [Dockerfile][]. This image contains all the necessary build dependencies, and is based on Ubuntu 14.04.
-
-Using this image amounts to running an ephemeral container with the local source code mounted as a shared volume, which is precisely what `build.sh` does (as well as pass on command-line arguments). If the `andschwa/magrathea` image is not already present, it is automatically pulled from the Hub.
-
-This is what `build.sh` looks like (there is no need to run this command manually):
-
-```sh
-docker run --rm --interactive --tty --volume /absolute/path/to/monad-linux/:/opt/monad --workdir /opt/monad/scripts andschwa/magrathea make run
-```
-
-It is run interactively with a tty, and so acts as if a shell had been opened to the container. The actual compilation takes place in the mounted volume, that is, the host machine's local source code repository. The magic of Docker is that the compilation processes take place in the context of the container, and so have all the dependencies satisfied. To prevent literring the host with containers, it is automatically removed when it exits; this is not a problem because all side effects happen on the host's file system, and similarly creating the container requires very minimal overhead.
-
 [automated build repository]: https://registry.hub.docker.com/u/andschwa/magrathea/
 [Dockerfile]: https://github.com/andschwa/docker-magrathea/blob/master/Dockerfile
-
-#### Manually install dependencies
-
-> Skip this section if you installed Docker.
-
-Setup the Mono package [repository][] because Ubuntu's Mono packages are out of date.
-
-```sh
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
-sudo apt-get update
-```
-
-Install necessary packages.
-
-- [Mono][], the C# compiler for Linux
-- Nuget, the C# package manager
-- libunwind8, used to determine the call-chain
-- GCC and G++, for compiling C and C++ native code
-- [GNU Make][], for building `monad-linux`
-- [CMake][], for building `src/monad-native`
-- libicu-dev, for building `src/monad-native`
-
-```sh
-sudo apt-get install mono-devel libunwind8 gcc g++ make cmake libicu-dev
-```
-
-[repository]: http://www.mono-project.com/docs/getting-started/install/linux/#debian-ubuntu-and-derivatives
-[Git]: https://git-scm.com/documentation
-[Mono]: http://www.mono-project.com/docs/
-[GNU Make]: https://www.gnu.org/software/make/manual/make.html
+[Make]: https://www.gnu.org/software/make/manual/make.html
 [CMake]: http://www.cmake.org/cmake/help/v2.8.12/cmake.html
-
 
 ### Building
 
-If you're using the Docker container, just prefix all build steps like so: `./build.sh make test`
-
 1. `cd scripts` since it contains the `Makefile` and `build.sh`
-2. `make prepare` will use Nuget to download several dependencies
-3. `make all` will build PowerShell for Linux
-4. `make run` will execute a demo, `"a","b","c","a","a" | Select-Object -Unique`
-5. `make run-interactive` will open an interactive PowerShell console
-6. `make test` will execute the unit tests
-7. `make clean` will remove the built objects
+2. `./build.sh make all` will build PowerShell for Linux
+3. `./build.sh make run` will build and execute a demo, `"a","b","c","a","a" | Select-Object -Unique`
+4. `./build-tty.sh make run-interactive` will open an interactive PowerShell console
+5. `./build.tty make test` will execute the unit tests
+6. `make clean` will remove the built objects
+7. `make clean-native` will remove `libps`
 8. `make cleanall` will also remove the Nuget packages
-
-## TODO: Unit tests
 
 ### Adding Pester tests
 
