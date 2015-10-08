@@ -1,6 +1,15 @@
 [submodule "src/monad"]
 	path = src/monad
-	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad
-[submodule "src/coreclr"]
-	path = src/coreclr
-	url = https://github.com/dotnet/coreclr.git
+	url = https://microsoft.visualstudio.com/DefaultCollection/PowerShell.Monad/_git/monad-sync1
+[submodule "ext-src/cppunit"]
+	path = ext-src/cppunit
+	url = git://anongit.freedesktop.org/git/libreoffice/cppunit/
+[submodule "src/monad-native"]
+	path = src/monad-native
+	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-native
+[submodule "src/monad-ext"]
+	path = src/monad-ext
+	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-ext
+[submodule "ext-src/pester"]
+	path = ext-src/pester
+	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/Pester
