@@ -1,10 +1,8 @@
 # PowerShell for Linux
 
-## Getting started
+## Obtain the source code
 
-### Obtain the source code
-
-#### Setup Git
+### Setup Git
 
 Install [Git][], the version control system. If you're new to Git, peruse the documentation and go through some tutorials; I recommend familiarizing yourself with `checkout`, `branch`, `pull`, `push`, `merge`, and after a while, `rebase` and `cherry-pick`.
 
@@ -31,7 +29,7 @@ git config --global rerere.autoUpdate true
 
 [Git]: https://git-scm.com/documentation
 
-#### Setup Visual Studio Online authentication
+### Setup Visual Studio Online authentication
 
 To use Git's `https` protocol with VSO, you'll want to setup tokens, and have Git remember them.
 
@@ -45,10 +43,10 @@ To use Git's `https` protocol with VSO, you'll want to setup tokens, and have Gi
 8. Choose " msostc" for "Accounts"
 9. Choose "All scopes"
 10. Click "Create Token" (you may want to copy this token somewhere safe, as VSO will not show it again!)
-11. Use this token as the password when cloning
+11. Use this token as the password when cloning (and your username for the username)
 12. Make a token for <https://microsoft.visualstudio.com> and use it when the `monad` submodule is cloned
 
-#### Download source code
+### Download source code
 
 Clone our [monad-linux][] source from Visual Studio Online, it's the superproject with a number of submodules.
 
@@ -61,9 +59,9 @@ Please read the documentation on [submodules][] if you're not familiar with them
 [monad-linux]: https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-linux
 [submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
 
-### Setup build environment
+## Setup build environment
 
-#### Docker
+### Docker
 
 See the official [installation documentation][] on how to install Docker, and don't forget to setup a [Docker group][].
 
@@ -80,7 +78,7 @@ The `build.sh` script is a wrapper that starts a temporary container with `monad
 [Make]: https://www.gnu.org/software/make/manual/make.html
 [CMake]: http://www.cmake.org/cmake/help/v2.8.12/cmake.html
 
-### Building
+## Building
 
 1. `cd scripts` since it contains the `Makefile` and `build.sh`
 2. `./build.sh make all` will build PowerShell for Linux
@@ -91,13 +89,13 @@ The `build.sh` script is a wrapper that starts a temporary container with `monad
 7. `make clean-native` will remove `libps`
 8. `make cleanall` will also remove the Nuget packages
 
-### Adding Pester tests
+## Adding Pester tests
 
-Pester tests are located in the src/pester-tests folder. The makefile targets "test" and "pester-tests" will run all Pester-based tests.
+Pester tests are located in the `src/pester-tests` folder. The makefile targets `test` and `pester-tests` will run all Pester tests.
 
 The steps to add your pester tests are:
-- add *.Tests.ps1  files to src/pester-tests
-- run "make pester-tests" to run the tests
+- add `*.Tests.ps1`  files to `src/pester-tests`
+- run `./build.sh make pester-tests` to run the tests
 
 ## TODO: Docker shell-in-a-box
 
