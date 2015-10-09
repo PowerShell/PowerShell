@@ -134,5 +134,123 @@ namespace PSTests
             FileSystemInfo fd = new FileInfo(path);
             Assert.False(Platform.NonWindowsIsHardLink(fd));
         }
+
+
+        [Fact]
+        public static void TestCommandLineArgvReturnsAnElement()
+        {
+            string testCommand= "Today";
+
+            int count = 0;
+
+            string[] retval = Platform.NonWindowsCommandLineToArgvW(testCommand, out count);
+
+            Assert.Equal(1, count);
+        }
+
+        [Fact]
+        public static void TestCommandLineArgvWWithSpaces()
+        {
+            string testCommand= "Today is a good day or is it";
+
+            int count = 0;
+
+            string[] retval = Platform.NonWindowsCommandLineToArgvW(testCommand, out count);
+
+            Assert.Equal("Today", retval[0]);
+            Assert.Equal("is", retval[1]);
+            Assert.Equal("a", retval[2]);
+            Assert.Equal("good", retval[3]);
+            Assert.Equal("day", retval[4]);
+            Assert.Equal("or", retval[5]);
+            Assert.Equal("is", retval[6]);
+            Assert.Equal("it", retval[7]);
+        }
+
+        [Fact]
+        public static void TestCommandLineToArgvWTabsAreTreatedAsSpaces()
+        {
+            string testCommand = "Today \t is a good day";
+
+            int count = 0;
+
+            string[] retval = Platform.NonWindowsCommandLineToArgvW(testCommand, out count);
+
+            Assert.Equal("Today", retval[0]);
+            Assert.Equal("is", retval[1]);
+            Assert.Equal("a", retval[2]);
+            Assert.Equal("good", retval[3]);
+            Assert.Equal("day", retval[4]);
+        }
+
+        [Fact]
+        public static void TestCommandLineToArgvWQuotesAreArgs()
+        {
+            string testCommand = "Today is \"a good\" day";
+
+            int count = 0;
+
+            string[] retval = Platform.NonWindowsCommandLineToArgvW(testCommand, out count);
+
+            Assert.Equal(4, count);
+            Assert.Equal("Today", retval[0]);
+            Assert.Equal("is", retval[1]);
+            Assert.Equal("\"a good\"", retval[2]);
+            Assert.Equal("day", retval[3]);
+        }
+
+        [Fact]
+        public static void TestCommandLineToArgvWEvenNumberBackSlashes()
+        {
+            string test1 = "a\\b c d";
+            string test2 = "a\\b\\c d";
+            string test3 = "a \\b\\c\\d";
+            string test4 = "a\\\\\\b";
+
+            int count = 0;
+
+            string[] a = Platform.NonWindowsCommandLineToArgvW(test1, out count);
+
+            Assert.Equal(3, count);
+            Assert.Equal("a\\b", a[0]);
+            Assert.Equal("c", a[1]);
+            Assert.Equal("d", a[2]);
+
+            string[] b = Platform.NonWindowsCommandLineToArgvW(test2, out count);
+
+            Assert.Equal(2, count);
+            Assert.Equal("a\\b\\c", b[0]);
+            Assert.Equal("d", b[1]);
+
+            string[] c = Platform.NonWindowsCommandLineToArgvW(test3, out count);
+
+            Assert.Equal(2, count);
+            Assert.Equal("a", c[0]);
+            Assert.Equal("\\b\\c\\d", c[1]);
+
+            string[] d = Platform.NonWindowsCommandLineToArgvW(test4, out count);
+
+            Assert.Equal(1, count);
+            Assert.Equal("a\\\\\\b", d[0]);
+        }
+
+        [Fact]
+        public static void TestCommandLineToArgvwOddNumberWithBackSlashes()
+        {
+            string test1 = "a\\\"b";
+            string test2 = "a\\\\\\\"b";
+
+            int count = 0;
+
+            string[] a = Platform.NonWindowsCommandLineToArgvW(test1, out count);
+
+            Assert.Equal(1, count);
+            Assert.Equal("a\\\"b", a[0]);
+
+            string[] b = Platform.NonWindowsCommandLineToArgvW(test2, out count);
+
+            Assert.Equal(1, count);
+            Assert.Equal("a\\\\\\\"b", b[0]);
+        }
     }
 }
