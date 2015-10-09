@@ -141,11 +141,9 @@ namespace PSTests
         {
             string testCommand= "Today";
 
-            int count = 0;
+            string[] retval = Platform.CommandLineToArgv(testCommand);
 
-            string[] retval = Platform.NonWindowsCommandLineToArgvW(testCommand, out count);
-
-            Assert.Equal(1, count);
+            Assert.Equal(1, retval.Length);
         }
 
         [Fact]
@@ -153,9 +151,7 @@ namespace PSTests
         {
             string testCommand= "Today is a good day or is it";
 
-            int count = 0;
-
-            string[] retval = Platform.NonWindowsCommandLineToArgvW(testCommand, out count);
+            string[] retval = Platform.CommandLineToArgv(testCommand);
 
             Assert.Equal("Today", retval[0]);
             Assert.Equal("is", retval[1]);
@@ -172,9 +168,7 @@ namespace PSTests
         {
             string testCommand = "Today \t is a good day";
 
-            int count = 0;
-
-            string[] retval = Platform.NonWindowsCommandLineToArgvW(testCommand, out count);
+            string[] retval = Platform.CommandLineToArgv(testCommand);
 
             Assert.Equal("Today", retval[0]);
             Assert.Equal("is", retval[1]);
@@ -188,11 +182,9 @@ namespace PSTests
         {
             string testCommand = "Today is \"a good\" day";
 
-            int count = 0;
+            string[] retval = Platform.CommandLineToArgv(testCommand);
 
-            string[] retval = Platform.NonWindowsCommandLineToArgvW(testCommand, out count);
-
-            Assert.Equal(4, count);
+            Assert.Equal(4, retval.Length);
             Assert.Equal("Today", retval[0]);
             Assert.Equal("is", retval[1]);
             Assert.Equal("\"a good\"", retval[2]);
@@ -206,32 +198,31 @@ namespace PSTests
             string test2 = "a\\b\\c d";
             string test3 = "a \\b\\c\\d";
             string test4 = "a\\\\\\b";
+            string[] retval;
 
-            int count = 0;
+            retval = Platform.CommandLineToArgv(test1);
 
-            string[] a = Platform.NonWindowsCommandLineToArgvW(test1, out count);
+            Assert.Equal(3, retval.Length);
+            Assert.Equal("a\\b", retval[0]);
+            Assert.Equal("c", retval[1]);
+            Assert.Equal("d", retval[2]);
 
-            Assert.Equal(3, count);
-            Assert.Equal("a\\b", a[0]);
-            Assert.Equal("c", a[1]);
-            Assert.Equal("d", a[2]);
+            retval = Platform.CommandLineToArgv(test2);
 
-            string[] b = Platform.NonWindowsCommandLineToArgvW(test2, out count);
+            Assert.Equal(2, retval.Length);
+            Assert.Equal("a\\b\\c", retval[0]);
+            Assert.Equal("d", retval[1]);
 
-            Assert.Equal(2, count);
-            Assert.Equal("a\\b\\c", b[0]);
-            Assert.Equal("d", b[1]);
+            retval = Platform.CommandLineToArgv(test3);
 
-            string[] c = Platform.NonWindowsCommandLineToArgvW(test3, out count);
+            Assert.Equal(2, retval.Length);
+            Assert.Equal("a", retval[0]);
+            Assert.Equal("\\b\\c\\d", retval[1]);
 
-            Assert.Equal(2, count);
-            Assert.Equal("a", c[0]);
-            Assert.Equal("\\b\\c\\d", c[1]);
+            retval = Platform.CommandLineToArgv(test4);
 
-            string[] d = Platform.NonWindowsCommandLineToArgvW(test4, out count);
-
-            Assert.Equal(1, count);
-            Assert.Equal("a\\\\\\b", d[0]);
+            Assert.Equal(1, retval.Length);
+            Assert.Equal("a\\\\\\b", retval[0]);
         }
 
         [Fact]
@@ -239,18 +230,17 @@ namespace PSTests
         {
             string test1 = "a\\\"b";
             string test2 = "a\\\\\\\"b";
+            string[] retval;
 
-            int count = 0;
+            retval = Platform.CommandLineToArgv(test1);
 
-            string[] a = Platform.NonWindowsCommandLineToArgvW(test1, out count);
+            Assert.Equal(1, retval.Length);
+            Assert.Equal("a\\\"b", retval[0]);
 
-            Assert.Equal(1, count);
-            Assert.Equal("a\\\"b", a[0]);
+            retval = Platform.CommandLineToArgv(test2);
 
-            string[] b = Platform.NonWindowsCommandLineToArgvW(test2, out count);
-
-            Assert.Equal(1, count);
-            Assert.Equal("a\\\\\\\"b", b[0]);
+            Assert.Equal(1, retval.Length);
+            Assert.Equal("a\\\\\\\"b", retval[0]);
         }
     }
 }
