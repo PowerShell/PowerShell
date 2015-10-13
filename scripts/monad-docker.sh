@@ -11,14 +11,14 @@ monad-tty()
 }
 
 # runs ephemeral andschwa/magrathea docker container with local
-# directory mounted to /opt and workdir set to /opt
+# directory mounted to /opt and workdir set to /opt/scripts
 monad-docker-run()
 {
     local CONSOLE=$1
     shift 1
     docker run --rm \
-	   --volume $(pwd)/:/opt \
-	   --workdir /opt \
+	   --volume $(dirname $(pwd))/:/opt \
+	   --workdir /opt/scripts \
 	   $CONSOLE \
 	   andschwa/magrathea:latest \
 	   bash -c "$(monad-impersonate) -- bash -c '$*'"
