@@ -170,8 +170,10 @@ run: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	# execute a cmdlet, this will auto-load the utility module and print a, b and c in 3 lines
 	$(APP_BASE)/runps-simple.sh '"a","b","c","a","a" | Select-Object -Unique'
 
-run-interactive: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
+shell: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	$(APP_BASE)/runps.sh
+
+run-interactive: shell
 
 run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	$(APP_BASE)/runps.sh --file $(PSSCRIPT)
