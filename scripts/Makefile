@@ -185,7 +185,7 @@ run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 # compiles "Hello World" like executables using .NET Core
 %.exe: %.cs prepare internal-prepare-clr
 	$(CSC) -out:$@ $(CSCOPTS_BASE) -target:exe $(COREREF) $<
-	@echo run with monad-tty ./scripts/exec_env/coreclr/corerun ./scripts/$@
+	@echo run with monad-tty ./exec_env/coreclr/corerun ./$@
 
 run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	PAL_DBG_CHANNELS="+LOADER.TRACE" $(APP_BASE)/runps-simple.sh get-location
