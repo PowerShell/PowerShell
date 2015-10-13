@@ -183,8 +183,8 @@ run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	TEMP=/tmp $(APP_BASE)/runps.sh --file ../../$@
 
 # compiles "Hello World" like executables using .NET Core
-%.exe: %.cs internal-prepare-clr
-	$(CSC) -out:$@ $(CSCOPTS_BASE) -target:exe $(COREREF) $^
+%.exe: %.cs prepare internal-prepare-clr
+	$(CSC) -out:$@ $(CSCOPTS_BASE) -target:exe $(COREREF) $<
 	@echo run with monad-tty ./scripts/exec_env/coreclr/corerun ./scripts/$@
 
 run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
