@@ -130,10 +130,10 @@ dotnetlibs/api-ms-win-core-registry-l1-1-0.dll: ../src/win-dll/lib-api-ms-win-co
 nuget.exe:
 	wget 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
 
-buildtemp:
-	mkdir -p buildtemp
+buildtemp dotnetlibs:
+	mkdir -p $@
 
-prepare: nuget.exe buildtemp
+prepare: nuget.exe buildtemp dotnetlibs
 	mono nuget.exe restore -PackagesDirectory buildtemp
 
 # this is the execution environment from which all managed code is run
@@ -152,7 +152,6 @@ APP_BASE=exec_env/app_base
 internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS)
 	rm -rf exec_env
 	mkdir -p $(APP_BASE)/Modules
-	mkdir -p exec_env/coreclr
 	cp ../src/monad/monad/miscfiles/display/*.ps1xml $(APP_BASE)
 	cp ../src/monad/monad/miscfiles/types/CoreClr/*.ps1xml $(APP_BASE)
 	cp -r ../src/monad/monad/miscfiles/modules/* $(APP_BASE)/Modules
@@ -164,14 +163,17 @@ internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS)
 	cp runps*.sh $(APP_BASE)
 
 internal-prepare-clr:
+	mkdir -p exec_env/coreclr
 	cp -r $(CORECLR_ASSEMBLY_BASE)/* exec_env/coreclr/
 
 run: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	# execute a cmdlet, this will auto-load the utility module and print a, b and c in 3 lines
 	$(APP_BASE)/runps-simple.sh '"a","b","c","a","a" | Select-Object -Unique'
 
-run-interactive: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
+shell: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	$(APP_BASE)/runps.sh
+
+run-interactive: shell
 
 run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	$(APP_BASE)/runps.sh --file $(PSSCRIPT)
@@ -179,6 +181,11 @@ run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 # easy way to run individual PowerShell scripts, `make script.ps1` where the path is relative to monad-linux/scripts (with TEMP set for Pester)
 %.ps1: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	TEMP=/tmp $(APP_BASE)/runps.sh --file ../../$@
+
+# compiles "Hello World" like executables using .NET Core
+%.exe: %.cs prepare internal-prepare-clr
+	$(CSC) -out:$@ $(CSCOPTS_BASE) -target:exe $(COREREF) $<
+	@echo run with monad-tty ./exec_env/coreclr/corerun ./$@
 
 run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	PAL_DBG_CHANNELS="+LOADER.TRACE" $(APP_BASE)/runps-simple.sh get-location
