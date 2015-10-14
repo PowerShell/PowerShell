@@ -49,39 +49,39 @@ RUN_TARGETS=$(POWERSHELL_RUN_TARGETS) $(addprefix dotnetlibs/, Microsoft.PowerSh
 all: dotnetlibs/System.Management.Automation.dll $(RUN_TARGETS) dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 
 # this is the build rule for SMA.dll
-dotnetlibs/System.Management.Automation.dll: prepare $(SYS_AUTO_SRCS) dotnetlibs/Microsoft.Management.Infrastructure.dll ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(SYS_AUTO_RES_SRCS) $(SYS_AUTO_RES_CS_SRCS)
-	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_PS_REFS) $(SYS_AUTO_SRCS) $(SYS_AUTO_RES_REF) $(SYS_AUTO_RES_CS_SRCS) ../src/assembly-info/System.Management.Automation.assembly-info.cs
+dotnetlibs/System.Management.Automation.dll: ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/Microsoft.Management.Infrastructure.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(SYS_AUTO_SRCS) $(SYS_AUTO_RES_SRCS) $(SYS_AUTO_RES_CS_SRCS) buildtemp
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_PS_REFS) $(SYS_AUTO_SRCS) $(SYS_AUTO_RES_REF) $(SYS_AUTO_RES_CS_SRCS) $<
 
 # this is the build rule for MMI.dll
-dotnetlibs/Microsoft.Management.Infrastructure.dll: prepare $(MAN_INFRA_SRCS) dotnetlibs/Microsoft.Management.Infrastructure.Native.dll ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs $(MAN_INFRA_RES_SRCS) $(MAN_INFRA_RES_CS_SRCS)
-	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_MI_REFS) $(MAN_INFRA_SRCS) $(MAN_INFRA_RES_REF) $(MAN_INFRA_RES_CS_SRCS) ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs
+dotnetlibs/Microsoft.Management.Infrastructure.dll: ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs dotnetlibs/Microsoft.Management.Infrastructure.Native.dll $(MAN_INFRA_SRCS) $(MAN_INFRA_RES_SRCS) $(MAN_INFRA_RES_CS_SRCS) buildtemp
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_MI_REFS) $(MAN_INFRA_SRCS) $(MAN_INFRA_RES_CS_SRCS)  $(MAN_INFRA_RES_REF) $<
 
 # Commands
 
-dotnetlibs/Microsoft.PowerShell.Commands.Management.dll: prepare $(COMMANDS_MANAGEMENT_SRCS) dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Security.dll $(COMMANDS_MANAGEMENT_RES_SRCS) $(COMMANDS_MANAGEMENT_RES_CS_SRCS) $(MI_ASSEMBLY)
-	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_COMMANDS_REFS) $(COMMANDS_MANAGEMENT_SRCS) $(COMMANDS_MANAGEMENT_RES_CS_SRCS) $(COMMANDS_MANAGEMENT_RES_REF) $(MI_REF) -r:dotnetlibs/Microsoft.PowerShell.Security.dll
+dotnetlibs/Microsoft.PowerShell.Commands.Management.dll: dotnetlibs/System.Management.Automation.dll dotnetlibs/Microsoft.PowerShell.Security.dll $(MI_ASSEMBLY) $(COMMANDS_MANAGEMENT_SRCS) $(COMMANDS_MANAGEMENT_RES_SRCS) $(COMMANDS_MANAGEMENT_RES_CS_SRCS) buildtemp
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_COMMANDS_REFS) $(MI_REF) $(COMMANDS_MANAGEMENT_SRCS) $(COMMANDS_MANAGEMENT_RES_CS_SRCS) $(COMMANDS_MANAGEMENT_RES_REF) -r:dotnetlibs/Microsoft.PowerShell.Security.dll
 
-dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll: prepare $(COMMANDS_UTILITY_SRCS) dotnetlibs/System.Management.Automation.dll $(COMMANDS_UTILITY_RES_SRCS) $(COMMANDS_UTILITY_RES_CS_SRCS)
+dotnetlibs/Microsoft.PowerShell.Commands.Utility.dll: dotnetlibs/System.Management.Automation.dll $(COMMANDS_UTILITY_SRCS) $(COMMANDS_UTILITY_RES_SRCS) $(COMMANDS_UTILITY_RES_CS_SRCS)  buildtemp
 	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_COMMANDS_REFS) $(COMMANDS_UTILITY_SRCS) $(COMMANDS_UTILITY_RES_CS_SRCS) $(COMMANDS_UTILITY_RES_REF)
 
-dotnetlibs/Microsoft.PowerShell.Security.dll: prepare $(SECURITY_SRCS) $(SECURITY_RES_SRCS) $(SECURITY_RES_CS_SRCS)
+dotnetlibs/Microsoft.PowerShell.Security.dll: $(SECURITY_SRCS) $(SECURITY_RES_SRCS) $(SECURITY_RES_CS_SRCS)  buildtemp
 	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_COMMANDS_REFS) $(SECURITY_SRCS) $(SECURITY_RES_CS_SRCS) $(SECURITY_RES_REF)
 
 # assembly load context
 
-dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET): prepare $(ASSEMBLY_LOAD_CONTEXT_SRCS)
+dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET): $(ASSEMBLY_LOAD_CONTEXT_SRCS) buildtemp
 	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(COREREF) $(ASSEMBLY_LOAD_CONTEXT_SRCS)
 
 # this one is built from stubs
 MI_STUBS=../src/stubs/Microsoft.Management.Infrastructure.Native-stub.cs ../src/stubs/Microsoft.Management.Infrastructure.Native-stub-assembly-info.cs
-dotnetlibs/Microsoft.Management.Infrastructure.Native.dll: prepare $(MI_STUBS)
+dotnetlibs/Microsoft.Management.Infrastructure.Native.dll: $(MI_STUBS) buildtemp
 	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(COREREF) $(MI_STUBS)
 
 # this creates the type catalog generator
 MPATH=/usr/lib/mono/4.5/Facades
 REFLECTION_METADATA=buildtemp/System.Reflection.Metadata.1.0.22/lib/dotnet/System.Reflection.Metadata.dll
 COLLECTIONS_IMMUTABLE=buildtemp/System.Collections.Immutable.1.1.37/lib/dotnet/System.Collections.Immutable.dll
-buildtemp/TypeCatalogGen.exe: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/TypeCatalogGen/TypeCatalogGen.cs $(REFLECTION_METADATA) $(COLLECTIONS_IMMUTABLE)
+buildtemp/TypeCatalogGen.exe: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/TypeCatalogGen/TypeCatalogGen.cs $(REFLECTION_METADATA) $(COLLECTIONS_IMMUTABLE) buildtemp
 	$(MCS) -out:$@ -target:exe -pkg:dotnet $(addprefix -r:, $(REFLECTION_METADATA) $(COLLECTIONS_IMMUTABLE) $(MPATH)/System.Runtime.dll $(MPATH)/System.Reflection.Primitives.dll $(MPATH)/System.IO.dll) $<
 
 # this generates the necessary file of CoreCLR references that is an artifact of the Windows build process
@@ -103,16 +103,15 @@ CorePsTypeCatalog.cs: powershell.inc buildtemp/TypeCatalogGen.exe
 # the native library, libps.so
 LIBPS_BUILD=buildtemp/libps-build
 $(LIBPS_BUILD)/Makefile: ../src/monad-native/src/CMakeLists.txt
-	mkdir -p $(LIBPS_BUILD)
 	# cached files can change the path to be incorrect, this must be cleaned
 	rm -f ../src/monad-native/src/CMakeCache.txt
 	rm -f ../src/monad-native/src/cmake_install.cmake 
+	mkdir -p $(LIBPS_BUILD)
 	cd $(LIBPS_BUILD) && cmake ../../../src/monad-native/src/
 
 NATIVE_BINARIES=libps.so monad_native host_cmdline
-$(addprefix dotnetlibs/, $(NATIVE_BINARIES)): $(LIBPS_BUILD)/Makefile
+$(addprefix dotnetlibs/, $(NATIVE_BINARIES)): $(LIBPS_BUILD)/Makefile dotnetlibs
 	$(MAKE) -j -C $(LIBPS_BUILD)
-	mkdir -p dotnetlibs
 	cp $(addprefix $(LIBPS_BUILD)/, $(notdir $@)) dotnetlibs
 
 # C++ tests for monad-native - results in native-tests.xml
@@ -124,16 +123,17 @@ native-tests: dotnetlibs/monad_native
 # registry functions that don't exist on Linux and there is no other good
 # way of fixing this right now
 # (TODO linux: this should be removed by addressing it in CoreCLR)
-dotnetlibs/api-ms-win-core-registry-l1-1-0.dll: ../src/win-dll/lib-api-ms-win-core-registry-l1-1-0.c
-	gcc -o $@ -fPIC -shared -Wall $^
+dotnetlibs/api-ms-win-core-registry-l1-1-0.dll: ../src/win-dll/lib-api-ms-win-core-registry-l1-1-0.c dotnetlibs
+	gcc -o $@ -fPIC -shared -Wall $<
 
 nuget.exe:
 	wget 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
 
-buildtemp dotnetlibs:
+dotnetlibs:
 	mkdir -p $@
 
-prepare: nuget.exe buildtemp dotnetlibs
+buildtemp: nuget.exe dotnetlibs
+	mkdir -p $@
 	mono nuget.exe restore -PackagesDirectory buildtemp
 
 # this is the execution environment from which all managed code is run
@@ -183,7 +183,7 @@ run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	TEMP=/tmp $(APP_BASE)/runps.sh --file ../../$@
 
 # compiles "Hello World" like executables using .NET Core
-%.exe: %.cs prepare internal-prepare-clr
+%.exe: %.cs internal-prepare-clr buildtemp
 	$(CSC) -out:$@ $(CSCOPTS_BASE) -target:exe $(COREREF) $<
 	@echo run with monad-tty ./exec_env/coreclr/corerun ./$@
 
@@ -198,7 +198,7 @@ TEST_SRCS=$(addprefix $(TEST_FOLDER)/, test_*.cs)
 $(APP_BASE)/xunit%: $(MONAD_EXT)/xunit/xunit%
 	cp -f $^ $@
 
-$(APP_BASE)/ps_test.dll: prepare $(TEST_SRCS) $(addprefix $(APP_BASE)/, xunit.core.dll xunit.assert.dll) $(addprefix dotnetlibs/, System.Management.Automation.dll Microsoft.PowerShell.Commands.Management.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET))
+$(APP_BASE)/ps_test.dll: $(TEST_SRCS) $(addprefix $(APP_BASE)/, xunit.core.dll xunit.assert.dll) $(addprefix dotnetlibs/, System.Management.Automation.dll Microsoft.PowerShell.Commands.Management.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET)) buildtemp
 	$(CSC) $(CSCOPTS_LIB) -out:$@ $(addprefix -r:$(APP_BASE)/, xunit.core.dll xunit.assert.dll) $(addprefix -r:dotnetlibs/, System.Management.Automation.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET)) $(COREREF) $(TEST_SRCS)
 
 xunit-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr $(addprefix $(APP_BASE)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll)
@@ -230,7 +230,7 @@ clean-native:
 clean:
 	rm -rf dotnetlibs exec_env powershell.inc
 
-# clean built stuff + prepare step
+# clean built stuff + buildtemp step
 cleanall: clean clean-native
 	rm -rf buildtemp *tests.xml
 
