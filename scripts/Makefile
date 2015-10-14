@@ -110,7 +110,7 @@ $(LIBPS_BUILD)/Makefile: ../src/monad-native/src/CMakeLists.txt
 	cd $(LIBPS_BUILD) && cmake ../../../src/monad-native/src/
 
 NATIVE_BINARIES=libps.so monad_native host_cmdline
-$(addprefix dotnetlibs/, $(NATIVE_BINARIES)): $(LIBPS_BUILD)/Makefile dotnetlibs
+$(addprefix dotnetlibs/, $(NATIVE_BINARIES)): $(LIBPS_BUILD)/Makefile
 	$(MAKE) -j -C $(LIBPS_BUILD)
 	cp $(addprefix $(LIBPS_BUILD)/, $(notdir $@)) dotnetlibs
 
@@ -129,15 +129,10 @@ dotnetlibs/api-ms-win-core-registry-l1-1-0.dll: ../src/win-dll/lib-api-ms-win-co
 nuget.exe:
 	wget 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
 
-dotnetlibs:
-	mkdir -p $@
-
-buildtemp: nuget.exe dotnetlibs
+# this creates the build output directories and restores packages from NuGet
+buildtemp: nuget.exe
 	mkdir -p $@
 	mono nuget.exe restore -PackagesDirectory buildtemp
-
-# this is the execution environment from which all managed code is run
-APP_BASE=exec_env/app_base
 
 # this is an internal target, it's not intended to be called manually
 #
@@ -149,6 +144,10 @@ APP_BASE=exec_env/app_base
 #
 # This rule does not copy coreclr, because the selection of debug or
 # release CoreCLR depends on the actual run target.
+
+# this is the execution environment from which all managed code is run
+APP_BASE=exec_env/app_base
+
 internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS)
 	rm -rf exec_env
 	mkdir -p $(APP_BASE)/Modules
@@ -228,11 +227,11 @@ clean-native:
 	rm -rf buildtemp/libps-build
 
 clean:
-	rm -rf dotnetlibs exec_env powershell.inc
+	rm -rf dotnetlibs/* exec_env powershell.inc *-tests.xml
 
 # clean built stuff + buildtemp step
 cleanall: clean clean-native
-	rm -rf buildtemp *tests.xml
+	rm -rf buildtemp
 
 docker-build:
 	docker build --no-cache=false -t image_ps .
