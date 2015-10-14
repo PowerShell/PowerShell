@@ -101,8 +101,7 @@ powershell.inc:
 CorePsTypeCatalog.cs: powershell.inc buildtemp/TypeCatalogGen.exe
 	MONO_PATH=$(dir $(REFLECTION_METADATA)):$(dir $(COLLECTIONS_IMMUTABLE)) mono buildtemp/TypeCatalogGen.exe $< $@ $(MONAD_EXT)/coreclr/TargetingPack
 
-# the pinvoke library libps.so
-
+# the native library, libps.so
 LIBPS_BUILD=buildtemp/libps-build
 $(LIBPS_BUILD)/Makefile: ../src/monad-native/src/CMakeLists.txt
 	mkdir -p $(LIBPS_BUILD)
@@ -117,8 +116,10 @@ $(addprefix dotnetlibs/, $(NATIVE_BINARIES)): $(LIBPS_BUILD)/Makefile
 	mkdir -p dotnetlibs
 	cp $(addprefix $(LIBPS_BUILD)/, $(notdir $@)) dotnetlibs
 
-libps.so-test: $(addprefix dotnetlibs/, libps.so monad_native)
-	cd dotnetlibs && LD_LIBRARY_PATH=. ./monad_native
+# C++ tests for monad-native - results in native-tests.xml
+# see https://github.com/google/googletest
+native-tests: dotnetlibs/monad_native
+	cd dotnetlibs && ./monad_native --gtest_output="xml:../native-tests.xml"
 
 # this is a windows dll that is needed because CoreCLR tries to access
 # registry functions that don't exist on Linux and there is no other good
@@ -190,11 +191,8 @@ run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	PAL_DBG_CHANNELS="+LOADER.TRACE" $(APP_BASE)/runps-simple.sh get-location
 
-native-tests: dotnetlibs/monad_native
-	# execute the native C++ tests
-	cd dotnetlibs && ./monad_native
-
-# xUnit tests
+# xUnit tests for PowerShell - results in xunit-tests.xml
+# see https://xunit.github.io/
 TEST_FOLDER=../src/ps_test
 TEST_SRCS=$(addprefix $(TEST_FOLDER)/, test_*.cs)
 
@@ -205,12 +203,13 @@ $(APP_BASE)/ps_test.dll: prepare $(TEST_SRCS) $(addprefix $(APP_BASE)/, xunit.co
 	$(CSC) $(CSCOPTS_LIB) -out:$@ $(addprefix -r:$(APP_BASE)/, xunit.core.dll xunit.assert.dll) $(addprefix -r:dotnetlibs/, System.Management.Automation.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET)) $(COREREF) $(TEST_SRCS)
 
 xunit-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr $(addprefix $(APP_BASE)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll)
-	# execute the xUnit runner, with XML output
-	$(APP_BASE)/runps-test.sh ps_test.dll -xml ../../xunittests.xml
+	$(APP_BASE)/runps-test.sh ps_test.dll -xml ../../xunit-tests.xml
 
+# Pester tests for PowerShell - results in pester-tests.xml
+# see https://github.com/pester/Pester
+# requires $TEMP to be set
 pester-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
-	# execute the Pester tests, which needs a TEMP environment variable to be set
-	$(APP_BASE)/runps-simple.sh 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester -OutputFile ../../scripts/pestertests.xml -OutputFormat NUnitXml'
+	$(APP_BASE)/runps-simple.sh 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester -OutputFile ../../scripts/pester-tests.xml -OutputFormat NUnitXml'
 
 hashbang-tests: all
 	# execute the 3rdparty/hashbang example
@@ -234,7 +233,7 @@ clean:
 
 # clean built stuff + prepare step
 cleanall: clean clean-native
-	rm -rf buildtemp xunittests.xml
+	rm -rf buildtemp *tests.xml
 
 docker-build:
 	docker build --no-cache=false -t image_ps .
