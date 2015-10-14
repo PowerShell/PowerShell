@@ -6,3 +6,4 @@ CorePsTypeCatalog.cs
 powershell.inc
 buildtemp/
 exec_env/
+libps/

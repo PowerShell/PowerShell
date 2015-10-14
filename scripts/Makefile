@@ -101,13 +101,13 @@ CorePsTypeCatalog.cs: powershell.inc buildtemp/TypeCatalogGen.exe
 	MONO_PATH=$(dir $(REFLECTION_METADATA)):$(dir $(COLLECTIONS_IMMUTABLE)) mono buildtemp/TypeCatalogGen.exe $< $@ $(MONAD_EXT)/coreclr/TargetingPack
 
 # the native library, libps.so
-LIBPS_BUILD=buildtemp/libps-build
+LIBPS_BUILD=libps
 $(LIBPS_BUILD)/Makefile: ../src/monad-native/src/CMakeLists.txt
 	# cached files can change the path to be incorrect, this must be cleaned
 	rm -f ../src/monad-native/src/CMakeCache.txt
 	rm -f ../src/monad-native/src/cmake_install.cmake 
 	mkdir -p $(LIBPS_BUILD)
-	cd $(LIBPS_BUILD) && cmake ../../../src/monad-native/src/
+	cd $(LIBPS_BUILD) && cmake ../../src/monad-native/src/
 
 NATIVE_BINARIES=libps.so monad_native host_cmdline
 $(addprefix dotnetlibs/, $(NATIVE_BINARIES)): $(LIBPS_BUILD)/Makefile
@@ -224,7 +224,7 @@ debug: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 
 # clean native library, libps
 clean-native:
-	rm -rf buildtemp/libps-build
+	rm -rf $(LIBPS_BUILD)
 
 clean:
 	rm -rf dotnetlibs/* exec_env powershell.inc *-tests.xml
