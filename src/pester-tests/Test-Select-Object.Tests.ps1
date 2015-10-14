@@ -1,39 +1,39 @@
-﻿. ../../../src/pester-tests/Test-Mocks.ps1
+﻿. ./Test-Mocks.ps1
 
 Describe "Select-Object" {
     BeforeEach {
-        $o=GetFileMock
+        $dirObject=GetFileMock
         $TestLength = 3
     }
 
     It "Handle piped input without error" {
-        { $o | Test-Path } | Should Not Throw
+        { $dirObject | Test-Path } | Should Not Throw
     } 
 
     It "-inputObject parameter should treats object as a single object" {
-        $(Select-Object -inputObject $o -last $TestLength).Length | Should Be $o.Length
+        $(Select-Object -inputObject $dirObject -last $TestLength).Length | Should Be $dirObject.Length
     }
 
     It "Should be able to use the alias" {
-        { $o | select } | Should Not Throw
-        { $o | select } | Should Not BeNullOrEmpty
+        { $dirObject | select } | Should Not Throw
+        { $dirObject | select } | Should Not BeNullOrEmpty
     }
 
     It "-First parameter should return correct object" {
-        $r = $o | Select-Object -First $TestLength
-        $r.Length | Should Be $TestLength
+        $result = $dirObject | Select-Object -First $TestLength
+        $result.Length | Should Be $TestLength
         for ($i=0; $i -lt $TestLength; $i++)
         {
-            $r[$i].Name | Should Be $o[$i].Name
+            $result[$i].Name | Should Be $dirObject[$i].Name
         }
     }
 
     It "-Last parameter should return correct object" {
-        $r = $o | Select-Object -Last $TestLength
-        $r.Length | Should Be $TestLength
+        $result = $dirObject | Select-Object -Last $TestLength
+        $result.Length | Should Be $TestLength
         for ($i=0; $i -lt $TestLength; $i++)
         {
-            $r[$i].Name | Should Be $o[$o.Length - $TestLength + $i].Name
+            $result[$i].Name | Should Be $dirObject[$dirObject.Length - $TestLength + $i].Name
         }
     }
 
@@ -42,52 +42,52 @@ Describe "Select-Object" {
     }
 
     It "-Skip parameter should return correct object" {
-        $r = $o | Select-Object -Skip $TestLength
-        $r.Length | Should Be ($o.Length - $TestLength)
+        $result = $dirObject | Select-Object -Skip $TestLength
+        $result.Length | Should Be ($dirObject.Length - $TestLength)
         for ($i=0; $i -lt $TestLength; $i++)
         {
-            $r[$i].Name | Should Be $o[$TestLength + $i].Name
+            $result[$i].Name | Should Be $dirObject[$TestLength + $i].Name
         }
     }
 
     It "-Property parameter should return an object with selected columns" {
-        $r = $o | Select-Object -Property Name, Size
-        $r.Length | Should Be $o.Length
-        $r[0].Name | Should Be $o[0].Name
-        $r[0].Size | Should Be $o[0].Size
-        $r[0].Mode | Should BeNullOrEmpty
+        $result = $dirObject | Select-Object -Property Name, Size
+        $result.Length | Should Be $dirObject.Length
+        $result[0].Name | Should Be $dirObject[0].Name
+        $result[0].Size | Should Be $dirObject[0].Size
+        $result[0].Mode | Should BeNullOrEmpty
     }
 
     It "Select-Object should send output to pipe properly" {
-        {$o | Select-Object -Unique | pipelineConsume} | Should Not Throw
+        {$dirObject | Select-Object -Unique | pipelineConsume} | Should Not Throw
     } 
 
     It "-Index parameter should select array indices" {
         $firstIndex = 2
         $secondIndex = 4
-        $r = $o | Select-Object -Index $firstIndex, $secondIndex
-        $r[0].Name | Should Be $o[$firstIndex].Name
-        $r[1].Name | Should Be $o[$secondIndex].Name
+        $result = $dirObject | Select-Object -Index $firstIndex, $secondIndex
+        $result[0].Name | Should Be $dirObject[$firstIndex].Name
+        $result[1].Name | Should Be $dirObject[$secondIndex].Name
     }
 
-    # Note that these two tests will modify original values of $o
+    # Note that these two tests will modify original values of $dirObject
 
     It "-First option does not wait when used without -Wait option" {
-        $orig1 = $o[0].Size
-        $orig2 = $o[$TestLength].Size
-        $r = $o | addOne | Select-Object -First $TestLength
-        $r[0].Size | Should Be ($orig1 + 1)
-        $o[0].Size | Should Be ($orig1 + 1)
-        $o[$TestLength].Size | Should Be $orig2
+        $orig1 = $dirObject[0].Size
+        $orig2 = $dirObject[$TestLength].Size
+        $result = $dirObject | addOne | Select-Object -First $TestLength
+        $result[0].Size | Should Be ($orig1 + 1)
+        $dirObject[0].Size | Should Be ($orig1 + 1)
+        $dirObject[$TestLength].Size | Should Be $orig2
     }
 
     It "-First option does wait when used with -Wait option" {
-        $orig1 = $o[0].Size
-        $orig2 = $o[$TestLength].Size
-        $r = $o | addOne | Select-Object -First $TestLength -Wait
-        $r[0].Size | Should Be ($orig1 + 1)
-        $o[0].Size | Should Be ($orig1 + 1)
-        $o[$TestLength].Size | Should Be ($orig2 + 1)
+        $orig1 = $dirObject[0].Size
+        $orig2 = $dirObject[$TestLength].Size
+        $result = $dirObject | addOne | Select-Object -First $TestLength -Wait
+        $result[0].Size | Should Be ($orig1 + 1)
+        $dirObject[0].Size | Should Be ($orig1 + 1)
+        $dirObject[$TestLength].Size | Should Be ($orig2 + 1)
     }
 }
 
