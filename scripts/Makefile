@@ -30,7 +30,6 @@ MI_REF_ASSEMBLY=-r:$(MONAD_EXT)/PS/PS_refs_modil/microsoft.management.infrastruc
 MI_ASSEMBLY=dotnetlibs/Microsoft.Management.Infrastructure.dll
 MI_REF=-r:$(MI_ASSEMBLY)
 
-PRODUCT_BASE_REFS=$(COREREF)
 PRODUCT_MI_REFS=$(COREREF) $(MI_NATIVE_REF)
 PRODUCT_PS_REFS=$(COREREF) $(MI_REF) -r:dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 PRODUCT_COMMANDS_REFS=$(COREREF) -r:dotnetlibs/System.Management.Automation.dll
@@ -71,12 +70,12 @@ dotnetlibs/Microsoft.PowerShell.Security.dll: prepare $(SECURITY_SRCS) $(SECURIT
 # assembly load context
 
 dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET): prepare $(ASSEMBLY_LOAD_CONTEXT_SRCS)
-	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_BASE_REFS) $(ASSEMBLY_LOAD_CONTEXT_SRCS)
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(COREREF) $(ASSEMBLY_LOAD_CONTEXT_SRCS)
 
 # this one is built from stubs
 MI_STUBS=../src/stubs/Microsoft.Management.Infrastructure.Native-stub.cs ../src/stubs/Microsoft.Management.Infrastructure.Native-stub-assembly-info.cs
 dotnetlibs/Microsoft.Management.Infrastructure.Native.dll: prepare $(MI_STUBS)
-	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_BASE_REFS) $(MI_STUBS)
+	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(COREREF) $(MI_STUBS)
 
 # this creates the type catalog generator
 MPATH=/usr/lib/mono/4.5/Facades
