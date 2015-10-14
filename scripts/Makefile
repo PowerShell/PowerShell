@@ -159,6 +159,7 @@ internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS)
 	cp -r dotnetlibs/*.so $(APP_BASE)
 	cp dotnetlibs/host_cmdline $(APP_BASE)
 	cp -r ../ext-src/pester $(APP_BASE)/Modules/Pester
+	cp -r $(MONAD_EXT)/xunit/xunit* $(APP_BASE)
 	cp runps*.sh $(APP_BASE)
 
 internal-prepare-clr:
@@ -193,14 +194,12 @@ run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 # see https://xunit.github.io/
 TEST_FOLDER=../src/ps_test
 TEST_SRCS=$(addprefix $(TEST_FOLDER)/, test_*.cs)
+TEST_TARGETS=System.Management.Automation.dll Microsoft.PowerShell.Commands.Management.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET)
 
-$(APP_BASE)/xunit%: $(MONAD_EXT)/xunit/xunit%
-	cp -f $^ $@
+dotnetlibs/ps_test.dll: $(TEST_SRCS) $(addprefix dotnetlibs/, $(TEST_TARGETS)) buildtemp
+	$(CSC) $(CSCOPTS_LIB) -out:$@ $(addprefix -r:$(MONAD_EXT)/xunit/, xunit.core.dll xunit.assert.dll) $(addprefix -r:dotnetlibs/, $(TEST_TARGETS)) $(COREREF) $(TEST_SRCS)
 
-$(APP_BASE)/ps_test.dll: $(TEST_SRCS) $(addprefix $(APP_BASE)/, xunit.core.dll xunit.assert.dll) $(addprefix dotnetlibs/, System.Management.Automation.dll Microsoft.PowerShell.Commands.Management.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET)) buildtemp
-	$(CSC) $(CSCOPTS_LIB) -out:$@ $(addprefix -r:$(APP_BASE)/, xunit.core.dll xunit.assert.dll) $(addprefix -r:dotnetlibs/, System.Management.Automation.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET)) $(COREREF) $(TEST_SRCS)
-
-xunit-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr $(addprefix $(APP_BASE)/, ps_test.dll xunit.console.netcore.exe xunit.runner.utility.dll xunit.abstractions.dll xunit.execution.dll)
+xunit-tests: dotnetlibs/ps_test.dll $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	$(APP_BASE)/runps-test.sh ps_test.dll -xml ../../xunit-tests.xml
 
 # Pester tests for PowerShell - results in pester-tests.xml
