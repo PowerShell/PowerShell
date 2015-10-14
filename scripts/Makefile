@@ -101,8 +101,7 @@ powershell.inc:
 CorePsTypeCatalog.cs: powershell.inc buildtemp/TypeCatalogGen.exe
 	MONO_PATH=$(dir $(REFLECTION_METADATA)):$(dir $(COLLECTIONS_IMMUTABLE)) mono buildtemp/TypeCatalogGen.exe $< $@ $(MONAD_EXT)/coreclr/TargetingPack
 
-# the pinvoke library libps.so
-
+# the native library, libps.so
 LIBPS_BUILD=buildtemp/libps-build
 $(LIBPS_BUILD)/Makefile: ../src/monad-native/src/CMakeLists.txt
 	mkdir -p $(LIBPS_BUILD)
@@ -117,8 +116,9 @@ $(addprefix dotnetlibs/, $(NATIVE_BINARIES)): $(LIBPS_BUILD)/Makefile
 	mkdir -p dotnetlibs
 	cp $(addprefix $(LIBPS_BUILD)/, $(notdir $@)) dotnetlibs
 
-libps.so-test: $(addprefix dotnetlibs/, libps.so monad_native)
-	cd dotnetlibs && LD_LIBRARY_PATH=. ./monad_native
+# C++ tests for monad-native
+native-tests: dotnetlibs/monad_native
+	cd dotnetlibs && ./monad_native --gtest_output="xml:../nativetests.xml"
 
 # this is a windows dll that is needed because CoreCLR tries to access
 # registry functions that don't exist on Linux and there is no other good
@@ -190,10 +190,6 @@ run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	PAL_DBG_CHANNELS="+LOADER.TRACE" $(APP_BASE)/runps-simple.sh get-location
 
-native-tests: dotnetlibs/monad_native
-	# execute the native C++ tests
-	cd dotnetlibs && ./monad_native
-
 # xUnit tests
 TEST_FOLDER=../src/ps_test
 TEST_SRCS=$(addprefix $(TEST_FOLDER)/, test_*.cs)
@@ -234,7 +230,7 @@ clean:
 
 # clean built stuff + prepare step
 cleanall: clean clean-native
-	rm -rf buildtemp xunittests.xml pestertests.xml
+	rm -rf buildtemp *tests.xml
 
 docker-build:
 	docker build --no-cache=false -t image_ps .
