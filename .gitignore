@@ -7,5 +7,6 @@ Makefile
 !scripts/Makefile
 cmake_install.cmake
 scripts/xunittests.xml
+scripts/pestertests.xml
 scripts/powershell.inc
 .bash_history

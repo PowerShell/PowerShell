@@ -210,7 +210,7 @@ xunit-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr $(add
 
 pester-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 	# execute the Pester tests, which needs a TEMP environment variable to be set
-	$(APP_BASE)/runps-simple.sh 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester'
+	$(APP_BASE)/runps-simple.sh 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester -OutputFile ../../scripts/pestertests.xml -OutputFormat NUnitXml'
 
 hashbang-tests: all
 	# execute the 3rdparty/hashbang example
