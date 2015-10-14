@@ -234,7 +234,7 @@ clean:
 
 # clean built stuff + prepare step
 cleanall: clean clean-native
-	rm -rf buildtemp xunittests.xml
+	rm -rf buildtemp xunittests.xml pestertests.xml
 
 docker-build:
 	docker build --no-cache=false -t image_ps .
