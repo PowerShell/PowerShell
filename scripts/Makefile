@@ -138,9 +138,7 @@ buildtemp: nuget.exe
 	mkdir -p $@
 	mono nuget.exe restore -PackagesDirectory buildtemp
 
-# this is an internal target, it's not intended to be called manually
-#
-# it will:
+# this is a phony target that will:
 # - create necessary directories for deployment layout
 # - copy all the PowerShell stuff into PowerShell's app_base
 # - copy the custom host and other scripts into PowerShell's app_base
@@ -148,12 +146,14 @@ buildtemp: nuget.exe
 #
 # This rule does not copy coreclr, because the selection of debug or
 # release CoreCLR depends on the actual run target.
+# - copy xUnit libraries
 
 # this is the execution environment from which all managed code is run
 APP_BASE=exec_env/app_base
 
-internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS)
-	rm -rf exec_env
+.PHONY: $(APP_BASE)
+$(APP_BASE): runps.sh $(POWERSHELL_RUN_TARGETS)
+	rm -rf $@
 	mkdir -p $(APP_BASE)/Modules
 	cp $(ADMIN_GIT_ROOT)/monad/miscfiles/display/*.ps1xml $(APP_BASE)
 	cp $(ADMIN_GIT_ROOT)/monad/miscfiles/types/CoreClr/*.ps1xml $(APP_BASE)
@@ -166,32 +166,36 @@ internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS)
 	cp -r $(MONAD_EXT)/xunit/xunit* $(APP_BASE)
 	cp runps*.sh $(APP_BASE)
 
-internal-prepare-clr:
-	mkdir -p exec_env/coreclr
-	cp -r $(CORECLR_ASSEMBLY_BASE)/* exec_env/coreclr/
+CORECLR=exec_env/coreclr
+$(CORECLR):
+	rm -rf $@
+	mkdir -p $@
+	cp -r $(CORECLR_ASSEMBLY_BASE)/* $@
 
-run: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
+prepare: $(APP_BASE) $(CORECLR)
+
+run: $(RUN_TARGETS) prepare
 	# execute a cmdlet, this will auto-load the utility module and print a, b and c in 3 lines
 	$(APP_BASE)/runps-simple.sh '"a","b","c","a","a" | Select-Object -Unique'
 
-shell: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
+shell: $(RUN_TARGETS) prepare
 	$(APP_BASE)/runps.sh
 
 run-interactive: shell
 
-run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
+run-file: $(RUN_TARGETS) prepare
 	$(APP_BASE)/runps.sh --file $(PSSCRIPT)
 
 # easy way to run individual PowerShell scripts, `make script.ps1` where the path is relative to monad-linux/scripts (with TEMP set for Pester)
-%.ps1: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
+%.ps1: $(RUN_TARGETS) prepare
 	TEMP=/tmp $(APP_BASE)/runps.sh --file $(MONAD)/scripts/$@
 
 # compiles "Hello World" like executables using .NET Core
-%.exe: %.cs internal-prepare-clr buildtemp
+%.exe: %.cs $(CORECLR) buildtemp
 	$(CSC) -out:$@ $(CSCOPTS_BASE) -target:exe $(COREREF) $<
-	@echo run with monad-tty ./exec_env/coreclr/corerun ./$@
+	@echo run with monad-tty ./$(CORECLR)/corerun ./$@
 
-run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
+run-debugclr: $(RUN_TARGETS) prepare
 	PAL_DBG_CHANNELS="+LOADER.TRACE" $(APP_BASE)/runps-simple.sh get-location
 
 # xUnit tests for PowerShell - results in xunit-tests.xml
@@ -203,25 +207,25 @@ TEST_TARGETS=System.Management.Automation.dll Microsoft.PowerShell.Commands.Mana
 dotnetlibs/ps_test.dll: $(TEST_SRCS) $(addprefix dotnetlibs/, $(TEST_TARGETS)) buildtemp
 	$(CSC) $(CSCOPTS_LIB) -out:$@ $(addprefix -r:$(MONAD_EXT)/xunit/, xunit.core.dll xunit.assert.dll) $(addprefix -r:dotnetlibs/, $(TEST_TARGETS)) $(COREREF) $(TEST_SRCS)
 
-xunit-tests: dotnetlibs/ps_test.dll $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
+xunit-tests: dotnetlibs/ps_test.dll $(RUN_TARGETS) prepare
 	$(APP_BASE)/runps-test.sh ps_test.dll -xml $(MONAD)/scripts/xunit-tests.xml
 
 # Pester tests for PowerShell - results in pester-tests.xml
 # see https://github.com/pester/Pester
 # requires $TEMP to be set
-pester-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
+pester-tests: $(RUN_TARGETS) prepare
 	$(APP_BASE)/runps-simple.sh 'cd $(MONAD)/src/pester-tests; $$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/scripts/pester-tests.xml -OutputFormat NUnitXml'
 
-hashbang-tests: all
-	# execute the 3rdparty/hashbang example
+# 3rdparty "hashbang" example using runps-file
+hashbang-tests: all prepare
 	PATH=$(PATH):$(MONAD)/scripts/$(APP_BASE) $(MONAD)/scripts/3rdparty/hashbang/script.ps1
 
 test: native-tests xunit-tests pester-tests hashbang-tests
 
-trace: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
+trace: $(RUN_TARGETS) prepare
 	$(APP_BASE)/runps-simple-trace.sh get-location
 
-debug: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
+debug: $(RUN_TARGETS) prepare
 	# quoting here is a bit special if strings are passed in, because lldb seems to forward arguments strangely
 	$(APP_BASE)/runps-simple-debug.sh get-location
 
