@@ -16,3 +16,7 @@
 [submodule "src/monad-omi-provider"]
 	path = src/monad-omi-provider
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-omi-provider
+[submodule "src/omi"]
+	path = src/omi
+	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/omi
+	branch = OMI-Shell/OMI-PSRP-Support
