@@ -1,10 +1,8 @@
-.PHONY: all
-
-# this should go away and be automatically generated
-include assembly-load-context.mk
+# the monad-linux superproject
+MONAD=$(realpath $(CURDIR)/..)
 
 # main references to the CoreCLR reference assemblies
-MONAD_EXT=../src/monad-ext
+MONAD_EXT=$(MONAD)/src/monad-ext
 TARGETING_PACK=$(MONAD_EXT)/coreclr/TargetingPack
 COREREF=$(addprefix -r:, $(shell ls $(TARGETING_PACK)/*.dll))
 CORECLR_ASSEMBLY_BASE=$(MONAD_EXT)/coreclr/Runtime
@@ -13,7 +11,7 @@ CORECLR_ASSEMBLY_BASE=$(MONAD_EXT)/coreclr/Runtime
 include powershell-run.mk
 
 # this variable is needed by module specific include makefiles below
-ADMIN_GIT_ROOT=../src/monad
+ADMIN_GIT_ROOT=$(MONAD)/src/monad
 
 # these are automatically generated from the PowerShell build sytem
 # - System.Management.Automation.dll (the main PS dll)
@@ -25,6 +23,10 @@ include commands-utility.mk
 include management-infrastructure.mk
 include security.mk
 
+# this should go away and be automatically generated
+include assembly-load-context.mk
+
+# reference sets for the PowerShell assemblies
 MI_NATIVE_REF=-r:dotnetlibs/Microsoft.Management.Infrastructure.Native.dll
 MI_REF_ASSEMBLY=-r:$(MONAD_EXT)/PS/PS_refs_modil/microsoft.management.infrastructure.metadata_dll
 MI_ASSEMBLY=dotnetlibs/Microsoft.Management.Infrastructure.dll
@@ -46,14 +48,15 @@ CSCOPTS_LIB_PS=$(CSCOPTS_LIB) -unsafe -define:CORECLR -define:_CORECLR /nowarn:C
 
 RUN_TARGETS=$(POWERSHELL_RUN_TARGETS) $(addprefix dotnetlibs/, Microsoft.PowerShell.Commands.Management.dll Microsoft.PowerShell.Commands.Utility.dll Microsoft.PowerShell.Security.dll api-ms-win-core-registry-l1-1-0.dll host_cmdline)
 
+.PHONY: all
 all: dotnetlibs/System.Management.Automation.dll $(RUN_TARGETS) dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET)
 
 # this is the build rule for SMA.dll
-dotnetlibs/System.Management.Automation.dll: ../src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/Microsoft.Management.Infrastructure.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(SYS_AUTO_SRCS) $(SYS_AUTO_RES_SRCS) $(SYS_AUTO_RES_CS_SRCS) buildtemp
+dotnetlibs/System.Management.Automation.dll: $(MONAD)/src/assembly-info/System.Management.Automation.assembly-info.cs dotnetlibs/Microsoft.Management.Infrastructure.dll dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET) $(SYS_AUTO_SRCS) $(SYS_AUTO_RES_SRCS) $(SYS_AUTO_RES_CS_SRCS) buildtemp
 	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_PS_REFS) $(SYS_AUTO_SRCS) $(SYS_AUTO_RES_REF) $(SYS_AUTO_RES_CS_SRCS) $<
 
 # this is the build rule for MMI.dll
-dotnetlibs/Microsoft.Management.Infrastructure.dll: ../src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs dotnetlibs/Microsoft.Management.Infrastructure.Native.dll $(MAN_INFRA_SRCS) $(MAN_INFRA_RES_SRCS) $(MAN_INFRA_RES_CS_SRCS) buildtemp
+dotnetlibs/Microsoft.Management.Infrastructure.dll: $(MONAD)/src/assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs dotnetlibs/Microsoft.Management.Infrastructure.Native.dll $(MAN_INFRA_SRCS) $(MAN_INFRA_RES_SRCS) $(MAN_INFRA_RES_CS_SRCS) buildtemp
 	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(PRODUCT_MI_REFS) $(MAN_INFRA_SRCS) $(MAN_INFRA_RES_CS_SRCS)  $(MAN_INFRA_RES_REF) $<
 
 # Commands
@@ -73,7 +76,7 @@ dotnetlibs/$(ASSEMBLY_LOAD_CONTEXT_TARGET): $(ASSEMBLY_LOAD_CONTEXT_SRCS) buildt
 	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(COREREF) $(ASSEMBLY_LOAD_CONTEXT_SRCS)
 
 # this one is built from stubs
-MI_STUBS=../src/stubs/Microsoft.Management.Infrastructure.Native-stub.cs ../src/stubs/Microsoft.Management.Infrastructure.Native-stub-assembly-info.cs
+MI_STUBS=$(MONAD)/src/stubs/Microsoft.Management.Infrastructure.Native-stub.cs $(MONAD)/src/stubs/Microsoft.Management.Infrastructure.Native-stub-assembly-info.cs
 dotnetlibs/Microsoft.Management.Infrastructure.Native.dll: $(MI_STUBS) buildtemp
 	$(CSC) -out:$@ $(CSCOPTS_LIB_PS) $(COREREF) $(MI_STUBS)
 
@@ -81,7 +84,7 @@ dotnetlibs/Microsoft.Management.Infrastructure.Native.dll: $(MI_STUBS) buildtemp
 MPATH=/usr/lib/mono/4.5/Facades
 REFLECTION_METADATA=buildtemp/System.Reflection.Metadata.1.0.22/lib/dotnet/System.Reflection.Metadata.dll
 COLLECTIONS_IMMUTABLE=buildtemp/System.Collections.Immutable.1.1.37/lib/dotnet/System.Collections.Immutable.dll
-buildtemp/TypeCatalogGen.exe: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/TypeCatalogGen/TypeCatalogGen.cs $(REFLECTION_METADATA) $(COLLECTIONS_IMMUTABLE) buildtemp
+buildtemp/TypeCatalogGen.exe: $(ADMIN_GIT_ROOT)/monad/nttargets/assemblies/core/PSAssemblyLoadContext/TypeCatalogGen/TypeCatalogGen.cs $(REFLECTION_METADATA) $(COLLECTIONS_IMMUTABLE) buildtemp
 	$(MCS) -out:$@ -target:exe -pkg:dotnet $(addprefix -r:, $(REFLECTION_METADATA) $(COLLECTIONS_IMMUTABLE) $(MPATH)/System.Runtime.dll $(MPATH)/System.Reflection.Primitives.dll $(MPATH)/System.IO.dll) $<
 
 # this generates the necessary file of CoreCLR references that is an artifact of the Windows build process
@@ -96,18 +99,19 @@ powershell.inc:
 	@echo '$(PROFILE_REFERENCES)' >> $@
 
 # generate the Core PS type catalog
-# this comes from: ../src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/makefile.inc
+# this comes from: $(MONAD)/src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/makefile.inc
 CorePsTypeCatalog.cs: powershell.inc buildtemp/TypeCatalogGen.exe
 	MONO_PATH=$(dir $(REFLECTION_METADATA)):$(dir $(COLLECTIONS_IMMUTABLE)) mono buildtemp/TypeCatalogGen.exe $< $@ $(MONAD_EXT)/coreclr/TargetingPack
 
 # the native library, libps.so
+MONAD_NATIVE=$(MONAD)/src/monad-native/src
 LIBPS_BUILD=libps
-$(LIBPS_BUILD)/Makefile: ../src/monad-native/src/CMakeLists.txt
+$(LIBPS_BUILD)/Makefile: $(MONAD_NATIVE)/CMakeLists.txt
 	# cached files can change the path to be incorrect, this must be cleaned
-	rm -f ../src/monad-native/src/CMakeCache.txt
-	rm -f ../src/monad-native/src/cmake_install.cmake 
+	rm -f $(MONAD_NATIVE)/CMakeCache.txt
+	rm -f $(MONAD_NATIVE)/cmake_install.cmake
 	mkdir -p $(LIBPS_BUILD)
-	cd $(LIBPS_BUILD) && cmake ../../src/monad-native/src/
+	cd $(LIBPS_BUILD) && cmake $(MONAD_NATIVE)
 
 NATIVE_BINARIES=libps.so monad_native host_cmdline
 $(addprefix dotnetlibs/, $(NATIVE_BINARIES)): $(LIBPS_BUILD)/Makefile
@@ -117,13 +121,13 @@ $(addprefix dotnetlibs/, $(NATIVE_BINARIES)): $(LIBPS_BUILD)/Makefile
 # C++ tests for monad-native - results in native-tests.xml
 # see https://github.com/google/googletest
 native-tests: dotnetlibs/monad_native
-	cd dotnetlibs && ./monad_native --gtest_output="xml:../native-tests.xml"
+	cd dotnetlibs && ./monad_native --gtest_output="xml:$(MONAD)/scripts/native-tests.xml"
 
 # this is a windows dll that is needed because CoreCLR tries to access
 # registry functions that don't exist on Linux and there is no other good
 # way of fixing this right now
 # (TODO linux: this should be removed by addressing it in CoreCLR)
-dotnetlibs/api-ms-win-core-registry-l1-1-0.dll: ../src/win-dll/lib-api-ms-win-core-registry-l1-1-0.c dotnetlibs
+dotnetlibs/api-ms-win-core-registry-l1-1-0.dll: $(MONAD)/src/win-dll/lib-api-ms-win-core-registry-l1-1-0.c dotnetlibs
 	gcc -o $@ -fPIC -shared -Wall $<
 
 nuget.exe:
@@ -151,14 +155,14 @@ APP_BASE=exec_env/app_base
 internal-prepare-exec_env: runps.sh $(POWERSHELL_RUN_TARGETS)
 	rm -rf exec_env
 	mkdir -p $(APP_BASE)/Modules
-	cp ../src/monad/monad/miscfiles/display/*.ps1xml $(APP_BASE)
-	cp ../src/monad/monad/miscfiles/types/CoreClr/*.ps1xml $(APP_BASE)
-	cp -r ../src/monad/monad/miscfiles/modules/* $(APP_BASE)/Modules
+	cp $(ADMIN_GIT_ROOT)/monad/miscfiles/display/*.ps1xml $(APP_BASE)
+	cp $(ADMIN_GIT_ROOT)/monad/miscfiles/types/CoreClr/*.ps1xml $(APP_BASE)
+	cp -r $(ADMIN_GIT_ROOT)/monad/miscfiles/modules/* $(APP_BASE)/Modules
 	cp -r dotnetlibs/*.dll $(APP_BASE)
 	cp -r dotnetlibs/*.exe $(APP_BASE)
 	cp -r dotnetlibs/*.so $(APP_BASE)
 	cp dotnetlibs/host_cmdline $(APP_BASE)
-	cp -r ../ext-src/pester $(APP_BASE)/Modules/Pester
+	cp -r $(MONAD)/ext-src/pester $(APP_BASE)/Modules/Pester
 	cp -r $(MONAD_EXT)/xunit/xunit* $(APP_BASE)
 	cp runps*.sh $(APP_BASE)
 
@@ -180,7 +184,7 @@ run-file: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 
 # easy way to run individual PowerShell scripts, `make script.ps1` where the path is relative to monad-linux/scripts (with TEMP set for Pester)
 %.ps1: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
-	TEMP=/tmp $(APP_BASE)/runps.sh --file ../../$@
+	TEMP=/tmp $(APP_BASE)/runps.sh --file $(MONAD)/scripts/$@
 
 # compiles "Hello World" like executables using .NET Core
 %.exe: %.cs internal-prepare-clr buildtemp
@@ -192,7 +196,7 @@ run-debugclr: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
 
 # xUnit tests for PowerShell - results in xunit-tests.xml
 # see https://xunit.github.io/
-TEST_FOLDER=../src/ps_test
+TEST_FOLDER=$(MONAD)/src/ps_test
 TEST_SRCS=$(addprefix $(TEST_FOLDER)/, test_*.cs)
 TEST_TARGETS=System.Management.Automation.dll Microsoft.PowerShell.Commands.Management.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET)
 
@@ -200,17 +204,17 @@ dotnetlibs/ps_test.dll: $(TEST_SRCS) $(addprefix dotnetlibs/, $(TEST_TARGETS)) b
 	$(CSC) $(CSCOPTS_LIB) -out:$@ $(addprefix -r:$(MONAD_EXT)/xunit/, xunit.core.dll xunit.assert.dll) $(addprefix -r:dotnetlibs/, $(TEST_TARGETS)) $(COREREF) $(TEST_SRCS)
 
 xunit-tests: dotnetlibs/ps_test.dll $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
-	$(APP_BASE)/runps-test.sh ps_test.dll -xml ../../xunit-tests.xml
+	$(APP_BASE)/runps-test.sh ps_test.dll -xml $(MONAD)/scripts/xunit-tests.xml
 
 # Pester tests for PowerShell - results in pester-tests.xml
 # see https://github.com/pester/Pester
 # requires $TEMP to be set
 pester-tests: $(RUN_TARGETS) internal-prepare-exec_env internal-prepare-clr
-	$(APP_BASE)/runps-simple.sh 'cd ../../../src/pester-tests; $$env:TEMP="/tmp"; invoke-pester -OutputFile ../../scripts/pester-tests.xml -OutputFormat NUnitXml'
+	$(APP_BASE)/runps-simple.sh 'cd $(MONAD)/src/pester-tests; $$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/scripts/pester-tests.xml -OutputFormat NUnitXml'
 
 hashbang-tests: all
 	# execute the 3rdparty/hashbang example
-	PATH=$(PATH):$(shell pwd)/$(APP_BASE) $(shell pwd)/3rdparty/hashbang/script.ps1
+	PATH=$(PATH):$(MONAD)/scripts/$(APP_BASE) $(MONAD)/scripts/3rdparty/hashbang/script.ps1
 
 test: native-tests xunit-tests pester-tests hashbang-tests
 
