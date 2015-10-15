@@ -15,16 +15,29 @@ git config --global user.email "alias@microsoft.com"
 
 I highly recommend these configurations to help deal with whitespace, rebasing, and general use of Git.
 
+> Auto-corrects your command when it's sure (`stats` to `status`)
 ```sh
-git config --global am.threeWay true
-git config --global apply.ignoreWhitespace change
 git config --global help.autoCorrect -1
-git config --global log.abbrevCommit true
-git config --global log.decorate short
+```
+
+> Refuses to merge when pulling, and only pushes to branch with same name.
+```sh
 git config --global pull.ff only
 git config --global push.default current
+```
+
+> Shows shorter commit hashes and always shows reference names in the log.
+```sh
+git config --global log.abbrevCommit true
+git config --global log.decorate short
+```
+
+> Ignores whitespace changes and uses more information when merging.
+```sh
+git config --global apply.ignoreWhitespace change
 git config --global rerere.enabled true
 git config --global rerere.autoUpdate true
+git config --global am.threeWay true
 ```
 
 [Git]: https://git-scm.com/documentation
@@ -69,7 +82,7 @@ The Docker container can be updated with `docker pull andschwa/magrathea`, which
 
 This container isolates all our build dependencies, including Ubuntu 14.04 and Mono. See the [Dockerfile][] to look under the hood.
 
-The `build.sh` script is a wrapper that starts a temporary container with `monad-linux` mounted and runs the arguments given to the script as your current user, but inside the container. The build artifacts will exist in your local folder and be owned by your user, essentially making the use of the container invisible. The `build-tty.sh` allocates a shell for the container, and so allows you to launch Bash or an interactive PowerShell session.
+The `monad-docker.sh` script has two Bash functions, `monad-run` and `monad-tty`, which are wrappers that start a temporary container with `monad-linux` mounted and runs the arguments given to the script as your current user, but inside the container. The build artifacts will exist in your local folder and be owned by your user, essentially making the use of the container invisible. The `monad-tty` version also allocates a shell for the container, and so allows you to launch Bash or an interactive PowerShell session. Since these are Bash functions, it is simplest to source the `monad-docker.sh` script directly in your `~/.bashrc`, but the `./build.sh` script will also source it and delegate to `monad-run`.
 
 [Docker group]: https://docs.docker.com/installation/ubuntulinux/#create-a-docker-group
 [installation documentation]: https://docs.docker.com/installation/ubuntulinux/
@@ -80,14 +93,15 @@ The `build.sh` script is a wrapper that starts a temporary container with `monad
 
 ## Building
 
-1. `cd scripts` since it contains the `Makefile` and `build.sh`
-2. `./build.sh make all` will build PowerShell for Linux
-3. `./build.sh make run` will build and execute a demo, `"a","b","c","a","a" | Select-Object -Unique`
-4. `./build-tty.sh make run-interactive` will open an interactive PowerShell console
-5. `./build.tty make test` will execute the unit tests
-6. `make clean` will remove the built objects
+1. `cd scripts` since it contains the `Makefile` and `monad-run.sh`
+2. `source monad-docker.sh` to get the `monad-run` and `monad-tty` Bash functions
+2. `monad-run make -j` will build PowerShell for Linux, in parallel with `-j`
+3. `monad-run make -j run` will build and execute a demo, `"a","b","c","a","a" | Select-Object -Unique`
+4. `monad-run make -j test` will build PowerShell and execute the unit tests
+5. `monad-tty make shell` will open an interactive PowerShell console (note the `tty`)
+6. `make clean` will remove the PowerShell and CoreCLR execution environment `exec_env`
 7. `make clean-native` will remove `libps`
-8. `make cleanall` will also remove the Nuget packages
+8. `make cleanall` will do the above and also remove the NuGet packages in `buildtemp`
 
 ## Adding Pester tests
 
