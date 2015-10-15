@@ -143,9 +143,6 @@ buildtemp: nuget.exe
 # - copy all the PowerShell stuff into PowerShell's app_base
 # - copy the custom host and other scripts into PowerShell's app_base
 # - copy PS modules
-#
-# This rule does not copy coreclr, because the selection of debug or
-# release CoreCLR depends on the actual run target.
 # - copy xUnit libraries
 
 # this is the execution environment from which all managed code is run
@@ -195,9 +192,6 @@ run-file: $(RUN_TARGETS) prepare
 	$(CSC) -out:$@ $(CSCOPTS_BASE) -target:exe $(COREREF) $<
 	@echo run with monad-tty ./$(CORECLR)/corerun ./$@
 
-run-debugclr: $(RUN_TARGETS) prepare
-	PAL_DBG_CHANNELS="+LOADER.TRACE" $(APP_BASE)/runps-simple.sh get-location
-
 # xUnit tests for PowerShell - results in xunit-tests.xml
 # see https://xunit.github.io/
 TEST_FOLDER=$(MONAD)/src/ps_test
@@ -222,23 +216,32 @@ hashbang-tests: all prepare
 
 test: native-tests xunit-tests pester-tests hashbang-tests
 
+# debug/trace targets
+
 trace: $(RUN_TARGETS) prepare
 	$(APP_BASE)/runps-simple-trace.sh get-location
 
+run-debugclr: $(RUN_TARGETS) prepare
+	PAL_DBG_CHANNELS="+LOADER.TRACE" $(APP_BASE)/runps-simple.sh get-location
+
+# quoting here is a bit special if strings are passed in, because lldb
+# seems to forward arguments strangely
 debug: $(RUN_TARGETS) prepare
-	# quoting here is a bit special if strings are passed in, because lldb seems to forward arguments strangely
 	$(APP_BASE)/runps-simple-debug.sh get-location
 
-# clean native library, libps
+# Cleaning
+.PHONY: clean-native clean cleanall
+
 clean-native:
 	rm -rf $(LIBPS_BUILD)
 
 clean:
 	rm -rf dotnetlibs/* exec_env powershell.inc *-tests.xml
 
-# clean built stuff + buildtemp step
 cleanall: clean clean-native
 	rm -rf buildtemp
+
+# Shell-in-a-box Docker setup
 
 docker-build:
 	docker build --no-cache=false -t image_ps .
