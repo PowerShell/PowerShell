@@ -21,7 +21,7 @@ monad-docker-run()
 	   --workdir /opt/scripts \
 	   $CONSOLE \
 	   andschwa/magrathea:latest \
-	   bash -c "$(monad-impersonate) -- bash -c '$*'"
+	   bash -c "$(monad-impersonate) bash -c '$*'"
 }
 
 # creates new user in container matching the local user so that
@@ -38,5 +38,5 @@ monad-impersonate()
     echo \
 	groupadd -g $CGID $CGROUP '&&' \
 	useradd -u $CUID -g $CGID -d /opt $CUSER '&&' \
-	sudo --set-home -u $CUSER -g $CGROUP
+	sudo --set-home -u $CUSER -g $CGROUP --
 }

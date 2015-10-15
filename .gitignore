@@ -1,11 +1,9 @@
 .idea
-.config/
-.local/
 CMakeCache.txt
 CMakeFiles/
-Makefile
-!scripts/Makefile
 cmake_install.cmake
-scripts/*-tests.xml
-scripts/powershell.inc
-.bash_history
+Makefile
+!/scripts/Makefile
+/.bash_history
+/.local/
+/.config/
