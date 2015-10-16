@@ -251,7 +251,7 @@ debug: $(RUN_TARGETS) prepare
 
 # Cleaning
 clean-provider:
-	$(MAKE) -j -C $(MONAD_PROVIDER) clean
+	-$(MAKE) -j -C $(MONAD_PROVIDER) clean
 
 clean-omi:
 	-$(MAKE) -j -C $(OMI) clean
@@ -262,13 +262,13 @@ distclean-omi:
 clean-psrp: clean-provider clean-omi
 
 clean-native:
-	rm -rf $(LIBPS_BUILD)
+	-rm -rf $(LIBPS_BUILD)
 
 clean:
-	rm -rf dotnetlibs/* exec_env powershell.inc *-tests.xml
+	-rm -rf dotnetlibs/* exec_env powershell.inc *-tests.xml
 
 distclean: clean clean-native distclean-omi clean-provider
-	rm -rf buildtemp
+	-rm -rf buildtemp
 
 cleanall: distclean
 
