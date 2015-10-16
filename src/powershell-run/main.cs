@@ -367,11 +367,11 @@ namespace Microsoft.Samples.PowerShell.Host
                 string prompt;
                 if (this.myHost.IsRunspacePushed)
                 {
-                    prompt = string.Format("\n[{0}] PSConsoleSample: ", this.myRunSpace.ConnectionInfo.ComputerName);
+                    prompt = string.Format("\n[{0}] PSL> ", this.myRunSpace.ConnectionInfo.ComputerName);
                 }
                 else
                 {
-                    prompt = "\nPSConsoleSample: ";
+                    prompt = "\nPSL> ";
                 }
 
                 this.myHost.UI.Write(ConsoleColor.White, ConsoleColor.Black, prompt);
