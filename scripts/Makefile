@@ -116,9 +116,11 @@ $(LIBPS_BUILD)/Makefile: $(MONAD_NATIVE)/CMakeLists.txt
 	cd $(LIBPS_BUILD) && cmake $(MONAD_NATIVE)
 
 NATIVE_BINARIES=libps.so monad_native host_cmdline
-$(addprefix dotnetlibs/, $(NATIVE_BINARIES)): $(LIBPS_BUILD)/Makefile
+$(addprefix dotnetlibs/, $(NATIVE_BINARIES)): monad-native
+
+monad-native: $(LIBPS_BUILD)/Makefile
 	$(MAKE) -j -C $(LIBPS_BUILD)
-	cp $(addprefix $(LIBPS_BUILD)/, $(notdir $@)) dotnetlibs
+	cp $(addprefix $(LIBPS_BUILD)/, $(NATIVE_BINARIES)) dotnetlibs
 
 # C++ tests for monad-native - results in native-tests.xml
 # see https://github.com/google/googletest
@@ -151,7 +153,7 @@ buildtemp: nuget.exe
 APP_BASE=exec_env/app_base
 
 .PHONY: $(APP_BASE)
-$(APP_BASE): runps.sh $(POWERSHELL_RUN_TARGETS)
+$(APP_BASE): runps.sh $(RUN_TARGETS)
 	rm -rf $@
 	mkdir -p $(APP_BASE)/Modules
 	cp $(ADMIN_GIT_ROOT)/monad/miscfiles/display/*.ps1xml $(APP_BASE)
