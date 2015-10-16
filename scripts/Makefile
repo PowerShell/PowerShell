@@ -84,6 +84,8 @@ dotnetlibs/Microsoft.Management.Infrastructure.Native.dll: $(MI_STUBS) buildtemp
 MPATH=/usr/lib/mono/4.5/Facades
 REFLECTION_METADATA=buildtemp/System.Reflection.Metadata.1.0.22/lib/dotnet/System.Reflection.Metadata.dll
 COLLECTIONS_IMMUTABLE=buildtemp/System.Collections.Immutable.1.1.37/lib/dotnet/System.Collections.Immutable.dll
+$(REFLECTION_METADATA): buildtemp
+$(COLLECTIONS_IMMUTABLE): buildtemp
 buildtemp/TypeCatalogGen.exe: $(ADMIN_GIT_ROOT)/monad/nttargets/assemblies/core/PSAssemblyLoadContext/TypeCatalogGen/TypeCatalogGen.cs $(REFLECTION_METADATA) $(COLLECTIONS_IMMUTABLE) buildtemp
 	$(MCS) -out:$@ -target:exe -pkg:dotnet $(addprefix -r:, $(REFLECTION_METADATA) $(COLLECTIONS_IMMUTABLE) $(MPATH)/System.Runtime.dll $(MPATH)/System.Reflection.Primitives.dll $(MPATH)/System.IO.dll) $<
 
