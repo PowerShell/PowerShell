@@ -250,7 +250,16 @@ debug: $(RUN_TARGETS) prepare
 	$(APP_BASE)/runps-simple-debug.sh get-location
 
 # Cleaning
-.PHONY: clean-native clean cleanall
+clean-provider:
+	$(MAKE) -j -C $(MONAD_PROVIDER) clean
+
+clean-omi:
+	-$(MAKE) -j -C $(OMI) clean
+
+distclean-omi:
+	-$(MAKE) -j -C $(OMI) distclean
+
+clean-psrp: clean-provider clean-omi
 
 clean-native:
 	rm -rf $(LIBPS_BUILD)
@@ -258,8 +267,10 @@ clean-native:
 clean:
 	rm -rf dotnetlibs/* exec_env powershell.inc *-tests.xml
 
-cleanall: clean clean-native
+distclean: clean clean-native distclean-omi clean-provider
 	rm -rf buildtemp
+
+cleanall: distclean
 
 # Shell-in-a-box Docker setup
 
