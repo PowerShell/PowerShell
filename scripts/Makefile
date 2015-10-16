@@ -224,6 +224,26 @@ trace: $(RUN_TARGETS) prepare
 run-debugclr: $(RUN_TARGETS) prepare
 	PAL_DBG_CHANNELS="+LOADER.TRACE" $(APP_BASE)/runps-simple.sh get-location
 
+# OMI
+OMI=$(MONAD)/src/omi/Unix/
+OMI_FLAGS=--dev --enable-debug
+$(OMI)/GNUmakefile:
+	cd $(OMI) && ./configure $(OMI_FLAGS)
+
+$(OMI)/output: $(OMI)/GNUmakefile
+	$(MAKE) -j -C $(OMI)
+
+omi: $(OMI)/output
+
+MONAD_PROVIDER=$(MONAD)/src/monad-omi-provider
+$(OMI)/output/lib/libTestShell.so: omi
+	$(MAKE) -j -C $(MONAD_PROVIDER)
+
+psrp: $(OMI)/output/lib/libTestShell.so
+
+psrp-tests: omi
+	$(MAKE) -C $(OMI) tests
+
 # quoting here is a bit special if strings are passed in, because lldb
 # seems to forward arguments strangely
 debug: $(RUN_TARGETS) prepare
