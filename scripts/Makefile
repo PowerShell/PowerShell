@@ -225,15 +225,15 @@ run-debugclr: $(RUN_TARGETS) prepare
 	PAL_DBG_CHANNELS="+LOADER.TRACE" $(APP_BASE)/runps-simple.sh get-location
 
 # OMI
-OMI=$(MONAD)/src/omi/Unix/
+OMI=$(MONAD)/src/omi/Unix
 OMI_FLAGS=--dev --enable-debug
 $(OMI)/GNUmakefile:
 	cd $(OMI) && ./configure $(OMI_FLAGS)
 
-$(OMI)/output: $(OMI)/GNUmakefile
+$(OMI)/output/bin/omiserver: $(OMI)/GNUmakefile
 	$(MAKE) -j -C $(OMI)
 
-omi: $(OMI)/output
+omi: $(OMI)/output/bin/omiserver
 
 MONAD_PROVIDER=$(MONAD)/src/monad-omi-provider
 $(OMI)/output/lib/libTestShell.so: omi
