@@ -322,7 +322,6 @@ namespace Microsoft.Samples.PowerShell.Host
         /// ConsoleCancelEventHandler.</param>
         private void HandleControlC(object sender, ConsoleCancelEventArgs e)
         {
-            Console.WriteLine("HandleControlC");
             try
             {
                 lock (this.instanceLock)
