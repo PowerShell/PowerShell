@@ -218,7 +218,7 @@ pester-tests: $(RUN_TARGETS) prepare
 hashbang-tests: all prepare
 	PATH=$(PATH):$(MONAD)/scripts/$(APP_BASE) $(MONAD)/scripts/3rdparty/hashbang/script.ps1
 
-test: native-tests xunit-tests pester-tests hashbang-tests
+test: native-tests xunit-tests pester-tests hashbang-tests psrp-tests
 
 # debug/trace targets
 
@@ -228,22 +228,53 @@ trace: $(RUN_TARGETS) prepare
 run-debugclr: $(RUN_TARGETS) prepare
 	PAL_DBG_CHANNELS="+LOADER.TRACE" $(APP_BASE)/runps-simple.sh get-location
 
+# OMI
+OMI=$(MONAD)/src/omi/Unix
+OMI_FLAGS=--dev --enable-debug
+$(OMI)/GNUmakefile:
+	cd $(OMI) && ./configure $(OMI_FLAGS)
+
+$(OMI)/output/bin/omiserver: $(OMI)/GNUmakefile
+	$(MAKE) -j -C $(OMI)
+
+omi: $(OMI)/output/bin/omiserver
+
+MONAD_PROVIDER=$(MONAD)/src/monad-omi-provider
+$(OMI)/output/lib/libTestShell.so: omi
+	$(MAKE) -j -C $(MONAD_PROVIDER)
+
+psrp: $(OMI)/output/lib/libTestShell.so
+
+psrp-tests: omi
+	$(MAKE) -C $(OMI) tests
+
 # quoting here is a bit special if strings are passed in, because lldb
 # seems to forward arguments strangely
 debug: $(RUN_TARGETS) prepare
 	$(APP_BASE)/runps-simple-debug.sh get-location
 
 # Cleaning
-.PHONY: clean-native clean cleanall
+clean-provider:
+	-$(MAKE) -j -C $(MONAD_PROVIDER) clean
+
+clean-omi:
+	-$(MAKE) -j -C $(OMI) clean
+
+distclean-omi:
+	-$(MAKE) -j -C $(OMI) distclean
+
+clean-psrp: clean-provider clean-omi
 
 clean-native:
-	rm -rf $(LIBPS_BUILD)
+	-rm -rf $(LIBPS_BUILD)
 
 clean:
-	rm -rf dotnetlibs/* exec_env powershell.inc *-tests.xml
+	-rm -rf dotnetlibs/* exec_env powershell.inc *-tests.xml
 
-cleanall: clean clean-native
-	rm -rf buildtemp
+distclean: clean clean-native distclean-omi clean-provider
+	-rm -rf buildtemp
+
+cleanall: distclean
 
 # Shell-in-a-box Docker setup
 
