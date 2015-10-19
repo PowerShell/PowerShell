@@ -214,7 +214,7 @@ pester-tests: $(RUN_TARGETS) prepare
 hashbang-tests: all prepare
 	PATH=$(PATH):$(MONAD)/scripts/$(APP_BASE) $(MONAD)/scripts/3rdparty/hashbang/script.ps1
 
-test: native-tests xunit-tests pester-tests hashbang-tests
+test: native-tests xunit-tests pester-tests hashbang-tests psrp-tests
 
 # debug/trace targets
 
