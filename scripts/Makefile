@@ -218,7 +218,7 @@ pester-tests: $(RUN_TARGETS) prepare
 hashbang-tests: all prepare
 	PATH=$(PATH):$(MONAD)/scripts/$(APP_BASE) $(MONAD)/scripts/3rdparty/hashbang/script.ps1
 
-test: native-tests xunit-tests pester-tests hashbang-tests psrp-tests
+test: psrp-tests native-tests xunit-tests pester-tests hashbang-tests
 
 # debug/trace targets
 
@@ -234,19 +234,24 @@ OMI_FLAGS=--dev --enable-debug
 $(OMI)/GNUmakefile:
 	cd $(OMI) && ./configure $(OMI_FLAGS)
 
-$(OMI)/output/bin/omiserver: $(OMI)/GNUmakefile
+OMISERVER=$(OMI)/output/bin/omiserver
+$(OMISERVER): $(OMI)/GNUmakefile
 	$(MAKE) -j -C $(OMI)
 
-omi: $(OMI)/output/bin/omiserver
+omi: $(OMISERVER)
 
 MONAD_PROVIDER=$(MONAD)/src/monad-omi-provider
-$(OMI)/output/lib/libTestShell.so: omi
+PSRP_OMI_PROVIDER=$(OMI)/output/lib/libTestShell.so
+$(PSRP_OMI_PROVIDER): $(OMISERVER)
 	$(MAKE) -j -C $(MONAD_PROVIDER)
 
-psrp: $(OMI)/output/lib/libTestShell.so
+psrp: $(PSRP_OMI_PROVIDER)
 
-psrp-tests: omi
+psrp-tests: $(OMISERVER)
 	$(MAKE) -C $(OMI) tests
+
+# phony targets so that the recursive make is always invoked
+.PHONY: $(OMISERVER) $(PSRP_OMI_PROVIDER)
 
 # quoting here is a bit special if strings are passed in, because lldb
 # seems to forward arguments strangely
