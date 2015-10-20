@@ -161,8 +161,6 @@ namespace Microsoft.Samples.PowerShell.Host
                 executeHelper(initialScript,null);
         }
 
-        private string _prompt;
-
         /// Sets the prompt equal to the output of the prompt function
         public string Prompt(Runspace rs)
         {
