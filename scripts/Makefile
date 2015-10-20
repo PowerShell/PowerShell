@@ -218,7 +218,7 @@ pester-tests: $(RUN_TARGETS) prepare
 
 # 3rdparty "hashbang" example using runps-file
 hashbang-tests: all prepare
-	PATH=$(PATH):$(MONAD)/scripts/$(APP_BASE) $(MONAD)/scripts/3rdparty/hashbang/script.ps1
+	PATH=$(PATH):$(APP_BASE) $(MONAD)/scripts/3rdparty/hashbang/script.ps1
 
 test: psrp-tests native-tests xunit-tests pester-tests hashbang-tests
 
