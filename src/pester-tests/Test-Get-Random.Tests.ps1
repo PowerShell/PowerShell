@@ -10,7 +10,7 @@
     It "Should return a random number less than 100 and greater than -100 " {
         $randomNumber = Get-Random -Minimum -100 -Maximum 100
         $randomNumber | Should BeLessThan 100
-        $randomNumber | Should BeGreaterThan -100 
+        $randomNumber | Should BeGreaterThan -101 
     }
 
     It "Should return a random number less than 20.93 and greater than 10.7 " {
