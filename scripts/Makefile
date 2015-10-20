@@ -150,7 +150,7 @@ buildtemp: nuget.exe
 # - copy xUnit libraries
 
 # this is the execution environment from which all managed code is run
-APP_BASE=exec_env/app_base
+APP_BASE=$(MONAD)/scripts/exec_env/app_base
 
 .PHONY: $(APP_BASE)
 $(APP_BASE): runps.sh $(RUN_TARGETS)
@@ -187,9 +187,10 @@ run-interactive: shell
 run-file: $(RUN_TARGETS) prepare
 	$(APP_BASE)/runps.sh --file $(PSSCRIPT)
 
-# easy way to run individual PowerShell scripts, `make script.ps1` where the path is relative to monad-linux/scripts (with TEMP set for Pester)
+# easy way to run individual Pester test scripts, `make ../src/pester-tests/Test-Import-Csv.Tests.ps1`
+# where the path is relative to monad-linux/scripts (with TEMP set for Pester)
 %.ps1: $(RUN_TARGETS) prepare
-	TEMP=/tmp $(APP_BASE)/runps.sh --file $(MONAD)/scripts/$@
+	TEMP=/tmp $(APP_BASE)/runps-simple.sh 'cd $(PESTER); & $(MONAD)/scripts/$@'
 
 # compiles "Hello World" like executables using .NET Core
 %.exe: %.cs $(CORECLR) buildtemp
@@ -211,8 +212,9 @@ xunit-tests: dotnetlibs/ps_test.dll $(RUN_TARGETS) prepare
 # Pester tests for PowerShell - results in pester-tests.xml
 # see https://github.com/pester/Pester
 # requires $TEMP to be set
+PESTER=$(MONAD)/src/pester-tests
 pester-tests: $(RUN_TARGETS) prepare
-	$(APP_BASE)/runps-simple.sh 'cd $(MONAD)/src/pester-tests; $$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/scripts/pester-tests.xml -OutputFormat NUnitXml'
+	$(APP_BASE)/runps-simple.sh 'cd $(PESTER); $$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/scripts/pester-tests.xml -OutputFormat NUnitXml'
 
 # 3rdparty "hashbang" example using runps-file
 hashbang-tests: all prepare
