@@ -161,6 +161,23 @@ namespace Microsoft.Samples.PowerShell.Host
                 executeHelper(initialScript,null);
         }
 
+        /// Sets the prompt equal to the output of the prompt function
+        public string Prompt(Runspace rs)
+        {
+            string returnVal      = string.Empty;
+            Pipeline pipeline     = rs.CreatePipeline();
+            Command promptCommand = new Command("prompt");
+
+            pipeline.Commands.Add(promptCommand);
+
+            Collection<PSObject> output = pipeline.Invoke();
+            foreach (PSObject item in output)
+            {
+                returnVal = item.BaseObject.ToString();
+            }
+
+            return returnVal;
+        }
         /// <summary>
         /// A helper class that builds and executes a pipeline that writes 
         /// to the default output path. Any exceptions that are thrown are 
@@ -362,7 +379,7 @@ namespace Microsoft.Samples.PowerShell.Host
                 }
                 else
                 {
-                    prompt = "\nPSL> ";
+                    prompt = Prompt(this.myHost.Runspace);
                 }
 
                 this.myHost.UI.Write(ConsoleColor.White, ConsoleColor.Black, prompt);
