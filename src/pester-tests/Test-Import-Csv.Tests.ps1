@@ -1,5 +1,5 @@
 ﻿Describe "Test-Import-Csv" {
-    $testCsv = "./TestAssets/TestCsv.csv"
+    $testCsv = "./assets/TestCsv.csv"
 
     It "Should be able to call without error" {
         { Import-Csv $testCsv } | Should Not Throw

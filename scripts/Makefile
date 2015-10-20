@@ -164,7 +164,6 @@ $(APP_BASE): runps.sh $(RUN_TARGETS)
 	cp -r dotnetlibs/*.so $(APP_BASE)
 	cp dotnetlibs/host_cmdline $(APP_BASE)
 	cp -r $(MONAD)/ext-src/pester $(APP_BASE)/Modules/Pester
-	cp -r $(ADMIN_GIT_ROOT)/../pester-tests/TestAssets $(APP_BASE)
 	cp -r $(MONAD_EXT)/xunit/xunit* $(APP_BASE)
 	cp runps*.sh $(APP_BASE)
 
