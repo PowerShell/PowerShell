@@ -57,7 +57,6 @@ To use Git's `https` protocol with VSO, you'll want to setup tokens, and have Gi
 9. Choose "All scopes"
 10. Click "Create Token" (you may want to copy this token somewhere safe, as VSO will not show it again!)
 11. Use this token as the password when cloning (and your username for the username)
-12. Make a token for <https://microsoft.visualstudio.com> and use it when the `monad` submodule is cloned
 
 ### Download source code
 
