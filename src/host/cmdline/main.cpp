@@ -11,49 +11,49 @@
 
 namespace Cmdline
 {
-    
+
 void printHelp()
 {
-    std::cerr << "PS CoreCLR host" << std::endl;
-    std::cerr << "Usage: host_cmdline [-c coreclr_path] [-alc load_context_assembly] [-s search_paths]" << std::endl;
-    std::cerr << "                    [-b base_path] assembly [...]" << std::endl;
-    std::cerr << std::endl;
-    std::cerr << "What it does:" << std::endl;
-    std::cerr << "- by default the host assumes that CoreCLR is located in the same folder" << std::endl;
-    std::cerr << "  as host_cmdline" << std::endl;
-    std::cerr << "  + this behavior can be overridden with the -c command line argument" << std::endl;
-    std::cerr << "- by default the host assumes that the assembly named" << std::endl;
-    std::cerr << "  Microsoft.PowerShell.CoreCLR.AssemblyLoadContext is part of the" << std::endl;
-    std::cerr << "  platform assemblies" << std::endl;
-    std::cerr << "  + a custom assembly containing the PowerShellAssemblyLoadContext can" << std::endl;
-    std::cerr << "    be provided with the -alc command line argument" << std::endl;
-    std::cerr << "- all additional parameters at the end of the command line are forwarded" << std::endl;
-    std::cerr << "  to the Main function in the assembly" << std::endl;
-    std::cerr << "- the host will execute the Main function in the specified assembly" << std::endl;
-    std::cerr << "  + this assembly has to be located in the search path" << std::endl;
-    std::cerr << "- by default the host will add the current working directory to the assembly search path" << std::endl;
-    std::cerr << "  + this can be overridden with the -s command line argument" << std::endl;
-    std::cerr << "  + if -c is specified, it will be added to the search path instead of the current directory" << std::endl;
-    std::cerr << "- by default the host assumes the PS base path for the assembly load context is the current" << std::endl;
-    std::cerr << "  working directory" << std::endl;
-    std::cerr << "  + this can be overridden with the -b command line argument" << std::endl;
-    std::cerr << "- the function signature of the Main function that gets executed must be:" << std::endl;
-    std::cerr << "  static void Main(string[] args)" << std::endl;
-    std::cerr << std::endl;
-    std::cerr << "Options:" << std::endl;
-    std::cerr << "-c, --clr-path    path to libcoreclr.so and the managed CLR assemblies" << std::endl;
-    std::cerr << "-alc              path to a dll containing Microsoft.PowerShell.CoreCLR.AssemblyLoadContext" << std::endl;
-    std::cerr << "-s                a list of assembly search paths, separated by :" << std::endl;
-    std::cerr << "-b                the powershell assembly base path" << std::endl;
-    std::cerr << "-v                verbose output, show paths" << std::endl;
-    std::cerr << "-tpa              additional list of trusted platform assemblies, this references dll and exe files" << std::endl;
-    std::cerr << "                  separated by :" << std::endl;
-    std::cerr << "                  unless part of the same folder as CoreCLR, the main assembly referenced with the assembly_name" << std::endl;
-    std::cerr << "                  argument, must always be added to the TPA list with this parameter" << std::endl;
-    std::cerr << "assembly          the path of the assembly to execute relative to current directory" << std::endl;
-    std::cerr << std::endl;
-    std::cerr << "Example:" << std::endl;
-    std::cerr << "./host_cmdline -c /test/coreclr -alc /test/ps/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll -s /test/ps -b /test/ps -tpa /test/ps/powershell-simple.exe 'powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null' 'get-process'" << std::endl;
+    std::cerr << "PS CoreCLR host" << std::endl
+              << "Usage: host_cmdline [-c coreclr_path] [-alc load_context_assembly] [-s search_paths]" << std::endl
+              << "                    [-b base_path] assembly [...]" << std::endl
+              << std::endl
+              << "What it does:" << std::endl
+              << "- by default the host assumes that CoreCLR is located in the same folder" << std::endl
+              << "  as host_cmdline" << std::endl
+              << "  + this behavior can be overridden with the -c command line argument" << std::endl
+              << "- by default the host assumes that the assembly named" << std::endl
+              << "  Microsoft.PowerShell.CoreCLR.AssemblyLoadContext is part of the" << std::endl
+              << "  platform assemblies" << std::endl
+              << "  + a custom assembly containing the PowerShellAssemblyLoadContext can" << std::endl
+              << "    be provided with the -alc command line argument" << std::endl
+              << "- all additional parameters at the end of the command line are forwarded" << std::endl
+              << "  to the Main function in the assembly" << std::endl
+              << "- the host will execute the Main function in the specified assembly" << std::endl
+              << "  + this assembly has to be located in the search path" << std::endl
+              << "- by default the host will add the current working directory to the assembly search path" << std::endl
+              << "  + this can be overridden with the -s command line argument" << std::endl
+              << "  + if -c is specified, it will be added to the search path instead of the current directory" << std::endl
+              << "- by default the host assumes the PS base path for the assembly load context is the current" << std::endl
+              << "  working directory" << std::endl
+              << "  + this can be overridden with the -b command line argument" << std::endl
+              << "- the function signature of the Main function that gets executed must be:" << std::endl
+              << "  static void Main(string[] args)" << std::endl
+              << std::endl
+              << "Options:" << std::endl
+              << "-c, --clr-path    path to libcoreclr.so and the managed CLR assemblies" << std::endl
+              << "-alc              path to a dll containing Microsoft.PowerShell.CoreCLR.AssemblyLoadContext" << std::endl
+              << "-s                a list of assembly search paths, separated by :" << std::endl
+              << "-b                the powershell assembly base path" << std::endl
+              << "-v                verbose output, show paths" << std::endl
+              << "-tpa              additional list of trusted platform assemblies, this references dll and exe files" << std::endl
+              << "                  separated by :" << std::endl
+              << "                  unless part of the same folder as CoreCLR, the main assembly referenced with the assembly_name" << std::endl
+              << "                  argument, must always be added to the TPA list with this parameter" << std::endl
+              << "assembly          the path of the assembly to execute relative to current directory" << std::endl
+              << std::endl
+              << "Example:" << std::endl
+              << "./host_cmdline -c /test/coreclr -alc /test/ps/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll -s /test/ps -b /test/ps -tpa /test/ps/powershell-simple.exe 'powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null' 'get-process'" << std::endl;
 }
 
 struct Args
@@ -77,15 +77,15 @@ struct Args
 
     void debugPrint() const
     {
-        std::cerr << "Args:" << std::endl;
-        std::cerr << "- clrPath                       " << clrPath << std::endl;
-        std::cerr << "- assemblyLoadContextFilePath   " << assemblyLoadContextFilePath << std::endl;
-        std::cerr << "- searchPaths                   " << searchPaths << std::endl;
-        std::cerr << "- basePath                      " << basePath << std::endl;
-        std::cerr << "- tpaList                       " << tpaList << std::endl;
-        std::cerr << "- entryAssemblyPath             " << entryAssemblyPath << std::endl;
-        std::cerr << "- argc                          " << argc << std::endl;
-        std::cerr << "- verbose                       " << (verbose ? "true" : "false") << std::endl;
+        std::cerr << "Args:" << std::endl
+                  << "- clrPath                       " << clrPath << std::endl
+                  << "- assemblyLoadContextFilePath   " << assemblyLoadContextFilePath << std::endl
+                  << "- searchPaths                   " << searchPaths << std::endl
+                  << "- basePath                      " << basePath << std::endl
+                  << "- tpaList                       " << tpaList << std::endl
+                  << "- entryAssemblyPath             " << entryAssemblyPath << std::endl
+                  << "- argc                          " << argc << std::endl
+                  << "- verbose                       " << (verbose ? "true" : "false") << std::endl;
     }
 };
 
