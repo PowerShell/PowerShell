@@ -180,7 +180,7 @@ run: $(RUN_TARGETS) prepare
 	$(APP_BASE)/runps-simple.sh '"a","b","c","a","a" | Select-Object -Unique'
 
 shell: $(RUN_TARGETS) prepare
-	$(APP_BASE)/runps.sh
+	TEMP=/tmp $(APP_BASE)/runps.sh
 
 run-interactive: shell
 
