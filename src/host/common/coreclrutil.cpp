@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <cstdlib>
 #include <iostream>
 #include <set>
 
@@ -71,23 +72,28 @@ bool GetDirectory(const char* absolutePath, std::string& directory)
     return false;
 }
 
-bool GetClrFilesAbsolutePath(const char* currentExePath, const char* clrFilesPath, std::string& clrFilesAbsolutePath)
+// Modified to use CORE_ROOT environment variable
+
+//
+// Get the absolute path to use to locate libcoreclr.so and the CLR assemblies are stored. If clrFilesPath is provided,
+// this function will return the absolute path to it. Otherwise, the directory of the current executable is used.
+//
+// Return true in case of a success, false otherwise.
+//
+bool GetClrFilesAbsolutePath(const char* currentExePath, std::string& clrFilesAbsolutePath)
 {
     std::string clrFilesRelativePath;
-    const char* clrFilesPathLocal = clrFilesPath;
+    const char* clrFilesPathLocal = std::getenv("CORE_ROOT");;
     if (clrFilesPathLocal == nullptr)
     {
-        // There was no CLR files path specified, use the folder of the corerun/coreconsole
+        // There was no CLR files path specified, use the folder of the host
         if (!GetDirectory(currentExePath, clrFilesRelativePath))
         {
-            perror("Failed to get directory from argv[0]");
+            std::cerr << "Failed to get directory from currentExePath" << std::endl;
             return false;
         }
 
         clrFilesPathLocal = clrFilesRelativePath.c_str();
-
-        // TODO: consider using an env variable (if defined) as a fall-back.
-        // The windows version of the corerun uses core_root env variable
     }
 
     if (!GetAbsolutePath(clrFilesPathLocal, clrFilesAbsolutePath))
@@ -195,10 +201,7 @@ void AddFilesFromDirectoryToTpaList(const char* directory, std::string& tpaList)
 //
 // Below is our custom start/stop interface
 //
-
 int startCoreCLR(
-    // Paths of expected things
-    const char* clrAbsolutePath,
     // Passed to propertyValues
     const char* tpaList,
     const char* appPath,
@@ -208,12 +211,19 @@ int startCoreCLR(
     void** hostHandle,
     unsigned int* domainId)
 {
-    // the path to the CoreCLR library
-    //
-    // This is typically libcoreclr.so on Linux and libcoreclr.dylib on Mac
-    std::string coreClrDllPath = clrAbsolutePath;
-    coreClrDllPath += "/";
-    coreClrDllPath += coreClrDll;
+    // get path to current executable
+    char exePath[PATH_MAX] = { 0 };
+    readlink("/proc/self/exe", exePath, PATH_MAX);
+
+    std::string clrFilesAbsolutePath;
+    if(!GetClrFilesAbsolutePath(exePath, clrFilesAbsolutePath))
+    {
+        return -1;
+    }
+
+    std::string coreClrDllPath(clrFilesAbsolutePath);
+    coreClrDllPath.append("/");
+    coreClrDllPath.append(coreClrDll);
 
     if (coreClrDllPath.size() >= PATH_MAX)
     {
@@ -274,10 +284,6 @@ int startCoreCLR(
         nativeDllSearchDirs,
         "UseLatestBehaviorWhenTFMNotSpecified"
     };
-
-    // get path to current executable
-    char exePath[PATH_MAX] = { 0 };
-    readlink("/proc/self/exe", exePath, PATH_MAX);
 
     // initialize CoreCLR
     int status = initializeCoreCLR(
