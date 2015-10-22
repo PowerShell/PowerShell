@@ -14,7 +14,7 @@ Describe "Select-Object" {
         $result   = $(Select-Object -inputObject $dirObject -last $TestLength).Length
         $expected = $dirObject.Length
 
-	$result | Should Be $expected
+    $result | Should Be $expected
     }
 
     It "Should be able to use the alias" {
@@ -25,7 +25,7 @@ Describe "Select-Object" {
         $result   = $dirObject | select  
         $expected = $dirObject | Select-Object
 
-	$result | Should Be $expected
+    $result | Should Be $expected
     }
 
     It "Should return correct object with First parameter" {
@@ -54,7 +54,7 @@ Describe "Select-Object" {
         $result   = ("a","b","c","a","a","a" | Select-Object -Unique).Length 
         $expected = 3
 
-	$result | Should Be $expected
+        $result | Should Be $expected
     }
 
     It "Should return correct object with Skip parameter" {
