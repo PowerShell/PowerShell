@@ -49,4 +49,7 @@
     It "Should produce a pathinfo object when the passthru parameter is used" {
         Push-Location .. -PassThru | ForEach-Object { $_.GetType().Name | Should Be PathInfo }
     }
+
+    # final cleanup
+    cd $startDirectory
 }
