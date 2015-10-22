@@ -1,12 +1,166 @@
 #include "coreclrutil.h"
 #include <dirent.h>
+#include <dlfcn.h>
 #include <assert.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <unistd.h>
+#include <iostream>
 #include <set>
 
 namespace CoreCLRUtil
 {
+    // The name of the CoreCLR native runtime DLL
+#if defined(__APPLE__)
+    constexpr char coreClrDll[] = "libcoreclr.dylib";
+#else
+    constexpr char coreClrDll[] = "libcoreclr.so";
+#endif
+
+    void* coreclrLib;
+
+    // Prototype of the coreclr_initialize function from the libcoreclr.so
+    typedef int (*InitializeCoreCLRFunction)(
+        const char* exePath,
+        const char* appDomainFriendlyName,
+        int propertyCount,
+        const char** propertyKeys,
+        const char** propertyValues,
+        void** hostHandle,
+        unsigned int* domainId);
+
+    InitializeCoreCLRFunction initializeCoreCLR;
+
+    // Prototype of the coreclr_shutdown function from the libcoreclr.so
+    typedef int (*ShutdownCoreCLRFunction)(
+        void* hostHandle,
+        unsigned int domainId);
+
+    ShutdownCoreCLRFunction shutdownCoreCLR;
+
+    ExecuteAssemblyFunction executeAssembly;
+    CreateDelegateFunction createDelegate;
+
+    int startCoreClr(
+        // Paths of expected things
+        const char* clrAbsolutePath,
+        // Passed to propertyValues
+        const char* tpaList,
+        const char* appPath,
+        const char* nativeDllSearchDirs,
+        // Passed to InitializeCoreCLRFunction
+        const char* appDomainFriendlyName,
+        void** hostHandle,
+        unsigned int* domainId)
+    {
+        // the path to the CoreCLR library
+        //
+        // This is typically libcoreclr.so on Linux and libcoreclr.dylib on Mac
+        std::string coreClrDllPath = clrAbsolutePath;
+        coreClrDllPath += "/";
+        coreClrDllPath += coreClrDll;
+
+        if (coreClrDllPath.size() >= PATH_MAX)
+        {
+            std::cerr << "Absolute path to CoreCLR library too long" << std::endl;
+            return 1;
+        }
+
+        // open the shared library
+        coreclrLib = dlopen(coreClrDllPath.c_str(), RTLD_NOW|RTLD_LOCAL);
+        if (coreclrLib == nullptr)
+        {
+            char* error = dlerror();
+            std::cerr << "dlopen failed to open the CoreCLR library: " << error << std::endl;
+            return 2;
+        }
+
+        // query the function pointers
+        initializeCoreCLR = (InitializeCoreCLRFunction)dlsym(coreclrLib,"coreclr_initialize");
+        shutdownCoreCLR = (ShutdownCoreCLRFunction)dlsym(coreclrLib,"coreclr_shutdown");
+
+        executeAssembly = (ExecuteAssemblyFunction)dlsym(coreclrLib,"coreclr_execute_assembly");
+        createDelegate = (CreateDelegateFunction)dlsym(coreclrLib,"coreclr_create_delegate");
+
+        if (initializeCoreCLR == nullptr)
+        {
+            std::cerr << "function coreclr_initialize not found in CoreCLR library" << std::endl;
+            return 3;
+        }
+        if (executeAssembly == nullptr)
+        {
+            std::cerr << "function coreclr_execute_assembly not found in CoreCLR library" << std::endl;
+            return 3;
+        }
+        if (shutdownCoreCLR == nullptr)
+        {
+            std::cerr << "function coreclr_shutdown not found in CoreCLR library" << std::endl;
+            return 3;
+        }
+        if (createDelegate == nullptr)
+        {
+            std::cerr << "function coreclr_create_delegate not found in CoreCLR library" << std::endl;
+            return 3;
+        }
+
+        // create list of properties to initialize CoreCLR
+        const char* propertyKeys[] = {
+            "TRUSTED_PLATFORM_ASSEMBLIES",
+            "APP_PATHS",
+            "APP_NI_PATHS",
+            "NATIVE_DLL_SEARCH_DIRECTORIES",
+            "AppDomainCompatSwitch"
+        };
+
+        const char* propertyValues[] = {
+            tpaList,
+            appPath,
+            appPath,
+            nativeDllSearchDirs,
+            "UseLatestBehaviorWhenTFMNotSpecified"
+        };
+
+        // get path to current executable
+        char exePath[PATH_MAX] = { 0 };
+        readlink("/proc/self/exe", exePath, PATH_MAX);
+
+        // initialize CoreCLR
+        int status = initializeCoreCLR(
+            exePath,
+            appDomainFriendlyName,
+            sizeof(propertyKeys)/sizeof(propertyKeys[0]),
+            propertyKeys,
+            propertyValues,
+            hostHandle,
+            domainId);
+
+        if (0 > status)
+        {
+            std::cerr << "coreclr_initialize failed - status: " << std::hex << status << std::endl;
+            return 4;
+        }
+
+        return status;
+    }
+
+    int stopCoreClr(void* hostHandle, unsigned int domainId)
+    {
+        // shutdown CoreCLR
+        int status = shutdownCoreCLR(hostHandle, domainId);
+        if (0 > status)
+        {
+            std::cerr << "coreclr_shutdown failed - status: " << std::hex << status << std::endl;
+        }
+
+        // close the dynamic library
+        if (0 != dlclose(coreclrLib))
+        {
+            std::cerr << "failed to close CoreCLR library" << std::endl;
+        }
+
+        return status;
+    }
+
     bool GetAbsolutePath(const char* path, std::string& absolutePath)
     {
         bool result = false;

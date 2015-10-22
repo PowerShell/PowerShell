@@ -3,7 +3,6 @@
 #include "common/coreclrutil.h"
 #include "common/hostutil.h"
 #include <limits.h>
-#include <dlfcn.h>
 #include <unicode/utypes.h>
 #include <unicode/ucnv.h>
 #include <unicode/ustring.h>
@@ -195,19 +194,6 @@ int main(int argc, char** argv)
     if (args.verbose)
         std::cerr << "clrAbsolutePath=" << clrAbsolutePath << std::endl;
 
-    // the path to the CoreCLR library
-    //
-    // This is typically libcoreclr.so on Linux and libcoreclr.dylib on Mac
-
-    std::string coreClrDllPath = clrAbsolutePath + "/" + CoreCLRUtil::coreClrDll;
-    if (coreClrDllPath.size() >= PATH_MAX)
-    {
-        std::cerr << "Absolute path to CoreCLR library too long" << std::endl;
-        return 1;
-    }
-    if (args.verbose)
-        std::cerr << "coreClrDllPath: " << coreClrDllPath << std::endl;
-
     // TPA list
     //
     // The list of platform assemblies must include all CoreCLR assemblies
@@ -297,82 +283,21 @@ int main(int argc, char** argv)
     int32_t targetSize = u8str.extract(0,u8str.length(),(char*)&psBasePath16[0],(psBasePath16.size()-1)*sizeof(char16_t),"UTF-16LE");
     psBasePath16.resize(targetSize/sizeof(char16_t)+1);
 
-    // open the shared library
-    void* coreclrLib = dlopen(coreClrDllPath.c_str(), RTLD_NOW|RTLD_LOCAL);
-    if (coreclrLib == nullptr)
-    {
-        char* error = dlerror();
-        std::cerr << "dlopen failed to open the CoreCLR library: " << error << std::endl;
-        return 2;
-    }
-
-    // query the function pointers
-    CoreCLRUtil::InitializeCoreCLRFunction initializeCoreCLR = (CoreCLRUtil::InitializeCoreCLRFunction)dlsym(coreclrLib,"coreclr_initialize");
-    CoreCLRUtil::ExecuteAssemblyFunction executeAssembly = (CoreCLRUtil::ExecuteAssemblyFunction)dlsym(coreclrLib,"coreclr_execute_assembly");
-    CoreCLRUtil::ShutdownCoreCLRFunction shutdownCoreCLR = (CoreCLRUtil::ShutdownCoreCLRFunction)dlsym(coreclrLib,"coreclr_shutdown");
-    CoreCLRUtil::CreateDelegateFunction createDelegate = (CoreCLRUtil::CreateDelegateFunction)dlsym(coreclrLib,"coreclr_create_delegate");
-
-    if (initializeCoreCLR == nullptr)
-    {
-        std::cerr << "function coreclr_initialize not found in CoreCLR library" << std::endl;
-        return 3;
-    }
-    if (executeAssembly == nullptr)
-    {
-        std::cerr << "function coreclr_execute_assembly not found in CoreCLR library" << std::endl;
-        return 3;
-    }
-    if (shutdownCoreCLR == nullptr)
-    {
-        std::cerr << "function coreclr_shutdown not found in CoreCLR library" << std::endl;
-        return 3;
-    }
-    if (createDelegate == nullptr)
-    {
-        std::cerr << "function coreclr_create_delegate not found in CoreCLR library" << std::endl;
-        return 3;
-    }
-
-    // create list of properties to initialize CoreCLR
-    const char* propertyKeys[] = {
-        "TRUSTED_PLATFORM_ASSEMBLIES",
-        "APP_PATHS",
-        "APP_NI_PATHS",
-        "NATIVE_DLL_SEARCH_DIRECTORIES",
-        "AppDomainCompatSwitch"
-    };
-
-    const char* propertyValues[] = {
-        tpaList.c_str(),
-        appPath.c_str(),
-        appPath.c_str(),
-        nativeDllSearchDirs.c_str(),
-        "UseLatestBehaviorWhenTFMNotSpecified"
-    };
-
-
-    // initialize CoreCLR
     void* hostHandle;
     unsigned int domainId;
-    int status = initializeCoreCLR(
-        currentExeAbsolutePath.c_str(),
+    int status = CoreCLRUtil::startCoreClr(
+        clrAbsolutePath.c_str(),
+        tpaList.c_str(),
+        appPath.c_str(),
+        nativeDllSearchDirs.c_str(),
         "ps_cmdline_host",
-        sizeof(propertyKeys)/sizeof(propertyKeys[0]),
-        propertyKeys,
-        propertyValues,
         &hostHandle,
         &domainId);
-
-    if (0 > status)
-    {
-        std::cerr << "coreclr_initialize failed - status: " << std::hex << status << std::endl;
-        return 4;
-    }
 
     // initialize the PS's custom assembly load context
     typedef void (*LoaderRunHelperFp)(const char16_t* appPath);
     LoaderRunHelperFp loaderDelegate = nullptr;
-    status = createDelegate(
+    status = CoreCLRUtil::createDelegate(
         hostHandle,
         domainId,
         "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
@@ -388,23 +313,12 @@ int main(int argc, char** argv)
 
     // call into Main of powershell-simple.exe
     unsigned int exitCode;
-    executeAssembly(hostHandle, domainId, args.argc,
-		    (const char**)args.argv,
-		    (currentDirAbsolutePath+"/"+args.entryAssemblyPath).c_str(),
-		    &exitCode);
+    CoreCLRUtil::executeAssembly(hostHandle, domainId, args.argc,
+                                 (const char**)args.argv,
+                                 (currentDirAbsolutePath+"/"+args.entryAssemblyPath).c_str(),
+                                 &exitCode);
 
-    // shutdown CoreCLR
-    status = shutdownCoreCLR(hostHandle,domainId);
-    if (0 > status)
-    {
-        std::cerr << "coreclr_shutdown failed - status: " << std::hex << status << std::endl;
-    }
-
-    // close the dynamic library
-    if (0 != dlclose(coreclrLib))
-    {
-        std::cerr << "failed to close CoreCLR library" << std::endl;
-    }
+    status = CoreCLRUtil::stopCoreClr(hostHandle, domainId);
 
     return exitCode;
 }
