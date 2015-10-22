@@ -1,6 +1,7 @@
 [submodule "src/monad"]
 	path = src/monad
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad
+	branch = develop
 [submodule "ext-src/cppunit"]
 	path = ext-src/cppunit
 	url = git://anongit.freedesktop.org/git/libreoffice/cppunit/
@@ -13,6 +14,7 @@
 [submodule "ext-src/pester"]
 	path = ext-src/pester
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/Pester
+	branch = develop
 [submodule "src/monad-omi-provider"]
 	path = src/monad-omi-provider
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-omi-provider
