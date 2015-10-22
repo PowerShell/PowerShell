@@ -23,7 +23,7 @@ namespace HostUtil
             if (token != "")
             {
                 std::string absolutePath;
-                if (CoreCLRUtil::GetAbsolutePath(token.c_str(),absolutePath))
+                if (GetAbsolutePath(token.c_str(),absolutePath))
                 {
                     // add colons correctly
                     if (result.size() == 0)
