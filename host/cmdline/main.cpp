@@ -160,16 +160,6 @@ int main(int argc, char** argv)
     if (args.verbose)
         args.debugPrint();
 
-    // get the absolute path of the current executable
-    std::string currentExeAbsolutePath;
-    if (!GetAbsolutePath(argv[0],currentExeAbsolutePath))
-    {
-        std::cerr << "could not get absolute path of current executable" << std::endl;
-        return 1;
-    }
-    if (args.verbose)
-        std::cerr << "currentExeAbsolutePath=" << currentExeAbsolutePath << std::endl;
- 
     std::string clrAbsolutePath;
     if (!GetAbsolutePath(std::getenv("CORE_ROOT"), clrAbsolutePath))
     {
