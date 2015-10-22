@@ -1,6 +1,5 @@
 ﻿Describe "Test-Set-PSBreakpoint" {
-    $script = ./assets/testablescript.ps1
-    # nv -name script -value ./assets/testablescript.ps1 -scope Global
+    New-Variable -Name script -Value ./assets/testablescript.ps1 -Scope Global
 
     It "Should be able to called with script and line parameters without error " {
         { Set-PSBreakpoint -Script $script -Line 1 } | Should Not Throw
