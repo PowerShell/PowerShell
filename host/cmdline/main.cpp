@@ -172,7 +172,7 @@ int main(int argc, char** argv)
 
     // get the absolute path of the current executable
     std::string currentExeAbsolutePath;
-    if (!CoreCLRUtil::GetAbsolutePath(argv[0],currentExeAbsolutePath))
+    if (!GetAbsolutePath(argv[0],currentExeAbsolutePath))
     {
         std::cerr << "could not get absolute path of current executable" << std::endl;
         return 1;
@@ -186,7 +186,7 @@ int main(int argc, char** argv)
     // specified with the -c command line argument
     std::string clrAbsolutePath;
     const char* clrPathArg = args.clrPath == "" ? nullptr : args.clrPath.c_str();
-    if (!CoreCLRUtil::GetClrFilesAbsolutePath(currentExeAbsolutePath.c_str(),clrPathArg,clrAbsolutePath))
+    if (!GetClrFilesAbsolutePath(currentExeAbsolutePath.c_str(),clrPathArg,clrAbsolutePath))
     {
         std::cerr << "could not find absolute CLR path" << std::endl;
         return 1;
@@ -202,12 +202,12 @@ int main(int argc, char** argv)
     // if the -alc parameter was specified, add it to the TPA list here
     
     std::string tpaList;
-    CoreCLRUtil::AddFilesFromDirectoryToTpaList(clrAbsolutePath.c_str(),tpaList);
+    AddFilesFromDirectoryToTpaList(clrAbsolutePath.c_str(),tpaList);
     
     if (args.assemblyLoadContextFilePath != "")
     {
         std::string assemblyLoadContextAbsoluteFilePath;
-        if (!CoreCLRUtil::GetAbsolutePath(args.assemblyLoadContextFilePath.c_str(),assemblyLoadContextAbsoluteFilePath))
+        if (!GetAbsolutePath(args.assemblyLoadContextFilePath.c_str(),assemblyLoadContextAbsoluteFilePath))
         {
             std::cerr << "Failed to get absolute file path for assembly load context" << std::endl;
             return 1;
@@ -229,7 +229,7 @@ int main(int argc, char** argv)
     // get the absolute path of the current directory
 
     std::string currentDirAbsolutePath;
-    if (!CoreCLRUtil::GetAbsolutePath(".",currentDirAbsolutePath))
+    if (!GetAbsolutePath(".",currentDirAbsolutePath))
     {
         std::cerr << "failed to get the absolute path from current working directory" << std::endl;
         return 1;
@@ -267,7 +267,7 @@ int main(int argc, char** argv)
     std::string psBasePath = currentDirAbsolutePath;
     if (args.basePath != "")
     {
-        if (!CoreCLRUtil::GetAbsolutePath(args.basePath.c_str(),psBasePath))
+        if (!GetAbsolutePath(args.basePath.c_str(),psBasePath))
         {
             std::cerr << "failed to get the absolute path from the base_path argument" << std::endl;
             return 1;
@@ -285,7 +285,7 @@ int main(int argc, char** argv)
 
     void* hostHandle;
     unsigned int domainId;
-    int status = CoreCLRUtil::startCoreClr(
+    int status = startCoreClr(
         clrAbsolutePath.c_str(),
         tpaList.c_str(),
         appPath.c_str(),
@@ -297,7 +297,7 @@ int main(int argc, char** argv)
     // initialize the PS's custom assembly load context
     typedef void (*LoaderRunHelperFp)(const char16_t* appPath);
     LoaderRunHelperFp loaderDelegate = nullptr;
-    status = CoreCLRUtil::createDelegate(
+    status = createDelegate(
         hostHandle,
         domainId,
         "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
@@ -313,12 +313,12 @@ int main(int argc, char** argv)
 
     // call into Main of powershell-simple.exe
     unsigned int exitCode;
-    CoreCLRUtil::executeAssembly(hostHandle, domainId, args.argc,
+    executeAssembly(hostHandle, domainId, args.argc,
                                  (const char**)args.argv,
                                  (currentDirAbsolutePath+"/"+args.entryAssemblyPath).c_str(),
                                  &exitCode);
 
-    status = CoreCLRUtil::stopCoreClr(hostHandle, domainId);
+    status = stopCoreClr(hostHandle, domainId);
 
     return exitCode;
 }
