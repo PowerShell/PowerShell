@@ -13,13 +13,12 @@ namespace Cmdline
     void printHelp()
     {
         std::cerr << "PS CoreCLR host" << std::endl
-                  << "Usage: host_cmdline [-c coreclr_path] [-alc load_context_assembly] [-s search_paths]" << std::endl
+                  << "Usage: host_cmdline [-alc load_context_assembly] [-s search_paths]" << std::endl
                   << "                    [-b base_path] assembly [...]" << std::endl
                   << std::endl
                   << "What it does:" << std::endl
                   << "- by default the host assumes that CoreCLR is located in the same folder" << std::endl
                   << "  as host_cmdline" << std::endl
-                  << "  + this behavior can be overridden with the -c command line argument" << std::endl
                   << "- by default the host assumes that the assembly named" << std::endl
                   << "  Microsoft.PowerShell.CoreCLR.AssemblyLoadContext is part of the" << std::endl
                   << "  platform assemblies" << std::endl
@@ -31,7 +30,6 @@ namespace Cmdline
                   << "  + this assembly has to be located in the search path" << std::endl
                   << "- by default the host will add the current working directory to the assembly search path" << std::endl
                   << "  + this can be overridden with the -s command line argument" << std::endl
-                  << "  + if -c is specified, it will be added to the search path instead of the current directory" << std::endl
                   << "- by default the host assumes the PS base path for the assembly load context is the current" << std::endl
                   << "  working directory" << std::endl
                   << "  + this can be overridden with the -b command line argument" << std::endl
@@ -39,7 +37,6 @@ namespace Cmdline
                   << "  static void Main(string[] args)" << std::endl
                   << std::endl
                   << "Options:" << std::endl
-                  << "-c, --clr-path    path to libcoreclr.so and the managed CLR assemblies" << std::endl
                   << "-alc              path to a dll containing Microsoft.PowerShell.CoreCLR.AssemblyLoadContext" << std::endl
                   << "-s                a list of assembly search paths, separated by :" << std::endl
                   << "-b                the powershell assembly base path" << std::endl
@@ -51,7 +48,7 @@ namespace Cmdline
                   << "assembly          the path of the assembly to execute relative to current directory" << std::endl
                   << std::endl
                   << "Example:" << std::endl
-                  << "./host_cmdline -c /test/coreclr -alc /test/ps/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll -s /test/ps -b /test/ps -tpa /test/ps/powershell-simple.exe 'powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null' 'get-process'" << std::endl;
+                  << "CORE_ROOT=/test/coreclr ./host_cmdline -alc /test/ps/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll -s /test/ps -b /test/ps -tpa /test/ps/powershell-simple.exe 'powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null' 'get-process'" << std::endl;
     }
 
     struct Args
@@ -63,7 +60,6 @@ namespace Cmdline
         {
         }
 
-        std::string clrPath;
         std::string assemblyLoadContextFilePath;
         std::string searchPaths;
         std::string basePath;
@@ -76,7 +72,6 @@ namespace Cmdline
         void debugPrint() const
         {
             std::cerr << "Args:" << std::endl
-                      << "- clrPath                       " << clrPath << std::endl
                       << "- assemblyLoadContextFilePath   " << assemblyLoadContextFilePath << std::endl
                       << "- searchPaths                   " << searchPaths << std::endl
                       << "- basePath                      " << basePath << std::endl
@@ -103,12 +98,7 @@ namespace Cmdline
             const bool hasNextArg = i+1 < argc;
             const std::string nextArg = hasNextArg ? std::string(argv[i+1]) : std::string("");
 
-            if (hasNextArg && (arg == "-c" || arg == "--clr-path"))
-            {
-                args.clrPath = nextArg;
-                ++i;
-            }
-            else if (hasNextArg && arg == "-alc")
+            if (hasNextArg && arg == "-alc")
             {
                 args.assemblyLoadContextFilePath = nextArg;
                 ++i;
@@ -180,15 +170,10 @@ int main(int argc, char** argv)
     if (args.verbose)
         std::cerr << "currentExeAbsolutePath=" << currentExeAbsolutePath << std::endl;
  
-    // CLR absolute folder path
-    //
-    // This path is created from the location of this executable or a path
-    // specified with the -c command line argument
     std::string clrAbsolutePath;
-    const char* clrPathArg = args.clrPath == "" ? nullptr : args.clrPath.c_str();
-    if (!GetClrFilesAbsolutePath(currentExeAbsolutePath.c_str(),clrPathArg,clrAbsolutePath))
+    if (!GetAbsolutePath(std::getenv("CORE_ROOT"), clrAbsolutePath))
     {
-        std::cerr << "could not find absolute CLR path" << std::endl;
+        std::cerr << "could not get absolute path of CoreCLR" << std::endl;
         return 1;
     }
     if (args.verbose)
@@ -237,12 +222,12 @@ int main(int argc, char** argv)
 
     // assembly search paths
     //
-    // add the current directory, and optionally the CoreCLR directory if -c was specified
-    // and anything specified with the -s option
+    // add the current directory, the CoreCLR directory, and anything
+    // specified with the -s option
 
     std::string appPath = currentDirAbsolutePath;
-    if (args.clrPath != "")
-        appPath += ":" + clrAbsolutePath;
+
+    appPath += ":" + clrAbsolutePath;
     if (args.searchPaths != "")
     {
         std::string searchAbsolutePathList = HostUtil::getAbsolutePathList(args.searchPaths);
@@ -286,7 +271,6 @@ int main(int argc, char** argv)
     void* hostHandle;
     unsigned int domainId;
     int status = startCoreCLR(
-        clrAbsolutePath.c_str(),
         tpaList.c_str(),
         appPath.c_str(),
         nativeDllSearchDirs.c_str(),
