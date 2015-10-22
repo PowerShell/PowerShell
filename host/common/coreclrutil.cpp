@@ -157,6 +157,10 @@ int stopCoreCLR(void* hostHandle, unsigned int domainId)
     return status;
 }
 
+//
+// Below is from unixcoreruncommon/coreruncommon.cpp
+//
+
 bool GetAbsolutePath(const char* path, std::string& absolutePath)
 {
     bool result = false;
@@ -223,7 +227,7 @@ void AddFilesFromDirectoryToTpaList(const char* directory, std::string& tpaList)
         ".ni.exe",
         ".exe",
     };
-                
+
     DIR* dir = opendir(directory);
     if (dir == nullptr)
     {
@@ -300,14 +304,10 @@ void AddFilesFromDirectoryToTpaList(const char* directory, std::string& tpaList)
                 tpaList.append(":");
             }
         }
-        
+
         // Rewind the directory stream to be able to iterate over it for the next extension
         rewinddir(dir);
     }
-    
-    closedir(dir);
 
-    // strip any trailing : from the tpaList
-    if (tpaList.size() > 0 && tpaList[tpaList.size()-1] == ':')
-        tpaList.resize(tpaList.size()-1);
+    closedir(dir);
 }
