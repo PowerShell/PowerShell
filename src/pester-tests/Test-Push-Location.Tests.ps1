@@ -18,7 +18,7 @@
 
     It "Should be able to use relative path to grandparent" {
         Test-Path ../.. | Should Be $true
-        
+
         { Push-Location ../.. } | Should Not Throw
     }
 
