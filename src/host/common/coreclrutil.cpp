@@ -73,33 +73,23 @@ bool GetDirectory(const char* absolutePath, std::string& directory)
     return false;
 }
 
-// Modified to use CORE_ROOT environment variable
-
 //
-// Get the absolute path to use to locate libcoreclr.so and the CLR assemblies are stored. If clrFilesPath is provided,
-// this function will return the absolute path to it. Otherwise, the directory of the current executable is used.
+// Get the absolute path given the environment variable.
 //
 // Return true in case of a success, false otherwise.
 //
-bool GetClrFilesAbsolutePath(const char* currentExePath, std::string& clrFilesAbsolutePath)
+bool GetEnvAbsolutePath(const char* env_var, std::string& absolutePath)
 {
-    std::string clrFilesRelativePath;
-    const char* clrFilesPathLocal = std::getenv("CORE_ROOT");;
-    if (clrFilesPathLocal == nullptr)
+    const char* filesPathLocal = std::getenv(env_var);;
+    if (filesPathLocal == nullptr)
     {
-        // There was no CLR files path specified, use the folder of the host
-        if (!GetDirectory(currentExePath, clrFilesRelativePath))
-        {
-            std::cerr << "Failed to get directory from currentExePath" << std::endl;
-            return false;
-        }
-
-        clrFilesPathLocal = clrFilesRelativePath.c_str();
+        std::cerr << "$" << env_var << " was empty" << std::endl;
+        return false;
     }
 
-    if (!GetAbsolutePath(clrFilesPathLocal, clrFilesAbsolutePath))
+    if (!GetAbsolutePath(filesPathLocal, absolutePath))
     {
-        perror("Failed to convert CLR files path to absolute path");
+        std::cerr << "Failed to get absolute path for " << env_var << std::endl;
         return false;
     }
 
@@ -203,11 +193,9 @@ void AddFilesFromDirectoryToTpaList(const char* directory, std::string& tpaList)
 // Below is our custom start/stop interface
 //
 int startCoreCLR(
-    // Passed to propertyValues
     const char* tpaList,
     const char* appPath,
     const char* nativeDllSearchDirs,
-    // Passed to InitializeCoreCLRFunction
     const char* appDomainFriendlyName,
     void** hostHandle,
     unsigned int* domainId)
@@ -216,12 +204,14 @@ int startCoreCLR(
     char exePath[PATH_MAX] = { 0 };
     readlink("/proc/self/exe", exePath, PATH_MAX);
 
+    // get the CoreCLR root path
     std::string clrFilesAbsolutePath;
-    if(!GetClrFilesAbsolutePath(exePath, clrFilesAbsolutePath))
+    if(!GetEnvAbsolutePath("CORE_ROOT", clrFilesAbsolutePath))
     {
         return -1;
     }
 
+    // get the CoreCLR shared library path
     std::string coreClrDllPath(clrFilesAbsolutePath);
     coreClrDllPath.append("/");
     coreClrDllPath.append(coreClrDll);
@@ -241,10 +231,9 @@ int startCoreCLR(
         return 2;
     }
 
-    // query the function pointers
+    // query and verify the function pointers
     initializeCoreCLR = (InitializeCoreCLRFunction)dlsym(coreclrLib,"coreclr_initialize");
     shutdownCoreCLR = (ShutdownCoreCLRFunction)dlsym(coreclrLib,"coreclr_shutdown");
-
     executeAssembly = (ExecuteAssemblyFunction)dlsym(coreclrLib,"coreclr_execute_assembly");
     createDelegate = (CreateDelegateFunction)dlsym(coreclrLib,"coreclr_create_delegate");
 
