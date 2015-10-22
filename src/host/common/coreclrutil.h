@@ -6,8 +6,8 @@
 
 extern "C"
 {
-    int startCoreClr(
         // Paths of expected things
+    int startCoreCLR(
         const char* clrAbsolutePath,
         // Passed to propertyValues
         const char* tpaList,
@@ -18,7 +18,7 @@ extern "C"
         void** hostHandle,
         unsigned int* domainId);
 
-    int stopCoreClr(void* hostHandle, unsigned int domainId);
+    int stopCoreCLR(void* hostHandle, unsigned int domainId);
 
     // Prototype of the coreclr_execute_assembly function from the libcoreclr.so
     typedef int (*ExecuteAssemblyFunction)(
