@@ -11,7 +11,7 @@
 
     It "Should return the proper Name and BaseType for directory objects vs file system objects" {
         (Get-Item .).GetType().Name | Should Be 'DirectoryInfo'
-        (Get-Item ./Test-Get-Item.Tests.ps1).GetType().Name | Should Be 'FileInfo'
+        (Get-Item ./Get-Item.Tests.ps1).GetType().Name | Should Be 'FileInfo'
     }
 
     It "Should return a different directory when a path argument is used" {
