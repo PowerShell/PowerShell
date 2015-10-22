@@ -285,7 +285,7 @@ int main(int argc, char** argv)
 
     void* hostHandle;
     unsigned int domainId;
-    int status = startCoreClr(
+    int status = startCoreCLR(
         clrAbsolutePath.c_str(),
         tpaList.c_str(),
         appPath.c_str(),
@@ -318,7 +318,7 @@ int main(int argc, char** argv)
                                  (currentDirAbsolutePath+"/"+args.entryAssemblyPath).c_str(),
                                  &exitCode);
 
-    status = stopCoreClr(hostHandle, domainId);
+    status = stopCoreCLR(hostHandle, domainId);
 
     return exitCode;
 }

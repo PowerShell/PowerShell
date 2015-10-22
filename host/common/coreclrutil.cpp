@@ -27,19 +27,17 @@ typedef int (*InitializeCoreCLRFunction)(
     void** hostHandle,
     unsigned int* domainId);
 
-InitializeCoreCLRFunction initializeCoreCLR;
-
 // Prototype of the coreclr_shutdown function from the libcoreclr.so
 typedef int (*ShutdownCoreCLRFunction)(
     void* hostHandle,
     unsigned int domainId);
 
+InitializeCoreCLRFunction initializeCoreCLR;
 ShutdownCoreCLRFunction shutdownCoreCLR;
-
 ExecuteAssemblyFunction executeAssembly;
 CreateDelegateFunction createDelegate;
 
-int startCoreClr(
+int startCoreCLR(
     // Paths of expected things
     const char* clrAbsolutePath,
     // Passed to propertyValues
@@ -141,7 +139,7 @@ int startCoreClr(
     return status;
 }
 
-int stopCoreClr(void* hostHandle, unsigned int domainId)
+int stopCoreCLR(void* hostHandle, unsigned int domainId)
 {
     // shutdown CoreCLR
     int status = shutdownCoreCLR(hostHandle, domainId);
