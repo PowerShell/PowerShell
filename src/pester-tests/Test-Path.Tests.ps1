@@ -1,4 +1,4 @@
-﻿Describe "Test-Test-Path" {
+﻿Describe "Test-Path" {
     $testdirectory = "/usr/bin"
     $testfilename  = "vi" # use /usr/bin/vi since that's bundled with all linux
     $testfile      = $testdirectory + "/" + $testfilename

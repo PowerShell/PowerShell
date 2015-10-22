@@ -1,4 +1,4 @@
-﻿Describe "Test-Export-Csv" {
+﻿Describe "Export-Csv" {
     $testObject = @("test","object","array")
     $testCsv = "output.csv"
 

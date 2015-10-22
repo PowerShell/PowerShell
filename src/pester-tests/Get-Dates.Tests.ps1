@@ -1,4 +1,4 @@
-﻿Describe "Test-Get-Date" {
+﻿Describe "Get-Date" {
 <#
     1. foreach
     2.

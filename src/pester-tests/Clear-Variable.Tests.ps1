@@ -1,4 +1,4 @@
-﻿Describe "Test-Clear-Variable" {
+﻿Describe "Clear-Variable" {
     BeforeEach {
         $var1 = 3
     }

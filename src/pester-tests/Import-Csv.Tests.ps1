@@ -1,4 +1,4 @@
-﻿Describe "Test-Import-Csv" {
+﻿Describe "Import-Csv" {
     $testCsv = "./assets/TestCsv.csv"
 
     It "Should be able to call without error" {

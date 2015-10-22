@@ -1,4 +1,4 @@
-Describe "test-Add-Member" {
+Describe "Add-Member" {
 
     It "should be able to see a newly added member of an object" {
         $o = New-Object psobject

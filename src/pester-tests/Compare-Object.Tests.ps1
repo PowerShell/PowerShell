@@ -1,4 +1,4 @@
-﻿Describe "Test-Compare-Object" {
+﻿Describe "Compare-Object" {
     # First ensure the environment is set up
     if (Test-Path "/tmp")
     {

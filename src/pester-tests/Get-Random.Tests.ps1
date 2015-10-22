@@ -1,4 +1,4 @@
-﻿Describe "Test-Get-Random" {
+﻿Describe "Get-Random" {
     It "Should return a random number greater than -1 " {
         Get-Random | Should BeGreaterThan -1 
     }

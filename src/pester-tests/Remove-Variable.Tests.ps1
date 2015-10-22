@@ -1,7 +1,7 @@
 ﻿# ensure the machine is in a clean state from the outset.
 Remove-Variable -Name var1 -ErrorAction SilentlyContinue -Force
 
-Describe "Test-Remove-Variable" {
+Describe "Remove-Variable" {
     It "Should throw an error when a dollar sign is used in the variable name place" {
         New-Variable -Name var1 -Value 4
 

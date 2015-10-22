@@ -1,4 +1,4 @@
-Describe "Test-Format-List" {
+Describe "Format-List" {
     BeforeEach {
         $input = New-Object PSObject
         Add-Member -InputObject $input -MemberType NoteProperty -Name testName -Value testValue

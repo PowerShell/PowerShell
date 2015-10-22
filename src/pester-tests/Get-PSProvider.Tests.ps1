@@ -1,4 +1,4 @@
-﻿Describe "Test-Get-PSProvider" {
+﻿Describe "Get-PSProvider" {
     It "Should be able to call with no parameters without error" {
         { Get-PSProvider } | Should Not Throw
     }

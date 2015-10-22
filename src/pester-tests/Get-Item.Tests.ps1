@@ -1,4 +1,4 @@
-﻿Describe "Test-Get-Item" {
+﻿Describe "Get-Item" {
     It "Should list all the items in the current working directory when asterisk is used" {
         (Get-Item *).GetType().BaseType | Should Be 'array'
         (Get-Item *).GetType().Name | Should Be 'Object[]'

@@ -1,4 +1,4 @@
-﻿Describe "Test-Get-ChildItem" {
+﻿Describe "Get-ChildItem" {
     It "Should list the contents of the current folder" {
         (Get-ChildItem .).Name.Length | Should BeGreaterThan 0
 

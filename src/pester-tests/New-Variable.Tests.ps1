@@ -1,4 +1,4 @@
-﻿Describe "Test-New-Variable" {
+﻿Describe "New-Variable" {
     It "Should create a new variable with no parameters" {
         { New-Variable var1 } | Should Not Throw
     }

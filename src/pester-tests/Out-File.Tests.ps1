@@ -1,4 +1,4 @@
-﻿Describe "Test-Out-File" {
+﻿Describe "Out-File" {
     $expectedContent = "some test text"
     $inputObject = New-Object psobject -Property @{text=$expectedContent}
     $testfile = "/tmp/outfileTest.txt"

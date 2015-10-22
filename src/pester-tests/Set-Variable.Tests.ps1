@@ -1,4 +1,4 @@
-﻿Describe "Test-Set-Variable" {
+﻿Describe "Set-Variable" {
     It "Should create a new variable with no parameters" {
         { Set-Variable testVar } | Should Not Throw
 

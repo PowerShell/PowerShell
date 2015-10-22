@@ -1,4 +1,4 @@
-﻿Describe "Test-Split-Path" {
+﻿Describe "Split-Path" {
     It "Should return a string object when invoked" {
         ( Split-Path . ).GetType().Name          | Should Be "String"
         ( Split-Path . -Leaf ).GetType().Name    | Should Be "String"

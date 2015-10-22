@@ -1,4 +1,4 @@
-﻿Describe "Test-Get-Location aka pwd" {
+﻿Describe "Get-Location aka pwd" {
     <#Dependencies:
         pushd
         popd

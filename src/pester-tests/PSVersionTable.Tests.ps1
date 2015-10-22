@@ -1,4 +1,4 @@
-﻿Describe "Test-PSVersionTable" {
+﻿Describe "PSVersionTable" {
     It "Should have version table entries" {
         $PSVersionTable.Count | Should BeGreaterThan 6
     }

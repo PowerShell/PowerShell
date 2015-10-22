@@ -1,4 +1,4 @@
-﻿Describe "Test-Remove-Item" {
+﻿Describe "Remove-Item" {
     $testpath = "/tmp/"
     $testfile = "testfile.txt"
     $testfilepath = $testpath + $testfile

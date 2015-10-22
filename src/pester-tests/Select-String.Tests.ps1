@@ -1,4 +1,4 @@
-﻿Describe "Test-Select-String" {
+﻿Describe "Select-String" {
     Context "String actions" {
     $testinputone = "hello","Hello","goodbye"
     $testinputtwo = "hello","Hello"

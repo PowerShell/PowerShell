@@ -1,4 +1,4 @@
-﻿Describe "Test-Format-Wide" {
+﻿Describe "Format-Wide" {
     It "Should be able to call format wide without error" {
         { Get-Process | Format-Wide } | Should Not Throw
     }

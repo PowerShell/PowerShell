@@ -1,4 +1,4 @@
-﻿Describe "Test-Set-PSBreakpoint" {
+﻿Describe "Set-PSBreakpoint" {
     New-Variable -Name script -Value ./assets/testablescript.ps1 -Scope Global
 
     It "Should be able to called with script and line parameters without error " {

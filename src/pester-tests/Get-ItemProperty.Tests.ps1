@@ -1,4 +1,4 @@
-﻿Describe "Test-Get-ItemProperty" {
+﻿Describe "Get-ItemProperty" {
     $currentDirectory = Split-Path . -Leaf
     $parentDirectory  = Split-Path .. -Leaf
     if (Test-Path /tmp)

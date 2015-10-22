@@ -11,7 +11,7 @@
     }
 }
 
-Describe "Test-New-Item" {
+Describe "New-Item" {
     $tmpDirectory         = "/tmp"
     $testfile             = "testfile.txt"
     $testfolder           = "newDirectory"
