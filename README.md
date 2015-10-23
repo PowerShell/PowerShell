@@ -107,8 +107,8 @@ The `monad-docker.sh` script has two Bash functions, `monad-run` and `monad-tty`
 Pester tests are located in the `src/pester-tests` folder. The makefile targets `test` and `pester-tests` will run all Pester tests.
 
 The steps to add your pester tests are:
-- add `*.Tests.ps1`  files to `src/pester-tests`
-- run `./build.sh make pester-tests` to run the tests
+- add `*.Tests.ps1` files to `src/pester-tests`
+- run `monad-run make pester-tests` to run all the tests
 
 ## TODO: Docker shell-in-a-box
 
