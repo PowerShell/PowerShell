@@ -16,10 +16,6 @@
 extern "C"
 {
     int startCoreCLR(
-        /* Passed to propertyValues */
-        const char* appPath,
-        const char* nativeDllSearchDirs,
-        /* Passed to InitializeCoreCLRFunction */
         const char* appDomainFriendlyName,
         void** hostHandle,
         unsigned int* domainId);
