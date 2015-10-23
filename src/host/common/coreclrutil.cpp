@@ -45,19 +45,17 @@ CreateDelegateFunction createDelegate;
 
 bool GetAbsolutePath(const char* path, std::string& absolutePath)
 {
-    bool result = false;
-
     char realPath[PATH_MAX];
     if (realpath(path, realPath) != nullptr && realPath[0] != '\0')
     {
         absolutePath.assign(realPath);
         // realpath should return canonicalized path without the trailing slash
         assert(absolutePath.back() != '/');
-
-        result = true;
+        return true;
     }
 
-    return result;
+    std::cerr << "failed to get absolute path for " << path << std::endl;
+    return false;
 }
 
 // TODO use dirname
@@ -71,6 +69,7 @@ bool GetDirectory(const char* absolutePath, std::string& directory)
         return true;
     }
 
+    std::cerr << "failed to get directory for " << absolutePath << std::endl;
     return false;
 }
 
@@ -84,13 +83,13 @@ bool GetEnvAbsolutePath(const char* env_var, std::string& absolutePath)
     const char* filesPathLocal = std::getenv(env_var);;
     if (filesPathLocal == nullptr)
     {
-        std::cerr << "$" << env_var << " was empty" << std::endl;
+        std::cerr << "failed because $" << env_var << " was empty" << std::endl;
         return false;
     }
 
     if (!GetAbsolutePath(filesPathLocal, absolutePath))
     {
-        std::cerr << "Failed to get absolute path for " << env_var << std::endl;
+        std::cerr << "failed to get absolute path for " << env_var << std::endl;
         return false;
     }
 
