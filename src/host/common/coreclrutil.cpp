@@ -198,19 +198,15 @@ int startCoreCLR(
     void** hostHandle,
     unsigned int* domainId)
 {
-    // get path to current executable
-    char exePath[PATH_MAX] = { 0 };
-    readlink("/proc/self/exe", exePath, PATH_MAX);
-
     // get the CoreCLR root path
-    std::string clrFilesAbsolutePath;
-    if(!GetEnvAbsolutePath("CORE_ROOT", clrFilesAbsolutePath))
+    std::string clrAbsolutePath;
+    if(!GetEnvAbsolutePath("CORE_ROOT", clrAbsolutePath))
     {
         return -1;
     }
 
     // get the CoreCLR shared library path
-    std::string coreClrDllPath(clrFilesAbsolutePath);
+    std::string coreClrDllPath(clrAbsolutePath);
     coreClrDllPath.append("/");
     coreClrDllPath.append(coreClrDll);
 
@@ -254,7 +250,7 @@ int startCoreCLR(
     std::string tpaList;
 
     // add assemblies in the CoreCLR root path
-    AddFilesFromDirectoryToTpaList(clrFilesAbsolutePath.c_str(), tpaList);
+    AddFilesFromDirectoryToTpaList(clrAbsolutePath.c_str(), tpaList);
 
     // get path to AssemblyLoadContext.dll
     std::string psAbsolutePath;
@@ -262,10 +258,12 @@ int startCoreCLR(
     {
         return -1;
     }
-    std::string assemblyLoadContextAbsoluteFilePath(psAbsolutePath + "/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll");
+    std::string alcAbsolutePath(psAbsolutePath);
+    alcAbsolutePath.append("/");
+    alcAbsolutePath.append("Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll");
 
     // add AssemblyLoadContext
-    tpaList.append(assemblyLoadContextAbsoluteFilePath);
+    tpaList.append(alcAbsolutePath);
 
     // generate the assembly search paths
     std::string appPath(psAbsolutePath);
@@ -273,7 +271,7 @@ int startCoreCLR(
 
     std::string nativeDllSearchDirs(appPath);
     nativeDllSearchDirs.append(":");
-    nativeDllSearchDirs.append(clrFilesAbsolutePath);
+    nativeDllSearchDirs.append(clrAbsolutePath);
 
     // create list of properties to initialize CoreCLR
     const char* propertyKeys[] = {
@@ -291,6 +289,10 @@ int startCoreCLR(
         nativeDllSearchDirs.c_str(),
         "UseLatestBehaviorWhenTFMNotSpecified"
     };
+
+    // get path to current executable
+    char exePath[PATH_MAX] = { 0 };
+    readlink("/proc/self/exe", exePath, PATH_MAX);
 
     // initialize CoreCLR
     int status = initializeCoreCLR(
