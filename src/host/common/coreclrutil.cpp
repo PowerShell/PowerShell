@@ -195,8 +195,6 @@ void AddFilesFromDirectoryToTpaList(const char* directory, std::string& tpaList)
 // Below is our custom start/stop interface
 //
 int startCoreCLR(
-    const char* appPath,
-    const char* nativeDllSearchDirs,
     const char* appDomainFriendlyName,
     void** hostHandle,
     unsigned int* domainId)
@@ -270,6 +268,14 @@ int startCoreCLR(
     // add AssemblyLoadContext
     tpaList.append(assemblyLoadContextAbsoluteFilePath);
 
+    // generate the assembly search paths
+    std::string appPath(psAbsolutePath);
+    // TODO: add LD_LIBRARY_PATH?
+
+    std::string nativeDllSearchDirs(appPath);
+    nativeDllSearchDirs.append(":");
+    nativeDllSearchDirs.append(clrFilesAbsolutePath);
+
     // create list of properties to initialize CoreCLR
     const char* propertyKeys[] = {
         "TRUSTED_PLATFORM_ASSEMBLIES",
@@ -281,9 +287,9 @@ int startCoreCLR(
 
     const char* propertyValues[] = {
         tpaList.c_str(),
-        appPath,
-        appPath,
-        nativeDllSearchDirs,
+        appPath.c_str(),
+        appPath.c_str(),
+        nativeDllSearchDirs.c_str(),
         "UseLatestBehaviorWhenTFMNotSpecified"
     };
 
