@@ -17,8 +17,10 @@
  * stopCoreCLR() will deinitialize given the handle and identifier
  */
 
+#ifdef __cplusplus
 extern "C"
 {
+#endif
     int startCoreCLR(
         const char* appDomainFriendlyName,
         void** hostHandle,
@@ -46,4 +48,6 @@ extern "C"
 
     extern ExecuteAssemblyFunction executeAssembly;
     extern CreateDelegateFunction createDelegate;
+#ifdef __cplusplus
 }
+#endif
