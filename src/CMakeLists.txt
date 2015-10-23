@@ -10,8 +10,7 @@ link_directories(${monad_native_BINARY_DIR})
 # source file definitions
 set(LIB_SOURCE_FILES impl/getcurrentprocessorid.cpp impl/getusername.cpp impl/terminal.cpp impl/getcomputername.cpp impl/getcpinfo.cpp)
 set(HOST_COMMON_SOURCE_FILES host/common/coreclrutil.cpp)
-set(HOST_COMMON_TEST_SOURCE_FILES tests/host/test-hostutil.cpp)
-set(TEST_SOURCE_FILES tests/test-getcurrentprocessid.cpp tests/test-getusername.cpp tests/test-getcomputername.cpp tests/test-getcpinfo.cpp ${HOST_COMMON_SOURCE_FILES} ${HOST_COMMON_TEST_SOURCE_FILES})
+set(TEST_SOURCE_FILES tests/test-getcurrentprocessid.cpp tests/test-getusername.cpp tests/test-getcomputername.cpp tests/test-getcpinfo.cpp ${HOST_COMMON_SOURCE_FILES})
 set(SOURCE_FILES main.cpp ../ext-src/gtest/fused-src/gtest/gtest-all.cc)
 set(HOST_CMDLINE_SOURCE_FILES host/cmdline/main.cpp)
 
@@ -24,8 +23,9 @@ add_executable(host_cmdline ${HOST_CMDLINE_SOURCE_FILES})
 # add pthread and other libs
 find_package(Threads)
 target_link_libraries(ps icuuc)
-target_link_libraries(monad_native ${CMAKE_THREAD_LIBS_INIT} ps)
-target_link_libraries(host_cmdline pshost dl icuuc)
+target_link_libraries(monad_native ${CMAKE_THREAD_LIBS_INIT} ps pshost)
+target_link_libraries(pshost dl icuuc)
+target_link_libraries(host_cmdline pshost)
 
 # target specific include directories
 target_include_directories(monad_native PRIVATE host)
