@@ -21,7 +21,7 @@
     }
 
     Context "Functionality testing" {
-        $startDirectory = $env:PWD
+        $startDirectory = "$env:HOME/src/pester-tests"
 
         It "Should have the correct current location when using the set-location cmdlet" {
             Set-Location $startDirectory
