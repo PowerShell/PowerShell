@@ -21,7 +21,7 @@
     }
 
     Context "Functionality testing" {
-        $startDirectory = $(Get-Location).Path
+        $startDirectory = $env:PWD
 
         It "Should have the correct current location when using the set-location cmdlet" {
             Set-Location $startDirectory
@@ -32,19 +32,19 @@
         It "Should have the correct current location when using the cd alias" {
             cd /
 
-            $(Get-Location).Path | Should Be $startDirectory
+            $(Get-Location).Path | Should Be /
         }
 
         It "Should have the correct current location when using the chdir alias" {
             chdir /
 
-            $(Get-Location).Path | Should Be $startDirectory
+            $(Get-Location).Path | Should Be /
         }
 
         It "Should have the correct current location when using the chdir alias" {
             sl /
 
-            $(Get-Location).Path | Should Be $startDirectory
+            $(Get-Location).Path | Should Be /
         }
 
         It "Should be able to use the Path switch" {
@@ -55,10 +55,7 @@
             $(Set-Location / -PassThru).GetType().Name | Should Be PathInfo
         }
 
-        It "Should clean up after itself" {
-            Set-Location $startDirectory
+        Set-Location $startDirectory
 
-            Test-Path $startDirectory | Should Be $true
-        }
     }
 }
