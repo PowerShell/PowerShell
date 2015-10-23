@@ -4,11 +4,19 @@
 
 /* PowerShell on Linux custom host interface
  *
- * startCoreCLR() and stopCoreCLR() wrap the initialization of CoreCLR
- * and use of ExecuteAssemblyFunction() and CreateDelegateFunction()
- * should be sandwiched in between them
+ * startCoreCLR() takes a friendly name, e.g. "powershell", and a
+ * writable pointer and identifier
  *
+ * executeAssmbly() will be made available after starting CoreCLR, and
+ * is used to launch assemblies with a main function
+ *
+ * createDelegate() works similarly but provides a reverse P/Invoke
+ * given an assembly, type, and method; note that on Linux,
+ * PublicKeyToken must be null
+ *
+ * stopCoreCLR() will deinitialize given the handle and identifier
  */
+
 extern "C"
 {
     int startCoreCLR(
