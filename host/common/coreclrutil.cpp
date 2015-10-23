@@ -217,19 +217,13 @@ int startCoreCLR(
     coreClrDllPath.append("/");
     coreClrDllPath.append(coreClrDll);
 
-    if (coreClrDllPath.size() >= PATH_MAX)
-    {
-        std::cerr << "Absolute path to CoreCLR library too long" << std::endl;
-        return 1;
-    }
-
     // open the shared library
     coreclrLib = dlopen(coreClrDllPath.c_str(), RTLD_NOW|RTLD_LOCAL);
     if (coreclrLib == nullptr)
     {
         char* error = dlerror();
         std::cerr << "dlopen failed to open the CoreCLR library: " << error << std::endl;
-        return 2;
+        return -1;
     }
 
     // query and verify the function pointers
@@ -241,22 +235,22 @@ int startCoreCLR(
     if (initializeCoreCLR == nullptr)
     {
         std::cerr << "function coreclr_initialize not found in CoreCLR library" << std::endl;
-        return 3;
+        return -1;
     }
     if (executeAssembly == nullptr)
     {
         std::cerr << "function coreclr_execute_assembly not found in CoreCLR library" << std::endl;
-        return 3;
+        return -1;
     }
     if (shutdownCoreCLR == nullptr)
     {
         std::cerr << "function coreclr_shutdown not found in CoreCLR library" << std::endl;
-        return 3;
+        return -1;
     }
     if (createDelegate == nullptr)
     {
         std::cerr << "function coreclr_create_delegate not found in CoreCLR library" << std::endl;
-        return 3;
+        return -1;
     }
 
     // generate the Trusted Platform Assemblies list
@@ -303,10 +297,10 @@ int startCoreCLR(
         hostHandle,
         domainId);
 
-    if (0 > status)
+    if (!SUCCEEDED(status))
     {
         std::cerr << "coreclr_initialize failed - status: " << std::hex << status << std::endl;
-        return 4;
+        return -1;
     }
 
     // initialize PowerShell's custom assembly load context
@@ -320,10 +314,10 @@ int startCoreCLR(
         "SetPowerShellAssemblyLoadContext",
         (void**)&loaderDelegate);
 
-    if (status < 0)
+    if (!SUCCEEDED(status))
     {
         std::cerr << "could not create delegate for SetPowerShellAssemblyLoadContext - status: " << std::hex << status << std::endl;
-        return 4;
+        return -1;
     }
 
     icu::UnicodeString psUnicodeAbsolutePath = icu::UnicodeString::fromUTF8(psAbsolutePath.c_str());
@@ -337,7 +331,7 @@ int stopCoreCLR(void* hostHandle, unsigned int domainId)
 {
     // shutdown CoreCLR
     int status = shutdownCoreCLR(hostHandle, domainId);
-    if (0 > status)
+    if (!SUCCEEDED(status))
     {
         std::cerr << "coreclr_shutdown failed - status: " << std::hex << status << std::endl;
     }

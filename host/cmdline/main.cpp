@@ -176,6 +176,12 @@ int main(int argc, char** argv)
         &hostHandle,
         &domainId);
 
+    if (!SUCCEEDED(status))
+    {
+        std::cerr << "could not start CoreCLR" << std::endl;
+        return -1;
+    }
+
     // call into Main of assembly
     unsigned int exitCode;
     executeAssembly(
@@ -185,6 +191,11 @@ int main(int argc, char** argv)
         &exitCode);
 
     status = stopCoreCLR(hostHandle, domainId);
+    if (!SUCCEEDED(status))
+    {
+        std::cerr << "could not stop CoreCLR" << std::endl;
+        return -1;
+    }
 
     return exitCode;
 }

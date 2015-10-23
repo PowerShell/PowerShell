@@ -4,6 +4,8 @@
 #include <string>
 #endif
 
+#define SUCCEEDED(Status) ((Status) >= 0)
+
 /* PowerShell on Linux custom host interface
  *
  * startCoreCLR() and stopCoreCLR() wrap the initialization of CoreCLR
