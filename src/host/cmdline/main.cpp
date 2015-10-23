@@ -13,38 +13,29 @@ namespace Cmdline
     void printHelp()
     {
         std::cerr << "PS CoreCLR host" << std::endl
-                  << "Usage: host_cmdline [-alc load_context_assembly] [-s search_paths]" << std::endl
-                  << "                    [-b base_path] assembly [...]" << std::endl
+                  << "Usage: host_cmdline [-s search_paths] assembly [...]" << std::endl
                   << std::endl
                   << "What it does:" << std::endl
-                  << "- by default the host assumes that CoreCLR is located in the same folder" << std::endl
-                  << "  as host_cmdline" << std::endl
+                  << "- the host assumes that CoreCLR is located $CORE_ROOT" << std::endl
                   << "- by default the host assumes that the assembly named" << std::endl
-                  << "  Microsoft.PowerShell.CoreCLR.AssemblyLoadContext is part of the" << std::endl
-                  << "  platform assemblies" << std::endl
-                  << "  + a custom assembly containing the PowerShellAssemblyLoadContext can" << std::endl
-                  << "    be provided with the -alc command line argument" << std::endl
+                  << "  Microsoft.PowerShell.CoreCLR.AssemblyLoadContext is " << std::endl
+                  << "  located in $PWRSH_ROOT" << std::endl
                   << "- all additional parameters at the end of the command line are forwarded" << std::endl
                   << "  to the Main function in the assembly" << std::endl
                   << "- the host will execute the Main function in the specified assembly" << std::endl
                   << "  + this assembly has to be located in the search path" << std::endl
                   << "- by default the host will add the current working directory to the assembly search path" << std::endl
                   << "  + this can be overridden with the -s command line argument" << std::endl
-                  << "- by default the host assumes the PS base path for the assembly load context is the current" << std::endl
-                  << "  working directory" << std::endl
-                  << "  + this can be overridden with the -b command line argument" << std::endl
                   << "- the function signature of the Main function that gets executed must be:" << std::endl
                   << "  static void Main(string[] args)" << std::endl
                   << std::endl
                   << "Options:" << std::endl
-                  << "-alc              path to a dll containing Microsoft.PowerShell.CoreCLR.AssemblyLoadContext" << std::endl
                   << "-s                a list of assembly search paths, separated by :" << std::endl
-                  << "-b                the powershell assembly base path" << std::endl
                   << "-v                verbose output" << std::endl
                   << "assembly          the path of the assembly to execute relative to current directory" << std::endl
                   << std::endl
                   << "Example:" << std::endl
-                  << "CORE_ROOT=/test/coreclr PWRSH_ROOT=/test/powershell ./host_cmdline -alc /test/ps/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll -s /test/ps -b /test/ps powershell-simple 'get-process'" << std::endl;
+                  << "CORE_ROOT=/test/coreclr PWRSH_ROOT=/test/powershell ./host_cmdline -s /test/ps powershell-simple 'get-process'" << std::endl;
     }
 
     struct Args
@@ -56,9 +47,7 @@ namespace Cmdline
         {
         }
 
-        std::string assemblyLoadContextFilePath;
         std::string searchPaths;
-        std::string basePath;
         std::string entryAssemblyPath;
         int argc;
         char** argv;
@@ -67,9 +56,7 @@ namespace Cmdline
         void debugPrint() const
         {
             std::cerr << "Args:" << std::endl
-                      << "- assemblyLoadContextFilePath   " << assemblyLoadContextFilePath << std::endl
                       << "- searchPaths                   " << searchPaths << std::endl
-                      << "- basePath                      " << basePath << std::endl
                       << "- entryAssemblyPath             " << entryAssemblyPath << std::endl
                       << "- argc                          " << argc << std::endl
                       << "- verbose                       " << (verbose ? "true" : "false") << std::endl;
@@ -92,19 +79,9 @@ namespace Cmdline
             const bool hasNextArg = i+1 < argc;
             const std::string nextArg = hasNextArg ? std::string(argv[i+1]) : std::string("");
 
-            if (hasNextArg && arg == "-alc")
-            {
-                args.assemblyLoadContextFilePath = nextArg;
-                ++i;
-            }
-            else if (hasNextArg && arg == "-s")
+	    if (hasNextArg && arg == "-s")
             {
                 args.searchPaths = nextArg;
-                ++i;
-            }
-            else if (hasNextArg && arg == "-b")
-            {
-                args.basePath = nextArg;
                 ++i;
             }
             else if (arg == "-v")
@@ -190,31 +167,6 @@ int main(int argc, char** argv)
     // Add both the CoreCLR directory and the regular search paths to this list
     std::string nativeDllSearchDirs = appPath + ":" + clrAbsolutePath;
 
-    // convert the app base to utf-16
-    //
-    // this is needed as a utf-16 LE string by CoreCLR/PS's assembly load context interface
-    // it is either:
-    // - the current dir's absolute path
-    // - the path specified through the -b argument
-    std::string psBasePath = currentDirAbsolutePath;
-    if (args.basePath != "")
-    {
-        if (!GetAbsolutePath(args.basePath.c_str(),psBasePath))
-        {
-            std::cerr << "failed to get the absolute path from the base_path argument" << std::endl;
-            return 1;
-        }
-    }
-    if (args.verbose)
-        std::cerr << "psBasePath=" << psBasePath << std::endl;
-
-    // make sure to leave 1 byte at the end for null termination
-    std::basic_string<char16_t> psBasePath16(PATH_MAX+1,0);
-
-    UnicodeString u8str = UnicodeString(psBasePath.c_str(),"UTF-8");
-    int32_t targetSize = u8str.extract(0,u8str.length(),(char*)&psBasePath16[0],(psBasePath16.size()-1)*sizeof(char16_t),"UTF-16LE");
-    psBasePath16.resize(targetSize/sizeof(char16_t)+1);
-
     void* hostHandle;
     unsigned int domainId;
     int status = startCoreCLR(
@@ -224,29 +176,13 @@ int main(int argc, char** argv)
         &hostHandle,
         &domainId);
 
-    // initialize the PS's custom assembly load context
-    typedef void (*LoaderRunHelperFp)(const char16_t* appPath);
-    LoaderRunHelperFp loaderDelegate = nullptr;
-    status = createDelegate(
-        hostHandle,
-        domainId,
-        "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-        "System.Management.Automation.PowerShellAssemblyLoadContextInitializer",
-        "SetPowerShellAssemblyLoadContext",
-        (void**)&loaderDelegate);
-    if (0 > status)
-    {
-        std::cerr << "could not create delegate for SetPowerShellAssemblyLoadContext - status: " << std::hex << status << std::endl;
-        return 4;
-    }
-    loaderDelegate(psBasePath16.c_str());
-
-    // call into Main of powershell-simple.exe
+    // call into Main of assembly
     unsigned int exitCode;
-    executeAssembly(hostHandle, domainId, args.argc,
-                                 (const char**)args.argv,
-                                 (currentDirAbsolutePath+"/"+args.entryAssemblyPath).c_str(),
-                                 &exitCode);
+    executeAssembly(
+        hostHandle, domainId, args.argc,
+        (const char**)args.argv,
+        (currentDirAbsolutePath+"/"+args.entryAssemblyPath).c_str(),
+        &exitCode);
 
     status = stopCoreCLR(hostHandle, domainId);
 

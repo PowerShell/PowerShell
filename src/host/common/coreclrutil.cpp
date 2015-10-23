@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <set>
+#include <unicode/unistr.h>
 
 // The name of the CoreCLR native runtime DLL
 #if defined(__APPLE__)
@@ -265,12 +266,12 @@ int startCoreCLR(
     AddFilesFromDirectoryToTpaList(clrFilesAbsolutePath.c_str(), tpaList);
 
     // get path to AssemblyLoadContext.dll
-    std::string psFilesAbsolutePath;
-    if(!GetEnvAbsolutePath("PWRSH_ROOT", psFilesAbsolutePath))
+    std::string psAbsolutePath;
+    if(!GetEnvAbsolutePath("PWRSH_ROOT", psAbsolutePath))
     {
         return -1;
     }
-    std::string assemblyLoadContextAbsoluteFilePath(psFilesAbsolutePath + "/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll");
+    std::string assemblyLoadContextAbsoluteFilePath(psAbsolutePath + "/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll");
 
     // add AssemblyLoadContext
     tpaList.append(assemblyLoadContextAbsoluteFilePath);
@@ -307,6 +308,27 @@ int startCoreCLR(
         std::cerr << "coreclr_initialize failed - status: " << std::hex << status << std::endl;
         return 4;
     }
+
+    // initialize PowerShell's custom assembly load context
+    typedef void (*LoaderRunHelperFp)(const char16_t* appPath);
+    LoaderRunHelperFp loaderDelegate = nullptr;
+    status = createDelegate(
+        *hostHandle,
+        *domainId,
+        "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "System.Management.Automation.PowerShellAssemblyLoadContextInitializer",
+        "SetPowerShellAssemblyLoadContext",
+        (void**)&loaderDelegate);
+
+    if (status < 0)
+    {
+        std::cerr << "could not create delegate for SetPowerShellAssemblyLoadContext - status: " << std::hex << status << std::endl;
+        return 4;
+    }
+
+    icu::UnicodeString psUnicodeAbsolutePath = icu::UnicodeString::fromUTF8(psAbsolutePath.c_str());
+
+    loaderDelegate((const char16_t*)psUnicodeAbsolutePath.getTerminatedBuffer());
 
     return status;
 }
