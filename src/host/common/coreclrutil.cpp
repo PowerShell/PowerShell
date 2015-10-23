@@ -96,6 +96,7 @@ bool GetEnvAbsolutePath(const char* env_var, std::string& absolutePath)
     return true;
 }
 
+// Add all *.dll, *.ni.dll, *.exe, and *.ni.exe files from the specified directory to the tpaList string.
 void AddFilesFromDirectoryToTpaList(const char* directory, std::string& tpaList)
 {
     const char * const tpaExtensions[] = {
@@ -193,7 +194,6 @@ void AddFilesFromDirectoryToTpaList(const char* directory, std::string& tpaList)
 // Below is our custom start/stop interface
 //
 int startCoreCLR(
-    const char* tpaList,
     const char* appPath,
     const char* nativeDllSearchDirs,
     const char* appDomainFriendlyName,
@@ -258,6 +258,23 @@ int startCoreCLR(
         return 3;
     }
 
+    // generate the Trusted Platform Assemblies list
+    std::string tpaList;
+
+    // add assemblies in the CoreCLR root path
+    AddFilesFromDirectoryToTpaList(clrFilesAbsolutePath.c_str(), tpaList);
+
+    // get path to AssemblyLoadContext.dll
+    std::string psFilesAbsolutePath;
+    if(!GetEnvAbsolutePath("PWRSH_ROOT", psFilesAbsolutePath))
+    {
+        return -1;
+    }
+    std::string assemblyLoadContextAbsoluteFilePath(psFilesAbsolutePath + "/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll");
+
+    // add AssemblyLoadContext
+    tpaList.append(assemblyLoadContextAbsoluteFilePath);
+
     // create list of properties to initialize CoreCLR
     const char* propertyKeys[] = {
         "TRUSTED_PLATFORM_ASSEMBLIES",
@@ -268,7 +285,7 @@ int startCoreCLR(
     };
 
     const char* propertyValues[] = {
-        tpaList,
+        tpaList.c_str(),
         appPath,
         appPath,
         nativeDllSearchDirs,

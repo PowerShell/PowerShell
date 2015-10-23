@@ -40,15 +40,11 @@ namespace Cmdline
                   << "-alc              path to a dll containing Microsoft.PowerShell.CoreCLR.AssemblyLoadContext" << std::endl
                   << "-s                a list of assembly search paths, separated by :" << std::endl
                   << "-b                the powershell assembly base path" << std::endl
-                  << "-v                verbose output, show paths" << std::endl
-                  << "-tpa              additional list of trusted platform assemblies, this references dll and exe files" << std::endl
-                  << "                  separated by :" << std::endl
-                  << "                  unless part of the same folder as CoreCLR, the main assembly referenced with the assembly_name" << std::endl
-                  << "                  argument, must always be added to the TPA list with this parameter" << std::endl
+                  << "-v                verbose output" << std::endl
                   << "assembly          the path of the assembly to execute relative to current directory" << std::endl
                   << std::endl
                   << "Example:" << std::endl
-                  << "CORE_ROOT=/test/coreclr ./host_cmdline -alc /test/ps/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll -s /test/ps -b /test/ps -tpa /test/ps/powershell-simple.exe 'powershell-simple, version=1.0.0.0, culture=neutral, PublicKeyToken=null' 'get-process'" << std::endl;
+                  << "CORE_ROOT=/test/coreclr PWRSH_ROOT=/test/powershell ./host_cmdline -alc /test/ps/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll -s /test/ps -b /test/ps powershell-simple 'get-process'" << std::endl;
     }
 
     struct Args
@@ -63,7 +59,6 @@ namespace Cmdline
         std::string assemblyLoadContextFilePath;
         std::string searchPaths;
         std::string basePath;
-        std::string tpaList;
         std::string entryAssemblyPath;
         int argc;
         char** argv;
@@ -75,7 +70,6 @@ namespace Cmdline
                       << "- assemblyLoadContextFilePath   " << assemblyLoadContextFilePath << std::endl
                       << "- searchPaths                   " << searchPaths << std::endl
                       << "- basePath                      " << basePath << std::endl
-                      << "- tpaList                       " << tpaList << std::endl
                       << "- entryAssemblyPath             " << entryAssemblyPath << std::endl
                       << "- argc                          " << argc << std::endl
                       << "- verbose                       " << (verbose ? "true" : "false") << std::endl;
@@ -111,11 +105,6 @@ namespace Cmdline
             else if (hasNextArg && arg == "-b")
             {
                 args.basePath = nextArg;
-                ++i;
-            }
-            else if (hasNextArg && arg == "-tpa")
-            {
-                args.tpaList = nextArg;
                 ++i;
             }
             else if (arg == "-v")
@@ -168,38 +157,6 @@ int main(int argc, char** argv)
     }
     if (args.verbose)
         std::cerr << "clrAbsolutePath=" << clrAbsolutePath << std::endl;
-
-    // TPA list
-    //
-    // The list of platform assemblies must include all CoreCLR assemblies
-    // and the Microsoft.PowerShell.CoreCLR.AssemblyLoadContext
-    //
-    // if the -alc parameter was specified, add it to the TPA list here
-    
-    std::string tpaList;
-    AddFilesFromDirectoryToTpaList(clrAbsolutePath.c_str(),tpaList);
-    
-    if (args.assemblyLoadContextFilePath != "")
-    {
-        std::string assemblyLoadContextAbsoluteFilePath;
-        if (!GetAbsolutePath(args.assemblyLoadContextFilePath.c_str(),assemblyLoadContextAbsoluteFilePath))
-        {
-            std::cerr << "Failed to get absolute file path for assembly load context" << std::endl;
-            return 1;
-        }
-        tpaList += ":" + assemblyLoadContextAbsoluteFilePath;
-    }
-
-    // add the -tpa command line argument
-    if (args.tpaList != "")
-    {
-        std::string tpaAbsolutePathList = HostUtil::getAbsolutePathList(args.tpaList);
-        if (tpaAbsolutePathList != "")
-            tpaList += ":" + tpaAbsolutePathList;
-    }
-
-    if (args.verbose)
-        std::cerr << "tpaList: " << tpaList << std::endl;
 
     // get the absolute path of the current directory
 
@@ -261,7 +218,6 @@ int main(int argc, char** argv)
     void* hostHandle;
     unsigned int domainId;
     int status = startCoreCLR(
-        tpaList.c_str(),
         appPath.c_str(),
         nativeDllSearchDirs.c_str(),
         "ps_cmdline_host",

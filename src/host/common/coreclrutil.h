@@ -15,7 +15,6 @@ extern "C"
 {
     int startCoreCLR(
         /* Passed to propertyValues */
-        const char* tpaList,
         const char* appPath,
         const char* nativeDllSearchDirs,
         /* Passed to InitializeCoreCLRFunction */
@@ -55,7 +54,4 @@ bool GetAbsolutePath(const char* path, std::string& absolutePath);
 // Get directory of the specified path.
 // Return true in case of a success, false otherwise.
 bool GetDirectory(const char* absolutePath, std::string& directory);
-
-// Add all *.dll, *.ni.dll, *.exe, and *.ni.exe files from the specified directory to the tpaList string.
-void AddFilesFromDirectoryToTpaList(const char* directory, std::string& tpaList);
 #endif
