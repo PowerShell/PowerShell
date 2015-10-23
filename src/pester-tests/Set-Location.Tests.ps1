@@ -1,5 +1,4 @@
 ﻿Describe "Set-Location" {
-
     It "Should be able to be called without error" {
         { Set-Location / }    | Should Not Throw
     }
