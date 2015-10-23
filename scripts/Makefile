@@ -216,6 +216,9 @@ PESTER=$(MONAD)/src/pester-tests
 pester-tests: $(RUN_TARGETS) prepare
 	$(APP_BASE)/runps-simple.sh 'cd $(PESTER); $$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/scripts/pester-tests.xml -OutputFormat NUnitXml'
 
+validate-pester: $(RUN_TARGETS) prepare
+	$(APP_BASE)/runps-simple.sh '$$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/scripts/validate-pester.xml -OutputFormat NUnitXml'
+
 # 3rdparty "hashbang" example using runps-file
 hashbang-tests: all prepare
 	PATH=$(PATH):$(APP_BASE) $(MONAD)/scripts/3rdparty/hashbang/script.ps1
