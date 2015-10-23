@@ -84,6 +84,8 @@ dotnetlibs/Microsoft.Management.Infrastructure.Native.dll: $(MI_STUBS) buildtemp
 MPATH=/usr/lib/mono/4.5/Facades
 REFLECTION_METADATA=buildtemp/System.Reflection.Metadata.1.0.22/lib/dotnet/System.Reflection.Metadata.dll
 COLLECTIONS_IMMUTABLE=buildtemp/System.Collections.Immutable.1.1.37/lib/dotnet/System.Collections.Immutable.dll
+$(REFLECTION_METADATA): buildtemp
+$(COLLECTIONS_IMMUTABLE): buildtemp
 buildtemp/TypeCatalogGen.exe: $(ADMIN_GIT_ROOT)/monad/nttargets/assemblies/core/PSAssemblyLoadContext/TypeCatalogGen/TypeCatalogGen.cs $(REFLECTION_METADATA) $(COLLECTIONS_IMMUTABLE) buildtemp
 	$(MCS) -out:$@ -target:exe -pkg:dotnet $(addprefix -r:, $(REFLECTION_METADATA) $(COLLECTIONS_IMMUTABLE) $(MPATH)/System.Runtime.dll $(MPATH)/System.Reflection.Primitives.dll $(MPATH)/System.IO.dll) $<
 
@@ -114,14 +116,17 @@ $(LIBPS_BUILD)/Makefile: $(MONAD_NATIVE)/CMakeLists.txt
 	cd $(LIBPS_BUILD) && cmake $(MONAD_NATIVE)
 
 NATIVE_BINARIES=libps.so monad_native host_cmdline
-$(addprefix dotnetlibs/, $(NATIVE_BINARIES)): $(LIBPS_BUILD)/Makefile
-	$(MAKE) -j -C $(LIBPS_BUILD)
-	cp $(addprefix $(LIBPS_BUILD)/, $(notdir $@)) dotnetlibs
+$(addprefix dotnetlibs/, $(NATIVE_BINARIES)): monad-native
 
+monad-native: $(LIBPS_BUILD)/Makefile
+	$(MAKE) -j -C $(LIBPS_BUILD)
+	cp $(addprefix $(LIBPS_BUILD)/, $(NATIVE_BINARIES)) dotnetlibs
+
+SCRIPTS=$(MONAD)/scripts
 # C++ tests for monad-native - results in native-tests.xml
 # see https://github.com/google/googletest
 native-tests: dotnetlibs/monad_native
-	cd dotnetlibs && ./monad_native --gtest_output="xml:$(MONAD)/scripts/native-tests.xml"
+	cd dotnetlibs && ./monad_native --gtest_output="xml:$(SCRIPTS)/native-tests.xml"
 
 # this is a windows dll that is needed because CoreCLR tries to access
 # registry functions that don't exist on Linux and there is no other good
@@ -146,10 +151,10 @@ buildtemp: nuget.exe
 # - copy xUnit libraries
 
 # this is the execution environment from which all managed code is run
-APP_BASE=exec_env/app_base
+APP_BASE=$(SCRIPTS)/exec_env/app_base
 
 .PHONY: $(APP_BASE)
-$(APP_BASE): runps.sh $(POWERSHELL_RUN_TARGETS)
+$(APP_BASE): runps.sh $(RUN_TARGETS)
 	rm -rf $@
 	mkdir -p $(APP_BASE)/Modules
 	cp $(ADMIN_GIT_ROOT)/monad/miscfiles/display/*.ps1xml $(APP_BASE)
@@ -176,16 +181,17 @@ run: $(RUN_TARGETS) prepare
 	$(APP_BASE)/runps-simple.sh '"a","b","c","a","a" | Select-Object -Unique'
 
 shell: $(RUN_TARGETS) prepare
-	$(APP_BASE)/runps.sh
+	TEMP=/tmp $(APP_BASE)/runps.sh
 
 run-interactive: shell
 
 run-file: $(RUN_TARGETS) prepare
 	$(APP_BASE)/runps.sh --file $(PSSCRIPT)
 
-# easy way to run individual PowerShell scripts, `make script.ps1` where the path is relative to monad-linux/scripts (with TEMP set for Pester)
+# easy way to run individual Pester test scripts, `make ../src/pester-tests/Test-Import-Csv.Tests.ps1`
+# where the path is relative to monad-linux/scripts (with TEMP set for Pester)
 %.ps1: $(RUN_TARGETS) prepare
-	TEMP=/tmp $(APP_BASE)/runps.sh --file $(MONAD)/scripts/$@
+	TEMP=/tmp $(APP_BASE)/runps-simple.sh 'cd $(PESTER); & $(SCRIPTS)/$@'
 
 # compiles "Hello World" like executables using .NET Core
 %.exe: %.cs $(CORECLR) buildtemp
@@ -202,19 +208,25 @@ dotnetlibs/ps_test.dll: $(TEST_SRCS) $(addprefix dotnetlibs/, $(TEST_TARGETS)) b
 	$(CSC) $(CSCOPTS_LIB) -out:$@ $(addprefix -r:$(MONAD_EXT)/xunit/, xunit.core.dll xunit.assert.dll) $(addprefix -r:dotnetlibs/, $(TEST_TARGETS)) $(COREREF) $(TEST_SRCS)
 
 xunit-tests: dotnetlibs/ps_test.dll $(RUN_TARGETS) prepare
-	$(APP_BASE)/runps-test.sh ps_test.dll -xml $(MONAD)/scripts/xunit-tests.xml
+	$(APP_BASE)/runps-test.sh ps_test.dll -xml $(SCRIPTS)/xunit-tests.xml
 
 # Pester tests for PowerShell - results in pester-tests.xml
 # see https://github.com/pester/Pester
 # requires $TEMP to be set
+# we cd because some tests rely on the current working directory
+PESTER=$(MONAD)/src/pester-tests
 pester-tests: $(RUN_TARGETS) prepare
-	$(APP_BASE)/runps-simple.sh 'cd $(MONAD)/src/pester-tests; $$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/scripts/pester-tests.xml -OutputFormat NUnitXml'
+	$(APP_BASE)/runps-simple.sh 'cd $(PESTER); $$env:TEMP="/tmp"; invoke-pester -OutputFile $(SCRIPTS)/pester-tests.xml -OutputFormat NUnitXml'
+
+# Pester self-tests - results in pester-self-tests.xml
+pester-self-tests: $(RUN_TARGETS) prepare
+	$(APP_BASE)/runps-simple.sh '$$env:TEMP="/tmp"; invoke-pester $(APP_BASE)/Modules/Pester/Functions -OutputFile $(SCRIPTS)/pester-self-tests.xml -OutputFormat NUnitXml'
 
 # 3rdparty "hashbang" example using runps-file
 hashbang-tests: all prepare
-	PATH=$(PATH):$(MONAD)/scripts/$(APP_BASE) $(MONAD)/scripts/3rdparty/hashbang/script.ps1
+	PATH=$(PATH):$(APP_BASE) $(SCRIPTS)/3rdparty/hashbang/script.ps1
 
-test: native-tests xunit-tests pester-tests hashbang-tests
+test: psrp-tests native-tests xunit-tests pester-tests hashbang-tests
 
 # debug/trace targets
 
@@ -224,22 +236,58 @@ trace: $(RUN_TARGETS) prepare
 run-debugclr: $(RUN_TARGETS) prepare
 	PAL_DBG_CHANNELS="+LOADER.TRACE" $(APP_BASE)/runps-simple.sh get-location
 
+# OMI
+OMI=$(MONAD)/src/omi/Unix
+OMI_FLAGS=--dev --enable-debug
+$(OMI)/GNUmakefile:
+	cd $(OMI) && ./configure $(OMI_FLAGS)
+
+OMISERVER=$(OMI)/output/bin/omiserver
+$(OMISERVER): $(OMI)/GNUmakefile
+	$(MAKE) -j -C $(OMI)
+
+omi: $(OMISERVER)
+
+MONAD_PROVIDER=$(MONAD)/src/monad-omi-provider
+PSRP_OMI_PROVIDER=$(OMI)/output/lib/libTestShell.so
+$(PSRP_OMI_PROVIDER): $(OMISERVER)
+	$(MAKE) -j -C $(MONAD_PROVIDER)
+
+psrp: $(PSRP_OMI_PROVIDER)
+
+psrp-tests: $(OMISERVER)
+	$(MAKE) -C $(OMI) tests
+
+# phony targets so that the recursive make is always invoked
+.PHONY: $(OMISERVER) $(PSRP_OMI_PROVIDER)
+
 # quoting here is a bit special if strings are passed in, because lldb
 # seems to forward arguments strangely
 debug: $(RUN_TARGETS) prepare
 	$(APP_BASE)/runps-simple-debug.sh get-location
 
 # Cleaning
-.PHONY: clean-native clean cleanall
+clean-provider:
+	-$(MAKE) -j -C $(MONAD_PROVIDER) clean
+
+clean-omi:
+	-$(MAKE) -j -C $(OMI) clean
+
+distclean-omi:
+	-$(MAKE) -j -C $(OMI) distclean
+
+clean-psrp: clean-provider clean-omi
 
 clean-native:
-	rm -rf $(LIBPS_BUILD)
+	-rm -rf $(LIBPS_BUILD)
 
 clean:
-	rm -rf dotnetlibs/* exec_env powershell.inc *-tests.xml
+	-rm -rf dotnetlibs/* exec_env powershell.inc *-tests.xml
 
-cleanall: clean clean-native
-	rm -rf buildtemp
+distclean: clean clean-native distclean-omi clean-provider
+	-rm -rf buildtemp
+
+cleanall: distclean
 
 # Shell-in-a-box Docker setup
 

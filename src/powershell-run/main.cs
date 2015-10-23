@@ -74,13 +74,6 @@ namespace Microsoft.Samples.PowerShell.Host
             set { this.exitCode = value; }
         }
 
-        // TODO:PSL this needs to be removed, it is only here for legacy testing purposes
-        public static void init()
-        {
-            string psBasePath = System.IO.Directory.GetCurrentDirectory();
-            PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(psBasePath);
-        }
-
         // this is the unmanaged main entry point used by the CoreCLR host
         public static int UnmanagedMain(int argc, [MarshalAs(UnmanagedType.LPArray,ArraySubType=UnmanagedType.LPStr,SizeParamIndex=0)] String[] argv)
         {
@@ -102,7 +95,6 @@ namespace Microsoft.Samples.PowerShell.Host
         /// <param name="args">This parameter is not used.</param>
         private static void Main(string[] args)
         {
-            init();
             ManagedMain(args);
         }
 
@@ -169,6 +161,23 @@ namespace Microsoft.Samples.PowerShell.Host
                 executeHelper(initialScript,null);
         }
 
+        /// Sets the prompt equal to the output of the prompt function
+        public string Prompt(Runspace rs)
+        {
+            string returnVal      = string.Empty;
+            Pipeline pipeline     = rs.CreatePipeline();
+            Command promptCommand = new Command("prompt");
+
+            pipeline.Commands.Add(promptCommand);
+
+            Collection<PSObject> output = pipeline.Invoke();
+            foreach (PSObject item in output)
+            {
+                returnVal = item.BaseObject.ToString();
+            }
+
+            return returnVal;
+        }
         /// <summary>
         /// A helper class that builds and executes a pipeline that writes 
         /// to the default output path. Any exceptions that are thrown are 
@@ -330,7 +339,6 @@ namespace Microsoft.Samples.PowerShell.Host
         /// ConsoleCancelEventHandler.</param>
         private void HandleControlC(object sender, ConsoleCancelEventArgs e)
         {
-            Console.WriteLine("HandleControlC");
             try
             {
                 lock (this.instanceLock)
@@ -367,11 +375,11 @@ namespace Microsoft.Samples.PowerShell.Host
                 string prompt;
                 if (this.myHost.IsRunspacePushed)
                 {
-                    prompt = string.Format("\n[{0}] PSConsoleSample: ", this.myRunSpace.ConnectionInfo.ComputerName);
+                    prompt = string.Format("\n[{0}] PSL> ", this.myRunSpace.ConnectionInfo.ComputerName);
                 }
                 else
                 {
-                    prompt = "\nPSConsoleSample: ";
+                    prompt = Prompt(this.myHost.Runspace);
                 }
 
                 this.myHost.UI.Write(ConsoleColor.White, ConsoleColor.Black, prompt);
