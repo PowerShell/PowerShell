@@ -26,7 +26,7 @@ find_package(Threads)
 target_link_libraries(ps icuuc)
 target_link_libraries(monad_native ${CMAKE_THREAD_LIBS_INIT} ps pshost)
 target_link_libraries(pshost dl icuuc)
-target_link_libraries(host_cmdline pshost icuuc)
+target_link_libraries(host_cmdline pshost)
 
 # target specific include directories
 target_include_directories(monad_native PRIVATE host)
