@@ -122,10 +122,11 @@ monad-native: $(LIBPS_BUILD)/Makefile
 	$(MAKE) -j -C $(LIBPS_BUILD)
 	cp $(addprefix $(LIBPS_BUILD)/, $(NATIVE_BINARIES)) dotnetlibs
 
+SCRIPTS=$(MONAD)/scripts
 # C++ tests for monad-native - results in native-tests.xml
 # see https://github.com/google/googletest
 native-tests: dotnetlibs/monad_native
-	cd dotnetlibs && ./monad_native --gtest_output="xml:$(MONAD)/scripts/native-tests.xml"
+	cd dotnetlibs && ./monad_native --gtest_output="xml:$(SCRIPTS)/native-tests.xml"
 
 # this is a windows dll that is needed because CoreCLR tries to access
 # registry functions that don't exist on Linux and there is no other good
@@ -150,7 +151,7 @@ buildtemp: nuget.exe
 # - copy xUnit libraries
 
 # this is the execution environment from which all managed code is run
-APP_BASE=$(MONAD)/scripts/exec_env/app_base
+APP_BASE=$(SCRIPTS)/exec_env/app_base
 
 .PHONY: $(APP_BASE)
 $(APP_BASE): runps.sh $(RUN_TARGETS)
@@ -190,7 +191,7 @@ run-file: $(RUN_TARGETS) prepare
 # easy way to run individual Pester test scripts, `make ../src/pester-tests/Test-Import-Csv.Tests.ps1`
 # where the path is relative to monad-linux/scripts (with TEMP set for Pester)
 %.ps1: $(RUN_TARGETS) prepare
-	TEMP=/tmp $(APP_BASE)/runps-simple.sh 'cd $(PESTER); & $(MONAD)/scripts/$@'
+	TEMP=/tmp $(APP_BASE)/runps-simple.sh 'cd $(PESTER); & $(SCRIPTS)/$@'
 
 # compiles "Hello World" like executables using .NET Core
 %.exe: %.cs $(CORECLR) buildtemp
@@ -207,18 +208,23 @@ dotnetlibs/ps_test.dll: $(TEST_SRCS) $(addprefix dotnetlibs/, $(TEST_TARGETS)) b
 	$(CSC) $(CSCOPTS_LIB) -out:$@ $(addprefix -r:$(MONAD_EXT)/xunit/, xunit.core.dll xunit.assert.dll) $(addprefix -r:dotnetlibs/, $(TEST_TARGETS)) $(COREREF) $(TEST_SRCS)
 
 xunit-tests: dotnetlibs/ps_test.dll $(RUN_TARGETS) prepare
-	$(APP_BASE)/runps-test.sh ps_test.dll -xml $(MONAD)/scripts/xunit-tests.xml
+	$(APP_BASE)/runps-test.sh ps_test.dll -xml $(SCRIPTS)/xunit-tests.xml
 
 # Pester tests for PowerShell - results in pester-tests.xml
 # see https://github.com/pester/Pester
 # requires $TEMP to be set
+# we cd because some tests rely on the current working directory
 PESTER=$(MONAD)/src/pester-tests
 pester-tests: $(RUN_TARGETS) prepare
-	$(APP_BASE)/runps-simple.sh 'cd $(PESTER); $$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/scripts/pester-tests.xml -OutputFormat NUnitXml'
+	$(APP_BASE)/runps-simple.sh 'cd $(PESTER); $$env:TEMP="/tmp"; invoke-pester -OutputFile $(SCRIPTS)/pester-tests.xml -OutputFormat NUnitXml'
+
+# Pester self-tests - results in pester-self-tests.xml
+pester-self-tests: $(RUN_TARGETS) prepare
+	$(APP_BASE)/runps-simple.sh '$$env:TEMP="/tmp"; invoke-pester $(APP_BASE)/Modules/Pester/Functions -OutputFile $(SCRIPTS)/pester-self-tests.xml -OutputFormat NUnitXml'
 
 # 3rdparty "hashbang" example using runps-file
 hashbang-tests: all prepare
-	PATH=$(PATH):$(APP_BASE) $(MONAD)/scripts/3rdparty/hashbang/script.ps1
+	PATH=$(PATH):$(APP_BASE) $(SCRIPTS)/3rdparty/hashbang/script.ps1
 
 test: psrp-tests native-tests xunit-tests pester-tests hashbang-tests
 

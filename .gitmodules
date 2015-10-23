@@ -15,6 +15,7 @@
 	path = ext-src/pester
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/Pester
 	branch = develop
+	ignore = dirty
 [submodule "src/monad-omi-provider"]
 	path = src/monad-omi-provider
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-omi-provider
