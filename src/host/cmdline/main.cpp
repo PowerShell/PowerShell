@@ -1,7 +1,6 @@
 #include <string>
 #include <iostream>
 #include "common/coreclrutil.h"
-#include "common/hostutil.h"
 #include <limits.h>
 #include <unicode/utypes.h>
 #include <unicode/ucnv.h>
