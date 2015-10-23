@@ -1,11 +1,7 @@
+#include <unistd.h>
 #include <string>
 #include <iostream>
 #include "common/coreclrutil.h"
-#include <limits.h>
-#include <unicode/utypes.h>
-#include <unicode/ucnv.h>
-#include <unicode/ustring.h>
-#include <unicode/uchar.h>
 
 namespace Cmdline
 {
@@ -123,12 +119,7 @@ int main(int argc, char** argv)
         args.debugPrint();
 
     // get the absolute path of the current directory
-    std::string currentDirAbsolutePath;
-    if (!GetAbsolutePath(".", currentDirAbsolutePath))
-    {
-        std::cerr << "failed to get the absolute path from current working directory" << std::endl;
-        return 1;
-    }
+    std::string cwd(getcwd(nullptr, 0));
 
     void* hostHandle;
     unsigned int domainId;
@@ -148,7 +139,7 @@ int main(int argc, char** argv)
     executeAssembly(
         hostHandle, domainId, args.argc,
         (const char**)args.argv,
-        (currentDirAbsolutePath+"/"+args.entryAssemblyPath).c_str(),
+        (cwd + "/" + args.entryAssemblyPath).c_str(),
         &exitCode);
 
     status = stopCoreCLR(hostHandle, domainId);

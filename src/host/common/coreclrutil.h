@@ -1,9 +1,5 @@
 #pragma once
 
-#ifdef __cplusplus
-#include <string>
-#endif
-
 #define SUCCEEDED(Status) ((Status) >= 0)
 
 /* PowerShell on Linux custom host interface
@@ -43,13 +39,3 @@ extern "C"
     extern ExecuteAssemblyFunction executeAssembly;
     extern CreateDelegateFunction createDelegate;
 }
-
-#ifdef __cplusplus
-// Get absolute path from the specified path.
-// Return true in case of a success, false otherwise.
-bool GetAbsolutePath(const char* path, std::string& absolutePath);
-
-// Get directory of the specified path.
-// Return true in case of a success, false otherwise.
-bool GetDirectory(const char* absolutePath, std::string& directory);
-#endif
