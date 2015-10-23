@@ -213,12 +213,14 @@ xunit-tests: dotnetlibs/ps_test.dll $(RUN_TARGETS) prepare
 # Pester tests for PowerShell - results in pester-tests.xml
 # see https://github.com/pester/Pester
 # requires $TEMP to be set
+# we cd because some tests rely on the current working directory
 PESTER=$(MONAD)/src/pester-tests
 pester-tests: $(RUN_TARGETS) prepare
 	$(APP_BASE)/runps-simple.sh 'cd $(PESTER); $$env:TEMP="/tmp"; invoke-pester -OutputFile $(SCRIPTS)/pester-tests.xml -OutputFormat NUnitXml'
 
-validate-pester: $(RUN_TARGETS) prepare
-	$(APP_BASE)/runps-simple.sh '$$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/scripts/validate-pester.xml -OutputFormat NUnitXml'
+# Pester self-tests - results in pester-self-tests.xml
+pester-self-tests: $(RUN_TARGETS) prepare
+	$(APP_BASE)/runps-simple.sh '$$env:TEMP="/tmp"; invoke-pester $(APP_BASE)/Modules/Pester/Functions -OutputFile $(SCRIPTS)/pester-self-tests.xml -OutputFormat NUnitXml'
 
 # 3rdparty "hashbang" example using runps-file
 hashbang-tests: all prepare
