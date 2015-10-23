@@ -1,32 +1,32 @@
 ﻿Describe "Set-Location" {
-    It "Should be able to be called without error" {
-        { Set-Location / }    | Should Not Throw
-    }
-
-    It "Should be able to be called on different providers" {
-        { Set-Location alias: } | Should Not Throw
-        { Set-Location env: }   | Should Not Throw
-    }
-
-    It "Should be able use the cd alias without error" {
-        { cd / } | Should Not Throw
-    }
-
-    It "Should be able to use the chdir alias without error" {
-        { chdir / } | Should Not Throw
-    }
-
-    It "Should be able to use the sl alias without error" {
-        { sl / } | Should Not Throw
-    }
-
     Context "Functionality testing" {
-        $startDirectory = "$env:HOME/src/pester-tests"
+        $startDirectory = Get-Location
+
+	It "Should be able to be called without error" {
+            { Set-Location / }    | Should Not Throw
+	}
+
+	It "Should be able to be called on different providers" {
+            { Set-Location alias: } | Should Not Throw
+            { Set-Location env: }   | Should Not Throw
+	}
+
+	It "Should be able use the cd alias without error" {
+            { cd / } | Should Not Throw
+	}
+
+	It "Should be able to use the chdir alias without error" {
+            { chdir / } | Should Not Throw
+	}
+
+	It "Should be able to use the sl alias without error" {
+            { sl / } | Should Not Throw
+	}
 
         It "Should have the correct current location when using the set-location cmdlet" {
             Set-Location $startDirectory
 
-            $(Get-Location).Path | Should Be $startDirectory
+            $(Get-Location).Path | Should Be $startDirectory.Path
         }
 
         It "Should have the correct current location when using the cd alias" {
