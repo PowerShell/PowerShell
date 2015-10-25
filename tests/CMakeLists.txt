@@ -1,13 +1,16 @@
 add_subdirectory(googletest)
 
-add_executable(monad_native
+add_executable(psnative-test
   test-getcurrentprocessid.cpp
   test-getusername.cpp
   test-getcomputername.cpp
   test-getlinkcount.cpp
   main.cpp)
 
-target_include_directories(monad_native PRIVATE ${gtest_SOURCE_DIR}/include)
+# manually include gtest headers
+target_include_directories(psnative-test PRIVATE ${gtest_SOURCE_DIR}/include)
 
-find_package(Threads)
-target_link_libraries(monad_native psnative gtest)
+target_link_libraries(psnative-test psnative gtest)
+
+add_test(NAME psnative-test
+  COMMAND psnative-test --gtest_output=xml:${MONAD_LINUX_SOURCE_DIR}/native-tests.xml)
