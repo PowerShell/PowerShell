@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <string>
 #include <iostream>
-#include "common/coreclrutil.h"
+#include "coreclrutil.h"
 
 namespace Cmdline
 {
