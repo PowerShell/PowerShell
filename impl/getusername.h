@@ -4,6 +4,6 @@
 
 PAL_BEGIN_EXTERNC
 
-BOOL GetUserNameW(WCHAR_T* lpBuffer, LPDWORD lpnSize);
+char* GetUserName();
 
 PAL_END_EXTERNC
