@@ -1,0 +1,13 @@
+.idea
+src/.kdev4/
+src/CMakeFiles/
+src/build/
+src/monad_native
+src/src.kdev4
+libps.so
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+host_cmdline
+monad_native
