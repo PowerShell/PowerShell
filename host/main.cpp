@@ -7,8 +7,8 @@ namespace Cmdline
 {
     void printHelp()
     {
-        std::cerr << "PS CoreCLR host" << std::endl
-                  << "Usage: host_cmdline assembly [...]" << std::endl
+        std::cerr << "PowerShell on Linux host" << std::endl
+                  << "Usage: powershell assembly [...]" << std::endl
                   << std::endl
                   << "What it does:" << std::endl
                   << "- the host assumes that CoreCLR is located $CORE_ROOT" << std::endl
