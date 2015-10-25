@@ -2,6 +2,7 @@ add_library(ps SHARED
   getcurrentprocessorid.cpp
   getusername.cpp
   getcomputername.cpp
+  getlinkcount.cpp
   terminal.cpp)
 
 target_link_libraries(ps icuuc)
