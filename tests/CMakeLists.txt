@@ -10,4 +10,4 @@ add_executable(monad_native
 target_include_directories(monad_native PRIVATE ${gtest_SOURCE_DIR}/include)
 
 find_package(Threads)
-target_link_libraries(monad_native ps gtest)
+target_link_libraries(monad_native psnative gtest)
