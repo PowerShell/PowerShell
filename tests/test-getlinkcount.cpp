@@ -53,7 +53,7 @@ class getLinkCountTest : public ::testing::Test
 
 TEST_F(getLinkCountTest, FilePathNameIsNull) 
 {
-    bool retVal = GetLinkCountW(NULL, &count );    
+    bool retVal = GetLinkCount(NULL, &count );
     ASSERT_FALSE(retVal);
     EXPECT_EQ(ERROR_INVALID_PARAMETER, errno);
 }
@@ -61,7 +61,7 @@ TEST_F(getLinkCountTest, FilePathNameIsNull)
 TEST_F(getLinkCountTest, FilePathNameDoesNotExist) 
 {
     std::string invalidFile = "/tmp/createFile";
-    bool retVal = GetLinkCountW(const_cast<char*>(invalidFile.c_str()), &count);
+    bool retVal = GetLinkCount(const_cast<char*>(invalidFile.c_str()), &count);
     ASSERT_FALSE(retVal);
     EXPECT_EQ(ERROR_FILE_NOT_FOUND, errno);
 }
@@ -69,7 +69,7 @@ TEST_F(getLinkCountTest, FilePathNameDoesNotExist)
 TEST_F(getLinkCountTest, LinkCountOfSinglyLinkedFile)
 {
     createFileForTesting(file);
-    bool retVal = GetLinkCountW(const_cast<char*>(file.c_str()), &count);
+    bool retVal = GetLinkCount(const_cast<char*>(file.c_str()), &count);
     ASSERT_TRUE(retVal);
     EXPECT_EQ(1, count);
 
@@ -80,7 +80,7 @@ TEST_F(getLinkCountTest, LinkCountOfMultipliLinkedFile)
 {
     createFileForTesting(file);
     std::string newFile = createHardLink(file);
-    bool retVal = GetLinkCountW(const_cast<char*>(file.c_str()), &count);
+    bool retVal = GetLinkCount(const_cast<char*>(file.c_str()), &count);
     ASSERT_TRUE(retVal);
     EXPECT_EQ(2, count);
 

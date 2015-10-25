@@ -16,20 +16,19 @@
 //! @brief GetLinkCount retrieves the file link count (number of hard links)
 //! for the given file
 //!
-//! GetLinkCountW is the Unicode variation. See [MSDN documentation].
+//! GetLinkCount
 //!
 //! @param[in] fileName
 //! @parblock
 //! A pointer to the buffer that contains the file name
 //!
-//! WCHAR_T* is a Unicode [LPTSTR].
+//! char* is marshaled as an LPStr, which on Linux is UTF-8.
 //! @endparblock
 //!
 //! @param[out] count
 //! @parblock
 //! This function returns the number of hard links associated with this file
-//!
-//! TCHAR is a Unicode 16-bit [WCHAR].
+//! @endparblock
 //!
 //! @exception errno Passes these errors via errno to GetLastError:
 //! - ERROR_INVALID_PARAMETER: parameter is not valid
@@ -52,7 +51,7 @@
 //! extended error information, call GetLastError.
 //!
 
-BOOL GetLinkCountW(char* fileName, LPDWORD count)
+BOOL GetLinkCount(char* fileName, LPDWORD count)
 {
     errno = 0;
     
@@ -117,4 +116,3 @@ BOOL GetLinkCountW(char* fileName, LPDWORD count)
     return TRUE;
     
 }
-
