@@ -1,5 +1,6 @@
-# the monad-linux superproject
+# the monad-linux superproject and lib directory
 export MONAD=$(realpath $(CURDIR))
+export PSLIB=$(MONAD)/lib
 
 all: powershell-native powershell-managed
 
@@ -25,10 +26,11 @@ bootstrap: tools/nuget.exe
 	mono $< restore -PackagesDirectory tools
 
 # run targets
-export POWERSHELL=env LD_LIBRARY_PATH=$(MONAD)/lib CORE_ROOT=$(MONAD)/src/monad-ext/coreclr/Runtime PWRSH_ROOT=$(MONAD)/lib PSMODULEPATH=$(MONAD)/lib/Modules $(MONAD)/bin/powershell
+export POWERSHELL=env LD_LIBRARY_PATH=$(PSLIB) CORE_ROOT=$(MONAD)/src/monad-ext/coreclr/Runtime PWRSH_ROOT=$(PSLIB) PSMODULEPATH=$(PSLIB)/Modules $(MONAD)/bin/powershell
+export POWERSHELL_SIMPLE=$(POWERSHELL) $(PSLIB)/powershell-simple.exe
 
 demo:
-	$(POWERSHELL) lib/powershell-simple.exe '"a","b","c","a","a" | Select-Object -Unique'
+	$(POWERSHELL_SIMPLE) '"a","b","c","a","a" | Select-Object -Unique'
 
 shell:
 	$(POWERSHELL) lib/powershell-run.exe
