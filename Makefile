@@ -7,12 +7,14 @@ all: powershell-native powershell-managed
 # managed code
 
 powershell-managed:
-	$(MAKE) -j -C src/monad-build all test
+	$(MAKE) -j -C src/monad-build
+	$(MAKE) -j -C src/monad-build test
 
 # native code
 
 powershell-native: src/monad-native/Makefile
-	$(MAKE) -j -C src/monad-native all test
+	$(MAKE) -j -C src/monad-native
+	$(MAKE) -j -C src/monad-native test
 
 src/monad-native/Makefile:
 	cd src/monad-native && cmake .
