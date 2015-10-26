@@ -90,7 +90,7 @@ psrp: $(PSRP_OMI_PROVIDER)
 clean: clean-monad
 	-rm *-tests.xml
 
-distclean: distclean-omi distclean-monad clean
+distclean: distclean-monad distclean-native distclean-omi clean
 	-rm -rf tools/*
 
 clean-monad:
@@ -101,6 +101,9 @@ distclean-monad:
 
 clean-native:
 	-$(MAKE) -C src/monad-native clean
+
+distclean-native:
+	cd src/monad-native && git clean -fdx
 
 clean-omi:
 	-$(MAKE) -C $(OMI) clean
