@@ -73,8 +73,8 @@ $(OMISERVER): $(OMI)/GNUmakefile
 
 ## copy libpshost because OMI isn't configurable
 MONAD_PROVIDER=src/monad-omi-provider
-PSRP_OMI_PROVIDER=$(OMI)/output/lib/libTestShell.so
-$(PSRP_OMI_PROVIDER): $(OMISERVER)
+PSRP_OMI_PROVIDER=$(OMI)/output/lib/libpsrpomiprov.so
+$(PSRP_OMI_PROVIDER): $(OMISERVER) powershell-native
 	cp lib/libpshost.a $(OMI)/output/lib
 	$(MAKE) -j -C $(MONAD_PROVIDER)
 
