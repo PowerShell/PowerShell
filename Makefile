@@ -86,10 +86,10 @@ psrp: $(PSRP_OMI_PROVIDER)
 # clean targets
 
 clean: clean-monad
-	rm *-tests.xml
+	-rm *-tests.xml
 
 distclean: distclean-omi distclean-monad clean
-	rm -rf tools/*
+	-rm -rf tools/*
 
 clean-monad:
 	$(MAKE) -C src/monad-build clean
