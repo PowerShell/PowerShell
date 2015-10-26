@@ -26,6 +26,7 @@ bootstrap: tools/nuget.exe
 	mono $< restore -PackagesDirectory tools
 
 # run targets
+
 export POWERSHELL=env LD_LIBRARY_PATH=$(PSLIB) CORE_ROOT=$(MONAD)/src/monad-ext/coreclr/Runtime PWRSH_ROOT=$(PSLIB) PSMODULEPATH=$(PSLIB)/Modules $(MONAD)/bin/powershell
 export POWERSHELL_SIMPLE=$(POWERSHELL) $(PSLIB)/powershell-simple.exe
 
@@ -34,6 +35,12 @@ demo:
 
 shell:
 	$(POWERSHELL) lib/powershell-run.exe
+
+## TODO: fix this after refactoring bin/powershell
+test-hashbang:
+	PATH=$(PATH):$(PSLIB) src/3rdparty/hashbang/script.ps1
+
+# clean targets
 
 clean-monad:
 	$(MAKE) -C src/monad-build clean
