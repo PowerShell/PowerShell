@@ -85,7 +85,8 @@ psrp: $(PSRP_OMI_PROVIDER)
 
 # clean targets
 
-clean: clean-monad *-tests.xml
+clean: clean-monad
+	rm *-tests.xml
 
 distclean: distclean-omi distclean-monad clean
 	rm -rf tools/*
