@@ -57,6 +57,28 @@ test-pester:
 test-pester-self:
 	$(POWERSHELL_SIMPLE) 'cd $(PSLIB)/Modules/Pester/Functions; $$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/pester-self-tests.xml -OutputFormat NUnitXml'
 
+# OMI
+OMI=src/omi/Unix
+OMI_FLAGS=--dev --enable-debug
+$(OMI)/GNUmakefile:
+	cd $(OMI) && ./configure $(OMI_FLAGS)
+
+OMISERVER=$(OMI)/output/bin/omiserver
+$(OMISERVER): $(OMI)/GNUmakefile
+	$(MAKE) -j -C $(OMI)
+
+## copy libpshost because OMI isn't configurable
+MONAD_PROVIDER=src/monad-omi-provider
+PSRP_OMI_PROVIDER=$(OMI)/output/lib/libTestShell.so
+$(PSRP_OMI_PROVIDER): $(OMISERVER)
+	cp lib/libpshost.a $(OMI)/output/lib
+	$(MAKE) -j -C $(MONAD_PROVIDER)
+
+psrp: $(PSRP_OMI_PROVIDER)
+
+## phony targets so that the recursive make is always invoked
+.PHONY: $(OMISERVER) $(PSRP_OMI_PROVIDER)
+
 # clean targets
 
 clean-monad:
