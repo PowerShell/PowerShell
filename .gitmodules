@@ -23,3 +23,6 @@
 	path = src/omi
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/omi
 	branch = OMI-Shell/OMI-PSRP-Support
+[submodule "src/monad-build"]
+	path = src/monad-build
+	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-build

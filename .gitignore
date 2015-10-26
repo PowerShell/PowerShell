@@ -1,10 +1,7 @@
-.idea
-CMakeCache.txt
-CMakeFiles/
-cmake_install.cmake
-Makefile
-!/scripts/Makefile
+/.config
+/.nuget\\packages\\/
 /.bash_history
-/.local/
-/.config/
-/indicationlog
+/bin/
+/lib/
+/tools/
+*-tests.xml

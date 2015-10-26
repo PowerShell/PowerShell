@@ -19,9 +19,9 @@ namespace Microsoft.Samples.PowerShell.Host
         // this class provides features otherwise not available through .net
         internal class Native
         {
-            [DllImport("libps")]
+            [DllImport("libpsnative")]
             internal static extern int GetTerminalWidth();
-            [DllImport("libps")]
+            [DllImport("libpsnative")]
             internal static extern int GetTerminalHeight();
         }
 

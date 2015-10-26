@@ -93,31 +93,77 @@ namespace PSTests
         }
 
         [Fact]
-        public static void TestExistantFileIsHardLink()
+        public static void TestFileIsNotHardLink()
         {
-            string path = @"/tmp/MyTest";
-            if (!File.Exists(path))
+            string path = @"/tmp/nothardlink";
+            if (File.Exists(path))
             {
-                File.Create(path);
+                File.Delete(path);
             }
-            // Create a file to write to using StreamWriter. 
-            // convert string to stream.  On Windows, this appears to be handled, but on *nix, 
-            // we apparently need to convert to UTF8.
-            byte[] byteArray    = System.Text.Encoding.UTF8.GetBytes(path);
-            MemoryStream stream = new MemoryStream(byteArray);
 
-            // Convert `path` string to FileSystemInfo data type. And now, it should return true
+            File.Create(path);
+
             FileSystemInfo fd = new FileInfo(path);
-            Assert.True(Platform.NonWindowsIsHardLink(fd));
+
+            // Since this is the only reference to the file, it is not considered a
+            // hardlink by our API (though all files are hardlinks on Linux)
+            Assert.False(Platform.NonWindowsIsHardLink(fd));
+
+            File.Delete(path);
         }
 
         [Fact]
-        public static void TestDirectoryIsHardLink()
+        public static void TestFileIsHardLink()
+        {
+            string path = @"/tmp/originallink";
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            File.Create(path);
+
+            string link = "/tmp/newlink";
+
+            if (File.Exists(link))
+            {
+                File.Delete(link);
+            }
+
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = @"/usr/bin/env",
+                Arguments = "ln " + path + " " + link,
+                RedirectStandardOutput = true,
+                UseShellExecute = false
+            };
+
+            using (Process process = Process.Start(startInfo))
+            {
+                process.WaitForExit();
+                Assert.Equal(0, process.ExitCode);
+            }
+
+
+            // Since there are now two references to the file, both are considered
+            // hardlinks by our API (though all files are hardlinks on Linux)
+            FileSystemInfo fd = new FileInfo(path);
+            Assert.True(Platform.NonWindowsIsHardLink(fd));
+
+            fd = new FileInfo(link);
+            Assert.True(Platform.NonWindowsIsHardLink(fd));
+
+            File.Delete(path);
+            File.Delete(link);
+        }
+
+        [Fact]
+        public static void TestDirectoryIsNotHardLink()
         {
             string path = @"/tmp";
 
-            // Convert `path` string to FileSystemInfo data type. And now, it should return true
             FileSystemInfo fd = new FileInfo(path);
+
             Assert.False(Platform.NonWindowsIsHardLink(fd));
         }
 
