@@ -1,14 +1,14 @@
 #include <unistd.h>
 #include <string>
 #include <iostream>
-#include "common/coreclrutil.h"
+#include "coreclrutil.h"
 
 namespace Cmdline
 {
     void printHelp()
     {
-        std::cerr << "PS CoreCLR host" << std::endl
-                  << "Usage: host_cmdline assembly [...]" << std::endl
+        std::cerr << "PowerShell on Linux host" << std::endl
+                  << "Usage: powershell assembly [...]" << std::endl
                   << std::endl
                   << "What it does:" << std::endl
                   << "- the host assumes that CoreCLR is located $CORE_ROOT" << std::endl
@@ -18,14 +18,12 @@ namespace Cmdline
                   << "- all additional parameters at the end of the command line are forwarded" << std::endl
                   << "  to the Main function in the assembly" << std::endl
                   << "- the host will execute the Main function in the specified assembly" << std::endl
-                  << "  + this assembly has to be located in the search path" << std::endl
-                  << "- the host will add $PWRSH_ROOT to the assembly search path" << std::endl
+                  << "  + this must be an absolute path to the assembly" << std::endl
                   << "- the function signature of the Main function that gets executed must be:" << std::endl
                   << "  static void Main(string[] args)" << std::endl
                   << std::endl
                   << "Options:" << std::endl
                   << "-v                verbose output" << std::endl
-                  << "assembly          the path of the assembly to execute relative to current directory" << std::endl
                   << std::endl
                   << "Example:" << std::endl
                   << "CORE_ROOT=/test/coreclr PWRSH_ROOT=/test/powershell ./host_cmdline -s /test/ps powershell-simple 'get-process'" << std::endl;
@@ -40,7 +38,6 @@ namespace Cmdline
         {
         }
 
-        std::string searchPaths;
         std::string entryAssemblyPath;
         int argc;
         char** argv;
@@ -118,9 +115,6 @@ int main(int argc, char** argv)
     if (args.verbose)
         args.debugPrint();
 
-    // get the absolute path of the current directory
-    std::string cwd(getcwd(nullptr, 0));
-
     void* hostHandle;
     unsigned int domainId;
     int status = startCoreCLR(
@@ -139,7 +133,7 @@ int main(int argc, char** argv)
     executeAssembly(
         hostHandle, domainId, args.argc,
         (const char**)args.argv,
-        (cwd + "/" + args.entryAssemblyPath).c_str(),
+        args.entryAssemblyPath.c_str(),
         &exitCode);
 
     status = stopCoreCLR(hostHandle, domainId);
