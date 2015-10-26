@@ -57,6 +57,10 @@ test-pester:
 test-pester-self:
 	$(POWERSHELL_SIMPLE) 'cd $(PSLIB)/Modules/Pester/Functions; $$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/pester-self-tests.xml -OutputFormat NUnitXml'
 
+## tracing
+## - use PAL_DBG_CHANNELS="+LOADER.TRACE" to enable CoreCLR tracing
+## - use Set-PSDebug -Trace 2 to enable PowerShell tracing
+
 # OMI
 OMI=src/omi/Unix
 OMI_FLAGS=--dev --enable-debug
