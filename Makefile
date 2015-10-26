@@ -20,7 +20,7 @@ src/monad-native/Makefile:
 # one-time setup
 
 tools/nuget.exe:
-	cd tools && 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
+	cd tools && wget 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
 
 bootstrap: tools/nuget.exe
 	mono $< restore -PackagesDirectory tools
