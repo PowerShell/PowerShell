@@ -36,9 +36,26 @@ demo:
 shell:
 	$(POWERSHELL) lib/powershell-run.exe
 
+# tests
+
+test: test-pester
+
 ## TODO: fix this after refactoring bin/powershell
 test-hashbang:
 	PATH=$(PATH):$(PSLIB) src/3rdparty/hashbang/script.ps1
+
+## Pester tests for PowerShell - results in pester-tests.xml
+## - see https://github.com/pester/Pester
+## - requires $TEMP to be set
+## - we cd because some tests rely on the current working directory
+PESTER=$(MONAD)/src/pester-tests
+test-pester:
+	$(POWERSHELL_SIMPLE) 'cd $(PESTER); $$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/pester-tests.xml -OutputFormat NUnitXml'
+
+## Pester self-tests
+## - results in pester-self-tests.xml
+test-pester-self:
+	$(POWERSHELL_SIMPLE) 'cd $(PSLIB)/Modules/Pester/Functions; $$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/pester-self-tests.xml -OutputFormat NUnitXml'
 
 # clean targets
 
