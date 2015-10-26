@@ -12,7 +12,7 @@ powershell-managed:
 # native code
 
 powershell-native: src/monad-native/Makefile
-	$(MAKE) -j -C src/monad-native
+	$(MAKE) -j -C src/monad-native all test
 
 src/monad-native/Makefile:
 	cd src/monad-native && cmake .
