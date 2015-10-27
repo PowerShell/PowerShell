@@ -7,7 +7,6 @@
 #include <locale.h>
 #include <unistd.h>
 #include <string>
-#include <iostream>
 #include "getcomputername.h"
 
 //! @brief GetComputerName retrieves the name of the host associated with
