@@ -1,6 +1,6 @@
 //! @file test-getcomputername.cpp
-//! @author Aaron Katz <v-aakatz@microsoft.com>
-//! @brief Unit tests for GetComputerNameW
+//! @author George Fleming <v-geflem@microsoft.com>
+//! @brief Unit tests for GetComputerName
 
 #include <string>
 #include <unistd.h>
@@ -21,7 +21,7 @@ protected:
     }
 };
 
-TEST_F(GetComputerNameTest, Success)
+TEST_F(GetComputerNameTest, ValidateLinuxGetHostnameSystemCall)
 {
     ASSERT_STREQ(GetComputerName(), expectedComputerName);
 }

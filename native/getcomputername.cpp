@@ -1,5 +1,5 @@
 //! @file getcomputername.cpp
-//! @author Aaron Katz <v-aakatz@microsoft.com>
+//! @author George Fleming <v-geflem@microsoft>
 //! @brief Implements GetComputerName Win32 API
 
 #include <errno.h>
