@@ -457,23 +457,6 @@ namespace ps_hello_world
             }
         }
 
-        // static void test1(string[] args)
-        // {
-        //     InitialSessionState iss = InitialSessionState.CreateDefault2();
-        //     Runspace rs = RunspaceFactory.CreateRunspace(iss);
-        //     rs.Open();
-        //     PowerShell ps = PowerShell.Create();
-        //     ps.Runspace = rs;
-
-        //     //ps.AddScript("\"Hello World!\"");
-        //     Console.WriteLine(args[0]);
-        //     ps.AddScript(args[0]);
-        //     foreach (string str in ps.Invoke<string>())
-        //     {
-        //         Console.Write(str);
-        //     }
-        // }
-
         static void test2(string[] args)
         {
             try
@@ -509,7 +492,6 @@ namespace ps_hello_world
 
         static void Main(string[] args)
         {
-            //test1(args);
             test2(args);
         }
     }
