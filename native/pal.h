@@ -88,6 +88,7 @@
     #define ERROR_BUFFER_OVERFLOW 0x0000006F
     #define ERROR_FILE_NOT_FOUND 0x00000002
     #define ERROR_BAD_PATH_NAME 0x000000A1
+    #define ERROR_BAD_NET_NAME 0x00000043
 
     typedef unsigned long long uint64;
 #endif
