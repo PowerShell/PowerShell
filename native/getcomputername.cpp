@@ -54,7 +54,6 @@ char* GetComputerName()
         return FALSE;
     }
     
-    std::cerr << "GetComputerName:  " << computername.c_str() << std::endl;
     return strdup(computername.c_str());
     
 }
