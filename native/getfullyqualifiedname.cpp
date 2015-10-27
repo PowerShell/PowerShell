@@ -6,9 +6,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include "getcomputername.h"
 #include "getfullyqualifiedname.h"
-
-extern char* GetComputerName();
 
 //! @brief GetFullyQualifiedName retrieves the full name of the host associated with
 //! the current thread.
