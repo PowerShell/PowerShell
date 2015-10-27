@@ -285,7 +285,7 @@ namespace ps_hello_world
 
         public override void Write(string value)
         {
-            Console.BackgroundColor = ConsoleColor.Green;
+            Console.BackgroundColor = ConsoleColor.Black;
             Console.Write(value);
             Console.ResetColor();
         }
@@ -304,7 +304,8 @@ namespace ps_hello_world
 
         public override void WriteDebugLine(string message)
         {
-            Console.BackgroundColor = ConsoleColor.Gray;
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write(String.Format(
                                         CultureInfo.CurrentCulture,
                                         "DEBUG: {0}",
@@ -315,7 +316,7 @@ namespace ps_hello_world
 
         public override void WriteErrorLine(string value)
         {
-            Console.BackgroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.Write(String.Format(
                                         CultureInfo.CurrentCulture,
                                         "ERROR: {0}",
@@ -349,7 +350,7 @@ namespace ps_hello_world
 
         public override void WriteVerboseLine(string message)
         {
-            Console.BackgroundColor = ConsoleColor.DarkGray;
+            Console.BackgroundColor = ConsoleColor.Gray;
             Console.WriteLine(String.Format(CultureInfo.CurrentCulture, "VERBOSE: {0}", message));
             Console.ResetColor();
         }
@@ -456,22 +457,22 @@ namespace ps_hello_world
             }
         }
 
-        static void test1(string[] args)
-        {
-            InitialSessionState iss = InitialSessionState.CreateDefault2();
-            Runspace rs = RunspaceFactory.CreateRunspace(iss);
-            rs.Open();
-            PowerShell ps = PowerShell.Create();
-            ps.Runspace = rs;
+        // static void test1(string[] args)
+        // {
+        //     InitialSessionState iss = InitialSessionState.CreateDefault2();
+        //     Runspace rs = RunspaceFactory.CreateRunspace(iss);
+        //     rs.Open();
+        //     PowerShell ps = PowerShell.Create();
+        //     ps.Runspace = rs;
 
-            //ps.AddScript("\"Hello World!\"");
-            Console.WriteLine(args[0]);
-            ps.AddScript(args[0]);
-            foreach (string str in ps.Invoke<string>())
-            {
-                Console.Write(str);
-            }
-        }
+        //     //ps.AddScript("\"Hello World!\"");
+        //     Console.WriteLine(args[0]);
+        //     ps.AddScript(args[0]);
+        //     foreach (string str in ps.Invoke<string>())
+        //     {
+        //         Console.Write(str);
+        //     }
+        // }
 
         static void test2(string[] args)
         {
