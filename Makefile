@@ -91,7 +91,6 @@ clean: clean-monad
 	-rm *-tests.xml
 
 distclean: distclean-monad distclean-native distclean-omi clean
-	-rm -rf tools/*
 
 clean-monad:
 	$(MAKE) -C src/monad-build clean
