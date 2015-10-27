@@ -18,12 +18,10 @@ protected:
     {     
         BOOL ret = gethostname(expectedComputerName, HOST_NAME_MAX);
         EXPECT_EQ(0, ret);
-	std::cout << "Expected Name:" << expectedComputerName << std::endl;
     }
 };
 
 TEST_F(GetComputerNameTest, Success)
 {
-    std::cout << "Actual Name:" << GetComputerNameW() << std::endl;
-    ASSERT_STREQ(GetComputerNameW(), expectedComputerName);
+    ASSERT_STREQ(GetComputerName(), expectedComputerName);
 }

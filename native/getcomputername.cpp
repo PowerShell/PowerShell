@@ -21,7 +21,7 @@
 //!
 //! @retval username as UTF-8 string, or null if unsuccessful
 
-char* GetComputerNameW()
+char* GetComputerName()
 {
     errno = 0;
     
