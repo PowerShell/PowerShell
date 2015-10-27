@@ -36,7 +36,7 @@ demo:
 	$(POWERSHELL_SIMPLE) '"a","b","c","a","a" | Select-Object -Unique'
 
 shell:
-	$(POWERSHELL) lib/powershell-run.exe
+	TEMP=/tmp $(POWERSHELL) lib/powershell-run.exe
 
 # tests
 
