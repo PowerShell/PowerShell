@@ -30,7 +30,7 @@ char* GetComputerName()
     if (nl_langinfo(CODESET) != std::string("UTF-8"))
     {
         errno = ERROR_BAD_ENVIRONMENT;
-        return FALSE;
+        return NULL;
     }
     
     // Get computername from system in a thread-safe manner
@@ -50,7 +50,7 @@ char* GetComputerName()
             default:
                 errno = ERROR_INVALID_FUNCTION;
         }
-        return FALSE;
+        return NULL;
     }
     
     return strdup(computername.c_str());

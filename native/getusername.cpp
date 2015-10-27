@@ -41,7 +41,7 @@ char* GetUserName()
     if (buflen == -1)
     {
         errno = ERROR_GEN_FAILURE;
-        return FALSE;
+        return NULL;
     }
     std::string buf(buflen, 0);
 
