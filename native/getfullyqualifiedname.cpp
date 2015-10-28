@@ -20,9 +20,6 @@
 //!
 //! @retval username as UTF-8 string, or null if unsuccessful
 //!
-//! Note on testing:  Since there's no easy way to override the domain name, no unit testing will be 
-//!   provided.  Instead, manual end-to-end testing should be done to verify domain name matches expected
-//!   value.
 
 char* GetFullyQualifiedName()
 {
@@ -32,6 +29,11 @@ char* GetFullyQualifiedName()
     if (NULL == computerName)
     {
 	return NULL;
+    }
+
+    if (strchr(computerName, '.') != NULL)
+    {
+	return computerName;
     }
 
     struct addrinfo hints, *info;
