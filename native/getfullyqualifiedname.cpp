@@ -9,17 +9,20 @@
 #include "getcomputername.h"
 #include "getfullyqualifiedname.h"
 
-//! @brief GetFullyQualifiedName retrieves the full name of the host associated with
-//! the current thread.
+//! @brief GetFullyQualifiedName retrieves the fully qualifed dns name of the host
 //!
 //! @exception errno Passes these errors via errno to GetLastError:
-//! - ERROR_BAD_ENVIRONMENT: locale is not UTF-8
-//! - ERROR_INVALID_FUNCTION: getlogin_r() returned an unrecognized error code
-//! - ERROR_INVALID_ADDRESS:  buffer is an invalid address
-//! - ERROR_GEN_FAILURE: buffer not large enough
+//! - ERROR_BAD_ENVIRONMENT: locale is not UTF-8 (from GetComputerName)
+//! - ERROR_INVALID_FUNCTION: getlogin_r() returned an unrecognized error code (from GetComputerName)
+//! - ERROR_INVALID_ADDRESS:  buffer is an invalid address (from GetComputerName)
+//! - ERROR_GEN_FAILURE: buffer not large enough (from GetComputerName)
 //! - ERROR_BAD_NET_NAME: Cannot determine network short name
 //!
 //! @retval username as UTF-8 string, or null if unsuccessful
+//!
+//! Note on testing:  Since there's no easy way to override the domain name, no unit testing will be 
+//!   provided.  Instead, manual end-to-end testing should be done to verify domain name matches expected
+//!   value.
 
 char* GetFullyQualifiedName()
 {
@@ -39,6 +42,12 @@ char* GetFullyQualifiedName()
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_CANONNAME;
 
+    /* There are several ways to get the domain name:
+     * uname(2), gethostbyname(3), resolver(3), getdomainname(2), 
+     * and getaddrinfo(3).  Some of these are not portable, some aren't 
+     * POSIX compliant, and some are being deprecated.  Getaddrinfo seems
+     * to be the best choice right now.
+     */
     if ((gai_result = getaddrinfo(computerName, "http", &hints, &info)) != 0) 
     {
         errno = ERROR_BAD_NET_NAME;
