@@ -1,12 +1,17 @@
-# the monad-linux superproject and lib directory
+# the monad-linux superproject
 export MONAD=$(realpath $(CURDIR))
-export PSLIB=$(MONAD)/lib
+
+# location of powershell and coreclr folders
+export PSLIB=$(MONAD)/lib/powershell
+export CLRLIB=$(MONAD)/lib/coreclr
 
 all: powershell-native powershell-managed
 
 # managed code
 
 powershell-managed:
+	mkdir -p $(PSLIB) $(CLRLIB)
+	cp -R $(MONAD)/src/monad-ext/coreclr/Runtime/* $(CLRLIB)
 	$(MAKE) -j -C src/monad-build
 	$(MAKE) -j -C src/monad-build test
 
@@ -29,14 +34,14 @@ bootstrap: tools/nuget.exe
 
 # run targets
 
-export POWERSHELL=env LD_LIBRARY_PATH=$(PSLIB) CORE_ROOT=$(MONAD)/src/monad-ext/coreclr/Runtime PWRSH_ROOT=$(PSLIB) PSMODULEPATH=$(PSLIB)/Modules $(MONAD)/bin/powershell
+export POWERSHELL=env LD_LIBRARY_PATH=$(MONAD)/lib:$(PSLIB) PSMODULEPATH=$(PSLIB)/Modules $(MONAD)/bin/powershell
 export POWERSHELL_SIMPLE=$(POWERSHELL) $(PSLIB)/powershell-simple.exe
 
 demo:
 	$(POWERSHELL_SIMPLE) '"a","b","c","a","a" | Select-Object -Unique'
 
 shell:
-	TEMP=/tmp $(POWERSHELL) lib/powershell-run.exe
+	TEMP=/tmp $(POWERSHELL) $(PSLIB)/powershell-run.exe
 
 # tests
 
@@ -91,6 +96,7 @@ clean: clean-monad
 	-rm *-tests.xml
 
 distclean: distclean-monad distclean-native distclean-omi clean
+	-rm -rf $(CLRLIB)
 
 clean-monad:
 	$(MAKE) -C src/monad-build clean
