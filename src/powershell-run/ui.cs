@@ -374,7 +374,7 @@ ReadNext:
         public override void WriteDebugLine(string message)
         {
             this.WriteLine(
-                    ConsoleColor.DarkYellow, 
+                    ConsoleColor.Yellow, 
                     ConsoleColor.Black,
                     String.Format(CultureInfo.CurrentCulture, "DEBUG: {0}", message));
         }
