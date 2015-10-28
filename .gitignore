@@ -7,3 +7,7 @@ install_manifest.txt
 CTestTestfile.cmake
 Testing/
 tests/psnative-test
+host/powershell
+host/libpshost.a
+native/libpsnative.so
+tests/native-tests.xml

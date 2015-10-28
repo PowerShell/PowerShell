@@ -9,3 +9,6 @@ add_library(psnative SHARED
 
 target_link_libraries(psnative icuuc)
 target_include_directories (psnative PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+install(TARGETS psnative
+  LIBRARY DESTINATION lib)

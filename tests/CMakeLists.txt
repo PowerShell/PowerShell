@@ -15,4 +15,4 @@ target_include_directories(psnative-test PRIVATE ${gtest_SOURCE_DIR}/include)
 target_link_libraries(psnative-test psnative gtest)
 
 add_test(NAME psnative-test
-  COMMAND psnative-test --gtest_output=xml:${MONAD}/native-tests.xml)
+  COMMAND psnative-test --gtest_output=xml:native-tests.xml)
