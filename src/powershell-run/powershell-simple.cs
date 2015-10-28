@@ -304,7 +304,6 @@ namespace ps_hello_world
 
         public override void WriteDebugLine(string message)
         {
-            Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write(String.Format(
                                         CultureInfo.CurrentCulture,
