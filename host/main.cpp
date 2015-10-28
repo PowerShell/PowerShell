@@ -11,10 +11,11 @@ namespace Cmdline
                   << "Usage: powershell assembly [...]" << std::endl
                   << std::endl
                   << "What it does:" << std::endl
-                  << "- the host assumes that CoreCLR is located $CORE_ROOT" << std::endl
+                  << "- the host assumes that CoreCLR is located $CORE_ROOT," << std::endl
+                  << "  else in lib/coreclr"
                   << "- the host assumes that the assembly named" << std::endl
                   << "  Microsoft.PowerShell.CoreCLR.AssemblyLoadContext is " << std::endl
-                  << "  located in $PWRSH_ROOT" << std::endl
+                  << "  located in $PWRSH_ROOT, else in lib/powershell" << std::endl
                   << "- all additional parameters at the end of the command line are forwarded" << std::endl
                   << "  to the Main function in the assembly" << std::endl
                   << "- the host will execute the Main function in the specified assembly" << std::endl
@@ -26,7 +27,7 @@ namespace Cmdline
                   << "-v                verbose output" << std::endl
                   << std::endl
                   << "Example:" << std::endl
-                  << "CORE_ROOT=/test/coreclr PWRSH_ROOT=/test/powershell ./host_cmdline -s /test/ps powershell-simple 'get-process'" << std::endl;
+                  << "CORE_ROOT=/test/coreclr PWRSH_ROOT=/test/powershell ./powershell powershell-simple 'get-process'" << std::endl;
     }
 
     struct Args

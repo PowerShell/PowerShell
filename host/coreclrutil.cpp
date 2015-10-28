@@ -18,6 +18,7 @@ constexpr char coreClrDll[] = "libcoreclr.so";
 #endif
 
 void* coreclrLib;
+char exePath[PATH_MAX];
 
 // Prototype of the coreclr_initialize function from the libcoreclr.so
 typedef int (*InitializeCoreCLRFunction)(
@@ -78,22 +79,51 @@ bool GetDirectory(const char* absolutePath, std::string& directory)
 //
 // Return true in case of a success, false otherwise.
 //
-bool GetEnvAbsolutePath(const char* env_var, std::string& absolutePath)
+bool GetEnvAbsolutePath(const char* envVar, std::string& absolutePath)
 {
-    const char* filesPathLocal = std::getenv(env_var);;
+    const char* filesPathLocal = std::getenv(envVar);;
     if (filesPathLocal == nullptr)
     {
-        std::cerr << "failed because $" << env_var << " was empty" << std::endl;
         return false;
     }
 
-    if (!GetAbsolutePath(filesPathLocal, absolutePath))
+    return GetAbsolutePath(filesPathLocal, absolutePath);
+}
+
+//
+// Get the a root path given an environment variable and default
+// relative to exePath
+//
+bool GetRootPath(const char* envVar,
+                 const char* relativePath,
+                 std::string& absolutePath)
+{
+    if (!GetEnvAbsolutePath(envVar, absolutePath))
     {
-        std::cerr << "failed to get absolute path for " << env_var << std::endl;
-        return false;
+        // Default to bin/relativePath
+        std::string path;
+        if (!GetDirectory(exePath, path))
+        {
+            return false;
+        }
+        path.append("/");
+        path.append(relativePath);
+        return GetAbsolutePath(path.c_str(), absolutePath);
     }
 
     return true;
+}
+
+// Get the PowerShell root path, with sensible default
+bool GetPwrshRoot(std::string& absolutePath)
+{
+    return GetRootPath("PWRSH_ROOT", "../lib/powershell", absolutePath);
+}
+
+// Get the CoreCLR root path, with sensible default
+bool GetCoreRoot(std::string& absolutePath)
+{
+    return GetRootPath("CORE_ROOT", "../lib/coreclr", absolutePath);
 }
 
 // Add all *.dll, *.ni.dll, *.exe, and *.ni.exe files from the specified directory to the tpaList string.
@@ -198,9 +228,12 @@ int startCoreCLR(
     void** hostHandle,
     unsigned int* domainId)
 {
+    // get path to current executable
+    readlink("/proc/self/exe", exePath, PATH_MAX);
+
     // get the CoreCLR root path
     std::string clrAbsolutePath;
-    if(!GetEnvAbsolutePath("CORE_ROOT", clrAbsolutePath))
+    if(!GetCoreRoot(clrAbsolutePath))
     {
         return -1;
     }
@@ -254,7 +287,7 @@ int startCoreCLR(
 
     // get path to AssemblyLoadContext.dll
     std::string psAbsolutePath;
-    if(!GetEnvAbsolutePath("PWRSH_ROOT", psAbsolutePath))
+    if(!GetPwrshRoot(psAbsolutePath))
     {
         return -1;
     }
@@ -289,10 +322,6 @@ int startCoreCLR(
         nativeDllSearchDirs.c_str(),
         "UseLatestBehaviorWhenTFMNotSpecified"
     };
-
-    // get path to current executable
-    char exePath[PATH_MAX] = { 0 };
-    readlink("/proc/self/exe", exePath, PATH_MAX);
 
     // initialize CoreCLR
     int status = initializeCoreCLR(
