@@ -11,7 +11,7 @@ all: powershell-native powershell-managed
 
 powershell-managed:
 	mkdir -p $(PSLIB) $(CLRLIB)
-	cp -R $(MONAD)/src/monad-ext/coreclr/Runtime $(CLRLIB)
+	cp -R $(MONAD)/src/monad-ext/coreclr/Runtime/* $(CLRLIB)
 	$(MAKE) -j -C src/monad-build
 	$(MAKE) -j -C src/monad-build test
 
@@ -96,6 +96,7 @@ clean: clean-monad
 	-rm *-tests.xml
 
 distclean: distclean-monad distclean-native distclean-omi clean
+	-rm -rf $(CLRLIB)
 
 clean-monad:
 	$(MAKE) -C src/monad-build clean
