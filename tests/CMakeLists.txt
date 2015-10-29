@@ -5,6 +5,7 @@ add_executable(psnative-test
   test-getusername.cpp
   test-getcomputername.cpp
   test-getlinkcount.cpp
+  test-getfullyqualifiedname.cpp
   main.cpp)
 
 # manually include gtest headers
