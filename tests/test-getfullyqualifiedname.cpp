@@ -17,7 +17,7 @@ TEST_F(GetFullyQualifiedNameTest, ValidateLinuxGetFullyQualifiedDomainName)
     
     //Get expected result from using linux command
 
-    FILE *fPtr = popen("/bin/hostname --fqdn", "r");
+    FILE *fPtr = popen("hostname --fqdn", "r");
     ASSERT_TRUE(fPtr != NULL);
 
     char *linePtr = fgets(expectedComputerName, sizeof(expectedComputerName), fPtr);
