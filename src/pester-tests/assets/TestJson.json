@@ -1,0 +1,14 @@
+{
+    "Name": "Zaphod Beeblebrox",
+    "Planet": "Betelgeuse",
+    "Appendages": {
+        "Heads": 2,
+        "Arms": 3
+    },
+    "Achievements": [
+        "Invented the Pan Galactic Gargle Blaster",
+        "Worst Dressed Sentient Being in the Known Universe",
+        "The best Bang since the Big One",
+        "One hoopy frood"
+    ]
+}
