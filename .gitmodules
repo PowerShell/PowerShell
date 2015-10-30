@@ -8,6 +8,7 @@
 [submodule "src/monad-native"]
 	path = src/monad-native
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-native
+	branch = develop
 [submodule "src/monad-ext"]
 	path = src/monad-ext
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-ext
