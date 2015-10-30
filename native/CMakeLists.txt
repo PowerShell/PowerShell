@@ -4,6 +4,7 @@ add_library(psnative SHARED
   getcomputername.cpp
   getlinkcount.cpp
   getfullyqualifiedname.cpp
+  issymlink.cpp
   terminal.cpp)
 
 target_link_libraries(psnative icuuc)
