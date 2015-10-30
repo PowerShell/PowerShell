@@ -218,7 +218,7 @@ namespace Microsoft.Samples.PowerShell.Host
             {
                 this.currentPowerShell.Runspace = this.myRunSpace;
 
-                this.currentPowerShell.AddScript(string.Format("(Get-PSProvider 'FileSystem').Home = '/home/{0}'",Environment.GetEnvironmentVariable("LOGNAME")));
+                this.currentPowerShell.AddScript(string.Format("(Get-PSProvider 'FileSystem').Home = '{0}'",Environment.GetEnvironmentVariable("HOME")));
                 this.currentPowerShell.AddScript(cmd);
 
                 // Add the default outputter to the end of the pipe and then call the 
