@@ -164,7 +164,15 @@ namespace Microsoft.Samples.PowerShell.Host
         /// Sets the prompt equal to the output of the prompt function
         public string Prompt(Runspace rs)
         {
-            string returnVal      = string.Empty;
+            string returnVal = string.Empty;
+
+            if (this.myHost.IsRunspacePushed)
+            {
+                returnVal = string.Format("\n[{0}] PSL> ", this.myRunSpace.ConnectionInfo.ComputerName);
+                return returnVal;
+            }
+
+            // TODO: if we are in block mode, sep the prome to ">> "
             Pipeline pipeline     = rs.CreatePipeline();
             Command promptCommand = new Command("prompt");
 
@@ -210,6 +218,8 @@ namespace Microsoft.Samples.PowerShell.Host
             {
                 this.currentPowerShell.Runspace = this.myRunSpace;
 
+                // TODO: Find out where this is set in the Monad host code and set all defaults that way
+                this.currentPowerShell.AddScript(string.Format("(Get-PSProvider 'FileSystem').Home = '{0}'",Environment.GetEnvironmentVariable("HOME")));
                 this.currentPowerShell.AddScript(cmd);
 
                 // Add the default outputter to the end of the pipe and then call the 
@@ -373,14 +383,7 @@ namespace Microsoft.Samples.PowerShell.Host
             while (!this.ShouldExit)
             {
                 string prompt;
-                if (this.myHost.IsRunspacePushed)
-                {
-                    prompt = string.Format("\n[{0}] PSL> ", this.myRunSpace.ConnectionInfo.ComputerName);
-                }
-                else
-                {
-                    prompt = Prompt(this.myHost.Runspace);
-                }
+                prompt = Prompt(this.myHost.Runspace);
 
                 this.myHost.UI.Write(ConsoleColor.White, ConsoleColor.Black, prompt);
 //                string cmd = this.consoleReadLine.Read();
