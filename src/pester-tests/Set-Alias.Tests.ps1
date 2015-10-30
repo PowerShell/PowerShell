@@ -6,6 +6,7 @@
     }
 
     It "Should be able to have the same output between set-alias and the output of the function being aliased" {
+        set-alias -Name gd -Value Get-Date
         gd | Should Be $(Get-Date)
     }
 
