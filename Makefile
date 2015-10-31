@@ -20,9 +20,11 @@ powershell-managed:
 powershell-native: src/monad-native/Makefile
 	$(MAKE) -j -C src/monad-native
 	$(MAKE) -j -C src/monad-native test
+	$(MAKE) -j -C src/monad-native install
 
+## will install to $(MONAD)/{bin,lib}
 src/monad-native/Makefile:
-	cd src/monad-native && cmake .
+	cd src/monad-native && cmake -DCMAKE_INSTALL_PREFIX=$(MONAD) .
 
 # one-time setup
 
