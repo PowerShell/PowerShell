@@ -1,5 +1,7 @@
-﻿Describe "Import-Csv" {
-    $testCsv = "./assets/TestCsv.csv"
+﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+
+Describe "Import-Csv" {
+    $testCsv = "$here/assets/TestCsv.csv"
 
     It "Should be able to call without error" {
         { Import-Csv $testCsv } | Should Not Throw
