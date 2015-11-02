@@ -12,32 +12,32 @@ Describe "Json.NET LINQ Parsing" {
     [Microsoft.PowerShell.CoreCLR.AssemblyExtensions]::LoadFrom($path)
 
     BeforeEach {
-	$jsonFile = "$here/assets/TestJson.json"
-	$jsonData = (Get-Content $jsonFile | Out-String)
-	$json = [Newtonsoft.Json.Linq.JObject]::Parse($jsonData)
+        $jsonFile = "$here/assets/TestJson.json"
+        $jsonData = (Get-Content $jsonFile | Out-String)
+        $json = [Newtonsoft.Json.Linq.JObject]::Parse($jsonData)
     }
 
     It "Should return data via Item()" {
-	[string]$json.Item("Name") | Should Be "Zaphod Beeblebrox"
+        [string]$json.Item("Name") | Should Be "Zaphod Beeblebrox"
     }
 
     It "Should return data via []" {
-	[string]$json["Planet"] | Should Be "Betelgeuse"
+        [string]$json["Planet"] | Should Be "Betelgeuse"
     }
 
     It "Should return nested data via Item().Item()" {
-	[int]$json.Item("Appendages").Item("Heads") | Should Be 2
+        [int]$json.Item("Appendages").Item("Heads") | Should Be 2
     }
 
     It "Should return nested data via [][]" {
-	[int]$json["Appendages"]["Arms"] | Should Be 3
+        [int]$json["Appendages"]["Arms"] | Should Be 3
     }
 
     It "Should return correct array count" {
-	$json["Achievements"].Count | Should Be 4
+        $json["Achievements"].Count | Should Be 4
     }
 
     It "Should return array data via [n]" {
-	[string]$json["Achievements"][3] | Should Be "One hoopy frood"
+        [string]$json["Achievements"][3] | Should Be "One hoopy frood"
     }
 }
