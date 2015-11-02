@@ -30,7 +30,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <limits.h>
-#include <stdint.h>
+#include <inttypes.h>
 
 #ifndef NAME_MAX
 #  define NAME_MAX 255
