@@ -1,6 +1,8 @@
-﻿Describe "ConvertFrom-Csv" {
+﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+
+Describe "ConvertFrom-Csv" {
     $testObject = "a", "1"
-    $testcsv = "./assets/TestCsv2.csv"
+    $testcsv = "$here/assets/TestCsv2.csv"
     $testName = "Zaphod BeebleBrox"
     $testColumns = @"
     a,b,c
