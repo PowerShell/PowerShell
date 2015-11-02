@@ -121,6 +121,11 @@ namespace Microsoft.Samples.PowerShell.Host
                         ++i;
                     }
                 }
+
+                if ( String.IsNullOrEmpty(initialScript) && args.Length > 0 ) 
+                {
+                    initialScript = string.Join(" ", args);
+                }
             }
 
             // Create the listener and run it
