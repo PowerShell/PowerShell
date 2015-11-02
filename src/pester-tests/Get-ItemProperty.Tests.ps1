@@ -1,6 +1,8 @@
-﻿Describe "Get-ItemProperty" {
-    $currentDirectory = Split-Path . -Leaf
-    $parentDirectory  = Split-Path .. -Leaf
+﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+
+Describe "Get-ItemProperty" {
+    $currentDirectory = Split-Path $here -Leaf
+    $parentDirectory  = Split-Path $here/.. -Leaf
     if (Test-Path /tmp)
     {
         $tempDirectory = "/tmp/testfolder"
@@ -18,15 +20,11 @@
     New-Item $testfile -ItemType file -Force
 
     It "Should be able to be called on in the current directory" {
-        { Get-ItemProperty . } | Should Not Throw
-
-        $(Get-ItemProperty .).Name | Should Be $currentDirectory
+        $(Get-ItemProperty $here).Name | Should Be $currentDirectory
     }
 
     It "Should be able to be called on a parent directory" {
-        { Get-ItemProperty .. } | Should Not Throw
-
-        (Get-ItemProperty ..).Name | Should Be $parentDirectory
+        (Get-ItemProperty $here/..).Name | Should Be $parentDirectory
     }
 
     It "Should be able to be called on a directory using the path switch" {

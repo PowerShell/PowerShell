@@ -59,7 +59,7 @@ test-hashbang:
 ## - we cd because some tests rely on the current working directory
 PESTER=$(MONAD)/src/pester-tests
 test-pester:
-	$(POWERSHELL_SIMPLE) 'cd $(PESTER); $$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/pester-tests.xml -OutputFormat NUnitXml'
+	$(POWERSHELL_SIMPLE) '$$env:TEMP="/tmp"; invoke-pester $(PESTER) -OutputFile $(MONAD)/pester-tests.xml -OutputFormat NUnitXml'
 
 ## Pester self-tests
 ## - results in pester-self-tests.xml

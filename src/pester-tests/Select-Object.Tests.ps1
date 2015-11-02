@@ -1,4 +1,5 @@
-﻿. ./Test-Mocks.ps1
+﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+. "$here/Test-Mocks.ps1"
 
 Describe "Select-Object" {
     BeforeEach {
