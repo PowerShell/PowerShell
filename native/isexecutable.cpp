@@ -1,6 +1,6 @@
 //! @file isExecutable.cpp
 //! @author George FLeming <v-geflem@microsoft.com>
-//! @brief returns whether a path is executable
+//! @brief returns whether a file is executable
 
 #include <errno.h>
 #include <langinfo.h>
@@ -21,19 +21,13 @@
 //! @endparblock
 //!
 //! @exception errno Passes these errors via errno to GetLastError:
-//! - ERROR_INVALID_PARAMETER: parameter is not valid
 //! - ERROR_BAD_ENVIRONMENT: locale is not UTF-8
-//! - ERROR_FILE_NOT_FOUND: file does not exist
-//! - ERROR_ACCESS_DENIED: access is denied
 //! - ERROR_FILE_NOT_FOUND: the system cannot find the file specified
 //! - ERROR_INVALID_ADDRESS: attempt to access invalid address
-//! - ERROR_STOPPED_ON_SYMLINK: the operation stopped after reaching a symbolic link
 //! - ERROR_GEN_FAILURE: device attached to the system is not functioning
-//! - ERROR_NO_SUCH_USER: there was no corresponding entry in the utmp-file
 //! - ERROR_INVALID_NAME: filename, directory name, or volume label syntax is incorrect
-//! - ERROR_BUFFER_OVERFLOW:  file name is too long
 //! - ERROR_INVALID_FUNCTION: incorrect function
-//! - ERROR_BAD_PATH_NAME: pathname is too long, or contains invalid characters
+//! - ERROR_INVALID_PARAMETER: parameter to access(2) call is incorrect
 //!
 //! @retval 1 if path is an executable
 //! @retval 0 if path is not a executable

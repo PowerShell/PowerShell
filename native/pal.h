@@ -8,28 +8,6 @@
 #  define NAME_MAX 255
 #endif
 
-/*    typedef unsigned long DWORD, *LPDWORD;
-    typedef char BOOL;
-	typedef unsigned short WCHAR_T;
-	typedef unsigned int UINT32;
-    typedef int INT32;
-    typedef unsigned long HRESULT;
-    typedef const wchar_t *PCWSTR;
-    typedef wchar_t *PWSTR;
-    typedef const char *PCSTR;
-    typedef char *PSTR;
-    typedef void *PVOID;
-    typedef PVOID HANDLE;
-    typedef uint32_t UINT;
-    typedef char BYTE;
-    #define NO_ERROR 0
-    #define INFINITE 0xFFFFFFFF
-    #define WINAPI
-    #define S_OK 0
-    #define TRUE 1
-    #define FALSE 0
-*/
-
 #define ERROR_INVALID_PARAMETER 87
 #define ERROR_OUTOFMEMORY 14
 #define ERROR_BAD_ENVIRONMENT 0x0000000A

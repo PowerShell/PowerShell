@@ -4,6 +4,6 @@
 
 PAL_BEGIN_EXTERNC
 
-long IsSymLink(const char* fileName);
+int32_t IsSymLink(const char* fileName);
 
 PAL_END_EXTERNC
