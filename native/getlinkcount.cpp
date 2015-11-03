@@ -10,7 +10,6 @@
 #include <unistd.h>
 #include <string>
 #include <unicode/unistr.h>
-#include <iostream>
 #include "getlinkcount.h"
 
 //! @brief GetLinkCount retrieves the file link count (number of hard links)
@@ -45,13 +44,13 @@
 //! - ERROR_INVALID_FUNCTION: incorrect function
 //! - ERROR_BAD_PATH_NAME: pathname is too long, or contains invalid characters
 //!
-//! @retval TRUE If the function succeeds, the return value is a nonzero
-//! value, and the variable pointed to by buffer contains infomation about the files
-//! @retval FALSE If the function fails, the return value is zero. To get
+//! @retval 1 If the function succeeds, and the variable pointed to by buffer contains 
+//! infomation about the files
+//! @retval 0 If the function fails, the return value is zero. To get
 //! extended error information, call GetLastError.
 //!
 
-BOOL GetLinkCount(char* fileName, LPDWORD count)
+int32_t GetLinkCount(const char* fileName, int32_t *count)
 {
     errno = 0;
 
@@ -109,10 +108,10 @@ BOOL GetLinkCount(char* fileName, LPDWORD count)
         default:
             errno = ERROR_INVALID_FUNCTION;
         }
-        return FALSE;
+        return 0;
     }
 
     *count = statBuf.st_nlink;
-    return TRUE;
+    return 1;
 
 }

@@ -4,6 +4,6 @@
 
 PAL_BEGIN_EXTERNC
 
-BOOL GetLinkCount(char* fileName, LPDWORD count);
+int32_t GetLinkCount(const char* fileName, int32_t *count);
 
 PAL_END_EXTERNC

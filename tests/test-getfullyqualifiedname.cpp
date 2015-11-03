@@ -2,7 +2,6 @@
 //! @author George Fleming <v-geflem@microsoft.com>
 //! @brief Unit tests for GetFullyQualifiedName
 
-#include <stdio.h>
 #include <gtest/gtest.h>
 #include "getfullyqualifiedname.h"
 
@@ -13,7 +12,7 @@ class GetFullyQualifiedNameTest : public ::testing::Test
 
 TEST_F(GetFullyQualifiedNameTest, ValidateLinuxGetFullyQualifiedDomainName)
 {
-    char expectedComputerName[HOST_NAME_MAX];
+    char expectedComputerName[NAME_MAX];
     
     //Get expected result from using linux command
 

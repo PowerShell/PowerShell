@@ -43,7 +43,7 @@
 //! @retval -1 If the function fails.. To get extended error information, call GetLastError.
 //!
 
-long IsSymLink(const char* fileName)
+int32_t IsSymLink(const char* fileName)
 {
     errno = 0;
 

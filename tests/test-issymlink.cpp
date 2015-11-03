@@ -14,8 +14,8 @@ class isSymLinkTest : public ::testing::Test
 protected:
 
     static const int bufSize = 64;
-    const string fileTemplate = "/tmp/symlinktest.fXXXXXXX";
-    const string dirTemplate = "/tmp/symlinktest.dXXXXXXX";
+    const string fileTemplate = "/tmp/symlinktest.fXXXXXX";
+    const string dirTemplate = "/tmp/symlinktest.dXXXXXX";
     const string fileSymLink = "/tmp/symlinktest.flink";
     const string dirSymLink = "/tmp/symlinktest.dlink";
     char *file, *dir;
