@@ -36,7 +36,8 @@ bootstrap: tools/nuget.exe
 
 # run targets
 
-export POWERSHELL=env TEMP=/tmp LD_LIBRARY_PATH=$(MONAD)/lib:$(PSLIB) PSMODULEPATH=$(PSLIB)/Modules $(MONAD)/bin/powershell $(PSLIB)/powershell.exe
+export POWERSHELL_HOST=env TEMP=/tmp LD_LIBRARY_PATH=$(MONAD)/lib:$(PSLIB) PSMODULEPATH=$(PSLIB)/Modules $(MONAD)/bin/powershell
+export POWERSHELL=$(POWERSHELL_HOST) $(PSLIB)/powershell.exe
 
 demo:
 	$(POWERSHELL) '"a","b","c","a","a" | Select-Object -Unique'
