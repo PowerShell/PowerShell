@@ -205,7 +205,8 @@ namespace Microsoft.Samples.PowerShell.Host
                 this.currentPowerShell.Runspace = this.myRunSpace;
 
                 // TODO: Find out where this is set in the Monad host code and set all defaults that way
-                this.currentPowerShell.AddScript(string.Format("(Get-PSProvider 'FileSystem').Home = '{0}'",Environment.GetEnvironmentVariable("HOME")));
+                // note that this breaks exception reporting for unknown reasons
+                // this.currentPowerShell.AddScript(string.Format("(Get-PSProvider 'FileSystem').Home = '{0}'",Environment.GetEnvironmentVariable("HOME")));
                 this.currentPowerShell.AddScript(cmd);
 
                 // Add the default outputter to the end of the pipe and then call the 
