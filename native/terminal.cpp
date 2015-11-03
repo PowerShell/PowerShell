@@ -1,7 +1,7 @@
 #include "terminal.h"
 #include <sys/ioctl.h>
 
-INT32 GetTerminalWidth()
+int32_t GetTerminalWidth()
 {
     struct winsize ws;
     if (-1 == ioctl(0,TIOCGWINSZ,&ws))
@@ -10,7 +10,7 @@ INT32 GetTerminalWidth()
     return ws.ws_col;
 }
 
-INT32 GetTerminalHeight()
+int32_t GetTerminalHeight()
 {
     struct winsize ws;
     if (-1 == ioctl(0,TIOCGWINSZ,&ws))

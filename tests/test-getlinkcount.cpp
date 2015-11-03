@@ -15,19 +15,24 @@ class getLinkCountTest : public ::testing::Test
 {
 protected:
 
-    std::string file;
-    const std::string fileTemplate = "/tmp/createFile.XXXXXXX";
-    ulong count;
+    static const int bufSize = 64;
+    const std::string fileTemplate = "/tmp/createFile.XXXXXX";
+    char fileTemplateBuf[bufSize];
+
+    int32_t count;
+    char *file;
 
     getLinkCountTest()
     {
-        file = fileTemplate;
-        file = mktemp(const_cast<char*>(file.c_str()));
-        std::ifstream fileCondition(file);
-        EXPECT_EQ(0, fileCondition.good());
+        // since mkstemp modifies the template string, let's give it writable buffer
+        strcpy(fileTemplateBuf, fileTemplate.c_str());
+
+        int fd = mkstemp(fileTemplateBuf);
+        EXPECT_TRUE(fd != -1);
+	file = fileTemplateBuf;
     }
 
-    void createFileForTesting(std::string theFile)
+    void createFileForTesting(const std::string &theFile)
     {
         std::ofstream ofs;
         ofs.open(theFile, std::ofstream::out);
@@ -35,25 +40,25 @@ protected:
         ofs.close();
     }
 
-    std::string createHardLink(std::string origFile)
+    std::string createHardLink(const std::string &origFile)
     {
         std::string newFile = origFile + "_link";
-	int ret = link(const_cast<char*>(origFile.c_str()), const_cast<char*>(newFile.c_str()));
+	int ret = link(origFile.c_str(), newFile.c_str());
         EXPECT_EQ(0, ret);
 
 	return newFile;
     }
 
-    void removeFile(std::string fileName)
+    void removeFile(const std::string &fileName)
     {
-        int ret = unlink(const_cast<char*>(fileName.c_str()));
+        int ret = unlink(fileName.c_str());
 	EXPECT_EQ(0, ret);
     }
 };
 
 TEST_F(getLinkCountTest, FilePathNameIsNull)
 {
-    bool retVal = GetLinkCount(NULL, &count );
+    int32_t retVal = GetLinkCount(NULL, &count );
     ASSERT_FALSE(retVal);
     EXPECT_EQ(ERROR_INVALID_PARAMETER, errno);
 }
@@ -61,7 +66,7 @@ TEST_F(getLinkCountTest, FilePathNameIsNull)
 TEST_F(getLinkCountTest, FilePathNameDoesNotExist)
 {
     std::string invalidFile = "/tmp/createFile";
-    bool retVal = GetLinkCount(const_cast<char*>(invalidFile.c_str()), &count);
+    int32_t retVal = GetLinkCount(invalidFile.c_str(), &count);
     ASSERT_FALSE(retVal);
     EXPECT_EQ(ERROR_FILE_NOT_FOUND, errno);
 }
@@ -69,7 +74,7 @@ TEST_F(getLinkCountTest, FilePathNameDoesNotExist)
 TEST_F(getLinkCountTest, LinkCountOfSinglyLinkedFile)
 {
     createFileForTesting(file);
-    bool retVal = GetLinkCount(const_cast<char*>(file.c_str()), &count);
+    int32_t retVal = GetLinkCount(file, &count);
     ASSERT_TRUE(retVal);
     EXPECT_EQ(1, count);
 
@@ -80,7 +85,7 @@ TEST_F(getLinkCountTest, LinkCountOfMultipliLinkedFile)
 {
     createFileForTesting(file);
     std::string newFile = createHardLink(file);
-    bool retVal = GetLinkCount(const_cast<char*>(file.c_str()), &count);
+    int32_t retVal = GetLinkCount(file, &count);
     ASSERT_TRUE(retVal);
     EXPECT_EQ(2, count);
 

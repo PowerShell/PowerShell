@@ -4,8 +4,8 @@
 
 PAL_BEGIN_EXTERNC
 
-INT32 GetTerminalWidth();
-INT32 GetTerminalHeight();
+int32_t GetTerminalWidth();
+int32_t GetTerminalHeight();
 
 PAL_END_EXTERNC
 

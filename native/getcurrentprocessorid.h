@@ -4,7 +4,7 @@
 
 PAL_BEGIN_EXTERNC
 
-HANDLE GetCurrentProcessId();
+int32_t GetCurrentProcessId();
 
 PAL_END_EXTERNC
 

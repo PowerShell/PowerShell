@@ -1,9 +1,9 @@
 #include "getcurrentprocessorid.h"
 #include <unistd.h>
 
-HANDLE GetCurrentProcessId()
+int32_t GetCurrentProcessId()
 {
-	pid_t pid = getpid();
-	return reinterpret_cast<HANDLE>(pid);
+    pid_t pid = getpid();
+    return static_cast<int32_t>(pid);
 }
 
