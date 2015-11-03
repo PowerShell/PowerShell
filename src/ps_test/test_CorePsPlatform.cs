@@ -88,8 +88,6 @@ namespace PSTests
                 // It should be the same as what our platform code returns
                 Assert.Equal(hostname, Platform.NonWindowsGetMachineName());
             }
-
-
         }
 
         [Fact]
@@ -113,8 +111,47 @@ namespace PSTests
                 // It should be the same as what our platform code returns
                 Assert.Equal(hostname, Platform.NonWindowsGetHostName());
             }
+        }
 
+        [Fact]
+        public static void TestGetDomainName()
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = @"/usr/bin/env",
+                Arguments = "dnsdomainname",
+                RedirectStandardOutput = true,
+                UseShellExecute = false
+            };
+            using (Process process = Process.Start(startInfo))
+            {
+                 // Get output of call to hostname without trailing newline
+                string domainName = process.StandardOutput.ReadToEnd().Trim();
+                process.WaitForExit();
 
+                // The process should return an exit code of 0 on success
+                Assert.Equal(0, process.ExitCode);
+                // It should be the same as what our platform code returns
+                Assert.Equal(domainName, Platform.NonWindowsGetDomainName());
+            }
+        }
+
+        [Fact]
+        public static void TestIsExecutable()
+        {
+            Assert.True(Platform.NonWindowsIsExecutable("/bin/ls"));
+        }
+
+        [Fact]
+        public static void TestIsNotExecutable()
+        {
+            Assert.False(Platform.NonWindowsIsExecutable("/etc/hosts"));
+        }
+
+        [Fact]
+        public static void TestDirectoryIsNotExecutable()
+        {
+            Assert.False(Platform.NonWindowsIsExecutable("/etc"));
         }
 
         [Fact]
