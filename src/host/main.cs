@@ -74,34 +74,14 @@ namespace Microsoft.Samples.PowerShell.Host
             set { this.exitCode = value; }
         }
 
-        // this is the unmanaged main entry point used by the CoreCLR host
-        public static int UnmanagedMain(int argc, [MarshalAs(UnmanagedType.LPArray,ArraySubType=UnmanagedType.LPStr,SizeParamIndex=0)] String[] argv)
-        {
-            List<String> allArgs = new List<String>();
-
-            for (int i = 0; i < argc; ++i)
-            {
-                allArgs.Add(argv[i]);
-            }
-
-            ManagedMain(allArgs.ToArray());
-
-            return 0;
-        }
-
         /// <summary>
         /// Creates and initiates the listener instance.
         /// </summary>
         /// <param name="args">This parameter is not used.</param>
         private static void Main(string[] args)
         {
-            ManagedMain(args);
-        }
-
-        private static void ManagedMain(string[] args)
-        {
-
-            String initialScript = null;
+            // Custom argument parsing
+            string initialScript = null;
             if (args.Length > 0)
             {
                 for (int i = 0; i < args.Length; ++i)
@@ -121,8 +101,7 @@ namespace Microsoft.Samples.PowerShell.Host
                         ++i;
                     }
                 }
-
-                if ( String.IsNullOrEmpty(initialScript) && args.Length > 0 ) 
+                if (string.IsNullOrEmpty(initialScript) && args.Length > 0)
                 {
                     initialScript = string.Join(" ", args);
                 }
@@ -163,7 +142,9 @@ namespace Microsoft.Samples.PowerShell.Host
 
             // run the initial script
             if (initialScript != null)
+            {
                 executeHelper(initialScript,null);
+            }
         }
 
         /// Sets the prompt equal to the output of the prompt function
@@ -203,7 +184,7 @@ namespace Microsoft.Samples.PowerShell.Host
         private void executeHelper(string cmd, object input)
         {
             // Ignore empty command lines.
-            if (String.IsNullOrEmpty(cmd))
+            if (string.IsNullOrEmpty(cmd))
             {
                 return;
             }
