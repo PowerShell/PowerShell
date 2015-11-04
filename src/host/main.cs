@@ -92,8 +92,12 @@ namespace Microsoft.Samples.PowerShell.Host
 
                     if (hasNext && arg == "--file")
                     {
-                        initialScript = File.ReadAllText(nextArg);
+                        initialScript = Path.GetFullPath(nextArg);
                         ++i;
+                    }
+                    else if (arg.EndsWith(".ps1"))
+                    {
+                        initialScript = Path.GetFullPath(arg);
                     }
                     else if (hasNext && arg == "--working-dir")
                     {
