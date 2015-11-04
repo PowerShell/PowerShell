@@ -36,7 +36,7 @@ bootstrap: tools/nuget.exe
 
 # run targets
 
-export POWERSHELL_HOST=env TEMP=/tmp LD_LIBRARY_PATH=$(MONAD)/lib:$(PSLIB) PSMODULEPATH=$(PSLIB)/Modules $(MONAD)/bin/powershell
+export POWERSHELL_HOST=env TEMP=/tmp LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(MONAD)/lib:$(PSLIB) PSMODULEPATH=$(PSLIB)/Modules $(MONAD)/bin/powershell
 export POWERSHELL=$(POWERSHELL_HOST) $(PSLIB)/powershell.exe
 
 demo:
