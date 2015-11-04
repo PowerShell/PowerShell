@@ -1,34 +1,34 @@
 Describe "Format-List" {
     BeforeEach {
-        $input = New-Object PSObject
-        Add-Member -InputObject $input -MemberType NoteProperty -Name testName -Value testValue
+        $in = New-Object PSObject
+        Add-Member -InputObject $in -MemberType NoteProperty -Name testName -Value testValue
     }
 
     It "Should call format list without error" {
-        { $input | Format-List } | Should Not Throw
-        { $input | Format-List } | Should Not BeNullOrEmpty
+        { $in | Format-List } | Should Not Throw
+        { $in | Format-List } | Should Not BeNullOrEmpty
     }
 
     It "Should be able to call the alias" {
-        { $input | fl } | Should Not Throw
-        { $input | fl } | Should Not BeNullOrEmpty
+        { $in | fl } | Should Not Throw
+        { $in | fl } | Should Not BeNullOrEmpty
     }
 
     It "Should have the same output whether choosing alias or not" {
-        $expected = $input | Format-List | Out-String
-        $actual   = $input | fl          | Out-String
+        $expected = $in | Format-List | Out-String
+        $actual   = $in | fl          | Out-String
 
         $actual | Should Be $expected
     }
 
     It "Should produce the expected output" {
         $expected = "`n`ntestName : testValue`n`n`n`n"
-        $input = New-Object PSObject
-        Add-Member -InputObject $input -MemberType NoteProperty -Name testName -Value testValue
+        $in = New-Object PSObject
+        Add-Member -InputObject $in -MemberType NoteProperty -Name testName -Value testValue
 
-        $input | Format-List                  | Should Not BeNullOrEmpty
-        $input | Format-List   | Out-String   | Should Not BeNullOrEmpty
-        $input | Format-List   | Out-String   | Should Be $expected
+        $in | Format-List                  | Should Not BeNullOrEmpty
+        $in | Format-List   | Out-String   | Should Not BeNullOrEmpty
+        $in | Format-List   | Out-String   | Should Be $expected
     }
 
     It "Should be able to call a property of the piped input" {
@@ -64,7 +64,7 @@ Describe "Format-List" {
     }
 
     It "Should be able to take input without piping objects to it" {
-        $output = { Format-List -InputObject $input }
+        $output = { Format-List -InputObject $in }
 
         $output | Should Not Throw
         $output | Should Not BeNullOrEmpty
