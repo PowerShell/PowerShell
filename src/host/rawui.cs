@@ -14,13 +14,14 @@ namespace Microsoft.Samples.PowerShell.Host
 {
     // this is all from https://msdn.microsoft.com/en-us/library/ee706570%28v=vs.85%29.aspx
 
-	internal class MyRawUserInterface : PSHostRawUserInterface
+    internal class MyRawUserInterface : PSHostRawUserInterface
     {
         // this class provides features otherwise not available through .net
         internal class Native
         {
             [DllImport("libpsnative")]
             internal static extern int GetTerminalWidth();
+
             [DllImport("libpsnative")]
             internal static extern int GetTerminalHeight();
         }
@@ -55,9 +56,9 @@ namespace Microsoft.Samples.PowerShell.Host
         public override Coordinates CursorPosition
         {
             get { throw new NotImplementedException(
-                       "The method or operation is not implemented."); }
+                    "The method or operation is not implemented."); }
             set { throw new NotImplementedException(
-                       "The method or operation is not implemented."); }
+                    "The method or operation is not implemented."); }
         }
     
         /// <summary>
@@ -89,8 +90,8 @@ namespace Microsoft.Samples.PowerShell.Host
         /// </summary>
         public override bool KeyAvailable
         {
-          	get { return false; }
-      	//  get { return Console.KeyAvailable; }
+            get { return false; }
+            //  get { return Console.KeyAvailable; }
         }
     
         /// <summary>
@@ -102,8 +103,8 @@ namespace Microsoft.Samples.PowerShell.Host
         /// </summary>
         public override Size MaxPhysicalWindowSize
         {
-        //  get { return new Size(Console.LargestWindowWidth, Console.LargestWindowHeight); }
-          	get { return new Size(1024,768); }
+            //  get { return new Size(Console.LargestWindowWidth, Console.LargestWindowHeight); }
+            get { return new Size(1024,768); }
         }
     
         /// <summary>
@@ -114,8 +115,8 @@ namespace Microsoft.Samples.PowerShell.Host
         /// </summary>
         public override Size MaxWindowSize
         {
-        //  get { return new Size(Console.LargestWindowWidth, Console.LargestWindowHeight); }
-        	get { return new Size(1024,768); }
+            //  get { return new Size(Console.LargestWindowWidth, Console.LargestWindowHeight); }
+            get { return new Size(1024,768); }
         }
     
         /// <summary>
@@ -125,8 +126,8 @@ namespace Microsoft.Samples.PowerShell.Host
         /// </summary>
         public override Coordinates WindowPosition
         {
-        //  get { return new Coordinates(Console.WindowLeft, Console.WindowTop); }
-        //  set { Console.SetWindowPosition(value.X, value.Y); }
+            //  get { return new Coordinates(Console.WindowLeft, Console.WindowTop); }
+            //  set { Console.SetWindowPosition(value.X, value.Y); }
             get { return new Coordinates(0,0); }
             set { }
         }
@@ -138,8 +139,8 @@ namespace Microsoft.Samples.PowerShell.Host
         /// </summary>
         public override Size WindowSize
         {
-        //  get { return new Size(Console.WindowWidth, Console.WindowHeight); }
-        //  set { Console.SetWindowSize(value.Width, value.Height); }
+            //  get { return new Size(Console.WindowWidth, Console.WindowHeight); }
+            //  set { Console.SetWindowSize(value.Width, value.Height); }
             get { return new Size(1024,768); }
             set { }
         }
@@ -150,8 +151,8 @@ namespace Microsoft.Samples.PowerShell.Host
         /// </summary>
         public override string WindowTitle
         {
-        //  get { return Console.Title; }
-        //  set { Console.Title = value; }
+            //  get { return Console.Title; }
+            //  set { Console.Title = value; }
             get { return "window title"; }
             set { }
         }
@@ -174,7 +175,7 @@ namespace Microsoft.Samples.PowerShell.Host
         public override BufferCell[,] GetBufferContents(Rectangle rectangle)
         {
             throw new NotImplementedException(
-                   "The method or operation is not implemented.");
+                "The method or operation is not implemented.");
         }
     
         /// <summary>
@@ -190,7 +191,7 @@ namespace Microsoft.Samples.PowerShell.Host
         public override KeyInfo ReadKey(ReadKeyOptions options)
         {
             throw new NotImplementedException(
-                    "The method or operation is not implemented.");
+                "The method or operation is not implemented.");
         }
     
         /// <summary>
@@ -206,7 +207,7 @@ namespace Microsoft.Samples.PowerShell.Host
         public override void ScrollBufferContents(Rectangle source, Coordinates destination, Rectangle clip, BufferCell fill)
         {
             throw new NotImplementedException(
-                    "The method or operation is not implemented.");
+                "The method or operation is not implemented.");
         }
     
         /// <summary>
@@ -220,7 +221,7 @@ namespace Microsoft.Samples.PowerShell.Host
                                                BufferCell[,] contents)
         {
             throw new NotImplementedException(
-                    "The method or operation is not implemented.");
+                "The method or operation is not implemented.");
         }
     
         /// <summary>
@@ -233,9 +234,7 @@ namespace Microsoft.Samples.PowerShell.Host
         public override void SetBufferContents(Rectangle rectangle, BufferCell fill)
         {
             throw new NotImplementedException(
-                    "The method or operation is not implemented.");
+                "The method or operation is not implemented.");
         }
     }
-
 }
-

@@ -87,8 +87,8 @@ namespace Microsoft.Samples.PowerShell.Host
                 for (int i = 0; i < args.Length; ++i)
                 {
                     string arg = args[i];
-                    bool hasNext = (i+1)<args.Length;
-                    string nextArg = hasNext ? args[i+1] : "";
+                    bool hasNext = (i+1) < args.Length;
+                    string nextArg = hasNext ? args[i+1] : string.Empty;
 
                     if (hasNext && arg == "--file")
                     {
@@ -173,7 +173,7 @@ namespace Microsoft.Samples.PowerShell.Host
             // run the initial script
             if (initialScript != null)
             {
-                executeHelper(initialScript,null);
+                executeHelper(initialScript, null);
             }
         }
 
@@ -234,9 +234,6 @@ namespace Microsoft.Samples.PowerShell.Host
             {
                 this.currentPowerShell.Runspace = this.myRunSpace;
 
-                // TODO: Find out where this is set in the Monad host code and set all defaults that way
-                // note that this breaks exception reporting for unknown reasons
-                // this.currentPowerShell.AddScript(string.Format("(Get-PSProvider 'FileSystem').Home = '{0}'",Environment.GetEnvironmentVariable("HOME")));
                 this.currentPowerShell.AddScript(cmd);
 
                 // Add the default outputter to the end of the pipe and then call the 
@@ -399,12 +396,10 @@ namespace Microsoft.Samples.PowerShell.Host
             // the user calling "exit".
             while (!this.ShouldExit)
             {
-                string prompt;
-                prompt = Prompt(this.myHost.Runspace);
+                string prompt = Prompt(this.myHost.Runspace);
 
                 this.myHost.UI.Write(ConsoleColor.White, ConsoleColor.Black, prompt);
-//                string cmd = this.consoleReadLine.Read();
-                string cmd = Console.ReadLine();
+                string cmd = this.myHost.UI.ReadLine();
                 this.Execute(cmd);
             }
 

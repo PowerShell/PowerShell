@@ -49,28 +49,28 @@ namespace Microsoft.Samples.PowerShell.Host
         public ConsoleReadLine()
         {
             this.tokenColors = new ConsoleColor[]
-            {
-                this.defaultColor,       // Unknown
+                {
+                    this.defaultColor,       // Unknown
                     ConsoleColor.Yellow,     // Command
                     ConsoleColor.Green,      // CommandParameter
                     ConsoleColor.Cyan,       // CommandArgument
                     ConsoleColor.Cyan,       // Number
                     ConsoleColor.Cyan,       // String
                     ConsoleColor.Green,      // Variable
-                    this.defaultColor,            // Member
-                    this.defaultColor,            // LoopLabel
+                    this.defaultColor,       // Member
+                    this.defaultColor,       // LoopLabel
                     ConsoleColor.DarkYellow, // Attribute
                     ConsoleColor.DarkYellow, // Type
                     ConsoleColor.DarkCyan,   // Operator
-                    this.defaultColor,            // GroupStart
-                    this.defaultColor,            // GroupEnd
+                    this.defaultColor,       // GroupStart
+                    this.defaultColor,       // GroupEnd
                     ConsoleColor.Magenta,    // Keyword
                     ConsoleColor.Red,        // Comment
                     ConsoleColor.DarkCyan,   // StatementSeparator
-                    this.defaultColor,            // NewLine
-                    this.defaultColor,            // LineContinuation
-                    this.defaultColor,            // Position            
-            };
+                    this.defaultColor,       // NewLine
+                    this.defaultColor,       // LineContinuation
+                    this.defaultColor,       // Position            
+                };
         }
 
         /// <summary>
