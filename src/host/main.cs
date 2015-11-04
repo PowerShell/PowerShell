@@ -140,6 +140,36 @@ namespace Microsoft.Samples.PowerShell.Host
             this.myRunSpace = RunspaceFactory.CreateRunspace(this.myHost, iss);
             this.myRunSpace.Open();
 
+            // Create a PowerShell object to run the commands used to create
+            // $profile and load the profiles.
+            lock (this.instanceLock)
+            {
+                this.currentPowerShell = PowerShell.Create();
+            }
+
+            try
+            {
+                this.currentPowerShell.Runspace = this.myRunSpace;
+
+                PSCommand[] profileCommands = HostUtilities.GetProfileCommands("PSL");
+                foreach (PSCommand command in profileCommands)
+                {
+                    this.currentPowerShell.Commands = command;
+                    this.currentPowerShell.Invoke();
+                }
+            }
+            finally
+            {
+                // Dispose the PowerShell object and set currentPowerShell
+                // to null. It is locked because currentPowerShell may be
+                // accessed by the ctrl-C handler.
+                lock (this.instanceLock)
+                {
+                    this.currentPowerShell.Dispose();
+                    this.currentPowerShell = null;
+                }
+            }
+
             // run the initial script
             if (initialScript != null)
             {

@@ -10,5 +10,8 @@ POWERSHELL_RUN_SRCS=$(addprefix $(POWERSHELL_RUN_FOLDER)/, main.cs host.cs ui.cs
 POWERSHELL_RUN_DEPS=$(addprefix $(PSLIB)/, System.Management.Automation.dll Microsoft.PowerShell.Commands.Management.dll $(ASSEMBLY_LOAD_CONTEXT_TARGET))
 POWERSHELL_RUN_REFS=$(addprefix -r:, $(POWERSHELL_RUN_DEPS))
 
-$(PSLIB)/powershell.exe: $(POWERSHELL_RUN_SRCS) $(POWERSHELL_RUN_DEPS)
+$(PSLIB)/PSL_profile.ps1:
+	cp -f $(POWERSHELL_RUN_FOLDER)/$(notdir $@) $@
+
+$(PSLIB)/powershell.exe: $(POWERSHELL_RUN_SRCS) $(POWERSHELL_RUN_DEPS) $(PSLIB)/PSL_profile.ps1
 	    $(CSC) -out:$@ -noconfig -nostdlib -target:exe $(POWERSHELL_RUN_REFS) $(COREREF) $(POWERSHELL_RUN_SRCS)
