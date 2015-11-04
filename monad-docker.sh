@@ -1,13 +1,18 @@
-# docker run magrathea without tty
+# docker run magrathea with a non-interactive tty
 monad-run()
 {
-    monad-docker-run "--attach STDOUT --attach STDERR" $*
+    monad-docker-run "--tty" $*
 }
 
 # docker run magrathea with interactive tty
-monad-tty()
+monad-it()
 {
     monad-docker-run "--interactive --tty" $*
+}
+
+monad-attach()
+{
+    monad-docker-run "--attach STDOUT --attach STDERR" $*
 }
 
 # runs ephemeral andschwa/magrathea docker container with local
