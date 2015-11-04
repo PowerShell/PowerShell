@@ -101,7 +101,7 @@ namespace Microsoft.Samples.PowerShell.Host
                         ++i;
                     }
                 }
-                if (string.IsNullOrEmpty(initialScript) && args.Length > 0)
+                if (string.IsNullOrEmpty(initialScript))
                 {
                     initialScript = string.Join(" ", args);
                 }
@@ -137,7 +137,7 @@ namespace Microsoft.Samples.PowerShell.Host
             // only the default snap-ins will be available.
             this.myHost = new MyHost(this);
             InitialSessionState iss = InitialSessionState.CreateDefault2();
-            this.myRunSpace = RunspaceFactory.CreateRunspace(this.myHost,iss);
+            this.myRunSpace = RunspaceFactory.CreateRunspace(this.myHost, iss);
             this.myRunSpace.Open();
 
             // run the initial script
