@@ -3,10 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
-
-#ifndef NAME_MAX
-#  define NAME_MAX 255
-#endif
+#include <limits.h>
 
 #define ERROR_INVALID_PARAMETER 87
 #define ERROR_OUTOFMEMORY 14
@@ -16,7 +13,6 @@
 #define ERROR_NO_ASSOCIATION 0x00000483
 #define ERROR_NO_SUCH_USER 0x00000525
 #define ERROR_INVALID_FUNCTION 0x00000001
-#define MAX_PATH 0x00000104
 #define ERROR_INVALID_ADDRESS 0x000001e7
 #define ERROR_GEN_FAILURE 0x0000001F
 #define ERROR_ACCESS_DENIED 0x00000005
