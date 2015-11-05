@@ -49,18 +49,18 @@
     }
 
     It "Should be able to set the value of a variable by piped input" {
-        $input = "value"
+        $in = "value"
 
-        $input | New-Variable -Name var1 
+        $in | New-Variable -Name var1 
 
-        $var1 | Should Be $input
+        $var1 | Should Be $in
 
     }
 
     It "Should be able to pipe object properties to output using the PassThru switch" {
-        $input = Set-Variable -Name testVar -Value "test" -Description "test description" -PassThru
+        $in = Set-Variable -Name testVar -Value "test" -Description "test description" -PassThru
 
-        $output = $input | Format-List -Property Description | Out-String
+        $output = $in | Format-List -Property Description | Out-String
 
         $output | Should Be "`n`nDescription : test description`n`n`n`n"
     }

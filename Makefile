@@ -36,14 +36,14 @@ bootstrap: tools/nuget.exe
 
 # run targets
 
-export POWERSHELL=env LD_LIBRARY_PATH=$(MONAD)/lib:$(PSLIB) PSMODULEPATH=$(PSLIB)/Modules $(MONAD)/bin/powershell
-export POWERSHELL_SIMPLE=$(POWERSHELL) $(PSLIB)/powershell-simple.exe
+export POWERSHELL_HOST=env TEMP=/tmp LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(MONAD)/lib:$(PSLIB) PSMODULEPATH=$(PSLIB)/Modules $(MONAD)/bin/powershell
+export POWERSHELL=$(POWERSHELL_HOST) $(PSLIB)/powershell.exe
 
 demo:
-	$(POWERSHELL_SIMPLE) '"a","b","c","a","a" | Select-Object -Unique'
+	$(POWERSHELL) '"a","b","c","a","a" | Select-Object -Unique'
 
 shell:
-	TEMP=/tmp $(POWERSHELL) $(PSLIB)/powershell-run.exe
+	$(POWERSHELL)
 
 # tests
 
@@ -59,12 +59,12 @@ test-hashbang:
 ## - we cd because some tests rely on the current working directory
 PESTER=$(MONAD)/src/pester-tests
 test-pester:
-	$(POWERSHELL_SIMPLE) '$$env:TEMP="/tmp"; invoke-pester $(PESTER) -OutputFile $(MONAD)/pester-tests.xml -OutputFormat NUnitXml'
+	$(POWERSHELL) 'invoke-pester $(PESTER) -OutputFile $(MONAD)/pester-tests.xml -OutputFormat NUnitXml'
 
 ## Pester self-tests
 ## - results in pester-self-tests.xml
 test-pester-self:
-	$(POWERSHELL_SIMPLE) 'cd $(PSLIB)/Modules/Pester/Functions; $$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/pester-self-tests.xml -OutputFormat NUnitXml'
+	$(POWERSHELL) 'cd $(PSLIB)/Modules/Pester/Functions; $$env:TEMP="/tmp"; invoke-pester -OutputFile $(MONAD)/pester-self-tests.xml -OutputFormat NUnitXml'
 
 ## tracing
 ## - use PAL_DBG_CHANNELS="+LOADER.TRACE" to enable CoreCLR tracing

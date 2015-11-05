@@ -74,46 +74,30 @@ namespace Microsoft.Samples.PowerShell.Host
             set { this.exitCode = value; }
         }
 
-        // this is the unmanaged main entry point used by the CoreCLR host
-        public static int UnmanagedMain(int argc, [MarshalAs(UnmanagedType.LPArray,ArraySubType=UnmanagedType.LPStr,SizeParamIndex=0)] String[] argv)
-        {
-            List<String> allArgs = new List<String>();
-
-            for (int i = 0; i < argc; ++i)
-            {
-                allArgs.Add(argv[i]);
-            }
-
-            ManagedMain(allArgs.ToArray());
-
-            return 0;
-        }
-
         /// <summary>
         /// Creates and initiates the listener instance.
         /// </summary>
         /// <param name="args">This parameter is not used.</param>
         private static void Main(string[] args)
         {
-            ManagedMain(args);
-        }
-
-        private static void ManagedMain(string[] args)
-        {
-
-            String initialScript = null;
+            // Custom argument parsing
+            string initialScript = null;
             if (args.Length > 0)
             {
                 for (int i = 0; i < args.Length; ++i)
                 {
                     string arg = args[i];
-                    bool hasNext = (i+1)<args.Length;
-                    string nextArg = hasNext ? args[i+1] : "";
+                    bool hasNext = (i+1) < args.Length;
+                    string nextArg = hasNext ? args[i+1] : string.Empty;
 
                     if (hasNext && arg == "--file")
                     {
-                        initialScript = File.ReadAllText(nextArg);
+                        initialScript = Path.GetFullPath(nextArg);
                         ++i;
+                    }
+                    else if (arg.EndsWith(".ps1"))
+                    {
+                        initialScript = Path.GetFullPath(arg);
                     }
                     else if (hasNext && arg == "--working-dir")
                     {
@@ -121,8 +105,7 @@ namespace Microsoft.Samples.PowerShell.Host
                         ++i;
                     }
                 }
-
-                if ( String.IsNullOrEmpty(initialScript) && args.Length > 0 ) 
+                if (string.IsNullOrEmpty(initialScript))
                 {
                     initialScript = string.Join(" ", args);
                 }
@@ -158,12 +141,44 @@ namespace Microsoft.Samples.PowerShell.Host
             // only the default snap-ins will be available.
             this.myHost = new MyHost(this);
             InitialSessionState iss = InitialSessionState.CreateDefault2();
-            this.myRunSpace = RunspaceFactory.CreateRunspace(this.myHost,iss);
+            this.myRunSpace = RunspaceFactory.CreateRunspace(this.myHost, iss);
             this.myRunSpace.Open();
+
+            // Create a PowerShell object to run the commands used to create
+            // $profile and load the profiles.
+            lock (this.instanceLock)
+            {
+                this.currentPowerShell = PowerShell.Create();
+            }
+
+            try
+            {
+                this.currentPowerShell.Runspace = this.myRunSpace;
+
+                PSCommand[] profileCommands = HostUtilities.GetProfileCommands("PSL");
+                foreach (PSCommand command in profileCommands)
+                {
+                    this.currentPowerShell.Commands = command;
+                    this.currentPowerShell.Invoke();
+                }
+            }
+            finally
+            {
+                // Dispose the PowerShell object and set currentPowerShell
+                // to null. It is locked because currentPowerShell may be
+                // accessed by the ctrl-C handler.
+                lock (this.instanceLock)
+                {
+                    this.currentPowerShell.Dispose();
+                    this.currentPowerShell = null;
+                }
+            }
 
             // run the initial script
             if (initialScript != null)
-                executeHelper(initialScript,null);
+            {
+                executeHelper(initialScript, null);
+            }
         }
 
         /// Sets the prompt equal to the output of the prompt function
@@ -203,7 +218,7 @@ namespace Microsoft.Samples.PowerShell.Host
         private void executeHelper(string cmd, object input)
         {
             // Ignore empty command lines.
-            if (String.IsNullOrEmpty(cmd))
+            if (string.IsNullOrEmpty(cmd))
             {
                 return;
             }
@@ -223,8 +238,6 @@ namespace Microsoft.Samples.PowerShell.Host
             {
                 this.currentPowerShell.Runspace = this.myRunSpace;
 
-                // TODO: Find out where this is set in the Monad host code and set all defaults that way
-                this.currentPowerShell.AddScript(string.Format("(Get-PSProvider 'FileSystem').Home = '{0}'",Environment.GetEnvironmentVariable("HOME")));
                 this.currentPowerShell.AddScript(cmd);
 
                 // Add the default outputter to the end of the pipe and then call the 
@@ -387,12 +400,10 @@ namespace Microsoft.Samples.PowerShell.Host
             // the user calling "exit".
             while (!this.ShouldExit)
             {
-                string prompt;
-                prompt = Prompt(this.myHost.Runspace);
+                string prompt = Prompt(this.myHost.Runspace);
 
                 this.myHost.UI.Write(ConsoleColor.White, ConsoleColor.Black, prompt);
-//                string cmd = this.consoleReadLine.Read();
-                string cmd = Console.ReadLine();
+                string cmd = this.myHost.UI.ReadLine();
                 this.Execute(cmd);
             }
 
