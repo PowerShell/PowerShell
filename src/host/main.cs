@@ -250,13 +250,15 @@ namespace Microsoft.Samples.PowerShell.Host
 
                 // If there is any input pass it in, otherwise just invoke the
                 // the pipeline.
+                PSInvocationSettings settings = new PSInvocationSettings();
+                settings.AddToHistory = true;
                 if (input != null)
                 {
-                    this.currentPowerShell.Invoke(new object[] { input });
+                    this.currentPowerShell.Invoke(new object[] { input }, settings);
                 }
                 else
                 {
-                    this.currentPowerShell.Invoke();
+                    this.currentPowerShell.Invoke(null, settings);
                 }
             }
             finally
