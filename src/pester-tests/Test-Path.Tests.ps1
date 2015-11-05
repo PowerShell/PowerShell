@@ -108,7 +108,7 @@
     }
 
     It "Should return true if used on components other than filesystem objects" {
-        Test-Path Alias:\gci    | Should Be $true
-        Test-Path Env:\HOSTNAME | Should Be $true
+        Test-Path Alias:\gci | Should Be $true
+        Test-Path Env:\HOME | Should Be $true
     }
 }
