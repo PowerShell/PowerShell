@@ -11,9 +11,13 @@
         $ENV:PATH | Should Match "/bin"
     }
 
+    It "Should have the correct HOME" {
+        $expected = /bin/bash -c "cd ~ && pwd"
+        $ENV:HOME | Should Be $expected
+    }
+
     It "Should be able to access the members of the environment variable" {
         $expected = /bin/bash -c "cd ~ && pwd"
-
         (Get-Item ENV:HOME).Value | Should Be $expected
     }
 
@@ -24,11 +28,5 @@
         $ENV:TESTENVIRONMENTVARIABLE | Should Not BeNullOrEmpty
         $ENV:TESTENVIRONMENTVARIABLE | Should Be $expected
 
-    }
-
-    It "Should have the correct HOSTNAME" {
-        $expected = /bin/hostname
-
-        $ENV:HOSTNAME | Should Be $expected
     }
 }
