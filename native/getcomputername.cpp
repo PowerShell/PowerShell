@@ -33,7 +33,8 @@ char* GetComputerName()
         return NULL;
     }
     
-    // Get computername from system in a thread-safe manner
+    // Get computername from system, not that gethostname gets the
+    // nodename from uname
     std::string computername(NAME_MAX, 0);
     int err = gethostname(&computername[0], computername.length());
     // Map errno to Win32 Error Codes

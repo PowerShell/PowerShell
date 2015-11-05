@@ -10,13 +10,12 @@ class GetComputerNameTest : public ::testing::Test
 {
 };
 
-TEST_F(GetComputerNameTest, ValidateLinuxGetHostnameSystemCall)
+TEST_F(GetComputerNameTest, Success)
 {
     char expectedComputerName[NAME_MAX];
 
-    //Get expected result from using linux command
-
-    FILE *fPtr = popen("hostname -s", "r");
+    // the gethostname system call gets the nodename from uname
+    FILE *fPtr = popen("uname -n", "r");
     ASSERT_TRUE(fPtr != NULL);
 
     char *linePtr = fgets(expectedComputerName, sizeof(expectedComputerName), fPtr);
