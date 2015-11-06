@@ -100,6 +100,7 @@ Please note that the square brackets indicate that part is only necessary if bui
 
 1. `cd scripts` since it contains the `Makefile` and `monad-run.sh`
 2. `[source monad-docker.sh]` to get the `monad-run` and `monad-it` Bash functions
+3. `[monad-run] make boostrap` will download dependent NuGet packages (including the C# compiler)
 2. `[monad-run] make` will build PowerShell for Linux and execute the managed and native unit tests
 3. `[monad-run] make demo` will build and execute a demo, `"a","b","c","a","a" | Select-Object -Unique`
 4. `[monad-run] make test` will build PowerShell and execute the Pester smoke tests
