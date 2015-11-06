@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.4)
 project(MONAD_NATIVE)
 
-add_compile_options(-std=c++11 -Wall)
+add_compile_options(-std=c++11 -Wall -Werror)
 
 # test in BUILD_DIR
 enable_testing()
