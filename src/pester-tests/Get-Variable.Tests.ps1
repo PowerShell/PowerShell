@@ -86,7 +86,6 @@
 
 Context "Scope Tests" {
         # This will violate the DRY principle.  Tread softly.
-
         It "Should be able to get a global scope variable using the global switch" {
             New-Variable globalVar -Value 1 -Scope global -Force
 
@@ -100,10 +99,11 @@ Context "Scope Tests" {
         }
 
         It "Should be able to get a global variable using the script scope switch" {
-            {
-                New-Variable globalVar -Value 1 -Scope global -Force
-                Get-Variable -Name globalVar -Scope script
-            } | Should Not Throw
+            { New-Variable globalVar -Value 1 -Scope global -Force
+
+              Get-Variable -Name globalVar -Scope script | Out-Host
+
+                $(Get-Variable -Name globalVar -Scope script).Value  }| Should Not Throw
         }
 
         It "Should be able to get an item locally using the local switch" {
