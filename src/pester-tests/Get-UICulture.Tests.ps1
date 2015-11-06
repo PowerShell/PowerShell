@@ -1,7 +1,7 @@
 Describe "Get-UICulture" {
-    It "Should return a type of VistaCultureInfo as the name of the type" {
+    It "Should return a type of CultureInfo as the name of the type" {
 
-	(Get-UICulture).GetType().Name | Should Be VistaCultureInfo
+	(Get-UICulture).GetType().Name | Should Be CultureInfo
 
     }
 
