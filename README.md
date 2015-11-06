@@ -98,16 +98,15 @@ The `monad-docker.sh` script has two Bash functions, `monad-run` and `monad-it`,
 
 Please note that the square brackets indicate that part is only necessary if building within the Docker container. If running baremetal, ignore them.
 
-1. `cd scripts` since it contains the `Makefile` and `monad-run.sh`
-2. `[source monad-docker.sh]` to get the `monad-run` and `monad-it` Bash functions
-3. `[monad-run] make boostrap` will download dependent NuGet packages (including the C# compiler)
-2. `[monad-run] make` will build PowerShell for Linux and execute the managed and native unit tests
-3. `[monad-run] make demo` will build and execute a demo, `"a","b","c","a","a" | Select-Object -Unique`
-4. `[monad-run] make test` will build PowerShell and execute the Pester smoke tests
-5. `[monad-it] make shell` will open an interactive PowerShell console (note the `it` for `--interactive --tty`)
-6. `make clean` will remove built libraries
-7. `make distclean` will remove all untracked files in `monad-native` (such as CMake's generated files) as well as generated files for `monad`
-8. `git clean -fdx && git submodule foreach git clean -fdx` will nuke everything that is untracked by Git in all repositories, use with caution
+1. `[source monad-docker.sh]` to get the `monad-run` and `monad-it` Bash functions
+2. `[monad-run] make boostrap` will download dependent NuGet packages (including the C# compiler)
+3. `[monad-run] make` will build PowerShell for Linux and execute the managed and native unit tests
+4. `[monad-run] make demo` will build and execute a demo, `"a","b","c","a","a" | Select-Object -Unique`
+5. `[monad-run] make test` will build PowerShell and execute the Pester smoke tests
+6. `[monad-it] make shell` will open an interactive PowerShell console (note the `it` for `--interactive --tty`)
+7. `make clean` will remove built libraries
+8. `make distclean` will remove all untracked files in `monad-native` (such as CMake's generated files) as well as generated files for `monad`
+9. `git clean -fdx && git submodule foreach git clean -fdx` will nuke everything that is untracked by Git in all repositories, use with caution
 
 ## Adding Pester tests
 
