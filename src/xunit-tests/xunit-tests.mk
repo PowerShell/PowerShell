@@ -9,4 +9,4 @@ $(PSLIB)/PowerShell.Linux.Test.dll: $(TEST_SRCS) $(TEST_TARGETS)
 	$(CSC) $(CSCOPTS_LIB) -out:$@ $(addprefix -r:$(MONAD_EXT)/xunit/, xunit.core.dll xunit.assert.dll) $(addprefix -r:, $(TEST_TARGETS)) $(COREREF) $(TEST_SRCS)
 
 test: $(PSLIB)/PowerShell.Linux.Test.dll
-	$(POWERSHELL_HOST) $(PSLIB)/xunit.console.netcore.exe $< -xml $(MONAD)/xunit-tests.xml
+	$(POWERSHELL) $(PSLIB)/xunit.console.netcore.exe $< -xml $(MONAD)/xunit-tests.xml
