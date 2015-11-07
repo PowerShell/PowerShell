@@ -50,7 +50,7 @@ test: test-pester
 
 ## TODO: fix this after refactoring bin/powershell
 test-hashbang:
-	PATH=$(PATH):$(PSLIB) src/3rdparty/hashbang/script.ps1
+	PATH=$(PATH):bin src/3rdparty/hashbang/script.ps1
 
 ## Pester tests for PowerShell - results in pester-tests.xml
 ## - see https://github.com/pester/Pester
