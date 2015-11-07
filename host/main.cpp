@@ -77,7 +77,7 @@ int main(int argc, char** argv)
     void* hostHandle;
     unsigned int domainId;
     int status = startCoreCLR(
-        "ps_cmdline_host",
+        "psl_cmdline_host",
         &hostHandle,
         &domainId);
 
