@@ -2,9 +2,6 @@
 	path = src/monad
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad
 	branch = develop
-[submodule "ext-src/cppunit"]
-	path = ext-src/cppunit
-	url = git://anongit.freedesktop.org/git/libreoffice/cppunit/
 [submodule "src/monad-native"]
 	path = src/monad-native
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-native
