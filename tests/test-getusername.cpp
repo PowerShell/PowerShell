@@ -10,18 +10,9 @@
 #include <pwd.h>
 #include "getusername.h"
 
-//! Test fixture for GetUserName
-class GetUserNameTest : public ::testing::Test
+TEST(GetUserName, Success)
 {
-protected:
-    std::string UserName;
-
-    GetUserNameTest(): UserName(std::string(getpwuid(geteuid())->pw_name))
-    {
-    }
-};
-
-TEST_F(GetUserNameTest, Success)
-{
-    ASSERT_EQ(GetUserName(), UserName);
+    char* expected = getpwuid(geteuid())->pw_name;
+    ASSERT_TRUE(expected != NULL);
+    ASSERT_EQ(GetUserName(), std::string(expected));
 }
