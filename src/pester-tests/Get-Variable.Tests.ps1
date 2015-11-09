@@ -86,7 +86,6 @@
 
 Context "Scope Tests" {
         # This will violate the DRY principle.  Tread softly.
-
         It "Should be able to get a global scope variable using the global switch" {
             New-Variable globalVar -Value 1 -Scope global -Force
 
@@ -99,50 +98,42 @@ Context "Scope Tests" {
             Get-Variable -Name globalVar -Scope local -ErrorAction SilentlyContinue | Should Throw
         }
 
-        It "Should be able to get a global variable using the script scope switch" {
-            {
-                New-Variable globalVar -Value 1 -Scope global -Force
-                Get-Variable -Name globalVar -Scope script
-            } | Should Not Throw
+        It "Should be able to get a global variable when there's one in the script scope" {
+             New-Variable globalVar -Value 1 -Scope global -Force 
+            { New-Variable globalVar -Value 2 -Scope script -Force }
+
+            $(Get-Variable -Name globalVar).Value | Should Be 1
         }
 
         It "Should be able to get an item locally using the local switch" {
             {
-                New-Variable globalVar -Value 1 -Scope local -Force
+                New-Variable localVar -Value 1 -Scope local -Force
 
-                Get-Variable -Name globalVar -Scope local 
+                Get-Variable -Name localVar -Scope local 
             } | Should Not Throw
         }
 
-        It "Should be able to get an item locally using the global switch" {
-            {
-                New-Variable globalVar -Value 1 -Scope local -Force
+        It "Should be able to get a variable created in the global scope when there's one in local scope" {
+            New-Variable localVar -Value 1 -Scope local -Force
 
-                Get-Variable -Name globalVar -Scope global
-            } | Should Not Throw
-        }
+            New-Variable localVar -Value 2 -Scope global -Force
 
-        It "Should not be able to get a local variable using the script scope switch" {
-            {
-                New-Variable globalVar -Value 1 -Scope local -Force
-
-                Get-Variable -Name globalVar -Scope script
-            } | Should Not Throw
+            $(Get-Variable -Name localVar -Scope global).Value | Should Be 2
         }
 
         It "Should be able to get a script variable created using the script switch" {
             {
-                New-Variable globalVar -Value 1 -Scope script -Force
+                New-Variable scriptVar -Value 1 -Scope script -Force
 
-                Get-Variable -Name globalVar -Scope script
+                Get-Variable -Name scriptVar -Scope script
             } | Should Not Throw
         }
 
         It "Should be able to clear a global script variable that was created using the script scope switch" {
             {
-                New-Variable globalVar -Value 1 -Scope script -Force
+                New-Variable scriptVar -Value 1 -Scope script -Force
 
-                Get-Variable -Name globalVar -Scope script
+                Get-Variable -Name scriptVar -Scope script
             } | Should Not Throw
         }
     }

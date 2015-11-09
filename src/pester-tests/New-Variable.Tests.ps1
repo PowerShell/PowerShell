@@ -49,18 +49,18 @@
     }
 
     It "Should be able to set the value of a variable by piped input" {
-        $input = "value"
+        $in = "value"
 
-        $input | New-Variable -Name var1 
+        $in | New-Variable -Name var1 
 
-        $var1 | Should Be $input
+        $var1 | Should Be $in
 
     }
 
     It "Should be able to pipe object properties to output using the PassThru switch" {
-        $input = Set-Variable -Name testVar -Value "test" -Description "test description" -PassThru
+        $in = Set-Variable -Name testVar -Value "test" -Description "test description" -PassThru
 
-        $output = $input | Format-List -Property Description | Out-String
+        $output = $in | Format-List -Property Description | Out-String
 
         $output | Should Be "`n`nDescription : test description`n`n`n`n"
     }
@@ -168,66 +168,16 @@
     }
 
      Context "Scope Tests" {
-        # This will violate the DRY principle.  Tread softly.  
-        # We use the -Force switch here because we are testing global variable creation
-
-        It "Should be able to get a global scope variable using the global switch" {
-            New-Variable globalVar -Value 1 -Scope global -Force
-
-            (Get-Variable -Name globalVar -Scope global)[0].Value | Should Be 1
+        It "Should be able to create a global scope variable using the global switch" {
+            { New-Variable globalVar -Value 1 -Scope global -Force } | Should Not Throw
         }
 
-        It "Should not be able to set a global scope variable using the local switch" {
-            Set-Variable globalVar -Value 1 -Scope global -Force
-
-            Get-Variable -Name globalVar -Scope local -ErrorAction SilentlyContinue | Should Throw
+        It "Should be able to create a local scope variable using the local switch" {
+            { New-Variable localVar -Value 1 -Scope local -Force } | Should Not Throw
         }
 
-        It "Should be able to set a global variable using the script scope switch" {
-            {
-                Set-Variable globalVar -Value 1 -Scope global -Force
-                Get-Variable -Name globalVar -Scope script
-            } | Should Not Throw
-        }
-
-        It "Should be able to get an item locally using the local switch" {
-            {
-                Set-Variable globalVar -Value 1 -Scope local -Force
-
-                Get-Variable -Name globalVar -Scope local 
-            } | Should Not Throw
-        }
-
-        It "Should be able to get an item locally using the global switch" {
-            {
-                Set-Variable globalVar -Value 1 -Scope local -Force
-
-                Get-Variable -Name globalVar -Scope global
-            } | Should Not Throw
-        }
-
-        It "Should not be able to get a local variable using the script scope switch" {
-            {
-                Set-Variable globalVar -Value 1 -Scope local -Force
-
-                Get-Variable -Name globalVar -Scope script
-            } | Should Not Throw
-        }
-
-        It "Should be able to get a script variable created using the script switch" {
-            {
-                Set-Variable globalVar -Value 1 -Scope script -Force
-
-                Get-Variable -Name globalVar -Scope script
-            } | Should Not Throw
-        }
-
-        It "Should be able to set a global script variable that was created using the script scope switch" {
-            {
-                Set-Variable globalVar -Value 1 -Scope script -Force
-
-                Get-Variable -Name globalVar -Scope script
-            } | Should Not Throw
+        It "Should be able to create a script scope variable using the script switch" {
+            { New-Variable scriptVar -Value 1 -Scope script -Force } | Should Not Throw
         }
     }
 }

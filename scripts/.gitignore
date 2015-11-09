@@ -1,9 +1,0 @@
-*.txt
-*.exe
-*-tests.xml
-*-win.mk
-CorePsTypeCatalog.cs
-powershell.inc
-buildtemp/
-exec_env/
-libps/

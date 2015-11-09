@@ -2,12 +2,10 @@
 	path = src/monad
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad
 	branch = develop
-[submodule "ext-src/cppunit"]
-	path = ext-src/cppunit
-	url = git://anongit.freedesktop.org/git/libreoffice/cppunit/
 [submodule "src/monad-native"]
 	path = src/monad-native
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-native
+	branch = develop
 [submodule "src/monad-ext"]
 	path = src/monad-ext
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-ext
@@ -23,3 +21,6 @@
 	path = src/omi
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/omi
 	branch = OMI-Shell/OMI-PSRP-Support
+[submodule "src/monad-build"]
+	path = src/monad-build
+	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-build
