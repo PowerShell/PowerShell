@@ -12,7 +12,7 @@ class GetComputerNameTest : public ::testing::Test
 
 TEST_F(GetComputerNameTest, ValidateLinuxGetHostnameSystemCall)
 {
-    char expectedComputerName[NAME_MAX];
+    char expectedComputerName[HOST_NAME_MAX];
 
     //Get expected result from using linux command
 

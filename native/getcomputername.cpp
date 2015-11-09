@@ -34,7 +34,7 @@ char* GetComputerName()
     }
     
     // Get computername from system in a thread-safe manner
-    std::string computername(NAME_MAX, 0);
+    std::string computername(HOST_NAME_MAX, 0);
     int err = gethostname(&computername[0], computername.length());
     // Map errno to Win32 Error Codes
     if (err != 0) 

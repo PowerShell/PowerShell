@@ -12,7 +12,7 @@ class GetFullyQualifiedNameTest : public ::testing::Test
 
 TEST_F(GetFullyQualifiedNameTest, ValidateLinuxGetFullyQualifiedDomainName)
 {
-    char expectedComputerName[NAME_MAX];
+    char expectedComputerName[HOST_NAME_MAX];
     
     //Get expected result from using linux command
 
