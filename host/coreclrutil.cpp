@@ -19,6 +19,7 @@ constexpr char coreClrDll[] = "libcoreclr.so";
 
 void* coreclrLib;
 char exePath[PATH_MAX];
+char pwrshPath[PATH_MAX];
 
 // Prototype of the coreclr_initialize function from the libcoreclr.so
 typedef int (*InitializeCoreCLRFunction)(
@@ -285,12 +286,15 @@ int startCoreCLR(
     // add assemblies in the CoreCLR root path
     AddFilesFromDirectoryToTpaList(clrAbsolutePath.c_str(), tpaList);
 
-    // get path to AssemblyLoadContext.dll
+    // get path to PowerShell libraries
     std::string psAbsolutePath;
     if(!GetPwrshRoot(psAbsolutePath))
     {
         return -1;
     }
+    psAbsolutePath.copy(pwrshPath, psAbsolutePath.size(), 0);
+
+    // get path to AssemblyLoadContext.dll
     std::string alcAbsolutePath(psAbsolutePath);
     alcAbsolutePath.append("/");
     alcAbsolutePath.append("Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll");

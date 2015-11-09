@@ -7,8 +7,8 @@ namespace Cmdline
 {
     void printHelp()
     {
-        std::cerr << "PowerShell on Linux host" << std::endl
-                  << "Usage: powershell assembly [...]" << std::endl
+        std::cerr << "PowerShell on Linux native host" << std::endl
+                  << "Usage: powershell [assembly] [...]" << std::endl
                   << std::endl
                   << "What it does:" << std::endl
                   << "- the host assumes that CoreCLR is located $CORE_ROOT," << std::endl
@@ -16,18 +16,14 @@ namespace Cmdline
                   << "- the host assumes that the assembly named" << std::endl
                   << "  Microsoft.PowerShell.CoreCLR.AssemblyLoadContext is " << std::endl
                   << "  located in $PWRSH_ROOT, else in lib/powershell" << std::endl
+                  << "- the host will launch $PWRSH_ROOT/powershell.exe" << std::endl
+                  << "  if not given an explicit assembly.exe" << std::endl
                   << "- all additional parameters at the end of the command line are forwarded" << std::endl
                   << "  to the Main function in the assembly" << std::endl
                   << "- the host will execute the Main function in the specified assembly" << std::endl
-                  << "  + this must be an absolute path to the assembly" << std::endl
-                  << "- the function signature of the Main function that gets executed must be:" << std::endl
-                  << "  static void Main(string[] args)" << std::endl
-                  << std::endl
-                  << "Options:" << std::endl
-                  << "-v                verbose output" << std::endl
                   << std::endl
                   << "Example:" << std::endl
-                  << "CORE_ROOT=/test/coreclr PWRSH_ROOT=/test/powershell ./powershell powershell-simple 'get-process'" << std::endl;
+                  << "CORE_ROOT=/test/coreclr PWRSH_ROOT=/test/powershell ./powershell get-process" << std::endl;
     }
 
     struct Args
@@ -35,91 +31,53 @@ namespace Cmdline
         Args() :
             argc(0),
             argv(nullptr),
-            verbose(false)
+            assembly()
         {
         }
 
-        std::string entryAssemblyPath;
         int argc;
         char** argv;
-        bool verbose;
-
-        void debugPrint() const
-        {
-            std::cerr << "Args:" << std::endl
-                      << "- entryAssemblyPath             " << entryAssemblyPath << std::endl
-                      << "- argc                          " << argc << std::endl
-                      << "- verbose                       " << (verbose ? "true" : "false") << std::endl;
-        }
+        std::string assembly;
     };
 
-    // this is implemented without any 3rd party lib to keep the list
-    // of dependencies low
-    bool parseCmdline(const int argc, char** argv, Args& args)
+    // checks if string ends with ".exe"
+    bool isExe(std::string arg)
     {
-        if (argc <= 1)
-        {
-            std::cerr << "error: missing arguments" << std::endl;
-            return false;
-        }
-
-        for (int i = 1; i < argc; ++i)
-        {
-            const std::string arg = argv[i];
-            const bool hasNextArg = i+1 < argc;
-            const std::string nextArg = hasNextArg ? std::string(argv[i+1]) : std::string("");
-
-	    if (hasNextArg && arg == "--File")
-            {
-                std::cerr << "TODO: should launch script " << nextArg << std::endl;
-                ++i;
-            }
-            else if (arg == "-v")
-            {
-                args.verbose = true;
-            }
-            else if (args.entryAssemblyPath == "")
-            {
-                args.entryAssemblyPath = arg;
-            }
-            else
-            {
-                // forward command line parameters
-                args.argc = argc-i;
-                args.argv = &argv[i];
-
-                // explicitly break here because the lines above consume all remaining arguments
-                break;
-            }
-        }
-
-        // check for mandatory parameters
-        if (args.entryAssemblyPath == "")
-        {
-            std::cerr << "error: assembly_name argument missing" << std::endl;
-        }
-
-        return true;
+        std::size_t dot = arg.find_last_of(".");
+        return dot == std::string::npos ? false : arg.substr(dot) == ".exe";
     }
 
+    // simple extraction of assembly.exe so we can run other hosts
+    void parseCmdline(int argc, char** argv, Args& args)
+    {
+        // index of arguments to forward (skip zeroth)
+        int i = 1;
+        // if we have any arguments
+        if (argc > 1)
+        {
+            // check if the first is an assembly.exe
+            const std::string arg = argv[i];
+            if (isExe(arg))
+            {
+                args.assembly.assign(arg);
+                ++i; // don't forward the first argument
+            }
+        }
+        // forward arguments
+        args.argc = argc - i;
+        args.argv = &argv[i];
+    }
 }
 
 int main(int argc, char** argv)
 {
-    // parse the command line arguments
     Cmdline::Args args;
-    if (!Cmdline::parseCmdline(argc,argv,args))
-    {
-        Cmdline::printHelp();
-        return 1;
-    }
-    if (args.verbose)
-        args.debugPrint();
+    Cmdline::parseCmdline(argc, argv, args);
 
     void* hostHandle;
     unsigned int domainId;
     int status = startCoreCLR(
-        "ps_cmdline_host",
+        "psl_cmdline_host",
         &hostHandle,
         &domainId);
 
@@ -129,12 +87,20 @@ int main(int argc, char** argv)
         return -1;
     }
 
+    // default to powershell.exe if no host specified
+    if (args.assembly.empty())
+    {
+        args.assembly.assign(pwrshPath);
+        args.assembly.append("/");
+        args.assembly.append("powershell.exe");
+    }
+
     // call into Main of assembly
     unsigned int exitCode;
     executeAssembly(
         hostHandle, domainId, args.argc,
         (const char**)args.argv,
-        args.entryAssemblyPath.c_str(),
+        args.assembly.c_str(),
         &exitCode);
 
     status = stopCoreCLR(hostHandle, domainId);
