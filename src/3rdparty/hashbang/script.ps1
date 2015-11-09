@@ -1,4 +1,4 @@
-#!/usr/bin/env runps-file.sh
+#!/usr/bin/env powershell
 
 get-process
 get-module

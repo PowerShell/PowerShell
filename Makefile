@@ -36,8 +36,7 @@ bootstrap: tools/nuget.exe
 
 # run targets
 
-export POWERSHELL_HOST=env TEMP=/tmp LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(MONAD)/lib:$(PSLIB) PSMODULEPATH=$(PSLIB)/Modules $(MONAD)/bin/powershell
-export POWERSHELL=$(POWERSHELL_HOST) $(PSLIB)/powershell.exe
+export POWERSHELL=env TEMP=/tmp LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(MONAD)/lib:$(PSLIB) PSMODULEPATH=$(PSLIB)/Modules $(MONAD)/bin/powershell
 
 demo:
 	$(POWERSHELL) '"a","b","c","a","a" | Select-Object -Unique'
@@ -51,7 +50,7 @@ test: test-pester
 
 ## TODO: fix this after refactoring bin/powershell
 test-hashbang:
-	PATH=$(PATH):$(PSLIB) src/3rdparty/hashbang/script.ps1
+	PATH=$(PATH):bin src/3rdparty/hashbang/script.ps1
 
 ## Pester tests for PowerShell - results in pester-tests.xml
 ## - see https://github.com/pester/Pester

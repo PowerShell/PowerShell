@@ -77,7 +77,6 @@ namespace Microsoft.Samples.PowerShell.Host
         /// <summary>
         /// Creates and initiates the listener instance.
         /// </summary>
-        /// <param name="args">This parameter is not used.</param>
         private static void Main(string[] args)
         {
             // Custom argument parsing
@@ -90,26 +89,44 @@ namespace Microsoft.Samples.PowerShell.Host
                     bool hasNext = (i+1) < args.Length;
                     string nextArg = hasNext ? args[i+1] : string.Empty;
 
-                    if (hasNext && arg == "--file")
+                    // lone argument is a script
+                    if (!hasNext && arg.EndsWith(".ps1"))
+                    {
+                        initialScript = Path.GetFullPath(arg);
+                    }
+                    // lone argument is an inline script
+                    else if (!hasNext)
+                    {
+                        initialScript = arg;
+                    }
+                    // --file <filePath> was specified
+                    else if (hasNext && (arg == "--file" || arg == "-f"))
                     {
                         initialScript = Path.GetFullPath(nextArg);
                         ++i;
                     }
-                    else if (arg.EndsWith(".ps1"))
+                    // --command <string> was specified
+                    else if (hasNext && (arg == "--command" || arg == "-c"))
                     {
-                        initialScript = Path.GetFullPath(arg);
+                        if (nextArg == "-")
+                        {
+                            initialScript = "\"TODO: read stdin using Console.OpenStandardInput\"";
+                        }
+                        else
+                        {
+                            initialScript = nextArg;
+                        }
+                        ++i;
                     }
+                    // --working-dir (not on PowerShell for Windows, may be removed)
                     else if (hasNext && arg == "--working-dir")
                     {
                         Directory.SetCurrentDirectory(nextArg);
                         ++i;
                     }
                 }
-                if (string.IsNullOrEmpty(initialScript))
-                {
-                    initialScript = string.Join(" ", args);
-                }
             }
+            // TODO: check for input on stdin
 
             // Create the listener and run it
             PSListenerConsoleSample listener = new PSListenerConsoleSample(initialScript);
