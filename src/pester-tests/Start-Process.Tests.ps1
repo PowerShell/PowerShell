@@ -6,7 +6,7 @@ Describe "Start-Process" {
     $pingDirectory = Split-Path $pingCommand -Parent
     $tempDir = GetTempDir
     $tempFile = $tempDir + "PSTest"
-    $assetsFile = $here/assets/SortTest.txt
+    $assetsFile = $here + "/assets/SortTest.txt"
     $windows = IsWindows
     if ($windows)
     {
@@ -91,7 +91,7 @@ Describe "Start-Process" {
     }
 
     It "Should should handle stdin redirection without error" {
-        $process  = Start-Process sort -Wait -RedirectStandardOutput $tempFile -RedirectStandardInput $assetFile
+        $process  = Start-Process sort -Wait -RedirectStandardOutput $tempFile -RedirectStandardInput $assetsFile
 	$dirEntry = dir $tempFile
 
 	$dirEntry.Length     | Should BeGreaterThan 0
