@@ -2,7 +2,7 @@
 . $here/Test-Common.ps1
 
 Describe "Start-Process" {
-    $pingCommand = (Get-Command -CommandType Application ping).Definition
+    $pingCommand = (Get-Command -CommandType Application ping)[0].Definition
     $pingDirectory = Split-Path $pingCommand -Parent
     $tempDir = GetTempDir
     $tempFile = $tempDir + "PSTest"
