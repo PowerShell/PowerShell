@@ -25,12 +25,13 @@ Describe "Start-Process" {
 
     It "Should start a process without error" {
         { Start-Process ping } | Should Not Throw
-    } 
+    }
 
     It "Should process arguments without error" {
         { Start-Process ping -ArgumentList $pingParamNoStop} | Should Not Throw
 
         $process = Get-Process -Name ping
+
         $process.Length      | Should Be 1
         $process.Id          | Should BeGreaterThan 1
         $process.ProcessName | Should Be "ping"
@@ -51,7 +52,7 @@ Describe "Start-Process" {
         $process.Id          | Should BeGreaterThan 1
         $process.ProcessName | Should Be "ping"
     }
-    
+
     It "Should invoke correct path when used with FilePath argument" {
         $process = Start-Process -FilePath $pingCommand -ArgumentList $pingParamNoStop -PassThru
 
@@ -64,6 +65,7 @@ Describe "Start-Process" {
         Start-Process ping -ArgumentList $pingParamStop -Wait
 
         $process = Get-Process -Name ping -ErrorAction SilentlyContinue
+
         $process.Length      | Should Be 0
     }
 
@@ -85,14 +87,14 @@ Describe "Start-Process" {
 
     It "Should should handle stdout redirection without error" {
         $process  = Start-Process ping -ArgumentList $pingParamStop -Wait -RedirectStandardOutput $tempFile
-	$dirEntry = dir $tempFile
+        $dirEntry = dir $tempFile
 
 	$dirEntry.Length     | Should BeGreaterThan 0
     }
 
     It "Should should handle stdin redirection without error" {
         $process  = Start-Process sort -Wait -RedirectStandardOutput $tempFile -RedirectStandardInput $assetsFile
-	$dirEntry = dir $tempFile
+        $dirEntry = dir $tempFile
 
 	$dirEntry.Length     | Should BeGreaterThan 0
     }
