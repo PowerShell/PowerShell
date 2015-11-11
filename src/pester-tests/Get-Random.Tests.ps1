@@ -4,7 +4,7 @@
     }
     It "Should return a random number less than 100 " {
         Get-Random -Maximum 100 | Should BeLessThan 100 
-        Get-Random -Maximum 100 | Should BeGreaterThan 0 
+        Get-Random -Maximum 100 | Should BeGreaterThan -1 
     }
 
     It "Should return a random number less than 100 and greater than -100 " {
