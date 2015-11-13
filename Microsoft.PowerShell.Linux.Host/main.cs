@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         /// Creates and initiates the listener instance.
         /// </summary>
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Console.WriteLine("Hit Main!");
             // Custom argument parsing
