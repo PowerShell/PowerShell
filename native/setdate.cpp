@@ -24,11 +24,11 @@
 //! - ERROR_INVALID_PARAMETER:  time was not passed in correctly
 //! - ERROR_ACCESS_DENIED:  you must be super-user to set the date
 //!
-//! @retval 0 process successfully started and finished (if we are waiting for process)
+//! @retval 0 successfully set date
 //! @retval -1 if failure occurred.  To get extended error information, call GetLastError.
 //!
 
- int32_t SetDate(const SetDateInfo &info)
+int32_t SetDate(const SetDateInfo &info)
 {
     errno = 0;
 
@@ -49,7 +49,7 @@
     bdTime.tm_mday = info.Day;
     bdTime.tm_hour = info.Hour;
     bdTime.tm_min = info.Minute;
-    bdTime.tm_min = info.Second;
+    bdTime.tm_sec = info.Second;
     bdTime.tm_isdst = info.DST;
 
     time_t newTime = mktime(&bdTime);
@@ -60,7 +60,7 @@
     }
 
     tv.tv_sec = newTime;
-    tv.tv_usec = info.Millisecond * 1000;
+    tv.tv_usec = 0;
 
     int result = settimeofday(&tv, NULL);
     if (result == -1)
