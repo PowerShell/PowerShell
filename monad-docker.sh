@@ -22,8 +22,8 @@ monad-docker-run()
     local CONSOLE=$1
     shift 1
     docker run --rm \
-	   --volume $(pwd)/:/opt \
-	   --workdir /opt \
+	   --volume $(pwd)/:/opt/src \
+	   --workdir /opt/src \
 	   $CONSOLE \
 	   andschwa/magrathea:latest \
 	   bash -c "$(monad-impersonate) bash -c '$*'"
