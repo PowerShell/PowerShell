@@ -6,6 +6,7 @@ add_library(psnative SHARED
   getfullyqualifiedname.cpp
   issymlink.cpp
   isexecutable.cpp
+  setdate.cpp
   terminal.cpp)
 
 target_link_libraries(psnative icuuc)
