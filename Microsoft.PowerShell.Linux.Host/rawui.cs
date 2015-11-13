@@ -10,7 +10,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace Microsoft.Samples.PowerShell.Host
+namespace Microsoft.PowerShell.Linux.Host
 {
     // this is all from https://msdn.microsoft.com/en-us/library/ee706570%28v=vs.85%29.aspx
 

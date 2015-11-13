@@ -6,8 +6,6 @@
     "projectUrl": "",
     "licenseUrl": "",
 
-    "scripts": { "prebuild": "powershell ./generate-csbindings.ps1" },
-
     "compile": [
 	"../src/monad/monad/src/commands/utility/new-object.cs",
 	"../src/monad/monad/src/commands/utility/Measure-Object.cs",

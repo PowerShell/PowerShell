@@ -1,4 +1,4 @@
-namespace Microsoft.Samples.PowerShell.Host
+namespace Microsoft.PowerShell.Linux.Host
 {
     using System;
     using System.Globalization;
@@ -13,7 +13,7 @@ namespace Microsoft.Samples.PowerShell.Host
     /// </summary>
     internal class MyHost : PSHost, IHostSupportsInteractiveSession
     {
-        public MyHost(PSListenerConsoleSample program)
+        public MyHost(Program program)
         {
             this.program = program;
         }
@@ -21,7 +21,7 @@ namespace Microsoft.Samples.PowerShell.Host
         /// <summary>
         /// A reference to the PSHost implementation.
         /// </summary>
-        private PSListenerConsoleSample program;
+        private Program program;
 
         /// <summary>
         /// The culture information of the thread that created

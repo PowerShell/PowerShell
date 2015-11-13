@@ -1,0 +1,34 @@
+{
+    "version": "1.0.0-*",
+    "description": "PowerShell On Linux Console",
+    "authors": [ "andschwa" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
+
+    "dependencies": {
+        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-*",
+        "System.Management.Automation": "",
+        "Microsoft.PowerShell.Security": "",
+        "Microsoft.PowerShell.Commands.Utility": "",
+        "Microsoft.PowerShell.Commands.Management": ""
+    },
+
+    "commands": {
+        "powershell": "Microsoft.PowerShell.Linux.Host"
+    },
+
+    "frameworks": {
+        "dnxcore50": {
+            "dependencies": {
+                "System.Console": "4.0.0-beta-23420",
+                "Microsoft.CSharp": "4.0.1-beta-23420",
+                "System.Collections": "4.0.11-beta-23420",
+                "System.Linq": "4.0.1-beta-23420",
+                "System.Runtime": "4.0.21-beta-23420",
+                "System.Threading": "4.0.11-beta-23420",
+                "System.Diagnostics.FileVersionInfo": "4.0.0-beta-23420"
+            }
+        }
+    }
+}

@@ -1,4 +1,4 @@
-namespace Microsoft.Samples.PowerShell.Host
+namespace Microsoft.PowerShell.Linux.Host
 {
     using System;
     using System.Collections.Generic;
@@ -11,12 +11,7 @@ namespace Microsoft.Samples.PowerShell.Host
     using System.Runtime.InteropServices;
     using PowerShell = System.Management.Automation.PowerShell;
 
-    /// <summary>
-    /// This sample shows how to implement a basic read-evaluate-print 
-    /// loop (or 'listener') that allowing you to interactively work 
-    /// with the Windows PowerShell engine.
-    /// </summary>
-    internal class PSListenerConsoleSample
+    public class Program
     {
         /// <summary>
         /// Used to read user input.
@@ -79,6 +74,7 @@ namespace Microsoft.Samples.PowerShell.Host
         /// </summary>
         private static void Main(string[] args)
         {
+            Console.WriteLine("Hit Main!");
             // Custom argument parsing
             string initialScript = null;
             if (args.Length > 0)
@@ -129,7 +125,7 @@ namespace Microsoft.Samples.PowerShell.Host
             // TODO: check for input on stdin
 
             // Create the listener and run it
-            PSListenerConsoleSample listener = new PSListenerConsoleSample(initialScript);
+            Program listener = new Program(initialScript);
 
             // only run if there was no script file passed in
             if (initialScript == null)
@@ -148,10 +144,7 @@ namespace Microsoft.Samples.PowerShell.Host
             }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the PSListenerConsoleSample class.
-        /// </summary>
-        public PSListenerConsoleSample(string initialScript)
+        public Program(string initialScript)
         {
             // Create the host and runspace instances for this interpreter. 
             // Note that this application does not support console files so 

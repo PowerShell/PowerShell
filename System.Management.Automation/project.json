@@ -7,6 +7,7 @@
     "licenseUrl": "",
 
     "compile": [
+	"../src/assembly-info/System.Management.Automation.assembly-info.cs",
 	"../src/monad/monad/src/engine/ChildrenCmdletProviderInterfaces.cs",
 	"../src/monad/monad/src/engine/CmdletFamilyProviderInterfaces.cs",
 	"../src/monad/monad/src/engine/MshCmdlet.cs",
@@ -665,7 +666,7 @@
         "TypesXmlStrings" : "../src/monad/monad/src/engine/resources/TypesXmlStrings.resx",
         "TransactionStrings" : "../src/monad/monad/src/engine/resources/TransactionStrings.resx",
         "WildcardPatternStrings" : "../src/monad/monad/src/engine/resources/WildcardPatternStrings.resx",
-        "RemotingErrorIdStrings" : "../src/monad/monad/src/engine/resources/RemotingErrorIdStrings.resx",
+        "RemotingErrorIdStrings" : "../src/monad/monad/src/engine/resources/remotingerroridstrings.resx",
         "DebuggerStrings" : "../src/monad/monad/src/engine/resources/DebuggerStrings.resx",
         "FormatAndOut_MshParameter" : "../src/monad/monad/src/engine/resources/FormatAndOut_MshParameter.resx",
         "NativeCP" : "../src/monad/monad/src/engine/resources/NativeCP.resx",
@@ -675,7 +676,7 @@
         "CoreClrStubResources" : "../src/monad/monad/src/engine/resources/CoreClrStubResources.resx",
         "FormatAndOut_format_xxx" : "../src/monad/monad/src/engine/resources/FormatAndOut_format_xxx.resx",
         "FormatAndOut_out_xxx" : "../src/monad/monad/src/engine/resources/FormatAndOut_out_xxx.resx",
-        "Modules" : "../src/monad/monad/src/engine/resources/Modules.resx"
+        "Modules" : "../src/monad/monad/src/engine/resources/modules.resx"
     },
 
     "dependencies": {
