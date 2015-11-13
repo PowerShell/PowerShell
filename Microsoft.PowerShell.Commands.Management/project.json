@@ -94,7 +94,6 @@
 
     "dependencies": {
         "System.Management.Automation" : "",
-        "Microsoft.PowerShell.Commands.Utility" : "",
         "Microsoft.PowerShell.Security" : ""
     },
 
@@ -182,7 +181,7 @@
                 "System.Security.Cryptography.X509Certificates": "4.0.0-beta-23420",
                 "System.Security.Principal": "4.0.1-beta-23420",
                 "System.Security.Principal.Windows": "4.0.0-beta-23420",
-                "System.Security.SecureString": "4.0.0-beta-23409",
+                "System.Security.SecureString": "4.0.0-beta-23405",
                 "System.ServiceModel.Duplex": "4.0.1-beta-23420",
                 "System.ServiceModel.Http": "4.0.11-beta-23420",
                 "System.ServiceModel.NetTcp": "4.1.0-beta-23420",
