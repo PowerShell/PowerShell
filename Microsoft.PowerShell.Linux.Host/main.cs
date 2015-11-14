@@ -11,7 +11,91 @@ namespace Microsoft.PowerShell.Linux.Host
     using System.Runtime.InteropServices;
     using PowerShell = System.Management.Automation.PowerShell;
 
-    public class Program
+    public static class Program
+    {
+        /// <summary>
+        /// Creates and initiates the listener instance.
+        /// </summary>
+        public static void Main(string[] args)
+        {
+            // create the typecatalog so they can find assemblies for a given type.
+            TypeCatalog.GenerateTypeCatalog();
+            if (System.Management.Automation.ClrHost.TypeCatalog == null)
+            {
+                Console.WriteLine("TypeCatalog generation failed!");
+            }
+
+            // Custom argument parsing
+            string initialScript = null;
+            if (args.Length > 0)
+            {
+                for (int i = 0; i < args.Length; ++i)
+                {
+                    string arg = args[i];
+                    bool hasNext = (i+1) < args.Length;
+                    string nextArg = hasNext ? args[i+1] : string.Empty;
+
+                    // lone argument is a script
+                    if (!hasNext && arg.EndsWith(".ps1"))
+                    {
+                        initialScript = Path.GetFullPath(arg);
+                    }
+                    // lone argument is an inline script
+                    else if (!hasNext)
+                    {
+                        initialScript = arg;
+                    }
+                    // --file <filePath> was specified
+                    else if (hasNext && (arg == "--file" || arg == "-f"))
+                    {
+                        initialScript = Path.GetFullPath(nextArg);
+                        ++i;
+                    }
+                    // --command <string> was specified
+                    else if (hasNext && (arg == "--command" || arg == "-c"))
+                    {
+                        if (nextArg == "-")
+                        {
+                            initialScript = "\"TODO: read stdin using Console.OpenStandardInput\"";
+                        }
+                        else
+                        {
+                            initialScript = nextArg;
+                        }
+                        ++i;
+                    }
+                    // --working-dir (not on PowerShell for Windows, may be removed)
+                    else if (hasNext && arg == "--working-dir")
+                    {
+                        Directory.SetCurrentDirectory(nextArg);
+                        ++i;
+                    }
+                }
+            }
+            // TODO: check for input on stdin
+
+            // Create the listener and run it
+            Listener listener = new Listener(initialScript);
+
+            // only run if there was no script file passed in
+            if (initialScript == null)
+            {
+                // Display the welcome message.
+                Console.WriteLine();
+                Console.WriteLine("PowerShell for Linux interactive console");
+                Console.WriteLine("========================================");
+                Console.WriteLine();
+                Console.WriteLine("Current status:");
+                Console.WriteLine("- Type 'exit' to exit");
+                Console.WriteLine("- Utility and Management cmdlet modules are loadable");
+                Console.WriteLine();
+
+                listener.Run();
+            }
+        }
+    }
+
+    internal class Listener
     {
         /// <summary>
         /// Used to read user input.
@@ -69,90 +153,19 @@ namespace Microsoft.PowerShell.Linux.Host
             set { this.exitCode = value; }
         }
 
-        /// <summary>
-        /// Creates and initiates the listener instance.
-        /// </summary>
-        public static void Main(string[] args)
-        {
-            Console.WriteLine("Hit Main!");
-            // Custom argument parsing
-            string initialScript = null;
-            if (args.Length > 0)
-            {
-                for (int i = 0; i < args.Length; ++i)
-                {
-                    string arg = args[i];
-                    bool hasNext = (i+1) < args.Length;
-                    string nextArg = hasNext ? args[i+1] : string.Empty;
-
-                    // lone argument is a script
-                    if (!hasNext && arg.EndsWith(".ps1"))
-                    {
-                        initialScript = Path.GetFullPath(arg);
-                    }
-                    // lone argument is an inline script
-                    else if (!hasNext)
-                    {
-                        initialScript = arg;
-                    }
-                    // --file <filePath> was specified
-                    else if (hasNext && (arg == "--file" || arg == "-f"))
-                    {
-                        initialScript = Path.GetFullPath(nextArg);
-                        ++i;
-                    }
-                    // --command <string> was specified
-                    else if (hasNext && (arg == "--command" || arg == "-c"))
-                    {
-                        if (nextArg == "-")
-                        {
-                            initialScript = "\"TODO: read stdin using Console.OpenStandardInput\"";
-                        }
-                        else
-                        {
-                            initialScript = nextArg;
-                        }
-                        ++i;
-                    }
-                    // --working-dir (not on PowerShell for Windows, may be removed)
-                    else if (hasNext && arg == "--working-dir")
-                    {
-                        Directory.SetCurrentDirectory(nextArg);
-                        ++i;
-                    }
-                }
-            }
-            // TODO: check for input on stdin
-
-            // Create the listener and run it
-            Program listener = new Program(initialScript);
-
-            // only run if there was no script file passed in
-            if (initialScript == null)
-            {
-                // Display the welcome message.
-                Console.WriteLine();
-                Console.WriteLine("PowerShell for Linux interactive console");
-                Console.WriteLine("========================================");
-                Console.WriteLine();
-                Console.WriteLine("Current status:");
-                Console.WriteLine("- Type 'exit' to exit");
-                Console.WriteLine("- Utility and Management cmdlet modules are loadable");
-                Console.WriteLine();
-
-                listener.Run();
-            }
-        }
-
-        public Program(string initialScript)
+        public Listener(string initialScript)
         {
             // Create the host and runspace instances for this interpreter. 
             // Note that this application does not support console files so 
             // only the default snap-ins will be available.
             this.myHost = new MyHost(this);
+            Console.WriteLine("myHost");
             InitialSessionState iss = InitialSessionState.CreateDefault2();
+            Console.WriteLine("iss");
             this.myRunSpace = RunspaceFactory.CreateRunspace(this.myHost, iss);
+            Console.WriteLine("runspace created");
             this.myRunSpace.Open();
+            Console.WriteLine("runspace opened");
 
             // Create a PowerShell object to run the commands used to create
             // $profile and load the profiles.
@@ -402,7 +415,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// reads a command from the user, executes it and repeats until the ShouldExit
         /// flag is set.
         /// </summary>
-        private void Run()
+        public void Run()
         {
             // Set up the control-C handler.
             Console.CancelKeyPress += new ConsoleCancelEventHandler(this.HandleControlC);
@@ -425,4 +438,3 @@ namespace Microsoft.PowerShell.Linux.Host
         }
     }
 }
-

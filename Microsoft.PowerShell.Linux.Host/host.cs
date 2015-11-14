@@ -13,15 +13,15 @@ namespace Microsoft.PowerShell.Linux.Host
     /// </summary>
     internal class MyHost : PSHost, IHostSupportsInteractiveSession
     {
-        public MyHost(Program program)
+        public MyHost(Listener Listener)
         {
-            this.program = program;
+            this.Listener = Listener;
         }
 
         /// <summary>
         /// A reference to the PSHost implementation.
         /// </summary>
-        private Program program;
+        private Listener Listener;
 
         /// <summary>
         /// The culture information of the thread that created
@@ -126,8 +126,8 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         public Runspace Runspace
         {
-            get { return this.program.myRunSpace; }
-            internal set { this.program.myRunSpace = value; }
+            get { return this.Listener.myRunSpace; }
+            internal set { this.Listener.myRunSpace = value; }
         }
 #endregion IHostSupportsInteractiveSession Properties
 
@@ -186,8 +186,8 @@ namespace Microsoft.PowerShell.Linux.Host
         /// host application should use.</param>
         public override void SetShouldExit(int exitCode)
         {
-            this.program.ShouldExit = true;
-            this.program.ExitCode = exitCode;
+            this.Listener.ShouldExit = true;
+            this.Listener.ExitCode = exitCode;
         }
 
 #region IHostSupportsInteractiveSession Methods
