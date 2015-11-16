@@ -417,7 +417,7 @@ namespace Microsoft.Samples.PowerShell.Host
 
             // Read commands and run them until the ShouldExit flag is set by
             // the user calling "exit".
-            while (!this.ShouldExit)
+            while (!this.ShouldExit && this.myHost.Runspace != null)
             {
                 string prompt = Prompt(this.myHost.Runspace);
 

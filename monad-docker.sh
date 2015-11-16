@@ -40,8 +40,15 @@ monad-impersonate()
     local CUSER=$(id -un)
     local CGID=$(id -g)
     local CGROUP=$(id -gn)
+    # default docker-machine VM does not change
+    if [[ $OSTYPE == darwin* ]]; then
+	CUID=1000
+	CUSER=docker
+	CGID=50
+	CGROUP=staff
+    fi
     echo \
-	groupadd -g $CGID $CGROUP '&&' \
+	groupadd -o -f -g $CGID $CGROUP '&&' \
 	useradd -u $CUID -g $CGID -d /opt $CUSER '&&' \
 	sudo --set-home -u $CUSER -g $CGROUP --
 }
