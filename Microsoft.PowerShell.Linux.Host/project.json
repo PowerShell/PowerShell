@@ -7,6 +7,7 @@
     "licenseUrl": "",
 
     "dependencies": {
+        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-*",
         "System.Management.Automation": "",
         "Microsoft.PowerShell.Security": "",
         "Microsoft.PowerShell.Commands.Utility": "",
@@ -20,14 +21,14 @@
     "frameworks": {
         "dnxcore50": {
             "dependencies": {
-		"Microsoft.Extensions.PlatformAbstractions": "1.0.0-*",
-                "System.Console": "4.0.0-*",
                 "Microsoft.CSharp": "4.0.1-*",
                 "System.Collections": "4.0.11-*",
+                "System.Console": "4.0.0-*",
+                "System.Diagnostics.FileVersionInfo": "4.0.0-*",
                 "System.Linq": "4.0.1-*",
+                "System.Reflection": "4.1.0-*",
                 "System.Runtime": "4.0.21-*",
-                "System.Threading": "4.0.11-*",
-                "System.Diagnostics.FileVersionInfo": "4.0.0-*"
+                "System.Threading": "4.0.11-*"
             }
         }
     }
