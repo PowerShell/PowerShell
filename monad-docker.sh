@@ -49,6 +49,6 @@ monad-impersonate()
     fi
     echo \
 	groupadd -o -f -g $CGID $CGROUP '&&' \
-	useradd -u $CUID -g $CGID -d /opt $CUSER '&&' \
+	useradd -u $CUID -g $CGID -G sudo -d /opt $CUSER '&&' \
 	sudo --set-home -u $CUSER -g $CGROUP --
 }
