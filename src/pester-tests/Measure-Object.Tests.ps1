@@ -34,6 +34,7 @@
     Context "Numeric tests" {
         It "Should be able to sum" {
             $actual   = $testObject | Measure-Object -Sum
+            $expected = 0
             $expected = $testObject[0]
 
             foreach ( $obj in $testObject )
@@ -46,7 +47,7 @@
 
         It "Should be able to average" {
             $actual   = $testObject | Measure-Object -Average
-            $expected = $testObject[0]
+            $expected = 0
 
             foreach ( $obj in $testObject )
             {
