@@ -35,6 +35,7 @@
         It "Should be able to sum" {
             $actual   = $testObject | Measure-Object -Sum
             $expected = 0
+            $expected = $testObject[0]
 
             foreach ( $obj in $testObject )
             {
