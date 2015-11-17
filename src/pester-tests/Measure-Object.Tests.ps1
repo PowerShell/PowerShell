@@ -31,6 +31,100 @@
         $actual.Sum        | Should BeNullOrEmpty
     }
 
+    Context "Numeric tests" {
+        It "Should be able to sum" {
+            $actual   = $testObject | Measure-Object -Sum
+            $expected = 0
+
+            foreach ( $obj in $testObject )
+            {
+                $expected += $obj
+            }
+
+            $actual.Sum | Should Be $expected
+        }
+
+        It "Should be able to average" {
+            $actual   = $testObject | Measure-Object -Average
+            $expected = 0
+
+            foreach ( $obj in $testObject )
+            {
+                $expected += $obj
+            }
+
+            $expected /= $testObject.length
+
+            $actual.Average | Should Be $expected
+        }
+
+        It "Should be able to return a minimum" {
+            $actual   = $testObject | Measure-Object -Minimum
+            $expected = $testObject[0]
+
+            for ($i=0; $i -lt $testObject.length; $i++)
+            {
+                if ( $testObject[$i] -lt $expected )
+                {
+
+                    $expected = $testObject[$i]
+                }
+            }
+
+            $actual.Minimum | Should Be $expected
+        }
+
+        It "Should be able to return a minimum when multiple objects are the minimum" {
+            $testMinimum = 1,1,2,4
+            $actual      = $testMinimum | Measure-Object -Minimum
+            $expected    = $testMinimum[0]
+
+            for ($i=1; $i -lt $testMinimum.length; $i++)
+            {
+                if ( $testMinimum[$i] -lt $expected )
+                {
+
+                    $expected = $testMinimum[$i]
+                }
+            }
+
+            $actual.Minimum | Should Be $expected
+        }
+
+        It "Should be able to return a maximum" {
+            $actual   = $testObject | Measure-Object -Maximum
+            $expected = $testObject[0]
+
+            for ($i=1; $i -lt $testObject.length; $i++)
+            {
+                if ( $testObject[$i] -gt $expected )
+                {
+
+                    $expected = $testObject[$i]
+                }
+            }
+
+            $actual.Maximum | Should Be $expected
+        }
+
+        It "Should be able to return a maximum when multiple objects are the maximum" {
+            $testMaximum = 1,3,5,5
+            $actual      = $testMaximum | Measure-Object -Maximum
+            $expected    = $testMaximum[0]
+
+            for ($i=1; $i -lt $testMaximum.length; $i++)
+            {
+                if ( $testMaximum[$i] -gt $expected )
+                {
+
+                    $expected = $testMaximum[$i]
+                }
+            }
+
+            $actual.Maximum | Should Be $expected
+        }
+    }
+
     Context "String tests" {
         if ($env:TEMP -eq "/tmp")
         {
