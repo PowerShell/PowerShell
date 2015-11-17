@@ -79,7 +79,7 @@
             $actual      = $testMinimum | Measure-Object -Minimum
             $expected    = $testMinimum[0]
 
-            for ($i=0; $i -lt $testMinimum.length; $i++)
+            for ($i=1; $i -lt $testMinimum.length; $i++)
             {
                 if ( $testMinimum[$i] -lt $expected )
                 {
@@ -93,9 +93,9 @@
 
         It "Should be able to return a maximum" {
             $actual   = $testObject | Measure-Object -Maximum
-            $expected = $testObject
+            $expected = $testObject[0]
 
-            for ($i=0; $i -lt $testObject.length; $i++)
+            for ($i=1; $i -lt $testObject.length; $i++)
             {
                 if ( $testObject[$i] -gt $expected )
                 {
@@ -110,9 +110,9 @@
         It "Should be able to return a maximum when multiple objects are the maximum" {
             $testMaximum = 1,3,5,5
             $actual      = $testMaximum | Measure-Object -Maximum
-            $expected    = $testMaximum 
+            $expected    = $testMaximum[0]
 
-            for ($i=0; $i -lt $testMaximum.length; $i++)
+            for ($i=1; $i -lt $testMaximum.length; $i++)
             {
                 if ( $testMaximum[$i] -gt $expected )
                 {
