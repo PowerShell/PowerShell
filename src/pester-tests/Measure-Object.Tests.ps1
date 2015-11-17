@@ -34,7 +34,7 @@
     Context "Numeric tests" {
         It "Should be able to sum" {
             $actual   = $testObject | Measure-Object -Sum
-            $expected = 0
+            $expected = $testObject[0]
 
             foreach ( $obj in $testObject )
             {
@@ -46,7 +46,7 @@
 
         It "Should be able to average" {
             $actual   = $testObject | Measure-Object -Average
-            $expected = 0
+            $expected = $testObject[0]
 
             foreach ( $obj in $testObject )
             {
@@ -93,7 +93,7 @@
 
         It "Should be able to return a maximum" {
             $actual   = $testObject | Measure-Object -Maximum
-            $expected = 0
+            $expected = $testObject
 
             for ($i=0; $i -lt $testObject.length; $i++)
             {
@@ -110,7 +110,7 @@
         It "Should be able to return a maximum when multiple objects are the maximum" {
             $testMaximum = 1,3,5,5
             $actual      = $testMaximum | Measure-Object -Maximum
-            $expected    = 0
+            $expected    = $testMaximum 
 
             for ($i=0; $i -lt $testMaximum.length; $i++)
             {
