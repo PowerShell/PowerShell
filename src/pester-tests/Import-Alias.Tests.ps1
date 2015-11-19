@@ -1,14 +1,12 @@
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 Describe "Import-Alias" {
-
-    #Alias file with only the addition of "pesterecho" aliased to echo
     $pesteraliasfile = "$here/assets/pesteralias.txt"
-
+    
     Context "Validate ability to import alias file" {
 
 	It "Should be able to import an alias file successfully" {
-            { Import-Alias $pesteraliasfile } | Should Not throw
+	    { Import-Alias $pesteraliasfile } | Should Not throw
 	}
 
 	It "Should be able to import file via the Import-Alias alias of ipal" {

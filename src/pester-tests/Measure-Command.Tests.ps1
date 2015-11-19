@@ -22,7 +22,7 @@ Describe "Measure-Command" {
             $testcommand | Add-Content -Path $testfile
 
             (Measure-Command { $pesterscript }).GetType() | Should Be timespan
-                Remove-Item $testfile
+            Remove-Item $testfile
         }
     }
 }
