@@ -585,23 +585,20 @@
 	"../src/monad/monad/src/DscSupport/CimDSCParser.cs"
     ],
 
-    "content" : [
-        "../src/monad/monad/ScriptSignJob/PreSigned/Certificate.format.ps1xml",
-        "../src/monad/monad/ScriptSignJob/PreSigned/DotNetTypes.format.ps1xml",
-        "../src/monad/monad/ScriptSignJob/PreSigned/FileSystem.format.ps1xml",
-        "../src/monad/monad/ScriptSignJob/PreSigned/Help.format.ps1xml",
-        "../src/monad/monad/ScriptSignJob/PreSigned/Registry.format.ps1xml",
-        "../src/monad/monad/miscfiles/types/CoreClr/types.ps1xml",
-        "../src/monad/monad/miscfiles/types/CoreClr/typesv3.ps1xml",
-        "../src/monad/monad/ScriptSignJob/PreSigned/profile.ps1",
     "compile" : [
 	"../src/monad-build/gen/SYS_AUTO/*.cs"
     ],
 
-        "../src/monad/monad/miscfiles/display/HelpV3.format.ps1xml",
-        "../src/monad/monad/miscfiles/display/PowerShellCore.format.ps1xml",
-        "../src/monad/monad/miscfiles/display/PowerShellTrace.format.ps1xml"
-    ],
+    "packInclude" :
+    {
+	"/" : [
+	    "../src/monad/monad/miscfiles/types/CoreClr/*.ps1xml",
+	    "../src/monad/monad/miscfiles/display/*.ps1xml",
+	    "../src/monad/monad/ScriptSignJob/PreSigned/*.ps1xml"
+	],
+	"Modules/" : "../src/monad/monad/miscfiles/modules/**",
+	"Pester/" : "../ext-src/pester/**"
+    },
 
     "compilationOptions": {
         "define": [
