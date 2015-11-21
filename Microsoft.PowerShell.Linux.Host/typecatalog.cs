@@ -3,6 +3,7 @@ namespace Microsoft.PowerShell.Linux.Host
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Management.Automation;
@@ -76,11 +77,18 @@ namespace Microsoft.PowerShell.Linux.Host
         {
             if (assembly != null)
             {
-                // Console.WriteLine(assembly.Location);
-                // Console.WriteLine(assembly.ExportedTypes.Count());
-                foreach (var type in assembly.ExportedTypes)
+                try
                 {
-                    TrackType(type.FullName, assembly);
+                    // Console.WriteLine(assembly.Location);
+                    // Console.WriteLine(assembly.ExportedTypes.Count());
+                    foreach (var type in assembly.ExportedTypes)
+                    {
+                        TrackType(type.FullName, assembly);
+                    }
+                }
+                catch (System.IO.FileNotFoundException)
+                {
+                    Debug.WriteLine("Could not track assembly {0}", assembly.Location);
                 }
             }
         }
