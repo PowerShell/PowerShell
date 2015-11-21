@@ -604,6 +604,7 @@
         "define": [
             "CORECLR",
             "_CORECLR",
+	    "NOALC",
             "LINUX"
         ],
         "allowUnsafe": true
