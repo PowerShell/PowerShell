@@ -6,7 +6,7 @@
     "projectUrl": "",
     "licenseUrl": "",
 
-    "compile": [
+    "compileFiles": [
 	"../src/assembly-info/System.Management.Automation.assembly-info.cs",
 	"../src/monad/monad/src/engine/ChildrenCmdletProviderInterfaces.cs",
 	"../src/monad/monad/src/engine/CmdletFamilyProviderInterfaces.cs",
@@ -582,8 +582,7 @@
 	"../src/monad/monad/src/cimSupport/cmdletization/xml/CoreCLR/cmdlets-over-objects.objectModel.autogen.cs",
 	"../src/monad/monad/src/cimSupport/cmdletization/xml/CoreCLR/cmdlets-over-objects.xmlSerializer.autogen.cs",
 	"../src/monad/monad/src/cimSupport/other/ciminstancetypeadapter.cs",
-	"../src/monad/monad/src/DscSupport/CimDSCParser.cs",
-        "../src/monad-build/gen/SYS_AUTO/*.cs"
+	"../src/monad/monad/src/DscSupport/CimDSCParser.cs"
     ],
 
     "content" : [
@@ -595,6 +594,9 @@
         "../src/monad/monad/miscfiles/types/CoreClr/types.ps1xml",
         "../src/monad/monad/miscfiles/types/CoreClr/typesv3.ps1xml",
         "../src/monad/monad/ScriptSignJob/PreSigned/profile.ps1",
+    "compile" : [
+	"../src/monad-build/gen/SYS_AUTO/*.cs"
+    ],
 
         "../src/monad/monad/miscfiles/display/HelpV3.format.ps1xml",
         "../src/monad/monad/miscfiles/display/PowerShellCore.format.ps1xml",
