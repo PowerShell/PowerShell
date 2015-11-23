@@ -1,5 +1,5 @@
 {
-    "version": "3.0.0.0",
+    "version": "1.0.0.0",
     "description": "Microsoft.PowerShell.Commands.Utility Class Library",
     "authors": [ "garretts", "andschwa" ],
     "tags": [ "" ],

@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0-*",
+    "version": "1.0.0.0",
     "description": "PowerShell On Linux Console",
     "authors": [ "andschwa" ],
     "tags": [ "" ],
