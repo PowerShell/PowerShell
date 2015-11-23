@@ -25,6 +25,8 @@ namespace Microsoft.PowerShell.Linux.Host
                 Console.WriteLine("TypeCatalog generation failed!");
             }
 
+            bool runspaceTest = false;
+
             // Custom argument parsing
             string initialScript = null;
             if (args.Length > 0)
@@ -44,6 +46,11 @@ namespace Microsoft.PowerShell.Linux.Host
                     else if (!hasNext)
                     {
                         initialScript = arg;
+                    }
+                    //  --runspace was specified for a simple runspace test
+                    else if (arg == "--runspace")
+                    {
+                        runspaceTest = true;
                     }
                     // --file <filePath> was specified
                     else if (hasNext && (arg == "--file" || arg == "-f"))
@@ -72,6 +79,26 @@ namespace Microsoft.PowerShell.Linux.Host
                     }
                 }
             }
+
+            if (runspaceTest)
+            {
+                using (var runspace = RunspaceFactory.CreateRunspace())
+                {
+                    runspace.Open();
+
+                    using (var ps = runspace.CreatePipeline(initialScript))
+                    {
+                        foreach (var result in ps.Invoke())
+                        {
+                            Console.WriteLine(result);
+                        }
+                    }
+
+                    runspace.Close();
+                }
+                return;
+            }
+
             // TODO: check for input on stdin
 
             // Create the listener and run it
@@ -215,8 +242,8 @@ namespace Microsoft.PowerShell.Linux.Host
                 return returnVal;
             }
 
-            // TODO: if we are in block mode, sep the prome to ">> "
-            Pipeline pipeline     = rs.CreatePipeline();
+            // TODO: if we are in block mode, sep the prompt to ">> "
+            Pipeline pipeline = rs.CreatePipeline();
             Command promptCommand = new Command("prompt");
 
             pipeline.Commands.Add(promptCommand);
@@ -229,6 +256,7 @@ namespace Microsoft.PowerShell.Linux.Host
 
             return returnVal;
         }
+
         /// <summary>
         /// A helper class that builds and executes a pipeline that writes 
         /// to the default output path. Any exceptions that are thrown are 
