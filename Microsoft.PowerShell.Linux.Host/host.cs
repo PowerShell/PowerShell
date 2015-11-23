@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         public override string Name
         {
-            get { return "MySampleConsoleHostImplementation"; }
+            get { return "PSL"; }
         }
 
         /// <summary>
