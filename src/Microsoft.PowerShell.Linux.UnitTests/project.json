@@ -1,0 +1,26 @@
+{
+    "version": "1.0.0.0",
+    "description": "PowerShell On Linux xUnit Tests",
+    "authors": [ "andschwa" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
+
+    "dependencies": {
+        "System.Management.Automation": "",
+        "Microsoft.PowerShell.Security": "",
+        "Microsoft.PowerShell.Commands.Utility": "",
+        "Microsoft.PowerShell.Commands.Management": "",
+	"xunit": "2.1.0-*",
+        "xunit.runner.dnx": "2.1.0-*"
+    },
+
+    "commands": {
+	"test": "xunit.runner.dnx"
+    },
+
+    "frameworks": {
+        "dnxcore50": {
+        }
+    }
+}
