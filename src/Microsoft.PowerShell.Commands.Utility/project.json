@@ -82,9 +82,29 @@
 	"../monad-build/gen/COMMANDS_UTILITY/*.cs"
     ],
 
-    "resource": [
-        "../monad/monad/src/commands/utility/resources/*.resx"
-    ],
+    "namedResource": {
+	"CsvCommandStrings": "../monad/monad/src/commands/utility/resources/CsvCommandStrings.resx",
+	"Debugger": "../monad/monad/src/commands/utility/resources/Debugger.resx",
+	"EventingStrings": "../monad/monad/src/commands/utility/resources/EventingStrings.resx",
+	"NewObjectStrings": "../monad/monad/src/commands/utility/resources/NewObjectStrings.resx",
+	"MeasureObjectStrings": "../monad/monad/src/commands/utility/resources/MeasureObjectStrings.resx",
+	"MatchStringStrings": "../monad/monad/src/commands/utility/resources/MatchStringStrings.resx",
+	"SelectObjectStrings": "../monad/monad/src/commands/utility/resources/SelectObjectStrings.resx",
+	"SortObjectStrings": "../monad/monad/src/commands/utility/resources/SortObjectStrings.resx",
+	"WriteErrorStrings": "../monad/monad/src/commands/utility/resources/WriteErrorStrings.resx",
+	"VariableCommandStrings": "../monad/monad/src/commands/utility/resources/VariableCommandStrings.resx",
+	"AddTypeStrings": "../monad/monad/src/commands/utility/resources/AddTypeStrings.resx",
+	"GetMember": "../monad/monad/src/commands/utility/resources/GetMember.resx",
+	"GetRandomCommandStrings": "../monad/monad/src/commands/utility/resources/GetRandomCommandStrings.resx",
+	"UtilityCommonStrings": "../monad/monad/src/commands/utility/resources/UtilityCommonStrings.resx",
+	"HostStrings": "../monad/monad/src/commands/utility/resources/HostStrings.resx",
+	"AddMember": "../monad/monad/src/commands/utility/resources/AddMember.resx",
+	"ConvertFromStringData": "../monad/monad/src/commands/utility/resources/ConvertFromStringData.resx",
+	"UpdateDataStrings": "../monad/monad/src/commands/utility/resources/UpdateDataStrings.resx",
+	"ImportLocalizedDataStrings": "../monad/monad/src/commands/utility/resources/ImportLocalizedDataStrings.resx",
+	"WriteProgressResourceStrings": "../monad/monad/src/commands/utility/resources/WriteProgressResourceStrings.resx",
+	"AliasCommandStrings": "../monad/monad/src/commands/utility/resources/AliasCommandStrings.resx"
+    },
 
     "compilationOptions": {
         "define": [
