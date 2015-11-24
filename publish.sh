@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
-pushd Microsoft.PowerShell.Linux.Host
-dnu publish --out ../bin --runtime dnx-coreclr-linux-x64.1.0.0-rc2-16177 --no-source
-popd
+cd src/Microsoft.PowerShell.Linux.Host
+source ~/.dnx/dnvm/dnvm.sh
+dnvm use 1.0.0-rc2-16177
+dnu publish --out ../.. --runtime dnx-coreclr-linux-x64.1.0.0-rc2-16177 --no-source
+cd ../..
