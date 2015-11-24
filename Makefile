@@ -1,52 +1,43 @@
 # the monad-linux superproject
 export MONAD=$(realpath $(CURDIR))
 
-# location of powershell and coreclr folders
-export PSLIB=$(MONAD)/lib/powershell
-export CLRLIB=$(MONAD)/lib/coreclr
-
-all: powershell-native powershell-managed
+all: powershell-native approot
 
 # managed code
 
-powershell-managed:
-	mkdir -p $(PSLIB) $(CLRLIB)
-	cp -R $(MONAD)/src/monad-ext/coreclr/Runtime/* $(CLRLIB)
-	$(MAKE) -j -C src/monad-build
-	$(MAKE) -j -C src/monad-build test
+approot:
+	./publish.sh
 
 # native code
 
 powershell-native: src/monad-native/Makefile
 	$(MAKE) -j -C src/monad-native
 	$(MAKE) -j -C src/monad-native test
-	$(MAKE) -j -C src/monad-native install
 
-## will install to $(MONAD)/{bin,lib}
 src/monad-native/Makefile:
-	cd src/monad-native && cmake -DCMAKE_INSTALL_PREFIX=$(MONAD) .
+	cd src/monad-native && cmake .
 
-# one-time setup
-
-tools/nuget.exe:
-	cd tools && wget 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
-
-bootstrap: tools/nuget.exe
-	mono $< restore -PackagesDirectory tools
+# installation of pslib
+install:
+	$(MAKE) -C src/monad-native install
+	ldconfig
 
 # run targets
 
-export POWERSHELL=env TEMP=/tmp LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(MONAD)/lib:$(PSLIB) PSMODULEPATH=$(PSLIB)/Modules $(MONAD)/bin/powershell
+export POWERSHELL= $(MONAD)/approot/powershell
 
 demo:
-	$(POWERSHELL) '"a","b","c","a","a" | Select-Object -Unique'
+	$(POWERSHELL) --runspace --command '"a","b","c","a","a" | Select-Object -Unique'
 
 shell:
 	$(POWERSHELL)
 
 # tests
 
-test: test-pester
+test: test-xunit
+
+test-xunit:
+	./test.sh
 
 ## TODO: fix this after refactoring bin/powershell
 test-hashbang:
@@ -100,10 +91,10 @@ distclean: distclean-monad distclean-native distclean-omi clean
 	-rm -rf $(CLRLIB)
 
 clean-monad:
-	$(MAKE) -C src/monad-build clean
+	rm -rf approot
 
 distclean-monad:
-	$(MAKE) -C src/monad-build distclean
+	./nuke.sh
 
 clean-native:
 	-$(MAKE) -C src/monad-native clean
