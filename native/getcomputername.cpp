@@ -4,7 +4,6 @@
 
 #include <errno.h>
 #include <langinfo.h>
-#include <locale.h>
 #include <unistd.h>
 #include <string>
 #include "getcomputername.h"
@@ -22,17 +21,6 @@
 
 char* GetComputerName()
 {
-    errno = 0;
-    
-    // Select locale from environment
-    setlocale(LC_ALL, "");
-    // Check that locale is UTF-8
-    if (nl_langinfo(CODESET) != std::string("UTF-8"))
-    {
-        errno = ERROR_BAD_ENVIRONMENT;
-        return NULL;
-    }
-    
     // Get computername from system, note that gethostname(2) gets the
     // nodename from uname
     std::string computername(HOST_NAME_MAX, 0);

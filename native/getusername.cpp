@@ -25,15 +25,6 @@ char* GetUserName()
 {
     errno = 0;
 
-    // Select locale from environment
-    setlocale(LC_ALL, "");
-    // Check that locale is UTF-8
-    if (nl_langinfo(CODESET) != std::string("UTF-8"))
-    {
-        errno = ERROR_BAD_ENVIRONMENT;
-        return NULL;
-    }
-
     struct passwd pwd;
     struct passwd* result;
     // gets the initial suggested size for buf

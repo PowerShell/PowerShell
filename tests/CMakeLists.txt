@@ -1,6 +1,7 @@
 add_subdirectory(googletest)
 
 add_executable(psnative-test
+  test-locale.cpp
   test-getcurrentprocessid.cpp
   test-getusername.cpp
   test-getcomputername.cpp
