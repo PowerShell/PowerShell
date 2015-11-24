@@ -7,19 +7,19 @@
     "licenseUrl": "",
 
     "compile": [
-	"../src/monad/monad/src/security/AclCommands.cs",
-	"../src/monad/monad/src/security/CertificateProvider.cs",
-	"../src/monad/monad/src/security/certificateproviderexceptions.cs",
-	"../src/monad/monad/src/security/CredentialCommands.cs",
-	"../src/monad/monad/src/security/ExecutionPolicyCommands.cs",
-	"../src/monad/monad/src/security/SecureStringCommands.cs",
-	"../src/monad/monad/src/security/SignatureCommands.cs",
-	"../src/monad/monad/src/security/Utils.cs",
-	"../src/monad-build/gen/SECURITY/*.cs"
+	"../monad/monad/src/security/AclCommands.cs",
+	"../monad/monad/src/security/CertificateProvider.cs",
+	"../monad/monad/src/security/certificateproviderexceptions.cs",
+	"../monad/monad/src/security/CredentialCommands.cs",
+	"../monad/monad/src/security/ExecutionPolicyCommands.cs",
+	"../monad/monad/src/security/SecureStringCommands.cs",
+	"../monad/monad/src/security/SignatureCommands.cs",
+	"../monad/monad/src/security/Utils.cs",
+	"../monad-build/gen/SECURITY/*.cs"
     ],
 
     "resource": [
-        "../src/monad/monad/src/security/resources/*.resx"
+        "../monad/monad/src/security/resources/*.resx"
     ],
 
     "compilationOptions": {

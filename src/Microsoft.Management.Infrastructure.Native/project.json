@@ -7,8 +7,8 @@
     "licenseUrl": "",
 
     "compile": [
-	"../src/stubs/Microsoft.Management.Infrastructure.Native-stub.cs",
-	"../src/stubs/Microsoft.Management.Infrastructure.Native-stub-assembly-info.cs"
+	"../stubs/Microsoft.Management.Infrastructure.Native-stub.cs",
+	"../stubs/Microsoft.Management.Infrastructure.Native-stub-assembly-info.cs"
     ],
 
     "compilationOptions": {
