@@ -27,6 +27,7 @@ namespace Microsoft.PowerShell.Linux.Host
             TrackType("ParameterAttribute", typeof(ParameterAttribute));
             TrackType("string", typeof(string));
             TrackType("int", typeof(int));
+            TrackType("long", typeof(long));
             TrackType("Hashtable", typeof(Hashtable));
             TrackType("ValidateSetAttribute", typeof(ValidateSetAttribute));
             TrackType("switch", typeof(SwitchParameter));
@@ -35,7 +36,6 @@ namespace Microsoft.PowerShell.Linux.Host
             TrackType("AllowEmptyStringAttribute", typeof(AllowEmptyStringAttribute));
             TrackType("PSObject", typeof(PSObject));
             TrackType("ValidateRangeAttribute", typeof(ValidateRangeAttribute));
-
         }
 
         private static void TrackPackage(string packageName)
