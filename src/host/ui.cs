@@ -416,10 +416,27 @@ ReadNext:
         /// </summary>
         /// <param name="sourceId">Unique identifier of the source of the record. </param>
         /// <param name="record">A ProgressReport object.</param>
-        public override void WriteProgress(long sourceId, ProgressRecord record)
-        {
+       public override void WriteProgress(long sourceId, ProgressRecord record)
+       {
+	       
+	   if (record == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("record");
+            }
 
-        }
+	   string percentComplete = " [";
+
+	   for (int i =0; i < record.PercentComplete; i++){
+	       percentComplete = percentComplete + "0";
+	   }
+
+	   percentComplete = percentComplete + "]";
+	   Console.Write ("\r{0} {1} {2} ", record.Activity, record.StatusDescription, percentComplete, "\r");
+
+	   if (record.PercentComplete == 100){
+	       Console.WriteLine(); //create a new line for the prompt
+	   }
+       }       
 
         /// <summary>
         /// Writes a verbose message to the output display of the host.
