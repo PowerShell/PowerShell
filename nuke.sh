@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-rm -rf bin
-for dir in $(find . -maxdepth 2 -name project.json | parallel dirname)
+rm -rf approot
+for dir in $(find . -maxdepth 3 -name project.json | xargs dirname)
 do
-    pushd $dir
-    rm -rf bin
-    popd
+    (
+	cd $dir
+	rm -rf bin
+    )
 done

@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
-for dir in $(find . -maxdepth 2 -name project.json | parallel dirname)
+source ~/.dnx/dnvm/dnvm.sh
+dnvm use 1.0.0-rc2-16177
+
+for dir in $(find . -maxdepth 3 -name project.json | xargs dirname)
 do
-    echo $dir
-    pushd $dir
+    (
+    cd $dir
     dnu restore
-    popd
+    )
 done

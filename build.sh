@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-for dir in $(find . -maxdepth 2 -name project.json | parallel dirname)
+for dir in $(find . -maxdepth 3 -name project.json | xargs dirname)
 do
-    pushd $dir
+    (
+    cd $dir
     dnu build
-    popd
+    )
 done
