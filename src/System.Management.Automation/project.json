@@ -591,11 +591,6 @@
 
     "packInclude" :
     {
-	"/" : [
-	    "../monad/monad/miscfiles/types/CoreClr/*.ps1xml",
-	    "../monad/monad/miscfiles/display/*.ps1xml",
-	    "../monad/monad/ScriptSignJob/PreSigned/*.ps1xml"
-	],
 	"Modules/" : "../monad/monad/miscfiles/modules/**",
 	"Pester/" : "../ext-src/pester/**"
     },
