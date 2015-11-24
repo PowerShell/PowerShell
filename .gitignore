@@ -1,7 +1,8 @@
-/.config
-/.nuget\\packages\\/
-/.bash_history
 /bin/
 /lib/
-/tools/
+/approot/
+/src/*/bin/
+/.bash_history
+/.vscode/
+project.lock.json
 *-tests.xml
