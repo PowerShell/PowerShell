@@ -19,7 +19,6 @@
 //! @endparblock
 //!
 //! @exception errno Passes these errors via errno to GetLastError:
-//! - ERROR_BAD_ENVIRONMENT: locale is not UTF-8
 //! - ERROR_FILE_NOT_FOUND: the system cannot find the file specified
 //! - ERROR_INVALID_ADDRESS: attempt to access invalid address
 //! - ERROR_GEN_FAILURE: device attached to the system is not functioning

@@ -15,7 +15,6 @@
 //!
 //! @exception errno Passes these errors via errno to GetLastError:
 //! - ERROR_INVALID_PARAMETER: parameter is not valid
-//! - ERROR_BAD_ENVIRONMENT: locale is not UTF-8
 //! - ERROR_NO_SUCH_USER: there was no corresponding user
 //! - ERROR_GEN_FAILURE: sysconf() or getpwuid() failed for unknown reasons
 //!
