@@ -3,7 +3,6 @@
 //! @brief Retrieve link count of a file
 
 #include <errno.h>
-#include <langinfo.h>
 #include <locale.h>
 #include <sys/types.h>
 #include <sys/stat.h>

@@ -18,5 +18,4 @@ TEST_F(LocaleTest, Success)
     setlocale (LC_ALL, "");
     ASSERT_FALSE (nl_langinfo(CODESET) == NULL);
     ASSERT_TRUE(nl_langinfo(CODESET) == std::string("UTF-8"));
-    ASSERT_FALSE(nl_langinfo(CODESET) != std::string("UTF-8"));  
 }

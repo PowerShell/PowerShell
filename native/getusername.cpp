@@ -3,7 +3,6 @@
 //! @brief Implements GetUserName for Linux
 
 #include <errno.h>
-#include <langinfo.h>
 #include <locale.h>
 #include <unistd.h>
 #include <string>

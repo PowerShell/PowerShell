@@ -3,7 +3,6 @@
 //! @brief Implements GetComputerName Win32 API
 
 #include <errno.h>
-#include <langinfo.h>
 #include <unistd.h>
 #include <string>
 #include "getcomputername.h"

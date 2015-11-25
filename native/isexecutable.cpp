@@ -3,7 +3,6 @@
 //! @brief returns whether a file is executable
 
 #include <errno.h>
-#include <langinfo.h>
 #include <unistd.h>
 #include <string>
 #include "isexecutable.h"

@@ -3,7 +3,6 @@
 //! @brief returns whether a path is a symbolic link
 
 #include <errno.h>
-#include <langinfo.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
