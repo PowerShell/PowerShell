@@ -1,6 +1,6 @@
 ﻿Describe "Get-Content" {
     $testString = "This is a test content for a file"
-    $nl         = "`n"
+    $nl         = [Environment]::NewLine
 
     $firstline  = "Here's a first line "
     $secondline = " here's a second line"
@@ -14,8 +14,8 @@
     $testPath2  = "/tmp/testfile2"
 
     BeforeEach {
-        New-Item -Path $testPath -Force -Value $testString
-        New-Item -Path $testPath2 -Force -Value $testString2
+        New-Item -Path $testPath -ItemType file -Force -Value $testString
+        New-Item -Path $testPath2 -ItemType file -Force -Value $testString2
     }
 
     It "Should throw an error on a directory  " {
