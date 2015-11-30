@@ -6,11 +6,11 @@
     }
 
     It "Should list the contents of the home directory" {
-        pushd /usr/
+        pushd $HOME
         (Get-ChildItem .).Name.Length | Should BeGreaterThan 0
         popd
 
-        pushd /usr/
+        pushd $HOME
         (ls .).Name.Length | Should BeGreaterThan 0
         popd
 
