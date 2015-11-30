@@ -8,17 +8,27 @@
     }
 
     It "Should contain /bin in the PATH" {
-        $ENV:PATH | Should Match "/bin"
+        if ($ENV:TEMP -eq "/tmp" )
+        {
+            $ENV:PATH | Should Match "/bin"
+        }
+        else
+        {
+            $ENV:PATH | Should Match "C:"
+        }
     }
 
     It "Should have the correct HOME" {
-        $expected = /bin/bash -c "cd ~ && pwd"
-        $ENV:HOME | Should Be $expected
-    }
-
-    It "Should be able to access the members of the environment variable" {
-        $expected = /bin/bash -c "cd ~ && pwd"
-        (Get-Item ENV:HOME).Value | Should Be $expected
+        if ($ENV:TEMP -eq "/tmp" )
+        {
+            $expected = /bin/bash -c "cd ~ && pwd"
+            $ENV:HOME | Should Be $expected
+        }
+        else
+        {
+            $expected = "\Users\" + $ENV:USERNAME
+            $ENV:HOMEPATH | Should Be $expected
+        }
     }
 
     It "Should be able to set the environment variables" {
