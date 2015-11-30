@@ -3,7 +3,7 @@
 Describe "Get-ItemProperty" {
     $currentDirectory = Split-Path $here -Leaf
     $parentDirectory  = Split-Path $here/.. -Leaf
-    if (Test-Path /tmp)
+    if ($Env:TEMP -eq "/tmp")
     {
         $tempDirectory = "/tmp/testfolder"
         $testProvider  = "/"
