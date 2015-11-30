@@ -1,4 +1,5 @@
 Describe "Format-List" {
+    $nl = [Environment]::NewLine
     BeforeEach {
         $in = New-Object PSObject
         Add-Member -InputObject $in -MemberType NoteProperty -Name testName -Value testValue
@@ -22,7 +23,7 @@ Describe "Format-List" {
     }
 
     It "Should produce the expected output" {
-        $expected = "`n`ntestName : testValue`n`n`n`n"
+        $expected = "${nl}${nl}testName : testValue${nl}${nl}${nl}${nl}"
         $in = New-Object PSObject
         Add-Member -InputObject $in -MemberType NoteProperty -Name testName -Value testValue
 
@@ -43,14 +44,14 @@ Describe "Format-List" {
     It "Should be able to display a list of props when separated by a comma" {
         { Get-Process | Format-List -Property Name,BasePriority } | Should Not Throw
 
-        (Get-Process | Format-List -Property Name,BasePriority | Out-String) -Split "`n" |
+        (Get-Process | Format-List -Property Name,BasePriority | Out-String) -Split "${nl}" |
           Where-Object { $_.trim() -ne "" } |
           ForEach-Object { $_ | Should Match "(Name)|(BasePriority)" }
     }
 
     It "Should show the requested prop in every element" {
         # Testing each element of format-list, using a for-each loop since the Format-List is so opaque
-        (Get-Process | Format-List -Property CPU | Out-String) -Split "`n" |
+        (Get-Process | Format-List -Property CPU | Out-String) -Split "${nl}" |
           Where-Object { $_.trim() -ne "" } |
           ForEach-Object { $_ | Should Match "CPU :" }
     }
