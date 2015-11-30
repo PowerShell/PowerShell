@@ -4,7 +4,7 @@
     }
 
     It "Should have a name and a length property" {
-        (Get-PSDrive).Name        | Should Not BeNullOrEmpty 
+        (Get-PSDrive).Name        | Should Not BeNullOrEmpty
         (Get-PSDrive).Root.Length | Should Not BeLessThan 1
     }
 
@@ -23,8 +23,16 @@
 
     It "Should return drive info"{
         (Get-PSDrive Env).Name        | Should Be Env
-        (Get-PSDrive /).Root          | Should Be /
-        (Get-PSDrive /).Provider.Name | Should Be FileSystem
+        (Get-PSDrive Cert).Root          | Should Be \
+
+        if ($Env:TEMP -eq "/tmp")
+        {
+            (Get-PSDrive /).Provider.Name | Should Be FileSystem
+        }
+        else
+        {
+            (Get-PSDrive C).Provider.Name | Should Be FileSystem
+        }
     }
 
     It "Should be able to access a drive using the PSProvider switch" {
