@@ -1,4 +1,4 @@
-namespace Microsoft.PowerShell.Linux.Host
+namespace System.Management.Automation
 {
     using System;
     using System.Collections;
@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Linux.Host
     using Microsoft.Extensions.PlatformAbstractions;
     using System.Management.Automation.Runspaces;
 
-    internal class TypeCatalog
+    internal static class TypeCatalog
     {
         internal static void GenerateTypeCatalog() {
             TrackPackage("System.Management.Automation");
