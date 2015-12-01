@@ -1,4 +1,13 @@
 ﻿Describe "Split-Path" {
+    if ( $Env:TEMP -eq "/tmp")
+    {
+        $qualifier = "/"
+    }
+    else
+    {
+        $qualifier = "C:"
+    }
+
     It "Should return a string object when invoked" {
         ( Split-Path . ).GetType().Name          | Should Be "String"
         ( Split-Path . -Leaf ).GetType().Name    | Should Be "String"
@@ -6,15 +15,23 @@
     }
 
     It "Should return the name of the drive when the qualifier switch is used" {
-        Split-Path / -Qualifier        | Should Be "/"
-        Split-Path /usr/bin -Qualifier | Should Be "/"
+        Split-Path $qualifier -Qualifier          | Should Be "$qualifier"
+        Split-Path ${qualifier}usr/bin -Qualifier | Should Be "$qualifier"
     }
 
     It "Should error when using the qualifier switch for a windows path while on a nonwindows machine" {
         # ErrorAction SilentlyContinue merely suppresses the error from the console.
         # Throwing exceptions still seen by Pester.
 
-        Split-Path "C:\Users" -Qualifier -ErrorAction SilentlyContinue  | Should Throw
+        if ($qualifier -eq "/")
+        {
+            Split-Path "C:\Users" -Qualifier -ErrorAction SilentlyContinue | Should Throw
+        }
+        else
+        {
+            Split-Path "/Users" -Qualifier -ErrorAction SilentlyContinue | Should Throw
+
+        }
     }
 
     It "Should error when no directory separator characters are used with a qualifier" {
@@ -22,13 +39,20 @@
     }
 
     It "Should return the path when the noqualifier switch is used on a Linux system" {
-        { Split-Path /usr/bin -NoQualifier } | Should Not Throw
-        Split-Path /usr/bin -NoQualifier     | Should Be "/usr/bin"
+        { Split-Path ${qualifier}usr/bin -NoQualifier } | Should Not Throw
+        if ($env:TEMP -eq "/tmp")
+        {
+            Split-Path ${qualifier}usr/bin -NoQualifier     | Should Be "/usr/bin"
+        }
+        else
+        {
+            Split-Path ${qualifier}usr/bin -NoQualifier     | Should Be "usr/bin"
+        }
     }
 
     It "Should return the base name when the leaf switch is used" {
-        Split-Path /usr/bin -Leaf       | Should be "bin"
-        Split-Path /usr/local/bin -Leaf | Should be "bin"
+        Split-Path ${qualifier}usr/bin -Leaf       | Should be "bin"
+        Split-Path ${qualifier}usr/local/bin -Leaf | Should be "bin"
         Split-Path usr/bin -Leaf        | Should be "bin"
         Split-Path ./bin -Leaf          | Should be "bin"
         Split-Path bin -Leaf            | Should be "bin"
@@ -38,8 +62,8 @@
         $testDir = "./tmp"
         Remove-Item $testDir -Recurse -Force -ErrorAction Ignore
 
-	$testFile1     = "testfile1.ps1"
-	$testFile2     = "testfile2.ps1"
+        $testFile1     = "testfile1.ps1"
+        $testFile2     = "testfile2.ps1"
         $testFilePath1 = $testDir + "/" + $testFile1
         $testFilePath2 = $testDir + "/" + $testFile2
 
@@ -58,29 +82,30 @@
     }
 
     It "Should be able to tell if a given path is an absolute path" {
-        ( Split-Path /usr/bin -IsAbsolute ) | Should be $true
-        ( Split-Path .. -IsAbsolute )       | Should be $false
-        ( Split-Path /usr/.. -IsAbsolute )  | Should be $true
-        ( Split-Path /usr/../ -IsAbsolute ) | Should be $true
-        ( Split-Path ../ -IsAbsolute )      | Should be $false
-        ( Split-Path . -IsAbsolute )        | Should be $false
-        ( Split-Path ~/ -IsAbsolute )       | Should be $false
-        ( Split-Path ~/.. -IsAbsolute )     | Should be $false
-        ( Split-Path ~/../.. -IsAbsolute )  | Should be $false
+        ( Split-Path ${qualifier}usr/bin -IsAbsolute ) | Should be $true
+        ( Split-Path .. -IsAbsolute )                  | Should be $false
+        ( Split-Path ${qualifier}usr/.. -IsAbsolute )  | Should be $true
+        ( Split-Path ${qualifier}usr/../ -IsAbsolute ) | Should be $true
+        ( Split-Path ../ -IsAbsolute )                 | Should be $false
+        ( Split-Path . -IsAbsolute )                   | Should be $false
+        ( Split-Path ~/ -IsAbsolute )                  | Should be $false
+        ( Split-Path ~/.. -IsAbsolute )                | Should be $false
+        ( Split-Path ~/../.. -IsAbsolute )             | Should be $false
 
     }
 
     It "Should support piping" {
-        ( "/usr/bin" | Split-Path ) | Should Be "/usr"
+        $path = "${qualifier}usr/bin"
+        ( $path | Split-Path ) | Should Be "${qualifier}usr"
     }
 
     It "Should return the path up to the parent of the directory when Parent switch is used" {
-        Split-Path "/usr/bin" -Parent       | Should Be "/usr"
-        Split-Path "/usr/local/bin" -Parent | Should Be "/usr/local"
-        Split-Path "usr/local/bin" -Parent  | Should Be "usr/local"
+        Split-Path "${qualifier}usr/bin" -Parent       | Should Be "${qualifier}usr"
+        Split-Path "${qualifier}usr/local/bin" -Parent | Should Be $(Join-Path "${qualifier}usr" -ChildPath "local")
+        Split-Path "usr/local/bin" -Parent  | Should Be $(Join-Path "usr" -ChildPath "local")
     }
 
     It "Should throw if a parameterSetName is incorrect" {
-        { Split-Path "/usr/bin/" -Parentaoeu } | Should Throw "A parameter cannot be found that matches parameter name"
+        { Split-Path "${qualifier}usr/bin/" -Parentaoeu } | Should Throw "A parameter cannot be found that matches parameter name"
     }
 }
