@@ -1,18 +1,11 @@
 ﻿Describe "Out-String" {
-    if (Test-Path /tmp)
-    {
-        $nl = "`n"
-    }
-    else
-    {
-        $nl = "`r`n"
-    }
+    $nl = [Environment]::NewLine
 
     It "Should accumulate the strings and returns them as a single string" {
         $testArray = "a", " b"
-        
+
         $testArray.GetType().BaseType | Should Be array
-        
+
         $testArray | Out-String | Should Be "a$nl b$nl"
 
         $($testArray | Out-String).GetType() | Should Be string
