@@ -1,4 +1,6 @@
 ﻿Describe "Set-Variable" {
+    ${nl} = [Environment]::Newline
+
     It "Should create a new variable with no parameters" {
         { Set-Variable testVar } | Should Not Throw
     }
@@ -51,7 +53,7 @@
         $output = $in | Format-List -Property Description | Out-String
 
         # This will cause errors running these tests in windows
-        $output | Should Be "`n`nDescription : test description`n`n`n`n"
+        $output | Should Be "${nl}${nl}Description : test description${nl}${nl}${nl}${nl}"
     }
 
     It "Should be able to set the value using the value switch" {
