@@ -21,14 +21,14 @@
     "frameworks": {
         "dnxcore50": {
             "dependencies": {
-                "Microsoft.CSharp": "4.0.1-*",
-                "System.Collections": "4.0.11-*",
-                "System.Console": "4.0.0-*",
-                "System.Diagnostics.FileVersionInfo": "4.0.0-*",
-                "System.Linq": "4.0.1-*",
-                "System.Reflection": "4.1.0-*",
-                "System.Runtime": "4.0.21-*",
-                "System.Threading": "4.0.11-*"
+		"Microsoft.CSharp": "4.0.1-beta-23516",
+		"System.Collections": "4.0.11-beta-23516",
+		"System.Console": "4.0.0-beta-23516",
+		"System.Diagnostics.FileVersionInfo": "4.0.0-beta-23516",
+		"System.Linq": "4.0.1-beta-23516",
+		"System.Runtime": "4.0.21-beta-23516",
+		"System.Threading": "4.0.11-beta-23516",
+                "System.Reflection": "4.1.0-beta-23516"
             }
         }
     }
