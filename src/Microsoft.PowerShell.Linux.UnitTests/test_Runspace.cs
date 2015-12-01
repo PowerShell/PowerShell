@@ -100,6 +100,26 @@ namespace PSTests
         }
 
         [Fact]
+        public void TestRunspaceWithFunction()
+        {
+            MyHost myHost = new MyHost(this);
+            using (var runspace = RunspaceFactory.CreateRunspace(myHost))
+            {
+                runspace.Open();
+
+                using (PowerShell powerShell = PowerShell.Create())
+                {
+                    powerShell.Runspace = runspace;
+
+                    powerShell.AddScript("{1}.Invoke()");
+                    powerShell.Invoke();
+                }
+
+                runspace.Close();
+            }
+        }
+
+        [Fact]
         public void TestRunspaceWithPowerShellAndInitialSessionState()
         {
             InitialSessionState iss = InitialSessionState.CreateDefault2();
