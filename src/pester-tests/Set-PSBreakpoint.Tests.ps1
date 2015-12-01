@@ -1,7 +1,7 @@
 ﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 Describe "Set-PSBreakpoint" {
-    New-Variable -Name script -Value $here/assets/testablescript.ps1 -Scope Global
+    New-Variable -Name script -Value $here/assets/testablescript.ps1 -Scope Global -Force
 
     It "Should be able to called with script and line parameters without error " {
         { Set-PSBreakpoint -Script $script -Line 1 } | Should Not Throw
