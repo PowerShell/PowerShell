@@ -20,6 +20,10 @@
         "allowUnsafe": true
     },
 
+    "dependencies": {
+	"System.Security.SecureString": ""
+    },
+
     "frameworks": {
         "dnxcore50": {
             "dependencies": {

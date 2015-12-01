@@ -107,8 +107,10 @@
     },
 
     "dependencies": {
-        "Microsoft.Management.Infrastructure.Native" : ""
+        "Microsoft.Management.Infrastructure.Native" : "",
+	"System.Security.SecureString": ""
     },
+
     "frameworks": {
         "dnxcore50": {
             "dependencies": {
