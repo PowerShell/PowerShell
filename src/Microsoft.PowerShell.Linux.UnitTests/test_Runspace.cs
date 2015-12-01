@@ -5,44 +5,102 @@ using System.Management.Automation.Runspaces;
 
 namespace PSTests
 {
-    public static class RunspaceTests
+    // NOTE: do not call AddCommand("out-host") after invoking or MergeMyResults,
+    // otherwise Invoke will not return any objects
+
+    public class RunspaceTests: IDisposable
     {
+        private static int count = 3;
+        private static string script = String.Format($"get-process | select-object -first {count}");
+
+        public RunspaceTests()
+        {
+            TypeCatalog.GenerateTypeCatalog();
+            Assert.NotNull(System.Management.Automation.ClrHost.TypeCatalog);
+        }
+
+        public void Dispose()
+        {
+        }
+
         [Fact]
-        public static void TestMethod()
+        public void TestRunspaceWithPipeline()
+        {
+            Assert.NotNull(System.Management.Automation.ClrHost.TypeCatalog);
+            using (Runspace runspace = RunspaceFactory.CreateRunspace())
+            {
+                runspace.Open();
+
+                using (var pipeline = runspace.CreatePipeline(script))
+                {
+                    int objCount = 0;
+                    foreach (var result in pipeline.Invoke())
+                    {
+                        ++objCount;
+                        Assert.NotNull(result);
+                    }
+                    Assert.Equal(count, objCount);
+                }
+
+                runspace.Close();
+            }
+        }
+
+        [Fact]
+        public void TestRunspaceWithPowerShell()
+        {
+            using (var runspace = RunspaceFactory.CreateRunspace())
+            {
+                runspace.Open();
+
+                using (PowerShell powerShell = PowerShell.Create())
+                {
+                    powerShell.Runspace = runspace;
+
+                    powerShell.AddScript(script);
+
+                    int objCount = 0;
+                    foreach (var result in powerShell.Invoke())
+                    {
+                        ++objCount;
+                        Console.WriteLine(result);
+                        Assert.NotNull(result);
+                    }
+                    Assert.Equal(count, objCount);
+                }
+
+                runspace.Close();
+            }
+        }
+
+        [Fact]
+        public void TestRunspaceWithPowerShellAndInitialSessionState()
         {
             InitialSessionState iss = InitialSessionState.CreateDefault2();
 
             // NOTE: instantiate custom host myHost for the next line to capture stdout and stderr output
             //       in addition to just the PSObjects
-            using (Runspace rs = RunspaceFactory.CreateRunspace(/*myHost,*/iss))
+            using (Runspace runspace = RunspaceFactory.CreateRunspace(/*myHost,*/iss))
             {
-                rs.Open();
-                using (PowerShell ps = PowerShell.Create())
+                runspace.Open();
+                using (PowerShell powerShell = PowerShell.Create())
                 {
-                    ps.Runspace = rs;
+                    powerShell.Runspace = runspace;
 
-                    string script = "get-process | select-object -first 3";
-                    ps.AddScript(script);
+                    powerShell.AddScript(script);
 
-                    // IMPORTANT NOTE: do not call AddCommand("out-host") here or
-                    // MergeMyResults, otherwise Invoke will not return any objects
-                    
-                    var results = ps.Invoke();
-
-                    // check that there are 3 captured objects
                     int objCount = 0;
-                    foreach (var result in results)
+                    foreach (var result in powerShell.Invoke())
                     {
                         // this is how an object would be captured here and looked at,
                         // each result is a PSObject with the data from the pipeline
                         ++objCount;
                         Assert.NotNull(result);
                     }
-                    Assert.Equal(3,objCount);
-                    ps.Dispose();
+                    Assert.Equal(count, objCount);
+                    powerShell.Dispose();
                 }
             }
         }
     }
 }
-
