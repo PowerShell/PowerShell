@@ -3,8 +3,6 @@
 //! @brief returns whether a file is executable
 
 #include <errno.h>
-#include <langinfo.h>
-#include <locale.h>
 #include <unistd.h>
 #include <string>
 #include "isexecutable.h"
@@ -21,7 +19,6 @@
 //! @endparblock
 //!
 //! @exception errno Passes these errors via errno to GetLastError:
-//! - ERROR_BAD_ENVIRONMENT: locale is not UTF-8
 //! - ERROR_FILE_NOT_FOUND: the system cannot find the file specified
 //! - ERROR_INVALID_ADDRESS: attempt to access invalid address
 //! - ERROR_GEN_FAILURE: device attached to the system is not functioning
@@ -42,15 +39,6 @@ int32_t IsExecutable(const char* fileName)
     if (!fileName)
     {
         errno = ERROR_INVALID_PARAMETER;
-        return -1;
-    }
-
-    // Select locale from environment
-    setlocale(LC_ALL, "");
-    // Check that locale is UTF-8
-    if (nl_langinfo(CODESET) != std::string("UTF-8"))
-    {
-        errno = ERROR_BAD_ENVIRONMENT;
         return -1;
     }
 

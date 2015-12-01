@@ -3,8 +3,6 @@
 //! @brief Implements GetComputerName Win32 API
 
 #include <errno.h>
-#include <langinfo.h>
-#include <locale.h>
 #include <unistd.h>
 #include <string>
 #include "getcomputername.h"
@@ -13,7 +11,6 @@
 //! the current thread.
 //!
 //! @exception errno Passes these errors via errno to GetLastError:
-//! - ERROR_BAD_ENVIRONMENT: locale is not UTF-8
 //! - ERROR_INVALID_FUNCTION: getlogin_r() returned an unrecognized error code
 //! - ERROR_INVALID_ADDRESS:  buffer is an invalid address
 //! - ERROR_GEN_FAILURE: buffer not large enough
@@ -22,17 +19,7 @@
 
 char* GetComputerName()
 {
-    errno = 0;
-    
-    // Select locale from environment
-    setlocale(LC_ALL, "");
-    // Check that locale is UTF-8
-    if (nl_langinfo(CODESET) != std::string("UTF-8"))
-    {
-        errno = ERROR_BAD_ENVIRONMENT;
-        return NULL;
-    }
-    
+    errno = 0; 
     // Get computername from system, note that gethostname(2) gets the
     // nodename from uname
     std::string computername(HOST_NAME_MAX, 0);

@@ -3,8 +3,6 @@
 //! @brief returns whether a path is a symbolic link
 
 #include <errno.h>
-#include <langinfo.h>
-#include <locale.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -25,7 +23,6 @@
 //!
 //! @exception errno Passes these errors via errno to GetLastError:
 //! - ERROR_INVALID_PARAMETER: parameter is not valid
-//! - ERROR_BAD_ENVIRONMENT: locale is not UTF-8
 //! - ERROR_FILE_NOT_FOUND: file does not exist
 //! - ERROR_ACCESS_DENIED: access is denied
 //! - ERROR_FILE_NOT_FOUND: the system cannot find the file specified
@@ -45,21 +42,13 @@
 
 int32_t IsSymLink(const char* fileName)
 {
-    errno = 0;
+
+    errno = 0;  
 
     // Check parameters
     if (!fileName)
     {
         errno = ERROR_INVALID_PARAMETER;
-        return -1;
-    }
-
-    // Select locale from environment
-    setlocale(LC_ALL, "");
-    // Check that locale is UTF-8
-    if (nl_langinfo(CODESET) != std::string("UTF-8"))
-    {
-        errno = ERROR_BAD_ENVIRONMENT;
         return -1;
     }
 

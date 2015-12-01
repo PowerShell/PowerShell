@@ -3,7 +3,6 @@
 //! @brief Implements GetUserName for Linux
 
 #include <errno.h>
-#include <langinfo.h>
 #include <locale.h>
 #include <unistd.h>
 #include <string>
@@ -16,7 +15,6 @@
 //!
 //! @exception errno Passes these errors via errno to GetLastError:
 //! - ERROR_INVALID_PARAMETER: parameter is not valid
-//! - ERROR_BAD_ENVIRONMENT: locale is not UTF-8
 //! - ERROR_NO_SUCH_USER: there was no corresponding user
 //! - ERROR_GEN_FAILURE: sysconf() or getpwuid() failed for unknown reasons
 //!
@@ -24,15 +22,6 @@
 char* GetUserName()
 {
     errno = 0;
-
-    // Select locale from environment
-    setlocale(LC_ALL, "");
-    // Check that locale is UTF-8
-    if (nl_langinfo(CODESET) != std::string("UTF-8"))
-    {
-        errno = ERROR_BAD_ENVIRONMENT;
-        return NULL;
-    }
 
     struct passwd pwd;
     struct passwd* result;
