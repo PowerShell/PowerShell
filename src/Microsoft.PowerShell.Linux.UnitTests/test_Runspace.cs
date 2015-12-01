@@ -63,7 +63,33 @@ namespace PSTests
                     foreach (var result in powerShell.Invoke())
                     {
                         ++objCount;
-                        Console.WriteLine(result);
+                        Assert.NotNull(result);
+                    }
+                    Assert.Equal(count, objCount);
+                }
+
+                runspace.Close();
+            }
+        }
+
+        [Fact]
+        public void TestRunspaceWithPowerShellAndHost()
+        {
+            MyHost myHost = new MyHost(this);
+            using (var runspace = RunspaceFactory.CreateRunspace(myHost))
+            {
+                runspace.Open();
+
+                using (PowerShell powerShell = PowerShell.Create())
+                {
+                    powerShell.Runspace = runspace;
+
+                    powerShell.AddScript(script);
+
+                    int objCount = 0;
+                    foreach (var result in powerShell.Invoke())
+                    {
+                        ++objCount;
                         Assert.NotNull(result);
                     }
                     Assert.Equal(count, objCount);
