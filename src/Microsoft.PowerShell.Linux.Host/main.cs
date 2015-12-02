@@ -25,8 +25,6 @@ namespace Microsoft.PowerShell.Linux.Host
                 Console.WriteLine("TypeCatalog generation failed!");
             }
 
-            bool runspaceTest = false;
-
             // Custom argument parsing
             string initialScript = null;
             if (args.Length > 0)
@@ -46,11 +44,6 @@ namespace Microsoft.PowerShell.Linux.Host
                     else if (!hasNext)
                     {
                         initialScript = arg;
-                    }
-                    //  --runspace was specified for a simple runspace test
-                    else if (arg == "--runspace")
-                    {
-                        runspaceTest = true;
                     }
                     // --file <filePath> was specified
                     else if (hasNext && (arg == "--file" || arg == "-f"))
@@ -79,26 +72,6 @@ namespace Microsoft.PowerShell.Linux.Host
                     }
                 }
             }
-
-            if (runspaceTest)
-            {
-                using (var runspace = RunspaceFactory.CreateRunspace())
-                {
-                    runspace.Open();
-
-                    using (var ps = runspace.CreatePipeline(initialScript))
-                    {
-                        foreach (var result in ps.Invoke())
-                        {
-                            Console.WriteLine(result);
-                        }
-                    }
-
-                    runspace.Close();
-                }
-                return;
-            }
-
             // TODO: check for input on stdin
 
             // Create the listener and run it
