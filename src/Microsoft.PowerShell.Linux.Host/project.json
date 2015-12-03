@@ -6,7 +6,12 @@
     "projectUrl": "",
     "licenseUrl": "",
 
+    "compilationOptions": {
+        "emitEntryPoint": true
+    },
+
     "dependencies": {
+	"Microsoft.NETCore.Runtime": "1.0.1-beta-*",
         "Microsoft.Extensions.PlatformAbstractions": "1.0.0-*",
         "System.Management.Automation": "",
         "Microsoft.PowerShell.Security": "",

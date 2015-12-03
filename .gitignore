@@ -6,3 +6,4 @@
 /.vscode/
 project.lock.json
 *-tests.xml
+obj/

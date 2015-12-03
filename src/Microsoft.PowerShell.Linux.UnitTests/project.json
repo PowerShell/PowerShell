@@ -7,6 +7,7 @@
     "licenseUrl": "",
 
     "dependencies": {
+	"Microsoft.NETCore.Runtime": "1.0.1-beta-*",
         "System.Management.Automation": "",
         "Microsoft.PowerShell.Security": "",
         "Microsoft.PowerShell.Commands.Utility": "",
@@ -15,9 +16,7 @@
         "xunit.runner.dnx": "2.1.0-*"
     },
 
-    "commands": {
-	"test": "xunit.runner.dnx"
-    },
+    "TestRunner": "xunit",
 
     "frameworks": {
         "dnxcore50": {
