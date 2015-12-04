@@ -12,7 +12,7 @@
 
     "dependencies": {
 	"Microsoft.NETCore.Runtime": "1.0.1-beta-*",
-        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-*",
+        "Microsoft.Extensions.PlatformAbstractions": "1.0.0-rc1-16231",
         "System.Management.Automation": "",
         "Microsoft.PowerShell.Security": "",
         "Microsoft.PowerShell.Commands.Utility": "",
