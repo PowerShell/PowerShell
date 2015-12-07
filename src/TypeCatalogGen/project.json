@@ -1,0 +1,31 @@
+{
+    "version": "1.0.0.0",
+    "description": "PowerShell TypeCatalogGen.exe",
+    "authors": [ "andschwa" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
+
+    "compilationOptions": {
+        "emitEntryPoint": true
+    },
+
+    "dependencies": {
+	"System.Reflection.Metadata": "1.1.1-beta-23516",
+	"System.Collections.Immutable": "1.1.38-beta-23516"
+    },
+
+    "compileFiles": [
+	"../monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/TypeCatalogGen/TypeCatalogGen.cs"
+    ],
+
+    "frameworks": {
+	"dnx451": {
+	    "frameworkAssemblies": {
+		"System.Runtime": "",
+		"System.IO": "",
+		"System.Reflection.Primitives": ""
+	    }
+	}
+    }
+}

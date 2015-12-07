@@ -1,4 +1,5 @@
-/bin/
+bin/
+obj/
 /lib/
 /approot/
 /src/*/bin/
@@ -6,4 +7,5 @@
 /.vscode/
 project.lock.json
 *-tests.xml
-obj/
+/src/TypeCatalogGen/powershell.inc
+/src/TypeCatalogGen/CorePsTypeCatalog.cs
