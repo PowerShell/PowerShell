@@ -48,7 +48,7 @@ extern "C"
 
     extern ExecuteAssemblyFunction executeAssembly;
     extern CreateDelegateFunction createDelegate;
-    extern char pwrshPath[];
+    extern char coreRoot[];
 #ifdef __cplusplus
 }
 #endif

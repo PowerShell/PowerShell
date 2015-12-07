@@ -11,19 +11,15 @@ namespace Cmdline
                   << "Usage: powershell [assembly] [...]" << std::endl
                   << std::endl
                   << "What it does:" << std::endl
-                  << "- the host assumes that CoreCLR is located $CORE_ROOT," << std::endl
-                  << "  else in lib/coreclr"
-                  << "- the host assumes that the assembly named" << std::endl
-                  << "  Microsoft.PowerShell.CoreCLR.AssemblyLoadContext is " << std::endl
-                  << "  located in $PWRSH_ROOT, else in lib/powershell" << std::endl
-                  << "- the host will launch $PWRSH_ROOT/powershell.exe" << std::endl
-                  << "  if not given an explicit assembly.exe" << std::endl
+                  << "- the host assumes that PSL has been published to $CORE_ROOT," << std::endl
+                  << "- the host will launch $CORE_ROOT/Microsoft.PowerShell.Linux.Host.dll" << std::endl
+                  << "  if not given an explicit assembly" << std::endl
                   << "- all additional parameters at the end of the command line are forwarded" << std::endl
                   << "  to the Main function in the assembly" << std::endl
                   << "- the host will execute the Main function in the specified assembly" << std::endl
                   << std::endl
                   << "Example:" << std::endl
-                  << "CORE_ROOT=/test/coreclr PWRSH_ROOT=/test/powershell ./powershell get-process" << std::endl;
+                  << "CORE_ROOT=/test/coreclr ./powershell get-process" << std::endl;
     }
 
     struct Args
@@ -90,9 +86,9 @@ int main(int argc, char** argv)
     // default to powershell.exe if no host specified
     if (args.assembly.empty())
     {
-        args.assembly.assign(pwrshPath);
+        args.assembly.append(coreRoot);
         args.assembly.append("/");
-        args.assembly.append("powershell.exe");
+        args.assembly.append("Microsoft.PowerShell.Linux.Host.dll");
     }
 
     // call into Main of assembly

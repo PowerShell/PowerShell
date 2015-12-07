@@ -1,14 +1,12 @@
 #include "coreclrutil.h"
 #include <dirent.h>
 #include <dlfcn.h>
-#include <assert.h>
-#include <string.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <cstdlib>
 #include <iostream>
 #include <set>
-#include <unicode/unistr.h>
+
+#include <boost/filesystem.hpp>
+using namespace boost;
 
 // The name of the CoreCLR native runtime DLL
 #if defined(__APPLE__)
@@ -18,8 +16,7 @@ constexpr char coreClrDll[] = "libcoreclr.so";
 #endif
 
 void* coreclrLib;
-char exePath[PATH_MAX];
-char pwrshPath[PATH_MAX];
+char coreRoot[PATH_MAX];
 
 // Prototype of the coreclr_initialize function from the libcoreclr.so
 typedef int (*InitializeCoreCLRFunction)(
@@ -42,92 +39,21 @@ ExecuteAssemblyFunction executeAssembly;
 CreateDelegateFunction createDelegate;
 
 //
-// Below is from unixcoreruncommon/coreruncommon.cpp
-//
-
-bool GetAbsolutePath(const char* path, std::string& absolutePath)
-{
-    char realPath[PATH_MAX];
-    if (realpath(path, realPath) != nullptr && realPath[0] != '\0')
-    {
-        absolutePath.assign(realPath);
-        // realpath should return canonicalized path without the trailing slash
-        assert(absolutePath.back() != '/');
-        return true;
-    }
-
-    std::cerr << "failed to get absolute path for " << path << std::endl;
-    return false;
-}
-
-// TODO use dirname
-bool GetDirectory(const char* absolutePath, std::string& directory)
-{
-    directory.assign(absolutePath);
-    size_t lastSlash = directory.rfind('/');
-    if (lastSlash != std::string::npos)
-    {
-        directory.erase(lastSlash);
-        return true;
-    }
-
-    std::cerr << "failed to get directory for " << absolutePath << std::endl;
-    return false;
-}
-
-//
 // Get the absolute path given the environment variable.
 //
 // Return true in case of a success, false otherwise.
 //
-bool GetEnvAbsolutePath(const char* envVar, std::string& absolutePath)
+filesystem::path GetEnvAbsolutePath(const char* env)
 {
-    const char* filesPathLocal = std::getenv(envVar);;
-    if (filesPathLocal == nullptr)
-    {
-        return false;
-    }
+    const char* local = std::getenv(env);
+    if (!local)
+        return nullptr;
 
-    return GetAbsolutePath(filesPathLocal, absolutePath);
-}
-
-//
-// Get the a root path given an environment variable and default
-// relative to exePath
-//
-bool GetRootPath(const char* envVar,
-                 const char* relativePath,
-                 std::string& absolutePath)
-{
-    if (!GetEnvAbsolutePath(envVar, absolutePath))
-    {
-        // Default to bin/relativePath
-        std::string path;
-        if (!GetDirectory(exePath, path))
-        {
-            return false;
-        }
-        path.append("/");
-        path.append(relativePath);
-        return GetAbsolutePath(path.c_str(), absolutePath);
-    }
-
-    return true;
-}
-
-// Get the PowerShell root path, with sensible default
-bool GetPwrshRoot(std::string& absolutePath)
-{
-    return GetRootPath("PWRSH_ROOT", "../lib/powershell", absolutePath);
-}
-
-// Get the CoreCLR root path, with sensible default
-bool GetCoreRoot(std::string& absolutePath)
-{
-    return GetRootPath("CORE_ROOT", "../lib/coreclr", absolutePath);
+    return filesystem::canonical(local);
 }
 
 // Add all *.dll, *.ni.dll, *.exe, and *.ni.exe files from the specified directory to the tpaList string.
+// Note: copied from unixcorerun
 void AddFilesFromDirectoryToTpaList(const char* directory, std::string& tpaList)
 {
     const char * const tpaExtensions[] = {
@@ -229,27 +155,30 @@ int startCoreCLR(
     void** hostHandle,
     unsigned int* domainId)
 {
+    char exePath[PATH_MAX];
+
     // get path to current executable
     readlink("/proc/self/exe", exePath, PATH_MAX);
 
     // get the CoreCLR root path
-    std::string clrAbsolutePath;
-    if(!GetCoreRoot(clrAbsolutePath))
+    auto clrAbsolutePath = GetEnvAbsolutePath("CORE_ROOT");
+    if(!clrAbsolutePath.is_absolute())
     {
+        std::cerr << "Failed to get CORE_ROOT path" << std::endl;
         return -1;
     }
+    // copy to shared buffer
+    clrAbsolutePath.native().copy(coreRoot, clrAbsolutePath.native().size(), 0);
 
     // get the CoreCLR shared library path
-    std::string coreClrDllPath(clrAbsolutePath);
-    coreClrDllPath.append("/");
-    coreClrDllPath.append(coreClrDll);
+    filesystem::path coreClrDllPath(clrAbsolutePath);
+    coreClrDllPath /= coreClrDll;
 
     // open the shared library
     coreclrLib = dlopen(coreClrDllPath.c_str(), RTLD_NOW|RTLD_LOCAL);
     if (coreclrLib == nullptr)
     {
-        char* error = dlerror();
-        std::cerr << "dlopen failed to open the CoreCLR library: " << error << std::endl;
+        std::cerr << "dlopen failed to open the CoreCLR library: " << dlerror() << std::endl;
         return -1;
     }
 
@@ -286,30 +215,6 @@ int startCoreCLR(
     // add assemblies in the CoreCLR root path
     AddFilesFromDirectoryToTpaList(clrAbsolutePath.c_str(), tpaList);
 
-    // get path to PowerShell libraries
-    std::string psAbsolutePath;
-    if(!GetPwrshRoot(psAbsolutePath))
-    {
-        return -1;
-    }
-    psAbsolutePath.copy(pwrshPath, psAbsolutePath.size(), 0);
-
-    // get path to AssemblyLoadContext.dll
-    std::string alcAbsolutePath(psAbsolutePath);
-    alcAbsolutePath.append("/");
-    alcAbsolutePath.append("Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll");
-
-    // add AssemblyLoadContext
-    tpaList.append(alcAbsolutePath);
-
-    // generate the assembly search paths
-    std::string appPath(psAbsolutePath);
-    // TODO: add LD_LIBRARY_PATH?
-
-    std::string nativeDllSearchDirs(appPath);
-    nativeDllSearchDirs.append(":");
-    nativeDllSearchDirs.append(clrAbsolutePath);
-
     // create list of properties to initialize CoreCLR
     const char* propertyKeys[] = {
         "TRUSTED_PLATFORM_ASSEMBLIES",
@@ -321,9 +226,9 @@ int startCoreCLR(
 
     const char* propertyValues[] = {
         tpaList.c_str(),
-        appPath.c_str(),
-        appPath.c_str(),
-        nativeDllSearchDirs.c_str(),
+        clrAbsolutePath.c_str(),
+        clrAbsolutePath.c_str(),
+        clrAbsolutePath.c_str(),
         "UseLatestBehaviorWhenTFMNotSpecified"
     };
 
@@ -342,27 +247,6 @@ int startCoreCLR(
         std::cerr << "coreclr_initialize failed - status: " << std::hex << status << std::endl;
         return -1;
     }
-
-    // initialize PowerShell's custom assembly load context
-    typedef void (*LoaderRunHelperFp)(const char16_t* appPath);
-    LoaderRunHelperFp loaderDelegate = nullptr;
-    status = createDelegate(
-        *hostHandle,
-        *domainId,
-        "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-        "System.Management.Automation.PowerShellAssemblyLoadContextInitializer",
-        "SetPowerShellAssemblyLoadContext",
-        (void**)&loaderDelegate);
-
-    if (!SUCCEEDED(status))
-    {
-        std::cerr << "could not create delegate for SetPowerShellAssemblyLoadContext - status: " << std::hex << status << std::endl;
-        return -1;
-    }
-
-    icu::UnicodeString psUnicodeAbsolutePath = icu::UnicodeString::fromUTF8(psAbsolutePath.c_str());
-
-    loaderDelegate((const char16_t*)psUnicodeAbsolutePath.getTerminatedBuffer());
 
     return status;
 }
