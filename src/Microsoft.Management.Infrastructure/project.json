@@ -113,7 +113,6 @@
     "frameworks": {
         "dnxcore50": {
             "dependencies": {
-                "Microsoft.Extensions.PlatformAbstractions": "1.0.0-*",
                 "Microsoft.CSharp": "4.0.1-*",
                 "Microsoft.VisualBasic": "10.0.1-*",
                 "Microsoft.Win32.Primitives": "4.0.1-*",

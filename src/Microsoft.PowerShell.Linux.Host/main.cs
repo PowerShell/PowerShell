@@ -18,13 +18,6 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         public static void Main(string[] args)
         {
-            // create the typecatalog so they can find assemblies for a given type.
-            TypeCatalog.GenerateTypeCatalog();
-            if (System.Management.Automation.ClrHost.TypeCatalog == null)
-            {
-                Console.WriteLine("TypeCatalog generation failed!");
-            }
-
             // Custom argument parsing
             string initialScript = null;
             if (args.Length > 0)

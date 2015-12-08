@@ -6,6 +6,22 @@
     "projectUrl": "",
     "licenseUrl": "",
 
+    "dependencies": {
+	"Microsoft.Management.Infrastructure" : "",
+	"Microsoft.PowerShell.CoreCLR.AssemblyLoadContext": ""
+    },
+
+    "compilationOptions": {
+        "define": [
+            "CORECLR",
+            "_CORECLR",
+            "LINUX"
+        ],
+        "allowUnsafe": true
+    },
+
+    "compile" : [ "../monad-build/gen/SYS_AUTO/*.cs" ],
+
     "compileFiles": [
 	"../monad/monad/src/engine/ChildrenCmdletProviderInterfaces.cs",
 	"../monad/monad/src/engine/CmdletFamilyProviderInterfaces.cs",
@@ -584,20 +600,6 @@
 	"../monad/monad/src/DscSupport/CimDSCParser.cs"
     ],
 
-    "compile" : [
-	"../monad-build/gen/SYS_AUTO/*.cs"
-    ],
-
-    "compilationOptions": {
-        "define": [
-            "CORECLR",
-            "_CORECLR",
-	    "NOALC",
-            "LINUX"
-        ],
-        "allowUnsafe": true
-    },
-
     "namedResource": {
         "Authenticode":   "../monad/monad/src/engine/resources/Authenticode.resx",
         "AutomationExceptions" : "../monad/monad/src/engine/resources/AutomationExceptions.resx",
@@ -667,14 +669,9 @@
         "Modules" : "../monad/monad/src/engine/resources/modules.resx"
     },
 
-    "dependencies": {
-        "Microsoft.Management.Infrastructure" : ""
-    },
-
     "frameworks": {
         "dnxcore50": {
             "dependencies": {
-                "Microsoft.Extensions.PlatformAbstractions": "1.0.0-*",
                 "Microsoft.CSharp": "4.0.1-*",
                 "Microsoft.VisualBasic": "10.0.1-*",
                 "Microsoft.Win32.Primitives": "4.0.1-*",
