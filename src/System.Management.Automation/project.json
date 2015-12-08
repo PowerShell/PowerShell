@@ -7,7 +7,6 @@
     "licenseUrl": "",
 
     "compileFiles": [
-	"../assembly-info/System.Management.Automation.assembly-info.cs",
 	"../monad/monad/src/engine/ChildrenCmdletProviderInterfaces.cs",
 	"../monad/monad/src/engine/CmdletFamilyProviderInterfaces.cs",
 	"../monad/monad/src/engine/MshCmdlet.cs",

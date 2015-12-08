@@ -7,7 +7,6 @@
     "licenseUrl": "",
 
     "compile": [
-	"../assembly-info/Microsoft.Management.Infrastructure.assembly-info.cs",
 	"../monad/wmi/WMIv2/Client/DotNetAPI/cs/AssemblyInfo.cs",
 	"../monad/wmi/WMIv2/Client/DotNetAPI/cs/CancellationMode.cs",
 	"../monad/wmi/WMIv2/Client/DotNetAPI/cs/CimApplication.cs",
