@@ -7,7 +7,7 @@
     "licenseUrl": "",
 
     "dependencies": {
-	"Microsoft.NETCore.Runtime": "1.0.1-beta-*",
+	"Microsoft.NETCore.Runtime": "1.0.1-*",
         "System.Management.Automation": "",
         "Microsoft.PowerShell.Security": "",
         "Microsoft.PowerShell.Commands.Utility": "",
