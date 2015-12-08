@@ -6,6 +6,8 @@
     "projectUrl": "",
     "licenseUrl": "",
 
+    "content": [ "*.ps1xml" ],
+
     "compilationOptions": {
         "emitEntryPoint": true
     },

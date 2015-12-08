@@ -588,12 +588,6 @@
 	"../monad-build/gen/SYS_AUTO/*.cs"
     ],
 
-    "packInclude" :
-    {
-	"Modules/" : "../monad/monad/miscfiles/modules/**",
-	"Pester/" : "../ext-src/pester/**"
-    },
-
     "compilationOptions": {
         "define": [
             "CORECLR",
