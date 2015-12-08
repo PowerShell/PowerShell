@@ -1,0 +1,23 @@
+{
+    "version": "1.0.0.0",
+    "description": "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext Class",
+    "authors": [ "andschwa" ],
+
+    "compileFiles": [ "../monad/monad/src/CoreCLR/CorePsAssemblyLoadContext.cs" ],
+
+    "compilationOptions": { "define": [ "CORECLR" ] },
+
+    "dependencies": {
+	"Microsoft.NETCore.Runtime": "1.0.1-*",
+        "System.Collections": "4.0.11-*",
+        "System.Collections.Concurrent": "4.0.11-*",
+        "System.Globalization": "4.0.11-*",
+        "System.IO": "4.0.11-*",
+	"System.IO.FileSystem": "4.0.1-*",
+        "System.Reflection": "4.1.0-*",
+        "System.Runtime.Loader": "4.0.0-*",
+	"System.Runtime.InteropServices": "4.0.21-*"
+    },
+
+    "frameworks": { "dnxcore50": { } }
+}
