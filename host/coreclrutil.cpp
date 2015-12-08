@@ -158,7 +158,10 @@ int startCoreCLR(
     char exePath[PATH_MAX];
 
     // get path to current executable
-    readlink("/proc/self/exe", exePath, PATH_MAX);
+    ssize_t len = readlink("/proc/self/exe", exePath, PATH_MAX);
+    if (len == -1 || len == sizeof(exePath))
+        len = 0;
+    exePath[len] = '\0';
 
     // get the CoreCLR root path
     auto clrAbsolutePath = GetEnvAbsolutePath("CORE_ROOT");
