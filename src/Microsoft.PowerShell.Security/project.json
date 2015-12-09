@@ -6,16 +6,17 @@
     "projectUrl": "",
     "licenseUrl": "",
 
-    "compile": [
+    "compile": [ "../monad-build/gen/SECURITY/*.cs" ],
+
+    "compileFiles": [
 	"../monad/monad/src/security/AclCommands.cs",
 	"../monad/monad/src/security/CertificateProvider.cs",
-	"../monad/monad/src/security/certificateproviderexceptions.cs",
 	"../monad/monad/src/security/CredentialCommands.cs",
 	"../monad/monad/src/security/ExecutionPolicyCommands.cs",
 	"../monad/monad/src/security/SecureStringCommands.cs",
 	"../monad/monad/src/security/SignatureCommands.cs",
 	"../monad/monad/src/security/Utils.cs",
-	"../monad-build/gen/SECURITY/*.cs"
+	"../monad/monad/src/security/certificateproviderexceptions.cs",
     ],
 
     "resource": [

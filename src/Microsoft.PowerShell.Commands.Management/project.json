@@ -57,7 +57,7 @@
 	"../monad/monad/src/commands/management/Service.cs",
 	"../monad/monad/src/commands/management/SetContentCommand.cs",
 	"../monad/monad/src/commands/management/SetPropertyCommand.cs",
-	"../monad/monad/src/commands/management/WriteContentCommandBase.cs",
+	"../monad/monad/src/commands/management/WriteContentCommandBase.cs"
     ],
 
     "compile": [
