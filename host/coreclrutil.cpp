@@ -5,6 +5,8 @@
 #include <iostream>
 #include <set>
 
+#include <unicode/unistr.h>
+
 #include <boost/filesystem.hpp>
 using namespace boost;
 
@@ -250,6 +252,30 @@ int startCoreCLR(
         std::cerr << "coreclr_initialize failed - status: " << std::hex << status << std::endl;
         return -1;
     }
+
+    // initialize PowerShell's custom assembly load context
+    filesystem::path alcAbsolutePath(clrAbsolutePath);
+    alcAbsolutePath /= "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll";
+
+    typedef void (*LoaderRunHelperFp)(const char16_t* appPath);
+    LoaderRunHelperFp loaderDelegate = nullptr;
+    status = createDelegate(
+        *hostHandle,
+        *domainId,
+        "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext, Version=1.0.0.0, PublicKeyToken=null",
+        "System.Management.Automation.PowerShellAssemblyLoadContextInitializer",
+        "SetPowerShellAssemblyLoadContext",
+        (void**)&loaderDelegate);
+
+    if (!SUCCEEDED(status))
+    {
+        std::cerr << "could not create delegate for SetPowerShellAssemblyLoadContext - status: " << std::hex << status << std::endl;
+        return -1;
+    }
+
+    icu::UnicodeString psUnicodeAbsolutePath = icu::UnicodeString::fromUTF8(clrAbsolutePath.c_str());
+
+    loaderDelegate((const char16_t*)psUnicodeAbsolutePath.getTerminatedBuffer());
 
     return status;
 }
