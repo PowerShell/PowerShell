@@ -75,38 +75,43 @@ Our convention is to create feature branches `dev/feature` off our integration b
 
 ## Setup build environment
 
-There are two approaches. You can build in our Docker container and have all the [dependencies](docs/Dependencies.md) taken care of for you, or you can install them by hand and run "baremetal."
+We use the [.NET Command Line Interface][dotnet-cli] (`dotnet-cli`) to build the managed components, and [CMake][] to build the native components. Install `dotnet-cli` by following their documentation. Then install the following dependencies (assuming Ubuntu 14.04):
 
-### Docker
+```sh
+sudo apt-get install g++ cmake make libicu-dev libboost-filesystem-dev lldb-3.6 strace
+```
 
-See the official [installation documentation][] on how to install Docker, and don't forget to setup a [Docker group][].
+### OMI
 
-The Docker container can be updated with `docker pull andschwa/magrathea`, which downloads it from the [automated build repository][].
+To develop on the PowerShell Remoting Protocol (PSRP), you'll need to be able to compile OMI, which additionally requires:
 
-This container isolates all our build dependencies, including Ubuntu 14.04 and Mono. See the [Dockerfile][] to look under the hood.
+```sh
+sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev
+```
 
-The `monad-docker.sh` script has two Bash functions, `monad-run` and `monad-it`, which are wrappers that start a temporary container with `monad-linux` mounted and runs the arguments given to the script as your current user, but inside the container. The build artifacts will exist in your local folder and be owned by your user, essentially making the use of the container invisible. The `monad-tty` version also allocates a shell for the container, and so allows you to launch Bash or an interactive PowerShell session. Since these are Bash functions, it is simplest to source the `monad-docker.sh` script directly in your `~/.bashrc`, but the `./build.sh` script will also source it and delegate to `monad-run`.
-
-[Docker group]: https://docs.docker.com/installation/ubuntulinux/#create-a-docker-group
-[installation documentation]: https://docs.docker.com/installation/ubuntulinux/
-[automated build repository]: https://registry.hub.docker.com/u/andschwa/magrathea/
-[Dockerfile]: https://github.com/andschwa/docker-magrathea/blob/master/Dockerfile
-[Make]: https://www.gnu.org/software/make/manual/make.html
-[CMake]: http://www.cmake.org/cmake/help/v2.8.12/cmake.html
+[dotnet-cli]: https://github.com/dotnet/cli
+[CMake]: https://cmake.org/cmake/help/v2.8.12/cmake.html
 
 ## Building
 
-Please note that the square brackets indicate that part is only necessary if building within the Docker container. If running baremetal, ignore them.
+### Native
 
-1. `[source monad-docker.sh]` to get the `monad-run` and `monad-it` Bash functions
-2. `[monad-run] make boostrap` will download dependent NuGet packages (including the C# compiler)
-3. `[monad-run] make` will build PowerShell for Linux and execute the managed and native unit tests
-4. `[monad-run] make demo` will build and execute a demo, `"a","b","c","a","a" | Select-Object -Unique`
-5. `[monad-run] make test` will build PowerShell and execute the Pester smoke tests
-6. `[monad-it] make shell` will open an interactive PowerShell console (note the `it` for `--interactive --tty`)
-7. `make clean` will remove built libraries
-8. `make distclean` will remove all untracked files in `monad-native` (such as CMake's generated files) as well as generated files for `monad`
-9. `git clean -fdx && git submodule foreach git clean -fdx` will nuke everything that is untracked by Git in all repositories, use with caution
+```sh
+cd src/monad-native
+cmake -DCMAKE_BUILD_TYPE=Debug .
+VERBOSE=1 make -j
+ctest -V
+```
+
+### Managed
+
+```sh
+dotnet restore
+cd src/Microsoft.PowerShell.Linux.Host
+dotnet publish --framework dnxcore50 --runtime ubuntu.14.04-x64 --output ../../bin
+```
+
+Now run with `./powershell`.
 
 ## Adding Pester tests
 
@@ -115,7 +120,3 @@ Pester tests are located in the `src/pester-tests` folder. The makefile targets 
 The steps to add your pester tests are:
 - add `*.Tests.ps1` files to `src/pester-tests`
 - run `make test` to run all the tests
-
-## TODO: Docker shell-in-a-box
-
-## TODO: Architecture
