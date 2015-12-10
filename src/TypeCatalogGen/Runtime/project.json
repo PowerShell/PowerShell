@@ -6,14 +6,13 @@
     "projectUrl": "",
     "licenseUrl": "",
 
+    "dependencies": {
+	"Microsoft.NETCore.Runtime": "1.0.1-*"
+    },
+
     "frameworks": {
         "dnxcore50": {
             "dependencies": {
-                "Microsoft.CSharp": "4.0.1-*",
-                "Microsoft.VisualBasic": "10.0.1-*",
-                "Microsoft.Win32.Primitives": "4.0.1-*",
-                "Microsoft.Win32.Registry": "4.0.0-*",
-                "Microsoft.Win32.Registry.AccessControl": "4.0.0-*",
                 "System.AppContext": "4.0.1-*",
                 "System.Collections": "4.0.11-*",
                 "System.Collections.Concurrent": "4.0.11-*",
