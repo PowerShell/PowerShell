@@ -3,7 +3,7 @@
 # Publish PowerShell
 cd src/Microsoft.PowerShell.Linux.Host
 dotnet publish --framework dnxcore50 --runtime ubuntu.14.04-x64 --output ../../bin
-cp *.ps1xml ../../bin
+cp *.ps1xml *_profile.ps1 ../../bin
 cd ../..
 
 # Copy Pester
