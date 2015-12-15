@@ -1,5 +1,5 @@
 add_library(pshost STATIC coreclrutil.cpp)
-target_link_libraries(pshost dl icuuc ${Boost_LIBRARIES})
+target_link_libraries(pshost dl ${Boost_LIBRARIES})
 target_include_directories(pshost PRIVATE ${Boost_INCLUDE_DIRS})
 target_compile_options(pshost PRIVATE -fPIC)
 

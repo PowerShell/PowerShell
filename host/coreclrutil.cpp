@@ -5,8 +5,6 @@
 #include <iostream>
 #include <set>
 
-#include <unicode/unistr.h>
-
 #include <boost/filesystem.hpp>
 using namespace boost;
 
@@ -257,7 +255,7 @@ int startCoreCLR(
     filesystem::path alcAbsolutePath(clrAbsolutePath);
     alcAbsolutePath /= "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll";
 
-    typedef void (*LoaderRunHelperFp)(const char16_t* appPath);
+    typedef void (*LoaderRunHelperFp)(const char* appPath);
     LoaderRunHelperFp loaderDelegate = nullptr;
     status = createDelegate(
         *hostHandle,
@@ -273,9 +271,7 @@ int startCoreCLR(
         return -1;
     }
 
-    icu::UnicodeString psUnicodeAbsolutePath = icu::UnicodeString::fromUTF8(clrAbsolutePath.c_str());
-
-    loaderDelegate((const char16_t*)psUnicodeAbsolutePath.getTerminatedBuffer());
+    loaderDelegate(clrAbsolutePath.c_str());
 
     return status;
 }
