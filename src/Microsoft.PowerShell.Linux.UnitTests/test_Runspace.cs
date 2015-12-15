@@ -8,25 +8,14 @@ namespace PSTests
     // NOTE: do not call AddCommand("out-host") after invoking or MergeMyResults,
     // otherwise Invoke will not return any objects
 
-    public class RunspaceTests: IDisposable
+    public class RunspaceTests
     {
         private static int count = 3;
         private static string script = String.Format($"get-process | select-object -first {count}");
 
-        public RunspaceTests()
-        {
-            TypeCatalog.GenerateTypeCatalog();
-            Assert.NotNull(System.Management.Automation.ClrHost.TypeCatalog);
-        }
-
-        public void Dispose()
-        {
-        }
-
         [Fact]
         public void TestRunspaceWithPipeline()
         {
-            Assert.NotNull(System.Management.Automation.ClrHost.TypeCatalog);
             using (Runspace runspace = RunspaceFactory.CreateRunspace())
             {
                 runspace.Open();
