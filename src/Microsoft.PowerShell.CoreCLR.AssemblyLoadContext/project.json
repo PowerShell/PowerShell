@@ -5,7 +5,7 @@
 
     "compileFiles": [ "../monad/monad/src/CoreCLR/CorePsAssemblyLoadContext.cs" ],
 
-    "compilationOptions": { "define": [ "CORECLR" ] },
+    "compilationOptions": { "define": [ "CORECLR", "LINUX" ] },
 
     "dependencies": {
 	"Microsoft.NETCore.Runtime": "1.0.1-*",
