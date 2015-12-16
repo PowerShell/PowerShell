@@ -13,30 +13,20 @@
     },
 
     "dependencies": {
-	"Microsoft.NETCore.Runtime": "1.0.1-*",
-	"runtime.ubuntu.14.04-x64.runtime.native.system": "1.0.1-*",
-        "System.Management.Automation": "",
-        "Microsoft.PowerShell.Security": "",
-        "Microsoft.PowerShell.Commands.Utility": "",
-        "Microsoft.PowerShell.Commands.Management": ""
+	"NETStandard.Library": "1.0.0-rc2-23616",
+        "Microsoft.PowerShell.Commands.Utility": {
+	    "type": "build",
+	    "version": "1.0.0-*"
+	},
+        "Microsoft.PowerShell.Commands.Management": {
+	    "type": "build",
+	    "version": "1.0.0-*"
+	}
     },
 
     "commands": {
         "powershell": "Microsoft.PowerShell.Linux.Host"
     },
 
-    "frameworks": {
-        "dnxcore50": {
-            "dependencies": {
-		"Microsoft.CSharp": "4.0.1-*",
-		"System.Collections": "4.0.11-*",
-		"System.Console": "4.0.0-*",
-		"System.Diagnostics.FileVersionInfo": "4.0.0-*",
-		"System.Linq": "4.0.1-*",
-		"System.Runtime": "4.0.21-*",
-		"System.Threading": "4.0.11-*",
-                "System.Reflection": "4.1.0-*"
-            }
-        }
-    }
+    "frameworks": { "dnxcore50": { } }
 }

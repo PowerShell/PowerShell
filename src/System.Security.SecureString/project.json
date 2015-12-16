@@ -1,33 +1,13 @@
 {
-    "version": "3.0.0.0",
-    "description": "SecureString Class Library",
-    "authors": [
-        "garretts"
-    ],
-    "tags": [
-        ""
-    ],
-    "projectUrl": "",
-    "licenseUrl": "",
-    "compile": [
-        "SecureString.cs"
-    ],
-    "compilationOptions": {
-        "define": [
-            "CORECLR",
-            "_CORECLR"
-        ],
-        "allowUnsafe": true
+    "version": "1.0.0-*",
+    "description": "SecureString Stub",
+    "authors": [ "garretts" ],
+
+    "compilationOptions": { "allowUnsafe": true },
+
+    "dependencies": {
+	"NETStandard.Library": "1.0.0-rc2-23616"
     },
-    "frameworks": {
-        "dnxcore50": {
-            "dependencies": {
-                "Microsoft.CSharp": "4.0.1-*",
-                "System.Collections": "4.0.11-*",
-                "System.Linq": "4.0.1-*",
-                "System.Runtime": "4.0.21-*",
-                "System.Threading": "4.0.11-*"
-            }
-        }
-    }
+
+    "frameworks": { "dnxcore50": { } }
 }

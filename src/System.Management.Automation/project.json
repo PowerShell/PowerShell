@@ -1,14 +1,18 @@
 {
-    "version": "3.0.0.0",
-    "description": "System.Management.Automation Class Library",
+    "name": "System.Management.Automation",
+    "version": "1.0.0-*",
+    "description": "System.Management.Automation Library",
     "authors": [ "garretts", "andschwa" ],
-    "tags": [ "" ],
-    "projectUrl": "",
-    "licenseUrl": "",
 
     "dependencies": {
-	"Microsoft.Management.Infrastructure" : "",
-	"Microsoft.PowerShell.CoreCLR.AssemblyLoadContext": ""
+	"Microsoft.Management.Infrastructure" :  {
+	    "type": "build",
+	    "version": "1.0.0-*"
+	},
+	"Microsoft.PowerShell.CoreCLR.AssemblyLoadContext":  {
+	    "type": "build",
+	    "version": "1.0.0-*"
+	}
     },
 
     "compilationOptions": {
