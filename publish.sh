@@ -16,7 +16,7 @@
 
 # Copy Pester
 mkdir -p bin/Modules/Pester
-cp -r ext-src/pester bin/Modules/Pester
+cp -r ext-src/pester/* bin/Modules/Pester
 
 # Patch
 cp patches/*.dll bin/
