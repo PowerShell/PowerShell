@@ -6,23 +6,6 @@
     "projectUrl": "",
     "licenseUrl": "",
 
-    "compile": [ "../monad-build/gen/SECURITY/*.cs" ],
-
-    "compileFiles": [
-	"../monad/monad/src/security/AclCommands.cs",
-	"../monad/monad/src/security/CertificateProvider.cs",
-	"../monad/monad/src/security/CredentialCommands.cs",
-	"../monad/monad/src/security/ExecutionPolicyCommands.cs",
-	"../monad/monad/src/security/SecureStringCommands.cs",
-	"../monad/monad/src/security/SignatureCommands.cs",
-	"../monad/monad/src/security/Utils.cs",
-	"../monad/monad/src/security/certificateproviderexceptions.cs",
-    ],
-
-    "resource": [
-        "../monad/monad/src/security/resources/*.resx"
-    ],
-
     "compilationOptions": {
         "define": [
             "CORECLR",
@@ -152,5 +135,26 @@
                 "System.Xml.XmlSerializer": "4.0.11-*"
             }
         }
+    },
+
+    "compile": [ "../monad-build/gen/SECURITY/*.cs" ],
+
+    "compileFiles": [
+	"../monad/monad/src/security/AclCommands.cs",
+	"../monad/monad/src/security/CertificateProvider.cs",
+	"../monad/monad/src/security/CredentialCommands.cs",
+	"../monad/monad/src/security/ExecutionPolicyCommands.cs",
+	"../monad/monad/src/security/SecureStringCommands.cs",
+	"../monad/monad/src/security/SignatureCommands.cs",
+	"../monad/monad/src/security/Utils.cs",
+	"../monad/monad/src/security/certificateproviderexceptions.cs"
+    ],
+
+    "namedResource": {
+	"CertificateProviderStrings": "../monad-build/gen/SECURITY/CertificateProviderStrings.resources",
+	"ExecutionPolicyCommands": "../monad-build/gen/SECURITY/ExecutionPolicyCommands.resources",
+	"SecureStringCommands": "../monad-build/gen/SECURITY/SecureStringCommands.resources",
+	"SignatureCommands": "../monad-build/gen/SECURITY/SignatureCommands.resources",
+	"UtilsStrings": "../monad-build/gen/SECURITY/UtilsStrings.resources"
     }
 }
