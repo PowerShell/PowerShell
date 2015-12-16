@@ -6,8 +6,8 @@ using System.Reflection;
 [assembly:InternalsVisibleTo("Microsoft.PowerShell.Security")]
 [assembly:InternalsVisibleTo("Microsoft.PowerShell.Linux.Host")]
 [assembly:InternalsVisibleTo("Microsoft.PowerShell.Linux.UnitTests")]
-[assembly:AssemblyFileVersionAttribute("0.0.0.0")]
-[assembly:AssemblyVersion("0.0.0.0")]
+[assembly:AssemblyFileVersionAttribute("3.0.0.0")]
+[assembly:AssemblyVersion("3.0.0.0")]
 
 namespace System.Management.Automation
 {
