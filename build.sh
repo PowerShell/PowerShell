@@ -2,7 +2,13 @@
 
 export BIN=$(pwd)/bin
 
-mkdir $BIN
+mkdir -p $BIN/Modules
+
+# Deploy Pester
+(
+    cd $BIN/Modules
+    ln -s ../../ext-src/pester Pester
+)
 
 # Build native components
 (
@@ -28,7 +34,3 @@ mkdir $BIN
     # Copy files that dotnet-publish doesn't currently deploy
     cp *.ps1xml *_profile.ps1 $BIN
 )
-
-# Deploy Pester
-mkdir -p $BIN/Modules/Pester
-cp -r ext-src/pester/* $BIN/Modules/Pester
