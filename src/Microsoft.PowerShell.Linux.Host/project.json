@@ -14,6 +14,7 @@
 
     "dependencies": {
 	"Microsoft.NETCore.Runtime": "1.0.1-*",
+	"runtime.ubuntu.14.04-x64.runtime.native.system": "1.0.1-*",
         "System.Management.Automation": "",
         "Microsoft.PowerShell.Security": "",
         "Microsoft.PowerShell.Commands.Utility": "",
