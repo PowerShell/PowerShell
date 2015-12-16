@@ -78,7 +78,7 @@ Our convention is to create feature branches `dev/feature` off our integration b
 We use the [.NET Command Line Interface][dotnet-cli] (`dotnet-cli`) to build the managed components, and [CMake][] to build the native components. Install `dotnet-cli` by following their documentation. Then install the following dependencies (assuming Ubuntu 14.04):
 
 ```sh
-sudo apt-get install g++ cmake make libicu-dev libboost-filesystem-dev lldb-3.6 strace
+sudo apt-get install g++ cmake make libboost-filesystem-dev lldb-3.6 strace
 ```
 
 ### OMI
@@ -94,29 +94,86 @@ sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev
 
 ## Building
 
+The following steps are done by `./build.sh`. Note that `dotnet restore` must be done at least once from the top directory to obtain all the necessary .NET packages. The variable `$BIN` is the output directory, `bin`.
+
 ### Native
+
+- `libpsnative.so`: native functions that `CorePsPlatform.cs` P/Invokes
+- `libpshost.a`: native CLR host library
+- `powershell`: native CLR host executable (for local shell)
+- `api-ms-win-core-registry-l1-1-0.dll`: registry stub to prevent missing DLL error on shutdown
+
+#### monad-native
+
+Driven by CMake, with its own unit tests using Google Test.
 
 ```sh
 cd src/monad-native
 cmake -DCMAKE_BUILD_TYPE=Debug .
-VERBOSE=1 make -j
+make -j
 ctest -V
+# Deploy development copy of libpsnative
+cp native/libpsnative.so $BIN
+```
+
+#### registry-stub
+
+Provides `RegCloseKey()` to satisfy the disposal of `SafeHandle` objects on shutdown.
+
+```sh
+cd src/registry-stub
+make
+cp api-ms-win-core-registry-l1-1-0.dll $BIN
 ```
 
 ### Managed
 
+Builds with `dotnet-cli`. Publishes all dependencies into the `bin` directory.
+
 ```sh
-dotnet restore
 cd src/Microsoft.PowerShell.Linux.Host
-dotnet publish --framework dnxcore50 --runtime ubuntu.14.04-x64 --output ../../bin
+dotnet publish --framework dnxcore50 --runtime ubuntu.14.04-x64 --output $BIN
+# Copy files that dotnet-publish doesn't currently deploy
+cp *.ps1xml *_profile.ps1 $BIN
 ```
 
-Now run with `./powershell`.
+### PowerShell Remoting Protocol
 
-## Adding Pester tests
+PSRP communication is tunneled through OMI using the `monad-omi-provider`. These build steps are not part of the `./build.sh` script.
 
-Pester tests are located in the `src/pester-tests` folder. The makefile targets `test` and `pester-tests` will run all Pester tests.
+#### OMI
 
-The steps to add your pester tests are:
-- add `*.Tests.ps1` files to `src/pester-tests`
-- run `make test` to run all the tests
+```sh
+cd src/omi/Unix
+./configure --dev --enable-debug
+make -j
+```
+
+#### Provider
+
+The provider has its own `./build.sh` script which does the second step documented here.
+
+```sh
+cd src/monad-omi-provider
+make clean && make -j && make reg
+```
+
+## Running
+
+- launch local shell with `./run.sh`.
+- launch local shell in LLDB with `./debug.sh`
+- launch `omiserver` for PSRP (and in LLDB) with `./prsp.sh`, and connect with `Enter-PSSession` from Windows
+
+## Known Issues
+
+### xUnit
+
+Sadly, `dotnet-test` is not fully supported on Linux, so our xUnit tests do not currently run. We may be able to work around this, or get the `dotnet-cli` team to fix their xUnit runner. GitHub [issue](https://github.com/dotnet/cli/issues/407).
+
+### Pester
+
+While Pester gets deployed and can be invoked, it has an issue asking for confirmation to do anything, and refuses to execute multiple `It` blocks. Need to work with upstream PowerShell teams to solve this.
+
+### Remoting
+
+Connecting to PowerShell on Linux gets quite far, but bails out to due `Cannot convert the "System.Management.Automation.Host.Size" value of type "System.String" to type "System.Type".`
