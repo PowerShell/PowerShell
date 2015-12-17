@@ -75,7 +75,7 @@ Our convention is to create feature branches `dev/feature` off our integration b
 
 ## Setup build environment
 
-We use the [.NET Command Line Interface][dotnet-cli] (`dotnet-cli`) to build the managed components, and [CMake][] to build the native components. Install `dotnet-cli` by following their documentation. Then install the following dependencies (assuming Ubuntu 14.04):
+We use the [.NET Command Line Interface][dotnet-cli] (`dotnet-cli`) to build the managed components, and [CMake][] to build the native components. Install `dotnet-cli` by following their documentation (make sure to install the `dotnet-dev` package to get the latest version). Then install the following dependencies (assuming Ubuntu 14.04):
 
 ```sh
 sudo apt-get install g++ cmake make libboost-filesystem-dev lldb-3.6 strace
@@ -94,7 +94,11 @@ sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev
 
 ## Building
 
-The following steps are done by `./build.sh`. Note that `dotnet restore` must be done at least once from the top directory to obtain all the necessary .NET packages. The variable `$BIN` is the output directory, `bin`.
+The command `dotnet restore` must be done at least once from the top directory to obtain all the necessary .NET packages; unfortunately, we also have to temporarily patch `System.Console.dll` until the API is officially updated, so run `./patch.sh`.
+
+Build with `./build.sh`, which does the following steps.
+
+> The variable `$BIN` is the output directory, `bin`.
 
 ### Native
 
@@ -169,10 +173,6 @@ make clean && make -j && make reg
 ### xUnit
 
 Sadly, `dotnet-test` is not fully supported on Linux, so our xUnit tests do not currently run. We may be able to work around this, or get the `dotnet-cli` team to fix their xUnit runner. GitHub [issue](https://github.com/dotnet/cli/issues/407).
-
-### Pester
-
-While Pester gets deployed and can be invoked, it has an issue asking for confirmation to do anything, and refuses to execute multiple `It` blocks. Need to work with upstream PowerShell teams to solve this.
 
 ### Remoting
 
