@@ -164,8 +164,8 @@ namespace Microsoft.PowerShell.Linux.Host
 			this.OnUpArrow(); 
 			break; 
                     case ConsoleKey.DownArrow:
-			// TODO: this.OnDownArrow();
-			continue;
+			this.OnDownArrow();
+			break;
 
 		    // TODO: case ConsoleKey.LeftWindows: not available in linux 
 		    // TODO: case ConsoleKey.RightWindows: not available in linux
@@ -317,7 +317,8 @@ namespace Microsoft.PowerShell.Linux.Host
 	/// The up arrow was pressed to retrieve history 
 	/// </summary>
 	private void OnUpArrow() {
-	    if (previousKeyPress.Key != ConsoleKey.UpArrow || previousKeyPress.Key == ConsoleKey.Enter)
+
+	    if ((previousKeyPress.Key != ConsoleKey.UpArrow && previousKeyPress.Key != ConsoleKey.DownArrow) || previousKeyPress.Key == ConsoleKey.Enter)
 	    {
 		//first time getting the history
 		using (Pipeline pipeline = this.runspace.CreatePipeline("Get-History"))
@@ -328,7 +329,6 @@ namespace Microsoft.PowerShell.Linux.Host
 
 		BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
 		this.Render(); 
-		
 		historyIndex++;
 	    }
 
@@ -337,20 +337,56 @@ namespace Microsoft.PowerShell.Linux.Host
 		BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
 		this.Render();
 		
-		if (historyIndex < historyResult.Count)
+		if (historyIndex < historyResult.Count -1)
 		{
 		    historyIndex++;
 		}
 
-		if (historyIndex == historyResult.Count)
+		else 
+		{
+		    historyIndex = 0;
+		}		
+	    }  
+	}
+	
+	/// <summary>
+	///   Changes the history queue when the down arrow is pressed
+	/// </summary>
+	private void OnDownArrow()
+	{
+	    if ((previousKeyPress.Key != ConsoleKey.DownArrow && previousKeyPress.Key != ConsoleKey.UpArrow) || previousKeyPress.Key == ConsoleKey.Enter)
+	    {	
+		//first time getting the history
+		using (Pipeline pipeline = this.runspace.CreatePipeline("Get-History"))
+		{
+		    historyResult = pipeline.Invoke();	
+		}
+		
+		historyIndex = historyResult.Count -1;	
+		BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
+		this.Render(); 
+
+		historyIndex--;
+	    }
+
+	    else
+	    {
+		BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
+		this.Render();
+		
+	        if( historyIndex == 0)
+		{
+		    historyIndex = historyResult.Count -1; 
+		}
+
+		else
 		{
 		    historyIndex--;
 		}
-		
+
 	    }
-  
 	}
-	
+
         /// <summary>
         /// Moves to the left of the cursor position.
         /// </summary>
