@@ -5,6 +5,7 @@
 
     "dependencies": {
 	"NETStandard.Library": "1.0.0-rc2-23616",
+
 	"Microsoft.CSharp": "4.0.1-rc2-23616",
 	"Microsoft.Win32.Registry.AccessControl": "4.0.0-rc2-23616",
 	"System.Collections.Specialized": "4.0.1-rc2-23616",
@@ -29,8 +30,11 @@
 	"System.Threading.Tasks.Parallel": "4.0.1-rc2-23616",
 	"System.Xml.XPath.XmlDocument": "4.0.1-rc2-23616",
 	"System.Xml.XmlDocument": "4.0.1-rc2-23616",
-	"System.Xml.XmlSerializer": "4.0.11-rc2-23616"
-    },
+	"System.Xml.XmlSerializer": "4.0.11-rc2-23616",
+
+    	"System.ServiceProcess.ServiceController": "4.1.0-rc2-23616",
+	"System.Net.NameResolution": "4.0.0-rc2-23616"
+},
 
     "frameworks": { "dnxcore50": { } }
 }

@@ -14,7 +14,7 @@ namespace System.Management.Automation
     {
         private Dictionary<string, string> InitializeTypeCatalog()
         {
-            Dictionary<string, string> typeCatalog = new Dictionary<string, string>(1807, StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, string> typeCatalog = new Dictionary<string, string>(1812, StringComparer.OrdinalIgnoreCase);
             typeCatalog["Microsoft.CSharp.RuntimeBinder.Binder"] = "Microsoft.CSharp, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo"] = "Microsoft.CSharp, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfoFlags"] = "Microsoft.CSharp, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
@@ -1694,6 +1694,11 @@ namespace System.Management.Automation
             typeCatalog["System.Security.Principal.WindowsBuiltInRole"] = "System.Security.Principal.Windows, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.Security.Principal.WindowsPrincipal"] = "System.Security.Principal.Windows, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["Microsoft.Win32.SafeHandles.SafeAccessTokenHandle"] = "System.Security.Principal.Windows, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["System.ServiceProcess.ServiceController"] = "System.ServiceProcess.ServiceController, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["System.ServiceProcess.ServiceControllerStatus"] = "System.ServiceProcess.ServiceController, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["System.ServiceProcess.ServiceStartMode"] = "System.ServiceProcess.ServiceController, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["System.ServiceProcess.ServiceType"] = "System.ServiceProcess.ServiceController, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["System.ServiceProcess.TimeoutException"] = "System.ServiceProcess.ServiceController, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.Text.RegularExpressions.Regex"] = "System.Text.RegularExpressions, Version=4.0.11.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.Text.RegularExpressions.MatchEvaluator"] = "System.Text.RegularExpressions, Version=4.0.11.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.Text.RegularExpressions.Capture"] = "System.Text.RegularExpressions, Version=4.0.11.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
