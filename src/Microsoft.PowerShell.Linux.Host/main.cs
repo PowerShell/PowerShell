@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell.Linux.Host
                 string prompt = Prompt(this.myHost.Runspace);
 
                 this.myHost.UI.Write(ConsoleColor.White, ConsoleColor.Black, prompt);
-                string cmd = this.myHost.UI.ReadLine();
+                string cmd = consoleReadLine.Read(this.myHost.Runspace);
                 this.Execute(cmd);
             }
 
