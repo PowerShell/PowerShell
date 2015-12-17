@@ -2,6 +2,35 @@
     "version": "1.0.0-*",
     "description": "Facade to generate folder of dependencies",
     "authors": [ "andschwa" ],
-    "dependencies": { "NETStandard.Library": "1.0.0-rc2-23616" },
+
+    "dependencies": {
+	"NETStandard.Library": "1.0.0-rc2-23616",
+	"Microsoft.CSharp": "4.0.1-rc2-23616",
+	"Microsoft.Win32.Registry.AccessControl": "4.0.0-rc2-23616",
+	"System.Collections.Specialized": "4.0.1-rc2-23616",
+	"System.ComponentModel.EventBasedAsync": "4.0.11-rc2-23616",
+	"System.ComponentModel.TypeConverter": "4.0.1-rc2-23616",
+	"System.Data.Common": "4.0.1-rc2-23616",
+	"System.Diagnostics.Contracts": "4.0.1-rc2-23616",
+	"System.Diagnostics.FileVersionInfo": "4.0.0-rc2-23616",
+	"System.Diagnostics.TraceSource": "4.0.0-rc2-23616",
+	"System.Dynamic.Runtime": "4.0.11-rc2-23616",
+	"System.IO.FileSystem.AccessControl": "4.0.0-rc2-23616",
+	"System.IO.FileSystem.DriveInfo": "4.0.0-rc2-23616",
+	"System.IO.FileSystem.Watcher": "4.0.0-rc2-23616",
+	"System.IO.Pipes": "4.0.0-rc2-23616",
+	"System.Linq.Expressions": "4.0.11-rc2-23616",
+	"System.Net.Http": "4.0.1-rc2-23616",
+	"System.Net.NetworkInformation": "4.1.0-rc2-23616",
+	"System.Reflection.Emit.Lightweight": "4.0.1-rc2-23616",
+	"System.Security.AccessControl": "4.0.0-rc2-23616",
+	"System.Security.Cryptography.Algorithms": "4.0.0-rc2-23616",
+	"System.Security.Cryptography.X509Certificates": "4.0.0-rc2-23616",
+	"System.Threading.Tasks.Parallel": "4.0.1-rc2-23616",
+	"System.Xml.XPath.XmlDocument": "4.0.1-rc2-23616",
+	"System.Xml.XmlDocument": "4.0.1-rc2-23616",
+	"System.Xml.XmlSerializer": "4.0.11-rc2-23616"
+    },
+
     "frameworks": { "dnxcore50": { } }
 }
