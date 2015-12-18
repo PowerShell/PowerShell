@@ -152,9 +152,8 @@ namespace Microsoft.PowerShell.Linux.Host
             // Note that this application does not support console files so 
             // only the default snap-ins will be available.
             this.myHost = new MyHost(this);
-            // InitialSessionState iss = InitialSessionState.CreateDefault2();
-            // TODO: CreateRunspace(this.myHost, iss)
-            this.myRunSpace = RunspaceFactory.CreateRunspace(this.myHost);
+            InitialSessionState iss = InitialSessionState.CreateDefault2();
+            this.myRunSpace = RunspaceFactory.CreateRunspace(this.myHost, iss);
             this.myRunSpace.Open();
 
             // Create a PowerShell object to run the commands used to create
