@@ -173,7 +173,3 @@ make clean && make -j && make reg
 ### xUnit
 
 Sadly, `dotnet-test` is not fully supported on Linux, so our xUnit tests do not currently run. We may be able to work around this, or get the `dotnet-cli` team to fix their xUnit runner. GitHub [issue](https://github.com/dotnet/cli/issues/407).
-
-### Remoting
-
-Connecting to PowerShell on Linux gets quite far, but bails out to due `Cannot convert the "System.Management.Automation.Host.Size" value of type "System.String" to type "System.Type".`
