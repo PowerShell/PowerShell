@@ -233,9 +233,10 @@ namespace Microsoft.PowerShell.Linux.Host
 	    if (previousKeyPress.Key != ConsoleKey.Tab || previousKeyPress.Key == ConsoleKey.Enter)
 	    {
 		tabBuffer = this.buffer;
+		
 		using (PowerShell powershell = PowerShell.Create())
 		{
-		    cmdCompleteOpt = CommandCompletion.CompleteInput(this.tabBuffer.ToString(), this.current, options, powershell);
+		    cmdCompleteOpt = CommandCompletion.CompleteInput(this.tabBuffer.ToString(), this.current, options, powershell);		
 		}
 	    }
 
@@ -245,7 +246,7 @@ namespace Microsoft.PowerShell.Linux.Host
 	    }
 	    catch (Exception)
 	    {
-		//todo continue nicely
+		// TODO: continue nicely
 	    }
 
 	    tabCompletionPos++;
@@ -283,15 +284,14 @@ namespace Microsoft.PowerShell.Linux.Host
 	/// </summary>
 	private void BufferFromString(string endResult)
 	{
-	        //reset prompt and buffer
-	    	OnEscape();
-
-		//set the buffer to the string
-		for (int i = 0; i < endResult.Length; i++)
-		{
-		    this.Insert(endResult[i]);		
-		}
-
+	    //reset prompt and buffer
+	    OnEscape();
+	    
+	    //set the buffer to the string
+	    for (int i = 0; i < endResult.Length; i++)
+	    {
+		this.Insert(endResult[i]);		
+	    }
 	}
 
         /// <summary>
@@ -318,52 +318,24 @@ namespace Microsoft.PowerShell.Linux.Host
 	/// </summary>
 	private void OnDownArrow() {
 
-	    if ((previousKeyPress.Key != ConsoleKey.UpArrow && previousKeyPress.Key != ConsoleKey.DownArrow) || previousKeyPress.Key == ConsoleKey.Enter)
+	    if (historyIndex == historyResult.Count) 
 	    {
-		//first time getting the history
-		using (Pipeline pipeline = this.runspace.CreatePipeline("Get-History"))
-		{
-			historyResult = pipeline.Invoke();			
-		}
-		
-		try
-		{
-		    BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
-		    this.Render(); 
-		    historyIndex++;
-
-		}
-
-		catch
-		{
-		    return;
-		}		
+		OnEscape();
 	    }
+		
+	    historyIndex++;
 
-	    else
+	    try 
 	    {
-		try
-		{
-		    BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
-		    this.Render();
-		
-		    if (historyIndex < historyResult.Count -1)
-		    {
-			historyIndex++;
-		    }
-
-		    else 
-		    {
-			historyIndex = 0;
-		    }		
-		}
-
-		catch 
-		{
-		    return;
-		}
+		BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());   this.Render();
 	    }
+	    
+	    catch
+	    {
+		return;
+	    }	    
 	}
+
 	/// <summary>
 	///   Changes the history queue when the down arrow is pressed
 	/// </summary>
@@ -384,15 +356,21 @@ namespace Microsoft.PowerShell.Linux.Host
 		    this.Render(); 
 		    historyIndex--;
 		}
-
+		
+	     
 		catch
-		{
+		{		
 		    return;
 		}
+		
 	    }
-
 	    else
 	    {
+		if (historyIndex > historyResult.Count) //we hit the blank prompt using the down arrow 
+		{
+		    historyIndex = historyResult.Count -1;
+		}
+
 		try
 		{
 		    BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
@@ -400,7 +378,7 @@ namespace Microsoft.PowerShell.Linux.Host
 		
 		    if( historyIndex == 0)
 		    {
-			historyIndex = historyResult.Count -1; 
+			return;
 		    }
 
 		    else
