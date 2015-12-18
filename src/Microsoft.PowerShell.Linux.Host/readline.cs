@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Linux.Host
 	    {
 		tabResult = cmdCompleteOpt.CompletionMatches[tabCompletionPos].CompletionText;
 	    }
-	    catch (Exception ex)
+	    catch (Exception)
 	    {
 		//todo continue nicely
 	    }
