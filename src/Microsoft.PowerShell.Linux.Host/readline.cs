@@ -7,7 +7,7 @@ namespace Microsoft.PowerShell.Linux.Host
     using System.Text;
 
     /// <summary>
-    /// This class is used to read the command line and color the text as 
+    /// This class is used to read the command line and color the text as
     /// it is entered. Tokens are determined using the PSParser.Tokenize
     /// method.
     /// </summary>
@@ -24,15 +24,15 @@ namespace Microsoft.PowerShell.Linux.Host
         private StringBuilder buffer = new StringBuilder();
 
 	/// <summary>
-	/// integeger for tracking up and down arrow history   
+	/// integeger for tracking up and down arrow history
 	/// </summary>
-	private int historyIndex; 
+	private int historyIndex;
 
 	/// <summary>
-	/// Used for storing tab completion   
+	/// Used for storing tab completion
 	/// </summary>
-	private CommandCompletion cmdCompleteOpt; 
-	
+	private CommandCompletion cmdCompleteOpt;
+
         /// <summary>
         /// The position of the cursor within the buffer.
         /// </summary>
@@ -42,20 +42,20 @@ namespace Microsoft.PowerShell.Linux.Host
 	/// Detects previously pressed key for TabCompletion
 	/// </summary>
         /// <summary>
-	private ConsoleKeyInfo previousKeyPress; 
+	private ConsoleKeyInfo previousKeyPress;
 
 	/// <summary>
 	/// Retains TabCompletion position
 	/// </summary>
-	private int tabCompletionPos; 
+	private int tabCompletionPos;
 
 	/// <summary>
 	///  History Queue
 	/// </summary>
-	private Collection<PSObject> historyResult; 
+	private Collection<PSObject> historyResult;
 
 	/// <summary>
-	/// Hashtable for command completion options  
+	/// Hashtable for command completion options
 	/// </summary>
 	private System.Collections.Hashtable options = new System.Collections.Hashtable();
 
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Linux.Host
 	/// <summary>
 	/// tabbuffer for storing result of tabcompletion
 	/// </summary>
-	private string tabResult; 
+	private string tabResult;
 
         /// The count of characters in buffer rendered.
         /// </summary>
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Linux.Host
                     ConsoleColor.DarkCyan,   // StatementSeparator
                     this.defaultColor,       // NewLine
                     this.defaultColor,       // LineContinuation
-                    this.defaultColor,       // Position            
+                    this.defaultColor,       // Position
                 };
         }
 
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Linux.Host
             this.Initialize();
 
             while (true)
-            {             
+            {
                 ConsoleKeyInfo key = Console.ReadKey(true);
 
                 switch (key.Key)
@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Linux.Host
                         break;
 		    case ConsoleKey.Delete:
                         this.OnDelete();
-                        break;			
+                        break;
 		    case ConsoleKey.Enter:
                         return this.OnEnter();
                    case ConsoleKey.RightArrow:
@@ -157,19 +157,19 @@ namespace Microsoft.PowerShell.Linux.Host
                     case ConsoleKey.End:
                         this.OnEnd();
                         break;
-		    case ConsoleKey.Tab: 
+		    case ConsoleKey.Tab:
 			this.OnTab();
 			break;
                     case ConsoleKey.UpArrow:
-			this.OnUpArrow(); 
-			break; 
+			this.OnUpArrow();
+			break;
                     case ConsoleKey.DownArrow:
 			this.OnDownArrow();
 			break;
 
-		    // TODO: case ConsoleKey.LeftWindows: not available in linux 
+		    // TODO: case ConsoleKey.LeftWindows: not available in linux
 		    // TODO: case ConsoleKey.RightWindows: not available in linux
-			
+
                     default:
 
                         if (key.KeyChar == '\x0D')
@@ -187,7 +187,7 @@ namespace Microsoft.PowerShell.Linux.Host
                         this.Render();
 			break;
                 }
-    		        previousKeyPress = key; 
+    		        previousKeyPress = key;
             }
         }
 
@@ -196,8 +196,8 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         private void Initialize()
         {
-	    this.tabCompletionPos = 0; 
-            this.historyIndex = 0; 
+	    this.tabCompletionPos = 0;
+            this.historyIndex = 0;
 	    this.buffer.Length = 0;
             this.current = 0;
             this.rendered = 0;
@@ -226,17 +226,17 @@ namespace Microsoft.PowerShell.Linux.Host
         }
 
 	/// <summary>
-	///   The Tab key was entered 
+	///   The Tab key was entered
 	/// </summary>
 	private void OnTab()
 	{
 	    if (previousKeyPress.Key != ConsoleKey.Tab || previousKeyPress.Key == ConsoleKey.Enter)
 	    {
 		tabBuffer = this.buffer;
-		
+
 		using (PowerShell powershell = PowerShell.Create())
 		{
-		    cmdCompleteOpt = CommandCompletion.CompleteInput(this.tabBuffer.ToString(), this.current, options, powershell);		
+		    cmdCompleteOpt = CommandCompletion.CompleteInput(this.tabBuffer.ToString(), this.current, options, powershell);
 		}
 	    }
 
@@ -253,8 +253,8 @@ namespace Microsoft.PowerShell.Linux.Host
 
 	    //if there is a command for the user before the uncompleted option
 	    if (!String.IsNullOrEmpty(tabResult))
-	    {			
-		//handle file path slashes 
+	    {
+		//handle file path slashes
 		if (tabResult.Contains(".\\"))
                 {
                      tabResult = tabResult.Replace(".\\", "");
@@ -262,20 +262,20 @@ namespace Microsoft.PowerShell.Linux.Host
 
 		if (this.buffer.ToString().Contains(" "))
 		{
-		    var replaceIndex = cmdCompleteOpt.ReplacementIndex; 
+		    var replaceIndex = cmdCompleteOpt.ReplacementIndex;
 		    string replaceBuffer = this.buffer.ToString();
-		    
-		    replaceBuffer = replaceBuffer.Remove(replaceIndex);	
-		    tabResult = replaceBuffer + tabResult;	    
-	   	}		
+
+		    replaceBuffer = replaceBuffer.Remove(replaceIndex);
+		    tabResult = replaceBuffer + tabResult;
+	   	}
 
 		OnEscape();
 
 		BufferFromString(tabResult);
 
-		//re-render 
+		//re-render
 	        this.Render();
-	    }		
+	    }
 
 	} //end of OnTab()
 
@@ -286,11 +286,11 @@ namespace Microsoft.PowerShell.Linux.Host
 	{
 	    //reset prompt and buffer
 	    OnEscape();
-	    
+
 	    //set the buffer to the string
 	    for (int i = 0; i < endResult.Length; i++)
 	    {
-		this.Insert(endResult[i]);		
+		this.Insert(endResult[i]);
 	    }
 	}
 
@@ -302,7 +302,7 @@ namespace Microsoft.PowerShell.Linux.Host
 	    this.current = 0;
             this.cursor.Reset();
         }
-	
+
         /// <summary>
         /// The Escape key was enetered.
         /// </summary>
@@ -314,26 +314,26 @@ namespace Microsoft.PowerShell.Linux.Host
         }
 
 	/// <summary>
-	/// The up arrow was pressed to retrieve history 
+	/// The up arrow was pressed to retrieve history
 	/// </summary>
 	private void OnDownArrow() {
 
-	    if (historyIndex == historyResult.Count) 
+	    if (historyIndex == historyResult.Count)
 	    {
 		OnEscape();
 	    }
-		
+
 	    historyIndex++;
 
-	    try 
+	    try
 	    {
 		BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());   this.Render();
 	    }
-	    
+
 	    catch
 	    {
 		return;
-	    }	    
+	    }
 	}
 
 	/// <summary>
@@ -342,31 +342,31 @@ namespace Microsoft.PowerShell.Linux.Host
 	private void OnUpArrow()
 	{
 	    if ((previousKeyPress.Key != ConsoleKey.DownArrow && previousKeyPress.Key != ConsoleKey.UpArrow) || previousKeyPress.Key == ConsoleKey.Enter)
-	    {	
+	    {
 		//first time getting the history
 		using (Pipeline pipeline = this.runspace.CreatePipeline("Get-History"))
 		{
-		    historyResult = pipeline.Invoke();	
+		    historyResult = pipeline.Invoke();
 		}
 
 		try
 		{
-		    historyIndex = historyResult.Count -1;	
+		    historyIndex = historyResult.Count -1;
 		    BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
-		    this.Render(); 
+		    this.Render();
 		    historyIndex--;
 		}
-		
-	     
+
+
 		catch
-		{		
+		{
 		    return;
 		}
-		
+
 	    }
 	    else
 	    {
-		if (historyIndex > historyResult.Count) //we hit the blank prompt using the down arrow 
+		if (historyIndex > historyResult.Count) //we hit the blank prompt using the down arrow
 		{
 		    historyIndex = historyResult.Count -1;
 		}
@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell.Linux.Host
 		{
 		    BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
 		    this.Render();
-		
+
 		    if( historyIndex == 0)
 		    {
 			return;
@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell.Linux.Host
 			historyIndex--;
 		    }
 		}
-		
+
 		catch
 		{
 		    return;
@@ -397,7 +397,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         /// Moves to the left of the cursor position.
         /// </summary>
-        /// <param name="consoleModifiers">Enumeration for Alt, Control, 
+        /// <param name="consoleModifiers">Enumeration for Alt, Control,
         /// and Shift keys.</param>
         private void OnLeft(ConsoleModifiers consoleModifiers)
         {
@@ -434,7 +434,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// Determines if a character is a seperator.
         /// </summary>
         /// <param name="ch">Character to investigate.</param>
-        /// <returns>A value that indicates whether the character 
+        /// <returns>A value that indicates whether the character
         /// is a seperator.</returns>
         private static bool IsSeperator(char ch)
         {
@@ -444,7 +444,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         /// Moves to what is to the right of the cursor position.
         /// </summary>
-        /// <param name="consoleModifiers">Enumeration for Alt, Control, 
+        /// <param name="consoleModifiers">Enumeration for Alt, Control,
         /// and Shift keys.</param>
         private void OnRight(ConsoleModifiers consoleModifiers)
         {
@@ -493,7 +493,7 @@ namespace Microsoft.PowerShell.Linux.Host
                 Cursor.Move(1);
             }
         }
-	
+
         /// <summary>
         /// Moves the cursor one character to the left.
         /// </summary>
@@ -506,7 +506,7 @@ namespace Microsoft.PowerShell.Linux.Host
                 Cursor.Move(-1);
             }
         }
-	
+
         /// <summary>
         /// The Enter key was entered.
         /// </summary>
@@ -516,7 +516,7 @@ namespace Microsoft.PowerShell.Linux.Host
             Console.Out.Write("\n");
             return this.buffer.ToString();
         }
-	
+
         /// <summary>
         /// The delete key was entered.
         /// </summary>
@@ -528,7 +528,7 @@ namespace Microsoft.PowerShell.Linux.Host
                 this.Render();
             }
         }
-	
+
         /// <summary>
         /// The Backspace key was entered.
         /// </summary>
@@ -541,7 +541,7 @@ namespace Microsoft.PowerShell.Linux.Host
                 this.Render();
             }
         }
-	
+
         /// <summary>
         /// Displays the line.
         /// </summary>
@@ -550,18 +550,18 @@ namespace Microsoft.PowerShell.Linux.Host
 	    this.cursor.Reset();
 
             string text = this.buffer.ToString();
-	    
+
             // The PowerShell tokenizer is used to decide how to colorize
             // the input.  Any errors in the input are returned in 'errors',
             // but we won't be looking at those here.
             Collection<PSParseError> errors = null;
             Collection<PSToken> tokens = PSParser.Tokenize(text, out errors);
- 	
+
             if (tokens.Count > 0)
             {
                 // We can skip rendering tokens that end before the cursor.
                 int i;
-             
+
 		for (i = 0; i < tokens.Count; ++i)
                 {
                     if (this.current >= tokens[i].Start)
@@ -620,7 +620,7 @@ namespace Microsoft.PowerShell.Linux.Host
             this.rendered = text.Length;
             this.cursor.Place(this.current);
         }
-	
+
         /// <summary>
         /// A helper class for maintaining the cursor while editing the command line.
         /// </summary>
@@ -635,7 +635,7 @@ namespace Microsoft.PowerShell.Linux.Host
             /// The left anchor for repositioning the cursor.
             /// </summary>
             private int anchorLeft;
-	    
+
             /// <summary>
             /// Initializes a new instance of the Cursor class.
             /// </summary>
@@ -682,6 +682,6 @@ namespace Microsoft.PowerShell.Linux.Host
 
                 Console.CursorTop = cursorTop;
             }
-        } // End Cursor 
+        } // End Cursor
     }
 }
