@@ -55,7 +55,7 @@ int32_t GetLinkCount(const char* fileName, int32_t *count)
     if (!fileName)
     {
         errno = ERROR_INVALID_PARAMETER;
-        return FALSE;
+        return 0;
     }
 
     struct stat statBuf;
