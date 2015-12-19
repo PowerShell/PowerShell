@@ -126,7 +126,7 @@
     }
 
     Context "String tests" {
-        if ($env:TEMP -eq "/tmp")
+        if ($true) # TODO: test if Windows or Linux
         {
             $nl = "`n"
         }

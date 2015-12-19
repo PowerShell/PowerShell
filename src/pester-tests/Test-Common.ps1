@@ -16,7 +16,7 @@ Function GetTempDir
     }
     else
     {
-        return "/tmp/"
+        return "/tmp"
     }
 }
 

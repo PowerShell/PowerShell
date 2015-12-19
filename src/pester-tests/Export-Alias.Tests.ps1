@@ -1,7 +1,10 @@
-﻿Describe "Export-Alias" {
-    $testAliasDirectory = $env:TEMP + "/ExportAliasTestDirectory"
+$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+. $here/Test-Common.ps1
+
+Describe "Export-Alias" {
+    $testAliasDirectory = "$(GetTempDir)/ExportAliasTestDirectory"
     $testAliases        = "TestAliases"
-    $fulltestpath       = $testAliasDirectory + "/" + $testAliases
+    $fulltestpath       = "$($testAliasDirectory)/$($testAliases)"
 
     BeforeEach {
         New-Item -Path $testAliasDirectory -ItemType Directory -Force

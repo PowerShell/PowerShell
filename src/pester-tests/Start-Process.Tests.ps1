@@ -4,8 +4,7 @@
 Describe "Start-Process" {
     $pingCommand = (Get-Command -CommandType Application ping)[0].Definition
     $pingDirectory = Split-Path $pingCommand -Parent
-    $tempDir = GetTempDir
-    $tempFile = $tempDir + "PSTest"
+    $tempFile = "$(GetTempDir)/PSTest"
     $assetsFile = $here + "/assets/SortTest.txt"
     $windows = IsWindows
     if ($windows)
