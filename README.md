@@ -89,7 +89,7 @@ To develop on the PowerShell Remoting Protocol (PSRP), you'll need to be able to
 sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev
 ```
 
-[dotnet-cli]: https://github.com/dotnet/cli
+[dotnet-cli]: https://github.com/dotnet/cli#new-to-net-cli
 [CMake]: https://cmake.org/cmake/help/v2.8.12/cmake.html
 
 ## Building
