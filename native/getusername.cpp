@@ -6,7 +6,6 @@
 #include <locale.h>
 #include <unistd.h>
 #include <string>
-#include <unicode/unistr.h>
 #include <pwd.h>
 #include "getusername.h"
 

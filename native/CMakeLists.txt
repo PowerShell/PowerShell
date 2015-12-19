@@ -9,7 +9,6 @@ add_library(psnative SHARED
   setdate.cpp
   terminal.cpp)
 
-target_link_libraries(psnative icuuc)
 target_include_directories (psnative PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 install(TARGETS psnative

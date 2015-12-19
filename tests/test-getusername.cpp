@@ -6,7 +6,6 @@
 #include <vector>
 #include <unistd.h>
 #include <gtest/gtest.h>
-#include <unicode/unistr.h>
 #include <pwd.h>
 #include "getusername.h"
 

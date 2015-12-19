@@ -8,7 +8,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string>
-#include <unicode/unistr.h>
 #include "getlinkcount.h"
 
 //! @brief GetLinkCount retrieves the file link count (number of hard links)

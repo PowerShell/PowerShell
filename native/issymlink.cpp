@@ -7,7 +7,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string>
-#include <unicode/unistr.h>
 #include "issymlink.h"
 
 //! @brief IsSymLink determines if path is a symbolic link 
