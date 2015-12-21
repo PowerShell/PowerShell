@@ -4,10 +4,11 @@ export BIN=$(pwd)/bin
 
 mkdir -p $BIN/Modules
 
-# Deploy Pester
+# Deploy PowerShell modules
 (
     cd $BIN/Modules
-    ln -s ../../ext-src/pester Pester
+    ln -sf ../../ext-src/pester Pester
+    ln -sf ../../src/monad/monad/miscfiles/modules/Microsoft.PowerShell.Utility .
 )
 
 # Build native components
