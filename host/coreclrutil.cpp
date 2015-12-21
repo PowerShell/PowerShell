@@ -47,7 +47,9 @@ filesystem::path GetEnvAbsolutePath(const char* env)
 {
     const char* local = std::getenv(env);
     if (!local)
-        return nullptr;
+    {
+        std::cerr << "Could not read environment variable " << env << std::endl;
+    }
 
     return filesystem::canonical(local);
 }
