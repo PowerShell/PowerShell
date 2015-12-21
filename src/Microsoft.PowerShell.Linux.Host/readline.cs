@@ -230,10 +230,15 @@ namespace Microsoft.PowerShell.Linux.Host
 	/// </summary>
 	private void OnTab()
 	{
-	    if (previousKeyPress.Key != ConsoleKey.Tab || previousKeyPress.Key == ConsoleKey.Enter)
-	    {
-		tabBuffer = this.buffer;
+	    //if the prompt is empty simply return 
+	    if (String.IsNullOrWhiteSpace(this.buffer.ToString()) || this.buffer.Length == 0){
+		return;
+	    }
 
+	    //if the buffer has been modified in anyway, get the new command completion
+	    if (previousKeyPress.Key != ConsoleKey.Tab || previousKeyPress.Key == ConsoleKey.Enter || previousKeyPress.Key == ConsoleKey.Escape || previousKeyPress.Key == ConsoleKey.Backspace || previousKeyPress.Key == ConsoleKey.Delete)
+	    {	
+		tabBuffer = this.buffer;
 		using (PowerShell powershell = PowerShell.Create())
 		{
 		    cmdCompleteOpt = CommandCompletion.CompleteInput(this.tabBuffer.ToString(), this.current, options, powershell);
@@ -246,17 +251,17 @@ namespace Microsoft.PowerShell.Linux.Host
 	    }
 	    catch (Exception)
 	    {
-		// TODO: continue nicely
+		return;
 	    }
 
 	    tabCompletionPos++;
-
+	    
 	    //if there is a command for the user before the uncompleted option
 	    if (!String.IsNullOrEmpty(tabResult))
 	    {
 		//handle file path slashes
 		if (tabResult.Contains(".\\"))
-                {
+                {		    
                      tabResult = tabResult.Replace(".\\", "");
                 }
 
@@ -269,11 +274,8 @@ namespace Microsoft.PowerShell.Linux.Host
 		    tabResult = replaceBuffer + tabResult;
 	   	}
 
-		OnEscape();
-
 		BufferFromString(tabResult);
 
-		//re-render
 	        this.Render();
 	    }
 
