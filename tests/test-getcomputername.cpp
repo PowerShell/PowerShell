@@ -12,7 +12,7 @@ class GetComputerNameTest : public ::testing::Test
 
 TEST_F(GetComputerNameTest, Success)
 {
-    char expectedComputerName[HOST_NAME_MAX];
+    char expectedComputerName[_POSIX_HOST_NAME_MAX];
 
     // the gethostname system call gets the nodename from uname
     FILE *fPtr = popen("uname -n", "r");
