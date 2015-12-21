@@ -9,6 +9,7 @@
 
     "dependencies": {
 	"NETStandard.Library": "1.0.0-rc2-23616",
+	"Newtonsoft.Json": "8.0.1-beta3",
         "Microsoft.PowerShell.Commands.Utility": {
 	    "type": "build",
 	    "version": "1.0.0-*"
