@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Linux.Host
 	    }
 	    	    
 	    tabCompletionPos++;
-	    
+
 	    //if there is a command for the user before the uncompleted option
 	    if (!String.IsNullOrEmpty(tabResult))
 	    {		
@@ -270,18 +270,33 @@ namespace Microsoft.PowerShell.Linux.Host
                 }
 
 		if (this.buffer.ToString().Contains(" "))
-		{
+		{  		    
 		    var replaceIndex = cmdCompleteOpt.ReplacementIndex;
 		    string replaceBuffer = this.buffer.ToString();
 
-		    replaceBuffer = replaceBuffer.Remove(replaceIndex);
-		    tabResult = replaceBuffer + tabResult;
-	   	}
+		    //test 
+		    if (replaceBuffer.Length < replaceIndex)
+		    {
+			replaceIndex = replaceBuffer.Length;
+		    }
+			
+		    if (replaceBuffer.Length == replaceIndex)
+		    {		
+			tabResult = replaceBuffer + tabResult;
+		    }
+			
+		    else
+		    {
+			replaceBuffer = replaceBuffer.Remove(replaceIndex);
+			tabResult = replaceBuffer + tabResult;	
+		    }
+		    
 
-		BufferFromString(tabResult);
-	        this.Render();
+		    BufferFromString(tabResult);
+		    this.Render();
+		}
 	    }
-
+	
 	} //end of OnTab()
 
 	/// <summary>
