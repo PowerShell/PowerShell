@@ -292,11 +292,8 @@ namespace Microsoft.PowerShell.Linux.Host
 	    //reset prompt and buffer
 	    OnEscape();
 
-	    //set the buffer to the string
-	    for (int i = 0; i < endResult.Length; i++)
-	    {
-		this.Insert(endResult[i]);
-	    }
+            this.buffer.Append(endResult);
+            this.current += endResult.Length;
 	}
 
         /// <summary>
