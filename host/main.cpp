@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <unistd.h>
 #include <string>
 #include <iostream>
@@ -8,18 +9,18 @@ namespace Cmdline
     void printHelp()
     {
         std::cerr << "PowerShell on Linux native host" << std::endl
-                  << "Usage: powershell [assembly] [...]" << std::endl
+                  << "Usage: powershell [-a assembly] [...]" << std::endl
                   << std::endl
                   << "What it does:" << std::endl
                   << "- the host assumes that PSL has been published to $CORE_ROOT," << std::endl
                   << "- the host will launch $CORE_ROOT/Microsoft.PowerShell.Linux.Host.dll" << std::endl
-                  << "  if not given an explicit assembly" << std::endl
+                  << "  if not given an explicit assembly via -a (or --assembly)" << std::endl
                   << "- all additional parameters at the end of the command line are forwarded" << std::endl
                   << "  to the Main function in the assembly" << std::endl
                   << "- the host will execute the Main function in the specified assembly" << std::endl
                   << std::endl
                   << "Example:" << std::endl
-                  << "CORE_ROOT=/test/coreclr ./powershell get-process" << std::endl;
+                  << "CORE_ROOT=$(pwd)/bin ./powershell get-process" << std::endl;
     }
 
     struct Args
@@ -36,14 +37,7 @@ namespace Cmdline
         std::string assembly;
     };
 
-    // checks if string ends with ".exe"
-    bool isExe(std::string arg)
-    {
-        std::size_t dot = arg.find_last_of(".");
-        return dot == std::string::npos ? false : arg.substr(dot) == ".exe";
-    }
-
-    // simple extraction of assembly.exe so we can run other hosts
+    // simple CLI parsing so we can run other hosts
     void parseCmdline(int argc, char** argv, Args& args)
     {
         // index of arguments to forward (skip zeroth)
@@ -51,12 +45,21 @@ namespace Cmdline
         // if we have any arguments
         if (argc > 1)
         {
-            // check if the first is an assembly.exe
-            const std::string arg = argv[i];
-            if (isExe(arg))
+            std::string arg(argv[i]);
+
+            // handle help if first argument; note that this can't be --help
+            // because the managed hosts use it
+            if (arg == "--native-help")
             {
-                args.assembly.assign(arg);
-                ++i; // don't forward the first argument
+                printHelp();
+                exit(0);
+            }
+
+            // check if given an explicit assembly to launch
+            if (argc > 2 && (arg == "-a" || arg == "--assembly"))
+            {
+                args.assembly.assign(std::string(argv[i+1]));
+                i += 2; // don't forward the first two arguments
             }
         }
         // forward arguments
