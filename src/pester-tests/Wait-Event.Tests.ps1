@@ -1,9 +1,14 @@
 Describe "Wait-Event" {
 
     Context "Validate Wait-Event is waiting for events" {
-	It "Should verify Wait-Event is waiting for at least a second" {
-	    $waiteventtime = Measure-Command { Wait-Event -timeout 1 }
-            $waiteventtime.Seconds | Should BeGreaterThan 0
+	It "Should time out when it does not receive a FakeEvent" {
+	    # Don't depend on Measure-Command
+	    $stopwatch = [System.Diagnostics.Stopwatch]::startNew()
+	    # Testing the the timeout, so wait for an event that will never be
+	    # raised because it is fake
+	    Wait-Event -Timeout 1 -SourceIdentifier "FakeEvent"
+	    $stopwatch.Stop()
+	    $stopwatch.ElapsedMilliseconds | Should BeGreaterThan 1000
 	}
     }
 }
