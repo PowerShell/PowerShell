@@ -1,4 +1,4 @@
-﻿Describe "New-TimeSpan" {
+Describe "New-TimeSpan" {
     It "Should be able to create a new timespan object" {
         New-Variable -Name testObject -Value $(New-TimeSpan)
 
