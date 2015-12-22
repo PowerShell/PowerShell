@@ -18,6 +18,11 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         private Runspace runspace;
 
+	/// <summary>
+	/// Powershell instance for tabcompletion    
+	/// </summary>
+	private PowerShell powershell = PowerShell.Create(); 
+
         /// <summary>
         /// The buffer used to edit.
         /// </summary>
@@ -141,6 +146,7 @@ namespace Microsoft.PowerShell.Linux.Host
                         this.OnDelete();
                         break;
 		    case ConsoleKey.Enter:
+           		previousKeyPress = key;
                         return this.OnEnter();
                    case ConsoleKey.RightArrow:
                         this.OnRight(key.Modifiers);
@@ -235,30 +241,28 @@ namespace Microsoft.PowerShell.Linux.Host
 		return;
 	    }
 
-	    //if the buffer has been modified in anyway, get the new command completion
+	    //if the buffer has been modified in any way, get the new command completion
 	    if (previousKeyPress.Key != ConsoleKey.Tab || previousKeyPress.Key == ConsoleKey.Enter || previousKeyPress.Key == ConsoleKey.Escape || previousKeyPress.Key == ConsoleKey.Backspace || previousKeyPress.Key == ConsoleKey.Delete)
 	    {	
 		tabBuffer = this.buffer;
-		using (PowerShell powershell = PowerShell.Create())
-		{
-		    cmdCompleteOpt = CommandCompletion.CompleteInput(this.tabBuffer.ToString(), this.current, options, powershell);
-		}
+		cmdCompleteOpt = CommandCompletion.CompleteInput(this.tabBuffer.ToString(), this.current, options, powershell);
 	    }
 
 	    try
 	    {
 		tabResult = cmdCompleteOpt.CompletionMatches[tabCompletionPos].CompletionText;
 	    }
+
 	    catch (Exception)
 	    {
 		return;
 	    }
-
+	    	    
 	    tabCompletionPos++;
 	    
 	    //if there is a command for the user before the uncompleted option
 	    if (!String.IsNullOrEmpty(tabResult))
-	    {
+	    {		
 		//handle file path slashes
 		if (tabResult.Contains(".\\"))
                 {		    
@@ -275,7 +279,6 @@ namespace Microsoft.PowerShell.Linux.Host
 	   	}
 
 		BufferFromString(tabResult);
-
 	        this.Render();
 	    }
 
@@ -344,7 +347,7 @@ namespace Microsoft.PowerShell.Linux.Host
 	private void OnUpArrow()
 	{
 	    if ((previousKeyPress.Key != ConsoleKey.DownArrow && previousKeyPress.Key != ConsoleKey.UpArrow) || previousKeyPress.Key == ConsoleKey.Enter)
-	    {
+	    {		
 		//first time getting the history
 		using (Pipeline pipeline = this.runspace.CreatePipeline("Get-History"))
 		{
@@ -353,12 +356,11 @@ namespace Microsoft.PowerShell.Linux.Host
 
 		try
 		{
-		    historyIndex = historyResult.Count -1;
-		    BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
+		    historyIndex = historyResult.Count -1;		    
+		    BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());		  
 		    this.Render();
 		    historyIndex--;
 		}
-
 
 		catch
 		{
@@ -366,6 +368,7 @@ namespace Microsoft.PowerShell.Linux.Host
 		}
 
 	    }
+	 
 	    else
 	    {
 		if (historyIndex > historyResult.Count) //we hit the blank prompt using the down arrow
@@ -373,12 +376,17 @@ namespace Microsoft.PowerShell.Linux.Host
 		    historyIndex = historyResult.Count -1;
 		}
 
+		if ( historyIndex < 0 )
+		{
+			historyIndex = 0; 		
+		}
+
 		try
 		{
 		    BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
 		    this.Render();
 
-		    if( historyIndex == 0)
+		    if ( historyIndex == 0 )
 		    {
 			return;
 		    }
@@ -515,7 +523,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <returns>A newline character.</returns>
         private string OnEnter()
         {
-            Console.Out.Write("\n");
+	    Console.Out.Write("\n");
             return this.buffer.ToString();
         }
 
