@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Linux.Host
             this.Write(
                     ConsoleColor.White, 
                     ConsoleColor.Black,
-                    caption + "\n" + message + " ");
+                    caption + System.Environment.NewLine + message + " ");
             Dictionary<string, PSObject> results =
                 new Dictionary<string, PSObject>();
             foreach (FieldDescription fd in descriptions)
@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Linux.Host
             this.WriteLine(
                     ConsoleColor.Blue, 
                     ConsoleColor.Black,
-                    caption + "\n" + message + "\n");
+                    caption + System.Environment.NewLine + message + System.Environment.NewLine);
 
             // Convert the choice collection into something that is
             // easier to work with. See the BuildHotkeysAndPlainLabels 
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Linux.Host
             this.WriteLine(
                     ConsoleColor.Blue, 
                     ConsoleColor.Black,
-                    caption + "\n" + message + "\n");
+                    caption + System.Environment.NewLine + message + System.Environment.NewLine);
 
             // Convert the choice collection into something that is
             // easier to work with. See the BuildHotkeysAndPlainLabels 

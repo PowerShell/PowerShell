@@ -520,7 +520,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <returns>A newline character.</returns>
         private string OnEnter()
         {
-	    Console.Out.Write("\n");
+	    Console.Out.WriteLine();
             return this.buffer.ToString();
         }
 

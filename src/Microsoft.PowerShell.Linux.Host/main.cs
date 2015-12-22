@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Linux.Host
 
             if (this.myHost.IsRunspacePushed)
             {
-                returnVal = string.Format("\n[{0}] PSL> ", this.myRunSpace.ConnectionInfo.ComputerName);
+                returnVal = string.Format($"{System.Environment.NewLine}[{this.myRunSpace.ConnectionInfo.ComputerName}] PSL> ");
                 return returnVal;
             }
 
