@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// reads a command from the user, executes it and repeats until the ShouldExit
         /// flag is set.
         /// </summary>
-        public void Run()
+        internal void Run()
         {
             // Set up the control-C handler.
             Console.CancelKeyPress += new ConsoleCancelEventHandler(this.HandleControlC);
