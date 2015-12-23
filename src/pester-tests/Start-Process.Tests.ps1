@@ -64,13 +64,11 @@ Describe "Start-Process" {
     }
 
     It "Should should handle stderr redirection without error" {
-        $process = Start-Process ping -ArgumentList $pingParamNoStop -PassThru -RedirectStandardError $tempFile
+        $process = Start-Process ping -ArgumentList $pingParamStop -PassThru -RedirectStandardError $tempFile
 
         $process.Length      | Should Be 1
         $process.Id          | Should BeGreaterThan 1
         $process.ProcessName | Should Be "ping"
-
-        Stop-Process -Id $process.Id
     }
 
     It "Should should handle stdout redirection without error" {
