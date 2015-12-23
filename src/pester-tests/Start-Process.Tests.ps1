@@ -9,62 +9,51 @@ Describe "Start-Process" {
     $windows = IsWindows
     if ($windows)
     {
-        $pingParamNoStop = "localhost -t"
-        $pingParamStop = "localhost -n 2"
+        $pingParam = "localhost -n 4"
     }
     else
     {
-        $pingParamNoStop = "localhost"
-        $pingParamStop = "localhost -c 2"
+        $pingParam = "localhost -c 4"
     }
 
     It "Should process arguments without error" {
-        $process = Start-Process ping -ArgumentList $pingParamNoStop -PassThru
+        $process = Start-Process ping -ArgumentList $pingParam -PassThru
 
         $process.Length      | Should Be 1
         $process.Id          | Should BeGreaterThan 1
         $process.ProcessName | Should Be "ping"
-
-        Stop-Process -Id $process.Id
     }
 
     It "Should work correctly when used with full path name" {
-        $process = Start-Process $pingCommand -ArgumentList $pingParamNoStop -PassThru
+        $process = Start-Process $pingCommand -ArgumentList $pingParam -PassThru
 
         $process.Length      | Should Be 1
         $process.Id          | Should BeGreaterThan 1
         $process.ProcessName | Should Be "ping"
-
-        Stop-Process -Id $process.Id
     }
 
     It "Should invoke correct path when used with FilePath argument" {
-        $process = Start-Process -FilePath $pingCommand -ArgumentList $pingParamNoStop -PassThru
+        $process = Start-Process -FilePath $pingCommand -ArgumentList $pingParam -PassThru
 
         $process.Length      | Should Be 1
         $process.Id          | Should BeGreaterThan 1
         $process.ProcessName | Should Be "ping"
-
-        Stop-Process -Id $process.Id
     }
 
     It "Should wait for command completion if used with Wait argument" {
-        $process = Start-Process ping -ArgumentList $pingParamStop -Wait -PassThru
-        ( Get-Process -Id $process.Id -ErrorAction SilentlyContinue ) | Should BeNullOrEmpty
+        $process = Start-Process ping -ArgumentList $pingParam -Wait -PassThru
     }
 
     It "Should work correctly with WorkingDirectory argument" {
-        $process = Start-Process ping -WorkingDirectory $pingDirectory -ArgumentList $pingParamNoStop -PassThru
+        $process = Start-Process ping -WorkingDirectory $pingDirectory -ArgumentList $pingParam -PassThru
 
         $process.Length      | Should Be 1
         $process.Id          | Should BeGreaterThan 1
         $process.ProcessName | Should Be "ping"
-
-        Stop-Process -Id $process.Id
     }
 
     It "Should should handle stderr redirection without error" {
-        $process = Start-Process ping -ArgumentList $pingParamStop -PassThru -RedirectStandardError $tempFile
+        $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardError $tempFile
 
         $process.Length      | Should Be 1
         $process.Id          | Should BeGreaterThan 1
@@ -72,7 +61,7 @@ Describe "Start-Process" {
     }
 
     It "Should should handle stdout redirection without error" {
-        $process = Start-Process ping -ArgumentList $pingParamStop -Wait -RedirectStandardOutput $tempFile
+        $process = Start-Process ping -ArgumentList $pingParam -Wait -RedirectStandardOutput $tempFile
         $dirEntry = dir $tempFile
 	$dirEntry.Length | Should BeGreaterThan 0
     }
