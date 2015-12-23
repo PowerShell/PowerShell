@@ -3,4 +3,4 @@ export CORE_ROOT=$(pwd)/bin
 # XML files are not executable
 chmod -x pester-tests.xml
 # Fix tty due to possible bug in .NET
-stty echo
+stty echo || true
