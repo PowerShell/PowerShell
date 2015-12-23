@@ -14,6 +14,10 @@
 	    "type": "build",
 	    "version": "1.0.0-*"
 	},
+        "Microsoft.PowerShell.Commands.Omi": {
+	    "type": "build",
+	    "version": "1.0.0-*"
+	},
         "Microsoft.PowerShell.Commands.Management": {
 	    "type": "build",
 	    "version": "1.0.0-*"

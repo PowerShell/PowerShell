@@ -1,0 +1,28 @@
+{
+    "version": "1.0.0-*",
+    "description": "Microsoft.PowerShell.Commands.Omi Library",
+    "authors": [ "George Fleming" ],
+
+    "compilationOptions": {
+        "define": [
+            "CORECLR",
+            "_CORECLR",
+	    "LINUX"
+        ],
+        "allowUnsafe": true
+    },
+
+    "dependencies": {
+	"NETStandard.Library": "1.0.0-rc2-23616",
+	"System.Management.Automation": {
+	    "type": "build",
+	    "version": "1.0.0-*"
+	},
+        "System.Xml.XDocument": "4.0.11-rc2-23616",
+        "System.Runtime.InteropServices": "4.0.21-rc2-23616",
+    },
+
+    "frameworks": { "dnxcore50": { } },
+
+    "compile": [ "../monad-build/gen/COMMANDS_OMI/*.cs" ],
+}

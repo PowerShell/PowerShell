@@ -2,7 +2,7 @@
 
 export BIN=$(pwd)/bin
 
-mkdir -p $BIN/Modules
+mkdir -p $BIN/Modules/Microsoft.PowerShell.Commands.Omi
 
 # Deploy PowerShell modules
 (
@@ -55,3 +55,9 @@ mkdir -p $BIN/Modules
     ln -sf ../src/monad/monad/miscfiles/display/Registry.format.ps1xml .
     ln -sf ../src/monad/monad/miscfiles/display/WSMan.format.ps1xml .
 )
+
+# Set up Microsoft.PowerShell.Commands.Omi Module
+{
+    cd $BIN/Modules/Microsoft.PowerShell.Commands.Omi
+    ln -sf ../../Microsoft.PowerShell.Commands.Omi.dll .
+}
