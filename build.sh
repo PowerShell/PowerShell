@@ -2,13 +2,16 @@
 
 export BIN=$(pwd)/bin
 
-mkdir -p $BIN/Modules/Microsoft.PowerShell.Commands.Omi
+mkdir -p $BIN/Modules
 
 # Deploy PowerShell modules
 (
     cd $BIN/Modules
     ln -sf ../../ext-src/pester Pester
     ln -sf ../../src/monad/monad/miscfiles/modules/Microsoft.PowerShell.Utility .
+    OMI=Microsoft.PowerShell.Commands.Omi
+    mkdir -p $OMI
+    ln -sf $BIN/$OMI.dll $OMI/
 )
 
 # Build native components
@@ -55,9 +58,3 @@ mkdir -p $BIN/Modules/Microsoft.PowerShell.Commands.Omi
     ln -sf ../src/monad/monad/miscfiles/display/Registry.format.ps1xml .
     ln -sf ../src/monad/monad/miscfiles/display/WSMan.format.ps1xml .
 )
-
-# Set up Microsoft.PowerShell.Commands.Omi Module
-{
-    cd $BIN/Modules/Microsoft.PowerShell.Commands.Omi
-    ln -sf ../../Microsoft.PowerShell.Commands.Omi.dll .
-}
