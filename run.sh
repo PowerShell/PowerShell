@@ -1,4 +1,3 @@
-export CORE_ROOT=$(pwd)/bin
-./powershell $@
+./bin/Microsoft.PowerShell.Linux.Host $@
 # Fix tty due to possible bug in .NET
 stty echo

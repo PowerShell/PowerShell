@@ -18,6 +18,12 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         public static void Main(string[] args)
         {
+            // Setup the Assembly Load Context, which Core PowerShell uses to
+            // analyze the libraries for types, functions, cmdlets, etc. and
+            // provide the ability to load assemblies by file path. Doing this
+            // here eliminates the need for a custom native host.
+            PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(AppContext.BaseDirectory);
+
             // Custom argument parsing
             string initialScript = null;
             if (args.Length > 0)
