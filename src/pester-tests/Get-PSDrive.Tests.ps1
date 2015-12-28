@@ -1,4 +1,6 @@
 ﻿Describe "Get-PSDrive" {
+    $isWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows) 
+
     It "Should not throw" {
         Get-PSDrive | Should Not BeNullOrEmpty
     }
@@ -23,15 +25,15 @@
 
     It "Should return drive info"{
         (Get-PSDrive Env).Name        | Should Be Env
-        (Get-PSDrive Cert).Root          | Should Be \
+        (Get-PSDrive Cert).Root       | Should Be \
 
-        if ($Env:TEMP -eq "/tmp")
+        if ($isWindows)
         {
-            (Get-PSDrive /).Provider.Name | Should Be FileSystem
+            (Get-PSDrive C).Provider.Name | Should Be FileSystem
         }
         else
         {
-            (Get-PSDrive C).Provider.Name | Should Be FileSystem
+            (Get-PSDrive /).Provider.Name | Should Be FileSystem
         }
     }
 
