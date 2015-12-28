@@ -1,9 +1,9 @@
 ﻿Describe "Compare-Object" {
-    $testDirectory = $env:HOME + "testDirectory"
     $nl            = [Environment]::NewLine
-    $slash         = [Environment]::DirectorySeparatorChar
+    $slash         = [System.IO.Path]::DirectorySeparatorChar
+    $testDirectory = $HOME + $slash + "testDirectory"
+    $dir           = $testDirectory
 
-    $dir = $testDirectory
     New-Item $testDirectory -ItemType directory -Force
 
     $content1 = "line 1" + $nl + "line 2"
