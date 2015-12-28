@@ -1,0 +1,90 @@
+{
+    "version": "1.0.0-*",
+    "description": "Microsoft.PowerShell.Commands.Management Library",
+    "authors": [ "garretts", "andschwa" ],
+
+    "compilationOptions": {
+        "define": [
+            "CORECLR",
+            "_CORECLR",
+	    "LINUX"
+        ],
+        "allowUnsafe": true
+    },
+
+    "dependencies": {
+	"NETStandard.Library": "1.0.0-rc2-23616",
+	"System.ServiceProcess.ServiceController": "4.1.0-rc2-23616",
+	"System.Net.NameResolution": "4.0.0-rc2-23616",
+	"Microsoft.PowerShell.Security": {
+	    "type": "build",
+	    "version": "1.0.0-*"
+	}
+    },
+
+    "frameworks": { "dnxcore50": { } },
+
+    "compile": [ "../monad-build/gen/COMMANDS_MANAGEMENT/*.cs" ],
+
+    "compileFiles": [
+	"../monad/monad/src/cimSupport/cmdletization/SessionBasedWrapper.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/CimJobException.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/CreateInstanceJob.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/DeleteInstanceJob.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/EnumerateAssociatedInstancesJob.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/ExtrinsicMethodInvocationJob.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/InstanceMethodInvocationJob.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/MethodInvocationJobBase.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/ModifyInstanceJob.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/PropertySettingJob.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/QueryJob.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/QueryJobBase.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/StaticMethodInvocationJob.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/TerminatingErrorTracker.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/cimChildJobBase.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/cimCmdletDefinitionContext.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/cimCmdletInvocationContext.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/cimConverter.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/cimJobContext.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/cimOperationOptionsHelper.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/cimQuery.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/cimWrapper.cs",
+	"../monad/monad/src/cimSupport/cmdletization/cim/clientSideQuery.cs",
+	"../monad/monad/src/commands/management/AddContentCommand.cs",
+	"../monad/monad/src/commands/management/ClearContentCommand.cs",
+	"../monad/monad/src/commands/management/ClearPropertyCommand.cs",
+	"../monad/monad/src/commands/management/CombinePathCommand.cs",
+	"../monad/monad/src/commands/management/CommandsCommon.cs",
+	"../monad/monad/src/commands/management/Computer.cs",
+	"../monad/monad/src/commands/management/ContentCommandBase.cs",
+	"../monad/monad/src/commands/management/ConvertPathCommand.cs",
+	"../monad/monad/src/commands/management/CopyPropertyCommand.cs",
+	"../monad/monad/src/commands/management/GetChildrenCommand.cs",
+	"../monad/monad/src/commands/management/GetContentCommand.cs",
+	"../monad/monad/src/commands/management/GetPropertyCommand.cs",
+	"../monad/monad/src/commands/management/MovePropertyCommand.cs",
+	"../monad/monad/src/commands/management/Navigation.cs",
+	"../monad/monad/src/commands/management/NewPropertyCommand.cs",
+	"../monad/monad/src/commands/management/ParsePathCommand.cs",
+	"../monad/monad/src/commands/management/PassThroughContentCommandBase.cs",
+	"../monad/monad/src/commands/management/PassThroughPropertyCommandBase.cs",
+	"../monad/monad/src/commands/management/PingPathCommand.cs",
+	"../monad/monad/src/commands/management/Process.cs",
+	"../monad/monad/src/commands/management/PropertyCommandBase.cs",
+	"../monad/monad/src/commands/management/RemovePropertyCommand.cs",
+	"../monad/monad/src/commands/management/RenamePropertyCommand.cs",
+	"../monad/monad/src/commands/management/ResolvePathCommand.cs",
+	"../monad/monad/src/commands/management/Service.cs",
+	"../monad/monad/src/commands/management/SetContentCommand.cs",
+	"../monad/monad/src/commands/management/SetPropertyCommand.cs",
+	"../monad/monad/src/commands/management/WriteContentCommandBase.cs"
+    ],
+
+    "namedResource": {
+	"CmdletizationResources": "../monad-build/gen/COMMANDS_MANAGEMENT/CmdletizationResources.resources",
+	"ComputerResources": "../monad-build/gen/COMMANDS_MANAGEMENT/ComputerResources.resources",
+	"NavigationResources": "../monad-build/gen/COMMANDS_MANAGEMENT/NavigationResources.resources",
+	"ProcessResources": "../monad-build/gen/COMMANDS_MANAGEMENT/ProcessResources.resources",
+	"ServiceResources": "../monad-build/gen/COMMANDS_MANAGEMENT/ServiceResources.resources"
+    }
+}

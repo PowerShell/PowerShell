@@ -22,8 +22,8 @@ monad-docker-run()
     local CONSOLE=$1
     shift 1
     docker run --rm \
-	   --volume $(pwd)/:/opt \
-	   --workdir /opt \
+	   --volume $(pwd)/:/opt/src \
+	   --workdir /opt/src \
 	   $CONSOLE \
 	   andschwa/magrathea:latest \
 	   bash -c "$(monad-impersonate) bash -c '$*'"
@@ -49,6 +49,6 @@ monad-impersonate()
     fi
     echo \
 	groupadd -o -f -g $CGID $CGROUP '&&' \
-	useradd -u $CUID -g $CGID -d /opt $CUSER '&&' \
+	useradd -u $CUID -g $CGID -G sudo -d /opt $CUSER '&&' \
 	sudo --set-home -u $CUSER -g $CGROUP --
 }

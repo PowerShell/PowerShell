@@ -1,0 +1,13 @@
+{
+    "version": "1.0.0-*",
+    "description": "SecureString Stub",
+    "authors": [ "garretts" ],
+
+    "compilationOptions": { "allowUnsafe": true },
+
+    "dependencies": {
+	"NETStandard.Library": "1.0.0-rc2-23616"
+    },
+
+    "frameworks": { "dnxcore50": { } }
+}

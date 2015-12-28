@@ -1,0 +1,17 @@
+{
+    "version": "1.0.0-*",
+    "description": "Microsoft.Management.Infrastructure.Native Stub",
+    "authors": [ "garretts", "andschwa" ],
+
+    "compilationOptions": { "allowUnsafe": true },
+
+    "dependencies": {
+	"NETStandard.Library": "1.0.0-rc2-23616",
+	"System.Security.SecureString":  {
+	    "type": "build",
+	    "version": "1.0.0-*"
+	}
+    },
+
+    "frameworks": { "dnxcore50": { } }
+}

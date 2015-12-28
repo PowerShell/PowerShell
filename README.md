@@ -75,47 +75,101 @@ Our convention is to create feature branches `dev/feature` off our integration b
 
 ## Setup build environment
 
-There are two approaches. You can build in our Docker container and have all the [dependencies](docs/Dependencies.md) taken care of for you, or you can install them by hand and run "baremetal."
+We use the [.NET Command Line Interface][dotnet-cli] (`dotnet-cli`) to build the managed components, and [CMake][] to build the native components. Install `dotnet-cli` by following their documentation (make sure to install the `dotnet-dev` package to get the latest version). Then install the following dependencies (assuming Ubuntu 14.04):
 
-### Docker
+```sh
+sudo apt-get install g++ cmake make libboost-filesystem-dev lldb-3.6 strace
+```
 
-See the official [installation documentation][] on how to install Docker, and don't forget to setup a [Docker group][].
+### OMI
 
-The Docker container can be updated with `docker pull andschwa/magrathea`, which downloads it from the [automated build repository][].
+To develop on the PowerShell Remoting Protocol (PSRP), you'll need to be able to compile OMI, which additionally requires:
 
-This container isolates all our build dependencies, including Ubuntu 14.04 and Mono. See the [Dockerfile][] to look under the hood.
+```sh
+sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev
+```
 
-The `monad-docker.sh` script has two Bash functions, `monad-run` and `monad-it`, which are wrappers that start a temporary container with `monad-linux` mounted and runs the arguments given to the script as your current user, but inside the container. The build artifacts will exist in your local folder and be owned by your user, essentially making the use of the container invisible. The `monad-tty` version also allocates a shell for the container, and so allows you to launch Bash or an interactive PowerShell session. Since these are Bash functions, it is simplest to source the `monad-docker.sh` script directly in your `~/.bashrc`, but the `./build.sh` script will also source it and delegate to `monad-run`.
-
-[Docker group]: https://docs.docker.com/installation/ubuntulinux/#create-a-docker-group
-[installation documentation]: https://docs.docker.com/installation/ubuntulinux/
-[automated build repository]: https://registry.hub.docker.com/u/andschwa/magrathea/
-[Dockerfile]: https://github.com/andschwa/docker-magrathea/blob/master/Dockerfile
-[Make]: https://www.gnu.org/software/make/manual/make.html
-[CMake]: http://www.cmake.org/cmake/help/v2.8.12/cmake.html
+[dotnet-cli]: https://github.com/dotnet/cli#new-to-net-cli
+[CMake]: https://cmake.org/cmake/help/v2.8.12/cmake.html
 
 ## Building
 
-Please note that the square brackets indicate that part is only necessary if building within the Docker container. If running baremetal, ignore them.
+The command `dotnet restore` must be done at least once from the top directory to obtain all the necessary .NET packages; unfortunately, we also have to temporarily patch `System.Console.dll` until the API is officially updated, so run `./patch.sh`.
 
-1. `[source monad-docker.sh]` to get the `monad-run` and `monad-it` Bash functions
-2. `[monad-run] make boostrap` will download dependent NuGet packages (including the C# compiler)
-3. `[monad-run] make` will build PowerShell for Linux and execute the managed and native unit tests
-4. `[monad-run] make demo` will build and execute a demo, `"a","b","c","a","a" | Select-Object -Unique`
-5. `[monad-run] make test` will build PowerShell and execute the Pester smoke tests
-6. `[monad-it] make shell` will open an interactive PowerShell console (note the `it` for `--interactive --tty`)
-7. `make clean` will remove built libraries
-8. `make distclean` will remove all untracked files in `monad-native` (such as CMake's generated files) as well as generated files for `monad`
-9. `git clean -fdx && git submodule foreach git clean -fdx` will nuke everything that is untracked by Git in all repositories, use with caution
+Build with `./build.sh`, which does the following steps.
 
-## Adding Pester tests
+> The variable `$BIN` is the output directory, `bin`.
 
-Pester tests are located in the `src/pester-tests` folder. The makefile targets `test` and `pester-tests` will run all Pester tests.
+### Native
 
-The steps to add your pester tests are:
-- add `*.Tests.ps1` files to `src/pester-tests`
-- run `make test` to run all the tests
+- `libpsnative.so`: native functions that `CorePsPlatform.cs` P/Invokes
+- `libpshost.a`: native CLR host library
+- `powershell`: native CLR host executable (for local shell)
+- `api-ms-win-core-registry-l1-1-0.dll`: registry stub to prevent missing DLL error on shutdown
 
-## TODO: Docker shell-in-a-box
+#### monad-native
 
-## TODO: Architecture
+Driven by CMake, with its own unit tests using Google Test.
+
+```sh
+cd src/monad-native
+cmake -DCMAKE_BUILD_TYPE=Debug .
+make -j
+ctest -V
+# Deploy development copy of libpsnative
+cp native/libpsnative.so $BIN
+```
+
+#### registry-stub
+
+Provides `RegCloseKey()` to satisfy the disposal of `SafeHandle` objects on shutdown.
+
+```sh
+cd src/registry-stub
+make
+cp api-ms-win-core-registry-l1-1-0.dll $BIN
+```
+
+### Managed
+
+Builds with `dotnet-cli`. Publishes all dependencies into the `bin` directory.
+
+```sh
+cd src/Microsoft.PowerShell.Linux.Host
+dotnet publish --framework dnxcore50 --runtime ubuntu.14.04-x64 --output $BIN
+# Copy files that dotnet-publish doesn't currently deploy
+cp *.ps1xml *_profile.ps1 $BIN
+```
+
+### PowerShell Remoting Protocol
+
+PSRP communication is tunneled through OMI using the `monad-omi-provider`. These build steps are not part of the `./build.sh` script.
+
+#### OMI
+
+```sh
+cd src/omi/Unix
+./configure --dev --enable-debug
+make -j
+```
+
+#### Provider
+
+The provider has its own `./build.sh` script which does the second step documented here.
+
+```sh
+cd src/monad-omi-provider
+make clean && make -j && make reg
+```
+
+## Running
+
+- launch local shell with `./run.sh`.
+- launch local shell in LLDB with `./debug.sh`
+- launch `omiserver` for PSRP (and in LLDB) with `./prsp.sh`, and connect with `Enter-PSSession` from Windows
+
+## Known Issues
+
+### xUnit
+
+Sadly, `dotnet-test` is not fully supported on Linux, so our xUnit tests do not currently run. We may be able to work around this, or get the `dotnet-cli` team to fix their xUnit runner. GitHub [issue](https://github.com/dotnet/cli/issues/407).
