@@ -126,13 +126,7 @@
     }
 
     Context "String tests" {
-        if ($true) # TODO: test if Windows or Linux
-        {
-            $nl = "`n"
-        }
-        else {
-            $nl = "`r`n"
-        }
+        $nl = [Environment]::NewLine
 
         $testString = "HAD I the heavens’ embroidered cloths,$nl Enwrought with golden and silver light,$nl The blue and the dim and the dark cloths$nl Of night and light and the half light,$nl I would spread the cloths under your feet:$nl But I, being poor, have only my dreams;$nl I have spread my dreams under your feet;$nl Tread softly because you tread on my dreams."
 

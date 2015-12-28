@@ -87,15 +87,17 @@
     }
 
     Context "Filesytem actions" {
-        if ($env:TEMP -eq "/tmp")
-        {
-            $testDirectory = "/tmp/"
-            $testInputFile =  "/tmp/testfile1.txt"
-        }
-        else
+        $isWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
+
+        if ($isWindows)
         {
             $testDirectory = "C:\tmp\"
             $testInputFile = "C:\tmp\testfile1.txt"
+        }
+        else
+        {
+            $testDirectory = "/tmp/"
+            $testInputFile =  "/tmp/testfile1.txt"
         }
 
         BeforeEach {

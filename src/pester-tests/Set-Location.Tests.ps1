@@ -1,12 +1,14 @@
 ﻿Describe "Set-Location" {
     $startDirectory = Get-Location
-    if ( $env:TEMP -eq "/tmp")
+    $isWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
+
+    if ($isWindows)
     {
-        $target = "/"
+        $target = "C:\"
     }
     else
     {
-        $target = "C:\"
+        $target = "/"
     }
 
     It "Should be able to be called without error" {

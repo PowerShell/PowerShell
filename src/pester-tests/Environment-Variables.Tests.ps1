@@ -1,4 +1,6 @@
 ﻿Describe "Environment-Variables" {
+    $isWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
+
     It "Should have environment variables" {
         Get-Item ENV: | Should Not BeNullOrEmpty
     }
@@ -8,27 +10,26 @@
     }
 
     It "Should contain /bin in the PATH" {
-        if ($ENV:TEMP -eq "/tmp" )
+        if ($isWindows)
         {
-            $ENV:PATH | Should Match "/bin"
+            $ENV:PATH | Should Match "C:"
         }
         else
         {
-            $ENV:PATH | Should Match "C:"
+            $ENV:PATH | Should Match "/bin"
         }
     }
 
     It "Should have the correct HOME" {
-        if ($ENV:TEMP -eq "/tmp" )
+        if ($isWindows)
         {
-            $expected = /bin/bash -c "cd ~ && pwd"
-            $ENV:HOME | Should Be $expected
+            $expected = "\Users\" + $ENV:USERNAME
         }
         else
         {
-            $expected = "\Users\" + $ENV:USERNAME
-            $ENV:HOMEPATH | Should Be $expected
+            $expected = /bin/bash -c "cd ~ && pwd"
         }
+            $ENV:HOME | Should Be $expected
     }
 
     It "Should be able to set the environment variables" {

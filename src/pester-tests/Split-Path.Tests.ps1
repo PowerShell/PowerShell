@@ -1,11 +1,13 @@
 ﻿Describe "Split-Path" {
-    if ( $Env:TEMP -eq "/tmp")
+    $isWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
+
+    if ($isWindows)
     {
-        $qualifier = "/"
+        $qualifier = "C:"
     }
     else
     {
-        $qualifier = "C:"
+        $qualifier = "/"
     }
 
     It "Should return a string object when invoked" {
@@ -40,7 +42,7 @@
 
     It "Should return the path when the noqualifier switch is used on a Linux system" {
         { Split-Path ${qualifier}usr/bin -NoQualifier } | Should Not Throw
-        if ($env:TEMP -eq "/tmp")
+        if ($isWindows)
         {
             Split-Path ${qualifier}usr/bin -NoQualifier     | Should Be "/usr/bin"
         }
@@ -64,8 +66,8 @@
 
         $testFile1     = "testfile1.ps1"
         $testFile2     = "testfile2.ps1"
-        $testFilePath1 = $testDir + "/" + $testFile1
-        $testFilePath2 = $testDir + "/" + $testFile2
+        $testFilePath1 = $testDir + [Environment]::NewLine + $testFile1
+        $testFilePath2 = $testDir + [Environment]::NewLine + $testFile2
 
         New-Item -ItemType file -Path $testFilePath1, $testFilePath2 -Force
 
