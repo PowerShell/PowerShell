@@ -21,12 +21,15 @@ Describe "ConvertTo-Csv" {
 
     It "Should return the column info in the second element of the output array" {
         $result = $testObject | ConvertTo-Csv
-        $result[1] | Should Be "`"FirstColumn`",`"SecondColumn`""
+
+        $result[1] | Should Match "`"FirstColumn`""
+        $result[1] | Should Match "`"SecondColumn`""
     }
 
     It "Should return the data as a comma-separated list in the third element of the output array" {
         $result = $testObject | ConvertTo-Csv
-        $result[2] | Should Be "`"Hello`",`"World`""
+        $result[2] | Should Match "`"Hello`""
+        $result[2] | Should Match "`"World`""
     }
 
 }
