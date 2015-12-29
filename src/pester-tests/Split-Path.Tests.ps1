@@ -44,11 +44,11 @@
         { Split-Path ${qualifier}usr/bin -NoQualifier } | Should Not Throw
         if ($isWindows)
         {
-            Split-Path ${qualifier}usr/bin -NoQualifier     | Should Be "/usr/bin"
+            Split-Path ${qualifier}usr/bin -NoQualifier     | Should Be "usr/bin"
         }
         else
         {
-            Split-Path ${qualifier}usr/bin -NoQualifier     | Should Be "usr/bin"
+            Split-Path ${qualifier}usr/bin -NoQualifier     | Should Be "/usr/bin"
         }
     }
 
@@ -61,13 +61,11 @@
     }
 
     It "Should be able to accept regular expression input and output an array for multiple objects" {
-        $testDir = "./tmp"
-        Remove-Item $testDir -Recurse -Force -ErrorAction Ignore
-
+        $testDir = "./testDir"
         $testFile1     = "testfile1.ps1"
         $testFile2     = "testfile2.ps1"
-        $testFilePath1 = $testDir + [Environment]::NewLine + $testFile1
-        $testFilePath2 = $testDir + [Environment]::NewLine + $testFile2
+        $testFilePath1 = $testDir + "/" + $testFile1
+        $testFilePath2 = $testDir + "/" + $testFile2
 
         New-Item -ItemType file -Path $testFilePath1, $testFilePath2 -Force
 
@@ -79,7 +77,7 @@
         $actual[0]                      | Should Be $testFile1
         $actual[1]                      | Should Be $testFile2
 
-        Remove-Item $testDir -Recurse -Force -ErrorAction Ignore
+        Remove-Item $testDir -Recurse -ErrorAction Ignore
         Test-Path $testDir | Should Be $false
     }
 
