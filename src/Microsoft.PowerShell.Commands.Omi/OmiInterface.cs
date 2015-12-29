@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands.Omi
 {
@@ -408,6 +409,61 @@ namespace Microsoft.PowerShell.Commands.Omi
 
             GetXML(nameSpace, className);
             cim = XElement.Parse(_xmlString);
+        }
+
+        /// <summary>
+        /// Send DSC configuration to OMI based on a mof file
+        /// </summary>
+        /// <param name="mofPath">The full path to mof file
+        /// </param>
+        /// <exception>
+        /// <cref type="IOException">Thrown if a unable to communicate with OMI
+	/// <cref type="ArgumentNullException>Thrown if any argument is null
+        /// </exception>
+        public void StartDscConfiguration(string mofPath)
+        {
+            if (mofPath == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (!Platform.IsLinux())
+            {
+                throw new PlatformNotSupportedException();
+            }
+
+            UnicodeEncoding unicode = new UnicodeEncoding();
+            string mof = File.ReadAllText(mofPath, unicode);
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("iv root/Microsoft/DesiredStateConfiguration { MSFT_DSCLocalConfigurationManager } SendConfigurationApply ");
+            sb.Append("{ ConfigurationData [ ");
+            sb.Append(mof);
+            sb.Append(" ] ");
+            sb.Append("}");
+
+            using (Process process = new Process())
+            {
+                // Assume omicli is somewhere in PATH...
+                process.StartInfo.FileName = "omicli";
+                process.StartInfo.Arguments = sb.ToString();
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.CreateNoWindow = true;
+
+                process.Start();
+
+                string output = process.StandardOutput.ReadToEnd();
+
+                process.WaitForExit();
+                if (process.ExitCode != 0)
+                {
+                    throw new IOException();
+                }
+                
+                Console.WriteLine(output);
+                return;
+            }
         }
     }
 }
