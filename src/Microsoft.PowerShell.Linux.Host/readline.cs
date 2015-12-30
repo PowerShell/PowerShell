@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Linux.Host
                         this.OnDelete();
                         break;
 		    case ConsoleKey.Enter:
-           		previousKeyPress = key;
+			previousKeyPress = key;
                         return this.OnEnter();
                    case ConsoleKey.RightArrow:
                         this.OnRight(key.Modifiers);
@@ -250,11 +250,22 @@ namespace Microsoft.PowerShell.Linux.Host
 
 	    try
 	    {
+		Console.WriteLine("CompletionMatches {0}", cmdCompleteOpt.CompletionMatches.Count);
+		Console.WriteLine("tabCompletionPos {0}", tabCompletionPos);
+		if (tabCompletionPos > cmdCompleteOpt.CompletionMatches.Count || tabCompletionPos == cmdCompleteOpt.CompletionMatches.Count)
+		{
+		    Console.WriteLine("in reset of tabCompleitonPos");
+		    tabCompletionPos = 0; 
+		}
+
 		tabResult = cmdCompleteOpt.CompletionMatches[tabCompletionPos].CompletionText;
+	       
 	    }
 
-	    catch (Exception)
+	    catch (Exception e)
 	    {
+		Console.WriteLine("tabCompletionPos {0}", tabCompletionPos);
+		Console.WriteLine("in exception with e= {0}", e);
 		return;
 	    }
 	    	    
@@ -262,7 +273,8 @@ namespace Microsoft.PowerShell.Linux.Host
 
 	    //if there is a command for the user before the uncompleted option
 	    if (!String.IsNullOrEmpty(tabResult))
-	    {		
+	    {	
+		Console.WriteLine("in not null or empty");
 		//handle file path slashes
 		if (tabResult.Contains(".\\"))
                 {		    
@@ -270,11 +282,12 @@ namespace Microsoft.PowerShell.Linux.Host
                 }
 
 		if (this.buffer.ToString().Contains(" "))
-		{  		    
+		{ 
+		    Console.WriteLine("the buffer contains a space");
 		    var replaceIndex = cmdCompleteOpt.ReplacementIndex;
 		    string replaceBuffer = this.buffer.ToString();
 
-		    //test 
+		    
 		    if (replaceBuffer.Length < replaceIndex)
 		    {
 			replaceIndex = replaceBuffer.Length;
@@ -291,10 +304,11 @@ namespace Microsoft.PowerShell.Linux.Host
 			tabResult = replaceBuffer + tabResult;	
 		    }
 		    
-
-		    BufferFromString(tabResult);
-		    this.Render();
+		
 		}
+		    BufferFromString(tabResult);
+		    Console.WriteLine("bufferfromstring is {0}", tabResult);
+		    this.Render();
 	    }
 	
 	} //end of OnTab()
@@ -705,5 +719,6 @@ namespace Microsoft.PowerShell.Linux.Host
                 Console.CursorTop = cursorTop;
             }
         } // End Cursor
+
     }
 }
