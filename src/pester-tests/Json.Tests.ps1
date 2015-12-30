@@ -8,7 +8,8 @@ $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 Describe "Json.NET LINQ Parsing" {
     # load third party Json.NET library
-    $path = "$env:CORE_ROOT/Newtonsoft.Json.dll"
+    $base = [System.AppContext]::BaseDirectory
+    $path = Join-Path $base Newtonsoft.Json.dll
     [Microsoft.PowerShell.CoreCLR.AssemblyExtensions]::LoadFrom($path)
 
     BeforeEach {
