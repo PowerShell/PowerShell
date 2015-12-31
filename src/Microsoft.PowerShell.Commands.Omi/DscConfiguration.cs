@@ -40,9 +40,6 @@ namespace Microsoft.PowerShell.Commands.Omi
 
         protected override void ProcessRecord()
         {
-            OmiInterface oi = new OmiInterface();
-
-            OmiData data;
             if (mofPath == null)
             {
                 throw new ArgumentNullException();
@@ -53,12 +50,14 @@ namespace Microsoft.PowerShell.Commands.Omi
                 throw new PlatformNotSupportedException();
             }
 
-            string mof = File.ReadAllText(mofPath);
-            byte[] asciiBytes = Encoding.ASCII.GetBytes(mof);
+            OmiInterface oi = new OmiInterface();
 
             const string nameSpace = "root/Microsoft/DesiredStateConfiguration";
             const string instanceName = "{ MSFT_DSCLocalConfigurationManager }";
             const string methodName = "SendConfigurationApply";
+
+            string mof = File.ReadAllText(mofPath);
+            byte[] asciiBytes = Encoding.ASCII.GetBytes(mof);
 
             StringBuilder sb = new StringBuilder();
             sb.Append(" { ConfigurationData [ ");
@@ -67,14 +66,16 @@ namespace Microsoft.PowerShell.Commands.Omi
                 sb.Append(b.ToString());
                 sb.Append(' ');
             }
-            sb.Append(" ] ");
+            sb.Append("] ");
             sb.Append("}");
             string parameters = sb.ToString();
 
             string arguments = $"iv {nameSpace} {instanceName} {methodName} {parameters} -xml";
             oi.ExecuteOmiCliCommand(arguments);
-            data = oi.GetOmiData();
+
+            OmiData data = oi.GetOmiData();
             object[] array = data.ToObjectArray();
+
             WriteObject(array);
 
         } // EndProcessing
