@@ -11,6 +11,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands.Omi
 {
@@ -61,6 +62,31 @@ namespace Microsoft.PowerShell.Commands.Omi
                 Console.WriteLine();
             }
         }
+
+        public Object[] ToObjectArray()
+        {
+            // Convert to array of objects
+            ArrayList array = new ArrayList();
+            foreach (Dictionary<string, string> d in Values)
+            {
+                PSObject o = new PSObject();
+
+                foreach (string p in Properties)
+                {
+                    string value = String.Empty;
+                    if (d.ContainsKey(p))
+                    {
+                        value = d[p];
+                    }
+                    PSNoteProperty psp = new PSNoteProperty(p, value);
+                    o.Members.Add(psp);
+                }
+                array.Add(o);
+            }
+
+            return (Object[])(array.ToArray());
+        }
+
         private string Truncate(string s, int maxChars)
         {
             return s.Length < maxChars ? s : s.Substring(0, maxChars) + " ...";
@@ -100,14 +126,14 @@ namespace Microsoft.PowerShell.Commands.Omi
             return;
         }
 
-        private void GetValue(string nameSpace, string propertyName, out string type, out string value)
+        private void GetValue(string className, string propertyName, out string type, out string value)
         {
             // parse xml
             XElement cim = XElement.Parse(_xmlString);
                     
             IEnumerable<XElement> elements = 
                 from el in cim.Elements("INSTANCE")
-                where (string)el.Attribute("CLASSNAME") == nameSpace
+                where (string)el.Attribute("CLASSNAME") == className
                 select el;
             
             IEnumerable<XElement> properties = 
@@ -420,7 +446,7 @@ namespace Microsoft.PowerShell.Commands.Omi
         /// <cref type="IOException">Thrown if a unable to communicate with OMI
 	/// <cref type="ArgumentNullException>Thrown if any argument is null
         /// </exception>
-        public void StartDscConfiguration(string mofPath)
+        public void StartDscConfiguration(string mofPath, out OmiData data)
         {
             if (mofPath == null)
             {
@@ -432,15 +458,22 @@ namespace Microsoft.PowerShell.Commands.Omi
                 throw new PlatformNotSupportedException();
             }
 
-            UnicodeEncoding unicode = new UnicodeEncoding();
-            string mof = File.ReadAllText(mofPath, unicode);
+            string mof = File.ReadAllText(mofPath);
+            byte[] asciiBytes = Encoding.ASCII.GetBytes(mof);
 
             StringBuilder sb = new StringBuilder();
-            sb.Append("iv root/Microsoft/DesiredStateConfiguration { MSFT_DSCLocalConfigurationManager } SendConfigurationApply ");
-            sb.Append("{ ConfigurationData [ ");
-            sb.Append(mof);
+            const string className = "SendConfigurationApply";
+
+            sb.Append("iv root/Microsoft/DesiredStateConfiguration { MSFT_DSCLocalConfigurationManager } ");
+            sb.Append(className);
+            sb.Append(" { ConfigurationData [ ");
+            foreach (byte b in asciiBytes)
+            {
+                sb.Append(b.ToString());
+                sb.Append(' ');
+            }
             sb.Append(" ] ");
-            sb.Append("}");
+            sb.Append("} -xml");
 
             using (Process process = new Process())
             {
@@ -461,7 +494,9 @@ namespace Microsoft.PowerShell.Commands.Omi
                     throw new IOException();
                 }
                 
-                Console.WriteLine(output);
+                _xmlString = $"<INSTANCES>{output}</INSTANCES>";
+                data = GetOmiData();
+
                 return;
             }
         }

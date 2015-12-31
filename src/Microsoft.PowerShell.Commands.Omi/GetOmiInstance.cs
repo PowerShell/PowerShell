@@ -2,10 +2,10 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 using System;
-using System.Management.Automation;
 using System.Xml.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands.Omi
 {
@@ -86,26 +86,8 @@ namespace Microsoft.PowerShell.Commands.Omi
             OmiData data;
             oi.GetOmiValues(nameSpace, className, out data);
 
-            // Convert OmiData type to array of objects
-            ArrayList array = new ArrayList();
-            foreach (Dictionary<string, string> d in data.Values)
-            {
-                PSObject o = new PSObject();
-
-                foreach (string p in data.Properties)
-                {
-                    string value = String.Empty;
-                    if (d.ContainsKey(p))
-                    {
-                        value = d[p];
-                    }
-                    PSNoteProperty psp = new PSNoteProperty(p, value);
-                    o.Members.Add(psp);
-                }
-                array.Add(o);
-            }
-
-            WriteObject((Object[])array.ToArray());
+            object[] array = data.ToObjectArray();
+            WriteObject(array);
 
         } // EndProcessing
         

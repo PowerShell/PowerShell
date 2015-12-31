@@ -40,7 +40,11 @@ namespace Microsoft.PowerShell.Commands.Omi
         {
             OmiInterface oi = new OmiInterface();
 
-            oi.StartDscConfiguration(mofPath);
+            OmiData data;
+            oi.StartDscConfiguration(mofPath, out data);
+
+            object[] array = data.ToObjectArray();
+            WriteObject(array);
 
         } // EndProcessing
         
