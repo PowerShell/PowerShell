@@ -2,6 +2,8 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 using System;
+using System.IO;
+using System.Text;
 using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands.Omi
@@ -41,8 +43,37 @@ namespace Microsoft.PowerShell.Commands.Omi
             OmiInterface oi = new OmiInterface();
 
             OmiData data;
-            oi.StartDscConfiguration(mofPath, out data);
+            if (mofPath == null)
+            {
+                throw new ArgumentNullException();
+            }
 
+            if (!Platform.IsLinux())
+            {
+                throw new PlatformNotSupportedException();
+            }
+
+            string mof = File.ReadAllText(mofPath);
+            byte[] asciiBytes = Encoding.ASCII.GetBytes(mof);
+
+            const string nameSpace = "root/Microsoft/DesiredStateConfiguration";
+            const string instanceName = "{ MSFT_DSCLocalConfigurationManager }";
+            const string methodName = "SendConfigurationApply";
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(" { ConfigurationData [ ");
+            foreach (byte b in asciiBytes)
+            {
+                sb.Append(b.ToString());
+                sb.Append(' ');
+            }
+            sb.Append(" ] ");
+            sb.Append("}");
+            string parameters = sb.ToString();
+
+            string arguments = $"iv {nameSpace} {instanceName} {methodName} {parameters} -xml";
+            oi.ExecuteOmiCliCommand(arguments);
+            data = oi.GetOmiData();
             object[] array = data.ToObjectArray();
             WriteObject(array);
 

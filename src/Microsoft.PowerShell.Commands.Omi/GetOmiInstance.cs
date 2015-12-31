@@ -73,20 +73,39 @@ namespace Microsoft.PowerShell.Commands.Omi
 
         protected override void ProcessRecord()
         {
+            if (nameSpace == null || className == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (!Platform.IsLinux())
+            {
+                throw new PlatformNotSupportedException();
+            }
+
             OmiInterface oi = new OmiInterface();
+
+            string arguments = $"ei {nameSpace} {className} -xml";
+            oi.ExecuteOmiCliCommand(arguments);
 
             if (propertySpecified)
             {
+                if (property == null)
+                {
+                    throw new ArgumentNullException();
+                }
+                
                 string value;
-                oi.GetOmiValue(nameSpace, className, property, out value);
+                string type;
+                oi.GetValue(className, property, out type, out value);
+
                 WriteObject(value);
                 return;
             }
 
-            OmiData data;
-            oi.GetOmiValues(nameSpace, className, out data);
-
+            OmiData data = oi.GetOmiData();
             object[] array = data.ToObjectArray();
+
             WriteObject(array);
 
         } // EndProcessing

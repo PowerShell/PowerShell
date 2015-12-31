@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands.Omi
@@ -100,13 +99,13 @@ namespace Microsoft.PowerShell.Commands.Omi
     {
         private string _xmlString = null;
 
-        private void GetXML(string nameSpace, string className)
+        public void ExecuteOmiCliCommand(string arguments)
         {
             using (Process process = new Process())
             {
                 // Assume omicli is somewhere in PATH...
                 process.StartInfo.FileName = "omicli";
-                process.StartInfo.Arguments = $"ei {nameSpace} {className} -xml";
+                process.StartInfo.Arguments = arguments;
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.CreateNoWindow = true;
@@ -126,7 +125,7 @@ namespace Microsoft.PowerShell.Commands.Omi
             return;
         }
 
-        private void GetValue(string className, string propertyName, out string type, out string value)
+        public void GetValue(string className, string propertyName, out string type, out string value)
         {
             // parse xml
             XElement cim = XElement.Parse(_xmlString);
@@ -157,7 +156,7 @@ namespace Microsoft.PowerShell.Commands.Omi
             return elements;
         }
 
-        private OmiData GetOmiData()
+        public OmiData GetOmiData()
         {
             OmiData data = new OmiData();
 
@@ -223,282 +222,6 @@ namespace Microsoft.PowerShell.Commands.Omi
             }
 
             return data;
-        }
-
-        /// <summary>
-        /// Query OMI and return a string value
-        /// </summary>
-        /// <param name="namespace">The OMI namespace to query
-        /// <param name="class">The OMI class to query
-        /// <param name="property">The OMI property to query
-        /// <param name="value">The return value
-        /// </param>
-        /// <exception>
-        /// <cref type="IOException">Thrown if a unable to communicate with OMI
-        /// <cref type="XmlException">Thrown if a unable to parse XML properly
-	/// <cref type="ArgumentNullException>Thrown if any argument is null
-	/// <cref type="ArgumentException>Thrown if any return value is of wrong type
-        /// </exception>
-        public void GetOmiValue(string nameSpace, string className, string property, out string value)
-        {
-            if (nameSpace == null || className == null || property == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (!Platform.IsLinux())
-            {
-                throw new PlatformNotSupportedException();
-            }
-
-            GetXML(nameSpace, className);
-
-            string type;
-            string stringValue;
-
-            GetValue(className, property, out type, out stringValue);
-
-            if (type != "string")
-            {
-                throw new ArgumentException();
-            }
-
-            value = stringValue;
-        }
-
-        /// <summary>
-        /// Query OMI and return a UInt32 value
-        /// </summary>
-        /// <param name="namespace">The OMI namespace to query
-        /// <param name="class">The OMI class to query
-        /// <param name="property">The OMI property to query
-        /// <param name="value">The return value
-        /// </param>
-        /// <exception>
-        /// <cref type="IOException">Thrown if a unable to communicate with OMI
-        /// <cref type="XmlException">Thrown if a unable to parse XML properly
-	/// <cref type="ArgumentNullException>Thrown if any argument is null
-	/// <cref type="ArgumentException>Thrown if any return value is of wrong type
-        /// </exception>
-        public void GetOmiValue(string nameSpace, string className, string property, out UInt32 value)
-        {
-            if (nameSpace == null || className == null || property == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (!Platform.IsLinux())
-            {
-                throw new PlatformNotSupportedException();
-            }
-
-            GetXML(nameSpace, className);
-
-            string type;
-            string stringValue;
-
-            GetValue(className, property, out type, out stringValue);
-
-            if (type != "uint32")
-            {
-                throw new ArgumentException();
-            }
-
-            value = UInt32.Parse(stringValue);
-        }
-
-        /// <summary>
-        /// Query OMI and return a UInt64 value
-        /// </summary>
-        /// <param name="namespace">The OMI namespace to query
-        /// <param name="class">The OMI class to query
-        /// <param name="property">The OMI property to query
-        /// <param name="value">The return value
-        /// </param>
-        /// <exception>
-        /// <cref type="IOException">Thrown if a unable to communicate with OMI
-        /// <cref type="XmlException">Thrown if a unable to parse XML properly
-	/// <cref type="ArgumentNullException>Thrown if any argument is null
-	/// <cref type="ArgumentException>Thrown if any return value is of wrong type
-        /// </exception>
-        public void GetOmiValue(string nameSpace, string className, string property, out UInt64 value)
-        {
-            if (nameSpace == null || className == null || property == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (!Platform.IsLinux())
-            {
-                throw new PlatformNotSupportedException();
-            }
-
-            GetXML(nameSpace, className);
-
-            string type;
-            string stringValue;
-
-            GetValue(className, property, out type, out stringValue);
-
-            if (type != "uint64")
-            {
-                throw new ArgumentException();
-            }
-
-            value = UInt64.Parse(stringValue);
-        }
-
-        /// <summary>
-        /// Query OMI and return a collection of XElements
-        /// </summary>
-        /// <param name="namespace">The OMI namespace to query
-        /// <param name="class">The OMI class to query
-        /// <param name="elements">The return values
-        /// </param>
-        /// <exception>
-        /// <cref type="IOException">Thrown if a unable to communicate with OMI
-        /// <cref type="XmlException">Thrown if a unable to parse XML properly
-	/// <cref type="ArgumentNullException>Thrown if any argument is null
-	/// <cref type="ArgumentException>Thrown if any return value is of wrong type
-        /// </exception>
-        public void GetOmiValues(string nameSpace, string className, out IEnumerable<XElement> elements)
-        {
-            if (nameSpace == null || className == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (!Platform.IsLinux())
-            {
-                throw new PlatformNotSupportedException();
-            }
-
-            GetXML(nameSpace, className);
-
-            elements = GetValueIEnumerable();
-        }
-
-        /// <summary>
-        /// Query OMI and return an OmiData data class
-        /// </summary>
-        /// <param name="namespace">The OMI namespace to query
-        /// <param name="class">The OMI class to query
-        /// <param name="data">The return values
-        /// </param>
-        /// <exception>
-        /// <cref type="IOException">Thrown if a unable to communicate with OMI
-        /// <cref type="XmlException">Thrown if a unable to parse XML properly
-	/// <cref type="ArgumentNullException>Thrown if any argument is null
-	/// <cref type="ArgumentException>Thrown if any return value is of wrong type
-        /// </exception>
-        public void GetOmiValues(string nameSpace, string className, out OmiData data)
-        {
-            if (nameSpace == null || className == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (!Platform.IsLinux())
-            {
-                throw new PlatformNotSupportedException();
-            }
-
-            GetXML(nameSpace, className);
-
-            data = GetOmiData();
-        }
-
-        /// <summary>
-        /// Query OMI and return output as XElement
-        /// </summary>
-        /// <param name="namespace">The OMI namespace to query
-        /// <param name="class">The OMI class to query
-        /// <param name="cim">The return xml as a XElement
-        /// </param>
-        /// <exception>
-        /// <cref type="IOException">Thrown if a unable to communicate with OMI
-        /// <cref type="XmlException">Thrown if a unable to parse XML properly
-	/// <cref type="ArgumentNullException>Thrown if any argument is null
-	/// <cref type="ArgumentException>Thrown if any return value is of wrong type
-        /// </exception>
-        public void GetOmiValues(string nameSpace, string className, out XElement cim)
-        {
-            if (nameSpace == null || className == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (!Platform.IsLinux())
-            {
-                throw new PlatformNotSupportedException();
-            }
-
-            GetXML(nameSpace, className);
-            cim = XElement.Parse(_xmlString);
-        }
-
-        /// <summary>
-        /// Send DSC configuration to OMI based on a mof file
-        /// </summary>
-        /// <param name="mofPath">The full path to mof file
-        /// </param>
-        /// <exception>
-        /// <cref type="IOException">Thrown if a unable to communicate with OMI
-	/// <cref type="ArgumentNullException>Thrown if any argument is null
-        /// </exception>
-        public void StartDscConfiguration(string mofPath, out OmiData data)
-        {
-            if (mofPath == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (!Platform.IsLinux())
-            {
-                throw new PlatformNotSupportedException();
-            }
-
-            string mof = File.ReadAllText(mofPath);
-            byte[] asciiBytes = Encoding.ASCII.GetBytes(mof);
-
-            StringBuilder sb = new StringBuilder();
-            const string className = "SendConfigurationApply";
-
-            sb.Append("iv root/Microsoft/DesiredStateConfiguration { MSFT_DSCLocalConfigurationManager } ");
-            sb.Append(className);
-            sb.Append(" { ConfigurationData [ ");
-            foreach (byte b in asciiBytes)
-            {
-                sb.Append(b.ToString());
-                sb.Append(' ');
-            }
-            sb.Append(" ] ");
-            sb.Append("} -xml");
-
-            using (Process process = new Process())
-            {
-                // Assume omicli is somewhere in PATH...
-                process.StartInfo.FileName = "omicli";
-                process.StartInfo.Arguments = sb.ToString();
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.CreateNoWindow = true;
-
-                process.Start();
-
-                string output = process.StandardOutput.ReadToEnd();
-
-                process.WaitForExit();
-                if (process.ExitCode != 0)
-                {
-                    throw new IOException();
-                }
-                
-                _xmlString = $"<INSTANCES>{output}</INSTANCES>";
-                data = GetOmiData();
-
-                return;
-            }
         }
     }
 }
