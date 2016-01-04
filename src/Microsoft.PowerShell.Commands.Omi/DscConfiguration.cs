@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands.Omi
             OmiData data = oi.GetOmiData();
             object[] array = data.ToObjectArray();
 
-            WriteObject(array);
+            WriteObject(array, true);
 
         } // EndProcessing
         
