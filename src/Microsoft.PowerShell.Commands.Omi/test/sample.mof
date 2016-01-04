@@ -1,0 +1,22 @@
+instance of MSFT_nxFileResource
+{
+	Contents = "my contents";
+	DestinationPath = "/tmp/linux.txt";
+	Ensure = "Present";
+	Type = "File";
+	Owner = "root";
+	Group = "root";
+	Mode = "644";
+	ResourceId = "[MSFT_nxFileResource]File1";
+	ModuleName = "nx";
+	ModuleVersion = "1.0";
+	
+	
+};
+
+instance of OMI_ConfigurationDocument
+{
+  Version="1.0.0";
+  
+};
+ 
