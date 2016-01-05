@@ -22,13 +22,13 @@ Describe "DscConfiguration" {
     }
 
     It "Should set Meta MOF file properly" {
-        $s = Set-DscLocalConfiguration -ConfigurationMof $mofMeta | 
+        $s = Set-DscLocalConfigurationManager -ConfigurationMof $mofMeta | 
                 Where-Object {$_.NAME -eq "ReturnValue"}
         $s.VALUE    | Should Be "0"
     }
 
     It "Should get DSC local configuration successfully" {
-        $s = Get-DscLocalConfiguration | Where-Object {$_.NAME -eq "ReturnValue"}
+        $s = Get-DscLocalConfigurationManager | Where-Object {$_.NAME -eq "ReturnValue"}
         $s.VALUE    | Should Be "0"
     }
 

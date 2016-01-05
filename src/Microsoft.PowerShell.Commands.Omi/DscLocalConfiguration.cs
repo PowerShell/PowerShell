@@ -8,14 +8,14 @@ using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands.Omi
 {
-    #region Set-DscLocalConfiguration
+    #region Set-DscLocalConfigurationManager
 
     /// <summary> 
     /// implementation for the Set-DscLocalConfiguration command 
     /// </summary> 
-    [Cmdlet(VerbsCommon.Set, "DscLocalConfiguration" )]
+    [Cmdlet(VerbsCommon.Set, "DscLocalConfigurationManager" )]
     [OutputType(typeof(object))]
-    public sealed class SetDscLocalConfigurationCommand : Cmdlet
+    public sealed class SetDscLocalConfigurationManagerCommand : Cmdlet
     {
         #region parameters
 
@@ -85,14 +85,14 @@ namespace Microsoft.PowerShell.Commands.Omi
 
     #endregion
 
-    #region Get-DscConfiguration
+    #region Get-DscLocalConfigurationManager
 
     /// <summary> 
-    /// implementation for the Get-DscLocalConfiguration command 
+    /// implementation for the Get-DscLocalConfigurationManager command 
     /// </summary> 
-    [Cmdlet(VerbsCommon.Get, "DscLocalConfiguration" )]
+    [Cmdlet(VerbsCommon.Get, "DscLocalConfigurationManager" )]
     [OutputType(typeof(object))]
-    public sealed class GetDscLocalConfigurationCommand : Cmdlet
+    public sealed class GetDscLocalConfigurationManagerCommand : Cmdlet
     {
         #region methods
 
