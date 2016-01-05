@@ -8,14 +8,14 @@ using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands.Omi
 {
-    #region Start-DscConfiguration
+    #region Set-DscLocalConfiguration
 
     /// <summary> 
-    /// implementation for the Start-DscConfiguration command 
+    /// implementation for the Set-DscLocalConfiguration command 
     /// </summary> 
-    [Cmdlet( VerbsLifecycle.Start, "DscConfiguration" )]
+    [Cmdlet(VerbsCommon.Set, "DscLocalConfiguration" )]
     [OutputType(typeof(object))]
-    public sealed class StartDscConfigurationCommand : Cmdlet
+    public sealed class SetDscLocalConfigurationCommand : Cmdlet
     {
         #region parameters
 
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands.Omi
 
             const string nameSpace = "root/Microsoft/DesiredStateConfiguration";
             const string instanceName = "{ MSFT_DSCLocalConfigurationManager }";
-            const string methodName = "SendConfigurationApply";
+            const string methodName = "SendMetaConfigurationApply";
 
             string mof = File.ReadAllText(mofPath);
             byte[] asciiBytes = Encoding.ASCII.GetBytes(mof);
@@ -88,11 +88,11 @@ namespace Microsoft.PowerShell.Commands.Omi
     #region Get-DscConfiguration
 
     /// <summary> 
-    /// implementation for the Get-DscConfiguration command 
+    /// implementation for the Get-DscLocalConfiguration command 
     /// </summary> 
-    [Cmdlet( VerbsCommon.Get, "DscConfiguration" )]
+    [Cmdlet(VerbsCommon.Get, "DscLocalConfiguration" )]
     [OutputType(typeof(object))]
-    public sealed class GetDscConfigurationCommand : Cmdlet
+    public sealed class GetDscLocalConfigurationCommand : Cmdlet
     {
         #region methods
 
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands.Omi
 
             const string nameSpace = "root/Microsoft/DesiredStateConfiguration";
             const string instanceName = "{ MSFT_DSCLocalConfigurationManager }";
-            const string methodName = "GetConfiguration";
+            const string methodName = "GetMetaConfiguration";
 
             string arguments = $"iv {nameSpace} {instanceName} {methodName} -xml";
             oi.ExecuteOmiCliCommand(arguments);

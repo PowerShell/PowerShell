@@ -207,17 +207,25 @@ namespace Microsoft.PowerShell.Commands.Omi
                     }
                 
                     IEnumerable<XElement> valueArrays = property.Elements(VALUEARRAY);
-                    foreach (XElement valueArray in valueArrays)
+
+                    if (valueArrays.Count() > 0)
                     {
-                        IEnumerable<XElement> values = valueArray.Elements(VALUE);
-                        foreach (XElement value in values)
+                        foreach (XElement valueArray in valueArrays)
                         {
-                            Dictionary<string, string> d = new Dictionary<string, string>(dCommon);
-                            data.Properties.Add(VALUE);
-                            d[VALUE] = value.Value;
-                            data.Values.Add(d);
-                        }
-                    }                
+                            IEnumerable<XElement> values = valueArray.Elements(VALUE);
+                            foreach (XElement value in values)
+                            {
+                                Dictionary<string, string> d = new Dictionary<string, string>(dCommon);
+                                data.Properties.Add(VALUE);
+                                d[VALUE] = value.Value;
+                                data.Values.Add(d);
+                            }
+                        }                
+                    }
+                    else
+                    {
+                        data.Values.Add(dCommon);
+                    }
                 }
             }
 
