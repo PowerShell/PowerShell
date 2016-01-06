@@ -1,20 +1,9 @@
 ﻿Describe "Compare-Object" {
-    # First ensure the environment is set up
-    if (Test-Path "/tmp")
-    {
-        $testDirectory = "/tmp/testDirectory"
-        $nl = "`n"
-        $slash = "/"
+    $nl            = [Environment]::NewLine
+    $slash         = [System.IO.Path]::DirectorySeparatorChar
+    $testDirectory = $HOME + $slash + "testDirectory"
+    $dir           = $testDirectory
 
-    }
-    else
-    {
-        $testDirectory = "C:\Users\v-zafolw\testdirectory"
-        $nl = "`r`n"
-        $slash = "\\"
-    }
-
-    $dir = $testDirectory
     New-Item $testDirectory -ItemType directory -Force
 
     $content1 = "line 1" + $nl + "line 2"

@@ -3,19 +3,21 @@
 Describe "Get-ItemProperty" {
     $currentDirectory = Split-Path $here -Leaf
     $parentDirectory  = Split-Path $here/.. -Leaf
-    if (Test-Path /tmp)
-    {
-        $tempDirectory = "/tmp/testfolder"
-        $testProvider  = "/"
-    }
-    else
+    $isWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
+
+    if ($isWindows)
     {
         $tempDirectory = "~/testfolder"
         $testProvider  = "C"
     }
+    else
+    {
+        $tempDirectory = "/tmp/testfolder"
+        $testProvider  = "/"
+    }
 
     New-Item $tempDirectory -ItemType Directory -Force
-    $testfile = $tempDirectory + "/" + "testfile1"
+    $testfile = $tempDirectory + [Environment]::DirectorySeparatorChar + "testfile1"
 
     New-Item $testfile -ItemType file -Force
 

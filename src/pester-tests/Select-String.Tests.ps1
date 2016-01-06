@@ -1,4 +1,6 @@
 ﻿Describe "Select-String" {
+    $nl = [Environment]::NewLine
+    $currentDirectory = $pwd.Path
     Context "String actions" {
     $testinputone = "hello","Hello","goodbye"
     $testinputtwo = "hello","Hello"
@@ -85,9 +87,21 @@
     }
 
     Context "Filesytem actions" {
-        $testInputFile =  "/tmp/testfile1.txt"
+        $isWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
+
+        if ($isWindows)
+        {
+            $testDirectory = "C:\tmp\"
+            $testInputFile = "C:\tmp\testfile1.txt"
+        }
+        else
+        {
+            $testDirectory = "/tmp/"
+            $testInputFile =  "/tmp/testfile1.txt"
+        }
+
         BeforeEach {
-            New-Item $testInputFile -Itemtype "file" -Force -Value "This is a text string, and another string`nThis is the second line`nThis is the third line`nThis is the fourth line`nNo matches"
+            New-Item $testInputFile -Itemtype "file" -Force -Value "This is a text string, and another string${nl}This is the second line${nl}This is the third line${nl}This is the fourth line${nl}No matches"
         }
 
         It "Should return an object when a match is found is the file on only one line" {
@@ -102,7 +116,7 @@
         It "Should return the name of the file and the string that 'string' is found if there is only one lines that has a match" {
             $expected = $testInputFile + ":1:This is a text string, and another string"
 
-            Select-String $testInputFile -Pattern "string" | Should Be $expected 
+            Select-String $(Split-Path $testInputFile -NoQualifier) -Pattern "string" | Should Be $expected 
         }
 
         It "Should return all strings where 'second' is found in testfile1 if there is only one lines that has a match" {
@@ -131,11 +145,11 @@
         It "Should return the third line in testfile1 and the lines above and below it " {
             $expectedLine       = "testfile1.txt:2:This is the second line"
             $expectedLineBefore = "testfile1.txt:3:This is the third line"
-            $expectedLineAfter  = "/tmp/testfile1.txt:4:This is the fourth line"
+            $expectedLineAfter  = "testfile1.txt:4:This is the fourth line"
 
             Select-String third $testInputFile -Context 1 | Should Match $expectedLine
-            Select-String third $testInputFile -Context 1 | Should Match $expectedLineBefore 
-            Select-String third $testInputFile -Context 1 | Should Match $expectedLineAfter 
+            Select-String third $testInputFile -Context 1 | Should Match $expectedLineBefore
+            Select-String third $testInputFile -Context 1 | Should Match $expectedLineAfter
         }
 
         It "Should return the number of matches for 'is' in textfile1 " {
@@ -143,14 +157,13 @@
         }
 
         It "Should return the third line in testfile1 when a relative path is used" {
-            $expected  = "/tmp/testfile1.txt:3:This is the third line"
+            $expected  = "testfile1.txt:3:This is the third line"
 
-            Select-String third /tmp/../tmp/testfile1.txt  | Should Match $expected
+            Select-String third $testDirectory/"../tmp/testfile1.txt"  | Should Match $expected
         }
 
         It "Should return the fourth line in testfile1 when a relative path is used" {
-            $testDirectory = "/tmp/"
-            $expected      = "/tmp/testfile1.txt:5:No matches"
+            $expected = "testfile1.txt:5:No matches"
 
             pushd $testDirectory
 
@@ -159,15 +172,16 @@
         }
 
         It "Should return the fourth line in testfile1 when a regular expression is used" {
-            $expected  = "/tmp/testfile1.txt:5:No matches"
+            $expected  = "testfile1.txt:5:No matches"
 
             Select-String 'matc*' $testInputFile -CaseSensitive | Should Match $expected
         }
 
         It "Should return the fourth line in testfile1 when a regular expression is used, using the alias for casesensitive" {
-            $expected  = "/tmp/testfile1.txt:5:No matches"
+            $expected  = "testfile1.txt:5:No matches"
 
             Select-String 'matc*' $testInputFile -ca | Should Match $expected
         }
     }
+    Push-Location $currentDirectory
 }

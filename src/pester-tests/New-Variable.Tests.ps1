@@ -1,4 +1,6 @@
 ﻿Describe "New-Variable" {
+    $nl = [Environment]::NewLine
+
     It "Should create a new variable with no parameters" {
         { New-Variable var1 } | Should Not Throw
     }
@@ -62,7 +64,7 @@
 
         $output = $in | Format-List -Property Description | Out-String
 
-        $output | Should Be "`n`nDescription : test description`n`n`n`n"
+        $output | Should Be "${nl}${nl}Description : test description${nl}${nl}${nl}${nl}"
     }
 
     It "Should be able to set the value using the value switch" {

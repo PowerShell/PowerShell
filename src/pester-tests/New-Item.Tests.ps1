@@ -92,8 +92,4 @@ Describe "New-Item" {
 
         Test-Path $FullyQualifiedFile | Should Be $false 
     }
-
-    It "Should produce an error when the credentials switch is thrown" {
-        { New-Item -Name $testfile -Path $tmpDirectory -ItemType file -Credential domain/USER } | Should Throw "not implemented"
-    }
 }
