@@ -3,6 +3,7 @@
 
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $mof = "$here/assets/sample.mof"
+$mofCleanup = "$here/assets/sample-cleanup.mof"
 $mofMeta = "$here/assets/sampleMeta.mof"
 $file = "/tmp/linux.txt"
 
@@ -19,6 +20,13 @@ Describe "DscConfiguration" {
     It "Should get DSC configuration successfully" {
         $s = Get-DscConfiguration | Where-Object {$_.NAME -eq "ReturnValue"}
         $s.VALUE    | Should Be "0"
+    }
+
+    It "Should remove temp file just created" {
+        $s = Start-DscConfiguration -ConfigurationMof $mofCleanup | 
+                Where-Object {$_.NAME -eq "ReturnValue"}
+        $s.VALUE    | Should Be "0"
+        $file       | Should Not Exist
     }
 
     It "Should set Meta MOF file properly" {
