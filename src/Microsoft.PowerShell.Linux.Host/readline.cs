@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Linux.Host
                         this.OnDelete();
                         break;
 		    case ConsoleKey.Enter:
-           		previousKeyPress = key;
+			previousKeyPress = key;
                         return this.OnEnter();
                    case ConsoleKey.RightArrow:
                         this.OnRight(key.Modifiers);
@@ -250,19 +250,24 @@ namespace Microsoft.PowerShell.Linux.Host
 
 	    try
 	    {
-		tabResult = cmdCompleteOpt.CompletionMatches[tabCompletionPos].CompletionText;
+		if (tabCompletionPos > cmdCompleteOpt.CompletionMatches.Count || tabCompletionPos == cmdCompleteOpt.CompletionMatches.Count)
+		{		 
+		    tabCompletionPos = 1; 
+		}
+
+		tabResult = cmdCompleteOpt.CompletionMatches[tabCompletionPos].CompletionText;	       
 	    }
 
-	    catch (Exception)
+	    catch (Exception e)
 	    {
 		return;
 	    }
 	    	    
 	    tabCompletionPos++;
-	    
+
 	    //if there is a command for the user before the uncompleted option
 	    if (!String.IsNullOrEmpty(tabResult))
-	    {		
+	    {	
 		//handle file path slashes
 		if (tabResult.Contains(".\\"))
                 {		    
@@ -270,18 +275,33 @@ namespace Microsoft.PowerShell.Linux.Host
                 }
 
 		if (this.buffer.ToString().Contains(" "))
-		{
+		{ 		   
 		    var replaceIndex = cmdCompleteOpt.ReplacementIndex;
 		    string replaceBuffer = this.buffer.ToString();
 
-		    replaceBuffer = replaceBuffer.Remove(replaceIndex);
-		    tabResult = replaceBuffer + tabResult;
-	   	}
-
-		BufferFromString(tabResult);
-	        this.Render();
+		    
+		    if (replaceBuffer.Length < replaceIndex)
+		    {
+			replaceIndex = replaceBuffer.Length;
+		    }
+			
+		    if (replaceBuffer.Length == replaceIndex)
+		    {		
+			tabResult = replaceBuffer + tabResult;
+		    }
+			
+		    else
+		    {
+			replaceBuffer = replaceBuffer.Remove(replaceIndex);
+			tabResult = replaceBuffer + tabResult;	
+		    }
+		    
+		
+		}
+		    BufferFromString(tabResult);	
+		    this.Render();
 	    }
-
+	
 	} //end of OnTab()
 
 	/// <summary>
@@ -690,5 +710,6 @@ namespace Microsoft.PowerShell.Linux.Host
                 Console.CursorTop = cursorTop;
             }
         } // End Cursor
+
     }
 }
