@@ -18,61 +18,61 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         private Runspace runspace;
 
-	/// <summary>
-	/// Powershell instance for tabcompletion    
-	/// </summary>
-	private PowerShell powershell = PowerShell.Create(); 
+        /// <summary>
+        /// Powershell instance for tabcompletion
+        /// </summary>
+        private PowerShell powershell = PowerShell.Create();
 
         /// <summary>
         /// The buffer used to edit.
         /// </summary>
         private StringBuilder buffer = new StringBuilder();
 
-	/// <summary>
-	/// integeger for tracking up and down arrow history
-	/// </summary>
-	private int historyIndex;
+        /// <summary>
+        /// integeger for tracking up and down arrow history
+        /// </summary>
+        private int historyIndex;
 
-	/// <summary>
-	/// Used for storing tab completion
-	/// </summary>
-	private CommandCompletion cmdCompleteOpt;
+        /// <summary>
+        /// Used for storing tab completion
+        /// </summary>
+        private CommandCompletion cmdCompleteOpt;
 
         /// <summary>
         /// The position of the cursor within the buffer.
         /// </summary>
         private int current;
 
-	/// <summary>
-	/// Detects previously pressed key for TabCompletion
-	/// </summary>
         /// <summary>
-	private ConsoleKeyInfo previousKeyPress;
+        /// Detects previously pressed key for TabCompletion
+        /// </summary>
+        /// <summary>
+        private ConsoleKeyInfo previousKeyPress;
 
-	/// <summary>
-	/// Retains TabCompletion position
-	/// </summary>
-	private int tabCompletionPos;
+        /// <summary>
+        /// Retains TabCompletion position
+        /// </summary>
+        private int tabCompletionPos;
 
-	/// <summary>
-	///  History Queue
-	/// </summary>
-	private Collection<PSObject> historyResult;
+        /// <summary>
+        ///  History Queue
+        /// </summary>
+        private Collection<PSObject> historyResult;
 
-	/// <summary>
-	/// Hashtable for command completion options
-	/// </summary>
-	private System.Collections.Hashtable options = new System.Collections.Hashtable();
+        /// <summary>
+        /// Hashtable for command completion options
+        /// </summary>
+        private System.Collections.Hashtable options = new System.Collections.Hashtable();
 
-	/// <summary>
-	/// Retain original buffer for TabCompletion
-	/// </summary>
-	private StringBuilder tabBuffer;
+        /// <summary>
+        /// Retain original buffer for TabCompletion
+        /// </summary>
+        private StringBuilder tabBuffer;
 
-	/// <summary>
-	/// tabbuffer for storing result of tabcompletion
-	/// </summary>
-	private string tabResult;
+        /// <summary>
+        /// tabbuffer for storing result of tabcompletion
+        /// </summary>
+        private string tabResult;
 
         /// The count of characters in buffer rendered.
         /// </summary>
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <returns>The command line read</returns>
         public string Read(Runspace runspace)
         {
-	    this.runspace = runspace;
+            this.runspace = runspace;
             this.Initialize();
 
             while (true)
@@ -139,14 +139,14 @@ namespace Microsoft.PowerShell.Linux.Host
 
                 switch (key.Key)
                 {
-		    case ConsoleKey.Backspace:
+                    case ConsoleKey.Backspace:
                         this.OnBackspace();
                         break;
-		    case ConsoleKey.Delete:
+                    case ConsoleKey.Delete:
                         this.OnDelete();
                         break;
-		    case ConsoleKey.Enter:
-			previousKeyPress = key;
+                    case ConsoleKey.Enter:
+                        previousKeyPress = key;
                         return this.OnEnter();
                    case ConsoleKey.RightArrow:
                         this.OnRight(key.Modifiers);
@@ -163,18 +163,18 @@ namespace Microsoft.PowerShell.Linux.Host
                     case ConsoleKey.End:
                         this.OnEnd();
                         break;
-		    case ConsoleKey.Tab:
-			this.OnTab();
-			break;
+                    case ConsoleKey.Tab:
+                        this.OnTab();
+                        break;
                     case ConsoleKey.UpArrow:
-			this.OnUpArrow();
-			break;
+                        this.OnUpArrow();
+                        break;
                     case ConsoleKey.DownArrow:
-			this.OnDownArrow();
-			break;
+                        this.OnDownArrow();
+                        break;
 
-		    // TODO: case ConsoleKey.LeftWindows: not available in linux
-		    // TODO: case ConsoleKey.RightWindows: not available in linux
+                    // TODO: case ConsoleKey.LeftWindows: not available in linux
+                    // TODO: case ConsoleKey.RightWindows: not available in linux
 
                     default:
 
@@ -191,9 +191,9 @@ namespace Microsoft.PowerShell.Linux.Host
                         this.Insert(key.KeyChar);
 
                         this.Render();
-			break;
+                        break;
                 }
-    		        previousKeyPress = key;
+                        previousKeyPress = key;
             }
         }
 
@@ -202,9 +202,9 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         private void Initialize()
         {
-	    this.tabCompletionPos = 0;
+            this.tabCompletionPos = 0;
             this.historyIndex = 0;
-	    this.buffer.Length = 0;
+            this.buffer.Length = 0;
             this.current = 0;
             this.rendered = 0;
             this.cursor = new Cursor();
@@ -231,97 +231,96 @@ namespace Microsoft.PowerShell.Linux.Host
             this.cursor.Place(this.rendered);
         }
 
-	/// <summary>
-	///   The Tab key was entered
-	/// </summary>
-	private void OnTab()
-	{
-	    //if the prompt is empty simply return 
-	    if (String.IsNullOrWhiteSpace(this.buffer.ToString()) || this.buffer.Length == 0){
-		return;
-	    }
+        /// <summary>
+        ///   The Tab key was entered
+        /// </summary>
+        private void OnTab()
+        {
+            //if the prompt is empty simply return
+            if (String.IsNullOrWhiteSpace(this.buffer.ToString()) || this.buffer.Length == 0){
+                return;
+            }
 
-	    //if the buffer has been modified in any way, get the new command completion
-	    if (previousKeyPress.Key != ConsoleKey.Tab || previousKeyPress.Key == ConsoleKey.Enter || previousKeyPress.Key == ConsoleKey.Escape || previousKeyPress.Key == ConsoleKey.Backspace || previousKeyPress.Key == ConsoleKey.Delete)
-	    {	
-		tabBuffer = this.buffer;
-		cmdCompleteOpt = CommandCompletion.CompleteInput(this.tabBuffer.ToString(), this.current, options, powershell);
-	    }
+            //if the buffer has been modified in any way, get the new command completion
+            if (previousKeyPress.Key != ConsoleKey.Tab || previousKeyPress.Key == ConsoleKey.Enter || previousKeyPress.Key == ConsoleKey.Escape || previousKeyPress.Key == ConsoleKey.Backspace || previousKeyPress.Key == ConsoleKey.Delete)
+            {
+                tabBuffer = this.buffer;
+                cmdCompleteOpt = CommandCompletion.CompleteInput(this.tabBuffer.ToString(), this.current, options, powershell);
+            }
 
-	    try
-	    {
-		if (tabCompletionPos > cmdCompleteOpt.CompletionMatches.Count || tabCompletionPos == cmdCompleteOpt.CompletionMatches.Count)
-		{		 
-		    tabCompletionPos = 1; 
-		}
+            try
+            {
+                if (tabCompletionPos > cmdCompleteOpt.CompletionMatches.Count || tabCompletionPos == cmdCompleteOpt.CompletionMatches.Count)
+                {
+                    tabCompletionPos = 1;
+                }
 
-		tabResult = cmdCompleteOpt.CompletionMatches[tabCompletionPos].CompletionText;	       
-	    }
+                tabResult = cmdCompleteOpt.CompletionMatches[tabCompletionPos].CompletionText;
+            }
+            catch (Exception)
+            {
+                return;
+            }
 
-	    catch (Exception e)
-	    {
-		return;
-	    }
-	    	    
-	    tabCompletionPos++;
+            tabCompletionPos++;
 
-	    //if there is a command for the user before the uncompleted option
-	    if (!String.IsNullOrEmpty(tabResult))
-	    {	
-		//handle file path slashes
-		if (tabResult.Contains(".\\"))
-                {		    
+            //if there is a command for the user before the uncompleted option
+            if (!String.IsNullOrEmpty(tabResult))
+            {
+                //handle file path slashes
+                if (tabResult.Contains(".\\"))
+                {
                      tabResult = tabResult.Replace(".\\", "");
                 }
 
-		if (this.buffer.ToString().Contains(" "))
-		{ 		   
-		    var replaceIndex = cmdCompleteOpt.ReplacementIndex;
-		    string replaceBuffer = this.buffer.ToString();
+                if (this.buffer.ToString().Contains(" "))
+                {
+                    var replaceIndex = cmdCompleteOpt.ReplacementIndex;
+                    string replaceBuffer = this.buffer.ToString();
 
-		    
-		    if (replaceBuffer.Length < replaceIndex)
-		    {
-			replaceIndex = replaceBuffer.Length;
-		    }
-			
-		    if (replaceBuffer.Length == replaceIndex)
-		    {		
-			tabResult = replaceBuffer + tabResult;
-		    }
-			
-		    else
-		    {
-			replaceBuffer = replaceBuffer.Remove(replaceIndex);
-			tabResult = replaceBuffer + tabResult;	
-		    }
-		    
-		
-		}
-		    BufferFromString(tabResult);	
-		    this.Render();
-	    }
-	
-	} //end of OnTab()
 
-	/// <summary>
-	/// Set buffer to a string rather than inserting char by char
-	/// </summary>
-	private void BufferFromString(string endResult)
-	{
-	    //reset prompt and buffer
-	    OnEscape();
+                    if (replaceBuffer.Length < replaceIndex)
+                    {
+                        replaceIndex = replaceBuffer.Length;
+                    }
+
+                    if (replaceBuffer.Length == replaceIndex)
+                    {
+                        tabResult = replaceBuffer + tabResult;
+                    }
+
+                    else
+                    {
+                        replaceBuffer = replaceBuffer.Remove(replaceIndex);
+                        tabResult = replaceBuffer + tabResult;
+                    }
+
+
+                }
+                    BufferFromString(tabResult);
+                    this.Render();
+            }
+
+        } //end of OnTab()
+
+        /// <summary>
+        /// Set buffer to a string rather than inserting char by char
+        /// </summary>
+        private void BufferFromString(string endResult)
+        {
+            //reset prompt and buffer
+            OnEscape();
 
             this.buffer.Append(endResult);
             this.current += endResult.Length;
-	}
+        }
 
         /// <summary>
         /// The Home key was entered.
         /// </summary>
         private void OnHome()
         {
-	    this.current = 0;
+            this.current = 0;
             this.cursor.Reset();
         }
 
@@ -335,91 +334,91 @@ namespace Microsoft.PowerShell.Linux.Host
             this.Render();
         }
 
-	/// <summary>
-	/// The up arrow was pressed to retrieve history
-	/// </summary>
-	private void OnDownArrow() {
+        /// <summary>
+        /// The up arrow was pressed to retrieve history
+        /// </summary>
+        private void OnDownArrow() {
 
-	    if (historyIndex == historyResult.Count)
-	    {
-		OnEscape();
-	    }
+            if (historyIndex == historyResult.Count)
+            {
+                OnEscape();
+            }
 
-	    historyIndex++;
+            historyIndex++;
 
-	    try
-	    {
-		BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());   this.Render();
-	    }
+            try
+            {
+                BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());   this.Render();
+            }
 
-	    catch
-	    {
-		return;
-	    }
-	}
+            catch
+            {
+                return;
+            }
+        }
 
-	/// <summary>
-	///   Changes the history queue when the down arrow is pressed
-	/// </summary>
-	private void OnUpArrow()
-	{
-	    if ((previousKeyPress.Key != ConsoleKey.DownArrow && previousKeyPress.Key != ConsoleKey.UpArrow) || previousKeyPress.Key == ConsoleKey.Enter)
-	    {		
-		//first time getting the history
-		using (Pipeline pipeline = this.runspace.CreatePipeline("Get-History"))
-		{
-		    historyResult = pipeline.Invoke();
-		}
+        /// <summary>
+        ///   Changes the history queue when the down arrow is pressed
+        /// </summary>
+        private void OnUpArrow()
+        {
+            if ((previousKeyPress.Key != ConsoleKey.DownArrow && previousKeyPress.Key != ConsoleKey.UpArrow) || previousKeyPress.Key == ConsoleKey.Enter)
+            {
+                //first time getting the history
+                using (Pipeline pipeline = this.runspace.CreatePipeline("Get-History"))
+                {
+                    historyResult = pipeline.Invoke();
+                }
 
-		try
-		{
-		    historyIndex = historyResult.Count -1;		    
-		    BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());		  
-		    this.Render();
-		    historyIndex--;
-		}
+                try
+                {
+                    historyIndex = historyResult.Count -1;
+                    BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
+                    this.Render();
+                    historyIndex--;
+                }
 
-		catch
-		{
-		    return;
-		}
+                catch
+                {
+                    return;
+                }
 
-	    }
-	 
-	    else
-	    {
-		if (historyIndex > historyResult.Count) //we hit the blank prompt using the down arrow
-		{
-		    historyIndex = historyResult.Count -1;
-		}
+            }
 
-		if ( historyIndex < 0 )
-		{
-			historyIndex = 0; 		
-		}
+            else
+            {
+                if (historyIndex > historyResult.Count) //we hit the blank prompt using the down arrow
+                {
+                    historyIndex = historyResult.Count -1;
+                }
 
-		try
-		{
-		    BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
-		    this.Render();
+                if ( historyIndex < 0 )
+                {
+                        historyIndex = 0;
+                }
 
-		    if ( historyIndex == 0 )
-		    {
-			return;
-		    }
+                try
+                {
+                    BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
+                    this.Render();
 
-		    else
-		    {
-			historyIndex--;
-		    }
-		}
+                    if ( historyIndex == 0 )
+                    {
+                        return;
+                    }
 
-		catch
-		{
-		    return;
-		}
-	    }
-	}
+                    else
+                    {
+                        historyIndex--;
+                    }
+                }
+
+                catch
+                {
+                    return;
+                }
+            }
+        }
 
         /// <summary>
         /// Moves to the left of the cursor position.
@@ -540,7 +539,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <returns>A newline character.</returns>
         private string OnEnter()
         {
-	    Console.Out.WriteLine();
+            Console.Out.WriteLine();
             return this.buffer.ToString();
         }
 
@@ -574,7 +573,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         private void Render()
         {
-	    this.cursor.Reset();
+            this.cursor.Reset();
 
             string text = this.buffer.ToString();
 
@@ -589,7 +588,7 @@ namespace Microsoft.PowerShell.Linux.Host
                 // We can skip rendering tokens that end before the cursor.
                 int i;
 
-		for (i = 0; i < tokens.Count; ++i)
+                for (i = 0; i < tokens.Count; ++i)
                 {
                     if (this.current >= tokens[i].Start)
                     {
