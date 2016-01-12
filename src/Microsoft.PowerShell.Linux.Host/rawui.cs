@@ -16,16 +16,6 @@ namespace Microsoft.PowerShell.Linux.Host
 
     internal class MyRawUserInterface : PSHostRawUserInterface
     {
-        // this class provides features otherwise not available through .net
-        internal class Native
-        {
-            [DllImport("libpsnative")]
-            internal static extern int GetTerminalWidth();
-
-            [DllImport("libpsnative")]
-            internal static extern int GetTerminalHeight();
-        }
-
         /// <summary>
         /// Gets or sets the background color of the displayed text.
         /// This maps to the corresponding Console.Background property.
@@ -42,7 +32,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         public override Size BufferSize
         {
-            get { return new Size(Native.GetTerminalWidth()-1,Native.GetTerminalHeight()-1); }
+            get { return new Size(Console.WindowWidth, Console.WindowHeight); }
             set {  }
             //get { return new Size(Console.BufferWidth, Console.BufferHeight); }
             //set { Console.SetBufferSize(value.Width, value.Height); }

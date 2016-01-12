@@ -677,10 +677,10 @@ namespace Microsoft.PowerShell.Linux.Host
             /// <param name="delta">The number of characters to move.</param>
             internal static void Move(int delta)
             {
-                int position = Console.CursorTop * Console.BufferWidth + Console.CursorLeft + delta;
+                int position = Console.CursorTop * Console.WindowWidth + Console.CursorLeft + delta;
 
-                Console.CursorLeft = position % Console.BufferWidth;
-                Console.CursorTop = position / Console.BufferWidth;
+                Console.CursorLeft = position % Console.WindowWidth;
+                Console.CursorTop = position / Console.WindowWidth;
             }
 
             /// <summary>
@@ -698,12 +698,12 @@ namespace Microsoft.PowerShell.Linux.Host
             /// <param name="position">The new position.</param>
             internal void Place(int position)
             {
-                Console.CursorLeft = (this.anchorLeft + position) % Console.BufferWidth;
-                int cursorTop = this.anchorTop + (this.anchorLeft + position) / Console.BufferWidth;
-                if (cursorTop >= Console.BufferHeight)
+                Console.CursorLeft = (this.anchorLeft + position) % Console.WindowWidth;
+                int cursorTop = this.anchorTop + (this.anchorLeft + position) / Console.WindowWidth;
+                if (cursorTop >= Console.WindowHeight)
                 {
-                    this.anchorTop -= cursorTop - Console.BufferHeight + 1;
-                    cursorTop = Console.BufferHeight - 1;
+                    this.anchorTop -= cursorTop - Console.WindowHeight + 1;
+                    cursorTop = Console.WindowHeight - 1;
                 }
 
                 Console.CursorTop = cursorTop;
