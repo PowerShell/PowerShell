@@ -8,7 +8,7 @@
     },
 
     "dependencies": {
-	"NETStandard.Library": "1.0.0-rc2-23616",
+	"NETStandard.Library": "1.0.0-rc2-23712",
 	"Newtonsoft.Json": "8.0.1-beta3",
         "Microsoft.PowerShell.Commands.Management": {
 	    "type": "build",

@@ -4,7 +4,7 @@
     "authors": [ "andschwa" ],
 
     "dependencies": {
-	"NETStandard.Library": "1.0.0-rc2-23616",
+	"NETStandard.Library": "1.0.0-rc2-23712",
         "Microsoft.PowerShell.Linux.Host": {
 	    "type": "build",
 	    "version": "1.0.0-*"
