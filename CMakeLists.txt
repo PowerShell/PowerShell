@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.4)
-project(MONAD_NATIVE)
+project(PSL-NATIVE)
 
 add_compile_options(-std=c++11 -Wall -Werror)
 

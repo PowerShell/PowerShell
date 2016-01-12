@@ -1,4 +1,4 @@
-add_library(psnative SHARED
+add_library(psl-native SHARED
   getcurrentprocessorid.cpp
   getusername.cpp
   getcomputername.cpp
@@ -9,7 +9,4 @@ add_library(psnative SHARED
   setdate.cpp
   terminal.cpp)
 
-target_include_directories (psnative PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
-install(TARGETS psnative
-  LIBRARY DESTINATION lib)
+target_include_directories(psl-native PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

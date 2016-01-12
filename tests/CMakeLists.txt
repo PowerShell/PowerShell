@@ -1,6 +1,6 @@
 add_subdirectory(googletest)
 
-add_executable(psnative-test
+add_executable(psl-native-test
   test-locale.cpp
   test-getcurrentprocessid.cpp
   test-getusername.cpp
@@ -12,9 +12,9 @@ add_executable(psnative-test
   main.cpp)
 
 # manually include gtest headers
-target_include_directories(psnative-test PRIVATE ${gtest_SOURCE_DIR}/include)
+target_include_directories(psl-native-test PRIVATE ${gtest_SOURCE_DIR}/include)
 
-target_link_libraries(psnative-test psnative gtest)
+target_link_libraries(psl-native-test psl-native gtest)
 
-add_test(NAME psnative-test
-  COMMAND psnative-test --gtest_output=xml:native-tests.xml)
+add_test(NAME psl-native-test
+  COMMAND psl-native-test --gtest_output=xml:native-tests.xml)
