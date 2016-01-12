@@ -20,3 +20,6 @@
 [submodule "src/monad-build"]
 	path = src/monad-build
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-build
+[submodule "src/dsc"]
+	path = src/dsc
+	url = https://github.com/Microsoft/PowerShell-DSC-for-Linux.git
