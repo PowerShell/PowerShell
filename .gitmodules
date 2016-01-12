@@ -15,8 +15,8 @@
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-omi-provider
 [submodule "src/omi"]
 	path = src/omi
-	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/omi
-	branch = OMI-Shell/OMI-PSRP-Support
+	url = https://github.com/MSFTOSSMgmt/omi.git
+	branch = psrp/features
 [submodule "src/monad-build"]
 	path = src/monad-build
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-build
