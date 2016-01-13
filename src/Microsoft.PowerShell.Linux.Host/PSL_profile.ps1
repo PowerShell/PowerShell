@@ -13,3 +13,13 @@ function prompt
         invoke-expression $str
     }
 }
+
+function banner 
+{
+   "`nPowerShell for Linux interactive console"
+   "========================================"
+   "- Type 'get-help' for help"
+   "- Type 'exit' to exit`n"
+}
+
+banner

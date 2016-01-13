@@ -79,16 +79,6 @@ namespace Microsoft.PowerShell.Linux.Host
             // only run if there was no script file passed in
             if (initialScript == null)
             {
-                // Display the welcome message.
-                Console.WriteLine();
-                Console.WriteLine("PowerShell for Linux interactive console");
-                Console.WriteLine("========================================");
-                Console.WriteLine();
-                Console.WriteLine("Current status:");
-                Console.WriteLine("- Type 'exit' to exit");
-                Console.WriteLine("- Utility and Management cmdlet modules are loadable");
-                Console.WriteLine();
-
                 listener.Run();
             }
         }
