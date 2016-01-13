@@ -2,10 +2,10 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 using System;
-using System.Management.Automation;
 using System.Xml.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands.Omi
 {
@@ -73,39 +73,40 @@ namespace Microsoft.PowerShell.Commands.Omi
 
         protected override void ProcessRecord()
         {
+            if (nameSpace == null || className == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (!Platform.IsLinux())
+            {
+                throw new PlatformNotSupportedException();
+            }
+
             OmiInterface oi = new OmiInterface();
+
+            string arguments = $"ei {nameSpace} {className} -xml";
+            oi.ExecuteOmiCliCommand(arguments);
 
             if (propertySpecified)
             {
+                if (property == null)
+                {
+                    throw new ArgumentNullException();
+                }
+                
                 string value;
-                oi.GetOmiValue(nameSpace, className, property, out value);
+                string type;
+                oi.GetValue(className, property, out type, out value);
+
                 WriteObject(value);
                 return;
             }
 
-            OmiData data;
-            oi.GetOmiValues(nameSpace, className, out data);
+            OmiData data = oi.GetOmiData();
+            object[] array = data.ToObjectArray();
 
-            // Convert OmiData type to array of objects
-            ArrayList array = new ArrayList();
-            foreach (Dictionary<string, string> d in data.Values)
-            {
-                PSObject o = new PSObject();
-
-                foreach (string p in data.Properties)
-                {
-                    string value = String.Empty;
-                    if (d.ContainsKey(p))
-                    {
-                        value = d[p];
-                    }
-                    PSNoteProperty psp = new PSNoteProperty(p, value);
-                    o.Members.Add(psp);
-                }
-                array.Add(o);
-            }
-
-            WriteObject((Object[])array.ToArray());
+            WriteObject(array, true);
 
         } // EndProcessing
         

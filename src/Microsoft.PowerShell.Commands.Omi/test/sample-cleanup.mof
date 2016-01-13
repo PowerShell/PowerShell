@@ -1,0 +1,19 @@
+instance of MSFT_nxFileResource
+{
+	Contents = "my contents";
+	DestinationPath = "/tmp/linux.txt";
+	Ensure = "Absent";
+	Type = "File";
+	ResourceId = "[MSFT_nxFileResource]File1";
+	ModuleName = "nx";
+	ModuleVersion = "1.0";
+	
+	
+};
+
+instance of OMI_ConfigurationDocument
+{
+  Version="1.0.0";
+  
+};
+ 

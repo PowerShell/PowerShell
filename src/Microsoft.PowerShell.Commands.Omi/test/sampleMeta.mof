@@ -1,0 +1,24 @@
+/*
+@TargetNode='10.199.192.181'
+@GeneratedBy=johnkord
+@GenerationDate=01/15/2015 14:34:29
+@GenerationHost=JKORDIC-1
+*/
+
+
+instance of MSFT_DSCMetaConfiguration as $MSFT_DSCMetaConfiguration1ref
+{
+DownloadManagerName = "WebDownloadManager";
+RefreshMode = "Push";
+ConfigurationMode = "ApplyAndAutoCorrect";
+
+};
+
+instance of OMI_ConfigurationDocument
+{
+Version="1.0.0";
+Author="johnkord";
+GenerationDate="01/15/2015 14:34:29";
+GenerationHost="JKORDIC-1";
+};
+
