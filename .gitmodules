@@ -16,9 +16,9 @@
 	path = src/omi
 	url = https://github.com/MSFTOSSMgmt/omi.git
 	branch = psrp/features
-[submodule "src/monad-build"]
-	path = src/monad-build
-	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-build
+[submodule "src/windows-build"]
+	path = src/windows-build
+	url = https://github.com/PowerShell/psl-windows-build.git
 [submodule "src/dsc"]
 	path = src/dsc
 	url = https://github.com/Microsoft/PowerShell-DSC-for-Linux.git

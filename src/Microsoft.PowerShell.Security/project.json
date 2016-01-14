@@ -22,7 +22,7 @@
 
     "frameworks": { "dnxcore50": { } },
 
-    "compile": [ "../monad-build/gen/SECURITY/*.cs" ],
+    "compile": [ "../windows-build/gen/SECURITY/*.cs" ],
 
     "compileFiles": [
 	"../monad/monad/src/security/AclCommands.cs",
@@ -36,10 +36,10 @@
     ],
 
     "namedResource": {
-	"CertificateProviderStrings": "../monad-build/gen/SECURITY/CertificateProviderStrings.resources",
-	"ExecutionPolicyCommands": "../monad-build/gen/SECURITY/ExecutionPolicyCommands.resources",
-	"SecureStringCommands": "../monad-build/gen/SECURITY/SecureStringCommands.resources",
-	"SignatureCommands": "../monad-build/gen/SECURITY/SignatureCommands.resources",
-	"UtilsStrings": "../monad-build/gen/SECURITY/UtilsStrings.resources"
+	"CertificateProviderStrings": "../windows-build/gen/SECURITY/CertificateProviderStrings.resources",
+	"ExecutionPolicyCommands": "../windows-build/gen/SECURITY/ExecutionPolicyCommands.resources",
+	"SecureStringCommands": "../windows-build/gen/SECURITY/SecureStringCommands.resources",
+	"SignatureCommands": "../windows-build/gen/SECURITY/SignatureCommands.resources",
+	"UtilsStrings": "../windows-build/gen/SECURITY/UtilsStrings.resources"
     }
 }

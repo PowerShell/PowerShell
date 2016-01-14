@@ -24,7 +24,7 @@
 
     "frameworks": { "dnxcore50": { } },
 
-    "compile": [ "../monad-build/gen/COMMANDS_MANAGEMENT/*.cs" ],
+    "compile": [ "../windows-build/gen/COMMANDS_MANAGEMENT/*.cs" ],
 
     "compileFiles": [
 	"../monad/monad/src/cimSupport/cmdletization/SessionBasedWrapper.cs",
@@ -81,10 +81,10 @@
     ],
 
     "namedResource": {
-	"CmdletizationResources": "../monad-build/gen/COMMANDS_MANAGEMENT/CmdletizationResources.resources",
-	"ComputerResources": "../monad-build/gen/COMMANDS_MANAGEMENT/ComputerResources.resources",
-	"NavigationResources": "../monad-build/gen/COMMANDS_MANAGEMENT/NavigationResources.resources",
-	"ProcessResources": "../monad-build/gen/COMMANDS_MANAGEMENT/ProcessResources.resources",
-	"ServiceResources": "../monad-build/gen/COMMANDS_MANAGEMENT/ServiceResources.resources"
+	"CmdletizationResources": "../windows-build/gen/COMMANDS_MANAGEMENT/CmdletizationResources.resources",
+	"ComputerResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ComputerResources.resources",
+	"NavigationResources": "../windows-build/gen/COMMANDS_MANAGEMENT/NavigationResources.resources",
+	"ProcessResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ProcessResources.resources",
+	"ServiceResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ServiceResources.resources"
     }
 }

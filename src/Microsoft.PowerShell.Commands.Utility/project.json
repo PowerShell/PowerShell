@@ -22,7 +22,7 @@
 
     "frameworks": { "dnxcore50": { } },
 
-    "compile": [ "../monad-build/gen/COMMANDS_UTILITY/*.cs" ],
+    "compile": [ "../windows-build/gen/COMMANDS_UTILITY/*.cs" ],
 
     "compileFiles": [
 	"../monad/monad/src/commands/utility/AddMember.cs",
@@ -97,26 +97,26 @@
     ],
 
     "namedResource": {
-	"AddMember": "../monad-build/gen/COMMANDS_UTILITY/AddMember.resources",
-	"AddTypeStrings": "../monad-build/gen/COMMANDS_UTILITY/AddTypeStrings.resources",
-	"AliasCommandStrings": "../monad-build/gen/COMMANDS_UTILITY/AliasCommandStrings.resources",
-	"ConvertFromStringData": "../monad-build/gen/COMMANDS_UTILITY/ConvertFromStringData.resources",
-	"CsvCommandStrings": "../monad-build/gen/COMMANDS_UTILITY/CsvCommandStrings.resources",
-	"Debugger": "../monad-build/gen/COMMANDS_UTILITY/Debugger.resources",
-	"EventingStrings": "../monad-build/gen/COMMANDS_UTILITY/EventingStrings.resources",
-	"GetMember": "../monad-build/gen/COMMANDS_UTILITY/GetMember.resources",
-	"GetRandomCommandStrings": "../monad-build/gen/COMMANDS_UTILITY/GetRandomCommandStrings.resources",
-	"HostStrings": "../monad-build/gen/COMMANDS_UTILITY/HostStrings.resources",
-	"ImportLocalizedDataStrings": "../monad-build/gen/COMMANDS_UTILITY/ImportLocalizedDataStrings.resources",
-	"MatchStringStrings": "../monad-build/gen/COMMANDS_UTILITY/MatchStringStrings.resources",
-	"MeasureObjectStrings": "../monad-build/gen/COMMANDS_UTILITY/MeasureObjectStrings.resources",
-	"NewObjectStrings": "../monad-build/gen/COMMANDS_UTILITY/NewObjectStrings.resources",
-	"SelectObjectStrings": "../monad-build/gen/COMMANDS_UTILITY/SelectObjectStrings.resources",
-	"SortObjectStrings": "../monad-build/gen/COMMANDS_UTILITY/SortObjectStrings.resources",
-	"UpdateDataStrings": "../monad-build/gen/COMMANDS_UTILITY/UpdateDataStrings.resources",
-	"UtilityCommonStrings": "../monad-build/gen/COMMANDS_UTILITY/UtilityCommonStrings.resources",
-	"VariableCommandStrings": "../monad-build/gen/COMMANDS_UTILITY/VariableCommandStrings.resources",
-	"WriteErrorStrings": "../monad-build/gen/COMMANDS_UTILITY/WriteErrorStrings.resources",
-	"WriteProgressResourceStrings": "../monad-build/gen/COMMANDS_UTILITY/WriteProgressResourceStrings.resources"
+	"AddMember": "../windows-build/gen/COMMANDS_UTILITY/AddMember.resources",
+	"AddTypeStrings": "../windows-build/gen/COMMANDS_UTILITY/AddTypeStrings.resources",
+	"AliasCommandStrings": "../windows-build/gen/COMMANDS_UTILITY/AliasCommandStrings.resources",
+	"ConvertFromStringData": "../windows-build/gen/COMMANDS_UTILITY/ConvertFromStringData.resources",
+	"CsvCommandStrings": "../windows-build/gen/COMMANDS_UTILITY/CsvCommandStrings.resources",
+	"Debugger": "../windows-build/gen/COMMANDS_UTILITY/Debugger.resources",
+	"EventingStrings": "../windows-build/gen/COMMANDS_UTILITY/EventingStrings.resources",
+	"GetMember": "../windows-build/gen/COMMANDS_UTILITY/GetMember.resources",
+	"GetRandomCommandStrings": "../windows-build/gen/COMMANDS_UTILITY/GetRandomCommandStrings.resources",
+	"HostStrings": "../windows-build/gen/COMMANDS_UTILITY/HostStrings.resources",
+	"ImportLocalizedDataStrings": "../windows-build/gen/COMMANDS_UTILITY/ImportLocalizedDataStrings.resources",
+	"MatchStringStrings": "../windows-build/gen/COMMANDS_UTILITY/MatchStringStrings.resources",
+	"MeasureObjectStrings": "../windows-build/gen/COMMANDS_UTILITY/MeasureObjectStrings.resources",
+	"NewObjectStrings": "../windows-build/gen/COMMANDS_UTILITY/NewObjectStrings.resources",
+	"SelectObjectStrings": "../windows-build/gen/COMMANDS_UTILITY/SelectObjectStrings.resources",
+	"SortObjectStrings": "../windows-build/gen/COMMANDS_UTILITY/SortObjectStrings.resources",
+	"UpdateDataStrings": "../windows-build/gen/COMMANDS_UTILITY/UpdateDataStrings.resources",
+	"UtilityCommonStrings": "../windows-build/gen/COMMANDS_UTILITY/UtilityCommonStrings.resources",
+	"VariableCommandStrings": "../windows-build/gen/COMMANDS_UTILITY/VariableCommandStrings.resources",
+	"WriteErrorStrings": "../windows-build/gen/COMMANDS_UTILITY/WriteErrorStrings.resources",
+	"WriteProgressResourceStrings": "../windows-build/gen/COMMANDS_UTILITY/WriteProgressResourceStrings.resources"
     }
 }
