@@ -16,12 +16,11 @@ mkdir -p $BIN/Modules
 
 # Build native components
 (
-    cd src/monad-native
+    cd src/libpsl-native
     cmake -DCMAKE_BUILD_TYPE=Debug .
     make -j
     ctest -V
-    # Deploy development copy of libpsnative
-    cp native/libpsnative.so $BIN
+    cp src/libpsl-native.so $BIN
 )
 
 # Build registry stub (this should go away, again)

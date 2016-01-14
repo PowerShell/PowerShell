@@ -2,9 +2,9 @@
 	path = src/monad
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad
 	branch = develop
-[submodule "src/monad-native"]
-	path = src/monad-native
-	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-native
+[submodule "src/libpsl-native"]
+	path = src/libpsl-native
+	url = https://github.com/PowerShell/psl-native.git
 [submodule "ext-src/pester"]
 	path = ext-src/pester
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/Pester
