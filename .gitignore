@@ -6,6 +6,6 @@ cmake_install.cmake
 install_manifest.txt
 CTestTestfile.cmake
 Testing/
-tests/psl-native-test
+test/psl-native-test
 src/libpsl-native.so
-tests/native-tests.xml
+test/native-tests.xml

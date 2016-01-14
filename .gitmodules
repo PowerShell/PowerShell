@@ -1,4 +1,4 @@
-[submodule "tests/googletest"]
-	path = tests/googletest
+[submodule "test/googletest"]
+	path = test/googletest
 	url = https://github.com/google/googletest.git
 	ignore = dirty
