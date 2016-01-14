@@ -1,7 +1,6 @@
 [submodule "src/monad"]
 	path = src/monad
-	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad
-	branch = develop
+	url = https://github.com/PowerShell/psl-monad.git
 [submodule "src/libpsl-native"]
 	path = src/libpsl-native
 	url = https://github.com/PowerShell/psl-native.git
