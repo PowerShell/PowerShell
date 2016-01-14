@@ -9,9 +9,9 @@
 	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/Pester
 	branch = develop
 	ignore = dirty
-[submodule "src/monad-omi-provider"]
-	path = src/monad-omi-provider
-	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-omi-provider
+[submodule "src/omi-provider"]
+	path = src/omi-provider
+	url = https://github.com/PowerShell/psl-omi-provider.git
 [submodule "src/omi"]
 	path = src/omi
 	url = https://github.com/MSFTOSSMgmt/omi.git
