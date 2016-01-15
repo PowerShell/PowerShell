@@ -4,9 +4,9 @@
 [submodule "src/libpsl-native"]
 	path = src/libpsl-native
 	url = https://github.com/PowerShell/psl-native.git
-[submodule "ext-src/pester"]
-	path = ext-src/pester
-	url = https://msostc.visualstudio.com/DefaultCollection/PS/_git/Pester
+[submodule "test/Pester"]
+	path = test/Pester
+	url = https://github.com/PowerShell/psl-pester.git
 	branch = develop
 	ignore = dirty
 [submodule "src/omi-provider"]

@@ -7,7 +7,7 @@ mkdir -p $BIN/Modules
 # Deploy PowerShell modules
 (
     cd $BIN/Modules
-    ln -sf ../../ext-src/pester Pester
+    ln -sf ../../test/Pester .
     ln -sf ../../src/monad/monad/miscfiles/modules/Microsoft.PowerShell.Utility .
     OMI=Microsoft.PowerShell.Commands.Omi
     mkdir -p $OMI
