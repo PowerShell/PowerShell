@@ -1,24 +1,24 @@
-[submodule "src/monad"]
-	path = src/monad
-	url = https://github.com/PowerShell/psl-monad.git
+[submodule "src/dsc"]
+	path = src/dsc
+	url = https://github.com/Microsoft/PowerShell-DSC-for-Linux.git
 [submodule "src/libpsl-native"]
 	path = src/libpsl-native
 	url = https://github.com/PowerShell/psl-native.git
+[submodule "src/monad"]
+	path = src/monad
+	url = https://github.com/PowerShell/psl-monad.git
+[submodule "src/omi"]
+	path = src/omi
+	url = https://github.com/MSFTOSSMgmt/omi.git
+	branch = psrp/features
+[submodule "src/omi-provider"]
+	path = src/omi-provider
+	url = https://github.com/PowerShell/psl-omi-provider.git
+[submodule "src/windows-build"]
+	path = src/windows-build
+	url = https://github.com/PowerShell/psl-windows-build.git
 [submodule "test/Pester"]
 	path = test/Pester
 	url = https://github.com/PowerShell/psl-pester.git
 	branch = develop
 	ignore = dirty
-[submodule "src/omi-provider"]
-	path = src/omi-provider
-	url = https://github.com/PowerShell/psl-omi-provider.git
-[submodule "src/omi"]
-	path = src/omi
-	url = https://github.com/MSFTOSSMgmt/omi.git
-	branch = psrp/features
-[submodule "src/windows-build"]
-	path = src/windows-build
-	url = https://github.com/PowerShell/psl-windows-build.git
-[submodule "src/dsc"]
-	path = src/dsc
-	url = https://github.com/Microsoft/PowerShell-DSC-for-Linux.git
