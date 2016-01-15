@@ -1,4 +1,4 @@
-# PowerShell for Linux
+# PowerShell on Linux
 
 ## Obtain the source code
 
@@ -14,6 +14,14 @@ The user name and email must be set to do just about anything with Git.
 ```sh
 git config --global user.name "First Last"
 git config --global user.email "alias@microsoft.com"
+```
+
+If you do not have a preferred method of authentication, enable the storage
+credential helper, which will cache your credentials in plaintext on your
+system, so use a [token][].
+
+```sh
+git config --global credential.helper store
 ```
 
 I highly recommend these configurations to help deal with whitespace, rebasing,
@@ -45,54 +53,25 @@ git config --global am.threeWay true
 ```
 
 [Git]: https://git-scm.com/documentation
-
-### Setup Visual Studio Online authentication
-
-To use Git's `https` protocol with VSO, you'll want to setup tokens, and have Git remember them.
-
-1. `git config --global credential.helper store`
-2. Login to <https://msostc.visualstudio.com>
-3. Click your name in the upper left corner and click 'My profile'
-4. Click the "Security" tab in the left pane (under "Details")
-5. Click "Add"
-6. Enter "msostc" for "Description"
-7. Set "Expires In" to "1 year"
-8. Choose " msostc" for "Accounts"
-9. Choose "All scopes"
-10. Click "Create Token" (you may want to copy this token somewhere safe, as VSO will not show it again!)
-11. Use this token as the password when cloning (and your username for the username)
-
-### Setup GitHub authentication
-
-We are working to move all our repositories to GitHub. Unfortunately, this
-transition is incomplete, but in progress. The DSC and OMI submodules are
-hosted on GitHub, and while the former is a public repository, the latter is
-private, thus requiring authentication.
-
-You should already have your credential helper setup to "store," and so should
-use a token with GitHub (instead of your plaintext password). Follow [their
-instructions](https://help.github.com/articles/creating-an-access-token-for-command-line-use/).
+[token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
 
 ### Download source code
 
-Clone our [monad-linux][] source from Visual Studio Online, it's the
-superproject with a number of submodules.
+Clone this repository recurisvely, as it's the superproject with a number of
+submodules.
 
 ```sh
-git clone --recursive https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-linux
+git clone --recursive https://github.com/PowerShell/PowerShell-Linux.git
 ```
 
-Please read the documentation on [submodules][] if you're not familiar with
-them. Note that because VSO's "Complete Pull Request" button merges with
-`--no-ff`, an extra merge commit will always be created. This can be annoying
-when trying to commit updates to submodules. When a submodule PR is approved,
-you can "complete" it without a merge commit by merging it to develop manually
-and pushing the updated head.
+*Read the documentation on [submodules][] if you're not familiar with them.*
 
-Our convention is to create feature branches `dev/feature` off `master`, except
-in `src/monad` where we branch off `develop`.
+Note that because GitHub's "Merge Pull Request" button merges with `--no-ff`,
+an extra merge commit will always be created. This can be especially annoying
+when trying to commit updates to submodules. Therefore our policy is to merge
+using the Git CLI after approval, preferably with a rebase to enable a
+fast-forward merge.
 
-[monad-linux]: https://msostc.visualstudio.com/DefaultCollection/PS/_git/monad-linux
 [submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
 
 ## Setup build environment
@@ -128,22 +107,34 @@ Build with `./build.sh`, which does the following steps.
 
 > The variable `$BIN` is the output directory, `bin`.
 
+### Managed
+
+Builds with `dotnet-cli`. Publishes all dependencies into the `bin` directory.
+Emits its own native host as `bin/Microsoft.PowerShell.Linux.Host`.
+
+```sh
+cd src/Microsoft.PowerShell.Linux.Host
+dotnet publish --framework dnxcore50 --output $BIN
+# Copy files that dotnet-publish doesn't currently deploy
+cp *.ps1xml *_profile.ps1 $BIN
+```
+
 ### Native
 
 - `libpsnative.so`: native functions that `CorePsPlatform.cs` P/Invokes
 - `api-ms-win-core-registry-l1-1-0.dll`: registry stub to prevent missing DLL error on shutdown
 
-#### monad-native
+#### libpsl-native
 
 Driven by CMake, with its own unit tests using Google Test.
 
 ```sh
-cd src/monad-native
+cd src/libpsl-native
 cmake -DCMAKE_BUILD_TYPE=Debug .
 make -j
 ctest -V
-# Deploy development copy of libpsnative
-cp native/libpsnative.so $BIN
+# Deploy development copy of libpsl-native
+cp native/libpsl-native.* $BIN
 ```
 
 #### registry-stub
@@ -156,21 +147,9 @@ make
 cp api-ms-win-core-registry-l1-1-0.dll $BIN
 ```
 
-### Managed
-
-Builds with `dotnet-cli`. Publishes all dependencies into the `bin` directory.
-Emits its own native host as `bin/Microsoft.PowerShell.Linux.Host`.
-
-```sh
-cd src/Microsoft.PowerShell.Linux.Host
-dotnet publish --framework dnxcore50 --runtime ubuntu.14.04-x64 --output $BIN
-# Copy files that dotnet-publish doesn't currently deploy
-cp *.ps1xml *_profile.ps1 $BIN
-```
-
 ### PowerShell Remoting Protocol
 
-PSRP communication is tunneled through OMI using the `monad-omi-provider`.
+PSRP communication is tunneled through OMI using the `omi-provider`.
 These build steps are not part of the `./build.sh` script.
 
 #### OMI
@@ -186,7 +165,7 @@ make -j
 The provider uses CMake to build, link, and register with OMI.
 
 ```sh
-cd src/monad-omi-provider
+cd src/omi-provider
 cmake .
 make -j
 ```
