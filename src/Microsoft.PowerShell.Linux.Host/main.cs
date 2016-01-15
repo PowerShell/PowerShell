@@ -133,6 +133,11 @@ namespace Microsoft.PowerShell.Linux.Host
         private object instanceLock = new object();
 
         /// <summary>
+        /// To keep track whether we've displayed the debugger help message
+        /// </summary>
+        private bool _showHelpMessage; 
+
+        /// <summary>
         /// Gets or sets a value indicating whether the host application 
         /// should exit.
         /// </summary>
@@ -161,6 +166,17 @@ namespace Microsoft.PowerShell.Linux.Host
             InitialSessionState iss = InitialSessionState.CreateDefault2();
             this.myRunSpace = RunspaceFactory.CreateRunspace(this.myHost, iss);
             this.myRunSpace.Open();
+
+            if (this.myRunSpace.Debugger != null)
+            {
+                this.myRunSpace.Debugger.DebuggerStop += HandleDebuggerStopEvent;
+
+                // Workflow debugging is new for PowerShell version 4 and is an opt-in 
+                // feature.  In order to debug Workflow script functions the debugger 
+                // DebugMode must include the DebugModes.LocalScript flag.
+                this.myRunSpace.Debugger.SetDebugMode(DebugModes.LocalScript);
+
+            }
 
             // Create a PowerShell object to run the commands used to create
             // $profile and load the profiles.
@@ -432,5 +448,96 @@ namespace Microsoft.PowerShell.Linux.Host
             // The exit code is set in the host by the MyHost.SetShouldExit() method.
             //Environment.Exit(this.ExitCode);
         }
+
+        /// <summary> 
+        /// Method to handle the Debugger DebuggerStop event.
+        /// </summary> 
+        /// <param name="sender"> Debugger instance
+        /// <param name="args"> DebuggerStop event args
+        private void HandleDebuggerStopEvent(object sender, DebuggerStopEventArgs args) 
+        { 
+            Debugger debugger = sender as Debugger; 
+            DebuggerResumeAction? resumeAction = null; 
+ 
+            WriteDebuggerStopMessages(args); 
+ 
+            // loop to process Debugger commands. 
+            while (resumeAction == null) 
+            { 
+                Console.Write("[DBG] PS >> "); 
+                string command = Console.ReadLine(); 
+                Console.WriteLine(); 
+ 
+                // Stream output from command processing to console. 
+                var output = new PSDataCollection<PSObject>(); 
+                output.DataAdded += (dSender, dArgs) => 
+                { 
+                    foreach (var item in output.ReadAll()) 
+                    { 
+                        Console.WriteLine(item); 
+                    } 
+                }; 
+
+                // Process command. 
+                // The Debugger.ProcesCommand method will parse and handle debugger specific 
+                // commands such as 'h' (help), 'list', 'stepover', etc.  If the command is  
+                // not specific to the debugger then it will be evaluated as a PowerShell  
+                // command or script.  The returned DebuggerCommandResults object will indicate 
+                // whether the command was evaluated by the debugger and if the debugger should 
+                // be released with a specific resume action. 
+                PSCommand psCommand = new PSCommand(); 
+                psCommand.AddScript(command).AddCommand("Out-String").AddParameter("Stream", true); 
+                DebuggerCommandResults results = debugger.ProcessCommand(psCommand, output); 
+                if (results.ResumeAction != null) 
+                { 
+                    resumeAction = results.ResumeAction; 
+                } 
+            } 
+ 
+            // Return from event handler with user resume action. 
+            args.ResumeAction = resumeAction.Value; 
+        }
+
+        /// <summary> 
+        /// Helper method to write debugger stop messages. 
+        /// </summary> 
+        /// <param name="args">DebuggerStopEventArgs for current debugger stop</param> 
+        private void WriteDebuggerStopMessages(DebuggerStopEventArgs args) 
+        { 
+            // Write debugger stop information in yellow. 
+            ConsoleColor saveFGColor = Console.ForegroundColor; 
+            Console.ForegroundColor = ConsoleColor.Yellow; 
+ 
+            // Show help message only once. 
+            if (!_showHelpMessage) 
+            { 
+                Console.WriteLine("Entering debug mode. Type 'h' to get help."); 
+                Console.WriteLine(); 
+                _showHelpMessage = true; 
+            } 
+ 
+            // Breakpoint stop information.  Writes all breakpoints that  
+            // pertain to this debugger execution stop point. 
+            if (args.Breakpoints.Count > 0) 
+            { 
+                Console.WriteLine("Debugger hit breakpoint on:"); 
+                foreach (var breakPoint in args.Breakpoints) 
+                { 
+                    Console.WriteLine(breakPoint.ToString()); 
+                } 
+                Console.WriteLine(); 
+            } 
+ 
+            // Script position stop information. 
+            // This writes the InvocationInfo position message if 
+            // there is one. 
+            if (args.InvocationInfo != null) 
+            { 
+                Console.WriteLine(args.InvocationInfo.PositionMessage); 
+                Console.WriteLine(); 
+            } 
+ 
+            Console.ForegroundColor = saveFGColor; 
+        } 
     }
 }
