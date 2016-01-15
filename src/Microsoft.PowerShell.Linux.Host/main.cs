@@ -79,16 +79,6 @@ namespace Microsoft.PowerShell.Linux.Host
             // only run if there was no script file passed in
             if (initialScript == null)
             {
-                // Display the welcome message.
-                Console.WriteLine();
-                Console.WriteLine("PowerShell for Linux interactive console");
-                Console.WriteLine("========================================");
-                Console.WriteLine();
-                Console.WriteLine("Current status:");
-                Console.WriteLine("- Type 'exit' to exit");
-                Console.WriteLine("- Utility and Management cmdlet modules are loadable");
-                Console.WriteLine();
-
                 listener.Run();
             }
         }
@@ -176,8 +166,7 @@ namespace Microsoft.PowerShell.Linux.Host
                 PSCommand[] profileCommands = HostUtilities.GetProfileCommands("PSL");
                 foreach (PSCommand command in profileCommands)
                 {
-                    this.currentPowerShell.Commands = command;
-                    this.currentPowerShell.Invoke();
+                    RunCommand(command);
                 }
             }
             finally
@@ -223,6 +212,32 @@ namespace Microsoft.PowerShell.Linux.Host
             }
 
             return returnVal;
+        }
+
+        /// <summary>
+        /// Runs individual commands
+        /// </summary>
+        /// <param name="command">command to run</param>
+        internal void RunCommand(PSCommand command)
+        {
+            if (command == null)
+            {
+                return;
+            }
+
+            command.AddCommand("out-default");
+            command.Commands[0].MergeMyResults(PipelineResultTypes.Error, PipelineResultTypes.Output);
+
+            this.currentPowerShell.Commands = command;
+
+            try
+            {
+                this.currentPowerShell.Invoke();
+            }
+            catch (RuntimeException e)
+            {
+                this.ReportException(e);
+            }
         }
 
         /// <summary>
