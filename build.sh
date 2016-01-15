@@ -20,7 +20,7 @@ mkdir -p $BIN/Modules
     cmake -DCMAKE_BUILD_TYPE=Debug .
     make -j
     ctest -V
-    cp src/libpsl-native.so $BIN
+    cp src/libpsl-native.* $BIN
 )
 
 # Build registry stub (this should go away, again)
@@ -33,7 +33,7 @@ mkdir -p $BIN/Modules
 # Publish PowerShell
 (
     cd src/Microsoft.PowerShell.Linux.Host
-    dotnet publish --framework dnxcore50 --runtime ubuntu.14.04-x64 --output $BIN
+    dotnet publish --framework dnxcore50 --output $BIN
     # Copy files that dotnet-publish does not currently deploy
     cp *_profile.ps1 $BIN
 )
