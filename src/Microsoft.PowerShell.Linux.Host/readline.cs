@@ -339,16 +339,22 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         private void OnDownArrow() {
 
+	    if (historyResult == null)
+	    {
+		return;
+	    }
+
             if (historyIndex == historyResult.Count)
             {
                 OnEscape();
-            }
+            }  
 
             historyIndex++;
 
             try
             {
-                BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());   this.Render();
+                BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
+		this.Render();
             }
 
             catch
@@ -362,62 +368,67 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         private void OnUpArrow()
         {
-            if ((previousKeyPress.Key != ConsoleKey.DownArrow && previousKeyPress.Key != ConsoleKey.UpArrow) || previousKeyPress.Key == ConsoleKey.Enter)
-            {
-                //first time getting the history
-                using (Pipeline pipeline = this.runspace.CreatePipeline("Get-History"))
-                {
-                    historyResult = pipeline.Invoke();
-                }
 
-                try
-                {
-                    historyIndex = historyResult.Count -1;
-                    BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
-                    this.Render();
-                    historyIndex--;
-                }
+	    try{
+		if ((previousKeyPress.Key != ConsoleKey.DownArrow && previousKeyPress.Key != ConsoleKey.UpArrow) || previousKeyPress.Key == ConsoleKey.Enter)
+		{
+		    //first time getting the history
+		    using (Pipeline pipeline = this.runspace.CreatePipeline("Get-History"))
+		    {
+			historyResult = pipeline.Invoke();
+		    }
 
-                catch
-                {
-                    return;
-                }
+		    try
+		    {
+			historyIndex = historyResult.Count -1;
+			BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
+			this.Render();
+			historyIndex--;
+		    }
 
-            }
+		    catch
+		    {
+			return;
+		    }
 
-            else
-            {
-                if (historyIndex > historyResult.Count) //we hit the blank prompt using the down arrow
-                {
-                    historyIndex = historyResult.Count -1;
-                }
+		}
 
-                if ( historyIndex < 0 )
-                {
+		else
+		{
+		    if (historyIndex > historyResult.Count) //we hit the blank prompt using the down arrow
+		    {
+			historyIndex = historyResult.Count -1;
+		    }
+
+		    if ( historyIndex < 0 )
+		    {
                         historyIndex = 0;
-                }
+		    }
 
-                try
-                {
-                    BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
-                    this.Render();
+		    try
+		    {
+			BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
+			this.Render();
 
-                    if ( historyIndex == 0 )
-                    {
-                        return;
-                    }
+			if ( historyIndex == 0 )
+			{
+			    return;
+			}
 
-                    else
-                    {
-                        historyIndex--;
-                    }
-                }
+			else
+			{
+			    historyIndex--;
+			}
+		    }
 
-                catch
-                {
-                    return;
-                }
-            }
+		    catch
+		    {
+			return;
+		    }
+		}
+	    }
+
+	    catch { return;}
         }
 
         /// <summary>
