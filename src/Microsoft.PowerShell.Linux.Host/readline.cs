@@ -100,8 +100,8 @@ namespace Microsoft.PowerShell.Linux.Host
         public ConsoleReadLine()
         {
             this.tokenColors = new ConsoleColor[]
-                {
-                    this.defaultColor,       // Unknown
+            {
+                this.defaultColor,       // Unknown
                     ConsoleColor.Yellow,     // Command
                     ConsoleColor.Green,      // CommandParameter
                     ConsoleColor.Cyan,       // CommandArgument
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Linux.Host
                     this.defaultColor,       // NewLine
                     this.defaultColor,       // LineContinuation
                     this.defaultColor,       // Position
-                };
+            };
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Linux.Host
                     case ConsoleKey.Enter:
                         previousKeyPress = key;
                         return this.OnEnter();
-                   case ConsoleKey.RightArrow:
+                    case ConsoleKey.RightArrow:
                         this.OnRight(key.Modifiers);
                         break;
                     case ConsoleKey.LeftArrow:
@@ -173,8 +173,8 @@ namespace Microsoft.PowerShell.Linux.Host
                         this.OnDownArrow();
                         break;
 
-                    // TODO: case ConsoleKey.LeftWindows: not available in linux
-                    // TODO: case ConsoleKey.RightWindows: not available in linux
+                        // TODO: case ConsoleKey.LeftWindows: not available in linux
+                        // TODO: case ConsoleKey.RightWindows: not available in linux
 
                     default:
 
@@ -193,7 +193,7 @@ namespace Microsoft.PowerShell.Linux.Host
                         this.Render();
                         break;
                 }
-                        previousKeyPress = key;
+                previousKeyPress = key;
             }
         }
 
@@ -270,7 +270,7 @@ namespace Microsoft.PowerShell.Linux.Host
                 //handle file path slashes
                 if (tabResult.Contains(".\\"))
                 {
-                     tabResult = tabResult.Replace(".\\", "");
+                    tabResult = tabResult.Replace(".\\", "");
                 }
 
                 if (this.buffer.ToString().Contains(" "))
@@ -297,8 +297,8 @@ namespace Microsoft.PowerShell.Linux.Host
 
 
                 }
-                    BufferFromString(tabResult);
-                    this.Render();
+                BufferFromString(tabResult);
+                this.Render();
             }
 
         } //end of OnTab()
@@ -339,22 +339,22 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         private void OnDownArrow() {
 
-	    if (historyResult == null)
-	    {
-		return;
-	    }
+            if (historyResult == null)
+            {
+                return;
+            }
 
             if (historyIndex == historyResult.Count)
             {
                 OnEscape();
-            }  
+            }
 
             historyIndex++;
 
             try
             {
                 BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
-		this.Render();
+                this.Render();
             }
 
             catch
@@ -369,66 +369,66 @@ namespace Microsoft.PowerShell.Linux.Host
         private void OnUpArrow()
         {
 
-	    try{
-		if ((previousKeyPress.Key != ConsoleKey.DownArrow && previousKeyPress.Key != ConsoleKey.UpArrow) || previousKeyPress.Key == ConsoleKey.Enter)
-		{
-		    //first time getting the history
-		    using (Pipeline pipeline = this.runspace.CreatePipeline("Get-History"))
-		    {
-			historyResult = pipeline.Invoke();
-		    }
+            try{
+                if ((previousKeyPress.Key != ConsoleKey.DownArrow && previousKeyPress.Key != ConsoleKey.UpArrow) || previousKeyPress.Key == ConsoleKey.Enter)
+                {
+                    //first time getting the history
+                    using (Pipeline pipeline = this.runspace.CreatePipeline("Get-History"))
+                    {
+                        historyResult = pipeline.Invoke();
+                    }
 
-		    try
-		    {
-			historyIndex = historyResult.Count -1;
-			BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
-			this.Render();
-			historyIndex--;
-		    }
+                    try
+                    {
+                        historyIndex = historyResult.Count -1;
+                        BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
+                        this.Render();
+                        historyIndex--;
+                    }
 
-		    catch
-		    {
-			return;
-		    }
+                    catch
+                    {
+                        return;
+                    }
 
-		}
+                }
 
-		else
-		{
-		    if (historyIndex > historyResult.Count) //we hit the blank prompt using the down arrow
-		    {
-			historyIndex = historyResult.Count -1;
-		    }
+                else
+                {
+                    if (historyIndex > historyResult.Count) //we hit the blank prompt using the down arrow
+                    {
+                        historyIndex = historyResult.Count -1;
+                    }
 
-		    if ( historyIndex < 0 )
-		    {
+                    if ( historyIndex < 0 )
+                    {
                         historyIndex = 0;
-		    }
+                    }
 
-		    try
-		    {
-			BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
-			this.Render();
+                    try
+                    {
+                        BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
+                        this.Render();
 
-			if ( historyIndex == 0 )
-			{
-			    return;
-			}
+                        if ( historyIndex == 0 )
+                        {
+                            return;
+                        }
 
-			else
-			{
-			    historyIndex--;
-			}
-		    }
+                        else
+                        {
+                            historyIndex--;
+                        }
+                    }
 
-		    catch
-		    {
-			return;
-		    }
-		}
-	    }
+                    catch
+                    {
+                        return;
+                    }
+                }
+            }
 
-	    catch { return;}
+            catch { return;}
         }
 
         /// <summary>

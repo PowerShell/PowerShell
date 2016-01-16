@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Linux.Host
         private object instanceLock = new object();
 
         /// <summary>
-        /// Gets or sets a value indicating whether the host application 
+        /// Gets or sets a value indicating whether the host application
         /// should exit.
         /// </summary>
         public bool ShouldExit
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Linux.Host
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the host application 
+        /// Gets or sets a value indicating whether the host application
         /// should exit.
         /// </summary>
         public int ExitCode
@@ -144,8 +144,8 @@ namespace Microsoft.PowerShell.Linux.Host
 
         public Listener(string initialScript)
         {
-            // Create the host and runspace instances for this interpreter. 
-            // Note that this application does not support console files so 
+            // Create the host and runspace instances for this interpreter.
+            // Note that this application does not support console files so
             // only the default snap-ins will be available.
             this.myHost = new MyHost(this);
             InitialSessionState iss = InitialSessionState.CreateDefault2();
@@ -241,13 +241,13 @@ namespace Microsoft.PowerShell.Linux.Host
         }
 
         /// <summary>
-        /// A helper class that builds and executes a pipeline that writes 
-        /// to the default output path. Any exceptions that are thrown are 
-        /// just passed to the caller. Since all output goes to the default 
+        /// A helper class that builds and executes a pipeline that writes
+        /// to the default output path. Any exceptions that are thrown are
+        /// just passed to the caller. Since all output goes to the default
         /// outter, this method does not return anything.
         /// </summary>
         /// <param name="cmd">The script to run.</param>
-        /// <param name="input">Any input arguments to pass to the script. 
+        /// <param name="input">Any input arguments to pass to the script.
         /// If null then nothing is passed in.</param>
         private void executeHelper(string cmd, object input)
         {
@@ -265,8 +265,8 @@ namespace Microsoft.PowerShell.Linux.Host
                 this.currentPowerShell = PowerShell.Create();
             }
 
-            // Add a script and command to the pipeline and then run the pipeline. Place 
-            // the results in the currentPowerShell variable so that the pipeline can be 
+            // Add a script and command to the pipeline and then run the pipeline. Place
+            // the results in the currentPowerShell variable so that the pipeline can be
             // stopped.
             try
             {
@@ -274,8 +274,8 @@ namespace Microsoft.PowerShell.Linux.Host
 
                 this.currentPowerShell.AddScript(cmd);
 
-                // Add the default outputter to the end of the pipe and then call the 
-                // MergeMyResults method to merge the output and error streams from the 
+                // Add the default outputter to the end of the pipe and then call the
+                // MergeMyResults method to merge the output and error streams from the
                 // pipeline. This will result in the output being written using the PSHost
                 // and PSHostUserInterface classes instead of returning objects to the host
                 // application.
@@ -297,8 +297,8 @@ namespace Microsoft.PowerShell.Linux.Host
             }
             finally
             {
-                // Dispose the PowerShell object and set currentPowerShell to null. 
-                // It is locked because currentPowerShell may be accessed by the 
+                // Dispose the PowerShell object and set currentPowerShell to null.
+                // It is locked because currentPowerShell may be accessed by the
                 // ctrl-C handler.
                 lock (this.instanceLock)
                 {
@@ -309,11 +309,11 @@ namespace Microsoft.PowerShell.Linux.Host
         }
 
         /// <summary>
-        /// To display an exception using the display formatter, 
+        /// To display an exception using the display formatter,
         /// run a second pipeline passing in the error record.
         /// The runtime will bind this to the $input variable,
         /// which is why $input is being piped to the Out-String
-        /// cmdlet. The WriteErrorLine method is called to make sure 
+        /// cmdlet. The WriteErrorLine method is called to make sure
         /// the error gets displayed in the correct error color.
         /// </summary>
         /// <param name="e">The exception to display.</param>
@@ -362,7 +362,7 @@ namespace Microsoft.PowerShell.Linux.Host
                 }
                 finally
                 {
-                    // Dispose of the pipeline and set it to null, locking it  because 
+                    // Dispose of the pipeline and set it to null, locking it  because
                     // currentPowerShell may be accessed by the ctrl-C handler.
                     lock (this.instanceLock)
                     {
@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell.Linux.Host
 
         /// <summary>
         /// Basic script execution routine. Any runtime exceptions are
-        /// caught and passed back to the Windows PowerShell engine to 
+        /// caught and passed back to the Windows PowerShell engine to
         /// display.
         /// </summary>
         /// <param name="cmd">Script to run.</param>
@@ -397,9 +397,9 @@ namespace Microsoft.PowerShell.Linux.Host
         /// pipeline Stop() method to stop execution. If any exceptions occur
         /// they are printed to the console but otherwise ignored.
         /// </summary>
-        /// <param name="sender">See sender property documentation of  
+        /// <param name="sender">See sender property documentation of
         /// ConsoleCancelEventHandler.</param>
-        /// <param name="e">See e property documentation of 
+        /// <param name="e">See e property documentation of
         /// ConsoleCancelEventHandler.</param>
         private void HandleControlC(object sender, ConsoleCancelEventArgs e)
         {

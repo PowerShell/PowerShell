@@ -9,11 +9,11 @@ namespace Microsoft.PowerShell.Linux.Host
     using System.Text;
 
     /// <summary>
-    /// A sample implementation of the PSHostUserInterface abstract class for 
-    /// console applications. Not all members are implemented. Those that are 
-    /// not implemented throw a NotImplementedException exception or return 
-    /// nothing. Members that are implemented include those that map easily to 
-    /// Console APIs and a basic implementation of the prompt API provided. 
+    /// A sample implementation of the PSHostUserInterface abstract class for
+    /// console applications. Not all members are implemented. Those that are
+    /// not implemented throw a NotImplementedException exception or return
+    /// nothing. Members that are implemented include those that map easily to
+    /// Console APIs and a basic implementation of the prompt API provided.
     /// </summary>
     internal class MyHostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
     {
@@ -32,20 +32,20 @@ namespace Microsoft.PowerShell.Linux.Host
         }
 
         /// <summary>
-        /// Prompts the user for input. 
+        /// Prompts the user for input.
         /// <param name="caption">The caption or title of the prompt.</param>
         /// <param name="message">The text of the prompt.</param>
-        /// <param name="descriptions">A collection of FieldDescription objects  
+        /// <param name="descriptions">A collection of FieldDescription objects
         /// that describe each field of the prompt.</param>
-        /// <returns>A dictionary object that contains the results of the user 
+        /// <returns>A dictionary object that contains the results of the user
         /// prompts.</returns>
         public override Dictionary<string, PSObject> Prompt(
-                string caption, 
+                string caption,
                 string message,
                 Collection<FieldDescription> descriptions)
         {
             this.Write(
-                    ConsoleColor.White, 
+                    ConsoleColor.White,
                     ConsoleColor.Black,
                     caption + System.Environment.NewLine + message + " ");
             Dictionary<string, PSObject> results =
@@ -68,31 +68,31 @@ namespace Microsoft.PowerShell.Linux.Host
 
         /// <summary>
 
-        /// Provides a set of choices that enable the user to choose a 
-        /// single option from a set of options. 
+        /// Provides a set of choices that enable the user to choose a
+        /// single option from a set of options.
         /// </summary>
         /// <param name="caption">Text that proceeds (a title) the choices.</param>
         /// <param name="message">A message that describes the choice.</param>
-        /// <param name="choices">A collection of ChoiceDescription objects that  
+        /// <param name="choices">A collection of ChoiceDescription objects that
         /// describ each choice.</param>
-        /// <param name="defaultChoice">The index of the label in the Choices  
+        /// <param name="defaultChoice">The index of the label in the Choices
         /// parameter collection. To indicate no default choice, set to -1.</param>
-        /// <returns>The index of the Choices parameter collection element that 
+        /// <returns>The index of the Choices parameter collection element that
         /// corresponds to the option that is selected by the user.</returns>
         public override int PromptForChoice(
-                string caption, 
+                string caption,
                 string message,
-                Collection<ChoiceDescription> choices, 
+                Collection<ChoiceDescription> choices,
                 int defaultChoice)
         {
             // Write the caption and message strings in Blue.
             this.WriteLine(
-                    ConsoleColor.Blue, 
+                    ConsoleColor.Blue,
                     ConsoleColor.Black,
                     caption + System.Environment.NewLine + message + System.Environment.NewLine);
 
             // Convert the choice collection into something that is
-            // easier to work with. See the BuildHotkeysAndPlainLabels 
+            // easier to work with. See the BuildHotkeysAndPlainLabels
             // method for details.
             string[,] promptData = BuildHotkeysAndPlainLabels(choices);
 
@@ -101,14 +101,14 @@ namespace Microsoft.PowerShell.Linux.Host
             for (int element = 0; element < choices.Count; element++)
             {
                 sb.Append(String.Format(
-                            CultureInfo.CurrentCulture, 
+                            CultureInfo.CurrentCulture,
                             "|{0}> {1} ",
-                            promptData[0, element], 
+                            promptData[0, element],
                             promptData[1, element]));
             }
 
             sb.Append(String.Format(
-                        CultureInfo.CurrentCulture, 
+                        CultureInfo.CurrentCulture,
                         "[Default is ({0}]",
                         promptData[0, defaultChoice]));
 
@@ -142,31 +142,31 @@ namespace Microsoft.PowerShell.Linux.Host
 #region IHostUISupportsMultipleChoiceSelection Members
 
         /// <summary>
-        /// Provides a set of choices that enable the user to choose a one or 
-        /// more options from a set of options. 
+        /// Provides a set of choices that enable the user to choose a one or
+        /// more options from a set of options.
         /// </summary>
         /// <param name="caption">Text that proceeds (a title) the choices.</param>
         /// <param name="message">A message that describes the choice.</param>
-        /// <param name="choices">A collection of ChoiceDescription objects that  
+        /// <param name="choices">A collection of ChoiceDescription objects that
         /// describ each choice.</param>
-        /// <param name="defaultChoices">The index of the label in the Choices  
+        /// <param name="defaultChoices">The index of the label in the Choices
         /// parameter collection. To indicate no default choice, set to -1.</param>
-        /// <returns>The index of the Choices parameter collection element that 
+        /// <returns>The index of the Choices parameter collection element that
         /// corresponds to the option that is selected by the user.</returns>
         public Collection<int> PromptForChoice(
-                string caption, 
+                string caption,
                 string message,
-                Collection<ChoiceDescription> choices, 
+                Collection<ChoiceDescription> choices,
                 IEnumerable<int> defaultChoices)
         {
             // Write the caption and message strings in Blue.
             this.WriteLine(
-                    ConsoleColor.Blue, 
+                    ConsoleColor.Blue,
                     ConsoleColor.Black,
                     caption + System.Environment.NewLine + message + System.Environment.NewLine);
 
             // Convert the choice collection into something that is
-            // easier to work with. See the BuildHotkeysAndPlainLabels 
+            // easier to work with. See the BuildHotkeysAndPlainLabels
             // method for details.
             string[,] promptData = BuildHotkeysAndPlainLabels(choices);
 
@@ -175,9 +175,9 @@ namespace Microsoft.PowerShell.Linux.Host
             for (int element = 0; element < choices.Count; element++)
             {
                 sb.Append(String.Format(
-                            CultureInfo.CurrentCulture, 
+                            CultureInfo.CurrentCulture,
                             "|{0}> {1} ",
-                            promptData[0, element], 
+                            promptData[0, element],
                             promptData[1, element]));
             }
 
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Linux.Host
                     foreach (int defaultChoice in defaultChoices)
                     {
                         sb.AppendFormat(
-                                CultureInfo.CurrentCulture, 
+                                CultureInfo.CurrentCulture,
                                 "\"{0}\",",
                                 promptData[0, defaultChoice]);
                     }
@@ -208,8 +208,8 @@ namespace Microsoft.PowerShell.Linux.Host
             }
 
             this.WriteLine(
-                    ConsoleColor.Cyan, 
-                    ConsoleColor.Black, 
+                    ConsoleColor.Cyan,
+                    ConsoleColor.Black,
                     sb.ToString());
             // Read prompts until a match is made, the default is
             // chosen, or the loop is interrupted with ctrl-C.
@@ -246,22 +246,22 @@ ReadNext:
 #endregion
 
         /// <summary>
-        /// Prompts the user for credentials with a specified prompt window 
-        /// caption, prompt message, user name, and target name. In this 
-        /// example this functionality is not needed so the method throws a 
+        /// Prompts the user for credentials with a specified prompt window
+        /// caption, prompt message, user name, and target name. In this
+        /// example this functionality is not needed so the method throws a
         /// NotImplementException exception.
         /// </summary>
         /// <param name="caption">The caption for the message window.</param>
         /// <param name="message">The text of the message.</param>
-        /// <param name="userName">The user name whose credential is to be 
+        /// <param name="userName">The user name whose credential is to be
         /// prompted for.</param>
-        /// <param name="targetName">The name of the target for which the 
+        /// <param name="targetName">The name of the target for which the
         /// credential is collected.</param>
         /// <returns>Throws a NotImplementedException exception.</returns>
         public override PSCredential PromptForCredential(
-                string caption, 
-                string message, 
-                string userName, 
+                string caption,
+                string message,
+                string userName,
                 string targetName)
         {
             throw new NotImplementedException(
@@ -269,29 +269,29 @@ ReadNext:
         }
 
         /// <summary>
-        /// Prompts the user for credentials by using a specified prompt window 
-        /// caption, prompt message, user name and target name, credential 
-        /// types allowed to be returned, and UI behavior options. In this 
-        /// example this functionality is not needed so the method throws a 
+        /// Prompts the user for credentials by using a specified prompt window
+        /// caption, prompt message, user name and target name, credential
+        /// types allowed to be returned, and UI behavior options. In this
+        /// example this functionality is not needed so the method throws a
         /// NotImplementException exception.
         /// </summary>
         /// <param name="caption">The caption for the message window.</param>
         /// <param name="message">The text of the message.</param>
-        /// <param name="userName">The user name whose credential is to be 
+        /// <param name="userName">The user name whose credential is to be
         /// prompted for.</param>
-        /// <param name="targetName">The name of the target for which the 
+        /// <param name="targetName">The name of the target for which the
         /// credential is collected.</param>
-        /// <param name="allowedCredentialTypes">A PSCredentialTypes constant  
+        /// <param name="allowedCredentialTypes">A PSCredentialTypes constant
         /// that identifies the type of credentials that can be returned.</param>
-        /// <param name="options">A PSCredentialUIOptions constant that 
+        /// <param name="options">A PSCredentialUIOptions constant that
         /// identifies the UI behavior when it gathers the credentials.</param>
         /// <returns>Throws a NotImplementedException exception.</returns>
         public override PSCredential PromptForCredential(
-                string caption, 
-                string message, 
-                string userName, 
-                string targetName, 
-                PSCredentialTypes allowedCredentialTypes, 
+                string caption,
+                string message,
+                string userName,
+                string targetName,
+                PSCredentialTypes allowedCredentialTypes,
                 PSCredentialUIOptions options)
         {
             throw new NotImplementedException(
@@ -299,7 +299,7 @@ ReadNext:
         }
 
         /// <summary>
-        /// Reads characters that are entered by the user until a newline 
+        /// Reads characters that are entered by the user until a newline
         /// (carriage return) is encountered.
         /// </summary>
         /// <returns>The characters that are entered by the user.</returns>
@@ -309,9 +309,9 @@ ReadNext:
         }
 
         /// <summary>
-        /// Reads characters entered by the user until a newline (carriage return) 
-        /// is encountered and returns the characters as a secure string. In this 
-        /// example this functionality is not needed so the method throws a 
+        /// Reads characters entered by the user until a newline (carriage return)
+        /// is encountered and returns the characters as a secure string. In this
+        /// example this functionality is not needed so the method throws a
         /// NotImplementException exception.
         /// </summary>
         /// <returns>Throws a NotImplemented exception.</returns>
@@ -326,19 +326,19 @@ ReadNext:
         /// <param name="value">The characters to be written.</param>
         public override void Write(string value)
         {
-            Console.Write(value); 
+            Console.Write(value);
         }
 
         /// <summary>
-        /// Writes characters to the output display of the host with possible 
-        /// foreground and background colors. 
+        /// Writes characters to the output display of the host with possible
+        /// foreground and background colors.
         /// </summary>
         /// <param name="foregroundColor">The color of the characters.</param>
         /// <param name="backgroundColor">The backgound color to use.</param>
         /// <param name="value">The characters to be written.</param>
         public override void Write(
                 ConsoleColor foregroundColor,
-                ConsoleColor backgroundColor, 
+                ConsoleColor backgroundColor,
                 string value)
         {
             Console.ForegroundColor = foregroundColor;
@@ -350,15 +350,15 @@ ReadNext:
 
 
         /// <summary>
-        /// Writes a line of characters to the output display of the host 
-        /// with foreground and background colors and appends a newline (carriage return). 
+        /// Writes a line of characters to the output display of the host
+        /// with foreground and background colors and appends a newline (carriage return).
         /// </summary>
         /// <param name="foregroundColor">The forground color of the display. </param>
         /// <param name="backgroundColor">The background color of the display. </param>
         /// <param name="value">The line to be written.</param>
         public override void WriteLine(
                 ConsoleColor foregroundColor,
-                ConsoleColor backgroundColor, 
+                ConsoleColor backgroundColor,
                 string value)
         {
             Console.ForegroundColor = foregroundColor;
@@ -374,7 +374,7 @@ ReadNext:
         public override void WriteDebugLine(string message)
         {
             this.WriteLine(
-                    ConsoleColor.Yellow, 
+                    ConsoleColor.Yellow,
                     ConsoleColor.Black,
                     String.Format(CultureInfo.CurrentCulture, "DEBUG: {0}", message));
         }
@@ -387,14 +387,14 @@ ReadNext:
         public override void WriteErrorLine(string value)
         {
             this.WriteLine(
-                    ConsoleColor.Red, 
-                    ConsoleColor.Black, 
+                    ConsoleColor.Red,
+                    ConsoleColor.Black,
                     value);
         }
 
         /// <summary>
-        /// Writes a newline character (carriage return) 
-        /// to the output display of the host. 
+        /// Writes a newline character (carriage return)
+        /// to the output display of the host.
         /// </summary>
         public override void WriteLine()
         {
@@ -402,8 +402,8 @@ ReadNext:
         }
 
         /// <summary>
-        /// Writes a line of characters to the output display of the host 
-        /// and appends a newline character(carriage return). 
+        /// Writes a line of characters to the output display of the host
+        /// and appends a newline character(carriage return).
         /// </summary>
         /// <param name="value">The line to be written.</param>
         public override void WriteLine(string value)
@@ -416,27 +416,27 @@ ReadNext:
         /// </summary>
         /// <param name="sourceId">Unique identifier of the source of the record. </param>
         /// <param name="record">A ProgressReport object.</param>
-       public override void WriteProgress(long sourceId, ProgressRecord record)
-       {
-	       
-	   if (record == null)
+        public override void WriteProgress(long sourceId, ProgressRecord record)
+        {
+
+            if (record == null)
             {
                 throw PSTraceSource.NewArgumentNullException("record");
             }
 
-	   string percentComplete = " [";
+            string percentComplete = " [";
 
-	   for (int i =0; i < record.PercentComplete; i++){
-	       percentComplete = percentComplete + "0";
-	   }
+            for (int i =0; i < record.PercentComplete; i++){
+                percentComplete = percentComplete + "0";
+            }
 
-	   percentComplete = percentComplete + "]";
-	   Console.Write ("\r{0} {1} {2} ", record.Activity, record.StatusDescription, percentComplete, "\r");
+            percentComplete = percentComplete + "]";
+            Console.Write ("\r{0} {1} {2} ", record.Activity, record.StatusDescription, percentComplete, "\r");
 
-	   if (record.PercentComplete == 100){
-	       Console.WriteLine(); //create a new line for the prompt
-	   }
-       }       
+            if (record.PercentComplete == 100){
+                Console.WriteLine(); //create a new line for the prompt
+            }
+        }
 
         /// <summary>
         /// Writes a verbose message to the output display of the host.
@@ -445,7 +445,7 @@ ReadNext:
         public override void WriteVerboseLine(string message)
         {
             this.WriteLine(
-                    ConsoleColor.Green, 
+                    ConsoleColor.Green,
                     ConsoleColor.Black,
                     String.Format(CultureInfo.CurrentCulture, "VERBOSE: {0}", message));
         }
@@ -457,7 +457,7 @@ ReadNext:
         public override void WriteWarningLine(string message)
         {
             this.WriteLine(
-                    ConsoleColor.Yellow, 
+                    ConsoleColor.Yellow,
                     ConsoleColor.Black,
                     String.Format(CultureInfo.CurrentCulture, "WARNING: {0}", message));
         }
