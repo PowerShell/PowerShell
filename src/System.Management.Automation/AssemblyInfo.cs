@@ -5,8 +5,7 @@ using System.Reflection;
 [assembly:InternalsVisibleTo("Microsoft.PowerShell.Commands.Utility")]
 [assembly:InternalsVisibleTo("Microsoft.PowerShell.Security")]
 [assembly:InternalsVisibleTo("Microsoft.PowerShell.CoreCLR.AssemblyLoadContext")]
-[assembly:InternalsVisibleTo("Microsoft.PowerShell.Linux.Host")]
-[assembly:InternalsVisibleTo("Microsoft.PowerShell.Linux.UnitTests")]
+[assembly:InternalsVisibleTo("powershell")]
 [assembly:AssemblyFileVersionAttribute("3.0.0.0")]
 [assembly:AssemblyVersion("3.0.0.0")]
 

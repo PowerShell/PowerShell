@@ -110,7 +110,7 @@ Build with `./build.sh`, which does the following steps.
 ### Managed
 
 Builds with `dotnet-cli`. Publishes all dependencies into the `bin` directory.
-Emits its own native host as `bin/Microsoft.PowerShell.Linux.Host`.
+Emits its own native host as `bin/powershell`.
 
 ```sh
 cd src/Microsoft.PowerShell.Linux.Host
@@ -187,7 +187,7 @@ make -j
 
 ## Running
 
-- launch local shell with `./bin/Microsoft.PowerShell.Linux.Host`
+- launch local shell with `./bin/powershell`
 - launch local shell in LLDB with `./debug.sh`
 - launch `omiserver` for PSRP (and in LLDB) with `./prsp.sh`, and connect with `Enter-PSSession` from Windows
 
