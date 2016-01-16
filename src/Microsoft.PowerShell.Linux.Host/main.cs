@@ -175,6 +175,41 @@ namespace Microsoft.PowerShell.Linux.Host
                 this.currentPowerShell = PowerShell.Create();
             }
 
+
+            if (initialScript == "--help" || initialScript == "-h")
+            {
+                Console.WriteLine(@"
+======HELP======
+PowerShell for Linux
+Command Line Help Resource
+================
+
+TOPIC
+    PowerShell for Linux Command Line Arguments
+
+SYNOPSIS
+    PowerShell for Linux takes several command line arguments.
+
+OPTIONS
+
+    [NO ARGUMENTS]        Will launch PowerShell for Linux in an interactive shell.
+
+    --command <string>    Will execute given string as a PowerShell command.
+
+    -c <string>           Will execute given string as a PowerShell command.
+
+    --file <filePath>     Given a file path will execute as a PowerShell script.
+
+    -f <filePath>         Given a file path will execute as a PowerShell script.
+
+    --help                Prints a basic help of command line arguments for PowerShell on Linux
+
+    -h                    Prints a basic help of command line arguments for PowerShell on Linux.
+
+");
+		return;
+	    }
+
             try
             {
                 this.currentPowerShell.Runspace = this.myRunSpace;
