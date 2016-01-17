@@ -1,4 +1,4 @@
-# PowerShell on Linux
+# PowerShell on Linux / OS X / Windows
 
 ## Obtain the source code
 
@@ -77,16 +77,24 @@ fast-forward merge.
 ## Setup build environment
 
 We use the [.NET Command Line Interface][dotnet-cli] (`dotnet-cli`) to build
-the managed components, and [CMake][] to build the native components. Install
-`dotnet-cli` by following their documentation (make sure to install the
-`dotnet-dev` package to get the latest version). Then install the following
-dependencies (assuming Ubuntu 14.04):
+the managed components, and [CMake][] to build the native components (on
+non-Windows platforms). Install `dotnet-cli` by following their documentation
+(make sure to install the `dotnet-dev` package on Linux to get the latest
+version). Then install the following dependencies Linux and OS X.
+
+> Note that OS X dependency installation instructions are not yet documented,
+> and Windows only needs `dotnet-cli`.
+
+### Linux
+
+Tested on Ubuntu 14.04 and OS X 10.11.
+
 
 ```sh
 sudo apt-get install g++ cmake make lldb-3.6 strace
 ```
 
-### OMI
+#### OMI
 
 To develop on the PowerShell Remoting Protocol (PSRP), you'll need to be able
 to compile OMI, which additionally requires:
@@ -100,12 +108,36 @@ sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev libboost-files
 
 ## Building
 
-The command `dotnet restore` must be done at least once from the top directory
-to obtain all the necessary .NET packages.
+*The command `dotnet restore` must be done at least once from the top directory
+to obtain all the necessary .NET packages.*
 
-Build with `./build.sh`, which does the following steps.
+Build with `./build.sh` on Linux and OS X, and `./build.ps1` on Windows.
 
-> The variable `$BIN` is the output directory, `bin`.
+## Running
+
+### Linux / OS X
+
+- launch local shell with `./bin/powershell`
+- launch local shell in LLDB with `./debug.sh`
+- launch `omiserver` for PSRP (and in LLDB) with `./prsp.sh`, and connect with `Enter-PSSession` from Windows
+
+### Windows
+
+Launch `./bin/powershell.exe`. The console output isn't the prettiest, bet the
+vast majority of Pester tests pass.
+
+## Known Issues
+
+### xUnit
+
+Sadly, `dotnet-test` is not fully supported on Linux, so our xUnit tests do not
+currently run. We may be able to work around this, or get the `dotnet-cli` team
+to fix their xUnit runner. GitHub
+[issue](https://github.com/dotnet/cli/issues/18).
+
+## Detailed Build Notes
+
+The variable `$BIN` is the output directory, `bin`.
 
 ### Managed
 
@@ -152,6 +184,9 @@ cp api-ms-win-core-registry-l1-1-0.dll $BIN
 PSRP communication is tunneled through OMI using the `omi-provider`.
 These build steps are not part of the `./build.sh` script.
 
+> PSRP has been observed working on OS X, but the changes made to OMI to
+> accomplish this are not even beta-ready and need to be done correctly.
+
 #### OMI
 
 ```sh
@@ -185,17 +220,3 @@ ln -s ../omi/Unix/ omi-1.0.8
 make -j
 ```
 
-## Running
-
-- launch local shell with `./bin/powershell`
-- launch local shell in LLDB with `./debug.sh`
-- launch `omiserver` for PSRP (and in LLDB) with `./prsp.sh`, and connect with `Enter-PSSession` from Windows
-
-## Known Issues
-
-### xUnit
-
-Sadly, `dotnet-test` is not fully supported on Linux, so our xUnit tests do not
-currently run. We may be able to work around this, or get the `dotnet-cli` team
-to fix their xUnit runner. GitHub
-[issue](https://github.com/dotnet/cli/issues/407).
