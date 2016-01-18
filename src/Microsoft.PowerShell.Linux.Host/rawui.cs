@@ -32,10 +32,8 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         public override Size BufferSize
         {
-            get { return new Size(Console.WindowWidth, Console.WindowHeight); }
-            set {  }
-            //get { return new Size(Console.BufferWidth, Console.BufferHeight); }
-            //set { Console.SetBufferSize(value.Width, value.Height); }
+            get { return new Size(Console.BufferWidth, Console.BufferHeight); }
+            set { Console.SetBufferSize(value.Width, value.Height); }
         }
 
         /// <summary>
