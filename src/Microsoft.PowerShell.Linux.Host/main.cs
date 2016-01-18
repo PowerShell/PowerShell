@@ -81,6 +81,10 @@ namespace Microsoft.PowerShell.Linux.Host
             {
                 listener.Run();
             }
+
+            // Exit with the desired exit code that was set by the exit command.
+            // The exit code is set in the host by the MyHost.SetShouldExit() method.
+            System.Environment.Exit(listener.ExitCode);
         }
     }
 
@@ -493,10 +497,6 @@ OPTIONS
                 string cmd = consoleReadLine.Read(this.myHost.Runspace);
                 this.Execute(cmd);
             }
-
-            // Exit with the desired exit code that was set by the exit command.
-            // The exit code is set in the host by the MyHost.SetShouldExit() method.
-            //Environment.Exit(this.ExitCode);
         }
 
         /// <summary>
