@@ -95,8 +95,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         public override bool KeyAvailable
         {
-            get { return false; }
-            //  get { return Console.KeyAvailable; }
+            get { return Console.KeyAvailable; }
         }
 
         /// <summary>
@@ -131,9 +130,8 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         public override Coordinates WindowPosition
         {
-            //  get { return new Coordinates(Console.WindowLeft, Console.WindowTop); }
+            get { return new Coordinates(Console.WindowLeft, Console.WindowTop); }
             //  set { Console.SetWindowPosition(value.X, value.Y); }
-            get { return new Coordinates(0,0); }
             set { }
         }
 
@@ -144,9 +142,8 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         public override Size WindowSize
         {
-            //  get { return new Size(Console.WindowWidth, Console.WindowHeight); }
+            get { return new Size(Console.WindowWidth, Console.WindowHeight); }
             //  set { Console.SetWindowSize(value.Width, value.Height); }
-            get { return new Size(1024,768); }
             set { }
         }
 
@@ -156,10 +153,8 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         public override string WindowTitle
         {
-            //  get { return Console.Title; }
-            //  set { Console.Title = value; }
-            get { return "window title"; }
-            set { }
+            get { return Console.Title; }
+            set { Console.Title = value; }
         }
 
         /// <summary>
