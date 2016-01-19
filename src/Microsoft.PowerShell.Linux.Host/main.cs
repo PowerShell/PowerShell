@@ -123,16 +123,13 @@ namespace Microsoft.PowerShell.Linux.Host
         private object instanceLock = new object();
 
         /// <summary>
-<<<<<<< HEAD
         /// Gets or sets a value indicating whether the host application
-=======
         /// To keep track whether we've displayed the debugger help message
         /// </summary>
         private bool _showHelpMessage; 
 
         /// <summary>
         /// Gets or sets a value indicating whether the host application 
->>>>>>> dev/debug
         /// should exit.
         /// </summary>
         public bool ShouldExit
