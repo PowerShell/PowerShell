@@ -1,24 +1,25 @@
 {
+    "name": "powershell",
     "version": "1.0.0-*",
     "description": "PowerShell On Linux Console",
     "authors": [ "andschwa" ],
 
     "compilationOptions": {
-        "emitEntryPoint": true
+	"emitEntryPoint": true
     },
 
     "dependencies": {
 	"NETStandard.Library": "1.0.0-rc2-23712",
 	"Newtonsoft.Json": "8.0.2",
-        "Microsoft.PowerShell.Commands.Management": {
+	"Microsoft.PowerShell.Commands.Management": {
 	    "type": "build",
 	    "version": "1.0.0-*"
 	},
-        "Microsoft.PowerShell.Commands.Omi": {
+	"Microsoft.PowerShell.Commands.Omi": {
 	    "type": "build",
 	    "version": "1.0.0-*"
 	},
-        "Microsoft.PowerShell.Commands.Utility": {
+	"Microsoft.PowerShell.Commands.Utility": {
 	    "type": "build",
 	    "version": "1.0.0-*"
 	}
