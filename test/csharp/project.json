@@ -1,6 +1,6 @@
 {
     "version": "1.0.0-*",
-    "description": "PowerShell On Linux xUnit Tests",
+    "description": "INCOMPLETE: PowerShell On Linux xUnit Tests",
     "authors": [ "andschwa" ],
 
     "dependencies": {
@@ -9,8 +9,6 @@
 	    "type": "build",
 	    "version": "1.0.0-*"
 	},
-	"xunit": "2.1.0-*",
-        "xunit.runner.dnx": "2.1.0-*"
     },
 
     "frameworks": { "dnxcore50": { } }
