@@ -94,6 +94,26 @@ to obtain all the necessary .NET packages.**
 
 Build with `./build.sh` on Linux and OS X, and `./build.ps1` on Windows.
 
+Specifically:
+
+### Linux
+
+> In Bash:
+```sh
+cd PowerShell-Linux
+dotnet restore
+./build.sh
+```
+
+### Windows
+
+> In PowerShell:
+```powershell
+cd PowerShell-Linux
+dotnet restore
+./build.ps1
+```
+
 ## Running
 
 ### Linux / OS X
@@ -108,29 +128,87 @@ Launch `./bin/powershell.exe`. The console output isn't the prettiest, but the
 vast majority of Pester tests pass. Run them in the console with `Invoke-Pester
 test/powershell`.
 
-## Known Issues
+## PowerShell Remoting Protocol
 
-### xUnit
+PSRP communication is tunneled through OMI using the `omi-provider`.
 
-The xUnit tests cannot currently be run; we are working to integrate the
-prototype .NET Core runner to re-enable them.
+**These build steps are not part of the `./build.sh` script.**
 
-### Console Output
+> PSRP has been observed working on OS X, but the changes made to OMI to
+> accomplish this are not even beta-ready and need to be done correctly. They
+> exist on the `andschwa-osx` branch of the OMI repository.
 
-The console output on Windows and under certain `TERM` environments on Linux
-(`xterm` is known to work fine), the console scrolls badly. We believe this is
-due to incomplete System.Console APIs, which have been fixed upstream and will
-be updated when new packages drop.
+### Build OMI
 
-### Registry Use
+```sh
+cd src/omi/Unix
+./configure --dev
+make -j
+cd ../../..
+```
 
-`SafeHandle` objects attempt to use the registry (even on Linux) so a stub is
-in place to prevent error messages. This should be fixed in .NET Core. Use of
-the registry is widespread throughout the PowerShell codebase, and so innocuous
-things (such as loading particular modules) can cause strange behavior when
-unguarded code is executed.
+### Build Provider
 
-## Detailed Build Notes
+The provider uses CMake to build, link, and register with OMI.
+
+```sh
+cd src/omi-provider
+cmake .
+make -j
+cd ../..
+```
+
+The provider also maintains its own native host library to initialize the CLR,
+but there are plans to refactor .NET's packaged host as a shared library.
+
+### Running
+
+Some initial setup on Windows is required. Open an administrative command
+prompt and execute the following:
+
+```cmd
+winrm set winrm/config/Client @{AllowUnencrypted="true"}
+winrm set winrm/config/Client @{TrustedHosts="*"}
+```
+
+Then on Linux, launch `omiserver` in the debugger (after building with the
+instructions above):
+
+```sh
+./psrp.sh
+run
+```
+
+> The `run` command is executed inside of LLDB (the debugger) to start the
+`omiserver` process.
+
+Now in a PowerShell prompt on Windows (opened after setting the WinRM client
+configurations):
+
+```powershell
+Enter-PSSession -ComputerName <IP address of Linux machine> -Credential $cred -Authentication basic
+```
+
+> The `$cred` variable can be empty; a credentials prompt will appear, enter
+> any fake credentials you wish as authentication is not yet implemented.
+
+### Desired State Configuration
+
+> DSC support is in its infancy.
+
+DSC also uses OMI, so build it first, then build DSC against it. Unfortunately,
+DSC cannot be configured to look for OMI elsewhere, so for now you need to
+symlink it to the expected location.
+
+```sh
+ln -s ../omi/Unix/ omi-1.0.8
+./configure --no-rpm --no-dpkg --local
+make -j
+```
+
+## Detailed Build Script Notes
+
+> This explains `./build.sh`.
 
 The variable `$BIN` is the output directory, `bin`.
 
@@ -174,46 +252,4 @@ Provides `RegCloseKey()` to satisfy the disposal of `SafeHandle` objects on shut
 cd src/registry-stub
 make
 cp api-ms-win-core-registry-l1-1-0.dll $BIN
-```
-
-### PowerShell Remoting Protocol
-
-PSRP communication is tunneled through OMI using the `omi-provider`.
-These build steps are not part of the `./build.sh` script.
-
-> PSRP has been observed working on OS X, but the changes made to OMI to
-> accomplish this are not even beta-ready and need to be done correctly. They
-> exist on the `andschwa-osx` branch of the OMI repository.
-
-#### OMI
-
-```sh
-cd src/omi/Unix
-./configure --dev
-make -j
-```
-
-#### Provider
-
-The provider uses CMake to build, link, and register with OMI.
-
-```sh
-cd src/omi-provider
-cmake .
-make -j
-```
-
-The provider also maintains its own native host library to initialize the CLR,
-but there are plans to refactor .NET's packaged host as a shared library.
-
-### DSC
-
-DSC also uses OMI, so build it first, then build DSC against it. Unfortunately,
-DSC cannot be configured to look for OMI elsewhere, so for now you need to
-symlink it to the expected location.
-
-```sh
-ln -s ../omi/Unix/ omi-1.0.8
-./configure --no-rpm --no-dpkg --local
-make -j
 ```
