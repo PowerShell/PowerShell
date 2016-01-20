@@ -4,10 +4,9 @@
 
 ### Setup Git
 
-Install [Git][], the version control system. If you're new to Git, peruse the
-documentation and go through some tutorials; I recommend familiarizing yourself
-with `checkout`, `branch`, `pull`, `push`, `merge`, and after a while, `rebase`
-and `cherry-pick`. Please commit early and often.
+Install [Git][], the version control system. If you're new to Git, work through
+the [guides][] until you are familiar with the following commands: `checkout`,
+`branch`, `pull`, `push`, `merge`. Don't forget to commit early and often!
 
 The user name and email must be set to do just about anything with Git.
 
@@ -24,47 +23,30 @@ system, so use a [token][].
 git config --global credential.helper store
 ```
 
-I highly recommend these configurations to help deal with whitespace, rebasing,
-and general use of Git.
+**Read the documentation on [submodules][]!**
 
-> Auto-corrects your command when it's sure (`stats` to `status`)
-```sh
-git config --global help.autoCorrect -1
-```
-
-> Refuses to merge when pulling, and only pushes to branch with same name.
-```sh
-git config --global pull.ff only
-git config --global push.default current
-```
-
-> Shows shorter commit hashes and always shows reference names in the log.
-```sh
-git config --global log.abbrevCommit true
-git config --global log.decorate short
-```
-
-> Ignores whitespace changes and uses more information when merging.
-```sh
-git config --global apply.ignoreWhitespace change
-git config --global rerere.enabled true
-git config --global rerere.autoUpdate true
-git config --global am.threeWay true
-```
+See the [Contributing Guidelines](CONTRIBUTING.md) for more Git information.
 
 [Git]: https://git-scm.com/documentation
+[guides]: https://guides.github.com/activities/hello-world/
 [token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
+[submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
 
 ### Download source code
 
-Clone this repository recurisvely, as it's the superproject with a number of
+Clone this repository recursively, as it's the superproject with a number of
 submodules.
 
 ```sh
 git clone --recursive https://github.com/PowerShell/PowerShell-Linux.git
 ```
 
-On windows don't use `clone --recursive`, because you don't need `omi` repo.
+The `src/omi` submodule requires your GitHub user to have joined the Microsoft
+organization. If it fails to check out, Git will bail and not check out further
+submodules either.
+
+On Windows, many fewer submodules are needed, so don't use `clone --recursive`.
+
 Instead run:
 
 ```
@@ -72,31 +54,22 @@ git clone https://github.com/PowerShell/PowerShell-Linux.git
 git submodule update --init --recursive -- src/monad src/windows-build test/Pester
 ```
 
-*Read the documentation on [submodules][] if you're not familiar with them.*
-
-Note that because GitHub's "Merge Pull Request" button merges with `--no-ff`,
-an extra merge commit will always be created. This can be especially annoying
-when trying to commit updates to submodules. Therefore our policy is to merge
-using the Git CLI after approval, preferably with a rebase to enable a
-fast-forward merge.
-
-[submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
-
 ## Setup build environment
 
 We use the [.NET Command Line Interface][dotnet-cli] (`dotnet-cli`) to build
 the managed components, and [CMake][] to build the native components (on
 non-Windows platforms). Install `dotnet-cli` by following their documentation
-(make sure to install the `dotnet-dev` package on Linux to get the latest
+(make sure to install the `dotnet-nightly` package on Linux to get the latest
 version). Then install the following dependencies Linux and OS X.
 
 > Note that OS X dependency installation instructions are not yet documented,
 > and Windows only needs `dotnet-cli`.
 
+> Previous installations of DNX or `dnvm` can cause `dotnet-cli` to fail.
+
 ### Linux
 
 Tested on Ubuntu 14.04 and OS X 10.11.
-
 
 ```sh
 sudo apt-get install g++ cmake make lldb-3.6 strace
@@ -104,8 +77,8 @@ sudo apt-get install g++ cmake make lldb-3.6 strace
 
 #### OMI
 
-To develop on the PowerShell Remoting Protocol (PSRP), you'll need to be able
-to compile OMI, which additionally requires:
+To develop on the PowerShell Remoting Protocol (PSRP) for Linux, you'll need to
+be able to compile OMI, which additionally requires:
 
 ```sh
 sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev libboost-filesystem-dev 
@@ -116,8 +89,8 @@ sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev libboost-files
 
 ## Building
 
-*The command `dotnet restore` must be done at least once from the top directory
-to obtain all the necessary .NET packages.*
+**The command `dotnet restore` must be done at least once from the top directory
+to obtain all the necessary .NET packages.**
 
 Build with `./build.sh` on Linux and OS X, and `./build.ps1` on Windows.
 
@@ -131,17 +104,31 @@ Build with `./build.sh` on Linux and OS X, and `./build.ps1` on Windows.
 
 ### Windows
 
-Launch `./bin/powershell.exe`. The console output isn't the prettiest, bet the
-vast majority of Pester tests pass.
+Launch `./bin/powershell.exe`. The console output isn't the prettiest, but the
+vast majority of Pester tests pass. Run them in the console with `Invoke-Pester
+test/powershell`.
 
 ## Known Issues
 
 ### xUnit
 
-Sadly, `dotnet-test` is not fully supported on Linux, so our xUnit tests do not
-currently run. We may be able to work around this, or get the `dotnet-cli` team
-to fix their xUnit runner. GitHub
-[issue](https://github.com/dotnet/cli/issues/18).
+The xUnit tests cannot currently be run; we are working to integrate the
+prototype .NET Core runner to re-enable them.
+
+### Console Output
+
+The console output on Windows and under certain `TERM` environments on Linux
+(`xterm` is known to work fine), the console scrolls badly. We believe this is
+due to incomplete System.Console APIs, which have been fixed upstream and will
+be updated when new packages drop.
+
+### Registry Use
+
+`SafeHandle` objects attempt to use the registry (even on Linux) so a stub is
+in place to prevent error messages. This should be fixed in .NET Core. Use of
+the registry is widespread throughout the PowerShell codebase, and so innocuous
+things (such as loading particular modules) can cause strange behavior when
+unguarded code is executed.
 
 ## Detailed Build Notes
 
@@ -161,7 +148,7 @@ cp *.ps1xml *_profile.ps1 $BIN
 
 ### Native
 
-- `libpsnative.so`: native functions that `CorePsPlatform.cs` P/Invokes
+- `libpsl-native.so`: native functions that `CorePsPlatform.cs` P/Invokes
 - `api-ms-win-core-registry-l1-1-0.dll`: registry stub to prevent missing DLL error on shutdown
 
 #### libpsl-native
@@ -176,6 +163,8 @@ ctest -V
 # Deploy development copy of libpsl-native
 cp native/libpsl-native.* $BIN
 ```
+
+The output is a `.so` on Linux and `.dylib` on OS X. It is unnecessary for Windows.
 
 #### registry-stub
 
@@ -193,7 +182,8 @@ PSRP communication is tunneled through OMI using the `omi-provider`.
 These build steps are not part of the `./build.sh` script.
 
 > PSRP has been observed working on OS X, but the changes made to OMI to
-> accomplish this are not even beta-ready and need to be done correctly.
+> accomplish this are not even beta-ready and need to be done correctly. They
+> exist on the `andschwa-osx` branch of the OMI repository.
 
 #### OMI
 
@@ -227,4 +217,3 @@ ln -s ../omi/Unix/ omi-1.0.8
 ./configure --no-rpm --no-dpkg --local
 make -j
 ```
-
