@@ -116,6 +116,9 @@ dotnet restore
 
 ## Running
 
+If you encounter any problems, see the [known issues](KNOWNISSUES.md),
+otherwise open a new issue on GitHub.
+
 ### Linux / OS X
 
 - launch local shell with `./bin/powershell`

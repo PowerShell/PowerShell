@@ -1,4 +1,4 @@
-# Contributing to Project PowerShell on Linux / OS X / Windows
+# Contributing to Project Magrathea
 
 ## New to Git?
 
