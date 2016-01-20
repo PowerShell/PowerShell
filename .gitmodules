@@ -9,7 +9,7 @@
 	url = https://github.com/PowerShell/psl-monad.git
 [submodule "src/omi"]
 	path = src/omi
-	url = https://github.com/MSFTOSSMgmt/omi.git
+	url = https://github.com/Microsoft/omi.git
 	branch = psrp/features
 [submodule "src/omi-provider"]
 	path = src/omi-provider
