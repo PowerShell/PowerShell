@@ -64,6 +64,14 @@ submodules.
 git clone --recursive https://github.com/PowerShell/PowerShell-Linux.git
 ```
 
+On windows don't use `clone --recursive`, because you don't need `omi` repo.
+Instead run:
+
+```
+git clone https://github.com/PowerShell/PowerShell-Linux.git
+git submodule update --init --recursive -- src/monad src/windows-build test/Pester
+```
+
 *Read the documentation on [submodules][] if you're not familiar with them.*
 
 Note that because GitHub's "Merge Pull Request" button merges with `--no-ff`,
