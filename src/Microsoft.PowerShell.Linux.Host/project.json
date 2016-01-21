@@ -9,7 +9,6 @@
     },
 
     "dependencies": {
-	"NETStandard.Library": "1.0.0-rc2-23712",
 	"Newtonsoft.Json": "8.0.2",
 	"Microsoft.PowerShell.Commands.Management": {
 	    "type": "build",
@@ -25,5 +24,6 @@
 	}
     },
 
-    "frameworks": { "dnxcore50": { } }
+    "dnx451": {},
+"frameworks": { "dnx451": { } }
 }
