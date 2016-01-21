@@ -10,17 +10,6 @@ Install [Git][], the version control system.
 sudo apt-get install git
 ```
 
-If you're new to Git, work through
-the [guides][] until you are familiar with the following commands: `checkout`,
-`branch`, `pull`, `push`, `merge`. Don't forget to commit early and often!
-
-The user name and email must be set to do just about anything with Git.
-
-```sh
-git config --global user.name "First Last"
-git config --global user.email "alias@microsoft.com"
-```
-
 If you do not have a preferred method of authentication, enable the storage
 credential helper, which will cache your credentials in plaintext on your
 system, so use a [token][].
@@ -29,14 +18,10 @@ system, so use a [token][].
 git config --global credential.helper store
 ```
 
-**Read the documentation on [submodules][]!**
-
 See the [Contributing Guidelines](CONTRIBUTING.md) for more Git information.
 
 [Git]: https://git-scm.com/documentation
-[guides]: https://guides.github.com/activities/hello-world/
 [token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
-[submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
 
 ### Download source code
 

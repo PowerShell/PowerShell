@@ -1,15 +1,33 @@
 # Contributing to Project Magrathea
 
+## Rules
+
+**Do not commit code changes to the master branch!**
+
+**Read the documentation on [submodules][]!**
+
+**Do not commit submodule updates accidentally!**
+
+Don't forget to commit early and often!
+
 ## New to Git?
 
-**DO NOT COMMIT TO THE MASTER BRANCH**
-
-**Do not commit submodule updates accidentally**
+If you're new to Git, learn the following commands: `checkout`, `branch`,
+`pull`, `push`, `merge`.
 
 Use GitHub's [Hello World][] to learn how to create a feature branch, commit
 changes, and issue a pull request.
 
+The user name and email must be set in order to commit changes:
+
+```sh
+git config --global user.name "First Last"
+git config --global user.email "alias@microsoft.com"
+```
+
+[submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
 [hello world]: https://guides.github.com/activities/hello-world/
+[guides]: https://guides.github.com/activities/hello-world/
 
 ## Rebase and Fast-Forward Merge Pull Requests
 
