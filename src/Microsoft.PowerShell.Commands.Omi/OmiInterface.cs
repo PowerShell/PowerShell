@@ -18,12 +18,22 @@ namespace Microsoft.PowerShell.Commands.Omi
     {
         internal static bool IsLinux()
         {
+#if CORECLR
             return RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+#else
+            // FullCLR doesn't have a Linux version
+            return false;
+#endif
         }
 
         internal static bool IsWindows()
         {
+#if CORECLR
             return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+#else
+            // FullCLR has only Windows version
+            return true;
+#endif
         }
     }
 
