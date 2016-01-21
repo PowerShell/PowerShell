@@ -4,7 +4,13 @@
 
 ### Setup Git
 
-Install [Git][], the version control system. If you're new to Git, work through
+Install [Git][], the version control system.
+
+```sh
+sudo apt-get install git
+```
+
+If you're new to Git, work through
 the [guides][] until you are familiar with the following commands: `checkout`,
 `branch`, `pull`, `push`, `merge`. Don't forget to commit early and often!
 
@@ -58,19 +64,32 @@ git submodule update --init --recursive -- src/monad src/windows-build test/Pest
 
 We use the [.NET Command Line Interface][dotnet-cli] (`dotnet-cli`) to build
 the managed components, and [CMake][] to build the native components (on
-non-Windows platforms). Install `dotnet-cli` by following their documentation
+non-Windows platforms). Install `dotnet-cli` by following their [documentation][]
 (make sure to install the `dotnet-nightly` package on Linux to get the latest
-version). Then install the following dependencies Linux and OS X.
+version).
 
 > Note that OS X dependency installation instructions are not yet documented,
 > and Windows only needs `dotnet-cli`.
 
 > Previous installations of DNX or `dnvm` can cause `dotnet-cli` to fail.
 
+[dotnet-cli]: https://github.com/dotnet/cli#new-to-net-cli
+[documentation]: https://dotnet.github.io/getting-started/
+[CMake]: https://cmake.org/cmake/help/v2.8.12/cmake.html
+
 ### Linux
 
-Tested on Ubuntu 14.04 and OS X 10.11.
+Tested on Ubuntu 14.04.
 
+```sh
+sudo sh -c 'echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/dotnet/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
+sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
+sudo apt-get update
+sudo apt-get install dotnet-nightly
+```
+
+Then install the following additional build / debug tools:
+ 
 ```sh
 sudo apt-get install g++ cmake make lldb-3.6 strace
 ```
@@ -84,9 +103,6 @@ be able to compile OMI, which additionally requires:
 sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev libboost-filesystem-dev 
 ```
 
-[dotnet-cli]: https://github.com/dotnet/cli#new-to-net-cli
-[CMake]: https://cmake.org/cmake/help/v2.8.12/cmake.html
-
 ## Building
 
 **The command `dotnet restore` must be done at least once from the top directory
@@ -98,7 +114,7 @@ Specifically:
 
 ### Linux
 
-> In Bash:
+In Bash:
 ```sh
 cd PowerShell-Linux
 dotnet restore
@@ -107,7 +123,7 @@ dotnet restore
 
 ### Windows
 
-> In PowerShell:
+In PowerShell:
 ```powershell
 cd PowerShell-Linux
 dotnet restore
@@ -194,6 +210,12 @@ Enter-PSSession -ComputerName <IP address of Linux machine> -Credential $cred -A
 
 > The `$cred` variable can be empty; a credentials prompt will appear, enter
 > any fake credentials you wish as authentication is not yet implemented.
+
+The IP address of the Linux machine can be obtained with:
+
+```sh
+ip -f inet addr show dev eth0
+```
 
 ### Desired State Configuration
 
