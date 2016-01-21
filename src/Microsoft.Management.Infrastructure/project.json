@@ -14,12 +14,9 @@
     "dependencies": {
 	"NETStandard.Library": "1.0.0-rc2-23712",
 	"System.Runtime.Serialization.Xml": "4.1.0-rc2-23712",
+	"System.Security.SecureString": "4.0.0-beta-23330",
 	"System.Threading.ThreadPool": "4.0.10-rc2-23712",
         "Microsoft.Management.Infrastructure.Native" : {
-	    "type": "build",
-	    "version": "1.0.0-*"
-	},
-	"System.Security.SecureString":  {
 	    "type": "build",
 	    "version": "1.0.0-*"
 	}
