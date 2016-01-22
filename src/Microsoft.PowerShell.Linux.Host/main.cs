@@ -34,8 +34,40 @@ namespace Microsoft.PowerShell.Linux.Host
                     bool hasNext = (i+1) < args.Length;
                     string nextArg = hasNext ? args[i+1] : string.Empty;
 
+                    // --help was specified
+                    if (arg == "--help" || arg == "-h")
+                    {
+                        Console.WriteLine(@"
+usage: powershell[.exe] [ (--help | -h) ]
+                        [ (--file | -f) <filePath> ]
+                        [ <script>.ps1 ]
+                        [ (--command | -c) <string> ]
+
+SYNOPSIS
+
+    Open PowerShell console can take none or one of several arguments.
+
+OPTIONS
+
+    No arguments
+            Will launch PowerShell interactively.
+
+    (--file | -f) <filePath>
+            Given a file path, will execute as a PowerShell script.
+
+    <script>.ps1
+            Given a .ps1 script, will execute without needing --flag.
+
+    (--command | -c) <string>
+            Will execute given string as a PowerShell script.
+
+    (--help | -h)
+            Prints this text.
+");
+                        return;
+                    }
                     // lone argument is a script
-                    if (!hasNext && arg.EndsWith(".ps1"))
+                    else if (!hasNext && arg.EndsWith(".ps1"))
                     {
                         initialScript = Path.GetFullPath(arg);
                     }
@@ -179,40 +211,6 @@ namespace Microsoft.PowerShell.Linux.Host
                 this.currentPowerShell = PowerShell.Create();
             }
 
-
-            if (initialScript == "--help" || initialScript == "-h")
-            {
-                Console.WriteLine(@"
-======HELP======
-PowerShell for Linux
-Command Line Help Resource
-================
-
-TOPIC
-    PowerShell for Linux Command Line Arguments
-
-SYNOPSIS
-    PowerShell for Linux takes several command line arguments.
-
-OPTIONS
-
-    [NO ARGUMENTS]        Will launch PowerShell for Linux in an interactive shell.
-
-    --command <string>    Will execute given string as a PowerShell command.
-
-    -c <string>           Will execute given string as a PowerShell command.
-
-    --file <filePath>     Given a file path will execute as a PowerShell script.
-
-    -f <filePath>         Given a file path will execute as a PowerShell script.
-
-    --help                Prints a basic help of command line arguments for PowerShell on Linux
-
-    -h                    Prints a basic help of command line arguments for PowerShell on Linux.
-
-");
-		return;
-	    }
 
             try
             {
