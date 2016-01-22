@@ -95,12 +95,6 @@ OPTIONS
                         }
                         ++i;
                     }
-                    // --working-dir (not on PowerShell for Windows, may be removed)
-                    else if (hasNext && arg == "--working-dir")
-                    {
-                        Directory.SetCurrentDirectory(nextArg);
-                        ++i;
-                    }
                 }
             }
             // TODO: check for input on stdin
