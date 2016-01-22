@@ -3,6 +3,7 @@
 |         |Ubuntu 14.04 |Windows |
 |---------|:------:|:------:|
 |master|  TODO |[![Build status](https://ci.appveyor.com/api/projects/status/wb0a0apbn4aiccp1/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/powershell-linux/branch/master)|
+|dnx451|  TODO |[![Build status](https://ci.appveyor.com/api/projects/status/wb0a0apbn4aiccp1/branch/dnx451?svg=true)](https://ci.appveyor.com/project/PowerShell/powershell-linux/branch/dnx451)|
 
 
 ## Obtain the source code
