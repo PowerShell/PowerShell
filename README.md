@@ -3,7 +3,6 @@
 |         |Ubuntu 14.04 |Windows |
 |---------|:------:|:------:|
 |master|  TODO |[![Build status](https://ci.appveyor.com/api/projects/status/wb0a0apbn4aiccp1/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/powershell-linux/branch/master)|
-|appveyor|    |[![Build status](https://ci.appveyor.com/api/projects/status/wb0a0apbn4aiccp1/branch/appveyor?svg=true)](https://ci.appveyor.com/project/PowerShell/powershell-linux/branch/appveyor)|
 
 
 ## Obtain the source code
