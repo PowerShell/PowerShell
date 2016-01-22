@@ -17,10 +17,15 @@ namespace Microsoft.PowerShell.Linux.Host
     /// </summary>
     internal class MyHostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
     {
+        public MyHostUserInterface(bool isInteractive)
+        {
+            this.myRawUi = new MyRawUserInterface(isInteractive);
+        }
+
         /// <summary>
         /// A reference to the PSRawUserInterface implementation.
         /// </summary>
-        private MyRawUserInterface myRawUi = new MyRawUserInterface();
+        private MyRawUserInterface myRawUi;
 
         /// <summary>
         /// Gets an instance of the PSRawUserInterface class for this host
@@ -344,7 +349,6 @@ ReadNext:
             Console.ForegroundColor = foregroundColor;
             Console.BackgroundColor = backgroundColor;
             Console.Write(value);
-            //Console.Write(value);
             Console.ResetColor();
         }
 
