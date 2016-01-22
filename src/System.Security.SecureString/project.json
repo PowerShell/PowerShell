@@ -6,8 +6,8 @@
     "compilationOptions": { "allowUnsafe": true },
 
     "dependencies": {
-	"NETStandard.Library": "1.0.0-rc2-23712"
     },
 
-    "frameworks": { "dnxcore50": { } }
+    "dnx451": {},
+"frameworks": { "dnx451": { } }
 }
