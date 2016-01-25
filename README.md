@@ -4,6 +4,7 @@
 |---------|:------:|:------:|
 |master|[![Build Status](https://travis-ci.com/PowerShell/PowerShell-Linux.svg?token=31YifM4jfyVpBmEGitCm&branch=master)](https://travis-ci.com/PowerShell/PowerShell-Linux)|[![Build status](https://ci.appveyor.com/api/projects/status/wb0a0apbn4aiccp1/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/powershell-linux/branch/master)|
 
+## [Waffle.io scrum board](https://waffle.io/PowerShell/PowerShell-Linux)
 
 ## Obtain the source code
 
