@@ -4,12 +4,12 @@
     "authors": [ "garretts", "andschwa" ],
 
     "compilationOptions": {
-        "define": [
-            "CORECLR",
-            "_CORECLR",
+	"define": [
+	    "CORECLR",
+	    "_CORECLR",
 	    "LINUX"
-        ],
-        "allowUnsafe": true
+	],
+	"allowUnsafe": true
     },
 
     "dependencies": {

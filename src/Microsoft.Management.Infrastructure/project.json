@@ -4,18 +4,18 @@
     "authors": [ "garretts", "andschwa" ],
 
     "compilationOptions": {
-        "define": [
-            "CORECLR",
-            "_CORECLR",
+	"define": [
+	    "CORECLR",
+	    "_CORECLR",
 	    "LINUX"
-        ]
+	]
     },
 
     "dependencies": {
 	"NETStandard.Library": "1.0.0-rc2-23712",
 	"System.Runtime.Serialization.Xml": "4.1.0-rc2-23712",
 	"System.Threading.ThreadPool": "4.0.10-rc2-23712",
-        "Microsoft.Management.Infrastructure.Native" : {
+	"Microsoft.Management.Infrastructure.Native" : {
 	    "type": "build",
 	    "version": "1.0.0-*"
 	},
@@ -115,6 +115,6 @@
 	"../monad/wmi/WMIv2/Client/DotNetAPI/cs/ProxyType.cs",
 	"../monad/wmi/WMIv2/Client/DotNetAPI/cs/SharedInstanceHandle.cs",
 	"../monad/wmi/WMIv2/Client/DotNetAPI/cs/Strings.Designer.cs",
-	"../monad/wmi/WMIv2/Client/DotNetAPI/cs/WSManSessionOptions.cs",
+	"../monad/wmi/WMIv2/Client/DotNetAPI/cs/WSManSessionOptions.cs"
     ]
 }
