@@ -26,10 +26,13 @@
 
     "compileFiles": [
 	"../monad/monad/src/commands/utility/AddMember.cs",
+	"../monad/monad/src/commands/utility/AddType.cs",
 	"../monad/monad/src/commands/utility/CSVCommands.cs",
 	"../monad/monad/src/commands/utility/ConsoleColorCmdlet.cs",
 	"../monad/monad/src/commands/utility/ConvertFrom-StringData.cs",
 	"../monad/monad/src/commands/utility/Csv.cs",
+	"../monad/monad/src/commands/utility/CustomSerialization.cs",
+	"../monad/monad/src/commands/utility/CustomSerializationStrings.cs",
 	"../monad/monad/src/commands/utility/DebugRunspaceCommand.cs",
 	"../monad/monad/src/commands/utility/Disable-PSBreakpoint.cs",
 	"../monad/monad/src/commands/utility/Enable-PSBreakpoint.cs",
@@ -86,6 +89,7 @@
 	"../monad/monad/src/commands/utility/WriteAliasCommandBase.cs",
 	"../monad/monad/src/commands/utility/WriteConsoleCmdlet.cs",
 	"../monad/monad/src/commands/utility/WriteProgressCmdlet.cs",
+	"../monad/monad/src/commands/utility/XmlCommands.cs",
 	"../monad/monad/src/commands/utility/compare-object.cs",
 	"../monad/monad/src/commands/utility/group-object.cs",
 	"../monad/monad/src/commands/utility/new-object.cs",
@@ -116,6 +120,7 @@
 	"UpdateDataStrings": "../windows-build/gen/COMMANDS_UTILITY/UpdateDataStrings.resources",
 	"UtilityCommonStrings": "../windows-build/gen/COMMANDS_UTILITY/UtilityCommonStrings.resources",
 	"VariableCommandStrings": "../windows-build/gen/COMMANDS_UTILITY/VariableCommandStrings.resources",
+	"WebCmdletStrings": "../windows-build/gen/COMMANDS_UTILITY/WebCmdletStrings.resources",
 	"WriteErrorStrings": "../windows-build/gen/COMMANDS_UTILITY/WriteErrorStrings.resources",
 	"WriteProgressResourceStrings": "../windows-build/gen/COMMANDS_UTILITY/WriteProgressResourceStrings.resources"
     }

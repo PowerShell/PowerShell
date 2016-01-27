@@ -52,11 +52,13 @@
 
     "frameworks": { "dnxcore50": { } },
 
-    "compile" : [ "../windows-build/gen/SYS_AUTO/*.cs" ],
+    "compile" : [
+	"../windows-build/gen/SYS_AUTO/*.cs",
+	"../monad/monad/src/CoreCLR/CorePsPlatform.cs"
+    ],
 
     "compileFiles": [
 	"../monad/monad/src/CoreCLR/CorePsExtensions.cs",
-	"../monad/monad/src/CoreCLR/CorePsPlatform.cs",
 	"../monad/monad/src/CoreCLR/CorePsStub.cs",
 	"../monad/monad/src/DscSupport/CimDSCParser.cs",
 	"../monad/monad/src/cimSupport/cmdletization/EnumWriter.cs",
@@ -76,6 +78,17 @@
 	"../monad/monad/src/commands/utility/FormatAndOutput/common/BaseOutputtingCommand.cs",
 	"../monad/monad/src/commands/utility/FormatAndOutput/common/ColumnWidthManager.cs",
 	"../monad/monad/src/commands/utility/FormatAndOutput/common/ComplexWriter.cs",
+	"../monad/monad/src/commands/utility/FormatAndOutput/common/DefaultFormatters/Certificate_format_ps1xml.cs",
+	"../monad/monad/src/commands/utility/FormatAndOutput/common/DefaultFormatters/Diagnostics_Format_ps1xml.cs",
+	"../monad/monad/src/commands/utility/FormatAndOutput/common/DefaultFormatters/DotNetTypes_format_ps1xml.cs",
+	"../monad/monad/src/commands/utility/FormatAndOutput/common/DefaultFormatters/Event_Format_ps1xml.cs",
+	"../monad/monad/src/commands/utility/FormatAndOutput/common/DefaultFormatters/FileSystem_format_ps1xml.cs",
+	"../monad/monad/src/commands/utility/FormatAndOutput/common/DefaultFormatters/HelpV3_format_ps1xml.cs",
+	"../monad/monad/src/commands/utility/FormatAndOutput/common/DefaultFormatters/Help_format_ps1xml.cs",
+	"../monad/monad/src/commands/utility/FormatAndOutput/common/DefaultFormatters/PowerShellCore_format_ps1xml.cs",
+	"../monad/monad/src/commands/utility/FormatAndOutput/common/DefaultFormatters/PowerShellTrace_format_ps1xml.cs",
+	"../monad/monad/src/commands/utility/FormatAndOutput/common/DefaultFormatters/Registry_format_ps1xml.cs",
+	"../monad/monad/src/commands/utility/FormatAndOutput/common/DefaultFormatters/WSMan_Format_ps1xml.cs",
 	"../monad/monad/src/commands/utility/FormatAndOutput/common/DisplayDatabase/FormatTable.cs",
 	"../monad/monad/src/commands/utility/FormatAndOutput/common/DisplayDatabase/XmlLoaderBase.cs",
 	"../monad/monad/src/commands/utility/FormatAndOutput/common/DisplayDatabase/commands.cs",
