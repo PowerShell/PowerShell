@@ -7,8 +7,12 @@ mkdir -p $BIN/Modules
 # Deploy PowerShell modules
 (
     cd $BIN/Modules
-    ln -sf ../../test/Pester .
-    ln -sf ../../src/monad/monad/miscfiles/modules/Microsoft.PowerShell.Utility .
+    cp -r ../../test/Pester .
+    cp -r ../../src/monad/monad/miscfiles/modules/Microsoft.PowerShell.Utility .
+    cp ../../src/monad/monad/miscfiles/modules/Microsoft.PowerShell.Utility/CoreClr/* Microsoft.PowerShell.Utility
+    cp -r ../../src/monad/monad/miscfiles/modules/Microsoft.PowerShell.Security .
+    cp -r ../../src/monad/monad/miscfiles/modules/Microsoft.PowerShell.Management .
+    cp -r ../../src/monad/monad/miscfiles/modules/PSDiagnostics .
     OMI=Microsoft.PowerShell.Commands.Omi
     mkdir -p $OMI
     ln -sf $BIN/$OMI.dll $OMI/
