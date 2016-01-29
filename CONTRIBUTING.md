@@ -13,6 +13,8 @@ Don't forget to commit early and often!
 Please add `[ci skip]` to commits that should be ignored by the CI systems
 (e.g. changes to documentation).
 
+All pull requests **must** pass both CI systems before they will be approved.
+
 ## New to Git?
 
 If you're new to Git, learn the following commands: `checkout`, `branch`,
