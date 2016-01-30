@@ -32,3 +32,31 @@ in place to prevent error messages. This should be fixed in .NET Core. Use of
 the registry is widespread throughout the PowerShell codebase, and so innocuous
 things (such as loading particular modules) can cause strange behavior when
 unguarded code is executed.
+
+## Unavailable cmdlets
+
+This project includes the CoreCLR versions of the `Commands.Management`,
+`Commands.Utility`, `Security`, and `PSDiagnostics` modules.
+
+The `Archive`, `Diagnostics`, `PSGet`, and `Host` modules are not yet included.
+
+The `WSMan.Management` module cannot be included unless the
+`Management.Infrastructure.Native` library is ported.
+
+The CoreCLR version of the `Commands.Utility` module does not contain the
+following cmdlets that exist in the FullCLR version:
+
+- ConvertFrom-String
+- ConvertTo-Html
+- Export-PSSession
+- Get-TraceSource
+- Import-PSSession
+- Invoke-RestMethod
+- Invoke-WebRequest
+- Out-GridView
+- Out-Printer
+- Send-MailMessage
+- Set-TraceSource
+- Show-Command
+- Trace-Command
+- Update-List
