@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-./bin/powershell -c "Invoke-Pester test/powershell/$1 -OutputFile pester-tests.xml -OutputFormat NUnitXml -EnableExit"
+./bin/powershell --noprofile -c "Invoke-Pester test/powershell/$1 -OutputFile pester-tests.xml -OutputFormat NUnitXml -EnableExit"
 failed_tests=$?
 
 # XML files are not executable

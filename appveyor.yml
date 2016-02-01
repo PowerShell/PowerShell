@@ -20,7 +20,7 @@ build_script:
 test_script:
   - ps: |
       $testResultsFile = ".\TestsResults.xml"
-      .\bin\powershell.exe -c "Invoke-Pester test/powershell -OutputFormat NUnitXml -OutputFile $testResultsFile"
+      .\bin\powershell.exe --noprofile -c "Invoke-Pester test/powershell -OutputFormat NUnitXml -OutputFile $testResultsFile"
       (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFile))
 
 
