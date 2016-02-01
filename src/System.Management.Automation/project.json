@@ -23,6 +23,7 @@
 	"System.Data.Common": "4.0.1-rc3-23729",
 	"System.Diagnostics.Contracts": "4.0.1-rc3-23729",
 	"System.Diagnostics.FileVersionInfo": "4.0.0-rc3-23729",
+	"System.Diagnostics.Process": "4.1.0-rc3-23729",
 	"System.Diagnostics.StackTrace": "4.0.1-rc3-23729",
 	"System.Diagnostics.TraceSource": "4.0.0-rc3-23729",
 	"System.Dynamic.Runtime": "4.0.11-rc3-23729",
