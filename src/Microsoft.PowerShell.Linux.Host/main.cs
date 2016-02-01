@@ -524,7 +524,7 @@ OPTIONS
             while (resumeAction == null)
             {
                 Console.Write("[DBG] PS >> ");
-                string command = Console.ReadLine();
+                string command = consoleReadLine.Read(this.myHost.Runspace); 
                 Console.WriteLine();
 
                 // Stream output from command processing to console.
