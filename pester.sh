@@ -7,4 +7,4 @@ failed_tests=$?
 chmod -x pester-tests.xml
 
 # Exit with failure if number of failed tests exceeds threshold
-[ ! $failed_tests -gt 14 ]
+[ ! $failed_tests -gt 11 ]
