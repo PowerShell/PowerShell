@@ -13,7 +13,7 @@
     },
 
     "dependencies": {
-	"NETStandard.Library": "1.0.0-rc2-23712",
+	"NETStandard.Library": "1.0.0-rc3-23729",
 	"Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1-20151109-01",
 	"System.Management.Automation": {
 	    "type": "build",

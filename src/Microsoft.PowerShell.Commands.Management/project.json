@@ -13,9 +13,9 @@
     },
 
     "dependencies": {
-	"NETStandard.Library": "1.0.0-rc2-23712",
-	"System.ServiceProcess.ServiceController": "4.1.0-rc2-23712",
-	"System.Net.NameResolution": "4.0.0-rc2-23712",
+	"NETStandard.Library": "1.0.0-rc3-23729",
+	"System.ServiceProcess.ServiceController": "4.1.0-rc3-23729",
+	"System.Net.NameResolution": "4.0.0-rc3-23729",
 	"Microsoft.PowerShell.Security": {
 	    "type": "build",
 	    "version": "1.0.0-*"

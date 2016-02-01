@@ -12,9 +12,9 @@
     },
 
     "dependencies": {
-	"NETStandard.Library": "1.0.0-rc2-23712",
-	"System.Runtime.Serialization.Xml": "4.1.0-rc2-23712",
-	"System.Threading.ThreadPool": "4.0.10-rc2-23712",
+	"NETStandard.Library": "1.0.0-rc3-23729",
+	"System.Runtime.Serialization.Xml": "4.1.0-rc3-23729",
+	"System.Threading.ThreadPool": "4.0.10-rc3-23729",
 	"Microsoft.Management.Infrastructure.Native" : {
 	    "type": "build",
 	    "version": "1.0.0-*"

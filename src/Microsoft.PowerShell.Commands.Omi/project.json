@@ -4,9 +4,8 @@
     "authors": [ "George Fleming", "andschwa" ],
 
     "dependencies": {
-        "NETStandard.Library": "1.0.0-rc2-23712",
-        "System.Xml.XDocument": "4.0.11-rc2-23712",
-        "System.Runtime.InteropServices": "4.0.21-rc2-23712",
+        "NETStandard.Library": "1.0.0-rc3-23729",
+        "System.Xml.XDocument": "4.0.11-rc3-23729",
 	"System.Management.Automation": {
 	    "type": "build",
 	    "version": "1.0.0-*"
