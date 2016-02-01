@@ -24,8 +24,10 @@ namespace Microsoft.PowerShell.Linux.Host
             // here eliminates the need for a custom native host.
             PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(AppContext.BaseDirectory);
 
-            // Custom argument parsing
+            // Argument parsing
             string initialScript = null;
+            bool loadProfiles = true;
+
             if (args.Length > 0)
             {
                 for (int i = 0; i < args.Length; ++i)
@@ -42,6 +44,7 @@ usage: powershell[.exe] [ (--help | -h) ]
                         [ (--file | -f) <filePath> ]
                         [ <script>.ps1 ]
                         [ (--command | -c) <string> ]
+                        [ --noprofile ]
 
 SYNOPSIS
 
@@ -61,10 +64,17 @@ OPTIONS
     (--command | -c) <string>
             Will execute given string as a PowerShell script.
 
+    --noprofile
+            Disables parsing of PowerShell profiles.
+
     (--help | -h)
             Prints this text.
 ");
                         return;
+                    }
+                    else if (arg == "--noprofile")
+                    {
+                        loadProfiles = false;
                     }
                     // lone argument is a script
                     else if (!hasNext && arg.EndsWith(".ps1"))
@@ -100,7 +110,7 @@ OPTIONS
             // TODO: check for input on stdin
 
             // Create the listener and run it
-            Listener listener = new Listener(initialScript);
+            Listener listener = new Listener(initialScript, loadProfiles);
 
             // only run if there was no script file passed in
             if (initialScript == null)
@@ -177,7 +187,7 @@ OPTIONS
             set { this.exitCode = value; }
         }
 
-        public Listener(string initialScript)
+        public Listener(string initialScript, bool loadProfiles)
         {
             // Create the host and runspace instances for this interpreter.
             // Note that this application does not support console files so
@@ -198,13 +208,26 @@ OPTIONS
 
             }
 
+            if (loadProfiles)
+            {
+                LoadProfiles();
+            }
+
+            // run the initial script
+            if (initialScript != null)
+            {
+                executeHelper(initialScript, null);
+            }
+        }
+
+        internal void LoadProfiles()
+        {
             // Create a PowerShell object to run the commands used to create
             // $profile and load the profiles.
             lock (this.instanceLock)
             {
                 this.currentPowerShell = PowerShell.Create();
             }
-
 
             try
             {
@@ -226,12 +249,6 @@ OPTIONS
                     this.currentPowerShell.Dispose();
                     this.currentPowerShell = null;
                 }
-            }
-
-            // run the initial script
-            if (initialScript != null)
-            {
-                executeHelper(initialScript, null);
             }
         }
 
