@@ -216,7 +216,7 @@ OPTIONS
             // run the initial script
             if (initialScript != null)
             {
-                executeHelper(initialScript, null);
+                ExecuteHelper(initialScript, null);
             }
         }
 
@@ -313,7 +313,7 @@ OPTIONS
         /// <param name="cmd">The script to run.</param>
         /// <param name="input">Any input arguments to pass to the script.
         /// If null then nothing is passed in.</param>
-        private void executeHelper(string cmd, object input)
+        private void ExecuteHelper(string cmd, object input)
         {
             // Ignore empty command lines.
             if (string.IsNullOrEmpty(cmd))
@@ -448,7 +448,7 @@ OPTIONS
             try
             {
                 // Run the command with no input.
-                this.executeHelper(cmd, null);
+                this.ExecuteHelper(cmd, null);
             }
             catch (RuntimeException rte)
             {
