@@ -61,6 +61,22 @@
                     "version": "1.0.0-*"
                 }
             }
+        },
+        "dnx451": {
+            "frameworkAssemblies": {
+                "System.Runtime": "",
+                "System.Xml": "4.0.0.0",
+                "System.Xml.Linq": "4.0.0.0",
+                "System.Numerics": "4.0.0.0",
+                "System.Data": "4.0.0.0",
+                "System.DirectoryServices": "4.0.0.0",
+                "System.Security": "4.0.0.0",
+                "System.Transactions": "4.0.0.0",
+                "System.Runtime.Serialization": "4.0.0.0",
+                "System.Management": "4.0.0.0",
+                "System.Configuration": "4.0.0.0",
+                "System.Configuration.Install": "4.0.0.0"
+            }
         }
     },
 

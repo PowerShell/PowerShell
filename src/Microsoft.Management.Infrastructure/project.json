@@ -23,6 +23,8 @@
                 "System.Runtime.Serialization.Xml": "4.1.0-rc3-23729",
                 "System.Threading.ThreadPool": "4.0.10-rc3-23729"
             }
+        },
+        "dnx451": {
         }
     },
 

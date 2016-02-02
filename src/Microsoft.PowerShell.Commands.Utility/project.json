@@ -31,6 +31,13 @@
             "dependencies": {
                 "Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1-20151109-01"
             }
+        },
+        "dnx451": {
+            "frameworkAssemblies": {
+                "System.Drawing": "4.0.0.0",
+                "System.Web.Extensions": "4.0.0.0",
+                "Microsoft.JScript": "10.0.0.0"
+            }
         }
     },
 

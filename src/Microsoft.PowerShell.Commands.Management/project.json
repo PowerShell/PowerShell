@@ -23,6 +23,11 @@
                 "System.ServiceProcess.ServiceController": "4.1.0-rc3-23729",
                 "System.Net.NameResolution": "4.0.0-rc3-23729"
             }
+        },
+        "dnx451": {
+            "frameworkAssemblies": {
+                "System.ServiceProcess": "4.0.0.0"
+            }
         }
     },
 

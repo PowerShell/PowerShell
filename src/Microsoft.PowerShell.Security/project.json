@@ -19,6 +19,8 @@
             "compilationOptions": {
                 "define": [ "CORECLR" ]
             }
+        },
+        "dnx451": {
         }
     },
 
