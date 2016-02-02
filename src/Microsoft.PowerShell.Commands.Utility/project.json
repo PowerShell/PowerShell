@@ -4,136 +4,136 @@
     "authors": [ "garretts", "andschwa" ],
 
     "compilationOptions": {
-	"allowUnsafe": true
+        "allowUnsafe": true
     },
 
     "configurations": {
-	"Linux": {
-	    "compilationOptions": {
-		"define": [ "LINUX" ]
-	    }
-	}
+        "Linux": {
+            "compilationOptions": {
+                "define": [ "LINUX" ]
+            }
+        }
     },
 
     "dependencies": {
-	"System.Management.Automation": {
-	    "type": "build",
-	    "version": "1.0.0-*"
-	}
+        "System.Management.Automation": {
+            "type": "build",
+            "version": "1.0.0-*"
+        }
     },
 
     "frameworks": {
-	"dnxcore50": {
-	    "compilationOptions": {
-		"define": [ "CORECLR" ]
-	    },
-	    "imports": "portable-net45+win8",
-	    "dependencies": {
-		"Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1-20151109-01"
-	    }
-	}
+        "dnxcore50": {
+            "compilationOptions": {
+                "define": [ "CORECLR" ]
+            },
+            "imports": "portable-net45+win8",
+            "dependencies": {
+                "Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1-20151109-01"
+            }
+        }
     },
 
     "compile": [ "../windows-build/gen/COMMANDS_UTILITY/*.cs" ],
 
     "compileFiles": [
-	"../monad/monad/src/commands/utility/AddMember.cs",
-	"../monad/monad/src/commands/utility/AddType.cs",
-	"../monad/monad/src/commands/utility/CSVCommands.cs",
-	"../monad/monad/src/commands/utility/ConsoleColorCmdlet.cs",
-	"../monad/monad/src/commands/utility/ConvertFrom-StringData.cs",
-	"../monad/monad/src/commands/utility/Csv.cs",
-	"../monad/monad/src/commands/utility/CustomSerialization.cs",
-	"../monad/monad/src/commands/utility/CustomSerializationStrings.cs",
-	"../monad/monad/src/commands/utility/DebugRunspaceCommand.cs",
-	"../monad/monad/src/commands/utility/Disable-PSBreakpoint.cs",
-	"../monad/monad/src/commands/utility/Enable-PSBreakpoint.cs",
-	"../monad/monad/src/commands/utility/EnableDisableRunspaceDebugCommand.cs",
-	"../monad/monad/src/commands/utility/ExportAliasCommand.cs",
-	"../monad/monad/src/commands/utility/FormatAndOutput/common/GetFormatDataCommand.cs",
-	"../monad/monad/src/commands/utility/FormatAndOutput/common/WriteFormatDataCommand.cs",
-	"../monad/monad/src/commands/utility/FormatAndOutput/format-list/Format-List.cs",
-	"../monad/monad/src/commands/utility/FormatAndOutput/format-object/format-object.cs",
-	"../monad/monad/src/commands/utility/FormatAndOutput/format-table/Format-Table.cs",
-	"../monad/monad/src/commands/utility/FormatAndOutput/format-wide/Format-Wide.cs",
-	"../monad/monad/src/commands/utility/FormatAndOutput/out-file/Out-File.cs",
-	"../monad/monad/src/commands/utility/FormatAndOutput/out-string/out-string.cs",
-	"../monad/monad/src/commands/utility/Get-PSBreakpoint.cs",
-	"../monad/monad/src/commands/utility/Get-PSCallStack.cs",
-	"../monad/monad/src/commands/utility/GetAliasCommand.cs",
-	"../monad/monad/src/commands/utility/GetCultureCommand.cs",
-	"../monad/monad/src/commands/utility/GetDateCommand.cs",
-	"../monad/monad/src/commands/utility/GetEventCommand.cs",
-	"../monad/monad/src/commands/utility/GetEventSubscriberCommand.cs",
-	"../monad/monad/src/commands/utility/GetHostCmdlet.cs",
-	"../monad/monad/src/commands/utility/GetMember.cs",
-	"../monad/monad/src/commands/utility/GetRandomCommand.cs",
-	"../monad/monad/src/commands/utility/GetRunspaceCommand.cs",
-	"../monad/monad/src/commands/utility/GetUICultureCommand.cs",
-	"../monad/monad/src/commands/utility/GetUnique.cs",
-	"../monad/monad/src/commands/utility/Import-LocalizedData.cs",
-	"../monad/monad/src/commands/utility/ImportAliasCommand.cs",
-	"../monad/monad/src/commands/utility/InvokeCommandCmdlet.cs",
-	"../monad/monad/src/commands/utility/MatchString.cs",
-	"../monad/monad/src/commands/utility/Measure-Object.cs",
-	"../monad/monad/src/commands/utility/NewAliasCommand.cs",
-	"../monad/monad/src/commands/utility/NewTimeSpanCommand.cs",
-	"../monad/monad/src/commands/utility/ObjectCommandComparer.cs",
-	"../monad/monad/src/commands/utility/OrderObjectBase.cs",
-	"../monad/monad/src/commands/utility/ReadConsoleCmdlet.cs",
-	"../monad/monad/src/commands/utility/RegisterObjectEventCommand.cs",
-	"../monad/monad/src/commands/utility/RegisterPSEventCommand.cs",
-	"../monad/monad/src/commands/utility/Remove-PSBreakpoint.cs",
-	"../monad/monad/src/commands/utility/RemoveEventCommand.cs",
-	"../monad/monad/src/commands/utility/Set-PSBreakpoint.cs",
-	"../monad/monad/src/commands/utility/SetAliasCommand.cs",
-	"../monad/monad/src/commands/utility/SetDateCommand.cs",
-	"../monad/monad/src/commands/utility/StartSleepCommand.cs",
-	"../monad/monad/src/commands/utility/TimeExpressionCommand.cs",
-	"../monad/monad/src/commands/utility/UnblockFile.cs",
-	"../monad/monad/src/commands/utility/UnregisterEventCommand.cs",
-	"../monad/monad/src/commands/utility/Update-Data.cs",
-	"../monad/monad/src/commands/utility/Update-TypeData.cs",
-	"../monad/monad/src/commands/utility/UtilityCommon.cs",
-	"../monad/monad/src/commands/utility/Var.cs",
-	"../monad/monad/src/commands/utility/WaitEventCommand.cs",
-	"../monad/monad/src/commands/utility/Write-Object.cs",
-	"../monad/monad/src/commands/utility/WriteAliasCommandBase.cs",
-	"../monad/monad/src/commands/utility/WriteConsoleCmdlet.cs",
-	"../monad/monad/src/commands/utility/WriteProgressCmdlet.cs",
-	"../monad/monad/src/commands/utility/XmlCommands.cs",
-	"../monad/monad/src/commands/utility/compare-object.cs",
-	"../monad/monad/src/commands/utility/group-object.cs",
-	"../monad/monad/src/commands/utility/new-object.cs",
-	"../monad/monad/src/commands/utility/neweventcommand.cs",
-	"../monad/monad/src/commands/utility/select-object.cs",
-	"../monad/monad/src/commands/utility/sort-object.cs",
-	"../monad/monad/src/commands/utility/tee-object.cs",
-	"../monad/monad/src/commands/utility/write.cs"
+        "../monad/monad/src/commands/utility/AddMember.cs",
+        "../monad/monad/src/commands/utility/AddType.cs",
+        "../monad/monad/src/commands/utility/CSVCommands.cs",
+        "../monad/monad/src/commands/utility/ConsoleColorCmdlet.cs",
+        "../monad/monad/src/commands/utility/ConvertFrom-StringData.cs",
+        "../monad/monad/src/commands/utility/Csv.cs",
+        "../monad/monad/src/commands/utility/CustomSerialization.cs",
+        "../monad/monad/src/commands/utility/CustomSerializationStrings.cs",
+        "../monad/monad/src/commands/utility/DebugRunspaceCommand.cs",
+        "../monad/monad/src/commands/utility/Disable-PSBreakpoint.cs",
+        "../monad/monad/src/commands/utility/Enable-PSBreakpoint.cs",
+        "../monad/monad/src/commands/utility/EnableDisableRunspaceDebugCommand.cs",
+        "../monad/monad/src/commands/utility/ExportAliasCommand.cs",
+        "../monad/monad/src/commands/utility/FormatAndOutput/common/GetFormatDataCommand.cs",
+        "../monad/monad/src/commands/utility/FormatAndOutput/common/WriteFormatDataCommand.cs",
+        "../monad/monad/src/commands/utility/FormatAndOutput/format-list/Format-List.cs",
+        "../monad/monad/src/commands/utility/FormatAndOutput/format-object/format-object.cs",
+        "../monad/monad/src/commands/utility/FormatAndOutput/format-table/Format-Table.cs",
+        "../monad/monad/src/commands/utility/FormatAndOutput/format-wide/Format-Wide.cs",
+        "../monad/monad/src/commands/utility/FormatAndOutput/out-file/Out-File.cs",
+        "../monad/monad/src/commands/utility/FormatAndOutput/out-string/out-string.cs",
+        "../monad/monad/src/commands/utility/Get-PSBreakpoint.cs",
+        "../monad/monad/src/commands/utility/Get-PSCallStack.cs",
+        "../monad/monad/src/commands/utility/GetAliasCommand.cs",
+        "../monad/monad/src/commands/utility/GetCultureCommand.cs",
+        "../monad/monad/src/commands/utility/GetDateCommand.cs",
+        "../monad/monad/src/commands/utility/GetEventCommand.cs",
+        "../monad/monad/src/commands/utility/GetEventSubscriberCommand.cs",
+        "../monad/monad/src/commands/utility/GetHostCmdlet.cs",
+        "../monad/monad/src/commands/utility/GetMember.cs",
+        "../monad/monad/src/commands/utility/GetRandomCommand.cs",
+        "../monad/monad/src/commands/utility/GetRunspaceCommand.cs",
+        "../monad/monad/src/commands/utility/GetUICultureCommand.cs",
+        "../monad/monad/src/commands/utility/GetUnique.cs",
+        "../monad/monad/src/commands/utility/Import-LocalizedData.cs",
+        "../monad/monad/src/commands/utility/ImportAliasCommand.cs",
+        "../monad/monad/src/commands/utility/InvokeCommandCmdlet.cs",
+        "../monad/monad/src/commands/utility/MatchString.cs",
+        "../monad/monad/src/commands/utility/Measure-Object.cs",
+        "../monad/monad/src/commands/utility/NewAliasCommand.cs",
+        "../monad/monad/src/commands/utility/NewTimeSpanCommand.cs",
+        "../monad/monad/src/commands/utility/ObjectCommandComparer.cs",
+        "../monad/monad/src/commands/utility/OrderObjectBase.cs",
+        "../monad/monad/src/commands/utility/ReadConsoleCmdlet.cs",
+        "../monad/monad/src/commands/utility/RegisterObjectEventCommand.cs",
+        "../monad/monad/src/commands/utility/RegisterPSEventCommand.cs",
+        "../monad/monad/src/commands/utility/Remove-PSBreakpoint.cs",
+        "../monad/monad/src/commands/utility/RemoveEventCommand.cs",
+        "../monad/monad/src/commands/utility/Set-PSBreakpoint.cs",
+        "../monad/monad/src/commands/utility/SetAliasCommand.cs",
+        "../monad/monad/src/commands/utility/SetDateCommand.cs",
+        "../monad/monad/src/commands/utility/StartSleepCommand.cs",
+        "../monad/monad/src/commands/utility/TimeExpressionCommand.cs",
+        "../monad/monad/src/commands/utility/UnblockFile.cs",
+        "../monad/monad/src/commands/utility/UnregisterEventCommand.cs",
+        "../monad/monad/src/commands/utility/Update-Data.cs",
+        "../monad/monad/src/commands/utility/Update-TypeData.cs",
+        "../monad/monad/src/commands/utility/UtilityCommon.cs",
+        "../monad/monad/src/commands/utility/Var.cs",
+        "../monad/monad/src/commands/utility/WaitEventCommand.cs",
+        "../monad/monad/src/commands/utility/Write-Object.cs",
+        "../monad/monad/src/commands/utility/WriteAliasCommandBase.cs",
+        "../monad/monad/src/commands/utility/WriteConsoleCmdlet.cs",
+        "../monad/monad/src/commands/utility/WriteProgressCmdlet.cs",
+        "../monad/monad/src/commands/utility/XmlCommands.cs",
+        "../monad/monad/src/commands/utility/compare-object.cs",
+        "../monad/monad/src/commands/utility/group-object.cs",
+        "../monad/monad/src/commands/utility/new-object.cs",
+        "../monad/monad/src/commands/utility/neweventcommand.cs",
+        "../monad/monad/src/commands/utility/select-object.cs",
+        "../monad/monad/src/commands/utility/sort-object.cs",
+        "../monad/monad/src/commands/utility/tee-object.cs",
+        "../monad/monad/src/commands/utility/write.cs"
     ],
 
     "namedResource": {
-	"AddMember": "../windows-build/gen/COMMANDS_UTILITY/AddMember.resources",
-	"AddTypeStrings": "../windows-build/gen/COMMANDS_UTILITY/AddTypeStrings.resources",
-	"AliasCommandStrings": "../windows-build/gen/COMMANDS_UTILITY/AliasCommandStrings.resources",
-	"ConvertFromStringData": "../windows-build/gen/COMMANDS_UTILITY/ConvertFromStringData.resources",
-	"CsvCommandStrings": "../windows-build/gen/COMMANDS_UTILITY/CsvCommandStrings.resources",
-	"Debugger": "../windows-build/gen/COMMANDS_UTILITY/Debugger.resources",
-	"EventingStrings": "../windows-build/gen/COMMANDS_UTILITY/EventingStrings.resources",
-	"GetMember": "../windows-build/gen/COMMANDS_UTILITY/GetMember.resources",
-	"GetRandomCommandStrings": "../windows-build/gen/COMMANDS_UTILITY/GetRandomCommandStrings.resources",
-	"HostStrings": "../windows-build/gen/COMMANDS_UTILITY/HostStrings.resources",
-	"ImportLocalizedDataStrings": "../windows-build/gen/COMMANDS_UTILITY/ImportLocalizedDataStrings.resources",
-	"MatchStringStrings": "../windows-build/gen/COMMANDS_UTILITY/MatchStringStrings.resources",
-	"MeasureObjectStrings": "../windows-build/gen/COMMANDS_UTILITY/MeasureObjectStrings.resources",
-	"NewObjectStrings": "../windows-build/gen/COMMANDS_UTILITY/NewObjectStrings.resources",
-	"SelectObjectStrings": "../windows-build/gen/COMMANDS_UTILITY/SelectObjectStrings.resources",
-	"SortObjectStrings": "../windows-build/gen/COMMANDS_UTILITY/SortObjectStrings.resources",
-	"UpdateDataStrings": "../windows-build/gen/COMMANDS_UTILITY/UpdateDataStrings.resources",
-	"UtilityCommonStrings": "../windows-build/gen/COMMANDS_UTILITY/UtilityCommonStrings.resources",
-	"VariableCommandStrings": "../windows-build/gen/COMMANDS_UTILITY/VariableCommandStrings.resources",
-	"WebCmdletStrings": "../windows-build/gen/COMMANDS_UTILITY/WebCmdletStrings.resources",
-	"WriteErrorStrings": "../windows-build/gen/COMMANDS_UTILITY/WriteErrorStrings.resources",
-	"WriteProgressResourceStrings": "../windows-build/gen/COMMANDS_UTILITY/WriteProgressResourceStrings.resources"
+        "AddMember": "../windows-build/gen/COMMANDS_UTILITY/AddMember.resources",
+        "AddTypeStrings": "../windows-build/gen/COMMANDS_UTILITY/AddTypeStrings.resources",
+        "AliasCommandStrings": "../windows-build/gen/COMMANDS_UTILITY/AliasCommandStrings.resources",
+        "ConvertFromStringData": "../windows-build/gen/COMMANDS_UTILITY/ConvertFromStringData.resources",
+        "CsvCommandStrings": "../windows-build/gen/COMMANDS_UTILITY/CsvCommandStrings.resources",
+        "Debugger": "../windows-build/gen/COMMANDS_UTILITY/Debugger.resources",
+        "EventingStrings": "../windows-build/gen/COMMANDS_UTILITY/EventingStrings.resources",
+        "GetMember": "../windows-build/gen/COMMANDS_UTILITY/GetMember.resources",
+        "GetRandomCommandStrings": "../windows-build/gen/COMMANDS_UTILITY/GetRandomCommandStrings.resources",
+        "HostStrings": "../windows-build/gen/COMMANDS_UTILITY/HostStrings.resources",
+        "ImportLocalizedDataStrings": "../windows-build/gen/COMMANDS_UTILITY/ImportLocalizedDataStrings.resources",
+        "MatchStringStrings": "../windows-build/gen/COMMANDS_UTILITY/MatchStringStrings.resources",
+        "MeasureObjectStrings": "../windows-build/gen/COMMANDS_UTILITY/MeasureObjectStrings.resources",
+        "NewObjectStrings": "../windows-build/gen/COMMANDS_UTILITY/NewObjectStrings.resources",
+        "SelectObjectStrings": "../windows-build/gen/COMMANDS_UTILITY/SelectObjectStrings.resources",
+        "SortObjectStrings": "../windows-build/gen/COMMANDS_UTILITY/SortObjectStrings.resources",
+        "UpdateDataStrings": "../windows-build/gen/COMMANDS_UTILITY/UpdateDataStrings.resources",
+        "UtilityCommonStrings": "../windows-build/gen/COMMANDS_UTILITY/UtilityCommonStrings.resources",
+        "VariableCommandStrings": "../windows-build/gen/COMMANDS_UTILITY/VariableCommandStrings.resources",
+        "WebCmdletStrings": "../windows-build/gen/COMMANDS_UTILITY/WebCmdletStrings.resources",
+        "WriteErrorStrings": "../windows-build/gen/COMMANDS_UTILITY/WriteErrorStrings.resources",
+        "WriteProgressResourceStrings": "../windows-build/gen/COMMANDS_UTILITY/WriteProgressResourceStrings.resources"
     }
 }

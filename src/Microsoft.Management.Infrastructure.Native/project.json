@@ -4,14 +4,14 @@
     "authors": [ "garretts", "andschwa" ],
 
     "frameworks": {
-	"dnxcore50": {
-	    "dependencies": {
-		"NETStandard.Library": "1.0.0-rc3-23729",
-		"System.Security.SecureString":  {
-		    "type": "build",
-		    "version": "1.0.0-*"
-		}
-	    }
-	}
+        "dnxcore50": {
+            "dependencies": {
+                "NETStandard.Library": "1.0.0-rc3-23729",
+                "System.Security.SecureString":  {
+                    "type": "build",
+                    "version": "1.0.0-*"
+                }
+            }
+        }
     }
 }

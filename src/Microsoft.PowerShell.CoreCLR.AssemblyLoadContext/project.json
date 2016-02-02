@@ -4,23 +4,23 @@
     "authors": [ "andschwa" ],
 
     "configurations": {
-	"Linux": {
-	    "compilationOptions": {
-		"define": [ "LINUX" ]
-	    }
-	}
+        "Linux": {
+            "compilationOptions": {
+                "define": [ "LINUX" ]
+            }
+        }
     },
 
     "frameworks": {
-	"dnxcore50": {
-	    "compilationOptions": {
-		"define": [ "CORECLR" ]
-	    },
-	    "dependencies": {
-		"NETStandard.Library": "1.0.0-rc3-23729",
-		"System.Runtime.Loader": "4.0.0-rc3-23729"
-	    }
-	}
+        "dnxcore50": {
+            "compilationOptions": {
+                "define": [ "CORECLR" ]
+            },
+            "dependencies": {
+                "NETStandard.Library": "1.0.0-rc3-23729",
+                "System.Runtime.Loader": "4.0.0-rc3-23729"
+            }
+        }
     },
 
     "compileFiles": [ "../monad/monad/src/CoreCLR/CorePsAssemblyLoadContext.cs" ]

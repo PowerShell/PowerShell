@@ -4,42 +4,42 @@
     "authors": [ "garretts", "andschwa" ],
 
     "compilationOptions": {
-	"allowUnsafe": true
+        "allowUnsafe": true
     },
 
     "dependencies": {
-	"System.Management.Automation": {
-	    "type": "build",
-	    "version": "1.0.0-*"
-	}
+        "System.Management.Automation": {
+            "type": "build",
+            "version": "1.0.0-*"
+        }
     },
 
     "frameworks": {
-	"dnxcore50": {
-	    "compilationOptions": {
-		"define": [ "CORECLR" ]
-	    }
-	}
+        "dnxcore50": {
+            "compilationOptions": {
+                "define": [ "CORECLR" ]
+            }
+        }
     },
 
     "compile": [ "../windows-build/gen/SECURITY/*.cs" ],
 
     "compileFiles": [
-	"../monad/monad/src/security/AclCommands.cs",
-	"../monad/monad/src/security/CertificateProvider.cs",
-	"../monad/monad/src/security/CredentialCommands.cs",
-	"../monad/monad/src/security/ExecutionPolicyCommands.cs",
-	"../monad/monad/src/security/SecureStringCommands.cs",
-	"../monad/monad/src/security/SignatureCommands.cs",
-	"../monad/monad/src/security/Utils.cs",
-	"../monad/monad/src/security/certificateproviderexceptions.cs"
+        "../monad/monad/src/security/AclCommands.cs",
+        "../monad/monad/src/security/CertificateProvider.cs",
+        "../monad/monad/src/security/CredentialCommands.cs",
+        "../monad/monad/src/security/ExecutionPolicyCommands.cs",
+        "../monad/monad/src/security/SecureStringCommands.cs",
+        "../monad/monad/src/security/SignatureCommands.cs",
+        "../monad/monad/src/security/Utils.cs",
+        "../monad/monad/src/security/certificateproviderexceptions.cs"
     ],
 
     "namedResource": {
-	"CertificateProviderStrings": "../windows-build/gen/SECURITY/CertificateProviderStrings.resources",
-	"ExecutionPolicyCommands": "../windows-build/gen/SECURITY/ExecutionPolicyCommands.resources",
-	"SecureStringCommands": "../windows-build/gen/SECURITY/SecureStringCommands.resources",
-	"SignatureCommands": "../windows-build/gen/SECURITY/SignatureCommands.resources",
-	"UtilsStrings": "../windows-build/gen/SECURITY/UtilsStrings.resources"
+        "CertificateProviderStrings": "../windows-build/gen/SECURITY/CertificateProviderStrings.resources",
+        "ExecutionPolicyCommands": "../windows-build/gen/SECURITY/ExecutionPolicyCommands.resources",
+        "SecureStringCommands": "../windows-build/gen/SECURITY/SecureStringCommands.resources",
+        "SignatureCommands": "../windows-build/gen/SECURITY/SignatureCommands.resources",
+        "UtilsStrings": "../windows-build/gen/SECURITY/UtilsStrings.resources"
     }
 }
