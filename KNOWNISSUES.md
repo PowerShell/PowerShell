@@ -13,6 +13,15 @@ Windows builds currently use the native stub; this should be replaced with
 actual compilation of the managed C++ library on Windows (with the stub used on
 Linux).
 
+## CorePS Eventing Library
+
+The Eventing library reimplementation for Core PowerShell does not exist on
+Linux, and so the ETW stub is used via a `#if LINUX` guard. On Windows, this
+library now exists, but its build needs to be ported to .NET CLI. Until then,
+it should remain stubbed. Before then, the use of the Linux configuration
+should be changed so it is stubbed in both Linux and Windows builds. For now,
+Core PowerShell must be build with `--configuration Linux`.
+
 ## xUnit
 
 The xUnit tests cannot currently be run; we are working to integrate the
