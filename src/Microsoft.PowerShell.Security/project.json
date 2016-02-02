@@ -4,23 +4,23 @@
     "authors": [ "garretts", "andschwa" ],
 
     "compilationOptions": {
-	"define": [
-	    "CORECLR",
-	    "_CORECLR",
-	    "LINUX"
-	],
 	"allowUnsafe": true
     },
 
     "dependencies": {
-	"NETStandard.Library": "1.0.0-rc3-23729",
 	"System.Management.Automation": {
 	    "type": "build",
 	    "version": "1.0.0-*"
 	}
     },
 
-    "frameworks": { "dnxcore50": { } },
+    "frameworks": {
+	"dnxcore50": {
+	    "compilationOptions": {
+		"define": [ "CORECLR" ]
+	    }
+	}
+    },
 
     "compile": [ "../windows-build/gen/SECURITY/*.cs" ],
 

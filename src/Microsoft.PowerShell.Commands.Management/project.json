@@ -4,25 +4,27 @@
     "authors": [ "garretts", "andschwa" ],
 
     "compilationOptions": {
-        "define": [
-            "CORECLR",
-            "_CORECLR",
-	    "LINUX"
-        ],
-        "allowUnsafe": true
+	"allowUnsafe": true
     },
 
     "dependencies": {
-	"NETStandard.Library": "1.0.0-rc3-23729",
-	"System.ServiceProcess.ServiceController": "4.1.0-rc3-23729",
-	"System.Net.NameResolution": "4.0.0-rc3-23729",
 	"Microsoft.PowerShell.Security": {
 	    "type": "build",
 	    "version": "1.0.0-*"
 	}
     },
 
-    "frameworks": { "dnxcore50": { } },
+    "frameworks": {
+	"dnxcore50": {
+	    "compilationOptions": {
+		"define": [ "CORECLR" ]
+	    },
+	    "dependencies": {
+		"System.ServiceProcess.ServiceController": "4.1.0-rc3-23729",
+		"System.Net.NameResolution": "4.0.0-rc3-23729"
+	    }
+	}
+    },
 
     "compile": [ "../windows-build/gen/COMMANDS_MANAGEMENT/*.cs" ],
 

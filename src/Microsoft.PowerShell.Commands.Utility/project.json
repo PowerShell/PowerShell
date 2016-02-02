@@ -4,24 +4,35 @@
     "authors": [ "garretts", "andschwa" ],
 
     "compilationOptions": {
-	"define": [
-	    "CORECLR",
-	    "_CORECLR",
-	    "LINUX"
-	],
 	"allowUnsafe": true
     },
 
+    "configurations": {
+	"Linux": {
+	    "compilationOptions": {
+		"define": [ "LINUX" ]
+	    }
+	}
+    },
+
     "dependencies": {
-	"NETStandard.Library": "1.0.0-rc3-23729",
-	"Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1-20151109-01",
 	"System.Management.Automation": {
 	    "type": "build",
 	    "version": "1.0.0-*"
 	}
     },
 
-    "frameworks": { "dnxcore50": { "imports": "portable-net45+win8" } },
+    "frameworks": {
+	"dnxcore50": {
+	    "compilationOptions": {
+		"define": [ "CORECLR" ]
+	    },
+	    "imports": "portable-net45+win8",
+	    "dependencies": {
+		"Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1-20151109-01"
+	    }
+	}
+    },
 
     "compile": [ "../windows-build/gen/COMMANDS_UTILITY/*.cs" ],
 

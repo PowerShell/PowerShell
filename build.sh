@@ -37,7 +37,7 @@ mkdir -p $BIN/Modules
 # Publish PowerShell
 (
     cd src/Microsoft.PowerShell.Linux.Host
-    dotnet publish --framework dnxcore50 --output $BIN
+    dotnet publish --framework dnxcore50 --output $BIN --configuration Linux
     # Temporary fix for dotnet publish
     [[ -d $BIN/Debug/dnxcore50 ]] && cp $BIN/Debug/dnxcore50/* $BIN
     # Copy files that dotnet-publish does not currently deploy

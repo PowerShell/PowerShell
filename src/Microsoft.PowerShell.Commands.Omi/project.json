@@ -1,16 +1,20 @@
 {
     "version": "1.0.0-*",
     "description": "Microsoft.PowerShell.Commands.Omi Library",
-    "authors": [ "George Fleming", "andschwa" ],
+    "authors": [ "palladia", "andschwa" ],
 
     "dependencies": {
-        "NETStandard.Library": "1.0.0-rc3-23729",
-        "System.Xml.XDocument": "4.0.11-rc3-23729",
-	"System.Management.Automation": {
-	    "type": "build",
-	    "version": "1.0.0-*"
-	}
+        "System.Management.Automation": {
+            "type": "build",
+            "version": "1.0.0-*"
+        }
     },
 
-    "frameworks": { "dnxcore50": { } }
+    "frameworks": {
+        "dnxcore50": {
+            "dependencies": {
+                "System.Xml.XDocument": "4.0.11-rc3-23729"
+            }
+        }
+    }
 }

@@ -3,14 +3,25 @@
     "description": "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext Class",
     "authors": [ "andschwa" ],
 
-    "compileFiles": [ "../monad/monad/src/CoreCLR/CorePsAssemblyLoadContext.cs" ],
-
-    "compilationOptions": { "define": [ "CORECLR", "LINUX" ] },
-
-    "dependencies": {
-	"NETStandard.Library": "1.0.0-rc3-23729",
-	"System.Runtime.Loader": "4.0.0-rc3-23729"
+    "configurations": {
+	"Linux": {
+	    "compilationOptions": {
+		"define": [ "LINUX" ]
+	    }
+	}
     },
 
-    "frameworks": { "dnxcore50": { } }
+    "frameworks": {
+	"dnxcore50": {
+	    "compilationOptions": {
+		"define": [ "CORECLR" ]
+	    },
+	    "dependencies": {
+		"NETStandard.Library": "1.0.0-rc3-23729",
+		"System.Runtime.Loader": "4.0.0-rc3-23729"
+	    }
+	}
+    },
+
+    "compileFiles": [ "../monad/monad/src/CoreCLR/CorePsAssemblyLoadContext.cs" ]
 }
