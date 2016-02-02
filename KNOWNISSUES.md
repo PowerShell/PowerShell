@@ -1,5 +1,18 @@
 # Known Issues
 
+## Computer.cs
+
+The file `monad/src/commands/management/Computer.cs` has been removed
+temporarily from `Microsoft.PowerShell.Commands.Management` because of we
+cannot resolve `Microsoft.WSMan.Management` for FullCLR builds. This must be
+fixed ASAP.
+
+## `Microsoft.Management.Infrastructure.Native`
+
+Windows builds currently use the native stub; this should be replaced with
+actual compilation of the managed C++ library on Windows (with the stub used on
+Linux).
+
 ## xUnit
 
 The xUnit tests cannot currently be run; we are working to integrate the

@@ -62,7 +62,6 @@
         "../monad/monad/src/commands/management/ClearPropertyCommand.cs",
         "../monad/monad/src/commands/management/CombinePathCommand.cs",
         "../monad/monad/src/commands/management/CommandsCommon.cs",
-        "../monad/monad/src/commands/management/Computer.cs",
         "../monad/monad/src/commands/management/ContentCommandBase.cs",
         "../monad/monad/src/commands/management/ConvertPathCommand.cs",
         "../monad/monad/src/commands/management/CopyPropertyCommand.cs",
