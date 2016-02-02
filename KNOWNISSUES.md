@@ -1,11 +1,25 @@
 # Known Issues
 
-## Computer.cs
+## `Computer.cs`
 
 The file `monad/src/commands/management/Computer.cs` has been removed
-temporarily from `Microsoft.PowerShell.Commands.Management` because of we
+temporarily from `Microsoft.PowerShell.Commands.Management` because we
 cannot resolve `Microsoft.WSMan.Management` for FullCLR builds. This must be
 fixed ASAP.
+
+## `ImplicitRemotingCommands.cs`
+
+The file `monad\src\commands\utility\ImplicitRemotingCommands.cs` has been
+removed temporarily from `Microsoft.PowerShell.Commands.Utility` because it
+does not build on Core PowerShell, and cannot be guarded with preprocessor
+directives due to the use of here-strings that contain lines starting with `#`,
+which breaks the preprocessor.
+
+## `WebCmdlet`
+
+All files in `monad\src\commands\utility\WebCmdlet` have been removed from
+`Microsoft.PowerShell.Commands.Utility` because we cannot resolve `mshtml.dll`
+as a framework assembly.
 
 ## `Microsoft.Management.Infrastructure.Native`
 
