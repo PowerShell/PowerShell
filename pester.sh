@@ -6,5 +6,5 @@ failed_tests=$?
 # XML files are not executable
 chmod -x pester-tests.xml
 
-# Exit with failure if number of failed tests exceeds threshold
-[ ! $failed_tests -gt 11 ]
+# Return number of failed tests as exit code (more than 0 will be an error)
+exit $failed_tests
