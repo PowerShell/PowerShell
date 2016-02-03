@@ -3,6 +3,11 @@ project(PowerShell)
 
 add_compile_options()
 
+# set these flags, so build does static linking for msvcr120.dll
+# otherwise this dll need to be present on the system
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+
 include_directories(
     ../../src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon)
 
@@ -21,9 +26,8 @@ add_executable(powershell WIN32
 
 # This subsystem definition is using old policy. TODO: figure out for release and the rest
 set_target_properties(powershell PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE")
-set_target_properties(powershell PROPERTIES COMPILE_DEFINITIONS_DEBUG "_CONSOLE")
+set_target_properties(powershell PROPERTIES COMPILE_DEFINITIONS "_CONSOLE")
 set_target_properties(powershell PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:CONSOLE")
-set_target_properties(powershell PROPERTIES COMPILE_DEFINITIONS_RELWITHDEBINFO "_CONSOLE")
 set_target_properties(powershell PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
 set_target_properties(powershell PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
 
