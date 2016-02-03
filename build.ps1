@@ -14,7 +14,7 @@ cd ../..
 
 # Publish PowerShell
 cd src/Microsoft.PowerShell.Linux.Host
-dotnet publish --framework dnxcore50 --output $BIN --configuration Linux
+dotnet publish --framework dnxcore50 --output $BIN
 # Temporary fix for dotnet publish
 if (Test-Path $BIN/Debug/dnxcore50) { cp $BIN/Debug/dnxcore50/* $BIN }
 # Copy files that dotnet-publish does not currently deploy

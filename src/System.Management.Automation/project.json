@@ -26,7 +26,7 @@
     "frameworks": {
         "dnxcore50": {
             "compilationOptions": {
-                "define": [ "CORECLR" ]
+                "define": [ "CORECLR", "NOETW" ]
             },
             "dependencies": {
                 "Microsoft.CSharp": "4.0.1-rc3-23729",
