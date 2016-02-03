@@ -16,6 +16,7 @@ build_script:
   - ps: Set-Alias -Name dotnet -Value "$pwd\dotnet\bin\dotnet.exe"
   - ps: dotnet restore
   - ps: .\build.ps1
+  - ps: .\build.fullCLR.ps1
 
 test_script:
   - ps: |
@@ -28,12 +29,15 @@ deploy_script:
   - ps: |
       # Creating project artifact
       $zipFilePath = Join-Path $pwd "$(Split-Path $pwd -Leaf).zip"
+      $zipFileFullPath = Join-Path $pwd "$(Split-Path $pwd -Leaf).FullCLR.zip"
       Add-Type -assemblyname System.IO.Compression.FileSystem
       [System.IO.Compression.ZipFile]::CreateFromDirectory("$pwd\bin", $zipFilePath)
+      [System.IO.Compression.ZipFile]::CreateFromDirectory("$pwd\binFull", $zipFileFullPath)
       
       @(
           # You can add other artifacts here
-          $zipFilePath
+          $zipFilePath,
+          $zipFileFullPath
       ) | % { 
           Write-Host "Pushing package $_ as Appveyor artifact"
           Push-AppveyorArtifact $_
