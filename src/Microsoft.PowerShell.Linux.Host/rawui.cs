@@ -16,16 +16,6 @@ namespace Microsoft.PowerShell.Linux.Host
 
     internal class MyRawUserInterface : PSHostRawUserInterface
     {
-        public MyRawUserInterface (bool isInteractive)
-        {
-            this.isInteractive = isInteractive;
-        }
-
-        /// <summary>
-        /// Whether or not this UI is actually interactive.
-        /// </summary>
-        bool isInteractive;
-
         /// <summary>
         /// Gets or sets the background color of the displayed text.
         /// This maps to the corresponding Console.Background property.
@@ -42,15 +32,10 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         public override Size BufferSize
         {
+            get { return new Size(Console.WindowWidth, Console.WindowHeight); }
+            set {  }
             //get { return new Size(Console.BufferWidth, Console.BufferHeight); }
             //set { Console.SetBufferSize(value.Width, value.Height); }
-            get {
-                if (!isInteractive)
-                    return new Size(0, 0);
-
-                return new Size(Console.WindowWidth, Console.WindowHeight);
-            }
-            set { }
         }
 
         /// <summary>

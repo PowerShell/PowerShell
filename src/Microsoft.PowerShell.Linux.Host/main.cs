@@ -192,7 +192,7 @@ OPTIONS
             // Create the host and runspace instances for this interpreter.
             // Note that this application does not support console files so
             // only the default snap-ins will be available.
-            this.myHost = new MyHost(this, initialScript == null);
+            this.myHost = new MyHost(this);
             InitialSessionState iss = InitialSessionState.CreateDefault2();
             this.myRunSpace = RunspaceFactory.CreateRunspace(this.myHost, iss);
             this.myRunSpace.Open();

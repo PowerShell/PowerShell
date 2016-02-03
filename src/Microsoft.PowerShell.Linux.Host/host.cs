@@ -13,10 +13,9 @@ namespace Microsoft.PowerShell.Linux.Host
     /// </summary>
     internal class MyHost : PSHost, IHostSupportsInteractiveSession
     {
-        public MyHost(Listener Listener, bool isInteractive)
+        public MyHost(Listener Listener)
         {
             this.Listener = Listener;
-            this.myHostUserInterface = new MyHostUserInterface(isInteractive);
         }
 
         /// <summary>
@@ -45,7 +44,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// A reference to the implementation of the PSHostUserInterface
         /// class for this application.
         /// </summary>
-        private MyHostUserInterface myHostUserInterface;
+        private MyHostUserInterface myHostUserInterface = new MyHostUserInterface();
 
         /// <summary>
         /// A reference to the runspace used to start an interactive session.
