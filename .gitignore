@@ -1,4 +1,6 @@
 bin/
+binFull/
+build/
 obj/
 /lib/
 /approot/
