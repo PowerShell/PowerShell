@@ -43,7 +43,7 @@ test_script:
         throw "$($x.'test-results'.failures) tests in test/fullCLR failed"
       }
 
-deploy_script: 
+on_finish: 
   - ps: |
       # Creating project artifact
       $zipFilePath = Join-Path $pwd "$(Split-Path $pwd -Leaf).zip"
