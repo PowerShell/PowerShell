@@ -17,7 +17,7 @@ Describe "Get-ItemProperty" {
     }
 
     New-Item $tempDirectory -ItemType Directory -Force
-    $testfile = $tempDirectory + [Environment]::DirectorySeparatorChar + "testfile1"
+    $testfile = $tempDirectory + [System.IO.Path]::DirectorySeparatorChar + "testfile1"
 
     New-Item $testfile -ItemType file -Force
 
@@ -62,4 +62,6 @@ Describe "Get-ItemProperty" {
         $alias.PSDrive         | Should Be $cmdlet.PSDrive
         $alias.PSProvider.Name | Should Be $cmdlet.PSProvider.Name
     }
+
+    Remove-Item $tempDirectory -Recurse -Force
 }

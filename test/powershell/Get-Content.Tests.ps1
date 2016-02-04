@@ -18,6 +18,11 @@
         New-Item -Path $testPath2 -ItemType file -Force -Value $testString2
     }
 
+    AfterEach {
+        Remove-Item -Path $testPath -Force
+        Remove-Item -Path $testPath2 -Force
+    }
+
     It "Should throw an error on a directory  " {
         # also tests that -erroraction SilentlyContinue will work.
         Get-Content . -ErrorAction SilentlyContinue | Should Throw

@@ -71,4 +71,6 @@ Describe "Start-Process" {
         $dirEntry = dir $tempFile
 	$dirEntry.Length | Should BeGreaterThan 0
     }
+
+    Remove-Item -Path $tempFile -Force
 }

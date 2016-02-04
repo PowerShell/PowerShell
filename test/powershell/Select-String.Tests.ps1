@@ -104,6 +104,10 @@
             New-Item $testInputFile -Itemtype "file" -Force -Value "This is a text string, and another string${nl}This is the second line${nl}This is the third line${nl}This is the fourth line${nl}No matches"
         }
 
+        AfterEach {
+            Remove-Item $testInputFile -Force
+        }
+
         It "Should return an object when a match is found is the file on only one line" {
             (Select-String $testInputFile -Pattern "string").GetType().BaseType | Should be System.Object
         }
