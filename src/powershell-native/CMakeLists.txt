@@ -25,11 +25,11 @@ add_executable(powershell WIN32
     ../../src/monad/monad/nttargets/assemblies/nativemsh/pwrshexe/MainEntry.cpp)
 
 # This subsystem definition is using old policy. TODO: figure out for release and the rest
-set_target_properties(powershell PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE")
 set_target_properties(powershell PROPERTIES COMPILE_DEFINITIONS "_CONSOLE")
+set_target_properties(powershell PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE")
 set_target_properties(powershell PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:CONSOLE")
-set_target_properties(powershell PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
-set_target_properties(powershell PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
+set_target_properties(powershell PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE")
+set_target_properties(powershell PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:CONSOLE")
 
 
 target_link_libraries(powershell
