@@ -38,9 +38,12 @@ function Start-DevPSGithub
         $startProcessArgs = @{
             FilePath = "$binDir\powershell.exe"
             ArgumentList = "$ArgumentList"
-            NoNewWindow = $NoNewWindow 
-            Wait = $NoNewWindow
         }  
+
+        if ($NoNewWindow) {
+            $startProcessArgs.NoNewWindow = $true
+            $startProcessArgs.Wait = $true
+        }
         
         Start-Process @startProcessArgs
     }
