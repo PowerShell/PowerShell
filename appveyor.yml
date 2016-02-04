@@ -25,10 +25,23 @@ build_script:
 
 test_script:
   - ps: |
+      # CoreCLR
       $testResultsFile = ".\TestsResults.xml"
       .\bin\powershell.exe --noprofile -c "Invoke-Pester test/powershell -OutputFormat NUnitXml -OutputFile $testResultsFile"
       (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFile))
-
+      # For now we don't fail the build if these tests failed
+      #
+      # FullCLR
+      Import-Module .\PowerShellGithubDev.psm1
+      $testResultsFile = ".\TestsResults.FullCLR.xml"
+      Start-DevPSGithub -binDir $pwd\binFull -NoNewWindow -ArgumentList '-command', 'Import-Module .\test\Pester; Invoke-Pester test/fullCLR -OutputFormat NUnitXml -OutputFile $testResultsFile'
+      (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFile))
+      # we want to fail the build, if these tests failed
+      $x = [xml](cat -raw .\TestsResults.FullCLR.xml)
+      if ([int]$x.'test-results'.failures -gt 0)
+      {
+        throw "$($x.'test-results'.failures) tests in test/fullCLR failed"
+      }
 
 deploy_script: 
   - ps: |
