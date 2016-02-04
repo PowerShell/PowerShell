@@ -138,6 +138,7 @@ Launch `./bin/powershell.exe`. The console output isn't the prettiest, but the
 vast majority of Pester tests pass. Run them in the console with `Invoke-Pester
 test/powershell`.
 
+
 ## PowerShell Remoting Protocol
 
 PSRP communication is tunneled through OMI using the `omi-provider`.
@@ -269,3 +270,69 @@ cd src/registry-stub
 make
 cp api-ms-win-core-registry-l1-1-0.dll $BIN
 ```
+
+# FullCLR PowerShell
+
+On windows, we also build Full PowerShell for .NET 4.5.1
+
+## Setup environment
+
+* You need Visual Studio to compile native host `powershell.exe`. 
+If you don't have any visual studio installed, 
+you can use [Visual Studio 2013 Community edition](https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx).
+
+* Add `msbuild` to PATH / create PowerShell alias to it.
+
+* Install cmake and add it to PATH. 
+You can install it from [chocolatey](https://chocolatey.org/packages/cmake.portable) or [download cmake](https://cmake.org/download/).
+
+```
+choco install cmake.portable
+```
+* dotnet-cli (see above for details)
+
+## Building
+
+```powershell
+.\build.FullCLR.ps1
+```
+
+**Troubleshooting:** the build logic is relatively simple and contains following steps:
+- building managed dlls: `dotnet publish --runtime dnx451`
+- generating Visual Studio project: `cmake -G "$cmakeGenerator"`
+- building powershell.exe from generated solution: `msbuild powershell.sln`
+
+All this steps can be run separately from `.\build.FullCLR.ps1`, don't hesitate to experiment. 
+
+## Running
+
+Running FullCLR version is not as simple as CoreCLR version.
+
+If you just run ~~`.\binFull\powershell.exe`~~, you will get powershell process,
+but all interesting dlls (i.e. System.Management.Automation.dll) would be loaded from GAC, not your `binFull` directory.
+
+[@lzybkr](https://github.com/lzybkr) wrote a module to deal with it and run side-by-side
+
+```powershell
+Import-Module .\PowerShellGithubDev.psm1
+Start-DevPSGithub -binDir $pwd\binFull
+```
+
+**Troubleshooting:** default for powershell.exe that **we build** is x86.
+There is a separate execution policy regkey for x86, and it's likely that you didn't ~~bypass~~ enable it.
+From **powershell.exe (x86)** run
+
+```
+Set-ExecutionPolicy Bypass
+```
+
+## Running from CI server
+
+We publish archive with fullCLR bits on every [CI build](https://ci.appveyor.com/project/PowerShell/powershell-linux).
+
+* Download zip package from **artifacts** tab of the particular build.
+* Unblock zip file: right-click in file explorer -> properties -> check 'Unblock' checkbox -> apply
+* Extract zip file to `$bin` directory
+* `Start-DevPSGithub -binDir $bin`
+
+
