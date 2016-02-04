@@ -5,7 +5,12 @@ param(
         "Visual Studio 12 2013 Win64",
         "Visual Studio 14 2015", 
         "Visual Studio 14 2015 Win64")]
-    [string]$cmakeGenerator = ""
+    [string]$cmakeGenerator = "",
+
+    [ValidateSet(
+        "Debug",
+        "Release")] 
+    [string]$msbuildConfiguration = "Release"   
 )
 
 $origPWD = $pwd
@@ -67,9 +72,9 @@ try
     {
         cmake ..\src\powershell-native
     }
-    msbuild powershell.sln
+    msbuild powershell.sln /p:Configuration=$msbuildConfiguration
 
-    cp -rec Debug\* $BINFULL
+    cp -rec $msbuildConfiguration\* $BINFULL
 }
 finally
 {
