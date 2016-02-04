@@ -4,14 +4,15 @@ function Start-DevPSGithub
         [switch]$ZapDisable,
         [string[]]$ArgumentList = '',
         [switch]$LoadProfile,
-        [string]$binDir = "$PSScriptRoot\binFull"
+        [string]$binDir = "$PSScriptRoot\binFull",
+        [switch]$NoNewWindow
     )
 
     try
     {
         if ($LoadProfile -eq $false)
         {
-            $ArgumentList += '-noprofile'
+            $ArgumentList = @('-noprofile') + $ArgumentList
         }
 
         $env:DEVPATH = $binDir
@@ -32,8 +33,16 @@ function Start-DevPSGithub
 "@
             $configContents | Out-File -Encoding Ascii $binDir\powershell.exe.config
         }
-
-        Start-Process -FilePath $binDir\powershell.exe -ArgumentList "$ArgumentList"
+        
+        # splatting for the win      
+        $startProcessArgs = @{
+            FilePath = "$binDir\powershell.exe"
+            ArgumentList = "$ArgumentList"
+            NoNewWindow = $NoNewWindow 
+            Wait = $NoNewWindow
+        }  
+        
+        Start-Process @startProcessArgs
     }
     finally
     {
