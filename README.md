@@ -2,9 +2,9 @@
 
 |         |Ubuntu 14.04 |Windows |
 |---------|:------:|:------:|
-|master|[![Build Status](https://travis-ci.com/PowerShell/PowerShell-Linux.svg?token=31YifM4jfyVpBmEGitCm&branch=master)](https://travis-ci.com/PowerShell/PowerShell-Linux)|[![Build status](https://ci.appveyor.com/api/projects/status/wb0a0apbn4aiccp1/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/powershell-linux/branch/master)|
+|master|[![Build Status](https://travis-ci.com/PowerShell/PowerShell.svg?token=31YifM4jfyVpBmEGitCm&branch=master)](https://travis-ci.com/PowerShell/PowerShell)|[![Build status](https://ci.appveyor.com/api/projects/status/wb0a0apbn4aiccp1/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/powershell-linux/branch/master)|
 
-## [Waffle.io scrum board](https://waffle.io/PowerShell/PowerShell-Linux)
+## [Waffle.io scrum board](https://waffle.io/PowerShell/PowerShell)
 
 ## Obtain the source code
 
@@ -35,7 +35,7 @@ Clone this repository recursively, as it's the superproject with a number of
 submodules.
 
 ```sh
-git clone --recursive https://github.com/PowerShell/PowerShell-Linux.git
+git clone --recursive https://github.com/PowerShell/PowerShell.git
 ```
 
 The `src/omi` submodule requires your GitHub user to have joined the Microsoft
@@ -47,7 +47,7 @@ On Windows, many fewer submodules are needed, so don't use `clone --recursive`.
 Instead run:
 
 ```
-git clone https://github.com/PowerShell/PowerShell-Linux.git
+git clone https://github.com/PowerShell/PowerShell.git
 git submodule update --init --recursive -- src/monad src/windows-build test/Pester
 ```
 
@@ -60,7 +60,7 @@ non-Windows platforms). Install `dotnet-cli` by following their [documentation][
 version).
 
 > Note that OS X dependency installation instructions are not yet documented,
-> and Windows only needs `dotnet-cli`.
+> and Core PowerShell on Windows only needs `dotnet-cli`.
 
 > Previous installations of DNX or `dnvm` can cause `dotnet-cli` to fail.
 
@@ -80,7 +80,7 @@ sudo apt-get install dotnet-nightly
 ```
 
 Then install the following additional build / debug tools:
- 
+
 ```sh
 sudo apt-get install g++ cmake make lldb-3.6 strace
 ```
@@ -91,7 +91,7 @@ To develop on the PowerShell Remoting Protocol (PSRP) for Linux, you'll need to
 be able to compile OMI, which additionally requires:
 
 ```sh
-sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev libboost-filesystem-dev 
+sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev libboost-filesystem-dev
 ```
 
 ## Building
@@ -99,7 +99,8 @@ sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev libboost-files
 **The command `dotnet restore` must be done at least once from the top directory
 to obtain all the necessary .NET packages.**
 
-Build with `./build.sh` on Linux and OS X, and `./build.ps1` on Windows.
+Build with `./build.sh` on Linux and OS X, `./build.ps1` for Core PowerShell on
+Windows, and `./build.FullCLR.ps1` for Full PowerShell on Windows.
 
 Specifically:
 
@@ -107,7 +108,7 @@ Specifically:
 
 In Bash:
 ```sh
-cd PowerShell-Linux
+cd PowerShell
 dotnet restore
 ./build.sh
 ```
@@ -116,7 +117,7 @@ dotnet restore
 
 In PowerShell:
 ```powershell
-cd PowerShell-Linux
+cd PowerShell
 dotnet restore
 ./build.ps1
 ```
@@ -126,51 +127,32 @@ dotnet restore
 If you encounter any problems, see the [known issues](KNOWNISSUES.md),
 otherwise open a new issue on GitHub.
 
+The local managed host has built-in documentation via `--help`.
+
 ### Linux / OS X
 
 - launch local shell with `./bin/powershell`
-- launch local shell in LLDB with `./debug.sh`
+- run tests with `./pester.sh`
 - launch `omiserver` for PSRP (and in LLDB) with `./prsp.sh`, and connect with `Enter-PSSession` from Windows
 
 ### Windows
 
-Launch `./bin/powershell.exe`. The console output isn't the prettiest, but the
-vast majority of Pester tests pass. Run them in the console with `Invoke-Pester
-test/powershell`.
-
+- launch `./bin/powershell.exe`
+- run tests with `./bin/powershell.exe -c "Invoke-Pester test/powershell"`
 
 ## PowerShell Remoting Protocol
 
 PSRP communication is tunneled through OMI using the `omi-provider`.
 
-**These build steps are not part of the `./build.sh` script.**
-
 > PSRP has been observed working on OS X, but the changes made to OMI to
 > accomplish this are not even beta-ready and need to be done correctly. They
 > exist on the `andschwa-osx` branch of the OMI repository.
 
-### Build OMI
+### Building
 
-```sh
-cd src/omi/Unix
-./configure --dev
-make -j
-cd ../../..
-```
+**PSRP support is not built by `./build.sh`**
 
-### Build Provider
-
-The provider uses CMake to build, link, and register with OMI.
-
-```sh
-cd src/omi-provider
-cmake .
-make -j
-cd ../..
-```
-
-The provider also maintains its own native host library to initialize the CLR,
-but there are plans to refactor .NET's packaged host as a shared library.
+Build with `./omibuild.sh`.
 
 ### Running
 
@@ -181,6 +163,8 @@ prompt and execute the following:
 winrm set winrm/config/Client @{AllowUnencrypted="true"}
 winrm set winrm/config/Client @{TrustedHosts="*"}
 ```
+
+> You can also set the `TrustedHosts` to include the target's IP address.
 
 Then on Linux, launch `omiserver` in the debugger (after building with the
 instructions above):
@@ -225,18 +209,20 @@ make -j
 
 ## Detailed Build Script Notes
 
-> This explains `./build.sh`.
+> This sections explains the build scripts.
 
 The variable `$BIN` is the output directory, `bin`.
 
 ### Managed
 
 Builds with `dotnet-cli`. Publishes all dependencies into the `bin` directory.
-Emits its own native host as `bin/powershell`.
+Emits its own native host as `bin/powershell`. Uses a `Linux` configuration to
+add a preprocessor definition. The `CORECLR` definition is added only when
+targeting the `dnxcore50` framework.
 
 ```sh
 cd src/Microsoft.PowerShell.Linux.Host
-dotnet publish --framework dnxcore50 --output $BIN
+dotnet publish --framework dnxcore50 --output $BIN --configuration Linux
 # Copy files that dotnet-publish doesn't currently deploy
 cp *.ps1xml *_profile.ps1 $BIN
 ```
@@ -271,25 +257,57 @@ make
 cp api-ms-win-core-registry-l1-1-0.dll $BIN
 ```
 
+### PSRP
+
+#### OMI
+
+Build OMI from source in developer mode:
+
+```sh
+cd src/omi/Unix
+./configure --dev
+make -j
+```
+
+#### Provider
+
+The provider uses CMake to build, link, and register with OMI.
+
+```sh
+cd src/omi-provider
+cmake .
+make -j
+```
+
+The provider also maintains its own native host library to initialize the CLR,
+but there are plans to refactor .NET's packaged host as a shared library.
+
 # FullCLR PowerShell
 
-On windows, we also build Full PowerShell for .NET 4.5.1
+On Windows, we also build Full PowerShell for .NET 4.5.1
 
 ## Setup environment
 
-* You need Visual Studio to compile native host `powershell.exe`. 
-If you don't have any visual studio installed, 
-you can use [Visual Studio 2013 Community edition](https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx).
+* You need Visual Studio to compile the native host `powershell.exe`.
 
-* Add `msbuild` to PATH / create PowerShell alias to it.
+If you don't have any visual studio installed, you can use [Visual Studio 2013
+Community edition][vs].
 
-* Install cmake and add it to PATH. 
-You can install it from [chocolatey](https://chocolatey.org/packages/cmake.portable) or [download cmake](https://cmake.org/download/).
+* Add `msbuild` to `PATH` / create PowerShell alias to it.
+
+* Install CMake and add it to `PATH.`
+
+You can install it from [Chocolatey][] or [manually][].
 
 ```
 choco install cmake.portable
 ```
-* dotnet-cli (see above for details)
+
+* Install dotnet-cli via their [documentation][]
+
+[vs]: https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx
+[chocolately]: https://chocolatey.org/packages/cmake.portable
+[manually]: https://cmake.org/download/
 
 ## Building
 
@@ -298,29 +316,33 @@ choco install cmake.portable
 ```
 
 **Troubleshooting:** the build logic is relatively simple and contains following steps:
-- building managed dlls: `dotnet publish --runtime dnx451`
+- building managed DLLs: `dotnet publish --runtime dnx451`
 - generating Visual Studio project: `cmake -G "$cmakeGenerator"`
-- building powershell.exe from generated solution: `msbuild powershell.sln`
+- building `powershell.exe` from generated solution: `msbuild powershell.sln`
 
-All this steps can be run separately from `.\build.FullCLR.ps1`, don't hesitate to experiment. 
+All this steps can be run separately from `.\build.FullCLR.ps1`, don't hesitate
+to experiment.
 
 ## Running
 
 Running FullCLR version is not as simple as CoreCLR version.
 
-If you just run ~~`.\binFull\powershell.exe`~~, you will get powershell process,
-but all interesting dlls (i.e. System.Management.Automation.dll) would be loaded from GAC, not your `binFull` directory.
+If you just run ~~`.\binFull\powershell.exe`~~, you will get a `powershell`
+process, but all the interesting DLLs (i.e. `System.Management.Automation.dll`)
+would be loaded from the GAC, not your `binFull` build directory.
 
-[@lzybkr](https://github.com/lzybkr) wrote a module to deal with it and run side-by-side
+[@lzybkr](https://github.com/lzybkr) wrote a module to deal with it and run
+side-by-side.
 
 ```powershell
 Import-Module .\PowerShellGithubDev.psm1
 Start-DevPSGithub -binDir $pwd\binFull
 ```
 
-**Troubleshooting:** default for powershell.exe that **we build** is x86.
-There is a separate execution policy regkey for x86, and it's likely that you didn't ~~bypass~~ enable it.
-From **powershell.exe (x86)** run
+**Troubleshooting:** default for `powershell.exe` that **we build** is x86.
+
+There is a separate execution policy registry key for x86, and it's likely that
+you didn't ~~bypass~~ enable it. From **powershell.exe (x86)** run:
 
 ```
 Set-ExecutionPolicy Bypass
@@ -328,11 +350,12 @@ Set-ExecutionPolicy Bypass
 
 ## Running from CI server
 
-We publish archive with fullCLR bits on every [CI build](https://ci.appveyor.com/project/PowerShell/powershell-linux).
+We publish an archive with FullCLR bits on every CI build with [AppVeyor][].
 
 * Download zip package from **artifacts** tab of the particular build.
-* Unblock zip file: right-click in file explorer -> properties -> check 'Unblock' checkbox -> apply
+* Unblock zip file: right-click in file explorer -> properties -> check
+  'Unblock' checkbox -> apply
 * Extract zip file to `$bin` directory
 * `Start-DevPSGithub -binDir $bin`
 
-
+[appveyor]: https://ci.appveyor.com/project/PowerShell/powershell-linux
