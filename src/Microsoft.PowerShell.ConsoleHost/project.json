@@ -1,14 +1,18 @@
 {
     "version": "1.0.0-*",
     "description": "Microsoft.PowerShell.ConsoleHost Library",
-    "authors": [ "sevoroby" ],
+    "authors": [ "sevoroby", "andschwa" ],
 
     "compilationOptions": {
         "allowUnsafe": true
     },
 
     "dependencies": {
-        "System.Management.Automation": {
+        "Microsoft.PowerShell.Commands.Management": {
+            "type": "build",
+            "version": "1.0.0-*"
+        },
+        "Microsoft.PowerShell.Commands.Utility": {
             "type": "build",
             "version": "1.0.0-*"
         }
