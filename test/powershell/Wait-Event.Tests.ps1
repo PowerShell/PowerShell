@@ -8,7 +8,7 @@ Describe "Wait-Event" {
 	    # raised because it is fake
 	    Wait-Event -Timeout 1 -SourceIdentifier "FakeEvent"
 	    $stopwatch.Stop()
-	    $stopwatch.ElapsedMilliseconds | Should BeGreaterThan 1000
+	    $stopwatch.ElapsedMilliseconds | Should BeGreaterThan 999
 	}
     }
 }

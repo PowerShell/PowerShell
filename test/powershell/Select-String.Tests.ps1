@@ -157,7 +157,7 @@
 
             $relativePath = Join-Path -Path $testDirectory -ChildPath ".."
             $relativePath = Join-Path -Path $relativePath -ChildPath ".."
-            $relativePath = Join-Path -Path $relativePath -ChildPath $testDirectory
+            $relativePath = Join-Path -Path $relativePath -ChildPath (Split-Path $testDirectory -NoQualifier)
             $relativePath = Join-Path -Path $relativePath -ChildPath testfile1.txt
             Select-String third $relativePath  | Should Match $expected
         }

@@ -24,12 +24,13 @@
         if ($isWindows)
         {
             $expected = "\Users\" + $ENV:USERNAME
+            $ENV:HOMEPATH | Should Be $expected
         }
         else
         {
             $expected = /bin/bash -c "cd ~ && pwd"
-        }
             $ENV:HOME | Should Be $expected
+        }
     }
 
     It "Should be able to set the environment variables" {

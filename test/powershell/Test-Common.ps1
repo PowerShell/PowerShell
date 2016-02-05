@@ -1,7 +1,7 @@
 Function IsWindows
 {
     $pingCommand = Get-Command -CommandType Application ping
-    if ($pingCommand.Definition.IndexOf("\\") -ne -1)
+    if ($pingCommand.Definition.IndexOf("\") -ne -1)
     {
         return 1;
     }

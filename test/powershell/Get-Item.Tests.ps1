@@ -8,7 +8,7 @@ Describe "Get-Item" {
 
     It "Should return the name of the current working directory when a dot is used" {
         (Get-Item $here).GetType().BaseType | Should Be 'System.IO.FileSystemInfo'
-        (Get-Item $here).Name | Should Be 'powershell'
+        (Get-Item $here).Name | Should Be (Split-Path $here -Leaf)
     }
 
     It "Should return the proper Name and BaseType for directory objects vs file system objects" {

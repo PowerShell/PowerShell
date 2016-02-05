@@ -126,7 +126,7 @@
     }
 
     Context "String tests" {
-        $nl = [Environment]::NewLine
+         $nl = [Environment]::NewLine
 
         $testString = "HAD I the heavens’ embroidered cloths,$nl Enwrought with golden and silver light,$nl The blue and the dim and the dark cloths$nl Of night and light and the half light,$nl I would spread the cloths under your feet:$nl But I, being poor, have only my dreams;$nl I have spread my dreams under your feet;$nl Tread softly because you tread on my dreams."
 
@@ -145,7 +145,7 @@
         }
 
         It "Should be able to count the number of lines in a string" {
-            $expectedLength = $testString.Split($nl).length
+            $expectedLength = $testString.Split($nl, [System.StringSplitOptions]::RemoveEmptyEntries).length
             $actualLength   = $testString | Measure-Object -Line
 
             $actualLength.Lines | Should Be $expectedLength

@@ -8,25 +8,31 @@ Describe "Set-PSBreakpoint" {
 
     It "Should be able to set a psbreakpoint on a line" {
         $lineNumber = 1
-        $(Set-PSBreakpoint -Line $lineNumber -Script $testScript).Line | Should Be $lineNumber
+        $brk = Set-PSBreakpoint -Line $lineNumber -Script $testScript
+        $brk.Line | Should Be $lineNumber
+        Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "Should throw when a string is entered for a line number" {
         {
             $lineNumber = "one"
-            $(Set-PSBreakpoint -Line $lineNumber -Script $testScript).Line 
+            Set-PSBreakpoint -Line $lineNumber -Script $testScript
 
         } | Should Throw
     }
 
     It "Should be able to set a psbreakpoint on a Command" {
         $command = "theCommand"
-        $(Set-PSBreakpoint -Command $command -Script $testScript).Command | Should Be $command
+        $brk = Set-PSBreakpoint -Command $command -Script $testScript
+        $brk.Command | Should Be $command
+        Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "Should be able to set a psbreakpoint on a variable" {
         $var = "theVariable"
-        $(Set-PSBreakpoint -Command $var -Script $testScript).Command | Should Be $var
+        $brk = Set-PSBreakpoint -Command $var -Script $testScript
+        $brk.Command | Should Be $var
+        Remove-PSBreakPoint -Id $brk.Id
     }
 
     # clean up after ourselves
