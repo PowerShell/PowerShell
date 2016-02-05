@@ -65,17 +65,17 @@
         "dnx451": {
             "frameworkAssemblies": {
                 "System.Runtime": "",
-                "System.Xml": "4.0.0.0",
-                "System.Xml.Linq": "4.0.0.0",
-                "System.Numerics": "4.0.0.0",
-                "System.Data": "4.0.0.0",
-                "System.DirectoryServices": "4.0.0.0",
-                "System.Security": "4.0.0.0",
-                "System.Transactions": "4.0.0.0",
-                "System.Runtime.Serialization": "4.0.0.0",
-                "System.Management": "4.0.0.0",
-                "System.Configuration": "4.0.0.0",
-                "System.Configuration.Install": "4.0.0.0"
+                "System.Xml": "",
+                "System.Xml.Linq": "",
+                "System.Numerics": "",
+                "System.Data": "",
+                "System.DirectoryServices": "",
+                "System.Security": "",
+                "System.Transactions": "",
+                "System.Runtime.Serialization": "",
+                "System.Management": "",
+                "System.Configuration": "",
+                "System.Configuration.Install": ""
             }
         }
     },

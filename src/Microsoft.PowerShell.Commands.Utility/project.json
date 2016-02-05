@@ -34,9 +34,9 @@
         },
         "dnx451": {
             "frameworkAssemblies": {
-                "System.Drawing": "4.0.0.0",
-                "System.Web.Extensions": "4.0.0.0",
-                "Microsoft.JScript": "10.0.0.0"
+                "System.Drawing": "",
+                "System.Web.Extensions": "",
+                "Microsoft.JScript": ""
             }
         }
     },

@@ -26,7 +26,7 @@
         },
         "dnx451": {
             "frameworkAssemblies": {
-                "System.ServiceProcess": "4.0.0.0"
+                "System.ServiceProcess": ""
             }
         }
     },
