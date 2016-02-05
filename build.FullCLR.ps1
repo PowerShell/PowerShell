@@ -51,12 +51,6 @@ try
     cd src\Microsoft.PowerShell.ConsoleHost
     dotnet publish --framework dnx451 --output $BINFULL
 
-    cd ..\..\src\Microsoft.PowerShell.Commands.Utility
-    dotnet publish --framework dnx451 --output $BINFULL
-
-    cd ..\..\src\Microsoft.PowerShell.Commands.Management
-    dotnet publish --framework dnx451 --output $BINFULL
-
     # build native host
     mkdir $build -ErrorAction SilentlyContinue
     cd $build
