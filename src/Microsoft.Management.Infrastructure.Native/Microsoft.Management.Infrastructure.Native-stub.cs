@@ -3,7 +3,6 @@ using System;
 using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
 using System.Security;
-
 namespace Microsoft.Win32.SafeHandles
 {
     internal class SafeHandleZeroOrMinusOneIsInvalid
@@ -13,9 +12,331 @@ namespace Microsoft.Win32.SafeHandles
 
 namespace Microsoft.Management.Infrastructure.Native
 {
-
-    internal class ApplicationHandle : SafeHandleZeroOrMinusOneIsInvalid
+    internal class MiNative
     {
+        // Reference to the MI.h shared object library
+        // TODO: figure out how to ensure the existence of mi as a shared object
+        public const string LIBMI      = "/home/zach/git/testMonad/monad-linux/src/omi/Unix/output/lib/libmi";
+        public const string LIBMOF     = "/home/zach/git/helloworld/native/mofcodec";
+        public const string LIBMICODEC = "/home/zach/git/monad-linux/src/dsc/omi-1.0.8/output/lib/libmicodec.so";
+
+#region structs
+
+        // MI_ApplicationFT struct mirroring the function table created in the native layer.
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_ApplicationFT
+        {
+            public delegate MiResult Close(out MI_Application application);
+            public delegate MiResult NewSession(MI_Application application,
+                                                IntPtr protocol, // _In_Opt_z_ const MI_Char *protocol
+                                                IntPtr destination, // _In_Opt_z_ const MI_Char *destination
+                                                IntPtr options, // _In_Opt_z_ MI_DestinationOptions *options
+                                                IntPtr callbacks, // _In_Opt_z_ MI_SessionCallbacks *callbacks
+                                                out IntPtr extendedError, // outptr_opt_result_maybenull_ MI_Instance **
+                                                out IntPtr session); // TODO: create MI_Session struct to replace IntPtr
+            public delegate MiResult NewHostedProvider(MI_Application application,
+                                                       string namespaceName,
+                                                       string providerName,
+                                                       IntPtr mi_Main, //MI_MainFunction mi_Main, //TODO: MI_MainFunction struct
+                                                       out IntPtr extendedError,
+                                                       out IntPtr provider); // TODO: MI_HostedProvider struct *provider
+            public delegate MiResult NewInstance(MI_Application application,
+                                                 string className,
+                                                 IntPtr RTTI, // TODO: create MI_ClassDecl struct
+                                                 out IntPtr instance); // MI_Instance **instance
+
+            public delegate MiResult NewDestinationOptions(MI_Application application,
+                                                           out IntPtr options); // TODO: create MI_DestinationOptions struct
+            public delegate MiResult NewOperationOptions(MI_Application application,
+                                                         [MarshalAs(UnmanagedType.U1)] bool mustUnderstand,
+                                                         out MI_OperationOptions options);
+
+            public delegate MiResult NewSubscriptionDeliveryOptions(MI_Application application,
+                                                                    MiSubscriptionDeliveryType deliveryType,
+                                                                    out IntPtr deliveryOptions); // TODO: create MI_SubscriptionDeliveryOptions struct
+            public delegate MiResult NewSerializer(MI_Application application,
+                                                   uint flags,
+                                                   string format,
+                                                   out MI_Serializer serializer); // TODO: create MI_Serializer struct
+
+            public delegate MiResult NewDeserializer(MI_Application application,
+                                                     uint flags,
+                                                     string format,
+                                                     out MI_Deserializer deserializer); // TODO: create MI_Serializer struct
+
+            public delegate MiResult NewInstanceFromClass(MI_Application application,
+                                                          string className,
+                                                          MI_Class classObject,
+                                                          out IntPtr instance); // MI_Instance **instance
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_Instance
+        {
+            public IntPtr ft; /*  the function table of MI_Instance related functions */
+            public IntPtr classDecl;
+            public IntPtr serverName;
+            public IntPtr nameSpace;
+            public IntPtr reserved;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_Application
+        {
+            public uint reserved1;
+            public IntPtr reserved2;
+            public MI_ApplicationFT ft; /* the function table of MI_Application related functions */
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_Serializer
+        {
+            uint reserved1;
+            IntPtr reserved2;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+        public struct MI_Deserializer
+        {
+            public UInt64 reserved1;
+            public IntPtr reserved2;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_Class
+        {
+            public IntPtr ft;
+            public IntPtr classDecl;
+            public string nameSpace;
+            public string serverName;
+            public IntPtr reserved;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_ClassA
+        {
+            public IntPtr data;
+            public uint size;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_OperationOptions
+        {
+            public uint reserved1;
+            public IntPtr reserved2;
+            public IntPtr ft;   /*  the function table of MI_OperationOptions related functions */
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_OperationOptionsFT
+        {
+            public delegate MiResult Delete(out MI_OperationOptions options);
+
+            public delegate MiResult SetString(out MI_OperationOptions options,
+                                               string optionName,
+                                               string value,
+                                               IntPtr flags);
+
+            public delegate MiResult SetNumber(out MI_OperationOptions options,
+                                               string optionName,
+                                               uint value,
+                                               uint flags);
+
+            public delegate MiResult SetCustomOption(MI_OperationOptions options,
+                                               string optionName,
+                                               MiType valueType,
+                                               IntPtr value, // MI_Value *value
+                                               char mustComply,
+                                               uint flags);
+
+            public delegate MiResult GetString(out MI_OperationOptions options,
+                                               string optionName,
+                                               IntPtr value, // MI_Char **value
+                                               out uint index,
+                                               out uint flags);
+
+            public delegate MiResult GetNumber(MI_OperationOptions options,
+                                               string optionName,
+                                               out uint value,
+                                               out uint index,
+                                               out uint flags);
+
+            public delegate MiResult GetOptionCount(MI_OperationOptions options,
+                                               uint count);
+
+            public delegate MiResult GetOptionAt(MI_OperationOptions options,
+                                               string optionName,
+                                               out IntPtr value, // MI_Value *value
+                                               out uint index,
+                                               out uint flags);
+
+            public delegate MiResult GetOption(MI_OperationOptions options,
+                                               string optionName,
+                                               out IntPtr value, // MI_Value *value
+                                               out MiType type,
+                                               out uint index,
+                                               out uint flags);
+
+            public delegate MiResult GetEnabledChannels(MI_OperationOptions options,
+                                               string optionName,
+                                               out uint channels, // _Out_writes_to_opt_(bufferReadLength, *channelCount)
+                                               out uint bufferLength,
+                                               out uint channelCount,
+                                               out uint flags);
+
+            public delegate MiResult Clone(MI_OperationOptions self,
+                                               out MI_OperationOptions newOperationOptions);
+
+            public delegate MiResult SetInterval(MI_OperationOptions options,
+                                               string optionName,
+                                               out IntPtr value, // TODO: create MI_Interval struct
+                                               out uint index, // optional
+                                               out uint flags); // optional
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_Deserializer_ClassObjectNeeded
+        {
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_Deserializer_GetIncludedFileBuffer
+        {}
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_Deserializer_FreeIncludedFileBuffer 
+        {}
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_OperationCallback_Instance 
+        {}
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_OperationCallback_Class 
+        {}
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_Deserializer_ClassObjectNeededOnId
+        {}
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_Deserializer_ClassObjectAndId
+        {}
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_Deserializer_QualifierDeclNeeded
+        {}
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_DeserializerCallbacks
+        {
+            /* Class schema callback */
+            public IntPtr classObjectNeededContext ;
+            public MI_Deserializer_ClassObjectNeeded classObjectNeeded;
+            /* Included file buffer callback */
+            public IntPtr includedFileContext;
+            public MI_Deserializer_GetIncludedFileBuffer getIncludedFileContent;
+            public MI_Deserializer_FreeIncludedFileBuffer freeIncludedFileContent;
+            /* instanceResult is reserved, must be NULL */
+            /* Instance result callbacks, only needed for instance deserialization */
+            public IntPtr instanceResultContext;
+            public MI_OperationCallback_Instance instanceResult;
+            /* classResult is reserved, must be NULL */
+            /* Class result callbacks, only needed for class deserialization */
+            public IntPtr classResultContext;
+            public MI_OperationCallback_Class classResult;
+            /* Class schema callback based on class Id */
+            public IntPtr classObjectNeededOnIdContext;
+            public MI_Deserializer_ClassObjectNeededOnId classObjectNeededOnId;
+            /* **Temporary** callback to return classid for a particular class 
+            * This will be used by deserializeClass routine to report Id associated with the class 
+            * If this callback is provided, MI_Deserializer_DeserializeClassArray will report all deserialized classes
+            * through this callback. No classes will be returned through MI_Deserializer_DeserializeClassArray's output parameter "classObjects" */
+            public IntPtr classObjectAndIdContext;
+            public MI_Deserializer_ClassObjectAndId classObjectAndId;
+            /* Qualifier declaration callback based on qualifier name */
+            public IntPtr qualifierDeclNeededContext;
+            public MI_Deserializer_QualifierDeclNeeded qualifierDeclNeeded;
+        }
+#endregion //structs
+
+#region PInvokes
+        // MI_INLINE MI_Result MI_Application_NewOperationOptions(
+        //     _In_  MI_Application *application,
+        //           MI_Boolean mustUnderstand,
+        //     _Out_ MI_OperationOptions *options)
+        [DllImport("/home/zach/git/mi/libmi.so", CharSet = CharSet.Ansi)]
+        public static extern MiResult MI_Application_NewOperationOptions(IntPtr application, //MI_Application*
+                                                                       [MarshalAs(UnmanagedType.U1)] bool mustUnderstand,
+                                                                       out MI_OperationOptions options);
+        // MI_Result MI_MAIN_CALL MI_Application_InitializeV1(
+        //              MI_Uint32 flags, 
+        //              _In_opt_z_ const MI_Char *applicationID,
+        //              _Outptr_opt_result_maybenull_ MI_Instance **extendedError,
+        //              _Out_    MI_Application *application);
+        [DllImport(LIBMI, CharSet = CharSet.Ansi)]
+        public static extern MiResult MI_Application_InitializeV1(uint flags,
+                                                                  string applicationID,
+                                                                  out IntPtr errInstance, 
+                                                                  out MI_Application application);
+
+        // MI_Result MI_MAIN_CALL MI_Application_NewDeserializer_Mof(
+        //     _Inout_ MI_Application *application, 
+        //     MI_Uint32 flags,
+        //     _In_z_ MI_Char *format, 
+        //     _Out_ MI_Deserializer *deserializer);
+        [DllImport(LIBMICODEC, CharSet = CharSet.Ansi)]
+        public static extern MiResult MI_Application_NewDeserializer_Mof(
+                                        ref MI_Application application,
+                                        UInt32 flags,
+                                        string nativeFormat,
+                                        out MI_Deserializer deserializer);
+
+        //    MI_Deserializer_DeserializeClassArray unmanaged signature in micodec:
+        //    MI_INLINE MI_Result MI_Deserializer_DeserializeClassArray(
+        //        _Inout_ MI_Deserializer *deserializer, 
+        //        _In_ MI_Uint32 flags,
+        //        _In_opt_ MI_OperationOptions *options,
+        //        _In_opt_ MI_DeserializerCallbacks * callbacks,
+        //        _In_reads_(serializedBufferLength) MI_Uint8 *serializedBuffer,
+        //        _In_ MI_Uint32 serializedBufferLength,
+        //        _In_opt_ MI_ClassA *classes,
+        //        _In_opt_z_ const MI_Char *serverName  ,
+        //        _In_opt_z_ const MI_Char *namespaceName,
+        //        _Out_opt_ MI_Uint32 *serializedBufferRead,
+        //        _Outptr_result_maybenull_ MI_ClassA **classObjects,
+        //        _Always_(_Outptr_opt_result_maybenull_) MI_Instance **cimErrorDetails)
+
+        // @params Pointer to MI_Class
+        //           Pointer to MI_Instance
+        [DllImport(LIBMICODEC, CharSet=CharSet.Ansi)]
+        public static extern MiResult MI_Deserializer_DeserializeClassArray(
+                                                        ref MI_Deserializer deserializer,
+                                                        UInt32 flags,
+                                                        ref MI_OperationOptions options,
+                                                        out IntPtr cb, // MI_DeserializerCallbacks callbacks,
+                                                        byte[] serializedBuffer,
+                                                        uint serializedBufferLength,
+                                                        out IntPtr classes,
+                                                        string serverName,
+                                                        string nameSpaceName,
+                                                        out uint serializedBufferRead,
+                                                        out IntPtr resultClassArray,
+                                                        out IntPtr cimErrorDetails);
+#endregion
+    } // End MiNative
+
+    // Creates an instance of the struct MI_Application for passing into Management Infrastructure methods.
+    [StructLayout(LayoutKind.Sequential)]
+    internal class ApplicationHandle// : SafeHandleZeroOrMinusOneIsInvalid
+    {
+        public MiNative.MI_Application miApp;
+
+        internal ApplicationHandle()
+        {
+            this.miApp = new MiNative.MI_Application();
+        }
+
         internal void AssertValidInternalState()
         {
             throw new NotImplementedException();
@@ -38,33 +359,70 @@ namespace Microsoft.Management.Infrastructure.Native
     internal class ApplicationMethods
     {
         // Fields
-        //private static ApplicationHandle applicationHandle;
-        //private static InstanceHandle applicationInitializationError;
-        //private static MiResult applicationInitializationResult;
         internal static string protocol_DCOM;
         internal static string protocol_WSMan;
 
         // Methods
         static ApplicationMethods()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
         private ApplicationMethods()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
         internal static MiResult GetCimErrorFromMiResult(MiResult errorCode, string errorMessage, out InstanceHandle cimError)
         {
             throw new NotImplementedException();
         }
+
+        // Creates a new MI_Application and an instance of MI_Errors
         internal static MiResult Initialize(out InstanceHandle errorDetails, out ApplicationHandle applicationHandle)
         {
-            throw new NotImplementedException();
+            return InitializeCore(out  errorDetails, out applicationHandle);
         }
-        private static MiResult InitializeCore(out InstanceHandle errorDetails, out ApplicationHandle applicationHandle)
+
+        // passes in to MI.h two pointers to structs which have been previously declared, sets them, and returns an MiResult
+        internal static MiResult InitializeCore(out InstanceHandle errorDetails, out ApplicationHandle applicationHandle)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(">>Native InitializeCore");
+            // Initialize instance
+            string appID       = string.Empty;
+            errorDetails       = new InstanceHandle();
+            applicationHandle  = new ApplicationHandle();
+
+            // create a local instance and application
+            MiNative.MI_Instance errorInstance  = errorDetails.miErrInstance;
+            MiNative.MI_Application application = applicationHandle.miApp;
+
+            application.reserved1 = 0; // set to zero.  Native call should set to 1 if it worked.
+            application.reserved2 = IntPtr.Zero;
+            //TODO: function table must not be null
+            //Function table must be set
+            //application.ft        = IntPtr.Zero; 
+
+            IntPtr appBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(application));
+            Marshal.StructureToPtr(application, appBuffer, false);
+
+            int eSize = Marshal.SizeOf(errorInstance);
+            IntPtr ePtr = Marshal.AllocHGlobal(eSize);
+            //Marshal.StructureToPtr(errorDetails.miErrInstance, instance, false);
+
+            MiResult result = MiNative.MI_Application_InitializeV1(0, appID, out ePtr, out application);
+
+            applicationHandle = Marshal.PtrToStructure<ApplicationHandle>(appBuffer);
+            // allocate the application to the MMI.Native ApplicationHandle
+            applicationHandle.miApp = application;
+            Console.WriteLine("application exists after pinvoke {0}", applicationHandle.miApp.reserved1);
+            //MiNative.MI_ApplicationFT appFT = Marshal.PtrToStructure<MiNative.MI_ApplicationFT>(application.ft);
+
+            //Console.WriteLine("MiResult for MI_Application_IntializeV1 : {0}", result);
+            // Free the memory
+            Marshal.FreeHGlobal(appBuffer);
+            Marshal.FreeHGlobal(ePtr);
+            return result;
         }
+
         internal static MiResult NewDeserializer(ApplicationHandle applicationHandle, string format, uint flags, out DeserializerHandle deserializerHandle)
         {
             throw new NotImplementedException();
@@ -79,7 +437,28 @@ namespace Microsoft.Management.Infrastructure.Native
         }
         internal static MiResult NewOperationOptions(ApplicationHandle applicationHandle, [MarshalAs(UnmanagedType.U1)] bool mustUnderstand, out OperationOptionsHandle operationOptionsHandle)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(">>Native/NewOperationOptions");
+            //TODO: create OperationOptionsHandle
+            operationOptionsHandle = new OperationOptionsHandle();
+            MiNative.MI_Application localApp = applicationHandle.miApp;
+
+            IntPtr appBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(localApp));
+            Marshal.StructureToPtr(localApp, appBuffer, false);
+            MiNative.MI_OperationOptions localOpts = operationOptionsHandle.miOperationOptions;
+            // Marshal Struct as IntPtr? We may not have to marshalAs.PtrToStructure
+
+            Console.WriteLine("Break> Pinvoke");
+            // perform p/invoke
+            MiResult result = MiNative.MI_Application_NewOperationOptions(appBuffer,
+                                                                          mustUnderstand,
+                                                                          out localOpts);
+
+            Console.WriteLine("NewOperationOptions result : {0}", result);
+            operationOptionsHandle.miOperationOptions = localOpts;
+            Marshal.FreeHGlobal(appBuffer);
+
+            return result;
+            //throw new NotImplementedException();
         }
         internal static MiResult NewSerializer(ApplicationHandle applicationHandle, string format, uint flags, out SerializerHandle serializerHandle)
         {
@@ -94,6 +473,7 @@ namespace Microsoft.Management.Infrastructure.Native
             throw new NotImplementedException();
         }
     }
+
     internal class ApplicationMethodsInternal
     {
         // Methods
@@ -101,10 +481,40 @@ namespace Microsoft.Management.Infrastructure.Native
         {
             throw new NotImplementedException();
         }
+
+        // Takes a newly declared DeserializerHandle, and executes a P/Invoke to create a deserialzerMOF instance.  This requires access to mofcodec.  ApplicationHandle should already be created via Native.Initialize.
         internal static MiResult NewDeserializerMOF(ApplicationHandle applicationHandle, string format, uint flags, out DeserializerHandle deserializerHandle)
         {
-            throw new NotImplementedException();
+            //TODO: the applicationdHandle should already be set.  Implement guards to verify
+            // create a pointer to the app and deserializer
+            IntPtr appBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(applicationHandle.miApp)); // app size should be 24
+            Marshal.StructureToPtr(applicationHandle.miApp, appBuffer, false);
+
+            // Create the deserializer
+            deserializerHandle                         = new DeserializerHandle();
+            MiNative.MI_Deserializer deserializer      = deserializerHandle.miDeserializer;
+            deserializer.reserved1                     = 0;
+            deserializer.reserved2                     = IntPtr.Zero;
+            IntPtr deserializeBuffer                   = Marshal.AllocHGlobal(Marshal.SizeOf(deserializer));
+            Marshal.StructureToPtr(deserializer, deserializeBuffer, false); // map the struct to an IntPtr
+
+            Console.WriteLine("Creating a New DeserializerMOF");
+            // takes a pointer to the applicationHandle struct, and a pointer to the deserializerHandle struct.
+            // Sets the deserializer struct.
+            MiResult result = MiNative.MI_Application_NewDeserializer_Mof(ref applicationHandle.miApp, flags, format, out deserializer);
+            Console.WriteLine("Native>> Created new deserializer Mof Pinvoke returned {0}", result);
+            deserializerHandle = Marshal.PtrToStructure<DeserializerHandle>(deserializeBuffer);
+            deserializerHandle.miDeserializer = deserializer;
+            // TODO: if result != MiResult.OK, return result
+            // TODO: Debug.Assert that the structs are populated correctly.
+
+            // Free the buffers
+            Marshal.FreeHGlobal(deserializeBuffer);
+            Marshal.FreeHGlobal(appBuffer);
+
+            return result;
         }
+
         internal static MiResult NewSerializerMOF(ApplicationHandle applicationHandle, string format, uint flags, out SerializerHandle serializerHandle)
         {
             throw new NotImplementedException();
@@ -137,9 +547,22 @@ namespace Microsoft.Management.Infrastructure.Native
         }
     }
 
-    internal class ClassHandle : SafeHandleZeroOrMinusOneIsInvalid
+    [StructLayout(LayoutKind.Sequential)]
+    internal class ClassHandle// : SafeHandleZeroOrMinusOneIsInvalid
     {
-        internal void AssertValidInternalState()
+        public MiNative.MI_Class miClass;
+
+        internal ClassHandle()
+        {
+            this.miClass = new MiNative.MI_Class();
+        }
+
+        internal ClassHandle(IntPtr handle)
+        {
+            this.miClass = Marshal.PtrToStructure<MiNative.MI_Class>(handle);
+        }
+
+         internal void AssertValidInternalState()
         {
             throw new NotImplementedException();
         }
@@ -382,8 +805,10 @@ namespace Microsoft.Management.Infrastructure.Native
         //protected virtual void Dispose([MarshalAs(UnmanagedType.U1)] bool A_0)
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     internal class DeserializerCallbacks
     {
+        public MiNative.MI_DeserializerCallbacks miDeserializerCallbacks;
         // Fields
         //private ClassObjectNeededCallbackDelegate<backing_store> ClassObjectNeededCallback;
         //private GetIncludedFileBufferCallbackDelegate<backing_store> GetIncludedFileBufferCallback;
@@ -392,13 +817,17 @@ namespace Microsoft.Management.Infrastructure.Native
         // Methods
         internal DeserializerCallbacks()
         {
-            throw new NotImplementedException();
+            this.miDeserializerCallbacks = new MiNative.MI_DeserializerCallbacks();
         }
         //internal static unsafe _MI_Result ClassObjectNeededAppDomainProxy(void* context, ushort modopt(IsConst)* serverName, ushort modopt(IsConst)* namespaceName, ushort modopt(IsConst)* className, _MI_Class** requestedClassObject)
         //internal static unsafe _MI_Result GetIncludedFileBufferAppDomainProxy(void* context, ushort modopt(IsConst)* fileName, byte** fileBuffer, uint* bufferLength)
         //internal static unsafe void ReleaseDeserializerCallbacksProxy(DeserializerCallbacksProxy* pCallbacksProxy)
-        //[return: MarshalAs(UnmanagedType.U1)]
-        //internal unsafe bool SetMiDeserializerCallbacks(_MI_DeserializerCallbacks* pmiDeserializerCallbacks)
+        [return: MarshalAs(UnmanagedType.U1)]
+        internal bool SetMiDeserializerCallbacks(MiNative.MI_DeserializerCallbacks pmiDeserializerCallbacks)
+        {
+            //TODO: Implement
+            return true;
+        }
         //private static unsafe void StoreCallbackDelegate(DeserializerCallbacksProxy* pCallbacksProxy, Delegate externalCallback, Delegate appDomainProxyCallback, DeserializerCallbackId callbackId);
 
         // Properties
@@ -421,11 +850,135 @@ namespace Microsoft.Management.Infrastructure.Native
         // Methods
         private DeserializerInternalMethods()
         {
-            throw new NotImplementedException();
+            //TODO: Implement
+            //throw new NotImplementedException();
         }
+
+        /*
+         * If classObjects parameter is not null, then set the contents of classArray to that, otherwise, pass in empty
+         * The deserializerHandle and serializedBuffer should already be populated by now.
+         */
         internal static MiResult DeserializeClassArray(DeserializerHandle deserializerHandle, OperationOptionsHandle options, DeserializerCallbacks callback, byte[] serializedBuffer, uint offset, ClassHandle[] classObjects, string serverName, string nameSpace, out ClassHandle[] deserializedClasses, out uint inputBufferUsed, out InstanceHandle cimErrorDetails)
         {
-            throw new NotImplementedException();
+            //TODO: Assert that deserializeHandle exists
+            //TODO: Assert that serializedbuffer exists
+            cimErrorDetails = new InstanceHandle();
+            Console.WriteLine(">>MMI.Native/DeserializeClassArray");
+            // create locals
+            MiNative.MI_OperationOptions localOpts = options.miOperationOptions;
+
+            //IntPtr psb = Marshal.AllocHGlobal(serializedBuffer.Length);
+            //Marshal.Copy(serializedBuffer, 0, psb, serializedBuffer.Length);
+            //GCHandle gch = GCHandle.Alloc(serializedBuffer.Length, GCHandleType.Pinned);
+            //IntPtr psb = gch.AddrOfPinnedObject();
+            // if (serializedBuffer != null)
+            // {
+            //     int serializedBuffSize = Marshal.SizeOf(serializedBuffer[0])*serializedBuffer.Length;
+            //     sb = Marshal.AllocHGlobal(serializedBuffSize);
+            //     Marshal.Copy(serializedBuffer, 0, sb, serializedBuffer.Length);
+            // }
+            IntPtr deserializerBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(deserializerHandle.miDeserializer));
+            Marshal.StructureToPtr(deserializerHandle.miDeserializer, deserializerBuffer, false);
+            MiNative.MI_Instance ErrorIns              = cimErrorDetails.miErrInstance;
+            IntPtr pErr                                = Marshal.AllocHGlobal(Marshal.SizeOf(ErrorIns));
+            inputBufferUsed                            = 0;
+            MiNative.MI_DeserializerCallbacks cb       = callback.miDeserializerCallbacks;
+            IntPtr pNativeCallbacks                    = Marshal.AllocHGlobal(Marshal.SizeOf(cb));
+            uint serializedBufferRead;
+            IntPtr classObjectsBuffer;
+            int nativeClassObjectsLength;
+            //byte[] pbyNativeClassObjects;
+            // create an array of classArray structs.  If there is existing classArray information, assign that.
+            //MiNative.MI_ClassA classArray;
+            //classArray.data = IntPtr.Zero;
+            //classArray.size = 0;
+            IntPtr classArray;
+            // Populate MI_ClassA.data when an array of classObjects is provided.
+            // This will later be passed as a pointer to MI_ClassA
+           /* if ((classObjects != null) && (0 < classObjects.Length))
+            {
+                nativeClassObjectsLength = classObjects.Length;
+                //now populate the date with all the MI_Class instances
+                int iSizeOfOneClassHandle = Marshal.SizeOf(classObjects[0].miClass); 
+                classObjectsBuffer = Marshal.AllocHGlobal(iSizeOfOneClassHandle * nativeClassObjectsLength);
+
+                classObjects = new ClassHandle[nativeClassObjectsLength];
+                for( uint i = 0; i < nativeClassObjectsLength; i++)
+                {
+                    classObjects[i] = new ClassHandle();
+                }
+                //pbyNativeClassObjects = (byte[])(pNativeClassObjects.ToPointer());
+                //for ( int i = 0; i < nativeClassObjectsLength; i++, pbyNativeClassObjects += (iSizeOfOneClassHandle) )
+                //{
+                //    IntPtr pOneClassObject = new IntPtr(pbyNativeClassObjects);
+                //    Marshal.StructureToPtr(classObjects[i], pOneClassObject, false);
+                //}
+                classArray.data = classObjectsBuffer;
+                classArray.size = (uint)nativeClassObjectsLength;
+            }*/
+
+            //if (options) { nativeOptions  }
+            IntPtr pOpts = IntPtr.Zero;
+            //if (callback) { callback.SetMiDeserializerCallbacks(ref pNativeCallbacks); }
+            // TODO: this is wrong- deserializedClasses array of classHandles needs to be created differently
+           // deserializedClasses                 = new ClassHandle[1];
+           // deserializedClasses[0]              = new ClassHandle();
+           // MiNative.MI_Class dClasses          = deserializedClasses[0].miClass;
+
+            //var resultClassArray = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IntPtr)));
+
+            //MiNative.MI_ClassA resultClassArray;
+            //IntPtr resultClassABuffer = (IntPtr)Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(IntPtr)));
+            //// convert classObjects to byte array
+            //Console.WriteLine("the pinned address : {0}", gch.AddrOfPinnedObject());
+            //IntPtr gchPtr = gch.AddrOfPinnedObject();
+
+            //resultClassArray.data     = IntPtr.Zero;
+            //resultClassArray.size     = 1;
+            //IntPtr resultClassABuffer = Marshal.AllocHGlobal(Marshal.SizeOf(resultClassArray));
+            //Marshal.StructureToPtr(resultClassArray, resultClassABuffer, false);
+
+            //MiNative.MI_ClassA classA = new MiNative.MI_ClassA();
+            //IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf(classA));
+            //Marshal.StructureToPtr(classA, ptr, false);
+            // execute p/invoke, assign to result. Note: flags= 0
+            //if ( classA == null) { Console.WriteLine("You dun goofed");}
+            IntPtr ptr;// = IntPtr.Zero;
+            //ptr = Marshal.AllocHGlobal(IntPtr.Size);
+            IntPtr bs;
+            //Marshal.StructureToPtr(callback, bs, false);//callbacks
+            MiResult result = MiNative.MI_Deserializer_DeserializeClassArray(
+                                                        ref deserializerHandle.miDeserializer,
+                                                        0,
+                                                        ref localOpts,
+                                                        out bs, // callbacks
+                                                        serializedBuffer,
+                                                        (uint)serializedBuffer.Length,
+                                                        out classArray,  /* classArray: if null, pass IntPtr.Zero, else classArray */
+                                                        serverName,
+                                                        nameSpace,
+                                                        out serializedBufferRead,
+                                                        out ptr,
+                                                        out pErr);
+
+            Console.WriteLine("MI_Deserializer_DeserializeClassArray pinvoke complete.  result :{0}", result);
+            Console.WriteLine("classObjects: {0}", ptr);
+            //TODO: classHandle array from resultClassArray needs to be marshalled into managed code, then assign the array of classHandles to 
+            ClassHandle[] d = new ClassHandle[1];
+            deserializedClasses = d;
+            //ClassHandle[] d = Marshal.PtrToStructure<ClassHandle>(resultClassArray);
+            //if ((result == MiResult.OK) && (0 != resultClassArray.Size))
+            //{
+            //    deserializedClasses = new ClassHandle[resultClassArray.size];
+            //    for (int i=0; i < resultClassArray.size; i++)
+            //    {
+            //        deserializedClasses[i] = Marshal.PtrToStructure<ClassHandle>(resultClassArray.data);
+            //    }
+            //}
+
+            return result;
+
+            //throw new NotImplementedException();
         }
         internal static MiResult DeserializeInstanceArray(DeserializerHandle deserializerHandle, OperationOptionsHandle options, DeserializerCallbacks callback, byte[] serializedBuffer, uint offset, ClassHandle[] classObjects, out InstanceHandle[] deserializedInstances, out uint inputBufferUsed, out InstanceHandle cimErrorDetails)
         {
@@ -433,11 +986,25 @@ namespace Microsoft.Management.Infrastructure.Native
         }
     }
 
-    internal class DeserializerHandle : SafeHandleZeroOrMinusOneIsInvalid
+    // TODO: classes with sequential layout cannot inherit.  Create a Data Transfer Object
+    [StructLayout(LayoutKind.Sequential)]
+    internal class DeserializerHandle// : SafeHandleZeroOrMinusOneIsInvalid
     {
+        public MiNative.MI_Deserializer miDeserializer;
+        internal DeserializerHandle()
+        {
+            this.miDeserializer = new MiNative.MI_Deserializer();
+        }
+
+        // Used when setting the deserializer handle to the return value
+        internal DeserializerHandle(IntPtr handle)
+        {
+            this.miDeserializer = Marshal.PtrToStructure<MiNative.MI_Deserializer>(handle);
+        }
+
         internal void AssertValidInternalState()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
         public void Dispose()
         {
@@ -854,8 +1421,23 @@ namespace Microsoft.Management.Infrastructure.Native
         }
     }
 
+    
     internal class InstanceHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
+        public MiNative.MI_Instance miErrInstance;
+        public IntPtr handle;
+
+        // construct a reference to MiNative.MI_Instance
+        internal InstanceHandle()
+        {
+            this.miErrInstance = new MiNative.MI_Instance();
+        }
+
+        internal InstanceHandle(IntPtr handle)
+        {
+            this.handle = handle;
+        }
+
         internal void AssertValidInternalState()
         {
             throw new NotImplementedException();
@@ -886,7 +1468,7 @@ namespace Microsoft.Management.Infrastructure.Native
         // Methods
         static InstanceMethods()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
         private InstanceMethods()
         {
@@ -910,6 +1492,9 @@ namespace Microsoft.Management.Infrastructure.Native
         //internal static unsafe IEnumerable<DangerousHandleAccessor> ConvertToMiValue(MiType type, object managedValue, _MI_Value* pmiValue);
         internal static MiResult GetClass(InstanceHandle instanceHandle, out ClassHandle classHandle)
         {
+            
+
+            //return MiResult.OK;
             throw new NotImplementedException();
         }
         internal static MiResult GetClassName(InstanceHandle handle, out string className)
@@ -1204,11 +1789,13 @@ namespace Microsoft.Management.Infrastructure.Native
         // Methods
         static OperationCallbacks()
         {
-            throw new NotImplementedException();
+            //TODO: Implement
+            //throw new NotImplementedException();
         }
         public OperationCallbacks()
         {
-            throw new NotImplementedException();
+            //TODO: Implement
+            //throw new NotImplementedException();
         }
         internal static void InvokeWithUserFilteredExceptionHandler(Action tryBody, Func<Exception, bool> userFilter, Action<Exception> catchBody)
         {
@@ -1292,13 +1879,15 @@ namespace Microsoft.Management.Infrastructure.Native
 
         //internal unsafe delegate void WriteProgressAppDomainProxyDelegate(_MI_Operation* pmiOperation, void* callbackContext, ushort modopt(IsConst)* wszActivity, ushort modopt(IsConst)* wszCurrentOperation, ushort modopt(IsConst)* wszStatusDescription, uint percentageComplete, uint secondsRemaining);
     }
-    
+
     internal class OperationHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
+        public MiNative.MI_OperationOptions miOperationOptions;
         internal void AssertValidInternalState()
         {
-            throw new NotImplementedException();
+            this.miOperationOptions = new MiNative.MI_OperationOptions();
         }
+
         public void Dispose()
         {
             throw new NotImplementedException();
@@ -1345,6 +1934,13 @@ namespace Microsoft.Management.Infrastructure.Native
 
     internal class OperationOptionsHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
+        public MiNative.MI_OperationOptions miOperationOptions;
+        internal OperationOptionsHandle()
+        {
+            // 
+            this.miOperationOptions = new MiNative.MI_OperationOptions();
+        }
+
         internal void AssertValidInternalState()
         {
             throw new NotImplementedException();
@@ -1413,7 +2009,9 @@ namespace Microsoft.Management.Infrastructure.Native
         }
         internal static MiResult SetOption(OperationOptionsHandle operationOptionsHandle, string optionName, string optionValue)
         {
-            throw new NotImplementedException();
+            //TODO: Implement
+            return MiResult.OK;
+            //throw new NotImplementedException();
         }
         internal static MiResult SetOption(OperationOptionsHandle operationOptionsHandle, string optionName, uint optionValue)
         {
@@ -1640,5 +2238,6 @@ namespace Microsoft.Management.Infrastructure.Native
             throw new NotImplementedException();
         }
     }
+
 
 }
