@@ -1,17 +1,15 @@
 ﻿Describe "Test-Path" {
         BeforeAll {
-            $guid          = [Guid]::NewGuid().Guid
-            $testdirectory = New-Item -Path $guid -ItemType Directory -Force
+            $testdirectory = $TestDrive
             $testfilename  = New-Item -path $testdirectory -Name testfile.txt -ItemType file -Value 1 -force
-            $testfile      = $tmp + "/" + $testfilename
 
             # populate with additional files
             New-Item -Path $testdirectory -Name datestfile -value 1 -ItemType file | Out-Null
             New-Item -Path $testdirectory -Name gatestfile -value 1 -ItemType file | Out-Null
-        }
+            New-Item -Path $testdirectory -Name usr -value 1 -ItemType directory | Out-Null
 
-        AfterAll {
-            Remove-Item -Path $testdirectory -Recurse
+            $nonExistantDir = Join-Path -Path (Join-Path -Path $testdirectory -ChildPath usr) -ChildPath bin
+            $nonExistantPath = Join-Path -Path (Join-Path -Path (Join-Path -Path $testdirectory -ChildPath usr) -ChildPath bin) -ChildPath error
         }
 
         It "Should be called on an existing path without error" {
@@ -24,15 +22,15 @@
             { $testdirectory | Test-Path  } | Should Not Throw
 
             $testdirectory                  | Test-Path | Should Be $true
-            "/usr/bin/totallyFakeDirectory" | Test-Path | Should Be $false
+            $nonExistantDir                 | Test-Path | Should Be $false
         }
 
         It "Should be called on a nonexistant path without error" {
-            { Test-Path -Path "aNonexistant/path/that/should/error" } | Should Not Throw
+            { Test-Path -Path $nonExistantPath } | Should Not Throw
         }
 
         It "Should return false for a nonexistant path" {
-            Test-Path -Path "aNonexistant/path/that/should/error" | Should Be $false
+            Test-Path -Path $nonExistantPath | Should Be $false
         }
 
         It "Should return true for an existing path" {
@@ -40,16 +38,16 @@
         }
 
         It "Should be able to accept a regular expression" {
-            { Test-Path -Path "/u*" }      | Should Not Throw
-            { Test-Path -Path "/u[a-z]r" } | Should Not Throw
+            { Test-Path -Path (Join-Path -Path $testdirectory -ChildPath "u*") }           | Should Not Throw
+            { Test-Path -Path (Join-Path -Path $testdirectory -ChildPath "u[a-z]r") }      | Should Not Throw
         }
 
         It "Should be able to return the correct result when a regular expression is used" {
-            Test-Path -Path "/u*"      | Should Be $true
-            Test-Path -Path "/u[a-z]*" | Should Be $true
+            Test-Path -Path (Join-Path -Path $testdirectory -ChildPath "u*")               | Should Be $true
+            Test-Path -Path (Join-Path -Path $testdirectory -ChildPath "u[a-z]*")          | Should Be $true
 
-            Test-Path -Path "/aoeu*"  | Should Be $false
-            Test-Path -Path "/u[A-Z]" | Should Be $false
+            Test-Path -Path (Join-Path -Path $testdirectory -ChildPath "aoeu*")            | Should Be $false
+            Test-Path -Path (Join-Path -Path $testdirectory -ChildPath "u[A-Z]")           | Should Be $false
         }
 
         It "Should return false when the Leaf pathtype is used on a directory" {
@@ -69,20 +67,20 @@
         }
 
         It "Should be able to search multiple regular expressions using the include switch" {
-            { Test-Path -Path "$testdirectory/*" -Include t* } | Should Be $true
+            { Test-Path -Path (Join-Path -Path $testdirectory -ChildPath "*") -Include t* } | Should Be $true
         }
 
         It "Should be able to exclude a regular expression using the exclude switch" {
-            { Test-Path -Path "$testdirectory/*" -Exclude v* } | Should Be $true
+            { Test-Path -Path (Join-Path -Path $testdirectory -ChildPath "*") -Exclude v* } | Should Be $true
         }
 
         It "Should be able to exclude multiple regular expressions using the exclude switch" {
-            # tests whether there's any files in the /usr directory that don't start with 'd' or 'g'
+            # tests whether there's any files in the usr directory that don't start with 'd' or 'g'
             { Test-Path -Path $testfilename -Exclude d*, g* } | Should Be $true
         }
 
         It "Should return true if the syntax of the path is correct when using the IsValid switch" {
-            { Test-Path -Path /this/is/a/valid/path -IsValid } | Should Be $true
+            { Test-Path -Path $nonExistantPath -IsValid } | Should Be $true
         }
 
         It "Should return false if the syntax of the path is incorrect when using the IsValid switch" {
@@ -107,13 +105,13 @@
         }
 
         It "Should return false if regular expressions are used with the LiteralPath switch" {
-            Test-Path -LiteralPath /*sr/bin | Should Be $false
-            Test-Path -LiteralPath /[usth]sr/bin | Should Be $false
+            Test-Path -LiteralPath (Join-Path -Path $testdirectory -ChildPath "u*")            | Should Be $false
+            Test-Path -LiteralPath (Join-Path -Path $testdirectory -ChildPath "u[a-z]r")       | Should Be $false
         }
 
         It "Should return false if regular expressions are used with the LiteralPath alias PSPath switch" {
-            Test-Path -PSPath /*sr/bin | Should Be $false
-            Test-Path -PSPath /[aoeu]sr/bin | Should Be $false
+            Test-Path -PSPath (Join-Path -Path $testdirectory -ChildPath "u*")            | Should Be $false
+            Test-Path -PSPath (Join-Path -Path $testdirectory -ChildPath "u[a-z]r")       | Should Be $false
         }
 
         It "Should return true if used on components other than filesystem objects" {

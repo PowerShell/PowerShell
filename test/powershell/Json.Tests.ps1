@@ -18,7 +18,7 @@ Describe "Json.NET LINQ Parsing" {
     [Microsoft.PowerShell.CoreCLR.AssemblyExtensions]::LoadFrom($path)
 
     BeforeEach {
-        $jsonFile = "$here/assets/TestJson.json"
+        $jsonFile = Join-Path -Path (Join-Path $here -ChildPath assets) -ChildPath TestJson.json
         $jsonData = (Get-Content $jsonFile | Out-String)
         $json = [Newtonsoft.Json.Linq.JObject]::Parse($jsonData)
     }

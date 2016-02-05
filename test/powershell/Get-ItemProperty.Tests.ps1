@@ -2,22 +2,11 @@
 
 Describe "Get-ItemProperty" {
     $currentDirectory = Split-Path $here -Leaf
-    $parentDirectory  = Split-Path $here/.. -Leaf
-    $isWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
+    $parentDirectory  = Split-Path (Join-Path -Path $here -ChildPath "..") -Leaf
+    $tempDirectory = $TestDrive
+    $testprovider = (Get-Item $tempDirectory).PSDrive.Name
 
-    if ($isWindows)
-    {
-        $tempDirectory = "~/testfolder"
-        $testProvider  = "C"
-    }
-    else
-    {
-        $tempDirectory = "/tmp/testfolder"
-        $testProvider  = "/"
-    }
-
-    New-Item $tempDirectory -ItemType Directory -Force
-    $testfile = $tempDirectory + [System.IO.Path]::DirectorySeparatorChar + "testfile1"
+    $testfile = Join-Path -Path $tempDirectory -ChildPath testfile1
 
     New-Item $testfile -ItemType file -Force
 
@@ -62,6 +51,4 @@ Describe "Get-ItemProperty" {
         $alias.PSDrive         | Should Be $cmdlet.PSDrive
         $alias.PSProvider.Name | Should Be $cmdlet.PSProvider.Name
     }
-
-    Remove-Item $tempDirectory -Recurse -Force
 }

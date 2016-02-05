@@ -16,8 +16,8 @@ Describe "Measure-Command" {
         }
 
         It "Should return TimeSpan after executing a cmdlet" {
-            $pesterscript = "$here/assets/echoscript.ps1"
-            $testfile = "$here/assets/echoscript.ps1"
+            $pesterscript = Join-Path -Path (Join-Path -Path $here -ChildPath assets) -ChildPath echoscript.ps1
+            $testfile = $pesterscript
             $testcommand = "echo pestertestscript"
             $testcommand | Add-Content -Path $testfile
 

@@ -13,7 +13,7 @@ Describe "Invoke-Expression" {
         }
 
         It "Should return the echoed text from a script" {
-            $testfile = "$here/assets/echoscript.ps1"
+            $testfile = Join-Path -Path (Join-Path $here -ChildPath assets) -ChildPath echoscript.ps1
             $testcommand = "echo pestertestscript"
             $testcommand | Add-Content -Path $testfile
             (Invoke-Expression $testfile) | Should Be "pestertestscript"
@@ -21,7 +21,7 @@ Describe "Invoke-Expression" {
         }
 
         It "Should return the echoed text from a script from the alias" {
-            $testfile = "$here/assets/echoscript.ps1"
+            $testfile = Join-Path -Path (Join-Path $here -ChildPath assets) -ChildPath echoscript.ps1
             $testcommand = "echo pestertestscript"
             $testcommand | Add-Content -Path $testfile
             (iex $testfile) | Should Be "pestertestscript"

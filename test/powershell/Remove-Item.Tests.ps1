@@ -1,7 +1,7 @@
 ﻿Describe "Remove-Item" {
-    $testpath = "/tmp/"
+    $testpath = $TestDrive
     $testfile = "testfile.txt"
-    $testfilepath = $testpath + $testfile
+    $testfilepath = Join-Path -Path $testpath -ChildPath $testfile
     Context "File removal Tests" {
         BeforeEach {
             New-Item -Name $testfile -Path $testpath -ItemType "file" -Value "lorem ipsum" -Force
@@ -71,11 +71,11 @@
             # Create a single file that does not match that string - already done in BeforeEach
 
             # Delete the specific string
-            Remove-Item /tmp/* -Include file*.txt
+            Remove-Item (Join-Path -Path $testpath -ChildPath "*") -Include file*.txt
             # validate that the string under test was deleted, and the nonmatching strings still exist
-            Test-path /tmp/file1.txt | Should Be $false
-            Test-path /tmp/file2.txt | Should Be $false
-            Test-path /tmp/file3.txt | Should Be $false
+            Test-path (Join-Path -Path $testpath -ChildPath file1.txt) | Should Be $false
+            Test-path (Join-Path -Path $testpath -ChildPath file2.txt) | Should Be $false
+            Test-path (Join-Path -Path $testpath -ChildPath file3.txt) | Should Be $false
             Test-Path $testfilepath  | Should Be $true
 
             # Delete the non-matching strings
@@ -93,27 +93,27 @@
             New-Item -Name file1.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
 
             # Delete the specific string
-            Remove-Item /tmp/file* -Exclude *.wav -Include *.txt
+            Remove-Item (Join-Path -Path $testpath -ChildPath "file*") -Exclude *.wav -Include *.txt
 
             # validate that the string under test was deleted, and the nonmatching strings still exist
-            Test-Path /tmp/file1.wav | Should Be $true
-            Test-Path /tmp/file2.wav | Should Be $true
-            Test-Path /tmp/file1.txt | Should Be $false
+            Test-Path (Join-Path -Path $testpath -ChildPath file1.wav) | Should Be $true
+            Test-Path (Join-Path -Path $testpath -ChildPath file2.wav) | Should Be $true
+            Test-Path (Join-Path -Path $testpath -ChildPath file1.txt) | Should Be $false
 
             # Delete the non-matching strings
-            Remove-Item /tmp/file1.wav
-            Remove-Item /tmp/file2.wav
+            Remove-Item (Join-Path -Path $testpath -ChildPath file1.wav)
+            Remove-Item (Join-Path -Path $testpath -ChildPath file2.wav)
 
-            Test-Path /tmp/file1.wav | Should Be $false
-            Test-Path /tmp/file2.wav | Should Be $false
+            Test-Path (Join-Path -Path $testpath -ChildPath file1.wav) | Should Be $false
+            Test-Path (Join-Path -Path $testpath -ChildPath file2.wav) | Should Be $false
         }
     }
 
     Context "Directory Removal Tests" {
-        $testdirectory = "/tmp/testdir"
-        $testsubdirectory = $testdirectory + "/subd"
+        $testdirectory = Join-Path -Path $testpath -ChildPath testdir
+        $testsubdirectory = Join-Path -Path $testdirectory -ChildPath subd
         BeforeEach {
-            New-Item -Name "testdir" -Path "/tmp/" -ItemType "directory" -Force
+            New-Item -Name "testdir" -Path $testpath -ItemType "directory" -Force
 
             Test-Path $testdirectory | Should Be $true
         }
@@ -128,7 +128,7 @@
             New-Item -Name "subd" -Path $testdirectory -ItemType "directory"
             New-Item -Name $testfile -Path $testsubdirectory -ItemType "file" -Value "lorem ipsum"
 
-            $complexDirectory = $testsubdirectory + "/" + $testfile
+            $complexDirectory = Join-Path -Path $testsubdirectory -ChildPath $testfile
             test-path $complexDirectory | Should Be $true
 
             { Remove-Item $testdirectory -Recurse} | Should Not Throw

@@ -1,5 +1,5 @@
 ﻿Describe "Get-FileHash" {
-    New-Variable testDocument -Value $PSScriptRoot/assets/testablescript.ps1 -Scope Global -Force
+    New-Variable testDocument -Value (Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath testablescript.ps1) -Scope Global -Force
     # The MACTripleDES and RIPEMD160 algorithms are unsupported at the moment
     $algorithms = @{"SHA1"      ="01B865D143E07ECC875AB0EFC0A4429387FD0CF7";
                     "SHA256"    = "4A6DA9F1C0827143BB19FC4B0F2A8057BC1DF55F6D1F62FA3B917BA458E8F570";
@@ -28,8 +28,7 @@
         It "Should list the path of the file under test" {
             $result = Get-FileHash $testDocument
 
-            # regular expression for the forward/backslashes for linux/windows compatability
-            $result.Path | Should Match "assets[/|\\]testablescript.ps1"
+            $result.Path | Should Match (Join-Path assets -ChildPath testablescript.ps1)
         }
     }
 

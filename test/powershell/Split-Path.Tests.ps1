@@ -61,24 +61,21 @@
     }
 
     It "Should be able to accept regular expression input and output an array for multiple objects" {
-        $testDir = "./testDir"
+        $testDir = $TestDrive
         $testFile1     = "testfile1.ps1"
         $testFile2     = "testfile2.ps1"
-        $testFilePath1 = $testDir + "/" + $testFile1
-        $testFilePath2 = $testDir + "/" + $testFile2
+        $testFilePath1 = Join-Path -Path $testDir -ChildPath $testFile1
+        $testFilePath2 = Join-Path -Path $testDir -ChildPath $testFile2
 
         New-Item -ItemType file -Path $testFilePath1, $testFilePath2 -Force
 
         Test-Path $testFilePath1 | Should Be $true
         Test-Path $testFilePath2 | Should Be $true
 
-        $actual = ( Split-Path $testDir/*file*.ps1 -Leaf -Resolve ) | Sort-Object
+        $actual = ( Split-Path (Join-Path -Path $testDir -ChildPath "*file*.ps1") -Leaf -Resolve ) | Sort-Object
         $actual.GetType().BaseType.Name | Should Be "Array"
         $actual[0]                      | Should Be $testFile1
         $actual[1]                      | Should Be $testFile2
-
-        Remove-Item $testDir -Recurse -ErrorAction Ignore
-        Test-Path $testDir | Should Be $false
     }
 
     It "Should be able to tell if a given path is an absolute path" {

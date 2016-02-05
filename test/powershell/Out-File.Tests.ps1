@@ -1,7 +1,7 @@
 ﻿Describe "Out-File" {
     $expectedContent = "some test text"
     $inObject = New-Object psobject -Property @{text=$expectedContent}
-    $testfile = "/tmp/outfileTest.txt"
+    $testfile = Join-Path -Path $TestDrive -ChildPath outfileTest.txt
 
     AfterEach {
          Remove-Item -Path $testfile -Force

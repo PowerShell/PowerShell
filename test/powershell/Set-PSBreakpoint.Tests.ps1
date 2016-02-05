@@ -2,7 +2,7 @@
 
 Describe "Set-PSBreakpoint" {
     # Set up test script
-    $testScript = "$here/psbreakpointtestscript.ps1"
+    $testScript = Join-Path -Path $here -ChildPath psbreakpointtestscript.ps1
 
     "`$var = 1 " > $testScript
 

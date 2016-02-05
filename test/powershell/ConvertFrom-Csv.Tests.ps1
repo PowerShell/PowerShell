@@ -2,7 +2,7 @@
 
 Describe "ConvertFrom-Csv" {
     $testObject = "a", "1"
-    $testcsv = "$here/assets/TestCsv2.csv"
+    $testcsv = Join-Path -Path (Join-Path -Path $here -ChildPath assets) -ChildPath TestCsv2.csv
     $testName = "Zaphod BeebleBrox"
     $testColumns = @"
     a,b,c

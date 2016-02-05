@@ -2,8 +2,8 @@
 
 Describe "Get-Item" {
     It "Should list all the items in the current working directory when asterisk is used" {
-        (Get-Item $here/*).GetType().BaseType | Should Be 'array'
-        (Get-Item $here/*).GetType().Name | Should Be 'Object[]'
+        (Get-Item (Join-Path -Path $here -ChildPath "*")).GetType().BaseType | Should Be 'array'
+        (Get-Item (Join-Path -Path $here -ChildPath "*")).GetType().Name | Should Be 'Object[]'
     }
 
     It "Should return the name of the current working directory when a dot is used" {
@@ -13,7 +13,7 @@ Describe "Get-Item" {
 
     It "Should return the proper Name and BaseType for directory objects vs file system objects" {
         (Get-Item $here).GetType().Name | Should Be 'DirectoryInfo'
-        (Get-Item $here/Get-Item.Tests.ps1).GetType().Name | Should Be 'FileInfo'
+        (Get-Item (Join-Path -Path $here -ChildPath Get-Item.Tests.ps1)).GetType().Name | Should Be 'FileInfo'
     }
 
     It "Should have mode flags set" {

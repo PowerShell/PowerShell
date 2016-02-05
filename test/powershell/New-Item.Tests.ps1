@@ -12,11 +12,11 @@
 }
 
 Describe "New-Item" {
-    $tmpDirectory         = "/tmp"
+    $tmpDirectory         = $TestDrive
     $testfile             = "testfile.txt"
     $testfolder           = "newDirectory"
-    $FullyQualifiedFile   = $tmpDirectory + "/" + $testfile
-    $FullyQualifiedFolder = $tmpDirectory + "/" + $testfolder
+    $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
+    $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
 
     BeforeEach {
         Clean-State
@@ -74,7 +74,7 @@ Describe "New-Item" {
     }
 
     It "Should be able to create a multiple items in different directories" {
-        $FullyQualifiedFile2 = $tmpDirectory + "/" + "test2.txt"
+        $FullyQualifiedFile2 = Join-Path -Path $tmpDirectory -ChildPath test2.txt
         New-Item -ItemType file -Path $FullyQualifiedFile, $FullyQualifiedFile2
 
         Test-Path $FullyQualifiedFile  | Should Be $true
@@ -84,7 +84,7 @@ Describe "New-Item" {
     }
 
     It "Should be able to call the whatif switch without error" {
-       { New-Item -Name testfile.txt -Path /tmp -ItemType file -WhatIf } | Should Not Throw
+       { New-Item -Name testfile.txt -Path $tmpDirectory -ItemType file -WhatIf } | Should Not Throw
     }
 
     It "Should not create a new file when the whatif switch is used" { 

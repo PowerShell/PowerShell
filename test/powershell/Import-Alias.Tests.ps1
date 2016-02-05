@@ -1,7 +1,7 @@
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 Describe "Import-Alias" {
-    $pesteraliasfile = "$here/assets/pesteralias.txt"
+    $pesteraliasfile = Join-Path -Path (Join-Path $here -ChildPath assets) -ChildPath pesteralias.txt
     
     Context "Validate ability to import alias file" {
 

@@ -1,11 +1,11 @@
 ﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-. $here/Test-Common.ps1
+. (Join-Path -Path $here -ChildPath Test-Common.ps1)
 
 Describe "Start-Process" {
     $pingCommand = (Get-Command -CommandType Application ping)[0].Definition
     $pingDirectory = Split-Path $pingCommand -Parent
-    $tempFile = "$(GetTempDir)/PSTest"
-    $assetsFile = $here + "/assets/SortTest.txt"
+    $tempFile = Join-Path -Path $(GetTempDir) -ChildPath PSTest
+    $assetsFile = Join-Path -Path (Join-Path -Path $here -ChildPath assets) -ChildPath SortTest.txt
     $windows = IsWindows
     if ($windows)
     {

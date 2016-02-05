@@ -89,16 +89,8 @@
     Context "Filesytem actions" {
         $isWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
 
-        if ($isWindows)
-        {
-            $testDirectory = "C:\tmp\"
-            $testInputFile = "C:\tmp\testfile1.txt"
-        }
-        else
-        {
-            $testDirectory = "/tmp/"
-            $testInputFile =  "/tmp/testfile1.txt"
-        }
+        $testDirectory = $TestDrive
+        $testInputFile = Join-Path -Path $testDirectory -ChildPath testfile1.txt
 
         BeforeEach {
             New-Item $testInputFile -Itemtype "file" -Force -Value "This is a text string, and another string${nl}This is the second line${nl}This is the third line${nl}This is the fourth line${nl}No matches"
@@ -163,7 +155,11 @@
         It "Should return the third line in testfile1 when a relative path is used" {
             $expected  = "testfile1.txt:3:This is the third line"
 
-            Select-String third $testDirectory/"../tmp/testfile1.txt"  | Should Match $expected
+            $relativePath = Join-Path -Path $testDirectory -ChildPath ".."
+            $relativePath = Join-Path -Path $relativePath -ChildPath ".."
+            $relativePath = Join-Path -Path $relativePath -ChildPath $testDirectory
+            $relativePath = Join-Path -Path $relativePath -ChildPath testfile1.txt
+            Select-String third $relativePath  | Should Match $expected
         }
 
         It "Should return the fourth line in testfile1 when a relative path is used" {
@@ -171,7 +167,7 @@
 
             pushd $testDirectory
 
-            Select-String matches $testDirectory/testfile1.txt  | Should Match $expected
+            Select-String matches (Join-Path -Path $testDirectory -ChildPath testfile1.txt)  | Should Match $expected
             popd
         }
 

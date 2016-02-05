@@ -2,7 +2,7 @@
 
 Describe "Remove-PSBreakpoint" {
     # Set up test script
-    $testScript = "$here/assets/psbreakpointtestscript.ps1"
+    $testScript = Join-Path -Path (Join-Path -Path $here -ChildPath assets) -ChildPath psbreakpointtestscript.ps1
 
     $script = "`$var = 1
 `$var2 = Get-Process 

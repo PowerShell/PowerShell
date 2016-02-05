@@ -10,8 +10,8 @@
 
     $testString2 = $firstline + $nl + $secondline + $nl + $thirdline + $nl + $fourthline + $nl + $fifthline
 
-    $testPath   = "/tmp/testfile1"
-    $testPath2  = "/tmp/testfile2"
+    $testPath   = Join-Path -Path $TestDrive -ChildPath testfile1
+    $testPath2  = Join-Path -Path $TestDrive -ChildPath testfile2
 
     BeforeEach {
         New-Item -Path $testPath -ItemType file -Force -Value $testString
