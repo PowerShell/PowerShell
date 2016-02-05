@@ -500,7 +500,16 @@ OPTIONS
             // the user calling "exit".
             while (!this.ShouldExit && this.myHost.Runspace != null)
             {
-                string prompt = Prompt(this.myHost.Runspace);
+                // If the prompt function failed for any reason, use a sane default
+                string prompt;
+                try
+                {
+                    prompt = Prompt(this.myHost.Runspace);
+                }
+                catch
+                {
+                    prompt = "PS> ";
+                }
 
                 this.myHost.UI.Write(ConsoleColor.White, ConsoleColor.Black, prompt);
                 string cmd = consoleReadLine.Read(this.myHost.Runspace);
