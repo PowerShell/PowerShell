@@ -23,8 +23,8 @@
     It "Should have the correct HOME" {
         if ($isWindows)
         {
-            $expected = "\Users\" + $ENV:USERNAME
-            $ENV:HOMEPATH | Should Be $expected
+            $expected = "\Users"
+            Split-Path $ENV:HOMEPATH -Parent | Should Be $expected
         }
         else
         {
