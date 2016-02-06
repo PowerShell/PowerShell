@@ -3,16 +3,35 @@
     "description": "Microsoft.Management.Infrastructure.Native Stub",
     "authors": [ "garretts", "andschwa" ],
 
+    "scripts": {
+        "postcompile" : [
+            "powershell .\\compile_c++.ps1 -config %compile:Configuration% -outputdir \"%compile:OutputDir%\"  -outputfile \"%compile:OutputFile%\" -framework \"%compile:TargetFramework%\" "
+        ]
+    },
+
     "frameworks": {
         "dnxcore50": {
             "dependencies": {
-                "NETStandard.Library": "1.0.0-rc3-23729",
-                "System.Security.SecureString":  {
+                "System.Security.SecureString": {
                     "type": "build",
                     "version": "1.0.0-*"
-                }
+                },
+
+                "System.Collections":"4.0.11-rc3-23729",
+                "System.Collections.NonGeneric":"4.0.1-rc3-23729",
+                "System.ComponentModel":"4.0.1-rc3-23729",
+                "System.Diagnostics.Debug":"4.0.11-rc3-23729",
+                "System.Diagnostics.Tools":"4.0.1-rc3-23729",
+                "System.Globalization.Calendars":"4.0.1-rc3-23729",
+                "System.Globalization":"4.0.11-rc3-23729",
+                "System.Runtime.CompilerServices.VisualC":"4.0.0-rc3-23729",
+                "System.Runtime":"4.1.0-rc3-23729",
+                "System.Runtime.Handles":"4.0.1-rc3-23729",
+                "System.Runtime.InteropServices":"4.1.0-rc3-23729",
+                "System.Threading": "4.0.11-rc3-23729"
             }
         },
+        
         "dnx451": {
         }
     }

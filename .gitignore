@@ -11,3 +11,5 @@ project.lock.json
 *-tests.xml
 /src/TypeCatalogGen/powershell.inc
 /src/TypeCatalogGen/CorePsTypeCatalog.cs
+intermediate/
+packages/

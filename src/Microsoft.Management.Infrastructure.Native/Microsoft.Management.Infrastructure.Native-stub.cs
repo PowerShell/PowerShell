@@ -1,3 +1,5 @@
+#if LINUX 
+
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Runtime.InteropServices;
@@ -1642,3 +1644,4 @@ namespace Microsoft.Management.Infrastructure.Native
     }
 
 }
+#endif 
