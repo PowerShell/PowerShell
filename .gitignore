@@ -2,12 +2,5 @@ bin/
 binFull/
 build/
 obj/
-/lib/
-/approot/
-/src/*/bin/
-/.bash_history
-/.vscode/
 project.lock.json
 *-tests.xml
-/src/TypeCatalogGen/powershell.inc
-/src/TypeCatalogGen/CorePsTypeCatalog.cs
