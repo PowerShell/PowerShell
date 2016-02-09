@@ -29,7 +29,7 @@
             },
             "imports": "portable-net45+win8",
             "dependencies": {
-                "Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1-20151109-01"
+                "Microsoft.CodeAnalysis.CSharp": "1.1.1"
             }
         },
         "dnx451": {
