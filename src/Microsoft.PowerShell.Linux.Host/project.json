@@ -24,6 +24,23 @@
         }
     },
 
+    "content": [
+        "types.ps1xml",
+        "typesv3.ps1xml",
+        "Certificate.format.ps1xml",
+        "Diagnostics.Format.ps1xml",
+        "DotNetTypes.format.ps1xml",
+        "Event.format.ps1xml",
+        "FileSystem.format.ps1xml",
+        "Help.format.ps1xml",
+        "HelpV3.format.ps1xml",
+        "PowerShellCore.format.ps1xml",
+        "PowerShellTrace.format.ps1xml",
+        "Registry.format.ps1xml",
+        "WSMan.format.ps1xml"
+    ],
+
+
     "frameworks": {
         "dnxcore50": {
             "imports": "portable-net45+win8"

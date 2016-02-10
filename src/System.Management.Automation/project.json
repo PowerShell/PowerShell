@@ -80,7 +80,7 @@
         }
     },
 
-    "compile" : [
+    "compile": [
         "../windows-build/gen/SYS_AUTO/*.cs",
         "../monad/monad/src/CoreCLR/CorePsPlatform.cs"
     ],
