@@ -25,8 +25,11 @@
     },
 
     "content": [
+        "PSL_profile.ps1",
+
         "types.ps1xml",
         "typesv3.ps1xml",
+
         "Certificate.format.ps1xml",
         "Diagnostics.Format.ps1xml",
         "DotNetTypes.format.ps1xml",
