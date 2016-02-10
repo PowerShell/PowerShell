@@ -25,6 +25,8 @@
     },
 
     "content": [
+        "Modules",
+
         "PSL_profile.ps1",
 
         "types.ps1xml",
