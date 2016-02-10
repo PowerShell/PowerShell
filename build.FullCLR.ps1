@@ -1,11 +1,12 @@
 param(
+    # "" is for default generator on the platform
     [ValidateSet(
         "",
         "Visual Studio 12 2013", 
         "Visual Studio 12 2013 Win64",
         "Visual Studio 14 2015", 
         "Visual Studio 14 2015 Win64")]
-    [string]$cmakeGenerator = "",
+    [string]$cmakeGenerator = "Visual Studio 12 2013",
 
     [ValidateSet(
         "Debug",
@@ -51,7 +52,6 @@ try
     cd src\Microsoft.PowerShell.ConsoleHost
     dotnet publish --framework dnx451 --output $BINFULL
 
-    # build native host
     mkdir $build -ErrorAction SilentlyContinue
     cd $build
 
@@ -63,7 +63,8 @@ try
     {
         cmake ..\src\powershell-native
     }
-    msbuild powershell.sln /p:Configuration=$msbuildConfiguration
+    
+    msbuild powershell.vcxproj /p:Configuration=$msbuildConfiguration
 
     cp -rec $msbuildConfiguration\* $BINFULL
 }
