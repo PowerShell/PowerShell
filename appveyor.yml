@@ -25,6 +25,8 @@ build_script:
 
 test_script:
   - ps: |
+      # fail tests execution, if any PS error detected
+      $ErrorActionPreference = 'Stop'
       # CoreCLR
       $testResultsFile = ".\TestsResults.xml"
       .\bin\powershell.exe --noprofile -c "Invoke-Pester test/powershell -OutputFormat NUnitXml -OutputFile $testResultsFile"
