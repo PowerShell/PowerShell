@@ -22,4 +22,19 @@
         $var.Length.Length | Should BeGreaterThan 0
 
     }
+
+    It "Should list files in sorted order" {
+        New-Item -Path $TestDrive -Name "a" -ItemType "File" -Force
+        New-Item -Path $TestDrive -Name "B" -ItemType "File" -Force
+        New-Item -Path $TestDrive -Name "c" -ItemType "File" -Force
+        New-Item -Path $TestDrive -Name "D" -ItemType "File" -Force
+        New-Item -Path $TestDrive -Name "E" -ItemType "Directory" -Force
+        
+        $files = Get-ChildItem -Path $TestDrive
+        $files[0].Name     | Should Be "E"
+        $files[1].Name     | Should Be "a"
+        $files[2].Name     | Should Be "B"
+        $files[3].Name     | Should Be "c"
+        $files[4].Name     | Should Be "D"
+    }
 }
