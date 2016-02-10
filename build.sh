@@ -27,13 +27,6 @@ mkdir -p $BIN/Modules
     cp src/libpsl-native.* $BIN
 )
 
-# Build registry stub (this should go away, again)
-(
-    cd src/registry-stub
-    make
-    cp api-ms-win-core-registry-l1-1-0.dll $BIN
-)
-
 # Publish PowerShell
 (
     cd src/Microsoft.PowerShell.Linux.Host
