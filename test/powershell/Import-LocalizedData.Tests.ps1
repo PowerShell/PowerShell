@@ -1,3 +1,6 @@
+$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+$assetsDir = Join-Path -Path $here -ChildPath assets
+
 Describe "Import-LocalizedData" {
 
     BeforeAll {
@@ -11,22 +14,22 @@ Describe "Import-LocalizedData" {
         $culture = Get-Culture
         $culture.Name     | Should Be "en-US"
 
-        $d = Import-LocalizedData -FileName $script -BaseDirectory assets
+        $d = Import-LocalizedData -FileName $script -BaseDirectory $assetsDir
         $d.d0             | Should be $sunday
     }
 
     It "Should be able to import string using en-US culture" {
-        $d = Import-LocalizedData -FileName $script -BaseDirectory assets -UICulture en-US
+        $d = Import-LocalizedData -FileName $script -BaseDirectory $assetsDir -UICulture en-US
         $d.d0             | Should be $sunday
     }
 
     It "Should be able to import string using de-DE culture" {
-        $d = Import-LocalizedData -FileName $script -BaseDirectory assets -UICulture de-DE
+        $d = Import-LocalizedData -FileName $script -BaseDirectory $assetsDir -UICulture de-DE
         $d.d0             | Should be $sundayInGerman
     }
 
     It "Should be able to import string and store in binding variable" {
-        Import-LocalizedData -FileName $script -BaseDirectory assets -UICulture de-DE -BindingVariable d
+        Import-LocalizedData -FileName $script -BaseDirectory $assetsDir -UICulture de-DE -BindingVariable d
         $d.d0             | Should be $sundayInGerman
     }
 
