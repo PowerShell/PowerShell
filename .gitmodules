@@ -17,8 +17,8 @@
 [submodule "src/windows-build"]
 	path = src/windows-build
 	url = https://github.com/PowerShell/psl-windows-build.git
-[submodule "test/Pester"]
-	path = test/Pester
+[submodule "src/Microsoft.PowerShell.Linux.Host/Modules/Pester"]
+	path = src/Microsoft.PowerShell.Linux.Host/Modules/Pester
 	url = https://github.com/PowerShell/psl-pester.git
 	branch = develop
 	ignore = dirty

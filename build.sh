@@ -2,14 +2,6 @@
 
 export BIN=$(pwd)/bin
 
-mkdir -p $BIN/Modules
-
-# Deploy PowerShell modules
-(
-    cd $BIN/Modules
-    cp -r ../../test/Pester .
-)
-
 # Build native components
 (
     cd src/libpsl-native
