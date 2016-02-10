@@ -59,14 +59,6 @@ Multiple sessions are not yet supported
 Server shut-down is not complete (must restart `omiserver` after a session is
 completed.
 
-## Registry Use
-
-`SafeHandle` objects attempt to use the registry (even on Linux) so a stub is
-in place to prevent error messages. This should be fixed in .NET Core. Use of
-the registry is widespread throughout the PowerShell codebase, and so innocuous
-things (such as loading particular modules) can cause strange behavior when
-unguarded code is executed.
-
 ## Unavailable cmdlets
 
 This project includes the CoreCLR versions of the `Commands.Management`,
