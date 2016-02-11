@@ -1,6 +1,6 @@
 {
+    "name": "Microsoft.PowerShell.Commands.Management",
     "version": "1.0.0-*",
-    "description": "Microsoft.PowerShell.Commands.Management Library",
     "authors": [ "garretts", "andschwa" ],
 
     "compilationOptions": {
@@ -8,14 +8,12 @@
     },
 
     "dependencies": {
-        "Microsoft.PowerShell.Security": {
-            "type": "build",
-            "version": "1.0.0-*"
-        }
+        "Microsoft.PowerShell.Security": "1.0.0-*"
     },
 
     "frameworks": {
-        "dnxcore50": {
+        "netstandard1.5": {
+            "imports": [ "dnxcore50" ],
             "compilationOptions": {
                 "define": [ "CORECLR" ]
             },
@@ -72,7 +70,7 @@
         "../monad/monad/src/commands/management/CommitTransactionCommand.cs",
         "../monad/monad/src/commands/management/Computer.cs",
         "../monad/monad/src/commands/management/ContentCommandBase.cs",
-        
+
         "../monad/monad/src/commands/management/ConvertPathCommand.cs",
         "../monad/monad/src/commands/management/CopyPropertyCommand.cs",
         "../monad/monad/src/commands/management/Eventlog.cs",

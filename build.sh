@@ -12,6 +12,4 @@ cp src/libpsl-native.* $BIN
 popd
 
 # Publish PowerShell
-pushd src/Microsoft.PowerShell.Linux.Host
-dotnet publish --framework dnxcore50 --output $BIN --configuration Linux
-popd
+dotnet publish --output $BIN --configuration Linux src/Microsoft.PowerShell.Linux.Host

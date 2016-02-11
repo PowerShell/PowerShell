@@ -5,7 +5,8 @@
     "authors": [ "andschwa" ],
 
     "frameworks": {
-	"dnxcore50": {
+	"netstandard1.5": {
+	    "imports": [ "dnxcore50", "portable-net45+win8" ],
 	    "dependencies": {
 		"Microsoft.PowerShell.Linux.Host": {
 		    "type": "build",
@@ -13,8 +14,7 @@
 		},
 		"xunit": "2.1.0",
 		"dotnet-test-xunit": "1.0.0-dev-*"
-	    },
-	    "imports": "portable-net45+win8"
+	    }
 	}
     },
 

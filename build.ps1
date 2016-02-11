@@ -1,7 +1,2 @@
-$BIN = "${pwd}/bin"
-
 # Publish PowerShell
-cd src/Microsoft.PowerShell.Linux.Host
-dotnet publish --framework dnxcore50 --output $BIN
-# Copy files that dotnet-publish does not currently deploy
-cd ../..
+dotnet publish "src/Microsoft.PowerShell.Linux.Host" --framework "netstandardapp1.5" --output "bin"

@@ -1,13 +1,19 @@
 {
+    "name": "System.Security.SecureString",
     "version": "1.0.0-*",
-    "description": "SecureString Stub",
+    "description": "SecureString Stub borrowed from Mono",
     "authors": [ "garretts" ],
 
-    "compilationOptions": { "allowUnsafe": true },
-
-    "dependencies": {
-	"NETStandard.Library": "1.0.0-rc3-23817"
+    "compilationOptions": {
+        "allowUnsafe": true
     },
 
-    "frameworks": { "dnxcore50": { } }
+    "frameworks": {
+        "netstandard1.5": {
+            "dependencies": {
+                "NETStandard.Library": "1.0.0-rc3-23817"
+            },
+            "imports": [ "dnxcore50" ]
+        }
+    }
 }

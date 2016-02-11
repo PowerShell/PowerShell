@@ -1,16 +1,15 @@
 {
+    "name": "Microsoft.Management.Infrastructure.Native",
     "version": "1.0.0-*",
-    "description": "Microsoft.Management.Infrastructure.Native Stub",
+    "description": "Stub to satisfy PowerShell compilation",
     "authors": [ "garretts", "andschwa" ],
 
     "frameworks": {
-        "dnxcore50": {
+        "netstandard1.5": {
+            "imports": [ "dnxcore50" ],
             "dependencies": {
                 "NETStandard.Library": "1.0.0-rc3-23817",
-                "System.Security.SecureString":  {
-                    "type": "build",
-                    "version": "1.0.0-*"
-                }
+                "System.Security.SecureString": "1.0.0-*"
             }
         },
         "dnx451": {

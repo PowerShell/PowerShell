@@ -1,6 +1,7 @@
 {
+    "name": "Microsoft.PowerShell.ConsoleHost",
     "version": "1.0.0-*",
-    "description": "Microsoft.PowerShell.ConsoleHost Library",
+    "description": "Full Windows PowerShell Host (requires native host)",
     "authors": [ "sevoroby", "andschwa" ],
 
     "compilationOptions": {
@@ -8,14 +9,8 @@
     },
 
     "dependencies": {
-        "Microsoft.PowerShell.Commands.Management": {
-            "type": "build",
-            "version": "1.0.0-*"
-        },
-        "Microsoft.PowerShell.Commands.Utility": {
-            "type": "build",
-            "version": "1.0.0-*"
-        }
+        "Microsoft.PowerShell.Commands.Management": "1.0.0-*",
+        "Microsoft.PowerShell.Commands.Utility": "1.0.0-*"
     },
 
     "frameworks": {

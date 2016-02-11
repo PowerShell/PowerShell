@@ -1,6 +1,6 @@
 {
+    "name": "Microsoft.PowerShell.Commands.Utility",
     "version": "1.0.0-*",
-    "description": "Microsoft.PowerShell.Commands.Utility Library",
     "authors": [ "garretts", "andschwa" ],
 
     "compilationOptions": {
@@ -16,18 +16,15 @@
     },
 
     "dependencies": {
-        "System.Management.Automation": {
-            "type": "build",
-            "version": "1.0.0-*"
-        }
+        "System.Management.Automation": "1.0.0-*"
     },
 
     "frameworks": {
-        "dnxcore50": {
+        "netstandard1.5": {
             "compilationOptions": {
                 "define": [ "CORECLR" ]
             },
-            "imports": "portable-net45+win8",
+            "imports": [ "dnxcore50", "portable-net45+win8" ],
             "dependencies": {
                 "Microsoft.CodeAnalysis.CSharp": "1.1.1",
                 "Newtonsoft.Json": "8.0.2"
