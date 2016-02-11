@@ -1,15 +1,22 @@
 {
+    "name": "powershell-tests",
     "version": "1.0.0-*",
-    "description": "INCOMPLETE: PowerShell On Linux xUnit Tests",
+    "description": "PowerShell On Linux xUnit Tests",
     "authors": [ "andschwa" ],
 
-    "dependencies": {
-	"NETStandard.Library": "1.0.0-rc3-23729",
-        "Microsoft.PowerShell.Linux.Host": {
-	    "type": "build",
-	    "version": "1.0.0-*"
-	},
+    "frameworks": {
+	"dnxcore50": {
+	    "dependencies": {
+		"Microsoft.PowerShell.Linux.Host": {
+		    "type": "build",
+		    "version": "1.0.0-*"
+		},
+		"xunit": "2.1.0",
+		"dotnet-test-xunit": "1.0.0-dev-*"
+	    },
+	    "imports": "portable-net45+win8"
+	}
     },
 
-    "frameworks": { "dnxcore50": { "imports": "portable-net45+win8" } }
+    "testRunner": "xunit"
 }
