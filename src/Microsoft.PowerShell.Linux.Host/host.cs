@@ -16,6 +16,7 @@ namespace Microsoft.PowerShell.Linux.Host
         public MyHost(Listener Listener)
         {
             this.Listener = Listener;
+            this.myHostUserInterface = new MyHostUserInterface(Listener.HasUI);
         }
 
         /// <summary>
@@ -44,7 +45,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// A reference to the implementation of the PSHostUserInterface
         /// class for this application.
         /// </summary>
-        private MyHostUserInterface myHostUserInterface = new MyHostUserInterface();
+        private MyHostUserInterface myHostUserInterface;
 
         /// <summary>
         /// A reference to the runspace used to start an interactive session.

@@ -187,8 +187,15 @@ OPTIONS
             set { this.exitCode = value; }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether UI should exit.
+        /// </summary>
+        public bool HasUI;
+
         public Listener(string initialScript, bool loadProfiles)
         {
+            HasUI = (initialScript == null) ? true : false;
+
             // Create the host and runspace instances for this interpreter.
             // Note that this application does not support console files so
             // only the default snap-ins will be available.
