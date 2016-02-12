@@ -14,11 +14,6 @@ namespace Microsoft.PowerShell.Linux.Host
     internal class ConsoleReadLine
     {
         /// <summary>
-        /// Holds a reference to the runspace (for history access).
-        /// </summary>
-        private Runspace runspace;
-
-        /// <summary>
         /// Powershell instance for tabcompletion
         /// </summary>
         private PowerShell powershell = PowerShell.Create();
@@ -130,7 +125,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <returns>The command line read</returns>
         public string Read(Runspace runspace)
         {
-            this.runspace = runspace;
+            this.powershell.Runspace = runspace;
             this.Initialize();
 
             while (true)
@@ -242,7 +237,7 @@ namespace Microsoft.PowerShell.Linux.Host
             }
 
             //if the buffer has been modified in any way, get the new command completion
-            if (previousKeyPress.Key != ConsoleKey.Tab || previousKeyPress.Key == ConsoleKey.Enter || previousKeyPress.Key == ConsoleKey.Escape || previousKeyPress.Key == ConsoleKey.Backspace || previousKeyPress.Key == ConsoleKey.Delete)
+            if (previousKeyPress.Key != ConsoleKey.Tab)
             {
                 tabBuffer = this.buffer;
                 cmdCompleteOpt = CommandCompletion.CompleteInput(this.tabBuffer.ToString(), this.current, options, powershell);
@@ -373,7 +368,7 @@ namespace Microsoft.PowerShell.Linux.Host
                 if ((previousKeyPress.Key != ConsoleKey.DownArrow && previousKeyPress.Key != ConsoleKey.UpArrow) || previousKeyPress.Key == ConsoleKey.Enter)
                 {
                     //first time getting the history
-                    using (Pipeline pipeline = this.runspace.CreatePipeline("Get-History"))
+                    using (Pipeline pipeline = this.powershell.Runspace.CreatePipeline("Get-History"))
                     {
                         historyResult = pipeline.Invoke();
                     }
