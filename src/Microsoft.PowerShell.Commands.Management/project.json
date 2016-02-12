@@ -81,7 +81,7 @@
         "../monad/monad/src/commands/management/GetContentCommand.cs",
         "../monad/monad/src/commands/management/GetPropertyCommand.cs",
         "../monad/monad/src/commands/management/GetTransactionCommand.cs",
-        "../monad/monad/src/commands/management/GetWmiObjectCommand.cs",
+        "../monad/monad/src/commands/management/GetWMIObjectCommand.cs",
         "../monad/monad/src/commands/management/Hotfix.cs",
         "../monad/monad/src/commands/management/InvokeWMIMethodCommand.cs",
         "../monad/monad/src/commands/management/MovePropertyCommand.cs",
