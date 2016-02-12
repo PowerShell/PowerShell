@@ -16,9 +16,7 @@ namespace Microsoft.Management.Infrastructure.Native
     {
         // Reference to the MI.h shared object library
         // TODO: figure out how to ensure the existence of mi as a shared object
-        public const string LIBMI      = "/home/zach/git/testMonad/monad-linux/src/omi/Unix/output/lib/libmi";
-        public const string LIBMOF     = "/home/zach/git/helloworld/native/mofcodec";
-        public const string LIBMICODEC = "/home/zach/git/monad-linux/src/dsc/omi-1.0.8/output/lib/libmicodec.so";
+        public const string LIBMI      = "../omi/Unix/output/lib/libmi";
 
 #region structs
 
@@ -194,70 +192,6 @@ namespace Microsoft.Management.Infrastructure.Native
                                                out uint flags); // optional
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_Deserializer_ClassObjectNeeded
-        {
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_Deserializer_GetIncludedFileBuffer
-        {}
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_Deserializer_FreeIncludedFileBuffer 
-        {}
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_OperationCallback_Instance 
-        {}
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_OperationCallback_Class 
-        {}
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_Deserializer_ClassObjectNeededOnId
-        {}
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_Deserializer_ClassObjectAndId
-        {}
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_Deserializer_QualifierDeclNeeded
-        {}
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_DeserializerCallbacks
-        {
-            /* Class schema callback */
-            public IntPtr classObjectNeededContext ;
-            public MI_Deserializer_ClassObjectNeeded classObjectNeeded;
-            /* Included file buffer callback */
-            public IntPtr includedFileContext;
-            public MI_Deserializer_GetIncludedFileBuffer getIncludedFileContent;
-            public MI_Deserializer_FreeIncludedFileBuffer freeIncludedFileContent;
-            /* instanceResult is reserved, must be NULL */
-            /* Instance result callbacks, only needed for instance deserialization */
-            public IntPtr instanceResultContext;
-            public MI_OperationCallback_Instance instanceResult;
-            /* classResult is reserved, must be NULL */
-            /* Class result callbacks, only needed for class deserialization */
-            public IntPtr classResultContext;
-            public MI_OperationCallback_Class classResult;
-            /* Class schema callback based on class Id */
-            public IntPtr classObjectNeededOnIdContext;
-            public MI_Deserializer_ClassObjectNeededOnId classObjectNeededOnId;
-            /* **Temporary** callback to return classid for a particular class 
-            * This will be used by deserializeClass routine to report Id associated with the class 
-            * If this callback is provided, MI_Deserializer_DeserializeClassArray will report all deserialized classes
-            * through this callback. No classes will be returned through MI_Deserializer_DeserializeClassArray's output parameter "classObjects" */
-            public IntPtr classObjectAndIdContext;
-            public MI_Deserializer_ClassObjectAndId classObjectAndId;
-            /* Qualifier declaration callback based on qualifier name */
-            public IntPtr qualifierDeclNeededContext;
-            public MI_Deserializer_QualifierDeclNeeded qualifierDeclNeeded;
-        }
 #endregion //structs
 
 #region PInvokes
@@ -280,49 +214,6 @@ namespace Microsoft.Management.Infrastructure.Native
                                                                   out IntPtr errInstance, 
                                                                   out MI_Application application);
 
-        // MI_Result MI_MAIN_CALL MI_Application_NewDeserializer_Mof(
-        //     _Inout_ MI_Application *application, 
-        //     MI_Uint32 flags,
-        //     _In_z_ MI_Char *format, 
-        //     _Out_ MI_Deserializer *deserializer);
-        [DllImport(LIBMICODEC, CharSet = CharSet.Ansi)]
-        public static extern MiResult MI_Application_NewDeserializer_Mof(
-                                        ref MI_Application application,
-                                        UInt32 flags,
-                                        string nativeFormat,
-                                        out MI_Deserializer deserializer);
-
-        //    MI_Deserializer_DeserializeClassArray unmanaged signature in micodec:
-        //    MI_INLINE MI_Result MI_Deserializer_DeserializeClassArray(
-        //        _Inout_ MI_Deserializer *deserializer, 
-        //        _In_ MI_Uint32 flags,
-        //        _In_opt_ MI_OperationOptions *options,
-        //        _In_opt_ MI_DeserializerCallbacks * callbacks,
-        //        _In_reads_(serializedBufferLength) MI_Uint8 *serializedBuffer,
-        //        _In_ MI_Uint32 serializedBufferLength,
-        //        _In_opt_ MI_ClassA *classes,
-        //        _In_opt_z_ const MI_Char *serverName  ,
-        //        _In_opt_z_ const MI_Char *namespaceName,
-        //        _Out_opt_ MI_Uint32 *serializedBufferRead,
-        //        _Outptr_result_maybenull_ MI_ClassA **classObjects,
-        //        _Always_(_Outptr_opt_result_maybenull_) MI_Instance **cimErrorDetails)
-
-        // @params Pointer to MI_Class
-        //           Pointer to MI_Instance
-        [DllImport(LIBMICODEC, CharSet=CharSet.Ansi)]
-        public static extern MiResult MI_Deserializer_DeserializeClassArray(
-                                                        ref MI_Deserializer deserializer,
-                                                        UInt32 flags,
-                                                        ref MI_OperationOptions options,
-                                                        out IntPtr cb, // MI_DeserializerCallbacks callbacks,
-                                                        byte[] serializedBuffer,
-                                                        uint serializedBufferLength,
-                                                        out IntPtr classes,
-                                                        string serverName,
-                                                        string nameSpaceName,
-                                                        out uint serializedBufferRead,
-                                                        out IntPtr resultClassArray,
-                                                        out IntPtr cimErrorDetails);
 #endregion
     } // End MiNative
 
@@ -408,6 +299,7 @@ namespace Microsoft.Management.Infrastructure.Native
             IntPtr ePtr = Marshal.AllocHGlobal(eSize);
             //Marshal.StructureToPtr(errorDetails.miErrInstance, instance, false);
 
+            // TODO: don't call InitializeV1 per the MI.h docs
             MiResult result = MiNative.MI_Application_InitializeV1(0, appID, out ePtr, out application);
 
             applicationHandle = Marshal.PtrToStructure<ApplicationHandle>(appBuffer);
@@ -485,34 +377,35 @@ namespace Microsoft.Management.Infrastructure.Native
         // Takes a newly declared DeserializerHandle, and executes a P/Invoke to create a deserialzerMOF instance.  This requires access to mofcodec.  ApplicationHandle should already be created via Native.Initialize.
         internal static MiResult NewDeserializerMOF(ApplicationHandle applicationHandle, string format, uint flags, out DeserializerHandle deserializerHandle)
         {
-            //TODO: the applicationdHandle should already be set.  Implement guards to verify
-            // create a pointer to the app and deserializer
-            IntPtr appBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(applicationHandle.miApp)); // app size should be 24
-            Marshal.StructureToPtr(applicationHandle.miApp, appBuffer, false);
+            throw new NotImplementedException();
+            ////TODO: the applicationdHandle should already be set.  Implement guards to verify
+            //// create a pointer to the app and deserializer
+            //IntPtr appBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(applicationHandle.miApp)); // app size should be 24
+            //Marshal.StructureToPtr(applicationHandle.miApp, appBuffer, false);
 
-            // Create the deserializer
-            deserializerHandle                         = new DeserializerHandle();
-            MiNative.MI_Deserializer deserializer      = deserializerHandle.miDeserializer;
-            deserializer.reserved1                     = 0;
-            deserializer.reserved2                     = IntPtr.Zero;
-            IntPtr deserializeBuffer                   = Marshal.AllocHGlobal(Marshal.SizeOf(deserializer));
-            Marshal.StructureToPtr(deserializer, deserializeBuffer, false); // map the struct to an IntPtr
+            //// Create the deserializer
+            //deserializerHandle                         = new DeserializerHandle();
+            //MiNative.MI_Deserializer deserializer      = deserializerHandle.miDeserializer;
+            //deserializer.reserved1                     = 0;
+            //deserializer.reserved2                     = IntPtr.Zero;
+            //IntPtr deserializeBuffer                   = Marshal.AllocHGlobal(Marshal.SizeOf(deserializer));
+            //Marshal.StructureToPtr(deserializer, deserializeBuffer, false); // map the struct to an IntPtr
 
-            Console.WriteLine("Creating a New DeserializerMOF");
-            // takes a pointer to the applicationHandle struct, and a pointer to the deserializerHandle struct.
-            // Sets the deserializer struct.
-            MiResult result = MiNative.MI_Application_NewDeserializer_Mof(ref applicationHandle.miApp, flags, format, out deserializer);
-            Console.WriteLine("Native>> Created new deserializer Mof Pinvoke returned {0}", result);
-            deserializerHandle = Marshal.PtrToStructure<DeserializerHandle>(deserializeBuffer);
-            deserializerHandle.miDeserializer = deserializer;
-            // TODO: if result != MiResult.OK, return result
-            // TODO: Debug.Assert that the structs are populated correctly.
+            //Console.WriteLine("Creating a New DeserializerMOF");
+            //// takes a pointer to the applicationHandle struct, and a pointer to the deserializerHandle struct.
+            //// Sets the deserializer struct.
+            //MiResult result = MiNative.MI_Application_NewDeserializer_Mof(ref applicationHandle.miApp, flags, format, out deserializer);
+            //Console.WriteLine("Native>> Created new deserializer Mof Pinvoke returned {0}", result);
+            //deserializerHandle = Marshal.PtrToStructure<DeserializerHandle>(deserializeBuffer);
+            //deserializerHandle.miDeserializer = deserializer;
+            //// TODO: if result != MiResult.OK, return result
+            //// TODO: Debug.Assert that the structs are populated correctly.
 
-            // Free the buffers
-            Marshal.FreeHGlobal(deserializeBuffer);
-            Marshal.FreeHGlobal(appBuffer);
+            //// Free the buffers
+            //Marshal.FreeHGlobal(deserializeBuffer);
+            //Marshal.FreeHGlobal(appBuffer);
 
-            return result;
+            //return result;
         }
 
         internal static MiResult NewSerializerMOF(ApplicationHandle applicationHandle, string format, uint flags, out SerializerHandle serializerHandle)
@@ -808,7 +701,7 @@ namespace Microsoft.Management.Infrastructure.Native
     [StructLayout(LayoutKind.Sequential)]
     internal class DeserializerCallbacks
     {
-        public MiNative.MI_DeserializerCallbacks miDeserializerCallbacks;
+        //public MiNative.MI_DeserializerCallbacks miDeserializerCallbacks;
         // Fields
         //private ClassObjectNeededCallbackDelegate<backing_store> ClassObjectNeededCallback;
         //private GetIncludedFileBufferCallbackDelegate<backing_store> GetIncludedFileBufferCallback;
@@ -817,17 +710,18 @@ namespace Microsoft.Management.Infrastructure.Native
         // Methods
         internal DeserializerCallbacks()
         {
-            this.miDeserializerCallbacks = new MiNative.MI_DeserializerCallbacks();
+            // TODO: Implement
+            //this.miDeserializerCallbacks = new MiNative.MI_DeserializerCallbacks();
         }
         //internal static unsafe _MI_Result ClassObjectNeededAppDomainProxy(void* context, ushort modopt(IsConst)* serverName, ushort modopt(IsConst)* namespaceName, ushort modopt(IsConst)* className, _MI_Class** requestedClassObject)
         //internal static unsafe _MI_Result GetIncludedFileBufferAppDomainProxy(void* context, ushort modopt(IsConst)* fileName, byte** fileBuffer, uint* bufferLength)
         //internal static unsafe void ReleaseDeserializerCallbacksProxy(DeserializerCallbacksProxy* pCallbacksProxy)
-        [return: MarshalAs(UnmanagedType.U1)]
-        internal bool SetMiDeserializerCallbacks(MiNative.MI_DeserializerCallbacks pmiDeserializerCallbacks)
-        {
-            //TODO: Implement
-            return true;
-        }
+        //[return: MarshalAs(UnmanagedType.U1)]
+        //internal bool SetMiDeserializerCallbacks(MiNative.MI_DeserializerCallbacks pmiDeserializerCallbacks)
+        //{
+        //    //TODO: Implement
+        //    return true;
+        //}
         //private static unsafe void StoreCallbackDelegate(DeserializerCallbacksProxy* pCallbacksProxy, Delegate externalCallback, Delegate appDomainProxyCallback, DeserializerCallbackId callbackId);
 
         // Properties
@@ -860,125 +754,126 @@ namespace Microsoft.Management.Infrastructure.Native
          */
         internal static MiResult DeserializeClassArray(DeserializerHandle deserializerHandle, OperationOptionsHandle options, DeserializerCallbacks callback, byte[] serializedBuffer, uint offset, ClassHandle[] classObjects, string serverName, string nameSpace, out ClassHandle[] deserializedClasses, out uint inputBufferUsed, out InstanceHandle cimErrorDetails)
         {
-            //TODO: Assert that deserializeHandle exists
-            //TODO: Assert that serializedbuffer exists
-            cimErrorDetails = new InstanceHandle();
-            Console.WriteLine(">>MMI.Native/DeserializeClassArray");
-            // create locals
-            MiNative.MI_OperationOptions localOpts = options.miOperationOptions;
+            throw new NotImplementedException();
+            ////TODO: Assert that deserializeHandle exists
+            ////TODO: Assert that serializedbuffer exists
+            //cimErrorDetails = new InstanceHandle();
+            //Console.WriteLine(">>MMI.Native/DeserializeClassArray");
+            //// create locals
+            //MiNative.MI_OperationOptions localOpts = options.miOperationOptions;
 
-            //IntPtr psb = Marshal.AllocHGlobal(serializedBuffer.Length);
-            //Marshal.Copy(serializedBuffer, 0, psb, serializedBuffer.Length);
-            //GCHandle gch = GCHandle.Alloc(serializedBuffer.Length, GCHandleType.Pinned);
-            //IntPtr psb = gch.AddrOfPinnedObject();
-            // if (serializedBuffer != null)
-            // {
-            //     int serializedBuffSize = Marshal.SizeOf(serializedBuffer[0])*serializedBuffer.Length;
-            //     sb = Marshal.AllocHGlobal(serializedBuffSize);
-            //     Marshal.Copy(serializedBuffer, 0, sb, serializedBuffer.Length);
-            // }
-            IntPtr deserializerBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(deserializerHandle.miDeserializer));
-            Marshal.StructureToPtr(deserializerHandle.miDeserializer, deserializerBuffer, false);
-            MiNative.MI_Instance ErrorIns              = cimErrorDetails.miErrInstance;
-            IntPtr pErr                                = Marshal.AllocHGlobal(Marshal.SizeOf(ErrorIns));
-            inputBufferUsed                            = 0;
-            MiNative.MI_DeserializerCallbacks cb       = callback.miDeserializerCallbacks;
-            IntPtr pNativeCallbacks                    = Marshal.AllocHGlobal(Marshal.SizeOf(cb));
-            uint serializedBufferRead;
-            IntPtr classObjectsBuffer;
-            int nativeClassObjectsLength;
-            //byte[] pbyNativeClassObjects;
-            // create an array of classArray structs.  If there is existing classArray information, assign that.
-            //MiNative.MI_ClassA classArray;
-            //classArray.data = IntPtr.Zero;
-            //classArray.size = 0;
-            IntPtr classArray;
-            // Populate MI_ClassA.data when an array of classObjects is provided.
-            // This will later be passed as a pointer to MI_ClassA
-           /* if ((classObjects != null) && (0 < classObjects.Length))
-            {
-                nativeClassObjectsLength = classObjects.Length;
-                //now populate the date with all the MI_Class instances
-                int iSizeOfOneClassHandle = Marshal.SizeOf(classObjects[0].miClass); 
-                classObjectsBuffer = Marshal.AllocHGlobal(iSizeOfOneClassHandle * nativeClassObjectsLength);
-
-                classObjects = new ClassHandle[nativeClassObjectsLength];
-                for( uint i = 0; i < nativeClassObjectsLength; i++)
-                {
-                    classObjects[i] = new ClassHandle();
-                }
-                //pbyNativeClassObjects = (byte[])(pNativeClassObjects.ToPointer());
-                //for ( int i = 0; i < nativeClassObjectsLength; i++, pbyNativeClassObjects += (iSizeOfOneClassHandle) )
-                //{
-                //    IntPtr pOneClassObject = new IntPtr(pbyNativeClassObjects);
-                //    Marshal.StructureToPtr(classObjects[i], pOneClassObject, false);
-                //}
-                classArray.data = classObjectsBuffer;
-                classArray.size = (uint)nativeClassObjectsLength;
-            }*/
-
-            //if (options) { nativeOptions  }
-            IntPtr pOpts = IntPtr.Zero;
-            //if (callback) { callback.SetMiDeserializerCallbacks(ref pNativeCallbacks); }
-            // TODO: this is wrong- deserializedClasses array of classHandles needs to be created differently
-           // deserializedClasses                 = new ClassHandle[1];
-           // deserializedClasses[0]              = new ClassHandle();
-           // MiNative.MI_Class dClasses          = deserializedClasses[0].miClass;
-
-            //var resultClassArray = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IntPtr)));
-
-            //MiNative.MI_ClassA resultClassArray;
-            //IntPtr resultClassABuffer = (IntPtr)Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(IntPtr)));
-            //// convert classObjects to byte array
-            //Console.WriteLine("the pinned address : {0}", gch.AddrOfPinnedObject());
-            //IntPtr gchPtr = gch.AddrOfPinnedObject();
-
-            //resultClassArray.data     = IntPtr.Zero;
-            //resultClassArray.size     = 1;
-            //IntPtr resultClassABuffer = Marshal.AllocHGlobal(Marshal.SizeOf(resultClassArray));
-            //Marshal.StructureToPtr(resultClassArray, resultClassABuffer, false);
-
-            //MiNative.MI_ClassA classA = new MiNative.MI_ClassA();
-            //IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf(classA));
-            //Marshal.StructureToPtr(classA, ptr, false);
-            // execute p/invoke, assign to result. Note: flags= 0
-            //if ( classA == null) { Console.WriteLine("You dun goofed");}
-            IntPtr ptr;// = IntPtr.Zero;
-            //ptr = Marshal.AllocHGlobal(IntPtr.Size);
-            IntPtr bs;
-            //Marshal.StructureToPtr(callback, bs, false);//callbacks
-            MiResult result = MiNative.MI_Deserializer_DeserializeClassArray(
-                                                        ref deserializerHandle.miDeserializer,
-                                                        0,
-                                                        ref localOpts,
-                                                        out bs, // callbacks
-                                                        serializedBuffer,
-                                                        (uint)serializedBuffer.Length,
-                                                        out classArray,  /* classArray: if null, pass IntPtr.Zero, else classArray */
-                                                        serverName,
-                                                        nameSpace,
-                                                        out serializedBufferRead,
-                                                        out ptr,
-                                                        out pErr);
-
-            Console.WriteLine("MI_Deserializer_DeserializeClassArray pinvoke complete.  result :{0}", result);
-            Console.WriteLine("classObjects: {0}", ptr);
-            //TODO: classHandle array from resultClassArray needs to be marshalled into managed code, then assign the array of classHandles to 
-            ClassHandle[] d = new ClassHandle[1];
-            deserializedClasses = d;
-            //ClassHandle[] d = Marshal.PtrToStructure<ClassHandle>(resultClassArray);
-            //if ((result == MiResult.OK) && (0 != resultClassArray.Size))
+            ////IntPtr psb = Marshal.AllocHGlobal(serializedBuffer.Length);
+            ////Marshal.Copy(serializedBuffer, 0, psb, serializedBuffer.Length);
+            ////GCHandle gch = GCHandle.Alloc(serializedBuffer.Length, GCHandleType.Pinned);
+            ////IntPtr psb = gch.AddrOfPinnedObject();
+            //// if (serializedBuffer != null)
+            //// {
+            ////     int serializedBuffSize = Marshal.SizeOf(serializedBuffer[0])*serializedBuffer.Length;
+            ////     sb = Marshal.AllocHGlobal(serializedBuffSize);
+            ////     Marshal.Copy(serializedBuffer, 0, sb, serializedBuffer.Length);
+            //// }
+            //IntPtr deserializerBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(deserializerHandle.miDeserializer));
+            //Marshal.StructureToPtr(deserializerHandle.miDeserializer, deserializerBuffer, false);
+            //MiNative.MI_Instance ErrorIns              = cimErrorDetails.miErrInstance;
+            //IntPtr pErr                                = Marshal.AllocHGlobal(Marshal.SizeOf(ErrorIns));
+            //inputBufferUsed                            = 0;
+            //MiNative.MI_DeserializerCallbacks cb       = callback.miDeserializerCallbacks;
+            //IntPtr pNativeCallbacks                    = Marshal.AllocHGlobal(Marshal.SizeOf(cb));
+            //uint serializedBufferRead;
+            //IntPtr classObjectsBuffer;
+            //int nativeClassObjectsLength;
+            ////byte[] pbyNativeClassObjects;
+            //// create an array of classArray structs.  If there is existing classArray information, assign that.
+            ////MiNative.MI_ClassA classArray;
+            ////classArray.data = IntPtr.Zero;
+            ////classArray.size = 0;
+            //IntPtr classArray;
+            //// Populate MI_ClassA.data when an array of classObjects is provided.
+            //// This will later be passed as a pointer to MI_ClassA
+           ///* if ((classObjects != null) && (0 < classObjects.Length))
             //{
-            //    deserializedClasses = new ClassHandle[resultClassArray.size];
-            //    for (int i=0; i < resultClassArray.size; i++)
+            //    nativeClassObjectsLength = classObjects.Length;
+            //    //now populate the date with all the MI_Class instances
+            //    int iSizeOfOneClassHandle = Marshal.SizeOf(classObjects[0].miClass); 
+            //    classObjectsBuffer = Marshal.AllocHGlobal(iSizeOfOneClassHandle * nativeClassObjectsLength);
+
+            //    classObjects = new ClassHandle[nativeClassObjectsLength];
+            //    for( uint i = 0; i < nativeClassObjectsLength; i++)
             //    {
-            //        deserializedClasses[i] = Marshal.PtrToStructure<ClassHandle>(resultClassArray.data);
+            //        classObjects[i] = new ClassHandle();
             //    }
-            //}
+            //    //pbyNativeClassObjects = (byte[])(pNativeClassObjects.ToPointer());
+            //    //for ( int i = 0; i < nativeClassObjectsLength; i++, pbyNativeClassObjects += (iSizeOfOneClassHandle) )
+            //    //{
+            //    //    IntPtr pOneClassObject = new IntPtr(pbyNativeClassObjects);
+            //    //    Marshal.StructureToPtr(classObjects[i], pOneClassObject, false);
+            //    //}
+            //    classArray.data = classObjectsBuffer;
+            //    classArray.size = (uint)nativeClassObjectsLength;
+            //}*/
 
-            return result;
+            ////if (options) { nativeOptions  }
+            //IntPtr pOpts = IntPtr.Zero;
+            ////if (callback) { callback.SetMiDeserializerCallbacks(ref pNativeCallbacks); }
+            //// TODO: this is wrong- deserializedClasses array of classHandles needs to be created differently
+           //// deserializedClasses                 = new ClassHandle[1];
+           //// deserializedClasses[0]              = new ClassHandle();
+           //// MiNative.MI_Class dClasses          = deserializedClasses[0].miClass;
 
-            //throw new NotImplementedException();
+            ////var resultClassArray = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IntPtr)));
+
+            ////MiNative.MI_ClassA resultClassArray;
+            ////IntPtr resultClassABuffer = (IntPtr)Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(IntPtr)));
+            ////// convert classObjects to byte array
+            ////Console.WriteLine("the pinned address : {0}", gch.AddrOfPinnedObject());
+            ////IntPtr gchPtr = gch.AddrOfPinnedObject();
+
+            ////resultClassArray.data     = IntPtr.Zero;
+            ////resultClassArray.size     = 1;
+            ////IntPtr resultClassABuffer = Marshal.AllocHGlobal(Marshal.SizeOf(resultClassArray));
+            ////Marshal.StructureToPtr(resultClassArray, resultClassABuffer, false);
+
+            ////MiNative.MI_ClassA classA = new MiNative.MI_ClassA();
+            ////IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf(classA));
+            ////Marshal.StructureToPtr(classA, ptr, false);
+            //// execute p/invoke, assign to result. Note: flags= 0
+            ////if ( classA == null) { Console.WriteLine("You dun goofed");}
+            //IntPtr ptr;// = IntPtr.Zero;
+            ////ptr = Marshal.AllocHGlobal(IntPtr.Size);
+            //IntPtr bs;
+            ////Marshal.StructureToPtr(callback, bs, false);//callbacks
+            //MiResult result = MiNative.MI_Deserializer_DeserializeClassArray(
+            //                                            ref deserializerHandle.miDeserializer,
+            //                                            0,
+            //                                            ref localOpts,
+            //                                            out bs, // callbacks
+            //                                            serializedBuffer,
+            //                                            (uint)serializedBuffer.Length,
+            //                                            out classArray,  /* classArray: if null, pass IntPtr.Zero, else classArray */
+            //                                            serverName,
+            //                                            nameSpace,
+            //                                            out serializedBufferRead,
+            //                                            out ptr,
+            //                                            out pErr);
+
+            //Console.WriteLine("MI_Deserializer_DeserializeClassArray pinvoke complete.  result :{0}", result);
+            //Console.WriteLine("classObjects: {0}", ptr);
+            ////TODO: classHandle array from resultClassArray needs to be marshalled into managed code, then assign the array of classHandles to 
+            //ClassHandle[] d = new ClassHandle[1];
+            //deserializedClasses = d;
+            ////ClassHandle[] d = Marshal.PtrToStructure<ClassHandle>(resultClassArray);
+            ////if ((result == MiResult.OK) && (0 != resultClassArray.Size))
+            ////{
+            ////    deserializedClasses = new ClassHandle[resultClassArray.size];
+            ////    for (int i=0; i < resultClassArray.size; i++)
+            ////    {
+            ////        deserializedClasses[i] = Marshal.PtrToStructure<ClassHandle>(resultClassArray.data);
+            ////    }
+            ////}
+
+            //return result;
+
+            ////throw new NotImplementedException();
         }
         internal static MiResult DeserializeInstanceArray(DeserializerHandle deserializerHandle, OperationOptionsHandle options, DeserializerCallbacks callback, byte[] serializedBuffer, uint offset, ClassHandle[] classObjects, out InstanceHandle[] deserializedInstances, out uint inputBufferUsed, out InstanceHandle cimErrorDetails)
         {

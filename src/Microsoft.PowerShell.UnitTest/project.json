@@ -1,0 +1,21 @@
+{
+    "version": "1.0.0-*",
+    "compilationOptions": {
+        "emitEntryPoint": false
+    },
+
+
+    "frameworks": {
+        "dnxcore50": {
+           "dependencies": {
+              "Microsoft.Management.Infrastructure" : {
+                  "type": "build",
+                  "version": "1.0.0-*"
+              },
+              "xunit": "2.1.0",
+              "dotnet-test-xunit": "1.0.0-dev-*"
+           },
+           "imports": "portable-net45+win8" }
+    },
+    "testRunner": "xunit"
+}
