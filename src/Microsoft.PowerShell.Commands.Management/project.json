@@ -27,8 +27,8 @@
         "dnx451": {
             "frameworkAssemblies": {
                 "System.ServiceProcess": "",
-                "System.Windows.Forms": "4.0.0.0",
-                "System.Drawing": "4.0.0.0",
+                "System.Windows.Forms": "",
+                "System.Drawing": "",
                 "System.Web.Services": ""
             },
             "dependencies": {
