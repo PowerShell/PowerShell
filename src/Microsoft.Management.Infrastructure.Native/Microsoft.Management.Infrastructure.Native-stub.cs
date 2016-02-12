@@ -276,7 +276,6 @@ namespace Microsoft.Management.Infrastructure.Native
         // passes in to MI.h two pointers to structs which have been previously declared, sets them, and returns an MiResult
         internal static MiResult InitializeCore(out InstanceHandle errorDetails, out ApplicationHandle applicationHandle)
         {
-            Console.WriteLine(">>Native InitializeCore");
             // Initialize instance
             string appID       = string.Empty;
             errorDetails       = new InstanceHandle();
@@ -288,27 +287,19 @@ namespace Microsoft.Management.Infrastructure.Native
 
             application.reserved1 = 0; // set to zero.  Native call should set to 1 if it worked.
             application.reserved2 = IntPtr.Zero;
-            //TODO: function table must not be null
-            //Function table must be set
-            //application.ft        = IntPtr.Zero; 
 
             IntPtr appBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(application));
             Marshal.StructureToPtr(application, appBuffer, false);
 
             int eSize = Marshal.SizeOf(errorInstance);
             IntPtr ePtr = Marshal.AllocHGlobal(eSize);
-            //Marshal.StructureToPtr(errorDetails.miErrInstance, instance, false);
 
-            // TODO: don't call InitializeV1 per the MI.h docs
             MiResult result = MiNative.MI_Application_InitializeV1(0, appID, out ePtr, out application);
 
             applicationHandle = Marshal.PtrToStructure<ApplicationHandle>(appBuffer);
             // allocate the application to the MMI.Native ApplicationHandle
             applicationHandle.miApp = application;
-            Console.WriteLine("application exists after pinvoke {0}", applicationHandle.miApp.reserved1);
-            //MiNative.MI_ApplicationFT appFT = Marshal.PtrToStructure<MiNative.MI_ApplicationFT>(application.ft);
 
-            //Console.WriteLine("MiResult for MI_Application_IntializeV1 : {0}", result);
             // Free the memory
             Marshal.FreeHGlobal(appBuffer);
             Marshal.FreeHGlobal(ePtr);
