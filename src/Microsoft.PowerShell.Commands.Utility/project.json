@@ -29,14 +29,19 @@
             },
             "imports": "portable-net45+win8",
             "dependencies": {
-                "Microsoft.CodeAnalysis.CSharp": "1.1.1"
+                "Microsoft.CodeAnalysis.CSharp": "1.1.1",
+                "Newtonsoft.Json": "8.0.2"
             }
         },
         "dnx451": {
             "frameworkAssemblies": {
                 "System.Drawing": "",
+                "System.Web": "",
                 "System.Web.Extensions": "",
                 "Microsoft.JScript": ""
+            },
+            "dependencies": {
+                "Microsoft.mshtml": "1.0.0"
             }
         }
     },
@@ -329,6 +334,26 @@
         "../monad/monad/src/commands/utility/StringManipulation/Synthesis/Strategies/TopDownSynthesis.cs",
         "../monad/monad/src/commands/utility/StringManipulation/Synthesis/StrategyConfig.cs",
         "../monad/monad/src/commands/utility/StringManipulation/Synthesis/SynthesisEngine.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/ConvertFromJsonCommand.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/ConvertToJsonCommand.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/JsonObject.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/BasicHtmlWebResponseObject.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/ContentHelper.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/FormObject.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/FormObjectCollection.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/HtmlWebResponseObject.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/InvokeRestMethodCommand.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/InvokeWebRequestCommand.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/JsonObjectTypeResolver.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/PSUserAgent.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/StreamHelper.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/WebCmdletElementCollection.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/WebRequestMethod.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/WebRequestPSCmdlet.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/WebRequestSession.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/WebResponseHelper.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/WebResponseObject.cs",
+        "../monad/monad/src/commands/utility/WebCmdlet/WebResponseObjectFactory.cs",
         "../monad/monad/src/commands/utility/tee-object.cs",
         "../monad/monad/src/commands/utility/TimeExpressionCommand.cs",
         "../monad/monad/src/commands/utility/trace/GetTracerCommand.cs",

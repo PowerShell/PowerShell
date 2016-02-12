@@ -15,12 +15,6 @@ does not build on Core PowerShell, and cannot be guarded with preprocessor
 directives due to the use of here-strings that contain lines starting with `#`,
 which breaks the preprocessor.
 
-## `WebCmdlet`
-
-All files in `monad\src\commands\utility\WebCmdlet` have been removed from
-`Microsoft.PowerShell.Commands.Utility` because we cannot resolve `mshtml.dll`
-as a framework assembly.
-
 ## `Microsoft.Management.Infrastructure.Native`
 
 Windows builds currently use the native stub; this should be replaced with
