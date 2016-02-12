@@ -1,10 +1,10 @@
 # Known Issues
 
-## `Computer.cs`
+## `ControlPanelItemCommand.cs`
 
-The file `monad/src/commands/management/Computer.cs` has been removed
+The file `monad/src/commands/management/ControlPanelItemCommand.cs` has been removed
 temporarily from `Microsoft.PowerShell.Commands.Management` because we
-cannot resolve `Microsoft.WSMan.Management` for FullCLR builds. This must be
+cannot resolve `[Shell32.ShellFolderItem]` for FullCLR builds. This must be
 fixed ASAP.
 
 ## `ImplicitRemotingCommands.cs`
