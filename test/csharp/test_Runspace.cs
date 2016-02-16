@@ -13,6 +13,12 @@ namespace PSTests
         private static int count = 3;
         private static string script = String.Format($"get-process | select-object -first {count}");
 
+        // Initialize the Core PowerShell AssemblyLoadContext
+        public RunspaceTests()
+        {
+            PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(AppContext.BaseDirectory);
+        }
+
         [Fact]
         public void TestRunspaceWithPipeline()
         {
