@@ -230,10 +230,11 @@ namespace Microsoft.PowerShell.Linux.Host
             if (previousKeyPress.Key != ConsoleKey.Tab)
             {
                 cmdCompleteOpt = CommandCompletion.CompleteInput(this.buffer.ToString(), this.current, options, powershell);
-                if (cmdCompleteOpt.CompletionMatches.Count == 0)
-                {
-                    return;
-                }
+            }
+
+            if (cmdCompleteOpt.CompletionMatches.Count == 0)
+            {
+                return;
             }
 
             if (tabCompletionPos >= cmdCompleteOpt.CompletionMatches.Count)
