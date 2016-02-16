@@ -26,7 +26,13 @@
         },
         "dnx451": {
             "frameworkAssemblies": {
-                "System.ServiceProcess": ""
+                "System.ServiceProcess": "",
+                "System.Windows.Forms": "",
+                "System.Drawing": "",
+                "System.Web.Services": ""
+            },
+            "dependencies": {
+                 "Microsoft.WSMan.Management": "1.0.0"
             }
         }
     },
@@ -34,8 +40,16 @@
     "compile": [ "../windows-build/gen/COMMANDS_MANAGEMENT/*.cs" ],
 
     "compileFiles": [
-        "../monad/monad/src/cimSupport/cmdletization/SessionBasedWrapper.cs",
+        "../monad/monad/src/cimSupport/cmdletization/cim/cimChildJobBase.cs",
+        "../monad/monad/src/cimSupport/cmdletization/cim/cimCmdletDefinitionContext.cs",
+        "../monad/monad/src/cimSupport/cmdletization/cim/cimCmdletInvocationContext.cs",
+        "../monad/monad/src/cimSupport/cmdletization/cim/cimConverter.cs",
+        "../monad/monad/src/cimSupport/cmdletization/cim/cimJobContext.cs",
         "../monad/monad/src/cimSupport/cmdletization/cim/CimJobException.cs",
+        "../monad/monad/src/cimSupport/cmdletization/cim/cimOperationOptionsHelper.cs",
+        "../monad/monad/src/cimSupport/cmdletization/cim/cimQuery.cs",
+        "../monad/monad/src/cimSupport/cmdletization/cim/cimWrapper.cs",
+        "../monad/monad/src/cimSupport/cmdletization/cim/clientSideQuery.cs",
         "../monad/monad/src/cimSupport/cmdletization/cim/CreateInstanceJob.cs",
         "../monad/monad/src/cimSupport/cmdletization/cim/DeleteInstanceJob.cs",
         "../monad/monad/src/cimSupport/cmdletization/cim/EnumerateAssociatedInstancesJob.cs",
@@ -48,26 +62,28 @@
         "../monad/monad/src/cimSupport/cmdletization/cim/QueryJobBase.cs",
         "../monad/monad/src/cimSupport/cmdletization/cim/StaticMethodInvocationJob.cs",
         "../monad/monad/src/cimSupport/cmdletization/cim/TerminatingErrorTracker.cs",
-        "../monad/monad/src/cimSupport/cmdletization/cim/cimChildJobBase.cs",
-        "../monad/monad/src/cimSupport/cmdletization/cim/cimCmdletDefinitionContext.cs",
-        "../monad/monad/src/cimSupport/cmdletization/cim/cimCmdletInvocationContext.cs",
-        "../monad/monad/src/cimSupport/cmdletization/cim/cimConverter.cs",
-        "../monad/monad/src/cimSupport/cmdletization/cim/cimJobContext.cs",
-        "../monad/monad/src/cimSupport/cmdletization/cim/cimOperationOptionsHelper.cs",
-        "../monad/monad/src/cimSupport/cmdletization/cim/cimQuery.cs",
-        "../monad/monad/src/cimSupport/cmdletization/cim/cimWrapper.cs",
-        "../monad/monad/src/cimSupport/cmdletization/cim/clientSideQuery.cs",
+        "../monad/monad/src/cimSupport/cmdletization/SessionBasedWrapper.cs",
         "../monad/monad/src/commands/management/AddContentCommand.cs",
         "../monad/monad/src/commands/management/ClearContentCommand.cs",
         "../monad/monad/src/commands/management/ClearPropertyCommand.cs",
+        "../monad/monad/src/commands/management/ClearRecycleBinCommand.cs",
         "../monad/monad/src/commands/management/CombinePathCommand.cs",
         "../monad/monad/src/commands/management/CommandsCommon.cs",
+        "../monad/monad/src/commands/management/CommitTransactionCommand.cs",
+        "../monad/monad/src/commands/management/Computer.cs",
         "../monad/monad/src/commands/management/ContentCommandBase.cs",
+        
         "../monad/monad/src/commands/management/ConvertPathCommand.cs",
         "../monad/monad/src/commands/management/CopyPropertyCommand.cs",
+        "../monad/monad/src/commands/management/Eventlog.cs",
         "../monad/monad/src/commands/management/GetChildrenCommand.cs",
+        "../monad/monad/src/commands/management/GetClipboardCommand.cs",
         "../monad/monad/src/commands/management/GetContentCommand.cs",
         "../monad/monad/src/commands/management/GetPropertyCommand.cs",
+        "../monad/monad/src/commands/management/GetTransactionCommand.cs",
+        "../monad/monad/src/commands/management/GetWMIObjectCommand.cs",
+        "../monad/monad/src/commands/management/Hotfix.cs",
+        "../monad/monad/src/commands/management/InvokeWMIMethodCommand.cs",
         "../monad/monad/src/commands/management/MovePropertyCommand.cs",
         "../monad/monad/src/commands/management/Navigation.cs",
         "../monad/monad/src/commands/management/NewPropertyCommand.cs",
@@ -77,20 +93,40 @@
         "../monad/monad/src/commands/management/PingPathCommand.cs",
         "../monad/monad/src/commands/management/Process.cs",
         "../monad/monad/src/commands/management/PropertyCommandBase.cs",
+        "../monad/monad/src/commands/management/RegisterWMIEventCommand.cs",
         "../monad/monad/src/commands/management/RemovePropertyCommand.cs",
+        "../monad/monad/src/commands/management/RemoveWMIObjectCommand.cs",
         "../monad/monad/src/commands/management/RenamePropertyCommand.cs",
         "../monad/monad/src/commands/management/ResolvePathCommand.cs",
+        "../monad/monad/src/commands/management/RollbackTransactionCommand.cs",
         "../monad/monad/src/commands/management/Service.cs",
+        "../monad/monad/src/commands/management/SetClipboardCommand.cs",
         "../monad/monad/src/commands/management/SetContentCommand.cs",
         "../monad/monad/src/commands/management/SetPropertyCommand.cs",
-        "../monad/monad/src/commands/management/WriteContentCommandBase.cs"
+        "../monad/monad/src/commands/management/SetWMIInstanceCommand.cs",
+        "../monad/monad/src/commands/management/StartTransactionCommand.cs",
+        "../monad/monad/src/commands/management/UseTransactionCommand.cs",
+        "../monad/monad/src/commands/management/WebServiceProxy.cs",
+        "../monad/monad/src/commands/management/WMIHelper.cs",
+        "../monad/monad/src/commands/management/WriteContentCommandBase.cs",
+        "../monad/monad/src/singleshell/installer/MshManagementMshSnapin.cs"
     ],
 
     "namedResource": {
+        "ClearRecycleBinResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ClearRecycleBinResources.resources",
+        "ClipboardResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ClipboardResources.resources",
         "CmdletizationResources": "../windows-build/gen/COMMANDS_MANAGEMENT/CmdletizationResources.resources",
         "ComputerResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ComputerResources.resources",
+        "ControlPanelResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ControlPanelResources.resources",
+        "EventlogResources": "../windows-build/gen/COMMANDS_MANAGEMENT/EventlogResources.resources",
+        "HotFixResources": "../windows-build/gen/COMMANDS_MANAGEMENT/HotFixResources.resources",
+        "ManagementMshSnapInResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ManagementMshSnapInResources.resources",
         "NavigationResources": "../windows-build/gen/COMMANDS_MANAGEMENT/NavigationResources.resources",
+        "ProcessCommandHelpResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ProcessCommandHelpResources.resources",
         "ProcessResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ProcessResources.resources",
-        "ServiceResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ServiceResources.resources"
+        "ServiceResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ServiceResources.resources",
+        "TransactionResources": "../windows-build/gen/COMMANDS_MANAGEMENT/TransactionResources.resources",
+        "WebServiceResources": "../windows-build/gen/COMMANDS_MANAGEMENT/WebServiceResources.resources",
+        "WmiResources": "../windows-build/gen/COMMANDS_MANAGEMENT/WmiResources.resources"
     }
 }

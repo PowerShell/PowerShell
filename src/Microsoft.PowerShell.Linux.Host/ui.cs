@@ -18,9 +18,17 @@ namespace Microsoft.PowerShell.Linux.Host
     internal class MyHostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
     {
         /// <summary>
+        /// Public constructor
+        /// </summary>
+        public MyHostUserInterface(bool hasUI)
+        {
+            myRawUi = (hasUI) ? new MyRawUserInterface() : null;
+        }
+
+        /// <summary>
         /// A reference to the PSRawUserInterface implementation.
         /// </summary>
-        private MyRawUserInterface myRawUi = new MyRawUserInterface();
+        private MyRawUserInterface myRawUi;
 
         /// <summary>
         /// Gets an instance of the PSRawUserInterface class for this host
