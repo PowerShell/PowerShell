@@ -59,16 +59,6 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         private System.Collections.Hashtable options = new System.Collections.Hashtable();
 
-        /// <summary>
-        /// Retain original buffer for TabCompletion
-        /// </summary>
-        private StringBuilder tabBuffer;
-
-        /// <summary>
-        /// tabbuffer for storing result of tabcompletion
-        /// </summary>
-        private string tabResult;
-
         /// The count of characters in buffer rendered.
         /// </summary>
         private int rendered;
@@ -239,23 +229,19 @@ namespace Microsoft.PowerShell.Linux.Host
             //if the buffer has been modified in any way, get the new command completion
             if (previousKeyPress.Key != ConsoleKey.Tab)
             {
-                tabBuffer = this.buffer;
-                cmdCompleteOpt = CommandCompletion.CompleteInput(this.tabBuffer.ToString(), this.current, options, powershell);
-            }
-
-            try
-            {
-                if (tabCompletionPos > cmdCompleteOpt.CompletionMatches.Count || tabCompletionPos == cmdCompleteOpt.CompletionMatches.Count)
+                cmdCompleteOpt = CommandCompletion.CompleteInput(this.buffer.ToString(), this.current, options, powershell);
+                if (cmdCompleteOpt.CompletionMatches.Count == 0)
                 {
-                    tabCompletionPos = 1;
+                    return;
                 }
+            }
 
-                tabResult = cmdCompleteOpt.CompletionMatches[tabCompletionPos].CompletionText;
-            }
-            catch (Exception)
+            if (tabCompletionPos >= cmdCompleteOpt.CompletionMatches.Count)
             {
-                return;
+                tabCompletionPos = 0;
             }
+
+            string tabResult = cmdCompleteOpt.CompletionMatches[tabCompletionPos].CompletionText;
 
             tabCompletionPos++;
 
@@ -268,30 +254,24 @@ namespace Microsoft.PowerShell.Linux.Host
                     tabResult = tabResult.Replace(".\\", "");
                 }
 
-                if (this.buffer.ToString().Contains(" "))
+                var replaceIndex = cmdCompleteOpt.ReplacementIndex;
+                string replaceBuffer = this.buffer.ToString();
+
+                if (replaceBuffer.Length < replaceIndex)
                 {
-                    var replaceIndex = cmdCompleteOpt.ReplacementIndex;
-                    string replaceBuffer = this.buffer.ToString();
-
-
-                    if (replaceBuffer.Length < replaceIndex)
-                    {
-                        replaceIndex = replaceBuffer.Length;
-                    }
-
-                    if (replaceBuffer.Length == replaceIndex)
-                    {
-                        tabResult = replaceBuffer + tabResult;
-                    }
-
-                    else
-                    {
-                        replaceBuffer = replaceBuffer.Remove(replaceIndex);
-                        tabResult = replaceBuffer + tabResult;
-                    }
-
-
+                    replaceIndex = replaceBuffer.Length;
                 }
+
+                if (replaceBuffer.Length == replaceIndex)
+                {
+                    tabResult = replaceBuffer + tabResult;
+                }
+                else
+                {
+                    replaceBuffer = replaceBuffer.Remove(replaceIndex);
+                    tabResult = replaceBuffer + tabResult;
+                }
+
                 BufferFromString(tabResult);
                 this.Render();
             }
