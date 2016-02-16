@@ -86,11 +86,27 @@ namespace Microsoft.Management.Infrastructure.Native
         }
 
         [StructLayout(LayoutKind.Sequential)]
+        struct MI_Operation
+        {
+            public uint reserved1;
+            public IntPtr reserved2;
+            public IntPtr ft; /* The function table of MI_Operations */
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
         public struct MI_Session
         {
             public uint reserved1;
             public IntPtr reserved2;
             public IntPtr ft; /* the function table of MI_Session related functions */
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MI_SubscriptionDeliveryOptions
+        {
+            public uint reserved1;
+            public IntPtr reserved2;
+            public IntPtr ft; /* The function table of MI_SubscriptionDeliveryOptions related functions */
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -204,7 +220,7 @@ namespace Microsoft.Management.Infrastructure.Native
             public delegate MiResult Close(
                     MI_Session session,
                     IntPtr completionContext,
-                    IntPtr completionContext); /* _In_opt_ void (MI_CALL *completionCallback)(_In_opt_ void *completionContext)) */
+                    IntPtr completionCallback); /* _In_opt_ void (MI_CALL *completionCallback)(_In_opt_ void *completionContext)) */
 
             public delegate MiResult GetApplication(
                     MI_Session session,
@@ -215,8 +231,8 @@ namespace Microsoft.Management.Infrastructure.Native
                     uint flags,
                     MI_OperationOptions options,
                     string namespaceName,
-                    const MI_Instance inboundInstance,
-                    MI_OperationCallbacks callbacks,
+                    MI_Instance inboundInstance,
+                    OperationCallbacks callbacks,
                     MI_Operation operation);
 
             public delegate void ModifyInstance(
@@ -224,17 +240,17 @@ namespace Microsoft.Management.Infrastructure.Native
                     uint flags,
                     MI_OperationOptions options,
                     string namespaceName,
-                    const MI_Instance inboundInstance,
-                    MI_OperationCallbacks callbacks,
+                    MI_Instance inboundInstance,
+                    OperationCallbacks callbacks,
                     out MI_Operation operation);
 
             public delegate void CreateInstance(
-                    MI_Session *session,
+                    MI_Session session,
                     uint flags,
                     MI_OperationOptions options,
                     string namespaceName,
                     string inboundInstance,
-                    MI_OperationCallbacks callbacks,
+                    OperationCallbacks callbacks,
                     out MI_Operation operation);
 
             public delegate void DeleteInstance(
@@ -242,20 +258,20 @@ namespace Microsoft.Management.Infrastructure.Native
                     uint flags,
                     MI_OperationOptions options,
                     string namespaceName,
-                    const MI_Instance inboundInstance,
-                    MI_OperationCallbacks callbacks,
+                    MI_Instance inboundInstance,
+                    OperationCallbacks callbacks,
                     out MI_Operation operation);
 
             public delegate void Invoke(
-                    MI_Session *session,
+                    MI_Session session,
                     uint flags,
-                    MI_OperationOptions *options,
+                    MI_OperationOptions options,
                     string namespaceName,
                     string className,
                     string methodName,
-                    const MI_Instance inboundInstance,
-                    const MI_Instance inboundProperties,
-                    MI_OperationCallbacks callbacks,
+                    MI_Instance inboundInstance,
+                    MI_Instance inboundProperties,
+                    OperationCallbacks callbacks,
                     MI_Operation operation);
 
             public delegate void EnumerateInstances(
@@ -264,8 +280,8 @@ namespace Microsoft.Management.Infrastructure.Native
                     MI_OperationOptions options,
                     string namespaceName,
                     string className,
-                    MI_Boolean keysOnly,
-                    MI_OperationCallbacks callbacks,
+                    byte keysOnly,
+                    OperationCallbacks callbacks,
                     out MI_Operation operation);
 
             public delegate void QueryInstances(
@@ -275,7 +291,7 @@ namespace Microsoft.Management.Infrastructure.Native
                     string namespaceName,
                     string queryDialect,
                     string queryExpression,
-                    MI_OperationCallbacks callbacks,
+                    OperationCallbacks callbacks,
                     out MI_Operation operation);
 
             public delegate void AssociatorInstances(
@@ -283,13 +299,13 @@ namespace Microsoft.Management.Infrastructure.Native
                     uint flags,
                     MI_OperationOptions options,
                     string namespaceName,
-                    const MI_Instance instanceKeys,
+                    MI_Instance instanceKeys,
                     string assocClass,
                     string resultClass,
                     string role,
                     string resultRole,
-                    MI_Boolean keysOnly,
-                    MI_OperationCallbacks callbacks,
+                    byte keysOnly,
+                    OperationCallbacks callbacks,
                     out MI_Operation operation);
 
             public delegate void ReferenceInstances(
@@ -297,48 +313,48 @@ namespace Microsoft.Management.Infrastructure.Native
                     uint flags,
                     MI_OperationOptions options,
                     string namespaceName,
-                    const MI_Instance instanceKeys,
+                    MI_Instance instanceKeys,
                     string resultClass,
                     string role,
-                    MI_Boolean keysOnly,
-                    MI_OperationCallbacks callbacks,
+                    byte keysOnly,
+                    OperationCallbacks callbacks,
                     out MI_Operation operation);
 
             public delegate void Subscribe(
-                    _In_ MI_Session *session,
+                    MI_Session session,
                     uint flags,
-                    _In_opt_ MI_OperationOptions *options,
-                    _In_opt_z_ const MI_Char *namespaceName, 
-                    _In_opt_z_ const MI_Char *queryDialect,
-                    _In_opt_z_ const MI_Char *queryExpression,
-                    _In_opt_ const MI_SubscriptionDeliveryOptions *deliverOptions,
-                    _In_opt_ MI_OperationCallbacks *callbacks,
-                    _Out_    MI_Operation *operation);
+                    MI_OperationOptions options,
+                    string namespaceName, 
+                    string queryDialect,
+                    string queryExpression,
+                    MI_SubscriptionDeliveryOptions deliverOptions,
+                    OperationCallbacks callbacks,
+                    out MI_Operation operation);
 
-            void (MI_CALL *GetClass)(
-                    _In_ MI_Session *session,
+            public delegate void GetClass(
+                    MI_Session session,
                     uint flags, 
-                    _In_opt_ MI_OperationOptions *options,
-                    _In_opt_z_ const MI_Char *namespaceName,
-                    _In_opt_z_ const MI_Char *className,
-                    _In_opt_ MI_OperationCallbacks *callbacks,
-                    _Out_    MI_Operation *operation);
+                    MI_OperationOptions options,
+                    string namespaceName,
+                    string className,
+                    OperationCallbacks callbacks,
+                    out MI_Operation operation);
 
-            void (MI_CALL *EnumerateClasses)(
-                    _In_     MI_Session *session,
+            public delegate void EnumerateClasses(
+                    MI_Session session,
                     uint flags,
-                    _In_opt_ MI_OperationOptions *options,
-                    _In_opt_z_ const MI_Char *namespaceName,
-                    _In_opt_z_ const MI_Char *className,
-                             MI_Boolean classNamesOnly,
-                    _In_opt_ MI_OperationCallbacks *callbacks,
-                    _Out_    MI_Operation *operation);
+                    MI_OperationOptions options,
+                    string namespaceName,
+                    string className,
+                    byte classNamesOnly,
+                    OperationCallbacks callbacks,
+                    out MI_Operation operation);
 
-            void (MI_CALL *TestConnection)(
-                    _In_     MI_Session *session,
+            public delegate void TestConnection(
+                    MI_Session session,
                     uint flags,
-                    _In_opt_ MI_OperationCallbacks *callbacks,
-                    _Out_    MI_Operation *operation
+                    OperationCallbacks callbacks,
+                    out MI_Operation operation
                 );
         }
 #endregion //structs
@@ -469,28 +485,28 @@ namespace Microsoft.Management.Infrastructure.Native
         }
         internal static MiResult NewOperationOptions(ApplicationHandle applicationHandle, [MarshalAs(UnmanagedType.U1)] bool mustUnderstand, out OperationOptionsHandle operationOptionsHandle)
         {
-            Console.WriteLine(">>Native/NewOperationOptions");
-            //TODO: create OperationOptionsHandle
-            operationOptionsHandle = new OperationOptionsHandle();
-            MiNative.MI_Application localApp = applicationHandle.miApp;
+            // Console.WriteLine(">>Native/NewOperationOptions");
+            // //TODO: create OperationOptionsHandle
+            // operationOptionsHandle = new OperationOptionsHandle();
+            // MiNative.MI_Application localApp = applicationHandle.miApp;
 
-            IntPtr appBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(localApp));
-            Marshal.StructureToPtr(localApp, appBuffer, false);
-            MiNative.MI_OperationOptions localOpts = operationOptionsHandle.miOperationOptions;
-            // Marshal Struct as IntPtr? We may not have to marshalAs.PtrToStructure
+            // IntPtr appBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(localApp));
+            // Marshal.StructureToPtr(localApp, appBuffer, false);
+            // MiNative.MI_OperationOptions localOpts = operationOptionsHandle.miOperationOptions;
+            // // Marshal Struct as IntPtr? We may not have to marshalAs.PtrToStructure
 
-            Console.WriteLine("Break> Pinvoke");
-            // perform p/invoke
-            MiResult result = MiNative.MI_Application_NewOperationOptions(appBuffer,
-                                                                          mustUnderstand,
-                                                                          out localOpts);
+            // Console.WriteLine("Break> Pinvoke");
+            // // perform p/invoke
+            // MiResult result = MiNative.MI_Application_NewOperationOptions(appBuffer,
+            //                                                               mustUnderstand,
+            //                                                               out localOpts);
 
-            Console.WriteLine("NewOperationOptions result : {0}", result);
-            operationOptionsHandle.miOperationOptions = localOpts;
-            Marshal.FreeHGlobal(appBuffer);
+            // Console.WriteLine("NewOperationOptions result : {0}", result);
+            // operationOptionsHandle.miOperationOptions = localOpts;
+            // Marshal.FreeHGlobal(appBuffer);
 
-            return result;
-            //throw new NotImplementedException();
+            // return result;
+            throw new NotImplementedException();
         }
         internal static MiResult NewSerializer(ApplicationHandle applicationHandle, string format, uint flags, out SerializerHandle serializerHandle)
         {
@@ -499,10 +515,12 @@ namespace Microsoft.Management.Infrastructure.Native
 
         internal static MiResult NewSession(ApplicationHandle applicationHandle, string protocol, string destination, DestinationOptionsHandle destinationOptionsHandle, out InstanceHandle extendedError, out SessionHandle sessionHandle)
         {
-            extendedError = new InstanceHandle();
-            sessionHandle = new SessionHandle();
+            // Console.WriteLine("In NewSession");
+            // extendedError = new InstanceHandle();
+            // sessionHandle = new SessionHandle();
+            // Console.WriteLine("instance and sessionHandle created");
 
-            //throw new NotImplementedException();
+            throw new NotImplementedException();
         }
         internal static MiResult NewSubscriptionDeliveryOptions(ApplicationHandle applicationHandle, MiSubscriptionDeliveryType deliveryType, out SubscriptionDeliveryOptionsHandle subscriptionDeliveryOptionsHandle)
         {
