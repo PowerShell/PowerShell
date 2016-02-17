@@ -2,6 +2,7 @@ namespace Microsoft.PowerShell.Linux.Host
 {
     using System;
     using System.Collections.ObjectModel;
+    using System.IO;
     using System.Management.Automation;
     using System.Management.Automation.Runspaces;
     using System.Text;
@@ -244,17 +245,18 @@ namespace Microsoft.PowerShell.Linux.Host
 
             string tabResult = cmdCompleteOpt.CompletionMatches[tabCompletionPos].CompletionText;
 
+            // To match behavior on Windows
+            if (cmdCompleteOpt.CompletionMatches[tabCompletionPos].ResultType == CompletionResultType.ProviderContainer
+                && Directory.Exists(tabResult))
+            {
+                tabResult = GetReplacementTextForDirectory(tabResult);
+            }
+
             tabCompletionPos++;
 
             //if there is a command for the user before the uncompleted option
             if (!String.IsNullOrEmpty(tabResult))
             {
-                //handle file path slashes
-                if (tabResult.Contains(".\\"))
-                {
-                    tabResult = tabResult.Replace(".\\", "");
-                }
-
                 var replaceIndex = cmdCompleteOpt.ReplacementIndex;
                 string replaceBuffer = this.buffer.ToString();
 
@@ -278,6 +280,37 @@ namespace Microsoft.PowerShell.Linux.Host
             }
 
         } //end of OnTab()
+
+        /// <summary>
+        /// Helper function to add trailing slash to directories
+        /// </summary>
+        private static string GetReplacementTextForDirectory(string replacementText)
+        {
+            string separator = Path.DirectorySeparatorChar.ToString();
+            const string singleQuote = "'";
+            const string doubleQuote = "\"";
+
+            if (!replacementText.EndsWith(separator, StringComparison.Ordinal))
+            {
+                if (replacementText.EndsWith(separator + singleQuote, StringComparison.Ordinal) 
+                    || replacementText.EndsWith(separator + doubleQuote, StringComparison.Ordinal))
+                {
+                    return replacementText;
+                }
+                else if (replacementText.EndsWith(singleQuote, StringComparison.Ordinal) 
+                         || replacementText.EndsWith(doubleQuote, StringComparison.Ordinal))
+                {
+                    var len = replacementText.Length;
+                    char quoteChar = replacementText[len - 1];
+                    replacementText = replacementText.Substring(0, len - 1) + separator + quoteChar;
+                }
+                else
+                {
+                    replacementText = replacementText + separator;
+                }
+            }
+            return replacementText;
+        }
 
         /// <summary>
         /// Set buffer to a string rather than inserting char by char
