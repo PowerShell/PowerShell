@@ -2,6 +2,7 @@ using Xunit;
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using Microsoft.PowerShell.Linux.Host;
 
 namespace PSTests
 {
@@ -70,7 +71,8 @@ namespace PSTests
         [Fact]
         public void TestRunspaceWithPowerShellAndHost()
         {
-            MyHost myHost = new MyHost(this);
+            Listener listener = new Listener("", false);
+            MyHost myHost = new MyHost(listener);
             using (var runspace = RunspaceFactory.CreateRunspace(myHost))
             {
                 runspace.Open();
@@ -97,7 +99,8 @@ namespace PSTests
         [Fact]
         public void TestRunspaceWithFunction()
         {
-            MyHost myHost = new MyHost(this);
+            Listener listener = new Listener("", false);
+            MyHost myHost = new MyHost(listener);
             using (var runspace = RunspaceFactory.CreateRunspace(myHost))
             {
                 runspace.Open();
