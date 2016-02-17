@@ -55,9 +55,10 @@ git submodule update --init --recursive -- src/monad src/windows-build test/Pest
 
 We use the [.NET Command Line Interface][dotnet-cli] (`dotnet-cli`) to build
 the managed components, and [CMake][] to build the native components (on
-non-Windows platforms). Install `dotnet-cli` by following their [documentation][]
-(make sure to install the `dotnet-nightly` package on Linux to get the latest
-version).
+non-Windows platforms). Install `dotnet-cli` by following their [documentation][].
+
+**Make sure to `apt-get install dotnet-nightly=1.0.1.001252-1` for a known,
+good version.**
 
 > Note that OS X dependency installation instructions are not yet documented,
 > and Core PowerShell on Windows only needs `dotnet-cli`.
