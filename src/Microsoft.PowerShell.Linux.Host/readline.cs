@@ -246,10 +246,10 @@ namespace Microsoft.PowerShell.Linux.Host
             string tabResult = cmdCompleteOpt.CompletionMatches[tabCompletionPos].CompletionText;
 
             // To match behavior on Windows
-            if (cmdCompleteOpt.CompletionMatches[tabCompletionPos].ResultType == CompletionResultType.ProviderContainer
-                && Directory.Exists(tabResult))
+            bool hasQuotes = false;
+            if (cmdCompleteOpt.CompletionMatches[tabCompletionPos].ResultType == CompletionResultType.ProviderContainer)
             {
-                tabResult = GetReplacementTextForDirectory(tabResult);
+                tabResult = GetReplacementTextForDirectory(tabResult, ref hasQuotes);
             }
 
             tabCompletionPos++;
@@ -277,6 +277,11 @@ namespace Microsoft.PowerShell.Linux.Host
 
                 BufferFromString(tabResult);
                 this.Render();
+
+                if (hasQuotes)
+                {
+                    MoveLeft();
+                }
             }
 
         } //end of OnTab()
@@ -284,7 +289,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         /// Helper function to add trailing slash to directories
         /// </summary>
-        private static string GetReplacementTextForDirectory(string replacementText)
+        private static string GetReplacementTextForDirectory(string replacementText, ref bool hasQuotes)
         {
             string separator = Path.DirectorySeparatorChar.ToString();
             const string singleQuote = "'";
@@ -295,6 +300,7 @@ namespace Microsoft.PowerShell.Linux.Host
                 if (replacementText.EndsWith(separator + singleQuote, StringComparison.Ordinal) 
                     || replacementText.EndsWith(separator + doubleQuote, StringComparison.Ordinal))
                 {
+                    hasQuotes = true;
                     return replacementText;
                 }
                 else if (replacementText.EndsWith(singleQuote, StringComparison.Ordinal) 
@@ -303,6 +309,7 @@ namespace Microsoft.PowerShell.Linux.Host
                     var len = replacementText.Length;
                     char quoteChar = replacementText[len - 1];
                     replacementText = replacementText.Substring(0, len - 1) + separator + quoteChar;
+                    hasQuotes = true;
                 }
                 else
                 {
