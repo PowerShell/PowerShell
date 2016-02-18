@@ -7,14 +7,6 @@ temporarily from `Microsoft.PowerShell.Commands.Management` because we
 cannot resolve `[Shell32.ShellFolderItem]` for FullCLR builds. This must be
 fixed ASAP.
 
-## `ImplicitRemotingCommands.cs`
-
-The file `monad\src\commands\utility\ImplicitRemotingCommands.cs` has been
-removed temporarily from `Microsoft.PowerShell.Commands.Utility` because it
-does not build on Core PowerShell, and cannot be guarded with preprocessor
-directives due to the use of here-strings that contain lines starting with `#`,
-which breaks the preprocessor.
-
 ## `Microsoft.Management.Infrastructure.Native`
 
 Windows builds currently use the native stub; this should be replaced with
