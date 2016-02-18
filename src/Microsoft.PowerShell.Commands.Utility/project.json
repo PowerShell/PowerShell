@@ -98,6 +98,7 @@
         "../monad/monad/src/commands/utility/group-object.cs",
         "../monad/monad/src/commands/utility/Import-LocalizedData.cs",
         "../monad/monad/src/commands/utility/ImportAliasCommand.cs",
+        "../monad/monad/src/commands/utility/ImplicitRemotingCommands.cs",
         "../monad/monad/src/commands/utility/InvokeCommandCmdlet.cs",
         "../monad/monad/src/commands/utility/MatchString.cs",
         "../monad/monad/src/commands/utility/Measure-Object.cs",
