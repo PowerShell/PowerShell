@@ -28,19 +28,25 @@
 
     "compileFiles": [
         "../monad/monad/src/security/AclCommands.cs",
+        "../monad/monad/src/security/CertificateCommands.cs",
         "../monad/monad/src/security/CertificateProvider.cs",
+        "../monad/monad/src/security/certificateproviderexceptions.cs",
+        "../monad/monad/src/security/CmsCommands.cs",
         "../monad/monad/src/security/CredentialCommands.cs",
         "../monad/monad/src/security/ExecutionPolicyCommands.cs",
         "../monad/monad/src/security/SecureStringCommands.cs",
         "../monad/monad/src/security/SignatureCommands.cs",
         "../monad/monad/src/security/Utils.cs",
-        "../monad/monad/src/security/certificateproviderexceptions.cs"
+        "../monad/monad/src/singleshell/installer/MshSecurityMshSnapin.cs"
     ],
 
     "namedResource": {
+        "CertificateCommands": "../windows-build/gen/SECURITY/CertificateCommands.resources",
         "CertificateProviderStrings": "../windows-build/gen/SECURITY/CertificateProviderStrings.resources",
+        "CmsCommands": "../windows-build/gen/SECURITY/CmsCommands.resources",
         "ExecutionPolicyCommands": "../windows-build/gen/SECURITY/ExecutionPolicyCommands.resources",
         "SecureStringCommands": "../windows-build/gen/SECURITY/SecureStringCommands.resources",
+        "SecurityMshSnapinResources": "../windows-build/gen/SECURITY/SecurityMshSnapinResources.resources",
         "SignatureCommands": "../windows-build/gen/SECURITY/SignatureCommands.resources",
         "UtilsStrings": "../windows-build/gen/SECURITY/UtilsStrings.resources"
     }
