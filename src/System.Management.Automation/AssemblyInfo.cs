@@ -8,6 +8,7 @@ using System.Reflection;
 [assembly:InternalsVisibleTo("Microsoft.PowerShell.Security")]
 [assembly:InternalsVisibleTo("Microsoft.PowerShell.CoreCLR.AssemblyLoadContext")]
 [assembly:InternalsVisibleTo("powershell")]
+[assembly:InternalsVisibleTo("powershell-tests")]
 [assembly:AssemblyFileVersionAttribute("3.0.0.0")]
 [assembly:AssemblyVersion("3.0.0.0")]
 
