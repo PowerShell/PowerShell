@@ -40,7 +40,7 @@ git clone --recursive https://github.com/PowerShell/PowerShell.git
 
 The `src/omi` submodule requires your GitHub user to have joined the Microsoft
 organization. If it fails to check out, Git will bail and not check out further
-submodules either.
+submodules either. Please follow the instructions on the [Open Source Hub][].
 
 On Windows, many fewer submodules are needed, so don't use `clone --recursive`.
 
@@ -51,32 +51,22 @@ git clone https://github.com/PowerShell/PowerShell.git
 git submodule update --init --recursive -- src/monad src/windows-build test/Pester
 ```
 
+[Open Source Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
+
 ## Setup build environment
 
-We use the [.NET Command Line Interface][dotnet-cli] (`dotnet-cli`) to build
+We use the [.NET Command Line Interface][dotnet] (`dotnet`) to build
 the managed components, and [CMake][] to build the native components (on
-non-Windows platforms). Install `dotnet-cli` by following their [documentation][].
+non-Windows platforms). Install `dotnet` by following their [documentation][].
 
 The version of .NET CLI is very important, you want a recent 1.0.0 beta
-(**not** 1.0.1).
+(**not** 1.0.1). The following instructions will install precisely
+1.0.0.001425, though any 1.0.0 version *should* work.
 
-These are known good versions:
+> Previous installations of DNX, `dnvm`, or older installations of .NET CLI
+> can cause odd failures when running. Please check your version.
 
-```sh
-sudo apt-get install dotnet=1.0.0.001425-1
-```
-
-```powershell
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
-./install.ps1 -version 1.0.0.001425 -channel beta
-```
-
-> Note that OS X dependency installation instructions are not yet documented,
-> and Core PowerShell on Windows only needs `dotnet-cli`.
-
-> Previous installations of DNX or `dnvm` can cause `dotnet-cli` to fail.
-
-[dotnet-cli]: https://github.com/dotnet/cli#new-to-net-cli
+[dotnet]: https://github.com/dotnet/cli#new-to-net-cli
 [documentation]: https://dotnet.github.io/getting-started/
 [CMake]: https://cmake.org/cmake/help/v2.8.12/cmake.html
 
@@ -88,7 +78,7 @@ Tested on Ubuntu 14.04.
 sudo sh -c 'echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/dotnet/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
 sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
 sudo apt-get update
-sudo apt-get install dotnet-nightly
+sudo apt-get install dotnet=1.0.0.001425-1
 ```
 
 Then install the following additional build / debug tools:
@@ -105,6 +95,25 @@ be able to compile OMI, which additionally requires:
 ```sh
 sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev libboost-filesystem-dev
 ```
+
+### Windows
+
+Tested on Windows 10 and Windows Server 2012 R2.
+
+An MSI installer also exists, but this script avoids touching your system.
+
+```powershell
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
+./install.ps1 -version 1.0.0.001425 -channel beta
+```
+
+### OS X
+
+The OS X dependency installation instructions are not yet documented. You can
+try their PKG installer, or their [obtain script][]. We do not (yet) routinely
+test on OS X, but some developers use PowerShell on 10.10 and 10.11.
+
+[obtain script]: https://github.com/dotnet/cli/blob/rel/1.0.0/scripts/obtain/install.sh
 
 ## Building
 
@@ -145,7 +154,6 @@ The local managed host has built-in documentation via `--help`.
 
 - launch local shell with `./bin/powershell`
 - run tests with `./pester.sh`
-- launch `omiserver` for PSRP (and in LLDB) with `./prsp.sh`, and connect with `Enter-PSSession` from Windows
 
 ### Windows
 
@@ -227,22 +235,21 @@ The variable `$BIN` is the output directory, `bin`.
 
 ### Managed
 
-Builds with `dotnet-cli`. Publishes all dependencies into the `bin` directory.
+Builds with `dotnet`. Publishes all dependencies into the `bin` directory.
 Emits its own native host as `bin/powershell`. Uses a `Linux` configuration to
 add a preprocessor definition. The `CORECLR` definition is added only when
-targeting the `dnxcore50` framework.
+targeting the `netstandard1.5` framework. The `LINUX` definition is added only
+when `--configuration Linux` is used.
 
 ```sh
 cd src/Microsoft.PowerShell.Linux.Host
-dotnet publish --framework dnxcore50 --output $BIN --configuration Linux
-# Copy files that dotnet-publish doesn't currently deploy
-cp *.ps1xml *_profile.ps1 $BIN
+dotnet publish --configuration Linux
 ```
 
 ### Native
 
-- `libpsl-native.so`: native functions that `CorePsPlatform.cs` P/Invokes
-- `api-ms-win-core-registry-l1-1-0.dll`: registry stub to prevent missing DLL error on shutdown
+The `libpsl-native.so` library consists of native functions that
+`CorePsPlatform.cs` P/Invokes.
 
 #### libpsl-native
 
@@ -258,16 +265,6 @@ cp native/libpsl-native.* $BIN
 ```
 
 The output is a `.so` on Linux and `.dylib` on OS X. It is unnecessary for Windows.
-
-#### registry-stub
-
-Provides `RegCloseKey()` to satisfy the disposal of `SafeHandle` objects on shutdown.
-
-```sh
-cd src/registry-stub
-make
-cp api-ms-win-core-registry-l1-1-0.dll $BIN
-```
 
 ### PSRP
 
