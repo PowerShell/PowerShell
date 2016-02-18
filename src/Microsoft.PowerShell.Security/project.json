@@ -1,6 +1,6 @@
 {
+    "name": "Microsoft.PowerShell.Security",
     "version": "1.0.0-*",
-    "description": "Microsoft.PowerShell.Security Library",
     "authors": [ "garretts", "andschwa" ],
 
     "compilationOptions": {
@@ -8,14 +8,12 @@
     },
 
     "dependencies": {
-        "System.Management.Automation": {
-            "type": "build",
-            "version": "1.0.0-*"
-        }
+        "System.Management.Automation": "1.0.0-*"
     },
 
     "frameworks": {
-        "dnxcore50": {
+        "netstandard1.5": {
+            "imports": [ "dnxcore50" ],
             "compilationOptions": {
                 "define": [ "CORECLR" ]
             }

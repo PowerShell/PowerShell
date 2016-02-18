@@ -36,5 +36,9 @@
 	"System.Net.NameResolution": "4.0.0-rc3-23817"
 },
 
-    "frameworks": { "dnxcore50": { } }
+    "frameworks": {
+	"netstandard1.5": {
+	    "imports": [ "dnxcore50", "portable-net45+win8" ]
+	}
+    }
 }

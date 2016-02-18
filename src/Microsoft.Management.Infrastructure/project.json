@@ -1,6 +1,6 @@
 {
+    "name": "Microsoft.Management.Infrastructure",
     "version": "1.0.0-*",
-    "description": "Microsoft.Management.Infrastructure",
     "authors": [ "garretts", "andschwa" ],
 
     "compilationOptions": {
@@ -8,14 +8,12 @@
     },
 
     "dependencies": {
-        "Microsoft.Management.Infrastructure.Native" : {
-            "type": "build",
-            "version": "1.0.0-*"
-        }
+        "Microsoft.Management.Infrastructure.Native": "1.0.0-*"
     },
 
     "frameworks": {
-        "dnxcore50": {
+        "netstandard1.5": {
+            "imports": [ "dnxcore50" ],
             "compilationOptions": {
                 "define": [ "_CORECLR" ]
             },

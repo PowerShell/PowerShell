@@ -57,8 +57,19 @@ We use the [.NET Command Line Interface][dotnet-cli] (`dotnet-cli`) to build
 the managed components, and [CMake][] to build the native components (on
 non-Windows platforms). Install `dotnet-cli` by following their [documentation][].
 
-**Make sure to `apt-get install dotnet-nightly=1.0.1.001252-1` for a known,
-good version.**
+The version of .NET CLI is very important, you want a recent 1.0.0 beta
+(**not** 1.0.1).
+
+These are known good versions:
+
+```sh
+sudo apt-get install dotnet=1.0.0.001425-1
+```
+
+```powershell
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
+./install.ps1 -version 1.0.0.001425 -channel beta
+```
 
 > Note that OS X dependency installation instructions are not yet documented,
 > and Core PowerShell on Windows only needs `dotnet-cli`.

@@ -1,7 +1,6 @@
 {
     "name": "System.Management.Automation",
     "version": "1.0.0-*",
-    "description": "System.Management.Automation Library",
     "authors": [ "garretts", "andschwa" ],
 
     "compilationOptions": {
@@ -17,18 +16,18 @@
     },
 
     "dependencies": {
-        "Microsoft.Management.Infrastructure" : {
-            "type": "build",
-            "version": "1.0.0-*"
-        }
+        "Microsoft.Management.Infrastructure": "1.0.0-*"
     },
 
     "frameworks": {
-        "dnxcore50": {
+        "netstandard1.5": {
+            "imports": [ "dnxcore50" ],
             "compilationOptions": {
                 "define": [ "CORECLR", "NOETW" ]
             },
             "dependencies": {
+		"Microsoft.PowerShell.CoreCLR.AssemblyLoadContext": "1.0.0-*",
+
                 "Microsoft.CSharp": "4.0.1-rc3-23817",
                 "Microsoft.Win32.Registry.AccessControl": "4.0.0-rc3-23817",
                 "System.Collections.Specialized": "4.0.1-rc3-23817",
@@ -56,10 +55,6 @@
                 "System.Xml.XPath.XmlDocument": "4.0.1-rc3-23817",
                 "System.Xml.XmlDocument": "4.0.1-rc3-23817",
                 "System.Xml.XmlSerializer": "4.0.11-rc3-23817",
-                "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext": {
-                    "type": "build",
-                    "version": "1.0.0-*"
-                }
             }
         },
         "dnx451": {
