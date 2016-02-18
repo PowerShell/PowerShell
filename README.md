@@ -304,6 +304,10 @@ Community edition][vs].
 
 * Add `msbuild` to `PATH` / create PowerShell alias to it.
 
+```powershell
+Set-Alias msbuild C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe
+```
+
 * Install CMake and add it to `PATH.`
 
 You can install it from [Chocolatey][] or [manually][].
