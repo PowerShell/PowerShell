@@ -360,22 +360,31 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         private void OnDownArrow() 
         {
-            if (historyResult == null)
+            if (this.newHistory)
             {
-                return;
-            }
-
-            historyIndex++;
-
-            if (historyIndex >= historyResult.Count)
-            {
+                GetHistory();
                 OnEscape();
                 historyIndex = historyResult.Count;
-                return;
             }
+            else
+            {
+                if ( historyResult == null)
+                {
+                    return;
+                }
 
-            BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
-            this.Render();
+                historyIndex++;
+
+                if (historyIndex >= historyResult.Count)
+                {
+                    OnEscape();
+                    historyIndex = historyResult.Count;
+                    return;
+                }
+
+                BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
+                this.Render();
+            }
             
             this.newHistory = false;
         }
@@ -387,22 +396,15 @@ namespace Microsoft.PowerShell.Linux.Host
         {
             if (this.newHistory)
             {
-                // get the history
-                using (Pipeline pipeline = this.powershell.Runspace.CreatePipeline("Get-History"))
-                {
-                    historyResult = pipeline.Invoke();
-                }
+                GetHistory();
+                historyIndex = historyResult.Count - 1;
 
-                historyIndex = historyResult.Count -1;
-                if (historyIndex >= 0)
-                {
-                    BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
-                    this.Render();
-                }
+                BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
+                this.Render();
             }
             else
             {
-                if ( historyIndex == 0 || historyResult.Count == 0 )
+                if ( historyResult == null || historyIndex == 0)
                 {
                     return;
                 }
@@ -414,6 +416,17 @@ namespace Microsoft.PowerShell.Linux.Host
             }
 
             this.newHistory = false;
+        }
+
+        /// <summary>
+        /// Helper function to get command history   
+        /// </summary>
+        private void GetHistory()
+        {
+            using (Pipeline pipeline = this.powershell.Runspace.CreatePipeline("Get-History"))
+            {
+                historyResult = pipeline.Invoke();
+            }
         }
 
         /// <summary>
