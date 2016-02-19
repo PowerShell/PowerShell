@@ -18,8 +18,8 @@
                 "define": [ "_CORECLR" ]
             },
             "dependencies": {
-                "System.Runtime.Serialization.Xml": "4.1.0-rc3-23817",
-                "System.Threading.ThreadPool": "4.0.10-rc3-23817"
+                "System.Runtime.Serialization.Xml": "4.1.0-rc3-23819",
+                "System.Threading.ThreadPool": "4.0.10-rc3-23819"
             }
         },
         "dnx451": {
