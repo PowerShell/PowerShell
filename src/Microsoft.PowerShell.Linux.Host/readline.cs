@@ -2,6 +2,7 @@ namespace Microsoft.PowerShell.Linux.Host
 {
     using System;
     using System.Collections.ObjectModel;
+    using System.IO;
     using System.Management.Automation;
     using System.Management.Automation.Runspaces;
     using System.Text;
@@ -78,6 +79,11 @@ namespace Microsoft.PowerShell.Linux.Host
         /// use this default.
         /// </summary>
         private ConsoleColor defaultColor = ConsoleColor.White;
+
+        /// <summary>
+        /// To keep track of whether we have hit "enter" key since last arrow up/down key
+        /// </summary>
+        private bool newHistory = false;
 
         /// <summary>
         /// Initializes a new instance of the ConsoleReadLine class.
@@ -244,17 +250,18 @@ namespace Microsoft.PowerShell.Linux.Host
 
             string tabResult = cmdCompleteOpt.CompletionMatches[tabCompletionPos].CompletionText;
 
+            // To match behavior on Windows
+            bool moveLeftOneSpace = false;
+            if (cmdCompleteOpt.CompletionMatches[tabCompletionPos].ResultType == CompletionResultType.ProviderContainer)
+            {
+                tabResult = GetReplacementTextForDirectory(tabResult, ref moveLeftOneSpace);
+            }
+
             tabCompletionPos++;
 
             //if there is a command for the user before the uncompleted option
             if (!String.IsNullOrEmpty(tabResult))
             {
-                //handle file path slashes
-                if (tabResult.Contains(".\\"))
-                {
-                    tabResult = tabResult.Replace(".\\", "");
-                }
-
                 var replaceIndex = cmdCompleteOpt.ReplacementIndex;
                 string replaceBuffer = this.buffer.ToString();
 
@@ -275,9 +282,47 @@ namespace Microsoft.PowerShell.Linux.Host
 
                 BufferFromString(tabResult);
                 this.Render();
+
+                if (moveLeftOneSpace)
+                {
+                    MoveLeft();
+                }
             }
 
         } //end of OnTab()
+
+        /// <summary>
+        /// Helper function to add trailing slash to directories
+        /// </summary>
+        private static string GetReplacementTextForDirectory(string replacementText, ref bool moveLeftOneSpace)
+        {
+            string separator = Path.DirectorySeparatorChar.ToString();
+            const string singleQuote = "'";
+            const string doubleQuote = "\"";
+
+            if (!replacementText.EndsWith(separator, StringComparison.Ordinal))
+            {
+                if (replacementText.EndsWith(separator + singleQuote, StringComparison.Ordinal) 
+                    || replacementText.EndsWith(separator + doubleQuote, StringComparison.Ordinal))
+                {
+                    moveLeftOneSpace = true;
+                    return replacementText;
+                }
+                else if (replacementText.EndsWith(singleQuote, StringComparison.Ordinal) 
+                         || replacementText.EndsWith(doubleQuote, StringComparison.Ordinal))
+                {
+                    var len = replacementText.Length;
+                    char quoteChar = replacementText[len - 1];
+                    replacementText = replacementText.Substring(0, len - 1) + separator + quoteChar;
+                    moveLeftOneSpace = true;
+                }
+                else
+                {
+                    replacementText = replacementText + separator;
+                }
+            }
+            return replacementText;
+        }
 
         /// <summary>
         /// Set buffer to a string rather than inserting char by char
@@ -311,100 +356,77 @@ namespace Microsoft.PowerShell.Linux.Host
         }
 
         /// <summary>
-        /// The up arrow was pressed to retrieve history
+        /// The down arrow was pressed to retrieve history
         /// </summary>
-        private void OnDownArrow() {
-
-            if (historyResult == null)
+        private void OnDownArrow() 
+        {
+            if (this.newHistory)
             {
-                return;
-            }
-
-            if (historyIndex == historyResult.Count)
-            {
+                GetHistory();
                 OnEscape();
+                historyIndex = historyResult.Count;
             }
-
-            historyIndex++;
-
-            try
+            else
             {
+                if ( historyResult == null)
+                {
+                    return;
+                }
+
+                historyIndex++;
+
+                if (historyIndex >= historyResult.Count)
+                {
+                    OnEscape();
+                    historyIndex = historyResult.Count;
+                    return;
+                }
+
+                BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
+                this.Render();
+            }
+            
+            this.newHistory = false;
+        }
+
+        /// <summary>
+        ///   Changes the history queue when the up arrow is pressed
+        /// </summary>
+        private void OnUpArrow()
+        {
+            if (this.newHistory)
+            {
+                GetHistory();
+                historyIndex = historyResult.Count - 1;
+
+                BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
+                this.Render();
+            }
+            else
+            {
+                if ( historyResult == null || historyIndex == 0)
+                {
+                    return;
+                }
+
+                historyIndex--;
+
                 BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
                 this.Render();
             }
 
-            catch
-            {
-                return;
-            }
+            this.newHistory = false;
         }
 
         /// <summary>
-        ///   Changes the history queue when the down arrow is pressed
+        /// Helper function to get command history   
         /// </summary>
-        private void OnUpArrow()
+        private void GetHistory()
         {
-
-            try{
-                if ((previousKeyPress.Key != ConsoleKey.DownArrow && previousKeyPress.Key != ConsoleKey.UpArrow) || previousKeyPress.Key == ConsoleKey.Enter)
-                {
-                    //first time getting the history
-                    using (Pipeline pipeline = this.powershell.Runspace.CreatePipeline("Get-History"))
-                    {
-                        historyResult = pipeline.Invoke();
-                    }
-
-                    try
-                    {
-                        historyIndex = historyResult.Count -1;
-                        BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
-                        this.Render();
-                        historyIndex--;
-                    }
-
-                    catch
-                    {
-                        return;
-                    }
-
-                }
-
-                else
-                {
-                    if (historyIndex > historyResult.Count) //we hit the blank prompt using the down arrow
-                    {
-                        historyIndex = historyResult.Count -1;
-                    }
-
-                    if ( historyIndex < 0 )
-                    {
-                        historyIndex = 0;
-                    }
-
-                    try
-                    {
-                        BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
-                        this.Render();
-
-                        if ( historyIndex == 0 )
-                        {
-                            return;
-                        }
-
-                        else
-                        {
-                            historyIndex--;
-                        }
-                    }
-
-                    catch
-                    {
-                        return;
-                    }
-                }
+            using (Pipeline pipeline = this.powershell.Runspace.CreatePipeline("Get-History"))
+            {
+                historyResult = pipeline.Invoke();
             }
-
-            catch { return;}
         }
 
         /// <summary>
@@ -526,6 +548,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <returns>A newline character.</returns>
         private string OnEnter()
         {
+            this.newHistory = true;
             Console.Out.WriteLine();
             return this.buffer.ToString();
         }
