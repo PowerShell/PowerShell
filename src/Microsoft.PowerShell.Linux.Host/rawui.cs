@@ -43,10 +43,8 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         public override Coordinates CursorPosition
         {
-            get { throw new NotImplementedException(
-                    "The method or operation is not implemented."); }
-            set { throw new NotImplementedException(
-                    "The method or operation is not implemented."); }
+            get { return new Coordinates(Console.CursorLeft, Console.CursorTop); }
+            set { Console.SetCursorPosition(value.X, value.Y); }
         }
 
         /// <summary>
@@ -56,10 +54,8 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         public override int CursorSize
         {
-            get { return 12; }
-            set { }
-            //get { return Console.CursorSize; }
-            //set { Console.CursorSize = value; }
+            get { return Console.CursorSize; }
+            set { Console.CursorSize = value; }
         }
 
         /// <summary>
@@ -90,8 +86,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         public override Size MaxPhysicalWindowSize
         {
-            //  get { return new Size(Console.LargestWindowWidth, Console.LargestWindowHeight); }
-            get { return new Size(1024,768); }
+            get { return new Size(Console.LargestWindowWidth, Console.LargestWindowHeight); }
         }
 
         /// <summary>
@@ -102,8 +97,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         public override Size MaxWindowSize
         {
-            //  get { return new Size(Console.LargestWindowWidth, Console.LargestWindowHeight); }
-            get { return new Size(1024,768); }
+            get { return new Size(Console.LargestWindowWidth, Console.LargestWindowHeight); }
         }
 
         /// <summary>
@@ -114,8 +108,7 @@ namespace Microsoft.PowerShell.Linux.Host
         public override Coordinates WindowPosition
         {
             get { return new Coordinates(Console.WindowLeft, Console.WindowTop); }
-            //  set { Console.SetWindowPosition(value.X, value.Y); }
-            set { }
+            set { Console.SetWindowPosition(value.X, value.Y); }
         }
 
         /// <summary>
@@ -126,8 +119,7 @@ namespace Microsoft.PowerShell.Linux.Host
         public override Size WindowSize
         {
             get { return new Size(Console.WindowWidth, Console.WindowHeight); }
-            //  set { Console.SetWindowSize(value.Width, value.Height); }
-            set { }
+            set { Console.SetWindowSize(value.Width, value.Height); }
         }
 
         /// <summary>
@@ -164,17 +156,13 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         /// This API reads a pressed, released, or pressed and released keystroke
         /// from the keyboard device, blocking processing until a keystroke is
-        /// typed that matches the specified keystroke options. In this example
-        /// this functionality is not needed so the method throws a
-        /// NotImplementException exception.
+        /// typed that matches the specified keystroke options.
         /// </summary>
-        /// <param name="options">Options, such as IncludeKeyDown,  used when
-        /// reading the keyboard.</param>
-        /// <returns>Throws a NotImplementedException exception.</returns>
+        /// <param name="options">Unused</param>
         public override KeyInfo ReadKey(ReadKeyOptions options)
         {
-            throw new NotImplementedException(
-                    "The method or operation is not implemented.");
+            ConsoleKeyInfo key = Console.ReadKey();
+            return new KeyInfo((int)key.Key, key.KeyChar, new ControlKeyStates(), true);
         }
 
         /// <summary>
