@@ -1,4 +1,4 @@
-function Start-DevPSGithub
+function Start-DevPSGitHub
 {
     param(
         [switch]$ZapDisable,
