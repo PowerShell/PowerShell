@@ -1,0 +1,1 @@
+fpm -f --verbose -n PowerShell -v 0.1 -m andschwa@microsoft.com --url https://github.com/PowerShell/PowerShell --license "Unlicensed" --vendor Microsoft --description "Project Magrathea -- Open PowerShell on .NET Core" -t osxpkg -s dir --prefix /usr/local/share/powershell bin/
