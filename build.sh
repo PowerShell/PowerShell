@@ -23,3 +23,6 @@ popd
 
 # Publish PowerShell to bin, with LINUX defined through a configuration
 dotnet publish --output "$BIN" --configuration Linux src/Microsoft.PowerShell.Linux.Host
+
+# Fix permissions for packaging
+chmod -R go=u "$BIN"
