@@ -86,6 +86,11 @@ namespace Microsoft.PowerShell.Linux.Host
         private bool newHistory = false;
 
         /// <summary>
+        /// Save buffer at time we hit <tab>  
+        /// </summary>
+        private string preTabBuffer;
+
+        /// <summary>
         /// Initializes a new instance of the ConsoleReadLine class.
         /// </summary>
         public ConsoleReadLine()
@@ -235,7 +240,8 @@ namespace Microsoft.PowerShell.Linux.Host
             //if the buffer has been modified in any way, get the new command completion
             if (previousKeyPress.Key != ConsoleKey.Tab)
             {
-                cmdCompleteOpt = CommandCompletion.CompleteInput(this.buffer.ToString(), this.current, options, powershell);
+                this.preTabBuffer = this.buffer.ToString();
+                cmdCompleteOpt = CommandCompletion.CompleteInput(this.preTabBuffer, this.current, options, powershell);
             }
 
             if (cmdCompleteOpt.CompletionMatches.Count == 0)
@@ -263,24 +269,24 @@ namespace Microsoft.PowerShell.Linux.Host
             if (!String.IsNullOrEmpty(tabResult))
             {
                 var replaceIndex = cmdCompleteOpt.ReplacementIndex;
-                string replaceBuffer = this.buffer.ToString();
+                string replaceBuffer = this.preTabBuffer;
 
                 if (replaceBuffer.Length < replaceIndex)
                 {
-                    replaceIndex = replaceBuffer.Length;
+                    // something is wrong
+                    return;
                 }
 
                 if (replaceBuffer.Length == replaceIndex)
                 {
-                    tabResult = replaceBuffer + tabResult;
+                    replaceBuffer = replaceBuffer + tabResult;
                 }
                 else
                 {
-                    replaceBuffer = replaceBuffer.Remove(replaceIndex);
-                    tabResult = replaceBuffer + tabResult;
-                }
+                    replaceBuffer = replaceBuffer.Remove(replaceIndex, cmdCompleteOpt.ReplacementLength).Insert(replaceIndex, tabResult);
+}
 
-                BufferFromString(tabResult);
+                BufferFromString(replaceBuffer);
                 this.Render();
 
                 if (moveLeftOneSpace)
