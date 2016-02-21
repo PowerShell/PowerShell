@@ -284,10 +284,14 @@ namespace Microsoft.PowerShell.Linux.Host
                 else
                 {
                     replaceBuffer = replaceBuffer.Remove(replaceIndex, cmdCompleteOpt.ReplacementLength).Insert(replaceIndex, tabResult);
-}
+                }
 
                 BufferFromString(replaceBuffer);
                 this.Render();
+
+                int newPosition = replaceIndex + tabResult.Length;
+                this.cursor.Place(newPosition);
+                this.current = newPosition;
 
                 if (moveLeftOneSpace)
                 {
@@ -529,9 +533,8 @@ namespace Microsoft.PowerShell.Linux.Host
         {
             if (this.current < this.buffer.Length)
             {
-                char c = this.buffer[this.current];
                 this.current++;
-                Cursor.Move(1);
+                this.cursor.Move(1);
             }
         }
 
@@ -540,11 +543,10 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         private void MoveLeft()
         {
-            if (this.current > 0 && (this.current - 1 < this.buffer.Length))
+            if (this.current > 0)
             {
                 this.current--;
-                char c = this.buffer[this.current];
-                Cursor.Move(-1);
+                this.cursor.Move(-1);
             }
         }
 
@@ -691,7 +693,7 @@ namespace Microsoft.PowerShell.Linux.Host
             /// Moves the cursor.
             /// </summary>
             /// <param name="delta">The number of characters to move.</param>
-            internal static void Move(int delta)
+            internal void Move(int delta)
             {
                 int position = Console.CursorTop * Console.BufferWidth + Console.CursorLeft + delta;
 
