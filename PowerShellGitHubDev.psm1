@@ -1,9 +1,15 @@
 # TODO: use PowerShell to check OS when available
-$Runtime = [System.Runtime.InteropServices.RuntimeInformation]
-$OSPlatform = [System.Runtime.InteropServices.OSPlatform]
-$Linux = $Runtime::IsOSPlatform($OSPlatform::Linux)
-$OSX = $Runtime::IsOSPlatform($OSPlatform::OSX)
-$Windows = $Runtime::IsOSPlatform($OSPlatform::Windows)
+try {
+    $Runtime = [System.Runtime.InteropServices.RuntimeInformation]
+    $OSPlatform = [System.Runtime.InteropServices.OSPlatform]
+    $Linux = $Runtime::IsOSPlatform($OSPlatform::Linux)
+    $OSX = $Runtime::IsOSPlatform($OSPlatform::OSX)
+    $Windows = $Runtime::IsOSPlatform($OSPlatform::Windows)
+} catch [System.Management.Automation.RuntimeException] {
+    $Linux = $false
+    $OSX = $false
+    $Windows = $true
+}
 
 function Start-PSBuild
 {
