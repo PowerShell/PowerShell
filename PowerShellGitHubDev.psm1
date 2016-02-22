@@ -1,3 +1,10 @@
+# TODO: use PowerShell to check OS when available
+$Runtime = [System.Runtime.InteropServices.RuntimeInformation]
+$OSPlatform = [System.Runtime.InteropServices.OSPlatform]
+$Linux = $Runtime::IsOSPlatform($OSPlatform::Linux)
+$OSX = $Runtime::IsOSPlatform($OSPlatform::OSX)
+$Windows = $Runtime::IsOSPlatform($OSPlatform::Windows)
+
 function Start-PSBuild
 {
     param(
@@ -9,17 +16,12 @@ function Start-PSBuild
         throw "Build dependency 'dotnet' not found in PATH! See: https://dotnet.github.io/getting-started/"
     }
 
+    New-Item -Force -Type Directory $Output | Out-Null
+
     $Top = "$PSScriptRoot/src/Microsoft.PowerShell.Linux.Host"
     if ($Restore -Or -Not (Test-Path "$Top/project.lock.json")) {
         dotnet restore
     }
-
-    # TODO: use PowerShell to check OS when available
-    $Runtime = [System.Runtime.InteropServices.RuntimeInformation]
-    $OSPlatform = [System.Runtime.InteropServices.OSPlatform]
-    $Linux = $Runtime::IsOSPlatform($OSPlatform::Linux)
-    $OSX = $Runtime::IsOSPlatform($OSPlatform::OSX)
-    $Windows = $Runtime::IsOSPlatform($OSPlatform::Windows)
 
     if ($Linux -Or $OSX) {
         $InstallCommand = if ($Linux) { "apt-get" } elseif ($OSX) { "brew" }
@@ -50,6 +52,46 @@ function Start-PSBuild
         elseif ($Windows) { "Debug" }
 
     dotnet publish -o $Output -c $Configuration -f "netstandardapp1.5" $Top
+}
+
+function Start-PSPackage
+{
+    param(
+            [version]$Version = "0.1.0",
+            [int]$Iteration = 1
+         )
+
+    if ($Windows) { throw "Building Windows packages is not yet supported!" }
+
+    if (-Not (Get-Command "fpm" -ErrorAction SilentlyContinue)) {
+        throw "Build dependency 'fpm' not found in PATH! See: https://github.com/jordansissel/fpm"
+    }
+
+    Start-PSBuild
+
+    Write-Host "Change permissions for packaging"
+    chmod -R go=u bin
+
+    $Output = if ($Linux) { "deb" } elseif ($OSX) { "osxpkg" }
+
+    fpm --force --verbose `
+        --name "powershell" `
+        --version $Version `
+        --iteration $Iteration `
+        --maintainer "Andrew Schwartzmeyer <andschwa@microsoft.com>" `
+        --vendor "Microsoft <mageng@microsoft.com>" `
+        --url "https://github.com/PowerShell/PowerShell" `
+        --license "Unlicensed" `
+        --description "Open PowerShell on .NET Core\nPowerShell is an open-source, cross-platform, scripting language and rich object shell. Built upon .NET Core, it is also a C# REPL.\n" `
+        --category "shells" `
+        --depends "libunwind8" `
+        --depends "libicu52" `
+        --deb-build-depends "dotnet" `
+        --deb-build-depends "cmake" `
+        --deb-build-depends "g++" `
+        -t $Output `
+        -s dir `
+        -- "bin/=/usr/local/share/powershell/" "package/powershell=/usr/local/bin"
 }
 
 function Start-DevPSGitHub
