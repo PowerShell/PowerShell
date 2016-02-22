@@ -3,6 +3,7 @@ using System.Reflection;
 
 #if _CORECLR
 [assembly:InternalsVisibleTo("System.Management.Automation")]
+[assembly:InternalsVisibleTo("Microsoft.PowerShell.UnitTest")]
 [assembly:AssemblyFileVersionAttribute("1.0.0.0")]
 [assembly:AssemblyVersion("1.0.0.0")]
 #else
