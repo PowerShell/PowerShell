@@ -18,9 +18,10 @@ install:
   - ps: ./install.ps1 -version 1.0.0.001425 -channel beta
 
 build_script:
-  - ps: $env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli\bin"
-  - ps: dotnet restore
-  - ps: .\build.ps1
+  - ps: |
+      $env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli\bin"
+      Import-Module .\PowerShellGitHubDev.psm1
+      Start-PSBuild
   - ps: .\build.fullCLR.ps1
 
 test_script:
