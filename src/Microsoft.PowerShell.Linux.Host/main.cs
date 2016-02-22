@@ -518,7 +518,7 @@ OPTIONS
                     prompt = "PS> ";
                 }
 
-                this.myHost.UI.Write(ConsoleColor.White, ConsoleColor.Black, prompt);
+                this.myHost.UI.Write(ConsoleColor.White, Console.BackgroundColor, prompt);
                 string cmd = consoleReadLine.Read(this.myHost.Runspace);
                 this.Execute(cmd);
             }
