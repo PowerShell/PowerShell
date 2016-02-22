@@ -86,6 +86,11 @@ namespace Microsoft.PowerShell.Linux.Host
         private bool newHistory = false;
 
         /// <summary>
+        /// Save buffer at time we hit <tab>  
+        /// </summary>
+        private string preTabBuffer;
+
+        /// <summary>
         /// Initializes a new instance of the ConsoleReadLine class.
         /// </summary>
         public ConsoleReadLine()
@@ -235,7 +240,8 @@ namespace Microsoft.PowerShell.Linux.Host
             //if the buffer has been modified in any way, get the new command completion
             if (previousKeyPress.Key != ConsoleKey.Tab)
             {
-                cmdCompleteOpt = CommandCompletion.CompleteInput(this.buffer.ToString(), this.current, options, powershell);
+                this.preTabBuffer = this.buffer.ToString();
+                cmdCompleteOpt = CommandCompletion.CompleteInput(this.preTabBuffer, this.current, options, powershell);
             }
 
             if (cmdCompleteOpt.CompletionMatches.Count == 0)
@@ -263,25 +269,29 @@ namespace Microsoft.PowerShell.Linux.Host
             if (!String.IsNullOrEmpty(tabResult))
             {
                 var replaceIndex = cmdCompleteOpt.ReplacementIndex;
-                string replaceBuffer = this.buffer.ToString();
+                string replaceBuffer = this.preTabBuffer;
 
                 if (replaceBuffer.Length < replaceIndex)
                 {
-                    replaceIndex = replaceBuffer.Length;
+                    // something is wrong
+                    return;
                 }
 
                 if (replaceBuffer.Length == replaceIndex)
                 {
-                    tabResult = replaceBuffer + tabResult;
+                    replaceBuffer = replaceBuffer + tabResult;
                 }
                 else
                 {
-                    replaceBuffer = replaceBuffer.Remove(replaceIndex);
-                    tabResult = replaceBuffer + tabResult;
+                    replaceBuffer = replaceBuffer.Remove(replaceIndex, cmdCompleteOpt.ReplacementLength).Insert(replaceIndex, tabResult);
                 }
 
-                BufferFromString(tabResult);
+                BufferFromString(replaceBuffer);
                 this.Render();
+
+                int newPosition = replaceIndex + tabResult.Length;
+                this.cursor.Place(newPosition);
+                this.current = newPosition;
 
                 if (moveLeftOneSpace)
                 {
@@ -523,9 +533,8 @@ namespace Microsoft.PowerShell.Linux.Host
         {
             if (this.current < this.buffer.Length)
             {
-                char c = this.buffer[this.current];
                 this.current++;
-                Cursor.Move(1);
+                this.cursor.Move(1);
             }
         }
 
@@ -534,11 +543,10 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         private void MoveLeft()
         {
-            if (this.current > 0 && (this.current - 1 < this.buffer.Length))
+            if (this.current > 0)
             {
                 this.current--;
-                char c = this.buffer[this.current];
-                Cursor.Move(-1);
+                this.cursor.Move(-1);
             }
         }
 
@@ -685,7 +693,7 @@ namespace Microsoft.PowerShell.Linux.Host
             /// Moves the cursor.
             /// </summary>
             /// <param name="delta">The number of characters to move.</param>
-            internal static void Move(int delta)
+            internal void Move(int delta)
             {
                 int position = Console.CursorTop * Console.BufferWidth + Console.CursorLeft + delta;
 
