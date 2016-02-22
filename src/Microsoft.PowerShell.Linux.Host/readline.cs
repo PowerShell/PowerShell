@@ -133,61 +133,127 @@ namespace Microsoft.PowerShell.Linux.Host
             {
                 ConsoleKeyInfo key = Console.ReadKey(true);
 
-                switch (key.Key)
+                // Basic Emacs-style readline implementation
+                if (key.Modifiers.HasFlag(ConsoleModifiers.Control))
                 {
-                    case ConsoleKey.Backspace:
-                        this.OnBackspace();
-                        break;
-                    case ConsoleKey.Delete:
-                        this.OnDelete();
-                        break;
-                    case ConsoleKey.Enter:
-                        previousKeyPress = key;
-                        return this.OnEnter();
-                    case ConsoleKey.RightArrow:
-                        this.OnRight(key.Modifiers);
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        this.OnLeft(key.Modifiers);
-                        break;
-                    case ConsoleKey.Escape:
-                        this.OnEscape();
-                        break;
-                    case ConsoleKey.Home:
-                        this.OnHome();
-                        break;
-                    case ConsoleKey.End:
-                        this.OnEnd();
-                        break;
-                    case ConsoleKey.Tab:
-                        this.OnTab();
-                        break;
-                    case ConsoleKey.UpArrow:
-                        this.OnUpArrow();
-                        break;
-                    case ConsoleKey.DownArrow:
-                        this.OnDownArrow();
-                        break;
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.A:
+                            this.OnHome();
+                            break;
+                        case ConsoleKey.E:
+                            this.OnEnd();
+                            break;
+                        // TODO: save buffer, yank with Ctrl-Y
+                        /*
+                        case ConsoleKey.K:
+                            this.OnEscape();
+                            break;
+                        */
+                        case ConsoleKey.D:
+                            this.OnDelete();
+                            break;
+                        case ConsoleKey.B:
+                            this.OnLeft(key.Modifiers);
+                            break;
+                        case ConsoleKey.F:
+                            this.OnRight(key.Modifiers);
+                            break;
+                        case ConsoleKey.P:
+                        // TODO: incremental search
+                        case ConsoleKey.R:
+                            this.OnUpArrow();
+                            break;
+                        case ConsoleKey.N:
+                        // TODO: incremental search
+                        case ConsoleKey.S:
+                            this.OnDownArrow();
+                            break;
+                        case ConsoleKey.J:
+                            this.OnEnter();
+                            break;
+                        // TODO: save and restore buffer
+                        /*
+                        case ConsoleKey.L:
+                            this.BufferFromString("clear");
+                            previousKeyPress = key;
+                            return this.OnEnter();
+                        */
+                    }
+                }
+                else if (key.Modifiers.HasFlag(ConsoleModifiers.Alt))
+                {
+                    switch (key.Key)
+                    {
+                        // TODO: OnDelete(key)
+                        // TODO: OnBackspace(key)
+                        case ConsoleKey.B:
+                            this.OnLeft(key.Modifiers);
+                            break;
+                        case ConsoleKey.F:
+                            this.OnRight(key.Modifiers);
+                            break;
+                    }
+                }
+                // Unmodified keys
+                else
+                {
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.Backspace:
+                            this.OnBackspace();
+                            break;
+                        case ConsoleKey.Delete:
+                            this.OnDelete();
+                            break;
+                        case ConsoleKey.Enter:
+                            previousKeyPress = key;
+                            return this.OnEnter();
+                        case ConsoleKey.RightArrow:
+                            this.OnRight(key.Modifiers);
+                            break;
+                        case ConsoleKey.LeftArrow:
+                            this.OnLeft(key.Modifiers);
+                            break;
+                        case ConsoleKey.Escape:
+                            this.OnEscape();
+                            break;
+                        case ConsoleKey.Home:
+                            this.OnHome();
+                            break;
+                        case ConsoleKey.End:
+                            this.OnEnd();
+                            break;
+                        case ConsoleKey.Tab:
+                            this.OnTab();
+                            break;
+                        case ConsoleKey.UpArrow:
+                            this.OnUpArrow();
+                            break;
+                        case ConsoleKey.DownArrow:
+                            this.OnDownArrow();
+                            break;
 
                         // TODO: case ConsoleKey.LeftWindows: not available in linux
                         // TODO: case ConsoleKey.RightWindows: not available in linux
 
-                    default:
+                        default:
 
-                        if (key.KeyChar == '\x0D')
-                        {
-                            goto case ConsoleKey.Enter;      // Ctrl-M
-                        }
+                            if (key.KeyChar == '\x0D')
+                            {
+                                goto case ConsoleKey.Enter;      // Ctrl-M
+                            }
 
-                        if (key.KeyChar == '\x08')
-                        {
-                            goto case ConsoleKey.Backspace;  // Ctrl-H
-                        }
+                            if (key.KeyChar == '\x08')
+                            {
+                                goto case ConsoleKey.Backspace;  // Ctrl-H
+                            }
 
-                        this.Insert(key.KeyChar);
+                            this.Insert(key.KeyChar);
 
-                        this.Render();
-                        break;
+                            this.Render();
+                            break;
+                    }
                 }
                 previousKeyPress = key;
             }
@@ -446,7 +512,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// and Shift keys.</param>
         private void OnLeft(ConsoleModifiers consoleModifiers)
         {
-            if ((consoleModifiers & ConsoleModifiers.Control) != 0)
+            if (consoleModifiers.HasFlag(ConsoleModifiers.Alt))
             {
                 // Move back to the start of the previous word.
                 if (this.buffer.Length > 0 && this.current != 0)
@@ -493,7 +559,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// and Shift keys.</param>
         private void OnRight(ConsoleModifiers consoleModifiers)
         {
-            if ((consoleModifiers & ConsoleModifiers.Control) != 0)
+            if (consoleModifiers.HasFlag(ConsoleModifiers.Alt))
             {
                 // Move to the next word.
                 if (this.buffer.Length != 0 && this.current < this.buffer.Length)
