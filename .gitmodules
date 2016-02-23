@@ -1,6 +1,3 @@
-[submodule "src/dsc"]
-	path = src/dsc
-	url = https://github.com/Microsoft/PowerShell-DSC-for-Linux.git
 [submodule "src/libpsl-native"]
 	path = src/libpsl-native
 	url = https://github.com/PowerShell/psl-native.git
