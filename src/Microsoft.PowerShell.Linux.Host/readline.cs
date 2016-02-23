@@ -762,6 +762,8 @@ namespace Microsoft.PowerShell.Linux.Host
             internal void Move(int delta)
             {
                 int position = Console.CursorTop * Console.BufferWidth + Console.CursorLeft + delta;
+                int maxPosition = (Console.BufferWidth * Console.BufferHeight) - 1;
+                position = (position < 0) ? 0 : ((position > maxPosition) ? maxPosition : position);
 
                 Console.CursorLeft = position % Console.BufferWidth;
                 Console.CursorTop = position / Console.BufferWidth;
