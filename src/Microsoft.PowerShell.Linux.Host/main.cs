@@ -178,11 +178,6 @@ OPTIONS
         private string partialLine = string.Empty;
 
         /// <summary>
-        /// To keep track of here-strings
-        /// </summary>
-        private bool hereString = false;
-
-        /// <summary>
         /// Gets or sets a value indicating whether the host application
         /// should exit.
         /// </summary>
@@ -399,21 +394,8 @@ OPTIONS
                 cmd = cmd.Trim();
                 partialLine += cmd;
 
-                if (hereString || cmd.EndsWith("@\"") || cmd.EndsWith("@\'"))
-                {
-                    hereString = true;
+                partialLine += System.Environment.NewLine;
 
-                    partialLine += System.Environment.NewLine;
-                }
-                else
-                {
-                    while (partialLine[partialLine.Length - 1] == '`')
-                    {
-                        partialLine = partialLine.Remove(partialLine.Length - 1);
-                    }
-
-                    partialLine += " ";
-                }
             }
 
             finally
@@ -430,7 +412,6 @@ OPTIONS
                 if (!incompleteLine)
                 {
                     partialLine = string.Empty;
-                    hereString = false;
                 }
             }
         }
