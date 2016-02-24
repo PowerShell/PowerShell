@@ -1,3 +1,6 @@
+# Use the .NET Core APIs to determine the current platform; if a runtime
+# exception is thrown, we are on FullCLR, not .NET Core.
+#
 # TODO: use PowerShell to check OS when available
 try {
     $Runtime = [System.Runtime.InteropServices.RuntimeInformation]
@@ -14,9 +17,9 @@ try {
 function Start-PSBuild
 {
     param(
-            [switch]$Restore,
-            [string]$Output = "$PSScriptRoot/bin"
-         )
+        [switch]$Restore,
+        [string]$Output = "$PSScriptRoot/bin"
+    )
 
     if (-Not (Get-Command "dotnet" -ErrorAction SilentlyContinue)) {
         throw "Build dependency 'dotnet' not found in PATH! See: https://dotnet.github.io/getting-started/"
@@ -26,7 +29,7 @@ function Start-PSBuild
 
     $Top = "$PSScriptRoot/src/Microsoft.PowerShell.Linux.Host"
     if ($Restore -Or -Not (Test-Path "$Top/project.lock.json")) {
-        dotnet restore
+        dotnet restore $PSScriptRoot
     }
 
     if ($Linux -Or $OSX) {
@@ -38,17 +41,14 @@ function Start-PSBuild
         }
 
         $Ext = if ($Linux) { "so" } elseif ($OSX) { "dylib" }
-        $Lib = "src/libpsl-native.$Ext"
-
+        $Native = "$PSScriptRoot/src/libpsl-native"
+        $Lib = "$Native/src/libpsl-native.$Ext"
         Write-Host "Building $Lib"
-
-        pushd "src/libpsl-native"
-        cmake -DCMAKE_BUILD_TYPE=Debug .
-        make -j
-        ctest -V
+        cmake -DCMAKE_BUILD_TYPE=Debug $Native
+        make -j -C $Native
+        make -C $Native test
         if (-Not (Test-Path $Lib)) { throw "Compilation of $Lib failed" }
         cp $Lib $Output
-        popd
     }
 
     Write-Host "Building PowerShell"
@@ -62,10 +62,13 @@ function Start-PSBuild
 
 function Start-PSPackage
 {
+    # PowerShell packages use Semantic Versioning http://semver.org/
+    #
+    # Ubuntu and OS X packages are supported.
     param(
-            [version]$Version = "0.1.0",
-            [int]$Iteration = 1
-         )
+        [string]$Version,
+        [int]$Iteration = 1
+    )
 
     if ($Windows) { throw "Building Windows packages is not yet supported!" }
 
@@ -73,13 +76,22 @@ function Start-PSPackage
         throw "Build dependency 'fpm' not found in PATH! See: https://github.com/jordansissel/fpm"
     }
 
-    Start-PSBuild
+    if (-Not(Test-Path "$PSScriptRoot/bin/powershell")) {
+        throw "Please Start-PSBuild to publish PowerShell"
+    }
 
-    Write-Host "Change permissions for packaging"
-    chmod -R go=u bin
+    # Change permissions for packaging
+    chmod -R go=u "$PSScriptRoot/bin"
 
+    # Decide package output type
     $Output = if ($Linux) { "deb" } elseif ($OSX) { "osxpkg" }
 
+    # Use Git tag if not given a version
+    if (-Not($Version)) {
+        $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
+    }
+
+    # Build package
     fpm --force --verbose `
         --name "powershell" `
         --version $Version `
@@ -97,7 +109,8 @@ function Start-PSPackage
         --deb-build-depends "g++" `
         -t $Output `
         -s dir `
-        -- "bin/=/usr/local/share/powershell/" "package/powershell=/usr/local/bin"
+        "$PSScriptRoot/bin/=/usr/local/share/powershell/" `
+        "$PSScriptRoot/package/powershell=/usr/local/bin"
 }
 
 function Start-DevPSGitHub
