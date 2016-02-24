@@ -3,6 +3,10 @@
     "version": "1.0.0-*",
     "authors": [ "andschwa" ],
 
+    "compilationOptions": {
+        "warningsAsErrors": true
+    },
+
     "configurations": {
         "Linux": {
             "compilationOptions": {

@@ -4,6 +4,10 @@
     "description": "Stub to satisfy PowerShell compilation",
     "authors": [ "garretts", "andschwa" ],
 
+    "compilationOptions": {
+        "warningsAsErrors": true
+    },
+
     "frameworks": {
         "netstandard1.5": {
             "imports": [ "dnxcore50" ],

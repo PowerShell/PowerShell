@@ -5,6 +5,7 @@
     "authors": [ "garretts" ],
 
     "compilationOptions": {
+        "warningsAsErrors": true,
         "allowUnsafe": true
     },
 

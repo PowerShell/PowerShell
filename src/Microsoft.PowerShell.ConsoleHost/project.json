@@ -5,6 +5,7 @@
     "authors": [ "sevoroby", "andschwa" ],
 
     "compilationOptions": {
+        "warningsAsErrors": true,
         "allowUnsafe": true
     },
 
