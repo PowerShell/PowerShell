@@ -388,7 +388,7 @@ OPTIONS
                     this.currentPowerShell.Invoke(null, settings);
                 }
             }
-            catch (IncompleteParseException e)
+            catch (IncompleteParseException)
             {
                 incompleteLine = true;
                 cmd = cmd.Trim();
