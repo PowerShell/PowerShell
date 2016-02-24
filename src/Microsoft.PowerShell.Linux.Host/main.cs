@@ -168,6 +168,16 @@ OPTIONS
         private bool _showHelpMessage;
 
         /// <summary>
+        /// To keep track whether last entered command was complete
+        /// </summary>
+        private bool incompleteLine = false;
+
+        /// <summary>
+        /// To store incomplete lines
+        /// </summary>
+        private string partialLine = string.Empty;
+
+        /// <summary>
         /// Gets or sets a value indicating whether the host application
         /// should exit.
         /// </summary>
@@ -270,7 +280,11 @@ OPTIONS
                 return returnVal;
             }
 
-            // TODO: if we are in block mode, sep the prompt to ">> "
+            if (incompleteLine)
+            {
+                return ">> ";
+            }
+
             Pipeline pipeline = rs.CreatePipeline();
             Command promptCommand = new Command("prompt");
 
@@ -343,7 +357,15 @@ OPTIONS
             {
                 this.currentPowerShell.Runspace = this.myRunSpace;
 
-                this.currentPowerShell.AddScript(cmd);
+                if (incompleteLine)
+                {
+                    this.currentPowerShell.AddScript(partialLine + cmd);
+                }
+                else
+                {
+                    this.currentPowerShell.AddScript(cmd);
+                }
+                incompleteLine = false;
 
                 // Add the default outputter to the end of the pipe and then call the
                 // MergeMyResults method to merge the output and error streams from the
@@ -366,6 +388,16 @@ OPTIONS
                     this.currentPowerShell.Invoke(null, settings);
                 }
             }
+            catch (IncompleteParseException e)
+            {
+                incompleteLine = true;
+                cmd = cmd.Trim();
+                partialLine += cmd;
+
+                partialLine += System.Environment.NewLine;
+
+            }
+
             finally
             {
                 // Dispose the PowerShell object and set currentPowerShell to null.
@@ -375,6 +407,11 @@ OPTIONS
                 {
                     this.currentPowerShell.Dispose();
                     this.currentPowerShell = null;
+                }
+
+                if (!incompleteLine)
+                {
+                    partialLine = string.Empty;
                 }
             }
         }
