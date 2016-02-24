@@ -44,9 +44,16 @@ function Start-PSBuild
         $Native = "$PSScriptRoot/src/libpsl-native"
         $Lib = "$Native/src/libpsl-native.$Ext"
         Write-Host "Building $Lib"
-        cmake -DCMAKE_BUILD_TYPE=Debug $Native
-        make -j -C $Native
-        make -C $Native test
+
+        try {
+            pushd $Native
+            cmake -DCMAKE_BUILD_TYPE=Debug .
+            make -j
+            make test
+        } finally {
+            popd
+        }
+
         if (-Not (Test-Path $Lib)) { throw "Compilation of $Lib failed" }
         cp $Lib $Output
     }
