@@ -48,7 +48,7 @@ Instead run:
 
 ```
 git clone https://github.com/PowerShell/PowerShell.git
-git submodule update --init --recursive -- src/monad src/windows-build test/Pester
+git submodule update --init --recursive -- src/monad src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
 ```
 
 [Open Source Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
