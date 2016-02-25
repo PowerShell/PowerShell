@@ -7,6 +7,9 @@
     "frameworks": {
         "netstandard1.5": {
             "imports": [ "dnxcore50" ],
+            "compilationOptions": {
+                "warningsAsErrors": true
+            },
             "dependencies": {
                 "NETStandard.Library": "1.0.0-rc3-23819",
                 "System.Security.SecureString": "1.0.0-*"

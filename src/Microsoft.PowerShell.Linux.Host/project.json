@@ -5,6 +5,7 @@
     "authors": [ "andschwa" ],
 
     "compilationOptions": {
+        "warningsAsErrors": true,
         "emitEntryPoint": true
     },
 
