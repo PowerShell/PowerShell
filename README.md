@@ -61,7 +61,7 @@ non-Windows platforms). Install `dotnet` by following their [documentation][].
 
 The version of .NET CLI is very important, you want a recent 1.0.0 beta
 (**not** 1.0.1). The following instructions will install precisely
-1.0.0.001425, though any 1.0.0 version *should* work.
+1.0.0.001517, though any 1.0.0 version *should* work.
 
 > Previous installations of DNX, `dnvm`, or older installations of .NET CLI
 > can cause odd failures when running. Please check your version.
@@ -78,7 +78,7 @@ Tested on Ubuntu 14.04.
 sudo sh -c 'echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/dotnet/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
 sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
 sudo apt-get update
-sudo apt-get install dotnet=1.0.0.001425-1
+sudo apt-get install dotnet=1.0.0.001540-1
 ```
 
 Then install the following additional build / debug tools:
@@ -104,7 +104,7 @@ An MSI installer also exists, but this script avoids touching your system.
 
 ```powershell
 Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
-./install.ps1 -version 1.0.0.001425 -channel beta
+./install.ps1 -version 1.0.0.001540 -channel beta
 ```
 
 ### OS X
