@@ -4,7 +4,6 @@
     "authors": [ "garretts", "andschwa" ],
 
     "compilationOptions": {
-        "warningsAsErrors": true,
         "allowUnsafe": true
     },
 
@@ -16,6 +15,7 @@
         "netstandard1.5": {
             "imports": [ "dnxcore50" ],
             "compilationOptions": {
+                "warningsAsErrors": true,
                 "define": [ "_CORECLR" ]
             },
             "dependencies": {
