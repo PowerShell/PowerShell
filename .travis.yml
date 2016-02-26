@@ -2,6 +2,7 @@ language: cpp
 sudo: required
 dist: trusty
 cache:
+  apt: true
   directories:
     - $HOME/.nuget
 git:
