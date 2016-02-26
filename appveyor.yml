@@ -2,6 +2,10 @@ environment:
   priv_key:
     secure: <encryped-value>
 
+cache:
+  - '%HOME%\.nuget'
+  - '%LocalAppData%\Microsoft\dotnet'
+
 notifications:
   - provider: Slack
     incoming_webhook:
