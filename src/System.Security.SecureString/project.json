@@ -12,7 +12,7 @@
     "frameworks": {
         "netstandard1.5": {
             "dependencies": {
-                "NETStandard.Library": "1.0.0-rc3-23819"
+                "NETStandard.Library": "1.0.0-rc3-23826"
             },
             "imports": [ "dnxcore50" ]
         }
