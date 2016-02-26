@@ -9,6 +9,7 @@ add_executable(psl-native-test
   test-getfullyqualifiedname.cpp
   test-issymlink.cpp
   test-isexecutable.cpp
+  test-createsymlink.cpp
   main.cpp)
 
 # manually include gtest headers

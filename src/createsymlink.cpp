@@ -3,8 +3,6 @@
 //! @brief create new symbolic link
 
 #include <errno.h>
-//#include <sys/types.h>
-//#include <sys/stat.h>
 #include <unistd.h>
 #include <string>
 #include "createsymlink.h"
