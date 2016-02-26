@@ -6,6 +6,7 @@ add_library(psl-native SHARED
   getfullyqualifiedname.cpp
   issymlink.cpp
   isexecutable.cpp
-  setdate.cpp)
+  setdate.cpp
+  createsymlink.cpp)
 
 target_include_directories(psl-native PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

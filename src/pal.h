@@ -22,6 +22,8 @@
 #define ERROR_FILE_NOT_FOUND 0x00000002
 #define ERROR_BAD_PATH_NAME 0x000000A1
 #define ERROR_BAD_NET_NAME 0x00000043
+#define ERROR_DISK_FULL 0x00000070
+#define ERROR_FILE_EXISTS 0x00000050
 
 /*
 **==============================================================================
