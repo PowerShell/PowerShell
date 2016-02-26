@@ -4,6 +4,7 @@ environment:
 
 cache:
   - '%HOME%\.nuget'
+  - '%LocalAppData%\Microsoft\dotnet'
 
 notifications:
   - provider: Slack
