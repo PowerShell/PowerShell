@@ -107,6 +107,9 @@ Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/sc
 ./install.ps1 -version 1.0.0.001540 -channel beta
 ```
 
+Note:
+>If you meet "Unable to cast COM object of type 'System.__ComObject' to interface type 'Microsoft.Cci.ISymUnmanagedWriter5'", please install [Visual C++ Redistributable for Visual Studio 2015].
+
 ### OS X
 
 The OS X dependency installation instructions are not yet documented. You can
@@ -372,3 +375,4 @@ We publish an archive with FullCLR bits on every CI build with [AppVeyor][].
 * `Start-DevPSGithub -binDir $bin`
 
 [appveyor]: https://ci.appveyor.com/project/PowerShell/powershell-linux
+[Visual C++ Redistributable for Visual Studio 2015]:https://www.microsoft.com/en-hk/download/details.aspx?id=48145
