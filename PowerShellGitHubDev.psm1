@@ -82,7 +82,9 @@ function Start-PSPackage
     # Ubuntu and OS X packages are supported.
     param(
         [string]$Version,
-        [int]$Iteration = 1
+        [int]$Iteration = 1,
+        [ValidateSet("deb", "osxpkg", "rpm")]
+        [string]$Type
     )
 
     if ($IsWindows) { throw "Building Windows packages is not yet supported!" }
@@ -99,11 +101,24 @@ function Start-PSPackage
     chmod -R go=u "$PSScriptRoot/bin"
 
     # Decide package output type
-    $Output = if ($IsLinux) { "deb" } elseif ($IsOSX) { "osxpkg" }
+    if (-Not($Type)) {
+        $Type = if ($IsLinux) { "deb" } elseif ($IsOSX) { "osxpkg" }
+        Write-Warning "-Type was not specified, continuing with $Type"
+    }
 
     # Use Git tag if not given a version
     if (-Not($Version)) {
         $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
+    }
+
+    $libunwind = switch ($Type) {
+        "deb" { "libunwind8" }
+        "rpm" { "libunwind" }
+    }
+
+    $libicu = switch ($Type) {
+        "deb" { "libicu52" }
+        "rpm" { "libicu" }
     }
 
     # Build package
@@ -117,12 +132,12 @@ function Start-PSPackage
         --license "Unlicensed" `
         --description "Open PowerShell on .NET Core\nPowerShell is an open-source, cross-platform, scripting language and rich object shell. Built upon .NET Core, it is also a C# REPL.\n" `
         --category "shells" `
-        --depends "libunwind8" `
-        --depends "libicu52" `
+        --depends $libunwind `
+        --depends $libicu `
         --deb-build-depends "dotnet" `
         --deb-build-depends "cmake" `
         --deb-build-depends "g++" `
-        -t $Output `
+        -t $Type `
         -s dir `
         "$PSScriptRoot/bin/=/usr/local/share/powershell/" `
         "$PSScriptRoot/package/powershell=/usr/local/bin"
