@@ -21,7 +21,8 @@ function Start-PSBuild
 {
     param(
         [switch]$Restore,
-        [string]$Output = "$PSScriptRoot/bin"
+        [string]$Output = "$PSScriptRoot/bin",
+        [string]$Runtime
     )
 
     if (-Not (Get-Command "dotnet" -ErrorAction SilentlyContinue)) {
@@ -63,11 +64,15 @@ function Start-PSBuild
 
     Write-Host "Building PowerShell"
 
-    $Configuration =
-        if ($IsLinux -Or $IsOSX) { "Linux" }
-        elseif ($IsWindows) { "Debug" }
+    $Arguments = "--framework", "netstandardapp1.5", "--output", $Output
 
-    dotnet publish -o $Output -c $Configuration -f "netstandardapp1.5" $Top
+    if ($IsLinux -Or $IsOSX) { $Arguments += "--configuration", "Linux" }
+
+    if ($Runtime) { $Arguments += "--runtime", $Runtime }
+
+    $Arguments += $Top
+
+    dotnet publish $Arguments
 }
 
 function Start-PSPackage
