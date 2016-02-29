@@ -1,5 +1,10 @@
 ﻿function Clean-State
 {
+    if (Test-Path $FullyQualifiedLink)
+    {
+        Remove-Item $FullyQualifiedLink -Force
+    }
+
     if (Test-Path $FullyQualifiedFile)
     {
         Remove-Item $FullyQualifiedFile -Force
@@ -8,11 +13,6 @@
     if (Test-Path $FullyQualifiedFolder)
     {
         Remove-Item $FullyQualifiedFolder -Recurse -Force
-    }
-
-    if (Test-Path $FullyQualifiedLink)
-    {
-        Remove-Item $FullyQualifiedLink -Force
     }
 }
 
