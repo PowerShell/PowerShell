@@ -285,12 +285,15 @@ OPTIONS
                 return ">> ";
             }
 
-            Pipeline pipeline = rs.CreatePipeline();
+            Collection<PSObject> output;
             Command promptCommand = new Command("prompt");
 
-            pipeline.Commands.Add(promptCommand);
+            using (Pipeline pipeline = rs.CreatePipeline())
+            {
+                pipeline.Commands.Add(promptCommand);
+                output = pipeline.Invoke();
+            }
 
-            Collection<PSObject> output = pipeline.Invoke();
             foreach (PSObject item in output)
             {
                 returnVal = item.BaseObject.ToString();
@@ -556,7 +559,7 @@ OPTIONS
                 }
 
                 this.myHost.UI.Write(ConsoleColor.White, Console.BackgroundColor, prompt);
-                string cmd = consoleReadLine.Read(this.myHost.Runspace);
+                string cmd = consoleReadLine.Read(this.myHost.Runspace, false);
                 this.Execute(cmd);
             }
         }
@@ -577,7 +580,7 @@ OPTIONS
             while (resumeAction == null)
             {
                 Console.Write("[DBG] PS >> ");
-                string command = consoleReadLine.Read(this.myHost.Runspace); 
+                string command = consoleReadLine.Read(this.myHost.Runspace, true); 
                 Console.WriteLine();
 
                 // Stream output from command processing to console.

@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// Read a line of text, colorizing while typing.
         /// </summary>
         /// <returns>The command line read</returns>
-        public string Read(Runspace runspace)
+        public string Read(Runspace runspace, bool nested)
         {
             this.powershell.Runspace = runspace;
             this.Initialize();
@@ -162,12 +162,12 @@ namespace Microsoft.PowerShell.Linux.Host
                         case ConsoleKey.P:
                         // TODO: incremental search
                         case ConsoleKey.R:
-                            this.OnUpArrow();
+                            this.OnUpArrow(nested);
                             break;
                         case ConsoleKey.N:
                         // TODO: incremental search
                         case ConsoleKey.S:
-                            this.OnDownArrow();
+                            this.OnDownArrow(nested);
                             break;
                         case ConsoleKey.J:
                             this.OnEnter();
@@ -228,10 +228,10 @@ namespace Microsoft.PowerShell.Linux.Host
                             this.OnTab();
                             break;
                         case ConsoleKey.UpArrow:
-                            this.OnUpArrow();
+                            this.OnUpArrow(nested);
                             break;
                         case ConsoleKey.DownArrow:
-                            this.OnDownArrow();
+                            this.OnDownArrow(nested);
                             break;
 
                         // TODO: case ConsoleKey.LeftWindows: not available in linux
@@ -434,11 +434,11 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         /// The down arrow was pressed to retrieve history
         /// </summary>
-        private void OnDownArrow() 
+        private void OnDownArrow(bool nested) 
         {
             if (this.newHistory)
             {
-                GetHistory();
+                GetHistory(nested);
                 OnEscape();
                 historyIndex = historyResult.Count;
             }
@@ -468,11 +468,11 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         ///   Changes the history queue when the up arrow is pressed
         /// </summary>
-        private void OnUpArrow()
+        private void OnUpArrow(bool nested)
         {
             if (this.newHistory)
             {
-                GetHistory();
+                GetHistory(nested);
                 historyIndex = historyResult.Count - 1;
 
                 BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
@@ -497,12 +497,23 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         /// Helper function to get command history   
         /// </summary>
-        private void GetHistory()
+        private void GetHistory(bool nested)
         {
-            using (Pipeline pipeline = this.powershell.Runspace.CreatePipeline("Get-History"))
+            if (nested)
             {
-                historyResult = pipeline.Invoke();
+                using (Pipeline pipelineNested = this.powershell.Runspace.CreateNestedPipeline("Get-History", true))
+                {
+                    historyResult = pipelineNested.Invoke();
+                }
             }
+            else
+            {
+                using (Pipeline pipeline = this.powershell.Runspace.CreatePipeline("Get-History"))
+                {
+                    historyResult = pipeline.Invoke();
+                }
+            }
+
         }
 
         /// <summary>
