@@ -9,14 +9,21 @@
     {
         Remove-Item $FullyQualifiedFolder -Recurse -Force
     }
+
+    if (Test-Path $FullyQualifiedLink)
+    {
+        Remove-Item $FullyQualifiedLink -Force
+    }
 }
 
 Describe "New-Item" {
     $tmpDirectory         = $TestDrive
     $testfile             = "testfile.txt"
     $testfolder           = "newDirectory"
+    $testlink             = "testlink"
     $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
     $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
+    $FullyQualifiedLink   = Join-Path -Path $tmpDirectory -ChildPath $testlink
 
     BeforeEach {
         Clean-State
@@ -92,4 +99,22 @@ Describe "New-Item" {
 
         Test-Path $FullyQualifiedFile | Should Be $false 
     }
+
+    It "Should create a symbolic link of a file without error" {
+        New-Item -Name $testfile -Path $tmpDirectory -ItemType file
+        Test-Path $FullyQualifiedFile | Should Be $true
+
+        New-Item -ItemType SymbolicLink -Target $FullyQualifiedFile -Name $testlink -Path $tmpDirectory
+        Test-Path $FullyQualifiedLink | Should Be $true
+    }
+
+    It "Should create a symbolic link from directory without error" {
+        New-Item -Name $testFolder -Path $tmpDirectory -ItemType directory
+        Test-Path $FullyQualifiedFolder | Should Be $true
+
+        New-Item -ItemType SymbolicLink -Target $FullyQualifiedFolder -Name $testlink -Path $tmpDirectory
+        Test-Path $FullyQualifiedLink | Should Be $true
+    }
+
+
 }
