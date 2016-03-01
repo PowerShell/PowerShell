@@ -12,7 +12,7 @@
 
     if (Test-Path $FullyQualifiedFolder)
     {
-        Remove-Item $FullyQualifiedFolder -Recurse -Force
+        Remove-Item $FullyQualifiedFolder -Force
     }
 }
 
@@ -114,6 +114,9 @@ Describe "New-Item" {
 
         New-Item -ItemType SymbolicLink -Target $FullyQualifiedFolder -Name $testlink -Path $tmpDirectory
         Test-Path $FullyQualifiedLink | Should Be $true
+
+        # Remove the link explicitly to avoid broken symlink issue
+        Remove-Item $FullyQualifiedLink -Force
     }
 
 
