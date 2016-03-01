@@ -499,21 +499,12 @@ namespace Microsoft.PowerShell.Linux.Host
         /// </summary>
         private void GetHistory(bool nested)
         {
-            if (nested)
+            using (Pipeline pipeline = nested 
+                   ? this.powershell.Runspace.CreateNestedPipeline("Get-History", true)
+                   : this.powershell.Runspace.CreatePipeline("Get-History"))
             {
-                using (Pipeline pipelineNested = this.powershell.Runspace.CreateNestedPipeline("Get-History", true))
-                {
-                    historyResult = pipelineNested.Invoke();
-                }
+                historyResult = pipeline.Invoke();
             }
-            else
-            {
-                using (Pipeline pipeline = this.powershell.Runspace.CreatePipeline("Get-History"))
-                {
-                    historyResult = pipeline.Invoke();
-                }
-            }
-
         }
 
         /// <summary>
