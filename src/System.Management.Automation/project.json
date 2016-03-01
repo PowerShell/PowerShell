@@ -56,7 +56,7 @@
                 "System.Threading.Tasks.Parallel": "4.0.1-rc3-23829",
                 "System.Xml.XPath.XmlDocument": "4.0.1-rc3-23829",
                 "System.Xml.XmlDocument": "4.0.1-rc3-23829",
-                "System.Xml.XmlSerializer": "4.0.11-rc3-23829",
+                "System.Xml.XmlSerializer": "4.0.11-rc3-23829"
             }
         },
         "dnx451": {
