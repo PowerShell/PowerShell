@@ -178,6 +178,16 @@ OPTIONS
         private string partialLine = string.Empty;
 
         /// <summary>
+        /// To keep track of whether CTRL-C is causing a command abort
+        /// </summary>
+        private bool abortCommand = false;
+
+        /// <summary>
+        /// To keep track of whether we are in input mode
+        /// </summary>
+        private bool inputMode = false;
+
+        /// <summary>
         /// Gets or sets a value indicating whether the host application
         /// should exit.
         /// </summary>
@@ -342,6 +352,13 @@ OPTIONS
             // Ignore empty command lines.
             if (string.IsNullOrEmpty(cmd))
             {
+                if (this.abortCommand)
+                {
+                    incompleteLine = false;
+                    partialLine = string.Empty;
+                    this.abortCommand = false;
+                }
+                    
                 return;
             }
 
@@ -514,6 +531,15 @@ OPTIONS
         /// ConsoleCancelEventHandler.</param>
         private void HandleControlC(object sender, ConsoleCancelEventArgs e)
         {
+            e.Cancel = true;
+
+            if (this.inputMode)
+            {
+                this.abortCommand = true;
+                this.consoleReadLine.Abort();
+                return;
+            }
+
             try
             {
                 lock (this.instanceLock)
@@ -524,7 +550,6 @@ OPTIONS
                     }
                 }
 
-                e.Cancel = true;
             }
             catch (Exception exception)
             {
@@ -559,7 +584,12 @@ OPTIONS
                 }
 
                 this.myHost.UI.Write(ConsoleColor.White, Console.BackgroundColor, prompt);
+
+                // Since Console.TreatControlCAsInput is not implemented, we use inputMode to
+                // tell us how control-c should be handled
+                this.inputMode = true;
                 string cmd = consoleReadLine.Read(this.myHost.Runspace, false);
+                this.inputMode = false;
                 this.Execute(cmd);
             }
         }
@@ -579,9 +609,28 @@ OPTIONS
             // loop to process Debugger commands.
             while (resumeAction == null)
             {
-                Console.Write("[DBG] PS >> ");
+                if (incompleteLine)
+                {
+                    Console.Write(">> ");
+                }
+                else
+                {
+                    Console.Write("[DBG] PS >> ");
+                }
+                this.inputMode = true;
                 string command = consoleReadLine.Read(this.myHost.Runspace, true); 
-                Console.WriteLine();
+                this.inputMode = false;
+
+                if (string.IsNullOrEmpty(command))
+                {
+                    if (this.abortCommand)
+                    {
+                        incompleteLine = false;
+                        partialLine = string.Empty;
+                        this.abortCommand = false;
+                    }
+                    continue;
+                }
 
                 // Stream output from command processing to console.
                 var output = new PSDataCollection<PSObject>();
@@ -600,10 +649,38 @@ OPTIONS
                 // command or script.  The returned DebuggerCommandResults object will indicate
                 // whether the command was evaluated by the debugger and if the debugger should
                 // be released with a specific resume action.
+
                 PSCommand psCommand = new PSCommand();
-                psCommand.AddScript(command).AddCommand("Out-String").AddParameter("Stream", true);
-                DebuggerCommandResults results = debugger.ProcessCommand(psCommand, output);
-                if (results.ResumeAction != null)
+
+                if (incompleteLine)
+                {
+                    psCommand.AddScript(partialLine + command).AddCommand("Out-String").AddParameter("Stream", true);
+                }
+                else
+                {
+                    psCommand.AddScript(command).AddCommand("Out-String").AddParameter("Stream", true);
+                }
+                incompleteLine = false;
+
+                DebuggerCommandResults results = null;
+                try
+                {
+                    results = debugger.ProcessCommand(psCommand, output);
+                }
+                catch (IncompleteParseException)
+                {
+                    incompleteLine = true;
+                    command = command.Trim();
+                    partialLine += command;
+                    partialLine += System.Environment.NewLine;
+                }
+
+                if (!incompleteLine)
+                {
+                    partialLine = string.Empty;
+                }
+
+                if (!incompleteLine && results.ResumeAction != null)
                 {
                     resumeAction = results.ResumeAction;
                 }
