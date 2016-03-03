@@ -185,7 +185,7 @@ OPTIONS
         /// <summary>
         /// To keep track of whether we are in input mode
         /// </summary>
-        private bool inputMode = false;
+        private bool awaitingUserInput = false;
 
         /// <summary>
         /// Gets or sets a value indicating whether the host application
@@ -377,14 +377,8 @@ OPTIONS
             {
                 this.currentPowerShell.Runspace = this.myRunSpace;
 
-                if (incompleteLine)
-                {
-                    this.currentPowerShell.AddScript(partialLine + cmd);
-                }
-                else
-                {
-                    this.currentPowerShell.AddScript(cmd);
-                }
+                string fullCommand = incompleteLine ? (partialLine + cmd) : cmd;
+                this.currentPowerShell.AddScript(fullCommand);
                 incompleteLine = false;
 
                 // Add the default outputter to the end of the pipe and then call the
@@ -411,11 +405,7 @@ OPTIONS
             catch (IncompleteParseException)
             {
                 incompleteLine = true;
-                cmd = cmd.Trim();
-                partialLine += cmd;
-
-                partialLine += System.Environment.NewLine;
-
+                partialLine = $"{partialLine}{cmd}{System.Environment.NewLine}";
             }
 
             finally
@@ -533,7 +523,7 @@ OPTIONS
         {
             e.Cancel = true;
 
-            if (this.inputMode)
+            if (this.awaitingUserInput)
             {
                 this.abortCommand = true;
                 this.consoleReadLine.Abort();
@@ -585,11 +575,11 @@ OPTIONS
 
                 this.myHost.UI.Write(ConsoleColor.White, Console.BackgroundColor, prompt);
 
-                // Since Console.TreatControlCAsInput is not implemented, we use inputMode to
+                // Since Console.TreatControlCAsInput is not implemented, we use awaitingUserInput to
                 // tell us how control-c should be handled
-                this.inputMode = true;
+                this.awaitingUserInput = true;
                 string cmd = consoleReadLine.Read(this.myHost.Runspace, false);
-                this.inputMode = false;
+                this.awaitingUserInput = false;
                 this.Execute(cmd);
             }
         }
@@ -609,17 +599,12 @@ OPTIONS
             // loop to process Debugger commands.
             while (resumeAction == null)
             {
-                if (incompleteLine)
-                {
-                    Console.Write(">> ");
-                }
-                else
-                {
-                    Console.Write("[DBG] PS >> ");
-                }
-                this.inputMode = true;
+                string prompt = incompleteLine ? ">> " : "[DBG] PS >> ";
+                Console.Write(prompt);
+
+                this.awaitingUserInput = true;
                 string command = consoleReadLine.Read(this.myHost.Runspace, true); 
-                this.inputMode = false;
+                this.awaitingUserInput = false;
 
                 if (string.IsNullOrEmpty(command))
                 {
@@ -652,14 +637,8 @@ OPTIONS
 
                 PSCommand psCommand = new PSCommand();
 
-                if (incompleteLine)
-                {
-                    psCommand.AddScript(partialLine + command).AddCommand("Out-String").AddParameter("Stream", true);
-                }
-                else
-                {
-                    psCommand.AddScript(command).AddCommand("Out-String").AddParameter("Stream", true);
-                }
+                string fullCommand = incompleteLine ? (partialLine + command) : command;
+                psCommand.AddScript(fullCommand).AddCommand("Out-String").AddParameter("Stream", true);
                 incompleteLine = false;
 
                 DebuggerCommandResults results = null;
@@ -670,9 +649,7 @@ OPTIONS
                 catch (IncompleteParseException)
                 {
                     incompleteLine = true;
-                    command = command.Trim();
-                    partialLine += command;
-                    partialLine += System.Environment.NewLine;
+                    partialLine = $"{partialLine}{command}{System.Environment.NewLine}";
                 }
 
                 if (!incompleteLine)
