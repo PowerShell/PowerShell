@@ -22,6 +22,14 @@ function Start-PSBuild
     param(
         [switch]$Restore,
         [string]$Output = "$PSScriptRoot/bin",
+        # These runtimes must match those in project.json
+        # We do not use ValidateScript since we want tab completion
+        [ValidateSet("ubuntu.14.04-x64",
+                     "centos.7.1-x64",
+                     "win7-x64",
+                     "win10-x64",
+                     "osx.10.10-x64",
+                     "osx.10.11-x64")]
         [string]$Runtime
     )
 
@@ -94,7 +102,7 @@ function Start-PSPackage
     }
 
     if (-Not(Test-Path "$PSScriptRoot/bin/powershell")) {
-        throw "Please Start-PSBuild to publish PowerShell"
+        throw "Please Start-PSBuild with the corresponding runtime for the package"
     }
 
     # Change permissions for packaging
