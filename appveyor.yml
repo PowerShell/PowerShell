@@ -3,7 +3,6 @@ environment:
     secure: <encryped-value>
 
 cache:
-  - '%HOME%\.nuget'
   - '%LocalAppData%\Microsoft\dotnet'
 
 notifications:
