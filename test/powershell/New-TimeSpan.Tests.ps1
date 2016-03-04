@@ -34,13 +34,13 @@ Describe "New-TimeSpan" {
     }
 
     It "Should have matching output when using the Start switch vs piping from another cmdlet" {
-        # this file is guarenteed to exist
+        # this file is guaranteed to exist
         $inputObject    = (Get-ChildItem $PSScriptRoot/New-TimeSpan.Tests.ps1)
         $inputParameter = New-TimeSpan -Start $inputObject.lastwritetime
         $pipedInput     = $inputObject | New-TimeSpan
 
         $difference = [math]::Abs($inputParameter.Milliseconds - $pipedInput.Milliseconds)
         # The difference between commands should be minimal
-        $difference | Should BeLessThan 10
+        $difference | Should BeLessThan 100
     }
 }
