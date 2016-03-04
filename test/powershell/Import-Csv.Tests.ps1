@@ -1,7 +1,5 @@
-﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-
-Describe "Import-Csv" {
-    $testCsv = Join-Path -Path (Join-Path $here -ChildPath assets) -ChildPath TestCsv.csv
+﻿Describe "Import-Csv" {
+    $testCsv = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestCsv.csv
 
     It "Should be able to call without error" {
         { Import-Csv $testCsv } | Should Not Throw

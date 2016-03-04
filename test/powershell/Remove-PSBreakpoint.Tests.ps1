@@ -1,8 +1,6 @@
-﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-
-Describe "Remove-PSBreakpoint" {
+﻿Describe "Remove-PSBreakpoint" {
     # Set up test script
-    $testScript = Join-Path -Path (Join-Path -Path $here -ChildPath assets) -ChildPath psbreakpointtestscript.ps1
+    $testScript = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath psbreakpointtestscript.ps1
 
     $script = "`$var = 1
 `$var2 = Get-Process 

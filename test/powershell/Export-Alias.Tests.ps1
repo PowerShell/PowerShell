@@ -1,8 +1,5 @@
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-. (Join-Path -Path $here -ChildPath Test-Common.ps1)
-
 Describe "Export-Alias" {
-    $testAliasDirectory = Join-Path -Path $(GetTempDir) -ChildPath ExportAliasTestDirectory
+    $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ExportAliasTestDirectory
     $testAliases        = "TestAliases"
     $fulltestpath       = Join-Path -Path $($testAliasDirectory) -ChildPath $($testAliases)
 

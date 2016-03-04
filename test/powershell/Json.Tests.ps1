@@ -1,5 +1,3 @@
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-
 # While Core PowerShell does not support the JSON cmdlets, a third
 # party C# library, [Json.NET](http://www.newtonsoft.com/json), can be
 # loaded into PowerShell and used directly.
@@ -18,7 +16,7 @@ Describe "Json.NET LINQ Parsing" {
     [Microsoft.PowerShell.CoreCLR.AssemblyExtensions]::LoadFrom($path)
 
     BeforeEach {
-        $jsonFile = Join-Path -Path (Join-Path $here -ChildPath assets) -ChildPath TestJson.json
+        $jsonFile = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestJson.json
         $jsonData = (Get-Content $jsonFile | Out-String)
         $json = [Newtonsoft.Json.Linq.JObject]::Parse($jsonData)
     }

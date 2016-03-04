@@ -1,5 +1,4 @@
-﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-. (Join-Path -Path $here -ChildPath Test-Mocks.ps1)
+﻿. (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
 
 Describe "Select-Object" {
     BeforeEach {

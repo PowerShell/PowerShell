@@ -1,8 +1,6 @@
-﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-
-Describe "Set-PSBreakpoint" {
+﻿Describe "Set-PSBreakpoint" {
     # Set up test script
-    $testScript = Join-Path -Path $here -ChildPath psbreakpointtestscript.ps1
+    $testScript = Join-Path -Path $PSScriptRoot -ChildPath psbreakpointtestscript.ps1
 
     "`$var = 1 " > $testScript
 

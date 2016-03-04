@@ -1,5 +1,4 @@
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$assetsDir = Join-Path -Path $here -ChildPath assets
+$assetsDir = Join-Path -Path $PSScriptRoot -ChildPath assets
 
 Describe "Import-LocalizedData" {
 

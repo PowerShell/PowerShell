@@ -1,5 +1,3 @@
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-
 Describe "Measure-Command" {
 
     Context "Validate return types for Measure-Command" {
@@ -16,7 +14,7 @@ Describe "Measure-Command" {
         }
 
         It "Should return TimeSpan after executing a cmdlet" {
-            $pesterscript = Join-Path -Path (Join-Path -Path $here -ChildPath assets) -ChildPath echoscript.ps1
+            $pesterscript = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath echoscript.ps1
             $testfile = $pesterscript
             $testcommand = "echo pestertestscript"
             $testcommand | Add-Content -Path $testfile

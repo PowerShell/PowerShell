@@ -1,8 +1,6 @@
-﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-
-Describe "Get-ItemProperty" {
-    $currentDirectory = Split-Path $here -Leaf
-    $parentDirectory  = Split-Path (Join-Path -Path $here -ChildPath "..") -Leaf
+﻿Describe "Get-ItemProperty" {
+    $currentDirectory = Split-Path $PSScriptRoot -Leaf
+    $parentDirectory  = Split-Path (Join-Path -Path $PSScriptRoot -ChildPath "..") -Leaf
     $tempDirectory = $TestDrive
     $testprovider = (Get-Item $tempDirectory).PSDrive.Name
 
@@ -11,11 +9,11 @@ Describe "Get-ItemProperty" {
     New-Item $testfile -ItemType file -Force
 
     It "Should be able to be called on in the current directory" {
-        $(Get-ItemProperty $here).Name | Should Be $currentDirectory
+        $(Get-ItemProperty $PSScriptRoot).Name | Should Be $currentDirectory
     }
 
     It "Should be able to be called on a parent directory" {
-        (Get-ItemProperty $here/..).Name | Should Be $parentDirectory
+        (Get-ItemProperty $PSScriptRoot/..).Name | Should Be $parentDirectory
     }
 
     It "Should be able to be called on a directory using the path switch" {

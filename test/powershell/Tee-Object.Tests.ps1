@@ -1,10 +1,8 @@
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-
 Describe "Tee-Object" {
 
     Context "Validate Tee-Object is correctly forking output" {
 
-        $testfile = Join-Path -Path (Join-Path -Path $here -ChildPath assets) -ChildPath testfile.txt
+        $testfile = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath testfile.txt
    
         It "Should return the output to the screen and to the variable" {
             $teefile = $testfile

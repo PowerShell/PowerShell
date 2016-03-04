@@ -1,5 +1,3 @@
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-
 Describe "Invoke-Expression" {
     
     Context "Should execute the invoked command validly" {
@@ -13,7 +11,7 @@ Describe "Invoke-Expression" {
         }
 
         It "Should return the echoed text from a script" {
-            $testfile = Join-Path -Path (Join-Path $here -ChildPath assets) -ChildPath echoscript.ps1
+            $testfile = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath echoscript.ps1
             $testcommand = "echo pestertestscript"
             $testcommand | Add-Content -Path $testfile
             (Invoke-Expression $testfile) | Should Be "pestertestscript"
@@ -21,7 +19,7 @@ Describe "Invoke-Expression" {
         }
 
         It "Should return the echoed text from a script from the alias" {
-            $testfile = Join-Path -Path (Join-Path $here -ChildPath assets) -ChildPath echoscript.ps1
+            $testfile = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath echoscript.ps1
             $testcommand = "echo pestertestscript"
             $testcommand | Add-Content -Path $testfile
             (iex $testfile) | Should Be "pestertestscript"
