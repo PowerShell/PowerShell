@@ -1,8 +1,7 @@
 ﻿Describe "Set-Location" {
     $startDirectory = Get-Location
-    $isWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
 
-    if ($isWindows)
+    if ($IsWindows)
     {
         $target = "C:\"
     }

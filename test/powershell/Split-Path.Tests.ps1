@@ -1,7 +1,5 @@
 ﻿Describe "Split-Path" {
-    $isWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
-
-    if ($isWindows)
+    if ($IsWindows)
     {
         $qualifier = "C:"
     }
@@ -42,7 +40,7 @@
 
     It "Should return the path when the noqualifier switch is used on a Linux system" {
         { Split-Path ${qualifier}usr/bin -NoQualifier } | Should Not Throw
-        if ($isWindows)
+        if ($IsWindows)
         {
             Split-Path ${qualifier}usr/bin -NoQualifier     | Should Be "usr/bin"
         }

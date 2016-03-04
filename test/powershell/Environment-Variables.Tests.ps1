@@ -1,5 +1,4 @@
 ﻿Describe "Environment-Variables" {
-    $isWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
 
     It "Should have environment variables" {
         Get-Item ENV: | Should Not BeNullOrEmpty
@@ -10,7 +9,7 @@
     }
 
     It "Should contain /bin in the PATH" {
-        if ($isWindows)
+        if ($IsWindows)
         {
             $ENV:PATH | Should Match "C:"
         }
@@ -21,7 +20,7 @@
     }
 
     It "Should have the correct HOME" {
-        if ($isWindows)
+        if ($IsWindows)
         {
             $expected = "\Users"
             Split-Path $ENV:HOMEPATH -Parent | Should Be $expected
