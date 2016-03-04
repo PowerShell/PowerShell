@@ -5,7 +5,8 @@
     "authors": [ "andschwa" ],
 
     "dependencies": {
-	"Microsoft.PowerShell.Linux.Host": "1.0.0-*"
+	"Microsoft.PowerShell.Linux.Host": "1.0.0-*",
+	"System.IO.Compression": "4.0.1-rc3-23903"
     },
 
     "frameworks": {
