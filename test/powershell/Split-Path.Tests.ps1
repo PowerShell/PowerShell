@@ -21,7 +21,7 @@
         Split-Path ${qualifier}usr/bin -Qualifier | Should Be "$qualifier"
     }
 
-    It "Should error when using the qualifier switch for a windows path while on a nonwindows machine" {
+    It "Should error when using the qualifier switch for a Windows path while on a non-Windows machine" {
         # ErrorAction SilentlyContinue merely suppresses the error from the console.
         # Throwing exceptions still seen by Pester.
 

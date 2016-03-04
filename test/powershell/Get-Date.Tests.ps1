@@ -10,7 +10,7 @@
     }
 
     It "Should be able to use the format flag" {
-        # You would think that one could use simple loops here, but apparently powershell in windows returns different values in loops
+        # You would think that one could use simple loops here, but apparently powershell in Windows returns different values in loops
 
         (Get-Date -Format d).Contains("/") | Should be $true
         (Get-Date -Format D).Contains(",") | Should be $true

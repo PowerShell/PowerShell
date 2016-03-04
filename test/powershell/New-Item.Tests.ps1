@@ -68,7 +68,7 @@ Describe "New-Item" {
     }
 
     It "Should not create a file when the Name switch is not used and only a directory specified" {
-        #errorAction used because permissions issue in windows
+        #errorAction used because permissions issue in Windows
         New-Item -Path $tmpDirectory -ItemType file -ErrorAction SilentlyContinue
 
         Test-Path $FullyQualifiedFile | Should Be $false

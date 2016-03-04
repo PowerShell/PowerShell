@@ -1,7 +1,7 @@
 Describe "Get-Event" {
 
     BeforeEach {
-        ( New-Event -SourceIdentifier PesterTestEvent -sender windows.timer -messagedata "PesterTestMessage" )
+        ( New-Event -SourceIdentifier PesterTestEvent -sender Windows.timer -messagedata "PesterTestMessage" )
      }
 
     AfterEach {
@@ -25,8 +25,8 @@ Describe "Get-Event" {
 	    { (Get-Event -SourceIdentifier PesterTimer).MessageData  | Should Be "PesterTestMessage" }
 	}
 
-        It "Should return Sender as windows.timer" {
-	     { (Get-Event -SourceIdentifier PesterTimer).Sender  | Should be windows.timer }
+        It "Should return Sender as Windows.timer" {
+	     { (Get-Event -SourceIdentifier PesterTimer).Sender  | Should be Windows.timer }
 	}
     
     }

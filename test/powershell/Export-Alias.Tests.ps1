@@ -13,7 +13,6 @@ Describe "Export-Alias" {
     It "Should be able to create a file in the specified location"{
         Export-Alias $fulltestpath
 
-
         Test-Path $fulltestpath | Should be $true
     }
 

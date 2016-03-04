@@ -52,7 +52,7 @@
 
         $output = $in | Format-List -Property Description | Out-String
 
-        # This will cause errors running these tests in windows
+        # This will cause errors running these tests in Windows
         $output | Should Be "${nl}${nl}Description : test description${nl}${nl}${nl}${nl}"
     }
 

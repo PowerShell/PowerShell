@@ -1,4 +1,4 @@
-﻿Describe "Get-FileHash" {
+Describe "Get-FileHash" {
     New-Variable testDocument -Value (Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath testablescript.ps1) -Scope Global -Force
     # The MACTripleDES and RIPEMD160 algorithms are unsupported on Linux
     $algorithms = @{"SHA1"      ="01B865D143E07ECC875AB0EFC0A4429387FD0CF7";
@@ -41,7 +41,7 @@
                 $algorithmResult.Hash | Should Be $algorithms[$algorithm]
             }
 
-            #MACTripleDES and RIPEMD160 are unsupported in the existing Pester tests from windows team
+            #MACTripleDES and RIPEMD160 are unsupported in the existing Pester tests from Windows team
             { Get-FileHash $testDocument -Algorithm MACTripleDES } | Should Throw "Algorithm 'MACTripleDES' is not supported in this system."
             { Get-FileHash $testDocument -Algorithm RIPEMD160 }    | Should Throw "Algorithm 'RIPEMD160' is not supported in this system."
         }

@@ -1,8 +1,8 @@
 Describe "Get-EventSubscriber" {
    
-        AfterEach {
-            Unregister-Event -SourceIdentifier PesterTestRegister -ErrorAction SilentlyContinue
-        }
+    AfterEach {
+        Unregister-Event -SourceIdentifier PesterTestRegister -ErrorAction SilentlyContinue
+    }
 
     Context "Check return type of Get-EventSubscriber" {
 	

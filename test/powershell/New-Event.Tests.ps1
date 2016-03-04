@@ -9,14 +9,14 @@ Describe "New-Event" {
 
     Context "Check New-Event can register an event"{
 	It "Should return PesterTestMessage as the MessageData" {
-	    (New-Event -sourceidentifier PesterTimer -sender windows.timer -messagedata "PesterTestMessage")
+	    (New-Event -sourceidentifier PesterTimer -sender Windows.timer -messagedata "PesterTestMessage")
 	    (Get-Event -SourceIdentifier PesterTimer).MessageData  | Should Be "PesterTestMessage"
 	    Remove-Event -sourceidentifier PesterTimer
 	}
 
-        It "Should return Sender as windows.timer" {
-             (New-Event -sourceidentifier PesterTimer -sender windows.timer -messagedata "PesterTestMessage")
-	     (Get-Event -SourceIdentifier PesterTimer).Sender  | Should be windows.timer
+        It "Should return Sender as Windows.timer" {
+             (New-Event -sourceidentifier PesterTimer -sender Windows.timer -messagedata "PesterTestMessage")
+	     (Get-Event -SourceIdentifier PesterTimer).Sender  | Should be Windows.timer
 	    Remove-Event -sourceIdentifier PesterTimer
 	}
     }
