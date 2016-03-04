@@ -24,6 +24,7 @@
 #define ERROR_BAD_NET_NAME 0x00000043
 #define ERROR_DISK_FULL 0x00000070
 #define ERROR_FILE_EXISTS 0x00000050
+#define ERROR_TOO_MANY_LINKS 0x00000476
 
 /*
 **==============================================================================
