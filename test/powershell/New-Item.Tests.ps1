@@ -17,6 +17,7 @@
 }
 
 Describe "New-Item" {
+    $isWindows            = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
     $tmpDirectory         = $TestDrive
     $testfile             = "testfile.txt"
     $testfolder           = "newDirectory"
@@ -101,6 +102,12 @@ Describe "New-Item" {
     }
 
     It "Should create a symbolic link of a file without error" {
+        # Making symbolic links on Windows requires administrator access
+        if ($isWindows)
+        {
+            return
+        }
+
         New-Item -Name $testfile -Path $tmpDirectory -ItemType file
         Test-Path $FullyQualifiedFile | Should Be $true
 
@@ -109,6 +116,12 @@ Describe "New-Item" {
     }
 
     It "Should create a symbolic link from directory without error" {
+        # Making symbolic links on Windows requires administrator access
+        if ($isWindows)
+        {
+            return
+        }
+
         New-Item -Name $testFolder -Path $tmpDirectory -ItemType directory
         Test-Path $FullyQualifiedFolder | Should Be $true
 
@@ -118,6 +131,4 @@ Describe "New-Item" {
         # Remove the link explicitly to avoid broken symlink issue
         Remove-Item $FullyQualifiedLink -Force
     }
-
-
 }
