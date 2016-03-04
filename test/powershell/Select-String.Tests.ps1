@@ -1,4 +1,4 @@
-﻿Describe "Select-String" {
+Describe "Select-String" {
     $nl = [Environment]::NewLine
     $currentDirectory = $pwd.Path
     Context "String actions" {

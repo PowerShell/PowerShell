@@ -1,4 +1,4 @@
-﻿Describe "Get-Member" {
+Describe "Get-Member" {
     It "Should be able to be called on string objects, ints, arrays, etc" {
         $a = 1 #test numbers
         $b = 1.3

@@ -1,4 +1,4 @@
-﻿Describe "Compare-Object" {
+Describe "Compare-Object" {
     $nl            = [Environment]::NewLine
     $slash         = [System.IO.Path]::DirectorySeparatorChar
     $testDirectory = $HOME + $slash + "testDirectory"

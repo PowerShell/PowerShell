@@ -1,4 +1,4 @@
-﻿. (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
+. (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
 
 Describe "Select-Object" {
     BeforeEach {

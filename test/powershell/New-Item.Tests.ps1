@@ -1,4 +1,4 @@
-﻿function Clean-State
+function Clean-State
 {
     if (Test-Path $FullyQualifiedLink)
     {

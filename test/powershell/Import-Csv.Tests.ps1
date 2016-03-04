@@ -1,4 +1,4 @@
-﻿Describe "Import-Csv" {
+Describe "Import-Csv" {
     $testCsv = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestCsv.csv
 
     It "Should be able to call without error" {

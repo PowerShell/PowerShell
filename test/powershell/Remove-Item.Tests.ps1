@@ -1,4 +1,4 @@
-﻿Describe "Remove-Item" {
+Describe "Remove-Item" {
     $testpath = $TestDrive
     $testfile = "testfile.txt"
     $testfilepath = Join-Path -Path $testpath -ChildPath $testfile

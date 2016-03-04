@@ -1,4 +1,4 @@
-﻿Describe "Get-Unique" {
+Describe "Get-Unique" {
     $sortedList1 = 1,2,2,3,3,4,5
     It "Should be able to use the Get-Unique cmdlet without error with inputObject switch" {
         { Get-Unique -InputObject $sortedList1 } | Should Not Throw

@@ -1,4 +1,4 @@
-﻿Describe "New-Alias" {
+Describe "New-Alias" {
     It "Should be able to be called using the name and value parameters without error" {
         { New-Alias -Name testAlias -Value 100 } | Should Not Throw
     }

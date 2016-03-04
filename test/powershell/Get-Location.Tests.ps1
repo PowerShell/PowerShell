@@ -1,4 +1,4 @@
-﻿Describe "Get-Location" {
+Describe "Get-Location" {
     BeforeEach {
         pushd $env:HOME
     }

@@ -1,4 +1,4 @@
-﻿Describe "Get-Alias" {
+Describe "Get-Alias" {
     It "Should have a return type of System.Array when gal returns more than one object" {
         $val1=(Get-Alias a*)
            $val2=(Get-Alias c*)

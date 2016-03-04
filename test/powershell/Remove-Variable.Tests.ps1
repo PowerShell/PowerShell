@@ -1,4 +1,4 @@
-﻿# ensure the machine is in a clean state from the outset.
+# ensure the machine is in a clean state from the outset.
 Remove-Variable -Name var1 -ErrorAction SilentlyContinue -Force
 
 Describe "Remove-Variable" {

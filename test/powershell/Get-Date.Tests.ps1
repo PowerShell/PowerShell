@@ -1,4 +1,4 @@
-﻿Describe "Get-Date" {
+Describe "Get-Date" {
     It "Should return a DateTime object upon being called" {
         (Get-Date).GetType().Name.Equals('DateTime') | Should Be $true
     }

@@ -1,4 +1,4 @@
-﻿Describe "Out-File" {
+Describe "Out-File" {
     $expectedContent = "some test text"
     $inObject = New-Object psobject -Property @{text=$expectedContent}
     $testfile = Join-Path -Path $TestDrive -ChildPath outfileTest.txt

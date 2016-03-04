@@ -1,4 +1,4 @@
-﻿Describe "New-Variable" {
+Describe "New-Variable" {
     $nl = [Environment]::NewLine
 
     It "Should create a new variable with no parameters" {

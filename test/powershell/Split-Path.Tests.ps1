@@ -1,4 +1,4 @@
-﻿Describe "Split-Path" {
+Describe "Split-Path" {
     if ($IsWindows)
     {
         $qualifier = "C:"

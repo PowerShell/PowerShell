@@ -1,4 +1,4 @@
-﻿Describe "Get-Variable" {
+Describe "Get-Variable" {
     It "Should be able to call with no parameters without error" {
         { Get-Variable } | Should Not Throw
     }

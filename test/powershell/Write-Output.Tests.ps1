@@ -1,4 +1,4 @@
-﻿Describe "Write-Output" {
+Describe "Write-Output" {
     $testString = $testString
     Context "Input Tests" {
         It "Should allow piped input" {

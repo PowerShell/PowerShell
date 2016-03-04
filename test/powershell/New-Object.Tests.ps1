@@ -1,4 +1,4 @@
-﻿Describe "New-Object" {
+Describe "New-Object" {
     It "should create an object with 4 fields" {
         $o = New-Object psobject
         $val = $o.GetType()

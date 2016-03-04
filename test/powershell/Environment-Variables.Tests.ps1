@@ -1,4 +1,4 @@
-﻿Describe "Environment-Variables" {
+Describe "Environment-Variables" {
 
     It "Should have environment variables" {
         Get-Item ENV: | Should Not BeNullOrEmpty

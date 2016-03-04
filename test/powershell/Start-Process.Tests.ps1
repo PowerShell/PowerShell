@@ -1,4 +1,4 @@
-﻿Describe "Start-Process" {
+Describe "Start-Process" {
     $pingCommand = (Get-Command -CommandType Application ping)[0].Definition
     $pingDirectory = Split-Path $pingCommand -Parent
     $tempFile = Join-Path -Path $TestDrive -ChildPath PSTest

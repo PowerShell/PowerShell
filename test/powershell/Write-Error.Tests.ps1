@@ -1,4 +1,4 @@
-﻿Describe "Write-Error" {
+Describe "Write-Error" {
     It "Should be able to throw" {
         Write-Error "test throw" -ErrorAction SilentlyContinue | Should Throw
     }

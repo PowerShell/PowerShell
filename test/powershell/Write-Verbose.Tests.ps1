@@ -1,4 +1,4 @@
-﻿Describe "Write-Verbose" {
+Describe "Write-Verbose" {
     It "Should be able to call cmdlet without error" {
         { Write-Verbose -Message "test" -ErrorAction SilentlyContinue } | Should Not Throw
     }

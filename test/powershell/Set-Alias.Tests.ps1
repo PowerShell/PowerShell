@@ -1,4 +1,4 @@
-﻿Describe "Set-Alias" {
+Describe "Set-Alias" {
     Mock Get-Date { return "Friday, October 30, 2015 3:38:08 PM" }
     It "Should be able to set alias without error" {
 

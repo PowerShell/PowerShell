@@ -1,4 +1,4 @@
-﻿Describe "Format-Table" {
+Describe "Format-Table" {
     It "Should call format table on piped input without error" {
         { Get-Process | Format-Table } | Should Not Throw
 

@@ -1,4 +1,4 @@
-﻿Describe "ConvertFrom-StringData" {
+Describe "ConvertFrom-StringData" {
     $sampleData = @'
                   foo  = 0
                   bar  = 1

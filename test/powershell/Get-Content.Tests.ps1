@@ -1,4 +1,4 @@
-﻿Describe "Get-Content" {
+Describe "Get-Content" {
     $testString = "This is a test content for a file"
     $nl         = [Environment]::NewLine
 

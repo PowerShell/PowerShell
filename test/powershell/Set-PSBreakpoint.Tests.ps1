@@ -1,4 +1,4 @@
-﻿Describe "Set-PSBreakpoint" {
+Describe "Set-PSBreakpoint" {
     # Set up test script
     $testScript = Join-Path -Path $PSScriptRoot -ChildPath psbreakpointtestscript.ps1
 

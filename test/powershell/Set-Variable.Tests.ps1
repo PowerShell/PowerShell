@@ -1,4 +1,4 @@
-﻿Describe "Set-Variable" {
+Describe "Set-Variable" {
     ${nl} = [Environment]::Newline
 
     It "Should create a new variable with no parameters" {

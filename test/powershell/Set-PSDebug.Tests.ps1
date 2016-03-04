@@ -1,4 +1,4 @@
-﻿Describe "Set-PSDebug" {
+Describe "Set-PSDebug" {
     # Because it is running through pester, no functions need to be called.  Pester should provide plenty
     # of output.
     It "Should be able to be called without error" {

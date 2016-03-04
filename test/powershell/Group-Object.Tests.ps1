@@ -1,4 +1,4 @@
-﻿Describe "Group-Object" {
+Describe "Group-Object" {
     $testObject = Get-ChildItem
 
     It "Should be called using an object as piped without error with no switches" {

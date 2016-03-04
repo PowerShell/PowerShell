@@ -1,4 +1,4 @@
-﻿Describe "Test-Push-Location" {
+Describe "Test-Push-Location" {
     New-Variable -Name startDirectory -Value $(Get-Location).Path -Scope Global -Force
 
     BeforeEach { cd $startDirectory }

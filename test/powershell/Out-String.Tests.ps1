@@ -1,4 +1,4 @@
-﻿Describe "Out-String" {
+Describe "Out-String" {
     $nl = [Environment]::NewLine
 
     It "Should accumulate the strings and returns them as a single string" {
