@@ -3,13 +3,11 @@ Describe "Start-Process" {
     $pingDirectory = Split-Path $pingCommand -Parent
     $tempFile = Join-Path -Path $TestDrive -ChildPath PSTest
     $assetsFile = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath SortTest.txt
-    if ($IsWindows)
-    {
-	$pingParam = "localhost -n 4"
+    if ($IsWindows) {
+	$pingParam = "-n 2 localhost"
     }
-    else
-    {
-	$pingParam = "localhost -c 4"
+    elseif ($IsLinux -Or $IsOSX) {
+	$pingParam = "-c 2 localhost"
     }
 
     It "Should process arguments without error" {
