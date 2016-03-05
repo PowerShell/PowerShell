@@ -118,4 +118,15 @@ Describe "New-Item" {
 	# Remove the link explicitly to avoid broken symlink issue
 	Remove-Item $FullyQualifiedLink -Force
     }
+
+    It "Should create a hard link of a file without error" {
+        New-Item -Name $testfile -Path $tmpDirectory -ItemType file
+        Test-Path $FullyQualifiedFile | Should Be $true
+
+        New-Item -ItemType HardLink -Target $FullyQualifiedFile -Name $testlink -Path $tmpDirectory
+        Test-Path $FullyQualifiedLink | Should Be $true
+    }
+
+
+
 }
