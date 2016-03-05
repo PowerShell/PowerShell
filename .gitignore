@@ -8,4 +8,5 @@ CTestTestfile.cmake
 Testing/
 test/psl-native-test
 src/libpsl-native.so
+src/libpsl-native.dylib
 test/native-tests.xml
