@@ -4,6 +4,10 @@
 
 #include <gtest/gtest.h>
 #include "getfullyqualifiedname.h"
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <string>
 
 //! Test fixture for GetComputerNameTest
 class GetFullyQualifiedNameTest : public ::testing::Test
@@ -12,23 +16,25 @@ class GetFullyQualifiedNameTest : public ::testing::Test
 
 TEST_F(GetFullyQualifiedNameTest, ValidateLinuxGetFullyQualifiedDomainName)
 {
-    char expectedComputerName[_POSIX_HOST_NAME_MAX];
-    
-    //Get expected result from using linux command
+    std::string actual(GetFullyQualifiedName());
 
-    FILE *fPtr = popen("hostname --fqdn", "r");
-    ASSERT_TRUE(fPtr != NULL);
+    std::string hostname(_POSIX_HOST_NAME_MAX, 0);
+    ASSERT_FALSE(gethostname(&hostname[0], hostname.length()));
+    // trim null characters from string
+    hostname = std::string(hostname.c_str());
 
-    char *linePtr = fgets(expectedComputerName, sizeof(expectedComputerName), fPtr);
-    ASSERT_TRUE(linePtr != NULL);
+    struct addrinfo hints, *info;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_CANONNAME;
+    ASSERT_FALSE(getaddrinfo(hostname.c_str(), "http", &hints, &info));
 
-    // There's a tendency to have \n at end of fgets string, so remove it before compare
-    size_t sz = strlen(expectedComputerName);
-    if (sz > 0 && expectedComputerName[sz - 1] == '\n')
-    {
-        expectedComputerName[sz - 1] = '\0';
-    }
-    pclose(fPtr);
+    // Compare hostname part of FQDN
+    ASSERT_EQ(hostname, actual.substr(0, hostname.length()));
 
-    ASSERT_STREQ(GetFullyQualifiedName(), expectedComputerName);
+    // Compare canonical name to FQDN
+    ASSERT_EQ(info->ai_canonname, actual);
+
+    freeaddrinfo(info);
 }
