@@ -2,9 +2,9 @@ Describe "ConvertTo-SecureString" {
 
     Context "Checking return types of ConvertTo-SecureString" {
 
-        It "Should return System.Security.SecureString after converting plaintext variable"{
-            $PesterTestConvert = (ConvertTo-SecureString "plaintextpester" -AsPlainText -force)
- 	    ($PesterTestConvert).GetType() | Should Be securestring
+	It "Should return System.Security.SecureString after converting plaintext variable"{
+	    $PesterTestConvert = (ConvertTo-SecureString "plaintextpester" -AsPlainText -force)
+	    ($PesterTestConvert).GetType() | Should Be securestring
 
 	}
     }

@@ -1,44 +1,43 @@
-﻿Describe "Environment-Variables" {
-    $isWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
+Describe "Environment-Variables" {
 
     It "Should have environment variables" {
-        Get-Item ENV: | Should Not BeNullOrEmpty
+	Get-Item ENV: | Should Not BeNullOrEmpty
     }
 
     It "Should have a nonempty PATH" {
-        $ENV:PATH | Should Not BeNullOrEmpty
+	$ENV:PATH | Should Not BeNullOrEmpty
     }
 
     It "Should contain /bin in the PATH" {
-        if ($isWindows)
-        {
-            $ENV:PATH | Should Match "C:"
-        }
-        else
-        {
-            $ENV:PATH | Should Match "/bin"
-        }
+	if ($IsWindows)
+	{
+	    $ENV:PATH | Should Match "C:"
+	}
+	else
+	{
+	    $ENV:PATH | Should Match "/bin"
+	}
     }
 
     It "Should have the correct HOME" {
-        if ($isWindows)
-        {
-            $expected = "\Users"
-            Split-Path $ENV:HOMEPATH -Parent | Should Be $expected
-        }
-        else
-        {
-            $expected = /bin/bash -c "cd ~ && pwd"
-            $ENV:HOME | Should Be $expected
-        }
+	if ($IsWindows)
+	{
+	    $expected = "\Users"
+	    Split-Path $ENV:HOMEPATH -Parent | Should Be $expected
+	}
+	else
+	{
+	    $expected = /bin/bash -c "cd ~ && pwd"
+	    $ENV:HOME | Should Be $expected
+	}
     }
 
     It "Should be able to set the environment variables" {
-        $expected = "this is a test environment variable"
-        { $ENV:TESTENVIRONMENTVARIABLE = $expected  } | Should Not Throw
+	$expected = "this is a test environment variable"
+	{ $ENV:TESTENVIRONMENTVARIABLE = $expected  } | Should Not Throw
 
-        $ENV:TESTENVIRONMENTVARIABLE | Should Not BeNullOrEmpty
-        $ENV:TESTENVIRONMENTVARIABLE | Should Be $expected
+	$ENV:TESTENVIRONMENTVARIABLE | Should Not BeNullOrEmpty
+	$ENV:TESTENVIRONMENTVARIABLE | Should Be $expected
 
     }
 }

@@ -1,25 +1,17 @@
-﻿Describe "Get-Location aka pwd" {
-    <#Dependencies:
-        pushd
-        popd
-        $HOME
-
-    #>
-    $winHome = 'C:\Users\v-zafolw'
-    $nixHome = '/home/zafolw'
+Describe "Get-Location" {
     BeforeEach {
-        pushd $HOME #on windows, this is c:\Users\XXXXX; for *nix, it's /home/XXXXX  
+	pushd $env:HOME
     }
 
-    AfterEach { popd }
+    AfterEach {
+	popd
+    }
 
     It "Should list the output of the current working directory" {
-        (Get-Location).Path | Should Not BeNullOrEmpty
-        (Get-Location).Path | Should Be ($winHome -or $nixHome)
+	(Get-Location).Path | Should Be $env:HOME
     }
 
-    It "Should be able to use pwd the same way" {
-        (pwd).Path | Should Not BeNullOrEmpty
-        (pwd).Path | Should Be ($winHome -or $nixHome)
+    It "Should do exactly the same thing as its alias" {
+	(pwd).Path | Should Be (Get-Location).Path
     }
 }

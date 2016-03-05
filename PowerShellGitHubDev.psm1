@@ -1,17 +1,20 @@
 # Use the .NET Core APIs to determine the current platform; if a runtime
 # exception is thrown, we are on FullCLR, not .NET Core.
 #
-# TODO: use PowerShell to check OS when available
+# TODO: import Microsoft.PowerShell.Platform instead
 try {
     $Runtime = [System.Runtime.InteropServices.RuntimeInformation]
     $OSPlatform = [System.Runtime.InteropServices.OSPlatform]
-    $Linux = $Runtime::IsOSPlatform($OSPlatform::Linux)
-    $OSX = $Runtime::IsOSPlatform($OSPlatform::OSX)
-    $Windows = $Runtime::IsOSPlatform($OSPlatform::Windows)
+
+    $IsCore = $true
+    $IsLinux = $Runtime::IsOSPlatform($OSPlatform::Linux)
+    $IsOSX = $Runtime::IsOSPlatform($OSPlatform::OSX)
+    $IsWindows = $Runtime::IsOSPlatform($OSPlatform::Windows)
 } catch [System.Management.Automation.RuntimeException] {
-    $Linux = $false
-    $OSX = $false
-    $Windows = $true
+    $IsCore = $false
+    $IsLinux = $false
+    $IsOSX = $false
+    $IsWindows = $true
 }
 
 function Start-PSBuild
@@ -32,15 +35,15 @@ function Start-PSBuild
         dotnet restore $PSScriptRoot
     }
 
-    if ($Linux -Or $OSX) {
-        $InstallCommand = if ($Linux) { "apt-get" } elseif ($OSX) { "brew" }
+    if ($IsLinux -Or $IsOSX) {
+        $InstallCommand = if ($IsLinux) { "apt-get" } elseif ($IsOSX) { "brew" }
         foreach ($Dependency in "cmake", "g++") {
             if (-Not (Get-Command $Dependency -ErrorAction SilentlyContinue)) {
                 throw "Build dependency '$Dependency' not found in PATH! Run '$InstallCommand install $Dependency'"
             }
         }
 
-        $Ext = if ($Linux) { "so" } elseif ($OSX) { "dylib" }
+        $Ext = if ($IsLinux) { "so" } elseif ($IsOSX) { "dylib" }
         $Native = "$PSScriptRoot/src/libpsl-native"
         $Lib = "$Native/src/libpsl-native.$Ext"
         Write-Host "Building $Lib"
@@ -61,8 +64,8 @@ function Start-PSBuild
     Write-Host "Building PowerShell"
 
     $Configuration =
-        if ($Linux -Or $OSX) { "Linux" }
-        elseif ($Windows) { "Debug" }
+        if ($IsLinux -Or $IsOSX) { "Linux" }
+        elseif ($IsWindows) { "Debug" }
 
     dotnet publish -o $Output -c $Configuration -f "netstandardapp1.5" $Top
 }
@@ -77,7 +80,7 @@ function Start-PSPackage
         [int]$Iteration = 1
     )
 
-    if ($Windows) { throw "Building Windows packages is not yet supported!" }
+    if ($IsWindows) { throw "Building Windows packages is not yet supported!" }
 
     if (-Not (Get-Command "fpm" -ErrorAction SilentlyContinue)) {
         throw "Build dependency 'fpm' not found in PATH! See: https://github.com/jordansissel/fpm"
@@ -91,7 +94,7 @@ function Start-PSPackage
     chmod -R go=u "$PSScriptRoot/bin"
 
     # Decide package output type
-    $Output = if ($Linux) { "deb" } elseif ($OSX) { "osxpkg" }
+    $Output = if ($IsLinux) { "deb" } elseif ($IsOSX) { "osxpkg" }
 
     # Use Git tag if not given a version
     if (-Not($Version)) {
