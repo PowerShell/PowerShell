@@ -4,6 +4,6 @@
 
 PAL_BEGIN_EXTERNC
 
-char* GetFullyQualifiedName();
+char *GetFullyQualifiedName();
 
 PAL_END_EXTERNC

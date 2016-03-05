@@ -4,6 +4,6 @@
 
 PAL_BEGIN_EXTERNC
 
-char* GetComputerName();
+char *GetComputerName();
 
 PAL_END_EXTERNC

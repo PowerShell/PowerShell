@@ -12,7 +12,7 @@
 //!
 //! @exception errno Passes these errors via errno to GetLastError:
 //! - ERROR_INVALID_FUNCTION: getlogin_r() returned an unrecognized error code
-//! - ERROR_INVALID_ADDRESS:  buffer is an invalid address
+//! - ERROR_INVALID_ADDRESS: buffer is an invalid address
 //! - ERROR_GEN_FAILURE: buffer not large enough
 //!
 //! @retval username as UTF-8 string, or null if unsuccessful
@@ -42,6 +42,4 @@ char* GetComputerName()
     }
     
     return strdup(computername.c_str());
-    
 }
-

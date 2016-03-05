@@ -101,5 +101,4 @@ int32_t GetLinkCount(const char* fileName, int32_t *count)
 
     *count = statBuf.st_nlink;
     return 1;
-
 }
