@@ -18,7 +18,7 @@ install:
   - git config --global url.git@github.com:.insteadOf https://github.com/
   - git submodule update --init --recursive -- src/monad src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
   - ps: Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
-  - ps: ./install.ps1 -version 1.0.0.001598 -channel beta
+  - ps: ./install.ps1 -version 1.0.0.001638 -channel beta
 
 build_script:
   - ps: |

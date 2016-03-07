@@ -78,7 +78,7 @@ Tested on Ubuntu 14.04.
 sudo sh -c 'echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/dotnet/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
 sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
 sudo apt-get update
-sudo apt-get install dotnet=1.0.0.001598-1
+sudo apt-get install dotnet=1.0.0.001638-1
 ```
 
 Then install the following additional build / debug tools:
@@ -104,7 +104,7 @@ An MSI installer also exists, but this script avoids touching your system.
 
 ```powershell
 Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
-./install.ps1 -version 1.0.0.001598 -channel beta
+./install.ps1 -version 1.0.0.001638 -channel beta
 ```
 
 Note:
