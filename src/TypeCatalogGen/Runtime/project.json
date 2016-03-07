@@ -3,6 +3,7 @@
     "authors": [ "andschwa" ],
 
     "dependencies": {
+        "Microsoft.NETCore.Unsupported.Platform.API": "1.0.0-rc3-00001",
         "NETStandard.Library": "1.0.0-rc3-23907",
         "System.Runtime.Loader": "4.0.0-rc3-23907",
         "System.Security.SecureString": "1.0.0-*",
