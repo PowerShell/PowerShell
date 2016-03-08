@@ -416,7 +416,7 @@ namespace Microsoft.Management.Infrastructure.Native
                      IntPtr self,
                      uint index,
                      out IntPtr name,  //IntPtr because of a `free(): invalid pointer` error using MarshalAs(UnmanagedType.LPStr)
-                     out IntPtr val,
+                     IntPtr val,
                      out MiType type,
                      out MiFlags flags);
             public delegate MiResult ClearElementDelegate(IntPtr self, string name);
@@ -1999,39 +1999,55 @@ namespace Microsoft.Management.Infrastructure.Native
             throw new NotImplementedException();
         }
         //internal static unsafe object ConvertFromMiValue(MiType type, _MiValue modopt(IsConst)* pmiValue);
-        internal static object ConvertFromMiValue(MiType type, Byte pValue)
+        internal static object ConvertFromMiValue(MiType type, IntPtr pVal)
         {
+            object val = null;
+            //Console.WriteLine("\npVal {0}\n", Marshal.PtrToStructure<uint>(pVal));
             switch (type.ToString())
             {
                 case "Boolean":
+                    val = (bool)Marshal.PtrToStructure<bool>(pVal);
+                    break;
                 case "Byte":
-                case "SByte":
+                case "UInt8":
+                    val = (byte)Marshal.PtrToStructure<byte>(pVal);
+                    break;
+                case "SInt16":
+                    val = (System.Int16)Marshal.PtrToStructure<Int16>(pVal);
+                    break;
                 case "UInt16":
-                case "Sint16":
                 case "SInt32":
                 case "UInt32":
                 case "SInt64":
                 case "UInt64":
                         // no work to do...
-                    val = pVal;
+                    val = Marshal.PtrToStructure<uint>(pVal);
+                    break;
+                case "SByte":
+                case "SInt8":
+                    val = (sbyte)Marshal.PtrToStructure<SByte>(pVal);
                     break;
                 case "Real32":
                     // TODO: these seem to fail for unknown reasons.  When dereferencing in the AddElement function, they appear to work fine.
+                    //Console.WriteLine("pVal : " + pVal);
                     throw new NotImplementedException();
                     break;
                 case "Real64":
-                    throw new NotImplementedException();
+                    val = (double)Marshal.PtrToStructure<System.Double>(pVal);
                     break;
                 default:
-                    Debug.Assert(false, "Unknown MiType);
+                    Console.WriteLine(">> MiType: {0}", type.ToString());
+                    Debug.Assert(false, "Unknown MiType Input");
                     break;
             }
+            return val;
         }
 
         internal static void ConvertToMiValuePtr(MiType type, object managedValue, ref IntPtr pVal)
         {
             int typeSize = 0;
-            switch (type.ToString())
+            // TODO: Avoid duplicate code.
+            switch (type.ToString()) // TODO: change cases to MiType
             {
                     case "Boolean":
                         typeSize = Marshal.SizeOf<Boolean>();
@@ -2039,11 +2055,13 @@ namespace Microsoft.Management.Infrastructure.Native
                         Marshal.StructureToPtr(managedValue, pVal, false);
                         break;
                     case "Byte":
+                    case "UInt8":
                         typeSize = Marshal.SizeOf<Byte>();
                         pVal = Marshal.AllocHGlobal(typeSize);
                         Marshal.StructureToPtr(managedValue, pVal, false);
                         break;
                     case "SByte":
+                    case "SInt8": 
                         typeSize = Marshal.SizeOf<SByte>();
                         pVal = Marshal.AllocHGlobal(typeSize);
                         Marshal.StructureToPtr(managedValue, pVal, false);
@@ -2053,7 +2071,7 @@ namespace Microsoft.Management.Infrastructure.Native
                         pVal = Marshal.AllocHGlobal(typeSize);
                         Marshal.StructureToPtr(managedValue, pVal, false);
                         break;
-                    case "SInt16":
+                    case "SInt16": //TODO: failing Int16Min test
                         typeSize = Marshal.SizeOf<Int16>();
                         pVal = Marshal.AllocHGlobal(typeSize);
                         Marshal.StructureToPtr(managedValue, pVal, false);
@@ -2136,7 +2154,7 @@ namespace Microsoft.Management.Infrastructure.Native
             MiType t;
             MiFlags f;
 
-            MiResult r = instance.ft.GetElementAt(instance.handle, (uint)index, out pName, out v, out t, out f);
+            MiResult r = instance.ft.GetElementAt(instance.handle, (uint)index, out pName, v, out t, out f);
             flags = f; //Marshal.PtrToStructure<MiFlags>(f);
             return r;
         }
@@ -2147,7 +2165,7 @@ namespace Microsoft.Management.Infrastructure.Native
             MiType type;
             MiFlags flags;
 
-            MiResult r = instance.ft.GetElementAt(instance.handle, (uint)index, out pName, out val, out type, out flags);
+            MiResult r = instance.ft.GetElementAt(instance.handle, (uint)index, out pName, val, out type, out flags);
             name = Marshal.PtrToStringAnsi(pName);
             return r;
         }
@@ -2157,7 +2175,7 @@ namespace Microsoft.Management.Infrastructure.Native
             IntPtr val=IntPtr.Zero;
             MiFlags flags;
             MiType t;
-            MiResult r = instance.ft.GetElementAt(instance.handle, (uint)index, out pName, out val, out t, out flags);
+            MiResult r = instance.ft.GetElementAt(instance.handle, (uint)index, out pName, val, out t, out flags);
 
             type = t; //Marshal.PtrToStructure<MiType>(t);
             return r;
@@ -2167,18 +2185,19 @@ namespace Microsoft.Management.Infrastructure.Native
         {
             Debug.Assert(0 <= index, "Caller should verify index > 0");
             IntPtr name;
-            IntPtr pVal;
+            IntPtr pVal= Marshal.AllocHGlobal(Marshal.SizeOf<MiValue>());
             MiType type;
             MiFlags flags;
             val = null;
 
-            MiResult r = instance.ft.GetElementAt(instance.handle, (uint)index, out name, out pVal, out type, out flags);
+            MiResult r = instance.ft.GetElementAt(instance.handle, (uint)index, out name, pVal, out type, out flags);
 
             if (r == MiResult.OK && pVal != null)
             {
                 if (!flags.HasFlag(MiFlags.NULLFLAG))
                 {
                     // ConvertToManaged
+                    val = ConvertFromMiValue(type, pVal);
                 }
                 else
                 {
@@ -2225,9 +2244,9 @@ namespace Microsoft.Management.Infrastructure.Native
         }
         internal static MiResult SetElementAt_SetValue(InstanceHandle instance, int index, object newValue)
         {
-            throw new NotImplementedException();
-            //MiResult r;
-            //MiValue v = default(MiValue);
+                throw new NotImplementedException();
+                //MiResult r;
+                //MiValue v = default(MiValue);
             //IntPtr t;
             //IntPtr f;
             //IntPtr noUse1;
@@ -2604,7 +2623,7 @@ namespace Microsoft.Management.Infrastructure.Native
     **==============================================================================
     */
     [StructLayout(LayoutKind.Explicit)]
-    public struct MiValue
+    public class MiValue
     {
         [FieldOffset(0)] public MI_Boolean boolean;
         [FieldOffset(0)] public System.Byte uint8;
@@ -2617,9 +2636,9 @@ namespace Microsoft.Management.Infrastructure.Native
         [FieldOffset(0)] public System.Int64 sint64;
         [FieldOffset(0)] public System.Single real32;
         [FieldOffset(0)] public MI_Real64 real64;
-        [FieldOffset(16)] public MI_Char16 char16;
-        [FieldOffset(24)] public MI_Datetime datetime;
-        [FieldOffset(32)] [MarshalAs(UnmanagedType.LPStr)] public string mistring;  // MI_Char* string;
+        //[FieldOffset(16)] public MI_Char16 char16;
+        //[FieldOffset(24)] public MI_Datetime datetime;
+        //[FieldOffset(32)] [MarshalAs(UnmanagedType.LPStr)] public string mistring;  // MI_Char* string;
         ////[FieldOffset(40)]
         //public IntPtr instance;   // MI_Instance *instance
         ////[FieldOffset(48)]
