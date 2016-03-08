@@ -21,6 +21,7 @@ function Start-PSBuild
 {
     param(
         [switch]$Restore,
+        [switch]$Clean,
         [string]$Output = "$PSScriptRoot/bin",
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
@@ -35,6 +36,10 @@ function Start-PSBuild
 
     if (-Not (Get-Command "dotnet" -ErrorAction SilentlyContinue)) {
         throw "Build dependency 'dotnet' not found in PATH! See: https://dotnet.github.io/getting-started/"
+    }
+
+    if ($Clean) {
+        Remove-Item -Force -Recurse $Output
     }
 
     New-Item -Force -Type Directory $Output | Out-Null
@@ -58,16 +63,16 @@ function Start-PSBuild
         Write-Host "Building $Lib"
 
         try {
-            pushd $Native
+            Push-Location $Native
             cmake -DCMAKE_BUILD_TYPE=Debug .
             make -j
             make test
         } finally {
-            popd
+            Pop-Location
         }
 
         if (-Not (Test-Path $Lib)) { throw "Compilation of $Lib failed" }
-        cp $Lib $Output
+        Copy-Item $Lib $Output
     }
 
     Write-Host "Building PowerShell"
