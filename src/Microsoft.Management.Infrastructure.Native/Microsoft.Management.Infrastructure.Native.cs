@@ -2002,11 +2002,12 @@ namespace Microsoft.Management.Infrastructure.Native
         internal static object ConvertFromMiValue(MiType type, IntPtr pVal)
         {
             object val = null;
-            //Console.WriteLine("\npVal {0}\n", Marshal.PtrToStructure<uint>(pVal));
+            //Console.WriteLine("\npVal {0}\n", Marshal.PtrToStructure<byte>(pVal));
+
             switch (type.ToString())
             {
                 case "Boolean":
-                    val = (bool)Marshal.PtrToStructure<bool>(pVal);
+                    val = (byte)Marshal.PtrToStructure<byte>(pVal) != 0;
                     break;
                 case "Byte":
                 case "UInt8":
