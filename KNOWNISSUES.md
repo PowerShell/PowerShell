@@ -22,15 +22,9 @@ the stub is also used with a `#if ETW` guard.
 
 ## xUnit
 
-The xUnit tests cannot currently be run; we are working to integrate the
-prototype .NET Core runner to re-enable them.
+The xUnit tests can only be run on Linux.
 
 ## Console Output
-
-The console output on Windows and under certain `TERM` environments on Linux
-(`xterm` is known to work fine), the console scrolls badly. We believe this is
-due to incomplete System.Console APIs, which have been fixed upstream and will
-be updated when new packages drop.
 
 Performance issues have been seen in some scenarios, such as nested SSH
 sessions. We believe this is likely an issue with `Console.ReadKey()` and are

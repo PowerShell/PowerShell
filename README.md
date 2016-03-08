@@ -61,7 +61,7 @@ non-Windows platforms). Install `dotnet` by following their [documentation][].
 
 The version of .NET CLI is very important, you want a recent 1.0.0 beta
 (**not** 1.0.1). The following instructions will install precisely
-1.0.0.001517, though any 1.0.0 version *should* work.
+1.0.0.001638, though any 1.0.0 version *should* work.
 
 > Previous installations of DNX, `dnvm`, or older installations of .NET CLI
 > can cause odd failures when running. Please check your version.
@@ -107,10 +107,11 @@ Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/sc
 ./install.ps1 -version 1.0.0.001638 -channel beta
 ```
 
-Note:
->If you meet "Unable to cast COM object of type 'System.__ComObject' to interface type 'Microsoft.Cci.ISymUnmanagedWriter5'", please install [Visual C++ Redistributable for Visual Studio 2015].
+If you meet `Unable to cast COM object of type 'System.__ComObject' to
+interface type 'Microsoft.Cci.ISymUnmanagedWriter5'`, please install
+[Visual C++ Redistributable for Visual Studio 2015][redist].
 
-[Visual C++ Redistributable for Visual Studio 2015]:https://www.microsoft.com/en-hk/download/details.aspx?id=48145
+[redist]: https://www.microsoft.com/en-hk/download/details.aspx?id=48145
 
 ### OS X
 
@@ -148,6 +149,13 @@ dotnet restore
 ./build.ps1
 ```
 
+### PowerShellGitHubDev
+
+Alternatively, the `PowerShellGitHubDev.psm1` module contains a `Start-PSBuild`
+function to build Core PowerShell on both Linux and Windows. This module can be
+imported into the built-in PowerShell on Windows, and a self-hosting copy of
+PowerShell can be installed using our packages under the releases tab.
+
 ## Running
 
 If you encounter any problems, see the [known issues](KNOWNISSUES.md),
@@ -162,6 +170,7 @@ The local managed host has built-in documentation via `--help`.
 
 ### Windows
 
+- set the module path `$env:PsModulePath = "$pwd\bin\Modules"`
 - launch `./bin/powershell.exe`
 - run tests with `./bin/powershell.exe -c "Invoke-Pester test/powershell"`
 
