@@ -21,11 +21,25 @@ function Start-PSBuild
 {
     param(
         [switch]$Restore,
-        [string]$Output = "$PSScriptRoot/bin"
+        [switch]$Clean,
+        [string]$Output = "$PSScriptRoot/bin",
+        # These runtimes must match those in project.json
+        # We do not use ValidateScript since we want tab completion
+        [ValidateSet("ubuntu.14.04-x64",
+                     "centos.7.1-x64",
+                     "win7-x64",
+                     "win10-x64",
+                     "osx.10.10-x64",
+                     "osx.10.11-x64")]
+        [string]$Runtime
     )
 
     if (-Not (Get-Command "dotnet" -ErrorAction SilentlyContinue)) {
         throw "Build dependency 'dotnet' not found in PATH! See: https://dotnet.github.io/getting-started/"
+    }
+
+    if ($Clean) {
+        Remove-Item -Force -Recurse $Output
     }
 
     New-Item -Force -Type Directory $Output | Out-Null
@@ -49,25 +63,29 @@ function Start-PSBuild
         Write-Host "Building $Lib"
 
         try {
-            pushd $Native
+            Push-Location $Native
             cmake -DCMAKE_BUILD_TYPE=Debug .
             make -j
             make test
         } finally {
-            popd
+            Pop-Location
         }
 
         if (-Not (Test-Path $Lib)) { throw "Compilation of $Lib failed" }
-        cp $Lib $Output
+        Copy-Item $Lib $Output
     }
 
     Write-Host "Building PowerShell"
 
-    $Configuration =
-        if ($IsLinux -Or $IsOSX) { "Linux" }
-        elseif ($IsWindows) { "Debug" }
+    $Arguments = "--framework", "netstandardapp1.5", "--output", $Output
 
-    dotnet publish -o $Output -c $Configuration -f "netstandardapp1.5" $Top
+    if ($IsLinux -Or $IsOSX) { $Arguments += "--configuration", "Linux" }
+
+    if ($Runtime) { $Arguments += "--runtime", $Runtime }
+
+    $Arguments += $Top
+
+    dotnet publish $Arguments
 }
 
 function Start-PSPackage
@@ -77,7 +95,9 @@ function Start-PSPackage
     # Ubuntu and OS X packages are supported.
     param(
         [string]$Version,
-        [int]$Iteration = 1
+        [int]$Iteration = 1,
+        [ValidateSet("deb", "osxpkg", "rpm")]
+        [string]$Type
     )
 
     if ($IsWindows) { throw "Building Windows packages is not yet supported!" }
@@ -87,18 +107,31 @@ function Start-PSPackage
     }
 
     if (-Not(Test-Path "$PSScriptRoot/bin/powershell")) {
-        throw "Please Start-PSBuild to publish PowerShell"
+        throw "Please Start-PSBuild with the corresponding runtime for the package"
     }
 
     # Change permissions for packaging
     chmod -R go=u "$PSScriptRoot/bin"
 
     # Decide package output type
-    $Output = if ($IsLinux) { "deb" } elseif ($IsOSX) { "osxpkg" }
+    if (-Not($Type)) {
+        $Type = if ($IsLinux) { "deb" } elseif ($IsOSX) { "osxpkg" }
+        Write-Warning "-Type was not specified, continuing with $Type"
+    }
 
     # Use Git tag if not given a version
     if (-Not($Version)) {
         $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
+    }
+
+    $libunwind = switch ($Type) {
+        "deb" { "libunwind8" }
+        "rpm" { "libunwind" }
+    }
+
+    $libicu = switch ($Type) {
+        "deb" { "libicu52" }
+        "rpm" { "libicu" }
     }
 
     # Build package
@@ -112,12 +145,12 @@ function Start-PSPackage
         --license "Unlicensed" `
         --description "Open PowerShell on .NET Core\nPowerShell is an open-source, cross-platform, scripting language and rich object shell. Built upon .NET Core, it is also a C# REPL.\n" `
         --category "shells" `
-        --depends "libunwind8" `
-        --depends "libicu52" `
+        --depends $libunwind `
+        --depends $libicu `
         --deb-build-depends "dotnet" `
         --deb-build-depends "cmake" `
         --deb-build-depends "g++" `
-        -t $Output `
+        -t $Type `
         -s dir `
         "$PSScriptRoot/bin/=/usr/local/share/powershell/" `
         "$PSScriptRoot/package/powershell=/usr/local/bin"
