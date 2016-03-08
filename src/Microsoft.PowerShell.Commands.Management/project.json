@@ -23,7 +23,7 @@
                 "System.Net.NameResolution": "4.0.0-rc3-23907"
             }
         },
-        "dnx451": {
+        "net451": {
             "frameworkAssemblies": {
                 "System.ServiceProcess": "",
                 "System.Windows.Forms": "",

@@ -50,7 +50,7 @@ try
 
     # Publish PowerShell
     cd src\Microsoft.PowerShell.ConsoleHost
-    dotnet publish --framework dnx451 --output $BINFULL
+    dotnet publish --framework net451 --output $BINFULL
 
     mkdir $build -ErrorAction SilentlyContinue
     cd $build
