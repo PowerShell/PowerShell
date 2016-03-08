@@ -1,6 +1,7 @@
 Describe "Get-Location" {
+    $currentDirectory=[System.IO.Directory]::GetCurrentDirectory()
     BeforeEach {
-	pushd $env:HOME
+	pushd $currentDirectory
     }
 
     AfterEach {
@@ -8,7 +9,8 @@ Describe "Get-Location" {
     }
 
     It "Should list the output of the current working directory" {
-	(Get-Location).Path | Should Be $env:HOME
+    
+	(Get-Location).Path | Should Be $currentDirectory
     }
 
     It "Should do exactly the same thing as its alias" {
