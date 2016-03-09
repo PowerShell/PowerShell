@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 # Build OMI
-cd src/omi/Unix
+pushd src/omi/Unix
 ./configure --dev
 make -j
-cd ../../..
+popd
 
 # Build the OMI Provider
-cd src/omi-provider
-cmake .
+pushd src/omi-provider
+cmake -DCMAKE_BUILD_TYPE=Debug .
 make -j
-cd ../..
+popd
