@@ -10,7 +10,22 @@
 
 ### Setup Git
 
+
 Install [Git][], the version control system.
+
+#### Windows
+
+Install git from [official web-site](https://git-scm.com/download/win)
+
+During install process pick this recommended settings:
+
+*  Use git and optional unix tools from windows prompt
+*  Checkout windows style, checking unix style
+*  Use windows default console windows
+
+Install [windows git credential helper](https://github.com/Microsoft/Git-Credential-Manager-for-Windows)
+
+#### Linux
 
 ```sh
 sudo apt-get install git
