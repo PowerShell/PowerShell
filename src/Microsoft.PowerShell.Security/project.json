@@ -19,7 +19,7 @@
                 "define": [ "CORECLR" ]
             }
         },
-        "dnx451": {
+        "net451": {
         }
     },
 

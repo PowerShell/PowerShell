@@ -23,6 +23,7 @@ install:
 build_script:
   - ps: |
       $env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli\bin"
+      dotnet --version
       Import-Module .\PowerShellGitHubDev.psm1
       Start-PSBuild
   - ps: .\build.fullCLR.ps1

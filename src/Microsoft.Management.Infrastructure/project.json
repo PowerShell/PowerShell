@@ -23,7 +23,7 @@
                 "System.Threading.ThreadPool": "4.0.10-rc3-23907"
             }
         },
-        "dnx451": {
+        "net451": {
         }
     },
 

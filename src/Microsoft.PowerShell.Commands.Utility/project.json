@@ -31,7 +31,7 @@
                 "Newtonsoft.Json": "8.0.2"
             }
         },
-        "dnx451": {
+        "net451": {
             "frameworkAssemblies": {
                 "System.Drawing": "",
                 "System.Web": "",
