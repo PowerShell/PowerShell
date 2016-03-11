@@ -99,7 +99,24 @@ sudo apt-get install dotnet=1.0.0.001638-1
 Then install the following additional build / debug tools:
 
 ```sh
-sudo apt-get install g++ cmake make lldb-3.6 strace
+sudo apt-get install g++ cmake make strace
+```
+
+#### Debugging
+To enable debugging on Linux, follow the installation instructions on the [MSDN blog site](https://blogs.msdn.microsoft.com/visualstudioalm/2016/03/10/experimental-net-core-debugging-in-vs-code/) for VSCode, .NET CLI tools, C# omnisharp extension, and mono-devel.  VSCode will place a .vscode directory in the Powershell main folder; this contains the launch.json, which you will customize using the instructions below.  You will also be prompted to create a tasks.json file.
+
+Currently, debugging supports attaching to a currently running powershell process.  Assuming you've created a launch.json file correctly, within the "configuration" section, use the below settings:
+
+```
+"configurations": [
+		{
+			"name": "powershell",
+			"type": "coreclr",
+			"request": "attach",
+            "processName": "powershell"
+            
+		}
+  ]
 ```
 
 #### OMI
