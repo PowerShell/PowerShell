@@ -401,3 +401,13 @@ We publish an archive with FullCLR bits on every CI build with [AppVeyor][].
 * `Start-DevPSGithub -binDir $bin`
 
 [appveyor]: https://ci.appveyor.com/project/PowerShell/powershell-linux
+
+#Troubleshooting
+### Difficulty with push
+If you have difficulty in pushing your changes, there is a high probability that you actually don't have permissions. 
+Be sure that you have write access to corresponding repo (remember that submodules have their own privilege).
+
+#Generally Useful Info
+### Skipping build in ci
+If you want to skip the CI process (for example, updating docs only), just add `[skip ci]` to your commit change comments
+
