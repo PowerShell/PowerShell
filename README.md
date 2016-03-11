@@ -179,6 +179,38 @@ The local managed host has built-in documentation via `--help`.
 - launch `./bin/powershell.exe`
 - run tests with `./bin/powershell.exe -c "Invoke-Pester test/powershell"`
 
+## Debugging
+
+To enable debugging on Linux, follow the installation instructions for
+[Experimental .NET Core Debugging in VS Code][VS Code]. You will also
+want to review their [detailed instructions][vscclrdebugger].
+
+VS Code will place a `.vscode` directory in the PowerShell folder.
+This contains the `launch.json` file, which you will customize using
+the instructions below. You will also be prompted to create a
+`tasks.json` file.
+
+Currently, debugging supports attaching to a currently running
+powershell process. Assuming you've created a `launch.json` file
+correctly, within the "configuration" section, use the below settings:
+
+```json
+"configurations": [
+    {
+        "name": "powershell",
+        "type": "coreclr",
+        "request": "attach",
+        "processName": "powershell"
+    }
+]
+```
+
+VS Code will now attach to a running `powershell` process. Start
+powershell, then (in VS Code) press `F5` to begin the debugger.
+
+[VS Code]: https://blogs.msdn.microsoft.com/visualstudioalm/2016/03/10/experimental-net-core-debugging-in-vs-code/
+[vscclrdebugger]: http://aka.ms/vscclrdebugger
+
 ## PowerShell Remoting Protocol
 
 PSRP communication is tunneled through OMI using the `omi-provider`.
