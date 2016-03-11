@@ -1,0 +1,6 @@
+BUILD_PASS1_CONSUMES= \
+    admin\wmi\wmiv2\client\dotnetapi\cpp\latest|PASS1 \
+
+BUILD_PASS2_CONSUMES= \
+    mergedcomponents\sdk|PASS2 \
+

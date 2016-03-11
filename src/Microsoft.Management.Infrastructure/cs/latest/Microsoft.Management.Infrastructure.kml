@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8' standalone='yes'?>
+<Content
+    xmlns="http://microsoft.com/schemas/Windows/Kits/Manifest"
+    xmlns:wix="http://schemas.microsoft.com/wix/2006/wi"
+    >
+  <ContentGroup
+      BuildArchitecture="x86"
+      BuildType="fre"
+      Destination="Microsoft\WMI\v1.0"
+      >
+    <FeatureReference Name="SDK Reference Assemblies"/>
+    <BinaryFile
+        Name="Microsoft.Management.Infrastructure.metadata_dll"
+        Rename="Microsoft.Management.Infrastructure.dll"
+        Source="$(OBJECT_ROOT)\admin\wmi\wmiv2\client\dotnetapi\cs\latest\$(O)"
+        />
+  </ContentGroup>
+</Content>

@@ -1,0 +1,130 @@
+MSC_WARNING_LEVEL=/W3 /WX
+# Copyright (C) 2010 Microsoft Corporation
+
+TARGETNAME=Microsoft.Management.Infrastructure
+TARGETTYPE=DYNLINK
+TARGET_DESTINATION=retail
+
+ASSEMBLY_IDENTITY_VERSION_NAME=Microsoft.Management.Infrastructure
+
+!if $(ARM) || $(ARM64)
+URT_VER=4.5
+!else
+URT_VER=4.0
+!endif
+
+INTERNALS_VISIBLE_TO = \
+    XmlServerStore, PublicKey=$(WINDOWS_PUBLIC_KEY_STRING); \
+    System.Management.Automation, PublicKey=$(WINDOWS_PUBLIC_KEY_STRING); \
+    XmlServerStore, PublicKey=$(WINDOWS_PUBLIC_KEY_STRING); \
+    Microsoft.CloudInfrastructure.Test.Common, PublicKey=$(WINDOWS_PUBLIC_KEY_STRING); \
+    Microsoft.Windows.DSC.CoreConfProviders, PublicKey=$(WINDOWS_PUBLIC_KEY_STRING); \
+    Microsoft.Monitoring.Commands, PublicKey=$(WINDOWS_PUBLIC_KEY_STRING); \
+    Microsoft.Management.Infrastructure.CimCmdlets, PublicKey=$(WINDOWS_PUBLIC_KEY_STRING); \
+
+SOURCES=\
+	Microsoft.Management.Infrastructure.kml \
+	..\AssemblyInfo.cs \
+	..\CancellationMode.cs \
+	..\CimApplication.cs \
+	..\CimAsyncCallbacksReceiverBase.cs \
+	..\CimAsyncCancellationDisposable.cs \
+	..\CimAsyncCollection.cs \
+	..\CimAsyncClassObservable.cs \
+	..\CimAsyncClassObserverProxy.cs \
+	..\CimAsyncDelegatedObservable.cs \
+	..\CimAsyncInstanceObservable.cs \
+	..\CimAsyncInstanceObserverProxy.cs \
+	..\CimAsyncIndicationObservable.cs \
+	..\CimAsyncIndicationObserverProxy.cs \
+	..\CimAsyncMethodResultObservable.cs \
+	..\CimAsyncMethodResultObserverProxy.cs \
+	..\CimAsyncObservableBase.cs \
+	..\CimAsyncObserverProxyBase.cs \
+	..\CimAsyncResult.cs \
+	..\CimAsyncStatus.cs \
+	..\CimClass.cs \
+	..\CimCredential.cs \
+	..\CimClassPropertiesCollection.cs \
+	..\CimClassPropertyOfClass.cs \
+	..\CimConverter.cs \
+	..\CimDeserializer.cs \
+	..\CimException.cs \
+	..\CimFlags.cs \
+	..\CimInstance.cs \
+	..\CimKeyedCollection.cs \
+	..\CimPropertyDeclaration.cs \
+	..\CimMethodDeclaration.cs \
+	..\CimMethodDeclarationCollection.cs \
+	..\CimMethodDeclarationOfClass.cs \
+	..\CimMethodQualifierCollection.cs \
+	..\CimMethodQualifierOfMethod.cs \
+	..\CimMethodParameterDeclaration.cs \
+	..\CimMethodParameterDeclarationCollection.cs \
+	..\CimMethodParameterDeclarationOfMethod.cs \
+	..\CimMethodParameterQualifierOfMethod.cs \
+	..\CimMethodParameterQualifierCollection.cs \
+	..\CimMethodParameter.cs \
+	..\CimMethodParameterBackedByCimProperty.cs \
+	..\CimMethodParametersCollection.cs \
+	..\CimMethodResultBase.cs \
+	..\CimMethodResult.cs \
+	..\CimMethodStreamedResult.cs \
+	..\CimOperation.cs \
+	..\CimOperationFlags.cs \
+	..\CimOperationOptions.cs \
+	..\CimProperty.cs \
+	..\CimPropertyStandalone.cs \
+	..\CimPropertyOfInstance.cs \
+	..\CimPropertiesCollection.cs \
+	..\CimPropertyQualifierCollection.cs \
+	..\CimQualifier.cs \
+	..\CimClassQualifierCollection.cs \
+	..\CimQualifierOfClass.cs \
+	..\CimQualifierOfProperty.cs \
+	..\CimReadOnlyKeyedCollection.cs \
+	..\CimSemantics.cs \
+	..\CimSystemProperties.cs \
+	..\CimSerializer.cs \
+	..\CimSession.cs \
+	..\CimSessionOptions.cs \
+	..\CimSyncClassEnumerable.cs \
+	..\CimSyncClassEnumerator.cs \
+	..\CimSyncEnumerableBase.cs \
+	..\CimSyncEnumeratorBase.cs \
+	..\CimSyncIndicationEnumerable.cs \
+	..\CimSyncIndicationEnumerator.cs \
+	..\CimSyncInstanceEnumerable.cs \
+	..\CimSyncInstanceEnumerator.cs \
+	..\CimSubscriptionDeliveryOptions.cs \
+	..\CimSubscriptionResult.cs \
+	..\CimType.cs \
+	..\ConvertingObservable.cs \
+	..\DComSessionOptions.cs \
+	..\EmptyDisposable.cs \
+	..\Helpers.cs \
+	..\ImpersonationType.cs \
+	..\NativeErrorCode.cs \
+	..\PacketEncoding.cs \
+	..\ProxyType.cs \
+	..\SharedInstanceHandle.cs \
+	..\WSManSessionOptions.cs \
+	..\Strings.Designer.cs \
+	..\WeakReferenceHashSet.cs \
+	..\CimMofSerializer.cs \
+	..\CimMofDeserializer.cs \
+
+REFERENCES=\
+    $(CLR_REF_PATH)\System.metadata_dll; \
+    $(CLR_REF_PATH)\System.Core.metadata_dll; \
+    $(OBJ_PATH)\..\..\cpp\latest\$O\Microsoft.Management.Infrastructure.Native.metadata_dll; \
+
+PASS1_PUBLISH={$(OBJ_PATH)\$O\$(TARGETNAME).metadata_dll=$(SDK_REF_PATH)\$(TARGETNAME).metadata_dll}
+
+RESGEN_SOURCES=\
+	..\Strings.resx,$(OBJ_PATH)\$O\$(TARGETNAME).Strings.resources
+
+LANGUAGE_SPECIFIC_MANAGED_RESOURCES=\
+	$(OBJ_PATH)\$O\$(TARGETNAME).Strings.resources
+
+KIT_SN_SIGN_METADATA_DLL=1
