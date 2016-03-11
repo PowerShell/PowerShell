@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F637C9B7-74FC-4340-8CE0-C2027C57EF7D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Management.Infrastructure</RootNamespace>
+    <AssemblyName>Microsoft.Management.Infrastructure</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>false</DelaySign>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Management.Infrastructure.Native, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\std2.binaries.amd64chk\Microsoft.Management.Infrastructure.Native.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CancellationMode.cs" />
+    <Compile Include="CimApplication.cs" />
+    <Compile Include="CimAsyncCallbacksReceiverBase.cs" />
+    <Compile Include="CimAsyncCancellationDisposable.cs" />
+    <Compile Include="CimAsyncClassObservable.cs" />
+    <Compile Include="CimAsyncClassObserverProxy.cs" />
+    <Compile Include="CimAsyncCollection.cs" />
+    <Compile Include="CimAsyncDelegatedObservable.cs" />
+    <Compile Include="CimAsyncIndicationObservable.cs" />
+    <Compile Include="CimAsyncIndicationObserverProxy.cs" />
+    <Compile Include="CimAsyncInstanceObservable.cs" />
+    <Compile Include="CimAsyncInstanceObserverProxy.cs" />
+    <Compile Include="CimAsyncMethodResultObservable.cs" />
+    <Compile Include="CimAsyncMethodResultObserverProxy.cs" />
+    <Compile Include="CimAsyncObservableBase.cs" />
+    <Compile Include="CimAsyncObserverProxyBase.cs" />
+    <Compile Include="CimAsyncResult.cs" />
+    <Compile Include="CimAsyncStatus.cs" />
+    <Compile Include="CimClass.cs" />
+    <Compile Include="CimClassPropertiesCollection.cs" />
+    <Compile Include="CimClassPropertyOfClass.cs" />
+    <Compile Include="CimClassQualifierCollection.cs" />
+    <Compile Include="CimConverter.cs" />
+    <Compile Include="CimCredential.cs" />
+    <Compile Include="CimDeserializer.cs" />
+    <Compile Include="CimException.cs" />
+    <Compile Include="CimFlags.cs" />
+    <Compile Include="CimInstance.cs" />
+    <Compile Include="CimKeyedCollection.cs" />
+    <Compile Include="CimMethodDeclaration.cs" />
+    <Compile Include="CimMethodDeclarationCollection.cs" />
+    <Compile Include="CimMethodDeclarationOfClass.cs" />
+    <Compile Include="CimMethodParameter.cs" />
+    <Compile Include="CimMethodParameterBackedByCimProperty.cs" />
+    <Compile Include="CimMethodParameterDeclaration.cs" />
+    <Compile Include="CimMethodParameterDeclarationCollection.cs" />
+    <Compile Include="CimMethodParameterDeclarationOfMethod.cs" />
+    <Compile Include="CimMethodParameterQualifierCollection.cs" />
+    <Compile Include="CimMethodParameterQualifierOfMethod.cs" />
+    <Compile Include="CimMethodParametersCollection.cs" />
+    <Compile Include="CimMethodQualifierCollection.cs" />
+    <Compile Include="CimMethodQualifierOfMethod.cs" />
+    <Compile Include="CimMethodResult.cs" />
+    <Compile Include="CimMethodResultBase.cs" />
+    <Compile Include="CimMethodStreamedResult.cs" />
+    <Compile Include="CimOperation.cs" />
+    <Compile Include="CimPropertiesCollection.cs" />
+    <Compile Include="CimProperty.cs" />
+    <Compile Include="CimPropertyDeclaration.cs" />
+    <Compile Include="CimPropertyOfInstance.cs" />
+    <Compile Include="CimPropertyQualifierCollection.cs" />
+    <Compile Include="CimPropertyStandalone.cs" />
+    <Compile Include="CimQualifier.cs" />
+    <Compile Include="CimQualifierOfClass.cs" />
+    <Compile Include="CimQualifierOfProperty.cs" />
+    <Compile Include="CimReadOnlyKeyedCollection.cs" />
+    <Compile Include="CimSemantics.cs" />
+    <Compile Include="CimSerializer.cs" />
+    <Compile Include="CimSession.cs" />
+    <Compile Include="CimSessionOptions.cs" />
+    <Compile Include="CimSubscriptionDeliveryOptions.cs" />
+    <Compile Include="CimSubscriptionResult.cs" />
+    <Compile Include="CimSyncClassEnumerable.cs" />
+    <Compile Include="CimSyncClassEnumerator.cs" />
+    <Compile Include="CimSyncEnumerableBase.cs" />
+    <Compile Include="CimSyncEnumeratorBase.cs" />
+    <Compile Include="CimSyncIndicationEnumerable.cs" />
+    <Compile Include="CimSyncIndicationEnumerator.cs" />
+    <Compile Include="CimSyncInstanceEnumerable.cs" />
+    <Compile Include="CimSyncInstanceEnumerator.cs" />
+    <Compile Include="CimSystemProperties.cs" />
+    <Compile Include="CimType.cs" />
+    <Compile Include="ConvertingObservable.cs" />
+    <Compile Include="DComSessionOptions.cs" />
+    <Compile Include="EmptyDisposable.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="ImpersonationType.cs" />
+    <Compile Include="CimOperationFlags.cs" />
+    <Compile Include="CimOperationOptions.cs" />
+    <Compile Include="NativeErrorCode.cs" />
+    <Compile Include="OperationFlags.cs" />
+    <Compile Include="PacketEncoding.cs" />
+    <Compile Include="ProxyType.cs" />
+    <Compile Include="SharedInstanceHandle.cs" />
+    <Compile Include="Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="WeakReferenceHashSet.cs" />
+    <Compile Include="WSManSessionOptions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

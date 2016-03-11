@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LCX SchemaVersion="6.0" Name="Microsoft.Management.Infrastructure.resources.dll" PsrId="211" FileType="1" SrcCul="en-US" Desc="Commenting file created by LCXAdmin. For more information, please visit http://localizability/longhorn/LcxAdmin.asp" xmlns="http://schemas.microsoft.com/locstudio/2006/6/lcx">
+  <OwnedComments>
+    <Cmt Name="Goldmine" />
+    <Cmt Name="LcxAdmin" />
+  </OwnedComments>
+  <Settings Name="@ParserSettingsPath@\NTDEV_LSSettings.lsconfig" Type="Config" />
+  <Item ItemId=";Managed Resources" ItemType="0" PsrId="211" Leaf="true">
+    <Disp Icon="Expand" Expand="true" Disp="true" LocTbl="false" />
+  </Item>
+  <Item ItemId=";Microsoft.Management.Infrastructure.Strings.resources" ItemType="0" PsrId="211" Leaf="false">
+    <Disp Icon="Str" Expand="true" Disp="true" LocTbl="false" Path=" \ ;Managed Resources \ 0 \ 0" />
+    <Item ItemId=";Strings" ItemType="0" PsrId="211" Leaf="false">
+      <Disp Icon="Str" LocTbl="false" />
+      <Item ItemId=";UnrecognizedProtocolName" ItemType="0" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[CimSessionOptions instance is invalid: unsupported protocol or unrecognized custom option.  Verify parameter passed to the CimSessionOptions(string) constructor and/or parameters passed to the CimSessionOptions.SetCustomOption(string, string) or CimSessionOptions.SetCustomOption(string, int) method.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+        <Cmts>
+          <Cmt Name="LcxAdmin"><![CDATA[{SubString="CimSessionOptions(string)"} {SubString="CimSessionOptions.SetCustomOption(string, string)"} {SubString="CimSessionOptions.SetCustomOption(string, int)"} {SubString="CimSessionOptions"}]]></Cmt>
+        </Cmts>
+      </Item>
+    </Item>
+  </Item>
+</LCX>

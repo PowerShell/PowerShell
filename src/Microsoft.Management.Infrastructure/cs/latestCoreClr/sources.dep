@@ -1,0 +1,7 @@
+BUILD_PASS1_CONSUMES= \
+    admin\wmi\wmiv2\client\dotnetapi\cpp\latest|PASS1 \
+    admin\wmi\wmiv2\client\dotnetapi\cpp\latestcoreclr|PASS1 \
+
+PUBLIC_PASS1_CONSUMES= \
+    onecore\redist\mspartners\coreclr\dotnetcore10\binary_release|PASS1 \
+    onecore\redist\mspartners\coreclr\dotnetcore10\binary_release\il|PASS1 \
