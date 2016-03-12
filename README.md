@@ -141,8 +141,9 @@ test on OS X, but some developers use PowerShell on 10.10 and 10.11.
 **The command `dotnet restore` must be done at least once from the top directory
 to obtain all the necessary .NET packages.**
 
-Build with `./build.sh` on Linux and OS X, `./build.ps1` for Core PowerShell on
-Windows, and `./build.FullCLR.ps1` for Full PowerShell on Windows.
+Build with `./build.sh` on Linux and OS X.
+
+`Start-PSBuild` from module `.\PowerShellGitHubDev.psm1` on Windows.
 
 Specifically:
 
@@ -161,8 +162,12 @@ In PowerShell:
 ```powershell
 cd PowerShell
 dotnet restore
-./build.ps1
+Import-Module .\PowerShellGitHubDev.psm1
+Start-PSBuild # build CoreCLR version
+Start-PSBuild -FullCLR # build FullCLR version
 ```
+
+**Tip:** use `Start-PSBuild -Verbose` switch to see more information about build process.
 
 ### PowerShellGitHubDev
 
