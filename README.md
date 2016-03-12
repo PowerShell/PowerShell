@@ -118,6 +118,7 @@ Currently, debugging supports attaching to a currently running powershell proces
 		}
   ]
 ```
+VSCode will now attach to a running powershell process.  Start powershell, then (in VSCode) press F5 to begin the debugger.
 
 #### OMI
 
