@@ -1,3 +1,5 @@
+version: 0.2.0.{build}
+
 environment:
   priv_key:
     secure: <encryped-value>
@@ -18,7 +20,7 @@ install:
   - git config --global url.git@github.com:.insteadOf https://github.com/
   - git submodule update --init --recursive -- src/monad src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
   - ps: Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
-  - ps: ./install.ps1 -version 1.0.0.001638 -channel beta
+  - ps: ./install.ps1 -version 1.0.0.001425 -channel beta
 
 build_script:
   - ps: |
@@ -34,32 +36,38 @@ test_script:
       $ErrorActionPreference = 'Stop'
       #
       # CoreCLR
-      $testResultsFile = ".\TestsResults.xml"
+      Write-Host -Foreground Green 'Run CoreCLR tests'
+      $testResultsFile = "$pwd\TestsResults.xml"
       .\bin\powershell.exe --noprofile -c "Import-Module .\bin\Modules\Microsoft.PowerShell.Platform; Invoke-Pester test/powershell -OutputFormat NUnitXml -OutputFile $testResultsFile"
       (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFile))
       #
       # FullCLR
-      $testResultsFile = ".\TestsResults.FullCLR.xml"
-      Start-DevPSGitHub -binDir $pwd\binFull -NoNewWindow -ArgumentList '-command', "Import-Module .\bin\Modules\Pester; Import-Module .\bin\Modules\Microsoft.PowerShell.Platform; Invoke-Pester test/fullCLR -OutputFormat NUnitXml -OutputFile $testResultsFile"
-      (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFile))
+      Write-Host -Foreground Green 'Run FullCLR tests'
+      $testResultsFileFullCLR = "$pwd\TestsResults.FullCLR.xml"
+      Start-DevPSGitHub -binDir $pwd\binFull -NoNewWindow -ArgumentList '-command', "Import-Module .\src\monad\monad\src\OSS\Pester; Import-Module .\bin\Modules\Microsoft.PowerShell.Platform; Invoke-Pester test/fullCLR -OutputFormat NUnitXml -OutputFile $testResultsFileFullCLR"
+      (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFileFullCLR))
       #
       # Fail the build, if tests failed
-      $x = [xml](cat -raw .\TestsResults.FullCLR.xml)
-      if ([int]$x.'test-results'.failures -gt 0)
-      {
-        throw "$($x.'test-results'.failures) tests in test/fullCLR failed"
-      }
-      $x = [xml](cat -raw .\TestsResults.xml)
+      Write-Host -Foreground Green 'Upload CoreCLR test results'
+      $x = [xml](cat -raw $testResultsFile)
       if ([int]$x.'test-results'.failures -gt 0)
       {
         throw "$($x.'test-results'.failures) tests in test/powershell failed"
       }
+      Write-Host -Foreground Green 'Upload FullCLR test results'
+      $x = [xml](cat -raw $testResultsFileFullCLR)
+      if ([int]$x.'test-results'.failures -gt 0)
+      {
+        throw "$($x.'test-results'.failures) tests in test/fullCLR failed"
+      }
+
 
 on_finish: 
   - ps: |
       # Creating project artifact
-      $zipFilePath = Join-Path $pwd "$(Split-Path $pwd -Leaf).zip"
-      $zipFileFullPath = Join-Path $pwd "$(Split-Path $pwd -Leaf).FullCLR.zip"
+      $name = git describe
+      $zipFilePath = Join-Path $pwd "$name.zip"
+      $zipFileFullPath = Join-Path $pwd "$name.FullCLR.zip"
       Add-Type -assemblyname System.IO.Compression.FileSystem
       [System.IO.Compression.ZipFile]::CreateFromDirectory("$pwd\bin", $zipFilePath)
       [System.IO.Compression.ZipFile]::CreateFromDirectory("$pwd\binFull", $zipFileFullPath)

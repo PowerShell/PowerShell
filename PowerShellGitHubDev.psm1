@@ -62,6 +62,11 @@ function Start-PSBuild
         }
     }
 
+    function log([string]$message)
+    {
+        Write-Host -Foreground Green $message
+    }
+
     # simplify ParameterSetNames, set output
     if ($PSCmdlet.ParameterSetName -eq 'FullCLR')
     {
@@ -70,7 +75,7 @@ function Start-PSBuild
 
     if (-not $Output)
     {
-        if ($FullCLR) { $Output = "$PSScriptRoot\binFull" } else { $Output = "$PSScriptRoot\bin" }
+        if ($FullCLR) { $Output = "$PSScriptRoot/binFull" } else { $Output = "$PSScriptRoot/bin" }
     }    
 
     # verify we have all tools in place to do the build
@@ -87,12 +92,12 @@ function Start-PSBuild
 
     # handle clean
     if ($Clean) {
-        Remove-Item -Force -Recurse $Output -ErrorAction SilentlyContinues
+        Remove-Item -Force -Recurse $Output -ErrorAction SilentlyContinue
     }
 
     New-Item -Force -Type Directory $Output | Out-Null
 
-    # handle Restore
+    # define key build variables
     if ($FullCLR) 
     {
         $Top = "$PSScriptRoot\src\Microsoft.PowerShell.ConsoleHost"
@@ -104,16 +109,26 @@ function Start-PSBuild
         $framework = 'netstandardapp1.5'
     }
 
+    # handle Restore
     if ($Restore -Or -Not (Test-Path "$Top/project.lock.json")) {
-        dotnet restore $PSScriptRoot
+        log "Run dotnet restore"
+        # restore is genuinely verbose.
+        # we don't show it by default to keep CI build log size small
+        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent)
+        {
+            dotnet restore $PSScriptRoot
+        }
+        else 
+        {
+            dotnet restore $PSScriptRoot > $null    
+        }
     }
 
     # Build native components
     if (-not $FullCLR)
     {
-        Write-Verbose "Start CoreCLR build"
-
         if ($IsLinux -Or $IsOSX) {
+            log "Start building native components"
             $InstallCommand = if ($IsLinux) { "apt-get" } elseif ($IsOSX) { "brew" }
             foreach ($Dependency in "cmake", "g++") {
                 if (-Not (Get-Command $Dependency -ErrorAction SilentlyContinue)) {
@@ -141,36 +156,32 @@ function Start-PSBuild
     }
     else
     {
-        Write-Verbose "Start building native powershell.exe"
+        log "Start building native powershell.exe"
         $build = "$PSScriptRoot/build"
         if ($Clean) {
             Remove-Item -Force -Recurse $build -ErrorAction SilentlyContinue
         }
 
         mkdir $build -ErrorAction SilentlyContinue
-        $origPWD = $pwd
         try
         {
-            cd $build
+            Push-Location $build
 
             if ($cmakeGenerator)
             {
-                cmake -G "$cmakeGenerator" ..\src\powershell-native
+                cmake -G $cmakeGenerator ..\src\powershell-native
             }
             else
             {
                 cmake ..\src\powershell-native
             }
             msbuild powershell.vcxproj /p:Configuration=$msbuildConfiguration
-            cp -rec $msbuildConfiguration\* $BINFULL
+            cp -rec $msbuildConfiguration\* $Output
         }
-        finally
-        {
-            cd $origPWD
-        }
+        finally { Pop-Location }
     }
 
-    Write-Verbose "Building PowerShell"
+    log "Building PowerShell"
     $Arguments = "--framework", $framework, "--output", $Output
     if ($IsLinux -Or $IsOSX) { $Arguments += "--configuration", "Linux" }
     if ($Runtime) { $Arguments += "--runtime", $Runtime }
@@ -180,8 +191,7 @@ function Start-PSBuild
         # there is a problem with code signing: 
         # AssemblyKeyFileAttribute file path cannot be correctly located, if `dotnet publish $TOP` syntax is used
         # we workaround it with calling `dotnet publish` from $TOP directory instead.
-        $origPWD = $pwd
-        cd $Top
+        Push-Location $Top
     }
     else 
     {
@@ -197,7 +207,7 @@ function Start-PSBuild
     }
     finally
     {
-        if ($FullCLR)  { cd $origPWD }
+        if ($FullCLR)  { Pop-Location }
     }
 }
 

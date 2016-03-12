@@ -143,7 +143,7 @@ to obtain all the necessary .NET packages.**
 
 Build with `./build.sh` on Linux and OS X.
 
-`Start-PSBuild` from module `.\PowerShellGitHubDev.psm1` on Windows.
+`Start-PSBuild` from module `.\PowerShellGitHubDev.psm1` on Windows and Linux / OS X, if you self-hosting PowerShell.
 
 Specifically:
 
