@@ -15,6 +15,15 @@ Please add `[ci skip]` to commits that should be ignored by the CI systems
 
 All pull requests **must** pass both CI systems before they will be approved.
 
+Write *good* commit messages. Follow Tim Pope's [guidelines][]:
+
+* The first line *must* be a short, capitalized summary
+* The second line *must* be blank
+* The rest should be a wrapped, detailed explanation of the what and why
+* The tone should be imperative
+
+[guidelines]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+
 ## Installation
 
 #### Windows
