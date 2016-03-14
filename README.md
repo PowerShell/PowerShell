@@ -194,7 +194,6 @@ The local managed host has built-in documentation via `--help`.
 
 ### Windows
 
-- set the module path `$env:PsModulePath = "$pwd\bin\Modules"`
 - launch `./bin/powershell.exe`
 - run tests with `./bin/powershell.exe -c "Invoke-Pester test/powershell"`
 
