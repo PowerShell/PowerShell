@@ -10,63 +10,46 @@
 
 ### Setup Git
 
-
 Install [Git][], the version control system.
 
-#### Windows
-
-Install git from [official web-site](https://git-scm.com/download/win)
-
-During install process pick this recommended settings:
-
-*  Use git and optional unix tools from windows prompt
-*  Checkout windows style, checking unix style
-*  Use windows default console windows
-
-Install [windows git credential helper](https://github.com/Microsoft/Git-Credential-Manager-for-Windows)
-
-#### Linux
-
-```sh
-sudo apt-get install git
-```
-
-If you do not have a preferred method of authentication, enable the storage
-credential helper, which will cache your credentials in plaintext on your
-system, so use a [token][].
-
-```sh
-git config --global credential.helper store
-```
-
-See the [Contributing Guidelines](CONTRIBUTING.md) for more Git information.
+See the [Contributing Guidelines](CONTRIBUTING.md) for more Git
+information, such as our installation instructions, contributing
+rules, and Git best practices.
 
 [Git]: https://git-scm.com/documentation
-[token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
 
 ### Download source code
 
-Clone this repository recursively, as it's the superproject with a number of
-submodules.
+Clone this repository. It is a "superproject" and has a number of
+other repositories embedded within it as submodules. *Please* see the
+contributing guidelines and learn about submodules.
 
 ```sh
-git clone --recursive https://github.com/PowerShell/PowerShell.git
+git clone https://github.com/PowerShell/PowerShell.git
+cd PowerShell
+```
+
+#### Linux
+
+Linux will need every submodule, so update them recursively:
+
+```sh
+git submodule update --init --recursive
 ```
 
 The `src/omi` submodule requires your GitHub user to have joined the Microsoft
 organization. If it fails to check out, Git will bail and not check out further
 submodules either. Please follow the instructions on the [Open Source Hub][].
 
-On Windows, many fewer submodules are needed, so don't use `clone --recursive`.
+[Open Source Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
 
-Instead run:
+#### Windows
 
-```
-git clone https://github.com/PowerShell/PowerShell.git
+On Windows, many fewer submodules are needed, so specify them:
+
+```sh
 git submodule update --init --recursive -- src/monad src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
 ```
-
-[Open Source Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
 
 ## Setup build environment
 

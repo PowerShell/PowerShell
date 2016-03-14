@@ -15,6 +15,45 @@ Please add `[ci skip]` to commits that should be ignored by the CI systems
 
 All pull requests **must** pass both CI systems before they will be approved.
 
+## Installation
+
+#### Windows
+
+Install [Git for Windows][].
+
+During the install process, choose these recommended settings:
+
+* Use Git from the Windows Command Prompt
+* Use OpenSSH
+* Checkout Windows-style, commit Unix-style line endings
+* Use Windows' default console window
+* Enable file system caching
+
+#### Linux
+
+Install via the package manager:
+
+```sh
+sudo apt-get install git
+```
+
+#### Authentication
+
+If you do not have a preferred method of authentication, enable the storage
+credential helper, which will cache your credentials in plaintext on your
+system, so use a [token][].
+
+```sh
+git config --global credential.helper store
+```
+
+Alternatively, on Windows, you can try the
+[Git Credential Manager for Windows][manager].
+
+[manager]: https://github.com/Microsoft/Git-Credential-Manager-for-Windows
+[Git for Windows]: https://git-scm.com/download/win
+[token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
+
 ## New to Git?
 
 If you're new to Git, learn the following commands: `checkout`, `branch`,
