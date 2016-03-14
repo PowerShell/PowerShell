@@ -72,7 +72,6 @@ The version of .NET CLI is very important, you want a recent 1.0.0 beta
 
 Tested on Ubuntu 14.04.
 
-
 This installs the .NET CLI package feed. The benefit to this is that
 installing `dotnet` using `apt-get` will also install all of its
 dependencies automatically.
@@ -107,8 +106,6 @@ sudo apt-get install g++ cmake make lldb-3.6 strace
 
 Tested on Windows 10 and Windows Server 2012 R2.
 
-An MSI installer also exists, but this script avoids touching your system.
-
 ```powershell
 Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
 ./install.ps1 -version 1.0.0.001718 -channel beta
@@ -136,13 +133,14 @@ to obtain all the necessary .NET packages.**
 Build with `./build.sh` on Linux and OS X.
 
 `Start-PSBuild` from module `./PowerShellGitHubDev.psm1` on Windows
-and Linux / OS X, if you self-hosting PowerShell.
+and Linux / OS X, if you are self-hosting PowerShell.
 
 Specifically:
 
 ### Linux
 
 In Bash:
+
 ```sh
 cd PowerShell
 dotnet restore
@@ -152,6 +150,7 @@ dotnet restore
 ### Windows
 
 In PowerShell:
+
 ```powershell
 cd PowerShell
 dotnet restore
@@ -187,8 +186,6 @@ PSRP communication is tunneled through OMI using the `omi-provider`.
 > PSRP has been observed working on OS X, but the changes made to OMI to
 > accomplish this are not even beta-ready and need to be done correctly. They
 > exist on the `andschwa-osx` branch of the OMI repository.
-
-### PowerShell Remoting Protocol
 
 PSRP support is *not* built automatically. See the detailed notes on
 how to enable it.
@@ -307,11 +304,11 @@ make -j
 The provider also maintains its own native host library to initialize the CLR,
 but there are plans to refactor .NET's packaged host as a shared library.
 
-# FullCLR PowerShell
+### FullCLR PowerShell
 
 On Windows, we also build Full PowerShell for .NET 4.5.1
 
-## Setup environment
+#### Setup environment
 
 * You need Visual Studio to compile the native host `powershell.exe`.
 
@@ -338,19 +335,19 @@ choco install cmake.portable
 [chocolately]: https://chocolatey.org/packages/cmake.portable
 [manually]: https://cmake.org/download/
 
-## Building
+#### Building
 
 ```powershell
-.\build.FullCLR.ps1
+Start-PSBuild -FullCLR
 ```
 
 **Troubleshooting:** the build logic is relatively simple and contains following steps:
-- building managed DLLs: `dotnet publish --runtime dnx451`
+- building managed DLLs: `dotnet publish --runtime net451`
 - generating Visual Studio project: `cmake -G "$cmakeGenerator"`
 - building `powershell.exe` from generated solution: `msbuild powershell.sln`
 
-All this steps can be run separately from `.\build.FullCLR.ps1`, don't hesitate
-to experiment.
+All this steps can be run separately from `Start-PSBuild`, don't
+hesitate to experiment.
 
 ## Running
 
@@ -388,4 +385,3 @@ We publish an archive with FullCLR bits on every CI build with [AppVeyor][].
 * `Start-DevPSGithub -binDir $bin`
 
 [appveyor]: https://ci.appveyor.com/project/PowerShell/powershell-linux
-
