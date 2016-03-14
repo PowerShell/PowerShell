@@ -15,7 +15,9 @@ Install [Git][], the version control system.
 
 #### Windows
 
-Install git from [official web-site](https://git-scm.com/download/win)
+Install [windows git credential helper](https://github.com/Microsoft/Git-Credential-Manager-for-Windows)
+
+The installer will install Git for Windows as well as .Net if needed.
 
 During install process pick this recommended settings:
 
@@ -23,7 +25,8 @@ During install process pick this recommended settings:
 *  Checkout windows style, checking unix style
 *  Use windows default console windows
 
-Install [windows git credential helper](https://github.com/Microsoft/Git-Credential-Manager-for-Windows)
+Generate [Personal Access Token](https://help.github.com/articles/creating-an-access-token-for-command-line-use/) which
+eliminates needs to type user/password each time and two-factor auth.  Best practice is to have a different token per machine/client.
 
 #### Linux
 
@@ -53,6 +56,9 @@ submodules.
 git clone --recursive https://github.com/PowerShell/PowerShell.git
 ```
 
+When prompted for username, be sure to use your username and not your email address.  For the password, use the
+Personal Access Token you generated.
+
 The `src/omi` submodule requires your GitHub user to have joined the Microsoft
 organization. If it fails to check out, Git will bail and not check out further
 submodules either. Please follow the instructions on the [Open Source Hub][].
@@ -63,6 +69,7 @@ Instead run:
 
 ```
 git clone https://github.com/PowerShell/PowerShell.git
+cd PowerShell
 git submodule update --init --recursive -- src/monad src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
 ```
 
