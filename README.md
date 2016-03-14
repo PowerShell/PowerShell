@@ -10,63 +10,46 @@
 
 ### Setup Git
 
-
 Install [Git][], the version control system.
 
-#### Windows
-
-Install git from [official web-site](https://git-scm.com/download/win)
-
-During install process pick this recommended settings:
-
-*  Use git and optional unix tools from windows prompt
-*  Checkout windows style, checking unix style
-*  Use windows default console windows
-
-Install [windows git credential helper](https://github.com/Microsoft/Git-Credential-Manager-for-Windows)
-
-#### Linux
-
-```sh
-sudo apt-get install git
-```
-
-If you do not have a preferred method of authentication, enable the storage
-credential helper, which will cache your credentials in plaintext on your
-system, so use a [token][].
-
-```sh
-git config --global credential.helper store
-```
-
-See the [Contributing Guidelines](CONTRIBUTING.md) for more Git information.
+See the [Contributing Guidelines](CONTRIBUTING.md) for more Git
+information, such as our installation instructions, contributing
+rules, and Git best practices.
 
 [Git]: https://git-scm.com/documentation
-[token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
 
 ### Download source code
 
-Clone this repository recursively, as it's the superproject with a number of
-submodules.
+Clone this repository. It is a "superproject" and has a number of
+other repositories embedded within it as submodules. *Please* see the
+contributing guidelines and learn about submodules.
 
 ```sh
-git clone --recursive https://github.com/PowerShell/PowerShell.git
+git clone https://github.com/PowerShell/PowerShell.git
+cd PowerShell
+```
+
+#### Linux
+
+Linux will need every submodule, so update them recursively:
+
+```sh
+git submodule update --init --recursive
 ```
 
 The `src/omi` submodule requires your GitHub user to have joined the Microsoft
 organization. If it fails to check out, Git will bail and not check out further
 submodules either. Please follow the instructions on the [Open Source Hub][].
 
-On Windows, many fewer submodules are needed, so don't use `clone --recursive`.
+[Open Source Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
 
-Instead run:
+#### Windows
 
-```
-git clone https://github.com/PowerShell/PowerShell.git
+On Windows, many fewer submodules are needed, so specify them:
+
+```sh
 git submodule update --init --recursive -- src/monad src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
 ```
-
-[Open Source Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
 
 ## Setup build environment
 
@@ -88,7 +71,6 @@ The version of .NET CLI is very important, you want a recent 1.0.0 beta
 ### Linux
 
 Tested on Ubuntu 14.04.
-
 
 This installs the .NET CLI package feed. The benefit to this is that
 installing `dotnet` using `apt-get` will also install all of its
@@ -113,20 +95,16 @@ wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotne
 sudo dpkg -i ./dotnet-ubuntu-x64.latest.deb
 ```
 
-#### OMI
-
-To develop on the PowerShell Remoting Protocol (PSRP) for Linux, you'll need to
-be able to compile OMI, which additionally requires:
+Additionally, PowerShell on Linux builds a native library, so install
+the following additional build / debug tools.
 
 ```sh
-sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev libboost-filesystem-dev
+sudo apt-get install g++ cmake make lldb-3.6 strace
 ```
 
 ### Windows
 
 Tested on Windows 10 and Windows Server 2012 R2.
-
-An MSI installer also exists, but this script avoids touching your system.
 
 ```powershell
 Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
@@ -154,13 +132,15 @@ to obtain all the necessary .NET packages.**
 
 Build with `./build.sh` on Linux and OS X.
 
-`Start-PSBuild` from module `.\PowerShellGitHubDev.psm1` on Windows and Linux / OS X, if you self-hosting PowerShell.
+`Start-PSBuild` from module `./PowerShellGitHubDev.psm1` on Windows
+and Linux / OS X, if you are self-hosting PowerShell.
 
 Specifically:
 
 ### Linux
 
 In Bash:
+
 ```sh
 cd PowerShell
 dotnet restore
@@ -170,6 +150,7 @@ dotnet restore
 ### Windows
 
 In PowerShell:
+
 ```powershell
 cd PowerShell
 dotnet restore
@@ -178,14 +159,8 @@ Start-PSBuild # build CoreCLR version
 Start-PSBuild -FullCLR # build FullCLR version
 ```
 
-**Tip:** use `Start-PSBuild -Verbose` switch to see more information about build process.
-
-### PowerShellGitHubDev
-
-Alternatively, the `PowerShellGitHubDev.psm1` module contains a `Start-PSBuild`
-function to build Core PowerShell on both Linux and Windows. This module can be
-imported into the built-in PowerShell on Windows, and a self-hosting copy of
-PowerShell can be installed using our packages under the releases tab.
+**Tip:** use `Start-PSBuild -Verbose` switch to see more information
+about build process.
 
 ## Running
 
@@ -201,9 +176,40 @@ The local managed host has built-in documentation via `--help`.
 
 ### Windows
 
-- set the module path `$env:PsModulePath = "$pwd\bin\Modules"`
 - launch `./bin/powershell.exe`
 - run tests with `./bin/powershell.exe -c "Invoke-Pester test/powershell"`
+
+## Debugging
+
+To enable debugging on Linux, follow the installation instructions for
+[Experimental .NET Core Debugging in VS Code][VS Code]. You will also
+want to review their [detailed instructions][vscclrdebugger].
+
+VS Code will place a `.vscode` directory in the PowerShell folder.
+This contains the `launch.json` file, which you will customize using
+the instructions below. You will also be prompted to create a
+`tasks.json` file.
+
+Currently, debugging supports attaching to a currently running
+powershell process. Assuming you've created a `launch.json` file
+correctly, within the "configuration" section, use the below settings:
+
+```json
+"configurations": [
+    {
+        "name": "powershell",
+        "type": "coreclr",
+        "request": "attach",
+        "processName": "powershell"
+    }
+]
+```
+
+VS Code will now attach to a running `powershell` process. Start
+powershell, then (in VS Code) press `F5` to begin the debugger.
+
+[VS Code]: https://blogs.msdn.microsoft.com/visualstudioalm/2016/03/10/experimental-net-core-debugging-in-vs-code/
+[vscclrdebugger]: http://aka.ms/vscclrdebugger
 
 ## PowerShell Remoting Protocol
 
@@ -213,11 +219,8 @@ PSRP communication is tunneled through OMI using the `omi-provider`.
 > accomplish this are not even beta-ready and need to be done correctly. They
 > exist on the `andschwa-osx` branch of the OMI repository.
 
-### Building
-
-**PSRP support is not built by `./build.sh`**
-
-Build with `./omibuild.sh`.
+PSRP support is *not* built automatically. See the detailed notes on
+how to enable it.
 
 ### Running
 
@@ -256,20 +259,6 @@ The IP address of the Linux machine can be obtained with:
 
 ```sh
 ip -f inet addr show dev eth0
-```
-
-### Desired State Configuration
-
-> DSC support is in its infancy.
-
-DSC also uses OMI, so build it first, then build DSC against it. Unfortunately,
-DSC cannot be configured to look for OMI elsewhere, so for now you need to
-symlink it to the expected location.
-
-```sh
-ln -s ../omi/Unix/ omi-1.0.8
-./configure --no-rpm --no-dpkg --local
-make -j
 ```
 
 ## Detailed Build Script Notes
@@ -315,6 +304,17 @@ The output is a `.so` on Linux and `.dylib` on OS X. It is unnecessary for Windo
 
 #### OMI
 
+**PSRP support is not built by `./build.sh`**
+
+To develop on the PowerShell Remoting Protocol (PSRP) for Linux, you'll need to
+be able to compile OMI, which additionally requires:
+
+```sh
+sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev libboost-filesystem-dev
+```
+
+Note that the OMI build steps can be done with `./omibuild.sh`.
+
 Build OMI from source in developer mode:
 
 ```sh
@@ -336,11 +336,11 @@ make -j
 The provider also maintains its own native host library to initialize the CLR,
 but there are plans to refactor .NET's packaged host as a shared library.
 
-# FullCLR PowerShell
+### FullCLR PowerShell
 
 On Windows, we also build Full PowerShell for .NET 4.5.1
 
-## Setup environment
+#### Setup environment
 
 * You need Visual Studio to compile the native host `powershell.exe`.
 
@@ -367,19 +367,19 @@ choco install cmake.portable
 [chocolately]: https://chocolatey.org/packages/cmake.portable
 [manually]: https://cmake.org/download/
 
-## Building
+#### Building
 
 ```powershell
-.\build.FullCLR.ps1
+Start-PSBuild -FullCLR
 ```
 
 **Troubleshooting:** the build logic is relatively simple and contains following steps:
-- building managed DLLs: `dotnet publish --runtime dnx451`
+- building managed DLLs: `dotnet publish --runtime net451`
 - generating Visual Studio project: `cmake -G "$cmakeGenerator"`
 - building `powershell.exe` from generated solution: `msbuild powershell.sln`
 
-All this steps can be run separately from `.\build.FullCLR.ps1`, don't hesitate
-to experiment.
+All this steps can be run separately from `Start-PSBuild`, don't
+hesitate to experiment.
 
 ## Running
 
@@ -417,13 +417,3 @@ We publish an archive with FullCLR bits on every CI build with [AppVeyor][].
 * `Start-DevPSGithub -binDir $bin`
 
 [appveyor]: https://ci.appveyor.com/project/PowerShell/powershell-linux
-
-#Troubleshooting
-### Difficulty with push
-If you have difficulty in pushing your changes, there is a high probability that you actually don't have permissions. 
-Be sure that you have write access to corresponding repo (remember that submodules have their own privilege).
-
-#Generally Useful Info
-### Skipping build in ci
-If you want to skip the CI process (for example, updating docs only), just add `[skip ci]` to your commit change comments
-

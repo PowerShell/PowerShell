@@ -15,6 +15,54 @@ Please add `[ci skip]` to commits that should be ignored by the CI systems
 
 All pull requests **must** pass both CI systems before they will be approved.
 
+Write *good* commit messages. Follow Tim Pope's [guidelines][]:
+
+* The first line *must* be a short, capitalized summary
+* The second line *must* be blank
+* The rest should be a wrapped, detailed explanation of the what and why
+* The tone should be imperative
+
+[guidelines]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+
+## Installation
+
+#### Windows
+
+Install [Git for Windows][].
+
+During the install process, choose these recommended settings:
+
+* Use Git from the Windows Command Prompt
+* Use OpenSSH
+* Checkout Windows-style, commit Unix-style line endings
+* Use Windows' default console window
+* Enable file system caching
+
+#### Linux
+
+Install via the package manager:
+
+```sh
+sudo apt-get install git
+```
+
+#### Authentication
+
+If you do not have a preferred method of authentication, enable the storage
+credential helper, which will cache your credentials in plaintext on your
+system, so use a [token][].
+
+```sh
+git config --global credential.helper store
+```
+
+Alternatively, on Windows, you can try the
+[Git Credential Manager for Windows][manager].
+
+[manager]: https://github.com/Microsoft/Git-Credential-Manager-for-Windows
+[Git for Windows]: https://git-scm.com/download/win
+[token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
+
 ## New to Git?
 
 If you're new to Git, learn the following commands: `checkout`, `branch`,
@@ -33,6 +81,19 @@ git config --global user.email "alias@microsoft.com"
 [submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
 [hello world]: https://guides.github.com/activities/hello-world/
 [guides]: https://guides.github.com/activities/hello-world/
+
+## Permissions
+
+If you have difficulty in pushing your changes, there is a high
+probability that you actually don't have permissions.
+
+Be sure that you have write access to corresponding repo (remember
+that submodules have their own privilege).
+
+You do *not* necessarily need to have write permissions to the main
+repositories, as you can also just [fork a repo][].
+
+[fork a repo]: https://help.github.com/articles/fork-a-repo/
 
 ## Rebase and Fast-Forward Merge Pull Requests
 
