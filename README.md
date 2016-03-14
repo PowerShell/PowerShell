@@ -98,7 +98,7 @@ dependencies automatically.
 sudo sh -c 'echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/dotnet/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
 sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
 sudo apt-get update
-sudo apt-get install dotnet=1.0.0.001675-1
+sudo apt-get install dotnet=1.0.0.001718-1
 ```
 
 The drawback of using the feed is that it gets out of date. The pinned
