@@ -6,12 +6,7 @@
 
 Describe "Json.NET LINQ Parsing" {
     # load third party Json.NET library
-    if ([string]::IsNullOrEmpty($env:CORE_ROOT)) {
-	$base = [System.AppContext]::BaseDirectory
-    } else {
-	$base = $env:CORE_ROOT
-    }
-
+    $base = [System.AppContext]::BaseDirectory
     $path = Join-Path $base Newtonsoft.Json.dll
     [Microsoft.PowerShell.CoreCLR.AssemblyExtensions]::LoadFrom($path)
 
