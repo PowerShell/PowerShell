@@ -258,20 +258,6 @@ The IP address of the Linux machine can be obtained with:
 ip -f inet addr show dev eth0
 ```
 
-### Desired State Configuration
-
-> DSC support is in its infancy.
-
-DSC also uses OMI, so build it first, then build DSC against it. Unfortunately,
-DSC cannot be configured to look for OMI elsewhere, so for now you need to
-symlink it to the expected location.
-
-```sh
-ln -s ../omi/Unix/ omi-1.0.8
-./configure --no-rpm --no-dpkg --local
-make -j
-```
-
 ## Detailed Build Script Notes
 
 > This sections explains the build scripts.
