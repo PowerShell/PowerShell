@@ -154,7 +154,8 @@ to obtain all the necessary .NET packages.**
 
 Build with `./build.sh` on Linux and OS X.
 
-`Start-PSBuild` from module `.\PowerShellGitHubDev.psm1` on Windows and Linux / OS X, if you self-hosting PowerShell.
+`Start-PSBuild` from module `./PowerShellGitHubDev.psm1` on Windows
+and Linux / OS X, if you self-hosting PowerShell.
 
 Specifically:
 
@@ -178,14 +179,8 @@ Start-PSBuild # build CoreCLR version
 Start-PSBuild -FullCLR # build FullCLR version
 ```
 
-**Tip:** use `Start-PSBuild -Verbose` switch to see more information about build process.
-
-### PowerShellGitHubDev
-
-Alternatively, the `PowerShellGitHubDev.psm1` module contains a `Start-PSBuild`
-function to build Core PowerShell on both Linux and Windows. This module can be
-imported into the built-in PowerShell on Windows, and a self-hosting copy of
-PowerShell can be installed using our packages under the releases tab.
+**Tip:** use `Start-PSBuild -Verbose` switch to see more information
+about build process.
 
 ## Running
 
