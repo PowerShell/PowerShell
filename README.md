@@ -113,13 +113,11 @@ wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotne
 sudo dpkg -i ./dotnet-ubuntu-x64.latest.deb
 ```
 
-#### OMI
-
-To develop on the PowerShell Remoting Protocol (PSRP) for Linux, you'll need to
-be able to compile OMI, which additionally requires:
+Additionally, PowerShell on Linux builds a native library, so install
+the following additional build / debug tools.
 
 ```sh
-sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev libboost-filesystem-dev
+sudo apt-get install g++ cmake make lldb-3.6 strace
 ```
 
 ### Windows
@@ -208,11 +206,10 @@ PSRP communication is tunneled through OMI using the `omi-provider`.
 > accomplish this are not even beta-ready and need to be done correctly. They
 > exist on the `andschwa-osx` branch of the OMI repository.
 
-### Building
+### PowerShell Remoting Protocol
 
-**PSRP support is not built by `./build.sh`**
-
-Build with `./omibuild.sh`.
+PSRP support is *not* built automatically. See the detailed notes on
+how to enable it.
 
 ### Running
 
@@ -295,6 +292,17 @@ The output is a `.so` on Linux and `.dylib` on OS X. It is unnecessary for Windo
 ### PSRP
 
 #### OMI
+
+**PSRP support is not built by `./build.sh`**
+
+To develop on the PowerShell Remoting Protocol (PSRP) for Linux, you'll need to
+be able to compile OMI, which additionally requires:
+
+```sh
+sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev libboost-filesystem-dev
+```
+
+Note that the OMI build steps can be done with `./omibuild.sh`.
 
 Build OMI from source in developer mode:
 
