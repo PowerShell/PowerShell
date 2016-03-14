@@ -6,16 +6,11 @@
 
 ## [Waffle.io scrum board](https://waffle.io/PowerShell/PowerShell)
 
-## Obtain the source code
-
-### Setup Git
-
-
-Install [Git][], the version control system.
+### Setup Git and obtain source
 
 #### Windows
 
-Install [windows git credential helper](https://github.com/Microsoft/Git-Credential-Manager-for-Windows)
+Install [Windows Git Credential Helper](https://github.com/Microsoft/Git-Credential-Manager-for-Windows)
 
 The installer will install Git for Windows as well as .Net if needed.
 
