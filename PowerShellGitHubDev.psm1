@@ -19,10 +19,12 @@ try {
 
 function Start-PSBuild
 {
+    [CmdletBinding(DefaultParameterSetName='CoreCLR')]
     param(
         [switch]$Restore,
         [switch]$Clean,
-        [string]$Output = "$PSScriptRoot/bin",
+        [string]$Output,
+
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("ubuntu.14.04-x64",
@@ -31,61 +33,182 @@ function Start-PSBuild
                      "win10-x64",
                      "osx.10.10-x64",
                      "osx.10.11-x64")]
-        [string]$Runtime
+        [Parameter(ParameterSetName='CoreCLR')]
+        [string]$Runtime,
+
+        [Parameter(ParameterSetName='FullCLR')]
+        [switch]$FullCLR,
+
+        [Parameter(ParameterSetName='FullCLR')]
+        [string]$cmakeGenerator = "Visual Studio 12 2013",
+
+        [Parameter(ParameterSetName='FullCLR')]
+        [ValidateSet("Debug",
+                     "Release")] 
+        [string]$msbuildConfiguration = "Release"   
     )
 
-    if (-Not (Get-Command "dotnet" -ErrorAction SilentlyContinue)) {
-        throw "Build dependency 'dotnet' not found in PATH! See: https://dotnet.github.io/getting-started/"
+    function precheck([string]$command, [string]$missedMessage)
+    {
+        $c = Get-Command $command -ErrorAction SilentlyContinue
+        if (-not $c)
+        {
+            Write-Warning $missedMessage
+            return $false
+        }
+        else 
+        {
+            return $true    
+        }
     }
 
+    function log([string]$message)
+    {
+        Write-Host -Foreground Green $message
+    }
+
+    # simplify ParameterSetNames, set output
+    if ($PSCmdlet.ParameterSetName -eq 'FullCLR')
+    {
+        $FullCLR = $true
+    }
+
+    if (-not $Output)
+    {
+        if ($FullCLR) { $Output = "$PSScriptRoot/binFull" } else { $Output = "$PSScriptRoot/bin" }
+    }    
+
+    # verify we have all tools in place to do the build
+    $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH! See: https://dotnet.github.io/getting-started/"
+    if ($FullCLR)
+    {
+        # cmake is needed to build powershell.exe
+        $precheck = $precheck -and (precheck 'cmake' 'cmake not found. You can install it from https://chocolatey.org/packages/cmake.portable')
+        # msbuild is needed to build powershell.exe
+        $precheck = $precheck -and (precheck 'msbuild' 'msbuild not found. Install Visual Studio and add msbuild to $env:PATH')
+    }
+    
+    if (-not $precheck) { return }
+
+    # handle clean
     if ($Clean) {
-        Remove-Item -Force -Recurse $Output
+        Remove-Item -Force -Recurse $Output -ErrorAction SilentlyContinue
     }
 
     New-Item -Force -Type Directory $Output | Out-Null
 
-    $Top = "$PSScriptRoot/src/Microsoft.PowerShell.Linux.Host"
+    # define key build variables
+    if ($FullCLR) 
+    {
+        $Top = "$PSScriptRoot\src\Microsoft.PowerShell.ConsoleHost"
+        $framework = 'net451'
+    }
+    else 
+    {
+        $Top = "$PSScriptRoot/src/Microsoft.PowerShell.Linux.Host"   
+        $framework = 'netstandardapp1.5'
+    }
+
+    # handle Restore
     if ($Restore -Or -Not (Test-Path "$Top/project.lock.json")) {
-        dotnet restore $PSScriptRoot
+        log "Run dotnet restore"
+        # restore is genuinely verbose.
+        # we don't show it by default to keep CI build log size small
+        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent)
+        {
+            dotnet restore $PSScriptRoot
+        }
+        else 
+        {
+            dotnet restore $PSScriptRoot > $null    
+        }
     }
 
-    if ($IsLinux -Or $IsOSX) {
-        $InstallCommand = if ($IsLinux) { "apt-get" } elseif ($IsOSX) { "brew" }
-        foreach ($Dependency in "cmake", "g++") {
-            if (-Not (Get-Command $Dependency -ErrorAction SilentlyContinue)) {
-                throw "Build dependency '$Dependency' not found in PATH! Run '$InstallCommand install $Dependency'"
+    # Build native components
+    if (-not $FullCLR)
+    {
+        if ($IsLinux -Or $IsOSX) {
+            log "Start building native components"
+            $InstallCommand = if ($IsLinux) { "apt-get" } elseif ($IsOSX) { "brew" }
+            foreach ($Dependency in "cmake", "g++") {
+                if (-Not (Get-Command $Dependency -ErrorAction SilentlyContinue)) {
+                    throw "Build dependency '$Dependency' not found in PATH! Run '$InstallCommand install $Dependency'"
+                }
             }
+
+            $Ext = if ($IsLinux) { "so" } elseif ($IsOSX) { "dylib" }
+            $Native = "$PSScriptRoot/src/libpsl-native"
+            $Lib = "$Native/src/libpsl-native.$Ext"
+            Write-Verbose "Building $Lib"
+
+            try {
+                Push-Location $Native
+                cmake -DCMAKE_BUILD_TYPE=Debug .
+                make -j
+                make test
+            } finally {
+                Pop-Location
+            }
+
+            if (-Not (Test-Path $Lib)) { throw "Compilation of $Lib failed" }
+            Copy-Item $Lib $Output
+        }
+    }
+    else
+    {
+        log "Start building native powershell.exe"
+        $build = "$PSScriptRoot/build"
+        if ($Clean) {
+            Remove-Item -Force -Recurse $build -ErrorAction SilentlyContinue
         }
 
-        $Ext = if ($IsLinux) { "so" } elseif ($IsOSX) { "dylib" }
-        $Native = "$PSScriptRoot/src/libpsl-native"
-        $Lib = "$Native/src/libpsl-native.$Ext"
-        Write-Host "Building $Lib"
+        mkdir $build -ErrorAction SilentlyContinue
+        try
+        {
+            Push-Location $build
 
-        try {
-            Push-Location $Native
-            cmake -DCMAKE_BUILD_TYPE=Debug .
-            make -j
-            make test
-        } finally {
-            Pop-Location
+            if ($cmakeGenerator)
+            {
+                cmake -G $cmakeGenerator ..\src\powershell-native
+            }
+            else
+            {
+                cmake ..\src\powershell-native
+            }
+            msbuild powershell.vcxproj /p:Configuration=$msbuildConfiguration
+            cp -rec $msbuildConfiguration\* $Output
         }
-
-        if (-Not (Test-Path $Lib)) { throw "Compilation of $Lib failed" }
-        Copy-Item $Lib $Output
+        finally { Pop-Location }
     }
 
-    Write-Host "Building PowerShell"
-
-    $Arguments = "--framework", "netstandardapp1.5", "--output", $Output
-
+    log "Building PowerShell"
+    $Arguments = "--framework", $framework, "--output", $Output
     if ($IsLinux -Or $IsOSX) { $Arguments += "--configuration", "Linux" }
-
     if ($Runtime) { $Arguments += "--runtime", $Runtime }
+    
+    if ($FullCLR) 
+    {
+        # there is a problem with code signing: 
+        # AssemblyKeyFileAttribute file path cannot be correctly located, if `dotnet publish $TOP` syntax is used
+        # we workaround it with calling `dotnet publish` from $TOP directory instead.
+        Push-Location $Top
+    }
+    else 
+    {
+        $Arguments += $Top
+    }
 
-    $Arguments += $Top
+    Write-Verbose "Run dotnet publish $Arguments from $pwd"
 
-    dotnet publish $Arguments
+    # this try-finally is part of workaround about AssemblyKeyFileAttribute issue
+    try 
+    {
+        dotnet publish $Arguments
+    }
+    finally
+    {
+        if ($FullCLR)  { Pop-Location }
+    }
 }
 
 function Start-PSPackage

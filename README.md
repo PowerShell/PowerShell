@@ -76,7 +76,7 @@ non-Windows platforms). Install `dotnet` by following their [documentation][].
 
 The version of .NET CLI is very important, you want a recent 1.0.0 beta
 (**not** 1.0.1). The following instructions will install precisely
-1.0.0.001638, though any 1.0.0 version *should* work.
+1.0.0.001718, though any 1.0.0 version *should* work.
 
 > Previous installations of DNX, `dnvm`, or older installations of .NET CLI
 > can cause odd failures when running. Please check your version.
@@ -89,17 +89,28 @@ The version of .NET CLI is very important, you want a recent 1.0.0 beta
 
 Tested on Ubuntu 14.04.
 
+
+This installs the .NET CLI package feed. The benefit to this is that
+installing `dotnet` using `apt-get` will also install all of its
+dependencies automatically.
+
 ```sh
 sudo sh -c 'echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/dotnet/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
 sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
 sudo apt-get update
-sudo apt-get install dotnet=1.0.0.001638-1
+sudo apt-get install dotnet=1.0.0.001675-1
 ```
 
-Then install the following additional build / debug tools:
+The drawback of using the feed is that it gets out of date. The pinned
+version is the most recent package published to the feed, but newer
+packages are available. To upgrade the package, install it by
+hand. Unfortunately, `dpkg` does not handle dependency resolution, so
+it is recommended to first install the older version from the feed,
+and then upgrade it.
 
 ```sh
-sudo apt-get install g++ cmake make lldb-3.6 strace
+wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-ubuntu-x64.latest.deb
+sudo dpkg -i ./dotnet-ubuntu-x64.latest.deb
 ```
 
 #### OMI
@@ -119,7 +130,7 @@ An MSI installer also exists, but this script avoids touching your system.
 
 ```powershell
 Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
-./install.ps1 -version 1.0.0.001638 -channel beta
+./install.ps1 -version 1.0.0.001718 -channel beta
 ```
 
 If you meet `Unable to cast COM object of type 'System.__ComObject' to
@@ -141,8 +152,9 @@ test on OS X, but some developers use PowerShell on 10.10 and 10.11.
 **The command `dotnet restore` must be done at least once from the top directory
 to obtain all the necessary .NET packages.**
 
-Build with `./build.sh` on Linux and OS X, `./build.ps1` for Core PowerShell on
-Windows, and `./build.FullCLR.ps1` for Full PowerShell on Windows.
+Build with `./build.sh` on Linux and OS X.
+
+`Start-PSBuild` from module `.\PowerShellGitHubDev.psm1` on Windows and Linux / OS X, if you self-hosting PowerShell.
 
 Specifically:
 
@@ -161,8 +173,12 @@ In PowerShell:
 ```powershell
 cd PowerShell
 dotnet restore
-./build.ps1
+Import-Module .\PowerShellGitHubDev.psm1
+Start-PSBuild # build CoreCLR version
+Start-PSBuild -FullCLR # build FullCLR version
 ```
+
+**Tip:** use `Start-PSBuild -Verbose` switch to see more information about build process.
 
 ### PowerShellGitHubDev
 
