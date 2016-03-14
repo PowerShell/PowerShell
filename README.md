@@ -10,11 +10,14 @@
 
 ### Setup Git
 
-Install [Git][], the version control system.
+For Windows, install [Windows Git Credential Helper](https://github.com/Microsoft/Git-Credential-Manager-for-Windows) (the installer will install Git for Windows if needed)
 
 See the [Contributing Guidelines](CONTRIBUTING.md) for more Git
 information, such as our installation instructions, contributing
 rules, and Git best practices.
+
+Generate [Personal Access Token](https://help.github.com/articles/creating-an-access-token-for-command-line-use/) which
+eliminates needs to type user/password each time and two-factor auth.  Best practice is to have a different token per machine/client.
 
 [Git]: https://git-scm.com/documentation
 
@@ -28,6 +31,8 @@ contributing guidelines and learn about submodules.
 git clone https://github.com/PowerShell/PowerShell.git
 cd PowerShell
 ```
+
+Use your username (not your email address which GitHub accepts) and your Personal Access Token as the password.
 
 #### Linux
 
