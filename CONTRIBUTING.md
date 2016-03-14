@@ -34,6 +34,19 @@ git config --global user.email "alias@microsoft.com"
 [hello world]: https://guides.github.com/activities/hello-world/
 [guides]: https://guides.github.com/activities/hello-world/
 
+## Permissions
+
+If you have difficulty in pushing your changes, there is a high
+probability that you actually don't have permissions.
+
+Be sure that you have write access to corresponding repo (remember
+that submodules have their own privilege).
+
+You do *not* necessarily need to have write permissions to the main
+repositories, as you can also just [fork a repo][].
+
+[fork a repo]: https://help.github.com/articles/fork-a-repo/
+
 ## Rebase and Fast-Forward Merge Pull Requests
 
 Because GitHub's "Merge Pull Request" button merges with `--no-ff`, an extra
