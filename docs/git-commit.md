@@ -1,4 +1,3 @@
-Working notes - 
 #Commit Dance
 Most of the time, you're going to be working in a submodule (say src/monad/monad/engine).
 The submodule has a relationship to the SuperProject  (PowerShell), but in order to be sure that CI is
