@@ -82,6 +82,20 @@ git config --global user.email "alias@microsoft.com"
 [hello world]: https://guides.github.com/activities/hello-world/
 [guides]: https://guides.github.com/activities/hello-world/
 
+#### Microsoft employees
+
+Microsoft employees should follow Microsoft open source [guidelinces][MS-OSS-Hub].
+
+Particularly:
+
+* [Join][MS-OSS-Hub] Microsoft github organization.
+* Use your `alias@microsoft.com` for commit messages email. 
+It the requirement for contributions made as part of your work at Microsoft.
+* Enable [2 factor authentication][].
+
+[MS-OSS-Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
+[2 factor authentication]: https://github.com/blog/1614-two-factor-authentication
+
 ## Permissions
 
 If you have difficulty in pushing your changes, there is a high
