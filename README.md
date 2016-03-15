@@ -344,7 +344,7 @@ On Windows, we also build Full PowerShell for .NET 4.5.1
 
 * You need Visual Studio to compile the native host `powershell.exe`.
 
-If you don't have any visual studio installed, you can use [Visual Studio 2013
+If you don't have any visual studio installed, you can use [Visual Studio 2015
 Community edition][vs].
 
 * Add `msbuild` to `PATH` / create PowerShell alias to it.
@@ -363,8 +363,8 @@ choco install cmake.portable
 
 * Install dotnet-cli via their [documentation][]
 
-[vs]: https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx
-[chocolately]: https://chocolatey.org/packages/cmake.portable
+[vs]: https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx
+[Chocolatey]: https://chocolatey.org/packages/cmake.portable
 [manually]: https://cmake.org/download/
 
 #### Building

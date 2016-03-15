@@ -40,7 +40,7 @@ function Start-PSBuild
         [switch]$FullCLR,
 
         [Parameter(ParameterSetName='FullCLR')]
-        [string]$cmakeGenerator = "Visual Studio 12 2013",
+        [string]$cmakeGenerator = "Visual Studio 14 2015",
 
         [Parameter(ParameterSetName='FullCLR')]
         [ValidateSet("Debug",
