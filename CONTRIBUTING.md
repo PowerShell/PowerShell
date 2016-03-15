@@ -62,6 +62,13 @@ It the requirement for contributions made as part of your work at Microsoft.
 [MS-OSS-Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
 [2 factor authentication]: https://github.com/blog/1614-two-factor-authentication
 
+## Branches
+
+* Checkout a new local branch for every change you want to make (bugfix, feature).
+* Use `alias/feature-name` pattern.
+* Use lowercase-with-dashes for naming.
+* Use same branch name in super-project and all [submodules](#submodules).
+
 ## Permissions
 
 If you have difficulty in pushing your changes, there is a high
