@@ -36,4 +36,5 @@ target_link_libraries(powershell
     mscoree.lib
     MUILoad.lib
     kernel32.lib
-    msxml6.lib)
+    msxml6.lib
+    legacy_stdio_definitions.lib)
