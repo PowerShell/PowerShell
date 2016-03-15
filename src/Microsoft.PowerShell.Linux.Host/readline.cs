@@ -124,10 +124,14 @@ namespace Microsoft.PowerShell.Linux.Host
         /// Read a line of text, colorizing while typing.
         /// </summary>
         /// <returns>The command line read</returns>
-        public string Read(Runspace runspace, bool nested)
+        public string Read(Runspace runspace, bool nested, out bool abort)
         {
             this.powershell.Runspace = runspace;
             this.Initialize();
+            bool finishedTyping = false;
+            abort = false;
+//            Console.WriteLine("Default value of TreatCtrlCAsInput: {0}", Console.TreatControlCAsInput);
+//            Console.TreatControlCAsInput = false;
 
             while (true)
             {
@@ -136,127 +140,172 @@ namespace Microsoft.PowerShell.Linux.Host
                 // Basic Emacs-style readline implementation
                 if (key.Modifiers.HasFlag(ConsoleModifiers.Control))
                 {
-                    switch (key.Key)
+                    finishedTyping = ProcessControlKey(key, nested, ref abort);
+                    if (abort)
                     {
-                        case ConsoleKey.A:
-                            this.OnHome();
-                            break;
-                        case ConsoleKey.E:
-                            this.OnEnd();
-                            break;
-                        // TODO: save buffer, yank with Ctrl-Y
-                        /*
-                        case ConsoleKey.K:
-                            this.OnEscape();
-                            break;
-                        */
-                        case ConsoleKey.D:
-                            this.OnDelete();
-                            break;
-                        case ConsoleKey.B:
-                            this.OnLeft(key.Modifiers);
-                            break;
-                        case ConsoleKey.F:
-                            this.OnRight(key.Modifiers);
-                            break;
-                        case ConsoleKey.P:
-                        // TODO: incremental search
-                        case ConsoleKey.R:
-                            this.OnUpArrow(nested);
-                            break;
-                        case ConsoleKey.N:
-                        // TODO: incremental search
-                        case ConsoleKey.S:
-                            this.OnDownArrow(nested);
-                            break;
-                        case ConsoleKey.J:
-                            this.OnEnter();
-                            break;
-                        // TODO: save and restore buffer
-                        /*
-                        case ConsoleKey.L:
-                            this.BufferFromString("clear");
-                            previousKeyPress = key;
-                            return this.OnEnter();
-                        */
+                        Console.WriteLine();
+//                        Console.TreatControlCAsInput = true;
+                        return String.Empty;
                     }
                 }
                 else if (key.Modifiers.HasFlag(ConsoleModifiers.Alt))
                 {
-                    switch (key.Key)
-                    {
-                        // TODO: OnDelete(key)
-                        // TODO: OnBackspace(key)
-                        case ConsoleKey.B:
-                            this.OnLeft(key.Modifiers);
-                            break;
-                        case ConsoleKey.F:
-                            this.OnRight(key.Modifiers);
-                            break;
-                    }
+                    finishedTyping = ProcessAltKey(key);
                 }
                 // Unmodified keys
                 else
                 {
-                    switch (key.Key)
-                    {
-                        case ConsoleKey.Backspace:
-                            this.OnBackspace();
-                            break;
-                        case ConsoleKey.Delete:
-                            this.OnDelete();
-                            break;
-                        case ConsoleKey.Enter:
-                            previousKeyPress = key;
-                            return this.OnEnter();
-                        case ConsoleKey.RightArrow:
-                            this.OnRight(key.Modifiers);
-                            break;
-                        case ConsoleKey.LeftArrow:
-                            this.OnLeft(key.Modifiers);
-                            break;
-                        case ConsoleKey.Escape:
-                            this.OnEscape();
-                            break;
-                        case ConsoleKey.Home:
-                            this.OnHome();
-                            break;
-                        case ConsoleKey.End:
-                            this.OnEnd();
-                            break;
-                        case ConsoleKey.Tab:
-                            this.OnTab();
-                            break;
-                        case ConsoleKey.UpArrow:
-                            this.OnUpArrow(nested);
-                            break;
-                        case ConsoleKey.DownArrow:
-                            this.OnDownArrow(nested);
-                            break;
-
-                        // TODO: case ConsoleKey.LeftWindows: not available in linux
-                        // TODO: case ConsoleKey.RightWindows: not available in linux
-
-                        default:
-
-                            if (key.KeyChar == '\x0D')
-                            {
-                                goto case ConsoleKey.Enter;      // Ctrl-M
-                            }
-
-                            if (key.KeyChar == '\x08')
-                            {
-                                goto case ConsoleKey.Backspace;  // Ctrl-H
-                            }
-
-                            this.Insert(key.KeyChar);
-
-                            this.Render();
-                            break;
-                    }
+                    finishedTyping = ProcessNormalKey(key, nested);
                 }
+
                 previousKeyPress = key;
+
+                if (finishedTyping)
+                {
+//                    Console.TreatControlCAsInput = true;
+                    return this.OnEnter();
+                }
             }
+        }
+
+        /// <summary>
+        /// Process Control-Key combo
+        /// </summary>
+        private bool ProcessControlKey(ConsoleKeyInfo key, bool nested, ref bool abort)
+        {
+            switch (key.Key)
+            {
+                case ConsoleKey.A:
+                    this.OnHome();
+                    break;
+                case ConsoleKey.E:
+                    this.OnEnd();
+                    break;
+                    // TODO: save buffer, yank with Ctrl-Y
+                    /*
+                      case ConsoleKey.K:
+                      this.OnEscape();
+                      break;
+                    */
+                case ConsoleKey.D:
+                    this.OnDelete();
+                    break;
+                case ConsoleKey.B:
+                    this.OnLeft(key.Modifiers);
+                    break;
+                case ConsoleKey.F:
+                    this.OnRight(key.Modifiers);
+                    break;
+                case ConsoleKey.P:
+                    // TODO: incremental search
+                case ConsoleKey.R:
+                    this.OnUpArrow(nested);
+                    break;
+                case ConsoleKey.N:
+                    // TODO: incremental search
+                case ConsoleKey.S:
+                    this.OnDownArrow(nested);
+                    break;
+                case ConsoleKey.J:
+                    this.OnEnter();
+                    break;
+                    // TODO: save and restore buffer
+                    /*
+                      case ConsoleKey.L:
+                      this.BufferFromString("clear");
+                      previousKeyPress = key;
+                      return this.OnEnter();
+                    */
+                case ConsoleKey.C:
+                    Console.WriteLine("received Ctrl-C");
+                    this.Abort();
+                    abort = true;
+                    break;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Process Alt-Key combo
+        /// </summary>
+        private bool ProcessAltKey(ConsoleKeyInfo key)
+        {
+            switch (key.Key)
+            {
+                // TODO: OnDelete(key)
+                // TODO: OnBackspace(key)
+                case ConsoleKey.B:
+                    this.OnLeft(key.Modifiers);
+                    break;
+                case ConsoleKey.F:
+                    this.OnRight(key.Modifiers);
+                    break;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Process normal key
+        /// </summary>
+        private bool ProcessNormalKey(ConsoleKeyInfo key, bool nested)
+        {
+            switch (key.Key)
+            {
+                case ConsoleKey.Backspace:
+                    this.OnBackspace();
+                    break;
+                case ConsoleKey.Delete:
+                    this.OnDelete();
+                    break;
+                case ConsoleKey.Enter:
+                    previousKeyPress = key;
+                    return true;
+                case ConsoleKey.RightArrow:
+                    this.OnRight(key.Modifiers);
+                    break;
+                case ConsoleKey.LeftArrow:
+                    this.OnLeft(key.Modifiers);
+                    break;
+                case ConsoleKey.Escape:
+                    this.OnEscape();
+                    break;
+                case ConsoleKey.Home:
+                    this.OnHome();
+                    break;
+                case ConsoleKey.End:
+                    this.OnEnd();
+                    break;
+                case ConsoleKey.Tab:
+                    this.OnTab();
+                    break;
+                case ConsoleKey.UpArrow:
+                    this.OnUpArrow(nested);
+                    break;
+                case ConsoleKey.DownArrow:
+                    this.OnDownArrow(nested);
+                    break;
+
+                    // TODO: case ConsoleKey.LeftWindows: not available in linux
+                    // TODO: case ConsoleKey.RightWindows: not available in linux
+
+                default:
+
+                    if (key.KeyChar == '\x0D')
+                    {
+                        goto case ConsoleKey.Enter;      // Ctrl-M
+                    }
+
+                    if (key.KeyChar == '\x08')
+                    {
+                        goto case ConsoleKey.Backspace;  // Ctrl-H
+                    }
+
+                    this.Insert(key.KeyChar);
+
+                    this.Render();
+                    break;
+            }
+            return false;
         }
 
         /// <summary>
@@ -731,6 +780,17 @@ namespace Microsoft.PowerShell.Linux.Host
 
             this.rendered = text.Length;
             this.cursor.Place(this.current);
+        }
+
+        /// <summary>
+        ///   Abort current command
+        /// </summary>
+        public void Abort()
+        {
+            ConsoleColor saveFGColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Out.WriteLine("^C");
+            Console.ForegroundColor = saveFGColor;
         }
 
         /// <summary>
