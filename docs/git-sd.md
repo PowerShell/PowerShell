@@ -10,6 +10,9 @@ You can push branch to the original repo (if you have permissions) or to the for
 There is no principal difference.
 * Most of the git complications come from the fact that you need to do integrations by yourself.
 
+
+The Microsoft Open Source Hub [article](https://opensourcehub.microsoft.com/articles/git-for-sd-users) for other details.
+
 ### Rosetta stone
 
 
