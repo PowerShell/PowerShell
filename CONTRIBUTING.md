@@ -82,7 +82,7 @@ git config --global user.email "alias@microsoft.com"
 [hello world]: https://guides.github.com/activities/hello-world/
 [guides]: https://guides.github.com/activities/hello-world/
 
-#### Microsoft employees
+## Microsoft employees
 
 Microsoft employees should follow Microsoft open source [guidelinces][MS-OSS-Hub].
 
@@ -95,6 +95,10 @@ It the requirement for contributions made as part of your work at Microsoft.
 
 [MS-OSS-Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
 [2 factor authentication]: https://github.com/blog/1614-two-factor-authentication
+
+### Git for sd users
+
+If you are familiar with `sd` and new to `git`, check out [git-sd.md](docs/git-sd.md)
 
 ## Permissions
 
