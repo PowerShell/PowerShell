@@ -360,14 +360,8 @@ OPTIONS
             {
                 this.currentPowerShell.Runspace = this.myRunSpace;
 
-                if (incompleteLine)
-                {
-                    this.currentPowerShell.AddScript(partialLine + cmd);
-                }
-                else
-                {
-                    this.currentPowerShell.AddScript(cmd);
-                }
+                string fullCommand = incompleteLine ? (partialLine + cmd) : cmd;
+                this.currentPowerShell.AddScript(fullCommand);
                 incompleteLine = false;
 
                 // Add the default outputter to the end of the pipe and then call the
@@ -394,11 +388,7 @@ OPTIONS
             catch (IncompleteParseException)
             {
                 incompleteLine = true;
-                cmd = cmd.Trim();
-                partialLine += cmd;
-
-                partialLine += System.Environment.NewLine;
-
+                partialLine = $"{partialLine}{cmd}{System.Environment.NewLine}";
             }
 
             finally
@@ -526,7 +516,6 @@ OPTIONS
                         this.currentPowerShell.Stop();
                     }
                 }
-
                 e.Cancel = true;
             }
             catch (Exception exception)
@@ -565,7 +554,19 @@ OPTIONS
                 }
 
                 this.myHost.UI.Write(ConsoleColor.White, Console.BackgroundColor, prompt);
-                string cmd = consoleReadLine.Read(this.myHost.Runspace, false);
+
+                bool abort;
+                string cmd = consoleReadLine.Read(this.myHost.Runspace, false, out abort);
+                if (string.IsNullOrEmpty(cmd))
+                {
+                    if (abort)
+                    {
+                        incompleteLine = false;
+                        partialLine = string.Empty;
+                    }
+                    continue;
+                }
+
                 this.Execute(cmd);
             }
         }
@@ -585,9 +586,21 @@ OPTIONS
             // loop to process Debugger commands.
             while (resumeAction == null)
             {
-                Console.Write("[DBG] PS >> ");
-                string command = consoleReadLine.Read(this.myHost.Runspace, true); 
-                Console.WriteLine();
+                string prompt = incompleteLine ? ">> " : "[DBG] PS >> ";
+                Console.Write(prompt);
+
+                bool abort;
+                string command = consoleReadLine.Read(this.myHost.Runspace, true, out abort); 
+
+                if (string.IsNullOrEmpty(command))
+                {
+                    if (abort)
+                    {
+                        incompleteLine = false;
+                        partialLine = string.Empty;
+                    }
+                    continue;
+                }
 
                 // Stream output from command processing to console.
                 var output = new PSDataCollection<PSObject>();
@@ -606,10 +619,30 @@ OPTIONS
                 // command or script.  The returned DebuggerCommandResults object will indicate
                 // whether the command was evaluated by the debugger and if the debugger should
                 // be released with a specific resume action.
+
                 PSCommand psCommand = new PSCommand();
-                psCommand.AddScript(command).AddCommand("Out-String").AddParameter("Stream", true);
-                DebuggerCommandResults results = debugger.ProcessCommand(psCommand, output);
-                if (results.ResumeAction != null)
+
+                string fullCommand = incompleteLine ? (partialLine + command) : command;
+                psCommand.AddScript(fullCommand).AddCommand("Out-String").AddParameter("Stream", true);
+                incompleteLine = false;
+
+                DebuggerCommandResults results = null;
+                try
+                {
+                    results = debugger.ProcessCommand(psCommand, output);
+                }
+                catch (IncompleteParseException)
+                {
+                    incompleteLine = true;
+                    partialLine = $"{partialLine}{command}{System.Environment.NewLine}";
+                }
+
+                if (!incompleteLine)
+                {
+                    partialLine = string.Empty;
+                }
+
+                if (!incompleteLine && results.ResumeAction != null)
                 {
                     resumeAction = results.ResumeAction;
                 }
