@@ -11,7 +11,7 @@
                 "warningsAsErrors": true
             },
             "dependencies": {
-                "NETStandard.Library": "1.0.0-rc3-23907",
+                "NETStandard.Library": "1.5.0-rc2-23911",
                 "System.Security.SecureString": "1.0.0-*"
             }
         },
