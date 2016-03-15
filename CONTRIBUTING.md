@@ -24,27 +24,11 @@ Write *good* commit messages. Follow Tim Pope's [guidelines][]:
 
 [guidelines]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
 
-## Installation
+## New to Git?
 
-#### Windows
-
-Install [Git for Windows][].
-
-During the install process, choose these recommended settings:
-
-* Use Git from the Windows Command Prompt
-* Use OpenSSH
-* Checkout Windows-style, commit Unix-style line endings
-* Use Windows' default console window
-* Enable file system caching
-
-#### Linux
-
-Install via the package manager:
-
-```sh
-sudo apt-get install git
-```
+- [Git 101](docs/git-101.md) : install and getting started.
+- [Git for sd users](docs/git-sd.md) : a handy reference document for people familiar with `sd`.
+- [Commit process](docs/git-commit.md) : step-by-step commit guide with all gory details.
 
 #### Authentication
 
@@ -62,25 +46,7 @@ Alternatively, on Windows, you can try the
 [manager]: https://github.com/Microsoft/Git-Credential-Manager-for-Windows
 [Git for Windows]: https://git-scm.com/download/win
 [token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
-
-## New to Git?
-
-If you're new to Git, learn the following commands: `checkout`, `branch`,
-`pull`, `push`, `merge`.
-
-Use GitHub's [Hello World][] to learn how to create a feature branch, commit
-changes, and issue a pull request.
-
-The user name and email must be set in order to commit changes:
-
-```sh
-git config --global user.name "First Last"
-git config --global user.email "alias@microsoft.com"
-```
-
 [submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
-[hello world]: https://guides.github.com/activities/hello-world/
-[guides]: https://guides.github.com/activities/hello-world/
 
 ## Microsoft employees
 
@@ -95,10 +61,6 @@ It the requirement for contributions made as part of your work at Microsoft.
 
 [MS-OSS-Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
 [2 factor authentication]: https://github.com/blog/1614-two-factor-authentication
-
-### Git for sd users
-
-If you are familiar with `sd` and new to `git`, check out [git-sd.md](docs/git-sd.md)
 
 ## Permissions
 
