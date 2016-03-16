@@ -535,6 +535,8 @@ OPTIONS
             Console.CancelKeyPress += new ConsoleCancelEventHandler(this.HandleControlC);
             //Console.TreatControlCAsInput = false;
 
+            string initialCommand = String.Empty;
+
             // Read commands and run them until the ShouldExit flag is set by
             // the user calling "exit".
             while (!this.ShouldExit && this.myHost.Runspace != null)
@@ -555,19 +557,24 @@ OPTIONS
 
                 this.myHost.UI.Write(ConsoleColor.White, Console.BackgroundColor, prompt);
 
-                bool abort;
-                string cmd = consoleReadLine.Read(this.myHost.Runspace, false, out abort);
-                if (string.IsNullOrEmpty(cmd))
+                ConsoleReadLine.ReadResult result = consoleReadLine.Read(this.myHost.Runspace, false, initialCommand);
+                
+                switch(result.state)
                 {
-                    if (abort)
-                    {
+                    case ConsoleReadLine.ReadResult.State.Abort:
                         incompleteLine = false;
                         partialLine = string.Empty;
-                    }
-                    continue;
+                        initialCommand = String.Empty;
+                        break;
+                    case ConsoleReadLine.ReadResult.State.Redraw:
+                        initialCommand = result.command;
+                        break;
+                    case ConsoleReadLine.ReadResult.State.Complete:
+                    default:
+                        this.Execute(result.command);
+                        initialCommand = String.Empty;
+                        break;
                 }
-
-                this.Execute(cmd);
             }
         }
 
@@ -583,23 +590,30 @@ OPTIONS
 
             WriteDebuggerStopMessages(args);
 
+            string initialCommand = String.Empty;
+
             // loop to process Debugger commands.
             while (resumeAction == null)
             {
                 string prompt = incompleteLine ? ">> " : "[DBG] PS >> ";
                 Console.Write(prompt);
 
-                bool abort;
-                string command = consoleReadLine.Read(this.myHost.Runspace, true, out abort); 
-
-                if (string.IsNullOrEmpty(command))
+                ConsoleReadLine.ReadResult result = consoleReadLine.Read(this.myHost.Runspace, true, initialCommand);
+                
+                switch(result.state)
                 {
-                    if (abort)
-                    {
+                    case ConsoleReadLine.ReadResult.State.Abort:
                         incompleteLine = false;
                         partialLine = string.Empty;
-                    }
-                    continue;
+                        initialCommand = String.Empty;
+                        continue;
+                    case ConsoleReadLine.ReadResult.State.Redraw:
+                        initialCommand = result.command;
+                        continue;
+                    case ConsoleReadLine.ReadResult.State.Complete:
+                    default:
+                        initialCommand = String.Empty;
+                        break;
                 }
 
                 // Stream output from command processing to console.
@@ -622,7 +636,7 @@ OPTIONS
 
                 PSCommand psCommand = new PSCommand();
 
-                string fullCommand = incompleteLine ? (partialLine + command) : command;
+                string fullCommand = incompleteLine ? (partialLine + result.command) : result.command;
                 psCommand.AddScript(fullCommand).AddCommand("Out-String").AddParameter("Stream", true);
                 incompleteLine = false;
 
@@ -634,7 +648,7 @@ OPTIONS
                 catch (IncompleteParseException)
                 {
                     incompleteLine = true;
-                    partialLine = $"{partialLine}{command}{System.Environment.NewLine}";
+                    partialLine = $"{partialLine}{result.command}{System.Environment.NewLine}";
                 }
 
                 if (!incompleteLine)

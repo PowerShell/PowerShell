@@ -91,6 +91,29 @@ namespace Microsoft.PowerShell.Linux.Host
         private string preTabBuffer;
 
         /// <summary>
+        /// kill buffer used by Ctrl-K and Ctrl-Y
+        /// </summary>
+        private string killBuffer = String.Empty;
+
+        /// <summary>
+        /// What Read() outputs
+        /// </summary>
+        public class ReadResult
+        {
+            public ReadResult(State s, string cmd)
+            {
+                this.command = cmd;
+                this.state = s;
+                Console.TreatControlCAsInput = true;
+            }
+
+            public enum State {Complete, Abort, Redraw}
+            
+            public string command;
+            public State state;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the ConsoleReadLine class.
         /// </summary>
         public ConsoleReadLine()
@@ -124,13 +147,20 @@ namespace Microsoft.PowerShell.Linux.Host
         /// Read a line of text, colorizing while typing.
         /// </summary>
         /// <returns>The command line read</returns>
-        public string Read(Runspace runspace, bool nested, out bool abort)
+        public ReadResult Read(Runspace runspace, bool nested, string initialValue)
         {
             this.powershell.Runspace = runspace;
             this.Initialize();
             bool commandComplete = false;
-            abort = false;
-//            Console.WriteLine("Default value of TreatCtrlCAsInput: {0}", Console.TreatControlCAsInput);
+            bool abort = false;
+            bool redraw = false;
+
+            if (!String.IsNullOrEmpty(initialValue))
+            {
+                this.BufferFromString(initialValue);
+                this.Render();
+            }
+
             Console.TreatControlCAsInput = false;
 
             while (true)
@@ -140,12 +170,7 @@ namespace Microsoft.PowerShell.Linux.Host
                 // Basic Emacs-style readline implementation
                 if (key.Modifiers.HasFlag(ConsoleModifiers.Control))
                 {
-                    commandComplete = ProcessControlKey(key, nested, ref abort);
-                    if (abort)
-                    {
-                        Console.TreatControlCAsInput = true;
-                        return String.Empty;
-                    }
+                    commandComplete = ProcessControlKey(key, nested, ref abort, ref redraw);
                 }
                 else if (key.Modifiers.HasFlag(ConsoleModifiers.Alt))
                 {
@@ -159,10 +184,19 @@ namespace Microsoft.PowerShell.Linux.Host
 
                 previousKeyPress = key;
 
+                if (abort)
+                {
+                    return new ReadResult(ReadResult.State.Abort, String.Empty);
+                }
+
+                if (redraw)
+                {
+                    return new ReadResult(ReadResult.State.Redraw, this.buffer.ToString());
+                }
+                
                 if (commandComplete)
                 {
-                    Console.TreatControlCAsInput = true;
-                    return this.OnEnter();
+                    return new ReadResult(ReadResult.State.Complete, this.OnEnter());
                 }
             }
         }
@@ -170,7 +204,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         /// Process Control-Key combo
         /// </summary>
-        private bool ProcessControlKey(ConsoleKeyInfo key, bool nested, ref bool abort)
+        private bool ProcessControlKey(ConsoleKeyInfo key, bool nested, ref bool abort, ref bool redraw)
         {
             switch (key.Key)
             {
@@ -180,12 +214,12 @@ namespace Microsoft.PowerShell.Linux.Host
                 case ConsoleKey.E:
                     this.OnEnd();
                     break;
-                    // TODO: save buffer, yank with Ctrl-Y
-                    /*
-                      case ConsoleKey.K:
-                      this.OnEscape();
-                      break;
-                    */
+                case ConsoleKey.K:
+                    this.OnKill();
+                    break;
+                case ConsoleKey.Y:
+                    this.OnYank();
+                    break;
                 case ConsoleKey.D:
                     this.OnDelete();
                     break;
@@ -206,15 +240,12 @@ namespace Microsoft.PowerShell.Linux.Host
                     this.OnDownArrow(nested);
                     break;
                 case ConsoleKey.J:
-                    this.OnEnter();
-                    break;
-                    // TODO: save and restore buffer
-                    /*
-                      case ConsoleKey.L:
-                      this.BufferFromString("clear");
-                      previousKeyPress = key;
-                      return this.OnEnter();
-                    */
+                    previousKeyPress = key;
+                    return true;
+                case ConsoleKey.L:
+                    Console.Clear();
+                    redraw = true;
+                    return false;
                 case ConsoleKey.C:
                     this.Abort();
                     abort = true;
@@ -684,6 +715,36 @@ namespace Microsoft.PowerShell.Linux.Host
             if (this.buffer.Length > 0 && this.current < this.buffer.Length)
             {
                 this.buffer.Remove(this.current, 1);
+                this.Render();
+            }
+        }
+
+        /// <summary>
+        /// Ctrl-K was entered.
+        /// </summary>
+        private void OnKill()
+        {
+            if (this.buffer.Length > 0 && this.current < this.buffer.Length)
+            {
+                this.killBuffer = this.buffer.ToString().Substring(this.current);
+                this.buffer.Remove(this.current, killBuffer.Length);
+                this.Render();
+            }
+            else
+            {
+                this.killBuffer = String.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Ctrl-Y was entered.
+        /// </summary>
+        private void OnYank()
+        {
+            if (!String.IsNullOrEmpty(killBuffer))
+            {
+                this.buffer.Insert(this.current, killBuffer);
+                this.current += killBuffer.Length;
                 this.Render();
             }
         }
