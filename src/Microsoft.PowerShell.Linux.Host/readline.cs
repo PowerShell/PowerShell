@@ -128,10 +128,10 @@ namespace Microsoft.PowerShell.Linux.Host
         {
             this.powershell.Runspace = runspace;
             this.Initialize();
-            bool finishedTyping = false;
+            bool commandComplete = false;
             abort = false;
 //            Console.WriteLine("Default value of TreatCtrlCAsInput: {0}", Console.TreatControlCAsInput);
-//            Console.TreatControlCAsInput = false;
+            Console.TreatControlCAsInput = false;
 
             while (true)
             {
@@ -140,29 +140,28 @@ namespace Microsoft.PowerShell.Linux.Host
                 // Basic Emacs-style readline implementation
                 if (key.Modifiers.HasFlag(ConsoleModifiers.Control))
                 {
-                    finishedTyping = ProcessControlKey(key, nested, ref abort);
+                    commandComplete = ProcessControlKey(key, nested, ref abort);
                     if (abort)
                     {
-                        Console.WriteLine();
-//                        Console.TreatControlCAsInput = true;
+                        Console.TreatControlCAsInput = true;
                         return String.Empty;
                     }
                 }
                 else if (key.Modifiers.HasFlag(ConsoleModifiers.Alt))
                 {
-                    finishedTyping = ProcessAltKey(key);
+                    commandComplete = ProcessAltKey(key);
                 }
                 // Unmodified keys
                 else
                 {
-                    finishedTyping = ProcessNormalKey(key, nested);
+                    commandComplete = ProcessNormalKey(key, nested);
                 }
 
                 previousKeyPress = key;
 
-                if (finishedTyping)
+                if (commandComplete)
                 {
-//                    Console.TreatControlCAsInput = true;
+                    Console.TreatControlCAsInput = true;
                     return this.OnEnter();
                 }
             }
@@ -217,10 +216,9 @@ namespace Microsoft.PowerShell.Linux.Host
                       return this.OnEnter();
                     */
                 case ConsoleKey.C:
-                    Console.WriteLine("received Ctrl-C");
                     this.Abort();
                     abort = true;
-                    break;
+                    return true;
             }
             return false;
         }
