@@ -347,7 +347,11 @@ On Windows, we also build Full PowerShell for .NET 4.5.1
 If you don't have any visual studio installed, you can use [Visual Studio 2015
 Community edition][vs].
 
-* Add `msbuild` to `PATH` / create PowerShell alias to it.
+**Troubleshooting note:** you need a **VC++** compiler from it (it's an optional component).
+If `cmake` output says that it cannot determine `C` and `CXX` compilers, you ever don't have VS 2015 installed, 
+or you don't have `C++` component installed.
+
+* Add `msbuild` to `PATH` or create PowerShell alias to it.
 
 ```powershell
 Set-Alias msbuild C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe
