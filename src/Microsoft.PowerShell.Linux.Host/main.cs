@@ -233,7 +233,7 @@ OPTIONS
             // run the initial script
             if (initialScript != null)
             {
-                ExecuteHelper(initialScript, null);
+                Execute(initialScript);
             }
         }
 
@@ -432,6 +432,9 @@ OPTIONS
         {
             if (e != null)
             {
+                // Return non-zero exit code if an exception is thrown
+                this.ExitCode = 1;
+
                 object error;
                 IContainsErrorRecord icer = e as IContainsErrorRecord;
                 if (icer != null)
@@ -547,6 +550,9 @@ OPTIONS
             // the user calling "exit".
             while (!this.ShouldExit && this.myHost.Runspace != null)
             {
+                // Reset exit code for each command
+                this.ExitCode = 0;
+
                 // If the prompt function failed for any reason, use a sane default
                 string prompt;
                 try
