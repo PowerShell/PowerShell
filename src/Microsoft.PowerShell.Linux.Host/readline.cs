@@ -229,16 +229,8 @@ namespace Microsoft.PowerShell.Linux.Host
                 case ConsoleKey.F:
                     this.OnRight(key.Modifiers);
                     break;
-                case ConsoleKey.P:
-                    // TODO: incremental search
                 case ConsoleKey.R:
-                    this.OnUpArrow(nested);
-                    break;
-                case ConsoleKey.N:
-                    // TODO: incremental search
-                case ConsoleKey.S:
-                    this.OnDownArrow(nested);
-                    break;
+                    return this.ReverseSearch(nested, ref abort);
                 case ConsoleKey.J:
                     previousKeyPress = key;
                     return true;
@@ -570,6 +562,98 @@ namespace Microsoft.PowerShell.Linux.Host
             }
 
             this.newHistory = false;
+        }
+
+        /// <summary>
+        ///   Reverse search through history
+        /// </summary>
+        private bool ReverseSearch(bool nested, ref bool abort)
+        {
+            GetHistory(nested);
+            
+            if (historyResult.Count == 0)
+            {
+                return false;
+            }
+            int searchPos = historyResult.Count - 1;
+            
+            StringBuilder searchString = new StringBuilder();
+            string searchResult = String.Empty;
+            string failed = String.Empty;
+
+            while (!abort)
+            {
+                OnEscape();
+                Console.Out.Write("({0}reverse-i-search)'{1}':{2} ", failed, searchString.ToString(), searchResult); 
+
+                ConsoleKeyInfo key = Console.ReadKey(true);
+
+                if (key.Modifiers.HasFlag(ConsoleModifiers.Control) && key.Key == ConsoleKey.R)
+                {
+                    // do nothing
+                }
+                else if (key.Modifiers.HasFlag(ConsoleModifiers.Control) && key.Key == ConsoleKey.C)
+                {
+                    Abort();
+                    return true;
+                }
+                else if (key.Key == ConsoleKey.Backspace)
+                {
+                    if (searchString.Length > 0)
+                    {
+                        searchString.Length--;
+                    }
+                    searchPos = historyResult.Count - 1;
+                }
+                else if (key.Key == ConsoleKey.Enter)
+                {
+                    BufferFromString(searchResult);
+                    return true;
+                }
+                else if (((key.Key >= ConsoleKey.A && key.Key <= ConsoleKey.Z)
+                         || (key.Key >= ConsoleKey.D0 && key.Key <= ConsoleKey.D9))
+                         && !key.Modifiers.HasFlag(ConsoleModifiers.Control)
+                         && !key.Modifiers.HasFlag(ConsoleModifiers.Alt))
+                {
+                    searchString.Append(key.KeyChar);
+                }
+                else
+                {
+                    OnEscape();
+                    BufferFromString(searchResult);
+                    Render();
+                    return false;
+                }
+
+                string result = searchHistory(searchString.ToString(), ref searchPos);
+                if (String.IsNullOrEmpty(result))
+                {
+                    failed = "failed ";
+                }
+                else
+                {
+                    searchResult = result;
+                }
+            }                
+            return false;   // for compiler
+        }
+
+        /// <summary>
+        /// Reverse search command history for one that match pattern
+        /// </summary>
+        private string searchHistory(string pattern, ref int pos)
+        {
+            for (int i = pos; i >= 0; --i)
+            {
+                string command = historyResult[i].Members["CommandLine"].Value.ToString();
+                if (command.Contains(pattern))
+                {
+                    pos = i;
+                    return command;
+                }
+            }
+            pos = -1;
+            return String.Empty;
         }
 
         /// <summary>
