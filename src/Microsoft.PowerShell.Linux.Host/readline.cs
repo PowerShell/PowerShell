@@ -771,6 +771,10 @@ namespace Microsoft.PowerShell.Linux.Host
 
             string text = this.buffer.ToString();
 
+            // TODO: Rendering of a multiline command on separate lines.  
+            // For now, just display it as a single-line command.
+            text = text.Replace(System.Environment.NewLine, " ");
+
             // The PowerShell tokenizer is used to decide how to colorize
             // the input.  Any errors in the input are returned in 'errors',
             // but we won't be looking at those here.
