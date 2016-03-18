@@ -20,11 +20,11 @@ popd
 # Run xUnit tests
 pushd test/csharp
 ## Build
-dotnet build
+dotnet build -c Linux
 ## Work-around dotnet/cli#753
-cp -r ../../src/Microsoft.PowerShell.Linux.Host/{Modules,*ps1xml} bin/Debug/netstandardapp1.5/ubuntu.14.04-x64
+cp -r ../../src/Microsoft.PowerShell.Linux.Host/{Modules,*ps1xml} bin/Linux/netstandardapp1.5/ubuntu.14.04-x64
 ## Test
-dotnet test
+dotnet test -c Linux
 result=$?
 popd
 
