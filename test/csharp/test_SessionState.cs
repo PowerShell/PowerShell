@@ -27,7 +27,7 @@ namespace PSTests
             ExecutionContext executionContext = new ExecutionContext(engine, hostInterface, iss);
             SessionStateInternal sessionState = new SessionStateInternal(executionContext);
             Collection<PSDriveInfo> drives = sessionState.Drives(null);
-            Assert.True(drives.Count>0);
+            Assert.NotNull(drives);
         }
     }
 }
