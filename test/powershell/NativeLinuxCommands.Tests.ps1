@@ -8,15 +8,23 @@ Describe "NativeLinuxCommands" {
 	ps | foreach-object { $_.ProcessName | Should Not BeNullOrEmpty }
     }
 	
-	It "Should be able to call using the touch, cat, rm cmdlet" {
-	{ touch /NativeLinuxCommandsTestFile } | Should Not Throw
-	{ cat /NativeLinuxCommandsTestFile } | Should Not Throw
-	{ rm /NativeLinuxCommandsTestFile } | Should Not Throw
+	It "Should find Application grep" -Skip:$IsWindows {
+    (get-command grep).CommandType | Should Be Application
+    }
+
+    It "Should pipe to grep and get result" -Skip:$IsWindows {
+    "hello world" | grep hello | Should Be "hello world"
     }
 	
-	It "Should be able to call using the mkdir, ls, rm cmdlet" {
-	{ mkdir /NativeLinuxCommandsTestFolder } | Should Not Throw
-	{ ls /NativeLinuxCommandsTestFolder } | Should Not Throw
-	{ rm /NativeLinuxCommandsTestFolder } | Should Not Throw
+	It "Should find Application touch" -Skip:$IsWindows {
+    (get-command touch).CommandType | Should Be Application
+    }
+	
+	It "Should find Alias ls" -Skip:$IsWindows {
+    (get-command ls).CommandType | Should Be Alias
+    }
+	
+	It "Should find Function mkdir" -Skip:$IsWindows {
+    (get-command mkdir).CommandType | Should Be Function
     }
 }
