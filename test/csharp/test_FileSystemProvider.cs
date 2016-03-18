@@ -5,6 +5,7 @@ using Microsoft.PowerShell.Commands;
 
 namespace PSTests
 {
+    [Collection("AssemblyLoadContext")]
     public static class FileSystemProviderTests
     {
         [Fact]
