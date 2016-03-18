@@ -4,6 +4,7 @@ using System.Management.Automation;
 
 namespace PSTests
 {
+    [Collection("AssemblyLoadContext")]
     public static class PSTypeExtensionsTests
     {
         [Fact]
