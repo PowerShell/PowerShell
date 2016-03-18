@@ -4,6 +4,7 @@ using System.Management.Automation.Language;
 
 namespace PSTests
 {
+    [Collection("AssemblyLoadContext")]
     public static class PSEnumerableBinderTests
     {
         [Fact]
