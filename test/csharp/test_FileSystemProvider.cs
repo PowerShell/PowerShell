@@ -37,8 +37,8 @@ namespace PSTests
 		[Fact]
         public static void TestGetProperty()
         {
-			FileSystemProvider fileSystemProvider = new FileSystemProvider();
-			fileSystemProvider.GetProperty(@"/", new Collection<string>(){"Attributes"});
+			//FileSystemProvider fileSystemProvider = new FileSystemProvider();
+			//fileSystemProvider.GetProperty(@"/", new Collection<string>(){"Attributes"});
         }
 		
 		[Fact]
