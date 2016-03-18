@@ -5,6 +5,7 @@ using System.Management.Automation;
 namespace PSTests
 {
     // Not static because a test requires non-const variables
+    [Collection("AssemblyLoadContext")]
     public class MshSnapinInfoTests
     {
         // Test that it does not throw an exception

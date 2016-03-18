@@ -53,9 +53,10 @@ git submodule update --init --recursive -- src/monad src/windows-build src/Micro
 
 ## Setup build environment
 
-We use the [.NET Command Line Interface][dotnet] (`dotnet`) to build
-the managed components, and [CMake][] to build the native components (on
-non-Windows platforms). Install `dotnet` by following their [documentation][].
+We use the [.NET Command Line Interface][dotnet-cli] (`dotnet`) to
+build the managed components, and [CMake][] to build the native
+components (on non-Windows platforms). Install `dotnet` by following
+their [documentation][cli-docs].
 
 The version of .NET CLI is very important, you want a recent 1.0.0 beta
 (**not** 1.0.1). The following instructions will install precisely
@@ -64,8 +65,8 @@ The version of .NET CLI is very important, you want a recent 1.0.0 beta
 > Previous installations of DNX, `dnvm`, or older installations of .NET CLI
 > can cause odd failures when running. Please check your version.
 
-[dotnet]: https://github.com/dotnet/cli#new-to-net-cli
-[documentation]: https://dotnet.github.io/getting-started/
+[dotnet-cli]: https://github.com/dotnet/cli#new-to-net-cli
+[cli-docs]: https://dotnet.github.io/getting-started/
 [CMake]: https://cmake.org/cmake/help/v2.8.12/cmake.html
 
 ### Linux
@@ -342,12 +343,23 @@ On Windows, we also build Full PowerShell for .NET 4.5.1
 
 #### Setup environment
 
-* You need Visual Studio to compile the native host `powershell.exe`.
+* Install the Visual C++ Compiler via Visual Studio 2015.
 
-If you don't have any visual studio installed, you can use [Visual Studio 2015
-Community edition][vs].
+This component is required to compile the native `powershell.exe` host.
 
-* Add `msbuild` to `PATH` / create PowerShell alias to it.
+This is an optionally installed component, so you may need to run the
+Visual Studio installer again.
+
+If you don't have any Visual Studio installed, you can use
+[Visual Studio 2015 Community Edition][vs].
+
+> Compiling with older versions should work, but we don't test it.
+
+**Troubleshooting note:** If `cmake` says that it cannot determine the
+`C` and `CXX` compilers, you either don't have Visual Studio, or you
+don't have the Visual C++ Compiler component installed.
+
+* Add `msbuild` to `PATH`, or create a PowerShell alias to it.
 
 ```powershell
 Set-Alias msbuild C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe
@@ -361,7 +373,7 @@ You can install it from [Chocolatey][] or [manually][].
 choco install cmake.portable
 ```
 
-* Install dotnet-cli via their [documentation][]
+* Install .NET CLI via their [documentation][cli-docs]
 
 [vs]: https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx
 [Chocolatey]: https://chocolatey.org/packages/cmake.portable

@@ -9,16 +9,11 @@ namespace PSTests
     // NOTE: do not call AddCommand("out-host") after invoking or MergeMyResults,
     // otherwise Invoke will not return any objects
 
+    [Collection("AssemblyLoadContext")]
     public class RunspaceTests
     {
         private static int count = 3;
         private static string script = String.Format($"get-process | select-object -first {count}");
-
-        // Initialize the Core PowerShell AssemblyLoadContext
-        public RunspaceTests()
-        {
-            PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(AppContext.BaseDirectory);
-        }
 
         [Fact]
         public void TestRunspaceWithPipeline()
