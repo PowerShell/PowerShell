@@ -224,10 +224,10 @@ namespace Microsoft.PowerShell.Linux.Host
                     this.OnDelete();
                     break;
                 case ConsoleKey.B:
-                    this.OnLeft(key.Modifiers);
+                    this.OnLeft(false);
                     break;
                 case ConsoleKey.F:
-                    this.OnRight(key.Modifiers);
+                    this.OnRight(false);
                     break;
                 case ConsoleKey.R:
                     return this.ReverseSearch(nested, ref abort);
@@ -242,6 +242,24 @@ namespace Microsoft.PowerShell.Linux.Host
                     this.Abort();
                     abort = true;
                     return true;
+                case ConsoleKey.P:
+                    this.OnUpArrow(nested);
+                    break;
+                case ConsoleKey.N:
+                    this.OnDownArrow(nested);
+                    break;
+                case ConsoleKey.RightArrow:
+                    this.OnRight(true);
+                    break;
+                case ConsoleKey.LeftArrow:
+                    this.OnLeft(true);
+                    break;
+                case ConsoleKey.Home:
+                    this.OnKillBackward();
+                    break;
+                case ConsoleKey.End:
+                    this.OnKill();
+                    break;
             }
             return false;
         }
@@ -256,10 +274,10 @@ namespace Microsoft.PowerShell.Linux.Host
                 // TODO: OnDelete(key)
                 // TODO: OnBackspace(key)
                 case ConsoleKey.B:
-                    this.OnLeft(key.Modifiers);
+                    this.OnLeft(true);
                     break;
                 case ConsoleKey.F:
-                    this.OnRight(key.Modifiers);
+                    this.OnRight(true);
                     break;
             }
             return false;
@@ -282,10 +300,10 @@ namespace Microsoft.PowerShell.Linux.Host
                     previousKeyPress = key;
                     return true;
                 case ConsoleKey.RightArrow:
-                    this.OnRight(key.Modifiers);
+                    this.OnRight(false);
                     break;
                 case ConsoleKey.LeftArrow:
-                    this.OnLeft(key.Modifiers);
+                    this.OnLeft(false);
                     break;
                 case ConsoleKey.Escape:
                     this.OnEscape();
@@ -715,11 +733,11 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         /// Moves to the left of the cursor position.
         /// </summary>
-        /// <param name="consoleModifiers">Enumeration for Alt, Control,
+        /// <param name="byWord">move by word instead of by letter
         /// and Shift keys.</param>
-        private void OnLeft(ConsoleModifiers consoleModifiers)
+        private void OnLeft(bool byWord)
         {
-            if (consoleModifiers.HasFlag(ConsoleModifiers.Alt))
+            if (byWord)
             {
                 // Move back to the start of the previous word.
                 if (this.buffer.Length > 0 && this.current != 0)
@@ -762,11 +780,11 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         /// Moves to what is to the right of the cursor position.
         /// </summary>
-        /// <param name="consoleModifiers">Enumeration for Alt, Control,
+        /// <param name="byWord">move by word instead of by letter
         /// and Shift keys.</param>
-        private void OnRight(ConsoleModifiers consoleModifiers)
+        private void OnRight(bool byWord)
         {
-            if (consoleModifiers.HasFlag(ConsoleModifiers.Alt))
+            if (byWord)
             {
                 // Move to the next word.
                 if (this.buffer.Length != 0 && this.current < this.buffer.Length)
@@ -847,7 +865,7 @@ namespace Microsoft.PowerShell.Linux.Host
         }
 
         /// <summary>
-        /// Ctrl-K was entered.
+        /// Ctrl-K or Ctrl-End was entered.
         /// </summary>
         private void OnKill()
         {
@@ -855,6 +873,24 @@ namespace Microsoft.PowerShell.Linux.Host
             {
                 this.killBuffer = this.buffer.ToString().Substring(this.current);
                 this.buffer.Remove(this.current, killBuffer.Length);
+                this.Render();
+            }
+            else
+            {
+                this.killBuffer = String.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Ctrl-Home was entered, kill from begin-of-line to current position
+        /// </summary>
+        private void OnKillBackward()
+        {
+            if (this.current > 0)
+            {
+                this.killBuffer = this.buffer.ToString().Substring(0, this.current);
+                this.buffer.Remove(0, this.current);
+                this.current = 0;
                 this.Render();
             }
             else
@@ -910,15 +946,10 @@ namespace Microsoft.PowerShell.Linux.Host
 
             if (tokens.Count > 0)
             {
-                // We can skip rendering tokens that end before the cursor.
-                int i;
-
-                for (i = 0; i < tokens.Count; ++i)
+                // Print leading blanks
+                if (tokens[0].Start != 0)
                 {
-                    if (this.current >= tokens[i].Start)
-                    {
-                        break;
-                    }
+                    Console.Out.Write(new string(' ', tokens[0].Start));
                 }
 
                 // Place the cursor at the start of the first token to render.  The
@@ -926,7 +957,8 @@ namespace Microsoft.PowerShell.Linux.Host
                 // preceding the cursor.
                 //this.cursor.Place(tokens[i].Start);
 
-                for (; i < tokens.Count; ++i)
+                int i;
+                for (i = 0; i < tokens.Count; ++i)
                 {
                     // Write out the token.  We don't use tokens[i].Content, instead we
                     // use the actual text from our input because the content sometimes
