@@ -1,0 +1,16 @@
+{
+	"version": "0.1.0",
+	"command": "powershell",
+	"isShellCommand": true,
+	"showOutput": "verbose",
+	"args": [ "--command" ],
+
+	"tasks": [
+		{
+			"taskName": "build",
+			"args": [ "Start-PSBuild" ],
+			"isBuildCommand": true,
+			"problemMatcher": "$msCompile"
+		}
+	]
+}

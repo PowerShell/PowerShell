@@ -1,0 +1,21 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": ".NET Core Launch (console)",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "build",
+			"program": "${workspaceRoot}/bin/powershell",
+			"args": [ "-c", "exit" ],
+			"cwd": "${workspaceRoot}",
+			"stopAtEntry": false
+		},
+		{
+			"name": "powershell",
+			"type": "coreclr",
+			"request": "attach",
+			"processName": "powershell"
+		}
+	]
+}
