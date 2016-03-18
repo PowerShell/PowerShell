@@ -359,12 +359,6 @@ If you don't have any Visual Studio installed, you can use
 `C` and `CXX` compilers, you either don't have Visual Studio, or you
 don't have the Visual C++ Compiler component installed.
 
-* Add `msbuild` to `PATH`, or create a PowerShell alias to it.
-
-```powershell
-Set-Alias msbuild C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe
-```
-
 * Install CMake and add it to `PATH.`
 
 You can install it from [Chocolatey][] or [manually][].
