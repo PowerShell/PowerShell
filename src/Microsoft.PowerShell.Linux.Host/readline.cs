@@ -581,67 +581,110 @@ namespace Microsoft.PowerShell.Linux.Host
             string searchResult = String.Empty;
             string failed = String.Empty;
 
-            while (!abort)
+            while (true)
             {
                 OnEscape();
-                Console.Out.Write("({0}reverse-i-search)'{1}':{2} ", failed, searchString.ToString(), searchResult); 
+                ConsoleColor saveFGColor = Console.ForegroundColor;
+                Console.Out.Write("(");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Out.Write("{0}", failed);
+                Console.ForegroundColor = saveFGColor;
+                Console.Out.Write("reverse-i-search)'{0}", searchString.ToString());
+                this.current = this.cursor.GetPosition();
+                Console.Out.Write("': ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Out.Write("{0}", searchResult); 
+                Console.ForegroundColor = saveFGColor;
+                this.rendered = this.cursor.GetPosition();
+                this.cursor.Place(this.current);
 
                 ConsoleKeyInfo key = Console.ReadKey(true);
 
-                if (key.Modifiers.HasFlag(ConsoleModifiers.Control) && key.Key == ConsoleKey.R)
+                bool terminateSearch = false;
+                if (key.Modifiers.HasFlag(ConsoleModifiers.Control))
                 {
-                    // do nothing
-                }
-                else if (key.Modifiers.HasFlag(ConsoleModifiers.Control) && key.Key == ConsoleKey.C)
-                {
-                    Abort();
-                    return true;
-                }
-                else if (key.Key == ConsoleKey.Backspace)
-                {
-                    if (searchString.Length > 0)
+                    switch (key.Key)
                     {
-                        searchString.Length--;
+                        case ConsoleKey.R:   // repeat search
+                            searchPos--;
+                            break;
+                        case ConsoleKey.C:
+                            Abort();
+                            abort = true;
+                            return true;
+                        default:
+                            terminateSearch = true;
+                            break;
                     }
-                    searchPos = historyResult.Count - 1;
                 }
-                else if (key.Key == ConsoleKey.Enter)
+                else if (key.Modifiers.HasFlag(ConsoleModifiers.Alt))
                 {
-                    BufferFromString(searchResult);
-                    return true;
-                }
-                else if (((key.Key >= ConsoleKey.A && key.Key <= ConsoleKey.Z)
-                         || (key.Key >= ConsoleKey.D0 && key.Key <= ConsoleKey.D9))
-                         && !key.Modifiers.HasFlag(ConsoleModifiers.Control)
-                         && !key.Modifiers.HasFlag(ConsoleModifiers.Alt))
-                {
-                    searchString.Append(key.KeyChar);
+                    terminateSearch = true;
                 }
                 else
                 {
-                    OnEscape();
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.Backspace:
+                            if (searchString.Length > 0)
+                            {
+                                searchString.Length--;
+                            }
+                            searchPos = historyResult.Count - 1;
+                            break;
+                        case ConsoleKey.Enter:
+                            BufferFromString(searchResult);
+                            Render();
+                            return true;
+                        case ConsoleKey.Delete:
+                        case ConsoleKey.RightArrow:
+                        case ConsoleKey.LeftArrow:
+                        case ConsoleKey.Escape:
+                        case ConsoleKey.Home:
+                        case ConsoleKey.End:
+                        case ConsoleKey.Tab:
+                        case ConsoleKey.UpArrow:
+                        case ConsoleKey.DownArrow:
+                            terminateSearch = true;
+                            break;
+                        default:
+                            searchString.Append(key.KeyChar);
+                            break;
+                    }
+                }
+
+                if (terminateSearch)
+                {
                     BufferFromString(searchResult);
                     Render();
                     return false;
                 }
 
-                string result = searchHistory(searchString.ToString(), ref searchPos);
-                if (String.IsNullOrEmpty(result))
+                if (searchString.Length == 0)
                 {
-                    failed = "failed ";
+                    searchResult = String.Empty;
+                    failed = String.Empty;
                 }
                 else
                 {
-                    searchResult = result;
+                    string result = reverseSearchHistory(searchString.ToString(), ref searchPos);
+                    if (String.IsNullOrEmpty(result))
+                    {
+                        failed = "failed ";
+                    }
+                    else
+                    {
+                        failed = String.Empty;
+                        searchResult = result;
+                    }
                 }
             }                
-            return false;   // for compiler
         }
 
         /// <summary>
         /// Reverse search command history for one that match pattern
         /// </summary>
-        private string searchHistory(string pattern, ref int pos)
+        private string reverseSearchHistory(string pattern, ref int pos)
         {
             for (int i = pos; i >= 0; --i)
             {
@@ -1003,6 +1046,15 @@ namespace Microsoft.PowerShell.Linux.Host
 
                 Console.CursorTop = cursorTop;
             }
+
+            /// <summary>
+            /// Return current position, relative to anchorLeft
+            /// </summary>
+            internal int GetPosition()
+            {
+                return Console.CursorLeft - this.anchorLeft;
+            }
+
         } // End Cursor
 
     }
