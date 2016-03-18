@@ -16,4 +16,8 @@
         { Remove-Module -ModuleInfo $a } | Should Not Throw
         (Get-Module -Name $moduleName).Name | Should BeNullOrEmpty
     }
+	
+	AfterEach {
+        Import-Module -Name $moduleName -Force
+    }
 }
