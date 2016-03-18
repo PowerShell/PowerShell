@@ -13,22 +13,21 @@ using Microsoft.PowerShell.Linux.Host;
 
 namespace PSTests
 {
+    [Collection("AssemblyLoadContext")]
     public class SessionStateTests
     {
         [Fact]
         public void TestDrives()
         {
-			PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(AppContext.BaseDirectory);
-			CultureInfo currentCulture = CultureInfo.CurrentCulture;
-			PSHost hostInterface =  new DefaultHost(currentCulture,currentCulture);
-			RunspaceConfiguration runspaceConfiguration =  RunspaceConfiguration.Create();
-			InitialSessionState iss = InitialSessionState.CreateDefault2();
-			AutomationEngine engine = new AutomationEngine(hostInterface, runspaceConfiguration, iss);
-			ExecutionContext executionContext = new ExecutionContext(engine, hostInterface, iss);
+            CultureInfo currentCulture = CultureInfo.CurrentCulture;
+            PSHost hostInterface =  new DefaultHost(currentCulture,currentCulture);
+            RunspaceConfiguration runspaceConfiguration =  RunspaceConfiguration.Create();
+            InitialSessionState iss = InitialSessionState.CreateDefault2();
+            AutomationEngine engine = new AutomationEngine(hostInterface, runspaceConfiguration, iss);
+            ExecutionContext executionContext = new ExecutionContext(engine, hostInterface, iss);
             SessionStateInternal sessionState = new SessionStateInternal(executionContext);
             Collection<PSDriveInfo> drives = sessionState.Drives(null);
-			Assert.True(drives.Count>0);
+            Assert.True(drives.Count>0);
         }
-
     }
 }
