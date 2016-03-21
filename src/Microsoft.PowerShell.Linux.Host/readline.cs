@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Linux.Host
             {
                 this.command = cmd;
                 this.state = s;
-                Console.TreatControlCAsInput = true;
+                Console.TreatControlCAsInput = false;
             }
 
             public enum State {Complete, Abort, Redraw}
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Linux.Host
                 this.Render();
             }
 
-            Console.TreatControlCAsInput = false;
+            Console.TreatControlCAsInput = true;
 
             while (true)
             {
