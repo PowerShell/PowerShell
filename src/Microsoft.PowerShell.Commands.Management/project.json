@@ -19,8 +19,8 @@
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
-                "System.ServiceProcess.ServiceController": "4.1.0-rc3-23914",
-                "System.Net.NameResolution": "4.0.0-rc3-23914"
+                "System.ServiceProcess.ServiceController": "4.1.0-rc2-23921",
+                "System.Net.NameResolution": "4.0.0-rc2-23921"
             }
         },
         "net451": {

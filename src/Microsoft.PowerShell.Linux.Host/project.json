@@ -10,9 +10,8 @@
     },
 
     "dependencies": {
-        "Microsoft.NETCore.Unsupported.Platform.API": "1.0.0-rc3-00001",
         "Newtonsoft.Json": "8.0.2",
-        "System.Xml.XDocument": "4.0.11-rc3-23914",
+        "System.Xml.XDocument": "4.0.11-rc2-23921",
         "Microsoft.PowerShell.Commands.Management": "1.0.0-*",
         "Microsoft.PowerShell.Commands.Utility": "1.0.0-*"
     },
