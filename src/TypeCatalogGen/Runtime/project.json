@@ -1,16 +1,15 @@
 {
     "description": "Facade to generate folder of dependencies",
+
     "authors": [ "andschwa" ],
 
     "dependencies": {
-        "NETStandard.Library": "1.5.0-rc2-23921",
-        "System.Runtime.Loader": "4.0.0-rc2-23921",
-        "System.Security.SecureString": "1.0.0-*",
-        "System.Runtime.Serialization.Xml": "4.1.1-rc2-23921",
-        "System.Threading.ThreadPool": "4.0.10-rc2-23921",
+        "Newtonsoft.Json": "8.0.2",
+        "System.Xml.XDocument": "4.0.11-rc2-23921",
         "Microsoft.CSharp": "4.0.1-rc2-23921",
         "Microsoft.Win32.Registry.AccessControl": "4.0.0-rc2-23921",
         "System.Collections.Specialized": "4.0.1-rc2-23921",
+        "System.Collections.NonGeneric": "4.0.1-rc2-23921",
         "System.ComponentModel.EventBasedAsync": "4.0.11-rc2-23921",
         "System.ComponentModel.TypeConverter": "4.0.1-rc2-23921",
         "System.Data.Common": "4.0.1-rc2-23921",
@@ -27,6 +26,7 @@
         "System.Linq.Expressions": "4.0.11-rc2-23921",
         "System.Net.Http": "4.0.1-rc2-23921",
         "System.Net.NetworkInformation": "4.1.0-rc2-23921",
+        "System.Reflection.Emit": "4.0.1-rc2-23921",
         "System.Reflection.Emit.Lightweight": "4.0.1-rc2-23921",
         "System.Security.AccessControl": "4.0.0-rc2-23921",
         "System.Security.Cryptography.Algorithms": "4.1.0-rc2-23921",
@@ -38,7 +38,9 @@
         "System.Xml.XmlSerializer": "4.0.11-rc2-23921",
         "System.ServiceProcess.ServiceController": "4.1.0-rc2-23921",
         "System.Net.NameResolution": "4.0.0-rc2-23921",
-        "System.Xml.XDocument": "4.0.11-rc2-23921"
+        "Microsoft.CodeAnalysis.CSharp": "1.1.1",
+        "NETStandard.Library": "1.5.0-rc2-23921",
+        "System.Runtime.Loader": "4.0.0-rc2-23921"
     },
 
     "frameworks": {
