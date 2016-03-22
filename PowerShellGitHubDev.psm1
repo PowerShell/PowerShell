@@ -344,3 +344,138 @@ function Start-DevPSGitHub
         }
     }
 }
+
+## this function is from Dave Wyatt's answer on
+## http://stackoverflow.com/questions/22002748/hashtables-from-convertfrom-json-have-different-type-from-powershells-built-in-h
+function Convert-PSObjectToHashtable
+{
+    param (
+        [Parameter(ValueFromPipeline)]
+        $InputObject
+    )
+
+    process
+    {
+        if ($null -eq $InputObject) { return $null }
+
+        if ($InputObject -is [System.Collections.IEnumerable] -and $InputObject -isnot [string])
+        {
+            $collection = @(
+                foreach ($object in $InputObject) { Convert-PSObjectToHashtable $object }
+            )
+
+            Write-Output -NoEnumerate $collection
+        }
+        elseif ($InputObject -is [psobject])
+        {
+            $hash = @{}
+
+            foreach ($property in $InputObject.PSObject.Properties)
+            {
+                $hash[$property.Name] = Convert-PSObjectToHashtable $property.Value
+            }
+
+            $hash
+        }
+        else
+        {
+            $InputObject
+        }
+    }
+}
+
+<#
+.EXAMPLE Copy-SubmoduleFiles                # copy files FROM submodule TO src/<project> folders
+.EXAMPLE Copy-SubmoduleFiles -ToSubmodule   # copy files FROM src/<project> folders TO submodule
+#>
+function Copy-SubmoduleFiles {
+    
+    [CmdletBinding()]
+    param(
+        [string]$mappingFilePath = "$PSScriptRoot\mapping.json",
+        [switch]$ToSubmodule
+    )
+
+    
+    if (-not (Test-Path $mappingFilePath))
+    {
+        throw "Mapping file not found in $mappingFilePath"
+    }
+
+    $m = cat -Raw $mappingFilePath | ConvertFrom-Json | Convert-PSObjectToHashtable
+
+    # mapping.json assumes the root folder
+    Push-Location $PSScriptRoot
+    try
+    {
+        $m.GetEnumerator() | % {
+
+            if ($ToSubmodule)
+            {
+                cp $_.Value $_.Key -Verbose:$Verbose
+            }
+            else 
+            {
+                mkdir (Split-Path $_.Value) -ErrorAction SilentlyContinue > $null
+                cp $_.Key $_.Value -Verbose:$Verbose  
+            }
+        }
+    }
+    finally
+    {
+        Pop-Location
+    }
+}
+
+<#
+    .EXAMPLE Create-MappingFile # create mapping.json in the root folder from project.json files
+#>
+function New-MappingFile
+{
+    param(
+        [string]$mappingFilePath = "$PSScriptRoot\mapping.json"
+    )
+
+    function Get-MappingPath([string]$project, [string]$path)
+    {
+        if ($project -match 'TypeCatalogGen')
+        {
+            return Split-Path $path -Leaf
+        }
+        
+        if ($project -match 'Microsoft.Management.Infrastructure')
+        {
+            return Split-Path $path -Leaf
+        }
+
+        return ($path -replace '../monad/monad/src/', '')
+    }
+
+    $mapping = [ordered]@{}
+
+    # assumes the root folder
+    Push-Location $PSScriptRoot
+    try
+    {
+        $projects = ls .\src\ -Recurse -Depth 2 -Filter 'project.json'
+        $projects | % {
+            $project = Split-Path $_.FullName
+            $json = cat -Raw -Path $_.FullName | ConvertFrom-Json
+            $json.compileFiles | % {
+                if ($_) {
+                    if (-not $_.EndsWith('AssemblyInfo.cs'))
+                    {
+                        $fullPath = Join-Path $project (Get-MappingPath -project $project -path $_)
+                        $mapping[$_.Replace('../', 'src/')] = ($fullPath.Replace("$($pwd.Path)\",'')).Replace('\', '/')
+                    }
+                }
+            }
+        }
+    }
+    finally
+    {
+        Pop-Location
+    }
+
+    Set-Content -Value ($mapping | ConvertTo-Json) -Path $mappingFilePath -Encoding Ascii
+}
