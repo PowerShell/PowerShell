@@ -20,44 +20,44 @@
     },
 
     "compile": [
-        "../../src/windows-build/gen/CONSOLE_HOST/*.cs"
+        "../windows-build/gen/CONSOLE_HOST/*.cs"
     ],
 
     "compileFiles": [
-        "../../src/monad/monad/src/host/msh/CommandLineParameterParser.cs",
-        "../../src/monad/monad/src/host/msh/ConsoleControl.cs",
-        "../../src/monad/monad/src/host/msh/Executor.cs",
-        "../../src/monad/monad/src/host/msh/ConsoleHost.cs",
-        "../../src/monad/monad/src/host/msh/ConsoleHostRawUserInterface.cs",
-        "../../src/monad/monad/src/host/msh/ConsoleHostTranscript.cs",
-        "../../src/monad/monad/src/host/msh/ConsoleHostUserInterface.cs",
-        "../../src/monad/monad/src/host/msh/ConsoleHostUserInterfaceProgress.cs",
-        "../../src/monad/monad/src/host/msh/ConsoleHostUserInterfacePrompt.cs",
-        "../../src/monad/monad/src/host/msh/ConsoleHostUserInterfacePromptForChoice.cs",
-        "../../src/monad/monad/src/host/msh/ConsoleHostUserInterfaceSecurity.cs",
-        "../../src/monad/monad/src/host/msh/ConsoleShell.cs",
-        "../../src/monad/monad/src/host/msh/ConsoleTextWriter.cs",
-        "../../src/monad/monad/src/host/msh/ProgressPane.cs",
-        "../../src/monad/monad/src/host/msh/PendingProgress.cs",
-        "../../src/monad/monad/src/host/msh/ProgressNode.cs",
-        "../../src/monad/monad/src/host/msh/Serialization.cs",
-        "../../src/monad/monad/src/host/msh/StartTranscriptCmdlet.cs",
-        "../../src/monad/monad/src/host/msh/StopTranscriptCmdlet.cs",
-        "../../src/monad/monad/src/singleshell/installer/MshHostMshSnapin.cs",
-        "../../src/monad/monad/src/singleshell/installer/EngineInstaller.cs",
-        "../../src/monad/monad/src/host/msh/ManagedEntrance.cs"
+        "../monad/monad/src/host/msh/CommandLineParameterParser.cs",
+        "../monad/monad/src/host/msh/ConsoleControl.cs",
+        "../monad/monad/src/host/msh/Executor.cs",
+        "../monad/monad/src/host/msh/ConsoleHost.cs",
+        "../monad/monad/src/host/msh/ConsoleHostRawUserInterface.cs",
+        "../monad/monad/src/host/msh/ConsoleHostTranscript.cs",
+        "../monad/monad/src/host/msh/ConsoleHostUserInterface.cs",
+        "../monad/monad/src/host/msh/ConsoleHostUserInterfaceProgress.cs",
+        "../monad/monad/src/host/msh/ConsoleHostUserInterfacePrompt.cs",
+        "../monad/monad/src/host/msh/ConsoleHostUserInterfacePromptForChoice.cs",
+        "../monad/monad/src/host/msh/ConsoleHostUserInterfaceSecurity.cs",
+        "../monad/monad/src/host/msh/ConsoleShell.cs",
+        "../monad/monad/src/host/msh/ConsoleTextWriter.cs",
+        "../monad/monad/src/host/msh/ProgressPane.cs",
+        "../monad/monad/src/host/msh/PendingProgress.cs",
+        "../monad/monad/src/host/msh/ProgressNode.cs",
+        "../monad/monad/src/host/msh/Serialization.cs",
+        "../monad/monad/src/host/msh/StartTranscriptCmdlet.cs",
+        "../monad/monad/src/host/msh/StopTranscriptCmdlet.cs",
+        "../monad/monad/src/singleshell/installer/MshHostMshSnapin.cs",
+        "../monad/monad/src/singleshell/installer/EngineInstaller.cs",
+        "../monad/monad/src/host/msh/ManagedEntrance.cs"
     ],
 
     "namedResource": {
-        "TranscriptStrings": "../../src/windows-build/gen/CONSOLE_HOST/TranscriptStrings.resources",
-        "ProgressNodeStrings": "../../src/windows-build/gen/CONSOLE_HOST/ProgressNodeStrings.resources",
-        "ManagedEntranceStrings": "../../src/windows-build/gen/CONSOLE_HOST/ManagedEntranceStrings.resources",
-        "HostMshSnapInResources": "../../src/windows-build/gen/CONSOLE_HOST/HostMshSnapInResources.resources",
-        "ConsoleHostUserInterfaceStrings": "../../src/windows-build/gen/CONSOLE_HOST/ConsoleHostUserInterfaceStrings.resources",
-        "ConsoleHostUserInterfaceSecurityResources": "../../src/windows-build/gen/CONSOLE_HOST/ConsoleHostUserInterfaceSecurityResources.resources",
-        "ConsoleHostStrings": "../../src/windows-build/gen/CONSOLE_HOST/ConsoleHostStrings.resources",
-        "ConsoleHostRawUserInterfaceStrings": "../../src/windows-build/gen/CONSOLE_HOST/ConsoleHostRawUserInterfaceStrings.resources",
-        "ConsoleControlStrings": "../../src/windows-build/gen/CONSOLE_HOST/ConsoleControlStrings.resources",
-        "CommandLineParameterParserStrings": "../../src/windows-build/gen/CONSOLE_HOST/CommandLineParameterParserStrings.resources"
+        "TranscriptStrings": "../windows-build/gen/CONSOLE_HOST/TranscriptStrings.resources",
+        "ProgressNodeStrings": "../windows-build/gen/CONSOLE_HOST/ProgressNodeStrings.resources",
+        "ManagedEntranceStrings": "../windows-build/gen/CONSOLE_HOST/ManagedEntranceStrings.resources",
+        "HostMshSnapInResources": "../windows-build/gen/CONSOLE_HOST/HostMshSnapInResources.resources",
+        "ConsoleHostUserInterfaceStrings": "../windows-build/gen/CONSOLE_HOST/ConsoleHostUserInterfaceStrings.resources",
+        "ConsoleHostUserInterfaceSecurityResources": "../windows-build/gen/CONSOLE_HOST/ConsoleHostUserInterfaceSecurityResources.resources",
+        "ConsoleHostStrings": "../windows-build/gen/CONSOLE_HOST/ConsoleHostStrings.resources",
+        "ConsoleHostRawUserInterfaceStrings": "../windows-build/gen/CONSOLE_HOST/ConsoleHostRawUserInterfaceStrings.resources",
+        "ConsoleControlStrings": "../windows-build/gen/CONSOLE_HOST/ConsoleControlStrings.resources",
+        "CommandLineParameterParserStrings": "../windows-build/gen/CONSOLE_HOST/CommandLineParameterParserStrings.resources"
     }
 }
