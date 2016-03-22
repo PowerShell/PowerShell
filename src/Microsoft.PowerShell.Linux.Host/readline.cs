@@ -4,6 +4,7 @@ namespace Microsoft.PowerShell.Linux.Host
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Management.Automation;
+    using System.Management.Automation.Host;
     using System.Management.Automation.Runspaces;
     using System.Text;
 
@@ -18,6 +19,11 @@ namespace Microsoft.PowerShell.Linux.Host
         /// Powershell instance for tabcompletion
         /// </summary>
         private PowerShell powershell = PowerShell.Create();
+
+        /// <summary>
+        /// Host's UserInterface  
+        /// </summary>
+        private PSHostUserInterface ui;
 
         /// <summary>
         /// The buffer used to edit.
@@ -78,7 +84,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// We do not pick different colors for every token, those tokens
         /// use this default.
         /// </summary>
-        private ConsoleColor defaultColor = ConsoleColor.White;
+        private ConsoleColor defaultColor = Console.ForegroundColor;
 
         /// <summary>
         /// To keep track of whether we have hit "enter" key since last arrow up/down key
@@ -147,9 +153,10 @@ namespace Microsoft.PowerShell.Linux.Host
         /// Read a line of text, colorizing while typing.
         /// </summary>
         /// <returns>The command line read</returns>
-        public ReadResult Read(Runspace runspace, bool nested, string initialValue)
+        public ReadResult Read(Runspace runspace, PSHostUserInterface hostUI, bool nested, string initialValue)
         {
             this.powershell.Runspace = runspace;
+            this.ui = hostUI;
             this.Initialize();
             bool commandComplete = false;
             bool abort = false;
@@ -603,15 +610,15 @@ namespace Microsoft.PowerShell.Linux.Host
             {
                 OnEscape();
                 ConsoleColor saveFGColor = Console.ForegroundColor;
-                Console.Out.Write("(");
+                ui.Write("(");
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Out.Write("{0}", failed);
+                ui.Write(String.Format("{0}", failed));
                 Console.ForegroundColor = saveFGColor;
-                Console.Out.Write("reverse-i-search)'{0}", searchString.ToString());
+                ui.Write(String.Format("reverse-i-search)'{0}", searchString.ToString()));
                 this.current = this.cursor.GetPosition();
-                Console.Out.Write("': ");
+                ui.Write("': ");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.Out.Write("{0}", searchResult); 
+                ui.Write(String.Format("{0}", searchResult)); 
                 Console.ForegroundColor = saveFGColor;
                 this.rendered = this.cursor.GetPosition();
                 this.cursor.Place(this.current);
@@ -848,7 +855,7 @@ namespace Microsoft.PowerShell.Linux.Host
         private string OnEnter()
         {
             this.newHistory = true;
-            Console.Out.WriteLine();
+            ui.WriteLine();
             return this.buffer.ToString();
         }
 
@@ -946,10 +953,12 @@ namespace Microsoft.PowerShell.Linux.Host
 
             if (tokens.Count > 0)
             {
+                ConsoleColor saveFGColor = Console.ForegroundColor;
+
                 // Print leading blanks
                 if (tokens[0].Start != 0)
                 {
-                    Console.Out.Write(new string(' ', tokens[0].Start));
+                    ui.Write(new string(' ', tokens[0].Start));
                 }
 
                 // Place the cursor at the start of the first token to render.  The
@@ -964,7 +973,7 @@ namespace Microsoft.PowerShell.Linux.Host
                     // use the actual text from our input because the content sometimes
                     // excludes part of the token, e.g. the quote characters of a string.
                     Console.ForegroundColor = this.tokenColors[(int)tokens[i].Type];
-                    Console.Out.Write(text.Substring(tokens[i].Start, tokens[i].Length));
+                    ui.Write(text.Substring(tokens[i].Start, tokens[i].Length));
 
                     // Whitespace doesn't show up in the array of tokens.  Write it out here.
                     if (i != (tokens.Count - 1))
@@ -972,7 +981,7 @@ namespace Microsoft.PowerShell.Linux.Host
                         Console.ForegroundColor = this.defaultColor;
                         for (int j = (tokens[i].Start + tokens[i].Length); j < tokens[i + 1].Start; ++j)
                         {
-                            Console.Out.Write(text[j]);
+                            ui.Write(text[j].ToString());
                         }
                     }
                 }
@@ -982,8 +991,10 @@ namespace Microsoft.PowerShell.Linux.Host
                 Console.ForegroundColor = this.defaultColor;
                 for (int j = tokens[i - 1].Start + tokens[i - 1].Length; j < text.Length; ++j)
                 {
-                    Console.Out.Write(text[j]);
+                    ui.Write(text[j].ToString());
                 }
+                
+                Console.ForegroundColor = saveFGColor;
             }
             else
             {
@@ -991,13 +1002,13 @@ namespace Microsoft.PowerShell.Linux.Host
                 // happens most frequently when the first token is incomplete, like a string
                 // literal missing a closing quote.
                 this.cursor.Reset();
-                Console.Out.Write(text);
+                ui.Write(text);
             }
 
             // If characters were deleted, we must write over previously written characters
             if (text.Length < this.rendered)
             {
-                Console.Out.Write(new string(' ', this.rendered - text.Length));
+                ui.Write(new string(' ', this.rendered - text.Length));
             }
 
             this.rendered = text.Length;
@@ -1011,7 +1022,7 @@ namespace Microsoft.PowerShell.Linux.Host
         {
             ConsoleColor saveFGColor = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.Out.WriteLine("^C");
+            ui.WriteLine("^C");
             Console.ForegroundColor = saveFGColor;
         }
 

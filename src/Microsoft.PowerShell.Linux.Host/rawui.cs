@@ -123,13 +123,39 @@ namespace Microsoft.PowerShell.Linux.Host
         }
 
         /// <summary>
+        /// Cached Window Title, for systems that needs it
+        /// </summary>
+        private string title = String.Empty;
+
+        /// <summary>
         /// Gets or sets the title of the displayed window. The example
         /// maps the Console.Title property to the value of this property.
         /// </summary>
         public override string WindowTitle
         {
-            get { return Console.Title; }
-            set { Console.Title = value; }
+            get 
+            { 
+                // In Unix/Linux systems, Console.Title current results in a not-implemented
+                // exception.  In that case, we return a cached copy of title that was set earlier.
+                // Obviously, this will not work if: 1) Title was never set in PowerShell, or 2) 
+                // one sets the windows's title outside of PowerShell.  
+                string result;
+                try
+                {
+                    result = Console.Title;
+                }
+                catch (PlatformNotSupportedException)
+                {
+                    return title;
+                }
+                return result;
+            }
+
+            set 
+            { 
+                Console.Title = value;
+                title = value;
+            }
         }
 
         /// <summary>

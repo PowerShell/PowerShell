@@ -533,7 +533,6 @@ OPTIONS
         {
             // Set up the control-C handler.
             Console.CancelKeyPress += new ConsoleCancelEventHandler(this.HandleControlC);
-            //Console.TreatControlCAsInput = false;
 
             string initialCommand = String.Empty;
 
@@ -557,7 +556,7 @@ OPTIONS
 
                 this.myHost.UI.Write(ConsoleColor.White, Console.BackgroundColor, prompt);
 
-                ConsoleReadLine.ReadResult result = consoleReadLine.Read(this.myHost.Runspace, false, initialCommand);
+                ConsoleReadLine.ReadResult result = consoleReadLine.Read(this.myHost.Runspace, this.myHost.UI, false, initialCommand);
                 
                 switch(result.state)
                 {
@@ -596,9 +595,9 @@ OPTIONS
             while (resumeAction == null)
             {
                 string prompt = incompleteLine ? ">> " : "[DBG] PS >> ";
-                Console.Write(prompt);
+                this.myHost.UI.Write(prompt);
 
-                ConsoleReadLine.ReadResult result = consoleReadLine.Read(this.myHost.Runspace, true, initialCommand);
+                ConsoleReadLine.ReadResult result = consoleReadLine.Read(this.myHost.Runspace, this.myHost.UI, true, initialCommand);
                 
                 switch(result.state)
                 {
@@ -622,7 +621,7 @@ OPTIONS
                 {
                     foreach (var item in output.ReadAll())
                     {
-                        Console.WriteLine(item);
+                        this.myHost.UI.WriteLine(item.ToString());
                     }
                 };
 
@@ -679,8 +678,8 @@ OPTIONS
             // Show help message only once.
             if (!_showHelpMessage)
             {
-                Console.WriteLine("Entering debug mode. Type 'h' to get help.");
-                Console.WriteLine();
+                this.myHost.UI.WriteLine("Entering debug mode. Type 'h' to get help.");
+                this.myHost.UI.WriteLine();
                 _showHelpMessage = true;
             }
 
@@ -688,12 +687,12 @@ OPTIONS
             // pertain to this debugger execution stop point.
             if (args.Breakpoints.Count > 0)
             {
-                Console.WriteLine("Debugger hit breakpoint on:");
+                this.myHost.UI.WriteLine("Debugger hit breakpoint on:");
                 foreach (var breakPoint in args.Breakpoints)
                 {
-                    Console.WriteLine(breakPoint.ToString());
+                    this.myHost.UI.WriteLine(breakPoint.ToString());
                 }
-                Console.WriteLine();
+                this.myHost.UI.WriteLine();
             }
 
             // Script position stop information.
@@ -701,8 +700,8 @@ OPTIONS
             // there is one.
             if (args.InvocationInfo != null)
             {
-                Console.WriteLine(args.InvocationInfo.PositionMessage);
-                Console.WriteLine();
+                this.myHost.UI.WriteLine(args.InvocationInfo.PositionMessage);
+                this.myHost.UI.WriteLine();
             }
 
             Console.ForegroundColor = saveFGColor;
