@@ -67,7 +67,7 @@ namespace PSTests
 		[Fact]
         public static void TestGetProperty()
         {
-			string path = @"/filesystemobject1";
+			string path = Path.Combine(Directory.GetCurrentDirectory(),"filesystemobject1");
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
 			ProviderInfo providerInfoToSet = GetProvider();
 			fileSystemProvider.SetProviderInformation(providerInfoToSet);
@@ -80,7 +80,7 @@ namespace PSTests
 		[Fact]
         public static void TestSetProperty()
         {
-			string path = @"/filesystemobject1";
+			string path = Path.Combine(Directory.GetCurrentDirectory(),"filesystemobject1");
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
 			ProviderInfo providerInfoToSet = GetProvider();
 			fileSystemProvider.SetProviderInformation(providerInfoToSet);
@@ -92,17 +92,18 @@ namespace PSTests
 		[Fact]
         public static void TestClearProperty()
         {
+			string path = Path.Combine(Directory.GetCurrentDirectory(),"test");
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
 			ProviderInfo providerInfoToSet = GetProvider();
 			fileSystemProvider.SetProviderInformation(providerInfoToSet);
 			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
-			fileSystemProvider.ClearProperty(@"/test", new Collection<string>(){"Attributes"});
+			fileSystemProvider.ClearProperty(path, new Collection<string>(){"Attributes"});
         }
 		
 		[Fact]
         public static void TestGetContentReader()
         {
-			string path = @"/test";
+			string path = Path.Combine(Directory.GetCurrentDirectory(),"test");
 			if(File.Exists(path)) File.Delete(path);
 			File.AppendAllText(path,"test content!");
 			
@@ -119,7 +120,7 @@ namespace PSTests
 		[Fact]
         public static void TestGetContentWriter()
         {
-			string path = @"/test";
+			string path = Path.Combine(Directory.GetCurrentDirectory(),"test");
 			if(File.Exists(path)) File.Delete(path);
 			File.AppendAllText(path,"test content!");
 			
