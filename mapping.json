@@ -1042,5 +1042,6 @@
     "src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon/WinSystemCallFacade.cpp": "src/powershell-native/nativemsh/pwrshcommon/WinSystemCallFacade.cpp",
     "src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon/WinSystemCallFacade.h": "src/powershell-native/nativemsh/pwrshcommon/WinSystemCallFacade.h",
     "src/monad/monad/nttargets/assemblies/nativemsh/pwrshexe/MainEntry.cpp": "src/powershell-native/nativemsh/pwrshexe/MainEntry.cpp",
-    "src/monad/monad/nttargets/assemblies/nativemsh/pwrshexe/OutputWriter.h": "src/powershell-native/nativemsh/pwrshexe/OutputWriter.h"
+    "src/monad/monad/nttargets/assemblies/nativemsh/pwrshexe/OutputWriter.h": "src/powershell-native/nativemsh/pwrshexe/OutputWriter.h",
+    "src/monad/monad/src/graphicalhost/visualstudiopublic.snk": "src/signing/visualstudiopublic.snk"
 }
