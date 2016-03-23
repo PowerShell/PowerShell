@@ -109,6 +109,9 @@ OPTIONS
             }
             // TODO: check for input on stdin
 
+            ConsoleColor InitialForegroundColor = Console.ForegroundColor;
+            ConsoleColor InitialBackgroundColor = Console.BackgroundColor;
+
             // Create the listener and run it
             Listener listener = new Listener(initialScript, loadProfiles);
 
@@ -117,6 +120,9 @@ OPTIONS
             {
                 listener.Run();
             }
+
+            Console.ForegroundColor = InitialForegroundColor;
+            Console.BackgroundColor = InitialBackgroundColor;
 
             // Exit with the desired exit code that was set by the exit command.
             // The exit code is set in the host by the MyHost.SetShouldExit() method.
@@ -129,7 +135,7 @@ OPTIONS
         /// <summary>
         /// Used to read user input.
         /// </summary>
-        internal ConsoleReadLine consoleReadLine = new ConsoleReadLine();
+        internal ConsoleReadLine consoleReadLine;
 
         /// <summary>
         /// Holds a reference to the runspace for this interpeter.
@@ -213,6 +219,7 @@ OPTIONS
             InitialSessionState iss = InitialSessionState.CreateDefault2();
             this.myRunSpace = RunspaceFactory.CreateRunspace(this.myHost, iss);
             this.myRunSpace.Open();
+            this.consoleReadLine = new ConsoleReadLine(this.myHost.Runspace, this.myHost.UI);
 
             if (this.myRunSpace.Debugger != null)
             {
@@ -222,7 +229,6 @@ OPTIONS
                 // feature.  In order to debug Workflow script functions the debugger
                 // DebugMode must include the DebugModes.LocalScript flag.
                 this.myRunSpace.Debugger.SetDebugMode(DebugModes.LocalScript);
-
             }
 
             if (loadProfiles)
@@ -554,9 +560,9 @@ OPTIONS
                     prompt = "PS> ";
                 }
 
-                this.myHost.UI.Write(ConsoleColor.White, Console.BackgroundColor, prompt);
+                this.myHost.UI.Write(prompt);
 
-                ConsoleReadLine.ReadResult result = consoleReadLine.Read(this.myHost.Runspace, this.myHost.UI, false, initialCommand);
+                ConsoleReadLine.ReadResult result = consoleReadLine.Read(false, initialCommand);
                 
                 switch(result.state)
                 {
@@ -597,7 +603,7 @@ OPTIONS
                 string prompt = incompleteLine ? ">> " : "[DBG] PS >> ";
                 this.myHost.UI.Write(prompt);
 
-                ConsoleReadLine.ReadResult result = consoleReadLine.Read(this.myHost.Runspace, this.myHost.UI, true, initialCommand);
+                ConsoleReadLine.ReadResult result = consoleReadLine.Read(true, initialCommand);
                 
                 switch(result.state)
                 {

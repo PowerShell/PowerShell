@@ -102,6 +102,21 @@ namespace Microsoft.PowerShell.Linux.Host
         private string killBuffer = String.Empty;
 
         /// <summary>
+        /// Indicator that command input is complete
+        /// </summary>
+        private bool commandComplete;
+
+        /// <summary>
+        /// Indicator that current command is to be aborted
+        /// </summary>
+        private bool abort;
+
+        /// <summary>
+        /// Indicator that we are to redraw current command
+        /// </summary>
+        private bool redraw;
+
+        /// <summary>
         /// What Read() outputs
         /// </summary>
         public class ReadResult
@@ -122,7 +137,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         /// Initializes a new instance of the ConsoleReadLine class.
         /// </summary>
-        public ConsoleReadLine()
+        public ConsoleReadLine(Runspace runspace, PSHostUserInterface hostUI)
         {
             this.tokenColors = new ConsoleColor[]
             {
@@ -147,20 +162,17 @@ namespace Microsoft.PowerShell.Linux.Host
                     this.defaultColor,       // LineContinuation
                     this.defaultColor,       // Position
             };
+            this.powershell.Runspace = runspace;
+            this.ui = hostUI;
         }
 
         /// <summary>
         /// Read a line of text, colorizing while typing.
         /// </summary>
         /// <returns>The command line read</returns>
-        public ReadResult Read(Runspace runspace, PSHostUserInterface hostUI, bool nested, string initialValue)
+        public ReadResult Read(bool nested, string initialValue)
         {
-            this.powershell.Runspace = runspace;
-            this.ui = hostUI;
             this.Initialize();
-            bool commandComplete = false;
-            bool abort = false;
-            bool redraw = false;
 
             if (!String.IsNullOrEmpty(initialValue))
             {
@@ -168,28 +180,34 @@ namespace Microsoft.PowerShell.Linux.Host
                 this.Render();
             }
 
-            Console.TreatControlCAsInput = true;
-
             while (true)
             {
-                ConsoleKeyInfo key = Console.ReadKey(true);
+                try
+                {
+                    ConsoleKeyInfo key = Console.ReadKey(true);
 
-                // Basic Emacs-style readline implementation
-                if (key.Modifiers.HasFlag(ConsoleModifiers.Control))
-                {
-                    commandComplete = ProcessControlKey(key, nested, ref abort, ref redraw);
-                }
-                else if (key.Modifiers.HasFlag(ConsoleModifiers.Alt))
-                {
-                    commandComplete = ProcessAltKey(key);
-                }
-                // Unmodified keys
-                else
-                {
-                    commandComplete = ProcessNormalKey(key, nested);
-                }
+                    // Basic Emacs-style readline implementation
+                    if (key.Modifiers.HasFlag(ConsoleModifiers.Control))
+                    {
+                        commandComplete = ProcessControlKey(key, nested);
+                    }
+                    else if (key.Modifiers.HasFlag(ConsoleModifiers.Alt))
+                    {
+                        commandComplete = ProcessAltKey(key);
+                    }
+                    // Unmodified keys
+                    else
+                    {
+                        commandComplete = ProcessNormalKey(key, nested);
+                    }
 
-                previousKeyPress = key;
+                    previousKeyPress = key;
+                }
+                catch
+                {
+                    // if anything goes wrong, abort
+                    abort = true;
+                }
 
                 if (abort)
                 {
@@ -211,7 +229,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         /// Process Control-Key combo
         /// </summary>
-        private bool ProcessControlKey(ConsoleKeyInfo key, bool nested, ref bool abort, ref bool redraw)
+        private bool ProcessControlKey(ConsoleKeyInfo key, bool nested)
         {
             switch (key.Key)
             {
@@ -237,7 +255,7 @@ namespace Microsoft.PowerShell.Linux.Host
                     this.OnRight(false);
                     break;
                 case ConsoleKey.R:
-                    return this.ReverseSearch(nested, ref abort);
+                    return this.ReverseSearch(nested);
                 case ConsoleKey.J:
                     previousKeyPress = key;
                     return true;
@@ -247,7 +265,6 @@ namespace Microsoft.PowerShell.Linux.Host
                     return false;
                 case ConsoleKey.C:
                     this.Abort();
-                    abort = true;
                     return true;
                 case ConsoleKey.P:
                     this.OnUpArrow(nested);
@@ -365,6 +382,10 @@ namespace Microsoft.PowerShell.Linux.Host
             this.current = 0;
             this.rendered = 0;
             this.cursor = new Cursor();
+            this.commandComplete = false;
+            this.abort = false;
+            this.redraw = false;
+            Console.TreatControlCAsInput = true;
         }
 
         /// <summary>
@@ -592,7 +613,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         ///   Reverse search through history
         /// </summary>
-        private bool ReverseSearch(bool nested, ref bool abort)
+        private bool ReverseSearch(bool nested)
         {
             GetHistory(nested);
             
@@ -609,17 +630,12 @@ namespace Microsoft.PowerShell.Linux.Host
             while (true)
             {
                 OnEscape();
-                ConsoleColor saveFGColor = Console.ForegroundColor;
                 ui.Write("(");
-                Console.ForegroundColor = ConsoleColor.Red;
-                ui.Write(String.Format("{0}", failed));
-                Console.ForegroundColor = saveFGColor;
-                ui.Write(String.Format("reverse-i-search)'{0}", searchString.ToString()));
+                ui.Write(ConsoleColor.Red, Console.BackgroundColor, $"{failed}");
+                ui.Write($"bck-i-search)'{searchString}");
                 this.current = this.cursor.GetPosition();
                 ui.Write("': ");
-                Console.ForegroundColor = ConsoleColor.Green;
-                ui.Write(String.Format("{0}", searchResult)); 
-                Console.ForegroundColor = saveFGColor;
+                ui.Write(ConsoleColor.Green, Console.BackgroundColor, $"{searchResult}"); 
                 this.rendered = this.cursor.GetPosition();
                 this.cursor.Place(this.current);
 
@@ -635,7 +651,6 @@ namespace Microsoft.PowerShell.Linux.Host
                             break;
                         case ConsoleKey.C:
                             Abort();
-                            abort = true;
                             return true;
                         default:
                             terminateSearch = true;
@@ -695,7 +710,7 @@ namespace Microsoft.PowerShell.Linux.Host
                     string result = reverseSearchHistory(searchString.ToString(), ref searchPos);
                     if (String.IsNullOrEmpty(result))
                     {
-                        failed = "failed ";
+                        failed = "failed-";
                     }
                     else
                     {
@@ -1024,6 +1039,7 @@ namespace Microsoft.PowerShell.Linux.Host
             Console.ForegroundColor = ConsoleColor.Red;
             ui.WriteLine("^C");
             Console.ForegroundColor = saveFGColor;
+            this.abort = true;
         }
 
         /// <summary>
