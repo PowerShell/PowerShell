@@ -391,7 +391,7 @@ function Copy-SubmoduleFiles {
     
     [CmdletBinding()]
     param(
-        [string]$mappingFilePath = "$PSScriptRoot\mapping.json",
+        [string]$mappingFilePath = "$PSScriptRoot/mapping.json",
         [switch]$ToSubmodule
     )
 
@@ -432,7 +432,7 @@ function Copy-SubmoduleFiles {
 function New-MappingFile
 {
     param(
-        [string]$mappingFilePath = "$PSScriptRoot\mapping.json"
+        [string]$mappingFilePath = "$PSScriptRoot/mapping.json"
     )
 
     function Get-MappingPath([string]$project, [string]$path)
@@ -477,4 +477,73 @@ function New-MappingFile
     }
 
     Set-Content -Value ($mapping | ConvertTo-Json) -Path $mappingFilePath -Encoding Ascii
+}
+
+function Get-InvertedOrderedMap
+{
+    param(
+        $h
+    )
+    $res = [ordered]@{}
+    foreach ($q in $h.GetEnumerator()) {
+        if ($res.Contains($q.Value))
+        {
+            throw "Cannot invert hashtable: duplicated key $($q.Value)"
+        }
+
+        $res[$q.Value] = $q.Key
+    }
+    return $res
+}
+
+<#
+.EXAMPLE Send-GitDiffToSd -diffArg1 45555786714d656bd31cbce67dbccb89c433b9cb -diffArg2 45555786714d656bd31cbce67dbccb89c433b9cb~1 -pathToAdmin d:\e\ps_dev\admin 
+Apply a signle commit to admin folder
+#>
+function Send-GitDiffToSd
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]$diffArg1,
+        [Parameter(Mandatory)]
+        [string]$diffArg2,
+        [Parameter(Mandatory)]
+        [string]$pathToAdmin,
+        [string]$mappingFilePath = "$PSScriptRoot/mapping.json",
+        [switch]$WhatIf
+    )
+
+    $patchPath = Join-Path (get-command git).Source ..\..\bin\patch
+    $m = cat -Raw $mappingFilePath | ConvertFrom-Json | Convert-PSObjectToHashtable
+    $affectedFiles = git diff --name-only $diffArg1 $diffArg2
+    $rev = Get-InvertedOrderedMap $m
+    foreach ($file in $affectedFiles) {
+        if ($rev.Contains)
+        {
+            $sdFilePath = Join-Path $pathToAdmin $rev[$file].Substring('src/monad/'.Length)
+            $diff = git diff $diffArg1 $diffArg2 -- $file
+            if ($diff)
+            {
+                Write-Host -Foreground Green "Apply patch to $sdFilePath"
+                Set-Content -Value $diff -Path $env:TEMP\diff -Encoding Ascii
+                if ($WhatIf)
+                {
+                    Write-Host -Foreground Green "Patch content"
+                    cat $env:TEMP\diff
+                }
+                else 
+                {
+                    & $patchPath --binary -p1 $sdFilePath $env:TEMP\diff        
+                }
+            }
+            else 
+            {
+                Write-Host -Foreground Green "No changes in $file"
+            }
+        }
+        else 
+        {
+            Write-Host -Foreground Green "Ignore changes in $file, because there is no mapping for it"
+        }
+    }    
 }
