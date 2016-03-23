@@ -1030,5 +1030,17 @@
     "src/monad/monad/src/utils/tracing/TracingGen.cs":  "src/System.Management.Automation/utils/tracing/TracingGen.cs",
     "src/monad/monad/src/utils/Verbs.cs":  "src/System.Management.Automation/utils/Verbs.cs",
     "src/monad/monad/src/utils/WindowsErrorReporting.cs":  "src/System.Management.Automation/utils/WindowsErrorReporting.cs",
-    "src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/TypeCatalogGen/TypeCatalogGen.cs":  "src/TypeCatalogGen/TypeCatalogGen.cs"
+    "src/monad/monad/nttargets/assemblies/core/PSAssemblyLoadContext/TypeCatalogGen/TypeCatalogGen.cs":  "src/TypeCatalogGen/TypeCatalogGen.cs",
+    "src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon/ClrHostWrapper.h": "src/powershell-native/nativemsh/pwrshcommon/ClrHostWrapper.h",
+    "src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon/ConfigFileReader.cpp": "src/powershell-native/nativemsh/pwrshcommon/ConfigFileReader.cpp",
+    "src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon/ConfigFileReader.h": "src/powershell-native/nativemsh/pwrshcommon/ConfigFileReader.h",
+    "src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon/IPwrshCommonOutput.h": "src/powershell-native/nativemsh/pwrshcommon/IPwrshCommonOutput.h",
+    "src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon/NativeMsh.h": "src/powershell-native/nativemsh/pwrshcommon/NativeMsh.h",
+    "src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon/NativeMshConstants.h": "src/powershell-native/nativemsh/pwrshcommon/NativeMshConstants.h",
+    "src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon/pwrshcommon.cpp": "src/powershell-native/nativemsh/pwrshcommon/pwrshcommon.cpp",
+    "src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon/SystemCallFacade.h": "src/powershell-native/nativemsh/pwrshcommon/SystemCallFacade.h",
+    "src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon/WinSystemCallFacade.cpp": "src/powershell-native/nativemsh/pwrshcommon/WinSystemCallFacade.cpp",
+    "src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon/WinSystemCallFacade.h": "src/powershell-native/nativemsh/pwrshcommon/WinSystemCallFacade.h",
+    "src/monad/monad/nttargets/assemblies/nativemsh/pwrshexe/MainEntry.cpp": "src/powershell-native/nativemsh/pwrshexe/MainEntry.cpp",
+    "src/monad/monad/nttargets/assemblies/nativemsh/pwrshexe/OutputWriter.h": "src/powershell-native/nativemsh/pwrshexe/OutputWriter.h"
 }
