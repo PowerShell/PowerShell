@@ -19,15 +19,19 @@ namespace PSTests
     [Collection("AssemblyLoadContext")]
     public static class FileSystemProviderTests
     {
-		private static ProviderInfo GetProvider()
-        {
+		private static ExecutionContext GetExecutionContext()
+		{
 			CultureInfo currentCulture = CultureInfo.CurrentCulture;
             PSHost hostInterface =  new DefaultHost(currentCulture,currentCulture);
             RunspaceConfiguration runspaceConfiguration =  RunspaceConfiguration.Create();
             InitialSessionState iss = InitialSessionState.CreateDefault2();
-			
             AutomationEngine engine = new AutomationEngine(hostInterface, runspaceConfiguration, iss);
             ExecutionContext executionContext = new ExecutionContext(engine, hostInterface, iss);
+			return executionContext;
+		}
+		private static ProviderInfo GetProvider()
+        {
+            ExecutionContext executionContext = GetExecutionContext();
             SessionStateInternal sessionState = new SessionStateInternal(executionContext);
 			
 			SessionStateProviderEntry providerEntry = new SessionStateProviderEntry("FileSystem",typeof(FileSystemProvider), null);
@@ -60,56 +64,82 @@ namespace PSTests
 			Assert.NotEqual(FileSystemProvider.Mode(PSObject.AsPSObject(fileSystemObject)),String.Empty);
         }
 		
-		[Fact(Skip = "Need mock")]
+		[Fact]
         public static void TestGetProperty()
         {
 			string path = @"/filesystemobject1";
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
 			ProviderInfo providerInfoToSet = GetProvider();
 			fileSystemProvider.SetProviderInformation(providerInfoToSet);
+			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
 			FileInfo fileSystemObject1 = new FileInfo(path);
 			fileSystemProvider.SetProperty(path, PSObject.AsPSObject(fileSystemObject1));
 			fileSystemProvider.GetProperty(path, new Collection<string>(){"Attributes"});
         }
 		
-		[Fact(Skip = "Need mock")]
+		[Fact]
         public static void TestSetProperty()
         {
 			string path = @"/filesystemobject1";
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
 			ProviderInfo providerInfoToSet = GetProvider();
 			fileSystemProvider.SetProviderInformation(providerInfoToSet);
+			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
 			FileInfo fileSystemObject1 = new FileInfo(path);
-			fileSystemProvider.SetProperty(@"/root", PSObject.AsPSObject(fileSystemObject1));
+			fileSystemProvider.SetProperty(path, PSObject.AsPSObject(fileSystemObject1));
         }
 		
-		[Fact(Skip = "Need mock")]
+		[Fact]
         public static void TestClearProperty()
         {
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
+			ProviderInfo providerInfoToSet = GetProvider();
+			fileSystemProvider.SetProviderInformation(providerInfoToSet);
+			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
 			fileSystemProvider.ClearProperty(@"/test", new Collection<string>(){"Attributes"});
         }
 		
-		[Fact(Skip = "Need mock")]
+		[Fact]
         public static void TestGetContentReader()
         {
+			string path = @"/test";
+			if(File.Exists(path)) File.Delete(path);
+			File.AppendAllText(path,"test content!");
+			
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
-			IContentReader contentReader = fileSystemProvider.GetContentReader(@"/test");
+			ProviderInfo providerInfoToSet = GetProvider();
+			fileSystemProvider.SetProviderInformation(providerInfoToSet);
+			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
+			
+			IContentReader contentReader = fileSystemProvider.GetContentReader(path);
 			Assert.NotNull(contentReader);
+			File.Delete(path);
         }
 		
-		[Fact(Skip = "Need mock")]
+		[Fact]
         public static void TestGetContentWriter()
         {
+			string path = @"/test";
+			if(File.Exists(path)) File.Delete(path);
+			File.AppendAllText(path,"test content!");
+			
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
-			IContentWriter contentWriter = fileSystemProvider.GetContentWriter(@"/test");
+			ProviderInfo providerInfoToSet = GetProvider();
+			fileSystemProvider.SetProviderInformation(providerInfoToSet);
+			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
+			
+			IContentWriter contentWriter = fileSystemProvider.GetContentWriter(path);
 			Assert.NotNull(contentWriter);
+			File.Delete(path);
         }
 		
-		[Fact(Skip = "Need mock")]
+		[Fact]
         public static void TestClearContent()
         {
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
+			ProviderInfo providerInfoToSet = GetProvider();
+			fileSystemProvider.SetProviderInformation(providerInfoToSet);
+			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
 			fileSystemProvider.ClearContent(@"/test");
         }
     }
