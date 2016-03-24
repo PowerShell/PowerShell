@@ -4,12 +4,17 @@
     "description": "Stub to satisfy PowerShell compilation",
     "authors": [ "garretts", "andschwa" ],
 
+    "compilationOptions": {
+        "allowUnsafe": true,
+        "define": [ "_LINUX" ]
+    },
+
     "frameworks": {
         "netstandard1.5": {
             "imports": [ "dnxcore50" ],
             "dependencies": {
                 "NETStandard.Library": "1.0.0-rc3-23819",
-                "System.Security.SecureString": "1.0.0-*"
+                "System.Security.SecureString": "1.0.0-*",
             }
         },
         "dnx451": {

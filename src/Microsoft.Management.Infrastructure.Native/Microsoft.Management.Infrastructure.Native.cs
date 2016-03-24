@@ -1,9 +1,13 @@
-using Microsoft.Win32.SafeHandles;
+using Micros.Win32.SafeHandles;
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Security;
+using System.Globalization;
+using NativeObject;
 
 /* MI_ primitive types. Rather than define structs, this is one alternative */
 using MI_Boolean = System.Byte; // unsigned char
@@ -21,7 +25,7 @@ using MI_Char16  = System.UInt16; // unsigned short
 using MI_Char    = System.Char;  // char (or wchar_t)
 // /Primitive MI data types represented in C#
 
-namespace Microsoft.Win32.SafeHandles
+namespace Micros.Win32.SafeHandles
 {
     internal class SafeHandleZeroOrMinusOneIsInvalid
     {
@@ -30,787 +34,788 @@ namespace Microsoft.Win32.SafeHandles
 
 namespace Microsoft.Management.Infrastructure.Native
 {
-    internal class MiNative
-    {
-        // Reference to the MI.h shared object library
-        public const string LIBMI = "libmi.so";
-
-#region structs
-        // struct MI_SchemaDecl
-        // {
-        //     /* Qualifier declarations */
-        //     MI_QualifierDecl const qualifierDecls;
-        //     uint numQualifierDecls;
-
-        //     /* Class declarations */
-        //     MI_ClassDecl const classDecls;
-        //     uint numClassDecls;
-        // }
-
-        // struct MI_ParameterDecl /* extends MI_FeatureDecl */
-        // {
-        //     /* Fields inherited from MI_FeatureDecl */
-        //     uint flags;
-        //     uint code;
-        //     const string name;
-        //     MI_Qualifier const qualifiers;
-        //     uint numQualifiers;
-
-        //     /* Type of this field */
-        //     uint type;
-
-        //     /* Name of reference class */
-        //     const string className;
-
-        //     /* Array subscript */
-        //     uint subscript;
-
-        //     /* Offset of this field within the structure */
-        //     uint offset;
-        // }
-
-        // struct MI_MethodDecl /* extends MI_ObjectDecl */
-        // {
-        //     /* Fields inherited from MI_FeatureDecl */
-        //     uint flags;
-        //     uint code;
-        //     const string* name;
-        //     struct MI_Qualifier const qualifiers;
-        //     uint numQualifiers;
-
-        //     /* Fields inherited from MI_ObjectDecl */
-        //     struct MI_ParameterDecl const parameters;
-        //     uint numParameters;
-        //     uint size;
-
-        //     /* PostResult type of this method */
-        //     uint returnType;
-
-        //     /* Ancestor class that first defined a property with this name */
-        //     const string origin;
-
-        //     /* Ancestor class that last defined a property with this name */
-        //     const string propagator;
-
-        //     /* Pointer to scema this class belongs to */
-        //     struct MI_SchemaDecl const schema;
-
-        //     /* Pointer to extrinsic method */
-        //     MI_MethodDecl_Invoke function;
-        // }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_PropertyDecl /* extends MI_ParameterDecl */
-        {
-            /* Fields inherited from MI_FeatureDecl */
-            public uint flags;
-            public uint code;
-            public string name;
-            public IntPtr qualifiers;  //MI_Qualifier
-            public uint numQualifiers;
-
-            /* Fields inherited from MI_ParameterDecl */
-            public uint type;
-            public string className;
-            public uint subscript;
-            public uint offset;
-
-            /* Ancestor class that first defined a property with this name */
-            public string origin;
-
-            /* Ancestor class that last defined a property with this name */
-            public string propagator;
-
-            /* Value of this property */
-            public IntPtr value;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_Qualifier
-        {
-            /* Qualifier name */
-            public string name;
-
-            /* Qualifier type */
-            public uint type;
-
-            /* Qualifier flavor */
-            public uint flavor;
-
-            /* Pointer to value */
-            IntPtr value;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_ClassDecl /* extends MI_ObjectDecl */
-        {
-            // /* Fields inherited from MI_FeatureDecl */
-            //public uint flags;
-            //public uint code;
-            //public string name;
-            //public MI_Qualifier qualifiers;
-            //public uint numQualifiers;
-
-            // /* Fields inherited from MI_ObjectDecl */
-            //public IntPtr properties;  //MI_PropertyDecl 
-            //public uint numProperties;
-            // uint size;
-
-            // /* Name of superclass */
-            // const string superClass;
-
-            // /* Superclass declaration */
-            // MI_ClassDecl const superClassDecl;
-
-            // /* The methods of this class */
-            // struct MI_MethodDecl const methods;
-            // uint numMethods;
-
-            // /* Pointer to scema this class belongs to */
-            // struct MI_SchemaDecl const schema;
-
-            // /* Provider functions */
-            // const MI_ProviderFT providerFT;
-
-            // /* Owning MI_Class object, if any.  NULL if static classDecl, -1 is from a dynamic instance */
-            // MI_Class owningClass;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_QualifierSet
-        {
-            UInt64 reserved1;
-            IntPtr reserved2;
-
-            readonly MI_QualifierSetFT ft;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_ParameterSet
-        {
-            UInt64 reserved1;
-            IntPtr reserved2;
-
-            readonly MI_ParameterSetFT ft;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_ParameterSetFT
-        {
-            public GetMethodReturnTypeDelegate GetMethodReturnType;
-            public GetParameterCountDelegate GetParameterCount;
-            public GetParameterAtDelegate GetParameterAt;
-            public GetParameterDelegate GetParameter;
-        }
-
-        public delegate MiResult GetMethodReturnTypeDelegate(
-                MI_ParameterSet self,
-                out MiType returnType,
-                out MI_QualifierSet qualifierSet);
-
-        public delegate MiResult GetParameterCountDelegate(
-                MI_ParameterSet self,
-                out uint count);
-
-        public delegate MiResult GetParameterAtDelegate(
-                MI_ParameterSet self,
-                uint index,
-                out IntPtr name,
-                MiType parameterType,
-                out IntPtr referenceClass,
-                out MI_QualifierSet qualifierSet);
-
-        public delegate MiResult GetParameterDelegate(
-                MI_ParameterSet self,
-                string name,
-                out MiType parameterType,
-                out IntPtr referenceClass,
-                out MI_QualifierSet qualifierSet,
-                out uint index);
-
-        [StructLayout(LayoutKind.Sequential)]
-        struct MI_QualifierSetFT
-        {
-            public GetQualifierCountDelegate GetQualifierCount;
-            public GetQualifierAtDelegate GetQualifierAt;
-            public GetQualifierDelegate GetQualifier;
-        }
-
-        public delegate MiResult GetQualifierCountDelegate(
-            MI_QualifierSet self,
-            out uint count);
-
-        public delegate MiResult GetQualifierAtDelegate(
-            MI_QualifierSet self,
-            uint index,
-            out IntPtr name,  // MI_Char ** name
-            out MiType qualifierType,
-            out uint qualifierFlags,    /* scope information */
-            out MiValue qualifierValue
-            );
-
-        public delegate MiResult GetQualifierDelegate(
-            MI_QualifierSet self,
-            string name,
-            out MiType qualifierType,
-            out uint qualifierFlags,    /* scope information */
-            out MiValue qualifierValue,
-            out uint index
-            );
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_ClassFT
-        {
-            public GetClassNameDelegate GetClassName;
-            public GetNameSpaceDelegate GetNameSpace;
-            public GetServerNameDelegate GetServerName;
-            public GetElementCountDelegate GetElementCount;
-            public GetElementDelegate GetElement;
-            public GetElementAtDelegate GetElementAt;
-            public GetClassQualifierSetDelegate GetClassQualifierSet;
-            public GetMethodCountDelegate GetMethodCount;
-            public GetMethodAtDelegate GetMethodAt;
-            public GetMethodDelegate GetMethod;
-            public GetParentClassNameDelegate GetParentClassName;
-            public GetParentClassDelegate GetParentClass;
-            public DeleteDelegate Delete;
-            public CloneDelegate Clone;
-        }
-
-        /* MI_ClassFT functions */
-        public delegate MiResult GetClassNameDelegate(
-            MI_Class self,
-            out IntPtr className);
-
-        public delegate MiResult GetNameSpaceDelegate(
-            MI_Class self,
-            out IntPtr nameSpace);
-
-        public delegate MiResult GetServerNameDelegate(
-            MI_Class self,
-            out IntPtr serverName);
-
-        public delegate MiResult GetElementCountDelegate(
-            MI_Class self,
-            out uint count);
-
-        public delegate MiResult GetElementDelegate(
-            MI_Class self,
-            string name,
-            out MiValue value,
-            out byte valueExists,
-            out MiType type,
-            out IntPtr referenceClass,
-            out MI_QualifierSet qualifierSet,
-            out uint flags,
-            out uint index);
-
-        public delegate MiResult GetElementAtDelegate(
-            MI_Class self, 
-            uint index,
-            out IntPtr name,
-            out MiValue value,
-            out byte valueExists,
-            out MiType type,
-            out IntPtr referenceClass,
-            out MI_QualifierSet qualifierSet,
-            out uint flags);
-
-        public delegate MiResult GetClassQualifierSetDelegate(
-            MI_Class self,
-            out MI_QualifierSet qualifierSet
-            );
-
-        public delegate MiResult GetMethodCountDelegate(
-            MI_Class self,
-            out uint count);
-
-        public delegate MiResult GetMethodAtDelegate(
-            MI_Class self,
-            uint index,
-            out IntPtr name,
-            out MI_QualifierSet qualifierSet,
-            out MI_ParameterSet parameterSet  //TODO: Add MI_ParameterSet
-            );
-
-        public delegate MiResult GetMethodDelegate(
-            MI_Class self,
-            string name,
-            out MI_QualifierSet qualifierSet,
-            out MI_ParameterSet parameterSet,
-            out uint index
-            );
-
-        public delegate MiResult GetParentClassNameDelegate(
-            MI_Class self,
-            out IntPtr name);
-
-        public delegate MiResult GetParentClassDelegate(
-            MI_Class self,
-            out IntPtr parentClass);
-
-        public delegate MiResult DeleteDelegate(
-            out MI_Class self);
-
-        public delegate MiResult CloneDelegate(
-            MI_Class self,
-            out IntPtr newClass);
-
-        /** The MI_Instance function table */
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_InstanceFT
-        {
-            public CloneDelegate Clone;
-            public DestructDelegate Destruct;
-            public DeleteDelegate Delete;
-            public IsADelegate IsA;
-            public GetClassNameDelegate GetClassName;
-            public SetNameSpaceDelegate SetNameSpace;
-            public GetNameSpaceDelegate GetNameSpace;
-            public GetElementCountDelegate GetElementCount;
-            public AddElementDelegate AddElement;
-            public SetElementDelegate SetElement;
-            public SetElementAtDelegate SetElementAt;
-            public GetElementDelegate GetElement;
-            public GetElementAtDelegate GetElementAt;
-            public ClearElementDelegate ClearElement;
-            public ClearElementAtDelegate ClearElementAt;
-            public GetServerNameDelegate GetServerName;
-            public SetServerNameDelegate SetServerName;
-            public GetClassDelegate GetClass;
-            // MI_InstanceFT delegate signatures
-            public delegate MiResult CloneDelegate(MI_Instance self, out IntPtr newInstance);
-            public delegate MiResult DestructDelegate(ref MI_Instance self);
-            public delegate MiResult DeleteDelegate(ref MI_Instance self); //ref MI_Instance self);
-            public delegate MiResult IsADelegate(MI_Instance self, MI_ClassDecl classDecl, out byte flag);
-            public delegate MiResult GetClassNameDelegate(IntPtr self, out IntPtr className);
-            public delegate MiResult GetNameSpaceDelegate(IntPtr self, out IntPtr nameSpace);
-            public delegate MiResult SetNameSpaceDelegate(IntPtr self, [MarshalAs(UnmanagedType.LPStr)] string nameSpace);
-            public delegate MiResult GetElementCountDelegate(IntPtr self, out uint count);
-            public delegate MiResult AddElementDelegate(
-                    IntPtr self,
-                    IntPtr name,
-                    IntPtr val, /* _In_opt_ */
-                    uint type,
-                    MiFlags flags);  // TODO: Implement MiFlags
-            public delegate MiResult SetElementDelegate(
-                    out MI_Instance self,
-                    string name,
-                    uint val, //TODO: Implement MiValue
-                    MiType type,
-                    uint flags);
-            public delegate MiResult SetElementAtDelegate(
-                    ref IntPtr self,
-                    uint index,
-                    MiValue val,
-                    MiType type,
-                    uint flags);
-            public delegate MiResult GetElementDelegate(
-                    IntPtr self,
-                    string name,
-                    out IntPtr val,
-                    out IntPtr type,
-                    out MiFlags flags,
-                    out uint index);
-            public delegate MiResult GetElementAtDelegate(
-                     IntPtr self,
-                     uint index,
-                     out IntPtr name,  //IntPtr because of a `free(): invalid pointer` error using MarshalAs(UnmanagedType.LPStr)
-                     IntPtr val,
-                     out MiType type,
-                     out MiFlags flags);
-            public delegate MiResult ClearElementDelegate(IntPtr self, string name);
-            public delegate MiResult ClearElementAtDelegate(ref MI_Instance self, uint index);
-            public delegate MiResult GetServerNameDelegate(IntPtr self, out IntPtr name);
-            public delegate MiResult SetServerNameDelegate(IntPtr self, [MarshalAs(UnmanagedType.LPStr)] string name);
-            public delegate MiResult GetClassDelegate(MI_Instance self, out IntPtr instanceClass);
-            // /Signatures
-        }//InstanceFT
-
-
-        // MI_ApplicationFT struct mirroring the function table created in the native layer.
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_ApplicationFT
-        {
-            public CloseDelegate Close;
-            public NewSessionDelegate NewSession;
-            public NewHostedProviderDelegate NewHostedProvider;
-            public NewInstanceDelegate NewInstance;
-            public NewDestinationOptionsDelegate NewDestinationOptions;
-            public NewOperationOptionsDelegate NewOperationOptions;
-            public NewSubscriptionDeliveryOptionsDelegate NewSubscriptionDeliveryOptions;
-            public NewSerializerDelegate NewSerializer;
-            public NewDeserializerDelegate NewDeserializer;
-            public NewInstanceFromClassDelegate NewInstanceFromClass;
-            // MI_ApplicationFT function table signatures
-            public delegate MiResult CloseDelegate(ref MI_Application application);
-            public delegate MiResult NewSessionDelegate(MI_Application application,
-                                                IntPtr protocol, // _In_Opt_z_ const MI_Char *protocol
-                                                IntPtr destination, // _In_Opt_z_ const MI_Char *destination
-                                                IntPtr options, // _In_Opt_z_ MI_DestinationOptions *options
-                                                IntPtr callbacks, // _In_Opt_z_ MI_SessionCallbacks *callbacks
-                                                out IntPtr extendedError, // outptr_opt_result_maybenull_ MI_Instance **
-                                                out IntPtr session); // TODO: create MI_Session struct to replace IntPtr
-            public delegate MiResult NewHostedProviderDelegate(MI_Application application,
-                                                string namespaceName,
-                                                string providerName,
-                                                IntPtr mi_Main, //MI_MainFunction mi_Main, //TODO: MI_MainFunction struct
-                                                out IntPtr extendedError,
-                                                out IntPtr provider); // TODO: MI_HostedProvider struct *provider
-            public delegate MiResult NewInstanceDelegate(ref MI_Application application,
-                                                string className,
-                                                IntPtr RTTI,  //TODO: SHould be MI_ClassDecl
-                                                out IntPtr instance); // MI_Instance **instance
-            public delegate MiResult NewDestinationOptionsDelegate(MI_Application application,
-                                                out IntPtr options); // TODO: create MI_DestinationOptions struct
-            public delegate MiResult NewOperationOptionsDelegate(MI_Application application,
-                                                [MarshalAs(UnmanagedType.U1)] bool mustUnderstand,
-                                                out MI_OperationOptions options);
-            public delegate MiResult NewSubscriptionDeliveryOptionsDelegate(MI_Application application,
-                                                MiSubscriptionDeliveryType deliveryType,
-                                                out IntPtr deliveryOptions); // TODO: create MI_SubscriptionDeliveryOptions struct
-            public delegate MiResult NewSerializerDelegate(MI_Application application,
-                                                uint flags,
-                                                string format,
-                                                out MI_Serializer serializer); // TODO: create MI_Serializer struct
-            public delegate MiResult NewDeserializerDelegate(MI_Application application,
-                                                uint flags,
-                                                string format,
-                                                out MI_Deserializer deserializer); // TODO: create MI_Serializer struct
-            public delegate MiResult NewInstanceFromClassDelegate(MI_Application application,
-                                                string className,
-                                                MI_Class classObject,
-                                                out IntPtr instance); // MI_Instance **instance
-
-        }
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_Instance
-        {
-            public IntPtr ft; /*  the function table of MI_Instance related functions */
-            public IntPtr classDecl; // TODO: Implement ClassDecl struct and assign as IntPtr
-            public string serverName;
-            public string nameSpace;
-            public IntPtr reserved1;
-            public IntPtr reserved2;
-            public IntPtr reserved3;
-            public IntPtr reserved4;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_Application
-        {
-            public uint reserved1;
-            public IntPtr reserved2;
-            public IntPtr ft; /* the function table of MI_Application related functions */
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        struct MI_Operation
-        {
-            public uint reserved1;
-            public IntPtr reserved2;
-            public IntPtr ft; /* The function table of MI_Operations */
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_Session
-        {
-            public uint reserved1;
-            public IntPtr reserved2;
-            public IntPtr ft; /* the function table of MI_Session related functions */
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_SubscriptionDeliveryOptions
-        {
-            public uint reserved1;
-            public IntPtr reserved2;
-            public IntPtr ft; /* The function table of MI_SubscriptionDeliveryOptions related functions */
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_Serializer
-        {
-            uint reserved1;
-            IntPtr reserved2;
-        }
-
-        [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-        public struct MI_Deserializer
-        {
-            public UInt64 reserved1;
-            public IntPtr reserved2;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_Class
-        {
-            public IntPtr ft;
-            public IntPtr classDecl;
-            public string nameSpace;
-            public string serverName;
-            public IntPtr reserved;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_ClassA
-        {
-            public IntPtr data;
-            public uint size;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_OperationOptions
-        {
-            public uint reserved1;
-            public IntPtr reserved2;
-            public IntPtr ft;   /*  the function table of MI_OperationOptions related functions */
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MI_OperationOptionsFT
-        {
-            public delegate MiResult Delete(out MI_OperationOptions options);
-
-            public delegate MiResult SetString(out MI_OperationOptions options,
-                                               string optionName,
-                                               string value,
-                                               IntPtr flags);
-
-            public delegate MiResult SetNumber(out MI_OperationOptions options,
-                                               string optionName,
-                                               uint value,
-                                               uint flags);
-
-            public delegate MiResult SetCustomOption(MI_OperationOptions options,
-                                               string optionName,
-                                               MiType valueType,
-                                               IntPtr value, // MiValue *value
-                                               char mustComply,
-                                               uint flags);
-
-            public delegate MiResult GetString(out MI_OperationOptions options,
-                                               string optionName,
-                                               IntPtr value, // MI_Char **value
-                                               out uint index,
-                                               out uint flags);
-
-            public delegate MiResult GetNumber(MI_OperationOptions options,
-                                               string optionName,
-                                               out uint value,
-                                               out uint index,
-                                               out uint flags);
-
-            public delegate MiResult GetOptionCount(MI_OperationOptions options,
-                                               uint count);
-
-            public delegate MiResult GetOptionAt(MI_OperationOptions options,
-                                               string optionName,
-                                               out IntPtr value, // MiValue *value
-                                               out uint index,
-                                               out uint flags);
-
-            public delegate MiResult GetOption(MI_OperationOptions options,
-                                               string optionName,
-                                               out IntPtr value, // MiValue *value
-                                               out MiType type,
-                                               out uint index,
-                                               out uint flags);
-
-            public delegate MiResult GetEnabledChannels(MI_OperationOptions options,
-                                               string optionName,
-                                               out uint channels, // _Out_writes_to_opt_(bufferReadLength, *channelCount)
-                                               out uint bufferLength,
-                                               out uint channelCount,
-                                               out uint flags);
-
-            public delegate MiResult Clone(MI_OperationOptions self,
-                                               out MI_OperationOptions newOperationOptions);
-
-            public delegate MiResult SetInterval(MI_OperationOptions options,
-                                               string optionName,
-                                               out IntPtr value, // TODO: create MI_Interval struct
-                                               out uint index, // optional
-                                               out uint flags); // optional
-        }
-
-        struct MI_SessionFT
-        {
-            public delegate MiResult Close(
-                    MI_Session session,
-                    IntPtr completionContext,
-                    IntPtr completionCallback); /* _In_opt_ void (MI_CALL *completionCallback)(_In_opt_ void *completionContext)) */
-
-            public delegate MiResult GetApplication(
-                    MI_Session session,
-                    out MI_Application application);
-
-            public delegate void GetInstance(
-                    MI_Session session,
-                    uint flags,
-                    MI_OperationOptions options,
-                    string namespaceName,
-                    MI_Instance inboundInstance,
-                    OperationCallbacks callbacks,
-                    MI_Operation operation);
-
-            public delegate void ModifyInstance(
-                    MI_Session session,
-                    uint flags,
-                    MI_OperationOptions options,
-                    string namespaceName,
-                    MI_Instance inboundInstance,
-                    OperationCallbacks callbacks,
-                    out MI_Operation operation);
-
-            public delegate void CreateInstance(
-                    MI_Session session,
-                    uint flags,
-                    MI_OperationOptions options,
-                    string namespaceName,
-                    string inboundInstance,
-                    OperationCallbacks callbacks,
-                    out MI_Operation operation);
-
-            public delegate void DeleteInstance(
-                    MI_Session session,
-                    uint flags,
-                    MI_OperationOptions options,
-                    string namespaceName,
-                    MI_Instance inboundInstance,
-                    OperationCallbacks callbacks,
-                    out MI_Operation operation);
-
-            public delegate void Invoke(
-                    MI_Session session,
-                    uint flags,
-                    MI_OperationOptions options,
-                    string namespaceName,
-                    string className,
-                    string methodName,
-                    MI_Instance inboundInstance,
-                    MI_Instance inboundProperties,
-                    OperationCallbacks callbacks,
-                    MI_Operation operation);
-
-            public delegate void EnumerateInstances(
-                    MI_Session session,
-                    uint flags,
-                    MI_OperationOptions options,
-                    string namespaceName,
-                    string className,
-                    byte keysOnly,
-                    OperationCallbacks callbacks,
-                    out MI_Operation operation);
-
-            public delegate void QueryInstances(
-                    MI_Session session,
-                    uint flags,
-                    MI_OperationOptions options,
-                    string namespaceName,
-                    string queryDialect,
-                    string queryExpression,
-                    OperationCallbacks callbacks,
-                    out MI_Operation operation);
-
-            public delegate void AssociatorInstances(
-                    MI_Session session,
-                    uint flags,
-                    MI_OperationOptions options,
-                    string namespaceName,
-                    MI_Instance instanceKeys,
-                    string assocClass,
-                    string resultClass,
-                    string role,
-                    string resultRole,
-                    byte keysOnly,
-                    OperationCallbacks callbacks,
-                    out MI_Operation operation);
-
-            public delegate void ReferenceInstances(
-                    MI_Session session,
-                    uint flags,
-                    MI_OperationOptions options,
-                    string namespaceName,
-                    MI_Instance instanceKeys,
-                    string resultClass,
-                    string role,
-                    byte keysOnly,
-                    OperationCallbacks callbacks,
-                    out MI_Operation operation);
-
-            public delegate void Subscribe(
-                    MI_Session session,
-                    uint flags,
-                    MI_OperationOptions options,
-                    string namespaceName,
-                    string queryDialect,
-                    string queryExpression,
-                    MI_SubscriptionDeliveryOptions deliverOptions,
-                    OperationCallbacks callbacks,
-                    out MI_Operation operation);
-
-            public delegate void GetClass(
-                    MI_Session session,
-                    uint flags, 
-                    MI_OperationOptions options,
-                    string namespaceName,
-                    string className,
-                    OperationCallbacks callbacks,
-                    out MI_Operation operation);
-
-            public delegate void EnumerateClasses(
-                    MI_Session session,
-                    uint flags,
-                    MI_OperationOptions options,
-                    string namespaceName,
-                    string className,
-                    byte classNamesOnly,
-                    OperationCallbacks callbacks,
-                    out MI_Operation operation);
-
-            public delegate void TestConnection(
-                    MI_Session session,
-                    uint flags,
-                    OperationCallbacks callbacks,
-                    out MI_Operation operation
-                );
-        }
-#endregion //structs
-
-#region PInvokes
-
-        //// MI_INLINE MI_Result MI_Application_NewOperationOptions(
-        ////     _In_  MI_Application *application,
-        ////           MI_Boolean mustUnderstand,
-        ////     _Out_ MI_OperationOptions *options)
-        //[DllImport("/home/zach/git/mi/libmi.so", CharSet = CharSet.Ansi)]
-        //public static extern MiResult MI_Application_NewOperationOptions(IntPtr application, //MI_Application*
-        //                                                               [MarshalAs(UnmanagedType.U1)] bool mustUnderstand,
-        //                                                               out MI_OperationOptions options);
-        // MI_Result MI_MAIN_CALL MI_Application_InitializeV1(
-        //              MI_Uint32 flags, 
-        //              _In_opt_z_ const MI_Char *applicationID,
-        //              _Outptr_opt_result_maybenull_ MI_Instance **extendedError,
-        //              _Out_    MI_Application *application);
-        [DllImport(LIBMI, CharSet = CharSet.Ansi)]
-        public static extern MiResult MI_Application_InitializeV1(uint flags,
-                                                                  string applicationID,
-                                                                  IntPtr errInstance,
-                                                                  out MI_Application application);
-
-#endregion
-    } // End MiNative
+    //internal class NativeObject
+    //{
+    //    // Reference to the MI.h shared object library
+    //    public const string LIBMI = "libmi.so";
+//#region structs
+    //    // struct MI_SchemaDecl
+    //    // {
+    //    //     /* Qualifier declarations */
+    //    //     MI_QualifierDecl const qualifierDecls;
+    //    //     uint numQualifierDecls;
+
+    //    //     /* Class declarations */
+    //    //     MI_ClassDecl const classDecls;
+    //    //     uint numClassDecls;
+    //    // }
+
+    //    // struct MI_ParameterDecl /* extends MI_FeatureDecl */
+    //    // {
+    //    //     /* Fields inherited from MI_FeatureDecl */
+    //    //     uint flags;
+    //    //     uint code;
+    //    //     const string name;
+    //    //     MI_Qualifier const qualifiers;
+    //    //     uint numQualifiers;
+
+    //    //     /* Type of this field */
+    //    //     uint type;
+
+    //    //     /* Name of reference class */
+    //    //     const string className;
+
+    //    //     /* Array subscript */
+    //    //     uint subscript;
+
+    //    //     /* Offset of this field within the structure */
+    //    //     uint offset;
+    //    // }
+
+    //    // struct MI_MethodDecl /* extends MI_ObjectDecl */
+    //    // {
+    //    //     /* Fields inherited from MI_FeatureDecl */
+    //    //     uint flags;
+    //    //     uint code;
+    //    //     const string* name;
+    //    //     struct MI_Qualifier const qualifiers;
+    //    //     uint numQualifiers;
+
+    //    //     /* Fields inherited from MI_ObjectDecl */
+    //    //     struct MI_ParameterDecl const parameters;
+    //    //     uint numParameters;
+    //    //     uint size;
+
+    //    //     /* PostResult type of this method */
+    //    //     uint returnType;
+
+    //    //     /* Ancestor class that first defined a property with this name */
+    //    //     const string origin;
+
+    //    //     /* Ancestor class that last defined a property with this name */
+    //    //     const string propagator;
+
+    //    //     /* Pointer to scema this class belongs to */
+    //    //     struct MI_SchemaDecl const schema;
+
+    //    //     /* Pointer to extrinsic method */
+    //    //     MI_MethodDecl_Invoke function;
+    //    // }
+
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    public struct MI_PropertyDecl /* extends MI_ParameterDecl */
+    //    {
+    //        /* Fields inherited from MI_FeatureDecl */
+    //        public uint flags;
+    //        public uint code;
+    //        public string name;
+    //        public IntPtr qualifiers;  //MI_Qualifier
+    //        public uint numQualifiers;
+
+    //        /* Fields inherited from MI_ParameterDecl */
+    //        public uint type;
+    //        public string className;
+    //        public uint subscript;
+    //        public uint offset;
+
+    //        /* Ancestor class that first defined a property with this name */
+    //        public string origin;
+
+    //        /* Ancestor class that last defined a property with this name */
+    //        public string propagator;
+
+    //        /* Value of this property */
+    //        public IntPtr value;
+    //    }
+
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    public struct MI_Qualifier
+    //    {
+    //        /* Qualifier name */
+    //        public string name;
+
+    //        /* Qualifier type */
+    //        public uint type;
+
+    //        /* Qualifier flavor */
+    //        public uint flavor;
+
+    //        /* Pointer to value */
+    //        IntPtr value;
+    //    }
+
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    public struct MI_ClassDecl /* extends MI_ObjectDecl */
+    //    {
+    //        // /* Fields inherited from MI_FeatureDecl */
+    //        //public uint flags;
+    //        //public uint code;
+    //        //public string name;
+    //        //public MI_Qualifier qualifiers;
+    //        //public uint numQualifiers;
+
+    //        // /* Fields inherited from MI_ObjectDecl */
+    //        //public IntPtr properties;  //MI_PropertyDecl 
+    //        //public uint numProperties;
+    //        // uint size;
+
+    //        // /* Name of superclass */
+    //        // const string superClass;
+
+    //        // /* Superclass declaration */
+    //        // MI_ClassDecl const superClassDecl;
+
+    //        // /* The methods of this class */
+    //        // struct MI_MethodDecl const methods;
+    //        // uint numMethods;
+
+    //        // /* Pointer to scema this class belongs to */
+    //        // struct MI_SchemaDecl const schema;
+
+    //        // /* Provider functions */
+    //        // const MI_Provide.provide.
+
+    //        // /* Owning MI_Class object, if any.  NULL if static classDecl, -1 is from a dynamic instance */
+    //        // MI_Class owningClass;
+    //    }
+
+    //    //[StructLayout(LayoutKind.Sequential)]
+    //    //public struct MI_QualifierSet
+    //    //{
+    //    //    UInt64 reserved1;
+    //    //    IntPtr reserved2;
+
+    //    //    readonly MI_QualifierSet ft;
+    //    //}
+
+    //    //[StructLayout(LayoutKind.Sequential)]
+    //    //public struct MI_ParameterSet
+    //    //{
+    //    //    UInt64 reserved1;
+    //    //    IntPtr reserved2;
+
+    //    //    readonly MI_ParameterSet.ft;
+    //    //}
+
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    public struct MI_ParameterSetFT
+    //    {
+    //        public GetMethodReturnTypeDelegate GetMethodReturnType;
+    //        public GetParameterCountDelegate GetParameterCount;
+    //        public GetParameterAtDelegate GetParameterAt;
+    //        public GetParameterDelegate GetParameter;
+    //    }
+
+    //    public delegate MiResult GetMethodReturnTypeDelegate(
+    //            MI_ParameterSet self,
+    //            out MiType returnType,
+    //            out MI_QualifierSet qualifierSet);
+
+    //    public delegate MiResult GetParameterCountDelegate(
+    //            MI_ParameterSet self,
+    //            out uint count);
+
+    //    public delegate MiResult GetParameterAtDelegate(
+    //            MI_ParameterSet self,
+    //            uint index,
+    //            out IntPtr name,
+    //            MiType parameterType,
+    //            out IntPtr referenceClass,
+    //            out MI_QualifierSet qualifierSet);
+
+    //    public delegate MiResult GetParameterDelegate(
+    //            MI_ParameterSet self,
+    //            string name,
+    //            out MiType parameterType,
+    //            out IntPtr referenceClass,
+    //            out MI_QualifierSet qualifierSet,
+    //            out uint index);
+
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    struct MI_QualifierSetFT
+    //    {
+    //        public GetQualifierCountDelegate GetQualifierCount;
+    //        public GetQualifierAtDelegate GetQualifierAt;
+    //        public GetQualifierDelegate GetQualifier;
+    //    }
+
+    //    public delegate MiResult GetQualifierCountDelegate(
+    //        MI_QualifierSet self,
+    //        out uint count);
+
+    //    public delegate MiResult GetQualifierAtDelegate(
+    //        MI_QualifierSet self,
+    //        uint index,
+    //        out IntPtr name,  // MI_Char ** name
+    //        out MiType qualifierType,
+    //        out uint qualifierFlags,    /* scope information */
+    //        out MiValue qualifierValue
+    //        );
+
+    //    public delegate MiResult GetQualifierDelegate(
+    //        MI_QualifierSet self,
+    //        string name,
+    //        out MiType qualifierType,
+    //        out uint qualifierFlags,    /* scope information */
+    //        out MiValue qualifierValue,
+    //        out uint index
+    //        );
+
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    public struct MI_ClassFT
+    //    {
+    //        public GetClassNameDelegate GetClassName;
+    //        public GetNameSpaceDelegate GetNameSpace;
+    //        public GetServerNameDelegate GetServerName;
+    //        public GetElementCountDelegate GetElementCount;
+    //        public GetElementDelegate GetElement;
+    //        public GetElementAtDelegate GetElementAt;
+    //        public GetClassQualifierSetDelegate GetClassQualifierSet;
+    //        public GetMethodCountDelegate GetMethodCount;
+    //        public GetMethodAtDelegate GetMethodAt;
+    //        public GetMethodDelegate GetMethod;
+    //        public GetParentClassNameDelegate GetParentClassName;
+    //        public GetParentClassDelegate GetParentClass;
+    //        public DeleteDelegate Delete;
+    //        public CloneDelegate Clone;
+    //    }
+
+    //    /* MI_Clas.functions */
+    //    public delegate MiResult GetClassNameDelegate(
+    //        MI_Class self,
+    //        out IntPtr className);
+
+    //    public delegate MiResult GetNameSpaceDelegate(
+    //        MI_Class self,
+    //        out IntPtr nameSpace);
+
+    //    public delegate MiResult GetServerNameDelegate(
+    //        MI_Class self,
+    //        out IntPtr serverName);
+
+    //    public delegate MiResult GetElementCountDelegate(
+    //        MI_Class self,
+    //        out uint count);
+
+    //    public delegate MiResult GetElementDelegate(
+    //        MI_Class self,
+    //        string name,
+    //        out MiValue value,
+    //        out byte valueExists,
+    //        out MiType type,
+    //        out IntPtr referenceClass,
+    //        out MI_QualifierSet qualifierSet,
+    //        out uint flags,
+    //        out uint index);
+
+    //    public delegate MiResult GetElementAtDelegate(
+    //        MI_Class self, 
+    //        uint index,
+    //        out IntPtr name,
+    //        out MiValue value,
+    //        out byte valueExists,
+    //        out MiType type,
+    //        out IntPtr referenceClass,
+    //        out MI_QualifierSet qualifierSet,
+    //        out uint flags);
+
+    //    public delegate MiResult GetClassQualifierSetDelegate(
+    //        MI_Class self,
+    //        out MI_QualifierSet qualifierSet
+    //        );
+
+    //    public delegate MiResult GetMethodCountDelegate(
+    //        MI_Class self,
+    //        out uint count);
+
+    //    public delegate MiResult GetMethodAtDelegate(
+    //        MI_Class self,
+    //        uint index,
+    //        out IntPtr name,
+    //        out MI_QualifierSet qualifierSet,
+    //        out MI_ParameterSet parameterSet  //TODO: Add MI_ParameterSet
+    //        );
+
+    //    public delegate MiResult GetMethodDelegate(
+    //        MI_Class self,
+    //        string name,
+    //        out MI_QualifierSet qualifierSet,
+    //        out MI_ParameterSet parameterSet,
+    //        out uint index
+    //        );
+
+    //    public delegate MiResult GetParentClassNameDelegate(
+    //        MI_Class self,
+    //        out IntPtr name);
+
+    //    public delegate MiResult GetParentClassDelegate(
+    //        MI_Class self,
+    //        out IntPtr parentClass);
+
+    //    public delegate MiResult DeleteDelegate(
+    //        out MI_Class self);
+
+    //    public delegate MiResult CloneDelegate(
+    //        MI_Class self,
+    //        out IntPtr newClass);
+
+    //    /** The MI_Instance function table */
+    //    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    //    public struct MI_InstanceFT
+    //    {
+    //        public CloneDelegate Clone;
+    //        public DestructDelegate Destruct;
+    //        public DeleteDelegate Delete;
+    //        public IsADelegate IsA;
+    //        public GetClassNameDelegate GetClassName;
+    //        public SetNameSpaceDelegate SetNameSpace;
+    //        public GetNameSpaceDelegate GetNameSpace;
+    //        public GetElementCountDelegate GetElementCount;
+    //        public AddElementDelegate AddElement;
+    //        public SetElementDelegate SetElement;
+    //        public SetElementAtDelegate SetElementAt;
+    //        public GetElementDelegate GetElement;
+    //        public GetElementAtDelegate GetElementAt;
+    //        public ClearElementDelegate ClearElement;
+    //        public ClearElementAtDelegate ClearElementAt;
+    //        public GetServerNameDelegate GetServerName;
+    //        public SetServerNameDelegate SetServerName;
+    //        public GetClassDelegate GetClass;
+    //        // MI_Instanc.delegate signatures
+    //        public delegate MiResult CloneDelegate(MI_Instance self, out IntPtr newInstance);
+    //        public delegate MiResult DestructDelegate(ref MI_Instance self);
+    //        public delegate MiResult DeleteDelegate(ref MI_Instance self); //ref MI_Instance self);
+    //        public delegate MiResult IsADelegate(MI_Instance self, MI_ClassDecl classDecl, out byte flag);
+    //        public delegate MiResult GetClassNameDelegate(IntPtr self, out IntPtr className);
+    //        public delegate MiResult GetNameSpaceDelegate(IntPtr self, out IntPtr nameSpace);
+    //        public delegate MiResult SetNameSpaceDelegate(IntPtr self, [MarshalAs(UnmanagedType.LPStr)] string nameSpace);
+    //        public delegate MiResult GetElementCountDelegate(IntPtr self, out uint count);
+    //        public unsafe delegate MiResult AddElementDelegate(
+    //                IntPtr self,
+    //                IntPtr name,
+    //                IntPtr val, /* _In_opt_ */
+    //                uint type,
+    //                MiFlags flags);  // TODO: Implement MiFlags
+    //        public delegate MiResult SetElementDelegate(
+    //                out MI_Instance self,
+    //                string name,
+    //                uint val, //TODO: Implement MiValue
+    //                MiType type,
+    //                uint flags);
+    //        public delegate MiResult SetElementAtDelegate(
+    //                ref IntPtr self,
+    //                uint index,
+    //                MiValue val,
+    //                MiType type,
+    //                uint flags);
+    //        public delegate MiResult GetElementDelegate(
+    //                IntPtr self,
+    //                string name,
+    //                out IntPtr val,
+    //                out IntPtr type,
+    //                out MiFlags flags,
+    //                out uint index);
+    //        public delegate MiResult GetElementAtDelegate(
+    //                 IntPtr self,
+    //                 uint index,
+    //                 out IntPtr name,  //IntPtr because of a `free(): invalid pointer` error using MarshalAs(UnmanagedType.LPStr)
+    //                 out IntPtr val,
+    //                 out MiType type,
+    //                 out MiFlags flags);
+    //        public delegate MiResult ClearElementDelegate(IntPtr self, string name);
+    //        public delegate MiResult ClearElementAtDelegate(ref MI_Instance self, uint index);
+    //        public delegate MiResult GetServerNameDelegate(IntPtr self, out IntPtr name);
+    //        public delegate MiResult SetServerNameDelegate(IntPtr self, [MarshalAs(UnmanagedType.LPStr)] string name);
+    //        public delegate MiResult GetClassDelegate(MI_Instance self, out IntPtr instanceClass);
+    //        // /Signatures
+    //    }//InstanceFT
+
+
+    //    // MI_Applicatio.struct mirroring the function table created in the native layer.
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    public struct MI_ApplicationFT
+    //    {
+    //        public CloseDelegate Close;
+    //        public NewSessionDelegate NewSession;
+    //        public NewHostedProviderDelegate NewHostedProvider;
+    //        public NewInstanceDelegate NewInstance;
+    //        public NewDestinationOptionsDelegate NewDestinationOptions;
+    //        public NewOperationOptionsDelegate NewOperationOptions;
+    //        public NewSubscriptionDeliveryOptionsDelegate NewSubscriptionDeliveryOptions;
+    //        public NewSerializerDelegate NewSerializer;
+    //        public NewDeserializerDelegate NewDeserializer;
+    //        public NewInstanceFromClassDelegate NewInstanceFromClass;
+    //        // MI_Applicatio.function table signatures
+    //        public delegate MiResult CloseDelegate(ref MI_Application application);
+    //        public delegate MiResult NewSessionDelegate(MI_Application application,
+    //                                            IntPtr protocol, // _In_Opt_z_ const MI_Char *protocol
+    //                                            IntPtr destination, // _In_Opt_z_ const MI_Char *destination
+    //                                            IntPtr options, // _In_Opt_z_ MI_DestinationOptions *options
+    //                                            IntPtr callbacks, // _In_Opt_z_ MI_SessionCallbacks *callbacks
+    //                                            out IntPtr extendedError, // outptr_opt_result_maybenull_ MI_Instance **
+    //                                            out IntPtr session); // TODO: create MI_Session struct to replace IntPtr
+    //        public delegate MiResult NewHostedProviderDelegate(MI_Application application,
+    //                                            string namespaceName,
+    //                                            string providerName,
+    //                                            IntPtr mi_Main, //MI_MainFunction mi_Main, //TODO: MI_MainFunction struct
+    //                                            out IntPtr extendedError,
+    //                                            out IntPtr provider); // TODO: MI_HostedProvider struct *provider
+    //        public delegate MiResult NewInstanceDelegate(ref MI_Application application,
+    //                                            string className,
+    //                                            IntPtr RTTI,  //TODO: SHould be MI_ClassDecl
+    //                                            out IntPtr instance); // MI_Instance **instance
+    //        public delegate MiResult NewDestinationOptionsDelegate(MI_Application application,
+    //                                            out IntPtr options); // TODO: create MI_DestinationOptions struct
+    //        public delegate MiResult NewOperationOptionsDelegate(MI_Application application,
+    //                                            [MarshalAs(UnmanagedType.U1)] bool mustUnderstand,
+    //                                            out MI_OperationOptions options);
+    //        public delegate MiResult NewSubscriptionDeliveryOptionsDelegate(MI_Application application,
+    //                                            MiSubscriptionDeliveryType deliveryType,
+    //                                            out IntPtr deliveryOptions); // TODO: create MI_SubscriptionDeliveryOptions struct
+    //        public delegate MiResult NewSerializerDelegate(MI_Application application,
+    //                                            uint flags,
+    //                                            string format,
+    //                                            out MI_Serializer serializer); // TODO: create MI_Serializer struct
+    //        public delegate MiResult NewDeserializerDelegate(MI_Application application,
+    //                                            uint flags,
+    //                                            string format,
+    //                                            out MI_Deserializer deserializer); // TODO: create MI_Serializer struct
+    //        public delegate MiResult NewInstanceFromClassDelegate(MI_Application application,
+    //                                            string className,
+    //                                            MI_Class classObject,
+    //                                            out IntPtr instance); // MI_Instance **instance
+
+    //    }
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    public struct MI_Instance
+    //    {
+    //        public IntPtr ft;/*  the function table of MI_Instance related functions */
+    //        public IntPtr classDecl; // TODO: Implement ClassDecl struct and assign as IntPtr
+    //        public string serverName;
+    //        public string nameSpace;
+    //        public IntPtr reserved1;
+    //        public IntPtr reserved2;
+    //        public IntPtr reserved3;
+    //        public IntPtr reserved4;
+    //    }
+
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    public struct MI_Application
+    //    {
+    //        public uint reserved1;
+    //        public IntPtr reserved2;
+    //        public IntPtr ft; /* the function table of MI_Application related functions */
+    //    }
+
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    struct MI_Operation
+    //    {
+    //        public uint reserved1;
+    //        public IntPtr reserved2;
+    //        public IntPtr ft;/* The function table of MI_Operations */
+    //    }
+
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    public struct MI_Session
+    //    {
+    //        public uint reserved1;
+    //        public IntPtr reserved2;
+    //        public IntPtr ft; /* the function table of MI_Session related functions */
+    //    }
+
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    public struct MI_SubscriptionDeliveryOptions
+    //    {
+    //        public uint reserved1;
+    //        public IntPtr reserved2;
+    //        public IntPtr ft;/* The function table of MI_SubscriptionDeliveryOptions related functions */
+    //    }
+
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    public struct MI_Serializer
+    //    {
+    //        uint reserved1;
+    //        IntPtr reserved2;
+    //    }
+
+    //    [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+    //    public struct MI_Deserializer
+    //    {
+    //        public UInt64 reserved1;
+    //        public IntPtr reserved2;
+    //    }
+
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    public struct MI_Class
+    //    {
+    //        public IntPtr ft;
+    //        public IntPtr classDecl;
+    //        public string nameSpace;
+    //        public string serverName;
+    //        public IntPtr reserved;
+    //    }
+
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    public struct MI_ClassA
+    //    {
+    //        public IntPtr data;
+    //        public uint size;
+    //    }
+
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    public struct MI_OperationOptions
+    //    {
+    //        public uint reserved1;
+    //        public IntPtr reserved2;
+    //        public IntPtr ft;  /*  the function table of MI_OperationOptions related functions */
+    //    }
+
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    public struct MI_OperationOptionsFT
+    //    {
+    //        public delegate MiResult Delete(out MI_OperationOptions options);
+
+    //        public delegate MiResult SetString(out MI_OperationOptions options,
+    //                                           string optionName,
+    //                                           string value,
+    //                                           IntPtr flags);
+
+    //        public delegate MiResult SetNumber(out MI_OperationOptions options,
+    //                                           string optionName,
+    //                                           uint value,
+    //                                           uint flags);
+
+    //        public delegate MiResult SetCustomOption(MI_OperationOptions options,
+    //                                           string optionName,
+    //                                           MiType valueType,
+    //                                           IntPtr value, // MiValue *value
+    //                                           char mustComply,
+    //                                           uint flags);
+
+    //        public delegate MiResult GetString(out MI_OperationOptions options,
+    //                                           string optionName,
+    //                                           IntPtr value, // MI_Char **value
+    //                                           out uint index,
+    //                                           out uint flags);
+
+    //        public delegate MiResult GetNumber(MI_OperationOptions options,
+    //                                           string optionName,
+    //                                           out uint value,
+    //                                           out uint index,
+    //                                           out uint flags);
+
+    //        public delegate MiResult GetOptionCount(MI_OperationOptions options,
+    //                                           uint count);
+
+    //        public delegate MiResult GetOptionAt(MI_OperationOptions options,
+    //                                           string optionName,
+    //                                           out IntPtr value, // MiValue *value
+    //                                           out uint index,
+    //                                           out uint flags);
+
+    //        public delegate MiResult GetOption(MI_OperationOptions options,
+    //                                           string optionName,
+    //                                           out IntPtr value, // MiValue *value
+    //                                           out MiType type,
+    //                                           out uint index,
+    //                                           out uint flags);
+
+    //        public delegate MiResult GetEnabledChannels(MI_OperationOptions options,
+    //                                           string optionName,
+    //                                           out uint channels, // _Out_writes_to_opt_(bufferReadLength, *channelCount)
+    //                                           out uint bufferLength,
+    //                                           out uint channelCount,
+    //                                           out uint flags);
+
+    //        public delegate MiResult Clone(MI_OperationOptions self,
+    //                                           out MI_OperationOptions newOperationOptions);
+
+    //        public delegate MiResult SetInterval(MI_OperationOptions options,
+    //                                           string optionName,
+    //                                           out IntPtr value, // TODO: create MI_Interval struct
+    //                                           out uint index, // optional
+    //                                           out uint flags); // optional
+    //    }
+
+    //    struct MI_SessionFT
+    //    {
+    //        public delegate MiResult Close(
+    //                MI_Session session,
+    //                IntPtr completionContext,
+    //                IntPtr completionCallback); /* _In_opt_ void (MI_CALL *completionCallback)(_In_opt_ void *completionContext)) */
+
+    //        public delegate MiResult GetApplication(
+    //                MI_Session session,
+    //                out MI_Application application);
+
+    //        public delegate void GetInstance(
+    //                MI_Session session,
+    //                uint flags,
+    //                MI_OperationOptions options,
+    //                string namespaceName,
+    //                MI_Instance inboundInstance,
+    //                OperationCallbacks callbacks,
+    //                MI_Operation operation);
+
+    //        public delegate void ModifyInstance(
+    //                MI_Session session,
+    //                uint flags,
+    //                MI_OperationOptions options,
+    //                string namespaceName,
+    //                MI_Instance inboundInstance,
+    //                OperationCallbacks callbacks,
+    //                out MI_Operation operation);
+
+    //        public delegate void CreateInstance(
+    //                MI_Session session,
+    //                uint flags,
+    //                MI_OperationOptions options,
+    //                string namespaceName,
+    //                string inboundInstance,
+    //                OperationCallbacks callbacks,
+    //                out MI_Operation operation);
+
+    //        public delegate void DeleteInstance(
+    //                MI_Session session,
+    //                uint flags,
+    //                MI_OperationOptions options,
+    //                string namespaceName,
+    //                MI_Instance inboundInstance,
+    //                OperationCallbacks callbacks,
+    //                out MI_Operation operation);
+
+    //        public delegate void Invoke(
+    //                MI_Session session,
+    //                uint flags,
+    //                MI_OperationOptions options,
+    //                string namespaceName,
+    //                string className,
+    //                string methodName,
+    //                MI_Instance inboundInstance,
+    //                MI_Instance inboundProperties,
+    //                OperationCallbacks callbacks,
+    //                MI_Operation operation);
+
+    //        public delegate void EnumerateInstances(
+    //                MI_Session session,
+    //                uint flags,
+    //                MI_OperationOptions options,
+    //                string namespaceName,
+    //                string className,
+    //                byte keysOnly,
+    //                OperationCallbacks callbacks,
+    //                out MI_Operation operation);
+
+    //        public delegate void QueryInstances(
+    //                MI_Session session,
+    //                uint flags,
+    //                MI_OperationOptions options,
+    //                string namespaceName,
+    //                string queryDialect,
+    //                string queryExpression,
+    //                OperationCallbacks callbacks,
+    //                out MI_Operation operation);
+
+    //        public delegate void AssociatorInstances(
+    //                MI_Session session,
+    //                uint flags,
+    //                MI_OperationOptions options,
+    //                string namespaceName,
+    //                MI_Instance instanceKeys,
+    //                string assocClass,
+    //                string resultClass,
+    //                string role,
+    //                string resultRole,
+    //                byte keysOnly,
+    //                OperationCallbacks callbacks,
+    //                out MI_Operation operation);
+
+    //        public delegate void ReferenceInstances(
+    //                MI_Session session,
+    //                uint flags,
+    //                MI_OperationOptions options,
+    //                string namespaceName,
+    //                MI_Instance instanceKeys,
+    //                string resultClass,
+    //                string role,
+    //                byte keysOnly,
+    //                OperationCallbacks callbacks,
+    //                out MI_Operation operation);
+
+    //        public delegate void Subscribe(
+    //                MI_Session session,
+    //                uint flags,
+    //                MI_OperationOptions options,
+    //                string namespaceName,
+    //                string queryDialect,
+    //                string queryExpression,
+    //                MI_SubscriptionDeliveryOptions deliverOptions,
+    //                OperationCallbacks callbacks,
+    //                out MI_Operation operation);
+
+    //        public delegate void GetClass(
+    //                MI_Session session,
+    //                uint flags, 
+    //                MI_OperationOptions options,
+    //                string namespaceName,
+    //                string className,
+    //                OperationCallbacks callbacks,
+    //                out MI_Operation operation);
+
+    //        public delegate void EnumerateClasses(
+    //                MI_Session session,
+    //                uint flags,
+    //                MI_OperationOptions options,
+    //                string namespaceName,
+    //                string className,
+    //                byte classNamesOnly,
+    //                OperationCallbacks callbacks,
+    //                out MI_Operation operation);
+
+    //        public delegate void TestConnection(
+    //                MI_Session session,
+    //                uint flags,
+    //                OperationCallbacks callbacks,
+    //                out MI_Operation operation
+    //            );
+    //    }
+    //#endregion //structs
+
+    //#region PInvokes
+
+    //    //// MI_INLINE MI_Result MI_Application_NewOperationOptions(
+    //    ////     _In_  MI_Application *application,
+    //    ////           MI_Boolean mustUnderstand,
+    //    ////     _Out_ MI_OperationOptions *options)
+    //    //[DllImport("/home/zach/git/mi/libmi.so", CharSet = CharSet.Ansi)]
+    //    //public static extern MiResult MI_Application_NewOperationOptions(IntPtr application, //MI_Application*
+    //    //                                                               [MarshalAs(UnmanagedType.U1)] bool mustUnderstand,
+    //    //                                                               out MI_OperationOptions options);
+    //    // MI_Result MI_MAIN_CALL MI_Application_InitializeV1(
+    //    //              MI_Uint32 flags, 
+    //    //              _In_opt_z_ const MI_Char *applicationID,
+    //    //              _Outptr_opt_result_maybenull_ MI_Instance **extendedError,
+    //    //              _Out_    MI_Application *application);
+    //    [DllImport(LIBMI, CharSet = CharSet.Ansi)]
+    //    public static extern MiResult MI_Application_InitializeV1(uint flags,
+    //                                                              string applicationID,
+    //                                                              IntPtr errInstance,
+    //                                                              out MI_Application application);
+    //
+    //#endregion
+    //} // End NativeObject
 
     // Creates an instance of the struct MI_Application for passing into Management Infrastructure methods.
     [StructLayout(LayoutKind.Sequential)]
     internal class ApplicationHandle// : SafeHandleZeroOrMinusOneIsInvalid
     {
-        public MiNative.MI_Application miApp;
+        //public NativeObject.MI_Application miApp;
+        public NativeObject.MI_Application miApp;
 
         internal ApplicationHandle()
         {
-            this.miApp = new MiNative.MI_Application();
+            //this.miApp = new NativeObject.MI_Application();
+            this.miApp = NativeObject.MI_Application.NewIndirectPtr();
         }
 
         internal void AssertValidInternalState()
@@ -819,8 +824,9 @@ namespace Microsoft.Management.Infrastructure.Native
         }
         public void Dispose()
         {
-            MiNative.MI_ApplicationFT table = Marshal.PtrToStructure<MiNative.MI_ApplicationFT>(this.miApp.ft);
-            MiResult r = table.Close(ref this.miApp);
+            // this is already implemented in the NativeObject destructor for MI_Application.
+            //NativeObject.MI_Applicatio.table = Marshal.PtrToStructure<NativeObject.MI_Applicatio.(this.miApp.;
+            //MiResult r = table.Close(ref this.miApp);
         }
         internal delegate void OnHandleReleasedDelegate();
         internal MiResult ReleaseHandleAsynchronously(OnHandleReleasedDelegate completionCallback)
@@ -867,7 +873,7 @@ namespace Microsoft.Management.Infrastructure.Native
             errorDetails       = new InstanceHandle();
             IntPtr ePtr        = IntPtr.Zero;
             applicationHandle  = new ApplicationHandle();
-            MiResult result    = MiNative.MI_Application_InitializeV1(0, appID, ePtr, out applicationHandle.miApp);
+            MiResult result    = (MiResult)(uint)NativeObject.MI_Application.Initialize(appID, out errorDetails.mmiInstance, out applicationHandle.miApp);
             return result;
         }
 
@@ -882,31 +888,39 @@ namespace Microsoft.Management.Infrastructure.Native
 
         internal static MiResult NewInstance(ApplicationHandle applicationHandle, string className, ClassHandle classHandle, out InstanceHandle newInstance)
         {
-            IntPtr pInstance;
-            IntPtr rtti                       = IntPtr.Zero;
-            MiResult result                   = MiResult.OK;
-            MiNative.MI_ApplicationFT table   = Marshal.PtrToStructure<MiNative.MI_ApplicationFT>(applicationHandle.miApp.ft);
+            NativeObject.MI_Instance pInstance = NativeObject.MI_Instance.NewIndirectPtr();
+            NativeObject.MI_ClassDecl rtti = null;
+            MiResult result                         = MiResult.OK;
 
-            result = table.NewInstance(ref applicationHandle.miApp, className, rtti, out pInstance);
-
+            result = (MiResult)(uint)applicationHandle.miApp.NewInstance(className, rtti, out pInstance);
             newInstance = new InstanceHandle(pInstance);
+
             return result;
+            //IntPtr pInstance;
+            //IntPtr rtti                       = IntPtr.Zero;
+            //MiResult result                   = MiResult.OK;
+            //NativeObject.MI_Applicatio.table   = Marshal.PtrToStructure<NativeObject.MI_Applicatio.(applicationHandle.miApp.;
+
+            //result = table.NewInstance(ref applicationHandle.miApp, className, rtti, out pInstance);
+
+            //newInstance = new InstanceHandle(pInstance);
+            //return result;
         }
         internal static MiResult NewOperationOptions(ApplicationHandle applicationHandle, [MarshalAs(UnmanagedType.U1)] bool mustUnderstand, out OperationOptionsHandle operationOptionsHandle)
         {
             // Console.WriteLine(">>Native/NewOperationOptions");
             // //TODO: create OperationOptionsHandle
             // operationOptionsHandle = new OperationOptionsHandle();
-            // MiNative.MI_Application localApp = applicationHandle.miApp;
+            // NativeObject.MI_Application localApp = applicationHandle.miApp;
 
             // IntPtr appBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(localApp));
             // Marshal.StructureToPtr(localApp, appBuffer, false);
-            // MiNative.MI_OperationOptions localOpts = operationOptionsHandle.miOperationOptions;
+            // NativeObject.MI_OperationOptions localOpts = operationOptionsHandle.miOperationOptions;
             // // Marshal Struct as IntPtr? We may not have to marshalAs.PtrToStructure
 
             // Console.WriteLine("Break> Pinvoke");
             // // perform p/invoke
-            // MiResult result = MiNative.MI_Application_NewOperationOptions(appBuffer,
+            // MiResult result = NativeObject.MI_Application_NewOperationOptions(appBuffer,
             //                                                               mustUnderstand,
             //                                                               out localOpts);
 
@@ -956,7 +970,7 @@ namespace Microsoft.Management.Infrastructure.Native
 
             //// Create the deserializer
             //deserializerHandle                         = new DeserializerHandle();
-            //MiNative.MI_Deserializer deserializer      = deserializerHandle.miDeserializer;
+            //NativeObject.MI_Deserializer deserializer      = deserializerHandle.miDeserializer;
             //deserializer.reserved1                     = 0;
             //deserializer.reserved2                     = IntPtr.Zero;
             //IntPtr deserializeBuffer                   = Marshal.AllocHGlobal(Marshal.SizeOf(deserializer));
@@ -965,7 +979,7 @@ namespace Microsoft.Management.Infrastructure.Native
             //Console.WriteLine("Creating a New DeserializerMOF");
             //// takes a pointer to the applicationHandle struct, and a pointer to the deserializerHandle struct.
             //// Sets the deserializer struct.
-            //MiResult result = MiNative.MI_Application_NewDeserializer_Mof(ref applicationHandle.miApp, flags, format, out deserializer);
+            //MiResult result = NativeObject.MI_Application_NewDeserializer_Mof(ref applicationHandle.miApp, flags, format, out deserializer);
             //Console.WriteLine("Native>> Created new deserializer Mof Pinvoke returned {0}", result);
             //deserializerHandle = Marshal.PtrToStructure<DeserializerHandle>(deserializeBuffer);
             //deserializerHandle.miDeserializer = deserializer;
@@ -1014,16 +1028,16 @@ namespace Microsoft.Management.Infrastructure.Native
     [StructLayout(LayoutKind.Sequential)]
     internal class ClassHandle// : SafeHandleZeroOrMinusOneIsInvalid
     {
-        public MiNative.MI_Class miClass;
+        public NativeObject.MI_Class miClass;
 
         internal ClassHandle()
         {
-            this.miClass = new MiNative.MI_Class();
+            this.miClass = NativeObject.MI_Class.NewDirectPtr();
         }
 
         internal ClassHandle(IntPtr handle)
         {
-            this.miClass = Marshal.PtrToStructure<MiNative.MI_Class>(handle);
+            this.miClass = Marshal.PtrToStructure<NativeObject.MI_Class>(handle);
         }
 
          internal void AssertValidInternalState()
@@ -1256,7 +1270,7 @@ namespace Microsoft.Management.Infrastructure.Native
         {
             throw new NotImplementedException();
         }
-        [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle", Justification = "We are calling DangerousAddRef/Release as prescribed in the docs + have to do this to call inline methods")]
+        [SuppressMessage("Micros.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle", Justification = "We are calling DangerousAddRef/Release as prescribed in the docs + have to do this to call inline methods")]
         internal IntPtr DangerousGetHandle()
         {
             throw new NotImplementedException();
@@ -1272,7 +1286,7 @@ namespace Microsoft.Management.Infrastructure.Native
     [StructLayout(LayoutKind.Sequential)]
     internal class DeserializerCallbacks
     {
-        //public MiNative.MI_DeserializerCallbacks miDeserializerCallbacks;
+        //public NativeObject.MI_DeserializerCallbacks miDeserializerCallbacks;
         // Fields
         //private ClassObjectNeededCallbackDelegate<backing_store> ClassObjectNeededCallback;
         //private GetIncludedFileBufferCallbackDelegate<backing_store> GetIncludedFileBufferCallback;
@@ -1282,13 +1296,13 @@ namespace Microsoft.Management.Infrastructure.Native
         internal DeserializerCallbacks()
         {
             // TODO: Implement
-            //this.miDeserializerCallbacks = new MiNative.MI_DeserializerCallbacks();
+            //this.miDeserializerCallbacks = new NativeObject.MI_DeserializerCallbacks();
         }
         //internal static unsafe _MI_Result ClassObjectNeededAppDomainProxy(void* context, ushort modopt(IsConst)* serverName, ushort modopt(IsConst)* namespaceName, ushort modopt(IsConst)* className, _MI_Class** requestedClassObject)
         //internal static unsafe _MI_Result GetIncludedFileBufferAppDomainProxy(void* context, ushort modopt(IsConst)* fileName, byte** fileBuffer, uint* bufferLength)
         //internal static unsafe void ReleaseDeserializerCallbacksProxy(DeserializerCallbacksProxy* pCallbacksProxy)
         //[return: MarshalAs(UnmanagedType.U1)]
-        //internal bool SetMiDeserializerCallbacks(MiNative.MI_DeserializerCallbacks pmiDeserializerCallbacks)
+        //internal bool SetMiDeserializerCallbacks(NativeObject.MI_DeserializerCallbacks pmiDeserializerCallbacks)
         //{
         //    //TODO: Implement
         //    return true;
@@ -1296,11 +1310,11 @@ namespace Microsoft.Management.Infrastructure.Native
         //private static unsafe void StoreCallbackDelegate(DeserializerCallbacksProxy* pCallbacksProxy, Delegate externalCallback, Delegate appDomainProxyCallback, DeserializerCallbackId callbackId);
 
         // Properties
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
+        [SuppressMessage("Micros.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
         internal ClassObjectNeededCallbackDelegate ClassObjectNeededCallback { get; set; }
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
+        [SuppressMessage("Micros.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
         internal GetIncludedFileBufferCallbackDelegate GetIncludedFileBufferCallback { get; set; }
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp and in cs/CimOperationOptions.cs")]
+        [SuppressMessage("Micros.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp and in cs/CimOperationOptions.cs")]
         internal object ManagedDeserializerContext { get; set; }
 
         // Nested Types
@@ -1331,7 +1345,7 @@ namespace Microsoft.Management.Infrastructure.Native
             //cimErrorDetails = new InstanceHandle();
             //Console.WriteLine(">>MMI.Native/DeserializeClassArray");
             //// create locals
-            //MiNative.MI_OperationOptions localOpts = options.miOperationOptions;
+            //NativeObject.MI_OperationOptions localOpts = options.miOperationOptions;
 
             ////IntPtr psb = Marshal.AllocHGlobal(serializedBuffer.Length);
             ////Marshal.Copy(serializedBuffer, 0, psb, serializedBuffer.Length);
@@ -1345,17 +1359,17 @@ namespace Microsoft.Management.Infrastructure.Native
             //// }
             //IntPtr deserializerBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(deserializerHandle.miDeserializer));
             //Marshal.StructureToPtr(deserializerHandle.miDeserializer, deserializerBuffer, false);
-            //MiNative.MI_Instance ErrorIns              = cimErrorDetails.miInstance;
+            //NativeObject.MI_Instance ErrorIns              = cimErrorDetails.miInstance;
             //IntPtr pErr                                = Marshal.AllocHGlobal(Marshal.SizeOf(ErrorIns));
             //inputBufferUsed                            = 0;
-            //MiNative.MI_DeserializerCallbacks cb       = callback.miDeserializerCallbacks;
+            //NativeObject.MI_DeserializerCallbacks cb       = callback.miDeserializerCallbacks;
             //IntPtr pNativeCallbacks                    = Marshal.AllocHGlobal(Marshal.SizeOf(cb));
             //uint serializedBufferRead;
             //IntPtr classObjectsBuffer;
             //int nativeClassObjectsLength;
             ////byte[] pbyNativeClassObjects;
             //// create an array of classArray structs.  If there is existing classArray information, assign that.
-            ////MiNative.MI_ClassA classArray;
+            ////NativeObject.MI_ClassA classArray;
             ////classArray.data = IntPtr.Zero;
             ////classArray.size = 0;
             //IntPtr classArray;
@@ -1389,11 +1403,11 @@ namespace Microsoft.Management.Infrastructure.Native
             //// TODO: this is wrong- deserializedClasses array of classHandles needs to be created differently
            //// deserializedClasses                 = new ClassHandle[1];
            //// deserializedClasses[0]              = new ClassHandle();
-           //// MiNative.MI_Class dClasses          = deserializedClasses[0].miClass;
+           //// NativeObject.MI_Class dClasses          = deserializedClasses[0].miClass;
 
             ////var resultClassArray = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IntPtr)));
 
-            ////MiNative.MI_ClassA resultClassArray;
+            ////NativeObject.MI_ClassA resultClassArray;
             ////IntPtr resultClassABuffer = (IntPtr)Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(IntPtr)));
             ////// convert classObjects to byte array
             ////Console.WriteLine("the pinned address : {0}", gch.AddrOfPinnedObject());
@@ -1404,7 +1418,7 @@ namespace Microsoft.Management.Infrastructure.Native
             ////IntPtr resultClassABuffer = Marshal.AllocHGlobal(Marshal.SizeOf(resultClassArray));
             ////Marshal.StructureToPtr(resultClassArray, resultClassABuffer, false);
 
-            ////MiNative.MI_ClassA classA = new MiNative.MI_ClassA();
+            ////NativeObject.MI_ClassA classA = new NativeObject.MI_ClassA();
             ////IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf(classA));
             ////Marshal.StructureToPtr(classA, ptr, false);
             //// execute p/invoke, assign to result. Note: flags= 0
@@ -1413,7 +1427,7 @@ namespace Microsoft.Management.Infrastructure.Native
             ////ptr = Marshal.AllocHGlobal(IntPtr.Size);
             //IntPtr bs;
             ////Marshal.StructureToPtr(callback, bs, false);//callbacks
-            //MiResult result = MiNative.MI_Deserializer_DeserializeClassArray(
+            //MiResult result = NativeObject.MI_Deserializer_DeserializeClassArray(
             //                                            ref deserializerHandle.miDeserializer,
             //                                            0,
             //                                            ref localOpts,
@@ -1456,16 +1470,16 @@ namespace Microsoft.Management.Infrastructure.Native
     [StructLayout(LayoutKind.Sequential)]
     internal class DeserializerHandle// : SafeHandleZeroOrMinusOneIsInvalid
     {
-        public MiNative.MI_Deserializer miDeserializer;
+        public NativeObject.MI_Deserializer miDeserializer;
         internal DeserializerHandle()
         {
-            this.miDeserializer = new MiNative.MI_Deserializer();
+            this.miDeserializer = new NativeObject.MI_Deserializer();
         }
 
         // Used when setting the deserializer handle to the return value
         internal DeserializerHandle(IntPtr handle)
         {
-            this.miDeserializer = Marshal.PtrToStructure<MiNative.MI_Deserializer>(handle);
+            this.miDeserializer = Marshal.PtrToStructure<NativeObject.MI_Deserializer>(handle);
         }
 
         internal void AssertValidInternalState()
@@ -1890,60 +1904,69 @@ namespace Microsoft.Management.Infrastructure.Native
     [StructLayout(LayoutKind.Sequential)]
     internal class InstanceHandle// : SafeHandleZeroOrMinusOneIsInvalid
     {
-        public MiNative.MI_Instance miInstance;
-        public MiNative.MI_InstanceFT ft;
+        public NativeObject.MI_Instance miInstance;
         public IntPtr handle;
-        public static WeakReference _reference;
+        //public static WeakReference _reference;
 
-        // construct a reference to MiNative.MI_Instance
+        public NativeObject.MI_Instance mmiInstance;
+        // construct a reference to NativeObject.MI_Instance
         internal InstanceHandle()
         {
-            this.miInstance = new MiNative.MI_Instance();
-            InstanceHandle._reference = new WeakReference(this.miInstance);
+            this.mmiInstance = NativeObject.MI_Instance.NewDirectPtr();
+            //this.miInstance = new NativeObject.MI_Instance();
+            //InstanceHandle._reference = new WeakReference(this.miInstance);
+        }
+
+        internal InstanceHandle(InstanceHandle handle)
+        {
+                this.handle = handle.mmiInstance.Ptr;
+                this.mmiInstance = handle.mmiInstance;
         }
 
         //Stores a pointer to the instance, as well as dereferences the pointer to store the struct
-        internal InstanceHandle(IntPtr handle)
+        internal InstanceHandle(NativeObject.MI_Instance handle)
         {
-            this.handle = handle;
-            this.miInstance = Marshal.PtrToStructure<MiNative.MI_Instance>(handle);
-            this.ft = Marshal.PtrToStructure<MiNative.MI_InstanceFT>(this.miInstance.ft);
-            InstanceHandle._reference = new WeakReference(this.handle);
+            this.handle = handle.Ptr;
+            this.mmiInstance = handle;
+            //this.handle = handle;
+            //this.miInstance = Marshal.PtrToStructure<NativeObject.MI_Instance>(handle);
+            //this.= Marshal.PtrToStructure<NativeObject.MI_Instanc.(this.miInstance.;
+            //InstanceHandle._reference = new WeakReference(this.handle);
         }
 
-        internal void AssertValidInternalState()
+        public void AssertValidInternalState()
         {
             System.Diagnostics.Debug.Assert(this.handle != IntPtr.Zero, "InstanceHandle.AssertValidInternalState: this.handle != IntPtr.Zero");
         }
 
-        ~InstanceHandle()
-        {
-            Dispose(false);
-            GC.SuppressFinalize(this);
-        }
+        //~InstanceHandle()
+        //{
+        //    Dispose(false);
+        //    GC.SuppressFinalize(this);
+        //}
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+        //    Dispose(true);
+        //    GC.SuppressFinalize(this);
         }
 
-        private bool _isDisposed = false;
-        protected void Dispose(bool disposing)
-        {
-            MiResult r;
-            try
-            {
-              r = this.ft.Delete(ref this.miInstance); // Release instances created on the heap
-            }
-            catch (NullReferenceException e)
-            {
-                // Object already disposed, nothing to do
-                _isDisposed = true;
-                return;
-            }
-            Debug.Assert( MiResult.OK == r, "MI Client .NET API should guarantee that calls to MI_Instance_Delete always return MI_RESULT_OK");
-            _isDisposed = true;
-        }
+        //private bool _isDisposed = false;
+        //protected void Dispose(bool disposing)
+        //{
+        //    MiResult r;
+        //    try
+        //    {
+        //      r = this.Delete(ref this.miInstance); // Release instances created on the heap
+        //    }
+        //    catch (NullReferenceException)
+        //    {
+        //        // Object already disposed, nothing to do
+        //        _isDisposed = true;
+        //        return;
+        //    }
+        //    Debug.Assert( MiResult.OK == r, "MI Client .NET API should guarantee that calls to MI_Instance_Delete always return MI_RESULT_OK");
+        //    _isDisposed = true;
+        //}
 
         //internal delegate void OnHandleReleasedDelegate();
         //internal MiResult ReleaseHandleAsynchronously(OnHandleReleasedDelegate completionCallback)
@@ -1963,6 +1986,7 @@ namespace Microsoft.Management.Infrastructure.Native
     {
         // Fields
         //internal static ValueType modopt(DateTime) modopt(IsBoxed) maxValidCimTimestamp;
+        public static DateTime maxValidCimTimestamp = new DateTime(9999, 12, 31, 23, 59, 59, 999, DateTimeKind.Utc);
 
         // Methods
         static InstanceMethods()
@@ -1976,144 +2000,564 @@ namespace Microsoft.Management.Infrastructure.Native
         /// a type flag, and an MI Flag
         internal static MiResult AddElement(InstanceHandle instance, string name, object managedValue, MiType type, MiFlags flags)
         {
-            int size;
-            IntPtr pVal = IntPtr.Zero;
-            // ConvertToUnmanaged
-            ConvertToMiValuePtr(type, managedValue, ref pVal);
+            NativeObject.MI_Value val;
+            ConvertToMiValue((MI_Type)type, managedValue, out val);
 
-            //TODO: does this *really* need to be a pointer?  Can we use LPStr in the function signature for AddElement with no adverse effects?
-            IntPtr pName = Marshal.StringToHGlobalAnsi(name);
-
-            MiResult r = instance.ft.AddElement(instance.handle, pName, pVal, (uint)type, flags);
+            NativeObject.MI_Type nativeType = (MI_Type)(uint)type;
+            NativeObject.MI_Flags nativeFlags = (MI_Flags)(uint)flags;
+            MiResult r = (MiResult)(uint)instance.mmiInstance.AddElement(name, val, nativeType, nativeFlags);
 
             return r;
         }
         internal static MiResult ClearElementAt(InstanceHandle instance, int index)
         {
-            MiResult r = instance.ft.ClearElementAt(ref instance.miInstance, (uint)index);
+            MiResult r = (MiResult)(uint)instance.mmiInstance.ClearElementAt( (uint)index);
 
             return r;
         }
         internal static MiResult Clone(InstanceHandle instanceHandleToClone, out InstanceHandle clonedInstanceHandle)
         {
-            throw new NotImplementedException();
+            Debug.Assert(instanceHandleToClone != null, "Caller should verify that instanceHandleToClone != null");
+            clonedInstanceHandle = null;
+            NativeObject.MI_Instance ptrClonedInstance = NativeObject.MI_Instance.NewIndirectPtr();
+
+            MiResult r = (MiResult)(uint)instanceHandleToClone.mmiInstance.Clone(out ptrClonedInstance);
+            if ( r == MiResult.OK)
+            {
+                clonedInstanceHandle = new InstanceHandle(ptrClonedInstance);
+            }
+
+            return r;
         }
-        //internal static unsafe object ConvertFromMiValue(MiType type, _MiValue modopt(IsConst)* pmiValue);
-        internal static object ConvertFromMiValue(MiType type, IntPtr pVal)
+
+        // Convert from an MI_Value to a .Net object
+        internal static object ConvertFromMiValue(MI_Type type, MI_Value miValue)
         {
             object val = null;
-            //Console.WriteLine("\npVal {0}\n", Marshal.PtrToStructure<byte>(pVal));
-
             switch (type.ToString())
             {
-                case "Boolean":
-                    val = (byte)Marshal.PtrToStructure<byte>(pVal) != 0;
+                case "MI_BOOLEAN":
+                    val = (bool)miValue.Boolean;
                     break;
-                case "Byte":
-                case "UInt8":
-                    val = (byte)Marshal.PtrToStructure<byte>(pVal);
+                case "MI_BOOLEANA":
+                    val = (bool[])miValue.BooleanA;
                     break;
-                case "SInt16":
-                    val = (System.Int16)Marshal.PtrToStructure<Int16>(pVal);
+                case "MI_SINT64":
+                    val = (Int64)miValue.Sint64;
                     break;
-                case "UInt16":
-                case "SInt32":
-                case "UInt32":
-                case "SInt64":
-                case "UInt64":
-                        // no work to do...
-                    val = Marshal.PtrToStructure<uint>(pVal);
+                case "MI_SINT64A":
+                    val = (Int64[])miValue.Sint64A;
                     break;
-                case "SByte":
-                case "SInt8":
-                    val = (sbyte)Marshal.PtrToStructure<SByte>(pVal);
+                case "MI_SINT32":
+                    val = (Int32)miValue.Sint32;
                     break;
-                case "Real32":
-                    // TODO: these seem to fail for unknown reasons.  When dereferencing in the AddElement function, they appear to work fine.
-                    //Console.WriteLine("pVal : " + pVal);
-                    throw new NotImplementedException();
+                case "MI_SINT32A":
+                    val = (Int32[])miValue.Sint32A;
                     break;
-                case "Real64":
-                    val = (double)Marshal.PtrToStructure<System.Double>(pVal);
+                case "MI_SINT16":
+                    val = (Int16)miValue.Sint16;
+                    break;
+                case "MI_SINT16A":
+                    val = (Int16[])miValue.Sint16A;
+                    break;
+                case "MI_SINT8":
+                    val = (sbyte)miValue.Sint8;
+                    break;
+                case "MI_SINT8A":
+                    val = (sbyte[])miValue.Sint8A;
+                    break;
+                case "MI_UINT64":
+                    val = (UInt64)miValue.Uint64;
+                    break;
+                case "MI_UINT64A":
+                    val = (UInt64[])miValue.Uint64A;
+                    break;
+                case "MI_UINT32":
+                    val = (UInt32)miValue.Uint32;
+                    break;
+                case "MI_UINT32A":
+                    val = (UInt32[])miValue.Uint32A;
+                    break;
+                case "MI_UINT16":
+                    val = (byte)miValue.Uint16;
+                    break;
+                case "MI_UINT16A":
+                    val = (ushort[])miValue.Uint16A;
+                    break;
+                case "MI_UINT8":
+                    val = (byte)miValue.Uint8;
+                    break;
+                case "MI_UINT8A":
+                    val = (byte[])miValue.Uint8A;
+                    break;
+                case "MI_REAL32":
+                    val = (float)miValue.Real32;
+                    break;
+                case "MI_REAL32A":
+                    val = (float[])miValue.Real32A;
+                    break;
+                case "MI_REAL64":
+                    val = (double)miValue.Real64;
+                    break;
+                case "MI_REAL64A":
+                    val = (double[])miValue.Real64A;
+                    break;
+                case "MI_CHAR16":
+                    val  = (char)miValue.Char16;
+                    break;
+                case "MI_CHAR16A":
+                    val = (char[])miValue.Char16A;
+                    break;
+                case "MI_STRING":
+                    val  = (string)miValue.String;
+                    break;
+                case "MI_STRINGA":
+                    val = (string[])miValue.StringA;
+                    break;
+                case "MI_DATETIME":
+                    val = MiDateTimeToManagedObjectDateTime(miValue.Datetime);
+                    break;
+                case "MI_INSTANCE":
+                case "MI_REFERENCE":
+                    val = new InstanceHandle(miValue.Instance);
+                    break;
+                case "MI_DATETIMEA":
+                    List<object> dateTimes = new List<object>();
+
+                    foreach (var dt in miValue.DatetimeA)
+                    {
+                          dateTimes.Add( MiDateTimeToManagedObjectDateTime(dt) );
+                    }
+
+                    val = dateTimes.ToArray();
+                    break;
+                case "MI_REFERENCEA":
+                case "MI_INSTANCEA":
+                    List<InstanceHandle> instances = new List<InstanceHandle>();
+
+                    foreach (var inst in miValue.InstanceA)
+                    {
+                        instances.Add( new InstanceHandle(miValue.Instance) );
+                    }
+
+                    val = instances.ToArray();
                     break;
                 default:
-                    Console.WriteLine(">> MiType: {0}", type.ToString());
-                    Debug.Assert(false, "Unknown MiType Input");
+                    Console.WriteLine("ERROR: MI_Value {0} is an unknown MI_Value " + type.ToString());
                     break;
             }
             return val;
         }
 
-        internal static void ConvertToMiValuePtr(MiType type, object managedValue, ref IntPtr pVal)
+        internal static void ConvertArrayToMiValue(MI_Type type, object managedValue, out MI_Value miValue)
         {
-            int typeSize = 0;
-            // TODO: Avoid duplicate code.
-            switch (type.ToString()) // TODO: change cases to MiType
+            miValue = MI_Value.NewDirectPtr();
+
+            byte[] a = managedValue as byte[]; //TODO: what if this is a boolean?
+            if (a != null)
             {
-                    case "Boolean":
-                        typeSize = Marshal.SizeOf<Boolean>();
-                        pVal = Marshal.AllocHGlobal(typeSize);
-                        Marshal.StructureToPtr(managedValue, pVal, false);
-                        break;
-                    case "Byte":
-                    case "UInt8":
-                        typeSize = Marshal.SizeOf<Byte>();
-                        pVal = Marshal.AllocHGlobal(typeSize);
-                        Marshal.StructureToPtr(managedValue, pVal, false);
-                        break;
-                    case "SByte":
-                    case "SInt8": 
-                        typeSize = Marshal.SizeOf<SByte>();
-                        pVal = Marshal.AllocHGlobal(typeSize);
-                        Marshal.StructureToPtr(managedValue, pVal, false);
-                        break;
-                    case "UInt16":
-                        typeSize = Marshal.SizeOf<UInt16>();
-                        pVal = Marshal.AllocHGlobal(typeSize);
-                        Marshal.StructureToPtr(managedValue, pVal, false);
-                        break;
-                    case "SInt16": //TODO: failing Int16Min test
-                        typeSize = Marshal.SizeOf<Int16>();
-                        pVal = Marshal.AllocHGlobal(typeSize);
-                        Marshal.StructureToPtr(managedValue, pVal, false);
-                        break;
-                    case "UInt32":
-                        typeSize = Marshal.SizeOf<UInt32>();
-                        pVal = Marshal.AllocHGlobal(typeSize);
-                        Marshal.StructureToPtr(managedValue, pVal, false);
-                        break;
-                    case "SInt32":
-                        typeSize = Marshal.SizeOf<Int32>();
-                        pVal = Marshal.AllocHGlobal(typeSize);
-                        Marshal.StructureToPtr(managedValue, pVal, false);
-                        break;
-                    case "SInt64":
-                        typeSize = Marshal.SizeOf<Int64>();
-                        pVal = Marshal.AllocHGlobal(typeSize);
-                        Marshal.StructureToPtr(managedValue, pVal, false);
-                        break;
-                    case "UInt64":
-                        typeSize = Marshal.SizeOf<UInt64>();
-                        pVal = Marshal.AllocHGlobal(typeSize);
-                        Marshal.StructureToPtr(managedValue, pVal, false);
-                        break;
-                    case "Real32":
-                        typeSize = Marshal.SizeOf<System.Single>();
-                        pVal = Marshal.AllocHGlobal(typeSize);
-                        Marshal.StructureToPtr(managedValue, pVal, false);
-                        break;
-                    case "Real64":
-                        typeSize = Marshal.SizeOf<System.Double>();
-                        pVal = Marshal.AllocHGlobal(typeSize);
-                        Marshal.StructureToPtr(managedValue, pVal, false);
-                        break;
-                    case "String":
-                        pVal = Marshal.StringToHGlobalAnsi(managedValue.ToString());
-                        break;
-                    default:
-                        Debug.Assert(false, "Unrecognized MiType");
-                        break;
+                miValue.Uint8A = a;
+                return;
             }
+
+            ushort[] b = managedValue as ushort[];
+            if (b != null)
+            {
+                miValue.Uint16A = b;
+                return;
+            }
+
+            UInt32[] c = managedValue as UInt32[];
+            if (c != null)
+            {
+                miValue.Uint32A = c;
+                return;
+            }
+
+            UInt64[] d = managedValue as UInt64[];
+            if (d != null)
+            {
+                miValue.Uint64A = d;
+                return;
+            }
+
+            sbyte[] e = managedValue as sbyte[];
+            if (e != null)
+            {
+                miValue.Sint8A = e;
+                return;
+            }
+
+            Int16[] f = managedValue as Int16[];
+            if (f != null)
+            {
+                miValue.Sint16A = f;
+                return;
+            }
+
+            Int32[] g = managedValue as Int32[];
+            if (g != null)
+            {
+                miValue.Sint32A = g;
+                return;
+            }
+
+            Int64[] h = managedValue as Int64[];
+            if (h != null)
+            {
+                miValue.Sint64A = h;
+                return;
+            }
+
+            bool[] i = managedValue as bool[];
+            if (i != null)
+            {
+                miValue.BooleanA = i;
+                return;
+            }
+
+            double[] j = managedValue as double[];
+            if (j != null)
+            {
+                miValue.Real64A = j;
+                return;
+            }
+
+            float[] k = managedValue as float[];
+            if (k != null)
+            {
+                miValue.Real32A = k;
+                return;
+            }
+
+            char[] l = managedValue as char[];
+            if (l != null)
+            {
+                miValue.Char16A = l;
+                return;
+            }
+
+            string[] m = managedValue as string[];
+            if (m != null)
+            {
+                miValue.StringA = m;
+                return;
+            }
+
+            System.DateTime[] n = managedValue as System.DateTime[];
+            if (n != null)
+            {
+                MI_Datetime[] dateTimeArray = new MI_Datetime[n.Length];
+
+                for ( int index = 0; index < n.Length; index++ )
+                {
+                    dateTimeArray[index] = ConvertManagedObjectToMiDateTime(n[index]);
+                }
+                miValue.DatetimeA = dateTimeArray;
+                return;
+            }
+
+            InstanceHandle[] o = managedValue as InstanceHandle[];
+            if ( o != null )
+            {
+                NativeObject.MI_Instance[] instanceArray = new NativeObject.MI_Instance[o.Length];
+
+                for ( int index = 0; index < o.Length; index++ )
+                {
+
+                    instanceArray[index] = CopyManagedItemToMiInstance(o[index]);
+                }
+                miValue.InstanceA = instanceArray;
+                return;
+            }
+        }
+
+        // Converts from an object to something that can be consumed by the native MI engine.
+        internal static void ConvertToMiValue(MI_Type type, object managedValue, out NativeObject.MI_Value miValue)
+        {
+            miValue = MI_Value.NewDirectPtr();
+            switch (type.ToString())
+            {
+                case "MI_BOOLEAN":
+                    miValue.Boolean = Convert.ToBoolean(managedValue);
+                    break;
+                case "MI_SINT8":
+                    miValue.Sint8 = Convert.ToSByte(managedValue);
+                    break;
+                case "MI_SINT16":
+                    miValue.Sint16 = Convert.ToInt16(managedValue);
+                    break;
+                case "MI_SINT32":
+                    miValue.Sint32 = Convert.ToInt32(managedValue);
+                    break;
+                case "MI_SINT64":
+                    miValue.Sint64 = Convert.ToInt64(managedValue);
+                    break;
+                case "MI_UINT8":
+                    miValue.Uint8 = Convert.ToByte(managedValue);
+                    break;
+                case "MI_UINT16":
+                    miValue.Uint16 = Convert.ToUInt16(managedValue);
+                    break;
+                case "MI_UINT32":
+                    miValue.Uint32 = Convert.ToUInt32(managedValue);
+                    break;
+                case "MI_UINT64":
+                    miValue.Uint64 = Convert.ToUInt64(managedValue);
+                    break;
+                case "MI_REAL32":
+                    miValue.Real32 = Convert.ToSingle(managedValue);
+                    break;
+                case "MI_REAL64":
+                    miValue.Real64 = Convert.ToDouble(managedValue);
+                    break;
+                case "MI_CHAR16":
+                    miValue.Char16 = Convert.ToChar(managedValue);
+                    break;
+                case "MI_STRING":
+                    miValue.String = Convert.ToString(managedValue);
+                    break;
+                case "MI_DATETIME":
+                    miValue.Datetime = ConvertManagedObjectToMiDateTime(managedValue);
+                    break;
+                case "MI_REFERENCE":
+                case "MI_INSTANCE":
+                    miValue.Instance = CopyManagedItemToMiInstance(managedValue);
+                    break;
+                case "MI_BOOLEANA":
+                case "MI_SINT8A":
+                case "MI_SINT16A":
+                case "MI_SINT32A":
+                case "MI_SINT64A":
+                case "MI_UINT8A":
+                case "MI_UINT16A":
+                case "MI_UINT64A":
+                case "MI_UINT32A":
+                case "MI_REAL32A":
+                case "MI_REAL64A":
+                case "MI_CHAR16A":
+                case "MI_STRINGA":
+                case "MI_DATETIMEA":
+                case "MI_INSTANCEA":
+                case "MI_REFERENCEA":
+                    ConvertArrayToMiValue(type, managedValue, out miValue);
+                    break;
+                default:
+                    Console.WriteLine("ERROR: unknown MI_Type type.  Type {0} is unknown", type.ToString());
+                    break;
+
+            }
+        }
+
+        /// Recieves an instanceHandle, creates a pointer to that instancehandle.
+        internal static NativeObject.MI_Instance CopyManagedItemToMiInstance(object managedValue)
+        {
+            InstanceHandle oldHandle = managedValue as InstanceHandle;
+
+            if (oldHandle != null)
+            {
+                InstanceHandle newHandle = new InstanceHandle(oldHandle.mmiInstance);
+
+                return newHandle.mmiInstance;
+            }
+
+            return null;
+        }
+        // Converts MI_DateTime to System.DateTime
+        internal static object MiDateTimeToManagedObjectDateTime(MI_Datetime miDatetime)
+        {
+            if (miDatetime.isTimestamp)
+            {
+                // "Now" value defined in line 1934, page 53 of DSP0004, version 2.6.0
+                if ((miDatetime.timestamp.year == 0) &&
+                    (miDatetime.timestamp.month == 0) &&
+                    (miDatetime.timestamp.day == 1) &&
+                    (miDatetime.timestamp.hour == 0) &&
+                    (miDatetime.timestamp.minute == 0) &&
+                    (miDatetime.timestamp.second == 0) &&
+                    (miDatetime.timestamp.microseconds == 0) &&
+                    (miDatetime.timestamp.utc == 720))
+                {
+                    return DateTime.Now;
+                }
+                // "Infinite past" value defined in line 1935, page 54 of DSP0004, version 2.6.0
+                else if ((miDatetime.timestamp.year == 0) &&
+                         (miDatetime.timestamp.month == 1) &&
+                         (miDatetime.timestamp.day == 1) &&
+                         (miDatetime.timestamp.hour == 0) &&
+                         (miDatetime.timestamp.minute == 0) &&
+                         (miDatetime.timestamp.second == 0) &&
+                         (miDatetime.timestamp.microseconds == 999999) &&
+                         (miDatetime.timestamp.utc == 720))
+                {
+                    return DateTime.MinValue;
+                }
+                // "Infinite future" value defined in line 1936, page 54 of DSP0004, version 2.6.0
+                else if ((miDatetime.timestamp.year == 9999) &&
+                         (miDatetime.timestamp.month == 12) &&
+                         (miDatetime.timestamp.day == 31) &&
+                         (miDatetime.timestamp.hour == 11) &&
+                         (miDatetime.timestamp.minute == 59) &&
+                         (miDatetime.timestamp.second == 59) &&
+                         (miDatetime.timestamp.microseconds == 999999) &&
+                         (miDatetime.timestamp.utc == 720))
+                {
+                    return DateTime.MaxValue;
+                }
+                else
+                {
+                    //If CoreCLR
+                    Calendar myCalendar = CultureInfo.InvariantCulture.Calendar;
+
+                    DateTime managedDateTime = myCalendar.ToDateTime(
+                                                            (int)miDatetime.timestamp.year,
+                                                            (int)miDatetime.timestamp.month,
+                                                            (int)miDatetime.timestamp.day,
+                                                            (int)miDatetime.timestamp.hour,
+                                                            (int)miDatetime.timestamp.minute,
+                                                            (int)miDatetime.timestamp.second,
+                                                            (int)miDatetime.timestamp.microseconds / 1000);
+                    DateTime managedUtcDateTime = DateTime.SpecifyKind(managedDateTime, DateTimeKind.Utc); //TODO: C++/cli uses myDateTime.SpecifyKind(), which fails here.
+                    // ^^CoreCLR
+                    long microsecondsUnaccounted = miDatetime.timestamp.microseconds % 1000;
+                    managedUtcDateTime = managedUtcDateTime.AddTicks(microsecondsUnaccounted * 10); // since 1 microsecond == 10 ticks
+                    managedUtcDateTime = managedUtcDateTime.AddMinutes(-(miDatetime.timestamp.utc));
+
+                    DateTime managedLocalDateTime = TimeZoneInfo.ConvertTime(managedUtcDateTime,TimeZoneInfo.Local);
+                    return managedLocalDateTime;
+                }
+           }
+           else
+           {
+               if ( TimeSpan.MaxValue.TotalDays < miDatetime.interval.days )
+               {
+                   return TimeSpan.MaxValue;
+               }
+
+               try
+               {
+                   TimeSpan managedTimeSpan = new TimeSpan(
+                                                    (int)miDatetime.interval.days,
+                                                    (int)miDatetime.interval.hours,
+                                                    (int)miDatetime.interval.minutes,
+                                                    (int)miDatetime.interval.seconds,
+                                                    (int)miDatetime.interval.microseconds / 1000);
+                   long microsecondsUnaccounted = miDatetime.interval.microseconds % 1000;
+                   TimeSpan ticksUnaccountedTimeSpan = new TimeSpan(microsecondsUnaccounted * 10); // since 1 microsecond == 10 ticks
+                   TimeSpan correctedTimeSpan = managedTimeSpan.Add(ticksUnaccountedTimeSpan);
+
+                   DateTime dt = new DateTime();
+                   DateTime managedDateTime = dt.AddDays(correctedTimeSpan.Days)
+                                                .AddHours(correctedTimeSpan.Hours)
+                                                .AddMinutes(correctedTimeSpan.Minutes)
+                                                .AddSeconds(correctedTimeSpan.Seconds)
+                                                .AddMilliseconds(correctedTimeSpan.Milliseconds)
+                                                .AddTicks(microsecondsUnaccounted * 10);
+
+                   DateTime returnDate = DateTime.SpecifyKind(managedDateTime, DateTimeKind.Unspecified);
+                   return returnDate;
+               }
+               catch (ArgumentOutOfRangeException)
+               {
+                       return TimeSpan.MaxValue;
+               }
+           }
+        }
+        // Converts System.DateTime to MI_DateTime
+        internal static MI_Datetime ConvertManagedObjectToMiDateTime(object managedValue)
+        {
+            Debug.Assert(managedValue != null, "Caller should verify managedValue != null");
+            NativeObject.MI_Datetime miDatetime = new NativeObject.MI_Datetime();
+
+                //long ticks = dt.Ticks;
+                //TimeSpan timeSpan = new TimeSpan(ticks);
+
+                if (managedValue is TimeSpan)
+                {
+                    System.TimeSpan timeSpan = (TimeSpan)managedValue;
+                    if (timeSpan.Equals(TimeSpan.MaxValue))
+                    {
+                        // "Infinite duration" value defined in line 1944, page 54 of DSP0004, version 2.6.0
+                        miDatetime.interval.days         = 99999999;
+                        miDatetime.interval.hours        = 23;
+                        miDatetime.interval.minutes      = 59;
+                        miDatetime.interval.seconds      = 59;
+                        miDatetime.interval.microseconds = 0;
+                    }
+                    else
+                    {
+                        long ticksUnaccounted = timeSpan.Ticks%10000; // since 10000 ticks == 1 millisecond
+
+                        miDatetime.interval.days         = (uint)timeSpan.Days;
+                        miDatetime.interval.hours        = (uint)timeSpan.Hours;
+                        miDatetime.interval.minutes      = (uint)timeSpan.Minutes;
+                        miDatetime.interval.seconds      = (uint)timeSpan.Seconds;
+                        miDatetime.interval.microseconds = (uint)(timeSpan.Milliseconds * 1000 + ticksUnaccounted/10); // since 1 tick == 0.1 microsecond
+                    }
+
+                    miDatetime.isTimestamp = false;
+                }
+                else
+                {
+                    // TimeStamp is null.  check that datetime isn't max
+                //    System.DateTime dateTime = Convert.ToDateTime(managedValue); //TODO: do we *really* need this?
+                    System.DateTime dateTime = (DateTime)managedValue;
+
+                    if (dateTime.Equals(DateTime.MaxValue))
+                    {
+                        // "Infinite future" value defined in line 1936, page 54 of DSP0004, version 2.6.0
+                        miDatetime.timestamp.year         = 9999;
+                        miDatetime.timestamp.month        = 12;
+                        miDatetime.timestamp.day          = 31;
+                        miDatetime.timestamp.hour         = 11;
+                        miDatetime.timestamp.minute       = 59;
+                        miDatetime.timestamp.second       = 59;
+                        miDatetime.timestamp.microseconds = 999999;
+                        miDatetime.timestamp.utc          = (-720);
+                    }
+                    else if (dateTime.Equals(DateTime.MinValue))
+                    {
+                        // "Infinite past" value defined in line 1935, page 54 of DSP0004, version 2.6.0
+                        miDatetime.timestamp.year         = 0;
+                        miDatetime.timestamp.month        = 1;
+                        miDatetime.timestamp.day          = 1;
+                        miDatetime.timestamp.hour         = 0;
+                        miDatetime.timestamp.minute       = 0;
+                        miDatetime.timestamp.second       = 0;
+                        miDatetime.timestamp.microseconds = 999999;
+                        miDatetime.timestamp.utc          = 720;
+                    }
+                    else if (DateTime.Compare(maxValidCimTimestamp, dateTime) <= 0)
+                    {
+                        // "Youngest useable timestamp" value defined in line 1930, page 53 of DSP0004, version 2.6.0
+                        miDatetime.timestamp.year         = 9999;
+                        miDatetime.timestamp.month        = 12;
+                        miDatetime.timestamp.day          = 31;
+                        miDatetime.timestamp.hour         = 11;
+                        miDatetime.timestamp.minute       = 59;
+                        miDatetime.timestamp.second       = 59;
+                        miDatetime.timestamp.microseconds = 999998;
+                        miDatetime.timestamp.utc          = (-720);
+                    }
+                    else
+                    {
+                        dateTime = TimeZoneInfo.ConvertTime(dateTime, TimeZoneInfo.Utc);
+                        long ticksUnaccounted = dateTime.Ticks%10000;
+
+                        miDatetime.timestamp.year         = (uint)dateTime.Year;
+                        miDatetime.timestamp.month        = (uint)dateTime.Month;
+                        miDatetime.timestamp.day          = (uint)dateTime.Day;
+                        miDatetime.timestamp.hour         = (uint)dateTime.Hour;
+                        miDatetime.timestamp.minute       = (uint)dateTime.Minute;
+                        miDatetime.timestamp.second       = (uint)dateTime.Second;
+                        miDatetime.timestamp.microseconds = (uint)dateTime.Millisecond * 1000 + (uint)ticksUnaccounted/10;
+                        miDatetime.timestamp.utc          = 0;
+
+                    }
+
+                    miDatetime.isTimestamp = true;
+                }
+            return miDatetime;
         }
 
         //internal static unsafe void ConvertManagedObjectToMiDateTime(object managedValue, _MI_Datetime* pmiValue);
@@ -2126,11 +2570,7 @@ namespace Microsoft.Management.Infrastructure.Native
         }
         internal static MiResult GetClassName(InstanceHandle instance, out string className)
         {
-            IntPtr pName;
-
-            MiResult r = instance.ft.GetClassName(instance.handle, out pName);
-            className = Marshal.PtrToStringAnsi(pName);
-
+            MiResult r = (MiResult)(uint)instance.mmiInstance.GetClassName(out className);
             return r;
         }
         internal static MiResult GetElement_GetIndex(InstanceHandle instance, string name, out int index)
@@ -2138,10 +2578,10 @@ namespace Microsoft.Management.Infrastructure.Native
             index = -1;
 
             uint i;
-            IntPtr v;
-            IntPtr t;
-            MiFlags f; //flags
-            MiResult r = instance.ft.GetElement(instance.handle, name, out v, out t, out f, out i);
+            NativeObject.MI_Value v = MI_Value.NewDirectPtr();
+            MI_Type t;
+            MI_Flags f; //flags
+            MiResult r = (MiResult)(uint)instance.mmiInstance.GetElement( name, out v, out t, out f, out i);
             index = (int)i;
             return r;
         }
@@ -2150,55 +2590,60 @@ namespace Microsoft.Management.Infrastructure.Native
             Debug.Assert(instance.handle != IntPtr.Zero, "Caller should verify that instance is not null");
             Debug.Assert(index >= 0, "Caller should verify that index >=0");
 
-            IntPtr pName;
-            IntPtr v = IntPtr.Zero;
-            MiType t;
-            MiFlags f;
+            NativeObject.MI_Value val = MI_Value.NewDirectPtr();
+            MI_Type nativeType;
+            MI_Flags nativeFlags; //flags
+            string name;
 
-            MiResult r = instance.ft.GetElementAt(instance.handle, (uint)index, out pName, v, out t, out f);
-            flags = f; //Marshal.PtrToStructure<MiFlags>(f);
+            MiResult r = (MiResult)(uint)instance.mmiInstance.GetElementAt( (uint)index, out name, out val, out nativeType, out nativeFlags);
+            flags = (MiFlags)nativeFlags;
             return r;
         }
         internal static MiResult GetElementAt_GetName(InstanceHandle instance, int index, out string name)
         {
-            IntPtr pName;
-            IntPtr val=IntPtr.Zero;
-            MiType type;
-            MiFlags flags;
+            NativeObject.MI_Value val = MI_Value.NewDirectPtr();
+            MI_Type type;
+            MI_Flags flags; //flags
 
-            MiResult r = instance.ft.GetElementAt(instance.handle, (uint)index, out pName, val, out type, out flags);
-            name = Marshal.PtrToStringAnsi(pName);
+            MiResult r = (MiResult)(uint)instance.mmiInstance.GetElementAt( (uint)index, out name, out val, out type, out flags);
+
             return r;
         }
         internal static MiResult GetElementAt_GetType(InstanceHandle instance, int index, out MiType type)
         {
-            IntPtr pName;
-            IntPtr val=IntPtr.Zero;
-            MiFlags flags;
-            MiType t;
-            MiResult r = instance.ft.GetElementAt(instance.handle, (uint)index, out pName, val, out t, out flags);
+            NativeObject.MI_Value val = MI_Value.NewDirectPtr();
+            MI_Type nativeType;
+            MI_Flags nativeFlags; //flags
+            string name;
 
-            type = t; //Marshal.PtrToStructure<MiType>(t);
+            MiResult r = (MiResult)(uint)instance.mmiInstance.GetElementAt( (uint)index, out name, out val, out nativeType, out nativeFlags);
+
+            type = (MiType)nativeType;
             return r;
         }
 
         internal static MiResult GetElementAt_GetValue(InstanceHandle instance, int index, out object val)
         {
             Debug.Assert(0 <= index, "Caller should verify index > 0");
-            IntPtr name;
-            IntPtr pVal= Marshal.AllocHGlobal(Marshal.SizeOf<MiValue>());
-            MiType type;
-            MiFlags flags;
+            string name;
+            MI_Value miValue = MI_Value.NewDirectPtr();
+            MI_Type type;
+            MI_Flags flags;
+
+            //IntPtr name;
+            //IntPtr pVal= Marshal.AllocHGlobal(Marshal.SizeOf<MiValue>());
+            //MiType type;
+            //MiFlags flags;
             val = null;
 
-            MiResult r = instance.ft.GetElementAt(instance.handle, (uint)index, out name, pVal, out type, out flags);
 
-            if (r == MiResult.OK && pVal != null)
+            MiResult r = (MiResult)(uint)instance.mmiInstance.GetElementAt( (uint)index, out name, out miValue, out type, out flags);
+            if (r == MiResult.OK && miValue != null)
             {
-                if (!flags.HasFlag(MiFlags.NULLFLAG))
+                if (!flags.HasFlag(MI_Flags.MI_FLAG_NULL))
                 {
                     // ConvertToManaged
-                    val = ConvertFromMiValue(type, pVal);
+                    val = ConvertFromMiValue(type, miValue);
                 }
                 else
                 {
@@ -2211,22 +2656,18 @@ namespace Microsoft.Management.Infrastructure.Native
         internal static MiResult GetElementCount(InstanceHandle instance, out int elementCount)
         {
            uint count;
-           MiResult r = instance.ft.GetElementCount(instance.handle, out count);
+           MiResult r = (MiResult)(uint)instance.mmiInstance.GetElementCount( out count);
            elementCount = Convert.ToInt32(count);
            return r;
         }
         internal static MiResult GetNamespace(InstanceHandle instance, out string nameSpace)
         {
-           IntPtr str;
-           MiResult r = instance.ft.GetNameSpace(instance.handle, out str);
-           nameSpace = Marshal.PtrToStringAnsi(str);
+           MiResult r = (MiResult)(uint)instance.mmiInstance.GetNameSpace( out nameSpace);
            return r;
         }
         internal static MiResult GetServerName(InstanceHandle instance, out string serverName)
         {
-           IntPtr str;
-           MiResult r = instance.ft.GetServerName(instance.handle, out str);
-           serverName = Marshal.PtrToStringAnsi(str);
+           MiResult r = (MiResult)(uint)instance.mmiInstance.GetServerName(out serverName);
            return r;
         }
         //internal static unsafe void ReleaseMiValue(MiType type, _MiValue* pmiValue, IEnumerable<DangerousHandleAccessor> dangerousHandleAccessors);
@@ -2252,23 +2693,23 @@ namespace Microsoft.Management.Infrastructure.Native
             //IntPtr f;
             //IntPtr noUse1;
             //// GetElementAt
-            //r = instance.ft.GetElementAt(instance.handle, (uint)index, out noUse1, out v, out t, out f);
+            //r = instance.GetElementAt(instance.handle, (uint)index, out noUse1, out v, out t, out f);
             //if (MiResult.OK != r)
             //        return r;
 
             //// SetElementAt
-            //r = instance.ft.SetElementAt(ref instance.handle, (uint)index, v, (MiType)t, 0);
+            //r = instance.SetElementAt(ref instance.handle, (uint)index, v, (MiType)t, 0);
             //return r;
             // No need to release MiValues here as they do in managed C++ implementation.  MiValue is a struct and thus a value type.
         }
         internal static MiResult SetNamespace(InstanceHandle instance, string nameSpace)
         {
-            return instance.ft.SetNameSpace(instance.handle, nameSpace);
+            return (MiResult)(uint)instance.mmiInstance.SetNameSpace( nameSpace);
         }
 
         internal static MiResult SetServerName(InstanceHandle instance, string serverName)
         {
-            return instance.ft.SetServerName(instance.handle, serverName);
+            return (MiResult)(uint)instance.mmiInstance.SetServerName( serverName);
         }
         internal static void ThrowIfMismatchedType(MiType type, object managedValue)
         {
@@ -2404,17 +2845,18 @@ namespace Microsoft.Management.Infrastructure.Native
     **==============================================================================
     */
 
-    struct MI_Timestamp
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MI_Timestamp
     {
         /* YYYYMMDDHHMMSS.MMMMMMSUTC */
-        MI_Uint32 year;
-        MI_Uint32 month;
-        MI_Uint32 day;
-        MI_Uint32 hour;
-        MI_Uint32 minute;
-        MI_Uint32 second;
-        MI_Uint32 microseconds;
-        MI_Sint32 utc;
+        public MI_Uint32 year;
+        public MI_Uint32 month;
+        public MI_Uint32 day;
+        public MI_Uint32 hour;
+        public MI_Uint32 minute;
+        public MI_Uint32 second;
+        public MI_Uint32 microseconds;  //4*7 = 28
+        public MI_Sint32 utc;  //
     }
 
     /*
@@ -2431,17 +2873,18 @@ namespace Microsoft.Management.Infrastructure.Native
     **==============================================================================
     */
 
-    struct MI_Interval
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MI_Interval
     {
         /* DDDDDDDDHHMMSS.MMMMMM:000 */
-        MI_Uint32 days;
-        MI_Uint32 hours;
-        MI_Uint32 minutes;
-        MI_Uint32 seconds;
-        MI_Uint32 microseconds;
-        //MI_Uint32 __padding1;
-        //MI_Uint32 __padding2;
-        //MI_Uint32 __padding3;
+        public MI_Uint32 days;
+        public MI_Uint32 hours;
+        public MI_Uint32 minutes;
+        public MI_Uint32 seconds;
+        public MI_Uint32 microseconds;
+        public MI_Uint32 __padding1;
+        public MI_Uint32 __padding2;
+        public MI_Uint32 __padding3;
     }
 
     /*
@@ -2455,14 +2898,13 @@ namespace Microsoft.Management.Infrastructure.Native
     **==============================================================================
     */
 
-    public struct MI_Datetime
+    [StructLayout(LayoutKind.Explicit)]
+    public struct MiDateTime
     {
-        MI_Uint32 isTimestamp;
-        struct u
-        {
-            MI_Timestamp timestamp;
-            MI_Interval interval;
-        }
+        [FieldOffset(0)] public uint isTimestamp;
+
+        [FieldOffset(4)] public MI_Timestamp timestamp;
+        [FieldOffset(4)] public MI_Interval interval;
     }
 
     /*
@@ -2475,107 +2917,109 @@ namespace Microsoft.Management.Infrastructure.Native
     **        - The data 
     **==============================================================================
     */
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Explicit)]
     public struct MI_BooleanA
     {
-        public IntPtr data;
-        public MI_Uint32 size;
+        [FieldOffset(0)] public IntPtr data;
+        [FieldOffset(8)] public uint  size;
     }
 
     struct MI_Uint8A
     {
         public IntPtr data;
-        public MI_Uint32 size;
+        public uint size;
     }
 
     public struct MI_Sint8A
     {
         public IntPtr data;
-        MI_Uint32 size;
+        public uint size;
     }
 
     public struct MI_Uint16A
     {
         public IntPtr data;
-        MI_Uint32 size;
+        public uint size;
     }
 
     public struct MI_Sint16A
     {
         public IntPtr data;
-        MI_Uint32 size;
+        public uint size;
     }
 
     public struct MI_Uint32A
     {
         public IntPtr data;
-        MI_Uint32 size;
+        public uint size;
     }
 
     public struct MI_Sint32A
     {
         public IntPtr data;
-        MI_Uint32 size;
+        public uint size;
     }
 
     public struct MI_Uint64A
     {
         public IntPtr data;
-        MI_Uint32 size;
+        public uint size;
     }
 
     public struct MI_Sint64A
     {
         public IntPtr data;
-        MI_Uint32 size;
+        public uint size;
     }
 
+    [StructLayout(LayoutKind.Explicit)]
     public struct MI_Real32A
     {
-        public IntPtr data;
-        MI_Uint32 size;
+        [FieldOffset(0)] public IntPtr data;
+        [FieldOffset(8)] public uint size;
     }
 
     public struct MI_Real64A
     {
         public IntPtr data;
-        MI_Uint32 size;
+        public uint size;
     }
 
     public struct MI_Char16A
     {
         public IntPtr data;
-        MI_Uint32 size;
+        public uint size;
     }
 
     public struct MI_DatetimeA
     {
         public IntPtr data;
-        MI_Uint32 size;
+        public uint size;
     }
 
+    [StructLayout(LayoutKind.Explicit)]
     public struct MI_StringA
     {
-        public IntPtr data;
-        MI_Uint32 size;
+        [FieldOffset(0)] public IntPtr data;
+        [FieldOffset(8)] public uint size;
     }
 
     public struct MI_ReferenceA
     {
         public IntPtr data; //struct _MI_Instance** data;
-        MI_Uint32 size;
+        public uint size;
     }
 
     public struct MI_InstanceA
     {
         public IntPtr data;
-        MI_Uint32 size;
+        public uint size;
     }
 
     public struct MI_Array
     {
         public IntPtr data;
-        MI_Uint32 size;
+        public uint size;
     }
 
     internal enum MiType:uint
@@ -2635,11 +3079,11 @@ namespace Microsoft.Management.Infrastructure.Native
         [FieldOffset(0)] public System.Int32 sint32;
         [FieldOffset(0)] public System.UInt64 uint64;
         [FieldOffset(0)] public System.Int64 sint64;
-        [FieldOffset(0)] public System.Single real32;
+        [FieldOffset(0)] public MI_Real32 real32;
         [FieldOffset(0)] public MI_Real64 real64;
-        //[FieldOffset(16)] public MI_Char16 char16;
-        //[FieldOffset(24)] public MI_Datetime datetime;
-        //[FieldOffset(32)] [MarshalAs(UnmanagedType.LPStr)] public string mistring;  // MI_Char* string;
+        [FieldOffset(0)] public MI_Char16 char16;
+        //[FieldOffset(16)] public MiDateTime datetime;
+        //[FieldOffset(32)]  public char[] mistring;  // MI_Char* string;
         ////[FieldOffset(40)]
         //public IntPtr instance;   // MI_Instance *instance
         ////[FieldOffset(48)]
@@ -2780,25 +3224,25 @@ namespace Microsoft.Management.Infrastructure.Native
         //internal unsafe bool SetMiOperationCallbacks(_MI_OperationCallbacks* pmiOperationCallbacks, MI_OperationWrapper* pmiOperationWrapper);
 
         // Properties
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
+        [SuppressMessage("Micros.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
         internal ClassCallbackDelegate ClassCallback { get; set; }
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
+        [SuppressMessage("Micros.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
         internal IndicationResultCallbackDelegate IndicationResultCallback { get; set; }
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
+        [SuppressMessage("Micros.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
         internal InstanceResultCallbackDelegate InstanceResultCallback { get; set; }
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
+        [SuppressMessage("Micros.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
         internal InternalErrorCallbackDelegate InternalErrorCallback { get; set; }
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp and in cs/CimOperationOptions.cs")]
+        [SuppressMessage("Micros.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp and in cs/CimOperationOptions.cs")]
         internal object ManagedOperationContext { get; set; }
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
+        [SuppressMessage("Micros.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
         internal PromptUserCallbackDelegate PromptUserCallback { get; set; }
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
+        [SuppressMessage("Micros.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
         internal StreamedParameterCallbackDelegate StreamedParameterCallback { get; set; }
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
+        [SuppressMessage("Micros.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
         internal WriteErrorCallbackDelegate WriteErrorCallback { get; set; }
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
+        [SuppressMessage("Micros.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
         internal WriteMessageCallbackDelegate WriteMessageCallback { get; set; }
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
+        [SuppressMessage("Micros.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "False positive from FxCop - this property is used in nativeOperationCallbacks.cpp")]
         internal WriteProgressCallbackDelegate WriteProgressCallback { get; set; }
 
         // Nested Types
@@ -2857,10 +3301,10 @@ namespace Microsoft.Management.Infrastructure.Native
 
     internal class OperationHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
-        public MiNative.MI_OperationOptions miOperationOptions;
+        public NativeObject.MI_OperationOptions miOperationOptions;
         internal void AssertValidInternalState()
         {
-            this.miOperationOptions = new MiNative.MI_OperationOptions();
+     //       this.miOperationOptions = new NativeObject.MI_OperationOptions();
         }
 
         public void Dispose()
@@ -2885,22 +3329,22 @@ namespace Microsoft.Management.Infrastructure.Native
         {
             throw new NotImplementedException();
         }
-        [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle", Justification = "C# layer internally manages the lifetime of OperationHandle + have to do this to call inline methods")]
+        [SuppressMessage("Micros.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle", Justification = "C# layer internally manages the lifetime of OperationHandle + have to do this to call inline methods")]
         internal static MiResult Cancel(OperationHandle operationHandle, MiCancellationReason cancellationReason)
         {
             throw new NotImplementedException();
         }
-        [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle", Justification = "C# layer internally manages the lifetime of OperationHandle + have to do this to call inline methods")]
+        [SuppressMessage("Micros.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle", Justification = "C# layer internally manages the lifetime of OperationHandle + have to do this to call inline methods")]
         internal static MiResult GetClass(OperationHandle operationHandle, out ClassHandle classHandle, out bool moreResults, out MiResult result, out string errorMessage, out InstanceHandle completionDetails)
         {
             throw new NotImplementedException();
         }
-        [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle", Justification = "C# layer internally manages the lifetime of OperationHandle + have to do this to call inline methods")]
+        [SuppressMessage("Micros.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle", Justification = "C# layer internally manages the lifetime of OperationHandle + have to do this to call inline methods")]
         internal static MiResult GetIndication(OperationHandle operationHandle, out InstanceHandle instanceHandle, out string bookmark, out string machineID, out bool moreResults, out MiResult result, out string errorMessage, out InstanceHandle completionDetails)
         {
             throw new NotImplementedException();
         }
-        [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle", Justification = "C# layer internally manages the lifetime of OperationHandle + have to do this to call inline methods")]
+        [SuppressMessage("Micros.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle", Justification = "C# layer internally manages the lifetime of OperationHandle + have to do this to call inline methods")]
         internal static MiResult GetInstance(OperationHandle operationHandle, out InstanceHandle instanceHandle, out bool moreResults, out MiResult result, out string errorMessage, out InstanceHandle completionDetails)
         {
             throw new NotImplementedException();
@@ -2909,11 +3353,11 @@ namespace Microsoft.Management.Infrastructure.Native
 
     internal class OperationOptionsHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
-        public MiNative.MI_OperationOptions miOperationOptions;
+        public NativeObject.MI_OperationOptions miOperationOptions;
         internal OperationOptionsHandle()
         {
             // 
-            this.miOperationOptions = new MiNative.MI_OperationOptions();
+            //this.miOperationOptions = new NativeObject.MI_OperationOptions();
         }
 
         internal void AssertValidInternalState()
@@ -3140,7 +3584,7 @@ namespace Microsoft.Management.Infrastructure.Native
         {
             throw new NotImplementedException();
         }
-        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "keysOnly")]
+        [SuppressMessage("Micros.Usage", "CA1801:ReviewUnusedParameters", MessageId = "keysOnly")]
         internal static void QueryInstances(SessionHandle sessionHandle, MiOperationFlags operationFlags, OperationOptionsHandle operationOptionsHandle, string namespaceName, string queryDialect, string queryExpression, [MarshalAs(UnmanagedType.U1)] bool keysOnly, OperationCallbacks operationCallbacks, out OperationHandle operationHandle)
         {
             throw new NotImplementedException();

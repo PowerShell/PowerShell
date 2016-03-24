@@ -18,6 +18,7 @@
                 "define": [ "_CORECLR" ]
             },
             "dependencies": {
+                "NETStandard.Library": "1.0.0-rc3-23819",
                 "System.Runtime.Serialization.Xml": "4.1.0-rc3-23819",
                 "System.Threading.ThreadPool": "4.0.10-rc3-23819"
             }
@@ -25,6 +26,8 @@
         "dnx451": {
         }
     },
+
+    "resource": ["../monad/wmi/WMIv2/Client/DotNetAPI/cs/Strings.resx"],
 
     "compileFiles": [
         "../monad/wmi/WMIv2/Client/DotNetAPI/cs/AssemblyInfo.cs",
