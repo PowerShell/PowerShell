@@ -78,7 +78,7 @@ namespace PSTests
 			FileSystemInfo directoryObject = new DirectoryInfo(@"/");
 			FileSystemInfo fileObject = new FileInfo(@"/etc/hosts");
 			FileSystemInfo excutableObject = new FileInfo(@"/bin/echo");
-			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)),"d-----");
+			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)).Replace("r","-"),"d-r---".Replace("r","-"));
 			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(fileObject)),"------");
 			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(excutableObject)),"------");
         }
@@ -157,8 +157,8 @@ namespace PSTests
 			
 			IContentWriter contentWriter = fileSystemProvider.GetContentWriter(testPath);
 			contentWriter.Write(new List<string>(){"contentWriterTestContent"});
-			//Assert.Equal(File.ReadAllText(testPath),testContent+"contentWriterTestContent");
 			contentWriter.Close();
+			Assert.Equal(File.ReadAllText(testPath), testContent+@"contentWriterTestContent"+ System.Environment.NewLine);
         }
 		
 		[Fact]
