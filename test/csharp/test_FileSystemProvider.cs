@@ -78,9 +78,9 @@ namespace PSTests
 			FileSystemInfo directoryObject = new DirectoryInfo(@"/");
 			FileSystemInfo fileObject = new FileInfo(@"/etc/hosts");
 			FileSystemInfo excutableObject = new FileInfo(@"/bin/echo");
-			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)).Replace("r","-"),"d-r---".Replace("r","-"));
-			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(fileObject)),"------");
-			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(excutableObject)),"------");
+			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)).Replace("r","-"),"d-----");
+			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(fileObject)).Replace("r","-"),"------");
+			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(excutableObject)).Replace("r","-"),"------");
         }
 		
 		[Fact]
