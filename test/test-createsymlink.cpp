@@ -1,12 +1,13 @@
-//! @file test-issymlink.cpp
+//! @file test-createsymlink.cpp
 //! @author George Fleming <v-geflem@microsoft.com>
-//! @brief Implements test for isSymLink()
+//! @brief Implements test for CreateSymLink() and FollowSymLink()
 
 #include <gtest/gtest.h>
 #include <errno.h>
 #include <unistd.h>
 #include "issymlink.h"
 #include "createsymlink.h"
+#include "followsymlink.h"
 
 using namespace std;
 
@@ -84,6 +85,9 @@ TEST_F(CreateSymLinkTest, FilePathNameDoesNotExist)
     int retVal = CreateSymLink(invalidLink.c_str(), invalidFile.c_str());
     EXPECT_EQ(retVal, 1);
 
+    std::string target = FollowSymLink(invalidLink.c_str());
+    EXPECT_EQ(target, invalidFile);
+
     unlink(invalidLink.c_str());
 }
 
@@ -91,12 +95,18 @@ TEST_F(CreateSymLinkTest, SymLinkToFile)
 {
     int retVal = IsSymLink(fileSymLink.c_str());
     EXPECT_EQ(1, retVal);
+
+    std::string target = FollowSymLink(fileSymLink.c_str());
+    EXPECT_EQ(target, file);
 }
 
 TEST_F(CreateSymLinkTest, SymLinkToDirectory)
 {
     int retVal = IsSymLink(dirSymLink.c_str());
     EXPECT_EQ(1, retVal);
+
+    std::string target = FollowSymLink(dirSymLink.c_str());
+    EXPECT_EQ(target, dir);
 }
 
 TEST_F(CreateSymLinkTest, SymLinkAgain)
