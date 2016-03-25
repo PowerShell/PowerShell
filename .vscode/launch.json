@@ -2,7 +2,7 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "powershell",
+			"name": ".NET Core Launch",
 			"type": "coreclr",
 			"request": "launch",
 			"justMyCode": false,
@@ -11,6 +11,13 @@
 			"args": [ ],
 			"preLaunchTask": "build",
 			"cwd": "${workspaceRoot}"
+		},
+		{
+			"name": ".NET Core Attach",
+			"type": "coreclr",
+			"request": "attach",
+			"justMyCode": false,
+			"program": "powershell"
 		}
 	]
 }
