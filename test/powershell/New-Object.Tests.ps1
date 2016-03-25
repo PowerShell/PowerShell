@@ -29,10 +29,7 @@ Describe "New-Object" {
 	$o = New-Object -TypeName System.Version -ArgumentList "1.2.3.4"
     $val = $o.GetType()
 
-	$o.Major      | Should Be 1
-	$o.Minor      | Should Be 2
-    $o.Build      | Should Be 3
-    $o.Revision   | Should Be 4
+	$o      | Should Be "1.2.3.4"
     
     $val.IsPublic       | Should Be $true
 	$val.IsSerializable | Should Be $false
