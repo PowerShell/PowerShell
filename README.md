@@ -60,7 +60,7 @@ their [documentation][cli-docs].
 
 The version of .NET CLI is very important, you want a recent 1.0.0 beta
 (**not** 1.0.1). The following instructions will install precisely
-1.0.0.001718, though any 1.0.0 version *should* work.
+1.0.0.001888, though any 1.0.0 version *should* work.
 
 > Previous installations of DNX, `dnvm`, or older installations of .NET CLI
 > can cause odd failures when running. Please check your version.
@@ -109,7 +109,8 @@ Tested on Windows 10 and Windows Server 2012 R2.
 
 ```powershell
 Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
-./install.ps1 -version 1.0.0.001718 -channel beta
+./install.ps1 -version 1.0.0.001888
+$env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli
 ```
 
 If you meet `Unable to cast COM object of type 'System.__ComObject' to
@@ -358,12 +359,6 @@ If you don't have any Visual Studio installed, you can use
 **Troubleshooting note:** If `cmake` says that it cannot determine the
 `C` and `CXX` compilers, you either don't have Visual Studio, or you
 don't have the Visual C++ Compiler component installed.
-
-* Add `msbuild` to `PATH`, or create a PowerShell alias to it.
-
-```powershell
-Set-Alias msbuild C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe
-```
 
 * Install CMake and add it to `PATH.`
 

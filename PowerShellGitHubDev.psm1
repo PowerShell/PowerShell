@@ -84,8 +84,15 @@ function Start-PSBuild
     {
         # cmake is needed to build powershell.exe
         $precheck = $precheck -and (precheck 'cmake' 'cmake not found. You can install it from https://chocolatey.org/packages/cmake.portable')
+        
         # msbuild is needed to build powershell.exe
-        $precheck = $precheck -and (precheck 'msbuild' 'msbuild not found. Install Visual Studio and add msbuild to $env:PATH')
+        # msbuild is part of .NET Framework, we can try to get it from well-known location.
+        if (-not (Get-Command -Name msbuild -ErrorAction Ignore))
+        {
+            $env:path += ";${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319"
+        }
+
+        $precheck = $precheck -and (precheck 'msbuild' 'msbuild not found. Install Visual Studio 2015.')
     }
     
     if (-not $precheck) { return }

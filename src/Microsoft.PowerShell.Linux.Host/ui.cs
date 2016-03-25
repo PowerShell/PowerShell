@@ -349,10 +349,13 @@ ReadNext:
                 ConsoleColor backgroundColor,
                 string value)
         {
+            ConsoleColor oldFg = Console.ForegroundColor;
+            ConsoleColor oldBg = Console.BackgroundColor;
             Console.ForegroundColor = foregroundColor;
             Console.BackgroundColor = backgroundColor;
             Console.Write(value);
-            Console.ResetColor();
+            Console.ForegroundColor = oldFg;
+            Console.BackgroundColor = oldBg;
         }
 
 
@@ -368,10 +371,13 @@ ReadNext:
                 ConsoleColor backgroundColor,
                 string value)
         {
+            ConsoleColor oldFg = Console.ForegroundColor;
+            ConsoleColor oldBg = Console.BackgroundColor;
             Console.ForegroundColor = foregroundColor;
             Console.BackgroundColor = backgroundColor;
             Console.WriteLine(value);
-            Console.ResetColor();
+            Console.ForegroundColor = oldFg;
+            Console.BackgroundColor = oldBg;
         }
 
         /// <summary>

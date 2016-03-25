@@ -4,6 +4,7 @@ namespace Microsoft.PowerShell.Linux.Host
     using System.Collections.ObjectModel;
     using System.IO;
     using System.Management.Automation;
+    using System.Management.Automation.Host;
     using System.Management.Automation.Runspaces;
     using System.Text;
 
@@ -18,6 +19,11 @@ namespace Microsoft.PowerShell.Linux.Host
         /// Powershell instance for tabcompletion
         /// </summary>
         private PowerShell powershell = PowerShell.Create();
+
+        /// <summary>
+        /// Host's UserInterface  
+        /// </summary>
+        private PSHostUserInterface ui;
 
         /// <summary>
         /// The buffer used to edit.
@@ -78,7 +84,7 @@ namespace Microsoft.PowerShell.Linux.Host
         /// We do not pick different colors for every token, those tokens
         /// use this default.
         /// </summary>
-        private ConsoleColor defaultColor = ConsoleColor.White;
+        private ConsoleColor defaultColor = Console.ForegroundColor;
 
         /// <summary>
         /// To keep track of whether we have hit "enter" key since last arrow up/down key
@@ -91,9 +97,47 @@ namespace Microsoft.PowerShell.Linux.Host
         private string preTabBuffer;
 
         /// <summary>
+        /// kill buffer used by Ctrl-K and Ctrl-Y
+        /// </summary>
+        private string killBuffer = String.Empty;
+
+        /// <summary>
+        /// Indicator that command input is complete
+        /// </summary>
+        private bool commandComplete;
+
+        /// <summary>
+        /// Indicator that current command is to be aborted
+        /// </summary>
+        private bool abort;
+
+        /// <summary>
+        /// Indicator that we are to redraw current command
+        /// </summary>
+        private bool redraw;
+
+        /// <summary>
+        /// What Read() outputs
+        /// </summary>
+        public class ReadResult
+        {
+            public ReadResult(State s, string cmd)
+            {
+                this.command = cmd;
+                this.state = s;
+                Console.TreatControlCAsInput = false;
+            }
+
+            public enum State {Complete, Abort, Redraw}
+            
+            public string command;
+            public State state;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the ConsoleReadLine class.
         /// </summary>
-        public ConsoleReadLine()
+        public ConsoleReadLine(Runspace runspace, PSHostUserInterface hostUI)
         {
             this.tokenColors = new ConsoleColor[]
             {
@@ -118,145 +162,213 @@ namespace Microsoft.PowerShell.Linux.Host
                     this.defaultColor,       // LineContinuation
                     this.defaultColor,       // Position
             };
+            this.powershell.Runspace = runspace;
+            this.ui = hostUI;
         }
 
         /// <summary>
         /// Read a line of text, colorizing while typing.
         /// </summary>
         /// <returns>The command line read</returns>
-        public string Read(Runspace runspace, bool nested)
+        public ReadResult Read(bool nested, string initialValue)
         {
-            this.powershell.Runspace = runspace;
             this.Initialize();
+
+            if (!String.IsNullOrEmpty(initialValue))
+            {
+                this.BufferFromString(initialValue);
+                this.Render();
+            }
 
             while (true)
             {
-                ConsoleKeyInfo key = Console.ReadKey(true);
-
-                // Basic Emacs-style readline implementation
-                if (key.Modifiers.HasFlag(ConsoleModifiers.Control))
+                try
                 {
-                    switch (key.Key)
+                    ConsoleKeyInfo key = Console.ReadKey(true);
+
+                    // Basic Emacs-style readline implementation
+                    if (key.Modifiers.HasFlag(ConsoleModifiers.Control))
                     {
-                        case ConsoleKey.A:
-                            this.OnHome();
-                            break;
-                        case ConsoleKey.E:
-                            this.OnEnd();
-                            break;
-                        // TODO: save buffer, yank with Ctrl-Y
-                        /*
-                        case ConsoleKey.K:
-                            this.OnEscape();
-                            break;
-                        */
-                        case ConsoleKey.D:
-                            this.OnDelete();
-                            break;
-                        case ConsoleKey.B:
-                            this.OnLeft(key.Modifiers);
-                            break;
-                        case ConsoleKey.F:
-                            this.OnRight(key.Modifiers);
-                            break;
-                        case ConsoleKey.P:
-                        // TODO: incremental search
-                        case ConsoleKey.R:
-                            this.OnUpArrow(nested);
-                            break;
-                        case ConsoleKey.N:
-                        // TODO: incremental search
-                        case ConsoleKey.S:
-                            this.OnDownArrow(nested);
-                            break;
-                        case ConsoleKey.J:
-                            this.OnEnter();
-                            break;
-                        // TODO: save and restore buffer
-                        /*
-                        case ConsoleKey.L:
-                            this.BufferFromString("clear");
-                            previousKeyPress = key;
-                            return this.OnEnter();
-                        */
+                        commandComplete = ProcessControlKey(key, nested);
                     }
+                    else if (key.Modifiers.HasFlag(ConsoleModifiers.Alt))
+                    {
+                        commandComplete = ProcessAltKey(key);
+                    }
+                    // Unmodified keys
+                    else
+                    {
+                        commandComplete = ProcessNormalKey(key, nested);
+                    }
+
+                    previousKeyPress = key;
                 }
-                else if (key.Modifiers.HasFlag(ConsoleModifiers.Alt))
+                catch
                 {
-                    switch (key.Key)
-                    {
-                        // TODO: OnDelete(key)
-                        // TODO: OnBackspace(key)
-                        case ConsoleKey.B:
-                            this.OnLeft(key.Modifiers);
-                            break;
-                        case ConsoleKey.F:
-                            this.OnRight(key.Modifiers);
-                            break;
-                    }
+                    // if anything goes wrong, abort
+                    abort = true;
                 }
-                // Unmodified keys
-                else
+
+                if (abort)
                 {
-                    switch (key.Key)
-                    {
-                        case ConsoleKey.Backspace:
-                            this.OnBackspace();
-                            break;
-                        case ConsoleKey.Delete:
-                            this.OnDelete();
-                            break;
-                        case ConsoleKey.Enter:
-                            previousKeyPress = key;
-                            return this.OnEnter();
-                        case ConsoleKey.RightArrow:
-                            this.OnRight(key.Modifiers);
-                            break;
-                        case ConsoleKey.LeftArrow:
-                            this.OnLeft(key.Modifiers);
-                            break;
-                        case ConsoleKey.Escape:
-                            this.OnEscape();
-                            break;
-                        case ConsoleKey.Home:
-                            this.OnHome();
-                            break;
-                        case ConsoleKey.End:
-                            this.OnEnd();
-                            break;
-                        case ConsoleKey.Tab:
-                            this.OnTab();
-                            break;
-                        case ConsoleKey.UpArrow:
-                            this.OnUpArrow(nested);
-                            break;
-                        case ConsoleKey.DownArrow:
-                            this.OnDownArrow(nested);
-                            break;
-
-                        // TODO: case ConsoleKey.LeftWindows: not available in linux
-                        // TODO: case ConsoleKey.RightWindows: not available in linux
-
-                        default:
-
-                            if (key.KeyChar == '\x0D')
-                            {
-                                goto case ConsoleKey.Enter;      // Ctrl-M
-                            }
-
-                            if (key.KeyChar == '\x08')
-                            {
-                                goto case ConsoleKey.Backspace;  // Ctrl-H
-                            }
-
-                            this.Insert(key.KeyChar);
-
-                            this.Render();
-                            break;
-                    }
+                    return new ReadResult(ReadResult.State.Abort, String.Empty);
                 }
-                previousKeyPress = key;
+
+                if (redraw)
+                {
+                    return new ReadResult(ReadResult.State.Redraw, this.buffer.ToString());
+                }
+                
+                if (commandComplete)
+                {
+                    return new ReadResult(ReadResult.State.Complete, this.OnEnter());
+                }
             }
+        }
+
+        /// <summary>
+        /// Process Control-Key combo
+        /// </summary>
+        private bool ProcessControlKey(ConsoleKeyInfo key, bool nested)
+        {
+            switch (key.Key)
+            {
+                case ConsoleKey.A:
+                    this.OnHome();
+                    break;
+                case ConsoleKey.E:
+                    this.OnEnd();
+                    break;
+                case ConsoleKey.K:
+                    this.OnKill();
+                    break;
+                case ConsoleKey.Y:
+                    this.OnYank();
+                    break;
+                case ConsoleKey.D:
+                    this.OnDelete();
+                    break;
+                case ConsoleKey.B:
+                    this.OnLeft(false);
+                    break;
+                case ConsoleKey.F:
+                    this.OnRight(false);
+                    break;
+                case ConsoleKey.R:
+                    return this.ReverseSearch(nested);
+                case ConsoleKey.J:
+                    previousKeyPress = key;
+                    return true;
+                case ConsoleKey.L:
+                    Console.Clear();
+                    redraw = true;
+                    return false;
+                case ConsoleKey.C:
+                    this.Abort();
+                    return true;
+                case ConsoleKey.P:
+                    this.OnUpArrow(nested);
+                    break;
+                case ConsoleKey.N:
+                    this.OnDownArrow(nested);
+                    break;
+                case ConsoleKey.RightArrow:
+                    this.OnRight(true);
+                    break;
+                case ConsoleKey.LeftArrow:
+                    this.OnLeft(true);
+                    break;
+                case ConsoleKey.Home:
+                    this.OnKillBackward();
+                    break;
+                case ConsoleKey.End:
+                    this.OnKill();
+                    break;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Process Alt-Key combo
+        /// </summary>
+        private bool ProcessAltKey(ConsoleKeyInfo key)
+        {
+            switch (key.Key)
+            {
+                // TODO: OnDelete(key)
+                // TODO: OnBackspace(key)
+                case ConsoleKey.B:
+                    this.OnLeft(true);
+                    break;
+                case ConsoleKey.F:
+                    this.OnRight(true);
+                    break;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Process normal key
+        /// </summary>
+        private bool ProcessNormalKey(ConsoleKeyInfo key, bool nested)
+        {
+            switch (key.Key)
+            {
+                case ConsoleKey.Backspace:
+                    this.OnBackspace();
+                    break;
+                case ConsoleKey.Delete:
+                    this.OnDelete();
+                    break;
+                case ConsoleKey.Enter:
+                    previousKeyPress = key;
+                    return true;
+                case ConsoleKey.RightArrow:
+                    this.OnRight(false);
+                    break;
+                case ConsoleKey.LeftArrow:
+                    this.OnLeft(false);
+                    break;
+                case ConsoleKey.Escape:
+                    this.OnEscape();
+                    break;
+                case ConsoleKey.Home:
+                    this.OnHome();
+                    break;
+                case ConsoleKey.End:
+                    this.OnEnd();
+                    break;
+                case ConsoleKey.Tab:
+                    this.OnTab();
+                    break;
+                case ConsoleKey.UpArrow:
+                    this.OnUpArrow(nested);
+                    break;
+                case ConsoleKey.DownArrow:
+                    this.OnDownArrow(nested);
+                    break;
+
+                    // TODO: case ConsoleKey.LeftWindows: not available in linux
+                    // TODO: case ConsoleKey.RightWindows: not available in linux
+
+                default:
+
+                    if (key.KeyChar == '\x0D')
+                    {
+                        goto case ConsoleKey.Enter;      // Ctrl-M
+                    }
+
+                    if (key.KeyChar == '\x08')
+                    {
+                        goto case ConsoleKey.Backspace;  // Ctrl-H
+                    }
+
+                    this.Insert(key.KeyChar);
+
+                    this.Render();
+                    break;
+            }
+            return false;
         }
 
         /// <summary>
@@ -270,6 +382,10 @@ namespace Microsoft.PowerShell.Linux.Host
             this.current = 0;
             this.rendered = 0;
             this.cursor = new Cursor();
+            this.commandComplete = false;
+            this.abort = false;
+            this.redraw = false;
+            Console.TreatControlCAsInput = true;
         }
 
         /// <summary>
@@ -495,6 +611,135 @@ namespace Microsoft.PowerShell.Linux.Host
         }
 
         /// <summary>
+        ///   Reverse search through history
+        /// </summary>
+        private bool ReverseSearch(bool nested)
+        {
+            GetHistory(nested);
+            
+            if (historyResult.Count == 0)
+            {
+                return false;
+            }
+            int searchPos = historyResult.Count - 1;
+            
+            StringBuilder searchString = new StringBuilder();
+            string searchResult = String.Empty;
+            string failed = String.Empty;
+
+            while (true)
+            {
+                OnEscape();
+                ui.Write("(");
+                ui.Write(ConsoleColor.Red, Console.BackgroundColor, $"{failed}");
+                ui.Write($"bck-i-search)'{searchString}");
+                this.current = this.cursor.GetPosition();
+                ui.Write("': ");
+                ui.Write(ConsoleColor.Green, Console.BackgroundColor, $"{searchResult}"); 
+                this.rendered = this.cursor.GetPosition();
+                this.cursor.Place(this.current);
+
+                ConsoleKeyInfo key = Console.ReadKey(true);
+
+                bool terminateSearch = false;
+                if (key.Modifiers.HasFlag(ConsoleModifiers.Control))
+                {
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.R:   // repeat search
+                            searchPos--;
+                            break;
+                        case ConsoleKey.C:
+                            Abort();
+                            return true;
+                        default:
+                            terminateSearch = true;
+                            break;
+                    }
+                }
+                else if (key.Modifiers.HasFlag(ConsoleModifiers.Alt))
+                {
+                    terminateSearch = true;
+                }
+                else
+                {
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.Backspace:
+                            if (searchString.Length > 0)
+                            {
+                                searchString.Length--;
+                            }
+                            searchPos = historyResult.Count - 1;
+                            break;
+                        case ConsoleKey.Enter:
+                            BufferFromString(searchResult);
+                            Render();
+                            return true;
+                        case ConsoleKey.Delete:
+                        case ConsoleKey.RightArrow:
+                        case ConsoleKey.LeftArrow:
+                        case ConsoleKey.Escape:
+                        case ConsoleKey.Home:
+                        case ConsoleKey.End:
+                        case ConsoleKey.Tab:
+                        case ConsoleKey.UpArrow:
+                        case ConsoleKey.DownArrow:
+                            terminateSearch = true;
+                            break;
+                        default:
+                            searchString.Append(key.KeyChar);
+                            break;
+                    }
+                }
+
+                if (terminateSearch)
+                {
+                    BufferFromString(searchResult);
+                    Render();
+                    return false;
+                }
+
+                if (searchString.Length == 0)
+                {
+                    searchResult = String.Empty;
+                    failed = String.Empty;
+                }
+                else
+                {
+                    string result = reverseSearchHistory(searchString.ToString(), ref searchPos);
+                    if (String.IsNullOrEmpty(result))
+                    {
+                        failed = "failed-";
+                    }
+                    else
+                    {
+                        failed = String.Empty;
+                        searchResult = result;
+                    }
+                }
+            }                
+        }
+
+        /// <summary>
+        /// Reverse search command history for one that match pattern
+        /// </summary>
+        private string reverseSearchHistory(string pattern, ref int pos)
+        {
+            for (int i = pos; i >= 0; --i)
+            {
+                string command = historyResult[i].Members["CommandLine"].Value.ToString();
+                if (command.Contains(pattern))
+                {
+                    pos = i;
+                    return command;
+                }
+            }
+            pos = -1;
+            return String.Empty;
+        }
+
+        /// <summary>
         /// Helper function to get command history   
         /// </summary>
         private void GetHistory(bool nested)
@@ -510,11 +755,11 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         /// Moves to the left of the cursor position.
         /// </summary>
-        /// <param name="consoleModifiers">Enumeration for Alt, Control,
+        /// <param name="byWord">move by word instead of by letter
         /// and Shift keys.</param>
-        private void OnLeft(ConsoleModifiers consoleModifiers)
+        private void OnLeft(bool byWord)
         {
-            if (consoleModifiers.HasFlag(ConsoleModifiers.Alt))
+            if (byWord)
             {
                 // Move back to the start of the previous word.
                 if (this.buffer.Length > 0 && this.current != 0)
@@ -557,11 +802,11 @@ namespace Microsoft.PowerShell.Linux.Host
         /// <summary>
         /// Moves to what is to the right of the cursor position.
         /// </summary>
-        /// <param name="consoleModifiers">Enumeration for Alt, Control,
+        /// <param name="byWord">move by word instead of by letter
         /// and Shift keys.</param>
-        private void OnRight(ConsoleModifiers consoleModifiers)
+        private void OnRight(bool byWord)
         {
-            if (consoleModifiers.HasFlag(ConsoleModifiers.Alt))
+            if (byWord)
             {
                 // Move to the next word.
                 if (this.buffer.Length != 0 && this.current < this.buffer.Length)
@@ -625,7 +870,7 @@ namespace Microsoft.PowerShell.Linux.Host
         private string OnEnter()
         {
             this.newHistory = true;
-            Console.Out.WriteLine();
+            ui.WriteLine();
             return this.buffer.ToString();
         }
 
@@ -637,6 +882,54 @@ namespace Microsoft.PowerShell.Linux.Host
             if (this.buffer.Length > 0 && this.current < this.buffer.Length)
             {
                 this.buffer.Remove(this.current, 1);
+                this.Render();
+            }
+        }
+
+        /// <summary>
+        /// Ctrl-K or Ctrl-End was entered.
+        /// </summary>
+        private void OnKill()
+        {
+            if (this.buffer.Length > 0 && this.current < this.buffer.Length)
+            {
+                this.killBuffer = this.buffer.ToString().Substring(this.current);
+                this.buffer.Remove(this.current, killBuffer.Length);
+                this.Render();
+            }
+            else
+            {
+                this.killBuffer = String.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Ctrl-Home was entered, kill from begin-of-line to current position
+        /// </summary>
+        private void OnKillBackward()
+        {
+            if (this.current > 0)
+            {
+                this.killBuffer = this.buffer.ToString().Substring(0, this.current);
+                this.buffer.Remove(0, this.current);
+                this.current = 0;
+                this.Render();
+            }
+            else
+            {
+                this.killBuffer = String.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Ctrl-Y was entered.
+        /// </summary>
+        private void OnYank()
+        {
+            if (!String.IsNullOrEmpty(killBuffer))
+            {
+                this.buffer.Insert(this.current, killBuffer);
+                this.current += killBuffer.Length;
                 this.Render();
             }
         }
@@ -663,6 +956,10 @@ namespace Microsoft.PowerShell.Linux.Host
 
             string text = this.buffer.ToString();
 
+            // TODO: Rendering of a multiline command on separate lines.  
+            // For now, just display it as a single-line command.
+            text = text.Replace(System.Environment.NewLine, " ");
+
             // The PowerShell tokenizer is used to decide how to colorize
             // the input.  Any errors in the input are returned in 'errors',
             // but we won't be looking at those here.
@@ -671,15 +968,12 @@ namespace Microsoft.PowerShell.Linux.Host
 
             if (tokens.Count > 0)
             {
-                // We can skip rendering tokens that end before the cursor.
-                int i;
+                ConsoleColor saveFGColor = Console.ForegroundColor;
 
-                for (i = 0; i < tokens.Count; ++i)
+                // Print leading blanks
+                if (tokens[0].Start != 0)
                 {
-                    if (this.current >= tokens[i].Start)
-                    {
-                        break;
-                    }
+                    ui.Write(new string(' ', tokens[0].Start));
                 }
 
                 // Place the cursor at the start of the first token to render.  The
@@ -687,13 +981,14 @@ namespace Microsoft.PowerShell.Linux.Host
                 // preceding the cursor.
                 //this.cursor.Place(tokens[i].Start);
 
-                for (; i < tokens.Count; ++i)
+                int i;
+                for (i = 0; i < tokens.Count; ++i)
                 {
                     // Write out the token.  We don't use tokens[i].Content, instead we
                     // use the actual text from our input because the content sometimes
                     // excludes part of the token, e.g. the quote characters of a string.
                     Console.ForegroundColor = this.tokenColors[(int)tokens[i].Type];
-                    Console.Out.Write(text.Substring(tokens[i].Start, tokens[i].Length));
+                    ui.Write(text.Substring(tokens[i].Start, tokens[i].Length));
 
                     // Whitespace doesn't show up in the array of tokens.  Write it out here.
                     if (i != (tokens.Count - 1))
@@ -701,7 +996,7 @@ namespace Microsoft.PowerShell.Linux.Host
                         Console.ForegroundColor = this.defaultColor;
                         for (int j = (tokens[i].Start + tokens[i].Length); j < tokens[i + 1].Start; ++j)
                         {
-                            Console.Out.Write(text[j]);
+                            ui.Write(text[j].ToString());
                         }
                     }
                 }
@@ -711,8 +1006,10 @@ namespace Microsoft.PowerShell.Linux.Host
                 Console.ForegroundColor = this.defaultColor;
                 for (int j = tokens[i - 1].Start + tokens[i - 1].Length; j < text.Length; ++j)
                 {
-                    Console.Out.Write(text[j]);
+                    ui.Write(text[j].ToString());
                 }
+                
+                Console.ForegroundColor = saveFGColor;
             }
             else
             {
@@ -720,17 +1017,29 @@ namespace Microsoft.PowerShell.Linux.Host
                 // happens most frequently when the first token is incomplete, like a string
                 // literal missing a closing quote.
                 this.cursor.Reset();
-                Console.Out.Write(text);
+                ui.Write(text);
             }
 
             // If characters were deleted, we must write over previously written characters
             if (text.Length < this.rendered)
             {
-                Console.Out.Write(new string(' ', this.rendered - text.Length));
+                ui.Write(new string(' ', this.rendered - text.Length));
             }
 
             this.rendered = text.Length;
             this.cursor.Place(this.current);
+        }
+
+        /// <summary>
+        ///   Abort current command
+        /// </summary>
+        public void Abort()
+        {
+            ConsoleColor saveFGColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
+            ui.WriteLine("^C");
+            Console.ForegroundColor = saveFGColor;
+            this.abort = true;
         }
 
         /// <summary>
@@ -796,6 +1105,15 @@ namespace Microsoft.PowerShell.Linux.Host
 
                 Console.CursorTop = cursorTop;
             }
+
+            /// <summary>
+            /// Return current position, relative to anchorLeft
+            /// </summary>
+            internal int GetPosition()
+            {
+                return Console.CursorLeft - this.anchorLeft;
+            }
+
         } // End Cursor
 
     }
