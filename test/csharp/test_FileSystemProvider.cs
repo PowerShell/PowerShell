@@ -1,5 +1,6 @@
 using Xunit;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
@@ -17,17 +18,35 @@ using Microsoft.PowerShell.Linux.Host;
 namespace PSTests
 {
     [Collection("AssemblyLoadContext")]
-    public static class FileSystemProviderTests
+    public class FileSystemProviderTests: IDisposable
     {
-		private static ProviderInfo GetProvider()
-        {
+		private string testPath;
+		private string testContent;
+		public FileSystemProviderTests()
+		{
+			testPath = Path.Combine(Path.GetTempPath(),"test");
+			testContent = "test content!";
+			if(File.Exists(testPath)) File.Delete(testPath);
+			File.AppendAllText(testPath,testContent);
+		}
+		void IDisposable.Dispose()
+		{
+			File.Delete(testPath);
+		}
+		
+		private ExecutionContext GetExecutionContext()
+		{
 			CultureInfo currentCulture = CultureInfo.CurrentCulture;
             PSHost hostInterface =  new DefaultHost(currentCulture,currentCulture);
             RunspaceConfiguration runspaceConfiguration =  RunspaceConfiguration.Create();
             InitialSessionState iss = InitialSessionState.CreateDefault2();
-			
             AutomationEngine engine = new AutomationEngine(hostInterface, runspaceConfiguration, iss);
             ExecutionContext executionContext = new ExecutionContext(engine, hostInterface, iss);
+			return executionContext;
+		}
+		private ProviderInfo GetProvider()
+        {
+            ExecutionContext executionContext = GetExecutionContext();
             SessionStateInternal sessionState = new SessionStateInternal(executionContext);
 			
 			SessionStateProviderEntry providerEntry = new SessionStateProviderEntry("FileSystem",typeof(FileSystemProvider), null);
@@ -38,13 +57,13 @@ namespace PSTests
         }
 		
         [Fact]
-        public static void TestCreateJunctionFails()
+        public void TestCreateJunctionFails()
         {
             Assert.False(InternalSymbolicLinkLinkCodeMethods.CreateJunction("",""));
         }
 		
 		[Fact]
-        public static void TestGetHelpMaml()
+        public void TestGetHelpMaml()
         {
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
 			Assert.Equal(fileSystemProvider.GetHelpMaml(String.Empty,String.Empty),String.Empty);
@@ -53,64 +72,104 @@ namespace PSTests
         }
 		
 		[Fact]
-        public static void TestMode()
+        public void TestMode()
         {
 			Assert.Equal(FileSystemProvider.Mode(null),String.Empty);
-			FileSystemInfo fileSystemObject = new DirectoryInfo(@"/");
-			Assert.NotEqual(FileSystemProvider.Mode(PSObject.AsPSObject(fileSystemObject)),String.Empty);
+			FileSystemInfo directoryObject = new DirectoryInfo(@"/");
+			FileSystemInfo fileObject = new FileInfo(@"/etc/hosts");
+			FileSystemInfo excutableObject = new FileInfo(@"/bin/echo");
+			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)).Replace("r","-"),"d-----");
+			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(fileObject)).Replace("r","-"),"------");
+			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(excutableObject)).Replace("r","-"),"------");
         }
 		
-		[Fact(Skip = "Need mock")]
-        public static void TestGetProperty()
+		[Fact]
+        public void TestGetProperty()
         {
-			string path = @"/filesystemobject1";
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
 			ProviderInfo providerInfoToSet = GetProvider();
 			fileSystemProvider.SetProviderInformation(providerInfoToSet);
-			FileInfo fileSystemObject1 = new FileInfo(path);
-			fileSystemProvider.SetProperty(path, PSObject.AsPSObject(fileSystemObject1));
-			fileSystemProvider.GetProperty(path, new Collection<string>(){"Attributes"});
+			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
+			PSObject pso=new PSObject();
+			pso.AddOrSetProperty("IsReadOnly",false);
+			fileSystemProvider.SetProperty(testPath, pso);
+			fileSystemProvider.GetProperty(testPath, new Collection<string>(){"IsReadOnly"});
+			FileInfo fileSystemObject1 = new FileInfo(testPath);
+			PSObject psobject1=PSObject.AsPSObject(fileSystemObject1);
+			foreach(PSPropertyInfo property in psobject1.Properties)
+			{
+				if(property.Name == "IsReadOnly")
+				{
+					Assert.Equal(property.Value,false);
+				}
+			}
         }
 		
-		[Fact(Skip = "Need mock")]
-        public static void TestSetProperty()
+		[Fact]
+        public void TestSetProperty()
         {
-			string path = @"/filesystemobject1";
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
 			ProviderInfo providerInfoToSet = GetProvider();
 			fileSystemProvider.SetProviderInformation(providerInfoToSet);
-			FileInfo fileSystemObject1 = new FileInfo(path);
-			fileSystemProvider.SetProperty(@"/root", PSObject.AsPSObject(fileSystemObject1));
+			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
+			fileSystemProvider.GetProperty(testPath, new Collection<string>(){"Name"});
+			FileInfo fileSystemObject1 = new FileInfo(testPath);
+			PSObject psobject1=PSObject.AsPSObject(fileSystemObject1);
+			foreach(PSPropertyInfo property in psobject1.Properties)
+			{
+				if(property.Name == "Name")
+				{
+					Assert.Equal(property.Value,"test");
+				}
+			}
         }
 		
-		[Fact(Skip = "Need mock")]
-        public static void TestClearProperty()
+		[Fact]
+        public void TestClearProperty()
         {
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
-			fileSystemProvider.ClearProperty(@"/test", new Collection<string>(){"Attributes"});
+			ProviderInfo providerInfoToSet = GetProvider();
+			fileSystemProvider.SetProviderInformation(providerInfoToSet);
+			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
+			fileSystemProvider.ClearProperty(testPath, new Collection<string>(){"Attributes"});
         }
 		
-		[Fact(Skip = "Need mock")]
-        public static void TestGetContentReader()
+		[Fact]
+        public void TestGetContentReader()
         {
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
-			IContentReader contentReader = fileSystemProvider.GetContentReader(@"/test");
-			Assert.NotNull(contentReader);
+			ProviderInfo providerInfoToSet = GetProvider();
+			fileSystemProvider.SetProviderInformation(providerInfoToSet);
+			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
+			
+			IContentReader contentReader = fileSystemProvider.GetContentReader(testPath);
+			Assert.Equal(contentReader.Read(1)[0],testContent);
+			contentReader.Close();
         }
 		
-		[Fact(Skip = "Need mock")]
-        public static void TestGetContentWriter()
+		[Fact]
+        public void TestGetContentWriter()
         {
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
-			IContentWriter contentWriter = fileSystemProvider.GetContentWriter(@"/test");
-			Assert.NotNull(contentWriter);
+			ProviderInfo providerInfoToSet = GetProvider();
+			fileSystemProvider.SetProviderInformation(providerInfoToSet);
+			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
+			
+			IContentWriter contentWriter = fileSystemProvider.GetContentWriter(testPath);
+			contentWriter.Write(new List<string>(){"contentWriterTestContent"});
+			contentWriter.Close();
+			Assert.Equal(File.ReadAllText(testPath), testContent+@"contentWriterTestContent"+ System.Environment.NewLine);
         }
 		
-		[Fact(Skip = "Need mock")]
-        public static void TestClearContent()
+		[Fact]
+        public void TestClearContent()
         {
 			FileSystemProvider fileSystemProvider = new FileSystemProvider();
-			fileSystemProvider.ClearContent(@"/test");
+			ProviderInfo providerInfoToSet = GetProvider();
+			fileSystemProvider.SetProviderInformation(providerInfoToSet);
+			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
+			fileSystemProvider.ClearContent(testPath);
+			Assert.Empty(File.ReadAllText(testPath));
         }
     }
 }
