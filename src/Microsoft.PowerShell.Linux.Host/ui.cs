@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Linux.Host
         {
             this.Write(
                     ConsoleColor.White,
-                    ConsoleColor.Black,
+                    Console.BackgroundColor,
                     caption + System.Environment.NewLine + message + " ");
             Dictionary<string, PSObject> results =
                 new Dictionary<string, PSObject>();
@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Linux.Host
             // Write the caption and message strings in Blue.
             this.WriteLine(
                     ConsoleColor.Blue,
-                    ConsoleColor.Black,
+                    Console.BackgroundColor,
                     caption + System.Environment.NewLine + message + System.Environment.NewLine);
 
             // Convert the choice collection into something that is
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Linux.Host
             // chosen, or the loop is interrupted with ctrl-C.
             while (true)
             {
-                this.WriteLine(ConsoleColor.Cyan, ConsoleColor.Black, sb.ToString());
+                this.WriteLine(ConsoleColor.Cyan, Console.BackgroundColor, sb.ToString());
                 string data = Console.ReadLine().Trim().ToUpper();
 
                 // If the choice string was empty, use the default selection.
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Linux.Host
             // Write the caption and message strings in Blue.
             this.WriteLine(
                     ConsoleColor.Blue,
-                    ConsoleColor.Black,
+                    Console.BackgroundColor,
                     caption + System.Environment.NewLine + message + System.Environment.NewLine);
 
             // Convert the choice collection into something that is
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Linux.Host
 
             this.WriteLine(
                     ConsoleColor.Cyan,
-                    ConsoleColor.Black,
+                    Console.BackgroundColor,
                     sb.ToString());
             // Read prompts until a match is made, the default is
             // chosen, or the loop is interrupted with ctrl-C.
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Linux.Host
             {
 ReadNext:
                 string prompt = string.Format(CultureInfo.CurrentCulture, "Choice[{0}]:", results.Count);
-                this.Write(ConsoleColor.Cyan, ConsoleColor.Black, prompt);
+                this.Write(ConsoleColor.Cyan, Console.BackgroundColor, prompt);
                 string data = Console.ReadLine().Trim().ToUpper();
 
                 // If the choice string was empty, no more choices have been made.
@@ -349,11 +349,13 @@ ReadNext:
                 ConsoleColor backgroundColor,
                 string value)
         {
+            ConsoleColor oldFg = Console.ForegroundColor;
+            ConsoleColor oldBg = Console.BackgroundColor;
             Console.ForegroundColor = foregroundColor;
             Console.BackgroundColor = backgroundColor;
             Console.Write(value);
-            //Console.Write(value);
-            Console.ResetColor();
+            Console.ForegroundColor = oldFg;
+            Console.BackgroundColor = oldBg;
         }
 
 
@@ -361,7 +363,7 @@ ReadNext:
         /// Writes a line of characters to the output display of the host
         /// with foreground and background colors and appends a newline (carriage return).
         /// </summary>
-        /// <param name="foregroundColor">The forground color of the display. </param>
+        /// <param name="foregroundColor">The foreground color of the display. </param>
         /// <param name="backgroundColor">The background color of the display. </param>
         /// <param name="value">The line to be written.</param>
         public override void WriteLine(
@@ -369,10 +371,13 @@ ReadNext:
                 ConsoleColor backgroundColor,
                 string value)
         {
+            ConsoleColor oldFg = Console.ForegroundColor;
+            ConsoleColor oldBg = Console.BackgroundColor;
             Console.ForegroundColor = foregroundColor;
             Console.BackgroundColor = backgroundColor;
             Console.WriteLine(value);
-            Console.ResetColor();
+            Console.ForegroundColor = oldFg;
+            Console.BackgroundColor = oldBg;
         }
 
         /// <summary>
@@ -383,7 +388,7 @@ ReadNext:
         {
             this.WriteLine(
                     ConsoleColor.Yellow,
-                    ConsoleColor.Black,
+                    Console.BackgroundColor,
                     String.Format(CultureInfo.CurrentCulture, "DEBUG: {0}", message));
         }
 
@@ -396,7 +401,7 @@ ReadNext:
         {
             this.WriteLine(
                     ConsoleColor.Red,
-                    ConsoleColor.Black,
+                    Console.BackgroundColor,
                     value);
         }
 
@@ -454,7 +459,7 @@ ReadNext:
         {
             this.WriteLine(
                     ConsoleColor.Green,
-                    ConsoleColor.Black,
+                    Console.BackgroundColor,
                     String.Format(CultureInfo.CurrentCulture, "VERBOSE: {0}", message));
         }
 
@@ -466,7 +471,7 @@ ReadNext:
         {
             this.WriteLine(
                     ConsoleColor.Yellow,
-                    ConsoleColor.Black,
+                    Console.BackgroundColor,
                     String.Format(CultureInfo.CurrentCulture, "WARNING: {0}", message));
         }
 

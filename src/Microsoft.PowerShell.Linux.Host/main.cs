@@ -109,6 +109,9 @@ OPTIONS
             }
             // TODO: check for input on stdin
 
+            ConsoleColor InitialForegroundColor = Console.ForegroundColor;
+            ConsoleColor InitialBackgroundColor = Console.BackgroundColor;
+
             // Create the listener and run it
             Listener listener = new Listener(initialScript, loadProfiles);
 
@@ -117,6 +120,9 @@ OPTIONS
             {
                 listener.Run();
             }
+
+            Console.ForegroundColor = InitialForegroundColor;
+            Console.BackgroundColor = InitialBackgroundColor;
 
             // Exit with the desired exit code that was set by the exit command.
             // The exit code is set in the host by the MyHost.SetShouldExit() method.
@@ -129,7 +135,7 @@ OPTIONS
         /// <summary>
         /// Used to read user input.
         /// </summary>
-        internal ConsoleReadLine consoleReadLine = new ConsoleReadLine();
+        internal ConsoleReadLine consoleReadLine;
 
         /// <summary>
         /// Holds a reference to the runspace for this interpeter.
@@ -168,6 +174,16 @@ OPTIONS
         private bool _showHelpMessage;
 
         /// <summary>
+        /// To keep track whether last entered command was complete
+        /// </summary>
+        private bool incompleteLine = false;
+
+        /// <summary>
+        /// To store incomplete lines
+        /// </summary>
+        private string partialLine = string.Empty;
+
+        /// <summary>
         /// Gets or sets a value indicating whether the host application
         /// should exit.
         /// </summary>
@@ -203,6 +219,7 @@ OPTIONS
             InitialSessionState iss = InitialSessionState.CreateDefault2();
             this.myRunSpace = RunspaceFactory.CreateRunspace(this.myHost, iss);
             this.myRunSpace.Open();
+            this.consoleReadLine = new ConsoleReadLine(this.myHost.Runspace, this.myHost.UI);
 
             if (this.myRunSpace.Debugger != null)
             {
@@ -212,7 +229,6 @@ OPTIONS
                 // feature.  In order to debug Workflow script functions the debugger
                 // DebugMode must include the DebugModes.LocalScript flag.
                 this.myRunSpace.Debugger.SetDebugMode(DebugModes.LocalScript);
-
             }
 
             if (loadProfiles)
@@ -223,7 +239,7 @@ OPTIONS
             // run the initial script
             if (initialScript != null)
             {
-                ExecuteHelper(initialScript, null);
+                Execute(initialScript);
             }
         }
 
@@ -270,13 +286,20 @@ OPTIONS
                 return returnVal;
             }
 
-            // TODO: if we are in block mode, sep the prompt to ">> "
-            Pipeline pipeline = rs.CreatePipeline();
+            if (incompleteLine)
+            {
+                return ">> ";
+            }
+
+            Collection<PSObject> output;
             Command promptCommand = new Command("prompt");
 
-            pipeline.Commands.Add(promptCommand);
+            using (Pipeline pipeline = rs.CreatePipeline())
+            {
+                pipeline.Commands.Add(promptCommand);
+                output = pipeline.Invoke();
+            }
 
-            Collection<PSObject> output = pipeline.Invoke();
             foreach (PSObject item in output)
             {
                 returnVal = item.BaseObject.ToString();
@@ -343,7 +366,9 @@ OPTIONS
             {
                 this.currentPowerShell.Runspace = this.myRunSpace;
 
-                this.currentPowerShell.AddScript(cmd);
+                string fullCommand = incompleteLine ? (partialLine + cmd) : cmd;
+                this.currentPowerShell.AddScript(fullCommand);
+                incompleteLine = false;
 
                 // Add the default outputter to the end of the pipe and then call the
                 // MergeMyResults method to merge the output and error streams from the
@@ -366,6 +391,12 @@ OPTIONS
                     this.currentPowerShell.Invoke(null, settings);
                 }
             }
+            catch (IncompleteParseException)
+            {
+                incompleteLine = true;
+                partialLine = $"{partialLine}{cmd}{System.Environment.NewLine}";
+            }
+
             finally
             {
                 // Dispose the PowerShell object and set currentPowerShell to null.
@@ -375,6 +406,11 @@ OPTIONS
                 {
                     this.currentPowerShell.Dispose();
                     this.currentPowerShell = null;
+                }
+
+                if (!incompleteLine)
+                {
+                    partialLine = string.Empty;
                 }
             }
         }
@@ -392,6 +428,9 @@ OPTIONS
         {
             if (e != null)
             {
+                // Return non-zero exit code if an exception is thrown
+                this.ExitCode = 1;
+
                 object error;
                 IContainsErrorRecord icer = e as IContainsErrorRecord;
                 if (icer != null)
@@ -483,7 +522,6 @@ OPTIONS
                         this.currentPowerShell.Stop();
                     }
                 }
-
                 e.Cancel = true;
             }
             catch (Exception exception)
@@ -501,12 +539,16 @@ OPTIONS
         {
             // Set up the control-C handler.
             Console.CancelKeyPress += new ConsoleCancelEventHandler(this.HandleControlC);
-            //Console.TreatControlCAsInput = false;
+
+            string initialCommand = String.Empty;
 
             // Read commands and run them until the ShouldExit flag is set by
             // the user calling "exit".
             while (!this.ShouldExit && this.myHost.Runspace != null)
             {
+                // Reset exit code for each command
+                this.ExitCode = 0;
+
                 // If the prompt function failed for any reason, use a sane default
                 string prompt;
                 try
@@ -518,9 +560,26 @@ OPTIONS
                     prompt = "PS> ";
                 }
 
-                this.myHost.UI.Write(ConsoleColor.White, ConsoleColor.Black, prompt);
-                string cmd = consoleReadLine.Read(this.myHost.Runspace);
-                this.Execute(cmd);
+                this.myHost.UI.Write(prompt);
+
+                ConsoleReadLine.ReadResult result = consoleReadLine.Read(false, initialCommand);
+                
+                switch(result.state)
+                {
+                    case ConsoleReadLine.ReadResult.State.Abort:
+                        incompleteLine = false;
+                        partialLine = string.Empty;
+                        initialCommand = String.Empty;
+                        break;
+                    case ConsoleReadLine.ReadResult.State.Redraw:
+                        initialCommand = result.command;
+                        break;
+                    case ConsoleReadLine.ReadResult.State.Complete:
+                    default:
+                        this.Execute(result.command);
+                        initialCommand = String.Empty;
+                        break;
+                }
             }
         }
 
@@ -536,12 +595,31 @@ OPTIONS
 
             WriteDebuggerStopMessages(args);
 
+            string initialCommand = String.Empty;
+
             // loop to process Debugger commands.
             while (resumeAction == null)
             {
-                Console.Write("[DBG] PS >> ");
-                string command = consoleReadLine.Read(this.myHost.Runspace); 
-                Console.WriteLine();
+                string prompt = incompleteLine ? ">> " : "[DBG] PS >> ";
+                this.myHost.UI.Write(prompt);
+
+                ConsoleReadLine.ReadResult result = consoleReadLine.Read(true, initialCommand);
+                
+                switch(result.state)
+                {
+                    case ConsoleReadLine.ReadResult.State.Abort:
+                        incompleteLine = false;
+                        partialLine = string.Empty;
+                        initialCommand = String.Empty;
+                        continue;
+                    case ConsoleReadLine.ReadResult.State.Redraw:
+                        initialCommand = result.command;
+                        continue;
+                    case ConsoleReadLine.ReadResult.State.Complete:
+                    default:
+                        initialCommand = String.Empty;
+                        break;
+                }
 
                 // Stream output from command processing to console.
                 var output = new PSDataCollection<PSObject>();
@@ -549,7 +627,7 @@ OPTIONS
                 {
                     foreach (var item in output.ReadAll())
                     {
-                        Console.WriteLine(item);
+                        this.myHost.UI.WriteLine(item.ToString());
                     }
                 };
 
@@ -560,10 +638,30 @@ OPTIONS
                 // command or script.  The returned DebuggerCommandResults object will indicate
                 // whether the command was evaluated by the debugger and if the debugger should
                 // be released with a specific resume action.
+
                 PSCommand psCommand = new PSCommand();
-                psCommand.AddScript(command).AddCommand("Out-String").AddParameter("Stream", true);
-                DebuggerCommandResults results = debugger.ProcessCommand(psCommand, output);
-                if (results.ResumeAction != null)
+
+                string fullCommand = incompleteLine ? (partialLine + result.command) : result.command;
+                psCommand.AddScript(fullCommand).AddCommand("Out-String").AddParameter("Stream", true);
+                incompleteLine = false;
+
+                DebuggerCommandResults results = null;
+                try
+                {
+                    results = debugger.ProcessCommand(psCommand, output);
+                }
+                catch (IncompleteParseException)
+                {
+                    incompleteLine = true;
+                    partialLine = $"{partialLine}{result.command}{System.Environment.NewLine}";
+                }
+
+                if (!incompleteLine)
+                {
+                    partialLine = string.Empty;
+                }
+
+                if (!incompleteLine && results.ResumeAction != null)
                 {
                     resumeAction = results.ResumeAction;
                 }
@@ -586,8 +684,8 @@ OPTIONS
             // Show help message only once.
             if (!_showHelpMessage)
             {
-                Console.WriteLine("Entering debug mode. Type 'h' to get help.");
-                Console.WriteLine();
+                this.myHost.UI.WriteLine("Entering debug mode. Type 'h' to get help.");
+                this.myHost.UI.WriteLine();
                 _showHelpMessage = true;
             }
 
@@ -595,12 +693,12 @@ OPTIONS
             // pertain to this debugger execution stop point.
             if (args.Breakpoints.Count > 0)
             {
-                Console.WriteLine("Debugger hit breakpoint on:");
+                this.myHost.UI.WriteLine("Debugger hit breakpoint on:");
                 foreach (var breakPoint in args.Breakpoints)
                 {
-                    Console.WriteLine(breakPoint.ToString());
+                    this.myHost.UI.WriteLine(breakPoint.ToString());
                 }
-                Console.WriteLine();
+                this.myHost.UI.WriteLine();
             }
 
             // Script position stop information.
@@ -608,8 +706,8 @@ OPTIONS
             // there is one.
             if (args.InvocationInfo != null)
             {
-                Console.WriteLine(args.InvocationInfo.PositionMessage);
-                Console.WriteLine();
+                this.myHost.UI.WriteLine(args.InvocationInfo.PositionMessage);
+                this.myHost.UI.WriteLine();
             }
 
             Console.ForegroundColor = saveFGColor;

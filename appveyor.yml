@@ -1,6 +1,13 @@
+image: Visual Studio 2015
+
+version: 0.2.0.{build}
+
 environment:
   priv_key:
     secure: <encryped-value>
+
+cache:
+  - '%LocalAppData%\Microsoft\dotnet'
 
 notifications:
   - provider: Slack
@@ -15,41 +22,54 @@ install:
   - git config --global url.git@github.com:.insteadOf https://github.com/
   - git submodule update --init --recursive -- src/monad src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
   - ps: Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
-  - ps: ./install.ps1 -version 1.0.0.001425 -channel beta
+  - ps: ./install.ps1 -version 1.0.0.001888
 
 build_script:
-  - ps: $env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli\bin"
-  - ps: dotnet restore
-  - ps: .\build.ps1
-  - ps: .\build.fullCLR.ps1
+  - ps: |
+      $env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli"
+      dotnet --version
+      Import-Module .\PowerShellGitHubDev.psm1
+      Start-PSBuild
+      Start-PSBuild -FullCLR
 
 test_script:
   - ps: |
       # fail tests execution, if any PS error detected
       $ErrorActionPreference = 'Stop'
+      #
       # CoreCLR
-      $testResultsFile = ".\TestsResults.xml"
-      .\bin\powershell.exe --noprofile -c "Invoke-Pester test/powershell -OutputFormat NUnitXml -OutputFile $testResultsFile"
+      Write-Host -Foreground Green 'Run CoreCLR tests'
+      $testResultsFile = "$pwd\TestsResults.xml"
+      .\bin\powershell.exe --noprofile -c "Import-Module .\bin\Modules\Microsoft.PowerShell.Platform; Invoke-Pester test/powershell -OutputFormat NUnitXml -OutputFile $testResultsFile"
       (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFile))
-      # For now we don't fail the build if these tests failed
       #
       # FullCLR
-      Import-Module .\PowerShellGithubDev.psm1
-      $testResultsFile = ".\TestsResults.FullCLR.xml"
-      Start-DevPSGithub -binDir $pwd\binFull -NoNewWindow -ArgumentList '-command', "Import-Module .\src\Microsoft.PowerShell.Linux.Host\Modules\Pester; Invoke-Pester test/fullCLR -OutputFormat NUnitXml -OutputFile $testResultsFile"
-      (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFile))
-      # we want to fail the build, if these tests failed
-      $x = [xml](cat -raw .\TestsResults.FullCLR.xml)
+      Write-Host -Foreground Green 'Run FullCLR tests'
+      $testResultsFileFullCLR = "$pwd\TestsResults.FullCLR.xml"
+      Start-DevPSGitHub -binDir $pwd\binFull -NoNewWindow -ArgumentList '-command', "Import-Module .\src\monad\monad\src\OSS\Pester; Import-Module .\bin\Modules\Microsoft.PowerShell.Platform; Invoke-Pester test/fullCLR -OutputFormat NUnitXml -OutputFile $testResultsFileFullCLR"
+      (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFileFullCLR))
+      #
+      # Fail the build, if tests failed
+      Write-Host -Foreground Green 'Upload CoreCLR test results'
+      $x = [xml](cat -raw $testResultsFile)
+      if ([int]$x.'test-results'.failures -gt 0)
+      {
+        throw "$($x.'test-results'.failures) tests in test/powershell failed"
+      }
+      Write-Host -Foreground Green 'Upload FullCLR test results'
+      $x = [xml](cat -raw $testResultsFileFullCLR)
       if ([int]$x.'test-results'.failures -gt 0)
       {
         throw "$($x.'test-results'.failures) tests in test/fullCLR failed"
       }
 
+
 on_finish: 
   - ps: |
       # Creating project artifact
-      $zipFilePath = Join-Path $pwd "$(Split-Path $pwd -Leaf).zip"
-      $zipFileFullPath = Join-Path $pwd "$(Split-Path $pwd -Leaf).FullCLR.zip"
+      $name = git describe
+      $zipFilePath = Join-Path $pwd "$name.zip"
+      $zipFileFullPath = Join-Path $pwd "$name.FullCLR.zip"
       Add-Type -assemblyname System.IO.Compression.FileSystem
       [System.IO.Compression.ZipFile]::CreateFromDirectory("$pwd\bin", $zipFilePath)
       [System.IO.Compression.ZipFile]::CreateFromDirectory("$pwd\binFull", $zipFileFullPath)

@@ -1,8 +1,6 @@
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-
 Describe "Import-Alias" {
-    $pesteraliasfile = Join-Path -Path (Join-Path $here -ChildPath assets) -ChildPath pesteralias.txt
-    
+    $pesteraliasfile = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath pesteralias.txt
+
     Context "Validate ability to import alias file" {
 
 	It "Should be able to import an alias file successfully" {
@@ -10,18 +8,18 @@ Describe "Import-Alias" {
 	}
 
 	It "Should be able to import file via the Import-Alias alias of ipal" {
-            { ipal $pesteraliasfile } | Should Not throw
-        }
+	    { ipal $pesteraliasfile } | Should Not throw
+	}
 
-        It "Should be able to import an alias file and perform imported aliased echo cmd" {
+	It "Should be able to import an alias file and perform imported aliased echo cmd" {
 	    (Import-Alias $pesteraliasfile)
 	    (pesterecho pestertesting) | Should Be "pestertesting"
 	}
 
-        It "Should be able to use ipal alias to import an alias file and perform cmd" {
-            (ipal $pesteraliasfile)
+	It "Should be able to use ipal alias to import an alias file and perform cmd" {
+	    (ipal $pesteraliasfile)
 	    (pesterecho pestertesting) | Should be "pestertesting"
 	}
-        
+
     }
 }

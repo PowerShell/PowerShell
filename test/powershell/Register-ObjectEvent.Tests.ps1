@@ -1,16 +1,16 @@
 Describe "Register-ObjectEvent" {
 
     BeforeEach {
-	    $pesterobject = (New-Object System.Collections.ObjectModel.ObservableCollection[object])
-	}
-    
-        AfterEach {
-            Unregister-Event -SourceIdentifier PesterTestRegister -ErrorAction SilentlyContinue
-        }
+	$pesterobject = (New-Object System.Collections.ObjectModel.ObservableCollection[object])
+    }
+
+    AfterEach {
+	Unregister-Event -SourceIdentifier PesterTestRegister -ErrorAction SilentlyContinue
+    }
 
     Context "Check return type of Register-ObjectEvent" {
-	
-        It "Should return System.Management.Automation.PSEventSubscriber as return type of New-Event with the registered sourceidentifier" {
+
+	It "Should return System.Management.Automation.PSEventSubscriber as return type of New-Event with the registered sourceidentifier" {
 	    Register-ObjectEvent -InputObject $pesterobject -EventName CollectionChanged -SourceIdentifier PesterTestRegister
 	    (Get-EventSubscriber -SourceIdentifier PesterTestRegister).GetType() | Should Be System.Management.Automation.PSEventSubscriber
 	}
@@ -22,7 +22,7 @@ Describe "Register-ObjectEvent" {
 	    (Get-EventSubscriber -SourceIdentifier PesterTestRegister).SourceIdentifier | Should Be "PesterTestRegister"
 	}
 
-        It "Should return an integer greater than 0 for the SubscriptionId" {
+	It "Should return an integer greater than 0 for the SubscriptionId" {
 	    Register-ObjectEvent -InputObject $pesterobject -EventName CollectionChanged -SourceIdentifier PesterTestRegister
 	    (Get-EventSubscriber -SourceIdentifier PesterTestRegister).SubscriptionId | Should BeGreaterThan 0
 

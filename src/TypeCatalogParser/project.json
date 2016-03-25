@@ -1,0 +1,26 @@
+{
+    "compilationOptions": {
+        "warningsAsErrors": true,
+        "emitEntryPoint": true
+    },
+
+    "dependencies": {
+        "Microsoft.DotNet.ProjectModel": "1.0.0-beta-*",
+        "Microsoft.DotNet.Cli.Utils": "1.0.0-beta-*"
+    },
+
+    "frameworks": {
+        "netstandardapp1.5": {
+            "imports": [ "dnxcore50", "portable-net45+win8" ]
+        }
+    },
+
+    "runtimes": {
+        "ubuntu.14.04-x64": { },
+        "centos.7.1-x64": { },
+        "win7-x64": { },
+        "win10-x64": { },
+        "osx.10.10-x64": { },
+        "osx.10.11-x64": { }
+    }
+}

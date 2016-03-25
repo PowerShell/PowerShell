@@ -1,5 +1,5 @@
 Describe "Get-Culture" {
-    
+
     It "Should return a type of CultureInfo for Get-Culture cmdlet" {
 
 	(Get-Culture).GetType() | Should Be CultureInfo

@@ -12,100 +12,112 @@
 
 Install [Git][], the version control system.
 
-```sh
-sudo apt-get install git
-```
-
-If you do not have a preferred method of authentication, enable the storage
-credential helper, which will cache your credentials in plaintext on your
-system, so use a [token][].
-
-```sh
-git config --global credential.helper store
-```
-
-See the [Contributing Guidelines](CONTRIBUTING.md) for more Git information.
+See the [Contributing Guidelines](CONTRIBUTING.md) for more Git
+information, such as our installation instructions, contributing
+rules, and Git best practices.
 
 [Git]: https://git-scm.com/documentation
-[token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
 
 ### Download source code
 
-Clone this repository recursively, as it's the superproject with a number of
-submodules.
+Clone this repository. It is a "superproject" and has a number of
+other repositories embedded within it as submodules. *Please* see the
+contributing guidelines and learn about submodules.
 
 ```sh
-git clone --recursive https://github.com/PowerShell/PowerShell.git
+git clone https://github.com/PowerShell/PowerShell.git
+cd PowerShell
+```
+
+#### Linux
+
+Linux will need every submodule, so update them recursively:
+
+```sh
+git submodule update --init --recursive
 ```
 
 The `src/omi` submodule requires your GitHub user to have joined the Microsoft
 organization. If it fails to check out, Git will bail and not check out further
 submodules either. Please follow the instructions on the [Open Source Hub][].
 
-On Windows, many fewer submodules are needed, so don't use `clone --recursive`.
-
-Instead run:
-
-```
-git clone https://github.com/PowerShell/PowerShell.git
-git submodule update --init --recursive -- src/monad src/windows-build test/Pester
-```
-
 [Open Source Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
+
+#### Windows
+
+On Windows, many fewer submodules are needed, so specify them:
+
+```sh
+git submodule update --init --recursive -- src/monad src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
+```
 
 ## Setup build environment
 
-We use the [.NET Command Line Interface][dotnet] (`dotnet`) to build
-the managed components, and [CMake][] to build the native components (on
-non-Windows platforms). Install `dotnet` by following their [documentation][].
+We use the [.NET Command Line Interface][dotnet-cli] (`dotnet`) to
+build the managed components, and [CMake][] to build the native
+components (on non-Windows platforms). Install `dotnet` by following
+their [documentation][cli-docs].
 
 The version of .NET CLI is very important, you want a recent 1.0.0 beta
 (**not** 1.0.1). The following instructions will install precisely
-1.0.0.001425, though any 1.0.0 version *should* work.
+1.0.0.001888, though any 1.0.0 version *should* work.
 
 > Previous installations of DNX, `dnvm`, or older installations of .NET CLI
 > can cause odd failures when running. Please check your version.
 
-[dotnet]: https://github.com/dotnet/cli#new-to-net-cli
-[documentation]: https://dotnet.github.io/getting-started/
+[dotnet-cli]: https://github.com/dotnet/cli#new-to-net-cli
+[cli-docs]: https://dotnet.github.io/getting-started/
 [CMake]: https://cmake.org/cmake/help/v2.8.12/cmake.html
 
 ### Linux
 
 Tested on Ubuntu 14.04.
 
+This installs the .NET CLI package feed. The benefit to this is that
+installing `dotnet` using `apt-get` will also install all of its
+dependencies automatically.
+
 ```sh
 sudo sh -c 'echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/dotnet/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
 sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
 sudo apt-get update
-sudo apt-get install dotnet=1.0.0.001425-1
+sudo apt-get install dotnet=1.0.0.001675-1
 ```
 
-Then install the following additional build / debug tools:
+The drawback of using the feed is that it gets out of date. The pinned
+version is the most recent package published to the feed, but newer
+packages are available. To upgrade the package, install it by
+hand. Unfortunately, `dpkg` does not handle dependency resolution, so
+it is recommended to first install the older version from the feed,
+and then upgrade it.
+
+```sh
+wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-ubuntu-x64.latest.deb
+sudo dpkg -i ./dotnet-ubuntu-x64.latest.deb
+```
+
+Additionally, PowerShell on Linux builds a native library, so install
+the following additional build / debug tools.
 
 ```sh
 sudo apt-get install g++ cmake make lldb-3.6 strace
-```
-
-#### OMI
-
-To develop on the PowerShell Remoting Protocol (PSRP) for Linux, you'll need to
-be able to compile OMI, which additionally requires:
-
-```sh
-sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev libboost-filesystem-dev
 ```
 
 ### Windows
 
 Tested on Windows 10 and Windows Server 2012 R2.
 
-An MSI installer also exists, but this script avoids touching your system.
-
 ```powershell
 Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
-./install.ps1 -version 1.0.0.001425 -channel beta
+./install.ps1 -version 1.0.0.001888
+$env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli
 ```
+
+If you meet `Unable to cast COM object of type 'System.__ComObject' to
+interface type 'Microsoft.Cci.ISymUnmanagedWriter5'`, please install
+[Visual C++ Redistributable for Visual Studio 2015][redist].
+
+[redist]: https://www.microsoft.com/en-hk/download/details.aspx?id=48145
 
 ### OS X
 
@@ -120,14 +132,17 @@ test on OS X, but some developers use PowerShell on 10.10 and 10.11.
 **The command `dotnet restore` must be done at least once from the top directory
 to obtain all the necessary .NET packages.**
 
-Build with `./build.sh` on Linux and OS X, `./build.ps1` for Core PowerShell on
-Windows, and `./build.FullCLR.ps1` for Full PowerShell on Windows.
+Build with `./build.sh` on Linux and OS X.
+
+`Start-PSBuild` from module `./PowerShellGitHubDev.psm1` on Windows
+and Linux / OS X, if you are self-hosting PowerShell.
 
 Specifically:
 
 ### Linux
 
 In Bash:
+
 ```sh
 cd PowerShell
 dotnet restore
@@ -137,11 +152,17 @@ dotnet restore
 ### Windows
 
 In PowerShell:
+
 ```powershell
 cd PowerShell
 dotnet restore
-./build.ps1
+Import-Module .\PowerShellGitHubDev.psm1
+Start-PSBuild # build CoreCLR version
+Start-PSBuild -FullCLR # build FullCLR version
 ```
+
+**Tip:** use `Start-PSBuild -Verbose` switch to see more information
+about build process.
 
 ## Running
 
@@ -160,6 +181,38 @@ The local managed host has built-in documentation via `--help`.
 - launch `./bin/powershell.exe`
 - run tests with `./bin/powershell.exe -c "Invoke-Pester test/powershell"`
 
+## Debugging
+
+To enable debugging on Linux, follow the installation instructions for
+[Experimental .NET Core Debugging in VS Code][VS Code]. You will also
+want to review their [detailed instructions][vscclrdebugger].
+
+VS Code will place a `.vscode` directory in the PowerShell folder.
+This contains the `launch.json` file, which you will customize using
+the instructions below. You will also be prompted to create a
+`tasks.json` file.
+
+Currently, debugging supports attaching to a currently running
+powershell process. Assuming you've created a `launch.json` file
+correctly, within the "configuration" section, use the below settings:
+
+```json
+"configurations": [
+    {
+        "name": "powershell",
+        "type": "coreclr",
+        "request": "attach",
+        "processName": "powershell"
+    }
+]
+```
+
+VS Code will now attach to a running `powershell` process. Start
+powershell, then (in VS Code) press `F5` to begin the debugger.
+
+[VS Code]: https://blogs.msdn.microsoft.com/visualstudioalm/2016/03/10/experimental-net-core-debugging-in-vs-code/
+[vscclrdebugger]: http://aka.ms/vscclrdebugger
+
 ## PowerShell Remoting Protocol
 
 PSRP communication is tunneled through OMI using the `omi-provider`.
@@ -168,11 +221,8 @@ PSRP communication is tunneled through OMI using the `omi-provider`.
 > accomplish this are not even beta-ready and need to be done correctly. They
 > exist on the `andschwa-osx` branch of the OMI repository.
 
-### Building
-
-**PSRP support is not built by `./build.sh`**
-
-Build with `./omibuild.sh`.
+PSRP support is *not* built automatically. See the detailed notes on
+how to enable it.
 
 ### Running
 
@@ -211,20 +261,6 @@ The IP address of the Linux machine can be obtained with:
 
 ```sh
 ip -f inet addr show dev eth0
-```
-
-### Desired State Configuration
-
-> DSC support is in its infancy.
-
-DSC also uses OMI, so build it first, then build DSC against it. Unfortunately,
-DSC cannot be configured to look for OMI elsewhere, so for now you need to
-symlink it to the expected location.
-
-```sh
-ln -s ../omi/Unix/ omi-1.0.8
-./configure --no-rpm --no-dpkg --local
-make -j
 ```
 
 ## Detailed Build Script Notes
@@ -270,6 +306,17 @@ The output is a `.so` on Linux and `.dylib` on OS X. It is unnecessary for Windo
 
 #### OMI
 
+**PSRP support is not built by `./build.sh`**
+
+To develop on the PowerShell Remoting Protocol (PSRP) for Linux, you'll need to
+be able to compile OMI, which additionally requires:
+
+```sh
+sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev libboost-filesystem-dev
+```
+
+Note that the OMI build steps can be done with `./omibuild.sh`.
+
 Build OMI from source in developer mode:
 
 ```sh
@@ -291,22 +338,27 @@ make -j
 The provider also maintains its own native host library to initialize the CLR,
 but there are plans to refactor .NET's packaged host as a shared library.
 
-# FullCLR PowerShell
+### FullCLR PowerShell
 
 On Windows, we also build Full PowerShell for .NET 4.5.1
 
-## Setup environment
+#### Setup environment
 
-* You need Visual Studio to compile the native host `powershell.exe`.
+* Install the Visual C++ Compiler via Visual Studio 2015.
 
-If you don't have any visual studio installed, you can use [Visual Studio 2013
-Community edition][vs].
+This component is required to compile the native `powershell.exe` host.
 
-* Add `msbuild` to `PATH` / create PowerShell alias to it.
+This is an optionally installed component, so you may need to run the
+Visual Studio installer again.
 
-```powershell
-Set-Alias msbuild C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe
-```
+If you don't have any Visual Studio installed, you can use
+[Visual Studio 2015 Community Edition][vs].
+
+> Compiling with older versions should work, but we don't test it.
+
+**Troubleshooting note:** If `cmake` says that it cannot determine the
+`C` and `CXX` compilers, you either don't have Visual Studio, or you
+don't have the Visual C++ Compiler component installed.
 
 * Install CMake and add it to `PATH.`
 
@@ -316,25 +368,25 @@ You can install it from [Chocolatey][] or [manually][].
 choco install cmake.portable
 ```
 
-* Install dotnet-cli via their [documentation][]
+* Install .NET CLI via their [documentation][cli-docs]
 
-[vs]: https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx
-[chocolately]: https://chocolatey.org/packages/cmake.portable
+[vs]: https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx
+[Chocolatey]: https://chocolatey.org/packages/cmake.portable
 [manually]: https://cmake.org/download/
 
-## Building
+#### Building
 
 ```powershell
-.\build.FullCLR.ps1
+Start-PSBuild -FullCLR
 ```
 
 **Troubleshooting:** the build logic is relatively simple and contains following steps:
-- building managed DLLs: `dotnet publish --runtime dnx451`
+- building managed DLLs: `dotnet publish --runtime net451`
 - generating Visual Studio project: `cmake -G "$cmakeGenerator"`
 - building `powershell.exe` from generated solution: `msbuild powershell.sln`
 
-All this steps can be run separately from `.\build.FullCLR.ps1`, don't hesitate
-to experiment.
+All this steps can be run separately from `Start-PSBuild`, don't
+hesitate to experiment.
 
 ## Running
 

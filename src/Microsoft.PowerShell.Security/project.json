@@ -4,6 +4,7 @@
     "authors": [ "garretts", "andschwa" ],
 
     "compilationOptions": {
+        "warningsAsErrors": true,
         "allowUnsafe": true
     },
 
@@ -18,7 +19,7 @@
                 "define": [ "CORECLR" ]
             }
         },
-        "dnx451": {
+        "net451": {
         }
     },
 

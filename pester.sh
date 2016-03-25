@@ -2,7 +2,7 @@
 
 test -x bin/powershell || { echo >&2 "No bin/powershell, please run './build.sh'"; exit 1; }
 
-./bin/powershell --noprofile -c "Invoke-Pester test/powershell/$1 -OutputFile pester-tests.xml -OutputFormat NUnitXml -EnableExit"
+./bin/powershell --noprofile -c "Import-Module Microsoft.PowerShell.Platform; Invoke-Pester test/powershell/$1 -OutputFile pester-tests.xml -OutputFormat NUnitXml -EnableExit"
 failed_tests=$?
 
 # XML files are not executable

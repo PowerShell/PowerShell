@@ -5,13 +5,14 @@
     "authors": [ "garretts" ],
 
     "compilationOptions": {
+        "warningsAsErrors": true,
         "allowUnsafe": true
     },
 
     "frameworks": {
         "netstandard1.5": {
             "dependencies": {
-                "NETStandard.Library": "1.0.0-rc3-23819"
+                "NETStandard.Library": "1.5.0-rc2-23922"
             },
             "imports": [ "dnxcore50" ]
         }

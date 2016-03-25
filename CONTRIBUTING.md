@@ -15,24 +15,72 @@ Please add `[ci skip]` to commits that should be ignored by the CI systems
 
 All pull requests **must** pass both CI systems before they will be approved.
 
+Write *good* commit messages. Follow Tim Pope's [guidelines][]:
+
+* The first line *must* be a short, capitalized summary
+* The second line *must* be blank
+* The rest should be a wrapped, detailed explanation of the what and why
+* The tone should be imperative
+
+[guidelines]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+
 ## New to Git?
 
-If you're new to Git, learn the following commands: `checkout`, `branch`,
-`pull`, `push`, `merge`.
+- [Git 101](docs/git-101.md) : install and getting started.
+- [Git for sd users](docs/git-sd.md) : a handy reference document for people familiar with `sd`.
+- [Commit process](docs/git-commit.md) : step-by-step commit guide with all gory details.
 
-Use GitHub's [Hello World][] to learn how to create a feature branch, commit
-changes, and issue a pull request.
+#### Authentication
 
-The user name and email must be set in order to commit changes:
+If you do not have a preferred method of authentication, enable the storage
+credential helper, which will cache your credentials in plaintext on your
+system, so use a [token][].
 
 ```sh
-git config --global user.name "First Last"
-git config --global user.email "alias@microsoft.com"
+git config --global credential.helper store
 ```
 
+Alternatively, on Windows, you can try the
+[Git Credential Manager for Windows][manager].
+
+[manager]: https://github.com/Microsoft/Git-Credential-Manager-for-Windows
+[Git for Windows]: https://git-scm.com/download/win
+[token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
 [submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
-[hello world]: https://guides.github.com/activities/hello-world/
-[guides]: https://guides.github.com/activities/hello-world/
+
+## Microsoft employees
+
+Microsoft employees should follow Microsoft open source [guidelinces][MS-OSS-Hub].
+
+Particularly:
+
+* [Join][MS-OSS-Hub] Microsoft github organization.
+* Use your `alias@microsoft.com` for commit messages email. 
+It the requirement for contributions made as part of your work at Microsoft.
+* Enable [2 factor authentication][].
+
+[MS-OSS-Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
+[2 factor authentication]: https://github.com/blog/1614-two-factor-authentication
+
+## Branches
+
+* Checkout a new local branch for every change you want to make (bugfix, feature).
+* Use `alias/feature-name` pattern.
+* Use lowercase-with-dashes for naming.
+* Use same branch name in super-project and all [submodules](#submodules).
+
+## Permissions
+
+If you have difficulty in pushing your changes, there is a high
+probability that you actually don't have permissions.
+
+Be sure that you have write access to corresponding repo (remember
+that submodules have their own privilege).
+
+You do *not* necessarily need to have write permissions to the main
+repositories, as you can also just [fork a repo][].
+
+[fork a repo]: https://help.github.com/articles/fork-a-repo/
 
 ## Rebase and Fast-Forward Merge Pull Requests
 

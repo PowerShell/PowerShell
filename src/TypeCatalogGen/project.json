@@ -9,8 +9,8 @@
     },
 
     "dependencies": {
-        "System.Reflection.Metadata": "1.1.1-beta-23516",
-        "System.Collections.Immutable": "1.1.38-beta-23516"
+        "System.Reflection.Metadata": "1.1.0",
+        "System.Collections.Immutable": "1.1.37"
     },
 
     "compileFiles": [
@@ -18,7 +18,7 @@
     ],
 
     "frameworks": {
-        "dnx451": {
+        "net45": {
             "frameworkAssemblies": {
                 "System.Runtime": "",
                 "System.IO": "",
