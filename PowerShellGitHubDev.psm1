@@ -119,16 +119,16 @@ function Start-PSBuild
     # handle Restore
     if ($Restore -Or -Not (Test-Path "$Top/project.lock.json")) {
         log "Run dotnet restore"
-        # restore is genuinely verbose.
-        # we don't show it by default to keep CI build log size small
-        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent)
-        {
-            dotnet restore $PSScriptRoot
-        }
-        else 
-        {
-            dotnet restore $PSScriptRoot > $null    
-        }
+
+        $Arguments = @("--verbosity")
+        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
+            $Arguments += "Info" } else { $Arguments += "Warning" }
+
+        if ($Runtime) { $Arguments += "--runtime", $Runtime }
+
+        $Arguments += "$PSScriptRoot"
+
+        dotnet restore $Arguments
     }
 
     # Build native components
