@@ -27,6 +27,8 @@
         }
     },
 
+    "resource": ["../monad/wmi/WMIv2/Client/DotNetAPI/cs/Strings.resx"],
+
     "compileFiles": [
         "../monad/wmi/WMIv2/Client/DotNetAPI/cs/AssemblyInfo.cs",
         "../monad/wmi/WMIv2/Client/DotNetAPI/cs/CancellationMode.cs",
