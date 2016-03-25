@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+#clean OMI if needed
+if [$1 == "clean" ]; then
+    pushd src/omi/Unix
+    make clean
+    popd
+fi
+
 # Build OMI
 pushd src/omi/Unix
 ./configure --dev

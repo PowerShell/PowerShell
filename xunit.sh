@@ -17,6 +17,9 @@ ctest -V
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(pwd)/src"
 popd
 
+# Add libmi.so to path
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(pwd)/src/omi/Unix/output/lib"
+
 # Run xUnit tests
 pushd test/csharp
 ## Build
