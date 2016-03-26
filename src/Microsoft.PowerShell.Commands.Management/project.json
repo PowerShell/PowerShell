@@ -111,21 +111,5 @@
         "../monad/monad/src/singleshell/installer/MshManagementMshSnapin.cs"
     ],
 
-    "namedResource": {
-        "ClearRecycleBinResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ClearRecycleBinResources.resources",
-        "ClipboardResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ClipboardResources.resources",
-        "CmdletizationResources": "../windows-build/gen/COMMANDS_MANAGEMENT/CmdletizationResources.resources",
-        "ComputerResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ComputerResources.resources",
-        "ControlPanelResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ControlPanelResources.resources",
-        "EventlogResources": "../windows-build/gen/COMMANDS_MANAGEMENT/EventlogResources.resources",
-        "HotFixResources": "../windows-build/gen/COMMANDS_MANAGEMENT/HotFixResources.resources",
-        "ManagementMshSnapInResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ManagementMshSnapInResources.resources",
-        "NavigationResources": "../windows-build/gen/COMMANDS_MANAGEMENT/NavigationResources.resources",
-        "ProcessCommandHelpResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ProcessCommandHelpResources.resources",
-        "ProcessResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ProcessResources.resources",
-        "ServiceResources": "../windows-build/gen/COMMANDS_MANAGEMENT/ServiceResources.resources",
-        "TransactionResources": "../windows-build/gen/COMMANDS_MANAGEMENT/TransactionResources.resources",
-        "WebServiceResources": "../windows-build/gen/COMMANDS_MANAGEMENT/WebServiceResources.resources",
-        "WmiResources": "../windows-build/gen/COMMANDS_MANAGEMENT/WmiResources.resources"
-    }
+    "resource": [ "../monad/monad/src/commands/management/resources/*.resx" ]
 }
