@@ -145,7 +145,7 @@ function Start-PSBuild
 
             $Ext = if ($IsLinux) { "so" } elseif ($IsOSX) { "dylib" }
             $Native = "$PSScriptRoot/src/libpsl-native"
-            $Lib = "$Native/src/libpsl-native.$Ext"
+            $Lib = "$Top/libpsl-native.$Ext"
             Write-Verbose "Building $Lib"
 
             try {
@@ -158,7 +158,6 @@ function Start-PSBuild
             }
 
             if (-Not (Test-Path $Lib)) { throw "Compilation of $Lib failed" }
-            Copy-Item $Lib $Output
         }
     }
     else

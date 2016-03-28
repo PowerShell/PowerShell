@@ -19,7 +19,9 @@
 
     "content": [
         "Modules",
-        "PSL_profile.ps1"
+        "*_profile.ps1",
+        "*.so",
+        "*.dylib"
     ],
 
     "frameworks": {
