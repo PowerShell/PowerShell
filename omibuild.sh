@@ -28,5 +28,7 @@ while [ "$1" != 0 ]; do
                       exit
   esac
   shift
+  build
+  exit
 done
 
