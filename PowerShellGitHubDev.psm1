@@ -432,7 +432,9 @@ function Copy-SubmoduleFiles {
 function New-MappingFile
 {
     param(
-        [string]$mappingFilePath = "$PSScriptRoot/mapping.json"
+        [string]$mappingFilePath = "$PSScriptRoot/mapping.json",
+        [switch]$IgnoreCompileFiles,
+        [switch]$IgnoreResouce
     )
 
     function Get-MappingPath([string]$project, [string]$path)
@@ -460,12 +462,25 @@ function New-MappingFile
         $projects | % {
             $project = Split-Path $_.FullName
             $json = cat -Raw -Path $_.FullName | ConvertFrom-Json
-            $json.compileFiles | % {
-                if ($_) {
-                    if (-not $_.EndsWith('AssemblyInfo.cs'))
-                    {
-                        $fullPath = Join-Path $project (Get-MappingPath -project $project -path $_)
-                        $mapping[$_.Replace('../', 'src/')] = ($fullPath.Replace("$($pwd.Path)\",'')).Replace('\', '/')
+            if (-not $IgnoreCompileFiles) {
+                $json.compileFiles | % {
+                    if ($_) {
+                        if (-not $_.EndsWith('AssemblyInfo.cs'))
+                        {
+                            $fullPath = Join-Path $project (Get-MappingPath -project $project -path $_)
+                            $mapping[$_.Replace('../', 'src/')] = ($fullPath.Replace("$($pwd.Path)\",'')).Replace('\', '/')
+                        }
+                    }
+                }
+            }
+
+            if ((-not $IgnoreResouce) -and ($json.resource)) {
+                $json.resource | % {
+                    if ($_) {
+                        ls $_.Replace('../', 'src/') | % {
+                            $fullPath = Join-Path $project (Join-Path 'resouces' $_.Name)
+                            $mapping[$_.FullName.Replace("$($pwd.Path)\", '').Replace('\', '/')] = ($fullPath.Replace("$($pwd.Path)\",'')).Replace('\', '/')
+                        }
                     }
                 }
             }
