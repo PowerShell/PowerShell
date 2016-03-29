@@ -6,18 +6,30 @@ namespace NativeObject
     using System.Text;
     using System.Threading.Tasks;
     using System.Runtime.InteropServices;
-
-    public static partial class NativeMethods
+    public static class NativeWindowsMethods
     {
-        //TODO: abstract the library call out 
-        [DllImport("libmi.so", CallingConvention = MI_PlatformSpecific.MiMainCallConvention)]
+        [DllImport("mi.dll", CallingConvention = MI_PlatformSpecific.MiMainCallConvention)]
         public static extern MI_Result MI_Application_InitializeV1(
             UInt32 flags,
             [MarshalAs(MI_PlatformSpecific.AppropriateStringType)] string applicationID,
             MI_InstanceOutPtr extendedError,
             [In, Out] MI_ApplicationPtr application
             );
+    }
 
+    public static class NativeLinuxMethods
+    {
+           [DllImport("libmi.so", CallingConvention = MI_PlatformSpecific.MiMainCallConvention)]
+           public static extern MI_Result MI_Application_InitializeV1(
+               UInt32 flags,
+               [MarshalAs(MI_PlatformSpecific.AppropriateStringType)] string applicationID,
+               MI_InstanceOutPtr extendedError,
+               [In, Out] MI_ApplicationPtr application
+               );
+    }
+
+    public partial class NativeMethods
+    {
         public static readonly int IntPtrSize = Marshal.SizeOf(typeof(IntPtr));
 
         [UnmanagedFunctionPointer(MI_PlatformSpecific.MiCallConvention)]
