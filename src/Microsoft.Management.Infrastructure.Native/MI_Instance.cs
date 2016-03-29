@@ -444,7 +444,7 @@ namespace NativeObject
             [UnmanagedFunctionPointer(MI_PlatformSpecific.MiCallConvention, CharSet = MI_PlatformSpecific.AppropriateCharSet)]
             public delegate MI_Result MI_Instance_AddElement(
                 MI_InstancePtr self,
-                string name,
+                [MarshalAs(MI_PlatformSpecific.AppropriateStringType)]string name,
                 [In, Out] MI_Value.MIValueBlock value,
                 MI_Type type,
                 MI_Flags flags
@@ -471,7 +471,7 @@ namespace NativeObject
             [UnmanagedFunctionPointer(MI_PlatformSpecific.MiCallConvention, CharSet = MI_PlatformSpecific.AppropriateCharSet)]
             public delegate MI_Result MI_Instance_GetElement(
                 MI_InstancePtr self,
-                string name,
+                [MarshalAs(MI_PlatformSpecific.AppropriateStringType)] string name,
                 [In, Out] MI_Value.MIValueBlock value,
                 out MI_Type type,
                 out MI_Flags flags,
