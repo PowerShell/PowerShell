@@ -5,7 +5,8 @@
     "authors": [ "garretts", "andschwa" ],
 
     "compilationOptions": {
-        "allowUnsafe": true
+        "allowUnsafe": true,
+        "define": [ "_LINUX" ]
     },
 
     "frameworks": {
