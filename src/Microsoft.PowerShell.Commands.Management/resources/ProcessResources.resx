@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NoProcessFoundForGivenName" xml:space="preserve">
+    <value>Cannot find a process with the name "{0}". Verify the process name and call the cmdlet again.</value>
+  </data>
+  <data name="NoDebuggerFound" xml:space="preserve">
+    <value>This command cannot be run because the debugger cannot be attached to the process "{0} ({1})". Specify another process and Run your command.</value>
+  </data>
+  <data name="NoProcessFoundForGivenId" xml:space="preserve">
+    <value>Cannot find a process with the process identifier {1}.</value>
+  </data>
+  <data name="CouldNotStopProcess" xml:space="preserve">
+    <value>Cannot stop process "{0} ({1})" because of the following error: {2}</value>
+  </data>
+  <data name="ProcessNameForConfirmation" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="CouldnotEnumerateModules" xml:space="preserve">
+    <value>Cannot enumerate the modules of the "{0}" process.</value>
+  </data>
+  <data name="CouldnotEnumerateFileVer" xml:space="preserve">
+    <value>Cannot enumerate the file version information of the "{0}" process.</value>
+  </data>
+  <data name="CouldnotEnumerateModuleFileVer" xml:space="preserve">
+    <value>Cannot enumerate the modules and the file version information of the "{0}" process.</value>
+  </data>
+  <data name="ConfirmStopProcess" xml:space="preserve">
+    <value>Are you sure you want to perform the Stop-Process operation on the following item: {0}({1})?</value>
+  </data>
+  <data name="UseShell" xml:space="preserve">
+    <value>The specified path is not a valid win32 application. Try again with the UseShellExecute.</value>
+  </data>
+  <data name="Process is not terminated" xml:space="preserve">
+    <value>This command stopped operation of "{0} ({1})" because of the following error: {2}.</value>
+  </data>
+  <data name="RedirectionParams" xml:space="preserve">
+    <value>This command cannot be run because Redirection parameters cannot be used with UseShellExecute parameter</value>
+  </data>
+  <data name="NoComputerNameWithFileVersion" xml:space="preserve">
+    <value>Exception getting "Modules" or "FileVersion": "This feature is not supported for remote computers.".</value>
+  </data>
+  <data name="DebuggerError" xml:space="preserve">
+    <value>This command cannot attach the debugger to the process due to {0} because no default debugger is available.</value>
+  </data>
+  <data name="WaitOnIdleProcess" xml:space="preserve">
+    <value>This command stopped operation because it cannot wait on 'System Idle' process. Specify another process and Run your command again.</value>
+  </data>
+  <data name="WaitOnItself" xml:space="preserve">
+    <value>This command stopped operation because it cannot wait on itself. Specify another process and Run your command again.</value>
+  </data>
+  <data name="ProcessNotTerminated" xml:space="preserve">
+    <value>This command stopped operation because process "{0} ({1})" is not stopped in the specified time-out.</value>
+  </data>
+  <data name="InvalidStartProcess" xml:space="preserve">
+    <value>This command cannot be run due to the error: {0}.</value>
+  </data>
+  <data name="InvalidApplication" xml:space="preserve">
+    <value>This command cannot be run because the input "{0}" is not a valid Application.  Give a valid application and run your command again.</value>
+  </data>
+  <data name="InvalidInput" xml:space="preserve">
+    <value>This command cannot be run because either the parameter "{0}" has a value that is not valid or cannot be used with this command. Give a valid input and Run your command again.</value>
+  </data>
+  <data name="DuplicateEntry" xml:space="preserve">
+    <value>This command cannot be run because "{0}" and "{1}" are same. Give different inputs and Run your command again.</value>
+  </data>
+  <data name="CannotStarttheProcess" xml:space="preserve">
+    <value>This command cannot be run completely because the system cannot find all the information required.</value>
+  </data>
+  <data name="InvalidUserError" xml:space="preserve">
+    <value>This command cannot be run due to error 1783. The possible cause of this error can be using of a non-existing user "{0}". Please give a valid user and run your command again.</value>
+  </data>
+  <data name="JoinNetworkFailed" xml:space="preserve">
+    <value>Error adding '{0}' to the network: {1}</value>
+  </data>
+  <data name="RemoveFailed" xml:space="preserve">
+    <value>Error removing '{0}' from the network: {1}</value>
+  </data>
+  <data name="RenameFailed" xml:space="preserve">
+    <value>Error renaming '{0}': {1}</value>
+  </data>
+  <data name="ContradictParametersSpecified" xml:space="preserve">
+    <value>Parameters "{0}" and "{1}" cannot be specified at the same time.</value>
+  </data>
+  <data name="IncludeUserNameRequiresElevation" xml:space="preserve">
+    <value>The 'IncludeUserName' parameter requires elevated user rights. Try running the command again in a session that has been opened with elevated user rights (that is, Run as Administrator).</value>
+  </data>
+  <data name="CouldNotDebugProcess" xml:space="preserve">
+    <value>Cannot debug process "{0} ({1})" because of the following error: {2}</value>
+  </data>
+  <data name="AttachDebuggerReturnCode2" xml:space="preserve">
+    <value>The user does not have access to the requested information.</value>
+  </data>
+  <data name="AttachDebuggerReturnCode21" xml:space="preserve">
+    <value>The specified parameter is not valid.</value>
+  </data>
+  <data name="AttachDebuggerReturnCode3" xml:space="preserve">
+    <value>The user does not have sufficient privilege.</value>
+  </data>
+  <data name="AttachDebuggerReturnCode8" xml:space="preserve">
+    <value>Unknown failure.</value>
+  </data>
+  <data name="AttachDebuggerReturnCode9" xml:space="preserve">
+    <value>The path specified does not exist.</value>
+  </data>
+  <data name="ParameterNotSupported" xml:space="preserve">
+    <value>The parameter '{0}' is not supported for the cmdlet '{1}' on this edition of Windows.</value>
+  </data>
+</root>

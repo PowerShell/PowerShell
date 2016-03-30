@@ -1,0 +1,1444 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="TypeNotFound" xml:space="preserve">
+    <value>Unable to find type [{0}].</value>
+  </data>
+  <data name="TypeNotFoundWithMessage" xml:space="preserve">
+    <value>Unable to find type [{0}]. Details: {1}</value>
+  </data>
+  <data name="IncompleteVariableReference" xml:space="preserve">
+    <value>Incomplete variable reference token.</value>
+  </data>
+  <data name="IncompleteString" xml:space="preserve">
+    <value>Incomplete string token.</value>
+  </data>
+  <data name="NumberBothLongAndFloatingPoint" xml:space="preserve">
+    <value>A number cannot be both a long and floating point.</value>
+  </data>
+  <data name="ReferenceNeedsToBeByItselfInTypeConstraint" xml:space="preserve">
+    <value>Cannot use [ref] with other types in a type constraint.</value>
+  </data>
+  <data name="ReferenceNeedsToBeLastTypeInTypeConversion" xml:space="preserve">
+    <value>[ref] can only be the final type in type conversion sequence.</value>
+  </data>
+  <data name="ReferenceNeedsToBeByItselfInTypeSequence" xml:space="preserve">
+    <value>Cannot have two occurrences of [ref] in a type sequence.</value>
+  </data>
+  <data name="BadNumericConstant" xml:space="preserve">
+    <value>The numeric constant {0} is not valid.</value>
+  </data>
+  <data name="InvalidRegularExpression" xml:space="preserve">
+    <value>The regular expression pattern {0} is not valid.</value>
+  </data>
+  <data name="EmptyVariableReference" xml:space="preserve">
+    <value>An empty ${} variable reference was found. A name is required inside the braces.</value>
+  </data>
+  <data name="InvalidVariableReference" xml:space="preserve">
+    <value>Variable reference is not valid. '$' was not followed by a valid variable name character. Consider using ${} to delimit the name.</value>
+  </data>
+  <data name="InvokeMethodOnNull" xml:space="preserve">
+    <value>You cannot call a method on a null-valued expression.</value>
+  </data>
+  <data name="MethodNotFound" xml:space="preserve">
+    <value>Method invocation failed because [{0}] does not contain a method named '{1}'.</value>
+  </data>
+  <data name="ParameterizedPropertyAssignmentFailed" xml:space="preserve">
+    <value>Assignment failed because [{0}] does not contain a property '{1}()' that can be set.</value>
+  </data>
+  <data name="UnexpectedToken" xml:space="preserve">
+    <value>Unexpected token '{0}' in expression or statement.</value>
+  </data>
+  <data name="SplattingNotPermitted" xml:space="preserve">
+    <value>The splatting operator '@' cannot be used to reference variables in an expression. '@{0}' can be used only as an argument to a command. To reference variables in an expression use '${0}'.</value>
+  </data>
+  <data name="InvalidParameter" xml:space="preserve">
+    <value>Parameter '{0}' is not valid</value>
+  </data>
+  <data name="AmbiguousParameterBaseMessage" xml:space="preserve">
+    <value>Ambiguous parameter '-{0}'
+Possible matches are</value>
+  </data>
+  <data name="AmbiguousParameterExtendMessage" xml:space="preserve">
+    <value>
+	{0} ({1})</value>
+  </data>
+  <data name="MissingExpression" xml:space="preserve">
+    <value>Missing expression after '{0}' in pipeline element.</value>
+  </data>
+  <data name="BadExpression" xml:space="preserve">
+    <value>The expression after '{0}' in a pipeline element produced an object that was not valid. It must result in a command name, a script block, or a CommandInfo object.</value>
+  </data>
+  <data name="ParameterRequiresArgument" xml:space="preserve">
+    <value>Parameter {0} requires an argument.</value>
+  </data>
+  <data name="ParameterCannotHaveArgument" xml:space="preserve">
+    <value>Parameter {0} cannot have an argument.</value>
+  </data>
+  <data name="DuplicateFormalParameter" xml:space="preserve">
+    <value>Duplicate parameter ${0} in parameter list.</value>
+  </data>
+  <data name="MissingArgument" xml:space="preserve">
+    <value>Missing argument in parameter list.</value>
+  </data>
+  <data name="SplattingNotPermittedInArgumentList" xml:space="preserve">
+    <value>Splatted variables like '@{0}' cannot be part of a comma-separated list of arguments.</value>
+  </data>
+  <data name="MissingFileSpecification" xml:space="preserve">
+    <value>Missing file specification after redirection operator.</value>
+  </data>
+  <data name="RedirectionNotSupported" xml:space="preserve">
+    <value>The '{0}' operator is reserved for future use.</value>
+  </data>
+  <data name="RedirectionFailed" xml:space="preserve">
+    <value>Redirection to '{0}' failed: {1}</value>
+  </data>
+  <data name="ExpressionsMustBeFirstInPipeline" xml:space="preserve">
+    <value>Expressions are only allowed as the first element of a pipeline.</value>
+  </data>
+  <data name="EmptyPipeElement" xml:space="preserve">
+    <value>An empty pipe element is not allowed.</value>
+  </data>
+  <data name="UnknownAssignmentOperator" xml:space="preserve">
+    <value>Unknown assignment operator '{0}'.</value>
+  </data>
+  <data name="InvalidLeftHandSide" xml:space="preserve">
+    <value>The assignment expression is not valid. The input to an assignment operator must be an object that is able to accept assignments, such as a variable or a property.</value>
+  </data>
+  <data name="NoPropertiesInSplatting" xml:space="preserve">
+    <value>Cannot expand the splatted variable '@{0}'. Splatted variables cannot be used as part of a property or array expression. Assign the result of the expression to a temporary variable then splat the temporary variable instead.</value>
+  </data>
+  <data name="AddHashTableToNonHashTable" xml:space="preserve">
+    <value>A hash table can only be added to another hash table.</value>
+  </data>
+  <data name="IsOperatorRequiresType" xml:space="preserve">
+    <value>The right operand of '-is' must be a type.</value>
+  </data>
+  <data name="AsOperatorRequiresType" xml:space="preserve">
+    <value>The right operand of '-as' must be a type.</value>
+  </data>
+  <data name="FormatError" xml:space="preserve">
+    <value>Error formatting a string: {0}.</value>
+  </data>
+  <data name="BadOperatorArgument" xml:space="preserve">
+    <value>The argument to operator '{0}' is not valid: {1}.</value>
+  </data>
+  <data name="OperatorFailed" xml:space="preserve">
+    <value>The '{0}' operator failed: {1}.</value>
+  </data>
+  <data name="BadReplaceArgument" xml:space="preserve">
+    <value>The {0} operator allows only two elements to follow it, not {1}.</value>
+  </data>
+  <data name="ExpectedValueExpression" xml:space="preserve">
+    <value>You must provide a value expression following the '{0}' operator.</value>
+  </data>
+  <data name="BadRegularExpression" xml:space="preserve">
+    <value>A regular expression that was provided to '{0}' is not valid: {1}.</value>
+  </data>
+  <data name="OperatorRequiresVariableOrProperty" xml:space="preserve">
+    <value>The '{0}' operator works only on variables or on properties.</value>
+  </data>
+  <data name="OrderedAttributeOnlyOnHashLiteralNode" xml:space="preserve">
+    <value>The {0} attribute can be specified only on a hash literal node.</value>
+  </data>
+  <data name="MissingArrayIndexExpression" xml:space="preserve">
+    <value>Array index expression is missing or not valid.</value>
+  </data>
+  <data name="MissingPropertyName" xml:space="preserve">
+    <value>Missing property name after reference operator.</value>
+  </data>
+  <data name="MissingPropertyReference" xml:space="preserve">
+    <value>Property reference or expression is missing or not valid.</value>
+  </data>
+  <data name="PropertyNotFound" xml:space="preserve">
+    <value>The property '{0}' cannot be found on this object. Verify that the property exists and can be set.</value>
+  </data>
+  <data name="PropertyNotFoundStrict" xml:space="preserve">
+    <value>The property '{0}' cannot be found on this object. Verify that the property exists.</value>
+  </data>
+  <data name="NullArrayIndex" xml:space="preserve">
+    <value>Index operation failed; the array index evaluated to null.</value>
+  </data>
+  <data name="NullArray" xml:space="preserve">
+    <value>Cannot index into a null array.</value>
+  </data>
+  <data name="CannotIndex" xml:space="preserve">
+    <value>Unable to index into an object of type {0}.</value>
+  </data>
+  <data name="ArrayAssignmentFailed" xml:space="preserve">
+    <value>Array assignment to [{0}] failed: {1}.</value>
+  </data>
+  <data name="ArraySliceAssignmentFailed" xml:space="preserve">
+    <value>Array assignment to [{0}] failed because assignment to slices is not supported.</value>
+  </data>
+  <data name="NeedMultidimensionalIndex" xml:space="preserve">
+    <value>You cannot index into a {0} dimensional array with index [{1}].</value>
+  </data>
+  <data name="KeyTypeMismatch" xml:space="preserve">
+    <value>Unable to assign to a dictionary of type {0} when the key is of type {1}.</value>
+  </data>
+  <data name="NotADictionary" xml:space="preserve">
+    <value>Unable to assign to an index into an object of type {0}.</value>
+  </data>
+  <data name="IndexOutOfRange" xml:space="preserve">
+    <value>Array assignment failed because index '{0}' was out of range.</value>
+  </data>
+  <data name="IndexOperationFailed" xml:space="preserve">
+    <value>Assigning to array element at index [{0}] failed: {1}.</value>
+  </data>
+  <data name="MissingExpressionAfterToken" xml:space="preserve">
+    <value>Missing expression after '{0}'.</value>
+  </data>
+  <data name="IncompleteDollarVariableReference" xml:space="preserve">
+    <value>${{variable}} reference starting is missing the closing '}}'.</value>
+  </data>
+  <data name="IncompleteDollarSubexpressionReference" xml:space="preserve">
+    <value>$(subexpression) is missing the closing ')'.</value>
+  </data>
+  <data name="UnexpectedUnaryOperator" xml:space="preserve">
+    <value>Internal error - unexpected unary operator {0}.</value>
+  </data>
+  <data name="NonExistingVariableReference" xml:space="preserve">
+    <value>[ref] cannot be applied to a variable that does not exist.</value>
+  </data>
+  <data name="VariableIsUndefined" xml:space="preserve">
+    <value>The variable '${0}' cannot be retrieved because it has not been set.</value>
+  </data>
+  <data name="DuplicateKeyInHashLiteral" xml:space="preserve">
+    <value>Duplicate keys '{0}' are not allowed in hash literals.</value>
+  </data>
+  <data name="DuplicateNamedArgument" xml:space="preserve">
+    <value>Duplicate named arguments '{0}' are not allowed.</value>
+  </data>
+  <data name="OperatorRequiresNumber" xml:space="preserve">
+    <value>The '{0}' operator works only on numbers. The operand is a '{1}'.</value>
+  </data>
+  <data name="ExpectedExpression" xml:space="preserve">
+    <value>An expression was expected after '('.</value>
+  </data>
+  <data name="MissingKeyInHashLiteral" xml:space="preserve">
+    <value>Missing key before '=' in hash literal.</value>
+  </data>
+  <data name="MissingEqualsInHashLiteral" xml:space="preserve">
+    <value>Missing '=' operator after key in hash literal.</value>
+  </data>
+  <data name="MissingEqualsInNamedArgument" xml:space="preserve">
+    <value>The "=" operator is missing after a named argument.</value>
+  </data>
+  <data name="MissingStatementInHashLiteral" xml:space="preserve">
+    <value>Missing statement after '=' in hash literal.</value>
+  </data>
+  <data name="MissingExpressionInNamedArgument" xml:space="preserve">
+    <value>Missing statement after '=' in named argument.</value>
+  </data>
+  <data name="IncompleteHashLiteral" xml:space="preserve">
+    <value>The hash literal was incomplete.</value>
+  </data>
+  <data name="MissingPropertyTerminator" xml:space="preserve">
+    <value>Missing ';' or end-of-line in property definition.</value>
+  </data>
+  <data name="MissingExpressionAfterOperator" xml:space="preserve">
+    <value>Missing expression after unary operator '{0}'.</value>
+  </data>
+  <data name="IfStatementMissingCondition" xml:space="preserve">
+    <value>Missing condition in if statement after '{0} ('.</value>
+  </data>
+  <data name="MissingStatementBlock" xml:space="preserve">
+    <value>Missing statement block after {0} ( condition ).</value>
+  </data>
+  <data name="MissingStatementBlockAfterElse" xml:space="preserve">
+    <value>Missing statement block after 'else' keyword.</value>
+  </data>
+  <data name="FileReadError" xml:space="preserve">
+    <value>The file could not be read: {0}.</value>
+  </data>
+  <data name="FileOpenError" xml:space="preserve">
+    <value>The current provider ({0}) cannot open a file.</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>No files matching '{0}' were found.</value>
+  </data>
+  <data name="AmbiguousPath" xml:space="preserve">
+    <value>The path cannot be processed because it resolved to more than one file; only one file at a time can be processed.</value>
+  </data>
+  <data name="IncompleteSwitchStatement" xml:space="preserve">
+    <value>The switch statement was incomplete.</value>
+  </data>
+  <data name="ParallelNotSupported" xml:space="preserve">
+    <value>The '-parallel' parameter can be used only within a workflow.</value>
+  </data>
+  <data name="MissingFilenameOption" xml:space="preserve">
+    <value>Cannot process the 'switch' statement because of a missing file name argument to the -file option.</value>
+  </data>
+  <data name="InvalidFilenameOption" xml:space="preserve">
+    <value>The file name argument to -file in the switch statement is not valid.</value>
+  </data>
+  <data name="InvalidSwitchFlag" xml:space="preserve">
+    <value>The parameter {0} is not valid for the switch statement.</value>
+  </data>
+  <data name="InvalidForeachFlag" xml:space="preserve">
+    <value>The parameter {0} is not valid for the foreach statement.</value>
+  </data>
+  <data name="PipelineValueRequired" xml:space="preserve">
+    <value>A switch statement must have one of the following:  '-file file_name' or '( expression )'.</value>
+  </data>
+  <data name="MissingSwitchValueExpression" xml:space="preserve">
+    <value>Missing expression after '(' in switch statement.</value>
+  </data>
+  <data name="MissingSwitchConditionExpression" xml:space="preserve">
+    <value>Missing condition in switch statement clause.</value>
+  </data>
+  <data name="MultipleSwitchDefaultClauses" xml:space="preserve">
+    <value>A switch statement can have only one default clause.</value>
+  </data>
+  <data name="MissingSwitchStatementClause" xml:space="preserve">
+    <value>Missing statement block in switch statement clause.</value>
+  </data>
+  <data name="MissingForeachExpression" xml:space="preserve">
+    <value>Missing expression in foreach loop.</value>
+  </data>
+  <data name="MissingForeachStatement" xml:space="preserve">
+    <value>Missing statement body in foreach loop.</value>
+  </data>
+  <data name="OnlyOneParameterListAllowed" xml:space="preserve">
+    <value>The param statement cannot be used if arguments were specified in the function declaration.</value>
+  </data>
+  <data name="NotADefinedOperationForType" xml:space="preserve">
+    <value>The operation '[{0}] {1} [{2}]' is not defined.</value>
+  </data>
+  <data name="BadEnumeration" xml:space="preserve">
+    <value>An error occurred while enumerating through a collection: {0}.</value>
+  </data>
+  <data name="COMException" xml:space="preserve">
+    <value>An unhandled COM interop exception occurred: {0}</value>
+  </data>
+  <data name="InvalidComObjectException" xml:space="preserve">
+    <value>A COM object was accessed after it was already released: {0}</value>
+  </data>
+  <data name="ScriptTooComplicated" xml:space="preserve">
+    <value>Processing was stopped because the script is too complex.</value>
+  </data>
+  <data name="ScriptsNotAllowed" xml:space="preserve">
+    <value>The syntax is not supported by this runspace. This can occur if the runspace is in no-language mode.</value>
+  </data>
+  <data name="InvalidSplitOptionCombination" xml:space="preserve">
+    <value>The combination of options with the -split operator is not valid.</value>
+  </data>
+  <data name="InvalidSplitOptionWithPredicate" xml:space="preserve">
+    <value>Options are not allowed on the -split operator with a predicate.</value>
+  </data>
+  <data name="MissingEndMultiLineComment" xml:space="preserve">
+    <value>The terminator '{0}' is missing from the multiline comment.</value>
+  </data>
+  <data name="InvalidEndOfLine" xml:space="preserve">
+    <value>The token '{0}' is not a valid statement separator in this version.</value>
+  </data>
+  <data name="AmpersandNotAllowed" xml:space="preserve">
+    <value>The ampersand (&amp;) character is not allowed. The &amp; operator is reserved for future use; wrap an ampersand in double quotation marks ("&amp;") to pass it as part of a string.</value>
+  </data>
+  <data name="FromKeywordNotAllowed" xml:space="preserve">
+    <value>The 'from' keyword is not supported in this version of the language.</value>
+  </data>
+  <data name="ReservedKeywordNotAllowed" xml:space="preserve">
+    <value>The '{0}' keyword is not supported in this version of the language.</value>
+  </data>
+  <data name="MissingExpressionAfterKeyword" xml:space="preserve">
+    <value>Missing expression after '{0}' in loop.</value>
+  </data>
+  <data name="MissingLoopStatement" xml:space="preserve">
+    <value>Missing statement body in {0} loop.</value>
+  </data>
+  <data name="MissingTrapStatement" xml:space="preserve">
+    <value>The 'trap' statement was incomplete. A trap statement requires a body.</value>
+  </data>
+  <data name="MissingTryStatement" xml:space="preserve">
+    <value>Incomplete 'try' statement. A try statement requires a body.</value>
+  </data>
+  <data name="InvalidLabelCharacter" xml:space="preserve">
+    <value>The character '{0}' is not valid. Labels can contain only alphanumeric characters, numbers, and underscores ('_').</value>
+  </data>
+  <data name="InvalidFunctionParameter" xml:space="preserve">
+    <value>Parameter declarations are a comma-separated list of variable names with optional initializer expressions.</value>
+  </data>
+  <data name="MissingFunctionBody" xml:space="preserve">
+    <value>Missing function body in function declaration.</value>
+  </data>
+  <data name="BadlyFormedCmdlet" xml:space="preserve">
+    <value>Could not process combined Begin/Process/End clauses with command text. A script or function can either have begin/process/end clauses or command text but not both.</value>
+  </data>
+  <data name="DuplicateScriptCommandClause" xml:space="preserve">
+    <value>Script command clause '{0}' has already been defined.</value>
+  </data>
+  <data name="MissingEndCurlyBrace" xml:space="preserve">
+    <value>Missing closing '}' in statement block or type definition.</value>
+  </data>
+  <data name="MissingEndParenthesisInMethodCall" xml:space="preserve">
+    <value>Missing ')' in method call.</value>
+  </data>
+  <data name="MissingEndSquareBracket" xml:space="preserve">
+    <value>Missing ']' after array index expression.</value>
+  </data>
+  <data name="MissingEndParenthesisInExpression" xml:space="preserve">
+    <value>Missing closing ')' in expression.</value>
+  </data>
+  <data name="MissingEndParenthesisInSubexpression" xml:space="preserve">
+    <value>Missing closing ')' in subexpression.</value>
+  </data>
+  <data name="MissingOpenParenthesisInIfStatement" xml:space="preserve">
+    <value>Missing '(' after '{0}' in if statement.</value>
+  </data>
+  <data name="MissingEndParenthesisInSwitchStatement" xml:space="preserve">
+    <value>Missing ')' after expression in switch statement.</value>
+  </data>
+  <data name="MissingCurlyBraceInSwitchStatement" xml:space="preserve">
+    <value>Missing '{' in switch statement.</value>
+  </data>
+  <data name="MissingVariableNameAfterForeach" xml:space="preserve">
+    <value>Missing variable name after foreach.</value>
+  </data>
+  <data name="MissingInInForeach" xml:space="preserve">
+    <value>Missing 'in' after variable in foreach loop.</value>
+  </data>
+  <data name="MissingEndParenthesisAfterForeach" xml:space="preserve">
+    <value>Missing closing ')' after expression part of foreach loop.</value>
+  </data>
+  <data name="MissingOpenParenthesisAfterKeyword" xml:space="preserve">
+    <value>Missing opening '(' after keyword '{0}'.</value>
+  </data>
+  <data name="MissingWhileOrUntilInDoWhile" xml:space="preserve">
+    <value>Missing while or until keyword in do loop.</value>
+  </data>
+  <data name="MissingEndParenthesisAfterStatement" xml:space="preserve">
+    <value>Missing closing ')' after expression in '{0}' statement.</value>
+  </data>
+  <data name="MissingNameAfterKeyword" xml:space="preserve">
+    <value>Missing name after {0} keyword.</value>
+  </data>
+  <data name="MissingEndParenthesisInFunctionParameterList" xml:space="preserve">
+    <value>Missing ')' in function parameter list.</value>
+  </data>
+  <data name="BackupParserMessage" xml:space="preserve">
+    <value>An error '{0}' occurred while processing this script. Text describing this error could not be loaded.</value>
+  </data>
+  <data name="BackupParserMessageWithException" xml:space="preserve">
+    <value>An error '{0}' occurred while processing this script. Text describing this error could not be loaded due to error '{1}'.</value>
+  </data>
+  <data name="ScriptBlockDelegateInvokedFromWrongThread" xml:space="preserve">
+    <value>There is no Runspace available to run scripts in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The script block you attempted to invoke was: {0}</value>
+  </data>
+  <data name="UnrecognizedToken" xml:space="preserve">
+    <value>Unrecognized token in source text.</value>
+  </data>
+  <data name="ExceptionActionPromptCaption" xml:space="preserve">
+    <value>Action to take for this exception:</value>
+  </data>
+  <data name="ContinueLabel" xml:space="preserve">
+    <value>&amp;Continue</value>
+  </data>
+  <data name="ContinueHelpMessage" xml:space="preserve">
+    <value>Report the error then continue with the next script statement.</value>
+  </data>
+  <data name="SilentlyContinueLabel" xml:space="preserve">
+    <value>S&amp;ilently Continue</value>
+  </data>
+  <data name="SilentlyContinueHelpMessage" xml:space="preserve">
+    <value>Do not report this error, just continue with the next script statement.</value>
+  </data>
+  <data name="BreakLabel" xml:space="preserve">
+    <value>&amp;Break</value>
+  </data>
+  <data name="BreakHelpMessage" xml:space="preserve">
+    <value>Do not continue processing, throw the exception instead.</value>
+  </data>
+  <data name="SuspendLabel" xml:space="preserve">
+    <value>&amp;Suspend</value>
+  </data>
+  <data name="SuspendHelpMessage" xml:space="preserve">
+    <value>Pause the current pipeline and return to the command prompt. Type exit to resume operation when you are done.</value>
+  </data>
+  <data name="CantActivateDocumentInPipeline" xml:space="preserve">
+    <value>Cannot run a document in the middle of a pipeline: {0}.</value>
+  </data>
+  <data name="ProgramFailedToExecute" xml:space="preserve">
+    <value>Program '{0}' failed to run: {1}{2}.</value>
+  </data>
+  <data name="CantInvokeInBinaryModule" xml:space="preserve">
+    <value>Cannot use '&amp;' to invoke in the context of binary module '{0}'. Specify a non-binary module after the '&amp;' and try the operation again.</value>
+  </data>
+  <data name="CantInvokeInNonImportedModule" xml:space="preserve">
+    <value>Cannot use '&amp;' to invoke in the context of module '{0}' because it is not imported. Import the module '{0}' and try the operation again.</value>
+  </data>
+  <data name="TokenAfterEndOfValidScriptText" xml:space="preserve">
+    <value>Executable script code found in signature block.</value>
+  </data>
+  <data name="TextForWordLine" xml:space="preserve">
+    <value>line</value>
+  </data>
+  <data name="TextForPositionMessage" xml:space="preserve">
+    <value>At {0}:{1} char:{2}
++ {3}</value>
+  </data>
+  <data name="TextForCharPositionMessage" xml:space="preserve">
+    <value>At char:{0}</value>
+  </data>
+  <data name="TraceScriptLineMessage" xml:space="preserve">
+    <value>{0,4}+ {1}</value>
+  </data>
+  <data name="TrapOnExceptionMatch" xml:space="preserve">
+    <value>    ! Trap or Catch on matching exception [{0}]</value>
+  </data>
+  <data name="TrapOnSubclassMatch" xml:space="preserve">
+    <value>    ! Trap or Catch on [{0}]; subclass of exception [{1}]</value>
+  </data>
+  <data name="TrapOnGenericException" xml:space="preserve">
+    <value>    ! Trap or Catch generic; caught [{0}]</value>
+  </data>
+  <data name="TraceSetMultipleRemaining" xml:space="preserve">
+    <value>    ! SET-MULTIPLE ${0} assigned remaining {1} values.</value>
+  </data>
+  <data name="TraceSetMultipleIndex" xml:space="preserve">
+    <value>    ! SET-MULTIPLE ${0} = '{1}'.</value>
+  </data>
+  <data name="TraceVariableAssignment" xml:space="preserve">
+    <value>    ! SET ${0} = '{1}'.</value>
+  </data>
+  <data name="TraceEnteringScriptBlock" xml:space="preserve">
+    <value>    ! CALL scriptblock.</value>
+  </data>
+  <data name="TraceEnteringScript" xml:space="preserve">
+    <value>    ! CALL script '{0}'</value>
+  </data>
+  <data name="TraceEnteringFunction" xml:space="preserve">
+    <value>    ! CALL function '{0}'</value>
+  </data>
+  <data name="TraceEnteringFunctionDefinedInFile" xml:space="preserve">
+    <value>    ! CALL function '{0}'  (defined in file '{1}')</value>
+  </data>
+  <data name="TraceParameterizedPropertySet" xml:space="preserve">
+    <value>   ! Setting parameterized property '{0}'</value>
+  </data>
+  <data name="TraceMethodCall" xml:space="preserve">
+    <value>    ! CALL method '{0}'</value>
+  </data>
+  <data name="TerminatorExpectedAtEndOfString" xml:space="preserve">
+    <value>The string is missing the terminator: {0}.</value>
+  </data>
+  <data name="WhitespaceBeforeHereStringFooter" xml:space="preserve">
+    <value>White space is not allowed before the string terminator.</value>
+  </data>
+  <data name="EndSquareBracketExpectedAtEndOfType" xml:space="preserve">
+    <value>Missing ] at end of type token.</value>
+  </data>
+  <data name="EndBracketExpectedAtEndOfSubExpression" xml:space="preserve">
+    <value>Missing ) at end of subexpression.</value>
+  </data>
+  <data name="OpenBraceNeedsToBeBackTickedInVariableName" xml:space="preserve">
+    <value>Use `{ instead of { in variable names.</value>
+  </data>
+  <data name="EndBraceExpectedAtEndOfVariableName" xml:space="preserve">
+    <value>Missing } at end of variable name.</value>
+  </data>
+  <data name="EmptyBracedVariableName" xml:space="preserve">
+    <value>Braced variable name cannot be empty.</value>
+  </data>
+  <data name="MissingStatementBlockForDataSection" xml:space="preserve">
+    <value>The Data section is missing its statement block.</value>
+  </data>
+  <data name="MissingOpenBraceInDataSectionStatement" xml:space="preserve">
+    <value>Missing the opening brace "{" in the Data section.</value>
+  </data>
+  <data name="MissingCloseBraceInDataSectionStatement" xml:space="preserve">
+    <value>Missing closing brace in the data section statement.</value>
+  </data>
+  <data name="InvalidDataSectionBody" xml:space="preserve">
+    <value>The body of the Data section is not valid. The Data section body can be only a convert-* command invocation optionally enclosed by an If statement.</value>
+  </data>
+  <data name="InvalidParameterForDataSectionStatement" xml:space="preserve">
+    <value>The "{0}" parameter of the Data section is not valid. The valid Data section parameter is SupportedCommand.</value>
+  </data>
+  <data name="ExpandableStringsNotSupportedInDataSectionCmdletList" xml:space="preserve">
+    <value>Expandable strings are not allowed in the list of supported commands for the Data section.</value>
+  </data>
+  <data name="InvalidTokenForDataSectionCmdletList" xml:space="preserve">
+    <value>A token that is not valid was found in the list of supported commands for the Data section.</value>
+  </data>
+  <data name="DataSectionNameHasAlreadyBeenUsed" xml:space="preserve">
+    <value>The Data section variable "{0}" has already been used for an existing variable or another Data section.</value>
+  </data>
+  <data name="ArrayReferenceNotSupportedInDataSection" xml:space="preserve">
+    <value>Array references are not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="AssignmentStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Assignment statements are not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="RedirectionNotSupportedInDataSection" xml:space="preserve">
+    <value>Redirection is not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="OnlyConvertFromCmdletsAreSupportedInDataSection" xml:space="preserve">
+    <value>A command is referenced that is not allowed. Only convertfrom-* commands are supported in restricted language mode or a Data section.</value>
+  </data>
+  <data name="DoWhileStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>The Do and While statements are not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="ExpandableStringNotSupportedInDataSection" xml:space="preserve">
+    <value>Expandable strings are not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="OperatorNotSupportedInDataSection" xml:space="preserve">
+    <value>The '{0}' operator is not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="TrapStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>The Trap statement is not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="TryStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>The Try statement is not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="FlowControlStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Flow control statements such as Break, Continue, Return, Exit, and Throw are not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="ForeachStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>Foreach statements are not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="ForWhileStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>For and While statements are not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="FunctionDeclarationNotSupportedInDataSection" xml:space="preserve">
+    <value>Function declarations are not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="MethodCallNotSupportedInDataSection" xml:space="preserve">
+    <value>Method calls are not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="ParameterDeclarationNotSupportedInDataSection" xml:space="preserve">
+    <value>Parameter declarations are not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="PropertyReferenceNotSupportedInDataSection" xml:space="preserve">
+    <value>Property references are not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="ScriptBlockNotSupportedInDataSection" xml:space="preserve">
+    <value>Script block literals are not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="SwitchStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>The switch statement is not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="VariableReferenceNotSupportedInDataSection" xml:space="preserve">
+    <value>A variable that cannot be referenced in restricted language mode or a Data section is being referenced. Variables that can be referenced include the following: {0}.</value>
+  </data>
+  <data name="CmdletNotInAllowedListForDataSection" xml:space="preserve">
+    <value>The command '{0}' is not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="DataSectionStatementNotSupportedInDataSection" xml:space="preserve">
+    <value>The data statement is not allowed in restricted language mode or another Data section.</value>
+  </data>
+  <data name="MissingValueForSupportedCommandInDataSectionStatement" xml:space="preserve">
+    <value>The SupportedCommand parameter of the Data section is missing a value. Supply a cmdlet or function name to the parameter.</value>
+  </data>
+  <data name="InvalidScriptBlockInDataSection" xml:space="preserve">
+    <value>A Begin statement block, Process statement block, or parameter statement is not allowed in a Data section.</value>
+  </data>
+  <data name="StringMultiplyToolongInDataSection" xml:space="preserve">
+    <value>String multiplication results with more than "{0}" characters are not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="ArrayMultiplyToolongInDataSection" xml:space="preserve">
+    <value>Array multiplication resulting in more than {0} elements is not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="DotSourcingNotSupportedInDataSection" xml:space="preserve">
+    <value>Dot sourcing is not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock" xml:space="preserve">
+    <value>Attribute argument must be a constant or a script block.</value>
+  </data>
+  <data name="CustomAttributeTypeNotFound" xml:space="preserve">
+    <value>Cannot find the type for custom attribute '{0}'. Make sure that the assembly that contains this type is loaded.</value>
+  </data>
+  <data name="CannotFindConstructorForCustomAttribute" xml:space="preserve">
+    <value>Cannot find an appropriate constructor to instantiate the custom attribute object for type '{0}'.</value>
+  </data>
+  <data name="InValidCustomAttributeType" xml:space="preserve">
+    <value>The custom attribute type '{0}' is not derived from System.Attribute.</value>
+  </data>
+  <data name="PropertyNotFoundForType" xml:space="preserve">
+    <value>Property '{0}' cannot be found for type '{1}'.</value>
+  </data>
+  <data name="UnexpectedAttribute" xml:space="preserve">
+    <value>Unexpected attribute '{0}'.</value>
+  </data>
+  <data name="OperatorNotSupportedForType" xml:space="preserve">
+    <value>Operator '{0}' is not supported for type '{1}'.</value>
+  </data>
+  <data name="EndSquareBracketExpectedAtEndOfAttribute" xml:space="preserve">
+    <value>Missing ] at end of attribute or type literal.</value>
+  </data>
+  <data name="StrictModeFunctionCallWithParens" xml:space="preserve">
+    <value>The function or command was called as if it were a method. Parameters should be separated by spaces. For information about parameters, see the about_Parameters Help topic.</value>
+  </data>
+  <data name="MissingTryStatementBlock" xml:space="preserve">
+    <value>The Try statement is missing its statement block.</value>
+  </data>
+  <data name="MissingCatchOrFinally" xml:space="preserve">
+    <value>The Try statement is missing its Catch or Finally block.</value>
+  </data>
+  <data name="MissingCatchHandlerBlock" xml:space="preserve">
+    <value>The Catch block is missing its statement block.</value>
+  </data>
+  <data name="MissingFinallyStatementBlock" xml:space="preserve">
+    <value>The Finally block is missing its statement block.</value>
+  </data>
+  <data name="ExceptionTypeAlreadyCaught" xml:space="preserve">
+    <value>Exception type {0} is already handled by a previous handler.</value>
+  </data>
+  <data name="EmptyCatchNotLast" xml:space="preserve">
+    <value>Catch block must be the last catch block.</value>
+  </data>
+  <data name="MissingTypeLiteralToken" xml:space="preserve">
+    <value>Missing type literal.</value>
+  </data>
+  <data name="MissingTerminatorMultiLineComment" xml:space="preserve">
+    <value>The terminator '#&gt;' is missing from the multiline comment.</value>
+  </data>
+  <data name="UnexpectedCharactersAfterHereStringHeader" xml:space="preserve">
+    <value>No characters are allowed after a here-string header but before the end of the line.</value>
+  </data>
+  <data name="ErrorCollection" xml:space="preserve">
+    <value>Parser errors were detected.</value>
+  </data>
+  <data name="MissingNamedStatementBlock" xml:space="preserve">
+    <value>Missing statement block after '{0}'.</value>
+  </data>
+  <data name="TypeNotAllowedBeforeParam" xml:space="preserve">
+    <value>Unexpected type [{0}] was found in the parameter statement.</value>
+  </data>
+  <data name="TypeNotAllowedBeforeStatement" xml:space="preserve">
+    <value>Unexpected type [{0}] was found before statement.</value>
+  </data>
+  <data name="InvalidNullKey" xml:space="preserve">
+    <value>A null key is not allowed in a hash literal.</value>
+  </data>
+  <data name="AttributeNotSupportedInDataSection" xml:space="preserve">
+    <value>Attributes are not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="TypeNotAllowedInDataSection" xml:space="preserve">
+    <value>The type {0} is not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="PropertyIsReadOnly" xml:space="preserve">
+    <value>'{0}' is a ReadOnly property.</value>
+  </data>
+  <data name="MissingAssemblyNameSpecification" xml:space="preserve">
+    <value>The type name is missing the assembly name specification.</value>
+  </data>
+  <data name="ControlLeavingFinally" xml:space="preserve">
+    <value>Flow of control cannot leave a Finally block.</value>
+  </data>
+  <data name="UnrecoverableParserError" xml:space="preserve">
+    <value>Unrecoverable error in Windows PowerShell.</value>
+  </data>
+  <data name="AstIsReused" xml:space="preserve">
+    <value>An AST cannot be used as the child of more than one AST. To use this AST in another AST, call the Copy() method and use its result.</value>
+  </data>
+  <data name="InvalidUsingExpression" xml:space="preserve">
+    <value>Expression is not allowed in a Using expression.</value>
+  </data>
+  <data name="UsingWithoutInvokeCommand" xml:space="preserve">
+    <value>A Using variable cannot be retrieved. A Using variable can be used only with Invoke-Command, Start-Job, or InlineScript in the script workflow. When it is used with Invoke-Command, the Using variable is valid only if the script block is invoked on a remote computer.</value>
+  </data>
+  <data name="InvalidBracedVariableReference" xml:space="preserve">
+    <value>Variable reference is not valid. The variable name is missing.</value>
+  </data>
+  <data name="InvalidVariableReferenceWithDrive" xml:space="preserve">
+    <value>Variable reference is not valid. ':' was not followed by a valid variable name character. Consider using ${} to delimit the name.</value>
+  </data>
+  <data name="TooManyErrors" xml:space="preserve">
+    <value>Not all parse errors were reported.  Correct the reported errors and try again.</value>
+  </data>
+  <data name="MissingTypename" xml:space="preserve">
+    <value>Missing type name after '['.</value>
+  </data>
+  <data name="AllStream" xml:space="preserve">
+    <value>* stream</value>
+  </data>
+  <data name="DebugStream" xml:space="preserve">
+    <value>debug stream</value>
+  </data>
+  <data name="ErrorStream" xml:space="preserve">
+    <value>error stream</value>
+  </data>
+  <data name="HostStream" xml:space="preserve">
+    <value>host stream</value>
+  </data>
+  <data name="OutputStream" xml:space="preserve">
+    <value>output stream</value>
+  </data>
+  <data name="StreamAlreadyRedirected" xml:space="preserve">
+    <value>The {0} for this command is already redirected.</value>
+  </data>
+  <data name="VerboseStream" xml:space="preserve">
+    <value>verbose stream</value>
+  </data>
+  <data name="WarningStream" xml:space="preserve">
+    <value>warning stream</value>
+  </data>
+  <data name="MissingStatementAfterKeyword" xml:space="preserve">
+    <value>Missing statement body after keyword '{0}'.</value>
+  </data>
+  <data name="ParallelAndSequenceBlockNotSupportedInDataSection" xml:space="preserve">
+    <value>Parallel and sequence blocks are not allowed in restricted language mode or a Data section.</value>
+  </data>
+  <data name="UnexpectedKeyword" xml:space="preserve">
+    <value>Unexpected keyword '{0}'.</value>
+  </data>
+  <data name="VoidTypeConstraintNotAllowed" xml:space="preserve">
+    <value>[void] cannot be used as a parameter type, or on the left side of an assignment.</value>
+  </data>
+  <data name="CannotInvoke" xml:space="preserve">
+    <value>The method cannot be invoked.</value>
+  </data>
+  <data name="HashtableToObjectConversionNotSupportedInDataSection" xml:space="preserve">
+    <value>Cannot convert hashtable to an object of the following type: {0}. Hashtable-to-Object conversion is not supported in restricted language mode or a Data section.</value>
+  </data>
+  <data name="RequiresArgumentMustBeConstant" xml:space="preserve">
+    <value>Argument must be constant.</value>
+  </data>
+  <data name="RequiresInvalidStringArgument" xml:space="preserve">
+    <value>The argument for the {0} parameter is not valid. Specify a valid string argument.</value>
+  </data>
+  <data name="RequiresModuleInvalid" xml:space="preserve">
+    <value>The argument for the Module parameter is not valid. {0}</value>
+  </data>
+  <data name="RequiresVersionInvalid" xml:space="preserve">
+    <value>The argument for the Version parameter is not valid. Specify a valid Windows PowerShell version, in the format major.minor version.</value>
+  </data>
+  <data name="WildCardModuleNameError" xml:space="preserve">
+    <value>Wildcard characters are not supported for module names.</value>
+  </data>
+  <data name="InvokeMethodConstrainedLanguage" xml:space="preserve">
+    <value>Cannot invoke method. Method invocation is supported only on core types in this language mode.</value>
+  </data>
+  <data name="PropertySetConstrainedLanguage" xml:space="preserve">
+    <value>Cannot set property. Property setting is supported only on core types in this language mode.</value>
+  </data>
+  <data name="ConfigurationInvalidPropertyName" xml:space="preserve">
+    <value>An attribute name for resource '{0}' was found that is not valid. An attribute name must be a simple string, and cannot contain variables or expressions. Replace '{1}' with a simple string.</value>
+  </data>
+  <data name="ConfigurationNameMissing" xml:space="preserve">
+    <value>The configuration name is missing or '{' was not found for a default definition.</value>
+  </data>
+  <data name="InvalidConfigurationParameter" xml:space="preserve">
+    <value>The parameter {0} is not valid for the configuration statement.</value>
+  </data>
+  <data name="InvalidInstanceProperty" xml:space="preserve">
+    <value>The member '{0}' is not valid. Valid members are
+'{1}'.</value>
+  </data>
+  <data name="MissingBraceInObjectDefinition" xml:space="preserve">
+    <value>Missing '{' in object definition.</value>
+  </data>
+  <data name="ParameterNameCanOnlyBeSpecifiedOnce" xml:space="preserve">
+    <value>Parameter {0} can only be specified once for a configuration.</value>
+  </data>
+  <data name="RequiredNameOrExpressionMissing" xml:space="preserve">
+    <value>A required name or expression was missing.</value>
+  </data>
+  <data name="SchemaFileNotFound" xml:space="preserve">
+    <value>The schema file {0} was not found. Verify that any modules specified in a configuration statement contain a schema.mof file, and then try running the script again.</value>
+  </data>
+  <data name="DataSectionAllowedCommandDisallowed" xml:space="preserve">
+    <value>Cannot define data section. Definition of additional supported commands is not supported in this language mode.</value>
+  </data>
+  <data name="MissingCurlyInConfigurationStatement" xml:space="preserve">
+    <value>Missing '{' in configuration statement.</value>
+  </data>
+  <data name="ExceptionParsingMOFFile" xml:space="preserve">
+    <value>Exception parsing MOF file '{0}':{1}.</value>
+  </data>
+  <data name="MissingConfigurationName" xml:space="preserve">
+    <value>The name for the configuration is missing. Provide the missing name as a simple name, string, or string-valued expresson.</value>
+  </data>
+  <data name="MissingRequiredResourcesArgument" xml:space="preserve">
+    <value>Missing argument to -Resources. The argument to the -Resource parameter must be a comma-separated list of names or constant strings naming modules to reference for resource type definitions.</value>
+    <comment>-Required Resources should not be localized</comment>
+  </data>
+  <data name="MissingRequiredResourcesArgumentFatalError" xml:space="preserve">
+    <value>Unexpected token '{0}'. The argument to the -Resource parameter must be a comma-separated list of names or constant strings naming modules to reference for resource type definitions.</value>
+    <comment>-Resource parameter should not be localized</comment>
+  </data>
+  <data name="ModuleNotFoundDuringParse" xml:space="preserve">
+    <value>Could not find the module '{0}'.</value>
+  </data>
+  <data name="MultipleModuleEntriesFoundDuringParse" xml:space="preserve">
+    <value>Multiple versions of the module '{0}' were found. You can run 'Get-Module -ListAvailable -FullyQualifiedName {0}' to see available versions on the system, and then use the fully qualified name '@{{ModuleName="{0}"; RequiredVersion="Version"}}'.</value>
+  </data>
+  <data name="MissingThrottleLimit" xml:space="preserve">
+    <value>The ThrottleLimit parameter of the foreach statement is missing a value. Supply a throttle limit to the parameter.</value>
+    <comment>'ThrottleLimit' must not be localized.</comment>
+  </data>
+  <data name="ThrottleLimitRequresParallelFlag" xml:space="preserve">
+    <value>The ThrottleLimit parameter is only supported on foreach statements that use the Parallel parameter.</value>
+    <comment>'ThrottleLimit' and 'Parallel' must not be localized.</comment>
+  </data>
+  <data name="ConfigurationBodyEmpty" xml:space="preserve">
+    <value>The configuration block results were null or empty. Verify that configurations were defined in the block.</value>
+  </data>
+  <data name="UnexpectedNameForType" xml:space="preserve">
+    <value>The '{0}' resource can only be used once per configuration, and therefore cannot have a name. Remove '{1}', and then run the script again.</value>
+  </data>
+  <data name="IncompletePropertyAssignmentBlock" xml:space="preserve">
+    <value>There is an incomplete property assignment block in the instance definition.</value>
+  </data>
+  <data name="MissingEqualsInPropertyAssignmentBlock" xml:space="preserve">
+    <value>Missing '=' operator after key in property assignment.</value>
+  </data>
+  <data name="DuplicatePropertyInInstanceDefinition" xml:space="preserve">
+    <value>Duplicate property assignements are not allowed in an instance definition.</value>
+  </data>
+  <data name="DuplicateCimClassDefinition" xml:space="preserve">
+    <value>A second CIM class definition for '{0}' was found while processing the schema file '{1}'. This class was already defined in the file(s) '{2}'. Remove the redundant definition, and then try again.</value>
+  </data>
+  <data name="DuplicateKeywordDefinition" xml:space="preserve">
+    <value>Keyword '{0}' already defined in the configuration.</value>
+  </data>
+  <data name="ClassNameNotSameAsDefiningFile" xml:space="preserve">
+    <value>The class name '{0}' does not match '{1}', the name of the file in which it is defined. Rename either the file name to match the class name or vice versa</value>
+  </data>
+  <data name="DuplicateResourceIdInNodeStatement" xml:space="preserve">
+    <value>A duplicate resource identifier '{0}' was found while processing the specification for node '{1}'. Change the name of this resource so that it is unique within the node specification.</value>
+  </data>
+  <data name="UnexpectedTokenInDynamicKeyword" xml:space="preserve">
+    <value>There is no whitespace between the name and the scriptblock in dynamic keyword '{0}' body statement.</value>
+  </data>
+  <data name="EmptyFunctionNameInFunctionDefinitionDictionary" xml:space="preserve">
+    <value>The key property for an entry in the dictionary of functions to define cannot be empty because the key property is used as the function name. Specify a non-empty string as the value of the key property, and then try the operation again.</value>
+  </data>
+  <data name="GetBadlyFormedRequiredResourceId" xml:space="preserve">
+    <value>The format of the resource reference '{0}' in the Requires list for resource '{1}' is not valid. A required resource name should be in the format '[&lt;typename&gt;]&lt;name&gt;', with alphanumeric characters, spaces, '_', '-', '.' and '\'.</value>
+    <comment>The capitalized word Requires should not be localized. The words &lt;typename&gt; and &lt;name&gt; should be localized but the &lt;&gt; characters must be preserved.</comment>
+  </data>
+  <data name="GetBadlyFormedExclusiveResourceId" xml:space="preserve">
+    <value>The format of the resource reference '{0}' in the exclusive list for resource '{1}' is not valid. An exclusive resource name should be in the format '&lt;typename&gt;\&lt;name&gt;', with no spaces.</value>
+  </data>
+  <data name="GetPullModeNeedConfigurationSource" xml:space="preserve">
+    <value>The PartialConfiguration '{0}' is set to pull mode which requires a ConfigurationSource property.</value>
+  </data>
+  <data name="NullEntryInVariablesDefinitionList" xml:space="preserve">
+    <value>A null entry was found in the list of variable entries to create in the script block scope. Remove the entry at index {0}, or replace it with a non-null entry, and then try again.</value>
+  </data>
+  <data name="NullFunctionBodyInFunctionDefinitionDictionary" xml:space="preserve">
+    <value>The script block that defines function '{0}' cannot be null or empty. Provide a non-empty script block in the function definition dictionary, and then try the operation again.</value>
+  </data>
+  <data name="ImportDscResourceNeedParams" xml:space="preserve">
+    <value>The syntax of the Import-DscResource dynamic keyword is: 
+   
+Import-DscResource  [-Name &lt;ResourceName(s)&gt;]  [-ModuleName  &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;].
+  
+Name          : Names of one or more resources to import.
+ModuleName    : Module names or ModuleSpecification objects of one or more modules to import.
+ModuleVersion : Version of module to import. If used, ModuleName must represent only one module by name.</value>
+  </data>
+  <data name="ImportDscResourceMultipleModulesNotSupportedWithName" xml:space="preserve">
+    <value>Import-DscResource dynamic keyword supports only one module when Name parameter is specified.</value>
+  </data>
+  <data name="ImportDscResourcePositionalParamsNotSupported" xml:space="preserve">
+    <value>Positional parameters are not supported for the Import-DscResource dynamic keyword. The syntax of Import-DscResource dynamic keyword is: "Import-DscResource  [-Name &lt;ResourceName(s)&gt;] [-ModuleName &lt;ModuleName(s)&gt;] [-ModuleVersion &lt;ModuleVersion&gt;]</value>
+  </data>
+  <data name="DscResourcesNotFoundDuringParsing" xml:space="preserve">
+    <value>Unable to load resource '{0}': Resource not found.</value>
+  </data>
+  <data name="ConfigurationNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>Configuration keyword is not allowed in constrainedLanguage mode.</value>
+  </data>
+  <data name="InvalidConfigurationName" xml:space="preserve">
+    <value>The configuration name '{0}' is not valid. Standard names may only contain letters (a-z, A-Z), numbers (0-9), and underscore (_). The name may not be null or empty, and should start with a letter.</value>
+  </data>
+  <data name="UnsupportedNamedBlockInConfiguration" xml:space="preserve">
+    <value>Configuration only supports the End block in its body. Begin, Process and DynamicParam blocks are not allowed in a configuration.</value>
+  </data>
+  <data name="CimDeserializationError" xml:space="preserve">
+    <value>Cim deserializer threw an error when deserializing file {0}.</value>
+  </data>
+  <data name="InvalidValueForProperty" xml:space="preserve">
+    <value>'{0}' is not a valid value for property '{1}' on class '{2}'. Please change the value to one of the following strings: {3}.</value>
+  </data>
+  <data name="UnsupportedValueForProperty" xml:space="preserve">
+    <value>At least one of the values '{0}' is not supported or valid for property '{1}' on class '{2}'. Please specify only supported values: 
+{3}.</value>
+  </data>
+  <data name="MissingValueForMandatoryProperty" xml:space="preserve">
+    <value>Resource '{0}' requires that a value of type '{1}' be provided for property '{2}'.</value>
+  </data>
+  <data name="ValueNotInRange" xml:space="preserve">
+    <value>Property '{0}' of Resource '{1}' has value '{2}' which is not between valid range '{3}' and '{4}'.</value>
+  </data>
+  <data name="CannotLoadPowerShellDataFile" xml:space="preserve">
+    <value>Failed to load the PowerShell data file '{0}' with the following error:
+{1}</value>
+  </data>
+  <data name="CannotResolvePowerShellDataFilePath" xml:space="preserve">
+    <value>Cannot resolve the path '{0}' to a single .psd1 file.</value>
+  </data>
+  <data name="InvalidPowerShellDataFile" xml:space="preserve">
+    <value>The PowerShell data file '{0}' is invalid since it cannot be evaluated into a Hashtable object.</value>
+  </data>
+  <data name="ConfigurationNotAllowedOnWinPE" xml:space="preserve">
+    <value>Configuration is not supported on WinPE.</value>
+  </data>
+  <data name="EmptyExpressionRequiresANonDefaultMode" xml:space="preserve">
+    <value>If the expression passed to the Where() operator is null then you must specify a non-Default value for the selection mode argument. Please change the value of the mode argument to a value other than Default and try running your script again.</value>
+  </data>
+  <data name="ForEachBadGenericConversionTypeSpecified" xml:space="preserve">
+    <value>The generic collection type [{0}] passed to ForEach() has too many type arguments. Please change the specified type to be a generic collection with only one type argument then try running your script again.</value>
+  </data>
+  <data name="ForEachTypeConversionFailed" xml:space="preserve">
+    <value>Unable to convert input to the target type [{0}] passed to the ForEach() operator. Please check the specified type and try running your script again.</value>
+  </data>
+  <data name="NumberToReturnMustBeGreaterThanZero" xml:space="preserve">
+    <value>The 'numberToReturn' value provided to the third argument of the Where() operator must be greater than zero. Please correct the argument's value and try running your script again.</value>
+  </data>
+  <data name="RedirectionStreamCanOnlyMergeToOutputStream" xml:space="preserve">
+    <value>Redirection only allows another stream to be merged with the output stream. Please correct the redirection operation to merge into the output stream then try running your script again.</value>
+  </data>
+  <data name="ForEachNonexistentMemberReference" xml:space="preserve">
+    <value>The ForEach() operator could not find a member '{0}' on the target object. Please verify that the named member exists and then try running your script again.</value>
+  </data>
+  <data name="UnsupportedReservedKeyword" xml:space="preserve">
+    <value>The '{0}' keyword is not supported in this version of the language.</value>
+  </data>
+  <data name="UnsupportedReservedProperty" xml:space="preserve">
+    <value>The '{0}' property is not supported in this version of the language.</value>
+  </data>
+  <data name="DuplicateQualifier" xml:space="preserve">
+    <value>Duplicate '{0}' qualifier</value>
+  </data>
+  <data name="ModifiersCannotBeCombined" xml:space="preserve">
+    <value>Modifier '{0}' cannot be combined with '{1}'</value>
+  </data>
+  <data name="MissingUsingStatementDirective" xml:space="preserve">
+    <value>Missing using directive</value>
+  </data>
+  <data name="MissingPropertyNameInClass" xml:space="preserve">
+    <value>Missing property name</value>
+  </data>
+  <data name="MissingNamespaceAlias" xml:space="preserve">
+    <value>Missing namespace alias</value>
+  </data>
+  <data name="MissingTypeAlias" xml:space="preserve">
+    <value>Missing type alias</value>
+  </data>
+  <data name="MissingEqualsInUsingAlias" xml:space="preserve">
+    <value>Missing '=' operator</value>
+  </data>
+  <data name="MissingUsingItemName" xml:space="preserve">
+    <value>Missing using name</value>
+  </data>
+  <data name="VariableNotLocal" xml:space="preserve">
+    <value>Variable is not assigned in the method.</value>
+  </data>
+  <data name="IncompleteMemberDefinition" xml:space="preserve">
+    <value>Missing a property name or method definition.</value>
+  </data>
+  <data name="MemberAlreadyDefined" xml:space="preserve">
+    <value>The member '{0}' is already defined.</value>
+  </data>
+  <data name="TooManyTypes" xml:space="preserve">
+    <value>Only one type may be specified on class members.</value>
+  </data>
+  <data name="TypeCreationError" xml:space="preserve">
+    <value>Error during creation of type "{0}". Error message: 
+{1}</value>
+  </data>
+  <data name="CannotConvertValue" xml:space="preserve">
+    <value>Cannot convert the value to type "{0}".</value>
+  </data>
+  <data name="PropertyNotFoundForAttribute" xml:space="preserve">
+    <value>Property '{0}' cannot be found for attribute '{1}'. Specify one of the following properties: {2}.</value>
+  </data>
+  <data name="AttributeNotAllowedOnDeclaration" xml:space="preserve">
+    <value>Attribute '{0}' is not valid on this declaration. It is valid on '{1}' declarations only.</value>
+  </data>
+  <data name="ParameterAttributeArgumentNeedsToBeConstant" xml:space="preserve">
+    <value>Attribute argument must be a constant.</value>
+  </data>
+  <data name="ResourceNotDefined" xml:space="preserve">
+    <value>Undefined DSC resource '{0}'. Use Import-DSCResource to import the resource.</value>
+  </data>
+  <data name="DynamicKeywordPreParseException" xml:space="preserve">
+    <value>Exception occurred when pre-parsing dynamic keyword '{0}' with details '{1}'.</value>
+  </data>
+  <data name="DynamicKeywordPostParseException" xml:space="preserve">
+    <value>Exception occurred when post-parsing dynamic keyword '{0}' with details '{1}'.</value>
+  </data>
+  <data name="WorkflowNotSupportedInPowerShellCore" xml:space="preserve">
+    <value>Workflow is not supported in PowerShell Core.</value>
+  </data>
+  <data name="MetaConfigurationUsedInRegularConfig" xml:space="preserve">
+    <value>Meta Configuration resource {0} is not allowed in the regular configuration. Use meta configuration resources in a configuration with [DscLocalConfigurationManager()] attribute.</value>
+  </data>
+  <data name="RegularResourceUsedInMetaConfig" xml:space="preserve">
+    <value>Regular DSC resource {0} is not allowed in the meta configuration. </value>
+  </data>
+  <data name="GetSteppablePipelineFromWrongThread" xml:space="preserve">
+    <value>There is no Runspace available to get and run the SteppablePipeline in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The script block you attempted to get SteppablePipeline from was: {0}</value>
+  </data>
+  <data name="AmbiguousConversion" xml:space="preserve">
+    <value>There are valid conversions from {0} to {1}.</value>
+  </data>
+  <data name="CannotCall" xml:space="preserve">
+    <value>Cannot perform call.</value>
+  </data>
+  <data name="CannotRetrieveTypeInformation" xml:space="preserve">
+    <value>ResolveComReference.CannotRetrieveTypeInformation.</value>
+  </data>
+  <data name="COMObjectDoesNotSupportEvents" xml:space="preserve">
+    <value>COM object does not support events.</value>
+  </data>
+  <data name="COMObjectDoesNotSupportSourceInterface" xml:space="preserve">
+    <value>COM object does not support specified source interface.</value>
+  </data>
+  <data name="CouldNotGetDispId" xml:space="preserve">
+    <value>Could not get dispatch ID for {0} (error: {1}).</value>
+  </data>
+  <data name="DispBadParamCount" xml:space="preserve">
+    <value>Cannot find an overload for "{0}" and the argument count: "{1}"</value>
+  </data>
+  <data name="DispMemberNotFound" xml:space="preserve">
+    <value>Error while invoking {0}. Could not find member.</value>
+  </data>
+  <data name="DispNoNamedArgs" xml:space="preserve">
+    <value>Error while invoking {0}. Named arguments are not supported.</value>
+  </data>
+  <data name="DispOverflow" xml:space="preserve">
+    <value>Error while invoking {0}. Overflow detected.</value>
+  </data>
+  <data name="DispParamNotOptional" xml:space="preserve">
+    <value>Error while invoking {0}. A required parameter was omitted.</value>
+  </data>
+  <data name="DispTypeMismatch" xml:space="preserve">
+    <value>Exception setting "{0}": Cannot convert the "{1}" value of type "{2}" to type "{3}".</value>
+  </data>
+  <data name="GetIDsOfNamesInvalid" xml:space="preserve">
+    <value>IDispatch::GetIDsOfNames behaved unexpectedly for {0}.</value>
+  </data>
+  <data name="MethodShouldNotBeCalled" xml:space="preserve">
+    <value>This method should not be called.</value>
+  </data>
+  <data name="SetComObjectDataFailed" xml:space="preserve">
+    <value>Marshal.SetComObjectData failed.</value>
+  </data>
+  <data name="UnexpectedVarEnum" xml:space="preserve">
+    <value>Unexpected VarEnum {0}.</value>
+  </data>
+  <data name="UnsupportedEnumType" xml:space="preserve">
+    <value>Attempting to wrap an unsupported enum type.</value>
+  </data>
+  <data name="UnsupportedHandlerType" xml:space="preserve">
+    <value>Attempting to pass an event handler of an unsupported type.</value>
+  </data>
+  <data name="VariantGetAccessorNYI" xml:space="preserve">
+    <value>Variant.GetAccessor cannot handle {0}.</value>
+  </data>
+  <data name="ConfigurationNotSupportedInPowerShellCore" xml:space="preserve">
+    <value>Configuration keyword is not supported in PowerShell Core.</value>
+  </data>
+  <data name="MethodHasCodePathNotReturn" xml:space="preserve">
+    <value>Not all code path returns value within method.</value>
+  </data>
+  <data name="VoidMethodHasReturn" xml:space="preserve">
+    <value>Invalid return statement within void method.</value>
+  </data>
+  <data name="NonVoidMethodMissingReturnValue" xml:space="preserve">
+    <value>Invalid return statement within non-void method.</value>
+  </data>
+  <data name="MissingTypeBody" xml:space="preserve">
+    <value>Missing '{0}' body in '{0}' declaration.</value>
+  </data>
+  <data name="CycleInEnumInitializers" xml:space="preserve">
+    <value>Cannot define enum because of a cycle in the initialization expressions.</value>
+  </data>
+  <data name="EnumeratorValueTooLarge" xml:space="preserve">
+    <value>Enumerator value is too large for a System.Int.</value>
+  </data>
+  <data name="EnumeratorValueMustBeConstant" xml:space="preserve">
+    <value>Enumerator value must be a constant value.</value>
+  </data>
+  <data name="DynamicKeywordSemanticCheckException" xml:space="preserve">
+    <value>Exception occurred when performing semantic check for dynamic keyword '{0}' with details '{1}'.</value>
+  </data>
+  <data name="UnsupportedPropertyTypeOfDSCResourceClass" xml:space="preserve">
+    <value>The '{0}' property with type '{1}' of DSC resource class '{2}' is not supported.</value>
+  </data>
+  <data name="MissingMethodParameterList" xml:space="preserve">
+    <value>Missing '(' in class method parameter list.</value>
+  </data>
+  <data name="NamedBlockNotAllowedInMethod" xml:space="preserve">
+    <value>A named block is not allowed in a class method.</value>
+  </data>
+  <data name="ParamBlockNotAllowedInMethod" xml:space="preserve">
+    <value>A param block is not allowed in a class method.</value>
+  </data>
+  <data name="SealedBaseClass" xml:space="preserve">
+    <value>Cannot inherit from sealed class '{0}'.</value>
+  </data>
+  <data name="TypeNameExpected" xml:space="preserve">
+    <value>Type name expected.</value>
+  </data>
+  <data name="InterfaceNameExpected" xml:space="preserve">
+    <value>'{0}': Interface name expected.</value>
+  </data>
+  <data name="BaseClassNoDefaultCtor" xml:space="preserve">
+    <value>Base class '{0}' does not contain a parameterless constructor.</value>
+  </data>
+  <data name="SubtypeArray" xml:space="preserve">
+    <value>Invalid base type '{0}'. Base type cannot be an array.</value>
+  </data>
+  <data name="SubtypeUnclosedGeneric" xml:space="preserve">
+    <value>Invalid base type '{0}'. Base type cannot be a generic with unspecified parameters.</value>
+  </data>
+  <data name="MissingBaseCtorCall" xml:space="preserve">
+    <value>Missing 'base' after ':' in a base class constructor call.</value>
+  </data>
+  <data name="ConstructorCantHaveReturnType" xml:space="preserve">
+    <value>A constructor cannot specify a return type.</value>
+  </data>
+  <data name="DscResourceMissingDefaultConstructor" xml:space="preserve">
+    <value>The DSC resource '{0}' has no default constructor.</value>
+  </data>
+  <data name="DscResourceMissingGetMethod" xml:space="preserve">
+    <value>The DSC resource '{0}' is missing a Get method that returns [{0}] and accepts no parameters.</value>
+  </data>
+  <data name="DscResourceMissingKeyProperty" xml:space="preserve">
+    <value>The DSC resource '{0}' must have at least one key property (using the syntax [DscProperty(Key)].)</value>
+  </data>
+  <data name="DscResourceMissingSetMethod" xml:space="preserve">
+    <value>The DSC resource '{0}' is missing a Set method that returns [void] and accepts no parameters.</value>
+  </data>
+  <data name="DscResourceMissingTestMethod" xml:space="preserve">
+    <value>The DSC resource '{0}' is missing a Test method that returns [bool] and accepts no parameters.</value>
+  </data>
+  <data name="StaticConstructorCantHaveParameters" xml:space="preserve">
+    <value>A static constructor cannot have any parameters.</value>
+  </data>
+  <data name="TypeNotAllowedForProperty" xml:space="preserve">
+    <value>The type '{0}' is not allowed on a property.</value>
+  </data>
+  <data name="TypeNotAllowedForParameter" xml:space="preserve">
+    <value>The type '{0}' is not allowed on a parameter.</value>
+  </data>
+  <data name="NonStaticMemberAccessInStaticMember" xml:space="preserve">
+    <value>Cannot access the non-static member '{0}' in a static method or initializer of a static property.</value>
+  </data>
+  <data name="FailToParseModuleScriptFile" xml:space="preserve">
+    <value>Failed to parse module script file '{0}' with error
+'{1}'.</value>
+  </data>
+  <data name="CantActivateDocumentInPowerShellCore" xml:space="preserve">
+    <value>Cannot run a document in PowerShell Core: {0}.</value>
+  </data>
+  <data name="InvalidAssemblyLoadContextInUse" xml:space="preserve">
+    <value>The default AssemblyLoadContext in use is invalid. The default AssemblyLoadContext for PowerShell Core should be of type 'PowerShellAssemblyLoadContext'.</value>
+  </data>
+  <data name="MultipleTypeConstraintsOnMethodParam" xml:space="preserve">
+    <value>Multiple type constraints are not allowed on a method parameter.</value>
+  </data>
+  <data name="ScriptContainedMaliciousContent" xml:space="preserve">
+    <value>This script contains malicious content and has been blocked by your antivirus software.</value>
+  </data>
+  <data name="InvalidLocalConfigurationManagerProperty" xml:space="preserve">
+    <value>'{0}' cannot be specified in LocalConfigurationManager resource. Please switch to Settings instead or use only following values: {1}.</value>
+  </data>
+  <data name="PropertyInGenericType" xml:space="preserve">
+    <value>'{0}' is defined in a generic type.</value>
+  </data>
+  <data name="AmbiguousTypeReference" xml:space="preserve">
+    <value>Type name '{0}' is ambiguous, it could be '{1}' or '{2}'.</value>
+  </data>
+  <data name="UsingMustBeAtStartOfScript" xml:space="preserve">
+    <value>A 'using' statement must appear before any other statements in a script.</value>
+  </data>
+  <data name="UsingStatementNotSupported" xml:space="preserve">
+    <value>This syntax of the 'using' statement is not supported.</value>
+  </data>
+  <data name="InformationStream" xml:space="preserve">
+    <value>information stream</value>
+  </data>
+  <data name="DscResourceInvalidKeyProperty" xml:space="preserve">
+    <value>Invalid key property. The key property must be of [string], signed/unsigned integer, or Enum types.</value>
+  </data>
+  <data name="DscResourceInvalidGetMethod" xml:space="preserve">
+    <value>Invalid Get method. Get method must return [{0}] and accepts no parameters.</value>
+  </data>
+  <data name="ErrorLoadingAssembly" xml:space="preserve">
+    <value>Cannot load assembly '{0}'.</value>
+  </data>
+  <data name="CannotLoadAssemblyFromUncPath" xml:space="preserve">
+    <value>Cannot use assembly with an UNC path: '{0}'.</value>
+  </data>
+  <data name="CannotLoadAssemblyWithUriSchema" xml:space="preserve">
+    <value>Cannot use assembly with uri schema '{0}'.</value>
+  </data>
+  <data name="MissingStatementTerminator" xml:space="preserve">
+    <value>Missing a newline or semicolon.</value>
+  </data>
+  <data name="MissingThis" xml:space="preserve">
+    <value>Cannot assign property, use '{0}{1}'.</value>
+  </data>
+  <data name="InvalidValueForUsingItemName" xml:space="preserve">
+    <value>'{0}' is not a valid value for using name.</value>
+  </data>
+  <data name="MissingTypeInStaticPropertyAssignment" xml:space="preserve">
+    <value>Cannot assign property, use '{0}{1}'.</value>
+  </data>
+  <data name="DebugModeShouldHaveOneValue" xml:space="preserve">
+    <value>DebugMode should only have one value.</value>
+  </data>
+  <data name="LabelNotFound" xml:space="preserve">
+    <value>Label '{0}' not found inside the method.</value>
+  </data>
+  <data name="ConvertCimPropertyToObjectPropertyFailed" xml:space="preserve">
+    <value>Failed to convert the value of CimProperty {0} to the property value of class {1}.</value>
+  </data>
+  <data name="ExpectArrayTypeOfPropertyInPSClass" xml:space="preserve">
+    <value>Property {0} of PowerShell class {1} is not declared as array type, but defined in its configuration instance as instance array type.</value>
+  </data>
+  <data name="InstantiatePSClassObjectFailed" xml:space="preserve">
+    <value>Failed to create an object of PowerShell class {0}.</value>
+  </data>
+  <data name="InvalidHashtable" xml:space="preserve">
+    <value>The hashtable supplied to the Desired State Configuration resource {0} is not valid. The key or value cannot be null or empty.</value>
+  </data>
+  <data name="InvalidPassword" xml:space="preserve">
+    <value>The username supplied to the Desired State Configuration resource {0} is not valid. The username cannot be null or empty.</value>
+  </data>
+  <data name="InvalidUserName" xml:space="preserve">
+    <value>The username supplied to the Desired State Configuration resource {0} is not valid. The username cannot be null or empty.</value>
+  </data>
+  <data name="PropertyNotDeclaredInPSClass" xml:space="preserve">
+    <value>Property {0} is not declared in PowerShell class {1}, but defined in its configuration instance.</value>
+  </data>
+  <data name="DisabledRefreshModeNotValidForPartialConfig" xml:space="preserve">
+    <value>PartialConfiguration '{0}' has a Refresh Mode set to Disabled which is not a valid mode for Partial Configurations. Use Pull or Push refresh mode. </value>
+  </data>
+  <data name="CannotCreateTypeConstrainedLanguage" xml:space="preserve">
+    <value>Cannot create type. Only core types are supported in this language mode.</value>
+  </data>
+  <data name="ImportDscResourceInsideNode" xml:space="preserve">
+    <value>Import-DscResource cannot be specified inside of Node context</value>
+  </data>
+  <data name="DefaultAllowedVariablesInDataSection" xml:space="preserve">
+    <value>$PSCulture, $PSUICulture, $true, $false, $null</value>
+  </data>
+  <data name="AssignmentStatementToAutomaticNotSupported" xml:space="preserve">
+    <value>Cannot assign automatic variable '{0}' with type '{1}'</value>
+  </data>
+</root>

@@ -1,0 +1,301 @@
+/********************************************************************++
+Copyright (c) Microsoft Corporation.  All rights reserved.
+--********************************************************************/
+
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Management.Automation.Internal;
+using COM = System.Runtime.InteropServices.ComTypes;
+
+namespace System.Management.Automation
+{
+      
+    /// <summary>
+    /// A Wrapper class for COM object's Type Information
+    /// </summary>
+    internal class ComTypeInfo
+    {
+        /// <summary>
+        ///  Member variables.
+        /// </summary>
+        private Dictionary<String,ComProperty> properties = null;
+        private Dictionary<String, ComMethod> methods = null;
+        private COM.ITypeInfo typeinfo = null;
+        private Guid guid = Guid.Empty;
+
+
+        /// <summary>
+        ///  Constructor
+        /// </summary>
+        /// <param name="info">ITypeInfo object being wrapped by this object</param>
+        internal ComTypeInfo(COM.ITypeInfo info)
+        {
+            typeinfo = info;
+            properties = new Dictionary<String, ComProperty>(StringComparer.OrdinalIgnoreCase);
+            methods = new Dictionary<String, ComMethod>(StringComparer.OrdinalIgnoreCase);
+
+            if (typeinfo != null)
+            {
+                Initialize();
+            }
+        }
+
+
+        /// <summary>
+        ///  Collection of properties in the COM object.
+        /// </summary>
+        public Dictionary<String, ComProperty> Properties
+        {
+            get
+            {
+                return properties;
+            }
+        }
+
+        /// <summary>
+        ///  Collection of methods in the COM object.
+        /// </summary>
+        public Dictionary<String, ComMethod> Methods
+        {
+            get
+            {
+                return methods;
+            }
+        }
+
+
+
+        /// <summary>
+        ///  Returns the string of the GUID for the type information.
+        /// </summary>
+        public string Clsid
+        {
+            get
+            {
+                return guid.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Initializes the typeinfo object
+        /// </summary>
+        private void Initialize()
+        {
+            if (typeinfo != null)
+            {
+                COM.TYPEATTR typeattr = GetTypeAttr(typeinfo);   
+       
+                //Initialize the type information guid
+                guid = typeattr.guid;
+
+                for (int i = 0; i < typeattr.cFuncs; i++)
+                {
+                    COM.FUNCDESC funcdesc  = GetFuncDesc(typeinfo, i);
+                    if ((funcdesc.wFuncFlags & 0x1) == 0x1)
+                    {
+                        // http://msdn.microsoft.com/en-us/library/ee488948.aspx
+                        // FUNCFLAGS -- FUNCFLAG_FRESTRICTED = 0x1:
+                        //     Indicates that the function should not be accessible from macro languages. 
+                        //     This flag is intended for system-level functions or functions that type browsers should not display.
+                        //
+                        // For IUnknown methods (AddRef, QueryInterface and Release) and IDispatch methods (GetTypeInfoCount, GetTypeInfo, GetIDsOfNames and Invoke)
+                        // FUNCFLAG_FRESTRICTED (0x1) is set for the 'wFuncFlags' field
+                        continue;
+                    }
+
+                    String strName = ComUtil.GetNameFromFuncDesc(typeinfo, funcdesc);
+
+                    switch (funcdesc.invkind)
+                    {
+                        case COM.INVOKEKIND.INVOKE_PROPERTYGET:
+                        case COM.INVOKEKIND.INVOKE_PROPERTYPUT:
+                        case COM.INVOKEKIND.INVOKE_PROPERTYPUTREF:
+                            AddProperty(strName, funcdesc, i);
+                            break;
+
+                        case COM.INVOKEKIND.INVOKE_FUNC:
+                            AddMethod(strName, i);
+                            break;
+                    }
+
+                }
+            }
+        }
+
+
+        /// <summary>
+        ///  Get the typeinfo interface for the given comobject.
+        /// </summary>
+        /// <param name="comObject">reference to com object for which we are getting type information.</param>
+        /// <returns>ComTypeInfo object which wraps the ITypeInfo interface of the given COM object</returns>
+        [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification = "Code uses the out parameter of 'GetTypeInfo' to check if the call succeeded.")]
+        internal static ComTypeInfo GetDispatchTypeInfo(object comObject)
+        {
+            ComTypeInfo result = null;
+            IDispatch disp = comObject as IDispatch;
+            if (disp != null)
+            {
+                COM.ITypeInfo typeinfo = null;
+                disp.GetTypeInfo(0, 0, out typeinfo);
+                if (typeinfo != null)
+                {
+                    COM.TYPEATTR typeattr = GetTypeAttr(typeinfo);
+
+                    if ((typeattr.typekind == COM.TYPEKIND.TKIND_INTERFACE))
+                    {
+                        //We have typeinfo for custom interface. Get typeinfo for Dispatch interface.
+                        typeinfo = GetDispatchTypeInfoFromCustomInterfaceTypeInfo(typeinfo);
+                    }
+
+                    if ((typeattr.typekind == COM.TYPEKIND.TKIND_COCLASS))
+                    {
+                        //We have typeinfo for the COClass.  Find the default interface and get typeinfo for default interface.
+                        typeinfo = GetDispatchTypeInfoFromCoClassTypeInfo(typeinfo);
+                    }
+                    result = new ComTypeInfo(typeinfo);
+                }
+            }
+            return result;
+        }
+
+    
+        private void AddProperty(string strName, COM.FUNCDESC funcdesc, int index)
+        {
+            ComProperty prop;
+            if (!properties.TryGetValue(strName, out prop))
+            {
+                prop = new ComProperty(typeinfo, strName);
+                properties[strName] = prop;
+            }
+
+            if (prop != null)
+            {
+                prop.UpdateFuncDesc(funcdesc, index);
+            }          
+        }
+
+        private void AddMethod(string strName,int index)
+        {
+            ComMethod method;
+            if (!methods.TryGetValue(strName, out method))
+            {
+                method = new ComMethod(typeinfo, strName);
+                methods[strName] = method;
+            }
+
+            if (method != null)
+            {
+                method.AddFuncDesc(index);
+            }
+        }
+
+
+        /// <summary>
+        ///  Get TypeAttr for the given type information.
+        /// </summary>
+        /// <param name="typeinfo">reference to ITypeInfo from which to get TypeAttr</param>
+        /// <returns></returns>
+        [ArchitectureSensitive]
+        internal static COM.TYPEATTR GetTypeAttr(COM.ITypeInfo typeinfo)
+        {
+            IntPtr pTypeAttr;
+            typeinfo.GetTypeAttr(out pTypeAttr);
+            COM.TYPEATTR typeattr = ClrFacade.PtrToStructure<COM.TYPEATTR>(pTypeAttr);
+            typeinfo.ReleaseTypeAttr(pTypeAttr);
+            return typeattr;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="typeinfo"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        [ArchitectureSensitive]
+        internal static COM.FUNCDESC GetFuncDesc(COM.ITypeInfo typeinfo, int index)
+        {
+            IntPtr pFuncDesc;
+            typeinfo.GetFuncDesc(index, out pFuncDesc);
+            COM.FUNCDESC funcdesc = ClrFacade.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
+            typeinfo.ReleaseFuncDesc(pFuncDesc);
+            return funcdesc;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="typeinfo"></param>
+        /// <returns></returns>
+        internal static COM.ITypeInfo GetDispatchTypeInfoFromCustomInterfaceTypeInfo(COM.ITypeInfo typeinfo)
+        {
+            int href;
+            COM.ITypeInfo dispinfo = null;
+
+            try
+            {
+                // We need the typeinfo for Dispatch Interface
+                typeinfo.GetRefTypeOfImplType(-1, out href);
+                typeinfo.GetRefTypeInfo(href, out dispinfo);                
+            }
+            catch (COMException ce)
+            {
+                //check if the error code is TYPE_E_ELEMENTNOTFOUND.
+                //This error code is thrown when we can't IDispatch interface.
+                if (ce.HResult != ComUtil.TYPE_E_ELEMENTNOTFOUND)
+                {
+                    //For other codes, rethrow the exception.
+                    throw;
+                }
+            }
+            return dispinfo;
+        }
+
+
+        /// <summary>
+        /// Get the IDispatch Typeinfo from CoClass typeinfo.
+        /// </summary>
+        /// <param name="typeinfo">Reference to the type info to which the type descriptor belongs</param>
+        /// <returns>ITypeInfo reference to the Dispatch interface </returns>
+        internal static COM.ITypeInfo GetDispatchTypeInfoFromCoClassTypeInfo(COM.ITypeInfo typeinfo)
+        {
+            //Get the number of interfaces implmented by this CoClass.
+            COM.TYPEATTR typeattr = GetTypeAttr(typeinfo);
+            int count = typeattr.cImplTypes;
+            int href;
+            COM.ITypeInfo interfaceinfo = null;
+
+            //For each interface implemented by this coclass
+            for (int i = 0; i < count; i++)
+            {
+                //Get the type information?
+                typeinfo.GetRefTypeOfImplType(i, out href);
+                typeinfo.GetRefTypeInfo(href, out interfaceinfo);
+                typeattr = GetTypeAttr(interfaceinfo);
+
+                // Is this interface IDispatch compatible interface?
+                if (typeattr.typekind == COM.TYPEKIND.TKIND_DISPATCH)
+                {
+                    return interfaceinfo;                   
+                }
+
+                //Nope. Is this a dual interface
+                if ((typeattr.wTypeFlags & COM.TYPEFLAGS.TYPEFLAG_FDUAL) != 0)
+                {
+                    interfaceinfo = GetDispatchTypeInfoFromCustomInterfaceTypeInfo(interfaceinfo);
+                    typeattr = GetTypeAttr(interfaceinfo);
+
+                    if (typeattr.typekind == COM.TYPEKIND.TKIND_DISPATCH)
+                    {
+                        return interfaceinfo;
+                    }
+                }
+                
+            }
+            return null;
+        }
+
+    }
+}
+

@@ -1,0 +1,256 @@
+/********************************************************************++
+Copyright (c) Microsoft Corporation.  All rights reserved.
+--********************************************************************/
+
+#region Using directives
+
+using System;
+using System.Collections;
+using System.Management.Automation;
+using System.Globalization;
+
+#endregion
+
+namespace Microsoft.PowerShell.Commands
+{
+    #region PSObject Comparer
+
+    /// <summary>
+    /// Keeps the property value of inputObject. Because the value of a non-existing property is null,
+    ///  isExistingProperty is needed to distinguish whether a property exists and its value is null or
+    ///  the property does not exist at all.
+    /// </summary>
+    internal class ObjectCommandPropertyValue
+    {
+        private ObjectCommandPropertyValue() { }
+
+        internal ObjectCommandPropertyValue(object propVal)
+        {
+            propertyValue = propVal;
+            isExistingProperty = true;
+        }
+
+        /// <summary>
+        /// ObjectCommandPropertyValue constructor.
+        /// </summary>
+        /// <param name="propVal">Property Value.</param>
+        /// <param name="isCaseSensitive">Indicates if the Property value comparison has to be case sensitive or not.</param>
+        /// <param name="cultureInfo">Culture Info of the Property Value.</param>
+        internal ObjectCommandPropertyValue(object propVal, bool isCaseSensitive, CultureInfo cultureInfo)
+            : this(propVal)
+        {
+            this.caseSensitive = isCaseSensitive;
+            this.cultureInfo = cultureInfo;
+        }
+
+
+        internal object PropertyValue
+        {
+            get
+            {
+                return propertyValue;
+            }
+        }
+        internal bool IsExistingProperty
+        {
+            get
+            {
+                return isExistingProperty;
+            }
+        }
+
+        /// <summary>
+        /// Indicates if the Property Value comparion has to be Case sensitive or not.
+        /// </summary>
+        internal SwitchParameter CaseSensitive
+        {
+            get { return caseSensitive; }
+        }
+
+        /// <summary>
+        /// Gets the Culture Info of the Property Value.
+        /// </summary>
+        internal CultureInfo Culture
+        {
+            get
+            {
+                return cultureInfo;
+            }
+        }
+
+        private object propertyValue;
+        private bool isExistingProperty;
+        internal readonly static ObjectCommandPropertyValue NonExistingProperty = new ObjectCommandPropertyValue();
+        internal readonly static ObjectCommandPropertyValue ExistingNullProperty = new ObjectCommandPropertyValue(null);
+        private bool caseSensitive;
+        internal CultureInfo cultureInfo = null;
+
+        /// <summary>
+        /// Provides an Equals implementation.
+        /// </summary>
+        /// <param name="inputObject">Input Object.</param>
+        /// <returns>True if both the objects are same or else returns false.</returns>
+        public override bool Equals(Object inputObject)
+        {
+            ObjectCommandPropertyValue objectCommandPropertyValueObject = inputObject as ObjectCommandPropertyValue;
+            if (objectCommandPropertyValueObject == null)
+                return false;
+
+            object baseObject = PSObject.Base(propertyValue);
+            object inComingbaseObjectPropertyValue = PSObject.Base(objectCommandPropertyValueObject.PropertyValue);
+
+            IComparable baseObjectComparable = baseObject as IComparable;
+
+            if (baseObjectComparable != null)
+            {
+                return (LanguagePrimitives.Compare(baseObject, inComingbaseObjectPropertyValue, CaseSensitive, Culture) == 0);
+            }
+            else
+            {
+                if (baseObject == null && inComingbaseObjectPropertyValue == null)
+                {
+                    return true;
+                }
+                if (baseObject != null && inComingbaseObjectPropertyValue != null)
+                {
+                    return baseObject.ToString().Equals(inComingbaseObjectPropertyValue.ToString(), StringComparison.OrdinalIgnoreCase);
+                }
+
+                // One of the property values being compared is null.
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Provides a GetHashCode() implementation.
+        /// </summary>
+        /// <returns>Hashcode in the form of an integer.</returns>
+        public override int GetHashCode()
+        {
+            if (propertyValue == null)
+                return 0;
+
+            object baseObject = PSObject.Base(propertyValue);
+            IComparable baseObjectComparable = baseObject as IComparable;
+
+            if (baseObjectComparable != null)
+            {
+                return baseObject.GetHashCode();
+            }
+            else
+            {
+                return baseObject.ToString().GetHashCode();
+            }
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    internal class ObjectCommandComparer : IComparer
+    {
+        /// <summary>
+        /// Constructor that doesn't set any private field.
+        /// Necessary because compareTo can compare two objects by calling
+        /// ((ICompare)obj1).CompareTo(obj2) without using a key.
+        /// </summary>
+        internal ObjectCommandComparer(bool ascending, CultureInfo cultureInfo, bool caseSensitive)
+        {
+            this.ascendingOrder = ascending;
+            this.cultureInfo = cultureInfo ?? CultureInfo.CurrentCulture;
+            this.caseSensitive = caseSensitive;
+        }
+
+        private static bool IsValueNull(object value)
+        {
+            object val = PSObject.Base(value);
+            return (val == null);
+        }
+
+
+        internal int Compare(ObjectCommandPropertyValue first, ObjectCommandPropertyValue second)
+        {
+            if (first.IsExistingProperty && second.IsExistingProperty)
+            {
+                return Compare(first.PropertyValue, second.PropertyValue);
+            }
+            // if first.IsExistingProperty, !second.IsExistingProperty; otherwise the
+            // first branch if would return. Regardless of key orders non existing property 
+            // will be considered greater than others
+            if (first.IsExistingProperty)
+            {
+                return -1;
+            }
+            // vice versa for the previous branch
+            if (second.IsExistingProperty)
+            {
+                return 1;
+            }
+            //both are nonexisting
+            return 0;
+        }
+
+        /// <summary>
+        /// Main method that will compare first and second by
+        /// their keys considering case and order
+        /// </summary>
+        /// <param name="first">
+        /// first object to extract value
+        /// </param>
+        /// <param name="second">
+        /// second object to extract value
+        /// </param>
+        /// <returns> 
+        /// 0 if they are the same, less than 0 if first is smaller, more than 0 if first is greater
+        ///</returns>
+        public int Compare(object first, object second)
+        {
+            // This method will never throw exceptions, two null
+            // objects are considered the same
+            if (IsValueNull(first) && IsValueNull(second)) return 0;
+
+
+            PSObject firstMsh = first as PSObject;
+            if (firstMsh != null)
+            {
+                first = firstMsh.BaseObject;
+            }
+
+            PSObject secondMsh = second as PSObject;
+            if (secondMsh != null)
+            {
+                second = secondMsh.BaseObject;
+            }
+
+            try
+            {
+                return LanguagePrimitives.Compare(first, second, !caseSensitive, cultureInfo) * (ascendingOrder ? 1 : -1);
+            }
+            catch (InvalidCastException)
+            {
+            }
+            catch (ArgumentException)
+            {
+                // Note that this will occur if the objects do not support
+                // IComparable.  We fall back to comparing as strings.
+            }
+
+            // being here means the first object doesn't support ICompare
+            // or an Exception was raised win Compare
+            string firstString = PSObject.AsPSObject(first).ToString();
+            string secondString = PSObject.AsPSObject(second).ToString();
+
+            return cultureInfo.CompareInfo.Compare(firstString, secondString, caseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase) * (ascendingOrder ? 1 : -1);
+        }
+
+        private CultureInfo cultureInfo = null;
+
+        private bool ascendingOrder = true;
+
+        private bool caseSensitive = false;
+
+    }
+
+    #endregion
+}
+
