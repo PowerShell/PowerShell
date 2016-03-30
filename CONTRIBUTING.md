@@ -26,9 +26,9 @@ Write *good* commit messages. Follow Tim Pope's [guidelines][]:
 
 ## New to Git?
 
-- [Git 101](docs/git-101.md) : install and getting started.
-- [Git for sd users](docs/git-sd.md) : a handy reference document for people familiar with `sd`.
-- [Commit process](docs/git-commit.md) : step-by-step commit guide with all gory details.
+- [Git Basics](docs/git/basics.md): install and getting started.
+- [Git for sd users](docs/git/source-depot.md): a handy reference document for people familiar with `sd`.
+- [Commit process](docs/git/committing.md): step-by-step commit guide with all gory details.
 
 #### Authentication
 
