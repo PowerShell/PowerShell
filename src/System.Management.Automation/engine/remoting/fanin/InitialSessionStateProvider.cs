@@ -662,7 +662,7 @@ namespace System.Management.Automation.Remoting
             {
                 try
                 {
-                    result = Assembly.Load(new AssemblyName(assemblyName));
+                    result = ClrFacade.Load(new AssemblyName(assemblyName));
                 }
                 catch (FileLoadException e)
                 {

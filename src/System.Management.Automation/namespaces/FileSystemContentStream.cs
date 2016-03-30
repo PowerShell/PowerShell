@@ -1192,8 +1192,10 @@ namespace Microsoft.PowerShell.Commands
             if (_singleByteCharSet != null)
                 return (bool)_singleByteCharSet;
 
-            if (_currentEncoding.Equals(_oemEncoding) || 
-                _currentEncoding.Equals(_defaultAnsiEncoding))
+            // Porting note: only UTF-8 is supported on Linux, which is not an SBCS
+            if ((_currentEncoding.Equals(_oemEncoding) ||
+                 _currentEncoding.Equals(_defaultAnsiEncoding))
+                && !Platform.IsLinux())
             {
                 NativeMethods.CPINFO cpInfo;
                 if (NativeMethods.GetCPInfo((uint)_currentEncoding.CodePage, out cpInfo) &&

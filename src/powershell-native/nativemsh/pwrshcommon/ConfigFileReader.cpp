@@ -9,7 +9,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <windef.h>
+#include <windows.h>
 
 #include "NativeMsh.h"
 #include "ConfigFileReader.h"

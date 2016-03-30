@@ -1,7 +1,8 @@
+#if !CORECLR
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -129,7 +130,7 @@ namespace System.Management.Automation
             HonorRestart = 2,
 
             /// <summary>
-            /// Add the report to the WER queue without notifying the user. The report is queued only—reporting (sending the report to Microsoft) occurs later based on the user's consent level.
+            /// Add the report to the WER queue without notifying the user. The report is queued only-reporting (sending the report to Microsoft) occurs later based on the user's consent level.
             /// </summary>
             Queue = 4,
 
@@ -1043,3 +1044,5 @@ namespace System.Management.Automation
         #endregion
     }
 }
+
+#endif

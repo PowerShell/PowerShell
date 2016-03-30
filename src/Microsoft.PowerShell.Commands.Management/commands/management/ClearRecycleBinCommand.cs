@@ -1,4 +1,5 @@
-﻿using System;
+#if !CORECLR
+using System;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.IO;
@@ -252,3 +253,4 @@ namespace Microsoft.PowerShell.Commands
         internal static extern uint SHEmptyRecycleBin(IntPtr hwnd, string pszRootPath, RecycleFlags dwFlags);
     }
 }
+#endif

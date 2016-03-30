@@ -555,6 +555,8 @@ namespace System.Management.Automation.Language
                 return (errorSuggestion ?? NullResult(target)).WriteToDebugLog(this);
             }
 
+#if !CORECLR
+            // .NET Core does not have a full DataTable type
             if (targetValue is DataTable)
             {
                 // Generate:
@@ -581,6 +583,7 @@ namespace System.Management.Automation.Language
                         target),
                     GetRestrictions(target))).WriteToDebugLog(this);
             }
+#endif
 
             if (IsComObject(targetValue))
             {
@@ -667,12 +670,26 @@ namespace System.Management.Automation.Language
             return (result == DynamicMetaObjectExtensions.FakeError) ? null : result;
         }
 
-        private static readonly TypeInfo ComObjectTypeInfo = typeof(object).GetTypeInfo().Assembly.GetType("System.__ComObject").GetTypeInfo();
+        // This is to reduce the runtime overhead of the feature query
+        private static readonly TypeInfo ComObjectTypeInfo = GetComObjectType();
+
+        private static TypeInfo GetComObjectType()
+        {
+            if (Platform.HasCom())
+            {
+                return typeof(object).GetTypeInfo().Assembly.GetType("System.__ComObject").GetTypeInfo();
+            }
+            else
+            {
+                return null;
+            }
+        }
 
         internal static bool IsComObject(object obj)
         {
-            // we can't use System.Runtime.InteropServices.Marshal.IsComObject(obj) since it doesn't work in partial trust
-            return obj != null && ComObjectTypeInfo.IsAssignableFrom(obj.GetType().GetTypeInfo());
+            // Platform notes: We can't use System.Runtime.InteropServices.Marshal.IsComObject(obj)
+            // since it doesn't work in partial trust
+            return obj != null && ComObjectTypeInfo != null && ComObjectTypeInfo.IsAssignableFrom(obj.GetType().GetTypeInfo());
         }
 
         private static IEnumerator AutomationNullRule(CallSite site, object obj)

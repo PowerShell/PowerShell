@@ -1,4 +1,5 @@
-﻿/********************************************************************++
+#if !CORECLR
+/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
@@ -16,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// The Invoke-RestMethod command
     /// This command makes an HTTP or HTTPS request to a web service,
     /// and returns the response in an appropriate way. 
-    /// Intended to work against the wide spectrum of “RESTful” web services 
+    /// Intended to work against the wide spectrum of "RESTful" web services 
     /// currently deployed across the web.  
     /// </summary>
     [Cmdlet(VerbsLifecycle.Invoke, "RestMethod", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217034")]
@@ -372,3 +373,5 @@ namespace Microsoft.PowerShell.Commands
     }
 
 }
+
+#endif

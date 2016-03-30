@@ -1,3 +1,4 @@
+#if !CORECLR
 #pragma warning disable 1634, 1691
 
 /********************************************************************++
@@ -761,3 +762,5 @@ namespace System.Management.Automation.Internal
 }
 
 
+
+#endif
