@@ -61,7 +61,8 @@ namespace MI_NewTest
         {
             this.value.Boolean = true;
             this.TestValueRoundtrip();
-            this.value.BooleanA = new bool[] { true, false, true };
+
+            this.value.BooleanA = new bool[] { false, false, true };
             this.TestValueRoundtrip();
         }
 
