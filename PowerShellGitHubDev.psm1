@@ -434,7 +434,7 @@ function New-MappingFile
     param(
         [string]$mappingFilePath = "$PSScriptRoot/mapping.json",
         [switch]$IgnoreCompileFiles,
-        [switch]$IgnoreResouce
+        [switch]$Ignoreresource
     )
 
     function Get-MappingPath([string]$project, [string]$path)
@@ -474,11 +474,11 @@ function New-MappingFile
                 }
             }
 
-            if ((-not $IgnoreResouce) -and ($json.resource)) {
+            if ((-not $Ignoreresource) -and ($json.resource)) {
                 $json.resource | % {
                     if ($_) {
                         ls $_.Replace('../', 'src/') | % {
-                            $fullPath = Join-Path $project (Join-Path 'resouces' $_.Name)
+                            $fullPath = Join-Path $project (Join-Path 'resources' $_.Name)
                             $mapping[$_.FullName.Replace("$($pwd.Path)\", '').Replace('\', '/')] = ($fullPath.Replace("$($pwd.Path)\",'')).Replace('\', '/')
                         }
                     }
