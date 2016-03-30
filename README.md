@@ -1,10 +1,19 @@
-# PowerShell on Linux / OS X / Windows
+PowerShell
+==========
 
-|         |Ubuntu 14.04 |Windows |
-|---------|:------:|:------:|
-|master|[![Build Status](https://travis-ci.com/PowerShell/PowerShell.svg?token=31YifM4jfyVpBmEGitCm&branch=master)](https://travis-ci.com/PowerShell/PowerShell)|[![Build status](https://ci.appveyor.com/api/projects/status/wb0a0apbn4aiccp1/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/powershell-linux/branch/master)|
+Build Status
+------------
 
-## [Waffle.io scrum board](https://waffle.io/PowerShell/PowerShell)
+| Platform     | `master` |
+|--------------|----------|
+| Ubuntu 14.04 | [![Build Status](https://travis-ci.com/PowerShell/PowerShell.svg?token=31YifM4jfyVpBmEGitCm&branch=master)](https://travis-ci.com/PowerShell/PowerShell) |
+| Windows      | [![Build status](https://ci.appveyor.com/api/projects/status/wb0a0apbn4aiccp1/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/powershell-linux/branch/master) |
+
+Team coordination
+-----------------
+
+- [PSCore Slack chat](https://pscore.slack.com/)
+- [Waffle.io scrum board](https://waffle.io/PowerShell/PowerShell)
 
 ## Obtain the source code
 
