@@ -26,7 +26,5 @@
                 "System.Runtime.Loader": "4.0.0-rc3-23922"
             }
         }
-    },
-
-    "compileFiles": [ "../monad/monad/src/CoreCLR/CorePsAssemblyLoadContext.cs" ]
+    }
 }
