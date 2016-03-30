@@ -16,9 +16,9 @@ before_install:
   - sudo apt-get install -y dotnet=1.0.0.001675-1
   - ./download.sh
   - sudo dpkg -i powershell.deb
-  - ./omibuild.sh
 script:
   - powershell -c "Import-Module ./PowerShellGitHubDev.psm1; Start-PSBuild"
+  - ./omibuild.sh
   - ./pester.sh
   - ./xunit.sh
 notifications:
