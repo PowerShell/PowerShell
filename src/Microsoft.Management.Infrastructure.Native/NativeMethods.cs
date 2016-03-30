@@ -17,7 +17,7 @@ namespace NativeObject
             [In, Out] MI_ApplicationPtr application
             );
 
-        public static readonly int IntPtrSize = Marshal.SizeOf(typeof(IntPtr));
+        public static readonly int IntPtrSize = Marshal.SizeOf<IntPtr>();
 
         [UnmanagedFunctionPointer(MI_PlatformSpecific.MiCallConvention)]
         public delegate void MI_Session_Close_CompletionCallback(IntPtr callbackContext);

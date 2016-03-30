@@ -61,8 +61,8 @@ namespace NativeObject
         }
 
         // Marshal implements these with Reflection - pay this hit only once
-        private static int MI_DestinationOptionsMembersFTOffset = (int)Marshal.OffsetOf(typeof(MI_DestinationOptionsMembers), "ft");
-        private static int MI_DestinationOptionsMembersSize = Marshal.SizeOf(typeof(MI_DestinationOptionsMembers));
+        private static int MI_DestinationOptionsMembersFTOffset = (int)Marshal.OffsetOf<MI_DestinationOptionsMembers>("ft");
+        private static int MI_DestinationOptionsMembersSize = Marshal.SizeOf<MI_DestinationOptionsMembers>();
 
         private MI_DestinationOptionsPtr ptr;
         private bool isDirect;

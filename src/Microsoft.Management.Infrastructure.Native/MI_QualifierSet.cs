@@ -75,8 +75,8 @@ namespace NativeObject
         }
 
         // Marshal implements these with Reflection - pay this hit only once
-        private static int MI_QualifierSetMembersFTOffset = (int)Marshal.OffsetOf(typeof(MI_QualifierSetMembers), "ft");
-        private static int MI_QualifierSetMembersSize = Marshal.SizeOf(typeof(MI_QualifierSetMembers));
+        private static int MI_QualifierSetMembersFTOffset = (int)Marshal.OffsetOf<MI_QualifierSetMembers>("ft");
+        private static int MI_QualifierSetMembersSize = Marshal.SizeOf<MI_QualifierSetMembers>();
 
         private MI_QualifierSetPtr ptr;
         private bool isDirect;

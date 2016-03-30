@@ -13,7 +13,7 @@
         "netstandard1.5": {
             "imports": [ "dnxcore50" ],
             "compilationOptions": {
-                "warningsAsErrors": false
+                "warningsAsErrors": true
             },
             "dependencies": {
                 "NETStandard.Library": "1.5.0-rc3-23922",

@@ -11,7 +11,7 @@ namespace NativeObject
     [StructLayout(LayoutKind.Sequential, CharSet = MI_PlatformSpecific.AppropriateCharSet)]
     public partial class MI_Value : IDisposable
     {
-        private static readonly int ByteSize = Marshal.SizeOf(typeof(byte));
+        private static readonly int ByteSize = Marshal.SizeOf<byte>();
 
         [StructLayout(LayoutKind.Sequential, CharSet = MI_PlatformSpecific.AppropriateCharSet)]
         public struct MIValueBlock
@@ -217,7 +217,7 @@ namespace NativeObject
                     throw new InvalidCastException();
                 }
 
-                MI_Array array = (MI_Array)Marshal.PtrToStructure(this.data, typeof(MI_Array));
+                MI_Array array = (MI_Array)Marshal.PtrToStructure<MI_Array>(this.data);
                 var size = array.size;
                 IntPtr[] ptrs = new IntPtr[size];
                 Marshal.Copy(array.data, ptrs, 0, (int)size);
@@ -258,7 +258,7 @@ namespace NativeObject
                     throw new InvalidCastException();
                 }
 
-                MI_Array array = (MI_Array)Marshal.PtrToStructure(this.data, typeof(MI_Array));
+                MI_Array array = (MI_Array)Marshal.PtrToStructure<MI_Array>(this.data);
                 var size = array.size;
                 byte[] bytes = new byte[size];
                 Marshal.Copy(array.data, bytes, 0, (int)size);
@@ -299,7 +299,7 @@ namespace NativeObject
                     throw new InvalidCastException();
                 }
 
-                MI_Array array = (MI_Array)Marshal.PtrToStructure(this.data, typeof(MI_Array));
+                MI_Array array = (MI_Array)Marshal.PtrToStructure<MI_Array>(this.data);
                 var size = array.size;
                 IntPtr[] ptrs = new IntPtr[size];
                 Marshal.Copy(array.data, ptrs, 0, (int)size);
@@ -340,7 +340,7 @@ namespace NativeObject
                     throw new InvalidCastException();
                 }
 
-                MI_Array array = (MI_Array)Marshal.PtrToStructure(this.data, typeof(MI_Array));
+                MI_Array array = (MI_Array)Marshal.PtrToStructure<MI_Array>(this.data);
                 var size = array.size;
                 IntPtr[] ptrs = new IntPtr[size];
                 Marshal.Copy(array.data, ptrs, 0, (int)size);
@@ -372,7 +372,7 @@ namespace NativeObject
             }
         }
 
-        public static int MI_ValueSize = Marshal.SizeOf(typeof(MI_ValueLayout));
+        public static int MI_ValueSize = Marshal.SizeOf<MI_ValueLayout>();
         public static MI_Value NewDirectPtr() { return new MI_Value(); }
         public static MI_Value Null { get { return null; } }
         public MI_Type? Type { get { return this.type; } }

@@ -43,7 +43,7 @@ namespace NativeObject
         }
 
         // Marshal implements these with Reflection - pay this hit only once
-        private static int MI_ClassDeclMembersSize = Marshal.SizeOf(typeof(MI_ClassDeclMembers));
+        private static int MI_ClassDeclMembersSize = Marshal.SizeOf<MI_ClassDeclMembers>();
 
         private MI_ClassDeclPtr ptr;
         private bool isDirect;
