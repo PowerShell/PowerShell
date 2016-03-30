@@ -38,32 +38,6 @@ git clone https://github.com/PowerShell/PowerShell.git
 cd PowerShell
 ```
 
-#### Windows
-
-On Windows, many fewer submodules are needed, so specify them:
-
-```sh
-git submodule update --init --recursive -- src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
-```
-
-## Setup build environment
-
-### Windows
-
-Tested on Windows 10 and Windows Server 2012 R2.
-
-```powershell
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
-./install.ps1 -version 1.0.0.001888
-$env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli
-```
-
-If you meet `Unable to cast COM object of type 'System.__ComObject' to
-interface type 'Microsoft.Cci.ISymUnmanagedWriter5'`, please install
-[Visual C++ Redistributable for Visual Studio 2015][redist].
-
-[redist]: https://www.microsoft.com/en-hk/download/details.aspx?id=48145
-
 ## Building
 
 **The command `dotnet restore` must be done at least once from the top directory
@@ -72,34 +46,12 @@ to obtain all the necessary .NET packages.**
 `Start-PSBuild` from module `./PowerShellGitHubDev.psm1` on Windows
 and Linux / OS X, if you are self-hosting PowerShell.
 
-Specifically:
-
-### Windows
-
-In PowerShell:
-
-```powershell
-cd PowerShell
-dotnet restore
-Import-Module .\PowerShellGitHubDev.psm1
-Start-PSBuild # build CoreCLR version
-Start-PSBuild -FullCLR # build FullCLR version
-```
-
 **Tip:** use `Start-PSBuild -Verbose` switch to see more information
 about build process.
-
-## Running
 
 If you encounter any problems, see the [known issues](KNOWNISSUES.md),
 otherwise open a new issue on GitHub.
 
-The local managed host has built-in documentation via `--help`.
-
-### Windows
-
-- launch `./bin/powershell.exe`
-- run tests with `./bin/powershell.exe -c "Invoke-Pester test/powershell"`
 
 ## Debugging
 
