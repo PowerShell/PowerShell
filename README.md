@@ -24,10 +24,10 @@ Build Status
 Get PowerShell
 --------------
 
-|                       | Linux | Windows .NET Core | Windows .NET Full | OS X |
-|-----------------------|-------|-------------------|-------------------|------|
-| Build from **Source** | [Instructions](docs/building/linux.md) | [Instructions](docs/building/windows-core.md) | [Instructions](docs/building/windows-full.md) | [Instructions](docs/building/osx.md) |
-| Get **Binaries**      | [Releases][] | [Artifacts][] | [Artifacts][] | [Releases][] |
+|                       | Linux | Windows .NET Core | Windows .NET Full | OS X | PSRP |
+|-----------------------|-------|-------------------|-------------------|------|------|
+| Build from **Source** | [Instructions](docs/building/linux.md) | [Instructions](docs/building/windows-core.md) | [Instructions](docs/building/windows-full.md) | [Instructions](docs/building/osx.md) | [Instructions](docs/building/psrp.md) |
+| Get **Binaries**      | [Releases][] | [Artifacts][] | [Artifacts][] | [Releases][] | TBD |
 
 Building summary: `Start-PSBuild` from the module
 `./PowerShellGitHubDev.psm1` (self-host on Linux / OS X)
@@ -97,98 +97,6 @@ powershell, then (in VS Code) press `F5` to begin the debugger.
 
 [VS Code]: https://blogs.msdn.microsoft.com/visualstudioalm/2016/03/10/experimental-net-core-debugging-in-vs-code/
 [vscclrdebugger]: http://aka.ms/vscclrdebugger
-
-## PowerShell Remoting Protocol
-
-PSRP communication is tunneled through OMI using the `omi-provider`.
-
-> PSRP has been observed working on OS X, but the changes made to OMI to
-> accomplish this are not even beta-ready and need to be done correctly. They
-> exist on the `andschwa-osx` branch of the OMI repository.
-
-PSRP support is *not* built automatically. See the detailed notes on
-how to enable it.
-
-### Running
-
-Some initial setup on Windows is required. Open an administrative command
-prompt and execute the following:
-
-```cmd
-winrm set winrm/config/Client @{AllowUnencrypted="true"}
-winrm set winrm/config/Client @{TrustedHosts="*"}
-```
-
-> You can also set the `TrustedHosts` to include the target's IP address.
-
-Then on Linux, launch `omiserver` in the debugger (after building with the
-instructions above):
-
-```sh
-./psrp.sh
-run
-```
-
-> The `run` command is executed inside of LLDB (the debugger) to start the
-`omiserver` process.
-
-Now in a PowerShell prompt on Windows (opened after setting the WinRM client
-configurations):
-
-```powershell
-Enter-PSSession -ComputerName <IP address of Linux machine> -Credential $cred -Authentication basic
-```
-
-> The `$cred` variable can be empty; a credentials prompt will appear, enter
-> any fake credentials you wish as authentication is not yet implemented.
-
-The IP address of the Linux machine can be obtained with:
-
-```sh
-ip -f inet addr show dev eth0
-```
-
-## Detailed Build Script Notes
-
-> This sections explains the build scripts.
-
-The variable `$BIN` is the output directory, `bin`.
-
-### PSRP
-
-#### OMI
-
-**PSRP support is not built by `./build.sh`**
-
-To develop on the PowerShell Remoting Protocol (PSRP) for Linux, you'll need to
-be able to compile OMI, which additionally requires:
-
-```sh
-sudo apt-get install libpam0g-dev libssl-dev libcurl4-openssl-dev libboost-filesystem-dev
-```
-
-Note that the OMI build steps can be done with `./omibuild.sh`.
-
-Build OMI from source in developer mode:
-
-```sh
-cd src/omi/Unix
-./configure --dev
-make -j
-```
-
-#### Provider
-
-The provider uses CMake to build, link, and register with OMI.
-
-```sh
-cd src/omi-provider
-cmake .
-make -j
-```
-
-The provider also maintains its own native host library to initialize the CLR,
-but there are plans to refactor .NET's packaged host as a shared library.
 
 ### FullCLR PowerShell
 
