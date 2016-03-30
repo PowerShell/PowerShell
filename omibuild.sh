@@ -2,16 +2,16 @@
 
 # Build OMI
 function build {
-    cd src/omi/Unix
+    pushd src/omi/Unix
     ./configure --dev
     make -j
-    cd ../../..
+    popd
 
     # Build the OMI Provider
-    cd src/omi-provider
+    pushd src/omi-provider
     cmake .
     make -j
-    cd ../..
+    popd
 }
 
 #clean OMI if needed
