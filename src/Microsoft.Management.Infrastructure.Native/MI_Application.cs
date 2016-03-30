@@ -28,14 +28,7 @@ namespace NativeObject
             MI_Instance extendedErrorLocal = MI_Instance.NewIndirectPtr();
             MI_Result result;
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                result = NativeWindowsMethods.MI_Application_InitializeV1(0, applicationId, extendedErrorLocal, applicationLocal);
-            }
-            else
-            {
-                result = NativeLinuxMethods.MI_Application_InitializeV1(0, applicationId, extendedErrorLocal, applicationLocal);
-            }
+            result = NativeMethods.MI_Application_InitializeV1(0, applicationId, extendedErrorLocal, applicationLocal);
 
             extendedError = extendedErrorLocal;
             application = applicationLocal;

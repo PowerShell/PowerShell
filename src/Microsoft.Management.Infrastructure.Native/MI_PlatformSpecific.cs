@@ -14,6 +14,7 @@ namespace NativeObject
         public const CharSet AppropriateCharSet = CharSet.Unicode;
         public const CallingConvention MiMainCallConvention = CallingConvention.Cdecl;
         public const CallingConvention MiCallConvention = CallingConvention.StdCall;
+        public const string MI = "mi.dll";
 
         public static string PtrToString(IntPtr ptr)
         {
@@ -29,6 +30,7 @@ namespace NativeObject
         public const CharSet AppropriateCharSet = CharSet.Ansi;
         public const CallingConvention MiMainCallConvention = CallingConvention.Cdecl;
         public const CallingConvention MiCallConvention = CallingConvention.Cdecl;
+        public const string MI = "libmi.so";
 
         public static string PtrToString(IntPtr ptr)
         {
