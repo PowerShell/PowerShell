@@ -64,14 +64,6 @@ interface type 'Microsoft.Cci.ISymUnmanagedWriter5'`, please install
 
 [redist]: https://www.microsoft.com/en-hk/download/details.aspx?id=48145
 
-### OS X
-
-The OS X dependency installation instructions are not yet documented. You can
-try their PKG installer, or their [obtain script][]. We do not (yet) routinely
-test on OS X, but some developers use PowerShell on 10.10 and 10.11.
-
-[obtain script]: https://github.com/dotnet/cli/blob/rel/1.0.0/scripts/obtain/install.sh
-
 ## Building
 
 **The command `dotnet restore` must be done at least once from the top directory
