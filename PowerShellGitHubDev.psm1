@@ -119,16 +119,16 @@ function Start-PSBuild
     # handle Restore
     if ($Restore -Or -Not (Test-Path "$Top/project.lock.json")) {
         log "Run dotnet restore"
-        # restore is genuinely verbose.
-        # we don't show it by default to keep CI build log size small
-        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent)
-        {
-            dotnet restore $PSScriptRoot
-        }
-        else 
-        {
-            dotnet restore $PSScriptRoot > $null    
-        }
+
+        $Arguments = @("--verbosity")
+        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
+            $Arguments += "Info" } else { $Arguments += "Warning" }
+
+        if ($Runtime) { $Arguments += "--runtime", $Runtime }
+
+        $Arguments += "$PSScriptRoot"
+
+        dotnet restore $Arguments
     }
 
     # Build native components
@@ -145,7 +145,7 @@ function Start-PSBuild
 
             $Ext = if ($IsLinux) { "so" } elseif ($IsOSX) { "dylib" }
             $Native = "$PSScriptRoot/src/libpsl-native"
-            $Lib = "$Native/src/libpsl-native.$Ext"
+            $Lib = "$Top/libpsl-native.$Ext"
             Write-Verbose "Building $Lib"
 
             try {
@@ -158,7 +158,6 @@ function Start-PSBuild
             }
 
             if (-Not (Test-Path $Lib)) { throw "Compilation of $Lib failed" }
-            Copy-Item $Lib $Output
         }
     }
     else

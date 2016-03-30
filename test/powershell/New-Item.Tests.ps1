@@ -37,6 +37,10 @@ Describe "New-Item" {
 	New-Item -Name $testfile -Path $tmpDirectory -ItemType file
 
 	Test-Path $FullyQualifiedFile | Should Be $true
+
+        $fileInfo = Get-ChildItem $FullyQualifiedFile
+        $fileInfo.Target | Should Be $null
+        $fileInfo.LinkType | Should Be $null
     }
 
     It "Should create a folder without an error" {
@@ -106,6 +110,10 @@ Describe "New-Item" {
 
 	New-Item -ItemType SymbolicLink -Target $FullyQualifiedFile -Name $testlink -Path $tmpDirectory
 	Test-Path $FullyQualifiedLink | Should Be $true
+
+        $fileInfo = Get-ChildItem $FullyQualifiedLink
+        $fileInfo.Target | Should Be $FullyQualifiedFile
+        $fileInfo.LinkType | Should Be "SymbolicLink"
     }
 
     It "Should create a symbolic link from directory without error" -Skip:$IsWindows {
@@ -114,6 +122,10 @@ Describe "New-Item" {
 
 	New-Item -ItemType SymbolicLink -Target $FullyQualifiedFolder -Name $testlink -Path $tmpDirectory
 	Test-Path $FullyQualifiedLink | Should Be $true
+
+        $fileInfo = Get-ChildItem $FullyQualifiedLink
+        $fileInfo.Target | Should Be $FullyQualifiedFolder
+        $fileInfo.LinkType | Should Be "SymbolicLink"
 
 	# Remove the link explicitly to avoid broken symlink issue
 	Remove-Item $FullyQualifiedLink -Force
@@ -125,6 +137,10 @@ Describe "New-Item" {
 
         New-Item -ItemType HardLink -Target $FullyQualifiedFile -Name $testlink -Path $tmpDirectory
         Test-Path $FullyQualifiedLink | Should Be $true
+
+        $fileInfo = Get-ChildItem $FullyQualifiedLink
+        $fileInfo.Target | Should Be $null
+        $fileInfo.LinkType | Should Be "HardLink"
     }
 
 

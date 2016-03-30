@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Linux.Host
             // analyze the libraries for types, functions, cmdlets, etc. and
             // provide the ability to load assemblies by file path. Doing this
             // here eliminates the need for a custom native host.
-            PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(AppContext.BaseDirectory);
+            PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(string.Empty);
 
             // Argument parsing
             string initialScript = null;

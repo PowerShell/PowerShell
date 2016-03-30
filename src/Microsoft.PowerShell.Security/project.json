@@ -39,14 +39,5 @@
         "../monad/monad/src/singleshell/installer/MshSecurityMshSnapin.cs"
     ],
 
-    "namedResource": {
-        "CertificateCommands": "../windows-build/gen/SECURITY/CertificateCommands.resources",
-        "CertificateProviderStrings": "../windows-build/gen/SECURITY/CertificateProviderStrings.resources",
-        "CmsCommands": "../windows-build/gen/SECURITY/CmsCommands.resources",
-        "ExecutionPolicyCommands": "../windows-build/gen/SECURITY/ExecutionPolicyCommands.resources",
-        "SecureStringCommands": "../windows-build/gen/SECURITY/SecureStringCommands.resources",
-        "SecurityMshSnapinResources": "../windows-build/gen/SECURITY/SecurityMshSnapinResources.resources",
-        "SignatureCommands": "../windows-build/gen/SECURITY/SignatureCommands.resources",
-        "UtilsStrings": "../windows-build/gen/SECURITY/UtilsStrings.resources"
-    }
+    "resource": [ "../monad/monad/src/security/resources/*.resx" ]
 }

@@ -48,16 +48,5 @@
         "../monad/monad/src/host/msh/ManagedEntrance.cs"
     ],
 
-    "namedResource": {
-        "TranscriptStrings": "../windows-build/gen/CONSOLE_HOST/TranscriptStrings.resources",
-        "ProgressNodeStrings": "../windows-build/gen/CONSOLE_HOST/ProgressNodeStrings.resources",
-        "ManagedEntranceStrings": "../windows-build/gen/CONSOLE_HOST/ManagedEntranceStrings.resources",
-        "HostMshSnapInResources": "../windows-build/gen/CONSOLE_HOST/HostMshSnapInResources.resources",
-        "ConsoleHostUserInterfaceStrings": "../windows-build/gen/CONSOLE_HOST/ConsoleHostUserInterfaceStrings.resources",
-        "ConsoleHostUserInterfaceSecurityResources": "../windows-build/gen/CONSOLE_HOST/ConsoleHostUserInterfaceSecurityResources.resources",
-        "ConsoleHostStrings": "../windows-build/gen/CONSOLE_HOST/ConsoleHostStrings.resources",
-        "ConsoleHostRawUserInterfaceStrings": "../windows-build/gen/CONSOLE_HOST/ConsoleHostRawUserInterfaceStrings.resources",
-        "ConsoleControlStrings": "../windows-build/gen/CONSOLE_HOST/ConsoleControlStrings.resources",
-        "CommandLineParameterParserStrings": "../windows-build/gen/CONSOLE_HOST/CommandLineParameterParserStrings.resources"
-    }
+    "resource": [ "../monad/monad/src/host/msh/resources/*.resx" ]
 }

@@ -23,9 +23,9 @@
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
-                "System.Security.Principal": "4.0.1-rc2-23922",
-                "System.Security.Principal.Windows": "4.0.0-rc2-23922",
-                "System.Diagnostics.TraceSource": "4.0.0-rc2-23922",
+                "System.Security.Principal": "4.0.1-rc3-23922",
+                "System.Security.Principal.Windows": "4.0.0-rc3-23922",
+                "System.Diagnostics.TraceSource": "4.0.0-rc3-23922",
                 "System.Security.SecureString": "1.0.0-*"
             }
         }
@@ -66,7 +66,5 @@
         "../monad/monad/src/DotNetCode/Eventing/Reader/Winmeta.cs"
     ],
 
-    "namedResource": {
-        "DotNetEventingStrings": "../windows-build/gen/CORECLR_EVENTING/DotNetEventingStrings.resources"
-     }
+    "resource": [ "../monad/monad/src/DotNetCode/Eventing/resources/*.resx" ]
 }
