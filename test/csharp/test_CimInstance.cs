@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 namespace Microsoft.PowerShell.UnitTest
 {
 // CimInstance
+    [Collection("AssemblyContext")]
     public class CimInstanceTests
     {
         [Fact]

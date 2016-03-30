@@ -5,6 +5,7 @@ using NativeObject;
 
 namespace MI_NewTest
 {
+    [Collection("AssemblyContext")]
     public class MIValueTests
     {
         private MI_Application application = null;
