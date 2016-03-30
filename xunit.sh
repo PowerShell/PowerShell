@@ -8,7 +8,6 @@ hash dotnet 2>/dev/null || { echo >&2 "No dotnet, please visit https://dotnet.gi
 # Test for lock file
 test -r test/csharp/project.lock.json || { echo >&2 "Please run 'dotnet restore' to download .NET Core packages"; exit 2; }
 
-<<<<<<< HEAD
 # Build native components
 pushd src/libpsl-native
 cmake -DCMAKE_BUILD_TYPE=Debug .
@@ -21,8 +20,6 @@ popd
 # Add libmi.so to path
 export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(pwd)/src/Microsoft.Management.Infrastructure.Native"
 
-=======
->>>>>>> master
 # Run xUnit tests
 pushd test/csharp
 ## Build
