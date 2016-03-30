@@ -18,7 +18,7 @@ export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(pwd)/src"
 popd
 
 # Add libmi.so to path
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(pwd)/src/omi/Unix/output/lib"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$(pwd)/src/Microsoft.Management.Infrastructure.Native"
 
 # Run xUnit tests
 pushd test/csharp
