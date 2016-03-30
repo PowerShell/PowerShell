@@ -2301,7 +2301,11 @@ namespace System.Management.Automation.Remoting.Client
 
         #region DllImports ClientAPI
 
+#if !LINUX
         internal const string WSManApiDll = @"WsmSvc.dll";
+#else
+        internal const string WSManApiDll = @"libpsrpomiprov";
+#endif
 
         /// <summary>
         /// This API is used to initialize the WinRM client;
@@ -2540,6 +2544,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr connectXml,
             IntPtr asyncCallback,
             [In, Out]  ref IntPtr shellOperationHandle);
+
 
         /// <summary>
         /// 
@@ -2899,7 +2904,8 @@ namespace System.Management.Automation.Remoting.Client
             int flags,
             int errorCode,
             [MarshalAs(UnmanagedType.LPWStr)] string extendedInformation);
-        
+
+
         internal enum WSManFlagReceive : int
         {
             /// <summary>
@@ -2963,7 +2969,20 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr requestDetails,
             int flags,
             IntPtr context);
-
+#if LINUX
+        /// <summary>
+        /// Registers the shutdown callback.  
+        /// </summary>
+        /// <param name="requestDetails">Specifies the resource URI, options, locale, shutdown flag, and handle for the request.</param>
+        /// <param name="shutdownCallback">Callback to be executed on shutdown</param>
+        /// <param name="shutdownContext"></param>
+        /// <returns></returns>
+        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        internal static extern void WSManPluginRegisterShutdownCallback(
+            IntPtr requestDetails,
+            IntPtr shutdownCallback,
+            IntPtr shutdownContext);
+#endif
         #endregion
     }
 
@@ -2999,6 +3018,11 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr requestDetails,
             int flags,
             IntPtr context);
+
+        void WSManPluginRegisterShutdownCallback(
+            IntPtr requestDetails,
+            IntPtr shutdownCallback,
+            IntPtr shutdownContext);
     }
 
     /// <summary>
@@ -3040,6 +3064,16 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr context)
         {
             return WSManNativeApi.WSManPluginReportContext(requestDetails, flags, context);
+        }
+
+        void IWSManNativeApiFacade.WSManPluginRegisterShutdownCallback(
+            IntPtr requestDetails,
+            IntPtr shutdownCallback,
+            IntPtr shutdownContext)
+        {
+#if LINUX
+           WSManNativeApi.WSManPluginRegisterShutdownCallback(requestDetails, shutdownCallback, shutdownContext);
+#endif
         }
     }
 }

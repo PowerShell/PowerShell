@@ -58,6 +58,10 @@ namespace Microsoft.PowerShell.Commands.Internal
     
         override protected bool ReleaseHandle()
         {
+            if (!Platform.HasRegistrySupport())
+            {
+                return true;
+            }
             // Returns a Win32 error code, 0 for success
             int r = RegCloseKey(handle);
             return r == 0;

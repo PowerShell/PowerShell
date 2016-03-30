@@ -1,3 +1,4 @@
+#if !NOETW
 using System;
 using System.Collections;
 using System.Diagnostics.Eventing;
@@ -987,3 +988,5 @@ namespace System.Management.Automation.Tracing {
 }
 // This code was generated on 02/01/2012 19:52:32
 
+
+#endif

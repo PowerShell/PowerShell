@@ -14,6 +14,7 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -90,7 +91,16 @@ Usage: TypeCatalogGen.exe <{0}> <{1}>
                         }
 
                         string fullName = GetTypeFullName(metadataReader, typeDefinition);
-                        typeNameToAssemblyMap.Add(fullName, strongAssemblyName);
+
+                        // Only add unique types
+                        if (!typeNameToAssemblyMap.ContainsKey(fullName))
+                        {
+                            typeNameToAssemblyMap.Add(fullName, strongAssemblyName);
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"Not adding duplicate key {fullName}!");
+                        }
                     }
                 }
             }

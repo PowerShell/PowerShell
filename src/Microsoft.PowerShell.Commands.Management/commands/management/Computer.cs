@@ -1,3 +1,4 @@
+#if !CORECLR
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -7384,3 +7385,5 @@ $result
     #endregion
 
 }//End namespace
+
+#endif

@@ -87,6 +87,15 @@ namespace System.Management.Automation
                                         CommandOrigin origin,
                                         PSHost host)
         {
+            // TODO:PSL this is a workaround since the exception below
+            // hides the internal issue of what's going on in terms of
+            // execution policy.
+            if (Platform.IsX())
+            {
+                return;
+            }
+
+
 #if DEBUG
             // If we are debugging, let the unit tests swap the file from beneath us
             if(commandInfo.CommandType == CommandTypes.ExternalScript)

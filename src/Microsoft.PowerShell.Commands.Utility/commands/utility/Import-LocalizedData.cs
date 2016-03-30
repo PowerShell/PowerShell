@@ -294,18 +294,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             CultureInfo currentCulture = culture;
-            StringBuilder stringBuilder;
             string filePath;
+            string fullFileName = fileName + ".psd1";
             while (currentCulture != null && !String.IsNullOrEmpty(currentCulture.Name))
             {
-                stringBuilder = new StringBuilder(dir);
-                stringBuilder.Append("\\");
-                stringBuilder.Append(currentCulture.Name);
-                stringBuilder.Append("\\");
-                stringBuilder.Append(fileName);
-                stringBuilder.Append(".psd1");
-
-                filePath = stringBuilder.ToString();
+                filePath = Path.Combine(dir, currentCulture.Name, fullFileName);
 
                 if (File.Exists(filePath))
                 {
@@ -315,12 +308,7 @@ namespace Microsoft.PowerShell.Commands
                 currentCulture = currentCulture.Parent;
             }
 
-            stringBuilder = new StringBuilder(dir);
-            stringBuilder.Append("\\");
-            stringBuilder.Append(fileName);
-            stringBuilder.Append(".psd1");
-
-            filePath = stringBuilder.ToString();
+            filePath = Path.Combine(dir, fullFileName);
 
             if (File.Exists(filePath))
             {
@@ -330,11 +318,11 @@ namespace Microsoft.PowerShell.Commands
             InvalidOperationException ioe =
                 PSTraceSource.NewInvalidOperationException(
                                         ImportLocalizedDataStrings.CannotFindPsd1File,
-                                        fileName + ".psd1",
-                                        dir + "\\" + culture.Name + "\\"
+                                        fullFileName,
+                                        Path.Combine(dir, culture.Name)
                                         );
             WriteError(new ErrorRecord(ioe, "ImportLocalizedData", ErrorCategory.ObjectNotFound,
-                dir + "\\" + culture.Name + "\\" + fileName + ".psd1"));
+                                       Path.Combine(dir, culture.Name, fullFileName)));
             return null;
         }
 

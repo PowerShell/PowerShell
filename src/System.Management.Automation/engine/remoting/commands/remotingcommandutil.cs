@@ -46,15 +46,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static string WinPEIdentificationRegKey = @"System\CurrentControlSet\Control\MiniNT";
 
-        /// <summary>
-        /// IsWinPEHost indicates if the machine on which PowerShell is hosted is WinPE or not.
-        /// This is a helper variable used to kep track if the IsWinPE() helper method has 
-        /// already checked for the WinPE specific registry key or not.
-        /// If the WinPE specific registry key has not yet been checked even 
-        /// once then this variable will point to null.
-        /// </summary>
-        internal static bool? isWinPEHost = null;
-
         internal static bool HasRepeatingRunspaces(PSSession[] runspaceInfos)
         {
             if (runspaceInfos == null)
@@ -105,9 +96,15 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static void CheckRemotingCmdletPrerequisites()
         {
+            //If the operating system (ie Linux) does not support the registry, simply return to avoid calls to the Windows registry. 
+            if (!Platform.HasRegistrySupport())
+            {
+                return;
+            }
+
             bool notSupported = true;
             String WSManKeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\WSMAN\\";
-
+	    
             CheckHostRemotingPrerequisites();
 
             try
@@ -161,46 +158,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// IsWinPEHost is a helper method used to identify if the 
-        /// PowerShell is hosted on a WinPE machine.
-        /// </summary>
-        internal static bool IsWinPEHost()
-        {
-            RegistryKey wsManKey = null;
-
-            if (isWinPEHost == null)
-            {
-                try
-                {
-                    // The existence of the following registry confirms that the host machine is a WinPE
-                    // HKLM\System\CurrentControlSet\Control\MiniNT
-                    wsManKey = Registry.LocalMachine.OpenSubKey(WinPEIdentificationRegKey);
-
-                    if (null != wsManKey)
-                    {
-                        isWinPEHost = true;
-                    }
-                    else
-                    {
-                        isWinPEHost = false;
-                    }
-                }
-                catch (ArgumentException) { }
-                catch (System.Security.SecurityException) { }
-                catch (ObjectDisposedException) { }
-                finally
-                {
-                    if (wsManKey != null)
-                    {
-                        wsManKey.Dispose();
-                    }
-                }
-            }
-
-            return isWinPEHost== true? true: false;
-        }
-
-        /// <summary>
         /// Facilitates to check if remoting is supported on the host machine.
         /// PowerShell remoting is supported on all Windows SQU's except WinPE.
         /// </summary>
@@ -213,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // A registry key indicates if the SKU is WINPE. If this turns out to be true,
             // then an InValidOperation exception is thrown.
-            bool isWinPEHost = IsWinPEHost();
+            bool isWinPEHost = Utils.IsWinPEHost();
             if (isWinPEHost)
             {
                 // WSMan is not supported on this platform

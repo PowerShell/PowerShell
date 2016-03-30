@@ -548,7 +548,7 @@ namespace Microsoft.PowerShell.Commands
             // properties...
             foreach (string p in Property)
             {
-                MshExpression expression = new MshExpression(p);
+                MshExpression expression = new MshExpression(p, true);
                 List<MshExpression> resolvedNames = expression.ResolveNames(inObj);
                 if (resolvedNames == null || resolvedNames.Count == 0)
                 {

@@ -171,6 +171,8 @@ namespace System.Management.Automation
             }
 #endif
             Collection<LogProvider> providers = new Collection<LogProvider>();
+            // Porting note: Linux does not support ETW
+#if !NOETW && !LINUX
             try
             {
 #if !CORECLR    //TODO:CORECLR EventLogLogProvider not handled yet
@@ -195,7 +197,7 @@ namespace System.Management.Automation
                 // when running as non-admin user. In that case, we will default 
                 // to dummy log. 
             }
-
+#endif
             providers.Add(new DummyLogProvider());
             return providers;
         }

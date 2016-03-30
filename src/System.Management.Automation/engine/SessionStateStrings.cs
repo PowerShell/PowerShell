@@ -28,15 +28,15 @@ namespace System.Management.Automation
         /// The default path separator used by the base implementation of the providers.
         /// </summary>
         /// 
-        internal const char DefaultPathSeparator = '\\';
-        internal const string DefaultPathSeparatorString = "\\";
+        internal static readonly char DefaultPathSeparator = System.IO.Path.DirectorySeparatorChar;
+        internal static readonly string DefaultPathSeparatorString = DefaultPathSeparator.ToString();
 
         /// <summary>
         /// The alternate path separator used by the base implementation of the providers.
         /// </summary>
         /// 
-        internal const char AlternatePathSeparator = '/';
-        internal const string AlternatePathSeparatorString = "/";
+        internal static readonly char AlternatePathSeparator = System.IO.Path.AltDirectorySeparatorChar;
+        internal static readonly string AlternatePathSeparatorString = AlternatePathSeparator.ToString();
 
         /// <summary>
         /// The default path prefix for remote paths. This is to mimic

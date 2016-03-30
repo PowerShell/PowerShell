@@ -76,7 +76,7 @@ namespace System.Management.Automation
 
         static internal Version GetBuildVersion()
         {
-            string assemblyPath = ClrFacade.GetAssemblyLocation(typeof(PSVersionInfo).GetTypeInfo().Assembly);
+            string assemblyPath = typeof(PSVersionInfo).GetTypeInfo().Assembly.Location;
             string buildVersion = FileVersionInfo.GetVersionInfo(assemblyPath).FileVersion;
             return new Version(buildVersion);
         }
@@ -86,6 +86,11 @@ namespace System.Management.Automation
         // Gets the current WSMan stack version from the registry.
         private static Version GetWSManStackVersion()
         {
+            if (!Platform.HasRegistrySupport())
+            {
+                return new Version(1, 0);
+            }
+
             Version version = null;
 
             try

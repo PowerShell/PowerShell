@@ -1302,7 +1302,8 @@ namespace System.Management.Automation
                         }
 
                         // Close the progress pane that may have popped up from analyzing UNC paths.
-                        if (context.CurrentCommandProcessor != null)
+                        // Porting note: we don't like this message
+                        if (!Platform.IsX() && context.CurrentCommandProcessor != null)
                         {
                             ProgressRecord analysisProgress = new ProgressRecord(0, Modules.ScriptAnalysisPreparing, " ");
                             analysisProgress.RecordType = ProgressRecordType.Completed;
@@ -1495,8 +1496,7 @@ namespace System.Management.Automation
         /// </summary>
         /// 
         /// <returns>
-        /// The contents of the PATH environment variable split using a semi-colon
-        /// as a delimiter.
+        /// The contents of the PATH environment variable split on System.IO.Path.PathSeparator.
         /// </returns>
         /// 
         /// <remarks>
@@ -1529,7 +1529,7 @@ namespace System.Management.Automation
 
                 if (pathCacheKey != null)
                 {
-                    string[] tokenizedPath = pathCacheKey.Split(Utils.Separators.Semicolon, StringSplitOptions.RemoveEmptyEntries);
+                    string[] tokenizedPath = pathCacheKey.Split(new char[] { System.IO.Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries);
                     cachedPath = new Collection<string>();
 
                     foreach (string directory in tokenizedPath)
@@ -1620,7 +1620,7 @@ namespace System.Management.Automation
             lock (lockObject)
             {
                 cachedPathExtCollection = pathExt != null
-                    ? pathExt.Split(Utils.Separators.Semicolon, StringSplitOptions.RemoveEmptyEntries)
+                    ? pathExt.Split(new char[] { System.IO.Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries)
                     : Utils.EmptyArray<string>();
                 cachedPathExtCollectionWithPs1 = new string[cachedPathExtCollection.Length + 1];
                 cachedPathExtCollectionWithPs1[0] = StringLiterals.PowerShellScriptFileExtension;
@@ -1883,6 +1883,11 @@ namespace System.Management.Automation
         /// 
         internal static string GetShellPathFromRegistry(string shellID)
         {
+            if (!Platform.HasRegistrySupport())
+            {
+                return null;
+            }
+
             string result = null;
 
             try
