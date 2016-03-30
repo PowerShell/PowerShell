@@ -38,20 +38,6 @@ git clone https://github.com/PowerShell/PowerShell.git
 cd PowerShell
 ```
 
-#### Linux
-
-Linux will need every submodule, so update them recursively:
-
-```sh
-git submodule update --init --recursive
-```
-
-The `src/omi` submodule requires your GitHub user to have joined the Microsoft
-organization. If it fails to check out, Git will bail and not check out further
-submodules either. Please follow the instructions on the [Open Source Hub][].
-
-[Open Source Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
-
 #### Windows
 
 On Windows, many fewer submodules are needed, so specify them:
@@ -61,56 +47,6 @@ git submodule update --init --recursive -- src/windows-build src/Microsoft.Power
 ```
 
 ## Setup build environment
-
-We use the [.NET Command Line Interface][dotnet-cli] (`dotnet`) to
-build the managed components, and [CMake][] to build the native
-components (on non-Windows platforms). Install `dotnet` by following
-their [documentation][cli-docs].
-
-The version of .NET CLI is very important, you want a recent 1.0.0 beta
-(**not** 1.0.1). The following instructions will install precisely
-1.0.0.001888, though any 1.0.0 version *should* work.
-
-> Previous installations of DNX, `dnvm`, or older installations of .NET CLI
-> can cause odd failures when running. Please check your version.
-
-[dotnet-cli]: https://github.com/dotnet/cli#new-to-net-cli
-[cli-docs]: https://dotnet.github.io/getting-started/
-[CMake]: https://cmake.org/cmake/help/v2.8.12/cmake.html
-
-### Linux
-
-Tested on Ubuntu 14.04.
-
-This installs the .NET CLI package feed. The benefit to this is that
-installing `dotnet` using `apt-get` will also install all of its
-dependencies automatically.
-
-```sh
-sudo sh -c 'echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/dotnet/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
-sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
-sudo apt-get update
-sudo apt-get install dotnet=1.0.0.001675-1
-```
-
-The drawback of using the feed is that it gets out of date. The pinned
-version is the most recent package published to the feed, but newer
-packages are available. To upgrade the package, install it by
-hand. Unfortunately, `dpkg` does not handle dependency resolution, so
-it is recommended to first install the older version from the feed,
-and then upgrade it.
-
-```sh
-wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-ubuntu-x64.latest.deb
-sudo dpkg -i ./dotnet-ubuntu-x64.latest.deb
-```
-
-Additionally, PowerShell on Linux builds a native library, so install
-the following additional build / debug tools.
-
-```sh
-sudo apt-get install g++ cmake make lldb-3.6 strace
-```
 
 ### Windows
 
@@ -141,22 +77,10 @@ test on OS X, but some developers use PowerShell on 10.10 and 10.11.
 **The command `dotnet restore` must be done at least once from the top directory
 to obtain all the necessary .NET packages.**
 
-Build with `./build.sh` on Linux and OS X.
-
 `Start-PSBuild` from module `./PowerShellGitHubDev.psm1` on Windows
 and Linux / OS X, if you are self-hosting PowerShell.
 
 Specifically:
-
-### Linux
-
-In Bash:
-
-```sh
-cd PowerShell
-dotnet restore
-./build.sh
-```
 
 ### Windows
 
@@ -179,11 +103,6 @@ If you encounter any problems, see the [known issues](KNOWNISSUES.md),
 otherwise open a new issue on GitHub.
 
 The local managed host has built-in documentation via `--help`.
-
-### Linux / OS X
-
-- launch local shell with `./bin/powershell`
-- run tests with `./pester.sh`
 
 ### Windows
 
@@ -277,39 +196,6 @@ ip -f inet addr show dev eth0
 > This sections explains the build scripts.
 
 The variable `$BIN` is the output directory, `bin`.
-
-### Managed
-
-Builds with `dotnet`. Publishes all dependencies into the `bin` directory.
-Emits its own native host as `bin/powershell`. Uses a `Linux` configuration to
-add a preprocessor definition. The `CORECLR` definition is added only when
-targeting the `netstandard1.5` framework. The `LINUX` definition is added only
-when `--configuration Linux` is used.
-
-```sh
-cd src/Microsoft.PowerShell.Linux.Host
-dotnet publish --configuration Linux
-```
-
-### Native
-
-The `libpsl-native.so` library consists of native functions that
-`CorePsPlatform.cs` P/Invokes.
-
-#### libpsl-native
-
-Driven by CMake, with its own unit tests using Google Test.
-
-```sh
-cd src/libpsl-native
-cmake -DCMAKE_BUILD_TYPE=Debug .
-make -j
-ctest -V
-# Deploy development copy of libpsl-native
-cp native/libpsl-native.* $BIN
-```
-
-The output is a `.so` on Linux and `.dylib` on OS X. It is unnecessary for Windows.
 
 ### PSRP
 
