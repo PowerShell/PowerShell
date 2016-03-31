@@ -1,9 +1,6 @@
 [submodule "src/libpsl-native"]
 	path = src/libpsl-native
 	url = https://github.com/PowerShell/psl-native.git
-[submodule "src/monad"]
-	path = src/monad
-	url = https://github.com/PowerShell/psl-monad.git
 [submodule "src/omi"]
 	path = src/omi
 	url = https://github.com/Microsoft/omi.git

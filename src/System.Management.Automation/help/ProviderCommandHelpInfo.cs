@@ -1,0 +1,142 @@
+/********************************************************************++
+Copyright (c) Microsoft Corporation.  All rights reserved.
+--********************************************************************/
+using Dbg = System.Management.Automation.Diagnostics;
+
+namespace System.Management.Automation
+{
+    /// <summary>
+    /// The ProviderCommandHelpInfo class.
+    /// </summary>
+    internal class ProviderCommandHelpInfo : HelpInfo
+    {
+        /// <summary>
+        /// Help info.
+        /// </summary>
+        private HelpInfo _helpInfo;
+
+        /// <summary>
+        /// Constructor for ProviderCommandHelpInfo.
+        /// </summary>
+        internal ProviderCommandHelpInfo(HelpInfo genericHelpInfo, ProviderContext providerContext)
+        {
+            Dbg.Assert(genericHelpInfo != null, "Expected genericHelpInfo != null");
+            Dbg.Assert(providerContext != null, "Expected providerContext != null");
+
+            // This should be set to None to prevent infinite forwarding.
+            this.ForwardHelpCategory = HelpCategory.None;
+
+            // Now pick which help we should show.
+            MamlCommandHelpInfo providerSpecificHelpInfo =
+                providerContext.GetProviderSpecificHelpInfo(genericHelpInfo.Name);
+            if (providerSpecificHelpInfo == null)
+            {
+                _helpInfo = genericHelpInfo;
+            }
+            else
+            {
+                providerSpecificHelpInfo.OverrideProviderSpecificHelpWithGenericHelp(genericHelpInfo);
+                _helpInfo = providerSpecificHelpInfo;
+            }
+        }
+
+        /// <summary>
+        /// Get parameter.
+        /// </summary>
+        override internal PSObject[] GetParameter(string pattern)
+        {
+            return _helpInfo.GetParameter(pattern);
+        }
+
+        /// <summary>
+        /// Returns the Uri used by get-help cmdlet to show help
+        /// online. Returns only the first uri found under
+        /// RelatedLinks.
+        /// </summary>
+        /// <returns>
+        /// Null if no Uri is specified by the helpinfo or a 
+        /// valid Uri.
+        /// </returns>
+        override internal Uri GetUriForOnlineHelp()
+        {
+            return _helpInfo.GetUriForOnlineHelp();
+        }
+
+        /// <summary>
+        /// The Name property.
+        /// </summary>
+        override internal string Name
+        {
+            get
+            {
+                return _helpInfo.Name;
+            }
+        }
+
+        /// <summary>
+        /// The Synopsis property.
+        /// </summary>
+        override internal string Synopsis
+        {
+            get
+            {
+                return _helpInfo.Synopsis;
+            }
+        }
+
+        /// <summary>
+        /// The HelpCategory property.
+        /// </summary>
+        override internal HelpCategory HelpCategory
+        {
+            get
+            {
+                return _helpInfo.HelpCategory;
+            }
+        }
+
+        /// <summary>
+        /// The FullHelp property.
+        /// </summary>
+        override internal PSObject FullHelp
+        {
+            get
+            {
+                return _helpInfo.FullHelp;
+            }
+        }
+
+        /// <summary>
+        /// The Component property.
+        /// </summary>
+        override internal string Component
+        {
+            get
+            {
+                return _helpInfo.Component;
+            }
+        }
+
+        /// <summary>
+        /// The Role property.
+        /// </summary>
+        override internal string Role
+        {
+            get
+            {
+                return _helpInfo.Role;
+            }
+        }
+
+        /// <summary>
+        /// The Functionality property.
+        /// </summary>
+        override internal string Functionality
+        {
+            get
+            {
+                return _helpInfo.Functionality;
+            }
+        }
+    }
+}
