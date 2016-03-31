@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CannotDeserializeTabCompletionResult" xml:space="preserve">
+    <value>The tab completion result cannot be properly deserialized because the remote runspace does not contain a TypeTable instance.</value>
+  </data>
+  <data name="NoAccessToProperties" xml:space="preserve">
+    <value>Cannot access properties on a null instance of the type CompletionResult.</value>
+  </data>
+  <data name="bnotOperatorDescription" xml:space="preserve">
+    <value>Bitwise NOT</value>
+  </data>
+  <data name="notOperatorDescription" xml:space="preserve">
+    <value>Logical not. Negates the statement that follows it.</value>
+  </data>
+  <data name="eqOperatorDescription" xml:space="preserve">
+    <value>Equal to - case insensitive. When the left operand is a collection, returns values from the collection that equal the right operand, otherwise returns TRUE if the left operand equals the right operand.</value>
+  </data>
+  <data name="ieqOperatorDescription" xml:space="preserve">
+    <value>Equal to - case insensitive. When the left operand is a collection, returns values from the collection that equal the right operand, otherwise returns TRUE if the left operand equals the right operand.</value>
+  </data>
+  <data name="ceqOperatorDescription" xml:space="preserve">
+    <value>Equal to - case sensitive. When the left operand is a collection, returns values from the collection that equal the right operand, otherwise returns TRUE if the left operand equals the right operand.</value>
+  </data>
+  <data name="neOperatorDescription" xml:space="preserve">
+    <value>Not equal to - case insensitive. When the left operand is a collection, returns values from the collection that do not equal the right operand, otherwise returns TRUE if the left operand does not equal the right operand.</value>
+  </data>
+  <data name="ineOperatorDescription" xml:space="preserve">
+    <value>Not equal to - case insensitive. When the left operand is a collection, returns values from the collection that do not equal the right operand, otherwise returns TRUE if the left operand does not equal the right operand.</value>
+  </data>
+  <data name="cneOperatorDescription" xml:space="preserve">
+    <value>Not equal to - case sensitive. When the left operand is a collection, returns values from the collection that do not equal the right operand, otherwise returns TRUE if the left operand does not equal the right operand.</value>
+  </data>
+  <data name="geOperatorDescription" xml:space="preserve">
+    <value>Greater than or equal to - case insensitive. When the left operand is a collection, returns values from the collection that are greater than or equal to the right operand, otherwise returns TRUE if the left operand is greater than or equal to the right operand.</value>
+  </data>
+  <data name="igeOperatorDescription" xml:space="preserve">
+    <value>Greater than or equal to - case insensitive. When the left operand is a collection, returns values from the collection that are greater than or equal to the right operand, otherwise returns TRUE if the left operand is greater than or equal to the right operand.</value>
+  </data>
+  <data name="cgeOperatorDescription" xml:space="preserve">
+    <value>Greater than or equal to - case sensitive. When the left operand is a collection, returns values from the collection that are greater than or equal to the right operand, otherwise returns TRUE if the left operand is greater than or equal to the right operand.</value>
+  </data>
+  <data name="gtOperatorDescription" xml:space="preserve">
+    <value>Greater than - case insensitive. When the left operand is a collection, returns values from the collection that are greater than the right operand, otherwise returns TRUE if the left operand is greater than the right operand.</value>
+  </data>
+  <data name="igtOperatorDescription" xml:space="preserve">
+    <value>Greater than - case insensitive. When the left operand is a collection, returns values from the collection that are greater than the right operand, otherwise returns TRUE if the left operand is greater than the right operand.</value>
+  </data>
+  <data name="cgtOperatorDescription" xml:space="preserve">
+    <value>Greater than - case sensitive. When the left operand is a collection, returns values from the collection that are greater than the right operand, otherwise returns TRUE if the left operand is greater than the right operand.</value>
+  </data>
+  <data name="ltOperatorDescription" xml:space="preserve">
+    <value>Less than - case insensitive. When the left operand is a collection, returns values from the collection that are less than the right operand, otherwise returns TRUE if the left operand is less than the right operand.</value>
+  </data>
+  <data name="iltOperatorDescription" xml:space="preserve">
+    <value>Less than - case insensitive. When the left operand is a collection, returns values from the collection that are less than the right operand, otherwise returns TRUE if the left operand is less than the right operand.</value>
+  </data>
+  <data name="cltOperatorDescription" xml:space="preserve">
+    <value>Less than - case sensitive. When the left operand is a collection, returns values from the collection that are less than the right operand, otherwise returns TRUE if the left operand is less than the right operand.</value>
+  </data>
+  <data name="leOperatorDescription" xml:space="preserve">
+    <value>Less than or equal to - case insensitive. When the left operand is a collection, returns values from the collection that are less than or equal to the right operand, otherwise returns TRUE if the left operand is less than or equal to the right operand.</value>
+  </data>
+  <data name="ileOperatorDescription" xml:space="preserve">
+    <value>Less than or equal to - case insensitive. When the left operand is a collection, returns values from the collection that are less than or equal to the right operand, otherwise returns TRUE if the left operand is less than or equal to the right operand.</value>
+  </data>
+  <data name="cleOperatorDescription" xml:space="preserve">
+    <value>Less than or equal to - case sensitive. When the left operand is a collection, returns values from the collection that are less than or equal to the right operand, otherwise returns TRUE if the left operand is less than or equal to the right operand.</value>
+  </data>
+  <data name="likeOperatorDescription" xml:space="preserve">
+    <value>Wildcard matching operator - case insensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+  </data>
+  <data name="ilikeOperatorDescription" xml:space="preserve">
+    <value>Wildcard matching operator - case insensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+  </data>
+  <data name="clikeOperatorDescription" xml:space="preserve">
+    <value>Wildcard matching operator - case sensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+  </data>
+  <data name="notlikeOperatorDescription" xml:space="preserve">
+    <value>Wildcard matching operator - case insensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+  </data>
+  <data name="inotlikeOperatorDescription" xml:space="preserve">
+    <value>Wildcard matching operator - case insensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+  </data>
+  <data name="cnotlikeOperatorDescription" xml:space="preserve">
+    <value>Wildcard matching operator - case sensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+  </data>
+  <data name="matchOperatorDescription" xml:space="preserve">
+    <value>Regular expression matching operator - case insensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+  </data>
+  <data name="imatchOperatorDescription" xml:space="preserve">
+    <value>Regular expression matching operator - case insensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+  </data>
+  <data name="cmatchOperatorDescription" xml:space="preserve">
+    <value>Regular expression matching operator - case sensitive. When the left operand is a collection, returns values from the collection that match the right hand operand, otherwise returns TRUE if the left operand matches the right operand.</value>
+  </data>
+  <data name="notmatchOperatorDescription" xml:space="preserve">
+    <value>Regular expression matching operator - case insensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+  </data>
+  <data name="inotmatchOperatorDescription" xml:space="preserve">
+    <value>Regular expression matching operator - case insensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+  </data>
+  <data name="cnotmatchOperatorDescription" xml:space="preserve">
+    <value>Regular expression matching operator - case sensitive. When the left operand is a collection, returns values from the collection that do not match the right hand operand, otherwise returns TRUE if the left operand does not match the right operand.</value>
+  </data>
+  <data name="replaceOperatorDescription" xml:space="preserve">
+    <value>Replace operator - case insensitive. Changes the left operand. Example: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="ireplaceOperatorDescription" xml:space="preserve">
+    <value>Replace operator - case insensitive. Changes the left operand. Example: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="creplaceOperatorDescription" xml:space="preserve">
+    <value>Replace operator - case sensitive. Changes the left operand. Example: (dir *.ps1).FullName -replace '.ps1$','.ps1.bak'</value>
+  </data>
+  <data name="containsOperatorDescription" xml:space="preserve">
+    <value>Containment operator - case insensitive. Returns TRUE when the test value (right operand) exactly matches at least one of the values in the left operand.</value>
+  </data>
+  <data name="icontainsOperatorDescription" xml:space="preserve">
+    <value>Containment operator - incase sensitive. Returns TRUE when the test value (right operand) exactly matches at least one of the values in the left operand.</value>
+  </data>
+  <data name="ccontainsOperatorDescription" xml:space="preserve">
+    <value>Containment operator - case sensitive. Returns TRUE only when the test value (right operand) exactly matches at least one of the values in the left operand.</value>
+  </data>
+  <data name="notcontainsOperatorDescription" xml:space="preserve">
+    <value>Containment operator - case insensitive. Returns TRUE when the test value (right operand) exactly matches none of the values in the left operand.</value>
+  </data>
+  <data name="inotcontainsOperatorDescription" xml:space="preserve">
+    <value>Containment operator - case insensitive. Returns TRUE when the test value (right operand) exactly matches none of the values in the left operand.</value>
+  </data>
+  <data name="cnotcontainsOperatorDescription" xml:space="preserve">
+    <value>Containment operator - case sensitive. Returns TRUE when the test value (right operand) exactly matches none of the values in the left operand.</value>
+  </data>
+  <data name="inOperatorDescription" xml:space="preserve">
+    <value>Containment operator - case insensitive. Returns TRUE when the test value (left operand) exactly matches at least one of the values in the right operand.</value>
+  </data>
+  <data name="iinOperatorDescription" xml:space="preserve">
+    <value>Containment operator - case insensitive. Returns TRUE when the test value (left operand) exactly matches at least one of the values in the right operand.</value>
+  </data>
+  <data name="cinOperatorDescription" xml:space="preserve">
+    <value>Containment operator - case sensitive. Returns TRUE when the test value (left operand) exactly matches at least one of the values in the right operand.</value>
+  </data>
+  <data name="notinOperatorDescription" xml:space="preserve">
+    <value>Containment operator - case sensitive. Returns TRUE when the test value (left operand) exactly matches none of the values in the right operand.</value>
+  </data>
+  <data name="inotinOperatorDescription" xml:space="preserve">
+    <value>Containment operator - case insensitive. Returns TRUE when the test value (left operand) exactly matches none of the values in the right operand.</value>
+  </data>
+  <data name="cnotinOperatorDescription" xml:space="preserve">
+    <value>Containment operator - case sensitive. Returns TRUE when the test value (left operand) exactly matches none of the values in the right operand.</value>
+  </data>
+  <data name="splitOperatorDescription" xml:space="preserve">
+    <value>Split - case insensitive. Split one or more strings into substrings.
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isplitOperatorDescription" xml:space="preserve">
+    <value>Split - case insensitive. Split one or more strings into substrings.
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="csplitOperatorDescription" xml:space="preserve">
+    <value>Split - case sensitive. Split one or more strings into substrings.
+-Split &lt;String&gt;
+
+&lt;String&gt; -Split &lt;Delimiter&gt;[,&lt;Max-substrings&gt;[,"&lt;Options&gt;"]]
+
+&lt;String&gt; -Split {&lt;ScriptBlock&gt;} [,&lt;Max-substrings&gt;]</value>
+  </data>
+  <data name="isnotOperatorDescription" xml:space="preserve">
+    <value>Returns TRUE when the left operand is not an instance of the specified .NET Framework type (right operand).</value>
+  </data>
+  <data name="isOperatorDescription" xml:space="preserve">
+    <value>Returns TRUE when the left operand is an instance of the specified .NET Framework type (right operand).</value>
+  </data>
+  <data name="asOperatorDescription" xml:space="preserve">
+    <value>Converts the left operand to the specified .NET Framework type (right operand).</value>
+  </data>
+  <data name="fOperatorDescription" xml:space="preserve">
+    <value>Formats strings by using the format method of string objects.</value>
+  </data>
+  <data name="andOperatorDescription" xml:space="preserve">
+    <value>Logical and. Returns TRUE when both statements are TRUE.</value>
+  </data>
+  <data name="bandOperatorDescription" xml:space="preserve">
+    <value>Bitwise AND</value>
+  </data>
+  <data name="orOperatorDescription" xml:space="preserve">
+    <value>Logical or. TRUE when either or both statements are TRUE.</value>
+  </data>
+  <data name="borOperatorDescription" xml:space="preserve">
+    <value>Bitwise OR (inclusive)</value>
+  </data>
+  <data name="xorOperatorDescription" xml:space="preserve">
+    <value>Logical exclusive or. Returns TRUE when one of the statements is TRUE and the other is FALSE.</value>
+  </data>
+  <data name="bxorOperatorDescription" xml:space="preserve">
+    <value>Bitwise OR (exclusive)</value>
+  </data>
+  <data name="joinOperatorDescription" xml:space="preserve">
+    <value>Join - combine multiple strings into a single string.
+-Join &lt;String[]&gt;
+&lt;String[]&gt; -Join &lt;Delimiter&gt;</value>
+  </data>
+  <data name="shlOperatorDescription" xml:space="preserve">
+    <value>Shift Left bit operator. Inserts zero in right-most bit position.</value>
+  </data>
+  <data name="shrOperatorDescription" xml:space="preserve">
+    <value>Shift Right bit operator. Inserts zero in the left-most bit position. For signed values, sign bit is preserved.</value>
+  </data>
+</root>

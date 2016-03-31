@@ -1,0 +1,281 @@
+/********************************************************************++
+Copyright (c) Microsoft Corporation.  All rights reserved.
+--********************************************************************/
+using System;
+using System.Management.Automation;
+using Dbg = System.Management.Automation;
+
+namespace Microsoft.PowerShell.Commands
+{
+    /// <summary>
+    /// The valid values for the -PathType parameter for test-path
+    /// </summary>
+    public enum TestPathType
+    {
+        /// <summary>
+        /// If the item at the path exists, true will be returned.
+        /// </summary>
+        Any,
+
+        /// <summary>
+        /// If the item at the path exists and is a container, true will be returned.
+        /// </summary>
+        Container,
+
+        /// <summary>
+        /// If the item at the path exists and is not a container, true will be returned.
+        /// </summary>
+        Leaf
+    }
+
+    /// <summary>
+    /// A command to determine if an item exists at a specified path
+    /// </summary>
+    [Cmdlet(VerbsDiagnostic.Test, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113418")]
+    [OutputType(typeof(bool))]
+    public class TestPathCommand : CoreCommandWithCredentialsBase
+    {
+        #region Parameters
+
+        /// <summary>
+        /// Gets or sets the path parameter to the command
+        /// </summary>
+        [Parameter (Position = 0, ParameterSetName = "Path",
+                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public string[] Path
+        {
+            get
+            {
+                return paths;
+            } // get
+
+            set
+            {
+                paths = value;
+            } // set
+        } // Path
+
+        /// <summary>
+        /// Gets or sets the literal path parameter to the command
+        /// </summary>
+        [Parameter(ParameterSetName = "LiteralPath",
+                   Mandatory = true, ValueFromPipeline=false, ValueFromPipelineByPropertyName = true)]
+        [Alias("PSPath")]
+        public string[] LiteralPath
+        {
+            get
+            {
+                return paths;
+            } // get
+
+            set
+            {
+                base.SuppressWildcardExpansion = true;
+                paths = value;
+            } // set
+        } // LiteralPath
+
+        /// <summary>
+        /// Gets or sets the filter property
+        /// </summary>
+        [Parameter]
+        public override string Filter
+        {
+            get
+            {
+                return base.Filter;
+            }
+            set
+            {
+                base.Filter = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the include property
+        /// </summary>
+        [Parameter]
+        public override string[] Include
+        {
+            get
+            {
+                return base.Include;
+            } // get
+
+            set
+            {
+                base.Include = value;
+            } // set
+        } // Include
+
+        /// <summary>
+        /// Gets or sets the exclude property
+        /// </summary>
+        [Parameter]
+        public override string[] Exclude
+        {
+            get
+            {
+                return base.Exclude;
+            } // get
+
+            set
+            {
+                base.Exclude = value;
+            } // set
+        } // Exclude
+
+        /// <summary>
+        /// Gets or sets the isContainer property
+        /// </summary>
+        [Parameter]
+        [Alias("Type")]
+        public TestPathType PathType
+        {
+            get
+            {
+                return type;
+            } // get
+
+            set
+            {
+                type = value;
+            } // set
+        } // Type
+
+        /// <summary>
+        /// Gets or sets the IsValid parameter
+        /// </summary>
+        [Parameter]
+        public SwitchParameter IsValid
+        {
+            get
+            {
+                return isValid;
+            } // get
+
+            set
+            {
+                isValid = value;
+            } // set
+        } // IsValid
+        
+        /// <summary>
+        /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
+        /// that require dynamic parameters should override this method and return the
+        /// dynamic parameter object.
+        /// </summary>
+        /// 
+        /// <param name="context">
+        /// The context under which the command is running.
+        /// </param>
+        /// 
+        /// <returns>
+        /// An object representing the dynamic parameters for the cmdlet or null if there
+        /// are none.
+        /// </returns>
+        /// 
+        internal override object GetDynamicParameters(CmdletProviderContext context)
+        {
+            object result = null;
+
+            if (this.PathType == TestPathType.Any && !IsValid)
+            {
+                if (Path != null && Path.Length > 0)
+                {
+                    result = InvokeProvider.Item.ItemExistsDynamicParameters(Path[0], context);
+                }
+                else
+                {
+                    result = InvokeProvider.Item.ItemExistsDynamicParameters(".", context);
+                }
+            }
+            return result;
+        } // GetDynamicParameters
+
+        #endregion Parameters
+
+        #region parameter data
+        
+        /// <summary>
+        /// The path to the item to ping
+        /// </summary>
+        private string[] paths;
+
+
+        /// <summary>
+        /// Determines if the command should check to see if any item exists at
+        /// the specified path, a container exists at the specified path, or a 
+        /// leaf item exists at the specified path.
+        /// </summary>
+        private TestPathType type = TestPathType.Any;
+
+        /// <summary>
+        /// Determines if the path should be checked for validity.
+        /// </summary>
+        private SwitchParameter isValid = new SwitchParameter();
+
+        #endregion parameter data
+
+        #region Command code
+
+        /// <summary>
+        /// Determines if an item at the specified path exists.
+        /// </summary>
+        protected override void ProcessRecord ()
+        {
+            CmdletProviderContext currentContext = CmdletProviderContext;
+            
+            foreach (string path in paths)
+            {
+                bool result = false;
+
+                try
+                {
+                    if(IsValid)
+                    {
+                        result = SessionState.Path.IsValid (path, currentContext);
+                    }
+                    else
+                    {
+                        if (this.PathType == TestPathType.Container)
+                        {
+                            result = InvokeProvider.Item.IsContainer (path, currentContext);
+                        }
+                        else if (this.PathType == TestPathType.Leaf)
+                        {
+                            result =
+                                InvokeProvider.Item.Exists(path, currentContext) &&
+                                !InvokeProvider.Item.IsContainer(path, currentContext);
+                        }
+                        else
+                        {
+                            result = InvokeProvider.Item.Exists(path, currentContext);
+                        }
+                    }
+
+                }
+                // Any of the known exceptions means the path does not exist.
+                catch (PSNotSupportedException)
+                {
+                }
+                catch (DriveNotFoundException)
+                {
+                }
+                catch (ProviderNotFoundException)
+                {
+                }
+                catch (ItemNotFoundException)
+                {
+                }
+
+                WriteObject(result);
+            }
+        } // ProcessRecord
+        #endregion Command code
+
+
+    } // PingPathCommand
+
+} // namespace Microsoft.PowerShell.Commands
+

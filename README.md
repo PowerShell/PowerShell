@@ -48,7 +48,7 @@ submodules either. Please follow the instructions on the [Open Source Hub][].
 On Windows, many fewer submodules are needed, so specify them:
 
 ```sh
-git submodule update --init --recursive -- src/monad src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
+git submodule update --init --recursive -- src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
 ```
 
 ## Setup build environment

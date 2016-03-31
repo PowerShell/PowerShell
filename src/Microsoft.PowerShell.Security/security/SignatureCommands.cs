@@ -1,0 +1,542 @@
+/********************************************************************++
+Copyright (c) Microsoft Corporation.  All rights reserved.
+--********************************************************************/
+
+
+using System;
+using System.Management.Automation;
+using Dbg=System.Management.Automation.Diagnostics;
+using System.Collections.Generic;
+using System.Collections;
+using System.IO;
+using System.Management.Automation.Provider;
+using System.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Runtime.InteropServices;
+using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
+
+using DWORD  = System.UInt32;
+
+namespace Microsoft.PowerShell.Commands
+{
+    /// <summary>
+    /// Defines the base class from which all signature commands
+    /// are derived.
+    /// </summary>
+    public abstract class SignatureCommandsBase : PSCmdlet
+    {
+        /// <summary>
+        /// Gets or sets the path to the file for which to get or set the 
+        /// digital signature.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
+        public string[] FilePath
+        {
+            get
+            {
+                return path;
+            }
+            
+            set
+            {
+                path = value;
+            }
+        }
+        private string[] path;
+
+        /// <summary>
+        /// Gets or sets the literal path to the file for which to get or set the 
+        /// digital signature.
+        /// </summary>
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
+        [Alias("PSPath")]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public string[] LiteralPath
+        {
+            get
+            {
+                return path;
+            }
+
+            set
+            {
+                path = value;
+                isLiteralPath = true;
+            }
+        }
+        bool isLiteralPath = false;
+
+        /// <summary>
+        /// Gets or sets the digital signature to be written to 
+        /// the output pipeline.
+        /// </summary>
+        protected Signature Signature
+        {
+            get { return signature; }
+            set { signature = value; }
+        }
+        private Signature signature;
+
+        //
+        // name of this command
+        //
+        string commandName;
+
+        /// <summary>
+        /// Initializes a new instance of the SignatureCommandsBase class,
+        /// using the given command name.
+        /// </summary>
+        ///
+        /// <param name="name">
+        /// The name of the command.
+        /// </param>
+        protected SignatureCommandsBase(string name) : base()
+        {
+            commandName = name;
+        }
+
+        //
+        // hide default ctor
+        //
+        private SignatureCommandsBase() : base() {}
+
+        /// <summary>
+        /// Processes records from the input pipeline.
+        /// For each input object, the command gets or
+        /// sets the digital signature on the object, and
+        /// and exports the object.
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            //
+            // this cannot happen as we have specified the Path
+            // property to be mandatory parameter
+            //
+            Dbg.Assert((FilePath != null) && (FilePath.Length > 0),
+                       "GetSignatureCommand: Param binder did not bind path");
+
+            foreach (string p in FilePath)
+            {
+                Collection<string> paths = new Collection<string>();
+
+                // Expand wildcard characters
+                if (isLiteralPath)
+                {
+                    paths.Add(SessionState.Path.GetUnresolvedProviderPathFromPSPath(p));
+                }
+                else
+                {
+                    try
+                    {
+                        foreach (PathInfo tempPath in SessionState.Path.GetResolvedPSPathFromPSPath(p))
+                        {
+                            paths.Add(tempPath.ProviderPath);
+                        }
+                    }
+                    catch (ItemNotFoundException)
+                    {
+                        WriteError(
+                            SecurityUtils.CreateFileNotFoundErrorRecord(
+                            SignatureCommands.FileNotFound,
+                            "SignatureCommandsBaseFileNotFound", p));
+                    }
+                }
+
+                if (paths.Count == 0)
+                    continue;
+
+                bool foundFile = false;
+
+                foreach (string path in paths)
+                {
+                    if (! System.IO.Directory.Exists(path))
+                    {
+                        foundFile = true;
+
+                        string resolvedFilePath = SecurityUtils.GetFilePathOfExistingFile(this, path);
+
+                        if (resolvedFilePath == null)
+                        {
+                            WriteError(SecurityUtils.CreateFileNotFoundErrorRecord(
+                                       SignatureCommands.FileNotFound,
+                                       "SignatureCommandsBaseFileNotFound",
+                                       path));
+                        }
+                        else
+                        {
+                            if ((Signature = PerformAction(resolvedFilePath)) != null)
+                            {
+                                WriteObject(Signature);
+                            }
+                        }
+                    }
+                }
+
+                if (!foundFile)
+                {
+                    WriteError(SecurityUtils.CreateFileNotFoundErrorRecord(
+                               SignatureCommands.CannotRetrieveFromContainer,
+                              "SignatureCommandsBaseCannotRetrieveFromContainer"));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Performs the action (ie: get signature, or set signature) 
+        /// on the specified file.
+        /// </summary>
+        /// <param name="filePath">
+        /// The name of the file on which to perform the action.
+        /// </param>
+        protected abstract Signature PerformAction(string filePath);
+    }
+
+    /// <summary>
+    /// Defines the implementation of the 'get-AuthenticodeSignature' cmdlet.
+    /// This cmdlet extracts the digital signature from the given file.
+    /// </summary>
+    [Cmdlet(VerbsCommon.Get, "AuthenticodeSignature", DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113307")]
+    [OutputType(typeof(Signature))]
+    public sealed class GetAuthenticodeSignatureCommand : SignatureCommandsBase
+    {
+        /// <summary>
+        /// Initializes a new instance of the GetSignatureCommand class.
+        /// </summary>
+        public GetAuthenticodeSignatureCommand() : base("Get-AuthenticodeSignature") { }
+
+        /// <summary>
+        /// Gets the signature from the specified file.
+        /// </summary>
+        /// <param name="filePath">
+        /// The name of the file on which to perform the action.
+        /// </param>
+        /// <returns>
+        /// The signature on the specified file.
+        /// </returns>
+        protected override Signature PerformAction(string filePath)
+        {
+            return SignatureHelper.GetSignature(filePath, null);
+        }
+    }
+
+    /// <summary>
+    /// Defines the implementation of the 'set-AuthenticodeSignature' cmdlet.
+    /// This cmdlet sets the digital signature on a given file.
+    /// </summary>
+    [Cmdlet(VerbsCommon.Set, "AuthenticodeSignature", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath",
+        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113391")]
+    [OutputType(typeof(Signature))]
+    public sealed class SetAuthenticodeSignatureCommand : SignatureCommandsBase
+    {
+        /// <summary>
+        /// Initializes a new instance of the SetAuthenticodeSignatureCommand class.
+        /// </summary>
+        public SetAuthenticodeSignatureCommand() : base("set-AuthenticodeSignature") { }
+
+        /// <summary>
+        /// Gets or sets the certificate with which to sign the
+        /// file.
+        /// </summary>
+        [Parameter(Position = 1, Mandatory = true)]
+        public X509Certificate2 Certificate
+        {
+            get
+            {
+                return certificate;
+            }
+
+            set
+            {
+                certificate = value;
+            }
+        }
+        private X509Certificate2 certificate;
+
+        /// <summary>
+        /// Gets or sets the additional certificates to
+        /// include in the digital signature.
+        /// Use 'signer' to include only the signer's certificate.
+        /// Use 'notroot' to include all certificates in the certificate
+        ///    chain, except for the root authority.
+        /// Use 'all' to include all certificates in the certificate chain.
+        /// 
+        /// Defaults to 'notroot'.
+        /// </summary>
+        ///
+        [Parameter(Mandatory = false)]
+        [ValidateSet("signer", "notroot", "all")]
+        public string IncludeChain
+        {
+            get
+            {
+                return includeChain;
+            }
+
+            set
+            {
+                includeChain = value;
+            }
+        }
+        private string includeChain = "notroot";
+
+        /// <summary>
+        /// Gets or sets the Url of the time stamping server.
+        /// The time stamping server certifies the exact time
+        /// that the certificate was added to the file.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public string TimestampServer
+        {
+            get
+            {
+                return timestampServer;
+            }
+
+            set
+            {
+                if (value == null)
+                {
+                    value = String.Empty;
+                }
+                timestampServer = value;
+            }
+        }
+        private string timestampServer = "";
+
+        /// <summary>
+        /// Gets or sets the hash algorithm used for signing.
+        /// This string value must represent the name of a Cryptographic Algorithm
+        /// Identifier supported by Windows.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public string HashAlgorithm
+        {
+            get
+            {
+                return hashAlgorithm;
+            }
+
+            set
+            {
+                hashAlgorithm = value;
+            }
+        }
+        private string hashAlgorithm = null;
+
+        /// <summary>
+        /// Property that sets force parameter.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Force
+        {
+            get
+            {
+                return force;
+            }
+            set
+            {
+                force = value;
+            }
+        }
+        private bool force;
+
+        /// <summary>
+        /// Sets the digital signature on the specified file.
+        /// </summary>
+        /// <param name="filePath">
+        /// The name of the file on which to perform the action.
+        /// </param>
+        /// <returns>
+        /// The signature on the specified file.
+        /// </returns>
+        protected override Signature PerformAction(string filePath)
+        {
+            SigningOption option = GetSigningOption(IncludeChain);
+
+            if (Certificate == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("certificate");
+            }
+
+            //
+            // if the cert is not good for signing, we cannot
+            // process any more files. Exit the command.
+            //
+            if (!SecuritySupport.CertIsGoodForSigning(Certificate))
+            {
+                Exception e = PSTraceSource.NewArgumentException(
+                        "certificate",
+                        SignatureCommands.CertNotGoodForSigning);
+
+                throw e;
+            }
+
+            if (!ShouldProcess(filePath))
+                return null;
+
+            FileInfo readOnlyFileInfo = null;
+            try
+            {
+                if (this.Force)
+                {
+                    try
+                    {
+                        // remove readonly attributes on the file
+                        FileInfo fInfo = new FileInfo(filePath);
+                        if (fInfo != null)
+                        {
+                            // Save some disk write time by checking whether file is readonly..
+                            if ((fInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                            {
+                                // remember to reset the read-only attribute later
+                                readOnlyFileInfo = fInfo;
+                                //Make sure the file is not read only
+                                fInfo.Attributes &= ~(FileAttributes.ReadOnly);
+                            }
+                        }
+                    }
+                    // These are the known exceptions for File.Load and StreamWriter.ctor
+                    catch (ArgumentException e)
+                    {
+                        ErrorRecord er = new ErrorRecord(
+                            e,
+                            "ForceArgumentException",
+                            ErrorCategory.WriteError,
+                            filePath
+                            );
+                        WriteError(er);
+                        return null;
+                    }
+                    catch (IOException e)
+                    {
+                        ErrorRecord er = new ErrorRecord(
+                            e,
+                            "ForceIOException",
+                            ErrorCategory.WriteError,
+                            filePath
+                            );
+                        WriteError(er);
+                        return null;
+                    }
+                    catch (UnauthorizedAccessException e)
+                    {
+                        ErrorRecord er = new ErrorRecord(
+                            e,
+                            "ForceUnauthorizedAccessException",
+                            ErrorCategory.PermissionDenied,
+                            filePath
+                            );
+                        WriteError(er);
+                        return null;
+                    }
+                    catch (NotSupportedException e)
+                    {
+                        ErrorRecord er = new ErrorRecord(
+                            e,
+                            "ForceNotSupportedException",
+                            ErrorCategory.WriteError,
+                            filePath
+                            );
+                        WriteError(er);
+                        return null;
+                    }
+                    catch (System.Security.SecurityException e)
+                    {
+                        ErrorRecord er = new ErrorRecord(
+                            e,
+                            "ForceSecurityException",
+                            ErrorCategory.PermissionDenied,
+                            filePath
+                            );
+                        WriteError(er);
+                        return null;
+                    }
+                }
+
+                //
+                // ProcessRecord() code in base class has already
+                // ascertained that filePath really represents an existing
+                // file. Thus we can safely call GetFileSize() below.
+                //
+
+                if (SecurityUtils.GetFileSize(filePath) < 4)
+                {
+                    // Note that the message param comes first
+                    string message = String.Format(
+                        System.Globalization.CultureInfo.CurrentCulture,
+                        UtilsStrings.FileSmallerThan4Bytes, filePath);
+
+                    PSArgumentException e = new PSArgumentException(message, "filePath");
+                    ErrorRecord er = SecurityUtils.CreateInvalidArgumentErrorRecord(
+                            e,
+                            "SignatureCommandsBaseFileSmallerThan4Bytes"
+                            );
+
+                    WriteError(er);
+
+                    return null;
+                }
+
+                return SignatureHelper.SignFile(option,
+                                                filePath,
+                                                Certificate,
+                                                TimestampServer,
+                                                hashAlgorithm);
+            }
+            finally
+            {
+                // reset the read-only attribute
+                if (null != readOnlyFileInfo)
+                {
+                    readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
+                }
+            }
+        }
+
+        private struct SigningOptionInfo
+        {
+            internal SigningOption option;
+            internal string optionName;
+
+            internal SigningOptionInfo(SigningOption o, string n)
+            {
+                option = o;
+                optionName = n;
+            }
+        }
+
+        /// <summary>
+        /// association between SigningOption.* values and the
+        /// corresponding string names.
+        /// </summary>
+        static readonly SigningOptionInfo[] sigOptionInfo =
+        {
+            new SigningOptionInfo(SigningOption.AddOnlyCertificate, "signer"),
+            new SigningOptionInfo(SigningOption.AddFullCertificateChainExceptRoot, "notroot"),
+            new SigningOptionInfo(SigningOption.AddFullCertificateChain, "all")
+        };
+
+        /// <summary>
+        /// get SigningOption value corresponding to a string name
+        /// </summary>
+        ///
+        /// <param name="optionName"> name of option </param>
+        ///
+        /// <returns> SigningOption </returns>
+        ///
+        private static SigningOption GetSigningOption(string optionName)
+        {
+            foreach (SigningOptionInfo si in sigOptionInfo)
+            {
+                if (String.Equals(optionName, si.optionName,
+                                  StringComparison.OrdinalIgnoreCase))
+                {
+                    return si.option;
+                }
+            }
+
+            return SigningOption.AddFullCertificateChainExceptRoot;
+        }
+    }
+}

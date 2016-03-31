@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ServiceNameForConfirmation" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="NoServiceFoundForGivenName" xml:space="preserve">
+    <value>Cannot find any service with service name '{0}'.</value>
+  </data>
+  <data name="NoServiceFoundForGivenDisplayName" xml:space="preserve">
+    <value>Cannot find any service with display name '{1}'.</value>
+  </data>
+  <data name="ServiceHasDependentServices" xml:space="preserve">
+    <value>Cannot stop service '{1} ({0})' because it has dependent services. It can only be stopped if the Force flag is set.</value>
+  </data>
+  <data name="ServiceHasDependentServicesNoForce" xml:space="preserve">
+    <value>Cannot stop service '{1} ({0})' because it has dependent services.</value>
+  </data>
+  <data name="ServiceIsDependentOnNoForce" xml:space="preserve">
+    <value>Cannot stop service '{1} ({0})' because it is dependent on other services.</value>
+  </data>
+  <data name="CouldNotStopService" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be stopped due to the following error: {2}</value>
+  </data>
+  <data name="CouldNotStartService" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be started due to the following error: {2}</value>
+  </data>
+  <data name="CouldNotSuspendService" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be suspended due to the following error: {2}</value>
+  </data>
+  <data name="CouldNotSuspendServiceNotSupported" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be suspended because the service does not support being suspended or resumed.</value>
+  </data>
+  <data name="CouldNotSuspendServiceNotRunning" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be suspended because it is not currently running.</value>
+  </data>
+  <data name="CouldNotResumeService" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be resumed due to the following error: {2}</value>
+  </data>
+  <data name="CouldNotResumeServiceNotSupported" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be resumed because the service does not support being suspended or resumed.</value>
+  </data>
+  <data name="CouldNotResumeServiceNotRunning" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be resumed because it is not currently running.</value>
+  </data>
+  <data name="CouldNotSetService" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be configured due to the following error: {2}</value>
+  </data>
+  <data name="CouldNotSetServiceDescription" xml:space="preserve">
+    <value>Service '{1} ({0})' description cannot be configured due to the following error: {2}</value>
+  </data>
+  <data name="CouldNotNewService" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be created due to the following error: {2}</value>
+  </data>
+  <data name="CouldNotNewServiceDescription" xml:space="preserve">
+    <value>Service '{1} ({0})' was created, but its description cannot be configured due to the following error: {2}</value>
+  </data>
+  <data name="CouldNotAccessDependentServices" xml:space="preserve">
+    <value>'Cannot access dependent services of '{1} ({0})'</value>
+  </data>
+  <data name="StartingService" xml:space="preserve">
+    <value>Waiting for service '{1} ({0})' to start...</value>
+  </data>
+  <data name="StoppingService" xml:space="preserve">
+    <value>Waiting for service '{1} ({0})' to stop...</value>
+  </data>
+  <data name="SuspendingService" xml:space="preserve">
+    <value>Waiting for service '{1} ({0})' to suspend...</value>
+  </data>
+  <data name="ResumingService" xml:space="preserve">
+    <value>Waiting for service '{1} ({0})' to resume...</value>
+  </data>
+  <data name="StartServiceFailed" xml:space="preserve">
+    <value>Failed to start service '{1} ({0})'.</value>
+  </data>
+  <data name="StopServiceFailed" xml:space="preserve">
+    <value>Service '{1} ({0})' stop failed.</value>
+  </data>
+  <data name="SuspendServiceFailed" xml:space="preserve">
+    <value>Service '{1} ({0})' suspend failed.</value>
+  </data>
+  <data name="ResumeServiceFailed" xml:space="preserve">
+    <value>Service '{1} ({0})' resume failed.</value>
+  </data>
+  <data name="ComputerAccessDenied" xml:space="preserve">
+    <value>The command cannot be used to configure the service '{0}' because access to computer '{1}' is denied. Run Windows PowerShell as admin and run your command again.</value>
+  </data>
+</root>

@@ -1,0 +1,505 @@
+/********************************************************************++
+Copyright (c) Microsoft Corporation.  All rights reserved.
+--********************************************************************/
+
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Management.Automation;
+using Microsoft.PowerShell.Commands.Internal.Format;
+
+namespace Microsoft.PowerShell.Commands
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    [Cmdlet(VerbsData.Compare, "Object", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113286",
+        RemotingCapability = RemotingCapability.None)]
+    public sealed class CompareObjectCommand : ObjectCmdletBase
+    {
+        #region Parameters
+        /// <summary>
+        ///
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true)]
+        [AllowEmptyCollection]
+        public PSObject[] ReferenceObject
+        {
+            get { return _referenceObject; }
+            set { _referenceObject = value; }
+        }
+        private PSObject[] _referenceObject;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipeline = true)]
+        [AllowEmptyCollection]
+        public PSObject[] DifferenceObject
+        {
+            get { return _differenceObject; }
+            set { _differenceObject = value; }
+        }
+        private PSObject[] _differenceObject;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Parameter]
+        [ValidateRange(0, Int32.MaxValue)]
+        public int SyncWindow
+        {
+            get { return _syncWindow; }
+            set { _syncWindow = value; }
+        }
+        private int _syncWindow = Int32.MaxValue;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
+        [Parameter]
+        public object[] Property
+        {
+            get { return _property; }
+            set { _property = value; }
+        }
+        private object[] _property;
+
+        /* not implemented
+        /// <summary>
+        /// 
+        /// </summary>
+        [Parameter]
+        public SwitchParameter IgnoreWhiteSpace
+        {
+            get { return _ignoreWhiteSpace; }
+            set { _ignoreWhiteSpace = value; }
+        }
+        private bool _ignoreWhiteSpace = false;
+        */
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Parameter]
+        public SwitchParameter ExcludeDifferent
+        {
+            get { return _excludeDifferent; }
+            set { _excludeDifferent = value; }
+        }
+        private bool _excludeDifferent /*=false*/;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Parameter]
+        public SwitchParameter IncludeEqual
+        {
+            get { return _includeEqual; }
+            set
+            {
+                _isIncludeEqualSpecified = true;
+                _includeEqual = value;
+            }
+        }
+        private bool _includeEqual /* = false */;
+        private bool _isIncludeEqualSpecified /* = false */;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Parameter]
+        public SwitchParameter PassThru
+        {
+            get { return _passThru; }
+            set { _passThru = value; }
+        }
+        private bool _passThru /* = false */;
+        #endregion Parameters
+
+        #region Internal
+        private List<OrderByPropertyEntry> referenceEntries;
+        private List<OrderByPropertyEntry> referenceEntryBacklog
+            = new List<OrderByPropertyEntry>();
+        private List<OrderByPropertyEntry> differenceEntryBacklog
+            = new List<OrderByPropertyEntry>();
+        private OrderByProperty orderByProperty = null;
+        private OrderByPropertyComparer comparer = null;
+
+        private int referenceObjectIndex /* = 0 */;
+
+        // These are programmatic strings, not subject to INTL
+        private const string SideIndicatorPropertyName = "SideIndicator";
+        private const string SideIndicatorMatch = "==";
+        private const string SideIndicatorReference = "<=";
+        private const string SideIndicatorDifference = "=>";
+        private const string InputObjectPropertyName = "InputObject";
+
+        /// <summary>
+        /// The following is the matching algorithm:
+        /// Retrieve the incoming object (differenceEntry) if any
+        /// Retrieve the next reference object (referenceEntry) if any
+        /// If differenceEntry matches referenceEntry
+        ///   Emit referenceEntry as a match
+        ///   Return
+        /// If differenceEntry matches any entry in referenceEntryBacklog
+        ///   Emit the backlog entry as a match
+        ///   Remove the backlog entry from referenceEntryBacklog
+        ///   Clear differenceEntry
+        /// If referenceEntry (if any) matches any entry in differenceEntryBacklog
+        ///   Emit referenceEntry as a match
+        ///   Remove the backlog entry from differenceEntryBacklog
+        ///   Clear referenceEntry
+        /// If differenceEntry is still present
+        ///   If SyncWindow is 0
+        ///     Emit differenceEntry as unmatched
+        ///   Else
+        ///     While there is no space in differenceEntryBacklog
+        ///       Emit oldest entry in differenceEntryBacklog as unmatched
+        ///       Remove oldest entry from differenceEntryBacklog
+        ///     Add differenceEntry to differenceEntryBacklog
+        /// If referenceEntry is still present
+        ///   If SyncWindow is 0
+        ///     Emit referenceEntry as unmatched
+        ///   Else
+        ///     While there is no space in referenceEntryBacklog
+        ///       Emit oldest entry in referenceEntryBacklog as unmatched
+        ///       Remove oldest entry from referenceEntryBacklog
+        ///     Add referenceEntry to referenceEntryBacklog
+        /// </summary>
+        /// <param name="differenceEntry"></param>
+        private void Process(OrderByPropertyEntry differenceEntry)
+        {
+            Diagnostics.Assert(null != referenceEntries, "null referenceEntries");
+
+            // Retrieve the next reference object (referenceEntry) if any
+            OrderByPropertyEntry referenceEntry = null;
+            if (referenceObjectIndex < referenceEntries.Count)
+            {
+                referenceEntry = referenceEntries[referenceObjectIndex++];
+            }
+
+            // If differenceEntry matches referenceEntry
+            //   Emit referenceEntry as a match
+            //   Return
+            // 2005/07/19 Switched order of referenceEntry and differenceEntry
+            //   so that we cast differenceEntry to the type of referenceEntry.
+            if (null != referenceEntry && null != differenceEntry &&
+                0 == comparer.Compare(referenceEntry, differenceEntry))
+            {
+                EmitMatch(referenceEntry);
+                return;
+            }
+
+            // If differenceEntry matches any entry in referenceEntryBacklog
+            //   Emit the backlog entry as a match
+            //   Remove the backlog entry from referenceEntryBacklog
+            //   Clear differenceEntry
+            OrderByPropertyEntry matchingEntry =
+                MatchAndRemove(differenceEntry, referenceEntryBacklog);
+            if (null != matchingEntry)
+            {
+                EmitMatch(matchingEntry);
+                differenceEntry = null;
+            }
+
+            // If referenceEntry (if any) matches any entry in differenceEntryBacklog
+            //   Emit referenceEntry as a match
+            //   Remove the backlog entry from differenceEntryBacklog
+            //   Clear referenceEntry
+            matchingEntry =
+                MatchAndRemove(referenceEntry, differenceEntryBacklog);
+            if (null != matchingEntry)
+            {
+                EmitMatch(referenceEntry);
+                referenceEntry = null;
+            }
+
+            // If differenceEntry is still present
+            //   If SyncWindow is 0
+            //     Emit differenceEntry as unmatched
+            //   Else
+            //     While there is no space in differenceEntryBacklog
+            //       Emit oldest entry in differenceEntryBacklog as unmatched
+            //       Remove oldest entry from differenceEntryBacklog
+            //     Add differenceEntry to differenceEntryBacklog
+            if (null != differenceEntry)
+            {
+                if (0 < SyncWindow)
+                {
+                    while (differenceEntryBacklog.Count >= SyncWindow)
+                    {
+                        EmitDifferenceOnly(differenceEntryBacklog[0]);
+                        differenceEntryBacklog.RemoveAt(0);
+                    }
+                    differenceEntryBacklog.Add(differenceEntry);
+                }
+                else
+                {
+                    EmitDifferenceOnly(differenceEntry);
+                }
+            }
+
+            // If referenceEntry is still present
+            //   If SyncWindow is 0
+            //     Emit referenceEntry as unmatched
+            //   Else
+            //     While there is no space in referenceEntryBacklog
+            //       Emit oldest entry in referenceEntryBacklog as unmatched
+            //       Remove oldest entry from referenceEntryBacklog
+            //     Add referenceEntry to referenceEntryBacklog
+            if (null != referenceEntry)
+            {
+                if (0 < SyncWindow)
+                {
+                    while (referenceEntryBacklog.Count >= SyncWindow)
+                    {
+                        EmitReferenceOnly(referenceEntryBacklog[0]);
+                        referenceEntryBacklog.RemoveAt(0);
+                    }
+                    referenceEntryBacklog.Add(referenceEntry);
+                }
+                else
+                {
+                    EmitReferenceOnly(referenceEntry);
+                }
+            }
+        }
+
+        private void InitComparer()
+        {
+            if (null != comparer)
+                return;
+
+            List<PSObject> referenceObjectList = new List<PSObject>(ReferenceObject);
+            orderByProperty = new OrderByProperty(
+                this, referenceObjectList, Property, true, _cultureInfo, CaseSensitive);
+            Diagnostics.Assert(orderByProperty.Comparer != null, "no comparer");
+            Diagnostics.Assert(
+                orderByProperty.OrderMatrix != null &&
+                orderByProperty.OrderMatrix.Count == ReferenceObject.Length,
+                "no OrderMatrix");
+            if (orderByProperty.Comparer == null || orderByProperty.OrderMatrix == null || orderByProperty.OrderMatrix.Count == 0)
+            {
+                return;
+            }
+
+            comparer = orderByProperty.Comparer;
+            referenceEntries = orderByProperty.OrderMatrix;
+        }
+
+        private OrderByPropertyEntry MatchAndRemove(
+            OrderByPropertyEntry match,
+            List<OrderByPropertyEntry> list)
+        {
+            if (null == match || null == list)
+                return null;
+            Diagnostics.Assert(null != comparer, "null comparer");
+            for (int i = 0; i < list.Count; i++)
+            {
+                OrderByPropertyEntry listEntry = list[i];
+                Diagnostics.Assert(null != listEntry, "null listEntry " + i);
+                if (0 == comparer.Compare(match, listEntry))
+                {
+                    list.RemoveAt(i);
+                    return listEntry;
+                }
+            }
+            return null;
+        }
+
+        #region Emit
+        private void EmitMatch(OrderByPropertyEntry entry)
+        {
+            if (_includeEqual)
+                Emit(entry, SideIndicatorMatch);
+        }
+
+        private void EmitDifferenceOnly(OrderByPropertyEntry entry)
+        {
+            if (!ExcludeDifferent)
+                Emit(entry, SideIndicatorDifference);
+        }
+
+        private void EmitReferenceOnly(OrderByPropertyEntry entry)
+        {
+            if (!ExcludeDifferent)
+                Emit(entry, SideIndicatorReference);
+        }
+
+        private void Emit(OrderByPropertyEntry entry, string sideIndicator)
+        {
+            Diagnostics.Assert(null != entry, "null entry");
+
+            PSObject mshobj;
+            if (PassThru)
+            {
+                mshobj = PSObject.AsPSObject(entry.inputObject);
+            }
+            else
+            {
+                mshobj = new PSObject();
+                if (null == Property || 0 == Property.Length)
+                {
+                    PSNoteProperty inputNote = new PSNoteProperty(
+                        InputObjectPropertyName, entry.inputObject);
+                    mshobj.Properties.Add(inputNote);
+                }
+                else
+                {
+                    List<MshParameter> mshParameterList = orderByProperty.MshParameterList;
+                    Diagnostics.Assert(null != mshParameterList, "null mshParameterList");
+                    Diagnostics.Assert(mshParameterList.Count == Property.Length, "mshParameterList.Count " + mshParameterList.Count);
+
+                    for (int i = 0; i < Property.Length; i++)
+                    {
+                        // 2005/07/05 This is the closest we can come to
+                        // the string typed by the user
+                        MshParameter mshParameter = mshParameterList[i];
+                        Diagnostics.Assert(null != mshParameter, "null mshParameter");
+                        Hashtable hash = mshParameter.hash;
+                        Diagnostics.Assert(null != hash, "null hash");
+                        object prop = hash[FormatParameterDefinitionKeys.ExpressionEntryKey];
+                        Diagnostics.Assert(null != prop, "null prop");
+                        string propName = prop.ToString();
+                        PSNoteProperty propertyNote = new PSNoteProperty(
+                            propName,
+                            entry.orderValues[i].PropertyValue);
+                        try
+                        {
+                            mshobj.Properties.Add(propertyNote);
+                        }
+                        catch (ExtendedTypeSystemException)
+                        {
+                            // this is probably a duplicate add
+                        }
+                    }
+                }
+            }
+            mshobj.Properties.Remove(SideIndicatorPropertyName);
+            PSNoteProperty sideNote = new PSNoteProperty(
+                SideIndicatorPropertyName, sideIndicator);
+            mshobj.Properties.Add(sideNote);
+            WriteObject(mshobj);
+        }
+        #endregion Emit
+        #endregion Internal
+
+        #region Overrides
+
+        /// <summary>
+        /// If the parameter 'ExcludeDifferent' is present, then we need to turn on the 
+        /// 'IncludeEqual' switch unless it's turned off by the user specifically.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            if (ExcludeDifferent)
+            {
+                if (_isIncludeEqualSpecified == false)
+                {
+                    return;
+                }
+                if (_isIncludeEqualSpecified && !_includeEqual)
+                {
+                    return;
+                }
+
+                _includeEqual = true;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (ReferenceObject == null || ReferenceObject.Length == 0)
+            {
+                HandleDifferenceObjectOnly();
+                return;
+            }
+            else if (DifferenceObject == null || DifferenceObject.Length == 0)
+            {
+                HandleReferenceObjectOnly();
+                return;
+            }
+
+            if (null == comparer && 0 < DifferenceObject.Length)
+            {
+                InitComparer();
+            }
+
+            List<PSObject> differenceList = new List<PSObject>(DifferenceObject);
+            List<OrderByPropertyEntry> differenceEntries =
+                OrderByProperty.CreateOrderMatrix(
+                this, differenceList, orderByProperty.MshParameterList);
+
+            foreach (OrderByPropertyEntry incomingEntry in differenceEntries)
+            {
+                Process(incomingEntry);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            // Clear remaining reference objects if there are more
+            // reference objects than difference objects
+            if (referenceEntries != null)
+            {
+                while (referenceObjectIndex < referenceEntries.Count)
+                {
+                    Process(null);
+                }
+            }
+
+            // emit all remaining backlogged objects
+            foreach (OrderByPropertyEntry differenceEntry in differenceEntryBacklog)
+            {
+                EmitDifferenceOnly(differenceEntry);
+            }
+            differenceEntryBacklog.Clear();
+            foreach (OrderByPropertyEntry referenceEntry in referenceEntryBacklog)
+            {
+                EmitReferenceOnly(referenceEntry);
+            }
+            referenceEntryBacklog.Clear();
+        }
+        #endregion Overrides
+
+        private void HandleDifferenceObjectOnly()
+        {
+            if (DifferenceObject == null || DifferenceObject.Length == 0)
+            {
+                return;
+            }
+
+            List<PSObject> differenceList = new List<PSObject>(DifferenceObject);
+            orderByProperty = new OrderByProperty(
+                this, differenceList, Property, true, _cultureInfo, CaseSensitive);
+            List<OrderByPropertyEntry> differenceEntries =
+                OrderByProperty.CreateOrderMatrix(
+                this, differenceList, orderByProperty.MshParameterList);
+
+            foreach (OrderByPropertyEntry entry in differenceEntries)
+            {
+                EmitDifferenceOnly(entry);
+            }
+        }
+
+        private void HandleReferenceObjectOnly()
+        {
+            if (ReferenceObject == null || ReferenceObject.Length == 0)
+            {
+                return;
+            }
+
+            InitComparer();
+            Process(null);
+        }
+    }
+}  
+

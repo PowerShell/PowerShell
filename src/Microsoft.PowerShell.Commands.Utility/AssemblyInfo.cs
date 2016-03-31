@@ -8,6 +8,6 @@ using System.Resources;
 [assembly:NeutralResourcesLanguage("en-US")]
 
 #if !CORECLR
-[assembly:AssemblyKeyFileAttribute(@"..\..\src\monad\monad\src\graphicalhost\visualstudiopublic.snk")]
+[assembly:AssemblyKeyFileAttribute(@"..\signing\visualstudiopublic.snk")]
 [assembly:AssemblyDelaySignAttribute(true)]
 #endif

@@ -21,7 +21,7 @@ using System.Security.Permissions;
 [assembly:System.Reflection.AssemblyCopyright("Copyright (c) Microsoft Corporation. All rights reserved.")]
 [assembly:System.Reflection.AssemblyCompany("Microsoft Corporation")]
 [assembly:System.Reflection.AssemblyFileVersion("10.0.10011.16384")]
-[assembly:AssemblyKeyFileAttribute(@"..\..\src\monad\monad\src\graphicalhost\visualstudiopublic.snk")]
+[assembly:AssemblyKeyFileAttribute(@"..\signing\visualstudiopublic.snk")]
 [assembly:System.Reflection.AssemblyDelaySign(true)]
 
 internal static class AssemblyStrings

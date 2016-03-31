@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ErrorMalformedDataFromRemoteCommand" xml:space="preserve">
+    <value>Data returned by the remote {0} command is not in the expected format.</value>
+  </data>
+  <data name="ErrorRequiredRemoteCommandNotFound" xml:space="preserve">
+    <value>The {0} cmdlet requires the following commands in the remote session: Get-Command, Get-FormatData, and Select-Object. The following commands are used, but optional: Get-Help, and Measure-Object. Verify that the remote session includes the required commands, and then try again.</value>
+  </data>
+  <data name="ErrorFromRemoteCommand" xml:space="preserve">
+    <value>Running the {0} command in a remote session reported the following error: {1}.</value>
+  </data>
+  <data name="ErrorNoResultsFromRemoteEnd" xml:space="preserve">
+    <value>Running the {0} command in a remote session returned no results.</value>
+  </data>
+  <data name="ErrorCannotCreateTemporaryFile" xml:space="preserve">
+    <value>Cannot create temporary file for implicit remoting module.</value>
+  </data>
+  <data name="ErrorNoRunspaceForThisModule" xml:space="preserve">
+    <value>No session has been associated with this implicit remoting module.</value>
+  </data>
+  <data name="ErrorCouldntResolveAlias" xml:space="preserve">
+    <value>Could not resolve remote alias '{0}'.</value>
+  </data>
+  <data name="ErrorSkippedNonRequestedCommand" xml:space="preserve">
+    <value>Proxy creation has been skipped for the '{0}' command, because the name did not match the value of the Name  parameter.</value>
+  </data>
+  <data name="ErrorSkippedNonRequestedTypeDefinition" xml:space="preserve">
+    <value>Extended type definition has been skipped for the '{0}' type because its name did not match the value of the FormatTypeName parameter.</value>
+  </data>
+  <data name="ErrorSkippedUnsafeCommandName" xml:space="preserve">
+    <value>Proxy creation has been skipped for the '{0}' command, because Windows PowerShell could not verify the safety of the command name.</value>
+  </data>
+  <data name="ErrorSkippedUnsafeParameterName" xml:space="preserve">
+    <value>Proxy creation has been skipped for the '{0}' command, because Windows PowerShell could not verify the safety of a parameter name: '{1}'.</value>
+  </data>
+  <data name="ErrorSkippedUnsafeParameterSetName" xml:space="preserve">
+    <value>Proxy creation has been skipped for the '{0}' command, because Windows PowerShell could not verify the safety of a parameter set name: '{1}'.</value>
+  </data>
+  <data name="ErrorSkippedUnsafeAliasName" xml:space="preserve">
+    <value>Proxy creation has been skipped for the '{0}' command, because Windows PowerShell could not verify the safety of a parameter alias name: '{1}'.</value>
+  </data>
+  <data name="ErrorCommandSkippedBecauseOfShadowing" xml:space="preserve">
+    <value>Proxy creation has been skipped for the following command: '{0}', because it would shadow an existing local command.  Use the AllowClobber parameter if you want to shadow existing local commands.</value>
+  </data>
+  <data name="ErrorNoCommandsImportedBecauseOfSkipping" xml:space="preserve">
+    <value>No command proxies have been created, because all of the requested remote commands would shadow existing local commands.  Use the AllowClobber parameter if you want to shadow existing local commands.</value>
+  </data>
+  <data name="ProxyModuleDescription" xml:space="preserve">
+    <value>Implicit remoting for {0}</value>
+  </data>
+  <data name="EventSourceIdentifier" xml:space="preserve">
+    <value>Implicit remoting event (session id: {0}; event handler id: {1})</value>
+  </data>
+  <data name="ModuleHeaderTitle" xml:space="preserve">
+    <value>Implicit remoting module</value>
+  </data>
+  <data name="ModuleHeaderDate" xml:space="preserve">
+    <value>generated on {0}</value>
+  </data>
+  <data name="ModuleHeaderCommand" xml:space="preserve">
+    <value>by {0} cmdlet</value>
+  </data>
+  <data name="ModuleHeaderCommandLine" xml:space="preserve">
+    <value>Invoked with the following command line: {0}</value>
+  </data>
+  <data name="ModuleHeaderRunspaceOverrideParameter" xml:space="preserve">
+    <value>Optional parameter that can be used to specify the session on which this proxy module works</value>
+  </data>
+  <data name="CreateNewRunspaceMessageTemplate" xml:space="preserve">
+    <value>Creating a new session for implicit remoting of "{{0}}" command...</value>
+  </data>
+  <data name="ProxyRunspaceNameTemplate" xml:space="preserve">
+    <value>Session for implicit remoting module at {{0}}</value>
+  </data>
+  <data name="ProgressActivity" xml:space="preserve">
+    <value>Creating implicit remoting module ...</value>
+  </data>
+  <data name="ProgressStatusGetCommandStart" xml:space="preserve">
+    <value>Getting command information from remote session ...</value>
+  </data>
+  <data name="ProgressStatusGetCommandProgress" xml:space="preserve">
+    <value>Getting command information from remote session ... {0} commands received</value>
+  </data>
+  <data name="ProgressStatusGetFormatDataStart" xml:space="preserve">
+    <value>Getting formatting and output information from remote session ...</value>
+  </data>
+  <data name="ProgressStatusGetFormatDataProgress" xml:space="preserve">
+    <value>Getting formatting and output information from remote session ... {0} objects received</value>
+  </data>
+  <data name="ProgressStatusProxyGeneration" xml:space="preserve">
+    <value>Generating a proxy command for '{0}' ...</value>
+  </data>
+  <data name="ProgressStatusCompleted" xml:space="preserve">
+    <value>Completed.</value>
+  </data>
+  <data name="CredentialRequestTitle" xml:space="preserve">
+    <value>Windows PowerShell Credential Request</value>
+  </data>
+  <data name="CredentialRequestBody" xml:space="preserve">
+    <value>Enter your credentials for {0}.</value>
+  </data>
+  <data name="ProxyCredentialRequestBody" xml:space="preserve">
+    <value>Enter the HTTP proxy credentials that are used for the following connection: {0}</value>
+  </data>
+  <data name="WarningMismatchedImplicitRemotingHash" xml:space="preserve">
+    <value>Commands that are available in the new remote session are different than those available when the implicit remoting module was created.  Consider creating the module again by using the Export-PSSession cmdlet.</value>
+  </data>
+  <data name="CertificateNeeded" xml:space="preserve">
+    <value>Files cannot be loaded because running scripts is disabled on this system. Provide a valid certificate with which to sign the files.</value>
+  </data>
+  <data name="InvalidSigningOperation" xml:space="preserve">
+    <value>The file {0} could not be signed.</value>
+  </data>
+</root>

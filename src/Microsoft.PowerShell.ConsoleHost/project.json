@@ -21,32 +21,5 @@
 
     "compile": [
         "../windows-build/gen/CONSOLE_HOST/*.cs"
-    ],
-
-    "compileFiles": [
-        "../monad/monad/src/host/msh/CommandLineParameterParser.cs",
-        "../monad/monad/src/host/msh/ConsoleControl.cs",
-        "../monad/monad/src/host/msh/Executor.cs",
-        "../monad/monad/src/host/msh/ConsoleHost.cs",
-        "../monad/monad/src/host/msh/ConsoleHostRawUserInterface.cs",
-        "../monad/monad/src/host/msh/ConsoleHostTranscript.cs",
-        "../monad/monad/src/host/msh/ConsoleHostUserInterface.cs",
-        "../monad/monad/src/host/msh/ConsoleHostUserInterfaceProgress.cs",
-        "../monad/monad/src/host/msh/ConsoleHostUserInterfacePrompt.cs",
-        "../monad/monad/src/host/msh/ConsoleHostUserInterfacePromptForChoice.cs",
-        "../monad/monad/src/host/msh/ConsoleHostUserInterfaceSecurity.cs",
-        "../monad/monad/src/host/msh/ConsoleShell.cs",
-        "../monad/monad/src/host/msh/ConsoleTextWriter.cs",
-        "../monad/monad/src/host/msh/ProgressPane.cs",
-        "../monad/monad/src/host/msh/PendingProgress.cs",
-        "../monad/monad/src/host/msh/ProgressNode.cs",
-        "../monad/monad/src/host/msh/Serialization.cs",
-        "../monad/monad/src/host/msh/StartTranscriptCmdlet.cs",
-        "../monad/monad/src/host/msh/StopTranscriptCmdlet.cs",
-        "../monad/monad/src/singleshell/installer/MshHostMshSnapin.cs",
-        "../monad/monad/src/singleshell/installer/EngineInstaller.cs",
-        "../monad/monad/src/host/msh/ManagedEntrance.cs"
-    ],
-
-    "resource": [ "../monad/monad/src/host/msh/resources/*.resx" ]
+    ]
 }

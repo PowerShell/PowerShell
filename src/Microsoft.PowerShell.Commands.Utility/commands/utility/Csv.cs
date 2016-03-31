@@ -1,0 +1,118 @@
+/********************************************************************++
+Copyright (c) Microsoft Corporation.  All rights reserved.
+--********************************************************************/
+using System.Collections.ObjectModel;
+
+namespace Microsoft.PowerShell.Commands
+{
+    /// <summary>
+    /// This class is used to parse CSV text.
+    /// </summary>
+    internal class CSVHelper
+    {
+        internal CSVHelper(char delimiter)
+        {
+            this.delimiter = delimiter;
+        }
+
+        /// <summary>
+        /// Gets or sets the delimiter that separates the values
+        /// </summary>
+        /// 
+        internal char Delimiter
+        {
+            get { return delimiter; }
+        }
+        private char delimiter = ',';
+
+        /// <summary>
+        /// Parse a CSV String.
+        /// </summary>
+        /// 
+        /// <param name="csv">
+        /// String to be parsed
+        /// </param>
+        ///
+        internal Collection<string> ParseCsv(string csv)
+        {
+            Collection<string> result = new Collection<string>();
+            string tempString = "";
+            csv = csv.Trim();
+            if (csv.Length == 0 || csv[0] == '#')
+            {
+                return result;
+            }
+            bool inQuote = false;
+            for (int i = 0; i < csv.Length; i++)
+            {
+                char c = csv[i];
+                if (c == Delimiter)
+                {
+                    if (!inQuote)
+                    {
+                        result.Add(tempString);
+                        tempString = "";
+                    }
+                    else
+                    {
+                        tempString += c;
+                    }
+                }
+                else
+                {
+                    switch (c)
+                    {
+                        case '"':
+                            if (inQuote)
+                            {
+                                //If we are at the end of the string or the end of the segment, create a new value
+                                //Otherwise we have an error
+                                if (i == csv.Length - 1)
+                                {
+                                    result.Add(tempString);
+                                    tempString = "";
+                                    inQuote = false;
+                                    break;
+                                }
+
+                                if (csv[i + 1] == Delimiter)
+                                {
+                                    result.Add(tempString);
+                                    tempString = "";
+                                    inQuote = false;
+                                    i++;
+                                }
+                                else if (csv[i + 1] == '"')
+                                {
+                                    tempString += '"';
+                                    i++;
+                                }
+                                else
+                                {
+                                    inQuote = false;
+                                }
+                            }
+                            else
+                            {
+                                inQuote = true;
+                            }
+
+                            break;
+
+                        default:
+                            tempString += c;
+                            break;
+                    }//switch
+                }//else
+            }//for int
+            if (tempString.Length > 0)
+            {
+                result.Add(tempString);
+            }
+            return result;
+        }
+
+    }
+
+}
+
