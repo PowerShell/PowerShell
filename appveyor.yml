@@ -20,7 +20,7 @@ install:
   - ps: $fileContent += "`n-----END RSA PRIVATE KEY-----`n"
   - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
   - git config --global url.git@github.com:.insteadOf https://github.com/
-  - git submodule update --init --recursive -- src/monad src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
+  - git submodule update --init --recursive -- src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
   - ps: Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
   - ps: ./install.ps1 -version 1.0.0.001888
 
@@ -46,7 +46,7 @@ test_script:
       # FullCLR
       Write-Host -Foreground Green 'Run FullCLR tests'
       $testResultsFileFullCLR = "$pwd\TestsResults.FullCLR.xml"
-      Start-DevPSGitHub -binDir $pwd\binFull -NoNewWindow -ArgumentList '-command', "Import-Module .\src\monad\monad\src\OSS\Pester; Import-Module .\bin\Modules\Microsoft.PowerShell.Platform; Invoke-Pester test/fullCLR -OutputFormat NUnitXml -OutputFile $testResultsFileFullCLR"
+      Start-DevPSGitHub -binDir $pwd\binFull -NoNewWindow -ArgumentList '-command', "Import-Module .\src\Microsoft.PowerShell.Linux.Host\Modules\Pester; Import-Module .\bin\Modules\Microsoft.PowerShell.Platform; Invoke-Pester test/fullCLR -OutputFormat NUnitXml -OutputFile $testResultsFileFullCLR"
       (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFileFullCLR))
       #
       # Fail the build, if tests failed
