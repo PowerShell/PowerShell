@@ -22,8 +22,8 @@
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
-                "NETStandard.Library": "1.5.0-rc3-23922",
-                "System.Runtime.Loader": "4.0.0-rc3-23922"
+                "NETStandard.Library": "1.5.0-rc3-23931-00",
+                "System.Runtime.Loader": "4.0.0-rc3-23931-00"
             }
         }
     }
