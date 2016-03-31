@@ -6,13 +6,13 @@ building PowerShell Remoting Protocol (PSRP) support first requires
 PowerShell on Linux built.
 
 PSRP communication is tunneled through the Open Management
-Infrastructure (OMI) using the [`omi-provider`][].
+Infrastructure (OMI) using the [OMI provider][].
 
 > PSRP has been observed working on OS X, but the changes made to OMI to
 > accomplish this are not even beta-ready and need to be done correctly. They
 > exist on the `andschwa-osx` branch of the OMI repository.
 
-[omi-provider]: https://github.com/PowerShell/psl-omi-provider/
+[OMI provider]: https://github.com/PowerShell/psl-omi-provider/
 
 Environment
 ===========
