@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccessDenied" xml:space="preserve">
+    <value>Access to the path '{0}' is denied.</value>
+  </data>
+  <data name="BodyConflict" xml:space="preserve">
+    <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and InFile. Specify either Body or Infile, then retry.  </value>
+  </data>
+  <data name="CredentialConflict" xml:space="preserve">
+    <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and UseDefaultCredentials. Specify either Credential or UseDefaultCredentials, then retry.</value>
+  </data>
+  <data name="DirecotryPathSpecified" xml:space="preserve">
+    <value>Path '{0}' resolves to a directory. Specify a path including a file name, and then retry the command.</value>
+  </data>
+  <data name="DuplicateKeysInJsonString" xml:space="preserve">
+    <value>Cannot convert the JSON string because a dictionary that was converted from the string contains the duplicated keys '{0}' and '{1}'.</value>
+  </data>
+  <data name="ExtendedProfileRequired" xml:space="preserve">
+    <value>The ConvertTo-Json and ConvertFrom-Json cmdlets require the installation of the .NET Client Profile, sometimes called the .NET extended profile.</value>
+  </data>
+  <data name="IEDomNotSupported" xml:space="preserve">
+    <value>The response content cannot be parsed because the Internet Explorer engine is not available, or Internet Explorer's first-launch configuration is not complete. Specify the UseBasicParsing parameter and try again. </value>
+  </data>
+  <data name="JsonStringInBadFormat" xml:space="preserve">
+    <value>The converted JSON string is in bad format.</value>
+  </data>
+  <data name="MaximumRedirectionCountExceeded" xml:space="preserve">
+    <value>The maximum redirection count has been exceeded. To increase the number of redirections allowed, supply a higher value to the -MaximumRedirection parameter.</value>
+  </data>
+  <data name="MultiplePathsResolved" xml:space="preserve">
+    <value>Path '{0}' can be resolved to multiple paths.</value>
+  </data>
+  <data name="NonStringKeyInDictionary" xml:space="preserve">
+    <value>The type '{0}' is not supported for serialization or deserialization of a dictionary. Keys must be strings.</value>
+  </data>
+  <data name="NoPathResolved" xml:space="preserve">
+    <value>Path '{0}' cannot be resolved to a file.</value>
+  </data>
+  <data name="NotFilesystemPath" xml:space="preserve">
+    <value>Path '{0}' is not a file system path. Please specify the path to a file in the file system.</value>
+  </data>
+  <data name="OutFileMissing" xml:space="preserve">
+    <value>The cmdlet cannot run because the following parameter is missing: OutFile. Provide a valid OutFile parameter value when using the PassThru parameter, then retry.</value>
+  </data>
+  <data name="ProxyCredentialConflict" xml:space="preserve">
+    <value>The cmdlet cannot run because the following conflicting parameters are specified: ProxyCredential and ProxyUseDefaultCredentials. Specify either ProxyCredential or ProxyUseDefaultCredentials, then retry.</value>
+  </data>
+  <data name="ProxyUriNotSupplied" xml:space="preserve">
+    <value>The cmdlet cannot run because the following parameter is missing: Proxy. Provide a valid proxy URI for the Proxy parameter when using the ProxyCredential or UseDefaultProxyCredentials parameters, then retry.</value>
+  </data>
+  <data name="ReadResponseComplete" xml:space="preserve">
+    <value>Reading web response completed. (Number of bytes read: {0})</value>
+  </data>
+  <data name="ReadResponseProgressActivity" xml:space="preserve">
+    <value>Reading web response</value>
+  </data>
+  <data name="ReadResponseProgressStatus" xml:space="preserve">
+    <value>Reading response stream... (Number of bytes read: {0})</value>
+  </data>
+  <data name="RequestTimeout" xml:space="preserve">
+    <value>The operation has timed out.</value>
+  </data>
+  <data name="SessionConflict" xml:space="preserve">
+    <value>The cmdlet cannot run because the following conflicting parameters are specified: Session and SessionVariable. Specify either Session or SessionVariable, then retry.</value>
+  </data>
+  <data name="ThumbprintNotFound" xml:space="preserve">
+    <value>Unable to retrieve certificates because the thumbprint is not valid. Verify the thumbprint and retry. </value>
+  </data>
+  <data name="WriteRequestComplete" xml:space="preserve">
+    <value>Writing web request completed. (Number of bytes remaining: {0})</value>
+  </data>
+  <data name="WriteRequestProgressActivity" xml:space="preserve">
+    <value>Writing web request</value>
+  </data>
+  <data name="WriteRequestProgressStatus" xml:space="preserve">
+    <value>Writing request stream... (Number of bytes written: {0})</value>
+  </data>
+  <data name="JsonNetModuleRequired" xml:space="preserve">
+    <value>The ConvertTo-Json and ConvertFrom-Json cmdlets require the 'Json.Net' module. {0}</value>
+  </data>
+  <data name="PSModuleAutoloadingPreferenceNotEnable" xml:space="preserve">
+    <value>The cmdlet cannot run because the 'Json.Net' module cannot be loaded. Import the module manually or set the $PSModuleAutoLoadingPreference variable to enable module auto loading. For more information, see 'get-help about_Preference_Variables'.</value>
+  </data>
+  <data name="CouldNotAutoImportJsonNetModule" xml:space="preserve">
+    <value>However, the 'Json.Net' module could not be loaded. For more information, run 'Import-Module Json.Net'.</value>
+  </data>
+  <data name="JsonNetModuleFilesRequired" xml:space="preserve">
+    <value>Ensure 'Json.Net.psd1' and 'Newtonsoft.Json.dll' are available in a versioned subdirectory of '{0}'.</value>
+  </data>
+  <data name="ReachedMaximumDepthAllowed" xml:space="preserve">
+    <value>The maximum depth allowed for serialization is {0}.</value>
+  </data>
+</root>

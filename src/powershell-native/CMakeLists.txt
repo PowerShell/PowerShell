@@ -9,20 +9,20 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 
 include_directories(
-    ../../src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon)
+    nativemsh/pwrshcommon)
 
 link_directories(
-    ../../src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon)
+    nativemsh/pwrshcommon)
 
 add_definitions(-DUNICODE)
 add_definitions(-D_UNICODE)
 
 add_executable(powershell WIN32
-    ../../src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon/ConfigFileReader.cpp
-    ../../src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon/pwrshcommon.cpp
-    ../../src/monad/monad/nttargets/assemblies/nativemsh/pwrshcommon/WinSystemCallFacade.cpp
+    nativemsh/pwrshcommon/ConfigFileReader.cpp
+    nativemsh/pwrshcommon/pwrshcommon.cpp
+    nativemsh/pwrshcommon/WinSystemCallFacade.cpp
 
-    ../../src/monad/monad/nttargets/assemblies/nativemsh/pwrshexe/MainEntry.cpp)
+    nativemsh/pwrshexe/MainEntry.cpp)
 
 # This subsystem definition is using old policy. TODO: figure out for release and the rest
 set_target_properties(powershell PROPERTIES COMPILE_DEFINITIONS "_CONSOLE")

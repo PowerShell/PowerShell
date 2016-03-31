@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="WriteDebugLineStoppedError" xml:space="preserve">
+    <value>WriteDebug stopped because the value of the DebugPreference variable was 'Stop'.</value>
+  </data>
+  <data name="UnsupportedPreferenceError" xml:space="preserve">
+    <value>The value {0} is not a supported ActionPreference value.</value>
+  </data>
+  <data name="PromptEmptyDescriptionsError" xml:space="preserve">
+    <value>The "{0}" parameter must contain at least one value.</value>
+  </data>
+  <data name="ShouldContinueYesLabel" xml:space="preserve">
+    <value>&amp;Yes</value>
+  </data>
+  <data name="ShouldContinueYesHelp" xml:space="preserve">
+    <value>Continue.</value>
+  </data>
+  <data name="ShouldContinueYesToAllLabel" xml:space="preserve">
+    <value>Yes to &amp;All</value>
+  </data>
+  <data name="ShouldContinueYesToAllHelp" xml:space="preserve">
+    <value>Continue, and do not ask again whether to continue in this session.</value>
+  </data>
+  <data name="ShouldContinueNoLabel" xml:space="preserve">
+    <value>&amp;No</value>
+  </data>
+  <data name="ShouldContinueNoHelp" xml:space="preserve">
+    <value>End the operation with an error.</value>
+  </data>
+  <data name="ShouldContinueNoToAllLabel" xml:space="preserve">
+    <value>No to A&amp;ll</value>
+  </data>
+  <data name="ShouldContinueNoToAllHelp" xml:space="preserve">
+    <value>End the operation with an error. Do not request to resume operation for this session.</value>
+  </data>
+  <data name="ShouldContinueSuspendLabel" xml:space="preserve">
+    <value>&amp;Suspend</value>
+  </data>
+  <data name="ShouldContinueSuspendHelp" xml:space="preserve">
+    <value>Pause the current operation and enter a command prompt. Type "exit" to resume the paused operation.</value>
+  </data>
+  <data name="ShouldContinuePromptMessage" xml:space="preserve">
+    <value>Continue with this operation?</value>
+  </data>
+  <data name="DefaultChoice" xml:space="preserve">
+    <value>(default is "{0}")</value>
+  </data>
+  <data name="DefaultChoicesForMultipleChoices" xml:space="preserve">
+    <value>(default choices are {0})</value>
+  </data>
+  <data name="ChoiceMessage" xml:space="preserve">
+    <value>Choice[{0}]: </value>
+  </data>
+  <data name="EmptyChoicesError" xml:space="preserve">
+    <value>"{0}" should have at least one element.</value>
+  </data>
+  <data name="InvalidDefaultChoiceForMultipleSelection" xml:space="preserve">
+    <value>"{0}" must be a valid index into "{1}". "{2}" is not a valid index.</value>
+  </data>
+  <data name="InvalidChoiceHotKeyError" xml:space="preserve">
+    <value>Cannot process the hot key because a question mark ("?") cannot be used as a hot key.</value>
+  </data>
+  <data name="VerboseFormatString" xml:space="preserve">
+    <value>VERBOSE: {0}</value>
+  </data>
+  <data name="WarningFormatString" xml:space="preserve">
+    <value>WARNING: {0}</value>
+  </data>
+  <data name="DebugFormatString" xml:space="preserve">
+    <value>DEBUG: {0}</value>
+  </data>
+  <data name="InformationFormatString" xml:space="preserve">
+    <value>INFO: {0}</value>
+  </data> 
+  <data name="HostNotTranscribing" xml:space="preserve">
+    <value>The host is not currently transcribing.</value>
+  </data>
+  <data name="CommandStartTime" xml:space="preserve">
+    <value>Command start time: {0}</value>
+  </data>
+  <data name="TranscriptPrologue" xml:space="preserve">
+    <value>**********************
+Windows PowerShell transcript start
+Start time: {0:yyyyMMddHHmmss}
+Username: {1}
+RunAs User: {2}
+Machine: {3} ({4})
+Host Application: {5}
+Process ID: {6}
+{7}
+**********************</value>
+  </data>
+  <data name="TranscriptEpilogue" xml:space="preserve">
+    <value>**********************
+Windows PowerShell transcript end
+End time: {0:yyyyMMddHHmmss}
+**********************</value>
+  </data>
+</root>

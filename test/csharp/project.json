@@ -14,7 +14,7 @@
 	    "imports": [ "dnxcore50", "portable-net45+win8" ],
 	    "dependencies": {
 		"xunit": "2.1.0",
-		"dotnet-test-xunit": "1.0.0-dev-*"
+		"dotnet-test-xunit": "1.0.0-dev-79755"
 	    }
 	}
     },

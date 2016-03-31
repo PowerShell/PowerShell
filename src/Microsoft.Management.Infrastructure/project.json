@@ -25,6 +25,7 @@
         },
         "net451": {
         }
+<<<<<<< HEAD
     },
 
     "resource": ["../monad/wmi/WMIv2/Client/DotNetAPI/cs/Strings.resx"],
@@ -119,4 +120,7 @@
         "../monad/wmi/WMIv2/Client/DotNetAPI/cs/Strings.Designer.cs",
         "../monad/wmi/WMIv2/Client/DotNetAPI/cs/WSManSessionOptions.cs"
     ]
+=======
+    }
+>>>>>>> master
 }

@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MetadataMemberInitialization" xml:space="preserve">
+    <value>Cannot initialize attributes for "{0}": "{1}"</value>
+  </data>
+  <data name="ValidateRangeElementType" xml:space="preserve">
+    <value>The argument cannot be validated because its type "{0}" is not the same type ({1}) as the maximum and minimum limits of the parameter. Make sure the argument is of type {1} and then try the command again.</value>
+  </data>
+  <data name="ValidateRangeMinRangeMaxRangeType" xml:space="preserve">
+    <value>The specified minimum range ({0}) cannot be accepted because it is not the same type as the specified maximum range ({1}). Update the ValidateRange attribute for the parameter.</value>
+  </data>
+  <data name="ValidateRangeNotIComparable" xml:space="preserve">
+    <value>Cannot accept the MaxRange and MinRange parameter types. Both parameters must be objects that implement an IComparable interface.</value>
+  </data>
+  <data name="ValidateRangeMaxRangeSmallerThanMinRange" xml:space="preserve">
+    <value>The specified maximum range cannot be accepted because it is less than the specified minimum range. Update the ValidateRange attribute for the parameter.</value>
+  </data>
+  <data name="ValidateRangeGreaterThanMaxRangeFailure" xml:space="preserve">
+    <value>The {0} argument is greater than the maximum allowed range of {1}. Supply an argument that is less than or equal to {1} and then try the command again.</value>
+  </data>
+  <data name="ValidateRangeSmallerThanMinRangeFailure" xml:space="preserve">
+    <value>The {0} argument is less than the minimum allowed range of {1}. Supply an argument that is greater than or equal to {1} and then try the command again.</value>
+  </data>
+  <data name="ValidatePatternFailure" xml:space="preserve">
+    <value>The argument "{0}" does not match the "{1}" pattern. Supply an argument that matches "{1}" and try the command again.</value>
+  </data>
+  <data name="ValidateCountNotInArray" xml:space="preserve">
+    <value>The ValidateCount attribute cannot be applied to a non-array parameter. Either remove the attribute from the parameter or make the parameter an array parameter.</value>
+  </data>
+  <data name="ValidateCountMinLengthFailure" xml:space="preserve">
+    <value>The number of provided arguments ({1}) is fewer than the minimum number of allowed arguments ({0}). Provide more than {0} arguments, and then try the command again.</value>
+  </data>
+  <data name="ValidateCountMaxLengthFailure" xml:space="preserve">
+    <value>The number of provided arguments, ({1}), exceeds the maximum number of allowed arguments ({0}). Provide fewer than {0} arguments, and then try the command again.</value>
+  </data>
+  <data name="ValidateCountMaxLengthSmallerThanMinLength" xml:space="preserve">
+    <value>The specified maximum number of arguments for a parameter is fewer than the specified minimum number of arguments. Update the ValidateCount attribute for the parameter.</value>
+  </data>
+  <data name="ValidateLengthMaxLengthSmallerThanMinLength" xml:space="preserve">
+    <value>The specified maximum character length of the argument is shorter than the specified minimum argument character length. Update the ValidateLength attribute for the parameter.</value>
+  </data>
+  <data name="ValidateLengthNotString" xml:space="preserve">
+    <value>The ValidateLength attribute cannot be applied to a parameter that is not a string or string[] parameter. Make the parameter a string or string[] parameter.</value>
+  </data>
+  <data name="ValidateLengthMinLengthFailure" xml:space="preserve">
+    <value>The character length ({1}) of the argument is too short. Specify an argument with a length that is greater than or equal to "{0}", and then try the command again.</value>
+  </data>
+  <data name="ValidateLengthMaxLengthFailure" xml:space="preserve">
+    <value>The character length of the {1} argument is too long. Shorten the character length of the argument so it is fewer than or equal to "{0}" characters, and then try the command again.</value>
+  </data>
+  <data name="ValidateSetFailure" xml:space="preserve">
+    <value>The argument "{0}" does not belong to the set "{1}" specified by the ValidateSet attribute. Supply an argument that is in the set and then try the command again.</value>
+  </data>
+  <data name="ValidateFailureResult" xml:space="preserve">
+    <value>"{0}" failed on property "{1}" {2}</value>
+  </data>
+  <data name="ParsingTooManyParameterSets" xml:space="preserve">
+    <value>Cannot get or run the command. The maximum number of parameter sets for this command has been exceeded.</value>
+  </data>
+  <data name="ArgumentTransformationArgumentsShouldBeStrings" xml:space="preserve">
+    <value>Cannot process the argument because the argument value is not a string. The values of parameter arguments that have the ArgumentTransformationAttribute specified should be strings.</value>
+  </data>
+  <data name="InvalidValueFailure" xml:space="preserve">
+    <value>The variable cannot be validated because the value {1} is not a valid value for the {0} variable.</value>
+  </data>
+  <data name="InvalidMetadataForCurrentValue" xml:space="preserve">
+    <value>The attribute cannot be added because variable {0} with value {1} would no longer be valid.</value>
+  </data>
+  <data name="ValidateNotNullFailure" xml:space="preserve">
+    <value>The argument is null. Provide a valid value for the argument, and then try running the command again.</value>
+  </data>
+  <data name="ValidateNotNullCollectionFailure" xml:space="preserve">
+    <value>The argument has a null value, or an element of the argument collection contains a null value. Provide a collection that does not contain any null values, and then try the command again.</value>
+  </data>
+  <data name="ValidateNotNullOrEmptyFailure" xml:space="preserve">
+    <value>The argument is null or empty. Provide an argument that is not null or empty, and then try the command again.</value>
+  </data>
+  <data name="ValidateNotNullOrEmptyCollectionFailure" xml:space="preserve">
+    <value>The argument is null, empty, or an element of the argument collection contains a null value. Supply a collection that does not contain any null values and then try the command again.</value>
+  </data>
+  <data name="ParameterNameAlreadyExistsForCommand" xml:space="preserve">
+    <value>A parameter with the name '{0}' was defined multiple times for the command.</value>
+  </data>
+  <data name="AliasParameterNameAlreadyExistsForCommand" xml:space="preserve">
+    <value>The parameter alias cannot be specified because an alias with the name '{0}' was already defined multiple times for the command.</value>
+  </data>
+  <data name="ParameterNameConflictsWithAlias" xml:space="preserve">
+    <value>The parameter '{0}' cannot be specified because it conflicts with the parameter alias of the same name for parameter '{1}'.</value>
+  </data>
+  <data name="ValidateScriptFailure" xml:space="preserve">
+    <value>The "{1}" validation script for the argument with value "{0}" did not return a result of True. Determine why the validation script failed, and then try the command again.</value>
+  </data>
+  <data name="ValidateVersionFailure" xml:space="preserve">
+    <value>The "{0}" argument does not contain a valid Windows PowerShell version. Supply a valid version number and then try the command again.</value>
+  </data>
+  <data name="ValidateVariableName" xml:space="preserve">
+    <value>Cannot validate argument '{0}' because it is not a valid variable name.</value>
+  </data>
+  <data name="JobDefinitionMustDeriveFromIJobConverter" xml:space="preserve">
+    <value>The job conversion type must derive from IAstToScriptBlockConverter.</value>
+  </data>
+  <data name="ValidateDrivePathArgNotString" xml:space="preserve">
+    <value>The path argument is invalid. Supply a path argument that is a string type.</value>
+  </data>
+  <data name="ValidateDrivePathFailure" xml:space="preserve">
+    <value>The path argument drive {0} does not belong to the set of approved drives: {1}. Supply a path argument with an approved drive.</value>
+  </data>
+  <data name="ValidateDrivePathInvalidChar" xml:space="preserve">
+    <value>The path argument contains invalid characters.</value>
+  </data>
+  <data name="ValidateDrivePathNoRoot" xml:space="preserve">
+    <value>The path argument has no root drive.  Supply a full path argument with a root drive.</value>
+  </data>
+</root>

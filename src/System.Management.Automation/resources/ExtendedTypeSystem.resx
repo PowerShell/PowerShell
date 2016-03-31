@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MemberAlreadyPresent" xml:space="preserve">
+    <value>The member "{0}" is already present.</value>
+  </data>
+  <data name="MemberAlreadyPresentFromTypesXml" xml:space="preserve">
+    <value>The member "{0}" is already present from the extended type data file.</value>
+  </data>
+  <data name="MemberNotPresent" xml:space="preserve">
+    <value>The member "{0}" is not present.</value>
+  </data>
+  <data name="ExceptionWhenSetting" xml:space="preserve">
+    <value>Exception setting "{0}": "{1}"</value>
+  </data>
+  <data name="ExceptionWhenGetting" xml:space="preserve">
+    <value>Exception getting "{0}": "{1}"</value>
+  </data>
+  <data name="EnumerationException" xml:space="preserve">
+    <value>The following exception occurred while trying to enumerate the collection: "{0}".</value>
+  </data>
+  <data name="AccessMemberOutsidePSObject" xml:space="preserve">
+    <value>Cannot access member "{0}" outside of a PSObject.</value>
+  </data>
+  <data name="ChangeStaticMember" xml:space="preserve">
+    <value>Cannot change the member created from the type configuration: "{0}".</value>
+  </data>
+  <data name="ReservedMemberName" xml:space="preserve">
+    <value>The member name "{0}" is reserved.</value>
+  </data>
+  <data name="CannotChangeReservedMember" xml:space="preserve">
+    <value>"{0}" cannot be changed.</value>
+  </data>
+  <data name="MethodInvocationException" xml:space="preserve">
+    <value>Exception calling "{0}" with "{1}" argument(s): "{2}"</value>
+  </data>
+  <data name="CopyToInvocationException" xml:space="preserve">
+    <value>An exception was thrown when trying to call "{0}" to extract the contents of an object of type "{1}": "{2}"</value>
+  </data>
+  <data name="MethodArgumentCountException" xml:space="preserve">
+    <value>Cannot find an overload for "{0}" and the argument count: "{1}".</value>
+  </data>
+  <data name="MethodAmbiguousException" xml:space="preserve">
+    <value>Multiple ambiguous overloads found for "{0}" and the argument count: "{1}".</value>
+  </data>
+  <data name="MethodArgumentConversionException" xml:space="preserve">
+    <value>Cannot convert argument "{0}", with value: "{1}", for "{2}" to type "{3}": "{4}"</value>
+  </data>
+  <data name="GetWithoutGetterException" xml:space="preserve">
+    <value>Get accessor for property "{0}" is unavailable.</value>
+  </data>
+  <data name="SetWithoutSetterException" xml:space="preserve">
+    <value>Set accessor for property "{0}" is unavailable.</value>
+  </data>
+  <data name="CodePropertySetterFormat" xml:space="preserve">
+    <value>The setter method should be public, void, static, and have two parameters. The first parameter should be of the type PSObject. A second parameter is required if a getter method is also available, and should have the same type as the return type for the getter method.</value>
+  </data>
+  <data name="CodePropertyGetterFormat" xml:space="preserve">
+    <value>The getter method should be public, not void, static, and have one parameter of the type PSObject.</value>
+  </data>
+  <data name="CodePropertyGetterAndSetterNull" xml:space="preserve">
+    <value>CodeProperty should use a getter or setter method.</value>
+  </data>
+  <data name="CodeMethodMethodFormat" xml:space="preserve">
+    <value>Cannot create a code method because of the method format. The method should be public, static, and have one parameter of type PSObject.</value>
+  </data>
+  <data name="CycleInAlias" xml:space="preserve">
+    <value>The alias with name "{0}" contains a cycle.</value>
+  </data>
+  <data name="InvalidCastException" xml:space="preserve">
+    <value>Cannot convert the "{0}" value of type "{1}" to type "{2}".</value>
+  </data>
+  <data name="InvalidCastExceptionWithInnerException" xml:space="preserve">
+    <value>Cannot convert value "{0}" to type "{1}". Error: "{2}"</value>
+  </data>
+  <data name="InvalidCastExceptionEnumerationNoFlagAndComma" xml:space="preserve">
+    <value>Cannot convert value "{0}" to type "{1}" because no commas are allowed for this enumeration.</value>
+  </data>
+  <data name="InvalidCastExceptionEnumerationNoValue" xml:space="preserve">
+    <value>Cannot convert value "{0}" to type "{1}" due to enumeration values that are not valid. Specify one of the following enumeration values and try again. The possible enumeration values are "{2}".</value>
+  </data>
+  <data name="InvalidCastExceptionEnumerationNull" xml:space="preserve">
+    <value>Cannot convert null to type "{0}" due to enumeration values that are not valid. Specify one of the following enumeration values and try again. The possible enumeration values are "{1}".</value>
+  </data>
+  <data name="InvalidCastFromNull" xml:space="preserve">
+    <value>Cannot convert null to type "{0}".</value>
+  </data>
+  <data name="InvalidCastExceptionNoStringForConversion" xml:space="preserve">
+    <value>Cannot convert value to type "{0}".  Error: "{1}"</value>
+  </data>
+  <data name="InvalidCastCannotRetrieveString" xml:space="preserve">
+    <value>Cannot convert value to type System.String.</value>
+  </data>
+  <data name="ReferenceTypeExpected" xml:space="preserve">
+    <value>Reference type is expected in argument.</value>
+  </data>
+  <data name="NotIcomparable" xml:space="preserve">
+    <value>Cannot compare "{0}" because it is not IComparable.</value>
+  </data>
+  <data name="ComparisonFailure" xml:space="preserve">
+    <value>Could not compare "{0}" to "{1}". Error: "{2}"</value>
+  </data>
+  <data name="NotTheSameTypeOrNotIcomparable" xml:space="preserve">
+    <value>Cannot compare "{0}" to "{1}" because the objects are not the same type or the object "{0}" does not implement "{2}".</value>
+  </data>
+  <data name="InvalidCastExceptionEnumerationMoreThanOneValue" xml:space="preserve">
+    <value>Cannot convert value "{0}" to type "{1}" because at least two matches were found ({2}, {3}) and only one match is allowed for this enumeration.</value>
+  </data>
+  <data name="InvalidCastExceptionForBooleanArgumentValue" xml:space="preserve">
+    <value>Cannot convert value "{0}" to type "{1}". Boolean parameters accept only Boolean values and numbers, such as $True, $False, 1 or 0.</value>
+  </data>
+  <data name="WriteOnlyProperty" xml:space="preserve">
+    <value>Cannot get property value because "{0}" is a write-only property.</value>
+  </data>
+  <data name="ReadOnlyProperty" xml:space="preserve">
+    <value>"{0}" is a ReadOnly property.</value>
+  </data>
+  <data name="XmlNodeSetShouldBeAString" xml:space="preserve">
+    <value>Cannot set "{0}" because only strings can be used as values to set XmlNode properties.</value>
+  </data>
+  <data name="XmlNodeSetRestrictions" xml:space="preserve">
+    <value>Cannot set "{0}" because only unique attributes or unique non-attributed leaf nodes can be set.</value>
+  </data>
+  <data name="CannotAddPropertyOrMethod" xml:space="preserve">
+    <value>A PSProperty or PSMethod object cannot be added to this collection.</value>
+  </data>
+  <data name="TypesXmlError" xml:space="preserve">
+    <value>The following error occurred while loading the extended type data file: {0}</value>
+  </data>
+  <data name="ToStringException" xml:space="preserve">
+    <value>The following exception occurred while retrieving the string: "{0}"</value>
+  </data>
+  <data name="NotAClsCompliantFieldProperty" xml:space="preserve">
+    <value>The field or property: "{0}" for type: "{1}" differs only in letter casing from the field or property: "{2}". The type must be Common Language Specification (CLS) compliant.</value>
+  </data>
+  <data name="ExceptionRetrievingTypeNameHierarchy" xml:space="preserve">
+    <value>The following exception occurred while retrieving the type name hierarchy: "{0}".</value>
+  </data>
+  <data name="ExceptionGettingMember" xml:space="preserve">
+    <value>The following exception occurred while retrieving member "{1}": "{0}"</value>
+  </data>
+  <data name="ExceptionGettingMembers" xml:space="preserve">
+    <value>The following exception occurred while retrieving members: "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingPropertyReadState" xml:space="preserve">
+    <value>The following exception occurred while retrieving the read state for property "{1}": "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingPropertyWriteState" xml:space="preserve">
+    <value>The following exception occurred while retrieving the write state for property "{1}": "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingPropertyType" xml:space="preserve">
+    <value>The following exception occurred while retrieving the type for property "{1}": "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingPropertyString" xml:space="preserve">
+    <value>The following exception occurred while retrieving the string representation for property "{1}" : "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingPropertyAttributes" xml:space="preserve">
+    <value>The following exception occurred while retrieving the attributes for property "{1}": "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingMethodDefinitions" xml:space="preserve">
+    <value>The following exception occurred while retrieving the definitions for method "{1}": "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingMethodString" xml:space="preserve">
+    <value>The following exception occurred while retrieving the string representation for method "{1}": "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingParameterizedPropertytype" xml:space="preserve">
+    <value>The following exception occurred while retrieving the type for parameterized property "{1}": "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingParameterizedPropertyReadState" xml:space="preserve">
+    <value>The following exception occurred while retrieving the read state for parameterized property "{1}": "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingParameterizedPropertyWriteState" xml:space="preserve">
+    <value>The following exception occurred while retrieving the write state for parameterized property "{1}": "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingParameterizedPropertyDefinitions" xml:space="preserve">
+    <value>The following exception occurred while retrieving the definitions for parameterized property "{1}": "{0}"</value>
+  </data>
+  <data name="ExceptionRetrievingParameterizedPropertyString" xml:space="preserve">
+    <value>The following exception occurred while retrieving the string representation for parameterized property "{1}": "{0}"</value>
+  </data>
+  <data name="CannotSetValueForMemberType" xml:space="preserve">
+    <value>Cannot set the Value property for PSMemberInfo object of type "{0}".</value>
+  </data>
+  <data name="NonRefArgumentToRefParameter" xml:space="preserve">
+    <value>Argument: '{0}' should be a {1}. Use {2}.</value>
+  </data>
+  <data name="RefArgumentToNonRefParameter" xml:space="preserve">
+    <value>Argument: '{0}' should not be a {1}. Do not use {2}.</value>
+  </data>
+  <data name="PropertyNotFoundInTypeDescriptor" xml:space="preserve">
+    <value>The property "{0}" was not found.</value>
+  </data>
+  <data name="InvalidComponent" xml:space="preserve">
+    <value>Cannot get or set the property value. The "{0}" argument should be of type "{1}" or "{2}".</value>
+  </data>
+  <data name="CannotSetNonManagementObject" xml:space="preserve">
+    <value>Cannot set the value for property "{0}" because the object has type "{1}" instead of "{2}".</value>
+  </data>
+  <data name="WMIMethodInvocationException" xml:space="preserve">
+    <value>Exception calling "{0}" : "{1}"</value>
+  </data>
+  <data name="InvalidWMIClassPath" xml:space="preserve">
+    <value>{0} is not a valid class path.</value>
+  </data>
+  <data name="InvalidWMIPath" xml:space="preserve">
+    <value>{0} is not a valid path.</value>
+  </data>
+  <data name="PropertyIsSettableError" xml:space="preserve">
+    <value>The adapter cannot determine whether property "{0}" can be changed.</value>
+  </data>
+  <data name="PropertyIsGettableError" xml:space="preserve">
+    <value>The adapter cannot determine whether property "{0}" is gettable.</value>
+  </data>
+  <data name="PropertyGetError" xml:space="preserve">
+    <value>The adapter cannot get the value of property "{0}".</value>
+  </data>
+  <data name="PropertySetError" xml:space="preserve">
+    <value>The adapter cannot set the value of property "{0}".</value>
+  </data>
+  <data name="PropertyTypeError" xml:space="preserve">
+    <value>The adapter cannot get the type of property "{0}".</value>
+  </data>
+  <data name="GetTypeNameHierarchyError" xml:space="preserve">
+    <value>The adapter cannot get the type hierarchy of "{0}".</value>
+  </data>
+  <data name="GetProperties" xml:space="preserve">
+    <value>The adapter cannot get the properties of "{0}".</value>
+  </data>
+  <data name="GetProperty" xml:space="preserve">
+    <value>The adapter cannot get property "{0}" for "{1}".</value>
+  </data>
+  <data name="NullReturnValueError" xml:space="preserve">
+    <value>"{0}" returned a null value.</value>
+  </data>
+  <data name="PropertyNotFound" xml:space="preserve">
+    <value>The {0} property was not found for the {1} object. The available property is: {2}</value>
+  </data>
+  <data name="ObjectCreationError" xml:space="preserve">
+    <value>Cannot create object of type "{0}". {1}</value>
+  </data>
+  <data name="CannotInvokeStaticMethodOnUninstantiatedGenericType" xml:space="preserve">
+    <value>Cannot invoke static methods or access static properties on the open generic type {0}.  Specify the type parameters and retry.  For example, instead of [System.Collections.Generic.HashSet``1]::CreateSetComparer() use [System.Collections.Generic.HashSet[int]]::CreateSetComparer().</value>
+    <comment>Error message shown when somebody tries to access a property or invoke a static method on an uninstantiated generic type:
+PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
+
+{0} is a placeholder for a type name (for example: System.Collections.Generic.Comparer`1)</comment>
+  </data>
+  <data name="ExceptionConstructingAttribute" xml:space="preserve">
+    <value>The following exception occurred while constructing the attribute "{1}": "{0}"</value>
+  </data>
+  <data name="CannotConvertValueToStringArray" xml:space="preserve">
+    <value>The value "{0}" cannot be converted to a string array.</value>
+  </data>
+  <data name="InvalidCastExceptionNonCoreType" xml:space="preserve">
+    <value>Cannot convert value to type "{0}". Only core types are supported in this language mode.</value>
+  </data>
+</root>

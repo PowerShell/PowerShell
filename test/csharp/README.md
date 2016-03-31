@@ -1,6 +1,6 @@
 # xUnit Tests
 
-This tests are completely Linux specific.
+These tests are completely Linux specific.
 
 Every test class *must* belong to
 `[Collection("AssemblyLoadContext")]`. This ensures that PowerShell's

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="LogReadError" xml:space="preserve">
+    <value>Log "{0}" could not be read to completion due to the following error. This may have occurred because the log was cleared while still being read. {1}</value>
+  </data>
+  <data name="NoEntriesFound" xml:space="preserve">
+    <value>No matches found</value>
+  </data>
+  <data name="ClearEventLogWarning" xml:space="preserve">
+    <value>Do you want to clear the "{0}" log on the computer "{1}"?</value>
+  </data>
+  <data name="LogDoesNotExist" xml:space="preserve">
+    <value>The Log name "{0}" does not exist in the computer "{1}".</value>
+  </data>
+  <data name="PathDoesNotExist" xml:space="preserve">
+    <value>The path to the "{1}" computer cannot be found.</value>
+  </data>
+  <data name="SourceDoesNotExist" xml:space="preserve">
+    <value>The source name "{2}" does not exist on computer "{1}".</value>
+  </data>
+  <data name="AccessDenied" xml:space="preserve">
+    <value>The registry key for the log "{0}" for source "{2}" could not be opened.</value>
+  </data>
+  <data name="OSWritingError" xml:space="preserve">
+    <value>The operating system reported an error when writing the event entry to the event log. A Windows error code is not available.</value>
+  </data>
+  <data name="LimitEventLogWarning" xml:space="preserve">
+    <value>Do you want to change the properties of the "{0}" log on the "{1}" computer?</value>
+  </data>
+  <data name="PermissionDenied" xml:space="preserve">
+    <value>The registry key for the log "{0}" could not be opened on the computer "{1}".</value>
+  </data>
+  <data name="ValueOutofRange" xml:space="preserve">
+    <value>The value supplied for MaximumSize parameter has to be in the range of 64 KB to 4GB with an increment of 64 KB. Please enter a proper value and then retry.</value>
+  </data>
+  <data name="NoAccess" xml:space="preserve">
+    <value>Access to the "{1}" computer is denied.</value>
+  </data>
+  <data name="SourceExistWithLog" xml:space="preserve">
+    <value>The "{2}" source is already registered with the "{0}" log.</value>
+  </data>
+  <data name="SourceExistInComp" xml:space="preserve">
+    <value>The "{2}" source is already registered on the "{1}" computer.</value>
+  </data>
+  <data name="RemoveEventLogWarning" xml:space="preserve">
+    <value>Do you want to remove the "{0}" log from the "{1}" computer?</value>
+  </data>
+  <data name="RemoveSourceWarning" xml:space="preserve">
+    <value>Do you want to remove the "{0}" source from the "{1}" computer?</value>
+  </data>
+  <data name="InvalidOverflowAction" xml:space="preserve">
+    <value>Retention days is valid only if the overflow action is "OverwriteOlder". Please change  and try again.</value>
+  </data>
+  <data name="InvalidArgument" xml:space="preserve">
+    <value>Specify a valid value for the number of retention days.</value>
+  </data>
+  <data name="AccessIsDenied" xml:space="preserve">
+    <value>Access is denied. Try running the command again in a session that has been opened with elevated user rights (that is, Run as Administrator).</value>
+  </data>
+  <data name="NotSupported" xml:space="preserve">
+    <value>The command is not supported in this version of the operating system.</value>
+  </data>
+</root>
