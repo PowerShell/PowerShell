@@ -1,6 +1,8 @@
-# Contributing to Project Magrathea
+Contributing to Project Magrathea
+=================================
 
-## Rules
+Rules
+-----
 
 **Do not commit code changes to the master branch!**
 
@@ -22,15 +24,18 @@ Write *good* commit messages. Follow Tim Pope's [guidelines][]:
 * The rest should be a wrapped, detailed explanation of the what and why
 * The tone should be imperative
 
+[submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
 [guidelines]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
 
-## New to Git?
+New to Git?
+-----------
 
-- [Git 101](docs/git-101.md) : install and getting started.
-- [Git for sd users](docs/git-sd.md) : a handy reference document for people familiar with `sd`.
-- [Commit process](docs/git-commit.md) : step-by-step commit guide with all gory details.
+- [Git Basics](docs/git/basics.md): install and getting started.
+- [Git for sd users](docs/git/source-depot.md): a handy reference document for people familiar with `sd`.
+- [Commit process](docs/git/committing.md): step-by-step commit guide with all gory details.
 
-#### Authentication
+Authentication
+--------------
 
 If you do not have a preferred method of authentication, enable the storage
 credential helper, which will cache your credentials in plaintext on your
@@ -43,33 +48,33 @@ git config --global credential.helper store
 Alternatively, on Windows, you can try the
 [Git Credential Manager for Windows][manager].
 
-[manager]: https://github.com/Microsoft/Git-Credential-Manager-for-Windows
-[Git for Windows]: https://git-scm.com/download/win
 [token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
-[submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
+[manager]: https://github.com/Microsoft/Git-Credential-Manager-for-Windows
 
-## Microsoft employees
+Microsoft employees
+-------------------
 
 Microsoft employees should follow Microsoft open source [guidelinces][MS-OSS-Hub].
 
 Particularly:
 
-* [Join][MS-OSS-Hub] Microsoft github organization.
+* [Join][MS-OSS-Hub] Microsoft GitHub organization.
 * Use your `alias@microsoft.com` for commit messages email. 
-It the requirement for contributions made as part of your work at Microsoft.
 * Enable [2 factor authentication][].
 
 [MS-OSS-Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
 [2 factor authentication]: https://github.com/blog/1614-two-factor-authentication
 
-## Branches
+Branches
+--------
 
 * Checkout a new local branch for every change you want to make (bugfix, feature).
 * Use `alias/feature-name` pattern.
 * Use lowercase-with-dashes for naming.
-* Use same branch name in super-project and all [submodules](#submodules).
+* Use same branch name in super-project and all [submodules][].
 
-## Permissions
+Permissions
+-----------
 
 If you have difficulty in pushing your changes, there is a high
 probability that you actually don't have permissions.
@@ -82,30 +87,33 @@ repositories, as you can also just [fork a repo][].
 
 [fork a repo]: https://help.github.com/articles/fork-a-repo/
 
-## Rebase and Fast-Forward Merge Pull Requests
+Rebase and Fast-Forward Merge Pull Requests in Submodules
+---------------------------------------------------------
 
-Because GitHub's "Merge Pull Request" button merges with `--no-ff`, an extra
-merge commit will always be created. This can be especially annoying when
-trying to commit updates to submodules. Therefore our policy is to merge using
-the Git CLI after approval, with a rebase onto master to enable a fast-forward
-merge. If you are uncomfortable doing this, please ask @andschwa to merge.
+*This is not necessary in the superproject, only submodules!*
 
-## Submodules
+Because GitHub's "Merge Pull Request" button merges with `--no-ff`, an
+extra merge commit will always be created. This can be especially
+annoying when trying to commit updates to submodules. Therefore our
+policy is to merge using the Git CLI after approval, with a rebase
+onto master to enable a fast-forward merge.
 
-This repository is a superproject with a half-dozen [submodules][]. **DO NOT**
-commit updates unless absolutely necessary. When submodules must be updated, a
-separate Pull Request must be submitted, reviewed, and merged before updating
-the superproject. When committing submodule updates, ensure no other changes
-are in the same commit. Submodule bumps may be included in feature branches for
-ease of work, but the update must be independently approved before merging into
-master.
+Submodules
+----------
 
-[submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
+This repository is a superproject with a half-dozen [submodules][].
+**DO NOT** commit updates unless absolutely necessary. When submodules
+must be updated, a separate Pull Request must be submitted, reviewed,
+and merged before updating the superproject. When committing submodule
+updates, ensure no other changes are in the same commit. Submodule
+bumps may be included in feature branches for ease of work, but the
+update must be independently approved before merging into master.
 
-## Recommended Git configurations
+Recommended Git configurations
+------------------------------
 
-I highly recommend these configurations to help deal with whitespace, rebasing,
-and general use of Git.
+We highly recommend these configurations to help deal with whitespace,
+rebasing, and general use of Git.
 
 > Auto-corrects your command when it's sure (`stats` to `status`)
 ```sh
