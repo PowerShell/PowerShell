@@ -14,7 +14,7 @@ namespace System.Management.Automation
     {
         private Dictionary<string, string> InitializeTypeCatalog()
         {
-            Dictionary<string, string> typeCatalog = new Dictionary<string, string>(2367, StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, string> typeCatalog = new Dictionary<string, string>(2379, StringComparer.OrdinalIgnoreCase);
             typeCatalog["Microsoft.CodeAnalysis.CaseInsensitiveComparison"] = "Microsoft.CodeAnalysis, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
             typeCatalog["Microsoft.CodeAnalysis.ScriptCompilationInfo"] = "Microsoft.CodeAnalysis, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
             typeCatalog["Microsoft.CodeAnalysis.CommandLineAnalyzerReference"] = "Microsoft.CodeAnalysis, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
@@ -1021,6 +1021,14 @@ namespace System.Management.Automation
             typeCatalog["System.IO.RenamedEventArgs"] = "System.IO.FileSystem.Watcher, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.IO.RenamedEventHandler"] = "System.IO.FileSystem.Watcher, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.IO.WatcherChangeTypes"] = "System.IO.FileSystem.Watcher, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["System.IO.MemoryMappedFiles.MemoryMappedFile"] = "System.IO.MemoryMappedFiles, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["System.IO.MemoryMappedFiles.MemoryMappedFileAccess"] = "System.IO.MemoryMappedFiles, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["System.IO.MemoryMappedFiles.MemoryMappedFileOptions"] = "System.IO.MemoryMappedFiles, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["System.IO.MemoryMappedFiles.MemoryMappedFileRights"] = "System.IO.MemoryMappedFiles, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["System.IO.MemoryMappedFiles.MemoryMappedViewAccessor"] = "System.IO.MemoryMappedFiles, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["System.IO.MemoryMappedFiles.MemoryMappedViewStream"] = "System.IO.MemoryMappedFiles, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["Microsoft.Win32.SafeHandles.SafeMemoryMappedFileHandle"] = "System.IO.MemoryMappedFiles, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["Microsoft.Win32.SafeHandles.SafeMemoryMappedViewHandle"] = "System.IO.MemoryMappedFiles, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.IO.Pipes.AnonymousPipeClientStream"] = "System.IO.Pipes, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.IO.Pipes.AnonymousPipeServerStream"] = "System.IO.Pipes, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.IO.Pipes.NamedPipeClientStream"] = "System.IO.Pipes, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
@@ -1030,6 +1038,8 @@ namespace System.Management.Automation
             typeCatalog["System.IO.Pipes.PipeStream"] = "System.IO.Pipes, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.IO.Pipes.PipeTransmissionMode"] = "System.IO.Pipes, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["Microsoft.Win32.SafeHandles.SafePipeHandle"] = "System.IO.Pipes, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["System.IO.UnmanagedMemoryAccessor"] = "System.IO.UnmanagedMemoryStream, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["System.IO.UnmanagedMemoryStream"] = "System.IO.UnmanagedMemoryStream, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.Linq.Enumerable"] = "System.Linq, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.Linq.IGrouping`2"] = "System.Linq, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.Linq.ILookup`2"] = "System.Linq, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
@@ -2095,6 +2105,8 @@ namespace System.Management.Automation
             typeCatalog["System.Security.Cryptography.OidCollection"] = "System.Security.Cryptography.Encoding, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.Security.Cryptography.OidEnumerator"] = "System.Security.Cryptography.Encoding, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.Security.Cryptography.OidGroup"] = "System.Security.Cryptography.Encoding, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["System.Security.Cryptography.AsnEncodedDataCollection"] = "System.Security.Cryptography.Encoding, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+            typeCatalog["System.Security.Cryptography.AsnEncodedDataEnumerator"] = "System.Security.Cryptography.Encoding, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.Security.Cryptography.AsymmetricAlgorithm"] = "System.Security.Cryptography.Primitives, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.Security.Cryptography.CipherMode"] = "System.Security.Cryptography.Primitives, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             typeCatalog["System.Security.Cryptography.CryptographicException"] = "System.Security.Cryptography.Primitives, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
