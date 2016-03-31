@@ -32,6 +32,10 @@ Get PowerShell
 Building summary: `Start-PSBuild` from the module
 `./PowerShellGitHubDev.psm1` (self-host on Linux / OS X)
 
+See [Linux releases](docs/installation/linux.md) and
+[Windows artifacts](docs/installation/windows.md) installation
+instructions.
+
 [releases]: https://github.com/PowerShell/PowerShell/releases
 [artifacts]: https://ci.appveyor.com/project/PowerShell/powershell-linux/build/artifacts
 
@@ -46,7 +50,8 @@ search the [issues][], and if all else fails, open a new issue.
 
 [issues]: https://github.com/PowerShell/PowerShell/issues
 
-## Obtain the source code
+Obtain the source code
+----------------------
 
 ### Setup Git
 
@@ -65,17 +70,3 @@ other repositories embedded within it as submodules. *Please* see the
 contributing guidelines and learn about submodules. Not every
 submodule is required on every system; see the individual build
 instructions for the necessary subsets.
-
-### FullCLR PowerShell
-
-## Running from CI server
-
-We publish an archive with FullCLR bits on every CI build with [AppVeyor][].
-
-* Download zip package from **artifacts** tab of the particular build.
-* Unblock zip file: right-click in file explorer -> properties -> check
-  'Unblock' checkbox -> apply
-* Extract zip file to `$bin` directory
-* `Start-DevPSGithub -binDir $bin`
-
-[appveyor]: https://ci.appveyor.com/project/PowerShell/powershell-linux
