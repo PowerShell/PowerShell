@@ -41,7 +41,7 @@ namespace System.Management.Automation
             _eventLog = new EventLog();
             _eventLog.Source = source;
 
-            _resourceManager = new ResourceManager("System.Management.Automation.Logging", System.Reflection.Assembly.GetExecutingAssembly());
+            _resourceManager = new ResourceManager("System.Management.Automation.resources.Logging", System.Reflection.Assembly.GetExecutingAssembly());
         }
 
         internal string SetupEventSource(string shellId)
