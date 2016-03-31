@@ -20,6 +20,8 @@ During the install process, choose these recommended settings:
 * Use Windows' default console window
 * Enable file system caching
 
+[Git for Windows]: https://git-scm.com/download/win
+
 #### Linux
 
 Install via the package manager:
@@ -42,12 +44,15 @@ changes, and issue a pull request.
 
 #### Githug
 
-[Githug](https://github.com/Gazler/githug) is a great gamefied way to learn git in couple hours.
-After finishing 50+ real-world scenarios you will have a pretty good idea about what and when you can do with git.
+[Githug](https://github.com/Gazler/githug) is a great gamified way to
+learn Git in couple hours. After finishing 50+ real-world scenarios
+you will have a pretty good idea about what and when you can do with
+Git.
 
 ## Cheatsheets
 
 #### Git pretty
+
 [So you have a mess on your hands?](http://justinhileman.info/article/git-pretty/)
 
 ## Scenarios
