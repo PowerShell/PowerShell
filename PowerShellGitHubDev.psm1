@@ -111,8 +111,6 @@ function Start-PSBuild
         if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
             $Arguments += "Info" } else { $Arguments += "Warning" }
 
-        if ($Runtime) { $Arguments += "--runtime", $Runtime }
-
         $Arguments += "$PSScriptRoot"
 
         dotnet restore $Arguments
