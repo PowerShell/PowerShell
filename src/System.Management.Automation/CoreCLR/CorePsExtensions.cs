@@ -3,8 +3,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-#if CORECLR
-
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -1677,7 +1675,5 @@ namespace Microsoft.PowerShell.CoreCLR
         }
     }
 }
-
-#endif
 
 #endif
