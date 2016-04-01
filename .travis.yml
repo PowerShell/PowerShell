@@ -9,7 +9,7 @@ git:
   submodules: false
 before_install:
   - git config --global url.git@github.com:.insteadOf https://github.com/
-  - git submodule update --init --recursive -- src/libpsl-native src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
+  - git submodule update --init --recursive -- src/libpsl-native src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester src/omi
   - sudo sh -c 'echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/dotnet/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list'
   - sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
   - sudo apt-get -qq update
@@ -18,6 +18,7 @@ before_install:
   - sudo dpkg -i powershell.deb
 script:
   - powershell -c "Import-Module ./PowerShellGitHubDev.psm1; Start-PSBuild"
+  - ./omibuild.sh
   - ./pester.sh
   - ./xunit.sh
 notifications:
