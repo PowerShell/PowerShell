@@ -17,8 +17,7 @@ try {
     $IsWindows = $true
 }
 
-function Start-PSBuild
-{
+function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName='CoreCLR')]
     param(
         [switch]$Restore,
@@ -43,63 +42,55 @@ function Start-PSBuild
 
         [Parameter(ParameterSetName='FullCLR')]
         [ValidateSet("Debug",
-                     "Release")] 
-        [string]$msbuildConfiguration = "Release"   
+                     "Release")]
+        [string]$msbuildConfiguration = "Release"
     )
 
-    function precheck([string]$command, [string]$missedMessage)
-    {
+    function precheck([string]$command, [string]$missedMessage) {
         $c = Get-Command $command -ErrorAction SilentlyContinue
-        if (-not $c)
-        {
+        if (-not $c) {
             Write-Warning $missedMessage
             return $false
-        }
-        else 
-        {
-            return $true    
+        } else {
+            return $true
         }
     }
 
-    function log([string]$message)
-    {
+    function log([string]$message) {
         Write-Host -Foreground Green $message
     }
 
     # simplify ParameterSetNames
-    if ($PSCmdlet.ParameterSetName -eq 'FullCLR')
-    {
+    if ($PSCmdlet.ParameterSetName -eq 'FullCLR') {
         $FullCLR = $true
     }
 
     # verify we have all tools in place to do the build
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH! See: https://dotnet.github.io/getting-started/"
-    if ($FullCLR)
-    {
+    if ($FullCLR) {
         # cmake is needed to build powershell.exe
         $precheck = $precheck -and (precheck 'cmake' 'cmake not found. You can install it from https://chocolatey.org/packages/cmake.portable')
-        
+
         # msbuild is needed to build powershell.exe
         # msbuild is part of .NET Framework, we can try to get it from well-known location.
-        if (-not (Get-Command -Name msbuild -ErrorAction Ignore))
-        {
+        if (-not (Get-Command -Name msbuild -ErrorAction Ignore)) {
             $env:path += ";${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319"
         }
 
         $precheck = $precheck -and (precheck 'msbuild' 'msbuild not found. Install Visual Studio 2015.')
     }
-    
-    if (-not $precheck) { return }
+
+    # Abort if any precheck failed
+    if (-not $precheck) {
+        return
+    }
 
     # define key build variables
-    if ($FullCLR) 
-    {
+    if ($FullCLR) {
         $Top = "$PSScriptRoot\src\Microsoft.PowerShell.ConsoleHost"
         $framework = 'net451'
-    }
-    else 
-    {
-        $Top = "$PSScriptRoot/src/Microsoft.PowerShell.Linux.Host"   
+    } else {
+        $Top = "$PSScriptRoot/src/Microsoft.PowerShell.Linux.Host"
         $framework = 'netstandardapp1.5'
     }
 
@@ -109,7 +100,10 @@ function Start-PSBuild
 
         $Arguments = @("--verbosity")
         if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-            $Arguments += "Info" } else { $Arguments += "Warning" }
+            $Arguments += "Info"
+        } else {
+            $Arguments += "Warning"
+        }
 
         $Arguments += "$PSScriptRoot"
 
@@ -154,46 +148,39 @@ function Start-PSBuild
         }
 
         mkdir $build -ErrorAction SilentlyContinue
-        try
-        {
+        try {
             Push-Location $build
 
-            if ($cmakeGenerator)
-            {
+            if ($cmakeGenerator) {
                 cmake -G $cmakeGenerator ..\src\powershell-native
-            }
-            else
-            {
+            } else {
                 cmake ..\src\powershell-native
             }
             msbuild powershell.vcxproj /p:Configuration=$msbuildConfiguration
             # cp -rec $msbuildConfiguration\* $Output
+        } finally {
+            Pop-Location
         }
-        finally { Pop-Location }
     }
 
     log "Building PowerShell"
+
     $Arguments = "--framework", $framework
     if ($IsLinux -Or $IsOSX) { $Arguments += "--configuration", "Linux" }
     if ($Runtime) { $Arguments += "--runtime", $Runtime }
-    
-    Write-Verbose "Run dotnet publish $Arguments from $pwd"
 
-    # this try-finally is part of workaround about AssemblyKeyFileAttribute issue
-    try 
-    {
+    log "Run dotnet build $Arguments from $pwd"
+
+    try {
         # Relative paths do not work well if cwd is not changed to project
         Push-Location $Top
         dotnet build $Arguments
-    }
-    finally
-    {
+    } finally {
         Pop-Location
     }
 }
 
-function Start-PSPackage
-{
+function Start-PSPackage {
     # PowerShell packages use Semantic Versioning http://semver.org/
     #
     # Ubuntu and OS X packages are supported.
@@ -363,14 +350,14 @@ function Convert-PSObjectToHashtable
 .EXAMPLE Copy-SubmoduleFiles -ToSubmodule   # copy files FROM src/<project> folders TO submodule
 #>
 function Copy-SubmoduleFiles {
-    
+
     [CmdletBinding()]
     param(
         [string]$mappingFilePath = "$PSScriptRoot/mapping.json",
         [switch]$ToSubmodule
     )
 
-    
+
     if (-not (Test-Path $mappingFilePath))
     {
         throw "Mapping file not found in $mappingFilePath"
@@ -388,10 +375,10 @@ function Copy-SubmoduleFiles {
             {
                 cp $_.Value $_.Key -Verbose:$Verbose
             }
-            else 
+            else
             {
                 mkdir (Split-Path $_.Value) -ErrorAction SilentlyContinue > $null
-                cp $_.Key $_.Value -Verbose:$Verbose  
+                cp $_.Key $_.Value -Verbose:$Verbose
             }
         }
     }
@@ -418,7 +405,7 @@ function New-MappingFile
         {
             return Split-Path $path -Leaf
         }
-        
+
         if ($project -match 'Microsoft.Management.Infrastructure')
         {
             return Split-Path $path -Leaf
@@ -487,7 +474,7 @@ function Get-InvertedOrderedMap
 }
 
 <#
-.EXAMPLE Send-GitDiffToSd -diffArg1 45555786714d656bd31cbce67dbccb89c433b9cb -diffArg2 45555786714d656bd31cbce67dbccb89c433b9cb~1 -pathToAdmin d:\e\ps_dev\admin 
+.EXAMPLE Send-GitDiffToSd -diffArg1 45555786714d656bd31cbce67dbccb89c433b9cb -diffArg2 45555786714d656bd31cbce67dbccb89c433b9cb~1 -pathToAdmin d:\e\ps_dev\admin
 Apply a signle commit to admin folder
 #>
 function Send-GitDiffToSd
@@ -521,19 +508,19 @@ function Send-GitDiffToSd
                     Write-Host -Foreground Green "Patch content"
                     cat $env:TEMP\diff
                 }
-                else 
+                else
                 {
-                    & $patchPath --binary -p1 $sdFilePath $env:TEMP\diff        
+                    & $patchPath --binary -p1 $sdFilePath $env:TEMP\diff
                 }
             }
-            else 
+            else
             {
                 Write-Host -Foreground Green "No changes in $file"
             }
         }
-        else 
+        else
         {
             Write-Host -Foreground Green "Ignore changes in $file, because there is no mapping for it"
         }
-    }    
+    }
 }
