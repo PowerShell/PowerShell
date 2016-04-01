@@ -6,12 +6,6 @@ function build {
     ./configure --dev
     make -j
     popd
-
-    # Build the OMI Provider
-    pushd src/omi-provider
-    cmake .
-    make -j
-    popd
 }
 
 #clean OMI if needed
