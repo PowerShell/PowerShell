@@ -23,7 +23,6 @@ function Start-PSBuild
     param(
         [switch]$Restore,
         [switch]$Clean,
-        [string]$Output,
 
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
@@ -67,16 +66,11 @@ function Start-PSBuild
         Write-Host -Foreground Green $message
     }
 
-    # simplify ParameterSetNames, set output
+    # simplify ParameterSetNames
     if ($PSCmdlet.ParameterSetName -eq 'FullCLR')
     {
         $FullCLR = $true
     }
-
-    if (-not $Output)
-    {
-        if ($FullCLR) { $Output = "$PSScriptRoot/binFull" } else { $Output = "$PSScriptRoot/bin" }
-    }    
 
     # verify we have all tools in place to do the build
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH! See: https://dotnet.github.io/getting-started/"
@@ -96,13 +90,6 @@ function Start-PSBuild
     }
     
     if (-not $precheck) { return }
-
-    # handle clean
-    if ($Clean) {
-        Remove-Item -Force -Recurse $Output -ErrorAction SilentlyContinue
-    }
-
-    New-Item -Force -Type Directory $Output | Out-Null
 
     # define key build variables
     if ($FullCLR) 
@@ -182,38 +169,28 @@ function Start-PSBuild
                 cmake ..\src\powershell-native
             }
             msbuild powershell.vcxproj /p:Configuration=$msbuildConfiguration
-            cp -rec $msbuildConfiguration\* $Output
+            # cp -rec $msbuildConfiguration\* $Output
         }
         finally { Pop-Location }
     }
 
     log "Building PowerShell"
-    $Arguments = "--framework", $framework, "--output", $Output
+    $Arguments = "--framework", $framework
     if ($IsLinux -Or $IsOSX) { $Arguments += "--configuration", "Linux" }
     if ($Runtime) { $Arguments += "--runtime", $Runtime }
     
-    if ($FullCLR) 
-    {
-        # there is a problem with code signing: 
-        # AssemblyKeyFileAttribute file path cannot be correctly located, if `dotnet publish $TOP` syntax is used
-        # we workaround it with calling `dotnet publish` from $TOP directory instead.
-        Push-Location $Top
-    }
-    else 
-    {
-        $Arguments += $Top
-    }
-
     Write-Verbose "Run dotnet publish $Arguments from $pwd"
 
     # this try-finally is part of workaround about AssemblyKeyFileAttribute issue
     try 
     {
-        dotnet publish $Arguments
+        # Relative paths do not work well if cwd is not changed to project
+        Push-Location $Top
+        dotnet build $Arguments
     }
     finally
     {
-        if ($FullCLR)  { Pop-Location }
+        Pop-Location
     }
 }
 
