@@ -1,3 +1,88 @@
+
+Describe "Set-Alias DRT Unit Tests" -Tags DRT{
+	It "Set-Alias Invalid Scope Name should throw PSArgumentException"{	
+		try { 
+			Set-Alias -Name "ABCD" -Value "foo" -Scope "bogus"
+			Throw "Execution OK"
+		} 
+		catch {
+			$_.FullyQualifiedErrorId | Should be "Argument,Microsoft.PowerShell.Commands.SetAliasCommand"
+		}
+	}
+	
+	It "Set-Alias ReadOnly Force"{
+			Set-Alias -Name ABCD -Value "foo" -Option ReadOnly -PassThru:$true
+			$result=Get-Alias -Name ABCD
+			$result.Name| Should Be "ABCD"
+			$result.Definition| Should Be "foo"
+			$result.Description| Should Be ""
+			$result.Options| Should Be "ReadOnly"
+			
+			Set-Alias -Name ABCD -Value "foo" -Force:$true -PassThru:$true
+			$result=Get-Alias -Name ABCD
+			$result.Name| Should Be "ABCD"
+			$result.Definition| Should Be "foo"
+			$result.Description| Should Be ""
+			$result.Options| Should Be "None"
+	}
+	
+	It "Set-Alias Name And Value Valid"{
+			Set-Alias -Name ABCD -Value "MyCommand" 
+			$result=Get-Alias -Name ABCD
+			$result.Name| Should Be "ABCD"
+			$result.Definition| Should Be "MyCommand"
+			$result.Description| Should Be ""
+			$result.Options| Should Be "None"
+	}
+	It "Set-Alias Name And Value Positional Valid"{
+			Set-Alias -Name ABCD "foo" 
+			$result=Get-Alias ABCD
+			$result.Name| Should Be "ABCD"
+			$result.Definition| Should Be "foo"
+			$result.Description| Should Be ""
+			$result.Options| Should Be "None"
+	}
+	It "Set-Alias Description Valid"{
+			Set-Alias -Name ABCD -Value "MyCommand" -Description "test description" 
+			$result=Get-Alias -Name ABCD
+			$result.Name| Should Be "ABCD"
+			$result.Definition| Should Be "MyCommand"
+			$result.Description| Should Be "test description"
+			$result.Options| Should Be "None"
+	}
+	It "Set-Alias Scope Valid"{
+			Set-Alias -Name ABCD -Value "localfoo" -scope local -PassThru:$true
+			Set-Alias -Name ABCD -Value "foo1" -scope "1" -PassThru:$true
+			
+			$result=Get-Alias -Name ABCD
+			$result.Name| Should Be "ABCD"
+			$result.Definition| Should Be "localfoo"
+			$result.Description| Should Be ""
+			$result.Options| Should Be "None"
+			
+			$result=Get-Alias -Name ABCD -scope local
+			$result.Name| Should Be "ABCD"
+			$result.Definition| Should Be "localfoo"
+			$result.Description| Should Be ""
+			$result.Options| Should Be "None"
+			
+			$result=Get-Alias -Name ABCD -scope "1"
+			$result.Name| Should Be "ABCD"
+			$result.Definition| Should Be "foo1"
+			$result.Description| Should Be ""
+			$result.Options| Should Be "None"
+	}
+	It "Set-Alias Expose Bug 1062958, BugId:905449"{
+		try { 
+			Set-Alias -Name "ABCD" -Value "foo" -Scope "-1"
+			Throw "Execution OK"
+		} 
+		catch {
+			$_.FullyQualifiedErrorId | Should be "ArgumentOutOfRange,Microsoft.PowerShell.Commands.SetAliasCommand"
+		}
+	}
+}
+
 Describe "Set-Alias" {
     Mock Get-Date { return "Friday, October 30, 2015 3:38:08 PM" }
     It "Should be able to set alias without error" {
