@@ -42,3 +42,9 @@ provide a PID. (Please be careful not to commit such a change).
 [vscode]: https://code.visualstudio.com/
 [OmniSharp]: https://github.com/OmniSharp/omnisharp-vscode
 [vscclrdebugger]: http://aka.ms/vscclrdebugger
+
+corehost
+--------
+
+The native executable prouduced by .NET CLI will produce trace output
+if launched with `COREHOST_TRACE=1 ./powershell`.
