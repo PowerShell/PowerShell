@@ -30,33 +30,21 @@ namespace System.Management.Automation.Remoting
         #region Members
         
         private System.Net.Sockets.AddressFamily m_AddressFamily;
-        private HyperVSocketFlag m_Flag;
         private Guid m_VmId;
         private Guid m_ServiceId;
 
         public const System.Net.Sockets.AddressFamily AF_HYPERV = (System.Net.Sockets.AddressFamily)34;
         public const int HYPERV_SOCK_ADDR_SIZE = 36;
 
-        /// <summary>
-        /// Supported values of m_Flag.
-        /// </summary>
-        public enum HyperVSocketFlag
-        {
-            VM = 0,
-            HyperVContainer = 1
-        }
-
         #endregion
 
         #region Constructor
 
         public HyperVSocketEndPoint(System.Net.Sockets.AddressFamily AddrFamily,
-                                   HyperVSocketFlag Flag,
                                    Guid  VmId,
                                    Guid  ServiceId)
         {
             m_AddressFamily = AddrFamily;
-            m_Flag = Flag;
             m_VmId = VmId;
             m_ServiceId = ServiceId;
         }
@@ -64,16 +52,6 @@ namespace System.Management.Automation.Remoting
         public override System.Net.Sockets.AddressFamily AddressFamily
         {
             get { return m_AddressFamily;  }
-        }
-
-        /// <summary>
-        /// If Flag is 0, the socket connection is for VM.
-        /// If Flag is 1, the socket connection is for Hyper-V container.
-        /// </summary>
-        public HyperVSocketFlag Flag
-        {
-            get { return m_Flag; }
-            set { m_Flag = value; }
         }
 
         public Guid VmId
@@ -101,11 +79,10 @@ namespace System.Management.Automation.Remoting
                 return null;
             }
         
-            HyperVSocketEndPoint endpoint = new HyperVSocketEndPoint(SockAddr.Family, 0, Guid.Empty, Guid.Empty);
+            HyperVSocketEndPoint endpoint = new HyperVSocketEndPoint(SockAddr.Family, Guid.Empty, Guid.Empty);
         
             string sockAddress = SockAddr.ToString();
 
-            endpoint.Flag = (HyperVSocketFlag)short.Parse(sockAddress.Substring(2, 2), CultureInfo.InvariantCulture);
             endpoint.VmId = new Guid(sockAddress.Substring(4, 16));
             endpoint.ServiceId = new Guid(sockAddress.Substring(20, 16));
         
@@ -122,7 +99,6 @@ namespace System.Management.Automation.Remoting
             }
         
             if ((m_AddressFamily == endpoint.AddressFamily) &&
-                (m_Flag == endpoint.Flag) &&
                 (m_VmId == endpoint.VmId) &&
                 (m_ServiceId == endpoint.ServiceId))
             {
@@ -144,7 +120,7 @@ namespace System.Management.Automation.Remoting
             byte[] vmId = m_VmId.ToByteArray();
             byte[] serviceId = m_ServiceId.ToByteArray();
 
-            sockAddress[2] = (byte)m_Flag;
+            sockAddress[2] = (byte)0;
         
             for (int i = 0; i < vmId.Length; i++)
             {
@@ -161,7 +137,7 @@ namespace System.Management.Automation.Remoting
     
         public override string ToString()
         {
-            return ((ushort)m_Flag).ToString(CultureInfo.InvariantCulture) + m_VmId.ToString() + m_ServiceId.ToString();
+            return m_VmId.ToString() + m_ServiceId.ToString();
         }
 
         #endregion
@@ -288,7 +264,7 @@ namespace System.Management.Automation.Remoting
 
                 // TODO: remove below 6 lines of code when .NET supports Hyper-V socket duplication
                 Guid serviceId = new Guid("a5201c21-2770-4c11-a68e-f182edb29220"); // HV_GUID_VM_SESSION_SERVICE_ID_2
-                HyperVSocketEndPoint endpoint = new HyperVSocketEndPoint(HyperVSocketEndPoint.AF_HYPERV, 0, Guid.Empty, serviceId);
+                HyperVSocketEndPoint endpoint = new HyperVSocketEndPoint(HyperVSocketEndPoint.AF_HYPERV, Guid.Empty, serviceId);
                 
                 Socket listenSocket = new Socket(endpoint.AddressFamily, SocketType.Stream, (System.Net.Sockets.ProtocolType)1);
                 listenSocket.Bind(endpoint);
@@ -390,6 +366,13 @@ namespace System.Management.Automation.Remoting
 
         #endregion
 
+        #region constants in hvsocket.h
+
+        public const int HV_PROTOCOL_RAW = 1;
+        public const int HVSOCKET_CONTAINER_PASSTHRU = 2;
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -464,11 +447,31 @@ namespace System.Management.Automation.Remoting
                 serviceId = new Guid("a5201c21-2770-4c11-a68e-f182edb29220");
             }
 
-            _endPoint = new HyperVSocketEndPoint(HyperVSocketEndPoint.AF_HYPERV,
-                isContainer ? HyperVSocketEndPoint.HyperVSocketFlag.HyperVContainer : HyperVSocketEndPoint.HyperVSocketFlag.VM,
-                vmId, serviceId);
-        
+            _endPoint = new HyperVSocketEndPoint(HyperVSocketEndPoint.AF_HYPERV, vmId, serviceId);
+
             _socket = new Socket(_endPoint.AddressFamily, SocketType.Stream, (System.Net.Sockets.ProtocolType)1);
+
+            //
+            // We need to call SetSocketOption() in order to set up Hyper-V socket connection between container host and Hyper-V container.
+            // Here is the scenario: the Hyper-V container is inside a utility vm, which is inside the container host 
+            //
+            if (isContainer)
+            {
+                var value = new byte[sizeof(uint)];
+                value[0] = 1;
+
+                try
+                {
+                    _socket.SetSocketOption((System.Net.Sockets.SocketOptionLevel)HV_PROTOCOL_RAW, 
+                                            (System.Net.Sockets.SocketOptionName)HVSOCKET_CONTAINER_PASSTHRU,
+                                            (byte[])value);
+                }
+                catch
+                {
+                    throw new PSDirectException(
+                        PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.RemoteSessionHyperVSocketClientConstructorSetSocketOptionFailure));
+                }
+            }
         }
 
         #endregion
@@ -522,9 +525,11 @@ namespace System.Management.Automation.Remoting
         /// connection occurs or the timeout time has ellapsed.
         /// </summary>
         /// <param name="networkCredential">The credential used for authentication</param>
-        /// <param name="isFirstConnection">Whether this is the first connection</param>
+        /// <param name="configurationName">The configuration name of the PS session</param>
+        /// <param name="isFirstConnection">Whether this is the first connection</param>        
         public bool Connect(
             NetworkCredential networkCredential,
+            string configurationName,
             bool isFirstConnection)
         {
             bool result = false;
@@ -555,11 +560,8 @@ namespace System.Management.Automation.Remoting
                             null);
                     }
 
-                    bool emptyPassword = false;
-                    if (String.IsNullOrEmpty(networkCredential.Password))
-                    {
-                        emptyPassword = true;
-                    }
+                    bool emptyPassword = String.IsNullOrEmpty(networkCredential.Password);
+                    bool emptyConfiguration = String.IsNullOrEmpty(configurationName);
 
                     Byte[] domain = Encoding.Unicode.GetBytes(networkCredential.Domain);
                     Byte[] userName = Encoding.Unicode.GetBytes(networkCredential.UserName);
@@ -585,7 +587,6 @@ namespace System.Management.Automation.Remoting
                     {
                         _socket.Send(Encoding.ASCII.GetBytes("EMPTYPW"));
                         _socket.Receive(response);
-                        _socket.Send(response);
                         responseString = Encoding.ASCII.GetString(response);
                     }
                     else
@@ -595,17 +596,48 @@ namespace System.Management.Automation.Remoting
                     
                         _socket.Send(password);
                         _socket.Receive(response);
-                        _socket.Send(response);
                         responseString = Encoding.ASCII.GetString(response);
                     }
 
+                    //
+                    // There are 3 cases for the responseString received above.
+                    // - "FAIL": credential is invalid
+                    // - "PASS": credentail is valid, but PowerShell Direct in VM does not support configuration (Server 2016 TP4 and before)
+                    // - "CONF": credentail is valid, and PowerShell Direct in VM supports configuration (Server 2016 TP5 and later)
+                    //
+    
                     //
                     // Credential is invalid.
                     //
                     if (String.Compare(responseString, "FAIL", StringComparison.Ordinal) == 0)
                     {
-                        throw new PSDirectCredentialException(
+                        _socket.Send(response);
+
+                        throw new PSDirectException(
                             PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidCredential));
+                    }
+
+                    //
+                    // If PowerShell Direct in VM supports configuration, send configuration name.
+                    //
+                    if (String.Compare(responseString, "CONF", StringComparison.Ordinal) == 0)
+                    {
+                        if (emptyConfiguration)
+                        {
+                            _socket.Send(Encoding.ASCII.GetBytes("EMPTYCF"));
+                        }
+                        else
+                        {
+                            _socket.Send(Encoding.ASCII.GetBytes("NONEMPTYCF"));
+                            _socket.Receive(response);
+
+                            Byte[] configName = Encoding.Unicode.GetBytes(configurationName);                        
+                            _socket.Send(configName);
+                        }
+                    }
+                    else
+                    {
+                        _socket.Send(response);
                     }
                 }
                 

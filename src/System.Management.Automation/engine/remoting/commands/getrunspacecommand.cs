@@ -117,9 +117,13 @@ namespace Microsoft.PowerShell.Commands
         private Uri[] uris;
 
         /// <summary>
+        /// For WSMan sessions:
         /// If this parameter is not specified then the value specified in
         /// the environment variable DEFAULTREMOTESHELLNAME will be used. If 
         /// this is not set as well, then Microsoft.PowerShell is used.
+        ///
+        /// For VM/Container sessions:
+        /// If this parameter is not speficied then all sessions that match other filters are returned.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                            ParameterSetName = GetPSSessionCommand.ComputerNameParameterSet)]
@@ -129,13 +133,26 @@ namespace Microsoft.PowerShell.Commands
                            ParameterSetName = GetPSSessionCommand.ConnectionUriParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                            ParameterSetName = GetPSSessionCommand.ConnectionUriInstanceIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                           ParameterSetName = GetPSSessionCommand.ContainerIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                           ParameterSetName = GetPSSessionCommand.ContainerIdInstanceIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                           ParameterSetName = GetPSSessionCommand.ContainerNameParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                           ParameterSetName = GetPSSessionCommand.ContainerNameInstanceIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                           ParameterSetName = GetPSSessionCommand.VMIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                           ParameterSetName = GetPSSessionCommand.VMIdInstanceIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                           ParameterSetName = GetPSSessionCommand.VMNameParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                           ParameterSetName = GetPSSessionCommand.VMNameInstanceIdParameterSet)]
         public String ConfigurationName
         {
             get { return shell; }
-            set 
-            {                 
-                shell = ResolveShell(value);
-            }
+            set { shell = value; }
         }
         private String shell;
 
@@ -368,6 +385,19 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
+        /// Resolves shellname
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+
+            if (ConfigurationName == null)
+            {
+                ConfigurationName = string.Empty;
+            }
+        }
+
+        /// <summary>
         /// Get the list of runspaces from the global cache and write them
         /// down. If no computername or instance id is specified then
         /// list all runspaces
@@ -389,7 +419,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                GetMatchingRunspaces(true, true, this.State);
+                GetMatchingRunspaces(true, true, this.State, this.ConfigurationName);
             }
         } // ProcessRecord
 

@@ -214,6 +214,9 @@
   <data name="InvalidPowerShellVersionInModuleManifest" xml:space="preserve">
     <value>The module manifest '{0}' is specified with the CompatiblePSEditions key which is supported only on PowerShell version '5.1' or higher. Update the value of the PowerShellVersion key to '5.1' or higher, and try again.</value>
   </data>
+  <data name="DuplicateEntriesInCompatiblePSEditions" xml:space="preserve">
+    <value>The specified value '{0}' for CompatiblePSEditions contains duplicate PowerShell Edition names. Try again after removing the duplicate PowerShell Edition names.</value>
+  </data>
   <data name="ModuleVersionEqualsToVersionFolder" xml:space="preserve">
     <value>Version specified in ModuleVersion key is equal to version folder name.</value>
   </data>

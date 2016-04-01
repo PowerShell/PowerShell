@@ -185,7 +185,7 @@ The #requires statement must be in one of the following formats:
     <value>The script '{0}' cannot be run because it contained a "#requires" statement for Windows PowerShell {1}. The version of Windows PowerShell that is required by the script does not match the currently running version of Windows PowerShell {2}.</value>
   </data>
   <data name="RequiresPSEditionNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement for PowerShell {1} edition. The edition of PowerShell that is required by the script does not match the currently running PowerShell {2} edition.</value>
+    <value>The script '{0}' cannot be run because it contained a "#requires" statement for PowerShell editions '{1}'. The edition of PowerShell that is required by the script does not match the currently running PowerShell {2} edition.</value>
   </data>
   <data name="RequiresMissingPSSnapIns" xml:space="preserve">
     <value>The script '{0}' cannot be run because the following snap-ins that are specified by the "#requires" statements of the script are missing: {1}.</value>

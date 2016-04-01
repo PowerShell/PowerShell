@@ -69,6 +69,11 @@ namespace System.Management.Automation
         internal static string WinPEIdentificationRegKey = @"System\CurrentControlSet\Control\MiniNT";  
 
         /// <summary>
+        /// Allowed PowerShell Editions
+        /// </summary>
+        internal static string[] AllowedEditionValues = { "Desktop", "Core" };
+
+        /// <summary>
         /// helper fn to check byte[] arg for null.
         /// </summary>
         ///
@@ -459,6 +464,16 @@ namespace System.Management.Automation
         internal static bool IsPSEditionSupported(string checkEdition)
         {
             return PSVersionInfo.PSEdition.Equals(checkEdition, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Checks whether the specified edition values is allowed.
+        /// </summary>
+        /// <param name="editionValue">Edition value to check</param>
+        /// <returns>true if allowed, false otherwise</returns>
+        internal static bool IsValidPSEditionValue(string editionValue)
+        {
+            return AllowedEditionValues.Contains(editionValue, StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>

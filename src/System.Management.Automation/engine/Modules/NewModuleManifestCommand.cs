@@ -3,6 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
+using System.Linq;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
@@ -885,6 +886,14 @@ namespace Microsoft.PowerShell.Commands
             ValidateUriParamterValue(ProjectUri, "ProjectUri");
             ValidateUriParamterValue(LicenseUri, "LicenseUri");
             ValidateUriParamterValue(IconUri, "IconUri");
+
+            if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Count()))
+            {
+                string message = StringUtil.Format(Modules.DuplicateEntriesInCompatiblePSEditions, String.Join(",", CompatiblePSEditions));
+                var ioe = new InvalidOperationException(message);
+                var er = new ErrorRecord(ioe, "Modules_DuplicateEntriesInCompatiblePSEditions", ErrorCategory.InvalidArgument, CompatiblePSEditions);
+                ThrowTerminatingError(er);
+            }
 
             string action = StringUtil.Format(Modules.CreatingModuleManifestFile, filePath);
 

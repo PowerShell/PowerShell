@@ -9,9 +9,11 @@ using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.Management.Infrastructure;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -80,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_AvailableLocally)]
         [Parameter(ParameterSetName = ParameterSet_AvailableInPsrpSession)]
-        [ValidateSet("Desktop", "Core")]
+        [ArgumentCompleter(typeof(PSEditionArgumentCompleter))]
         public string PSEdition { get; set; }
 
         /// <summary>
@@ -491,5 +493,28 @@ namespace Microsoft.PowerShell.Commands
             }
         }
     }
+
+    /// <summary>
+    /// PSEditionArgumentCompleter for PowerShell Edition names.
+    /// </summary>
+    public class PSEditionArgumentCompleter : IArgumentCompleter
+    {
+        /// <summary>
+        /// CompleteArgument
+        /// </summary>
+        public IEnumerable<CompletionResult> CompleteArgument(string commandName, string parameterName, string wordToComplete, CommandAst commandAst, IDictionary fakeBoundParameters)
+        {
+            var wordToCompletePattern = WildcardPattern.Get(string.IsNullOrWhiteSpace(wordToComplete) ? "*" : wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            foreach (var edition in Utils.AllowedEditionValues)
+            {
+                if (wordToCompletePattern.IsMatch(edition))
+                {
+                    yield return new CompletionResult(edition, edition, CompletionResultType.Text, edition);
+                }
+            }
+        }
+    }
+
 } // Microsoft.PowerShell.Commands
 

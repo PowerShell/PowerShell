@@ -207,26 +207,26 @@ namespace Microsoft.PowerShell.Commands
                                 var modules = GetModule(new[] { moduleListModule.Name }, true, true);
                                 if (modules.Count == 0)
                                 {
-                                    string errorMsg = StringUtil.Format(Modules.InvalidFilePathinModuleManifest, moduleListModule.Name, filePath);
+                                    string errorMsg = StringUtil.Format(Modules.InvalidModuleListinModuleManifest, moduleListModule.Name, filePath);
                                     var errorRecord = new ErrorRecord(new DirectoryNotFoundException(errorMsg), "Modules_InvalidModuleListinModuleManifest",
                                             ErrorCategory.ObjectNotFound, _path);
                                     WriteError(errorRecord);
                                 }
                             }
                         }
-                    }
 
-                    if (module.CompatiblePSEditions.Any())
-                    {
-                        // The CompatiblePSEditions module manifest key is supported only on PowerShell version '5.1' or higher.
-                        // Ensure that PowerShellVersion module manifest key value is '5.1' or higher.
-                        //
-                        var minimumRequiredPowerShellVersion = new Version(5,1);
-                        if((module.PowerShellVersion == null) || module.PowerShellVersion < minimumRequiredPowerShellVersion)
+                        if (module.CompatiblePSEditions.Any())
                         {
-                            string errorMsg = StringUtil.Format(Modules.InvalidPowerShellVersionInModuleManifest, filePath);
-                            var errorRecord = new ErrorRecord(new ArgumentException(errorMsg), "Modules_InvalidPowerShellVersionInModuleManifest", ErrorCategory.InvalidArgument, _path);
-                            WriteError(errorRecord);
+                            // The CompatiblePSEditions module manifest key is supported only on PowerShell version '5.1' or higher.
+                            // Ensure that PowerShellVersion module manifest key value is '5.1' or higher.
+                            //
+                            var minimumRequiredPowerShellVersion = new Version(5,1);
+                            if((module.PowerShellVersion == null) || module.PowerShellVersion < minimumRequiredPowerShellVersion)
+                            {
+                                string errorMsg = StringUtil.Format(Modules.InvalidPowerShellVersionInModuleManifest, filePath);
+                                var errorRecord = new ErrorRecord(new ArgumentException(errorMsg), "Modules_InvalidPowerShellVersionInModuleManifest", ErrorCategory.InvalidArgument, _path);
+                                WriteError(errorRecord);
+                            }
                         }
                     }
                 }

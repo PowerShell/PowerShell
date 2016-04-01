@@ -3641,7 +3641,18 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 pse.Runspace = initializedRunspace;
-                pse.Invoke();
+                // Module import should be run in FullLanguage mode since it is running in
+                // a trusted context.
+                var savedLanguageMode = pse.Runspace.ExecutionContext.LanguageMode;
+                pse.Runspace.ExecutionContext.LanguageMode = PSLanguageMode.FullLanguage;
+                try
+                {
+                    pse.Invoke();
+                }
+                finally
+                {
+                    pse.Runspace.ExecutionContext.LanguageMode = savedLanguageMode;
+                }
 
                 // Lock down the command visibility to respect default command visibility
                 if (this.DefaultCommandVisibility != SessionStateEntryVisibility.Public)
