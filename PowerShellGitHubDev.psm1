@@ -176,7 +176,6 @@ function Start-PSBuild {
                 cmake ..\src\powershell-native
             }
             msbuild powershell.vcxproj /p:Configuration=$msbuildConfiguration
-            # cp -rec $msbuildConfiguration\* $Output
         } finally {
             Pop-Location
         }
