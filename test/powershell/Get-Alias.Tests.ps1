@@ -140,7 +140,7 @@ Describe "Get-Alias DRT Unit Tests" -Tags DRT{
 	}
 	It "Get-Alias Expose Bug 1065828, BugId:905235"{
 		try { 
-			Get-Alias -Name "ABCD" -Scope "1"
+			Get-Alias -Name "ABCD" -Scope "100"
 			Throw "Execution OK"
 		} 
 		catch {
