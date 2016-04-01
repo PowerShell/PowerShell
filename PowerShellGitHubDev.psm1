@@ -89,6 +89,20 @@ function Start-PSBuild {
             $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run '$InstallCommand install $Dependency'")
         }
     }
+
+    if (-Not $Runtime) {
+        $Runtime = dotnet --info | % {
+            if ($_ -match "RID") {
+                $_ -split "\s+" | Select-Object -Last 1
+            }
+        }
+
+        if (-Not $Runtime) {
+            Write-Warning "Could not determine Runtime Identifier, please update dotnet"
+            $precheck = $false
+        } else {
+            log "Runtime not specified, using $Runtime"
+        }
     }
 
     # Abort if any precheck failed
@@ -171,8 +185,12 @@ function Start-PSBuild {
     log "Building PowerShell"
 
     $Arguments = "--framework", $framework
-    if ($IsLinux -Or $IsOSX) { $Arguments += "--configuration", "Linux" }
-    if ($Runtime) { $Arguments += "--runtime", $Runtime }
+
+    if ($IsLinux -Or $IsOSX) {
+        $Arguments += "--configuration", "Linux"
+    }
+
+    $Arguments += "--runtime", $Runtime
 
     log "Run dotnet build $Arguments from $pwd"
 
