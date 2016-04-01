@@ -78,6 +78,17 @@ function Start-PSBuild {
         }
 
         $precheck = $precheck -and (precheck 'msbuild' 'msbuild not found. Install Visual Studio 2015.')
+    } elseif ($IsLinux -Or $IsOSX) {
+        $InstallCommand = if ($IsLinux) {
+            'apt-get'
+        } elseif ($IsOSX) {
+            'brew'
+        }
+
+        foreach ($Dependency in 'cmake', 'make', 'g++') {
+            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run '$InstallCommand install $Dependency'")
+        }
+    }
     }
 
     # Abort if any precheck failed
@@ -111,36 +122,30 @@ function Start-PSBuild {
     }
 
     # Build native components
-    if (-not $FullCLR)
-    {
-        if ($IsLinux -Or $IsOSX) {
-            log "Start building native components"
-            $InstallCommand = if ($IsLinux) { "apt-get" } elseif ($IsOSX) { "brew" }
-            foreach ($Dependency in "cmake", "g++") {
-                if (-Not (Get-Command $Dependency -ErrorAction SilentlyContinue)) {
-                    throw "Build dependency '$Dependency' not found in PATH! Run '$InstallCommand install $Dependency'"
-                }
-            }
-
-            $Ext = if ($IsLinux) { "so" } elseif ($IsOSX) { "dylib" }
-            $Native = "$PSScriptRoot/src/libpsl-native"
-            $Lib = "$Top/libpsl-native.$Ext"
-            Write-Verbose "Building $Lib"
-
-            try {
-                Push-Location $Native
-                cmake -DCMAKE_BUILD_TYPE=Debug .
-                make -j
-                make test
-            } finally {
-                Pop-Location
-            }
-
-            if (-Not (Test-Path $Lib)) { throw "Compilation of $Lib failed" }
+    if ($IsLinux -Or $IsOSX) {
+        $Ext = if ($IsLinux) {
+            "so"
+        } elseif ($IsOSX) {
+            "dylib"
         }
-    }
-    else
-    {
+
+        $Native = "$PSScriptRoot/src/libpsl-native"
+        $Lib = "$Top/libpsl-native.$Ext"
+        log "Start building $Lib"
+
+        try {
+            Push-Location $Native
+            cmake -DCMAKE_BUILD_TYPE=Debug .
+            make -j
+            make test
+        } finally {
+            Pop-Location
+        }
+
+        if (-Not (Test-Path $Lib)) {
+            throw "Compilation of $Lib failed"
+        }
+    } elseif ($FullCLR) {
         log "Start building native powershell.exe"
         $build = "$PSScriptRoot/build"
         if ($Clean) {
