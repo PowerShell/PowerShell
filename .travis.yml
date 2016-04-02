@@ -9,7 +9,7 @@ git:
   submodules: false
 before_install:
   - git config --global url.git@github.com:.insteadOf https://github.com/
-  - git submodule update --init --recursive -- src/libpsl-native src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
+  - git submodule update --init -- src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester src/libpsl-native/test/googletest
   - ./bootstrap.sh
   - ./download.sh
   - sudo dpkg -i ./powershell.deb
