@@ -119,7 +119,13 @@ function Start-PSBuild {
     $Arguments += "--framework", $Framework
     $Arguments += "--configuration", $Configuration
     $Arguments += "--runtime", $Runtime
-    $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, $Executable)
+
+    # FullCLR only builds a library, so there is no runtime component
+    if ($FullCLR) {
+	    $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Executable)
+    } else {
+	    $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, $Executable)
+    }
     Write-Verbose "script:Output is $script:Output"
 
     # handle Restore
@@ -164,21 +170,18 @@ function Start-PSBuild {
         }
     } elseif ($FullCLR) {
         log "Start building native powershell.exe"
-        $build = "$PSScriptRoot/build"
-        if ($Clean) {
-            Remove-Item -Force -Recurse $build -ErrorAction SilentlyContinue
-        }
 
-        mkdir $build -ErrorAction SilentlyContinue
         try {
-            Push-Location $build
+            Push-Location .\src\powershell-native
 
             if ($cmakeGenerator) {
-                cmake -G $cmakeGenerator ..\src\powershell-native
+                cmake -G $cmakeGenerator .
             } else {
-                cmake ..\src\powershell-native
+                cmake .
             }
+
             msbuild powershell.vcxproj /p:Configuration=$msbuildConfiguration
+
         } finally {
             Pop-Location
         }
