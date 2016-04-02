@@ -139,16 +139,16 @@ function Start-PSBuild {
     if ($Restore -Or -Not (Test-Path "$Top/project.lock.json")) {
         log "Run dotnet restore"
 
-        $Arguments = @("--verbosity")
+        $RestoreArguments = @("--verbosity")
         if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-            $Arguments += "Info"
+            $RestoreArguments += "Info"
         } else {
-            $Arguments += "Warning"
+            $RestoreArguments += "Warning"
         }
 
-        $Arguments += "$PSScriptRoot"
+        $RestoreArguments += "$PSScriptRoot"
 
-        dotnet restore $Arguments
+        dotnet restore $RestoreArguments
     }
 
     # Build native components
