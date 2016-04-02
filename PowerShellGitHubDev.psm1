@@ -17,6 +17,7 @@ try {
     $IsWindows = $true
 }
 
+
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName='CoreCLR')]
     param(
@@ -46,20 +47,6 @@ function Start-PSBuild {
                      "Release")]
         [string]$msbuildConfiguration = "Release"
     )
-
-    function precheck([string]$command, [string]$missedMessage) {
-        $c = Get-Command $command -ErrorAction SilentlyContinue
-        if (-not $c) {
-            Write-Warning $missedMessage
-            return $false
-        } else {
-            return $true
-        }
-    }
-
-    function log([string]$message) {
-        Write-Host -Foreground Green $message
-    }
 
     # simplify ParameterSetNames
     if ($PSCmdlet.ParameterSetName -eq 'FullCLR') {
@@ -209,11 +196,14 @@ function Start-PSBuild {
 
 }
 
+
 function Get-PSOutput {
     $script:Output
 }
 
+
 function Start-PSxUnit {
+    [CmdletBinding()]param()
     if ($IsWindows) {
         throw "xUnit tests are only currently supported on Linux / OS X"
     }
@@ -239,7 +229,7 @@ function Start-PSPackage {
     # PowerShell packages use Semantic Versioning http://semver.org/
     #
     # Ubuntu and OS X packages are supported.
-    param(
+    [CmdletBinding()]param(
         [string]$Version,
         [int]$Iteration = 1,
         [ValidateSet("deb", "osxpkg", "rpm")]
@@ -302,8 +292,8 @@ function Start-PSPackage {
         "$PSScriptRoot/package/powershell=/usr/local/bin"
 }
 
-function Start-DevPSGitHub
-{
+
+function Start-DevPSGitHub {
     param(
         [switch]$ZapDisable,
         [string[]]$ArgumentList = '',
@@ -312,27 +302,23 @@ function Start-DevPSGitHub
         [switch]$NoNewWindow
     )
 
-    try
-    {
-        if ($LoadProfile -eq $false)
-        {
+    try {
+        if ($LoadProfile -eq $false) {
             $ArgumentList = @('-noprofile') + $ArgumentList
         }
 
         $env:DEVPATH = $binDir
-        if ($ZapDisable)
-        {
+        if ($ZapDisable) {
             $env:COMPLUS_ZapDisable = 1
         }
 
-        if (-Not (Test-Path $binDir\powershell.exe.config))
-        {
+        if (-Not (Test-Path $binDir\powershell.exe.config)) {
             $configContents = @"
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
-    <runtime>
-        <developmentMode developerInstallation="true"/>
-    </runtime>
+<runtime>
+<developmentMode developerInstallation="true"/>
+</runtime>
 </configuration>
 "@
             $configContents | Out-File -Encoding Ascii $binDir\powershell.exe.config
@@ -350,55 +336,14 @@ function Start-DevPSGitHub
         }
 
         Start-Process @startProcessArgs
-    }
-    finally
-    {
+    } finally {
         ri env:DEVPATH
-        if ($ZapDisable)
-        {
+        if ($ZapDisable) {
             ri env:COMPLUS_ZapDisable
         }
     }
 }
 
-## this function is from Dave Wyatt's answer on
-## http://stackoverflow.com/questions/22002748/hashtables-from-convertfrom-json-have-different-type-from-powershells-built-in-h
-function Convert-PSObjectToHashtable
-{
-    param (
-        [Parameter(ValueFromPipeline)]
-        $InputObject
-    )
-
-    process
-    {
-        if ($null -eq $InputObject) { return $null }
-
-        if ($InputObject -is [System.Collections.IEnumerable] -and $InputObject -isnot [string])
-        {
-            $collection = @(
-                foreach ($object in $InputObject) { Convert-PSObjectToHashtable $object }
-            )
-
-            Write-Output -NoEnumerate $collection
-        }
-        elseif ($InputObject -is [psobject])
-        {
-            $hash = @{}
-
-            foreach ($property in $InputObject.PSObject.Properties)
-            {
-                $hash[$property.Name] = Convert-PSObjectToHashtable $property.Value
-            }
-
-            $hash
-        }
-        else
-        {
-            $InputObject
-        }
-    }
-}
 
 <#
 .EXAMPLE Copy-SubmoduleFiles                # copy files FROM submodule TO src/<project> folders
@@ -413,8 +358,7 @@ function Copy-SubmoduleFiles {
     )
 
 
-    if (-not (Test-Path $mappingFilePath))
-    {
+    if (-not (Test-Path $mappingFilePath)) {
         throw "Mapping file not found in $mappingFilePath"
     }
 
@@ -422,47 +366,38 @@ function Copy-SubmoduleFiles {
 
     # mapping.json assumes the root folder
     Push-Location $PSScriptRoot
-    try
-    {
+    try {
         $m.GetEnumerator() | % {
 
-            if ($ToSubmodule)
-            {
+            if ($ToSubmodule) {
                 cp $_.Value $_.Key -Verbose:$Verbose
-            }
-            else
-            {
+            } else {
                 mkdir (Split-Path $_.Value) -ErrorAction SilentlyContinue > $null
                 cp $_.Key $_.Value -Verbose:$Verbose
             }
         }
-    }
-    finally
-    {
+    } finally {
         Pop-Location
     }
 }
 
+
 <#
-    .EXAMPLE Create-MappingFile # create mapping.json in the root folder from project.json files
+.EXAMPLE Create-MappingFile # create mapping.json in the root folder from project.json files
 #>
-function New-MappingFile
-{
+function New-MappingFile {
     param(
         [string]$mappingFilePath = "$PSScriptRoot/mapping.json",
         [switch]$IgnoreCompileFiles,
         [switch]$Ignoreresource
     )
 
-    function Get-MappingPath([string]$project, [string]$path)
-    {
-        if ($project -match 'TypeCatalogGen')
-        {
+    function Get-MappingPath([string]$project, [string]$path) {
+        if ($project -match 'TypeCatalogGen') {
             return Split-Path $path -Leaf
         }
 
-        if ($project -match 'Microsoft.Management.Infrastructure')
-        {
+        if ($project -match 'Microsoft.Management.Infrastructure') {
             return Split-Path $path -Leaf
         }
 
@@ -473,8 +408,7 @@ function New-MappingFile
 
     # assumes the root folder
     Push-Location $PSScriptRoot
-    try
-    {
+    try {
         $projects = ls .\src\ -Recurse -Depth 2 -Filter 'project.json'
         $projects | % {
             $project = Split-Path $_.FullName
@@ -482,8 +416,7 @@ function New-MappingFile
             if (-not $IgnoreCompileFiles) {
                 $json.compileFiles | % {
                     if ($_) {
-                        if (-not $_.EndsWith('AssemblyInfo.cs'))
-                        {
+                        if (-not $_.EndsWith('AssemblyInfo.cs')) {
                             $fullPath = Join-Path $project (Get-MappingPath -project $project -path $_)
                             $mapping[$_.Replace('../', 'src/')] = ($fullPath.Replace("$($pwd.Path)\",'')).Replace('\', '/')
                         }
@@ -502,38 +435,19 @@ function New-MappingFile
                 }
             }
         }
-    }
-    finally
-    {
+    } finally {
         Pop-Location
     }
 
     Set-Content -Value ($mapping | ConvertTo-Json) -Path $mappingFilePath -Encoding Ascii
 }
 
-function Get-InvertedOrderedMap
-{
-    param(
-        $h
-    )
-    $res = [ordered]@{}
-    foreach ($q in $h.GetEnumerator()) {
-        if ($res.Contains($q.Value))
-        {
-            throw "Cannot invert hashtable: duplicated key $($q.Value)"
-        }
-
-        $res[$q.Value] = $q.Key
-    }
-    return $res
-}
 
 <#
 .EXAMPLE Send-GitDiffToSd -diffArg1 45555786714d656bd31cbce67dbccb89c433b9cb -diffArg2 45555786714d656bd31cbce67dbccb89c433b9cb~1 -pathToAdmin d:\e\ps_dev\admin
 Apply a signle commit to admin folder
 #>
-function Send-GitDiffToSd
-{
+function Send-GitDiffToSd {
     param(
         [Parameter(Mandatory)]
         [string]$diffArg1,
@@ -550,32 +464,88 @@ function Send-GitDiffToSd
     $affectedFiles = git diff --name-only $diffArg1 $diffArg2
     $rev = Get-InvertedOrderedMap $m
     foreach ($file in $affectedFiles) {
-        if ($rev.Contains)
-        {
+        if ($rev.Contains) {
             $sdFilePath = Join-Path $pathToAdmin $rev[$file].Substring('src/monad/'.Length)
             $diff = git diff $diffArg1 $diffArg2 -- $file
-            if ($diff)
-            {
+            if ($diff) {
                 Write-Host -Foreground Green "Apply patch to $sdFilePath"
                 Set-Content -Value $diff -Path $env:TEMP\diff -Encoding Ascii
-                if ($WhatIf)
-                {
+                if ($WhatIf) {
                     Write-Host -Foreground Green "Patch content"
                     cat $env:TEMP\diff
-                }
-                else
-                {
+                } else {
                     & $patchPath --binary -p1 $sdFilePath $env:TEMP\diff
                 }
-            }
-            else
-            {
+            } else {
                 Write-Host -Foreground Green "No changes in $file"
             }
-        }
-        else
-        {
+        } else {
             Write-Host -Foreground Green "Ignore changes in $file, because there is no mapping for it"
+        }
+    }
+}
+
+
+function script:log([string]$message) {
+    Write-Host -Foreground Green $message
+}
+
+
+function script:precheck([string]$command, [string]$missedMessage) {
+    $c = Get-Command $command -ErrorAction SilentlyContinue
+    if (-not $c) {
+        Write-Warning $missedMessage
+        return $false
+    } else {
+        return $true
+    }
+}
+
+
+function script:Get-InvertedOrderedMap {
+    param(
+        $h
+    )
+    $res = [ordered]@{}
+    foreach ($q in $h.GetEnumerator()) {
+        if ($res.Contains($q.Value)) {
+            throw "Cannot invert hashtable: duplicated key $($q.Value)"
+        }
+
+        $res[$q.Value] = $q.Key
+    }
+    return $res
+}
+
+
+## this function is from Dave Wyatt's answer on
+## http://stackoverflow.com/questions/22002748/hashtables-from-convertfrom-json-have-different-type-from-powershells-built-in-h
+function script:Convert-PSObjectToHashtable {
+    param (
+        [Parameter(ValueFromPipeline)]
+        $InputObject
+    )
+
+    process {
+        if ($null -eq $InputObject) { return $null }
+
+        if ($InputObject -is [System.Collections.IEnumerable] -and $InputObject -isnot [string]) {
+            $collection = @(
+                foreach ($object in $InputObject) { Convert-PSObjectToHashtable $object }
+            )
+
+            Write-Output -NoEnumerate $collection
+        } elseif ($InputObject -is [psobject]) {
+            $hash = @{}
+
+            foreach ($property in $InputObject.PSObject.Properties)
+            {
+                $hash[$property.Name] = Convert-PSObjectToHashtable $property.Value
+            }
+
+            $hash
+        } else {
+            $InputObject
         }
     }
 }
