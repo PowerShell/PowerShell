@@ -13,3 +13,7 @@
 	url = https://github.com/PowerShell/psl-pester.git
 	branch = develop
 	ignore = dirty
+[submodule "src/libpsl-native/test/googletest"]
+	path = src/libpsl-native/test/googletest
+	url = https://github.com/google/googletest.git
+	ignore = dirty
