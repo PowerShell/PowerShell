@@ -13,7 +13,7 @@ pushd test/csharp
 ## Build
 dotnet build -c Linux
 ## Work-around dotnet/cli#753
-cp -r -f ../../src/Microsoft.PowerShell.Linux.Host/{Modules,*.so,*.dylib} bin/Linux/netstandardapp1.5/ubuntu.14.04-x64 2>/dev/null
+cp -r -f ../../src/Microsoft.PowerShell.Host/{Modules,*.so,*.dylib} bin/Linux/netstandardapp1.5/ubuntu.14.04-x64 2>/dev/null
 ## Test
 dotnet test -c Linux
 result=$?

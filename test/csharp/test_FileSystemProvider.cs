@@ -13,7 +13,7 @@ using System.Management.Automation.Provider;
 using System.Management.Automation.Runspaces;
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
-using Microsoft.PowerShell.Linux.Host;
+using Microsoft.PowerShell.Host;
 
 namespace PSTests
 {

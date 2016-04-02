@@ -116,7 +116,7 @@ function Start-PSBuild {
         $Top = "$PSScriptRoot\src\Microsoft.PowerShell.ConsoleHost"
         $Framework = 'net451'
     } else {
-        $Top = "$PSScriptRoot/src/Microsoft.PowerShell.Linux.Host"
+        $Top = "$PSScriptRoot/src/Microsoft.PowerShell.Host"
         $Framework = 'netstandardapp1.5'
     }
 

@@ -1,7 +1,7 @@
 using Xunit;
 using System;
 using System.Management.Automation;
-using Microsoft.PowerShell.Linux.Host;
+using Microsoft.PowerShell.Host;
 
 // This collection fixture initializes Core PowerShell's AssemblyLoadContext once and only
 // once. Attempting to initialize in a class level fixture will cause multiple

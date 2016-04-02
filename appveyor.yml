@@ -20,7 +20,7 @@ install:
   - ps: $fileContent += "`n-----END RSA PRIVATE KEY-----`n"
   - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
   - git config --global url.git@github.com:.insteadOf https://github.com/
-  - git submodule update --init -- src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
+  - git submodule update --init -- src/windows-build src/Modules/Pester
   - ps: Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
   - ps: ./install.ps1 -version 1.0.0-beta-002198
 
