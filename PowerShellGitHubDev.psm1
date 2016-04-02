@@ -202,6 +202,7 @@ function Start-PSBuild {
         log "Run `dotnet build $Arguments` from $pwd"
         Push-Location $Top
         dotnet build $Arguments
+        log "PowerShell output: $script:Output"
     } finally {
         Pop-Location
     }
