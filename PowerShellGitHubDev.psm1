@@ -213,6 +213,28 @@ function Get-PSOutput {
     $script:Output
 }
 
+function Start-PSxUnit {
+    if ($IsWindows) {
+        throw "xUnit tests are only currently supported on Linux / OS X"
+    }
+    if (-Not $script:Output) {
+        throw '$script:Output is not defined, run Start-PSBuild'
+    }
+    $Content = Split-Path -Parent $script:Output
+    $Arguments = "--configuration", "Linux"
+    try {
+        Push-Location $PSScriptRoot/test/csharp
+        dotnet build $Arguments
+        Copy-Item -ErrorAction SilentlyContinue -Recurse -Path $Content/* -Include Modules,libpsl-native* -Destination "./bin/Linux/netstandardapp1.5/ubuntu.14.04-x64"
+        dotnet test $Arguments
+        if ($LASTEXITCODE -ne 0) {
+            throw "$LASTEXITCODE xUnit tests failed"
+        }
+    } finally {
+        Pop-Location
+    }
+}
+
 function Start-PSPackage {
     # PowerShell packages use Semantic Versioning http://semver.org/
     #
