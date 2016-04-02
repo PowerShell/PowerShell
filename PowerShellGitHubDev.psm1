@@ -198,7 +198,12 @@ function Start-PSBuild {
 
 
 function Get-PSOutput {
-    $script:Output
+    [CmdletBinding()]param()
+    if (-Not $Output) {
+        throw '$script:Output is not defined, run Start-PSBuild'
+    }
+
+    $Output
 }
 
 
@@ -207,10 +212,8 @@ function Start-PSxUnit {
     if ($IsWindows) {
         throw "xUnit tests are only currently supported on Linux / OS X"
     }
-    if (-Not $script:Output) {
-        throw '$script:Output is not defined, run Start-PSBuild'
-    }
-    $Content = Split-Path -Parent $script:Output
+
+    $Content = Split-Path -Parent (Get-PSOutput)
     $Arguments = "--configuration", "Linux"
     try {
         Push-Location $PSScriptRoot/test/csharp
