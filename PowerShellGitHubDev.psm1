@@ -114,11 +114,26 @@ function Start-PSBuild {
     # define key build variables
     if ($FullCLR) {
         $Top = "$PSScriptRoot\src\Microsoft.PowerShell.ConsoleHost"
-        $framework = 'net451'
+        $Framework = 'net451'
     } else {
         $Top = "$PSScriptRoot/src/Microsoft.PowerShell.Linux.Host"
-        $framework = 'netstandardapp1.5'
+        $Framework = 'netstandardapp1.5'
     }
+
+    if ($IsLinux -Or $IsOSX) {
+        $Configuration = "Linux"
+        $Executable = "powershell"
+    } else {
+        $Configuration = "Debug"
+        $Executable = "powershell.exe"
+    }
+
+    $Arguments = @()
+    $Arguments += "--framework", $Framework
+    $Arguments += "--configuration", $Configuration
+    $Arguments += "--runtime", $Runtime
+    $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, $Executable)
+    Write-Verbose "script:Output is $script:Output"
 
     # handle Restore
     if ($Restore -Or -Not (Test-Path "$Top/project.lock.json")) {
@@ -182,25 +197,19 @@ function Start-PSBuild {
         }
     }
 
-    log "Building PowerShell"
-
-    $Arguments = "--framework", $framework
-
-    if ($IsLinux -Or $IsOSX) {
-        $Arguments += "--configuration", "Linux"
-    }
-
-    $Arguments += "--runtime", $Runtime
-
-    log "Run dotnet build $Arguments from $pwd"
-
     try {
         # Relative paths do not work well if cwd is not changed to project
+        log "Run `dotnet build $Arguments` from $pwd"
         Push-Location $Top
         dotnet build $Arguments
     } finally {
         Pop-Location
     }
+
+}
+
+function Get-PSOutput {
+    $script:Output
 }
 
 function Start-PSPackage {
