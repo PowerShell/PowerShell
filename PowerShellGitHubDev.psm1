@@ -207,6 +207,21 @@ function Get-PSOutput {
 }
 
 
+function Start-PSPester {
+    [CmdletBinding()]param(
+        [string]$Flags = '-EnableExit -OutputFile pester-tests.xml -OutputFormat NUnitXml',
+        [string]$Tests = "*",
+        [ValidateScript({ Test-Path -PathType Container $_})]
+        [string]$Directory = "$PSScriptRoot/test/powershell"
+    )
+
+    & (Get-PSOutput) -c "Invoke-Pester $Flags $Directory/$Tests"
+    if ($LASTEXITCODE -ne 0) {
+        throw "$LASTEXITCODE Pester tests failed"
+    }
+}
+
+
 function Start-PSxUnit {
     [CmdletBinding()]param()
     if ($IsWindows) {
