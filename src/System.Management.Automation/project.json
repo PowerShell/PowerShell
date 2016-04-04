@@ -81,6 +81,6 @@
     },
 
     "compile": [
-        "../windows-build/gen/SYS_AUTO/*.cs"
+        "../windows-build/gen/System.Management.Automation/*.cs"
     ]
 }

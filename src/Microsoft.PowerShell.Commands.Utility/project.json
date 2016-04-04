@@ -44,5 +44,5 @@
         }
     },
 
-    "compile": [ "../windows-build/gen/COMMANDS_UTILITY/*.cs" ]
+    "compile": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Utility/*.cs" ]
 }

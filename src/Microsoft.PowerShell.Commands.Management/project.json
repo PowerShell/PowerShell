@@ -36,5 +36,5 @@
         }
     },
 
-    "compile": [ "../windows-build/gen/COMMANDS_MANAGEMENT/*.cs" ]
+    "compile": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Management/*.cs" ]
 }

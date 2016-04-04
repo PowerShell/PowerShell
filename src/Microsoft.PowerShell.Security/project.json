@@ -23,5 +23,5 @@
         }
     },
 
-    "compile": [ "../windows-build/gen/SECURITY/*.cs" ]
+    "compile": [ "../windows-build/gen/Microsoft.PowerShell.Security/*.cs" ]
 }
