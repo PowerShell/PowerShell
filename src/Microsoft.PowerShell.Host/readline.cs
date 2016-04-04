@@ -1,4 +1,4 @@
-namespace Microsoft.PowerShell.Linux.Host
+namespace Microsoft.PowerShell.Host
 {
     using System;
     using System.Collections.ObjectModel;

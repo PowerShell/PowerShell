@@ -14,6 +14,12 @@
         "Microsoft.PowerShell.Commands.Utility": "1.0.0-*"
     },
 
+    "content": [
+        "Modules",
+        "../Modules",
+        "powershell.exe"
+    ],
+
     "frameworks": {
         "net451": {
         }

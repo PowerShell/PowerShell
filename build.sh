@@ -5,7 +5,7 @@ hash cmake 2>/dev/null || { echo >&2 "No cmake, please run 'sudo apt-get install
 hash g++ 2>/dev/null || { echo >&2 "No g++, please run 'sudo apt-get install g++'"; exit 1; }
 hash dotnet 2>/dev/null || { echo >&2 "No dotnet, please visit https://dotnet.github.io/getting-started/"; exit 1; }
 
-TOP="$(pwd)/src/Microsoft.PowerShell.Linux.Host"
+TOP="$(pwd)/src/Microsoft.PowerShell.Host"
 
 # Test for lock file
 test -r "$TOP/project.lock.json" || { echo >&2 "Please run 'dotnet restore' to download .NET Core packages"; exit 2; }
