@@ -6,9 +6,6 @@ environment:
   priv_key:
     secure: <encryped-value>
 
-cache:
-  - '%LocalAppData%\Microsoft\dotnet'
-
 notifications:
   - provider: Slack
     incoming_webhook:
