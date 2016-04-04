@@ -921,6 +921,12 @@ Possible matches are</value>
   <data name="RequiresVersionInvalid" xml:space="preserve">
     <value>The argument for the Version parameter is not valid. Specify a valid Windows PowerShell version, in the format major.minor version.</value>
   </data>
+  <data name="RequiresPSEditionInvalid" xml:space="preserve">
+    <value>The argument for the {0} parameter is not valid. Specify a valid PowerShell edition.</value>
+  </data>
+  <data name="RequiresPSEditionValueIsAlreadySpecified" xml:space="preserve">
+    <value>The argument for the {0} parameter contains duplicate values. Do not specify duplicate PowerShell edition values.</value>
+  </data>
   <data name="WildCardModuleNameError" xml:space="preserve">
     <value>Wildcard characters are not supported for module names.</value>
   </data>
@@ -1008,7 +1014,7 @@ Possible matches are</value>
     <value>A second CIM class definition for '{0}' was found while processing the schema file '{1}'. This class was already defined in the file(s) '{2}'. Remove the redundant definition, and then try again.</value>
   </data>
   <data name="DuplicateKeywordDefinition" xml:space="preserve">
-    <value>Keyword '{0}' already defined in the configuration.</value>
+    <value>Resource name '{0}' is already being used by another Resource or Configuration.</value>
   </data>
   <data name="ClassNameNotSameAsDefiningFile" xml:space="preserve">
     <value>The class name '{0}' does not match '{1}', the name of the file in which it is defined. Rename either the file name to match the class name or vice versa</value>
@@ -1060,7 +1066,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Configuration keyword is not allowed in constrainedLanguage mode.</value>
   </data>
   <data name="InvalidConfigurationName" xml:space="preserve">
-    <value>The configuration name '{0}' is not valid. Standard names may only contain letters (a-z, A-Z), numbers (0-9), and underscore (_). The name may not be null or empty, and should start with a letter.</value>
+    <value>The configuration name '{0}' is not valid. Standard names may only contain letters (a-z, A-Z), numbers (0-9), period (.), hyphen (-) and underscore (_). The name may not be null or empty, and should start with a letter.</value>
   </data>
   <data name="UnsupportedNamedBlockInConfiguration" xml:space="preserve">
     <value>Configuration only supports the End block in its body. Begin, Process and DynamicParam blocks are not allowed in a configuration.</value>

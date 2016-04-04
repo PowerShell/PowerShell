@@ -231,6 +231,7 @@ namespace System.Management.Automation.Remoting
         InvalidContainerNameMultiple = 971,
         InvalidContainerNameNotExist = 972,
         ContainerSessionConnectFailed = 973,
+        RemoteSessionHyperVSocketClientConstructorSetSocketOptionFailure = 974,
 
         // Invoke-Command related error codes.
         InvalidVMIdNotSingle = 981,
@@ -698,10 +699,10 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// This exception is used by PowerShell Direct for credential related error.
+    /// This exception is used by PowerShell Direct errors.
     /// </summary>
     [Serializable]
-    public class PSDirectCredentialException : RuntimeException
+    public class PSDirectException : RuntimeException
     {
         #region Constructor
 
@@ -711,7 +712,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="message">
         /// A localized string as an error message.
         /// </param>
-        public PSDirectCredentialException(string message)
+        public PSDirectException(string message)
             : base(message)
         {
         }

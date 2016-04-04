@@ -1240,6 +1240,9 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   <data name="RCAutoDisconnectingError" xml:space="preserve">
     <value>Network connectivity to {0} has been lost and the reconnection attempt failed. Please repair the network connection and reconnect using Connect-PSSession or Receive-PSSession.</value>
   </data>
+  <data name="RemoteSessionHyperVSocketClientConstructorSetSocketOptionFailure" xml:space="preserve">
+    <value>Failed to create an instance of RemoteSessionHyperVSocketClient due to SetSocketOption failure.</value>
+  </data>
   <data name="RemoteSessionHyperVSocketServerConstructorFailure" xml:space="preserve">
     <value>Failed to create an instance of RemoteSessionHyperVSocketServer.</value>
   </data>
@@ -1435,7 +1438,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>{0}[{1}]: {2}</value>
   </data>
   <data name="EnterPSHostProcessCannotConnectToProcess" xml:space="preserve">
-    <value>Unable to connect to application domain name {0} of process {1}.</value>
+    <value>Unable to connect to application domain name {0} of process {1}.  Error: {2}.</value>
   </data>
   <data name="WSManPluginConnectNoNegotiationData" xml:space="preserve">
     <value>PowerShell plugin cannot process the Connect operation as required negotiation information is either missing or not complete.</value>
@@ -1514,9 +1517,6 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   </data>
   <data name="RemoteTransportError" xml:space="preserve">
     <value>Remote transport error: {0}</value>
-  </data>
-  <data name="CannotConnectNamedPipe" xml:space="preserve">
-    <value>Unable to open pipe connection for PowerShell IPC. Error code: {0}.</value>
   </data>
   <data name="CannotConnectContainerNamedPipe" xml:space="preserve">
     <value>Unable to open pipe connection for PowerShell in container. Error code: {0}.</value>

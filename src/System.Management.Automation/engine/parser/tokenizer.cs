@@ -1516,7 +1516,7 @@ namespace System.Management.Automation.Language
 
             string requiredShellId = null;
             Version requiredVersion = null;
-            string requiredEdition = null;
+            List<string> requiredEditions = null;
             List<ModuleSpecification> requiredModules = null;
             List<PSSnapInSpecification> requiredSnapins = null;
             List<string> requiredAssemblies = null;
@@ -1565,7 +1565,7 @@ namespace System.Management.Automation.Language
                         {
                             HandleRequiresParameter(parameter, commandAst.CommandElements, snapinSpecified,
                                 ref i, ref snapinName, ref snapinVersion,
-                                ref requiredShellId, ref requiredVersion, ref requiredEdition, ref requiredModules, ref requiredAssemblies, ref requiresElevation);
+                                ref requiredShellId, ref requiredVersion, ref requiredEditions, ref requiredModules, ref requiredAssemblies, ref requiresElevation);
                         }
                         else
                         {
@@ -1584,7 +1584,9 @@ namespace System.Management.Automation.Language
                        {
                            RequiredApplicationId = requiredShellId,
                            RequiredPSVersion = requiredVersion,
-                           RequiredPSEdition = requiredEdition,
+                           RequiredPSEditions = requiredEditions != null
+                                                    ? new ReadOnlyCollection<string>(requiredEditions)
+                                                    : ScriptRequirements.EmptyEditionCollection,
                            RequiresPSSnapIns = requiredSnapins != null
                                                    ? new ReadOnlyCollection<PSSnapInSpecification>(requiredSnapins)
                                                    : ScriptRequirements.EmptySnapinCollection,
@@ -1614,7 +1616,7 @@ namespace System.Management.Automation.Language
                                              ref Version snapinVersion,
                                              ref string requiredShellId,
                                              ref Version requiredVersion,
-                                             ref string requiredEdition,
+                                             ref List<string> requiredEditions,
                                              ref List<ModuleSpecification> requiredModules,
                                              ref List<string> requiredAssemblies,
                                              ref bool requiresElevation)
@@ -1680,19 +1682,23 @@ namespace System.Management.Automation.Language
             }
             else if (editionToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
-                if (!(argumentValue is string))
-                {
-                    ReportError(argumentAst.Extent, () => ParserStrings.RequiresInvalidStringArgument, editionToken);
-                    return;
-                }
-
-                if (requiredEdition != null)
+                if (requiredEditions != null)
                 {
                     ReportError(parameter.Extent, () => ParameterBinderStrings.ParameterAlreadyBound, null, editionToken);
                     return;
                 }
 
-                requiredEdition = (string)argumentValue;
+                if (argumentValue is string || !(argumentValue is IEnumerable))
+                {
+                    requiredEditions = HandleRequiresPSEditionArgument(argumentAst, argumentValue, ref requiredEditions);
+                }
+                else
+                {
+                    foreach (var arg in (IEnumerable)argumentValue)
+                    {
+                        requiredEditions = HandleRequiresPSEditionArgument(argumentAst, arg, ref requiredEditions);
+                    }
+                }
             }
             else if (versionToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
@@ -1787,6 +1793,34 @@ namespace System.Management.Automation.Language
             return requiredAssemblies;
         }
 
+        private List<string> HandleRequiresPSEditionArgument(Ast argumentAst, object arg, ref List<string> requiredEditions)
+        {
+            if (!(arg is string))
+            {
+                ReportError(argumentAst.Extent, () => ParserStrings.RequiresInvalidStringArgument, editionToken);
+            }
+            else
+            {
+                if (requiredEditions == null)
+                    requiredEditions = new List<string>();
+
+                var edition = (string) arg;
+                if (!Utils.IsValidPSEditionValue(edition))
+                {
+                    ReportError(argumentAst.Extent, () => ParserStrings.RequiresPSEditionInvalid, editionToken);
+                }
+
+                if (!requiredEditions.Contains(edition, StringComparer.OrdinalIgnoreCase))
+                {
+                    requiredEditions.Add(edition);
+                }
+                else
+                {
+                    ReportError(argumentAst.Extent, () => ParserStrings.RequiresPSEditionValueIsAlreadySpecified, editionToken);
+                }
+            }
+            return requiredEditions;
+        }
         #endregion Requires
 
         #endregion Comments

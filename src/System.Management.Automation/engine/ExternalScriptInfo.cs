@@ -383,12 +383,12 @@ namespace System.Management.Automation
             }
         }
         
-        internal string RequiresPSEdition
+        internal IEnumerable<string> RequiresPSEditions
         {
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredPSEdition;
+                return data == null ? null : data.RequiredPSEditions;
             }
         }
 

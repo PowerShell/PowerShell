@@ -2507,21 +2507,25 @@ function Get-PSImplicitRemotingSession
 
         // index 0 - "-VMId <vm id>" (VMId is used instead of VMName due to its uniqueness)
         // index 1 - VM credential
+        // index 2 - "-ConfigurationName <configuration name>" or empty string
         private const string NewVMRunspaceTemplate = @"
             $( 
                 & $script:NewPSSession `
                     {0} `
                     {1} `
+                    {2} `
             )
 ";
 
         // index 0 - "-ContainerId <container id>" (ContainerId is used instead of ContainerName due to its uniqueness)
         // index 1 - "-RunAsAdministrator" or empty string
+        // index 2 - "-ConfigurationName <configuration name>" or empty string
         private const string NewContainerRunspaceTemplate = @"
             $( 
                 & $script:NewPSSession `
                     {0} `
                     {1} `
+                    {2} `
             )
 ";
 
@@ -2530,22 +2534,26 @@ function Get-PSImplicitRemotingSession
             VMConnectionInfo vmConnectionInfo = this.remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
             if (vmConnectionInfo != null)
             {
+                string vmConfigurationName = vmConnectionInfo.ConfigurationName;
                 return string.Format(
                     CultureInfo.InvariantCulture,
                     NewVMRunspaceTemplate,
                     /* 0 */ this.GenerateConnectionStringForNewRunspace(),
-                    /* 1 */ this.GenerateCredentialParameter());
+                    /* 1 */ this.GenerateCredentialParameter(),
+                    /* 2 */ String.IsNullOrEmpty(vmConfigurationName) ? String.Empty : String.Concat("-ConfigurationName ", vmConfigurationName));
             }
             else
             {
                 ContainerConnectionInfo containerConnectionInfo = this.remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
                 if (containerConnectionInfo != null)
                 {
+                    string containerConfigurationName = containerConnectionInfo.ContainerProc.ConfigurationName;
                     return string.Format(
                         CultureInfo.InvariantCulture,
                         NewContainerRunspaceTemplate,
                         /* 0 */ this.GenerateConnectionStringForNewRunspace(),
-                        /* 1 */ containerConnectionInfo.ContainerProc.RunAsAdmin ? "-RunAsAdministrator" : string.Empty);
+                        /* 1 */ containerConnectionInfo.ContainerProc.RunAsAdmin ? "-RunAsAdministrator" : string.Empty,
+                        /* 2 */ String.IsNullOrEmpty(containerConfigurationName) ? String.Empty : String.Concat("-ConfigurationName ", containerConfigurationName));
                 }
                 else
                 {

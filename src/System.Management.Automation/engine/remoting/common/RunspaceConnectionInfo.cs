@@ -1971,6 +1971,7 @@ namespace System.Management.Automation.Runspaces
         private const int _defaultOpenTimeout = 20000; /* 20 seconds. */
         private Guid _vmGuid;
         private string _vmName;
+        private string _configurationName;
 
         #endregion
 
@@ -1983,6 +1984,15 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _vmGuid; }
             set { _vmGuid = value; }
+        }
+
+        /// <summary>
+        /// Configuration name of the VM session.
+        /// </summary>
+        public string ConfigurationName
+        {
+            get { return _configurationName; }
+            set { _configurationName = value; }
         }
 
         #endregion
@@ -2047,7 +2057,7 @@ namespace System.Management.Automation.Runspaces
 
         internal override RunspaceConnectionInfo InternalCopy()
         {
-            VMConnectionInfo result = new VMConnectionInfo(Credential, VMGuid, ComputerName);
+            VMConnectionInfo result = new VMConnectionInfo(Credential, VMGuid, ComputerName, ConfigurationName);
             return result;
         }
 
@@ -2057,7 +2067,8 @@ namespace System.Management.Automation.Runspaces
                 this,
                 instanceId,
                 cryptoHelper,
-                VMGuid);
+                VMGuid,
+                ConfigurationName);
         }
 
         #endregion
@@ -2070,12 +2081,14 @@ namespace System.Management.Automation.Runspaces
         internal VMConnectionInfo(
             PSCredential credential,
             Guid vmGuid,
-            string vmName)
+            string vmName,
+            string configurationName)
             : base()
         {
             Credential = credential;
             VMGuid = vmGuid;
             ComputerName = vmName;
+            ConfigurationName = configurationName;
 
             AuthenticationMechanism = AuthenticationMechanism.Default;
             OpenTimeout = _defaultOpenTimeout;
@@ -2224,9 +2237,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public static ContainerConnectionInfo CreateContainerConnectionInfoById(
             string containerId,
-            bool runAsAdmin)
+            bool runAsAdmin,
+            string configurationName)
         {
-            ContainerProcess containerProc = new ContainerProcess(containerId, null, 0, runAsAdmin);
+            ContainerProcess containerProc = new ContainerProcess(containerId, null, 0, runAsAdmin, configurationName);
 
             return new ContainerConnectionInfo(containerProc);
         }
@@ -2236,9 +2250,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public static ContainerConnectionInfo CreateContainerConnectionInfoByName(
             string containerName,
-            bool runAsAdmin)
+            bool runAsAdmin,
+            string configurationName)
         {
-            ContainerProcess containerProc = new ContainerProcess(null, containerName, 0, runAsAdmin);
+            ContainerProcess containerProc = new ContainerProcess(null, containerName, 0, runAsAdmin, configurationName);
 
             return new ContainerConnectionInfo(containerProc);
         }
@@ -2277,6 +2292,7 @@ namespace System.Management.Automation.Runspaces
         private string containerName;        
         private int processId;
         private bool runAsAdmin = false;
+        private string configurationName;
         private bool processTerminated = false;
         private uint errorCode = 0;
         private string errorMessage = string.Empty;
@@ -2340,6 +2356,15 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// The configuration name of the container session.
+        /// </summary>
+        internal string ConfigurationName
+        {
+            get { return configurationName; }
+            set { configurationName = value; }
+        }
+
+        /// <summary>
         /// Whether the process in container has terminated.
         /// </summary>
         internal bool ProcessTerminated
@@ -2388,12 +2413,13 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates an instance used for PowerShell Direct for container.
         /// </summary>
-        public ContainerProcess(string containerId, string containerName, int processId, bool runAsAdmin)
+        public ContainerProcess(string containerId, string containerName, int processId, bool runAsAdmin, string configurationName)
         {
             this.ContainerId = containerId;
             this.ContainerName = containerName;
             this.ProcessId = processId;
             this.RunAsAdmin = runAsAdmin;
+            this.ConfigurationName = configurationName;
 
             if (!String.IsNullOrEmpty(containerId))
             {
@@ -2565,8 +2591,9 @@ namespace System.Management.Automation.Runspaces
                     // Windows Server container (i.e., RuntimeId is empty) uses named pipe transport for now.
                     //
                     cmd = string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                        @"{{""CommandLine"": ""powershell.exe {0} -NoLogo"",""RestrictedToken"": {1}}}",
+                        @"{{""CommandLine"": ""powershell.exe {0} -NoLogo {1}"",""RestrictedToken"": {2}}}",
                         (RuntimeId != Guid.Empty) ? "-so -NoProfile" : "-NamedPipeServerMode",
+                        String.IsNullOrEmpty(ConfigurationName) ? String.Empty : String.Concat("-Config ", ConfigurationName),
                         (RunAsAdmin) ? "false" : "true");
                     
                     //

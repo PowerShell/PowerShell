@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell
                 else if (cpp.NamedPipeServerMode)
                 {
                     ClrFacade.StartProfileOptimization("StartupProfileData-NamedPipeServerMode");
-                    System.Management.Automation.Remoting.RemoteSessionNamedPipeServer.RunServerMode();
+                    System.Management.Automation.Remoting.RemoteSessionNamedPipeServer.RunServerMode(cpp.ConfigurationName);
                     exitCode = 0;
                 }
                 else if (cpp.SocketServerMode)

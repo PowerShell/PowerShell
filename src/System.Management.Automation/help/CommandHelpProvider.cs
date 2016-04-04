@@ -480,33 +480,8 @@ namespace System.Management.Automation
         /// </summary>
         private readonly Hashtable _helpFiles = new Hashtable();
 
-        /// <summary>
-        /// Finds a help file associated with the given cmdlet
-        /// </summary>
-        /// <param name="cmdletInfo"></param>
-        /// <returns></returns>
-        private string FindHelpFile(CmdletInfo cmdletInfo)
+        private string GetHelpFile(string helpFile, CmdletInfo cmdletInfo)
         {
-            if (cmdletInfo == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("cmdletInfo");
-            }
-
-            string helpFile = cmdletInfo.HelpFile;
-
-            if (String.IsNullOrEmpty(helpFile))
-            {
-                if (cmdletInfo.Module != null)
-                {
-                    if (InitialSessionState.IsEngineModule(cmdletInfo.Module.Name))
-                    {
-                        return System.IO.Path.Combine(cmdletInfo.Module.ModuleBase, CultureInfo.CurrentCulture.Name, engineModuleHelpFileCache[cmdletInfo.Module.Name]);
-                    }
-                }
-
-                return helpFile;
-            }
-
             string helpFileToLoad = helpFile;
 
             // Get the mshsnapinfo object for this cmdlet.
@@ -555,6 +530,80 @@ namespace System.Management.Automation
             if (String.IsNullOrEmpty(location))
             {
                 tracer.WriteLine("Unable to load file {0}", helpFileToLoad);
+            }
+
+            return location;
+        }
+
+        /// <summary>
+        /// Finds a help file associated with the given cmdlet
+        /// </summary>
+        /// <param name="cmdletInfo"></param>
+        /// <returns></returns>
+        private string FindHelpFile(CmdletInfo cmdletInfo)
+        {
+            if (cmdletInfo == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("cmdletInfo");
+            }
+
+            // Get the help file name from the cmdlet metadata
+            string helpFile = cmdletInfo.HelpFile;
+
+            if (String.IsNullOrEmpty(helpFile))
+            {
+                if (cmdletInfo.Module != null)
+                {
+                    if (InitialSessionState.IsEngineModule(cmdletInfo.Module.Name))
+                    {
+                        return System.IO.Path.Combine(cmdletInfo.Module.ModuleBase, CultureInfo.CurrentCulture.Name, engineModuleHelpFileCache[cmdletInfo.Module.Name]);
+                    }
+                }
+
+                return helpFile;
+            }
+
+            // This is the path to the help file.
+            string location = null;
+
+            if (helpFile.EndsWith(".ni.dll-Help.xml"))
+            {
+                // For PowerShell on OneCore, we ship Ngen binaries. As a result, the name of the assembly now contains '.ni' on it,
+                // e.g., <AssemblyName>.ni.dll as supposed to <AssemblyName>.dll.
+
+                // When cmdlet metadata is generated for the 'HelpFile' field, we use the name assembly and we append '-Help.xml' to it.
+                // Because of this, if the cmdlet is part of an N’gen assembly, then 'HelpFile' field will be pointing to a help file which does not exist.
+                // If this is the case, we remove '.ni' from the help file name and try again.
+                // For example:
+                // Ngen assembly name: Microsoft.PowerShell.Commands.Management.ni.dll
+                // Cmdlet metadata 'HelpFile': Microsoft.PowerShell.Commands.Management.ni.dll-Help.xml
+                // Actual help file name: Microsoft.PowerShell.Commands.Management.dll-Help.xml
+
+                // Make sure that the assembly name contains more than '.ni.dll'
+                string assemblyName = helpFile.Replace(".ni.dll-Help.xml", "");
+
+                if (!String.IsNullOrEmpty(assemblyName))
+                {
+                    // In the first try, we remove '.ni' from the assembly name and we attempt to find the corresponding help file.
+                    string helpFileName = cmdletInfo.HelpFile.Replace(".ni.dll-Help.xml", ".dll-Help.xml");
+                    location = GetHelpFile(helpFileName, cmdletInfo);
+
+                    if (String.IsNullOrEmpty(location))
+                    {
+                        // If the help file could not be found, then it is possible that the actual assembly name is something like
+                        // <Name>.ni.dll, e.g., MyAsembly.ni.dll, so let’s try to find the original help file in the cmdlet metadata.
+                        location = GetHelpFile(helpFile, cmdletInfo);
+                    }
+                }
+                else
+                {
+                    // the assembly name is actually '.ni.dll'.
+                    location = GetHelpFile(helpFile, cmdletInfo);
+                }
+            }
+            else
+            {
+                location = GetHelpFile(helpFile, cmdletInfo);
             }
 
             return location;

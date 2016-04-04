@@ -552,7 +552,7 @@ namespace System.Management.Automation.Remoting.Server
             // AppDomain is not available in CoreCLR
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
 #endif
-            SingletonInstance.Start(initialCommand);
+            SingletonInstance.Start(initialCommand, namedPipeServer.ConfigurationName);
         }
 
         #endregion

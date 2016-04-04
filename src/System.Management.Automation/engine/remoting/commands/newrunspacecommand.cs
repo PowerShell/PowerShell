@@ -164,6 +164,40 @@ namespace Microsoft.PowerShell.Commands
         }
         private SwitchParameter enableNetworkAccess;
 
+        /// <summary>
+        /// For WSMan sessions:
+        /// If this parameter is not specified then the value specified in
+        /// the environment variable DEFAULTREMOTESHELLNAME will be used. If 
+        /// this is not set as well, then Microsoft.PowerShell is used.
+        ///
+        /// For VM/Container sessions:
+        /// If this parameter is not specified then no configuration is used.
+        /// </summary>      
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = NewPSSessionCommand.ComputerNameParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = NewPSSessionCommand.UriParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = NewPSSessionCommand.ContainerIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = NewPSSessionCommand.ContainerNameParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = NewPSSessionCommand.VMIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = NewPSSessionCommand.VMNameParameterSet)]
+        public String ConfigurationName
+        {
+            get
+            {
+                return shell;
+            }
+            set
+            {
+                shell = value;
+            }
+        }
+        private String shell;
+
         #endregion Parameters
 
         #region Cmdlet Overrides
@@ -180,6 +214,20 @@ namespace Microsoft.PowerShell.Commands
             throttleManager.ThrottleComplete +=
                 new EventHandler<EventArgs>(HandleThrottleComplete);
 
+            if (String.IsNullOrEmpty(ConfigurationName))
+            {
+                if ((ParameterSetName == NewPSSessionCommand.ComputerNameParameterSet) ||
+                    (ParameterSetName == NewPSSessionCommand.UriParameterSet))
+                {
+                    // set to default value for WSMan session
+                    ConfigurationName = ResolveShell(null);
+                }
+                else
+                {
+                    // convert null to String.Empty for VM/Container session
+                    ConfigurationName = String.Empty;
+                }
+            }
         } // BeginProcessing
 
         /// <summary>
@@ -504,13 +552,13 @@ namespace Microsoft.PowerShell.Commands
                         Action<Cmdlet> errorWriter = delegate(Cmdlet cmdlet)
                         {
                             //
-                            // In case of PSDirectCredentialException, we should output the precise error message
+                            // In case of PSDirectException, we should output the precise error message
                             // in inner exception instead of the generic one in outer exception.
                             //
                             if ((errorRecord.Exception != null) && 
                                 (errorRecord.Exception.InnerException != null))
                             {
-                                PSDirectCredentialException ex = errorRecord.Exception.InnerException as PSDirectCredentialException;
+                                PSDirectException ex = errorRecord.Exception.InnerException as PSDirectException;
                                 if (ex != null)
                                 {
                                     errorRecord = new ErrorRecord(errorRecord.Exception.InnerException, 
@@ -916,7 +964,7 @@ namespace Microsoft.PowerShell.Commands
                 
                 try
                 {
-                    connectionInfo = new VMConnectionInfo(this.Credential, this.VMId[index], this.VMName[index]);
+                    connectionInfo = new VMConnectionInfo(this.Credential, this.VMId[index], this.VMName[index], this.ConfigurationName);
                 
                     runspace = new RemoteRunspace(Utils.GetTypeTableFromExecutionContextTLS(),
                         connectionInfo, this.Host, null, rsName, rsId);
@@ -992,11 +1040,11 @@ namespace Microsoft.PowerShell.Commands
                     //
                     if (isContainerIdSet)
                     {
-                        connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoById(input, RunAsAdministrator.IsPresent);
+                        connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoById(input, RunAsAdministrator.IsPresent, this.ConfigurationName);
                     }
                     else
                     {
-                        connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoByName(input, RunAsAdministrator.IsPresent);
+                        connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoByName(input, RunAsAdministrator.IsPresent, this.ConfigurationName);
                     }
                   
                     resolvedNameList.Add(connectionInfo.ComputerName);
