@@ -31,5 +31,5 @@
         }
     },
 
-    "compile": [ "../windows-build/gen/CORECLR_EVENTING/*.cs" ]
+    "compile": [ "../windows-build/gen/Microsoft.PowerShell.CoreCLR.Eventing/*.cs" ]
 }
