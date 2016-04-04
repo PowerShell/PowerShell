@@ -20,7 +20,7 @@ it to your PowerShell session's path:
 
 ```powershell
 Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
-./install.ps1 -version 1.0.0.001888
+./install.ps1 -version 1.0.0-beta-002198
 $env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli
 ```
 
