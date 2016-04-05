@@ -154,4 +154,4 @@ Running Pester Tests
 --------------------
 
 Go to the top level of the PowerShell repository and run:
-`./bin/powershell -c "Invoke-Pester test/powershell"`
+`Start-PSPester` inside a self-hosted copy of PowerShell.

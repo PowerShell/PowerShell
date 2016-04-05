@@ -3,7 +3,7 @@ Build PowerShell on Windows for .NET Full
 
 This guide supplements the
 [Windows .NET Core instructions](./windows-core.md), as building the
-.NET 4.5.1 (desktop) version is nearly identical.
+.NET 4.5.1 (desktop) version is pretty similar.
 
 Environment
 ===========
@@ -46,21 +46,43 @@ Build using our module
 ======================
 
 Use `Start-PSBuild -FullCLR` from the `PowerShellGitHubDev.psm1`
-module. The bits will be published to `binFull`.
+module.
+
+Because the `ConsoleHost` project (*not* the `Host` project) is a
+library and not an application (in the sense that .NET CLI does not
+emit a native executable using .NET Core's `corehost`), it targets the
+framework `netstandard1.5`, *not* `netstandardapp1.5`, and the build
+output will *not* have a runtime identifier in the path.
+
+Thus the output location of `powershell.exe` will be
+`./src/Microsoft.PowerShell.ConsoleHost/bin/Debug/netstandardapp1.5/powershell.exe`
 
 While building is easy, running FullCLR version is not as simple as
 CoreCLR version.
 
-If you just run ~~`.\binFull\powershell.exe`~~, you will get a
-`powershell` process, but all the interesting DLLs (i.e.
-`System.Management.Automation.dll`) would be loaded from the GAC, not
-your `binFull` build directory.
+If you just run ~~`./powershell.exe`~~, you will get a `powershell`
+process, but all the interesting DLLs (such as
+`System.Management.Automation.dll`) would be loaded from the Global
+Assembly Cache (GAC), not your output directory.
 
 [@lzybkr](https://github.com/lzybkr) wrote a module to deal with it
 and run side-by-side.
 
 ```powershell
-Start-DevPSGithub -binDir $pwd\binFull
+Start-DevPSGithub
+```
+
+This command has a reasonable default to run `powershell.exe` from the build output folder.
+If you are building an unusual configuration (i.e. not `Debug`), you can explicitly specify path to the bin directory
+
+```powershell
+Start-DevPSGithub -binDir .\src\Microsoft.PowerShell.ConsoleHost\bin\Debug\net451
+```
+
+Or more programmatically:
+
+```powershell
+Start-DevPSGithub -binDir (Split-Path -Parent (Get-PSOutput))
 ```
 
 The default for `powershell.exe` that **we build** is x86. See
