@@ -1,6 +1,14 @@
 bin/
-binFull/
-build/
 obj/
 project.lock.json
 *-tests.xml
+
+# dotnet cli install.ps1 script
+install.ps1
+
+# VS auto-generated solution files for project.json solutions
+*.xproj
+*.xproj.user
+
+# We copy powershell.exe as a content in host dotnet cli projects
+*.exe
