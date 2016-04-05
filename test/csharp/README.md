@@ -1,4 +1,5 @@
-# xUnit Tests
+xUnit Tests
+===========
 
 These tests are completely Linux specific.
 
@@ -11,3 +12,9 @@ for the AppDomain and cannot be reset.`
 
 Having every class in the same collection is as close to an xUnit
 global init hook as can be done.
+
+Running xUnit Tests
+-------------------
+
+Go to the top level of the PowerShell repository and run:
+`Start-PSxUnit` inside a self-hosted copy of PowerShell.
