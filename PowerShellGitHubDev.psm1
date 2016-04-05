@@ -521,7 +521,8 @@ function Start-ResGen
             $genSource = Get-StronglyTypeCsFileForResx -xml $xml -ModuleName $module -ClassName $className
             $outPath = "$PSScriptRoot/src/windows-build/gen/$module/$className.cs"
             log "ResGen for $outPath"
-            Set-Content -Encoding Ascii -Path "$PSScriptRoot/src/windows-build/gen/$module/$className.cs" -Value $genSource
+            mkdir -ErrorAction SilentlyContinue (Split-Path $outPath) > $null
+            Set-Content -Encoding Ascii -Path $outPath -Value $genSource
         }
     }
 }
