@@ -69,7 +69,14 @@ Assembly Cache (GAC), not your output directory.
 and run side-by-side.
 
 ```powershell
-Start-DevPSGithub -binDir $pwd/src/Microsoft.PowerShell.ConsoleHost/bin/Debug/netstandardapp1.5
+Start-DevPSGithub
+```
+
+This command has a reasonable default to run `powershell.exe` from the build output folder.
+If you are building an unusual configuration (i.e. not `Debug`), you can explicitly specify path to the bin directory
+
+```powershell
+Start-DevPSGithub -binDir .\src\Microsoft.PowerShell.ConsoleHost\bin\Debug\net451
 ```
 
 Or more programmatically:
