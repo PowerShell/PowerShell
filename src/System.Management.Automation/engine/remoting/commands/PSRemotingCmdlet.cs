@@ -243,7 +243,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return resolvedShell;
-
         }
 
         /// <summary>
@@ -552,29 +551,6 @@ namespace Microsoft.PowerShell.Commands
         private SwitchParameter useSSL;
         
         /// <summary>
-        /// If this parameter is not specified then the value specified in
-        /// the environment variable DEFAULTREMOTESHELLNAME will be used. If 
-        /// this is not set as well, then Microsoft.PowerShell is used.
-        /// </summary>      
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = PSRemotingBaseCmdlet.ComputerNameParameterSet)]
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = PSRemotingBaseCmdlet.UriParameterSet)]
-        public virtual String ConfigurationName
-        {
-            get
-            {
-                return shell;
-            }
-            set
-            {
-                shell = ResolveShell(value);
-            }
-        }
-
-        private String shell;
-
-        /// <summary>
         /// This parameters specifies the appname which identifies the connection
         /// end point on the remote machine. If this parameter is not specified
         /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If thats
@@ -879,11 +855,6 @@ namespace Microsoft.PowerShell.Commands
                     idleTimeout / 1000, BaseTransportManager.MinimumIdleTimeout / 1000));
             }
 
-            if (String.IsNullOrEmpty(shell))
-            {
-                shell = ResolveShell(null);
-            }
-
             if (String.IsNullOrEmpty(appName))
             {
                 appName = ResolveAppName(null);
@@ -1130,6 +1101,54 @@ namespace Microsoft.PowerShell.Commands
             set { containerName = value; }
         }
         private string[] containerName;
+
+        /// <summary>
+        /// For WSMan session:
+        /// If this parameter is not specified then the value specified in
+        /// the environment variable DEFAULTREMOTESHELLNAME will be used. If 
+        /// this is not set as well, then Microsoft.PowerShell is used.
+        ///
+        /// For VM/Container sessions:
+        /// If this parameter is not specified then no configuration is used.
+        /// </summary>      
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.UriParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.FilePathComputerNameParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.FilePathUriParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.ContainerNameParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.VMIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.VMNameParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.FilePathContainerNameParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
+        public virtual String ConfigurationName
+        {
+            get
+            {
+                return shell;
+            }
+            set
+            {
+                // Only InvokeCommandCommand may enter here,
+                // which will call ResolveShell() if needed.
+                shell = value;
+            }
+        }
+        private String shell;
 
         #endregion Parameters
 
@@ -1432,7 +1451,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    connectionInfo = new VMConnectionInfo(this.Credential, this.VMId[index], this.VMName[index]);
+                    connectionInfo = new VMConnectionInfo(this.Credential, this.VMId[index], this.VMName[index], this.ConfigurationName);
                 
                     remoteRunspace = new RemoteRunspace(Utils.GetTypeTableFromExecutionContextTLS(),
                         connectionInfo, this.Host, null, null, -1);
@@ -1509,11 +1528,11 @@ namespace Microsoft.PowerShell.Commands
                     //
                     if (isContainerIdSet)
                     {
-                        connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoById(input, RunAsAdministrator.IsPresent);
+                        connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoById(input, RunAsAdministrator.IsPresent, this.ConfigurationName);
                     }
                     else
                     {
-                        connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoByName(input, RunAsAdministrator.IsPresent);
+                        connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoByName(input, RunAsAdministrator.IsPresent, this.ConfigurationName);
                     }
                   
                     resolvedNameList.Add(connectionInfo.ComputerName);
@@ -2362,12 +2381,29 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
         /// no matches are found</param>
         /// <param name="writeobject">if true write the object down
         /// the pipeline</param>
+        /// <returns>list of matching runspaces</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
+        protected Dictionary<Guid, PSSession> GetMatchingRunspaces(bool writeobject,
+            bool writeErrorOnNoMatch)
+        {
+            return GetMatchingRunspaces(writeobject, writeErrorOnNoMatch, SessionFilterState.All, null);
+        }
+
+        /// <summary>
+        /// Gets the matching runspaces based on the parameterset
+        /// </summary>
+        /// <param name="writeErrorOnNoMatch">write an error record when
+        /// no matches are found</param>
+        /// <param name="writeobject">if true write the object down
+        /// the pipeline</param>
         /// <param name="filterState">Runspace state filter value.</param>
+        /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <returns>list of matching runspaces</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         protected Dictionary<Guid, PSSession> GetMatchingRunspaces(bool writeobject,
             bool writeErrorOnNoMatch,
-            SessionFilterState filterState = SessionFilterState.All)
+            SessionFilterState filterState,
+            String configurationName)
         {
             switch (ParameterSetName)
             {
@@ -2399,49 +2435,49 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
                 // container id + optional session name
                 case PSRunspaceCmdlet.ContainerIdParameterSet:
                     {
-                        return GetMatchingRunspacesByContainerVMNameContainerId(writeobject, filterState, true, true);
+                        return GetMatchingRunspacesByContainerVMNameContainerId(writeobject, filterState, configurationName, true, true);
                     }
 
                 // container id + session instanceid
                 case PSRunspaceCmdlet.ContainerIdInstanceIdParameterSet:
                     {
-                        return GetMatchingRunspacesByContainerVMNameContainerIdSessionInstanceId(writeobject, filterState, true, true);
+                        return GetMatchingRunspacesByContainerVMNameContainerIdSessionInstanceId(writeobject, filterState, configurationName, true, true);
                     }
 
                 // container name + optional session name
                 case PSRunspaceCmdlet.ContainerNameParameterSet:
                     {
-                        return GetMatchingRunspacesByContainerVMNameContainerId(writeobject, filterState, true, false);
+                        return GetMatchingRunspacesByContainerVMNameContainerId(writeobject, filterState, configurationName, true, false);
                     }
 
                 // container name + session instanceid
                 case PSRunspaceCmdlet.ContainerNameInstanceIdParameterSet:
                     {
-                        return GetMatchingRunspacesByContainerVMNameContainerIdSessionInstanceId(writeobject, filterState, true, false);
+                        return GetMatchingRunspacesByContainerVMNameContainerIdSessionInstanceId(writeobject, filterState, configurationName, true, false);
                     }
 
                 // vm Guid + optional session name
                 case PSRunspaceCmdlet.VMIdParameterSet:
                     {
-                        return GetMatchingRunspacesByVMId(writeobject, filterState);
+                        return GetMatchingRunspacesByVMId(writeobject, filterState, configurationName);
                     }
 
                 // vm Guid + session instanceid
                 case PSRunspaceCmdlet.VMIdInstanceIdParameterSet:
                     {
-                        return GetMatchingRunspacesByVMIdSessionInstanceId(writeobject, filterState);
+                        return GetMatchingRunspacesByVMIdSessionInstanceId(writeobject, filterState, configurationName);
                     }
 
                 // vm name + optional session name
                 case PSRunspaceCmdlet.VMNameParameterSet:
                     {
-                        return GetMatchingRunspacesByContainerVMNameContainerId(writeobject, filterState, false, false);
+                        return GetMatchingRunspacesByContainerVMNameContainerId(writeobject, filterState, configurationName, false, false);
                     }
 
                 // vm name + session instanceid
                 case PSRunspaceCmdlet.VMNameInstanceIdParameterSet:
                     {
-                        return GetMatchingRunspacesByContainerVMNameContainerIdSessionInstanceId(writeobject, filterState, false, false);
+                        return GetMatchingRunspacesByContainerVMNameContainerIdSessionInstanceId(writeobject, filterState, configurationName, false, false);
                     }
             }
 
@@ -2708,11 +2744,13 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
         /// </summary>
         /// <param name="writeobject">if true write the object down the pipeline</param>
         /// <param name="filterState">Runspace state filter value.</param>
+        /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <param name="isContainer">if true the target is a container instead of virtual machine</param>
         /// <param name="useContainerId">if true the input is container id</param>
         /// <returns>list of matching runspaces</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByContainerVMNameContainerId(bool writeobject,
             SessionFilterState filterState,
+            String configurationName,
             bool isContainer,
             bool useContainerId)
         {
@@ -2720,6 +2758,8 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
             TargetMachineType computerType;
             bool supportWildChar = false;
             String[] sessionNames = { "*" };
+            WildcardPattern configurationNamePattern = 
+                String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);            
             Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
@@ -2758,13 +2798,15 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
 
                 foreach (string sessionName in sessionNames)
                 {
-                    WildcardPattern sessionNamePattern = WildcardPattern.Get(sessionName, WildcardOptions.IgnoreCase);
+                    WildcardPattern sessionNamePattern = 
+                        String.IsNullOrEmpty(sessionName) ? null : WildcardPattern.Get(sessionName, WildcardOptions.IgnoreCase);
 
                     var matchingRunspaceInfos = remoteRunspaceInfos
                         .Where<PSSession>(session => (supportWildChar ? inputNamePattern.IsMatch(isContainer ? session.ContainerName : session.VMName)
                                                                       : inputName.Equals(session.ContainerId)) &&
-                                                     sessionNamePattern.IsMatch(session.Name) &&
+                                                     ((sessionNamePattern == null) ? true : sessionNamePattern.IsMatch(session.Name)) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
+                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == computerType))
                         .ToList<PSSession>();
 
@@ -2780,17 +2822,21 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
         /// </summary>
         /// <param name="writeobject">if true write the object down the pipeline</param>
         /// <param name="filterState">Runspace state filter value.</param>
+        /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <param name="isContainer">if true the target is a container instead of virtual machine</param>
         /// <param name="useContainerId">if true the input is container id</param>
         /// <returns>list of matching runspaces</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByContainerVMNameContainerIdSessionInstanceId(bool writeobject,
             SessionFilterState filterState,
+            String configurationName,
             bool isContainer,
             bool useContainerId)
         {
             String[] inputNames;
             TargetMachineType computerType;
             bool supportWildChar = false;
+            WildcardPattern configurationNamePattern = 
+                String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);            
             Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
@@ -2828,6 +2874,7 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
                                                                       : inputName.Equals(session.ContainerId)) &&
                                                      sessionInstanceId.Equals(session.InstanceId) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
+                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == computerType))
                         .ToList<PSSession>();
 
@@ -2843,11 +2890,15 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
         /// </summary>
         /// <param name="writeobject">if true write the object down the pipeline</param>
         /// <param name="filterState">Runspace state filter value.</param>
+        /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <returns>list of matching runspaces</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMId(bool writeobject,
-            SessionFilterState filterState)
+            SessionFilterState filterState,
+            String configurationName)
         {
-            String[] sessionNames = { "*" };
+            String[] sessionNames = { "*" };        
+            WildcardPattern configurationNamePattern = 
+                String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);            
             Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
@@ -2861,12 +2912,14 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
             {
                 foreach (string sessionName in sessionNames)
                 {
-                    WildcardPattern sessionNamePattern = WildcardPattern.Get(sessionName, WildcardOptions.IgnoreCase);
+                    WildcardPattern sessionNamePattern =
+                        String.IsNullOrEmpty(sessionName) ? null : WildcardPattern.Get(sessionName, WildcardOptions.IgnoreCase);
 
                     var matchingRunspaceInfos = remoteRunspaceInfos
                         .Where<PSSession>(session => vmId.Equals(session.VMId) &&
-                                                     sessionNamePattern.IsMatch(session.Name) &&
+                                                     ((sessionNamePattern == null) ? true : sessionNamePattern.IsMatch(session.Name)) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
+                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == TargetMachineType.VirtualMachine))
                         .ToList<PSSession>();
 
@@ -2882,10 +2935,14 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
         /// </summary>
         /// <param name="writeobject">if true write the object down the pipeline</param>
         /// <param name="filterState">Runspace state filter value.</param>
+        /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <returns>list of matching runspaces</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMIdSessionInstanceId(bool writeobject,
-            SessionFilterState filterState)
+            SessionFilterState filterState,
+            String configurationName)
         {
+            WildcardPattern configurationNamePattern = 
+                String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);            
             Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
@@ -2897,6 +2954,7 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
                         .Where<PSSession>(session => vmId.Equals(session.VMId) &&
                                                      sessionInstanceId.Equals(session.InstanceId) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
+                                                     ((configurationNamePattern == null) ? true : configurationNamePattern.IsMatch(session.ConfigurationName)) &&
                                                      (session.ComputerType == TargetMachineType.VirtualMachine))
                         .ToList<PSSession>();
 

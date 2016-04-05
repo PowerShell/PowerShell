@@ -263,18 +263,38 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// For WSMan session:
         /// If this parameter is not specified then the value specified in
         /// the environment variable DEFAULTREMOTESHELLNAME will be used. If 
         /// this is not set as well, then Microsoft.PowerShell is used.
+        ///
+        /// For VM/Container sessions:
+        /// If this parameter is not specified then no configuration is used.
         /// </summary>      
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
-                           ParameterSetName = InvokeCommandCommand.UriParameterSet)]
+                   ParameterSetName = InvokeCommandCommand.UriParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathComputerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
-                           ParameterSetName = InvokeCommandCommand.FilePathUriParameterSet)]
+                   ParameterSetName = InvokeCommandCommand.FilePathUriParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.ContainerNameParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.VMIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.VMNameParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.FilePathContainerNameParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
         public override String ConfigurationName
         {
             get
@@ -772,6 +792,23 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 return;
+            }
+
+            if (String.IsNullOrEmpty(ConfigurationName))
+            {
+                if ((ParameterSetName == InvokeCommandCommand.ComputerNameParameterSet) ||
+                    (ParameterSetName == InvokeCommandCommand.UriParameterSet) ||
+                    (ParameterSetName == InvokeCommandCommand.FilePathComputerNameParameterSet) ||
+                    (ParameterSetName == InvokeCommandCommand.FilePathUriParameterSet))
+                {
+                    // set to default value for WSMan session
+                    ConfigurationName = ResolveShell(null);
+                }
+                else
+                {
+                    // convert null to String.Empty for VM/Container session
+                    ConfigurationName = String.Empty;
+                }
             }
 
             base.BeginProcessing();
@@ -1761,14 +1798,14 @@ namespace Microsoft.PowerShell.Commands
             ErrorRecord errorRecord = streamObject.Value as ErrorRecord;
 
             //
-            // In case of PSDirectCredentialException, we should output the precise error message
+            // In case of PSDirectException, we should output the precise error message
             // in inner exception instead of the generic one in outer exception.
             //
             if ((errorRecord != null) && 
                 (errorRecord.Exception != null) && 
                 (errorRecord.Exception.InnerException != null))
             {
-                PSDirectCredentialException ex = errorRecord.Exception.InnerException as PSDirectCredentialException;
+                PSDirectException ex = errorRecord.Exception.InnerException as PSDirectException;
                 if (ex != null)
                 {
                     streamObject.Value = new ErrorRecord(errorRecord.Exception.InnerException, 

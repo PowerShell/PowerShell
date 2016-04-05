@@ -231,7 +231,8 @@ namespace System.Management.Automation
                     foreach (var exportedType in exportedTypes)
                     {
                         if (exportedType.Value != null &&
-                            classNameMatcher.IsMatch(exportedType.Value.Name))
+                            classNameMatcher.IsMatch(exportedType.Value.Name) &&
+                            exportedType.Value.IsClass)
                         {
                             ast = exportedType.Value.Parent.Parent as ScriptBlockAst;
                             if (ast != null)

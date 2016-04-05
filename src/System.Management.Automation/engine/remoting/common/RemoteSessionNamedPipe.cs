@@ -320,6 +320,7 @@ namespace System.Management.Automation.Remoting
         private readonly object _syncObject;
         private bool _disposed;
         private bool _listenerRunning;
+        private string _configurationName;
         private StreamReader _streamReader;
         private StreamWriter _streamWriter;
         private PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
@@ -364,6 +365,15 @@ namespace System.Management.Automation.Remoting
         public bool IsListenerRunning
         {
             get { return _listenerRunning; }
+        }
+
+        /// <summary>
+        /// Name of session configuration.
+        /// </summary>
+        public string ConfigurationName
+        {
+            get { return _configurationName; }
+            set { _configurationName = value; }
         }
 
         /// <summary>
@@ -795,7 +805,8 @@ namespace System.Management.Automation.Remoting
         /// This method supports PowerShell running in "NamedPipeServerMode", which is used for
         /// PowerShell Direct Windows Server Container connection and management.
         /// </summary>
-        internal static void RunServerMode()
+        /// <param name="configurationName">name of the configuration to use</param>
+        internal static void RunServerMode(string configurationName)
         {
             IPCNamedPipeServerEnabled = true;
             CreateIPCNamedPipeServerSingleton();
@@ -804,6 +815,8 @@ namespace System.Management.Automation.Remoting
             {
                 throw new RuntimeException(RemotingErrorIdStrings.NamedPipeServerCannotStart);
             }
+
+            IPCNamedPipeServer.ConfigurationName = configurationName;
 
             ManualResetEventSlim clientConnectionEnded = new ManualResetEventSlim(false);
             IPCNamedPipeServer.ListenerEnded -= OnIPCNamedPipeServerEnded;
@@ -1172,8 +1185,7 @@ namespace System.Management.Automation.Remoting
             int lastError = Marshal.GetLastWin32Error();
             if (pipeHandle.IsInvalid)
             {
-                throw new PSInvalidOperationException(
-                    StringUtil.Format(RemotingErrorIdStrings.CannotConnectNamedPipe, lastError));
+                throw new System.ComponentModel.Win32Exception(lastError);
             }
             
             try

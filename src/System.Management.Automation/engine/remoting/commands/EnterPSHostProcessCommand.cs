@@ -204,10 +204,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 string msgAppDomainName = (!string.IsNullOrEmpty(appDomainName)) ? appDomainName : NamedPipeUtils.DefaultAppDomainName;
 
+                // Unwrap inner exception for original error message, if any.
+                string errorMessage = (e.InnerException != null) ? (e.InnerException.Message ?? string.Empty) : string.Empty;
+
                 ThrowTerminatingError(
                     new ErrorRecord(
-                        new RuntimeException(StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToProcess, msgAppDomainName, procId), 
-                                             e.InnerException),
+                        new RuntimeException(
+                            StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToProcess, 
+                                              msgAppDomainName, procId, errorMessage),
+                            e.InnerException),
                         "EnterPSHostProcessCannotConnectToProcess",
                         ErrorCategory.OperationTimeout,
                         this));
@@ -627,7 +632,18 @@ namespace Microsoft.PowerShell.Commands
             private set;
         }
 
-        #endregion
+#if !CORECLR
+        /// <summary>
+        /// Main window title of the process
+        /// </summary>
+        public string MainWindowTitle
+        {
+            get;
+            private set;
+        }
+#endif
+
+#endregion
 
         #region Constructors
 
@@ -643,6 +659,17 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(processName)) { throw new PSArgumentNullException("processName"); }
             if (string.IsNullOrEmpty(appDomainName)) { throw new PSArgumentNullException("appDomainName"); }
+
+#if !CORECLR
+            MainWindowTitle = String.Empty;
+            try
+            {
+                var proc = System.Diagnostics.Process.GetProcessById(processId);
+                MainWindowTitle = proc.MainWindowTitle ?? string.Empty;
+            }
+            catch (ArgumentException) { }
+            catch (InvalidOperationException) { }
+#endif
 
             this.ProcessName = processName;
             this.ProcessId = processId;

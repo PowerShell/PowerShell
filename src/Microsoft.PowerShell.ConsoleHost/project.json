@@ -26,6 +26,6 @@
     },
 
     "compile": [
-        "../windows-build/gen/CONSOLE_HOST/*.cs"
+        "../windows-build/gen/Microsoft.PowerShell.ConsoleHost/*.cs"
     ]
 }
