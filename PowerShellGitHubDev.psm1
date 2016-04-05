@@ -319,7 +319,7 @@ function Start-DevPSGitHub {
         [switch]$ZapDisable,
         [string[]]$ArgumentList = '',
         [switch]$LoadProfile,
-        [string]$binDir = "$PSScriptRoot\binFull",
+        [string]$binDir = "$PSScriptRoot\src\Microsoft.PowerShell.ConsoleHost\bin\Debug\net451",
         [switch]$NoNewWindow
     )
 
