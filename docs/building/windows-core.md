@@ -52,14 +52,14 @@ the submodules:
 ```sh
 git clone https://github.com/PowerShell/PowerShell.git
 cd PowerShell
-git submodule update --init -- src/windows-build src/Microsoft.PowerShell.Linux.Host/Modules/Pester
+git submodule update --init -- src/windows-build src/Modules/Pester
 ```
 
 Build using our module
 ======================
 
-We maintain a `PowerShellGitHubDev.psm1` PowerShell module with the
-function `Start-PSBuild` to build PowerShell.
+We maintain a [PowerShell module](../../PowerShellGitHubDev.psm1) with
+the function `Start-PSBuild` to build PowerShell.
 
 ```powershell
 Import-Module ./PowerShellGitHubDev.psm1
@@ -67,9 +67,22 @@ Start-PSBuild
 ```
 
 Congratulations! If everything went right, PowerShell is now built and
-executable as `./bin/powershell.exe`.
+executable as `./src/Microsoft.PowerShell.Host/bin/Debug/netstandardapp1.5/win10-x64/powershell`.
 
-> The cross-platform host has built-in documentation via `--help`.
+This location is of the form
+`./[project]/bin/[configuration]/[framework]/[rid]/[binary name]`, and
+our project is `Microsoft.PowerShell.Host`, configuration is `Debug`
+by default, framework is `netstandardapp1.5`, runtime identifier is
+**probably** `win10-x64` (but will depend on your operating system;
+don't worry, `dotnet --info` will tell you what it was), and binary
+name is `powershell`. The function `Get-PSOutput` will return the path
+to the executable; thus you can execute the development copy via `&
+(Get-PSOutput)`.
 
-You can run our cross-platform Pester tests with `./bin/powershell.exe
--c "Invoke-Pester test/powershell"`.
+The `Microsoft.PowerShell.Host` project is the cross-platform host for
+PowerShell targetting .NET Core. It is the top level project, so
+`dotnet build` transitively builds all its dependencies, and emits a
+`powershell` executable. The cross-platform host has built-in
+documentation via `--help`.
+
+You can run our cross-platform Pester tests with `Start-PSPester`.
