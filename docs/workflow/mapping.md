@@ -40,6 +40,8 @@ If you are bringing new (that are not yet included) files from source-depot, you
 This way, we can keep track of changes and have ability to integrate changes back to Source Depot.
 We will use term **integrate** for that kind of new files.
 
+* Use `source-depot` branch to initially add files.
+
 * Make a separate commit with update for `mapping.json`. Separate commit will help to manage this change in other branches.
 
 * You can use `Copy-SubmoduleFiles` function to copy files on disk.
@@ -50,6 +52,8 @@ Use `--author="PowerShell Team <PowerShellTeam@hotmail.com>"` switch to indicate
 ```
 git commit --author="PowerShell Team <PowerShellTeam@hotmail.com>"
 ```
+
+* Merge changes to `master`
 
 Use this approach for **test files** as well.
 You can add them under `test` directory and include in CI test run, but keep the notion of integration in `mapping.json`.
