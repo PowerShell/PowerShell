@@ -34,4 +34,23 @@ It supports `-WhatIf` switch.
  
 ```
 
+## Updating `mapping.json`
+
+If you are bringing new (that are not yet included) files from source-depot, you need to update `mapping.json` to include them.
+This way, we can keep track of changes and have ability to integrate changes back to Source Depot.
+We will use term **integrate** for that kind of new files.
+
+* Make a separate commit with update for `mapping.json`. Separate commit will help to manage this change in other branches.
+
+* You can use `Copy-SubmoduleFiles` function to copy files on disk.
+
+* Make a separate commit for integrated files.
+Use `--author="PowerShell Team <PowerShellTeam@hotmail.com>"` switch to indicate that it's a collective work.
+
+```
+git commit --author="PowerShell Team <PowerShellTeam@hotmail.com>"
+```
+
+Use this approach for **test files** as well.
+You can add them under `test` directory and include in CI test run, but keep the notion of integration in `mapping.json`.
  
