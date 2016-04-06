@@ -11,14 +11,14 @@ Describe "Set-Alias DRT Unit Tests" -Tags DRT{
 	}
 	
 	It "Set-Alias ReadOnly Force"{
-			Set-Alias -Name ABCD -Value "foo" -Option ReadOnly -PassThru:$true
+			Set-Alias -Name ABCD -Value "foo" -Option ReadOnly -Force:$true
 			$result=Get-Alias -Name ABCD
 			$result.Name| Should Be "ABCD"
 			$result.Definition| Should Be "foo"
 			$result.Description| Should Be ""
 			$result.Options| Should Be "ReadOnly"
 			
-			Set-Alias -Name ABCD -Value "foo" -Force:$true -PassThru:$true
+			Set-Alias -Name ABCD -Value "foo" -Force:$true
 			$result=Get-Alias -Name ABCD
 			$result.Name| Should Be "ABCD"
 			$result.Definition| Should Be "foo"
@@ -51,8 +51,8 @@ Describe "Set-Alias DRT Unit Tests" -Tags DRT{
 			$result.Options| Should Be "None"
 	}
 	It "Set-Alias Scope Valid"{
-			Set-Alias -Name ABCD -Value "localfoo" -scope local -PassThru:$true
-			Set-Alias -Name ABCD -Value "foo1" -scope "1" -PassThru:$true
+			Set-Alias -Name ABCD -Value "localfoo" -scope local -Force:$true
+			Set-Alias -Name ABCD -Value "foo1" -scope "1" -Force:$true
 			
 			$result=Get-Alias -Name ABCD
 			$result.Name| Should Be "ABCD"
