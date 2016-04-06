@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+#if !CORECLR
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Microsoft.Management.Infrastructure;
 
@@ -25,3 +26,4 @@ namespace System.Management.Automation
         }
     }
 }
+#endif

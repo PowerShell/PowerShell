@@ -63,6 +63,15 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// IsWinPEHost indicates if the machine on which PowerShell is hosted is WinPE or not.
+        /// This is a helper variable used to kep track if the IsWinPE() helper method has 
+        /// already checked for the WinPE specific registry key or not.
+        /// If the WinPE specific registry key has not yet been checked even 
+        /// once then this variable will point to null.
+        /// </summary>
+        internal static bool? isWinPEHost = null;
+
+        /// <summary>
         /// The existence of the following registry confirms that the host machine is a WinPE
         /// HKLM\System\CurrentControlSet\Control\MiniNT
         /// </summary>
@@ -196,16 +205,7 @@ namespace System.Management.Automation
 
         private static string _pshome = null;
 
-        /// <summary>
-        /// Gets the application base for current monad version
-        /// </summary>
-        /// <returns>
-        /// applicationbase path for current monad version installation
-        /// </returns>
-        /// <exception cref="SecurityException">
-        /// if caller doesn't have permission to read the key
-        /// </exception>
-        internal static string GetApplicationBase(string shellId)
+        internal static string GetApplicationBaseFromRegistry(string shellId)
         {
             bool wantPsHome = (object) shellId == (object) DefaultPowerShellShellID;
             if (wantPsHome && _pshome != null)
@@ -222,6 +222,30 @@ namespace System.Management.Automation
                     if (wantPsHome)
                         Interlocked.CompareExchange(ref _pshome, null, result);
 
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the application base for current monad version
+        /// </summary>
+        /// <returns>
+        /// applicationbase path for current monad version installation
+        /// </returns>
+        /// <exception cref="SecurityException">
+        /// if caller doesn't have permission to read the key
+        /// </exception>
+        internal static string GetApplicationBase(string shellId)
+        {
+            if (!Platform.IsX())
+            {
+                // try to get the path from the registry first
+                string result = GetApplicationBaseFromRegistry(shellId);
+                if (result != null)
+                {
                     return result;
                 }
             }
@@ -280,7 +304,16 @@ namespace System.Management.Automation
                 }
 
                 // And built-in modules
-                string progFileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell", "Modules");
+                string progFileDir;
+                if (Platform.IsX())
+                {
+                    progFileDir = Path.Combine(appBase, "Modules");
+                }
+                else
+                {
+                    progFileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell", "Modules");
+                }
+
                 if (!string.IsNullOrEmpty(progFileDir))
                 {
                     baseDirectories.Add(Path.Combine(progFileDir, "PackageManagement"));
@@ -336,30 +369,58 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsWinPEHost()
         {
+            if (Platform.HasRegistrySupport())
+            {
+                return WinIsWinPEHost();
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        internal static bool WinIsWinPEHost()
+        {
             RegistryKey winPEKey = null;
 
-            try
+            if (!isWinPEHost.HasValue)
             {
-                // The existence of the following registry confirms that the host machine is a WinPE
-                // HKLM\System\CurrentControlSet\Control\MiniNT
-                winPEKey = Registry.LocalMachine.OpenSubKey(WinPEIdentificationRegKey);
-
-                return winPEKey != null;
-            }
-            catch (ArgumentException) { }
-            catch (SecurityException) { }
-            catch (ObjectDisposedException) { }
-            finally
-            {
-                if (winPEKey != null)
+                try
                 {
-                    winPEKey.Dispose();
+                    // The existence of the following registry confirms that the host machine is a WinPE
+                    // HKLM\System\CurrentControlSet\Control\MiniNT
+                    winPEKey = Registry.LocalMachine.OpenSubKey(WinPEIdentificationRegKey);
+
+                    if (null != winPEKey)
+                    {
+                        isWinPEHost = true;
+                    }
+                    else
+                    {
+                        isWinPEHost = false;
+                    }
+                }
+                catch (ArgumentException) { }
+                catch (SecurityException) { }
+                catch (ObjectDisposedException) { }
+                finally
+                {
+                    if (winPEKey != null)
+                    {
+                        winPEKey.Dispose();
+                    }
                 }
             }
 
-            return false;
-        }  
-
+            if (isWinPEHost.HasValue)
+            {
+                return (bool)isWinPEHost;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         #region Versioning related methods
 
@@ -545,7 +606,8 @@ namespace System.Management.Automation
         /// <remarks>
         /// Profile uses this to control profile loading.
         /// </remarks>
-        internal static string ProductNameForDirectory = "WindowsPowerShell";
+        internal static string ProductNameForDirectory =
+            Platform.IsWindows() ? "WindowsPowerShell" : Platform.ProductNameForDirectory;
 
         /// <summary>
         /// The name of the subdirectory that contains packages.
@@ -555,7 +617,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The partial path to the DSC module directory
         /// </summary>
-        internal static string DscModuleDirectory = "WindowsPowerShell\\Modules";
+        internal static string DscModuleDirectory = Path.Combine("WindowsPowerShell", "Modules");
 
         internal static string GetRegistryConfigurationPrefix()
         {
@@ -585,8 +647,18 @@ namespace System.Management.Automation
             return GetGroupPolicySetting(groupPolicyBase, settingName, preferenceOrder);
         }
 
+        // We use a static to avoid creating "extra garbage."
+        private static Dictionary<string, object> _emptyDictionary = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+
         internal static Dictionary<string, object> GetGroupPolicySetting(string groupPolicyBase, string settingName, RegistryKey[] preferenceOrder)
         {
+            if (!Platform.HasGroupPolicySupport())
+            {
+                // Porting note: No group policy support means we have an empty set of
+                // policies.
+                return _emptyDictionary;
+            }
+
             lock (cachedGroupPolicySettings)
             {
                 // Return cached information, if we have it
@@ -888,10 +960,21 @@ namespace System.Management.Automation
 
         internal static bool IsAdministrator()
         {
-            System.Security.Principal.WindowsIdentity currentIdentity = System.Security.Principal.WindowsIdentity.GetCurrent();
-            System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(currentIdentity);
+            // Porting note: only Windows supports the
+            // SecurityPrincipal API of .net for now assume Linux
+            // users have no concept of "Administrator" for now and
+            // specifically do not map to a check for root user
+            if (Platform.IsWindows())
+            {
+                System.Security.Principal.WindowsIdentity currentIdentity = System.Security.Principal.WindowsIdentity.GetCurrent();
+                System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(currentIdentity);
 
-            return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+                return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+            }
+            else
+            {
+                return false;
+            }
         }
 
         internal static bool NativeItemExists(string path)
@@ -902,9 +985,38 @@ namespace System.Management.Automation
             return NativeItemExists(path, out unusedIsDirectory, out unusedException);
         }
 
-        // This is done through P/Invoke since File.Exists and Directory.Exists pay 13% performance degradation
-        // through the CAS checks, and are terribly slow for network paths.
         internal static bool NativeItemExists(string path, out bool isDirectory, out Exception exception)
+        {
+            if (Platform.UseDotNetToQueryFileAttributes())
+            {
+                // TODO:PSL replace by System.IO.File.GetAttributes
+                exception = null;
+                if (NativeDirectoryExists(path))
+                {
+                    isDirectory = true;
+                    return true;
+                }
+                else if (NativeFileExists(path))
+                {
+                    isDirectory = false;
+                    return true;
+                }
+                else
+                {
+                    isDirectory = false;
+                    return false;
+                }
+            }
+            else
+            {
+                // This is done through P/Invoke since File.Exists and Directory.Exists
+                // pay 13% performance degradation through the CAS checks, and are
+                // terribly slow for network paths.
+                return WinNativeItemExists(path,out isDirectory,out exception);
+            }
+        }
+
+        internal static bool WinNativeItemExists(string path, out bool isDirectory, out Exception exception)
         {
             exception = null;
 
@@ -948,9 +1060,21 @@ namespace System.Management.Automation
             return true;
         }
 
-        // This is done through P/Invoke since we pay 13% performance degradation
-        // through the CAS checks required by File.Exists and Directory.Exists
         internal static bool NativeFileExists(string path)
+        {
+            if (Platform.UseDotNetToQueryFileAttributes())
+            {
+                return System.IO.File.Exists(path);
+            }
+            else
+            {
+                // This is done through P/Invoke since we pay 13% performance degradation
+                // through the CAS checks required by File.Exists and Directory.Exists
+                return WinNativeFileExists(path);
+            }
+        }
+
+        internal static bool WinNativeFileExists(string path)
         {
             bool isDirectory;
             Exception ioException;
@@ -968,6 +1092,18 @@ namespace System.Management.Automation
         // through the CAS checks required by File.Exists and Directory.Exists
         internal static bool NativeDirectoryExists(string path)
         {
+            if (Platform.UseDotNetToQueryFileAttributes())
+            {
+                return System.IO.Directory.Exists(path);
+            }
+            else
+            {
+                return WinNativeDirectoryExists(path);
+            }
+        }
+
+        internal static bool WinNativeDirectoryExists(string path)
+        {
             bool isDirectory;
             Exception ioException;
 
@@ -981,6 +1117,31 @@ namespace System.Management.Automation
         }
 
         internal static void NativeEnumerateDirectory(string directory, out List<string> directories, out List<string> files)
+        {
+            if (Platform.UseDotNetToQueryFileAttributes())
+            {
+                IEnumerable<string> fileEnum = System.IO.Directory.EnumerateFiles(directory);
+                IEnumerable<string> dirEnum = System.IO.Directory.EnumerateDirectories(directory);
+ 
+                files = new List<string>();
+                directories = new List<string>();
+
+                foreach (string entry in fileEnum)
+                {
+                    files.Add(directory + "/" + entry);
+                }
+                foreach (string entry in dirEnum)
+                {
+                    directories.Add(directory + "/" + entry);
+                }
+            }
+            else
+            {
+                WinNativeEnumerateDirectory(directory, out directories, out files);
+            }
+        }
+
+        internal static void WinNativeEnumerateDirectory(string directory, out List<string> directories, out List<string> files)
         {
             IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
             NativeMethods.WIN32_FIND_DATA findData;
@@ -1045,6 +1206,10 @@ namespace System.Management.Automation
 
         internal static bool PathIsUnc(string path)
         {
+            if (!Platform.HasUNCSupport())
+            {
+                return false;
+            }
             Uri uri;
             return !string.IsNullOrEmpty(path) && Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
         }
@@ -1098,8 +1263,25 @@ namespace System.Management.Automation
             public static extern bool FindClose(IntPtr hFindFile);
         }
 
+        // Porting note: PublicKeyToken must be null if code signed
+        // assemblies aren't supported
+        private static string strongNamePublicKeyToken
+        {
+            get
+            {
+                if (Platform.UsesCodeSignedAssemblies())
+                {
+                    return "31bf3856ad364e35";
+                }
+                else
+                {
+                    return "null";
+                }
+            }
+        }
+
         internal static readonly string PowerShellAssemblyStrongNameFormat =
-            "{0}, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
+            "{0}, Version=3.0.0.0, Culture=neutral, PublicKeyToken={1}";
 
         internal static readonly HashSet<string> PowerShellAssemblies =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -1156,7 +1338,8 @@ namespace System.Management.Automation
 
                 if ((fixedName != null) && PowerShellAssemblies.Contains(fixedName))
                 {
-                    return string.Format(CultureInfo.InvariantCulture, PowerShellAssemblyStrongNameFormat, fixedName);
+                    return string.Format(CultureInfo.InvariantCulture, PowerShellAssemblyStrongNameFormat,
+                                         fixedName, strongNamePublicKeyToken);
                 }
             }
 

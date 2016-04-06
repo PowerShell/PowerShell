@@ -316,23 +316,9 @@ namespace System.Management.Automation.Runspaces
             string shellId = Utils.DefaultPowerShellShellID;
             string psHome = Utils.GetApplicationBase(shellId);
             List<string> defaultFormatFiles = new List<string>();
-            List<string> fileList = new List<string>()
-                                        {
-                                            "Certificate.Format.ps1xml",
-											"Event.Format.ps1xml",
-                                            "Diagnostics.Format.ps1xml",
-                                            "DotNetTypes.Format.ps1xml",
-                                            "FileSystem.Format.ps1xml",
-                                            "Help.Format.ps1xml",
-                                            "HelpV3.Format.ps1xml",
-                                            "PowerShellCore.format.ps1xml",
-                                            "PowerShellTrace.format.ps1xml",
-                                            "Registry.format.ps1xml",
-                                            "WSMan.Format.ps1xml"
-                                        };
             if (!string.IsNullOrEmpty(psHome))
             {
-                defaultFormatFiles.AddRange(fileList.Select(file => Path.Combine(psHome, file)));
+                defaultFormatFiles.AddRange(Platform.FormatFileNames.Select(file => Path.Combine(psHome, file)));
             }
 
             return new FormatTable(defaultFormatFiles);

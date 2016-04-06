@@ -1,4 +1,5 @@
-﻿using System.IO;
+#if !CORECLR
+using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -56,3 +57,4 @@ namespace System.Management.Automation
         }
     }
 }
+#endif

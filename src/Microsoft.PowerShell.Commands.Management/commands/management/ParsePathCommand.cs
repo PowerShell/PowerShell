@@ -272,6 +272,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Command code
 
+        private static string volumeSeparatorCharAsString = System.IO.Path.VolumeSeparatorChar.ToString();
         /// <summary>
         /// Parses the specified path and returns the portion determined by the 
         /// boolean parameters.
@@ -395,7 +396,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
 
                     case qualifierSet :
-                        int separatorIndex = pathsToParse[index].IndexOf(":", StringComparison.CurrentCulture);
+                        int separatorIndex = pathsToParse[index].IndexOf(volumeSeparatorCharAsString, StringComparison.CurrentCulture);
 
                         if (separatorIndex < 0)
                         {
@@ -537,10 +538,15 @@ namespace Microsoft.PowerShell.Commands
 
             string result = path;
 
-            if (SessionState.Path.IsProviderQualified(path))
+            // Platform notes: On single root fileystems, there is no such thing
+            // as a drive qualifier, and so this is a noop
+            if (Platform.HasSingleRootFilesystem())
+            {
+            }
+            else if (SessionState.Path.IsProviderQualified(path))
             {
                 int index = path.IndexOf("::", StringComparison.CurrentCulture);
-                
+
                 if (index != -1)
                 {
                     // remove the qualifier
@@ -553,8 +559,8 @@ namespace Microsoft.PowerShell.Commands
 
                 if (SessionState.Path.IsPSAbsolute(path, out driveName))
                 {
-                    // Remove the drive name and colon
 
+                    // Remove the drive name and colon
                     result = path.Substring(driveName.Length + 1);
                 }
             }

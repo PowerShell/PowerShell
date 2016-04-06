@@ -29,12 +29,15 @@ namespace System.Management.Automation
 
     internal static class EnumerableExtensions
     {
+#if !CORECLR
+        // Porting note: .NET Core has this, but full .NET does not
         internal static IEnumerable<T> Append<T>(this IEnumerable<T> collection, T element)
         {
             foreach (T t in collection)
                 yield return t;
             yield return element;
         }
+#endif
 
         internal static IEnumerable<T> Prepend<T>(this IEnumerable<T> collection, T element)
         {
@@ -128,6 +131,11 @@ namespace System.Management.Automation
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool IsComObject(this Type type)
         {
+            if (!Platform.HasCom())
+            {
+                return false;
+            }
+
 #if CORECLR // Type.IsComObject(Type) is not in CoreCLR
             return ComObjectType.IsAssignableFrom(type);
 #else

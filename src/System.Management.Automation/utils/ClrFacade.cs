@@ -240,37 +240,8 @@ namespace System.Management.Automation
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string GetAssemblyLocation(Assembly assembly)
         {
-#if CORECLR // Assembly.Location is not in CoreCLR; Use Assembly.ManifestModule.FullyQualifiedName to substitute it.
-            // According to MSDN:
-            //  1. Assembly.Location returns the location of the loaded file that contains the manifest.
-            //  2. Assembly.ManifestModule returns the module that contains the manifest for the assembly.
-            //  3. Module.FullyQualifiedName returns a string representing the fully qualified name and path to this module.
-            //
-            // When the actual assembly is .ni.dll, 'ManifestModule.FullyQualifiedName' still returns the IL dll name, e.g. System.Collections.dll.
-            // So we need to check if the path exists before returning it, and try the .ni.dll path again if it doesn't exist.
-            const string DllExt = ".dll";
-            const string NiDllExt = ".ni.dll";
-
-            string path = assembly.ManifestModule.FullyQualifiedName;
-            if (File.Exists(path))
-            {
-                return path;
-            }
-
-            if (path.EndsWith(DllExt, StringComparison.OrdinalIgnoreCase) && 
-               !path.EndsWith(NiDllExt, StringComparison.OrdinalIgnoreCase))
-            {
-                path = Path.ChangeExtension(path, NiDllExt);
-                if (File.Exists(path))
-                {
-                    return path;
-                }
-            }
-            // This could happen if the passed-in assembly is a dynamic assembly. 
-            return null;
-#else
+            // Porting note: Asembly.Location is in recent CoreCLR
             return assembly.Location;
-#endif
         }
 
         /// <summary>
@@ -336,6 +307,34 @@ namespace System.Management.Automation
             return psAssemblyLoader.LoadFrom(assembly);
         }
 #endif
+
+        /// <summary>
+        /// Porting note: Load assembly by name through the AssemblyLoadContext.
+        /// This is to ensure that the types get cached.
+        /// </summary>
+        internal static Assembly Load(AssemblyName assembly)
+        {
+#if CORECLR
+            var psAssemblyLoader = GetAssemblyLoadContext();
+            return psAssemblyLoader.LoadFromAssemblyName(assembly);
+#else
+            return Assembly.Load(assembly);
+#endif
+        }
+
+        /// <summary>
+        /// Same as the above, but overloaded for a name in a string.
+        /// </summary>
+        internal static Assembly Load(string assembly)
+        {
+#if CORECLR
+            var psAssemblyLoader = GetAssemblyLoadContext();
+            return psAssemblyLoader.LoadFromAssemblyName(new AssemblyName(assembly));
+#else
+            return Assembly.Load(assembly);
+#endif
+        }
+
 
         /// <summary>
         /// Facade for EnumBuilder.CreateTypeInfo
@@ -570,20 +569,8 @@ namespace System.Management.Automation
         /// </summary>
         internal static DirectoryInfo GetParent(string path)
         {
-#if CORECLR
-            // Implementation copied from .NET source code.
-            if (string.IsNullOrEmpty(path))
-                throw new ArgumentNullException("path");
-
-            string fullPath = Path.GetFullPath(path);
-
-            string s = Path.GetDirectoryName(fullPath);
-            if (s == null)
-                return null;
-            return new DirectoryInfo(s);
-#else
+            // Porting note: this is in recent CoreCLR
             return Directory.GetParent(path);
-#endif
         }
 
         /// <summary>

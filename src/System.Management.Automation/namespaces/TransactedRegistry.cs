@@ -1,3 +1,4 @@
+#if !CORECLR
 // ==++==
 // 
 //   Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -132,3 +133,5 @@ namespace Microsoft.PowerShell.Commands.Internal
         internal static readonly TransactedRegistryKey CurrentConfig = TransactedRegistryKey.GetBaseKey(BaseRegistryKeys.HKEY_CURRENT_CONFIG);
     }
 }
+
+#endif
