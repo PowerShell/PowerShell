@@ -54,6 +54,11 @@ namespace System.Management.Automation
         internal PowerShellAssemblyLoadContext(string basePaths)
         {
             #region Validation
+            if (string.IsNullOrEmpty(basePaths))
+            {
+                throw new ArgumentNullException("basePaths");
+            }
+
             this.basePaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < this.basePaths.Length; i++)
             {
@@ -184,19 +189,9 @@ namespace System.Management.Automation
                         assemblyName.FullName);
                 }
 
-                // Try loading it from the TPA list. All PowerShell dependencies are in the
-                // TPA list when published with dotnet-cli.
-                asmLoaded = Assembly.Load(assemblyName);
-
-                // If it wasn't there, try loading from path
-                if (asmLoaded == null)
-                {
-                    asmLoaded = asmFilePath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
-                        ? LoadFromNativeImagePath(asmFilePath, null)
-                        : LoadFromAssemblyPath(asmFilePath);
-                }
-
-                // If it loaded, add it to the cache
+                asmLoaded = asmFilePath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase) 
+                                ? LoadFromNativeImagePath(asmFilePath, null) 
+                                : LoadFromAssemblyPath(asmFilePath);
                 if (asmLoaded != null)
                 {
                     // Add the loaded assembly to the cache
@@ -248,17 +243,10 @@ namespace System.Management.Automation
                 if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
                     return asmLoaded;
 
-                // Try loading it from the TPA list. All PowerShell dependencies are in the
-                // TPA list when published with dotnet-cli.
-                asmLoaded = Assembly.Load(assemblyName);
-
-                if (asmLoaded == null)
-                {
-                    // Load the assembly through 'LoadFromNativeImagePath' or 'LoadFromAssemblyPath'
-                    asmLoaded = assemblyPath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
-                        ? LoadFromNativeImagePath(assemblyPath, null)
-                        : LoadFromAssemblyPath(assemblyPath);
-                }
+                // Load the assembly through 'LoadFromNativeImagePath' or 'LoadFromAssemblyPath'
+                asmLoaded = assemblyPath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
+                    ? LoadFromNativeImagePath(assemblyPath, null)
+                    : LoadFromAssemblyPath(assemblyPath);
 
                 if (asmLoaded != null)
                 {
@@ -496,20 +484,16 @@ namespace System.Management.Automation
     {
         private static bool IsInitialized = false;
 
-        // Porting note: it's much easier to send an LPStr on Linux
-        private const UnmanagedType stringType = 
-#if LINUX
-            UnmanagedType.LPStr
-#else
-            UnmanagedType.LPWStr
-#endif
-            ;
-
         /// <summary>
         /// Set the default Assembly Load Context
         /// </summary>
-        public static void SetPowerShellAssemblyLoadContext([MarshalAs(stringType)]string basePaths)
+        public static void SetPowerShellAssemblyLoadContext([MarshalAs(UnmanagedType.LPWStr)]string basePaths)
         {
+            if (string.IsNullOrEmpty(basePaths))
+            {
+                throw new ArgumentNullException("basePaths");
+            }
+
             if (!IsInitialized)
             {
                 var psAsmLoadContext = new PowerShellAssemblyLoadContext(basePaths);

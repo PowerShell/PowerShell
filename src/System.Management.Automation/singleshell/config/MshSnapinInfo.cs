@@ -994,7 +994,7 @@ namespace System.Management.Automation
             return v;
         }
 
-        internal static void ReadRegistryInfo(out Version assemblyVersion, out string publicKeyToken, out string culture, out string architecture, out string applicationBase, out Version psVersion)
+        private static void ReadRegistryInfo(out Version assemblyVersion, out string publicKeyToken, out string culture, out string architecture, out string applicationBase, out Version psVersion)
         {
             applicationBase = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
             Dbg.Assert(!string.IsNullOrEmpty(applicationBase),
@@ -1018,21 +1018,9 @@ namespace System.Management.Automation
             byte[] publicTokens = currentAssembly.GetName().GetPublicKeyToken();
             if (publicTokens.Length == 0)
             {
-                if (Platform.UsesCodeSignedAssemblies())
-                {
-                    throw PSTraceSource.NewArgumentException("PublicKeyToken", MshSnapinInfo.PublicKeyTokenAccessFailed);
-                }
-                else
-                {
-                    // Platform note: set this to null when code signed assemblies are
-                    // unsupported (rather than blank)
-                    publicKeyToken = "null";
-                }
+                throw PSTraceSource.NewArgumentException("PublicKeyToken", MshSnapinInfo.PublicKeyTokenAccessFailed);
             }
-            else
-            {
-                publicKeyToken = ConvertByteArrayToString(publicTokens);
-            }
+            publicKeyToken = ConvertByteArrayToString(publicTokens);
             // save some cpu cycles by hardcoding the culture to neutral
             // assembly should never be targeted to a particular culture
             culture = "neutral";
@@ -1082,12 +1070,6 @@ namespace System.Management.Automation
                         {"Certificate.format.ps1xml","DotNetTypes.format.ps1xml","FileSystem.format.ps1xml",
                          "Help.format.ps1xml","HelpV3.format.ps1xml","PowerShellCore.format.ps1xml","PowerShellTrace.format.ps1xml",
                          "Registry.format.ps1xml"});
-
-            // If code signing is not supported, the token must be set to "null"
-            if (!Platform.UsesCodeSignedAssemblies())
-            {
-                publicKeyToken = "null";
-            }
 
             string strongName = string.Format(CultureInfo.InvariantCulture, "{0}, Version={1}, Culture={2}, PublicKeyToken={3}, ProcessorArchitecture={4}",
                 CoreSnapin.AssemblyName, assemblyVersion, culture, publicKeyToken, architecture);
@@ -1148,7 +1130,7 @@ namespace System.Management.Automation
                     StringComparison.OrdinalIgnoreCase))
                 {
                     types = new Collection<string>(new string[] { "GetEvent.types.ps1xml" });
-                    formats = new Collection<string>(new string[] { "Event.format.ps1xml","Diagnostics.format.ps1xml" });
+                    formats = new Collection<string>(new string[] { "Event.Format.ps1xml","Diagnostics.Format.ps1xml" });
                 }
                 else if (defaultMshSnapinInfo.AssemblyName.Equals("Microsoft.WSMan.Management", StringComparison.OrdinalIgnoreCase))
                 {
@@ -1428,7 +1410,7 @@ namespace System.Management.Automation
                             };
 
 #if !CORECLR //TODO:CORECLR - The 'Microsoft.WSMan.Management' module will be available on OneCore soon
-                            if (!Utils.IsWinPEHost())
+                            if (!RemotingCommandUtil.IsWinPEHost())
                             {
                                 defaultMshSnapins.Add(new DefaultPSSnapInInformation("Microsoft.WSMan.Management", "Microsoft.WSMan.Management", null,
                                     "WsManResources,Description", "WsManResources,Vendor"));

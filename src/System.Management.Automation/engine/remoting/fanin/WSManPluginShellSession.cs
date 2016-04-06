@@ -265,7 +265,7 @@ namespace System.Management.Automation.Remoting
                     //RACE TO BE FIXED - As soon as this API is called, WinRM service will send CommandResponse back and Signal is expected anytime
                     // If Signal comes and executes before registering the notification handle, cleanup will be messed          
                     result = WSManNativeApi.WSManPluginReportContext(creationRequestDetails.unmanagedHandle, 0, creationRequestDetails.unmanagedHandle);
-                    if (Platform.IsWindows() && (WSManPluginConstants.ExitCodeSuccess == result))
+                    if (WSManPluginConstants.ExitCodeSuccess == result)
                     {
                         registeredShutdownNotification = 1;
 

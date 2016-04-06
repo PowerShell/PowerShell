@@ -1,4 +1,3 @@
-#if !CORECLR
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -2032,7 +2031,9 @@ namespace Microsoft.PowerShell.Commands
             return result.ToString();
         }
 
-        private const string SectionSeparator = "\r\n##############################################################################\r\n";
+        private const string SectionSeparator = @"
+##############################################################################
+";
 
         private void GenerateSectionSeparator(TextWriter writer)
         {
@@ -2079,7 +2080,14 @@ namespace Microsoft.PowerShell.Commands
 
         #region Generating header of a proxy module
 
-        private const string TopCommentTemplate = "\r\n<#\r\n # {0}\r\n # {1}\r\n # {2}\r\n # {3}\r\n #>\r\n";
+        private const string TopCommentTemplate = @"
+<#
+ # {0}
+ # {1}
+ # {2}
+ # {3}
+ #>
+        ";
 
         private void GenerateTopComment(TextWriter writer)
         {
@@ -2395,7 +2403,8 @@ function Get-PSImplicitRemotingSession
                 -ErrorAction SilentlyContinue )
     }}
     if (($script:PSSession -ne $null) -and ($script:PSSession.Runspace.RunspaceStateInfo.State -eq 'Disconnected'))
-    {{  # If we are handed a disconnected session, try re-connecting it before creating a new session.
+    {{
+        # If we are handed a disconnected session, try re-connecting it before creating a new session.
         Set-PSImplicitRemotingSession `
             (& $script:ConnectPSSession `
                 -Session $script:PSSession `
@@ -2847,7 +2856,12 @@ function Get-PSImplicitRemotingClientSideParameters
     }}
     Process {{ {6} }}
     End {{ {7} }}
-" + "\r\n    # .ForwardHelpTargetName {1}\r\n    # .ForwardHelpCategory {5}\r\n    # .RemoteHelpRunspace PSSession\r\n}}\r\n        ";
+
+    # .ForwardHelpTargetName {1}
+    # .ForwardHelpCategory {5}
+    # .RemoteHelpRunspace PSSession
+}}
+        ";
 
         private void GenerateCommandProxy(TextWriter writer, CommandMetadata commandMetadata)
         {
@@ -3143,4 +3157,3 @@ function Get-PSImplicitRemotingClientSideParameters
     }
 
 }
-#endif

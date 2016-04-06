@@ -1,4 +1,3 @@
-#if !CORECLR
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -41,7 +40,7 @@ namespace System.Management.Automation
             _eventLog = new EventLog();
             _eventLog.Source = source;
 
-            _resourceManager = new ResourceManager("System.Management.Automation.resources.Logging", System.Reflection.Assembly.GetExecutingAssembly());
+            _resourceManager = new ResourceManager("Logging", System.Reflection.Assembly.GetExecutingAssembly());
         }
 
         internal string SetupEventSource(string shellId)
@@ -691,5 +690,3 @@ namespace System.Management.Automation
         #endregion Event Message
     }
 }
-
-#endif

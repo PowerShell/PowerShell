@@ -131,7 +131,7 @@ namespace System.Management.Automation
             {
                 var rawArgs = arguments.ToString();
 
-                if (tracer.IsEnabled && Platform.IsWindows())
+                if (tracer.IsEnabled)
                 {
                     // This tracing really shouldn't be in the property getter...
                     tracer.WriteLine("Raw argument string: {0}", rawArgs);

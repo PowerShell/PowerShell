@@ -481,13 +481,10 @@ namespace System.Management.Automation
             return null;
         }
 
-#if !CORECLR
-        // .NET Core does not have a full DataTable type
         static IEnumerable DataTableEnumerable(object obj)
         {
             return (((DataTable)obj).Rows);
         }
-#endif
 
         static IEnumerable TypicalEnumerable(object obj)
         {
@@ -525,13 +522,10 @@ namespace System.Management.Automation
 
         static GetEnumerableDelegate CalculateGetEnumerable(Type objectType)
         {
-#if !CORECLR
-            // .NET Core does not have a full DataTable type
             if (typeof(DataTable).IsAssignableFrom(objectType))
             {
                 return LanguagePrimitives.DataTableEnumerable;
             }
-#endif
 
             // Don't treat IDictionary or XmlNode as enumerable...
             if (typeof(IEnumerable).IsAssignableFrom(objectType)

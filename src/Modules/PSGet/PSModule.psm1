@@ -11623,6 +11623,11 @@ function Update-ModuleManifest
         $ProcessorArchitecture,
 
         [Parameter()]
+        [ValidateSet('Desktop','Core')]
+        [string[]]
+        $CompatiblePSEditions,
+
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
         [Version]
         $PowerShellVersion,
@@ -11780,20 +11785,27 @@ function Update-ModuleManifest
       }
     
     #Get the original module manifest and migrate all the fields to the new module manifest, including the specified parameter values
+    $moduleInfo = $null
+
     try
     {
         $moduleInfo = Microsoft.PowerShell.Core\Test-ModuleManifest -Path $Path -ErrorAction Stop
     }
     catch
     {
-        $message = $LocalizedData.TestModuleManifestFail -f ($_.Exception.Message)
-        ThrowError -ExceptionName "System.ArgumentException" `
-                   -ExceptionMessage $message `
-                   -ErrorId "InvalidModuleManifestFile" `
-                   -ExceptionObject $Path `
-                   -CallerPSCmdlet $PSCmdlet `
-                   -ErrorCategory InvalidArgument
-        return
+        # Throw an error only if Test-ModuleManifest did not return the PSModuleInfo object.
+        # This enables the users to use Update-ModuleManifest cmdlet to update the metadata.
+        if(-not $moduleInfo)
+        {
+            $message = $LocalizedData.TestModuleManifestFail -f ($_.Exception.Message)
+            ThrowError -ExceptionName "System.ArgumentException" `
+                       -ExceptionMessage $message `
+                       -ErrorId "InvalidModuleManifestFile" `
+                       -ExceptionObject $Path `
+                       -CallerPSCmdlet $PSCmdlet `
+                       -ErrorCategory InvalidArgument
+            return
+        }
     }
     
     #Params to pass to New-ModuleManifest module                                                                    
@@ -12084,6 +12096,31 @@ function Update-ModuleManifest
         {
             $params.Add("DscResourcesToExport",$moduleInfo.ExportedDscResources)
         }
+    }
+
+    if($CompatiblePSEditions)
+    {
+        # CompatiblePSEditions field is not available in PowerShell version lower than 5.1
+        #
+        if  (($PSVersionTable.PSVersion -lt [Version]'5.1') -or ($PowerShellVersion -and $PowerShellVersion -lt [Version]'5.1') `
+             -or (-not $PowerShellVersion -and $moduleInfo.PowerShellVersion -and $moduleInfo.PowerShellVersion -lt [Version]'5.1') `
+             -or (-not $PowerShellVersion -and -not $moduleInfo.PowerShellVersion))
+        {
+                ThrowError -ExceptionName 'System.ArgumentException' `
+                           -ExceptionMessage $LocalizedData.CompatiblePSEditionsNotSupportedOnLowerPowerShellVersion `
+                           -ErrorId 'CompatiblePSEditionsNotSupported' `
+                           -ExceptionObject $CompatiblePSEditions `
+                           -CallerPSCmdlet $PSCmdlet `
+                           -ErrorCategory InvalidArgument
+                return  
+        }
+
+        $params.Add('CompatiblePSEditions', $CompatiblePSEditions)
+    }
+    elseif( (Microsoft.PowerShell.Utility\Get-Member -InputObject $moduleInfo -name 'CompatiblePSEditions') -and
+            $moduleInfo.CompatiblePSEditions)
+    {
+        $params.Add('CompatiblePSEditions', $moduleInfo.CompatiblePSEditions)
     }
 
     if($HelpInfoUri)

@@ -1607,25 +1607,13 @@ namespace System.Management.Automation
                     break;
                 }
 
-                // compare both to \ and / here
-                if (path.StartsWith(@".\", StringComparison.Ordinal) ||
-                    path.StartsWith(@"./", StringComparison.Ordinal))
+                if (path.StartsWith(@".\", StringComparison.Ordinal))
                 {
                     // The .\ prefix basically escapes anything that follows
                     // so treat it as a relative path no matter what comes
                     // after it.
 
                     result = false;
-                    break;
-                }
-
-                // non-windows porting notes:
-                // this needs to be handled differently on non-windows, paths starting with / are always absolute
-                // -> still continue with other isAbsolute processing, colons can still happen in drives
-                //    of other providers 
-                if (Platform.HasSingleRootFilesystem() && path.StartsWith("/",StringComparison.Ordinal))
-                {
-                    result = true;
                     break;
                 }
 
@@ -1713,17 +1701,6 @@ namespace System.Management.Automation
                     // after it.
 
                     result = false;
-                    break;
-                }
-
-                // non-windows porting notes:
-                // this needs to be handled differently on non-windows, paths starting with / are always absolute
-                // -> still continue with other isAbsolute processing, colons can still happen in drives
-                //    of other providers 
-                if (Platform.HasSingleRootFilesystem() && path.StartsWith("/",StringComparison.Ordinal))
-                {
-                    driveName = "/";
-                    result = true;
                     break;
                 }
 
@@ -2039,20 +2016,7 @@ namespace System.Management.Automation
                 // Now hack off the drive component of the path
                 if (!isPathForCurrentDrive)
                 {
-                    // This functionality needs to respect if a drive uses a colon to separate the path
-                    //
-                    // what happens here is this:
-                    // - path is assumed to be drive root relative, so on Windows it would start with a
-                    //   \
-                    // - on Linux, there is no difference between drive root relative, and absolute, they
-                    //   are both the same, so we have to preserve the drive here in order to make
-                    //   sure the path will continue being drive root relative
-                    if (workingDriveForPath.VolumeSeparatedByColon)
-                    {
-                        // this is the default behavior for all windows drives, and all non-filesystem
-                        // drives on non-windows
-                        path = path.Substring(driveName.Length + 1);
-                    }
+                    path = path.Substring(driveName.Length + 1);
                 }
             }
             else
@@ -2260,13 +2224,10 @@ namespace System.Management.Automation
             {
                 // The root relative path was given so empty the current working path.
 
-                // Porting notes: This can happen on non-Windows, because the assumption
-                // is that for file paths a path that is already relative to the drive
-                // root is the same thing as an absolute path (both start with /).
-
                 driveRootRelativeWorkingPath = String.Empty;
 
-                // Remove the \ or / from the drive relative path
+                // Remove the \ or / from the drive relative
+                // path
 
                 path = path.Substring(1);
 
@@ -2442,41 +2403,18 @@ namespace System.Management.Automation
 
         private bool HasRelativePathTokens(string path)
         {
-            if (System.IO.Path.DirectorySeparatorChar == '/')
-            {
-                string comparePath = path;
+            string comparePath = path.Replace('/', '\\');
 
-                // the next line will only replace something, if the directory separators
-                // are different on the platform
-                if (System.IO.Path.DirectorySeparatorChar != System.IO.Path.AltDirectorySeparatorChar)
-                    comparePath = path.Replace(System.IO.Path.AltDirectorySeparatorChar,System.IO.Path.DirectorySeparatorChar);
-
-                return (
-                        comparePath.Equals(".", StringComparison.OrdinalIgnoreCase) ||
-                        comparePath.Equals("..", StringComparison.OrdinalIgnoreCase) ||
-                        comparePath.Contains("/./") ||
-                        comparePath.Contains("/../") ||
-                        comparePath.EndsWith("/..", StringComparison.OrdinalIgnoreCase) ||
-                        comparePath.EndsWith("/.", StringComparison.OrdinalIgnoreCase) ||
-                        comparePath.StartsWith("../", StringComparison.OrdinalIgnoreCase) ||
-                        comparePath.StartsWith("./", StringComparison.OrdinalIgnoreCase) ||
-                        comparePath.StartsWith("~", StringComparison.OrdinalIgnoreCase));
-            }
-            else
-            {
-                string comparePath = path.Replace('/', '\\');
-
-                return (
-                    comparePath.Equals(".", StringComparison.OrdinalIgnoreCase) ||
-                    comparePath.Equals("..", StringComparison.OrdinalIgnoreCase) ||
-                    comparePath.Contains("\\.\\") ||
-                    comparePath.Contains("\\..\\") ||
-                    comparePath.EndsWith("\\..", StringComparison.OrdinalIgnoreCase) ||
-                    comparePath.EndsWith("\\.", StringComparison.OrdinalIgnoreCase) ||
-                    comparePath.StartsWith("..\\", StringComparison.OrdinalIgnoreCase) ||
-                    comparePath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
-                    comparePath.StartsWith("~", StringComparison.OrdinalIgnoreCase));
-            }
+            return (
+                comparePath.Equals(".", StringComparison.OrdinalIgnoreCase) ||
+                comparePath.Equals("..", StringComparison.OrdinalIgnoreCase) ||
+                comparePath.Contains("\\.\\") ||
+                comparePath.Contains("\\..\\") ||
+                comparePath.EndsWith("\\..", StringComparison.OrdinalIgnoreCase) ||
+                comparePath.EndsWith("\\.", StringComparison.OrdinalIgnoreCase) ||
+                comparePath.StartsWith("..\\", StringComparison.OrdinalIgnoreCase) ||
+                comparePath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
+                comparePath.StartsWith("~", StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -3130,49 +3068,36 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    // Platform note:
-                    // this needs to be done differently on non-windows platforms
-
                     string unescapedPath = context.SuppressWildcardExpansion ? path : RemoveGlobEscaping(path);
 
-                    // this is the output of the platform specific code right below
-                    string resolvedPath;
+                    string formatString = "{0}:" + StringLiterals.DefaultPathSeparator + "{1}";
 
-                    if (drive.VolumeSeparatedByColon)
+                    // Check to see if its a hidden provider drive.
+                    if (drive.Hidden)
                     {
-                        string formatString = "{0}:" + StringLiterals.DefaultPathSeparator + "{1}";
-
-                        // Check to see if its a hidden provider drive.
-                        if (drive.Hidden)
+                        if (IsProviderDirectPath(unescapedPath))
                         {
-                            if (IsProviderDirectPath(unescapedPath))
-                            {
-                                formatString = "{1}";
-                            }
-                            else
-                            {
-                                formatString = "{0}::{1}";
-                            }
+                            formatString = "{1}";
                         }
                         else
                         {
-                            if (path.StartsWith(StringLiterals.DefaultPathSeparator.ToString(), StringComparison.Ordinal))
-                            {
-                                formatString = "{0}:{1}";
-                            }
+                            formatString = "{0}::{1}";
                         }
-
-                        resolvedPath =
-                            String.Format(
-                                System.Globalization.CultureInfo.InvariantCulture,
-                                formatString,
-                                drive.Name,
-                                unescapedPath);
                     }
                     else
                     {
-                        resolvedPath = drive.Name + unescapedPath;
+                        if (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                        {
+                            formatString = "{0}:{1}";
+                        }
                     }
+
+                    string resolvedPath =
+                        String.Format(
+                            System.Globalization.CultureInfo.InvariantCulture,
+                            formatString,
+                            drive.Name,
+                            unescapedPath);
 
                     // Since we didn't do globbing, be sure the path exists
                     if (allowNonexistingPaths || 
@@ -3332,59 +3257,45 @@ namespace System.Management.Automation
             }
 
             string result = path;
+            bool treatAsRelative = true;
 
-            // platform notes:
-            // this needs to be implemented differently depending if the drive uses colon to separate paths
-            if (drive.VolumeSeparatedByColon)
+            // Ensure the drive name is the same as the portion of the path before
+            // :. If not add the drive name and colon as if it was a relative path
+
+            int index = path.IndexOf(':');
+
+            if (index != -1)
             {
-                bool treatAsRelative = true;
-
-                // Ensure the drive name is the same as the portion of the path before
-                // :. If not add the drive name and colon as if it was a relative path
-
-                int index = path.IndexOf(':');
-
-                if (index != -1)
+                if (drive.Hidden)
                 {
-                    if (drive.Hidden)
+                    treatAsRelative = false;
+                }
+                else
+                {
+                    string possibleDriveName = path.Substring(0, index);
+                    if (String.Equals(possibleDriveName, drive.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         treatAsRelative = false;
                     }
-                    else
-                    {
-                        string possibleDriveName = path.Substring(0, index);
-                        if (String.Equals(possibleDriveName, drive.Name, StringComparison.OrdinalIgnoreCase))
-                        {
-                            treatAsRelative = false;
-                        }
-                    }
-                }
-
-                if (treatAsRelative)
-                {
-                    string formatString = "{0}:" + StringLiterals.DefaultPathSeparator + "{1}";
-
-                    if (path.StartsWith(StringLiterals.DefaultPathSeparator.ToString(), StringComparison.Ordinal))
-                    {
-                        formatString = "{0}:{1}";
-                    }
-                    result =
-                        String.Format(
-                            System.Globalization.CultureInfo.InvariantCulture,
-                            formatString,
-                            drive.Name,
-                            path);
                 }
             }
-            else
+
+            if (treatAsRelative)
             {
-                if (path.StartsWith(drive.Name))
-                    result = path;
-                else
-                    result = drive.Name + path;
+                string formatString = "{0}:" + StringLiterals.DefaultPathSeparator + "{1}";
+
+                if (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                {
+                    formatString = "{0}:{1}";
+                }
+                result =
+                    String.Format(
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        formatString,
+                        drive.Name,
+                        path);
             }
 
-            tracer.WriteLine("result = {0}", result);
             return result;
         } // GetDriveQualifiedPath
 

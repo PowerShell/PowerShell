@@ -1,4 +1,3 @@
-#if !CORECLR
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -145,5 +144,3 @@ namespace Microsoft.PowerShell.Commands
     } // class PSHostTraceListener
 } // namespace System.Management.Automation
 
-
-#endif

@@ -138,11 +138,6 @@ namespace System.Management.Automation
 
         internal static void SetExecutionPolicy(ExecutionPolicyScope scope, ExecutionPolicy policy, string shellId)
         {
-            if (!Platform.HasExecutionPolicy())
-            {
-                throw new PlatformNotSupportedException();
-            }
-
             string executionPolicy = "Restricted";
             string preferenceKey = Utils.GetRegistryConfigurationPath(shellId);
             const string PolicyKeyValueName = "ExecutionPolicy";
@@ -283,11 +278,6 @@ namespace System.Management.Automation
 
         internal static ExecutionPolicy GetExecutionPolicy(string shellId, ExecutionPolicyScope scope)
         {
-            if (!Platform.HasExecutionPolicy())
-            {
-                throw new PlatformNotSupportedException();
-            }
-
             switch (scope)
             {
                 case ExecutionPolicyScope.Process:
@@ -429,13 +419,6 @@ namespace System.Management.Automation
             if (!isUnderProductFolder)
             {
                 return false;
-            }
-
-            // There is no signature support on non-Windows platforms (yet), when
-            // execution reaches here, we are sure the file is under product folder
-            if (Platform.IsX())
-            {
-                return true;
             }
 
             // Check the file signature
@@ -1634,18 +1617,6 @@ namespace System.Management.Automation
         /// <returns>AMSI_RESULT_DETECTED if malware was detected in the sample.</returns>
         internal static AmsiNativeMethods.AMSI_RESULT ScanContent(string content, string sourceMetadata)
         {
-            if (Platform.HasAmsi())
-            {
-                return WinScanContent(content,sourceMetadata);
-            }
-            else
-            {
-                return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
-            }
-        }
-
-        internal static AmsiNativeMethods.AMSI_RESULT WinScanContent(string content, string sourceMetadata)
-        {
             if (String.IsNullOrEmpty(sourceMetadata))
             {
                 sourceMetadata = String.Empty;
@@ -1729,16 +1700,9 @@ namespace System.Management.Automation
             }
         }
 
-        internal static void CurrentDomain_ProcessExit(object sender, EventArgs e)
+        static void CurrentDomain_ProcessExit(object sender, EventArgs e)
         {
-            if (Platform.HasAmsi())
-            {
-                VerifyAmsiUninitializeCalled();
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            VerifyAmsiUninitializeCalled();
         }
 
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
@@ -1753,20 +1717,6 @@ namespace System.Management.Automation
         /// Reset the AMSI session (used to track related script invocations)
         /// </summary>
         internal static void CloseSession()
-        {
-            if (Platform.HasAmsi())
-            {
-                WinCloseSession();
-            }
-            else
-            {
-                // Porting note: cannot throw here because this is called whether or not
-                // AMSI was initialized in the first place
-                return;
-            }
-        }
-
-        internal static void WinCloseSession()
         {
             if (!amsiInitFailed)
             {
@@ -1789,20 +1739,6 @@ namespace System.Management.Automation
         /// Uninitialize the AMSI interface
         /// </summary>
         internal static void Uninitialize()
-        {
-            if (Platform.HasAmsi())
-            {
-                WinUninitialize();
-            }
-            else
-            {
-                // Porting note: cannot throw here because this is called whether or not
-                // AMSI was initialized in the first place
-                return;
-            }
-        }
-
-        internal static void WinUninitialize()
         {
             AmsiUninitializeCalled = true;
             if (!amsiInitFailed)

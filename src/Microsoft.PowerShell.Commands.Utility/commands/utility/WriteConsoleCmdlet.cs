@@ -170,11 +170,6 @@ namespace Microsoft.PowerShell.Commands
                 // Expected if the host is not interactive, or doesn't have Foreground / Background
                 // colours.
             }
-            catch (System.PlatformNotSupportedException)
-            {
-                // TODO:PSL Support setting these colors. Expected
-                // exception on non-windows CoreCLR for now.
-            }
 
             this.WriteInformation(informationMessage, new string[] { "PSHOST" });
             this.Host.UI.TranscribeResult(result);

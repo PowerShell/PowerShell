@@ -1,4 +1,3 @@
-#if !NOETW
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
@@ -548,6 +547,3 @@ namespace System.Management.Automation.Tracing
         }
     }
 }
-
-
-#endif

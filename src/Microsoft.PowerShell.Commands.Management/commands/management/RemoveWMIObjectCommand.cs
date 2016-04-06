@@ -1,4 +1,3 @@
-#if !CORECLR
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
@@ -172,5 +171,3 @@ namespace Microsoft.PowerShell.Commands
         #endregion Command code
     }
 }
-
-#endif

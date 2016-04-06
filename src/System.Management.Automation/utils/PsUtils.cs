@@ -585,19 +585,6 @@ namespace System.Management.Automation
 
         internal static string GetHostName()
         {
-            // Note: non-windows CoreCLR does not support System.Net yet
-            if (Platform.IsWindows())
-            {
-                return WinGetHostName();
-            }
-            else
-            {
-                return Platform.NonWindowsGetHostName();
-            }
-        }
-
-        internal static string WinGetHostName()
-        {
             System.Net.NetworkInformation.IPGlobalProperties ipProperties = 
                 System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
 
@@ -611,18 +598,6 @@ namespace System.Management.Automation
         }
 
         internal static uint GetNativeThreadId()
-        {
-            if (Platform.IsWindows())
-            {
-                return WinGetNativeThreadId();
-            }
-            else
-            {
-                return Platform.NonWindowsGetThreadId();
-            }
-        }
-
-        internal static uint WinGetNativeThreadId()
         {
             return NativeMethods.GetCurrentThreadId();
         }

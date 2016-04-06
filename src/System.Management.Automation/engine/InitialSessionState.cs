@@ -1673,9 +1673,19 @@ namespace System.Management.Automation.Runspaces
             return iss;
         }
 
-        // Porting note: moved to Platform so we have one list to maintain
-        private static string[] PSCoreFormatFileNames = Platform.FormatFileNames.ToArray();
-
+        private static string[] PSCoreFormatFileNames = {
+                                                            "Certificate.format.ps1xml",
+                                                            "Diagnostics.Format.ps1xml",
+                                                            "DotNetTypes.format.ps1xml",
+                                                            "Event.Format.ps1xml",
+                                                            "FileSystem.format.ps1xml",
+                                                            "Help.format.ps1xml",
+                                                            "HelpV3.format.ps1xml",
+                                                            "PowerShellCore.format.ps1xml",
+                                                            "PowerShellTrace.format.ps1xml",
+                                                            "Registry.format.ps1xml",
+                                                            "WSMan.Format.ps1xml"
+                                                        };
         private static void IncludePowerShellCoreFormats(InitialSessionState iss)
         {
             string psHome = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
@@ -1775,14 +1785,25 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            // Porting note: copy so it can be modified
-            List<string> allowedFormats = new List<string>(Platform.FormatFileNames);
+            List<string> allowedFormats = new List<string>
+                                              {
+                                                  "Certificate.Format.ps1xml",
+												  "Event.format.ps1xml",
+                                                  "Diagnostics.format.ps1xml",
+                                                  "DotNetTypes.Format.ps1xml",
+                                                  "FileSystem.Format.ps1xml",
+                                                  "Help.Format.ps1xml",
+                                                  "HelpV3.format.ps1xml",
+                                                  "PowerShellCore.format.ps1xml",
+                                                  "PowerShellTrace.format.ps1xml",
+                                                  "Registry.format.ps1xml",
+                                                  "WSMan.format.ps1xml"
+                                              };
             RemoveDisallowedEntries(
                 iss.Formats,
                 allowedFormats,
                 formatEntry => IO.Path.GetFileName(formatEntry.FileName));
 
-            // Porting note: type files were deprecated
             List<string> allowedTypes = new List<string>();
             allowedTypes.AddRange(DefaultTypeFiles);
             RemoveDisallowedEntries(
@@ -1850,14 +1871,25 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            // Porting note: copy so it can be modified
-            List<string> allowedFormats = new List<string>(Platform.FormatFileNames);
+            List<string> allowedFormats = new List<string>
+                                              {
+                                                  "Certificate.Format.ps1xml",
+												  "Event.format.ps1xml",
+                                                  "Diagnostics.format.ps1xml",
+                                                  "DotNetTypes.Format.ps1xml",
+                                                  "FileSystem.Format.ps1xml",
+                                                  "Help.Format.ps1xml",
+                                                  "HelpV3.format.ps1xml",
+                                                  "PowerShellCore.format.ps1xml",
+                                                  "PowerShellTrace.format.ps1xml",
+                                                  "Registry.format.ps1xml",
+                                                  "WSMan.format.ps1xml"
+                                              };
             RemoveDisallowedEntries(
                 iss.Formats,
                 allowedFormats,
                 formatEntry => IO.Path.GetFileName(formatEntry.FileName));
 
-            // Porting note: type files were deprecated
             List<string> allowedTypes = new List<string>();
             allowedTypes.AddRange(DefaultTypeFiles);
             RemoveDisallowedEntries(
@@ -4256,7 +4288,6 @@ namespace System.Management.Automation.Runspaces
             return coreSnapin;
         }
 
-        // WARNING: THIS CODE IS COMPLETELY DUPLICATED IN RunspaceConfigForSingleShell
         internal PSSnapInInfo ImportPSSnapIn(PSSnapInInfo psSnapInInfo, out PSSnapInException warning)
         {
             // See if the snapin is already loaded. If has been then there will be an entry in the
@@ -4717,32 +4748,6 @@ End
         /// Win8: 320909. Retaining the original definition to ensure backward compatability.
         /// </remarks>
         private static string ImportSystemModulesText = @"";
-
-        /// <summary>
-        /// This is the default function to use for clear-host. On Windows it rewrites the
-        /// host, and on Linux, it delegates to the native binary, 'clear'.
-        /// </summary>
-        internal static string GetClearHostFunctionText()
-        {
-            if (Platform.IsWindows())
-            {
-                return @"
-$RawUI = $Host.UI.RawUI
-$RawUI.CursorPosition = @{X=0;Y=0}
-$RawUI.SetBufferContents(
-    @{Top = -1; Bottom = -1; Right = -1; Left = -1},
-    @{Character = ' '; ForegroundColor = $rawui.ForegroundColor; BackgroundColor = $rawui.BackgroundColor})
-# .Link
-# http://go.microsoft.com/fwlink/?LinkID=225747
-# .ExternalHelp System.Management.Automation.dll-help.xml
-";
-            }
-            else
-            {
-                // Porting note: non-Windows platforms use `clear`
-                return "& (Get-Command -CommandType Application clear).Definition | Select-Object -First 1";
-            }
-        }
 
         /// <summary>
         /// This is the default function to use for man/help. It uses
@@ -5439,16 +5444,26 @@ end
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
 
+        internal const string DefaultClearHostFunctionText = @"
+$RawUI = $Host.UI.RawUI
+$RawUI.CursorPosition = @{X=0;Y=0}
+$RawUI.SetBufferContents(
+    @{Top = -1; Bottom = -1; Right = -1; Left = -1},
+    @{Character = ' '; ForegroundColor = $rawui.ForegroundColor; BackgroundColor = $rawui.BackgroundColor})
+# .Link
+# http://go.microsoft.com/fwlink/?LinkID=225747
+# .ExternalHelp System.Management.Automation.dll-help.xml
+";
+
         internal const string DefaultMoreFunctionText = @"
 param([string[]]$paths)
 $OutputEncoding = [System.Console]::OutputEncoding
-$moreCommand = (Get-Command -CommandType Application more).Definition | Select-Object -First 1
 if($paths) {
     foreach ($file in $paths)
     {
-        Get-Content $file | & $moreCommand
+        Get-Content $file | more.com
     }
-} else { $input | & $moreCommand }
+} else { $input | more.com }
 ";
 
         internal const string DefaultSetDriveFunctionText = "Set-Location $MyInvocation.MyCommand.Name";
@@ -5457,9 +5472,10 @@ if($paths) {
         internal static SessionStateFunctionEntry[] BuiltInFunctions = new SessionStateFunctionEntry[]
         {
             // Functions.  Only the name and definitions are used
+
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("prompt", DefaultPromptFunctionText), 
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("TabExpansion2", TabExpansionFunctionText),
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Clear-Host", GetClearHostFunctionText()),
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Clear-Host", DefaultClearHostFunctionText),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("more", DefaultMoreFunctionText),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText()),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("mkdir", GetMkdirFunctionText()),
@@ -5620,8 +5636,7 @@ if($paths) {
 
             try
             {
-                // WARNING: DUPLICATE CODE see RunspaceConfigForSingleShell
-                assembly = ClrFacade.Load(new AssemblyName(psSnapInInfo.AssemblyName));
+                assembly = Assembly.Load(new AssemblyName(psSnapInInfo.AssemblyName));
             }
             catch (BadImageFormatException e)
             {
@@ -5644,12 +5659,7 @@ if($paths) {
             try
             {
                 AssemblyName assemblyName = ClrFacade.GetAssemblyName(psSnapInInfo.AbsoluteModulePath);
-
-                // Porting note: the snapins still require 'ProcessorArchitecture=MSIL' in
-                // the strong name, which is not in the strong name of assemblies created
-                // by dotnet-cli
-                if (!Platform.IsX() &&
-                    !string.Equals(assemblyName.FullName, psSnapInInfo.AssemblyName, StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(assemblyName.FullName, psSnapInInfo.AssemblyName, StringComparison.OrdinalIgnoreCase))
                 {
                     string message = StringUtil.Format(ConsoleInfoErrorStrings.PSSnapInAssemblyNameMismatch, psSnapInInfo.AbsoluteModulePath, psSnapInInfo.AssemblyName);
                     _PSSnapInTracer.TraceError(message);

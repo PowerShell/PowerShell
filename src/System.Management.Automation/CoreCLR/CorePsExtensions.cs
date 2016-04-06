@@ -1,7 +1,8 @@
-#if CORECLR
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
+#if CORECLR
 
 using System.Globalization;
 using System.Linq;
@@ -824,37 +825,7 @@ namespace System.Management.Automation
 
         public static string GetEnvironmentVariable(string variable)
         {
-            string value = System.Environment.GetEnvironmentVariable(variable);
-
-            // Porting note: if not otherwise defined, map Windows environment
-            // variables to their corresponding Linux counterparts
-            if (Platform.IsLinux() && String.IsNullOrEmpty(value))
-            {
-                switch (variable)
-                {
-                    case "OS":
-                        return "Linux";
-
-                    case "COMPUTERNAME":
-                        return System.Environment.GetEnvironmentVariable("HOSTNAME");
-
-                    case "USERNAME":
-                        return System.Environment.GetEnvironmentVariable("USER");
-
-                    case "HOMEPATH":
-                    case "USERPROFILE":
-                        return System.Environment.GetEnvironmentVariable("HOME");
-
-                    case "TMP":
-                    case "TEMP":
-                        return System.Environment.GetEnvironmentVariable("TMPDIR");
-
-                    default:
-                        break;
-                }
-            }
-
-            return value;
+            return System.Environment.GetEnvironmentVariable(variable);
         }
 
         public static IDictionary GetEnvironmentVariables()
@@ -891,13 +862,6 @@ namespace System.Management.Automation
             if (target == EnvironmentVariableTarget.Process)
             {
                 return GetEnvironmentVariables();
-            }
-
-            if (!Platform.HasRegistrySupport())
-            {
-                // Porting note: Does not throw a PlatformUnsupported because
-                // GetEnvironmentVariable cannot throw, and we want the same interface.
-                return null;
             }
  
             if( target == EnvironmentVariableTarget.Machine)
@@ -956,14 +920,6 @@ namespace System.Management.Automation
                 return System.Environment.GetEnvironmentVariable(variable);
             }
 
-            if (!Platform.HasRegistrySupport())
-            {
-                // Porting note: This cannot throw since it would otherwise throw while
-                // creating a runspace. Returning null is appropriate to signal that there
-                // is no value for a registry key with no registry.
-                return null;
-            }
-
             if (target == EnvironmentVariableTarget.Machine)
             {
                 using (RegistryKey environmentKey =
@@ -991,31 +947,6 @@ namespace System.Management.Automation
 
 #region Property_Extensions
 
-        internal static string WinGetUserDomainName()
-        {
-            StringBuilder domainName = new StringBuilder(1024);
-            uint domainNameLen = (uint)domainName.Capacity;
-
-            byte ret = Win32Native.GetUserNameEx(Win32Native.NameSamCompatible, domainName, ref domainNameLen);
-            if (ret == 1)
-            {
-                string samName = domainName.ToString();
-                int index = samName.IndexOf('\\');
-                if (index != -1)
-                {
-                    return samName.Substring(0, index);
-                }
-            }
-            else
-            {
-                int errorCode = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException(Win32Native.GetMessage(errorCode));
-            }
-
-            // Cannot use LookupAccountNameW to get DomainName because 'GetUserName' is not available in CSS and thus we cannot get the account.
-            throw new InvalidOperationException(CoreClrStubResources.CannotGetDomainName);
-        }
-
         /// <summary>
         /// UserDomainName
         /// </summary>
@@ -1023,33 +954,28 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Platform.IsWindows())
+                StringBuilder domainName = new StringBuilder(1024);
+                uint domainNameLen = (uint)domainName.Capacity;
+
+                byte ret = Win32Native.GetUserNameEx(Win32Native.NameSamCompatible, domainName, ref domainNameLen);
+                if (ret == 1)
                 {
-                    return WinGetUserDomainName();
+                    string samName = domainName.ToString();
+                    int index = samName.IndexOf('\\');
+                    if (index != -1)
+                    {
+                        return samName.Substring(0, index);
+                    }
                 }
                 else
                 {
-                    return Platform.NonWindowsGetDomainName();
+                    int errorCode = Marshal.GetLastWin32Error();
+                    throw new InvalidOperationException(Win32Native.GetMessage(errorCode));
                 }
-            }
-        }
-        
-        internal static string WinGetUserName()
-        {
-            StringBuilder domainName = new StringBuilder(1024);
-            uint domainNameLen = (uint)domainName.Capacity;
 
-            byte ret = Win32Native.GetUserNameEx(Win32Native.NameSamCompatible, domainName, ref domainNameLen);
-            if (ret == 1)
-            {
-                string samName = domainName.ToString();
-                int index = samName.IndexOf('\\');
-                if (index != -1)
-                {
-                    return samName.Substring(index + 1);
-                }
+                // Cannot use LookupAccountNameW to get DomainName because 'GetUserName' is not available in CSS and thus we cannot get the account.
+                throw new InvalidOperationException(CoreClrStubResources.CannotGetDomainName);
             }
-            return string.Empty;
         }
 
         /// <summary>
@@ -1059,26 +985,21 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Platform.IsWindows())
-                {
-                    return WinGetUserName();
-                }
-                else
-                {
-                    return Platform.NonWindowsGetUserName();
-                }
-            }
-        }
+                StringBuilder domainName = new StringBuilder(1024);
+                uint domainNameLen = (uint)domainName.Capacity;
 
-        internal static string WinGetMachineName()
-        {
-            // In future release of operating systems, you might be able to rename a machine without
-            // rebooting.  Therefore, don't cache this machine name.
-            StringBuilder buf = new StringBuilder(MaxMachineNameLength);
-            int len = MaxMachineNameLength;
-            if (Win32Native.GetComputerName(buf, ref len) == 0)
-                throw new InvalidOperationException(CoreClrStubResources.CannotGetComputerName);
-            return buf.ToString();
+                byte ret = Win32Native.GetUserNameEx(Win32Native.NameSamCompatible, domainName, ref domainNameLen);
+                if (ret == 1)
+                {
+                    string samName = domainName.ToString();
+                    int index = samName.IndexOf('\\');
+                    if (index != -1)
+                    {
+                        return samName.Substring(index + 1);
+                    }
+                }
+                return string.Empty;
+            }
         }
 
         /// <summary>
@@ -1088,14 +1009,13 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Platform.IsWindows())
-                {
-                    return WinGetMachineName();
-                }
-                else
-                {
-                    return Platform.NonWindowsGetMachineName();
-                }
+                // In future release of operating systems, you might be able to rename a machine without
+                // rebooting.  Therefore, don't cache this machine name.
+                StringBuilder buf = new StringBuilder(MaxMachineNameLength);
+                int len = MaxMachineNameLength;
+                if (Win32Native.GetComputerName(buf, ref len) == 0)
+                    throw new InvalidOperationException(CoreClrStubResources.CannotGetComputerName);
+                return buf.ToString();
             }
         }
 
@@ -1108,45 +1028,22 @@ namespace System.Management.Automation
             {
                 if (m_os == null)
                 {
-                    if (Platform.IsWindows())
+                    Win32Native.OSVERSIONINFOEX osviex = new Win32Native.OSVERSIONINFOEX();
+                    osviex.OSVersionInfoSize = Marshal.SizeOf(osviex);
+                    if (!Win32Native.GetVersionEx(ref osviex))
                     {
-                        m_os = WinOSVersion;
+                        int errorCode = Marshal.GetLastWin32Error();
+                        throw new Win32Exception(errorCode);
                     }
-                    else
-                    {
-                        // TODO:PSL use P/Invoke to provide proper version
 
-                        // Porting note: cannot put this in CorePsPlatform since
-                        // System.Management.Automation.Environment only exists in CoreCLR
-                        // builds of monad.
-                        m_os = new Environment.OperatingSystem(new Version(1,0,0,0),"");
-                    }
+                    Version v = new Version(osviex.MajorVersion, osviex.MinorVersion, osviex.BuildNumber, (osviex.ServicePackMajor << 16) | osviex.ServicePackMinor);
+                    m_os = new OperatingSystem(v, osviex.CSDVersion);
                 }
                 return m_os;
             }
         }
         private static volatile OperatingSystem m_os;
 
-        /// <summary>
-        /// Windows OSVersion implementation
-        /// </summary>
-        private static OperatingSystem WinOSVersion
-        {
-            get
-            {
-                Win32Native.OSVERSIONINFOEX osviex = new Win32Native.OSVERSIONINFOEX();
-                osviex.OSVersionInfoSize = Marshal.SizeOf(osviex);
-                if (!Win32Native.GetVersionEx(ref osviex))
-                {
-                    int errorCode = Marshal.GetLastWin32Error();
-                    throw new Win32Exception(errorCode);
-                }
-
-                Version v = new Version(osviex.MajorVersion, osviex.MinorVersion, osviex.BuildNumber, (osviex.ServicePackMajor << 16) | osviex.ServicePackMinor);
-                return new OperatingSystem(v, osviex.CSDVersion);
-            }
-        }
-        
         //TODO:CORECLR Need to decide what to do with 'requestedClrVersion' and 'requestedDotNetFrameworkVersion' in ModuleCmdletBase.cs [LoadModuleManifest]
         public static Version Version
         {
@@ -1179,11 +1076,6 @@ namespace System.Management.Automation
         /// </returns>
         private static string InternalGetFolderPath(SpecialFolder folder)
         {
-            if (!Platform.IsWindows())
-            {
-                return Platform.NonWindowsGetFolderPath(folder);
-            }
-
             // The API 'SHGetFolderPath' is not available on OneCore, so we have to rely on environment variables
             string folderPath = null;
             string systemRoot = null;
@@ -1264,7 +1156,7 @@ namespace System.Management.Automation
         /// DllImport uses the ApiSet dll that is available on CSS, since this code
         /// will only be included when building targeting CoreCLR.
         /// </summary>
-        internal static class Win32Native
+        private static class Win32Native
         {
             internal const int NameSamCompatible = 2;             // EXTENDED_NAME_FORMAT - NameSamCompatible
 
@@ -1331,17 +1223,13 @@ namespace System.Management.Automation
 
 #region NestedTypes
 
-        // Porting note: MyDocuments does not exist on .NET Core, but Personal does, and
-        // they both point to your "documents repository," which on linux, is just the
-        // home directory.
-
         /// <summary>
         /// It only contains the values that get used in powershell
         /// </summary>
         internal enum SpecialFolder
         {
-            Personal = 0x05,
-            MyDocuments = 0x05,
+            MyDocuments = 5,
+            Personal = 5,
             LocalApplicationData = 0x1c,
             ProgramFiles = 0x26,
             ProgramFilesX86 = 0x2a,

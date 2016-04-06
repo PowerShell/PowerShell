@@ -135,12 +135,6 @@ namespace Microsoft.PowerShell.Commands
         protected override Collection<PSDriveInfo> InitializeDefaultDrives() 
         {
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
-
-            if (!Platform.HasRegistrySupport())
-            {
-                return drives;
-            }
-
             drives.Add(
                 new PSDriveInfo(
                     "HKLM",

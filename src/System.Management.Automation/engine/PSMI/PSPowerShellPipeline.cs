@@ -1,5 +1,4 @@
-#if !CORECLR
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
@@ -61,4 +60,3 @@ namespace System.Management.Automation
         internal IntPtr Value;
     }
 }
-#endif

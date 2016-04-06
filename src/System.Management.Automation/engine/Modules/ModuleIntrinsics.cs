@@ -531,9 +531,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the personal module path
-        /// (i.e. C:\Users\lukasza\Documents\WindowsPowerShell\modules, or
-        /// ~/.powershell/Modules on Linux)
+        /// Gets the personal module path (i.e. C:\Users\lukasza\Documents\WindowsPowerShell\modules)
         /// </summary>
         /// <returns>personal module path</returns>
         internal static string GetPersonalModulePath()
@@ -580,12 +578,7 @@ namespace System.Management.Automation
                 // Because of this, the module that is getting loaded during startup (through LocalRunspace)
                 // is using "SysWow64" in the key. Later, when Import-Module is called, it loads the 
                 // module using ""System32" in the key.
-
-                // Porting note: psHome cannot be lower-cased on case sensitive file systems
-                if (Platform.IsWindows())
-                {
-                    psHome = psHome.ToLowerInvariant().Replace("\\syswow64\\", "\\system32\\");
-                }
+                psHome = psHome.ToLowerInvariant().Replace("\\syswow64\\", "\\system32\\");
                 Interlocked.CompareExchange(ref SystemWideModulePath, Path.Combine(psHome, Utils.ModuleDirectory), null);
             }
 
@@ -600,11 +593,6 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static string GetDscModulePath()
         {
-            if (!Platform.IsWindows())
-            {
-                return string.Empty;
-            }
-
             string dscModulePath = null;
             string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
             if (!string.IsNullOrEmpty(programFilesPath))
@@ -738,7 +726,7 @@ namespace System.Management.Automation
             if (currentProcessModulePath == null)  // EVT.Process does Not exist - really corner case
             {
                 // Handle the default case...
-                if (String.IsNullOrEmpty(hkcuUserModulePath)) // EVT.User does Not exist -> set to <SpecialFolder.MyDocuments> location
+                if (hkcuUserModulePath == null) // EVT.User does Not exist -> set to <SpecialFolder.MyDocuments> location
                 {
                     currentProcessModulePath = GetPersonalModulePath(); // = SpecialFolder.MyDocuments + Utils.ProductNameForDirectory + Utils.ModuleDirectory
                 }
@@ -748,7 +736,7 @@ namespace System.Management.Automation
                 }
 
                 currentProcessModulePath += ';';
-                if (String.IsNullOrEmpty(hklmMachineModulePath)) // EVT.Machine does Not exist
+                if (hklmMachineModulePath == null) // EVT.Machine does Not exist
                 {
                     currentProcessModulePath += CombineSystemModulePaths(); // += (DscModulePath + $PSHome\Modules)
                 }
@@ -760,13 +748,6 @@ namespace System.Management.Automation
             else // EVT.Process exists
             {
                 // Now handle the case where the environment variable is already set.
-
-                // Porting note: Open PowerShell has a Modules folder in the the application base path which contains the built-in modules
-                // It must be in the front of the path no matter what.
-                if (Platform.IsX())
-                {
-                    currentProcessModulePath = AddToPath(currentProcessModulePath, GetSystemwideModulePath(), 0);
-                }
 
                 // If there is no personal path key, then if the env variable doesn't match the system variable,
                 // the user modified it somewhere, else prepend the default personel module path
@@ -877,11 +858,11 @@ namespace System.Management.Automation
 
             string newModulePathString = GetModulePath(currentModulePath, systemWideModulePath, personalModulePath);
 
-            if(!string.IsNullOrEmpty(newModulePathString))
-            {
-                // Set the environment variable...
+			if(!string.IsNullOrEmpty(newModulePathString))
+			{
+	            // Set the environment variable...
                 Environment.SetEnvironmentVariable("PSMODULEPATH", newModulePathString);
-            }
+			}
 
             return newModulePathString;
         }
@@ -966,8 +947,7 @@ namespace System.Management.Automation
                 catch (NotSupportedException)
                 {
                     // silently skip invalid path
-                    // NotSupportedException is thrown if path contains a colon (":") that is not part of a
-                    // volume identifier (for example, "c:\" is Supported but not "c:\temp\Z:\invalidPath")
+                    // NotSupportedException is thrown if path contains a colon (":") that is not part of a volume identifier (for example, "c:\" is Supported but not "c:\temp\Z:\invalidPath")
                 }
 
                 if (provider != null && resolvedPaths != null && provider.NameEquals(context.ProviderNames.FileSystem))

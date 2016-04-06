@@ -1809,8 +1809,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
 
             // optional pre-load and binding verification
-            // Porting Note: DLL.resources are not currently available on Linux
-            if (!Platform.IsX() && this.VerifyStringResources)
+            if (this.VerifyStringResources)
             {
                 DisplayResourceManagerCache.LoadingResult result;
                 DisplayResourceManagerCache.AssemblyBindingStatus bindingStatus;
