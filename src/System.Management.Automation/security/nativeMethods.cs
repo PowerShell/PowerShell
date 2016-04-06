@@ -1973,10 +1973,51 @@ namespace System.Management.Automation.Security
         }
     }
 
-    /// <summary>
-    /// pinvoke methods from wintrust.dll
-    /// These are added to Generate and Validate Window Catalog Files 
-    /// </summary>
+    // Constants needed for Catalog Error Handling 
+    internal partial class NativeConstants
+    {
+        // CRYPTCAT_E_AREA_HEADER = "0x00000000";
+        public const int CRYPTCAT_E_AREA_HEADER = 0;
+
+        // CRYPTCAT_E_AREA_MEMBER = "0x00010000";
+        public const int CRYPTCAT_E_AREA_MEMBER = 65536;
+
+        // CRYPTCAT_E_AREA_ATTRIBUTE = "0x00020000";
+        public const int CRYPTCAT_E_AREA_ATTRIBUTE = 131072;
+
+        // CRYPTCAT_E_CDF_UNSUPPORTED = "0x00000001";
+        public const int CRYPTCAT_E_CDF_UNSUPPORTED = 1;
+
+        // CRYPTCAT_E_CDF_DUPLICATE = "0x00000002";
+        public const int CRYPTCAT_E_CDF_DUPLICATE = 2;
+
+        // CRYPTCAT_E_CDF_TAGNOTFOUND = "0x00000004";    
+        public const int CRYPTCAT_E_CDF_TAGNOTFOUND = 4;
+
+        // CRYPTCAT_E_CDF_MEMBER_FILE_PATH = "0x00010001";
+        public const int CRYPTCAT_E_CDF_MEMBER_FILE_PATH = 65537;
+
+        // CRYPTCAT_E_CDF_MEMBER_INDIRECTDATA = "0x00010002";
+        public const int CRYPTCAT_E_CDF_MEMBER_INDIRECTDATA = 65538;
+
+        // CRYPTCAT_E_CDF_MEMBER_FILENOTFOUND = "0x00010004";    
+        public const int CRYPTCAT_E_CDF_MEMBER_FILENOTFOUND = 65540;
+
+        // CRYPTCAT_E_CDF_BAD_GUID_CONV = "0x00020001";    
+        public const int CRYPTCAT_E_CDF_BAD_GUID_CONV = 131073;
+
+        // CRYPTCAT_E_CDF_ATTR_TOOFEWVALUES = "0x00020002";    
+        public const int CRYPTCAT_E_CDF_ATTR_TOOFEWVALUES = 131074;
+
+        // CRYPTCAT_E_CDF_ATTR_TYPECOMBO = "0x00020004";
+        public const int CRYPTCAT_E_CDF_ATTR_TYPECOMBO = 131076;
+
+    }
+
+        /// <summary>
+        /// pinvoke methods from wintrust.dll
+        /// These are added to Generate and Validate Window Catalog Files 
+        /// </summary>
     internal static partial class NativeMethods
     {
         [StructLayout(LayoutKind.Sequential)]
@@ -2038,6 +2079,22 @@ namespace System.Management.Automation.Security
             DWORD dwReserved;
         };
 
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct CRYPTCATSTORE
+        {
+            DWORD cbStruct;
+            internal  DWORD dwPublicVersion;
+            [MarshalAs(UnmanagedType.LPWStr)]
+            internal string pwszP7File;
+            IntPtr hProv;
+            DWORD dwEncodingType;
+            DWORD fdwStoreFlags;
+            IntPtr hReserved;
+            IntPtr hAttrs;
+            IntPtr hCryptMsg;
+            IntPtr hSorted;
+        };
+
         [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]
         internal static extern IntPtr CryptCATCDFOpen(
             [MarshalAs(UnmanagedType.LPWStr)]
@@ -2082,6 +2139,11 @@ namespace System.Management.Automation.Security
         [DllImport("wintrust.dll")]
         internal static extern BOOL CryptCATClose(
           IntPtr hCatalog
+        );
+
+        [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]
+        internal static extern IntPtr CryptCATStoreFromHandle(
+            IntPtr hCatalog
         );
 
         [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]
