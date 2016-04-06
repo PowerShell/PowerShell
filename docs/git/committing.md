@@ -1,5 +1,10 @@
 #Commit Dance
-Most of the time, you're going to be working in a submodule (say src/monad/monad/engine).
+
+**Update:** commit dance became much simpler after [removing psl-monad submodule](https://github.com/PowerShell/PowerShell/issues/656).
+Meahwhile, there are still few submodules. If you need to touch their content, this doc provides the overview of the process.
+Remember that it's written against `src/monad` submodule, which doesn't exist anymore.
+
+Sometimes, you need to do the work in a submodule (i.e. you added a new string in `.resx` file).
 The submodule has a relationship to the SuperProject  (PowerShell), but in order to be sure that CI is
 notified about changes in a submodule, you need be sure that this is reflected as a pull request in the SuperProject.
 

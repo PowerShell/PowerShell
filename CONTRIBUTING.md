@@ -65,7 +65,7 @@ Particularly:
 [MS-OSS-Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
 [2 factor authentication]: https://github.com/blog/1614-two-factor-authentication
 
-Branches
+[Branches](docs/workflow/branches.md)
 --------
 
 * Checkout a new local branch for every change you want to make (bugfix, feature).
@@ -109,6 +109,7 @@ updates, ensure no other changes are in the same commit. Submodule
 bumps may be included in feature branches for ease of work, but the
 update must be independently approved before merging into master.
 
+
 Recommended Git configurations
 ------------------------------
 
@@ -139,3 +140,14 @@ git config --global rerere.enabled true
 git config --global rerere.autoUpdate true
 git config --global am.threeWay true
 ```
+
+[Mapping](docs/workflow/mapping.md)
+--------
+
+Learn about new files locations in PowerShell/PowerShell.
+
+[Resources](docs/workflow/resources.md)
+--------
+
+Learn how to work with string resources in `.resx` files.
+
