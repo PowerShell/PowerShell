@@ -3,6 +3,13 @@ project(PowerShell)
 
 add_compile_options()
 
+# set the output path for `powershell.exe`
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/../Microsoft.PowerShell.ConsoleHost")
+foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
+    string(TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
+
 # set these flags, so build does static linking for msvcr120.dll
 # otherwise this dll need to be present on the system
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")

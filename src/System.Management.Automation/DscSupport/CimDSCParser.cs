@@ -1000,6 +1000,25 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
+        /// Find cached cim classes defined under specified module
+        /// </summary>
+        /// <param name="module"></param>
+        /// <returns>List of cached cim classes</returns>
+        public static List<Microsoft.Management.Infrastructure.CimClass> GetCachedClassesForModule(PSModuleInfo module)
+        {
+            List<Microsoft.Management.Infrastructure.CimClass> cachedClasses = new List<Microsoft.Management.Infrastructure.CimClass>();
+            var moduleQualifiedName = String.Format(CultureInfo.InvariantCulture, "{0}\\{1}", module.Name, module.Version.ToString());
+            foreach (var pair in ClassCache)
+            {
+                if(pair.Key.StartsWith(moduleQualifiedName, StringComparison.OrdinalIgnoreCase))
+                {
+                    cachedClasses.Add(pair.Value.Item2);
+                }
+            }
+            return cachedClasses;
+        }
+
+        /// <summary>
         /// Get the file that defined this class.
         /// </summary>
         /// <param name="className"></param>
@@ -1189,7 +1208,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             if (!CacheResourcesFromMultipleModuleVersions && DynamicKeyword.ContainsKeyword(keyword.Keyword))
             {
                 var oldKeyword = DynamicKeyword.GetKeyword(keyword.Keyword);
-                if (!oldKeyword.ImplementingModule.Equals(moduleName, StringComparison.OrdinalIgnoreCase) || oldKeyword.ImplementingModuleVersion != moduleVersion)
+                if (oldKeyword.ImplementingModule == null ||
+                    !oldKeyword.ImplementingModule.Equals(moduleName, StringComparison.OrdinalIgnoreCase) || oldKeyword.ImplementingModuleVersion != moduleVersion)
                 {
                     var e = PSTraceSource.NewInvalidOperationException(ParserStrings.DuplicateKeywordDefinition, keyword.Keyword);
                     e.SetErrorId("DuplicateKeywordDefinition");
@@ -2258,6 +2278,96 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             sb.Append("};");
         }
 
+        /// <summary>
+        /// Gets the line no for DSC Class Resource Get/Set/Test methods
+        /// </summary>
+        /// <param name="typeDefinitionAst"></param>
+        /// <param name="methodsLinePosition"></param>
+        private static bool GetResourceMethodsLineNumber(TypeDefinitionAst typeDefinitionAst, out Dictionary<string, int> methodsLinePosition)
+        {
+            const string getMethodName = "Get";
+            const string setMethodName = "Set";
+            const string testMethodName = "Test";
+
+            methodsLinePosition = new Dictionary<string, int>(); ;
+            foreach (var member in typeDefinitionAst.Members)
+            {
+                var functionMemberAst = member as FunctionMemberAst;
+                if (functionMemberAst != null)
+                {
+                    if (functionMemberAst.Name.Equals(getMethodName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        methodsLinePosition[getMethodName] = functionMemberAst.NameExtent.StartLineNumber;
+                    }
+                    else if (functionMemberAst.Name.Equals(setMethodName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        methodsLinePosition[setMethodName] = functionMemberAst.NameExtent.StartLineNumber;
+                    }
+                    else if (functionMemberAst.Name.Equals(testMethodName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        methodsLinePosition[testMethodName] = functionMemberAst.NameExtent.StartLineNumber;
+                    }
+                }
+            }
+
+            // All 3 methods (Get/Set/Test) position should be found.
+            return (methodsLinePosition.Count == 3);
+        }
+
+        /// <summary>
+        /// Gets the line no for DSC Class Resource Get/Set/Test methods
+        /// </summary>
+        /// <param name="moduleInfo"></param>
+        /// <param name="resourceName"></param>
+        /// <param name="resourceMethodsLinePosition"></param>
+        /// <param name="resourceFilePath"></param>
+        public static bool GetResourceMethodsLinePosition(PSModuleInfo moduleInfo, string resourceName, out Dictionary<string, int> resourceMethodsLinePosition, out string resourceFilePath)
+        {
+            resourceMethodsLinePosition = null;
+            resourceFilePath = string.Empty;
+            if (moduleInfo == null || string.IsNullOrEmpty(resourceName))
+            {
+                return false;
+            }
+
+            IEnumerable<Ast> resourceDefinitions;
+            List<string> moduleFiles = new List<string>();
+            if (moduleInfo.RootModule != null)
+            {
+                moduleFiles.Add(moduleInfo.Path);
+            }
+            if (moduleInfo.NestedModules != null)
+            {
+                foreach (var nestedModule in moduleInfo.NestedModules.Where(m => !string.IsNullOrEmpty(m.Path)))
+                {
+                    moduleFiles.Add(nestedModule.Path);
+                }
+            }
+
+            foreach (string moduleFile in moduleFiles)
+            {
+                if (GetResourceDefinitionsFromModule(moduleFile, out resourceDefinitions, null, null))
+                {
+                    foreach (var r in resourceDefinitions)
+                    {
+                        var resourceDefnAst = (TypeDefinitionAst)r;
+                        if (!resourceName.Equals(resourceDefnAst.Name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
+
+                        if (GetResourceMethodsLineNumber(resourceDefnAst, out resourceMethodsLinePosition))
+                        {
+                            resourceFilePath = moduleFile;
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
         private static void ProcessMembers(StringBuilder sb, List<object> embeddedInstanceTypes, TypeDefinitionAst typeDefinitionAst, string className)
         {
             foreach (var member in typeDefinitionAst.Members)
@@ -2318,15 +2428,14 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         ///
         /// </summary>
         /// <param name="fileName"></param>
-        /// <param name="module"></param>
-        /// <param name="resourcesToImport"></param>
-        /// <param name="resourcesFound"></param>
-        /// <param name="functionsToDefine"></param>
+        /// <param name="resourceDefinitions"></param>
         /// <param name="errorList"></param>
         /// <param name="extent"></param>
         /// <returns></returns>
-        static bool ImportKeywordsFromScriptFile(string fileName, PSModuleInfo module, ICollection<string> resourcesToImport, ICollection<string> resourcesFound, Dictionary<string, ScriptBlock> functionsToDefine, List<ParseError> errorList, IScriptExtent extent)
+        private static bool GetResourceDefinitionsFromModule (string fileName, out IEnumerable<Ast> resourceDefinitions, List<ParseError> errorList, IScriptExtent extent)
         {
+            resourceDefinitions = null;
+
             if (string.IsNullOrEmpty(fileName))
             {
                 return false;
@@ -2356,7 +2465,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 if (errorList != null && extent != null)
                 {
                     List<String> errorMessages = new List<string>();
-                    foreach(var error in errors)
+                    foreach (var error in errors)
                     {
                         errorMessages.Add(error.ToString());
                     }
@@ -2366,7 +2475,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 return false;
             }
 
-            var resourceDefinitions = ast.FindAll(n =>
+            resourceDefinitions = ast.FindAll(n =>
             {
                 var typeAst = n as TypeDefinitionAst;
                 if (typeAst != null)
@@ -2379,6 +2488,28 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
                 return false;
             }, false);
+
+            return true;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="module"></param>
+        /// <param name="resourcesToImport"></param>
+        /// <param name="resourcesFound"></param>
+        /// <param name="functionsToDefine"></param>
+        /// <param name="errorList"></param>
+        /// <param name="extent"></param>
+        /// <returns></returns>
+        static bool ImportKeywordsFromScriptFile(string fileName, PSModuleInfo module, ICollection<string> resourcesToImport, ICollection<string> resourcesFound, Dictionary<string, ScriptBlock> functionsToDefine, List<ParseError> errorList, IScriptExtent extent)
+        {
+            IEnumerable<Ast> resourceDefinitions;
+            if(!GetResourceDefinitionsFromModule(fileName, out resourceDefinitions, errorList, extent))
+            {
+                return false;
+            }
 
             var result = false;
             var parser = new CimDSCParser(MyClassCallback);

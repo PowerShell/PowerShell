@@ -9,7 +9,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Runspaces;
 using Microsoft.PowerShell;
-using Microsoft.PowerShell.Linux.Host;
+using Microsoft.PowerShell.Host;
 
 namespace PSTests
 {

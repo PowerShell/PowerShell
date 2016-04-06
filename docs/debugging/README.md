@@ -42,3 +42,19 @@ provide a PID. (Please be careful not to commit such a change).
 [vscode]: https://code.visualstudio.com/
 [OmniSharp]: https://github.com/OmniSharp/omnisharp-vscode
 [vscclrdebugger]: http://aka.ms/vscclrdebugger
+
+corehost
+--------
+
+The native executable prouduced by .NET CLI will produce trace output
+if launched with `COREHOST_TRACE=1 ./powershell`.
+
+CoreCLR PAL
+-----------
+
+The native code in the CLR has debug channels to selectively output
+information to the console. These are controlled by the
+`PAL_DBG_CHANNELS`, e.g., `export PAL_DBG_CHANNELS="+all.all"`, as
+detailed in the `dbgmsg.h` [header][].
+
+[header]: https://github.com/dotnet/coreclr/blob/release/1.0.0-rc2/src/pal/src/include/pal/dbgmsg.h

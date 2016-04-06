@@ -1,6 +1,3 @@
-[submodule "src/libpsl-native"]
-	path = src/libpsl-native
-	url = https://github.com/PowerShell/psl-native.git
 [submodule "src/omi"]
 	path = src/omi
 	url = https://github.com/Microsoft/omi.git
@@ -11,8 +8,12 @@
 [submodule "src/windows-build"]
 	path = src/windows-build
 	url = https://github.com/PowerShell/psl-windows-build.git
-[submodule "src/Microsoft.PowerShell.Linux.Host/Modules/Pester"]
-	path = src/Microsoft.PowerShell.Linux.Host/Modules/Pester
+[submodule "src/Modules/Pester"]
+	path = src/Modules/Pester
 	url = https://github.com/PowerShell/psl-pester.git
 	branch = develop
+	ignore = dirty
+[submodule "src/libpsl-native/test/googletest"]
+	path = src/libpsl-native/test/googletest
+	url = https://github.com/google/googletest.git
 	ignore = dirty

@@ -1,0 +1,43 @@
+{
+    "name": "powershell",
+    "version": "1.0.0-*",
+    "description": "PowerShell Managed Console for .NET Core",
+    "authors": [ "andschwa" ],
+
+    "compilationOptions": {
+        "warningsAsErrors": true,
+        "emitEntryPoint": true
+    },
+
+    "dependencies": {
+        "Newtonsoft.Json": "8.0.2",
+        "System.Xml.XDocument": "4.0.11-rc3-23931-00",
+        "System.IO.MemoryMappedFiles": "4.0.0-rc3-23931-00",
+        "Microsoft.PowerShell.Commands.Management": "1.0.0-*",
+        "Microsoft.PowerShell.Commands.Utility": "1.0.0-*"
+    },
+
+    "content": [
+        "Modules",
+        "../Modules",
+        "*_profile.ps1",
+        "*.so",
+        "*.dylib"
+    ],
+
+    "frameworks": {
+        "netstandardapp1.5": {
+            "imports": [ "dnxcore50", "portable-net45+win8" ]
+        }
+    },
+
+    "runtimes": {
+        "ubuntu.14.04-x64": { },
+        "centos.7.1-x64": { },
+        "win7-x64": { },
+        "win81-x64": { },
+        "win10-x64": { },
+        "osx.10.10-x64": { },
+        "osx.10.11-x64": { }
+    }
+}

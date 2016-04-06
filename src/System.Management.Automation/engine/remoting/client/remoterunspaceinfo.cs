@@ -323,28 +323,39 @@ namespace System.Management.Automation.Runspaces
                 remoteRunspace.PSSessionName = name;
             }
 
-            string fullShellName = WSManConnectionInfo.ExtractPropertyAsWsManConnectionInfo<string>(
-                remoteRunspace.ConnectionInfo,
-                "ShellUri", string.Empty);
-
-            shell = GetDisplayShellName(fullShellName);
-
-            if (remoteRunspace.ConnectionInfo is VMConnectionInfo)
-            {
-                computerType = TargetMachineType.VirtualMachine;
-            }
-            else if (remoteRunspace.ConnectionInfo is ContainerConnectionInfo)
-            {
-                computerType = TargetMachineType.Container;
-            }
-            else if (remoteRunspace.ConnectionInfo is WSManConnectionInfo)
+            // WSMan session
+            if (remoteRunspace.ConnectionInfo is WSManConnectionInfo)
             {
                 computerType = TargetMachineType.RemoteMachine;
+
+                string fullShellName = WSManConnectionInfo.ExtractPropertyAsWsManConnectionInfo<string>(
+                    remoteRunspace.ConnectionInfo,
+                    "ShellUri", string.Empty);
+                
+                shell = GetDisplayShellName(fullShellName);
+                return;
             }
-            else
+
+            // VM session
+            VMConnectionInfo vmConnectionInfo = remoteRunspace.ConnectionInfo as VMConnectionInfo;
+            if (vmConnectionInfo != null)
             {
-                Dbg.Assert(false, "Invalid Runspace");
+                computerType = TargetMachineType.VirtualMachine;
+                shell = vmConnectionInfo.ConfigurationName;
+                return;
             }
+
+            // Container session
+            ContainerConnectionInfo containerConnectionInfo = remoteRunspace.ConnectionInfo as ContainerConnectionInfo;
+            if (containerConnectionInfo != null)
+            {
+                computerType = TargetMachineType.Container;
+                shell = containerConnectionInfo.ContainerProc.ConfigurationName;
+                return;
+            }
+
+            // We only support WSMan/VM/Container sessions now.
+            Dbg.Assert(false, "Invalid Runspace");
         }
 
         #endregion Constructor

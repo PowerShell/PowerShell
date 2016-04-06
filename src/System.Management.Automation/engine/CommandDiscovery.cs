@@ -586,14 +586,34 @@ namespace System.Management.Automation
 
         internal static void VerifyPSEdition(ExternalScriptInfo scriptInfo)
         {
-            string requiresPSEdition = scriptInfo.RequiresPSEdition;
-            if ((requiresPSEdition != null) && !Utils.IsPSEditionSupported(requiresPSEdition))
+            if (scriptInfo.RequiresPSEditions != null)
             {
-                var message = StringUtil.Format(DiscoveryExceptions.RequiresPSEditionNotCompatible, scriptInfo.Name, requiresPSEdition, PSVersionInfo.PSEdition);
-                var ex = new RuntimeException(message);
-                ex.SetErrorId("ScriptRequiresUnmatchedPSEdition");
-                ex.SetTargetObject(scriptInfo.Name);
-                throw ex;
+                var isCurrentEditionListed = false;
+                var isRequiresPSEditionSpecified = false;
+                foreach (var edition in scriptInfo.RequiresPSEditions)
+                {
+                    isRequiresPSEditionSpecified = true;
+                    isCurrentEditionListed = Utils.IsPSEditionSupported(edition);
+                    if (isCurrentEditionListed)
+                    {
+                        break;
+                    }
+                }
+
+                // Throw an error if required PowerShell editions are specified and without the current PowerShell Edition.
+                //
+                if (isRequiresPSEditionSpecified && !isCurrentEditionListed)
+                {
+                    var specifiedEditionsString = string.Join(",", scriptInfo.RequiresPSEditions);
+                    var message = StringUtil.Format(DiscoveryExceptions.RequiresPSEditionNotCompatible,
+                        scriptInfo.Name,
+                        specifiedEditionsString,
+                        PSVersionInfo.PSEdition);
+                    var ex = new RuntimeException(message);
+                    ex.SetErrorId("ScriptRequiresUnmatchedPSEdition");
+                    ex.SetTargetObject(scriptInfo.Name);
+                    throw ex;
+                }
             }
         }
 

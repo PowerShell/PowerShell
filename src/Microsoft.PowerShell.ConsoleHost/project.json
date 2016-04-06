@@ -14,12 +14,18 @@
         "Microsoft.PowerShell.Commands.Utility": "1.0.0-*"
     },
 
+    "content": [
+        "Modules",
+        "../Modules",
+        "powershell.exe"
+    ],
+
     "frameworks": {
         "net451": {
         }
     },
 
     "compile": [
-        "../windows-build/gen/CONSOLE_HOST/*.cs"
+        "../windows-build/gen/Microsoft.PowerShell.ConsoleHost/*.cs"
     ]
 }

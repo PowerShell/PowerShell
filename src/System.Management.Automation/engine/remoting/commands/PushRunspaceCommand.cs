@@ -219,9 +219,66 @@ namespace Microsoft.PowerShell.Commands
         }
         private string containerName;
 
+        /// <summary>
+        /// For WSMan sessions:
+        /// If this parameter is not specified then the value specified in
+        /// the environment variable DEFAULTREMOTESHELLNAME will be used. If 
+        /// this is not set as well, then Microsoft.PowerShell is used.
+        ///
+        /// For VM/Container sessions:
+        /// If this parameter is not specified then no configuration is used.
+        /// </summary>      
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = EnterPSSessionCommand.ComputerNameParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = EnterPSSessionCommand.UriParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = EnterPSSessionCommand.ContainerIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = EnterPSSessionCommand.ContainerNameParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = EnterPSSessionCommand.VMIdParameterSet)]
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = EnterPSSessionCommand.VMNameParameterSet)]
+        public String ConfigurationName
+        {
+            get
+            {
+                return shell;
+            }
+            set
+            {
+                shell = value;
+            }
+        }
+        private String shell;
+
         #endregion
 
         #region Overrides
+
+        /// <summary>
+        /// Resolves shellname and appname
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            base.BeginProcessing();
+
+            if (String.IsNullOrEmpty(ConfigurationName))
+            {
+                if ((ParameterSetName == EnterPSSessionCommand.ComputerNameParameterSet) ||
+                    (ParameterSetName == EnterPSSessionCommand.UriParameterSet))
+                {
+                    // set to default value for WSMan session
+                    ConfigurationName = ResolveShell(null);
+                }
+                else
+                {
+                    // convert null to String.Empty for VM/Container session
+                    ConfigurationName = String.Empty;
+                }
+            }
+        }
 
         /// <summary>
         /// Process record.
@@ -1013,7 +1070,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 VMConnectionInfo connectionInfo;
-                connectionInfo = new VMConnectionInfo(this.Credential, this.VMId, this.VMName);
+                connectionInfo = new VMConnectionInfo(this.Credential, this.VMId, this.VMName, this.ConfigurationName);
 
                 remoteRunspace = CreateTemporaryRemoteRunspaceForPowerShellDirect(this.Host, connectionInfo);
             }
@@ -1037,27 +1094,36 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (PSRemotingDataStructureException e)
             {
+                ErrorRecord errorRecord;
+
+                //
+                // In case of PSDirectException, we should output the precise error message
+                // in inner exception instead of the generic one in outer exception.
+                //
+                if ((e.InnerException != null) && (e.InnerException is PSDirectException))
+                {
+                    errorRecord = new ErrorRecord(e.InnerException,
+                        "CreateRemoteRunspaceForVMFailed", 
+                        ErrorCategory.InvalidArgument,
+                        null);                        
+                }
+                else
+                {
+                    errorRecord = new ErrorRecord(e,
+                        "CreateRemoteRunspaceForVMFailed", 
+                        ErrorCategory.InvalidOperation,
+                        null);
+                }
+
+                WriteError(errorRecord);
+            }
+            catch (Exception e)
+            {
                 ErrorRecord errorRecord = new ErrorRecord(e,
                     "CreateRemoteRunspaceForVMFailed", 
                     ErrorCategory.InvalidOperation,
                     null);
-
-                //
-                // In case of PSDirectCredentialException, we should output the precise error message
-                // in inner exception instead of the generic one in outer exception.
-                //
-                if (e.InnerException != null)
-                {
-                    PSDirectCredentialException ex = e.InnerException as PSDirectCredentialException;
-                    if (ex != null)
-                    {
-                        errorRecord = new ErrorRecord(e.InnerException,
-                            "CreateRemoteRunspaceForVMFailed", 
-                            ErrorCategory.InvalidArgument,
-                            null);                        
-                    }
-                }
-
+                
                 WriteError(errorRecord);
             }
 
@@ -1180,13 +1246,13 @@ namespace Microsoft.PowerShell.Commands
                 //
                 if (!String.IsNullOrEmpty(ContainerId))
                 {
-                    connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoById(ContainerId, RunAsAdministrator.IsPresent);
+                    connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoById(ContainerId, RunAsAdministrator.IsPresent, this.ConfigurationName);
                 }
                 else
                 {
                     Dbg.Assert(!String.IsNullOrEmpty(ContainerName), "Either ContainerId or ContainerName has to be set.");
 
-                    connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoByName(ContainerName, RunAsAdministrator.IsPresent);
+                    connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoByName(ContainerName, RunAsAdministrator.IsPresent, this.ConfigurationName);
                 }
 
                 this.ContainerName = connectionInfo.ComputerName;
@@ -1209,6 +1275,31 @@ namespace Microsoft.PowerShell.Commands
                     ErrorCategory.InvalidArgument,
                     null);
                 
+                WriteError(errorRecord);
+            }
+            catch (PSRemotingDataStructureException e)
+            {
+                ErrorRecord errorRecord;
+
+                //
+                // In case of PSDirectException, we should output the precise error message
+                // in inner exception instead of the generic one in outer exception.
+                //
+                if ((e.InnerException != null) && (e.InnerException is PSDirectException))
+                {
+                    errorRecord = new ErrorRecord(e.InnerException,
+                        "CreateRemoteRunspaceForContainerFailed", 
+                        ErrorCategory.InvalidOperation,
+                        null);                        
+                }
+                else
+                {
+                    errorRecord = new ErrorRecord(e,
+                        "CreateRemoteRunspaceForContainerFailed", 
+                        ErrorCategory.InvalidOperation,
+                        null);
+                }
+
                 WriteError(errorRecord);
             }
             catch (Exception e)

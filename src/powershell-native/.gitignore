@@ -1,0 +1,12 @@
+ALL_BUILD.vcxproj
+ALL_BUILD.vcxproj.filters
+CMakeCache.txt
+CMakeFiles/
+PowerShell.sln
+Win32/
+ZERO_CHECK.vcxproj
+ZERO_CHECK.vcxproj.filters
+cmake_install.cmake
+powershell.dir/
+powershell.vcxproj
+powershell.vcxproj.filters

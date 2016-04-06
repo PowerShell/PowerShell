@@ -17,19 +17,19 @@ try {
     $IsWindows = $true
 }
 
-function Start-PSBuild
-{
+
+function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName='CoreCLR')]
     param(
         [switch]$Restore,
         [switch]$Clean,
-        [string]$Output,
 
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("ubuntu.14.04-x64",
                      "centos.7.1-x64",
                      "win7-x64",
+                     "win81-x64",
                      "win10-x64",
                      "osx.10.10-x64",
                      "osx.10.11-x64")]
@@ -44,185 +44,213 @@ function Start-PSBuild
 
         [Parameter(ParameterSetName='FullCLR')]
         [ValidateSet("Debug",
-                     "Release")] 
-        [string]$msbuildConfiguration = "Release"   
+                     "Release")]
+        [string]$msbuildConfiguration = "Release"
     )
 
-    function precheck([string]$command, [string]$missedMessage)
-    {
-        $c = Get-Command $command -ErrorAction SilentlyContinue
-        if (-not $c)
-        {
-            Write-Warning $missedMessage
-            return $false
-        }
-        else 
-        {
-            return $true    
-        }
-    }
-
-    function log([string]$message)
-    {
-        Write-Host -Foreground Green $message
-    }
-
-    # simplify ParameterSetNames, set output
-    if ($PSCmdlet.ParameterSetName -eq 'FullCLR')
-    {
+    # simplify ParameterSetNames
+    if ($PSCmdlet.ParameterSetName -eq 'FullCLR') {
         $FullCLR = $true
     }
 
-    if (-not $Output)
-    {
-        if ($FullCLR) { $Output = "$PSScriptRoot/binFull" } else { $Output = "$PSScriptRoot/bin" }
-    }    
-
     # verify we have all tools in place to do the build
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH! See: https://dotnet.github.io/getting-started/"
-    if ($FullCLR)
-    {
+    if ($FullCLR) {
         # cmake is needed to build powershell.exe
         $precheck = $precheck -and (precheck 'cmake' 'cmake not found. You can install it from https://chocolatey.org/packages/cmake.portable')
-        
+
         # msbuild is needed to build powershell.exe
         # msbuild is part of .NET Framework, we can try to get it from well-known location.
-        if (-not (Get-Command -Name msbuild -ErrorAction Ignore))
-        {
+        if (-not (Get-Command -Name msbuild -ErrorAction Ignore)) {
             $env:path += ";${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319"
         }
 
         $precheck = $precheck -and (precheck 'msbuild' 'msbuild not found. Install Visual Studio 2015.')
-    }
-    
-    if (-not $precheck) { return }
+    } elseif ($IsLinux -Or $IsOSX) {
+        $InstallCommand = if ($IsLinux) {
+            'apt-get'
+        } elseif ($IsOSX) {
+            'brew'
+        }
 
-    # handle clean
-    if ($Clean) {
-        Remove-Item -Force -Recurse $Output -ErrorAction SilentlyContinue
+        foreach ($Dependency in 'cmake', 'make', 'g++') {
+            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run '$InstallCommand install $Dependency'")
+        }
     }
 
-    New-Item -Force -Type Directory $Output | Out-Null
+    if (-Not $Runtime) {
+        $Runtime = dotnet --info | % {
+            if ($_ -match "RID") {
+                $_ -split "\s+" | Select-Object -Last 1
+            }
+        }
+
+        if (-Not $Runtime) {
+            Write-Warning "Could not determine Runtime Identifier, please update dotnet"
+            $precheck = $false
+        } else {
+            log "Runtime not specified, using $Runtime"
+        }
+    }
+
+    # Abort if any precheck failed
+    if (-not $precheck) {
+        return
+    }
 
     # define key build variables
-    if ($FullCLR) 
-    {
+    if ($FullCLR) {
         $Top = "$PSScriptRoot\src\Microsoft.PowerShell.ConsoleHost"
-        $framework = 'net451'
+        $Framework = 'net451'
+    } else {
+        $Top = "$PSScriptRoot/src/Microsoft.PowerShell.Host"
+        $Framework = 'netstandardapp1.5'
     }
-    else 
-    {
-        $Top = "$PSScriptRoot/src/Microsoft.PowerShell.Linux.Host"   
-        $framework = 'netstandardapp1.5'
+
+    if ($IsLinux -Or $IsOSX) {
+        $Configuration = "Linux"
+        $Executable = "powershell"
+    } else {
+        $Configuration = "Debug"
+        $Executable = "powershell.exe"
     }
+
+    $Arguments = @()
+    $Arguments += "--framework", $Framework
+    $Arguments += "--configuration", $Configuration
+    $Arguments += "--runtime", $Runtime
+
+    # FullCLR only builds a library, so there is no runtime component
+    if ($FullCLR) {
+	    $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Executable)
+    } else {
+	    $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, $Executable)
+    }
+    Write-Verbose "script:Output is $script:Output"
 
     # handle Restore
     if ($Restore -Or -Not (Test-Path "$Top/project.lock.json")) {
         log "Run dotnet restore"
 
-        $Arguments = @("--verbosity")
+        $RestoreArguments = @("--verbosity")
         if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-            $Arguments += "Info" } else { $Arguments += "Warning" }
+            $RestoreArguments += "Info"
+        } else {
+            $RestoreArguments += "Warning"
+        }
 
-        if ($Runtime) { $Arguments += "--runtime", $Runtime }
+        $RestoreArguments += "$PSScriptRoot"
 
-        $Arguments += "$PSScriptRoot"
-
-        dotnet restore $Arguments
+        dotnet restore $RestoreArguments
     }
 
     # Build native components
-    if (-not $FullCLR)
-    {
-        if ($IsLinux -Or $IsOSX) {
-            log "Start building native components"
-            $InstallCommand = if ($IsLinux) { "apt-get" } elseif ($IsOSX) { "brew" }
-            foreach ($Dependency in "cmake", "g++") {
-                if (-Not (Get-Command $Dependency -ErrorAction SilentlyContinue)) {
-                    throw "Build dependency '$Dependency' not found in PATH! Run '$InstallCommand install $Dependency'"
-                }
-            }
-
-            $Ext = if ($IsLinux) { "so" } elseif ($IsOSX) { "dylib" }
-            $Native = "$PSScriptRoot/src/libpsl-native"
-            $Lib = "$Top/libpsl-native.$Ext"
-            Write-Verbose "Building $Lib"
-
-            try {
-                Push-Location $Native
-                cmake -DCMAKE_BUILD_TYPE=Debug .
-                make -j
-                make test
-            } finally {
-                Pop-Location
-            }
-
-            if (-Not (Test-Path $Lib)) { throw "Compilation of $Lib failed" }
+    if ($IsLinux -Or $IsOSX) {
+        $Ext = if ($IsLinux) {
+            "so"
+        } elseif ($IsOSX) {
+            "dylib"
         }
-    }
-    else
-    {
+
+        $Native = "$PSScriptRoot/src/libpsl-native"
+        $Lib = "$Top/libpsl-native.$Ext"
+        log "Start building $Lib"
+
+        try {
+            Push-Location $Native
+            cmake -DCMAKE_BUILD_TYPE=Debug .
+            make -j
+            make test
+        } finally {
+            Pop-Location
+        }
+
+        if (-Not (Test-Path $Lib)) {
+            throw "Compilation of $Lib failed"
+        }
+    } elseif ($FullCLR) {
         log "Start building native powershell.exe"
-        $build = "$PSScriptRoot/build"
-        if ($Clean) {
-            Remove-Item -Force -Recurse $build -ErrorAction SilentlyContinue
-        }
 
-        mkdir $build -ErrorAction SilentlyContinue
-        try
-        {
-            Push-Location $build
+        try {
+            Push-Location .\src\powershell-native
 
-            if ($cmakeGenerator)
-            {
-                cmake -G $cmakeGenerator ..\src\powershell-native
+            if ($cmakeGenerator) {
+                cmake -G $cmakeGenerator .
+            } else {
+                cmake .
             }
-            else
-            {
-                cmake ..\src\powershell-native
-            }
+
             msbuild powershell.vcxproj /p:Configuration=$msbuildConfiguration
-            cp -rec $msbuildConfiguration\* $Output
+
+        } finally {
+            Pop-Location
         }
-        finally { Pop-Location }
     }
 
-    log "Building PowerShell"
-    $Arguments = "--framework", $framework, "--output", $Output
-    if ($IsLinux -Or $IsOSX) { $Arguments += "--configuration", "Linux" }
-    if ($Runtime) { $Arguments += "--runtime", $Runtime }
-    
-    if ($FullCLR) 
-    {
-        # there is a problem with code signing: 
-        # AssemblyKeyFileAttribute file path cannot be correctly located, if `dotnet publish $TOP` syntax is used
-        # we workaround it with calling `dotnet publish` from $TOP directory instead.
+    try {
+        # Relative paths do not work well if cwd is not changed to project
+        log "Run `dotnet build $Arguments` from $pwd"
         Push-Location $Top
-    }
-    else 
-    {
-        $Arguments += $Top
+        dotnet build $Arguments
+        log "PowerShell output: $script:Output"
+    } finally {
+        Pop-Location
     }
 
-    Write-Verbose "Run dotnet publish $Arguments from $pwd"
+}
 
-    # this try-finally is part of workaround about AssemblyKeyFileAttribute issue
-    try 
-    {
-        dotnet publish $Arguments
+
+function Get-PSOutput {
+    [CmdletBinding()]param()
+    if (-Not $Output) {
+        throw '$script:Output is not defined, run Start-PSBuild'
     }
-    finally
-    {
-        if ($FullCLR)  { Pop-Location }
+
+    $Output
+}
+
+
+function Start-PSPester {
+    [CmdletBinding()]param(
+        [string]$Flags = '-EnableExit -OutputFile pester-tests.xml -OutputFormat NUnitXml',
+        [string]$Tests = "*",
+        [ValidateScript({ Test-Path -PathType Container $_})]
+        [string]$Directory = "$PSScriptRoot/test/powershell"
+    )
+
+    & (Get-PSOutput) -c "Invoke-Pester $Flags $Directory/$Tests"
+    if ($LASTEXITCODE -ne 0) {
+        throw "$LASTEXITCODE Pester tests failed"
     }
 }
 
-function Start-PSPackage
-{
+
+function Start-PSxUnit {
+    [CmdletBinding()]param()
+    if ($IsWindows) {
+        throw "xUnit tests are only currently supported on Linux / OS X"
+    }
+
+    $Content = Split-Path -Parent (Get-PSOutput)
+    $Arguments = "--configuration", "Linux"
+    try {
+        Push-Location $PSScriptRoot/test/csharp
+        dotnet build $Arguments
+        Copy-Item -ErrorAction SilentlyContinue -Recurse -Path $Content/* -Include Modules,libpsl-native* -Destination "./bin/Linux/netstandardapp1.5/ubuntu.14.04-x64"
+        dotnet test $Arguments
+        if ($LASTEXITCODE -ne 0) {
+            throw "$LASTEXITCODE xUnit tests failed"
+        }
+    } finally {
+        Pop-Location
+    }
+}
+
+function Start-PSPackage {
     # PowerShell packages use Semantic Versioning http://semver.org/
     #
     # Ubuntu and OS X packages are supported.
-    param(
+    [CmdletBinding()]param(
         [string]$Version,
         [int]$Iteration = 1,
         [ValidateSet("deb", "osxpkg", "rpm")]
@@ -285,37 +313,33 @@ function Start-PSPackage
         "$PSScriptRoot/package/powershell=/usr/local/bin"
 }
 
-function Start-DevPSGitHub
-{
+
+function Start-DevPSGitHub {
     param(
         [switch]$ZapDisable,
         [string[]]$ArgumentList = '',
         [switch]$LoadProfile,
-        [string]$binDir = "$PSScriptRoot\binFull",
+        [string]$binDir = "$PSScriptRoot\src\Microsoft.PowerShell.ConsoleHost\bin\Debug\net451",
         [switch]$NoNewWindow
     )
 
-    try
-    {
-        if ($LoadProfile -eq $false)
-        {
+    try {
+        if ($LoadProfile -eq $false) {
             $ArgumentList = @('-noprofile') + $ArgumentList
         }
 
         $env:DEVPATH = $binDir
-        if ($ZapDisable)
-        {
+        if ($ZapDisable) {
             $env:COMPLUS_ZapDisable = 1
         }
 
-        if (-Not (Test-Path $binDir\powershell.exe.config))
-        {
+        if (-Not (Test-Path $binDir\powershell.exe.config)) {
             $configContents = @"
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
-    <runtime>
-        <developmentMode developerInstallation="true"/>
-    </runtime>
+<runtime>
+<developmentMode developerInstallation="true"/>
+</runtime>
 </configuration>
 "@
             $configContents | Out-File -Encoding Ascii $binDir\powershell.exe.config
@@ -333,71 +357,29 @@ function Start-DevPSGitHub
         }
 
         Start-Process @startProcessArgs
-    }
-    finally
-    {
+    } finally {
         ri env:DEVPATH
-        if ($ZapDisable)
-        {
+        if ($ZapDisable) {
             ri env:COMPLUS_ZapDisable
         }
     }
 }
 
-## this function is from Dave Wyatt's answer on
-## http://stackoverflow.com/questions/22002748/hashtables-from-convertfrom-json-have-different-type-from-powershells-built-in-h
-function Convert-PSObjectToHashtable
-{
-    param (
-        [Parameter(ValueFromPipeline)]
-        $InputObject
-    )
-
-    process
-    {
-        if ($null -eq $InputObject) { return $null }
-
-        if ($InputObject -is [System.Collections.IEnumerable] -and $InputObject -isnot [string])
-        {
-            $collection = @(
-                foreach ($object in $InputObject) { Convert-PSObjectToHashtable $object }
-            )
-
-            Write-Output -NoEnumerate $collection
-        }
-        elseif ($InputObject -is [psobject])
-        {
-            $hash = @{}
-
-            foreach ($property in $InputObject.PSObject.Properties)
-            {
-                $hash[$property.Name] = Convert-PSObjectToHashtable $property.Value
-            }
-
-            $hash
-        }
-        else
-        {
-            $InputObject
-        }
-    }
-}
 
 <#
 .EXAMPLE Copy-SubmoduleFiles                # copy files FROM submodule TO src/<project> folders
 .EXAMPLE Copy-SubmoduleFiles -ToSubmodule   # copy files FROM src/<project> folders TO submodule
 #>
 function Copy-SubmoduleFiles {
-    
+
     [CmdletBinding()]
     param(
         [string]$mappingFilePath = "$PSScriptRoot/mapping.json",
         [switch]$ToSubmodule
     )
 
-    
-    if (-not (Test-Path $mappingFilePath))
-    {
+
+    if (-not (Test-Path $mappingFilePath)) {
         throw "Mapping file not found in $mappingFilePath"
     }
 
@@ -405,47 +387,38 @@ function Copy-SubmoduleFiles {
 
     # mapping.json assumes the root folder
     Push-Location $PSScriptRoot
-    try
-    {
+    try {
         $m.GetEnumerator() | % {
 
-            if ($ToSubmodule)
-            {
+            if ($ToSubmodule) {
                 cp $_.Value $_.Key -Verbose:$Verbose
-            }
-            else 
-            {
+            } else {
                 mkdir (Split-Path $_.Value) -ErrorAction SilentlyContinue > $null
-                cp $_.Key $_.Value -Verbose:$Verbose  
+                cp $_.Key $_.Value -Verbose:$Verbose
             }
         }
-    }
-    finally
-    {
+    } finally {
         Pop-Location
     }
 }
 
+
 <#
-    .EXAMPLE Create-MappingFile # create mapping.json in the root folder from project.json files
+.EXAMPLE Create-MappingFile # create mapping.json in the root folder from project.json files
 #>
-function New-MappingFile
-{
+function New-MappingFile {
     param(
         [string]$mappingFilePath = "$PSScriptRoot/mapping.json",
         [switch]$IgnoreCompileFiles,
         [switch]$Ignoreresource
     )
 
-    function Get-MappingPath([string]$project, [string]$path)
-    {
-        if ($project -match 'TypeCatalogGen')
-        {
+    function Get-MappingPath([string]$project, [string]$path) {
+        if ($project -match 'TypeCatalogGen') {
             return Split-Path $path -Leaf
         }
-        
-        if ($project -match 'Microsoft.Management.Infrastructure')
-        {
+
+        if ($project -match 'Microsoft.Management.Infrastructure') {
             return Split-Path $path -Leaf
         }
 
@@ -456,8 +429,7 @@ function New-MappingFile
 
     # assumes the root folder
     Push-Location $PSScriptRoot
-    try
-    {
+    try {
         $projects = ls .\src\ -Recurse -Depth 2 -Filter 'project.json'
         $projects | % {
             $project = Split-Path $_.FullName
@@ -465,8 +437,7 @@ function New-MappingFile
             if (-not $IgnoreCompileFiles) {
                 $json.compileFiles | % {
                     if ($_) {
-                        if (-not $_.EndsWith('AssemblyInfo.cs'))
-                        {
+                        if (-not $_.EndsWith('AssemblyInfo.cs')) {
                             $fullPath = Join-Path $project (Get-MappingPath -project $project -path $_)
                             $mapping[$_.Replace('../', 'src/')] = ($fullPath.Replace("$($pwd.Path)\",'')).Replace('\', '/')
                         }
@@ -485,38 +456,19 @@ function New-MappingFile
                 }
             }
         }
-    }
-    finally
-    {
+    } finally {
         Pop-Location
     }
 
     Set-Content -Value ($mapping | ConvertTo-Json) -Path $mappingFilePath -Encoding Ascii
 }
 
-function Get-InvertedOrderedMap
-{
-    param(
-        $h
-    )
-    $res = [ordered]@{}
-    foreach ($q in $h.GetEnumerator()) {
-        if ($res.Contains($q.Value))
-        {
-            throw "Cannot invert hashtable: duplicated key $($q.Value)"
-        }
-
-        $res[$q.Value] = $q.Key
-    }
-    return $res
-}
 
 <#
-.EXAMPLE Send-GitDiffToSd -diffArg1 45555786714d656bd31cbce67dbccb89c433b9cb -diffArg2 45555786714d656bd31cbce67dbccb89c433b9cb~1 -pathToAdmin d:\e\ps_dev\admin 
+.EXAMPLE Send-GitDiffToSd -diffArg1 45555786714d656bd31cbce67dbccb89c433b9cb -diffArg2 45555786714d656bd31cbce67dbccb89c433b9cb~1 -pathToAdmin d:\e\ps_dev\admin
 Apply a signle commit to admin folder
 #>
-function Send-GitDiffToSd
-{
+function Send-GitDiffToSd {
     param(
         [Parameter(Mandatory)]
         [string]$diffArg1,
@@ -533,32 +485,197 @@ function Send-GitDiffToSd
     $affectedFiles = git diff --name-only $diffArg1 $diffArg2
     $rev = Get-InvertedOrderedMap $m
     foreach ($file in $affectedFiles) {
-        if ($rev.Contains)
-        {
+        if ($rev.Contains) {
             $sdFilePath = Join-Path $pathToAdmin $rev[$file].Substring('src/monad/'.Length)
             $diff = git diff $diffArg1 $diffArg2 -- $file
-            if ($diff)
-            {
+            if ($diff) {
                 Write-Host -Foreground Green "Apply patch to $sdFilePath"
                 Set-Content -Value $diff -Path $env:TEMP\diff -Encoding Ascii
-                if ($WhatIf)
-                {
+                if ($WhatIf) {
                     Write-Host -Foreground Green "Patch content"
                     cat $env:TEMP\diff
+                } else {
+                    & $patchPath --binary -p1 $sdFilePath $env:TEMP\diff
                 }
-                else 
-                {
-                    & $patchPath --binary -p1 $sdFilePath $env:TEMP\diff        
-                }
-            }
-            else 
-            {
+            } else {
                 Write-Host -Foreground Green "No changes in $file"
             }
-        }
-        else 
-        {
+        } else {
             Write-Host -Foreground Green "Ignore changes in $file, because there is no mapping for it"
         }
-    }    
+    }
 }
+
+function Start-ResGen
+{
+    @("Microsoft.PowerShell.Commands.Management",
+"Microsoft.PowerShell.Commands.Utility",
+"Microsoft.PowerShell.ConsoleHost",
+"Microsoft.PowerShell.CoreCLR.Eventing",
+"Microsoft.PowerShell.Security",
+"System.Management.Automation") | % {
+        $module = $_
+        ls "$PSScriptRoot/src/$module/resources" | % {
+            $className = $_.Name.Replace('.resx', '')
+            $xml = [xml](cat -raw $_.FullName)
+            $genSource = Get-StronglyTypeCsFileForResx -xml $xml -ModuleName $module -ClassName $className
+            $outPath = "$PSScriptRoot/src/windows-build/gen/$module/$className.cs"
+            log "ResGen for $outPath"
+            mkdir -ErrorAction SilentlyContinue (Split-Path $outPath) > $null
+            Set-Content -Encoding Ascii -Path $outPath -Value $genSource
+        }
+    }
+}
+
+
+function script:log([string]$message) {
+    Write-Host -Foreground Green $message
+}
+
+
+function script:precheck([string]$command, [string]$missedMessage) {
+    $c = Get-Command $command -ErrorAction SilentlyContinue
+    if (-not $c) {
+        Write-Warning $missedMessage
+        return $false
+    } else {
+        return $true
+    }
+}
+
+
+function script:Get-InvertedOrderedMap {
+    param(
+        $h
+    )
+    $res = [ordered]@{}
+    foreach ($q in $h.GetEnumerator()) {
+        if ($res.Contains($q.Value)) {
+            throw "Cannot invert hashtable: duplicated key $($q.Value)"
+        }
+
+        $res[$q.Value] = $q.Key
+    }
+    return $res
+}
+
+
+## this function is from Dave Wyatt's answer on
+## http://stackoverflow.com/questions/22002748/hashtables-from-convertfrom-json-have-different-type-from-powershells-built-in-h
+function script:Convert-PSObjectToHashtable {
+    param (
+        [Parameter(ValueFromPipeline)]
+        $InputObject
+    )
+
+    process {
+        if ($null -eq $InputObject) { return $null }
+
+        if ($InputObject -is [System.Collections.IEnumerable] -and $InputObject -isnot [string]) {
+            $collection = @(
+                foreach ($object in $InputObject) { Convert-PSObjectToHashtable $object }
+            )
+
+            Write-Output -NoEnumerate $collection
+        } elseif ($InputObject -is [psobject]) {
+            $hash = @{}
+
+            foreach ($property in $InputObject.PSObject.Properties)
+            {
+                $hash[$property.Name] = Convert-PSObjectToHashtable $property.Value
+            }
+
+            $hash
+        } else {
+            $InputObject
+        }
+    }
+}
+
+
+function script:Get-StronglyTypeCsFileForResx
+{
+    param($xml, $ModuleName, $ClassName)
+$body = @'
+//------------------------------------------------------------------------------
+// <auto-generated>
+//     This code was generated by a Start-ResGen funciton from PowerShellGitHubDev.psm1.
+//     To add or remove a member, edit your .ResX file then rerun Start-ResGen.
+//
+//     Changes to this file may cause incorrect behavior and will be lost if
+//     the code is regenerated.
+// </auto-generated>
+//------------------------------------------------------------------------------
+
+using System;
+using System.Reflection;
+
+/// <summary>
+///   A strongly-typed resource class, for looking up localized strings, etc.
+/// </summary>
+[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+
+internal class {0} {{
+    
+    private static global::System.Resources.ResourceManager resourceMan;
+    
+    private static global::System.Globalization.CultureInfo resourceCulture;
+    
+    [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+    internal {0}() {{
+    }}
+    
+    /// <summary>
+    ///   Returns the cached ResourceManager instance used by this class.
+    /// </summary>
+    [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+    internal static global::System.Resources.ResourceManager ResourceManager {{
+        get {{
+            if (object.ReferenceEquals(resourceMan, null)) {{
+                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("{1}.resources.{0}", typeof({0}).GetTypeInfo().Assembly);
+                resourceMan = temp;
+            }}
+            return resourceMan;
+        }}
+    }}
+    
+    /// <summary>
+    ///   Overrides the current thread's CurrentUICulture property for all
+    ///   resource lookups using this strongly typed resource class.
+    /// </summary>
+    [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+    internal static global::System.Globalization.CultureInfo Culture {{
+        get {{
+            return resourceCulture;
+        }}
+        set {{
+            resourceCulture = value;
+        }}
+    }}
+    {2} 
+}} 
+'@    
+
+    $entry = @'
+
+    /// <summary>
+    ///   Looks up a localized string similar to {1}
+    /// </summary>
+    internal static string {0} {{
+        get {{
+            return ResourceManager.GetString("{0}", resourceCulture);
+        }}
+    }}
+'@
+    $entries = $xml.root.data | % {
+        if ($_) {
+            $val = $_.value.Replace("`n", "`n    ///")
+            $name = $_.name.Replace(' ', '_')
+            $entry -f $name,$val
+        }
+    } | Out-String
+    $body -f $ClassName,$ModuleName,$entries
+}
+

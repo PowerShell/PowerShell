@@ -1264,6 +1264,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         private Guid _vmGuid;
+        private string _configurationName;
         private VMConnectionInfo _connectionInfo;
         private NetworkCredential _networkCredential;
 
@@ -1275,7 +1276,8 @@ namespace System.Management.Automation.Remoting.Client
             VMConnectionInfo connectionInfo,
             Guid runspaceId,
             PSRemotingCryptoHelper cryptoHelper,
-            Guid vmGuid)
+            Guid vmGuid,
+            string configurationName)
             : base(runspaceId, cryptoHelper)
         {
             if (connectionInfo == null)
@@ -1285,6 +1287,7 @@ namespace System.Management.Automation.Remoting.Client
 
             _connectionInfo = connectionInfo;
             _vmGuid = vmGuid;
+            _configurationName = configurationName;
 
             if (connectionInfo.Credential == null)
             {
@@ -1307,7 +1310,7 @@ namespace System.Management.Automation.Remoting.Client
         internal override void CreateAsync()
         {
             _client = new RemoteSessionHyperVSocketClient(_vmGuid, true);
-            if (!_client.Connect(_networkCredential, true))
+            if (!_client.Connect(_networkCredential, _configurationName, true))
             {
                 _client.Dispose();
                 throw new PSInvalidOperationException(
@@ -1321,7 +1324,7 @@ namespace System.Management.Automation.Remoting.Client
             // TODO: remove below 3 lines when Hyper-V socket duplication is supported in .NET framework.
             _client.Dispose();
             _client = new RemoteSessionHyperVSocketClient(_vmGuid, false);
-            if (!_client.Connect(_networkCredential, false))
+            if (!_client.Connect(_networkCredential, _configurationName, false))
             {
                 _client.Dispose();
                 throw new PSInvalidOperationException(
@@ -1380,7 +1383,7 @@ namespace System.Management.Automation.Remoting.Client
         internal override void CreateAsync()
         {
             _client = new RemoteSessionHyperVSocketClient(_targetGuid, false, true);
-            if (!_client.Connect(null, false))
+            if (!_client.Connect(null, String.Empty, false))
             {
                 _client.Dispose();
                 throw new PSInvalidOperationException(
@@ -1426,9 +1429,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             _connectionInfo = connectionInfo;
-
             _threadName = threadName;
-            
             Fragmentor.FragmentSize = RemoteSessionNamedPipeServer.NamedPipeBufferSizeForRemoting;
         }
 

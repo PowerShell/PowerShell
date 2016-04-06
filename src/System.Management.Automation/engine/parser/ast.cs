@@ -708,6 +708,8 @@ namespace System.Management.Automation.Language
             Utils.EmptyReadOnlyCollection<string>();
         internal static readonly ReadOnlyCollection<ModuleSpecification> EmptyModuleCollection =
             Utils.EmptyReadOnlyCollection<ModuleSpecification>();
+        internal static readonly ReadOnlyCollection<string> EmptyEditionCollection =
+            Utils.EmptyReadOnlyCollection<string>();
 
         /// <summary>
         /// The application id this script requires, specified like:
@@ -726,9 +728,9 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The PowerShell Edition this script requires, specified like:
         ///     <code>#requires -PSEdition Desktop</code>
-        /// If no PSEdition has been specified, this property is null.
+        /// If no PSEdition has been specified, this property is an empty collection.
         /// </summary>
-        public string RequiredPSEdition { get; internal set; }
+        public ReadOnlyCollection<string> RequiredPSEditions { get; internal set; }
 
         /// <summary>
         /// The modules this script requires, specified like:

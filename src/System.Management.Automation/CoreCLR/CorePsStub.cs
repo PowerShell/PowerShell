@@ -12,8 +12,6 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.Win32;
 using System.Management.Automation.Remoting;
 
-#if CORECLR
-
 #pragma warning disable 1591, 1572, 1571, 1573, 1587, 1570, 0067
 
 #region CLR_STUBS
@@ -1872,7 +1870,5 @@ namespace System
 #endregion Timer
 
 #pragma warning restore 1591, 1572, 1571, 1573, 1587, 1570, 0067
-
-#endif
 
 #endif

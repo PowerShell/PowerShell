@@ -2705,7 +2705,7 @@ namespace System.Management.Automation.Language
                 {
                     simpleConfigurationNameValue = outValue as string;
                     if (simpleConfigurationNameValue == null || 
-                        !System.Text.RegularExpressions.Regex.IsMatch(simpleConfigurationNameValue, "^[A-Za-z][A-Za-z0-9_]*$"))
+                        !System.Text.RegularExpressions.Regex.IsMatch(simpleConfigurationNameValue, "^[A-Za-z][A-Za-z0-9_./-]*$"))
                     {
                         // This is actually a semantics check, the syntax is fine at this point.
                         // Continue parsing to get as much information as possible

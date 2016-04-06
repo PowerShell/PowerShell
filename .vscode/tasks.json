@@ -1,7 +1,8 @@
 {
+    "version": "0.1.0",
     "command": "powershell",
     "isShellCommand": true,
-    "showOutput": "verbose",
+    "showOutput": "always",
     "args": [ "-c" ],
 
     "tasks": [
