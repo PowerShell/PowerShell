@@ -26,8 +26,10 @@ New to Git?
 -----------
 
 - [Git Basics](docs/git/basics.md): install and getting started.
-- [Git for sd users](docs/git/source-depot.md): a handy reference document for people familiar with `sd`.
-- [Commit process](docs/git/committing.md): step-by-step commit guide with all gory details.
+- [Git for sd users](docs/git/source-depot.md): a handy reference
+  document for people familiar with `sd`.
+- [Commit process](docs/git/committing.md): step-by-step commit guide
+  with all gory details.
 
 Authentication
 --------------
@@ -61,7 +63,7 @@ Particularly:
 [2 factor authentication]: https://github.com/blog/1614-two-factor-authentication
 
 [Branches](docs/workflow/branches.md)
---------
+-------------------------------------
 
 * Checkout a new local branch for every change you want to make (bugfix, feature).
 * Use `alias/feature-name` pattern.
@@ -116,12 +118,12 @@ git config --global am.threeWay true
 ```
 
 [Mapping](docs/workflow/mapping.md)
---------
+-----------------------------------
 
 Learn about new files locations in PowerShell/PowerShell.
 
 [Resources](docs/workflow/resources.md)
---------
+---------------------------------------
 
 Learn how to work with string resources in `.resx` files.
 

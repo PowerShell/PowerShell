@@ -39,10 +39,11 @@ index 1ba8dd4..ed5d202 160000
 * Push the branch (in the SuperProject): `git push origin jim/colon-drive`
 * Pull request in the superproject to kick-in CI build and notify people. Reference submodule pull-request in the PR message to make navigation between two simpler.
 
-### Commands log
+Commands log
+------------
 
 Here is a transcript of command Jim used:
-```
+```sh
 cd $HOME/PowerShell/src/monad/monad/src/engine
 vi DataStoreAdapter.cs
 git checkout -b jim/colon-drive
@@ -50,11 +51,10 @@ git commit -a
 git push origin jim/colon-drive
 ```
 then I went to the web interface and did the pull request *in the submodule*. After that, back to the commandline:
-```
+```sh
 cd $HOME/PowerShell
 git checkout -b jim/colon-drive
 git commit -a
 git push origin jim/colon-drive
 ```
 and back to the web interface for the pull request *in the superproject*.
-

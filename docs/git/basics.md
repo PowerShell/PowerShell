@@ -1,10 +1,11 @@
 # Git 101
 
-We are using git version 2.7.x, but any version should be good.
-It's recommended to learn `git` command line tool for full cross-platform expirience.
+We are using Git version 2.8.1, but any recent version should be good.
+It's recommended to learn the `git` command line tool for full
+cross-platform experience and a deeper understanding of Git itself.
 
-There are (too) many git tutorials on the internet.
-Here we post referrences to our favorites.
+There are (too) many Git tutorials on the internet. Here we post
+references to our favorites.
 
 ## Install
 
