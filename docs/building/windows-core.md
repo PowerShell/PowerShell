@@ -46,6 +46,9 @@ CLI can cause odd failures when running. Please check your version.
 Git Setup
 ---------
 
+Using Git requires it to be setup correctly; refer to the
+[Contributing Guidelines](../../CONTRIBUTING.md).
+
 Please clone the superproject (this repo) and initialize a subset of
 the submodules:
 
