@@ -6,10 +6,6 @@ Rules
 
 **Do not commit code changes to the master branch!**
 
-**Read the documentation on [submodules][]!**
-
-**Do not commit submodule updates accidentally!**
-
 Don't forget to commit early and often!
 
 Please add `[ci skip]` to commits that should be ignored by the CI systems
@@ -24,7 +20,6 @@ Write *good* commit messages. Follow Tim Pope's [guidelines][]:
 * The rest should be a wrapped, detailed explanation of the what and why
 * The tone should be imperative
 
-[submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
 [guidelines]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
 
 New to Git?
@@ -71,7 +66,9 @@ Particularly:
 * Checkout a new local branch for every change you want to make (bugfix, feature).
 * Use `alias/feature-name` pattern.
 * Use lowercase-with-dashes for naming.
-* Use same branch name in super-project and all [submodules][].
+* Use same branch name in superproject and all [submodules][].
+
+[submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
 
 Permissions
 -----------
@@ -86,29 +83,6 @@ You do *not* necessarily need to have write permissions to the main
 repositories, as you can also just [fork a repo][].
 
 [fork a repo]: https://help.github.com/articles/fork-a-repo/
-
-Rebase and Fast-Forward Merge Pull Requests in Submodules
----------------------------------------------------------
-
-*This is not necessary in the superproject, only submodules!*
-
-Because GitHub's "Merge Pull Request" button merges with `--no-ff`, an
-extra merge commit will always be created. This can be especially
-annoying when trying to commit updates to submodules. Therefore our
-policy is to merge using the Git CLI after approval, with a rebase
-onto master to enable a fast-forward merge.
-
-Submodules
-----------
-
-This repository is a superproject with a half-dozen [submodules][].
-**DO NOT** commit updates unless absolutely necessary. When submodules
-must be updated, a separate Pull Request must be submitted, reviewed,
-and merged before updating the superproject. When committing submodule
-updates, ensure no other changes are in the same commit. Submodule
-bumps may be included in feature branches for ease of work, but the
-update must be independently approved before merging into master.
-
 
 Recommended Git configurations
 ------------------------------

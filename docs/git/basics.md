@@ -76,8 +76,8 @@ git fetch --all -p
 # you should call this command ONLY from master branch
 git pull origin master
 
-# update submodules
-git submodule update --recursive 
+# update submodules: this checks the submodules out to the commit recorded in the superproject
+git submodule update
 ```
 
 Then switch to your branch and do rebase

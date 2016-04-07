@@ -1,8 +1,14 @@
-#Commit Dance
+Commit Dance
+============
 
-**Update:** commit dance became much simpler after [removing psl-monad submodule](https://github.com/PowerShell/PowerShell/issues/656).
-Meahwhile, there are still few submodules. If you need to touch their content, this doc provides the overview of the process.
-Remember that it's written against `src/monad` submodule, which doesn't exist anymore.
+**Update:** commit dance became much simpler after
+[removing psl-monad submodule](https://github.com/PowerShell/PowerShell/issues/656).
+Thus, this really only applies to `src/windows-build` and
+`src/Modules/Pester`. If you need to touch their content, this doc
+provides the overview of the process. Remember that it's written
+against `src/monad` submodule, which doesn't exist anymore.
+
+Also see the [submodules documentation](./submodules.md).
 
 Sometimes, you need to do the work in a submodule (i.e. you added a new string in `.resx` file).
 The submodule has a relationship to the SuperProject  (PowerShell), but in order to be sure that CI is
