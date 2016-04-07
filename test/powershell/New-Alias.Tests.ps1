@@ -1,3 +1,43 @@
+Describe "New-Alias DRT Unit Tests" -Tags DRT{
+	It "New-Alias Constant should throw SessionStateException skip now as bug#777" -Skip:$true{	
+		try {
+			New-Alias -Name "ABCD" -Value "foo" -Option "Constant" -Force:$true
+			New-Alias -Name "ABCD" -Value "foo" -Force:$true
+			Throw "Execution OK"
+		} 
+		catch {
+			$_.FullyQualifiedErrorId | Should be "AliasNotWritable,Microsoft.PowerShell.Commands.NewAliasCommand"
+		}
+	}
+	
+	It "New-Alias NamePositional And Value Valid" {
+			New-Alias ABCD -Value "MyCommand" -Scope "0"
+			$result=Get-Alias -Name ABCD -Scope "0"
+			$result.Name| Should Be "ABCD"
+			$result.Definition| Should Be "MyCommand"
+			$result.Description| Should Be ""
+			$result.Options| Should Be "None"
+	}
+	
+	It "New-Alias NamePositional And ValuePositional Valid" {
+			New-Alias ABCD "MyCommand" -Scope "0"
+			$result=Get-Alias -Name ABCD -Scope "0"
+			$result.Name| Should Be "ABCD"
+			$result.Definition| Should Be "MyCommand"
+			$result.Description| Should Be ""
+			$result.Options| Should Be "None"
+	}
+	
+	It "New-Alias Description Valid" {
+			New-Alias -Name ABCD -Value "MyCommand" -Description "test description" -Scope "0"
+			$result=Get-Alias -Name ABCD -Scope "0"
+			$result.Name| Should Be "ABCD"
+			$result.Definition| Should Be "MyCommand"
+			$result.Description| Should Be "test description"
+			$result.Options| Should Be "None"
+	}
+}
+
 Describe "New-Alias" {
     It "Should be able to be called using the name and value parameters without error" {
 	{ New-Alias -Name testAlias -Value 100 } | Should Not Throw
