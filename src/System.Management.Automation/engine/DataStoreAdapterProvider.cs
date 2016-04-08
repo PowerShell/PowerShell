@@ -499,7 +499,7 @@ namespace System.Management.Automation
 
             // TODO:PSL
             // this is probably not right here
-            if (implementingType == typeof(Microsoft.PowerShell.Commands.FileSystemProvider) && !Platform.IsWindows())
+            if (implementingType == typeof(Microsoft.PowerShell.Commands.FileSystemProvider) && !Platform.IsWindows)
             {
                 volumeSeparatedByColon = false;
             }

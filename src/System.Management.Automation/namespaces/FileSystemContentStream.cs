@@ -1195,7 +1195,7 @@ namespace Microsoft.PowerShell.Commands
             // Porting note: only UTF-8 is supported on Linux, which is not an SBCS
             if ((_currentEncoding.Equals(_oemEncoding) ||
                  _currentEncoding.Equals(_defaultAnsiEncoding))
-                && Platform.IsWindows())
+                && Platform.IsWindows)
             {
                 NativeMethods.CPINFO cpInfo;
                 if (NativeMethods.GetCPInfo((uint)_currentEncoding.CodePage, out cpInfo) &&

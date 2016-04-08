@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
 
             if ( ShouldProcess( dateToUse.ToString() ) )
             {
-                if (Platform.IsWindows())
+                if (Platform.IsWindows)
                 {
                     #pragma warning disable 56523
 

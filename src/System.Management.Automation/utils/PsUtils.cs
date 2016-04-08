@@ -586,7 +586,7 @@ namespace System.Management.Automation
         internal static string GetHostName()
         {
             // Note: non-windows CoreCLR does not support System.Net yet
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
             {
                 return WinGetHostName();
             }
@@ -612,7 +612,7 @@ namespace System.Management.Automation
 
         internal static uint GetNativeThreadId()
         {
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
             {
                 return WinGetNativeThreadId();
             }

@@ -1026,8 +1026,8 @@ namespace System.Management.Automation
 
             // On Windows, check the extension list and see if we should try to execute this directly.
             // Otherwise, use the platform library to check executability
-            if ((Platform.IsWindows() && ValidateExtension(this.Path))
-                || (!Platform.IsWindows() && Platform.NonWindowsIsExecutable(this.Path)))
+            if ((Platform.IsWindows && ValidateExtension(this.Path))
+                || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(this.Path)))
             {
                 startInfo.UseShellExecute = false;
                 if (redirectInput)

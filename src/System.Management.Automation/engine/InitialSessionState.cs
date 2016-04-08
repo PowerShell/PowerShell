@@ -4724,7 +4724,7 @@ End
         /// </summary>
         internal static string GetClearHostFunctionText()
         {
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
             {
                 return @"
 $RawUI = $Host.UI.RawUI

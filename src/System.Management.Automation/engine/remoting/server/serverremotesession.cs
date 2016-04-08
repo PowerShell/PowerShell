@@ -170,7 +170,7 @@ namespace System.Management.Automation.Remoting
             _senderInfo = senderInfo;
             _configProviderId = configurationProviderId;
             _initParameters = initializationParameters;
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
             {
             	_cryptoHelper = (PSRemotingCryptoHelperServer)transportManager.CryptoHelper;
             	_cryptoHelper.Session = this;

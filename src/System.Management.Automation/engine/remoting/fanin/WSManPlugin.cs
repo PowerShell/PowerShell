@@ -283,7 +283,7 @@ namespace System.Management.Automation.Remoting
                 // to verify here.
                 WSManPluginServerTransportManager serverTransportMgr;
 
-                if (Platform.IsWindows())
+                if (Platform.IsWindows)
                 {
                     serverTransportMgr = new WSManPluginServerTransportManager(BaseTransportManager.DefaultFragmentSize, new PSRemotingCryptoHelperServer());
                 }
@@ -390,7 +390,7 @@ namespace System.Management.Automation.Remoting
                 // Wrap the provided handle so it can be passed to the registration function
                 EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
 
-                if (Platform.IsWindows())
+                if (Platform.IsWindows)
                 {
                     SafeWaitHandle safeWaitHandle = new SafeWaitHandle(requestDetails.shutdownNotificationHandle, false); // Owned by WinRM
                     ClrFacade.SetSafeWaitHandle(eventWaitHandle, safeWaitHandle);

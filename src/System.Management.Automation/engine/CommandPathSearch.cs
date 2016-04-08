@@ -56,7 +56,7 @@ namespace System.Management.Automation
                 // turn the command name into a pattern and then match against extensions in PATHEXT.
                 // The old code would enumerate the file system many more times, once per possible extension.
                 // Porting note: this is wrong on Linux, where we don't depend on extensions
-                if (Platform.IsWindows())
+                if (Platform.IsWindows)
                 {
                     commandName = commandName + ".*";
                 }
@@ -478,7 +478,7 @@ namespace System.Management.Automation
                     for (int i = 0; i < baseNames.Length; i++)
                     {
                         if (name.Equals(baseNames[i], StringComparison.OrdinalIgnoreCase)
-                            || (!Platform.IsWindows() && Platform.NonWindowsIsExecutable(name)))
+                            || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(name)))
                         {
                             if (result == null)
                                 result = new Collection<string>();
@@ -505,7 +505,7 @@ namespace System.Management.Automation
                 foreach (var fileName in fileNames)
                 {
                     if (fileName.EndsWith(allowedExt, StringComparison.OrdinalIgnoreCase)
-                        || (!Platform.IsWindows() && Platform.NonWindowsIsExecutable(fileName)))
+                        || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(fileName)))
                     {
                         if (result == null)
                             result = new Collection<string>();

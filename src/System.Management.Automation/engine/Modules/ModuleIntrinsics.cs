@@ -582,7 +582,7 @@ namespace System.Management.Automation
                 // module using ""System32" in the key.
 
                 // Porting note: psHome cannot be lower-cased on case sensitive file systems
-                if (Platform.IsWindows())
+                if (Platform.IsWindows)
                 {
                     psHome = psHome.ToLowerInvariant().Replace("\\syswow64\\", "\\system32\\");
                 }
@@ -600,7 +600,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static string GetDscModulePath()
         {
-            if (!Platform.IsWindows())
+            if (!Platform.IsWindows)
             {
                 return string.Empty;
             }

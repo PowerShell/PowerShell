@@ -332,7 +332,7 @@ namespace System.Management.Automation.Remoting
                 isRequestPending = true;
                 this.requestDetails = requestDetails;
 
-                if (Platform.IsWindows())
+                if (Platform.IsWindows)
                 {
                 	// Wrap the provided handle so it can be passed to the registration function
                 	SafeWaitHandle safeWaitHandle = new SafeWaitHandle(requestDetails.shutdownNotificationHandle, false); // Owned by WinRM

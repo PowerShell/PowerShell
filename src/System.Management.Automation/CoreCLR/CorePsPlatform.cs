@@ -30,15 +30,42 @@ namespace System.Management.Automation
     /// </summary>
     internal static class Platform
     {
-        // this is specifically to query for Windows, everything else is considered to be non-Windows
-        internal static bool IsWindows()
+
+        // Platform variables used to defined corresponding PowerShell built-in variables
+        public static const bool IsLinux
         {
-#if CORECLR
-            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-#else
-            // FullCLR has only Windows version
-            return true;
-#endif
+            get
+            {
+                #if CORECLR
+                return RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+                #else
+                return false;
+                #endif
+            }
+        }
+
+        public static const bool IsOSX
+        {
+            get
+            {
+                #if CORECLR
+                return RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+                #else
+                return false;
+                #endif
+            }
+        }
+
+        public static const bool IsWindows
+        {
+            get
+            {
+                #if CORECLR
+                return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+                #else
+                return true;
+                #endif
+            }
         }
 
         // true if cross-platform (always for this project)
@@ -77,13 +104,13 @@ namespace System.Management.Automation
         internal static bool HasCom()
         {
             // TODO: catch exception from Type.IsComObject
-            return IsWindows();
+            return IsWindows;
         }
 
         // The Antimalware Scan Interface is not supported on Linux
         internal static bool HasAmsi()
         {
-            return IsWindows();
+            return IsWindows;
         }
 
         internal static bool UsesCodeSignedAssemblies()
@@ -95,25 +122,25 @@ namespace System.Management.Automation
         // disconnected network drives on Windows
         internal static bool HasDriveAutoMounting()
         {
-            return IsWindows();
+            return IsWindows;
         }
 
         // Linux does not have a registry
         internal static bool HasRegistrySupport()
         {
-            return IsWindows();
+            return IsWindows;
         }
 
         // Linux does not have PowerShell execution policies
         internal static bool HasExecutionPolicy()
         {
-            return IsWindows();
+            return IsWindows;
         }
 
         // Linux has a single rooted file system
         internal static bool HasSingleRootFilesystem()
         {
-            return !IsWindows();
+            return !IsWindows;
         }
 
         // Linux has no notion of file shares. It has mount points
@@ -128,7 +155,7 @@ namespace System.Management.Automation
         // the UNC equivalent of a "network drive" aka mount would be the mount itself
         internal static bool HasUNCSupport()
         {
-            return IsWindows();
+            return IsWindows;
         }
 
         // Linux uses .net to query file attributes
@@ -140,25 +167,25 @@ namespace System.Management.Automation
         // Linux does not have group policy support
         internal static bool HasGroupPolicySupport()
         {
-            return IsWindows();
+            return IsWindows;
         }
 
         // non-windows does not have network drive support
         internal static bool HasNetworkDriveSupport()
         {
-            return IsWindows();
+            return IsWindows;
         }
 
         // non-windows does not have reparse points
         internal static bool SupportsReparsePoints()
         {
-            return IsWindows();
+            return IsWindows;
         }
 
         // non-windows does not support removing drives
         internal static bool SupportsRemoveDrive()
         {
-            return IsWindows();
+            return IsWindows;
         }
 
         // Platform methods prefixed NonWindows are:
@@ -178,7 +205,7 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsIsHardLink(FileSystemInfo fileInfo)
         {
-            if (!IsWindows())
+            if (!IsWindows)
             {
                 return LinuxPlatform.IsHardLink(fileInfo);
             }
@@ -188,7 +215,7 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsIsSymLink(FileSystemInfo fileInfo)
         {
-            if (!IsWindows())
+            if (!IsWindows)
             {
                 return LinuxPlatform.IsSymLink(fileInfo);
             }
@@ -204,7 +231,7 @@ namespace System.Management.Automation
 
         internal static string NonWindowsInternalGetTarget(string path)
         {
-            if (!IsWindows())
+            if (!IsWindows)
             {
                 return LinuxPlatform.FollowSymLink(path);
             }
@@ -217,7 +244,7 @@ namespace System.Management.Automation
 #if CORECLR
         internal static string NonWindowsGetFolderPath(SpecialFolder folder)
         {
-            if (!IsWindows())
+            if (!IsWindows)
             {
                 return LinuxPlatform.GetFolderPath(folder);
             }
@@ -230,7 +257,7 @@ namespace System.Management.Automation
 
         internal static string NonWindowsInternalGetLinkType(FileSystemInfo fileInfo)
         {
-            if (!IsWindows())
+            if (!IsWindows)
             {
                 if (NonWindowsIsSymLink(fileInfo))
                 {
@@ -251,7 +278,7 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsCreateSymbolicLink(string path, string strTargetPath, bool isDirectory)
         {
-            if (!IsWindows())
+            if (!IsWindows)
             {
                 // Linux doesn't care if target is a directory or not
                 return LinuxPlatform.CreateSymbolicLink(path, strTargetPath);
@@ -264,7 +291,7 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsCreateHardLink(string path, string strTargetPath)
         {
-            if (!IsWindows())
+            if (!IsWindows)
             {
                 return LinuxPlatform.CreateHardLink(path, strTargetPath);
             }
@@ -276,7 +303,7 @@ namespace System.Management.Automation
 
         internal static void NonWindowsSetDate(DateTime dateToUse)
         {
-            if (!IsWindows())
+            if (!IsWindows)
             {
                 LinuxPlatform.SetDateInfoInternal date = new LinuxPlatform.SetDateInfoInternal(dateToUse);
                 LinuxPlatform.SetDate(date);
@@ -289,7 +316,7 @@ namespace System.Management.Automation
 
         internal static string NonWindowsGetDomainName()
         {
-            if (!IsWindows())
+            if (!IsWindows)
             {
                 string fullyQualifiedName = LinuxPlatform.Native.GetFullyQualifiedName();
                 if (string.IsNullOrEmpty(fullyQualifiedName))
@@ -314,7 +341,7 @@ namespace System.Management.Automation
 
         internal static string NonWindowsGetUserName()
         {
-            if (!IsWindows())
+            if (!IsWindows)
             {
                 return LinuxPlatform.UserName;
             }
@@ -326,7 +353,7 @@ namespace System.Management.Automation
 
         internal static string NonWindowsGetMachineName()
         {
-            if (!IsWindows())
+            if (!IsWindows)
             {
                 return LinuxPlatform.HostName;
             }
@@ -339,7 +366,7 @@ namespace System.Management.Automation
         // Hostname in this context seems to be the FQDN
         internal static string NonWindowsGetHostName()
         {
-            if (!IsWindows())
+            if (!IsWindows)
             {
                 string hostName = LinuxPlatform.Native.GetFullyQualifiedName();
                 if (string.IsNullOrEmpty(hostName))
@@ -358,7 +385,7 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsIsExecutable(string path)
         {
-            if (!IsWindows())
+            if (!IsWindows)
             {
                 return LinuxPlatform.IsExecutable(path);
             }
