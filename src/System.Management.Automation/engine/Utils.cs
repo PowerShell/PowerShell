@@ -240,7 +240,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static string GetApplicationBase(string shellId)
         {
-            if (!Platform.IsX())
+            if (!Platform.IsCore)
             {
                 // try to get the path from the registry first
                 string result = GetApplicationBaseFromRegistry(shellId);
@@ -305,7 +305,7 @@ namespace System.Management.Automation
 
                 // And built-in modules
                 string progFileDir;
-                if (Platform.IsX())
+                if (Platform.IsCore)
                 {
                     progFileDir = Path.Combine(appBase, "Modules");
                 }
@@ -607,7 +607,7 @@ namespace System.Management.Automation
         /// Profile uses this to control profile loading.
         /// </remarks>
         internal static string ProductNameForDirectory =
-            Platform.IsWindows() ? "WindowsPowerShell" : Platform.ProductNameForDirectory;
+            Platform.IsWindows ? "WindowsPowerShell" : Platform.ProductNameForDirectory;
 
         /// <summary>
         /// The name of the subdirectory that contains packages.
@@ -964,7 +964,7 @@ namespace System.Management.Automation
             // SecurityPrincipal API of .net for now assume Linux
             // users have no concept of "Administrator" for now and
             // specifically do not map to a check for root user
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
             {
                 System.Security.Principal.WindowsIdentity currentIdentity = System.Security.Principal.WindowsIdentity.GetCurrent();
                 System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(currentIdentity);

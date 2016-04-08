@@ -828,7 +828,7 @@ namespace System.Management.Automation
 
             // Porting note: if not otherwise defined, map Windows environment
             // variables to their corresponding Linux counterparts
-            if (Platform.IsLinux() && String.IsNullOrEmpty(value))
+            if (!Platform.IsWindows && String.IsNullOrEmpty(value))
             {
                 switch (variable)
                 {
@@ -1023,7 +1023,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Platform.IsWindows())
+                if (Platform.IsWindows)
                 {
                     return WinGetUserDomainName();
                 }
@@ -1059,7 +1059,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Platform.IsWindows())
+                if (Platform.IsWindows)
                 {
                     return WinGetUserName();
                 }
@@ -1088,7 +1088,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Platform.IsWindows())
+                if (Platform.IsWindows)
                 {
                     return WinGetMachineName();
                 }
@@ -1108,7 +1108,7 @@ namespace System.Management.Automation
             {
                 if (m_os == null)
                 {
-                    if (Platform.IsWindows())
+                    if (Platform.IsWindows)
                     {
                         m_os = WinOSVersion;
                     }
@@ -1179,7 +1179,7 @@ namespace System.Management.Automation
         /// </returns>
         private static string InternalGetFolderPath(SpecialFolder folder)
         {
-            if (!Platform.IsWindows())
+            if (!Platform.IsWindows)
             {
                 return Platform.NonWindowsGetFolderPath(folder);
             }

@@ -4724,7 +4724,7 @@ End
         /// </summary>
         internal static string GetClearHostFunctionText()
         {
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
             {
                 return @"
 $RawUI = $Host.UI.RawUI
@@ -5101,6 +5101,32 @@ end
                 RemotingErrorIdStrings.PSSessionAppName,
                 ScopedItemOptions.None),
             // End: Variables which control remoting behavior
+
+            #region Platform
+            new SessionStateVariableEntry(
+                SpecialVariables.IsLinux,
+                Platform.IsLinux,
+                String.Empty,
+                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+
+            new SessionStateVariableEntry(
+                SpecialVariables.IsOSX,
+                Platform.IsOSX,
+                String.Empty,
+                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+
+            new SessionStateVariableEntry(
+                SpecialVariables.IsWindows,
+                Platform.IsWindows,
+                String.Empty,
+                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+
+            new SessionStateVariableEntry(
+                SpecialVariables.IsCore,
+                Platform.IsCore,
+                String.Empty,
+                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+            #endregion
         };
 
         /// <summary>
@@ -5662,7 +5688,7 @@ if($paths) {
                 // Porting note: the snapins still require 'ProcessorArchitecture=MSIL' in
                 // the strong name, which is not in the strong name of assemblies created
                 // by dotnet-cli
-                if (!Platform.IsX() &&
+                if (!Platform.IsCore &&
                     !string.Equals(assemblyName.FullName, psSnapInInfo.AssemblyName, StringComparison.OrdinalIgnoreCase))
                 {
                     string message = StringUtil.Format(ConsoleInfoErrorStrings.PSSnapInAssemblyNameMismatch, psSnapInInfo.AbsoluteModulePath, psSnapInInfo.AssemblyName);

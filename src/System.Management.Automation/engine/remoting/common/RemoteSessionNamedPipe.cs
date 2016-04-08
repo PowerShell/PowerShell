@@ -534,7 +534,7 @@ namespace System.Management.Automation.Remoting
 
             // All PowerShell instances will start with the named pipe
             // and listner created and running.
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
             {
                 IPCNamedPipeServerEnabled = true;
             }

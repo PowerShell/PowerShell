@@ -38,7 +38,7 @@ namespace System.Management.Automation
 
             this.TimeGenerated = DateTime.Now;
             this.Tags = new List<string>();
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
             {
                 this.User = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
             }

@@ -490,7 +490,7 @@ namespace Microsoft.PowerShell.Commands
         private void MapNetworkDrive(PSDriveInfo drive)
         {
             // Porting note: mapped network drives are only supported on Windows
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
             {
                 WinMapNetworkDrive(drive);
             }
@@ -992,7 +992,7 @@ namespace Microsoft.PowerShell.Commands
 
                         // Porting notes: on the non-Windows platforms, the drive never
                         // uses : as a separator between drive and path
-                        if (!Platform.IsWindows())
+                        if (!Platform.IsWindows)
                         {
                             newPSDriveInfo.VolumeSeparatedByColon = false;
                         }
@@ -1505,7 +1505,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     DirectoryInfo directory = new DirectoryInfo(path);
 
-                    if (!Platform.IsWindows() && Platform.NonWindowsIsSymLink(directory))
+                    if (!Platform.IsWindows && Platform.NonWindowsIsSymLink(directory))
                     {
                         // For Linux, treat symlink to directories like a file
                         WriteItemObject(directory, path, false);
@@ -2210,7 +2210,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if(itemType == ItemType.SymbolicLink)
                     {
-                        if (Platform.IsWindows())
+                        if (Platform.IsWindows)
                         {
                             success = WinCreateSymbolicLink(path,strTargetPath,isDirectory);
                         }
@@ -2221,7 +2221,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if(itemType == ItemType.HardLink)
                     {
-                        if (Platform.IsWindows())
+                        if (Platform.IsWindows)
                         {
                             success = WinCreateHardLink(path,strTargetPath);
                         }
@@ -7981,7 +7981,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (fileSysInfo != null)
             {
-                if (Platform.IsWindows())
+                if (Platform.IsWindows)
                 {
                     using (SafeFileHandle handle = OpenReparsePoint(fileSysInfo.FullName, FileDesiredAccess.GenericRead))
                     {
@@ -8018,7 +8018,7 @@ namespace Microsoft.PowerShell.Commands
         private static List<string> InternalGetTarget(string filePath)
         {
             var links = new List<string>();
-            if (!Platform.IsWindows())
+            if (!Platform.IsWindows)
             {
                 string link = Platform.NonWindowsInternalGetTarget(filePath);
                 if (!String.IsNullOrEmpty(link))
@@ -8092,7 +8092,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static string InternalGetLinkType(FileSystemInfo fileInfo)
         {
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
             {
                 return WinInternalGetLinkType(fileInfo.FullName);
             }
@@ -8105,7 +8105,7 @@ namespace Microsoft.PowerShell.Commands
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         private static string WinInternalGetLinkType(string filePath)
         {
-            if (Platform.IsLinux())
+            if (!Platform.IsWindows)
             {
                 throw new Platform.PlatformNotSupportedException();
             }
@@ -8169,7 +8169,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool IsHardLink(FileSystemInfo fileInfo)
         {
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
                 return WinIsHardLink(fileInfo);
             else
                 return Platform.NonWindowsIsHardLink(fileInfo);
@@ -8177,7 +8177,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool IsReparsePoint(FileSystemInfo fileInfo)
         {
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
             {
                 // Note that this class also has a enum called FileAttributes, so use fully qualified name
                 return (fileInfo.Attributes & System.IO.FileAttributes.ReparsePoint) 
@@ -8228,7 +8228,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool IsHardLink(ref IntPtr handle)
         {
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
                 return WinIsHardLink(ref handle);
             else
                 return Platform.NonWindowsIsHardLink(ref handle);
@@ -8256,7 +8256,7 @@ namespace Microsoft.PowerShell.Commands
         
         private static string InternalGetTarget(SafeFileHandle handle)
         {
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
             {
                 return WinInternalGetTarget(handle);
             }
@@ -8336,7 +8336,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // this is a purely Windows specific feature, no feature flag
             // used for that reason
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
             {
                 return WinCreateJunction(path,target);
             }
@@ -8420,7 +8420,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!String.IsNullOrEmpty(junctionPath))
             {
-                if (!Platform.IsWindows())
+                if (!Platform.IsWindows)
                 {
                    // For non-Windows platform, treat it as a file.  Just delete it.
                    try

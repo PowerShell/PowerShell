@@ -1323,7 +1323,7 @@ namespace System.Management.Automation
 
                         // Close the progress pane that may have popped up from analyzing UNC paths.
                         // Porting note: we don't like this message
-                        if (!Platform.IsX() && context.CurrentCommandProcessor != null)
+                        if (!Platform.IsCore && context.CurrentCommandProcessor != null)
                         {
                             ProgressRecord analysisProgress = new ProgressRecord(0, Modules.ScriptAnalysisPreparing, " ");
                             analysisProgress.RecordType = ProgressRecordType.Completed;

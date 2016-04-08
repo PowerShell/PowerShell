@@ -1362,7 +1362,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    if (Platform.IsWindows() && !Force)
+                    if (Platform.IsWindows && !Force)
                     {
                         // Check if the process is owned by current user
                         if (!IsProcessOwnedByCurrentUser(process))
@@ -2097,7 +2097,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 //LoadUserProfile.
-                if (Platform.IsWindows())
+                if (Platform.IsWindows)
                 {
                     startInfo.LoadUserProfile = _loaduserprofile;
                 }
@@ -2193,7 +2193,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
             //Starts the Process
             Process process;
-            if (Platform.IsWindows())
+            if (Platform.IsWindows)
             {
                 process = start(startInfo);
             }
@@ -2238,7 +2238,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!process.HasExited)
                     {
-                        if (Platform.IsWindows())
+                        if (Platform.IsWindows)
                         {
                             waithandle = new ManualResetEvent(false);
 

@@ -433,7 +433,7 @@ namespace System.Management.Automation
 
             // There is no signature support on non-Windows platforms (yet), when
             // execution reaches here, we are sure the file is under product folder
-            if (Platform.IsX())
+            if (Platform.IsCore)
             {
                 return true;
             }

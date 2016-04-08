@@ -1,7 +1,5 @@
 # Use the .NET Core APIs to determine the current platform; if a runtime
 # exception is thrown, we are on FullCLR, not .NET Core.
-#
-# TODO: import Microsoft.PowerShell.Platform instead
 try {
     $Runtime = [System.Runtime.InteropServices.RuntimeInformation]
     $OSPlatform = [System.Runtime.InteropServices.OSPlatform]
@@ -10,11 +8,15 @@ try {
     $IsLinux = $Runtime::IsOSPlatform($OSPlatform::Linux)
     $IsOSX = $Runtime::IsOSPlatform($OSPlatform::OSX)
     $IsWindows = $Runtime::IsOSPlatform($OSPlatform::Windows)
-} catch [System.Management.Automation.RuntimeException] {
-    $IsCore = $false
-    $IsLinux = $false
-    $IsOSX = $false
-    $IsWindows = $true
+} catch {
+    # If these are already set, then they're read-only and we're done
+    try {
+        $IsCore = $false
+        $IsLinux = $false
+        $IsOSX = $false
+        $IsWindows = $true
+    }
+    catch { }
 }
 
 
@@ -122,9 +124,9 @@ function Start-PSBuild {
 
     # FullCLR only builds a library, so there is no runtime component
     if ($FullCLR) {
-	    $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Executable)
+        $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Executable)
     } else {
-	    $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, $Executable)
+        $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, $Executable)
     }
     Write-Verbose "script:Output is $script:Output"
 

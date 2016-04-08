@@ -582,7 +582,7 @@ namespace System.Management.Automation
                 // module using ""System32" in the key.
 
                 // Porting note: psHome cannot be lower-cased on case sensitive file systems
-                if (Platform.IsWindows())
+                if (Platform.IsWindows)
                 {
                     psHome = psHome.ToLowerInvariant().Replace("\\syswow64\\", "\\system32\\");
                 }
@@ -600,7 +600,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static string GetDscModulePath()
         {
-            if (!Platform.IsWindows())
+            if (!Platform.IsWindows)
             {
                 return string.Empty;
             }
@@ -763,7 +763,7 @@ namespace System.Management.Automation
 
                 // Porting note: Open PowerShell has a Modules folder in the the application base path which contains the built-in modules
                 // It must be in the front of the path no matter what.
-                if (Platform.IsX())
+                if (Platform.IsCore)
                 {
                     currentProcessModulePath = AddToPath(currentProcessModulePath, GetSystemwideModulePath(), 0);
                 }

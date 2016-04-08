@@ -326,7 +326,7 @@ namespace System.Management.Automation.Remoting
                 this.shutdownPluginGCHandle = GCHandle.Alloc(shutdownPlugin);
                 unmanagedStruct.wsManPluginShutdownPluginCallbackNative = Marshal.GetFunctionPointerForDelegate(shutdownPlugin);
             }
-            if(!Platform.IsWindows())
+            if(!Platform.IsWindows)
             {
                 WSMPluginOperationShutdownDelegate pluginShutDownDelegate = new WSMPluginOperationShutdownDelegate(WSManPluginManagedEntryWrapper.WSManPSShutdown);
                 this.WSMPluginOperationShutdownGCHandle = GCHandle.Alloc(pluginShutDownDelegate);
@@ -351,7 +351,7 @@ namespace System.Management.Automation.Remoting
                 this.pluginSignalGCHandle.Free();
                 this.pluginConnectGCHandle.Free();
                 this.shutdownPluginGCHandle.Free();
-                if(!Platform.IsWindows())
+                if(!Platform.IsWindows)
                 {
                     this.WSMPluginOperationShutdownGCHandle.Free();
                 }
