@@ -40,10 +40,6 @@ Describe "Get-Content" {
 	(Get-Content -Path $testPath) | Should Be $testString
     }
 
-    It "Should be able to call using the cat alias" {
-	{ cat -Path $testPath } | Should Not Throw
-    }
-
     It "Should be able to call using the gc alias" {
 	{ gc -Path $testPath } | Should Not Throw
     }
@@ -55,11 +51,9 @@ Describe "Get-Content" {
     It "Should return the same values for aliases" {
 	$getContentAlias = Get-Content -Path $testPath
 	$gcAlias         = gc -Path $testPath
-	$catAlias        = cat -Path $testPath
 	$typeAlias       = type -Path $testPath
 
 	$getContentAlias | Should Be $gcAlias
-	$getContentAlias | Should Be $catAlias
 	$getContentAlias | Should Be $typeAlias
     }
 
@@ -68,21 +62,21 @@ Describe "Get-Content" {
     }
 
     It "Should be able to specify the number of lines to get the content of using the TotalCount switch" {
-	$returnArray = (cat -Path $testPath2 -TotalCount 2)
+	$returnArray = (Get-Content -Path $testPath2 -TotalCount 2)
 
 	$returnArray[0] | Should Be $firstline
 	$returnArray[1] | Should Be $secondline
     }
 
     It "Should be able to specify the number of lines to get the content of using the Head switch" {
-	$returnArray = (cat -Path $testPath2 -Head 2)
+	$returnArray = (Get-Content -Path $testPath2 -Head 2)
 
 	$returnArray[0] | Should Be $firstline
 	$returnArray[1] | Should Be $secondline
     }
 
     It "Should be able to specify the number of lines to get the content of using the First switch" {
-	$returnArray = (cat -Path $testPath2 -First 2)
+	$returnArray = (Get-Content -Path $testPath2 -First 2)
 
 	$returnArray[0] | Should Be $firstline
 	$returnArray[1] | Should Be $secondline

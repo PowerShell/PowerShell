@@ -35,35 +35,6 @@ Describe "Compare-Object" {
 	{ Compare-Object -ReferenceObject $(Get-Content $file1) $(Get-Content $file2) } | Should Not Throw
     }
 
-    It "Should be able to execute compare object using the compare alias" {
-	{ compare -ReferenceObject $(Get-Content $file1) -DifferenceObject $(Get-Content $file2) } | Should Not Throw
-    }
-
-    It "Should produce the same output when the compare alias is used" {
-	$alias    = compare -ReferenceObject $(Get-Content $file1) -DifferenceObject $(Get-Content $file2)
-	$fullname = Compare-Object -ReferenceObject $(Get-Content $file1) -DifferenceObject $(Get-Content $file2)
-
-	$alias[0].InputObject   | Should Be $fullname[0].InputObject
-	$alias[0].SideIndicator | Should Be $fullname[0].SideIndicator
-	$alias[1].InputObject   | Should Be $fullname[1].InputObject
-	$alias[1].SideIndicator | Should Be $fullname[1].SideIndicator
-
-	$alias.Length | Should Be 2 # There should be no other elements to test
-
-    }
-
-    It "Should be able to execute compare object using the diff alias" {
-	$alias    = diff -ReferenceObject $(Get-Content $file1) -DifferenceObject $(Get-Content $file2)
-	$fullname = Compare-Object -ReferenceObject $(Get-Content $file1) -DifferenceObject $(Get-Content $file2)
-
-	$alias[0].InputObject   | Should Be $fullname[0].InputObject
-	$alias[0].SideIndicator | Should Be $fullname[0].SideIndicator
-	$alias[1].InputObject   | Should Be $fullname[1].InputObject
-	$alias[1].SideIndicator | Should Be $fullname[1].SideIndicator
-
-	$alias.Length | Should Be 2 # There should be no other elements to test
-    }
-
     It "Should indicate data that exists only in the reference dataset" {
 	$actualOutput = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4)
 
