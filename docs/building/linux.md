@@ -105,7 +105,7 @@ Start-PSBuild
 
 Congratulations! If everything went right, PowerShell is now built.
 The `Start-PSBuild` script will output the location of the executable:
-`./src/Microsoft.PowerShell.Host/bin/Linux/netstandardapp1.5/ubuntu.14.04-x64/powershell`.
+`./src/Microsoft.PowerShell.CoreConsoleHost/bin/Linux/netstandardapp1.5/ubuntu.14.04-x64/powershell`.
 
 > Note that the `./build.sh` script is deprecated and will be removed
 
@@ -131,14 +131,14 @@ make test
 popd
 ```
 
-This library will be emitted in the `src/Microsoft.PowerShell.Host`
+This library will be emitted in the `src/Microsoft.PowerShell.CoreConsoleHost`
 project, where `dotnet` consumes it as "content" and thus
 automatically deploys it.
 
 Build the managed projects
 --------------------------
 
-The `Microsoft.PowerShell.Host` project is the cross-platform host for
+The `Microsoft.PowerShell.CoreConsoleHost` project is the cross-platform host for
 PowerShell targetting .NET Core. It is the top level project, so
 `dotnet build` transitively builds all its dependencies, and emits a
 `powershell` executable. The `--configuration Linux` flag is
@@ -147,7 +147,7 @@ defined (see [issue #673][]).
 
 ```sh
 dotnet restore
-cd src/Microsoft.PowerShell.Host
+cd src/Microsoft.PowerShell.CoreConsoleHost
 dotnet build --configuration Linux
 ```
 

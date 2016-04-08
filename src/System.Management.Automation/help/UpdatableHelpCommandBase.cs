@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
             metadataCache.Add("Microsoft.PowerShell.Diagnostics", "http://go.microsoft.com/fwlink/?linkid=390783");
             metadataCache.Add("Microsoft.PowerShell.Core", "http://go.microsoft.com/fwlink/?linkid=390782");
             metadataCache.Add("Microsoft.PowerShell.Utility", "http://go.microsoft.com/fwlink/?linkid=390787");
-            metadataCache.Add("Microsoft.PowerShell.Host", "http://go.microsoft.com/fwlink/?linkid=390784");
+            metadataCache.Add("Microsoft.PowerShell.CoreConsoleHost", "http://go.microsoft.com/fwlink/?linkid=390784");
             metadataCache.Add("Microsoft.PowerShell.Management", " http://go.microsoft.com/fwlink/?linkid=390785");
             metadataCache.Add("Microsoft.PowerShell.Security", " http://go.microsoft.com/fwlink/?linkid=390786");
             metadataCache.Add("Microsoft.WSMan.Management", "http://go.microsoft.com/fwlink/?linkid=390788");

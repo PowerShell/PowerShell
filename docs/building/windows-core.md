@@ -70,11 +70,11 @@ Start-PSBuild
 ```
 
 Congratulations! If everything went right, PowerShell is now built and
-executable as `./src/Microsoft.PowerShell.Host/bin/Debug/netstandardapp1.5/win10-x64/powershell`.
+executable as `./src/Microsoft.PowerShell.CoreConsoleHost/bin/Debug/netstandardapp1.5/win10-x64/powershell`.
 
 This location is of the form
 `./[project]/bin/[configuration]/[framework]/[rid]/[binary name]`, and
-our project is `Microsoft.PowerShell.Host`, configuration is `Debug`
+our project is `Microsoft.PowerShell.CoreConsoleHost`, configuration is `Debug`
 by default, framework is `netstandardapp1.5`, runtime identifier is
 **probably** `win10-x64` (but will depend on your operating system;
 don't worry, `dotnet --info` will tell you what it was), and binary
@@ -82,7 +82,7 @@ name is `powershell`. The function `Get-PSOutput` will return the path
 to the executable; thus you can execute the development copy via `&
 (Get-PSOutput)`.
 
-The `Microsoft.PowerShell.Host` project is the cross-platform host for
+The `Microsoft.PowerShell.CoreConsoleHost` project is the cross-platform host for
 PowerShell targetting .NET Core. It is the top level project, so
 `dotnet build` transitively builds all its dependencies, and emits a
 `powershell` executable. The cross-platform host has built-in

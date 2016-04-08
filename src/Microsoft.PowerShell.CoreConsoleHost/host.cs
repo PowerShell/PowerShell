@@ -1,4 +1,4 @@
-namespace Microsoft.PowerShell.Host
+namespace Microsoft.PowerShell.CoreConsoleHost
 {
     using System;
     using System.Globalization;
@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Host
         /// </summary>
         public override string Name
         {
-            get { return "PSL"; }
+            get { return "CoreConsoleHost"; }
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-namespace Microsoft.PowerShell.Host
+namespace Microsoft.PowerShell.CoreConsoleHost
 {
     using System;
     using System.Collections.Generic;
