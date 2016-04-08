@@ -1,7 +1,7 @@
 Describe "Export-Alias DRT Unit Tests" -Tags DRT{
     $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ExportAliasTestDirectory
     $testAliases        = "TestAliases"
-    $fulltestpath       = Join-Path -Path $($testAliasDirectory) -ChildPath $($testAliases)
+    $fulltestpath       = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
 
     BeforeEach {
 		New-Item -Path $testAliasDirectory -ItemType Directory -Force
@@ -90,9 +90,17 @@ Describe "Export-Alias DRT Unit Tests" -Tags DRT{
 		$fulltestpath| Should ContainExactly '"abcd02","efgh02","","None"'
     }
 	
-	It "Export-Alias for Force ReadOnly Test for linux" -Skip:$IsWindows {
+	It "Export-Alias for Force ReadOnly Test" {
 		Export-Alias $fulltestpath abcd01
-		chmod 444 $fulltestpath
+		if ( $IsWindows )
+		{
+			attrib +r $fulltestpath
+		}
+		else
+		{
+			chmod 444 $fulltestpath
+		}
+		
 		try{
 			Export-Alias $fulltestpath abcd02
 		}
@@ -103,30 +111,23 @@ Describe "Export-Alias DRT Unit Tests" -Tags DRT{
 		$fulltestpath| Should Not ContainExactly '"abcd01","efgh01","","None"'
 		$fulltestpath| Should Not ContainExactly '"abcd02","efgh02","","None"'
 		$fulltestpath| Should ContainExactly '"abcd03","efgh03","","None"'
-		chmod 777 $fulltestpath
-    }
-	
-	It "Export-Alias for Force ReadOnly Test for windows" -Skip:($IsLinux -Or $IsOSX) {
-		Export-Alias $fulltestpath abcd01
-		attrib +r $fulltestpath
-		try{
-			Export-Alias $fulltestpath abcd02
+		
+		if ( $IsWindows )
+		{
+			attrib -r $fulltestpath
 		}
-		catch{
-			$_.FullyQualifiedErrorId | Should be "FileOpenFailure,Microsoft.PowerShell.Commands.ExportAliasCommand"
+		else
+		{
+			chmod 777 $fulltestpath
 		}
-		Export-Alias $fulltestpath abcd03 -force
-		$fulltestpath| Should Not ContainExactly '"abcd01","efgh01","","None"'
-		$fulltestpath| Should Not ContainExactly '"abcd02","efgh02","","None"'
-		$fulltestpath| Should ContainExactly '"abcd03","efgh03","","None"'
-		attrib -r $fulltestpath
+		
     }
 }
 
 Describe "Export-Alias" {
     $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ExportAliasTestDirectory
     $testAliases        = "TestAliases"
-    $fulltestpath       = Join-Path -Path $($testAliasDirectory) -ChildPath $($testAliases)
+    $fulltestpath       = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
 
     BeforeEach {
 	New-Item -Path $testAliasDirectory -ItemType Directory -Force
@@ -144,8 +145,8 @@ Describe "Export-Alias" {
 	Test-Path $fulltestpath | Should Be $true
 
 	$actual   = Get-Content $fulltestpath | Sort
-	$expected = $(Get-Command -CommandType Alias)
-
+	$expected = Get-Command -CommandType Alias
+	
 	for ( $i=0; $i -lt $expected.Length; $i++)
 	{
 	    # We loop through the expected list and not the other because the output writes some comments to the file.
