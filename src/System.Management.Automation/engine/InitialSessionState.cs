@@ -5477,6 +5477,8 @@ if($paths) {
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Get-Verb", GetGetVerbText()),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("oss", GetOSTFunctionText()),
 
+            // Porting note: we remove the drive functions from Linux because they make no sense
+            #if !LINUX
             // Default drives
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("A:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("B:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
@@ -5504,6 +5506,7 @@ if($paths) {
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("X:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Y:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Z:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
+            #endif
 
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location .."),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\"),
