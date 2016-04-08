@@ -87,8 +87,6 @@ Describe "Select-String" {
     }
 
     Context "Filesytem actions" {
-	$isWindows = [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform([System.Runtime.InteropServices.OSPlatform]::Windows)
-
 	$testDirectory = $TestDrive
 	$testInputFile = Join-Path -Path $testDirectory -ChildPath testfile1.txt
 
