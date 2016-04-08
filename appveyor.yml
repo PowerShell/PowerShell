@@ -26,7 +26,7 @@ build_script:
       $env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli"
       dotnet --version
       Import-Module .\PowerShellGitHubDev.psm1
-      Start-PSBuild
+      Start-PSBuild -Publish
       Start-PSBuild -FullCLR
 
 test_script:
@@ -35,7 +35,7 @@ test_script:
       $ErrorActionPreference = 'Stop'
       #
       # CoreCLR
-      $env:CoreOutput = "$pwd\src\Microsoft.PowerShell.CoreConsoleHost\bin\Debug\netstandardapp1.5\win81-x64"
+      $env:CoreOutput = "$pwd\src\Microsoft.PowerShell.CoreConsoleHost\bin\Debug\netstandardapp1.5\win81-x64\publish"
       Write-Host -Foreground Green 'Run CoreCLR tests'
       $testResultsFile = "$pwd\TestsResults.xml"
       & ("$env:CoreOutput\powershell.exe") -c "Invoke-Pester test/powershell -OutputFormat NUnitXml -OutputFile $testResultsFile"
