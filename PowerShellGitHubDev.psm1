@@ -24,7 +24,6 @@ function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName='CoreCLR')]
     param(
         [switch]$Restore,
-        [switch]$Clean,
 
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
