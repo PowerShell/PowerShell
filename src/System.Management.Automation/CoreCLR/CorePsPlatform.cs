@@ -30,18 +30,6 @@ namespace System.Management.Automation
     /// </summary>
     internal static class Platform
     {
-        // this queries specifically for Linux or OS X because they are very similar
-        internal static bool IsLinux()
-        {
-#if CORECLR
-            return RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
-                || RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-#else
-            // FullCLR doesn't have a Linux version
-            return false;
-#endif
-        }
-
         // this is specifically to query for Windows, everything else is considered to be non-Windows
         internal static bool IsWindows()
         {
@@ -190,7 +178,7 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsIsHardLink(FileSystemInfo fileInfo)
         {
-            if (IsLinux())
+            if (!IsWindows())
             {
                 return LinuxPlatform.IsHardLink(fileInfo);
             }
@@ -200,7 +188,7 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsIsSymLink(FileSystemInfo fileInfo)
         {
-            if (IsLinux())
+            if (!IsWindows())
             {
                 return LinuxPlatform.IsSymLink(fileInfo);
             }
@@ -216,7 +204,7 @@ namespace System.Management.Automation
 
         internal static string NonWindowsInternalGetTarget(string path)
         {
-            if (IsLinux())
+            if (!IsWindows())
             {
                 return LinuxPlatform.FollowSymLink(path);
             }
@@ -229,7 +217,7 @@ namespace System.Management.Automation
 #if CORECLR
         internal static string NonWindowsGetFolderPath(SpecialFolder folder)
         {
-            if (IsLinux())
+            if (!IsWindows())
             {
                 return LinuxPlatform.GetFolderPath(folder);
             }
@@ -242,7 +230,7 @@ namespace System.Management.Automation
 
         internal static string NonWindowsInternalGetLinkType(FileSystemInfo fileInfo)
         {
-            if (IsLinux())
+            if (!IsWindows())
             {
                 if (NonWindowsIsSymLink(fileInfo))
                 {
@@ -263,7 +251,7 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsCreateSymbolicLink(string path, string strTargetPath, bool isDirectory)
         {
-            if (IsLinux())
+            if (!IsWindows())
             {
                 // Linux doesn't care if target is a directory or not
                 return LinuxPlatform.CreateSymbolicLink(path, strTargetPath);
@@ -276,7 +264,7 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsCreateHardLink(string path, string strTargetPath)
         {
-            if (IsLinux())
+            if (!IsWindows())
             {
                 return LinuxPlatform.CreateHardLink(path, strTargetPath);
             }
@@ -288,7 +276,7 @@ namespace System.Management.Automation
 
         internal static void NonWindowsSetDate(DateTime dateToUse)
         {
-            if (IsLinux())
+            if (!IsWindows())
             {
                 LinuxPlatform.SetDateInfoInternal date = new LinuxPlatform.SetDateInfoInternal(dateToUse);
                 LinuxPlatform.SetDate(date);
@@ -301,7 +289,7 @@ namespace System.Management.Automation
 
         internal static string NonWindowsGetDomainName()
         {
-            if (IsLinux())
+            if (!IsWindows())
             {
                 string fullyQualifiedName = LinuxPlatform.Native.GetFullyQualifiedName();
                 if (string.IsNullOrEmpty(fullyQualifiedName))
@@ -326,7 +314,7 @@ namespace System.Management.Automation
 
         internal static string NonWindowsGetUserName()
         {
-            if (IsLinux())
+            if (!IsWindows())
             {
                 return LinuxPlatform.UserName;
             }
@@ -338,7 +326,7 @@ namespace System.Management.Automation
 
         internal static string NonWindowsGetMachineName()
         {
-            if (IsLinux())
+            if (!IsWindows())
             {
                 return LinuxPlatform.HostName;
             }
@@ -351,7 +339,7 @@ namespace System.Management.Automation
         // Hostname in this context seems to be the FQDN
         internal static string NonWindowsGetHostName()
         {
-            if (IsLinux())
+            if (!IsWindows())
             {
                 string hostName = LinuxPlatform.Native.GetFullyQualifiedName();
                 if (string.IsNullOrEmpty(hostName))
@@ -370,7 +358,7 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsIsExecutable(string path)
         {
-            if (IsLinux())
+            if (!IsWindows())
             {
                 return LinuxPlatform.IsExecutable(path);
             }

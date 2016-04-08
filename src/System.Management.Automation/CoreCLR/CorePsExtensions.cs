@@ -828,7 +828,7 @@ namespace System.Management.Automation
 
             // Porting note: if not otherwise defined, map Windows environment
             // variables to their corresponding Linux counterparts
-            if (Platform.IsLinux() && String.IsNullOrEmpty(value))
+            if (!Platform.IsWindows() && String.IsNullOrEmpty(value))
             {
                 switch (variable)
                 {

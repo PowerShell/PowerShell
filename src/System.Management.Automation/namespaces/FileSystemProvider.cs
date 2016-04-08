@@ -8105,7 +8105,7 @@ namespace Microsoft.PowerShell.Commands
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         private static string WinInternalGetLinkType(string filePath)
         {
-            if (Platform.IsLinux())
+            if (!Platform.IsWindows())
             {
                 throw new Platform.PlatformNotSupportedException();
             }
