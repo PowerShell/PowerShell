@@ -1,5 +1,5 @@
 ﻿Describe "Import-Module" {
-    $moduleName = "Microsoft.PowerShell.Platform"
+    $moduleName = "Microsoft.PowerShell.Security"
 
     BeforeEach {
         Remove-Module -Name $moduleName -Force
