@@ -45,7 +45,7 @@ test_script:
       $env:FullOutput = "$pwd\src\Microsoft.PowerShell.ConsoleHost\bin\Debug\net451"
       Write-Host -Foreground Green 'Run FullCLR tests'
       $testResultsFileFullCLR = "$pwd\TestsResults.FullCLR.xml"
-      Start-DevPSGitHub -binDir $env:FullOutput -NoNewWindow -ArgumentList '-command', "Import-Module .\src\Modules\Pester; Import-Module .\bin\Modules\Microsoft.PowerShell.Platform; Invoke-Pester test/fullCLR -OutputFormat NUnitXml -OutputFile $testResultsFileFullCLR"
+      Start-DevPSGitHub -binDir $env:FullOutput -NoNewWindow -ArgumentList '-command', "Import-Module .\src\Modules\Pester; Invoke-Pester test/fullCLR -OutputFormat NUnitXml -OutputFile $testResultsFileFullCLR"
       (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFileFullCLR))
       #
       # Fail the build, if tests failed
