@@ -1,8 +1,14 @@
-#Commit Dance
+Commit Dance
+============
 
-**Update:** commit dance became much simpler after [removing psl-monad submodule](https://github.com/PowerShell/PowerShell/issues/656).
-Meahwhile, there are still few submodules. If you need to touch their content, this doc provides the overview of the process.
-Remember that it's written against `src/monad` submodule, which doesn't exist anymore.
+**Update:** commit dance became much simpler after
+[removing psl-monad submodule](https://github.com/PowerShell/PowerShell/issues/656).
+Thus, this really only applies to `src/windows-build` and
+`src/Modules/Pester`. If you need to touch their content, this doc
+provides the overview of the process. Remember that it's written
+against `src/monad` submodule, which doesn't exist anymore.
+
+Also see the [submodules documentation](./submodules.md).
 
 Sometimes, you need to do the work in a submodule (i.e. you added a new string in `.resx` file).
 The submodule has a relationship to the SuperProject  (PowerShell), but in order to be sure that CI is
@@ -33,10 +39,11 @@ index 1ba8dd4..ed5d202 160000
 * Push the branch (in the SuperProject): `git push origin jim/colon-drive`
 * Pull request in the superproject to kick-in CI build and notify people. Reference submodule pull-request in the PR message to make navigation between two simpler.
 
-### Commands log
+Commands log
+------------
 
 Here is a transcript of command Jim used:
-```
+```sh
 cd $HOME/PowerShell/src/monad/monad/src/engine
 vi DataStoreAdapter.cs
 git checkout -b jim/colon-drive
@@ -44,11 +51,10 @@ git commit -a
 git push origin jim/colon-drive
 ```
 then I went to the web interface and did the pull request *in the submodule*. After that, back to the commandline:
-```
+```sh
 cd $HOME/PowerShell
 git checkout -b jim/colon-drive
 git commit -a
 git push origin jim/colon-drive
 ```
 and back to the web interface for the pull request *in the superproject*.
-
