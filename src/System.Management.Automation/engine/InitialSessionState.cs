@@ -5101,6 +5101,32 @@ end
                 RemotingErrorIdStrings.PSSessionAppName,
                 ScopedItemOptions.None),
             // End: Variables which control remoting behavior
+
+            #region Platform
+            new SessionStateVariableEntry(
+                SpecialVariables.IsLinux,
+                Platform.IsLinux,
+                String.Empty,
+                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+
+            new SessionStateVariableEntry(
+                SpecialVariables.IsOSX,
+                Platform.IsOSX,
+                String.Empty,
+                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+
+            new SessionStateVariableEntry(
+                SpecialVariables.IsWindows,
+                Platform.IsWindows,
+                String.Empty,
+                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+
+            new SessionStateVariableEntry(
+                SpecialVariables.IsCore,
+                Platform.IsCore,
+                String.Empty,
+                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+            #endregion
         };
 
         /// <summary>
