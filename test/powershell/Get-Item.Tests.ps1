@@ -15,6 +15,6 @@ Describe "Get-Item" {
     }
 
     It "Should have mode flags set" {
-	ls $PSScriptRoot | foreach-object { $_.Mode | Should Not BeNullOrEmpty }
+	Get-ChildItem $PSScriptRoot | foreach-object { $_.Mode | Should Not BeNullOrEmpty }
     }
 }

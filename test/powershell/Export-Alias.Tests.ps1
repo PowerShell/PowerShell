@@ -144,7 +144,7 @@ Describe "Export-Alias" {
 
 	Test-Path $fulltestpath | Should Be $true
 
-	$actual   = Get-Content $fulltestpath | Sort
+	$actual   = Get-Content $fulltestpath | Sort-Object
 	$expected = Get-Command -CommandType Alias
 	
 	for ( $i=0; $i -lt $expected.Length; $i++)
