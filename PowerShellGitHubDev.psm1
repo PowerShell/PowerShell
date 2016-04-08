@@ -25,6 +25,9 @@ function Start-PSBuild {
     param(
         [switch]$Restore,
 
+        [Parameter(ParameterSetName='CoreCLR')]
+        [switch]$Publish,
+
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("ubuntu.14.04-x64",
@@ -117,16 +120,27 @@ function Start-PSBuild {
     }
 
     $Arguments = @()
+    if ($Publish) {
+        $Arguments += "publish"
+    } else {
+        $Arguments += "build"
+    }
     $Arguments += "--framework", $Framework
     $Arguments += "--configuration", $Configuration
     $Arguments += "--runtime", $Runtime
 
+    # Build the Output path in script scope
+    $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework)
     # FullCLR only builds a library, so there is no runtime component
-    if ($FullCLR) {
-        $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Executable)
-    } else {
-        $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, $Executable)
+    if (-Not $FullCLR) {
+        $script:Output = [IO.Path]::Combine($script:Output, $Runtime)
     }
+    # Publish injects the publish directory
+    if ($Publish) {
+        $script:Output = [IO.Path]::Combine($script:Output, "publish")
+    }
+    $script:Output = [IO.Path]::Combine($script:Output, $Executable)
+
     Write-Verbose "script:Output is $script:Output"
 
     # handle Restore
@@ -192,7 +206,7 @@ function Start-PSBuild {
         # Relative paths do not work well if cwd is not changed to project
         log "Run `dotnet build $Arguments` from $pwd"
         Push-Location $Top
-        dotnet build $Arguments
+        dotnet $Arguments
         log "PowerShell output: $script:Output"
     } finally {
         Pop-Location
