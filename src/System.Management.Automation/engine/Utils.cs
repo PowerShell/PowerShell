@@ -240,7 +240,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static string GetApplicationBase(string shellId)
         {
-            if (!Platform.IsX())
+            if (!Platform.IsCore)
             {
                 // try to get the path from the registry first
                 string result = GetApplicationBaseFromRegistry(shellId);
@@ -305,7 +305,7 @@ namespace System.Management.Automation
 
                 // And built-in modules
                 string progFileDir;
-                if (Platform.IsX())
+                if (Platform.IsCore)
                 {
                     progFileDir = Path.Combine(appBase, "Modules");
                 }

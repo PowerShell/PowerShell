@@ -763,7 +763,7 @@ namespace System.Management.Automation
 
                 // Porting note: Open PowerShell has a Modules folder in the the application base path which contains the built-in modules
                 // It must be in the front of the path no matter what.
-                if (Platform.IsX())
+                if (Platform.IsCore)
                 {
                     currentProcessModulePath = AddToPath(currentProcessModulePath, GetSystemwideModulePath(), 0);
                 }

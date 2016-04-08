@@ -5648,7 +5648,7 @@ if($paths) {
                 // Porting note: the snapins still require 'ProcessorArchitecture=MSIL' in
                 // the strong name, which is not in the strong name of assemblies created
                 // by dotnet-cli
-                if (!Platform.IsX() &&
+                if (!Platform.IsCore &&
                     !string.Equals(assemblyName.FullName, psSnapInInfo.AssemblyName, StringComparison.OrdinalIgnoreCase))
                 {
                     string message = StringUtil.Format(ConsoleInfoErrorStrings.PSSnapInAssemblyNameMismatch, psSnapInInfo.AbsoluteModulePath, psSnapInInfo.AssemblyName);

@@ -68,16 +68,16 @@ namespace System.Management.Automation
             }
         }
 
-        // true if cross-platform (always for this project)
-        internal static bool IsX()
+        public static const bool IsCore
         {
-#if CORECLR
-            // CoreCLR version is cross-platform
-            return true;
-#else
-            // FullCLR is not cross-platform
-            return false;
-#endif
+            get
+            {
+                #if CORECLR
+                return true;
+                #else
+                return false;
+                #endif
+            }
         }
 
         // format files
@@ -115,7 +115,7 @@ namespace System.Management.Automation
 
         internal static bool UsesCodeSignedAssemblies()
         {
-            return !Platform.IsX();
+            return !Platform.IsCore;
         }
 
         // This is mainly with respect to the auto-mounting of
