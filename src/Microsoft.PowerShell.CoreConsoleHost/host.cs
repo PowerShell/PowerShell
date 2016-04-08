@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.CoreConsoleHost
         /// </summary>
         public override string Name
         {
-            get { return "PSL"; }
+            get { return "CoreConsoleHost"; }
         }
 
         /// <summary>
