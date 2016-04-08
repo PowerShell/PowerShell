@@ -13,8 +13,8 @@ Describe "Get-Date DRT Unit Tests"  -Tags DRT {
     }
 
     It "using -displayhint produces the correct output" {
-        $newLine = [Environment]::NewLine
-        Get-date -Date:"Jan 1, 2020"  -DisplayHint:$([Microsoft.PowerShell.Commands.DisplayHintType]::Date) | Out-String | Should be $newLine"Wednesday, January 1, 2020$newLine$newLine$newLine"
+        $d = Get-date -Date:"Jan 1, 2020"  -DisplayHint Date | Out-String 
+        $d.Trim() | Should be "Wednesday, January 1, 2020"
     }
 
     It "using -format produces the correct output" {
@@ -46,9 +46,9 @@ Describe "Get-Date DRT Unit Tests"  -Tags DRT {
 
     It "the LastWriteTime alias works with pipeline input" {
         $folder = "GetDateTest"
-        $tempPath = $PSScriptRoot
-        $pathString = Join-Path -Path $tempPath -ChildPath $folder
-        New-Item -Path $tempPath -Name $folder -ItemType directory -Force
+        #$tempPath = $TestDrive 
+        $pathString = Join-Path -Path $TestDrive -ChildPath $folder
+        New-Item -Path $TestDrive -Name $folder -ItemType directory -Force
         for($i = 0; $i -lt 10; $i++)
         {
             $temp = [guid]::NewGuid()

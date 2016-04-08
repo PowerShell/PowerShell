@@ -1,5 +1,5 @@
 Describe "Start-Sleep DRT Unit Tests" -Tags DRT{
-    It "Shoule be works properly when sleeping with Second" {
+    It "Should be works properly when sleeping with Second" {
         $dtStart = [DateTime]::Now
         Start-Sleep -Seconds 1
         $dtEnd = [DateTime]::Now
@@ -7,7 +7,7 @@ Describe "Start-Sleep DRT Unit Tests" -Tags DRT{
         $millseconds | Should BeGreaterThan 1000
     }
 
-    It "Shoule be works properly when sleeping with Second" {
+    It "Should be works properly when sleeping with Milliseconds" {
         $dtStart = [DateTime]::Now
         Start-Sleep -Milliseconds 1000
         $dtEnd = [DateTime]::Now
