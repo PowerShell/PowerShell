@@ -32,7 +32,7 @@ namespace System.Management.Automation
     {
 
         // Platform variables used to defined corresponding PowerShell built-in variables
-        public static const bool IsLinux
+        public static bool IsLinux
         {
             get
             {
@@ -44,7 +44,7 @@ namespace System.Management.Automation
             }
         }
 
-        public static const bool IsOSX
+        public static bool IsOSX
         {
             get
             {
@@ -56,7 +56,7 @@ namespace System.Management.Automation
             }
         }
 
-        public static const bool IsWindows
+        public static bool IsWindows
         {
             get
             {
@@ -68,7 +68,7 @@ namespace System.Management.Automation
             }
         }
 
-        public static const bool IsCore
+        public static bool IsCore
         {
             get
             {
