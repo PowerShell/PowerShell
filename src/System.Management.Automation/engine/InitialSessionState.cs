@@ -2055,7 +2055,7 @@ namespace System.Management.Automation.Runspaces
                 // Only load the core snapins at this point...
                 if (Environment.GetEnvironmentVariable("PowerShellMinimal") != null)
                 {
-                    if (si.Name.Equals("Microsoft.PowerShell.Host", StringComparison.OrdinalIgnoreCase))
+                    if (si.Name.Equals("Microsoft.PowerShell.CoreConsoleHost", StringComparison.OrdinalIgnoreCase))
                         break;
                 }
 #endif
@@ -5530,7 +5530,7 @@ if($paths) {
                                                                 "Microsoft.PowerShell.Utility",
                                                                 "Microsoft.PowerShell.Management",
                                                                 "Microsoft.PowerShell.Diagnostics",
-                                                                "Microsoft.PowerShell.Host",
+                                                                "Microsoft.PowerShell.CoreConsoleHost",
                                                                 "Microsoft.PowerShell.Security",
                                                                 "Microsoft.WSMan.Management"
                                                             };
@@ -5548,14 +5548,14 @@ if($paths) {
                                                                                              { "Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Commands.Utility"},
                                                                                              { "Microsoft.PowerShell.Management", "Microsoft.PowerShell.Commands.Management"},
                                                                                              { "Microsoft.PowerShell.Diagnostics", "Microsoft.PowerShell.Commands.Diagnostics"},
-                                                                                             { "Microsoft.PowerShell.Host", "Microsoft.PowerShell.ConsoleHost"},
+                                                                                             { "Microsoft.PowerShell.CoreConsoleHost", "Microsoft.PowerShell.ConsoleHost"},
                                                                                          };
         internal static Dictionary<string, string> NestedModuleEngineModuleMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                                                                                          {
                                                                                              { "Microsoft.PowerShell.Commands.Utility", "Microsoft.PowerShell.Utility"},
                                                                                              { "Microsoft.PowerShell.Commands.Management", "Microsoft.PowerShell.Management"},
                                                                                              { "Microsoft.PowerShell.Commands.Diagnostics", "Microsoft.PowerShell.Diagnostics"},
-                                                                                             { "Microsoft.PowerShell.ConsoleHost", "Microsoft.PowerShell.Host"},
+                                                                                             { "Microsoft.PowerShell.ConsoleHost", "Microsoft.PowerShell.CoreConsoleHost"},
                                                                                              { "Microsoft.PowerShell.Security", "Microsoft.PowerShell.Security"},
                                                                                              { "Microsoft.WSMan.Management", "Microsoft.WSMan.Management"},
                                                                                          };

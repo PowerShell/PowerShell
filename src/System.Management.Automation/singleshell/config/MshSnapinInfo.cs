@@ -64,7 +64,7 @@ namespace System.Management.Automation
 
         //Name of default mshsnapins
         internal const string CoreMshSnapinName = "Microsoft.PowerShell.Core";
-        internal const string HostMshSnapinName = "Microsoft.PowerShell.Host";
+        internal const string HostMshSnapinName = "Microsoft.PowerShell.CoreConsoleHost";
         internal const string ManagementMshSnapinName = "Microsoft.PowerShell.Management";
         internal const string SecurityMshSnapinName = "Microsoft.PowerShell.Security";
         internal const string UtilityMshSnapinName = "Microsoft.PowerShell.Utility";
@@ -1412,7 +1412,7 @@ namespace System.Management.Automation
                                 new DefaultPSSnapInInformation("Microsoft.PowerShell.Diagnostics", "Microsoft.PowerShell.Commands.Diagnostics", null,
                                     "GetEventResources,Description", "GetEventResources,Vendor"),
 
-                                new DefaultPSSnapInInformation("Microsoft.PowerShell.Host", "Microsoft.PowerShell.ConsoleHost", null,
+                                new DefaultPSSnapInInformation("Microsoft.PowerShell.CoreConsoleHost", "Microsoft.PowerShell.ConsoleHost", null,
                                     "HostMshSnapInResources,Description","HostMshSnapInResources,Vendor"),
 #endif
                                 CoreSnapin,
