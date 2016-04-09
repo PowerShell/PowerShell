@@ -5,18 +5,18 @@
     "authors": [ "andschwa" ],
 
     "dependencies": {
-	"Microsoft.PowerShell.CoreConsoleHost": "1.0.0-*"
+        "Microsoft.PowerShell.CoreConsoleHost": "1.0.0-*"
     },
 
     "frameworks": {
-	"netstandardapp1.5": {
-	    "imports": [ "dnxcore50", "portable-net45+win8" ],
-	    "dependencies": {
+        "netstandardapp1.5": {
+            "imports": [ "dnxcore50", "portable-net45+win8" ],
+            "dependencies": {
                 "NuGet.Packaging.Core": "3.5.0-beta-1145",
-		"xunit": "2.1.0",
-		"dotnet-test-xunit": "1.0.0-dev-91790-12"
-	    }
-	}
+                "xunit": "2.1.0",
+                "dotnet-test-xunit": "1.0.0-dev-91790-12"
+            }
+        }
     },
 
     "testRunner": "xunit",
