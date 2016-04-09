@@ -1059,8 +1059,9 @@ namespace Microsoft.PowerShell.Commands
         private static PortableExecutableReference ObjectImplementationAssemblyReference =
             MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location);
 
+        // This assembly should be System.Runtime.dll
         private static PortableExecutableReference ObjectDeclaredAssemblyReference =
-            MetadataReference.CreateFromFile(System.IO.Path.Combine(FrameworkFolder, "System.Runtime.dll"));
+            MetadataReference.CreateFromFile(ClrFacade.GetAssemblies(typeof(object).FullName).First().Location);
 
         private static MetadataReference[] defaultAssemblies = new MetadataReference[]
         {
