@@ -5475,10 +5475,18 @@ end
         internal const string DefaultMoreFunctionText = @"
 param([string[]]$paths)
 $OutputEncoding = [System.Console]::OutputEncoding
-$moreCommand = (Get-Command -CommandType Application more).Definition | Select-Object -First 1
+
+# Respect PAGER, use more on Windows, and use less on Linux
+if (Test-Path env:PAGER) {
+    $moreCommand = (Get-Command -CommandType Application $env:PAGER).Definition | Select-Object -First 1
+} elseif ($IsWindows) {
+    $moreCommand = (Get-Command -CommandType Application more).Definition | Select-Object -First 1
+} else {
+    $moreCommand = (Get-Command -CommandType Application less).Definition | Select-Object -First 1
+}
+
 if($paths) {
-    foreach ($file in $paths)
-    {
+    foreach ($file in $paths) {
         Get-Content $file | & $moreCommand
     }
 } else { $input | & $moreCommand }
