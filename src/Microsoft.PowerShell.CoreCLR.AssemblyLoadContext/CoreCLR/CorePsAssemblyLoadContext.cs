@@ -250,7 +250,14 @@ namespace System.Management.Automation
 
                 // Try loading it from the TPA list. All PowerShell dependencies are in the
                 // TPA list when published with dotnet-cli.
-                asmLoaded = Assembly.Load(assemblyName);
+                try
+                {
+                    asmLoaded = Assembly.Load(assemblyName);
+                }
+                catch
+                {
+                    asmLoaded = null;
+                }
 
                 if (asmLoaded == null)
                 {
