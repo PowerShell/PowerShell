@@ -256,7 +256,7 @@ OPTIONS
             {
                 this.currentPowerShell.Runspace = this.myRunSpace;
 
-                PSCommand[] profileCommands = HostUtilities.GetProfileCommands("PSL");
+                PSCommand[] profileCommands = HostUtilities.GetProfileCommands("Microsoft.PowerShellCore");
                 foreach (PSCommand command in profileCommands)
                 {
                     RunCommand(command);
