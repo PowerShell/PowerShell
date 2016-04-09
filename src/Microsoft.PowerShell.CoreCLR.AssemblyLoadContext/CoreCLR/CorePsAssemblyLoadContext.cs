@@ -186,10 +186,12 @@ namespace System.Management.Automation
 
                 // Try loading it from the TPA list. All PowerShell dependencies are in the
                 // TPA list when published with dotnet-cli.
-                asmLoaded = Assembly.Load(assemblyName);
-
+                try
+                {
+                    asmLoaded = Assembly.Load(assemblyName);
+                }
                 // If it wasn't there, try loading from path
-                if (asmLoaded == null)
+                catch (FileNotFoundException)
                 {
                     asmLoaded = asmFilePath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
                         ? LoadFromNativeImagePath(asmFilePath, null)
@@ -250,9 +252,12 @@ namespace System.Management.Automation
 
                 // Try loading it from the TPA list. All PowerShell dependencies are in the
                 // TPA list when published with dotnet-cli.
-                asmLoaded = Assembly.Load(assemblyName);
-
-                if (asmLoaded == null)
+                try
+                {
+                    asmLoaded = Assembly.Load(assemblyName);
+                }
+                // If it wasn't there, try loading from path
+                catch (FileNotFoundException)
                 {
                     // Load the assembly through 'LoadFromNativeImagePath' or 'LoadFromAssemblyPath'
                     asmLoaded = assemblyPath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
