@@ -2723,7 +2723,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             bool missingDefaultConstructor = false;
             if (type.GetTypeInfo().IsValueType)
             {
-                supported = true;
+                if (mapPrimitiveDotNetTypeToMof.ContainsKey(type))
+                {
+                    supported = true;
+                }
             }
             else if (!type.GetTypeInfo().IsAbstract)
             {

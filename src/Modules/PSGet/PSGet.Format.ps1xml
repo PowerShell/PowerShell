@@ -15,9 +15,6 @@
                         <Width>35</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                        <Width>10</Width>
-                    </TableColumnHeader>
-                    <TableColumnHeader>
                         <Width>20</Width>
                     </TableColumnHeader>
                     <TableColumnHeader/>
@@ -30,9 +27,6 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Name</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>Type</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Repository</PropertyName>
@@ -56,9 +50,6 @@
                         <Width>25</Width>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                        <Width>25</Width>
-                    </TableColumnHeader>
-                    <TableColumnHeader>
                         <Width>20</Width>
                     </TableColumnHeader>
                     <TableColumnHeader/>
@@ -68,9 +59,6 @@
                         <TableColumnItems>
                             <TableColumnItem>
                                 <PropertyName>Name</PropertyName>
-                            </TableColumnItem>
-                            <TableColumnItem>
-                                <PropertyName>PackageManagementProvider</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>InstallationPolicy</PropertyName>
