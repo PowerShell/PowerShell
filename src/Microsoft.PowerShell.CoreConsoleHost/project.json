@@ -11,8 +11,8 @@
 
     "dependencies": {
         "Newtonsoft.Json": "8.0.2",
-        "System.Xml.XDocument": "4.0.11-rc3-23931-00",
-        "System.IO.MemoryMappedFiles": "4.0.0-rc3-23931-00",
+        "System.Xml.XDocument": "4.0.11-rc3-24004-00",
+        "System.IO.MemoryMappedFiles": "4.0.0-rc3-24004-00",
         "Microsoft.PowerShell.Commands.Management": "1.0.0-*",
         "Microsoft.PowerShell.Commands.Utility": "1.0.0-*"
     },
