@@ -1,0 +1,21 @@
+{
+    "name": "Microsoft.Management.Infrastructure.Native",
+    "version": "1.0.0-*",
+    "description": "Stub to satisfy PowerShell compilation",
+    "authors": [ "garretts", "andschwa" ],
+
+    "frameworks": {
+        "netstandard1.5": {
+            "imports": [ "dnxcore50" ],
+            "compilationOptions": {
+                "warningsAsErrors": true
+            },
+            "dependencies": {
+                "NETStandard.Library": "1.5.0-rc3-23931-00",
+                "System.Security.SecureString": "1.0.0-*"
+            }
+        },
+        "net451": {
+        }
+    }
+}

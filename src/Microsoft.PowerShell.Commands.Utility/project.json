@@ -1,0 +1,48 @@
+{
+    "name": "Microsoft.PowerShell.Commands.Utility",
+    "version": "1.0.0-*",
+    "authors": [ "garretts", "andschwa" ],
+
+    "compilationOptions": {
+        "warningsAsErrors": true,
+        "allowUnsafe": true
+    },
+
+    "configurations": {
+        "Linux": {
+            "compilationOptions": {
+                "define": [ "LINUX" ]
+            }
+        }
+    },
+
+    "dependencies": {
+        "System.Management.Automation": "1.0.0-*"
+    },
+
+    "frameworks": {
+        "netstandard1.5": {
+            "compilationOptions": {
+                "define": [ "CORECLR" ]
+            },
+            "imports": [ "dnxcore50", "portable-net45+win8" ],
+            "dependencies": {
+                "Microsoft.CodeAnalysis.CSharp": "1.1.1",
+                "Newtonsoft.Json": "8.0.2"
+            }
+        },
+        "net451": {
+            "frameworkAssemblies": {
+                "System.Drawing": "",
+                "System.Web": "",
+                "System.Web.Extensions": "",
+                "Microsoft.JScript": ""
+            },
+            "dependencies": {
+                "Microsoft.mshtml": "1.0.0"
+            }
+        }
+    },
+
+    "compile": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Utility/*.cs" ]
+}

@@ -1,0 +1,27 @@
+{
+    "name": "Microsoft.PowerShell.Security",
+    "version": "1.0.0-*",
+    "authors": [ "garretts", "andschwa" ],
+
+    "compilationOptions": {
+        "warningsAsErrors": true,
+        "allowUnsafe": true
+    },
+
+    "dependencies": {
+        "System.Management.Automation": "1.0.0-*"
+    },
+
+    "frameworks": {
+        "netstandard1.5": {
+            "imports": [ "dnxcore50" ],
+            "compilationOptions": {
+                "define": [ "CORECLR" ]
+            }
+        },
+        "net451": {
+        }
+    },
+
+    "compile": [ "../windows-build/gen/Microsoft.PowerShell.Security/*.cs" ]
+}

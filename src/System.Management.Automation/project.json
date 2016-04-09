@@ -1,0 +1,86 @@
+{
+    "name": "System.Management.Automation",
+    "version": "1.0.0-*",
+    "authors": [ "garretts", "andschwa" ],
+
+    "compilationOptions": {
+        "warningsAsErrors": true,
+        "allowUnsafe": true
+    },
+
+    "configurations": {
+        "Linux": {
+            "compilationOptions": {
+                "define": [ "LINUX", "NOETW" ]
+            }
+        }
+    },
+
+    "dependencies": {
+        "Microsoft.Management.Infrastructure": "1.0.0-*"
+    },
+
+    "frameworks": {
+        "netstandard1.5": {
+            "imports": [ "dnxcore50" ],
+            "compilationOptions": {
+                "define": [ "CORECLR" ]
+            },
+            "dependencies": {
+                "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext": "1.0.0-*",
+                "Microsoft.PowerShell.CoreCLR.Eventing": "1.0.0-*",
+
+                "Microsoft.CSharp": "4.0.1-rc3-23931-00",
+                "Microsoft.Win32.Registry.AccessControl": "4.0.0-rc3-23931-00",
+                "System.Collections.Specialized": "4.0.1-rc3-23931-00",
+                "System.Collections.NonGeneric": "4.0.1-rc3-23931-00",
+                "System.ComponentModel.EventBasedAsync": "4.0.11-rc3-23931-00",
+                "System.ComponentModel.TypeConverter": "4.0.1-rc3-23931-00",
+                "System.Data.Common": "4.0.1-rc3-23931-00",
+                "System.Diagnostics.Contracts": "4.0.1-rc3-23931-00",
+                "System.Diagnostics.FileVersionInfo": "4.0.0-rc3-23931-00",
+                "System.Diagnostics.Process": "4.1.0-rc3-23931-00",
+                "System.Diagnostics.StackTrace": "4.0.1-rc3-23931-00",
+                "System.Diagnostics.TraceSource": "4.0.0-rc3-23931-00",
+                "System.Dynamic.Runtime": "4.0.11-rc3-23931-00",
+                "System.IO.FileSystem.AccessControl": "4.0.0-rc3-23931-00",
+                "System.IO.FileSystem.DriveInfo": "4.0.0-rc3-23931-00",
+                "System.IO.FileSystem.Watcher": "4.0.0-rc3-23931-00",
+                "System.IO.Pipes": "4.0.0-rc3-23931-00",
+                "System.Linq.Expressions": "4.0.11-rc3-23931-00",
+                "System.Net.Http": "4.0.1-rc3-23931-00",
+                "System.Net.NetworkInformation": "4.1.0-rc3-23931-00",
+                "System.Reflection.Emit": "4.0.1-rc3-23931-00",
+                "System.Reflection.Emit.Lightweight": "4.0.1-rc3-23931-00",
+                "System.Security.AccessControl": "4.0.0-rc3-23931-00",
+                "System.Security.Cryptography.Algorithms": "4.1.0-rc3-23931-00",
+                "System.Security.Cryptography.X509Certificates": "4.1.0-rc3-23931-00",
+                "System.Threading.Thread": "4.0.0-rc3-23931-00",
+                "System.Threading.Tasks.Parallel": "4.0.1-rc3-23931-00",
+                "System.Xml.XPath.XmlDocument": "4.0.1-rc3-23931-00",
+                "System.Xml.XmlDocument": "4.0.1-rc3-23931-00",
+                "System.Xml.XmlSerializer": "4.0.11-rc3-23931-00"
+            }
+        },
+        "net451": {
+            "frameworkAssemblies": {
+                "System.Runtime": "",
+                "System.Xml": "",
+                "System.Xml.Linq": "",
+                "System.Numerics": "",
+                "System.Data": "",
+                "System.DirectoryServices": "",
+                "System.Security": "",
+                "System.Transactions": "",
+                "System.Runtime.Serialization": "",
+                "System.Management": "",
+                "System.Configuration": "",
+                "System.Configuration.Install": ""
+            }
+        }
+    },
+
+    "compile": [
+        "../windows-build/gen/System.Management.Automation/*.cs"
+    ]
+}

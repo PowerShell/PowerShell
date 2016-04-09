@@ -1,0 +1,150 @@
+/********************************************************************++
+Copyright (c) Microsoft Corporation.  All rights reserved.
+--********************************************************************/
+using System.Xml;
+
+namespace System.Management.Automation
+{
+    /// <summary>
+    /// 
+    /// Class MamlClassHelpInfo keeps track of help information to be returned by 
+    /// class help provider.
+    /// 
+    /// </summary>
+    internal class MamlClassHelpInfo : HelpInfo 
+    {   
+        /// <summary>
+        /// Constructor for custom HelpInfo object creation.
+        /// </summary>
+        /// <param name="helpObject"></param>
+        /// <param name="helpCategory"></param>
+        internal MamlClassHelpInfo(PSObject helpObject, HelpCategory helpCategory)
+        {
+            _helpCategory = helpCategory;
+            _fullHelpObject = helpObject;
+        }
+
+        /// <summary>
+        /// Convert a XMLNode to HelpInfo object.
+        /// </summary>
+        /// <param name="xmlNode"></param>
+        /// <param name="helpCategory"></param>
+        private MamlClassHelpInfo(XmlNode xmlNode, HelpCategory helpCategory)
+        {
+            _helpCategory = helpCategory;
+
+            MamlNode mamlNode = new MamlNode(xmlNode);
+            _fullHelpObject = mamlNode.PSObject;
+
+            this.Errors = mamlNode.Errors;
+            this._fullHelpObject.TypeNames.Clear();
+            this._fullHelpObject.TypeNames.Add("PSClassHelpInfo");
+        }
+
+        /// <summary>
+        /// HelpCategory of the Help object.
+        /// </summary>
+        private HelpCategory _helpCategory;
+
+        /// <summary>
+        /// PSObject representation on help.
+        /// </summary>
+        private PSObject _fullHelpObject;
+        
+        #region Load 
+
+        /// <summary>
+        /// Create a MamlClassHelpInfo object from an XmlNode.
+        /// </summary>
+        /// <param name="xmlNode">xmlNode that contains help info</param>
+        /// <param name="helpCategory">help category this maml object fits into</param>
+        /// <returns>MamlCommandHelpInfo object created</returns>
+        internal static MamlClassHelpInfo Load(XmlNode xmlNode, HelpCategory helpCategory)
+        {
+            MamlClassHelpInfo mamlClassHelpInfo = new MamlClassHelpInfo(xmlNode, helpCategory);
+
+            if (String.IsNullOrEmpty(mamlClassHelpInfo.Name))
+                return null;
+
+            mamlClassHelpInfo.AddCommonHelpProperties();
+
+            return mamlClassHelpInfo;
+        }
+
+        #endregion
+
+        #region Helper Methods and Overloads
+
+        /// <summary>
+        /// Clone the help info object.
+        /// </summary>
+        /// <returns>MamlClassHelpInfo object.</returns>
+        internal MamlClassHelpInfo Copy()
+        {
+            MamlClassHelpInfo result = new MamlClassHelpInfo(this._fullHelpObject.Copy(), this.HelpCategory);
+            return result;
+        }
+
+        /// <summary>
+        /// Clone the help object with a new category.
+        /// </summary>
+        /// <param name="newCategoryToUse"></param>
+        /// <returns>MamlClassHelpInfo</returns>
+        internal MamlClassHelpInfo Copy(HelpCategory newCategoryToUse)
+        {
+            MamlClassHelpInfo result = new MamlClassHelpInfo(this._fullHelpObject.Copy(), newCategoryToUse);
+            result.FullHelp.Properties["Category"].Value = newCategoryToUse;
+            return result;
+        }
+
+        internal override string Name
+        {
+            get 
+            {
+                string tempName = string.Empty;
+                var title = this._fullHelpObject.Properties["title"];
+
+                if (title != null && title.Value != null)
+                {
+                    tempName = title.Value.ToString();
+                }
+
+                return tempName; 
+            }
+        }
+
+        internal override string Synopsis
+        {
+            get 
+            {
+                string tempSynopsis = string.Empty;
+                var intro = this._fullHelpObject.Properties["introduction"];
+
+                if(intro != null && intro.Value != null)
+                {
+                    tempSynopsis = intro.Value.ToString();
+                }
+
+                return tempSynopsis; 
+            }
+        }
+
+        internal override HelpCategory HelpCategory
+        {
+            get 
+            {
+                return _helpCategory;
+            }
+        }
+
+        internal override PSObject FullHelp
+        {
+            get 
+            {
+                return _fullHelpObject;
+            }
+        }
+
+        #endregion
+    }
+}

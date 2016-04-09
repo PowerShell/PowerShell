@@ -1,0 +1,74 @@
+/********************************************************************++
+Copyright (c) Microsoft Corporation.  All rights reserved.
+--********************************************************************/
+
+using System;
+using System.Collections.Generic;
+
+namespace System.Management.Automation
+{
+    /// <summary>
+    /// An object that represents a stack of paths.
+    /// </summary>
+    public sealed class PathInfoStack : Stack<PathInfo>
+    {
+        /// <summary>
+        /// Constructor for the PathInfoStack class.
+        /// </summary>
+        ///
+        /// <param name="stackName">
+        /// The name of the stack.
+        /// </param>
+        /// 
+        /// <param name="locationStack">
+        /// A stack object containing PathInfo objects
+        /// </param>
+        ///
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="locationStack"/> is null.
+        /// </exception>
+        /// 
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="stackName"/> is null or empty.
+        /// </exception>
+        /// 
+        internal PathInfoStack(string stackName, Stack<PathInfo> locationStack) : base()
+        {
+            if (locationStack == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("locationStack");
+            }
+
+            if (String.IsNullOrEmpty(stackName))
+            {
+                throw PSTraceSource.NewArgumentException("stackName");
+            }
+
+            this.stackName = stackName;
+
+            // Since the Stack<T> constructor takes an IEnumerable and
+            // not a Stack<T> the stack actually gets enumerated in the
+            // wrong order.  I have to push them on manually in the 
+            // appropriate order.
+
+            PathInfo[] stackContents = new PathInfo[locationStack.Count];
+            locationStack.CopyTo(stackContents, 0);
+
+            for (int index = stackContents.Length - 1; index >= 0; --index)
+            {
+                this.Push(stackContents[index]);
+            }
+        } // constructor
+
+        /// <summary>
+        /// Gets the name of the stack
+        /// </summary>
+        public string Name
+        {
+            get { return stackName; }
+        }
+        private string stackName = null;
+
+    } // PathInfoStack
+
+} // namespace System.Management.Automation

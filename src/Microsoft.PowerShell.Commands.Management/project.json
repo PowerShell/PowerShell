@@ -1,0 +1,40 @@
+{
+    "name": "Microsoft.PowerShell.Commands.Management",
+    "version": "1.0.0-*",
+    "authors": [ "garretts", "andschwa" ],
+
+    "compilationOptions": {
+        "warningsAsErrors": true,
+        "allowUnsafe": true
+    },
+
+    "dependencies": {
+        "Microsoft.PowerShell.Security": "1.0.0-*"
+    },
+
+    "frameworks": {
+        "netstandard1.5": {
+            "imports": [ "dnxcore50" ],
+            "compilationOptions": {
+                "define": [ "CORECLR" ]
+            },
+            "dependencies": {
+                "System.ServiceProcess.ServiceController": "4.1.0-rc3-23931-00",
+                "System.Net.NameResolution": "4.0.0-rc3-23931-00"
+            }
+        },
+        "net451": {
+            "frameworkAssemblies": {
+                "System.ServiceProcess": "",
+                "System.Windows.Forms": "",
+                "System.Drawing": "",
+                "System.Web.Services": ""
+            },
+            "dependencies": {
+                 "Microsoft.WSMan.Management": "1.0.0"
+            }
+        }
+    },
+
+    "compile": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Management/*.cs" ]
+}

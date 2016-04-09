@@ -1,0 +1,16 @@
+{
+    "version": "0.1.0",
+    "command": "powershell",
+    "isShellCommand": true,
+    "showOutput": "always",
+    "args": [ "-c" ],
+
+    "tasks": [
+        {
+            "taskName": "build",
+            "args": [ "Import-Module ${workspaceRoot}/PowerShellGitHubDev.psm1; Start-PSBuild" ],
+            "isBuildCommand": true,
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "name": "Microsoft.PowerShell.CoreCLR.Eventing",
+    "version": "1.0.0-*",
+    "authors": [ "sevoroby" ],
+
+    "compilationOptions": {
+        "warningsAsErrors": true,
+        "allowUnsafe": true
+    },
+
+    "configurations": {
+        "Linux": {
+            "compilationOptions": {
+                "define": [ "NOETW" ]
+            }
+        }
+    },
+    
+    "frameworks": {
+        "netstandard1.5": {
+            "imports": [ "dnxcore50" ],
+            "compilationOptions": {
+                "define": [ "CORECLR" ]
+            },
+            "dependencies": {
+                "System.Security.Principal": "4.0.1-rc3-23931-00",
+                "System.Security.Principal.Windows": "4.0.0-rc3-23931-00",
+                "System.Diagnostics.TraceSource": "4.0.0-rc3-23931-00",
+                "System.Security.SecureString": "1.0.0-*"
+            }
+        }
+    },
+
+    "compile": [ "../windows-build/gen/Microsoft.PowerShell.CoreCLR.Eventing/*.cs" ]
+}

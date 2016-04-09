@@ -1,0 +1,30 @@
+{
+    "name": "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext",
+    "version": "1.0.0-*",
+    "authors": [ "andschwa" ],
+
+    "compilationOptions": {
+        "warningsAsErrors": true
+    },
+
+    "configurations": {
+        "Linux": {
+            "compilationOptions": {
+                "define": [ "LINUX" ]
+            }
+        }
+    },
+
+    "frameworks": {
+        "netstandard1.5": {
+            "imports": [ "dnxcore50" ],
+            "compilationOptions": {
+                "define": [ "CORECLR" ]
+            },
+            "dependencies": {
+                "NETStandard.Library": "1.5.0-rc3-23931-00",
+                "System.Runtime.Loader": "4.0.0-rc3-23931-00"
+            }
+        }
+    }
+}

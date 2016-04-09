@@ -1,0 +1,19 @@
+[submodule "src/omi"]
+	path = src/omi
+	url = https://github.com/Microsoft/omi.git
+	branch = psrp/features
+[submodule "src/omi-provider"]
+	path = src/omi-provider
+	url = https://github.com/PowerShell/psl-omi-provider.git
+[submodule "src/windows-build"]
+	path = src/windows-build
+	url = https://github.com/PowerShell/psl-windows-build.git
+[submodule "src/Modules/Pester"]
+	path = src/Modules/Pester
+	url = https://github.com/PowerShell/psl-pester.git
+	branch = develop
+	ignore = dirty
+[submodule "src/libpsl-native/test/googletest"]
+	path = src/libpsl-native/test/googletest
+	url = https://github.com/google/googletest.git
+	ignore = dirty

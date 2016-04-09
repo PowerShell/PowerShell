@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="InvalidPowerShellStateGeneral" xml:space="preserve">
+    <value>The state of the current PowerShell instance is not valid for this operation.</value>
+  </data>
+  <data name="ExecutionAlreadyStarted" xml:space="preserve">
+    <value>The operation cannot be performed because a command has already been started. Wait for the command to complete, or stop it, and then try the operation again.</value>
+  </data>
+  <data name="NoCommandToInvoke" xml:space="preserve">
+    <value>No commands are specified.</value>
+  </data>
+  <data name="InvalidStateCreateNested" xml:space="preserve">
+    <value>The PowerShell instance is not in the correct state for creating a nested PowerShell instance. Nested PowerShell instances should only be created in a running PowerShell instance.</value>
+  </data>
+  <data name="InvalidRunspaceState" xml:space="preserve">
+    <value>Cannot perform operation because the runspace is not in the '{0}' state. Current state of runspace is '{1}'.</value>
+  </data>
+  <data name="RemoteRunspacePoolNotOpened" xml:space="preserve">
+    <value>The runspace pool specified is not in an opened state.</value>
+  </data>
+  <data name="OperationNotSupportedForRemoting" xml:space="preserve">
+    <value>This operation is currently not supported in the remoting scenario.</value>
+  </data>
+  <data name="NestedPowerShellInvokeAsync" xml:space="preserve">
+    <value>Nested PowerShell instances cannot be invoked asynchronously. Use the Invoke method.</value>
+  </data>
+  <data name="AsyncResultNotOwned" xml:space="preserve">
+    <value>The {0} object was not created by calling {1} on this Windows PowerShell instance.</value>
+  </data>
+  <data name="ApartmentStateMismatch" xml:space="preserve">
+    <value>When the runspace is set to reuse a thread, the apartment state in the invocation settings must match the runspace.</value>
+  </data>
+  <data name="ApartmentStateMismatchCurrentThread" xml:space="preserve">
+    <value>When the runspace is set to use the current thread, the apartment state in the invocation settings must match that of the current thread.</value>
+  </data>
+  <data name="ParameterRequiresCommand" xml:space="preserve">
+    <value>A command is required to add a parameter. A command must be added to the Windows PowerShell instance before adding a parameter.</value>
+  </data>
+  <data name="KeyMustBeString" xml:space="preserve">
+    <value>The keys in the dictionary must be strings.</value>
+  </data>
+  <data name="CommandInvokedFromWrongThreadWithCommand" xml:space="preserve">
+    <value>There is no Runspace available to run commands in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The command you attempted to invoke was: {0}</value>
+  </data>
+  <data name="JobProxyReceiveInvalid" xml:space="preserve">
+    <value>You can only begin receiving data on a PSJobProxy instance when it has been created with data streaming disabled. This operation can run only once.</value>
+  </data>
+  <data name="GetJobForCommandNotSupported" xml:space="preserve">
+    <value>GetJobForCommand is not supported when there is more than one command in the Windows PowerShell instance.</value>
+  </data>
+  <data name="GetJobForCommandRequiresACommand" xml:space="preserve">
+    <value>The Command property of a Windows PowerShell object cannot be empty.</value>
+  </data>
+  <data name="CommandDoesNotWriteJob" xml:space="preserve">
+    <value>The PSJobProxy object can only be used for remote commands that return a job object.</value>
+    <comment>PSJobProxy is the name of a class and should not be localized</comment>
+  </data>
+  <data name="JobCannotBeStartedWhenRunning" xml:space="preserve">
+    <value>A job cannot be started when it is already running.</value>
+  </data>
+  <data name="OnlyWorkflowInvocationSettingsSupported" xml:space="preserve">
+    <value>PSJobProxy currently supports only PSWorkflowInvocationSettings.</value>
+    <comment>PSJobProxy and PSWorkflowInvocationSettings are the names of classes and should not be localized</comment>
+  </data>
+  <data name="RunspaceAndRunspacePoolNull" xml:space="preserve">
+    <value>Either a runspace or runspace pool must be assigned to PSJobProxy before it can be started.</value>
+    <comment>PSJobProxy is the name of a class and should not be localized</comment>
+  </data>
+  <data name="UnblockNotSupported" xml:space="preserve">
+    <value>Support for interactive jobs is not available</value>
+  </data>
+  <data name="JobObjectCanBeUsedOnce" xml:space="preserve">
+    <value>A job object can be used only once.</value>
+  </data>
+  <data name="JobCanBeStartedOnce" xml:space="preserve">
+    <value>A job object cannot be reused.</value>
+  </data>
+  <data name="CannotConnect" xml:space="preserve">
+    <value>This Windows PowerShell object cannot be connected because it is not associated with a remote runspace or runspace pool.</value>
+  </data>
+  <data name="DiscOnSyncCommand" xml:space="preserve">
+    <value>The running command has been disconnected but is still running on the remote server.  Reconnect to get command operation status and output data.</value>
+  </data>
+  <data name="ExecutionDisconnected" xml:space="preserve">
+    <value>The operation cannot be performed because the current Windows PowerShell session is in the Disconnected state.  Connect this Windows PowerShell session, and then either wait for the command to finish, or stop the command.</value>
+  </data>
+  <data name="IsDisconnected" xml:space="preserve">
+    <value>The operation cannot be performed because the current Windows PowerShell session is in the Disconnected state.  Connect this Windows PowerShell session, and then try again.</value>
+  </data>
+  <data name="ConnectFailed" xml:space="preserve">
+    <value>The connection attempt to the remote command failed.</value>
+  </data>
+  <data name="ProxyChildJobControlNotSupported" xml:space="preserve">
+    <value>PSChildJobProxy does not support control methods.</value>
+    <comment>PSChildJobProxy is the name of a class and should not be localized</comment>
+  </data>
+  <data name="ExecutionStopping" xml:space="preserve">
+    <value>The operation cannot be performed because a command is currently stopping. Wait for the command to complete stopping, and then try the operation again.</value>
+  </data>
+  <data name="CommandInvokedFromWrongThreadWithoutCommand" xml:space="preserve">
+    <value>There is no Runspace available to run commands in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The current Windows PowerShell instance contains no command to invoke.</value>
+  </data>
+  <data name="JobProxyAsJobMustBeTrue" xml:space="preserve">
+    <value>A command in which the value of AsJob is equal to false cannot be run through a PSJobProxy.</value>
+    <comment>PSJobProxy is the name of a class and should not be localized. AsJob is the name of a parameter and should not be localized.</comment>
+  </data>
+  <data name="ProxyUnblockJobNotSupported" xml:space="preserve">
+    <value>PSJobProxy does not support the Unblock operation.</value>
+    <comment>PSJobProxy is the name of a class and should not be localized</comment>
+  </data>
+  <data name="NoDefaultRunspaceForPSCreate" xml:space="preserve">
+    <value>A Windows PowerShell object cannot be created that uses the current runspace because there is no current runspace available.  The current runspace might be starting, such as when it is created with an Initial Session State.</value>
+  </data>
+  <data name="ProxyJobControlNotSupported" xml:space="preserve">
+    <value>PSJobProxy does not support this control method.</value>
+  </data>
+</root>

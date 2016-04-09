@@ -1,0 +1,70 @@
+/********************************************************************++
+Copyright (c) Microsoft Corporation.  All rights reserved.
+--********************************************************************/
+using System.Collections.Generic;
+
+namespace System.Management.Automation
+{
+    /// <summary>
+    /// 
+    /// Class DefaultHelpProvider implement the help provider for commands.
+    /// 
+    /// Command Help information are stored in 'help.xml' files. Location of these files
+    /// can be found from CommandDiscovery.
+    /// 
+    /// </summary>
+    internal class DefaultHelpProvider : HelpFileHelpProvider
+    {
+        /// <summary>
+        /// Constructor for HelpProvider
+        /// </summary>
+        internal DefaultHelpProvider(HelpSystem helpSystem)
+            : base(helpSystem)
+        {
+        }
+
+        #region Common Properties
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
+        override internal string Name
+        {
+            get
+            {
+                return "Default Help Provider";
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value></value>
+        override internal HelpCategory HelpCategory
+        {
+            get
+            {
+                return HelpCategory.DefaultHelp;
+            }
+        }
+
+        #endregion
+
+        #region Help Provider Interface
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="helpRequest">help request object</param>
+        /// <returns></returns>
+        override internal IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
+        {
+            HelpRequest defaultHelpRequest = helpRequest.Clone();
+            defaultHelpRequest.Target = "default";
+            return base.ExactMatchHelp(defaultHelpRequest);
+        }
+
+        #endregion
+    }
+}

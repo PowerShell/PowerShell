@@ -1,0 +1,29 @@
+{
+    "name": "Microsoft.Management.Infrastructure",
+    "version": "1.0.0-*",
+    "authors": [ "garretts", "andschwa" ],
+
+    "compilationOptions": {
+        "allowUnsafe": true
+    },
+
+    "dependencies": {
+        "Microsoft.Management.Infrastructure.Native": "1.0.0-*"
+    },
+
+    "frameworks": {
+        "netstandard1.5": {
+            "imports": [ "dnxcore50" ],
+            "compilationOptions": {
+                "warningsAsErrors": true,
+                "define": [ "_CORECLR" ]
+            },
+            "dependencies": {
+                "System.Runtime.Serialization.Xml": "4.1.1-rc3-23931-00",
+                "System.Threading.ThreadPool": "4.0.10-rc3-23931-00"
+            }
+        },
+        "net451": {
+        }
+    }
+}
