@@ -70,7 +70,7 @@ function Start-PSBuild {
         }
 
         $precheck = $precheck -and (precheck 'msbuild' 'msbuild not found. Install Visual Studio 2015.')
-    } elseif ($IsLinux -Or $IsOSX) {
+    } elseif ($IsLinux -or $IsOSX) {
         $InstallCommand = if ($IsLinux) {
             'apt-get'
         } elseif ($IsOSX) {
@@ -82,14 +82,14 @@ function Start-PSBuild {
         }
     }
 
-    if (-Not $Runtime) {
+    if (-not $Runtime) {
         $Runtime = dotnet --info | % {
             if ($_ -match "RID") {
                 $_ -split "\s+" | Select-Object -Last 1
             }
         }
 
-        if (-Not $Runtime) {
+        if (-not $Runtime) {
             Write-Warning "Could not determine Runtime Identifier, please update dotnet"
             $precheck = $false
         } else {
@@ -111,7 +111,7 @@ function Start-PSBuild {
         $Framework = 'netstandardapp1.5'
     }
 
-    if ($IsLinux -Or $IsOSX) {
+    if ($IsLinux -or $IsOSX) {
         $Configuration = "Linux"
         $Executable = "powershell"
     } else {
@@ -132,7 +132,7 @@ function Start-PSBuild {
     # Build the Output path in script scope
     $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework)
     # FullCLR only builds a library, so there is no runtime component
-    if (-Not $FullCLR) {
+    if (-not $FullCLR) {
         $script:Output = [IO.Path]::Combine($script:Output, $Runtime)
     }
     # Publish injects the publish directory
@@ -144,7 +144,7 @@ function Start-PSBuild {
     Write-Verbose "script:Output is $script:Output"
 
     # handle Restore
-    if ($Restore -Or -Not (Test-Path "$Top/project.lock.json")) {
+    if ($Restore -or -not (Test-Path "$Top/project.lock.json")) {
         log "Run dotnet restore"
 
         $RestoreArguments = @("--verbosity")
@@ -160,7 +160,7 @@ function Start-PSBuild {
     }
 
     # Build native components
-    if ($IsLinux -Or $IsOSX) {
+    if ($IsLinux -or $IsOSX) {
         $Ext = if ($IsLinux) {
             "so"
         } elseif ($IsOSX) {
@@ -180,7 +180,7 @@ function Start-PSBuild {
             Pop-Location
         }
 
-        if (-Not (Test-Path $Lib)) {
+        if (-not (Test-Path $Lib)) {
             throw "Compilation of $Lib failed"
         }
     } elseif ($FullCLR) {
@@ -217,7 +217,7 @@ function Start-PSBuild {
 
 function Get-PSOutput {
     [CmdletBinding()]param()
-    if (-Not $Output) {
+    if (-not $Output) {
         throw '$script:Output is not defined, run Start-PSBuild'
     }
 
@@ -274,7 +274,7 @@ function Start-PSPackage {
 
     if ($IsWindows) { throw "Building Windows packages is not yet supported!" }
 
-    if (-Not (Get-Command "fpm" -ErrorAction SilentlyContinue)) {
+    if (-not (Get-Command "fpm" -ErrorAction SilentlyContinue)) {
         throw "Build dependency 'fpm' not found in PATH! See: https://github.com/jordansissel/fpm"
     }
 
@@ -292,7 +292,7 @@ function Start-PSPackage {
     }
 
     # Use Git tag if not given a version
-    if (-Not($Version)) {
+    if (-not $Version) {
         $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
     }
 
@@ -348,7 +348,7 @@ function Start-DevPSGitHub {
             $env:COMPLUS_ZapDisable = 1
         }
 
-        if (-Not (Test-Path $binDir\powershell.exe.config)) {
+        if (-not (Test-Path $binDir\powershell.exe.config)) {
             $configContents = @"
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
