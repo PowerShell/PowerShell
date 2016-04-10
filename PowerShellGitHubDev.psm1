@@ -262,15 +262,21 @@ function Start-PSxUnit {
 }
 
 function Start-PSPackage {
-    # PowerShell packages use Semantic Versioning http://semver.org/
-    #
-    # Ubuntu and OS X packages are supported.
     [CmdletBinding()]param(
+        # PowerShell packages use Semantic Versioning http://semver.org/
         [string]$Version,
+        # Package iteration version (rarely changed)
         [int]$Iteration = 1,
+        # Ubuntu, CentOS, and OS X packages are supported
         [ValidateSet("deb", "osxpkg", "rpm")]
         [string]$Type
     )
+
+    $Description = @"
+Open PowerShell on .NET Core
+PowerShell is an open-source, cross-platform, scripting language and rich object shell.
+Built upon .NET Core, it is also a C# REPL.
+"@
 
     if ($IsWindows) { throw "Building Windows packages is not yet supported!" }
 
@@ -278,18 +284,35 @@ function Start-PSPackage {
         throw "Build dependency 'fpm' not found in PATH! See: https://github.com/jordansissel/fpm"
     }
 
-    if (-Not(Test-Path "$PSScriptRoot/bin/powershell")) {
-        throw "Please Start-PSBuild with the corresponding runtime for the package"
+    $Source = Split-Path -Parent (Get-PSOutput)
+    if ((Split-Path -Leaf $Source) -ne "publish") {
+        throw "Please Start-PSBuild -Package with the corresponding runtime for the package"
     }
 
-    # Change permissions for packaging
-    chmod -R go=u "$PSScriptRoot/bin"
-
     # Decide package output type
-    if (-Not($Type)) {
+    if (-not $Type) {
         $Type = if ($IsLinux) { "deb" } elseif ($IsOSX) { "osxpkg" }
         Write-Warning "-Type was not specified, continuing with $Type"
     }
+
+    # Follow the Filesystem Hierarchy Standard for Linux and OS X
+    $Destination = if ($IsLinux) {
+        "/opt/microsoft/powershell"
+    } elseif ($IsOSX) {
+        "/usr/local/microsoft/powershell"
+    }
+
+    # Destination for symlink to powershell executable
+    $Link = if ($IsLinux) {
+        "/usr/bin"
+    } elseif ($IsOSX) {
+        "/usr/local/bin"
+    }
+
+    New-Item -Force -ItemType SymbolicLink -Path /tmp/powershell -Target $Destination/powershell >$null
+
+    # Change permissions for packaging
+    chmod -R go=u $Source /tmp/powershell
 
     # Use Git tag if not given a version
     if (-not $Version) {
@@ -306,26 +329,32 @@ function Start-PSPackage {
         "rpm" { "libicu" }
     }
 
+
+    $Arguments = @(
+        "--force", "--verbose",
+        "--name", "powershell",
+        "--version", $Version,
+        "--iteration", $Iteration,
+        "--maintainer", "Andrew Schwartzmeyer <andschwa@microsoft.com>",
+        "--vendor", "Microsoft <mageng@microsoft.com>",
+        "--url", "https://github.com/PowerShell/PowerShell",
+        "--license", "Unlicensed",
+        "--description", $Description,
+        "--category", "shells",
+        "--rpm-os", "linux",
+        "--depends", $libunwind,
+        "--depends", $libicu,
+        "--deb-build-depends", "dotnet",
+        "--deb-build-depends", "cmake",
+        "--deb-build-depends", "g++",
+        "-t", $Type,
+        "-s", "dir",
+        "$Source/=$Destination/",
+        "/tmp/powershell=$Link"
+    )
+
     # Build package
-    fpm --force --verbose `
-        --name "powershell" `
-        --version $Version `
-        --iteration $Iteration `
-        --maintainer "Andrew Schwartzmeyer <andschwa@microsoft.com>" `
-        --vendor "Microsoft <mageng@microsoft.com>" `
-        --url "https://github.com/PowerShell/PowerShell" `
-        --license "Unlicensed" `
-        --description "Open PowerShell on .NET Core\nPowerShell is an open-source, cross-platform, scripting language and rich object shell. Built upon .NET Core, it is also a C# REPL.\n" `
-        --category "shells" `
-        --depends $libunwind `
-        --depends $libicu `
-        --deb-build-depends "dotnet" `
-        --deb-build-depends "cmake" `
-        --deb-build-depends "g++" `
-        -t $Type `
-        -s dir `
-        "$PSScriptRoot/bin/=/usr/local/share/powershell/" `
-        "$PSScriptRoot/package/powershell=/usr/local/bin"
+    fpm $Arguments
 }
 
 
