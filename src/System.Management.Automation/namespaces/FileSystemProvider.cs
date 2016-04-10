@@ -2125,9 +2125,14 @@ namespace Microsoft.PowerShell.Commands
 
                     bool exists = false;
 
+                    // It is legal to create symbolic links to non-existing targets on
+                    // both Windows and Linux. It is not legal to create hard links to
+                    // non-existing targets on either Windows or Linux.
                     try
                     {
-                        exists = CheckItemExists(strTargetPath, out isDirectory);
+                        exists = (itemType == ItemType.SymbolicLink)
+                            ? true // pretend it exists if we're making a symbolic link
+                            : CheckItemExists(strTargetPath, out isDirectory);
                     }
                     catch (Exception e)
                     {

@@ -3712,6 +3712,8 @@ namespace System.Management.Automation
                     }
 
                     bool isSymbolicJunctionOrHardLink = false;
+                    // Symbolic link targets are allowed to not exist on both Windows and Linux
+                    bool allowNonexistingPath = false;
                     
                     if(type != null)
                     {
@@ -3720,6 +3722,7 @@ namespace System.Management.Automation
                         if (typeEvaluator.IsMatch("symboliclink") || typeEvaluator.IsMatch("junction") || typeEvaluator.IsMatch("hardlink"))
                         {                            
                             isSymbolicJunctionOrHardLink = true;
+                            allowNonexistingPath = typeEvaluator.IsMatch("symboliclink");
                         }
                     }
 
@@ -3742,7 +3745,7 @@ namespace System.Management.Automation
 
                         var globbedTarget = Globber.GetGlobbedProviderPathsFromMonadPath(
                             targetPath,
-                            false,
+                            allowNonexistingPath,
                             context,
                             out targetProvider,
                             out targetProviderInstance);

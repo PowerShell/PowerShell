@@ -104,7 +104,7 @@ Describe "New-Item" {
 	Test-Path $FullyQualifiedFile | Should Be $false
     }
 
-    It "Should create a symbolic link of a file without error" -Skip:$IsWindows {
+    It "Should create a symbolic link of a file without error" {
 	New-Item -Name $testfile -Path $tmpDirectory -ItemType file
 	Test-Path $FullyQualifiedFile | Should Be $true
 
@@ -116,7 +116,18 @@ Describe "New-Item" {
         $fileInfo.LinkType | Should Be "SymbolicLink"
     }
 
-    It "Should create a symbolic link from directory without error" -Skip:$IsWindows {
+    It "Should create a symbolic link to a non-existing file without error" {
+        $target = Join-Path $tmpDirectory "totallyBogusFile"
+        New-Item -ItemType SymbolicLink -Target $target -Name $testlink -Path $tmpDirectory
+        Test-Path $FullyQualifiedLink | Should Be $true
+
+        $fileInfo = Get-ChildItem $FullyQualifiedLink
+        $fileInfo.Target | Should Be $target
+        Test-Path $fileInfo.Target | Should be $false
+        $fileInfo.LinkType | Should Be "SymbolicLink"
+    }
+
+    It "Should create a symbolic link from directory without error" {
 	New-Item -Name $testFolder -Path $tmpDirectory -ItemType directory
 	Test-Path $FullyQualifiedFolder | Should Be $true
 
