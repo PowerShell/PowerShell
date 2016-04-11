@@ -62,8 +62,6 @@ Describe "Import-Alias DRT Unit Tests" -Tags DRT{
 Describe "Import-Alias" {
     $pesteraliasfile = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath pesteralias.txt
 
-    Context "Validate ability to import alias file" {
-
 	It "Should be able to import an alias file successfully" {
 	    { Import-Alias $pesteraliasfile } | Should Not throw
 	}
@@ -81,6 +79,4 @@ Describe "Import-Alias" {
 	    (ipal $pesteraliasfile)
 	    (pesterecho pestertesting) | Should be "pestertesting"
 	}
-
-    }
 }
