@@ -1,3 +1,56 @@
+
+Describe "Get-Variable DRT Unit Tests" -Tags DRT{
+	It "Get-Variable not exist variable Name should throw ItemNotFoundException skip now as bug#777" -Skip:$true{	
+		try { 
+			Get-Variable -Name nonexistingVariableName
+			Throw "Execution OK"
+		} 
+		catch {
+			$_.FullyQualifiedErrorId | Should be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+		}
+	}
+	
+	It "Get-Variable exist variable Name with include and bogus exclude should work"{
+		Set-Variable newVar testing
+		$var1=get-variable -Name newVar -Include newVar -Exclude bogus
+		$var1.Name|Should Be "newVar"
+		$var1.Value|Should Be "testing"
+	}
+	
+	It "Get-Variable exist variable Name with Description and Option should work"{
+		Set-Variable newVar testing -Option ReadOnly -Description "testing description"
+		$var1=get-variable -Name newVar
+		$var1.Name|Should Be "newVar"
+		$var1.Value|Should Be "testing"
+		$var1.Options|Should Be "ReadOnly"
+		$var1.Description|Should Be "testing description"
+	}
+	
+	It "Get-Variable exist variable Globbing Name should work"{
+		Set-Variable abcaVar testing
+		Set-Variable bcdaVar "another test"
+		Set-Variable aVarfoo wow
+		$var1=get-variable -Name *aVar* -Scope local
+		$var1[0].Name|Should Be "abcaVar"
+		$var1[0].Value|Should Be "testing"
+		$var1[1].Name|Should Be "aVarfoo"
+		$var1[1].Value|Should Be "wow"
+		$var1[2].Name|Should Be "bcdaVar"
+		$var1[2].Value|Should Be "another test"
+	}
+	
+	It "Get-Variable an exist private variable Name should throw ItemNotFoundException skip now as bug#777" -Skip:$true{	
+		try { 
+			Set-Variable newVar testing -Option Private
+			Get-Variable -Name newVar
+			Throw "Execution OK"
+		} 
+		catch {
+			$_.FullyQualifiedErrorId | Should be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+		}
+	}
+}
+
 Describe "Get-Variable" {
     It "Should be able to call with no parameters without error" {
 	{ Get-Variable } | Should Not Throw
