@@ -45,8 +45,7 @@ Describe "Get-Date DRT Unit Tests"  -Tags DRT {
     }
 
     It "the LastWriteTime alias works with pipeline input" {
-        $folder = "GetDateTest"
-        #$tempPath = $TestDrive 
+        $folder = "GetDateTest" 
         $pathString = Join-Path -Path $TestDrive -ChildPath $folder
         New-Item -Path $TestDrive -Name $folder -ItemType directory -Force
         for($i = 0; $i -lt 10; $i++)
