@@ -1,6 +1,7 @@
 
 Describe "Get-Variable DRT Unit Tests" -Tags DRT{
-	It "Get-Variable not exist variable Name should throw ItemNotFoundException skip now as bug#777" -Skip:$true{	
+	It "Get-Variable not exist variable Name should throw ItemNotFoundException"{	
+		$ErrorActionPreference = "Stop"
 		try { 
 			Get-Variable -Name nonexistingVariableName
 			Throw "Execution OK"
@@ -8,6 +9,7 @@ Describe "Get-Variable DRT Unit Tests" -Tags DRT{
 		catch {
 			$_.FullyQualifiedErrorId | Should be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 		}
+		$ErrorActionPreference = "SilentlyContinue"
 	}
 	
 	It "Get-Variable exist variable Name with include and bogus exclude should work"{
@@ -39,7 +41,7 @@ Describe "Get-Variable DRT Unit Tests" -Tags DRT{
 		$var1[2].Value|Should Be "another test"
 	}
 	
-	It "Get-Variable an exist private variable Name should throw ItemNotFoundException skip now as bug#777" -Skip:$true{	
+	It "Get-Variable an exist private variable Name should throw ItemNotFoundException skip now as bug#818" -Skip:$true{
 		try { 
 			Set-Variable newVar testing -Option Private
 			Get-Variable -Name newVar
