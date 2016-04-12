@@ -879,6 +879,7 @@ namespace System.Management.Automation
                     data.RunspacePoolId,
                     hostInfo,
                     streamOptions,
+                    noInput,
                     addToHistory);
 
                 return;
@@ -1209,6 +1210,7 @@ namespace System.Management.Automation
         /// <param name="runspacePoolId">RunspacePool Id</param>
         /// <param name="hostInfo">Host Info</param>
         /// <param name="streamOptions">Remote stream options</param>
+        /// <param name="noInput">False when input is provided</param>
         /// <param name="addToHistory">Add to history</param>
         private void StartPowerShellCommandOnPushedRunspace(
             PowerShell powershell,
@@ -1216,6 +1218,7 @@ namespace System.Management.Automation
             Guid runspacePoolId,
             HostInfo hostInfo,
             RemoteStreamOptions streamOptions,
+            bool noInput,
             bool addToHistory)
         {
             Runspace runspace = this.remoteHost.PushedRunspace;
@@ -1223,7 +1226,7 @@ namespace System.Management.Automation
             ServerPowerShellDriver driver = new ServerPowerShellDriver(
                 powershell,
                 null,
-                true,
+                noInput,
                 powershellId,
                 runspacePoolId,
                 this,

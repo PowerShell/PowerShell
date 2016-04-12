@@ -271,8 +271,8 @@ function PackageManagementMessageResolver($MsgID, $Message) {
                         if($Message)
                         {
                             $tempMessage = $Message     -creplace "PackageSource", "PSRepository"
-                            $tempMessage = $Message     -creplace "packagesource", "psrepository"
-                            $tempMessage = $Message     -creplace "Package", "Module"
+                            $tempMessage = $tempMessage -creplace "packagesource", "psrepository"
+                            $tempMessage = $tempMessage -creplace "Package", "Module"
                             $tempMessage = $tempMessage -creplace "package", "module"
                             $tempMessage = $tempMessage -creplace "Sources", "Repositories"
                             $tempMessage = $tempMessage -creplace "sources", "repositories"
@@ -369,8 +369,8 @@ function PackageManagementMessageResolverForScripts($MsgID, $Message) {
                         if($Message)
                         {
                             $tempMessage = $Message     -creplace "PackageSource", "PSRepository"
-                            $tempMessage = $Message     -creplace "packagesource", "psrepository"
-                            $tempMessage = $Message     -creplace "Package", "Script"
+                            $tempMessage = $tempMessage -creplace "packagesource", "psrepository"
+                            $tempMessage = $tempMessage -creplace "Package", "Script"
                             $tempMessage = $tempMessage -creplace "package", "script"
                             $tempMessage = $tempMessage -creplace "Sources", "Repositories"
                             $tempMessage = $tempMessage -creplace "sources", "repositories"
@@ -511,7 +511,11 @@ function Publish-Module
         [Parameter()]
         [ValidateNotNullOrEmpty()]
         [Uri]
-        $ProjectUri
+        $ProjectUri,
+
+        [Parameter()]
+        [switch]
+        $Force
     )
 
     Begin
@@ -561,7 +565,7 @@ function Publish-Module
                         -ExceptionObject $ProjectUri
         }
        
-        Install-NuGetClientBinaries -CallerPSCmdlet $PSCmdlet -BootstrapNuGetExe
+        Install-NuGetClientBinaries -CallerPSCmdlet $PSCmdlet -BootstrapNuGetExe -Force:$Force
     }
 
     Process
@@ -891,7 +895,7 @@ function Publish-Module
             }
 
             $shouldProcessMessage = $LocalizedData.PublishModulewhatIfMessage -f ($moduleInfo.Version, $moduleInfo.Name)
-            if($PSCmdlet.ShouldProcess($shouldProcessMessage, "Publish-Module"))
+            if($Force -or $PSCmdlet.ShouldProcess($shouldProcessMessage, "Publish-Module"))
             {
                 Publish-PSArtifactUtility -PSModuleInfo $moduleInfo `
                                           -ManifestPath $manifestPath `
@@ -2183,7 +2187,11 @@ function Publish-Script
         [Parameter()]
         [ValidateNotNullOrEmpty()]
         [string]
-        $Repository = $Script:PSGalleryModuleSource
+        $Repository = $Script:PSGalleryModuleSource,
+
+        [Parameter()]
+        [switch]
+        $Force
     )
 
     Begin
@@ -2200,7 +2208,7 @@ function Publish-Script
 
         Get-PSGalleryApiAvailability -Repository $Repository        
 
-        Install-NuGetClientBinaries -CallerPSCmdlet $PSCmdlet -BootstrapNuGetExe
+        Install-NuGetClientBinaries -CallerPSCmdlet $PSCmdlet -BootstrapNuGetExe -Force:$Force
     }
 
     Process
@@ -2407,7 +2415,7 @@ function Publish-Script
             }
 
             $shouldProcessMessage = $LocalizedData.PublishScriptwhatIfMessage -f ($PSScriptInfo.Version, $scriptName)
-            if($PSCmdlet.ShouldProcess($shouldProcessMessage, "Publish-Script"))
+            if($Force -or $PSCmdlet.ShouldProcess($shouldProcessMessage, "Publish-Script"))
             {
                 Publish-PSArtifactUtility -PSScriptInfo $PSScriptInfo `
                                           -NugetApiKey $NuGetApiKey `
@@ -3492,41 +3500,50 @@ function Register-PSRepository
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(PositionalBinding=$false,
+    [CmdletBinding(DefaultParameterSetName='NameParameterSet',
                    HelpUri='http://go.microsoft.com/fwlink/?LinkID=517129')]
     Param 
     (
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$true,
+                   Position=0, 
+                   ParameterSetName='NameParameterSet')]
         [ValidateNotNullOrEmpty()]
         [string]
         $Name,
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$true,
+                   Position=1, 
+                   ParameterSetName='NameParameterSet')]
         [ValidateNotNullOrEmpty()]
         [Uri]
         $SourceLocation,
 
-        [Parameter()]
+        [Parameter(ParameterSetName='NameParameterSet')]
         [ValidateNotNullOrEmpty()]
         [Uri]
         $PublishLocation,
 
-        [Parameter()]
+        [Parameter(ParameterSetName='NameParameterSet')]
         [ValidateNotNullOrEmpty()]
         [Uri]
         $ScriptSourceLocation,
 
-        [Parameter()]
+        [Parameter(ParameterSetName='NameParameterSet')]
         [ValidateNotNullOrEmpty()]
         [Uri]
         $ScriptPublishLocation,
+
+        [Parameter(Mandatory=$true,
+                   ParameterSetName='PSGalleryParameterSet')]
+        [Switch]
+        $Default,
 
         [Parameter()]
         [ValidateSet('Trusted','Untrusted')]
         [string]
         $InstallationPolicy = 'Untrusted',
 
-        [Parameter()]
+        [Parameter(ParameterSetName='NameParameterSet')]
         [ValidateNotNullOrEmpty()]
         [string]
         $PackageManagementProvider        
@@ -3585,62 +3602,86 @@ function Register-PSRepository
 
     Process
     {
-        # Ping and resolve the specified location
-        $SourceLocation = Resolve-Location -Location (Get-LocationString -LocationUri $SourceLocation) `
-                                           -LocationParameterName 'SourceLocation' `
-                                           -CallerPSCmdlet $PSCmdlet
-        if(-not $SourceLocation)
+        if($PSCmdlet.ParameterSetName -eq 'PSGalleryParameterSet')
         {
-            # Above Resolve-Location function throws an error when it is not able to resolve a location
-            return
+            if(-not $Default)
+            {
+                return
+            }
+
+            $PSBoundParameters['Name'] = $Script:PSGalleryModuleSource
+            $null = $PSBoundParameters.Remove('Default')
+        }
+        else
+        {
+            if($Name -eq $Script:PSGalleryModuleSource)
+            {
+                $message = $LocalizedData.UseDefaultParameterSetOnRegisterPSRepository
+                ThrowError -ExceptionName "System.ArgumentException" `
+                           -ExceptionMessage $message `
+                           -ErrorId 'UseDefaultParameterSetOnRegisterPSRepository' `
+                           -CallerPSCmdlet $PSCmdlet `
+                           -ErrorCategory InvalidArgument `
+                           -ExceptionObject $Name
+                return   
+            }
+
+            # Ping and resolve the specified location
+            $SourceLocation = Resolve-Location -Location (Get-LocationString -LocationUri $SourceLocation) `
+                                               -LocationParameterName 'SourceLocation' `
+                                               -CallerPSCmdlet $PSCmdlet
+            if(-not $SourceLocation)
+            {
+                # Above Resolve-Location function throws an error when it is not able to resolve a location
+                return
+            }
+
+            $providerName = $null
+
+            if($PackageManagementProvider)
+            {            
+                $providerName = $PackageManagementProvider
+            }
+            elseif($selctedProviderName)
+            {
+                $providerName = $selctedProviderName
+            }
+            else
+            {
+                $providerName = Get-PackageManagementProviderName -Location $SourceLocation
+            }
+
+            if($providerName)
+            {
+                $PSBoundParameters[$script:PackageManagementProviderParam] = $providerName
+            }
+
+            if($PublishLocation)
+            {
+                $PSBoundParameters[$script:PublishLocation] = Get-LocationString -LocationUri $PublishLocation
+            }
+
+            if($ScriptPublishLocation)
+            {
+                $PSBoundParameters[$script:ScriptPublishLocation] = Get-LocationString -LocationUri $ScriptPublishLocation
+            }
+
+            if($ScriptSourceLocation)
+            {
+                $PSBoundParameters[$script:ScriptSourceLocation] = Get-LocationString -LocationUri $ScriptSourceLocation
+            }
+
+            $PSBoundParameters["Location"] = Get-LocationString -LocationUri $SourceLocation
+            $null = $PSBoundParameters.Remove("SourceLocation")
         }
 
         if($InstallationPolicy -eq "Trusted")
         {
-            $PSBoundParameters.Add("Trusted", $true)
+            $PSBoundParameters['Trusted'] = $true
         }
-
-        $providerName = $null
-
-        if($PackageManagementProvider)
-        {            
-            $providerName = $PackageManagementProvider
-        }
-        elseif($selctedProviderName)
-        {
-            $providerName = $selctedProviderName
-        }
-        else
-        {
-            $providerName = Get-PackageManagementProviderName -Location $SourceLocation
-        }
-
-        if($providerName)
-        {
-            $PSBoundParameters[$script:PackageManagementProviderParam] = $providerName
-        }
-
-        if($PublishLocation)
-        {
-            $PSBoundParameters[$script:PublishLocation] = Get-LocationString -LocationUri $PublishLocation
-        }
-
-        if($ScriptPublishLocation)
-        {
-            $PSBoundParameters[$script:ScriptPublishLocation] = Get-LocationString -LocationUri $ScriptPublishLocation
-        }
-
-        if($ScriptSourceLocation)
-        {
-            $PSBoundParameters[$script:ScriptSourceLocation] = Get-LocationString -LocationUri $ScriptSourceLocation
-        }
-
-        $PSBoundParameters["Provider"] = $script:PSModuleProviderName
-        
-        $PSBoundParameters["Location"] = Get-LocationString -LocationUri $SourceLocation
-        $null = $PSBoundParameters.Remove("SourceLocation")
         $null = $PSBoundParameters.Remove("InstallationPolicy")
 
+        $PSBoundParameters["Provider"] = $script:PSModuleProviderName
         $PSBoundParameters["MessageResolver"] = $script:PackageManagementMessageResolverScriptBlock
 
         $null = PackageManagement\Register-PackageSource @PSBoundParameters
@@ -3656,16 +3697,15 @@ function Set-PSRepository
                    HelpUri='http://go.microsoft.com/fwlink/?LinkID=517128')]
     Param
     (
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$true, Position=0)]
         [ValidateNotNullOrEmpty()]
         [string]
         $Name,
         
-        [Parameter()]
+        [Parameter(Position=1)]
         [ValidateNotNullOrEmpty()]
         [Uri]
         $SourceLocation,
-
 
         [Parameter()]
         [ValidateNotNullOrEmpty()]
@@ -5925,6 +5965,50 @@ function Set-PSGetSettingsVariable
     }   
 }
 
+function Set-PSGalleryRepository
+{
+    [CmdletBinding()]
+    param([switch]$Trusted)
+
+    $psgalleryLocation = Resolve-Location -Location $Script:PSGallerySourceUri `
+                                          -LocationParameterName 'SourceLocation' `
+                                          -ErrorAction SilentlyContinue `
+                                          -WarningAction SilentlyContinue
+
+    $scriptSourceLocation = Resolve-Location -Location $Script:PSGalleryScriptSourceUri `
+                                             -LocationParameterName 'ScriptSourceLocation' `
+                                             -ErrorAction SilentlyContinue `
+                                             -WarningAction SilentlyContinue
+    if($psgalleryLocation)
+    {
+        $result = Ping-Endpoint -Endpoint $Script:PSGalleryPublishUri -AllowAutoRedirect:$false
+        if ($result.ContainsKey($Script:ResponseUri) -and $result[$Script:ResponseUri])
+        {   
+                $script:PSGalleryPublishUri = $result[$Script:ResponseUri]                    
+        }
+
+        $repository = Microsoft.PowerShell.Utility\New-Object PSCustomObject -Property ([ordered]@{
+                Name = $Script:PSGalleryModuleSource
+                SourceLocation =  $psgalleryLocation
+                PublishLocation = $Script:PSGalleryPublishUri
+                ScriptSourceLocation = $scriptSourceLocation
+                ScriptPublishLocation = $Script:PSGalleryPublishUri
+                Trusted=$Trusted
+                Registered=$true
+                InstallationPolicy = if($Trusted) {'Trusted'} else {'Untrusted'}
+                PackageManagementProvider=$script:NuGetProviderName
+                ProviderOptions = @{}
+            })
+
+        $repository.PSTypeNames.Insert(0, "Microsoft.PowerShell.Commands.PSRepository")
+        $script:PSGetModuleSources[$Script:PSGalleryModuleSource] = $repository
+        
+        Save-ModuleSources
+
+        return $repository
+    }
+}
+
 function Set-ModuleSourcesVariable
 {
     [CmdletBinding()]
@@ -5943,39 +6027,7 @@ function Set-ModuleSourcesVariable
 
             if(-not $script:PSGetModuleSources.Contains($Script:PSGalleryModuleSource))
             {
-                $isPersistRequired = $true
-                $psgalleryLocation = Resolve-Location -Location $Script:PSGallerySourceUri `
-                                                      -LocationParameterName 'SourceLocation' `
-                                                      -ErrorAction SilentlyContinue `
-                                                      -WarningAction SilentlyContinue
-
-                $scriptSourceLocation = Resolve-Location -Location $Script:PSGalleryScriptSourceUri `
-                                                         -LocationParameterName 'ScriptSourceLocation' `
-                                                         -ErrorAction SilentlyContinue `
-                                                         -WarningAction SilentlyContinue
-                if($psgalleryLocation)
-                {
-                    $result = Ping-Endpoint -Endpoint $Script:PSGalleryPublishUri -AllowAutoRedirect:$false
-                    if ($result.ContainsKey($Script:ResponseUri) -and $result[$Script:ResponseUri])
-                    {   
-                            $script:PSGalleryPublishUri = $result[$Script:ResponseUri]                    
-                    }
-                    $moduleSource = Microsoft.PowerShell.Utility\New-Object PSCustomObject -Property ([ordered]@{
-                            Name = $Script:PSGalleryModuleSource
-                            SourceLocation =  $psgalleryLocation
-                            PublishLocation = $Script:PSGalleryPublishUri
-                            ScriptSourceLocation = $scriptSourceLocation
-                            ScriptPublishLocation = $Script:PSGalleryPublishUri
-                            Trusted=$false
-                            Registered=$true
-                            InstallationPolicy = 'Untrusted'
-                            PackageManagementProvider=$script:NuGetProviderName
-                            ProviderOptions = @{}
-                        })
-
-                    $moduleSource.PSTypeNames.Insert(0, "Microsoft.PowerShell.Commands.PSRepository")
-                    $script:PSGetModuleSources.Add($Script:PSGalleryModuleSource, $moduleSource)
-                }
+                $null = Set-PSGalleryRepository
             }
         }
 
@@ -7552,7 +7604,7 @@ function Publish-PSArtifactUtility
         Microsoft.PowerShell.Management\Remove-Item $NupkgPath  -Force -ErrorAction SilentlyContinue -WarningAction SilentlyContinue -Confirm:$false -WhatIf:$false
         Microsoft.PowerShell.Management\Remove-Item $NuspecPath -Force -ErrorAction SilentlyContinue -WarningAction SilentlyContinue -Confirm:$false -WhatIf:$false
             
-        Microsoft.PowerShell.Management\Set-Content -Value $nuspec -Path $NuspecPath
+        Microsoft.PowerShell.Management\Set-Content -Value $nuspec -Path $NuspecPath -Force -Confirm:$false -WhatIf:$false
 
         # Create .nupkg file
         $output = & $script:NuGetExePath pack $NuspecPath -OutputDirectory $NugetPackageRoot
@@ -7950,15 +8002,14 @@ function Get-DynamicOptions
 
     Write-Output -InputObject (New-DynamicOption -Category $category -Name $script:PackageManagementProviderParam -ExpectedType String -IsRequired $false)
 
-    Write-Output -InputObject (New-DynamicOption -Category $category `
-                                                 -Name $script:PSArtifactType `
-                                                 -ExpectedType String `
-                                                 -IsRequired $false `
-                                                 -PermittedValues @($script:PSArtifactTypeModule,$script:PSArtifactTypeScript, $script:All))
-
     switch($category)
     {
         Package {
+                    Write-Output -InputObject (New-DynamicOption -Category $category `
+                                                                 -Name $script:PSArtifactType `
+                                                                 -ExpectedType String `
+                                                                 -IsRequired $false `
+                                                                 -PermittedValues @($script:PSArtifactTypeModule,$script:PSArtifactTypeScript, $script:All))
                     Write-Output -InputObject (New-DynamicOption -Category $category -Name $script:Filter -ExpectedType String -IsRequired $false)
                     Write-Output -InputObject (New-DynamicOption -Category $category -Name $script:Tag -ExpectedType StringArray -IsRequired $false)
                     Write-Output -InputObject (New-DynamicOption -Category $category -Name Includes -ExpectedType StringArray -IsRequired $false -PermittedValues $script:IncludeValidSet)
@@ -7975,6 +8026,11 @@ function Get-DynamicOptions
 
         Install 
                 {
+                    Write-Output -InputObject (New-DynamicOption -Category $category `
+                                                                 -Name $script:PSArtifactType `
+                                                                 -ExpectedType String `
+                                                                 -IsRequired $false `
+                                                                 -PermittedValues @($script:PSArtifactTypeModule,$script:PSArtifactTypeScript, $script:All))
                     Write-Output -InputObject (New-DynamicOption -Category $category -Name "Scope" -ExpectedType String -IsRequired $false -PermittedValues @("CurrentUser","AllUsers"))
                     Write-Output -InputObject (New-DynamicOption -Category $category -Name "InstallUpdate" -ExpectedType Switch -IsRequired $false)
                     Write-Output -InputObject (New-DynamicOption -Category $category -Name 'NoPathUpdate' -ExpectedType Switch -IsRequired $false)
@@ -8000,6 +8056,11 @@ function Add-PackageSource
     Write-Debug ($LocalizedData.ProviderApiDebugMessage -f ('Add-PackageSource'))
 
     Set-ModuleSourcesVariable -Force
+
+    if(-not $Name)
+    {
+        return
+    }
 
     $IsNewModuleSource = $false
     $Options = $request.Options
@@ -8047,6 +8108,17 @@ function Add-PackageSource
     $PublishLocation = $null
     if($Options.ContainsKey($script:PublishLocation))
     {
+        if($Name -eq $Script:PSGalleryModuleSource)
+        {
+            $message = $LocalizedData.ParameterIsNotAllowedWithPSGallery -f ('PublishLocation')
+            ThrowError -ExceptionName "System.ArgumentException" `
+                       -ExceptionMessage $message `
+                       -ErrorId 'ParameterIsNotAllowedWithPSGallery' `
+                       -CallerPSCmdlet $PSCmdlet `
+                       -ErrorCategory InvalidArgument `
+                       -ExceptionObject $PublishLocation
+        }
+
         $PublishLocation = $Options[$script:PublishLocation]
 
         if(-not (Microsoft.PowerShell.Management\Test-Path $PublishLocation) -and
@@ -8079,6 +8151,17 @@ function Add-PackageSource
     $ScriptSourceLocation = $null
     if($Options.ContainsKey($script:ScriptSourceLocation))
     {
+        if($Name -eq $Script:PSGalleryModuleSource)
+        {
+            $message = $LocalizedData.ParameterIsNotAllowedWithPSGallery -f ('ScriptSourceLocation')
+            ThrowError -ExceptionName "System.ArgumentException" `
+                       -ExceptionMessage $message `
+                       -ErrorId 'ParameterIsNotAllowedWithPSGallery' `
+                       -CallerPSCmdlet $PSCmdlet `
+                       -ErrorCategory InvalidArgument `
+                       -ExceptionObject $ScriptSourceLocation
+        }
+
         $ScriptSourceLocation = $Options[$script:ScriptSourceLocation]
 
         if(-not (Microsoft.PowerShell.Management\Test-Path $ScriptSourceLocation) -and
@@ -8111,6 +8194,17 @@ function Add-PackageSource
     $ScriptPublishLocation = $null
     if($Options.ContainsKey($script:ScriptPublishLocation))
     {
+        if($Name -eq $Script:PSGalleryModuleSource)
+        {
+            $message = $LocalizedData.ParameterIsNotAllowedWithPSGallery -f ('ScriptPublishLocation')
+            ThrowError -ExceptionName "System.ArgumentException" `
+                       -ExceptionMessage $message `
+                       -ErrorId 'ParameterIsNotAllowedWithPSGallery' `
+                       -CallerPSCmdlet $PSCmdlet `
+                       -ErrorCategory InvalidArgument `
+                       -ExceptionObject $ScriptPublishLocation
+        }
+
         $ScriptPublishLocation = $Options[$script:ScriptPublishLocation]
 
         if(-not (Microsoft.PowerShell.Management\Test-Path $ScriptPublishLocation) -and
@@ -8140,10 +8234,53 @@ function Add-PackageSource
         }
     }
 
-    # Ping and resolve the specified location
-    $Location = Resolve-Location -Location $Location `
-                                 -LocationParameterName 'Location' `
-                                 -CallerPSCmdlet $PSCmdlet
+    $currentSourceObject = $null
+
+    # Check if Name is already registered
+    if($script:PSGetModuleSources.Contains($Name))
+    {
+        $currentSourceObject = $script:PSGetModuleSources[$Name]
+    }
+
+    # Location is not allowed for PSGallery source
+    # However OneGet passes Location value during Set-PackageSource cmdlet, 
+    # that's why ensuring that Location value is same as the current SourceLocation
+    #
+    if(($Name -eq $Script:PSGalleryModuleSource) -and 
+       $Location -and
+       ((-not $IsUpdatePackageSource) -or ($currentSourceObject -and $currentSourceObject.SourceLocation -ne $Location)))
+    {
+        $message = $LocalizedData.ParameterIsNotAllowedWithPSGallery -f ('Location, NewLocation or SourceLocation')
+        ThrowError -ExceptionName "System.ArgumentException" `
+                   -ExceptionMessage $message `
+                   -ErrorId 'ParameterIsNotAllowedWithPSGallery' `
+                   -CallerPSCmdlet $PSCmdlet `
+                   -ErrorCategory InvalidArgument `
+                   -ExceptionObject $Location
+    }
+
+    if($Name -eq $Script:PSGalleryModuleSource)
+    {
+        # Add or update the PSGallery repostory
+        $repository = Set-PSGalleryRepository -Trusted:$Trusted
+
+        if($repository)
+        {
+            # return the package source object.
+            Write-Output -InputObject (New-PackageSourceFromModuleSource -ModuleSource $repository)
+        }
+
+        return
+    }
+
+    if($Location)
+    {
+        # Ping and resolve the specified location
+        $Location = Resolve-Location -Location $Location `
+                                     -LocationParameterName 'Location' `
+                                     -CallerPSCmdlet $PSCmdlet
+    }
+
     if(-not $Location)
     {
         # Above Resolve-Location function throws an error when it is not able to resolve a location
@@ -8202,14 +8339,6 @@ function Add-PackageSource
                    -ErrorId "RepositoryAlreadyRegistered" `
                    -CallerPSCmdlet $PSCmdlet `
                    -ErrorCategory InvalidArgument
-    }
-    
-    $currentSourceObject = $null
-
-    # Check if Name is already registered
-    if($script:PSGetModuleSources.Contains($Name))
-    {
-        $currentSourceObject = $script:PSGetModuleSources[$Name]
     }
     
     if(-not $PublishLocation -and $currentSourceObject -and $currentSourceObject.PublishLocation)
@@ -10632,7 +10761,6 @@ function New-SoftwareIdentityFromPackage
 	}
 	
     $details.Add( "PackageManagementProvider" , $PackageManagementProviderName )
-    $details.Add( "Type" , $Type )
 
     if($InstalledLocation)
     {

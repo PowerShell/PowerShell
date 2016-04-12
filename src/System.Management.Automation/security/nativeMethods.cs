@@ -2144,33 +2144,8 @@ namespace System.Management.Automation.Security
         [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]
         internal static extern IntPtr CryptCATStoreFromHandle(
             IntPtr hCatalog
-        );
-
-        [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]
-        internal static extern bool CryptCATAdminAcquireContext2(
-            ref IntPtr phCatAdmin,
-            IntPtr pgSubsystem,
-            [MarshalAs(UnmanagedType.LPWStr)]
-            string pwszHashAlgorithm,
-            IntPtr pStrongHashPolicy,
-            DWORD dwFlags
-        );
-
-        [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]
-        internal static extern bool CryptCATAdminReleaseContext(
-            IntPtr phCatAdmin,
-            DWORD dwFlags
-        );
-
-        [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]
-        internal static extern bool CryptCATAdminCalcHashFromFileHandle2(
-         IntPtr hCatAdmin,
-                SafeFileHandle hFile,
-                [In, Out] ref DWORD pcbHash,
-                IntPtr pbHash,
-                DWORD dwFlags
-            );
-
+        );     
+        
         [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]
         internal static extern IntPtr CryptCATEnumerateMember(
                 IntPtr hCatalog,
