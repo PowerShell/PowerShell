@@ -59,16 +59,8 @@ Git Setup
 ---------
 
 Using Git requires it to be setup correctly; refer to the
+[README](../../README.md) and
 [Contributing Guidelines](../../CONTRIBUTING.md).
-
-Please clone the superproject (this repo) and initialize a subset of
-the submodules:
-
-```sh
-git clone https://github.com/PowerShell/PowerShell.git
-cd PowerShell
-git submodule update --init -- src/windows-build src/Modules/Pester src/libpsl-native/test/googletest
-```
 
 Build using our module
 ======================
