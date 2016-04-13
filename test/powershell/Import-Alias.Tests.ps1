@@ -1,5 +1,5 @@
 Describe "Import-Alias DRT Unit Tests" -Tags DRT{
-    $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ExportAliasTestDirectory
+    $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
     $testAliases        = "TestAliases"
     $fulltestpath       = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
 
@@ -60,7 +60,24 @@ Describe "Import-Alias DRT Unit Tests" -Tags DRT{
 }
 
 Describe "Import-Alias" {
-    $pesteraliasfile = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath pesteralias.txt
+	$newLine=[Environment]::NewLine
+	$testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
+    $testAliases        = "pesteralias.txt"
+    $pesteraliasfile       = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
+	
+	BeforeEach {
+		New-Item -Path $testAliasDirectory -ItemType Directory -Force
+	
+		$pesteraliascontent ='# Alias File'+$newLine
+		$pesteraliascontent+='# Exported by : alex'+$newLine
+		$pesteraliascontent+='# Date/Time : Thursday, 12 November 2015 21:55:08'+$newLine
+		$pesteraliascontent+='# Computer : archvm'+$newLine+'"pesterecho","echo","","None"'
+		$pesteraliascontent > $pesteraliasfile
+	}
+	
+	AfterEach {
+		Remove-Item -Path $testAliasDirectory -Recurse -Force
+	}
 
 	It "Should be able to import an alias file successfully" {
 	    { Import-Alias $pesteraliasfile } | Should Not throw
