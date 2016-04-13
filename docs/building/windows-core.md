@@ -38,7 +38,6 @@ The `Start-PSBootstrap` function itself does exactly this:
 ```powershell
 Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
 ./install.ps1
-$env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli"
 ```
 
 If you have any problems installing `dotnet`, please see their

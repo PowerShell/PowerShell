@@ -23,6 +23,7 @@ try {
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName='CoreCLR')]
     param(
+        [switch]$NoPath,
         [switch]$Restore,
 
         [Parameter(ParameterSetName='CoreCLR')]
@@ -57,6 +58,15 @@ function Start-PSBuild {
         $FullCLR = $true
     }
 
+    if (-not $NoPath) {
+        Write-Verbose "Appending probable .NET CLI tool path"
+        if ($IsWindows) {
+            $env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli"
+        } elseif ($IsOSX) {
+            $env:PATH += ":/usr/local/share/dotnet"
+        }
+    }
+
     # verify we have all tools in place to do the build
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH! See: https://dotnet.github.io/getting-started/"
     if ($FullCLR) {
@@ -65,7 +75,8 @@ function Start-PSBuild {
 
         # msbuild is needed to build powershell.exe
         # msbuild is part of .NET Framework, we can try to get it from well-known location.
-        if (-not (Get-Command -Name msbuild -ErrorAction Ignore)) {
+        if (-nopt $NoPath -and -not (Get-Command -Name msbuild -ErrorAction Ignore)) {
+            Write-Verbose "Appending probable Visual C++ tools path"
             $env:path += ";${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319"
         }
 
@@ -301,10 +312,11 @@ function Start-PSBootstrap {
         Remove-Item dotnet*.pkg
         wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-dev-osx-x64.latest.pkg
         sudo installer -pkg dotnet-dev-osx-x64.latest.pkg -target /
+
     } elseif ($IsWindows -And -Not $IsCore) {
         Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
         ./install.ps1
-        $env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli"
+
     } else {
         Write-Warning "Start-PSBootstrap cannot be run in Core PowerShell on Windows (need Invoke-WebRequest!)"
     }
