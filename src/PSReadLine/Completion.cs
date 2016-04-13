@@ -24,7 +24,9 @@ namespace Microsoft.PowerShell
         private Runspace _runspace;
 
         // Stub helper method so completion can be mocked
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         CommandCompletion IPSConsoleReadLineMockableMethods.CompleteInput(string input, int cursorIndex, Hashtable options, System.Management.Automation.PowerShell powershell)
         {
             return CalloutUsingDefaultConsoleMode(

@@ -10,7 +10,7 @@
 
 namespace Microsoft.PowerShell {
     using System;
-    
+    using System.Reflection;
     
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.PowerShell.PSReadLineResources", typeof(PSReadLineResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PSReadLine.PSReadLineResources", typeof(PSReadLineResources).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
