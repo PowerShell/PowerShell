@@ -9,6 +9,7 @@ namespace Microsoft.PowerShell.CoreConsoleHost
     using System.Text;
     using System.IO;
     using System.Runtime.InteropServices;
+    using System.Linq;
     using PowerShell = System.Management.Automation.PowerShell;
 
     public static class Program
@@ -562,25 +563,76 @@ OPTIONS
 
                 this.myHost.UI.Write(prompt);
 
-                ConsoleReadLine.ReadResult result = consoleReadLine.Read(false, initialCommand);
-                
-                switch(result.state)
+                string input;
+                if (TryInvokeUserDefinedReadLine(out input, true))
                 {
-                    case ConsoleReadLine.ReadResult.State.Abort:
-                        incompleteLine = false;
-                        partialLine = string.Empty;
-                        initialCommand = String.Empty;
-                        break;
-                    case ConsoleReadLine.ReadResult.State.Redraw:
-                        initialCommand = result.command;
-                        break;
-                    case ConsoleReadLine.ReadResult.State.Complete:
-                    default:
-                        this.Execute(result.command);
-                        initialCommand = String.Empty;
-                        break;
+                    this.Execute(input);
+                }
+                else
+                {
+                    ConsoleReadLine.ReadResult result = consoleReadLine.Read(false, initialCommand);
+                
+                    switch(result.state)
+                    {
+                        case ConsoleReadLine.ReadResult.State.Abort:
+                            incompleteLine = false;
+                            partialLine = string.Empty;
+                            initialCommand = String.Empty;
+                            break;
+                        case ConsoleReadLine.ReadResult.State.Redraw:
+                            initialCommand = result.command;
+                            break;
+                        case ConsoleReadLine.ReadResult.State.Complete:
+                        default:
+                            this.Execute(result.command);
+                            initialCommand = String.Empty;
+                            break;
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        ///   Helper function to test if PSReadLine or another alternate ReadLine has been loaded
+        /// </summary>
+        const string CustomReadlineCommand = "PSConsoleHostReadLine";
+        private bool TryInvokeUserDefinedReadLine(out string input, bool useUserDefinedCustomReadLine)
+        {
+            if (useUserDefinedCustomReadLine)
+            {
+                var runspace = this.myHost.Runspace;
+                if (runspace != null
+                    && runspace.ExecutionContext.EngineIntrinsics.InvokeCommand.GetCommands(CustomReadlineCommand, CommandTypes.Function | CommandTypes.Cmdlet, nameIsPattern: false).Any())
+                {
+                    try
+                    {
+                        PowerShell ps;
+                        if ((runspace.ExecutionContext.EngineHostInterface.NestedPromptCount > 0) && (Runspace.DefaultRunspace != null))
+                        {
+                            ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
+                        }
+                        else
+                        {
+                            ps = PowerShell.Create();
+                            ps.Runspace = runspace;
+                        }
+
+                        var result = ps.AddCommand(CustomReadlineCommand).Invoke();
+                        if (result.Count == 1)
+                        {
+                            input = PSObject.Base(result[0]) as string;
+                            return true;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        CommandProcessorBase.CheckForSevereException(e);
+                    }
+                }
+            }
+
+            input = null;
+            return false;
         }
 
         /// <summary>
