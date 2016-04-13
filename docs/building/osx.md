@@ -11,22 +11,14 @@ Environment
 ===========
 
 You will want [Homebrew](http://brew.sh/), the missing package manager
-for OS X. Once installed, use `brew` to install the following
-dependencies.
+for OS X. Once installed, follow the same instructions to download and
+install a self-hosted copy of PowerShell on your OS X machine, and use
+`Start-PSBootstrap` to install the dependencies.
 
-```sh
-brew install openssl cmake wget
-```
+The `Start-PSBootstrap` function does the following:
 
-Instead of using Linux `./bootstrap.sh` to install .NET CLI's Ubuntu
-packages, you will want to use the official PKG installer for OS X.
-
-```sh
-wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-dev-osx-x64.latest.pkg
-open ./dotnet-dev-osx-x64.latest.pkg
-```
-
-Then follow the wizard's instructions to complete installation.
+- Uses `brew` to install CMake, OpenSSL, and GNU WGet
+- Downloads and installs the latest .NET CLI package
 
 Build using our module
 ======================

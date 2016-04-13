@@ -10,6 +10,16 @@ Environment
 These instructions are written assuming the Ubuntu 14.04 LTS, since
 that's the distro the team uses.
 
+Git Setup
+---------
+
+Using Git requires it to be setup correctly; refer to the
+[README](../../README.md) and
+[Contributing Guidelines](../../CONTRIBUTING.md).
+
+This guide assumes that you have recursively cloned the PowerShell
+repository and `cd`ed into it.
+
 Toolchain Setup
 ---------------
 
@@ -26,16 +36,46 @@ Unfortunately, the `apt-get` feed for `dotnet` has been deprecated,
 and the latest version is only distributed in the form of three
 separate packages, which require manual dependency resolution.
 
-**To ease this process, just run `./bootstrap.sh` and enter password
-for `sudo` when prompted.**
+Installing the toolchain is as easy as running `Start-PSBootstrap` in
+PowerShell. Of course, this requires a self-hosted copy of PowerShell
+on Linux.
 
-The [bootstrap script](../../bootstrap.sh) does the following:
+Fortunately, this is as easy as downloading and installing the
+package. Unfortunately, while the repository is still private, the
+package cannot be downloaded as simply as with `wget`. We have a
+script that wraps the GitHub API and uses a personal access token to
+authorize in order to obtain the package.
+
+The `./download.sh` script will also install the PowerShell package.
+
+> You can alternativelly download via a browser, upload it to your
+> box via some other method, and manually install it.
+
+In Bash:
+
+```sh
+GITHUB_TOKEN=<replace with your token> ./download.sh
+powershell
+```
+
+You should now be in a `powershell` console host that is installed
+separately from any development copy you're about to build. Just
+import our module, bootsrap the dependencies, and build!
+
+In PowerShell:
+
+```powershell
+Import-Module ./PowerShellGitHubDev.psm1
+Start-PSBootstrap
+```
+
+The `Start-PSBootstrap` function does the following:
 
 - Adds the LLVM package feed
 - Installs our dependencies combined with the dependencies of the .NET
   CLI toolchain via `apt-get`
 - Installs the .NET CLI host, shared framework, and SDK by downloading
-  the three `.deb` packages to `/tmp` and using `dpkg -i`
+  the three `.deb` packages and using `dpkg -i`
 
 [dotnet-cli]: https://github.com/dotnet/cli#new-to-net-cli
 [CMake]: https://cmake.org/cmake/help/v2.8.12/cmake.html
@@ -55,36 +95,13 @@ uninstall prior any prior versions.
 
 [cli-docs]: https://dotnet.github.io/getting-started/
 
-Git Setup
----------
-
-Using Git requires it to be setup correctly; refer to the
-[README](../../README.md) and
-[Contributing Guidelines](../../CONTRIBUTING.md).
-
 Build using our module
 ======================
 
 We maintain a [PowerShell module](../../PowerShellGitHubDev.psm1) with
 the function `Start-PSBuild` to build PowerShell. Since this is
-PowerShell code, it requires self-hosting. Fortunately, this is as
-easy as downloading and installing the package. Unfortunately, while
-the repository is still private, the package cannot be downloaded as
-simply as with `wget`. We have a script that wraps the GitHub API and
-uses a personal access token to authorize and obtain the package.
-
-> You can alternativelly download via a browser and upload it to your
-> box via some other method.
-
-```sh
-GITHUB_TOKEN=<replace with your token> ./download.sh
-sudo dpkg -i ./powershell.deb
-powershell
-```
-
-You should now be in a `powershell` console host that is installed
-separately from any development copy you're about to build. Just
-import our module and build!
+PowerShell code, it requires self-hosting. If you have followed the
+toolchain setup section above, you should have `powershell` installed.
 
 > If you cannot or do not want to self-host, `Start-PSBuild` is just a
 > convenience; you can execute each step of the build process yourself
@@ -98,8 +115,6 @@ Start-PSBuild
 Congratulations! If everything went right, PowerShell is now built.
 The `Start-PSBuild` script will output the location of the executable:
 `./src/Microsoft.PowerShell.CoreConsoleHost/bin/Linux/netstandardapp1.5/ubuntu.14.04-x64/powershell`.
-
-> Note that the `./build.sh` script is deprecated and will be removed
 
 You can run our cross-platform Pester tests with `Start-PSPester`, and
 our xUnit tests with `Start-PSxUnit`.
