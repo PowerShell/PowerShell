@@ -19,6 +19,11 @@ The `Start-PSBootstrap` function does the following:
 
 - Uses `brew` to install CMake, OpenSSL, and GNU WGet
 - Downloads and installs the latest .NET CLI package
+- Adds `/usr/local/share/dotnet` to the process path
+
+Please heed that last step. You may want to add the .NET CLI tool
+location to your path more permanently by adding it to your shell's
+profile.
 
 Build using our module
 ======================
