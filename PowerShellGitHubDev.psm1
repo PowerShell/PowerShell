@@ -277,7 +277,7 @@ function Start-PSBootstrap {
         sudo apt-get update -qq
 
         # Install ours and .NET's dependencies
-        sudo apt-get install -y wget make g++ cmake libc6 libgcc1 libstdc++6 libcurl3 libgssapi-krb5-2 libicu52 liblldb-3.6 liblttng-ust0 libssl1.0.0 libunwind8 libuuid1 zlib1g clang-3.5
+        sudo apt-get install -y make g++ cmake libc6 libgcc1 libstdc++6 libcurl3 libgssapi-krb5-2 libicu52 liblldb-3.6 liblttng-ust0 libssl1.0.0 libunwind8 libuuid1 zlib1g clang-3.5
 
         # Install .NET CLI packages
         Remove-Item dotnet*.deb

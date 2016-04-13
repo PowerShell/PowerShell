@@ -7,6 +7,8 @@ case "$OSTYPE" in
     linux*)
         asset='1536045'
         package='powershell_0.3.0-1_amd64.deb'
+        # Install curl and wget to download package
+        sudo apt-get install -y curl wget
         ;;
     darwin*)
         asset='1536063'
@@ -30,6 +32,8 @@ curl -s -i \
 # Installs PowerShell package
 case "$OSTYPE" in
     linux*)
+        # Install dependencies
+        sudo apt-get install -y libunwind8 libicu52
         sudo dpkg -i ./$package
         ;;
     darwin*)
