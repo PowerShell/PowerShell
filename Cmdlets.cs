@@ -10,6 +10,9 @@ using System.Management.Automation;
 using System.Management.Automation.Language;
 using System.Reflection;
 using System.Linq;
+#if CORECLR
+using System.Runtime.InteropServices;
+#endif
 
 namespace Microsoft.PowerShell
 {
@@ -82,6 +85,7 @@ namespace Microsoft.PowerShell
         public const ConsoleColor DefaultEmphasisForegroundColor  = ConsoleColor.Cyan;
         public const ConsoleColor DefaultErrorForegroundColor     = ConsoleColor.Red;
 
+
         public const EditMode DefaultEditMode = EditMode.Windows;
 
         public const string DefaultContinuationPrompt = ">> ";
@@ -151,8 +155,24 @@ namespace Microsoft.PowerShell
             WordDelimiters = DefaultWordDelimiters;
             HistorySearchCaseSensitive = DefaultHistorySearchCaseSensitive;
             HistorySaveStyle = DefaultHistorySaveStyle;
+#if CORECLR
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))   // MS Windows
+            {
+                HistorySavePath = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%AppData%"),
+                                                         @"\Microsoft\Windows\PowerShell\PSReadline\",
+                                                         hostName + "_history.txt");
+            }
+            else
+            {
+                HistorySavePath = System.IO.Path.Combine(
+                                                         Environment.GetEnvironmentVariable("HOME"), 
+                                                         ".psreadline", 
+                                                         hostName + "_history.txt");
+            }
+#else
             HistorySavePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
                 + @"\Microsoft\Windows\PowerShell\PSReadline\" + hostName + "_history.txt";
+#endif
             CommandValidationHandler = null;
             CommandsToValidateScriptBlockArguments = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -346,7 +366,9 @@ namespace Microsoft.PowerShell
     [OutputType(typeof(PSConsoleReadlineOptions))]
     public class GetPSReadlineOption : PSCmdlet
     {
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         protected override void EndProcessing()
         {
             WriteObject(PSConsoleReadLine.GetOptions());
@@ -589,7 +611,9 @@ namespace Microsoft.PowerShell
         }
         internal ConsoleColor? _backgroundColor;
 
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         protected override void EndProcessing()
         {
             PSConsoleReadLine.SetOptions(this);
@@ -607,7 +631,9 @@ namespace Microsoft.PowerShell
         [Parameter]
         public ViMode ViMode { get; set; }
 
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         protected IDisposable UseRequestedDispatchTables()
         {
             bool inViMode = PSConsoleReadLine.GetOptions().EditMode == EditMode.Vi;
@@ -650,7 +676,9 @@ namespace Microsoft.PowerShell
         private const string FunctionParameter = "Function";
         private const string FunctionParameterSet = "Function";
 
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         protected override void EndProcessing()
         {
             using (UseRequestedDispatchTables())
@@ -658,9 +686,16 @@ namespace Microsoft.PowerShell
                 if (ParameterSetName.Equals(FunctionParameterSet))
                 {
                     var function = (string)_dynamicParameters.Value[FunctionParameter].Value;
+#if CORECLR
+                    MethodInfo mi = typeof (PSConsoleReadLine).GetMethod(function);
+                    var keyHandler = (Action<ConsoleKeyInfo?, object>)
+                        mi.CreateDelegate(typeof (Action<ConsoleKeyInfo?, object>));
+                            
+#else
                     var keyHandler = (Action<ConsoleKeyInfo?, object>)
                         Delegate.CreateDelegate(typeof (Action<ConsoleKeyInfo?, object>),
                             typeof (PSConsoleReadLine).GetMethod(function));
+#endif
                     BriefDescription = function;
                     PSConsoleReadLine.SetKeyHandler(Chord, keyHandler, BriefDescription, Description);
                 }
@@ -728,7 +763,9 @@ namespace Microsoft.PowerShell
         }
         private SwitchParameter? _unbound;
 
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         protected override void EndProcessing()
         {
             bool bound = true;
@@ -755,7 +792,9 @@ namespace Microsoft.PowerShell
     [Cmdlet("Remove", "PSReadlineKeyHandler", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=528809")]
     public class RemoveKeyHandlerCommand : ChangePSReadlineKeyHandlerCommandBase
     {
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         protected override void EndProcessing()
         {
             using (UseRequestedDispatchTables())

@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell
         public static IEnumerable<Microsoft.PowerShell.KeyHandler> GetKeyHandlers(bool includeBound = true, bool includeUnbound = false)
         {
             var boundFunctions = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
+            
             foreach (var entry in _singleton._dispatchTable)
             {
                 if (entry.Value.BriefDescription == "Ignore"

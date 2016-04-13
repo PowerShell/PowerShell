@@ -133,9 +133,11 @@ namespace Microsoft.PowerShell
                 { Keys.CtrlSpace,              MakeKeyHandler(MenuComplete,              "MenuComplete") },
                 { Keys.Tab,                    MakeKeyHandler(TabCompleteNext,           "TabCompleteNext") },
                 { Keys.ShiftTab,               MakeKeyHandler(TabCompletePrevious,       "TabCompletePrevious") },
+#if !CORECLR
                 { Keys.VolumeDown,             MakeKeyHandler(Ignore,                    "Ignore") },
                 { Keys.VolumeUp,               MakeKeyHandler(Ignore,                    "Ignore") },
                 { Keys.VolumeMute,             MakeKeyHandler(Ignore,                    "Ignore") },
+#endif
                 { Keys.CtrlA,                  MakeKeyHandler(SelectAll,                 "SelectAll") },
                 { Keys.CtrlC,                  MakeKeyHandler(CopyOrCancelLine,          "CopyOrCancelLine") },
                 { Keys.CtrlShiftC,             MakeKeyHandler(Copy,                      "Copy") },
@@ -252,9 +254,11 @@ namespace Microsoft.PowerShell
                 { Keys.AltPeriod,       MakeKeyHandler(YankLastArg,          "YankLastArg") },
                 { Keys.AltUnderbar,     MakeKeyHandler(YankLastArg,          "YankLastArg") },
                 { Keys.AltCtrlY,        MakeKeyHandler(YankNthArg,           "YankNthArg") },
+#if !CORECLR
                 { Keys.VolumeDown,      MakeKeyHandler(Ignore,               "Ignore") },
                 { Keys.VolumeUp,        MakeKeyHandler(Ignore,               "Ignore") },
                 { Keys.VolumeMute,      MakeKeyHandler(Ignore,               "Ignore") },
+#endif
                 { Keys.PageUp,          MakeKeyHandler(ScrollDisplayUp,      "ScrollDisplayUp") },
                 { Keys.CtrlPageUp,      MakeKeyHandler(ScrollDisplayUpLine,  "ScrollDisplayUpLine") },
                 { Keys.PageDown,        MakeKeyHandler(ScrollDisplayDown,    "ScrollDisplayDown") },

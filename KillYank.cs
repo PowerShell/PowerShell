@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Language;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 
 namespace Microsoft.PowerShell
 {
@@ -476,6 +476,7 @@ namespace Microsoft.PowerShell
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static void Paste(ConsoleKeyInfo? key = null, object arg = null)
         {
+#if !CORECLR
             string textToPaste = null;
             ExecuteOnSTAThread(() => {
                 if (Clipboard.ContainsText())
@@ -498,6 +499,7 @@ namespace Microsoft.PowerShell
                     Insert(textToPaste);
                 }
             }
+#endif
         }
 
         /// <summary>
@@ -506,6 +508,7 @@ namespace Microsoft.PowerShell
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static void Copy(ConsoleKeyInfo? key = null, object arg = null)
         {
+#if !CORECLR
             string textToSet;
             if (_singleton._visualSelectionCommandCount > 0)
             {
@@ -521,6 +524,7 @@ namespace Microsoft.PowerShell
             {
                 ExecuteOnSTAThread(() => Clipboard.SetText(textToSet));
             }
+#endif
         }
 
         /// <summary>
@@ -545,6 +549,7 @@ namespace Microsoft.PowerShell
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static void Cut(ConsoleKeyInfo? key = null, object arg = null)
         {
+#if !CORECLR
             if (_singleton._visualSelectionCommandCount > 0)
             {
                 int start, length;
@@ -552,6 +557,7 @@ namespace Microsoft.PowerShell
                 ExecuteOnSTAThread(() => Clipboard.SetText(_singleton._buffer.ToString(start, length)));
                 Delete(start, length);
             }
+#endif
         }
     }
 }

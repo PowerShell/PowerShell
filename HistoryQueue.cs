@@ -9,7 +9,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.PowerShell
 {
-    [ExcludeFromCodeCoverage]
+#if !CORECLR
+        [ExcludeFromCodeCoverage]
+#endif
     internal sealed class QueueDebugView<T>
     {
         private readonly HistoryQueue<T> _queue;
@@ -114,7 +116,9 @@ namespace Microsoft.PowerShell
             return result;
         }
 
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         public T this[int index]
         {
             get
