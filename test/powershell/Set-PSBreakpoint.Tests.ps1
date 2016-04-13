@@ -1,7 +1,7 @@
 Describe "Set-PSBreakpoint DRT Unit Tests" -Tags DRT{
-    #Set up test script
+    #Set up 
     $scriptFileName = Join-Path $TestDrive -ChildPath breakpointTestScript.ps1
-    $powershell = Join-Path $PSHOME -ChildPath powershell.exe
+    $scriptFileNameBug = Join-Path -Path $TestDrive -ChildPath SetPSBreakpointTests.ExposeBug154112.ps1
     
     $contents = @"
 function Hello
@@ -26,51 +26,67 @@ Goodbye
 return 
 "@
 
+    $contentsBug = @" 
+set-psbreakpoint -variable foo 
+set-psbreakpoint -command foo 
+"@ 
+    
     $contents > $scriptFileName
+    $contentsBug > $scriptFileNameBug
 
 
-    It "Should be able to set psbreakpoints for line" {
-        $lineNum = 13
-        $columnNum = 1
-        $action = "break"
-
-        $brk = Set-PSBreakpoint -Line $lineNum -Script $scriptFileName
-        $brk.Line | Should Be $lineNum
+    It "Should be able to set psbreakpoints for -Line" {
+        $brk = Set-PSBreakpoint -Line 13 -Script $scriptFileName
+        $brk.Line | Should Be 13
         Remove-PSBreakPoint -Id $brk.Id
-        
+    }
 
-        $brk = set-psbreakpoint -line $lineNum -column $columnNum -script $scriptFileName
-        $brk.Line | Should Be $lineNum
-        $brk.Column | Should Be $columnNum
+    It "Should be able to set psbreakpoints for -Line and -column" {
+        $brk = set-psbreakpoint -line 13 -column 1 -script $scriptFileName
+        $brk.Line | Should Be 13
+        $brk.Column | Should Be 1
         Remove-PSBreakPoint -Id $brk.Id
+    }
 
-        $brk = set-psbreakpoint -line $lineNum -action {{ break; }} -script $scriptFileName
-        $brk.Line | Should Be $lineNum
-        $brk.Action | Should Match $action
+    It "Should be able to set psbreakpoints for -Line and -action" {
+        $brk = set-psbreakpoint -line 13 -action {{ break; }} -script $scriptFileName
+        $brk.Line | Should Be 13
+        $brk.Action | Should Match "break"
         Remove-PSBreakPoint -Id $brk.Id
+    }
 
-        $brk = set-psbreakpoint -line $lineNum -column $columnNum -action {{ break; }} -script $scriptFileName
-        $brk.Line | Should Be $lineNum
-        $brk.Column | Should Be $columnNum
-        $brk.Action | Should Match $action
+    It "Should be able to set psbreakpoints for -Line, -column and -action" {
+        $brk = set-psbreakpoint -line 13 -column 1 -action {{ break; }} -script $scriptFileName
+        $brk.Line | Should Be 13
+        $brk.Column | Should Be 1
+        $brk.Action | Should Match "break"
         Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "-script and -line can take multiple items" {
-        { sbp -line 11,12,13 -column 1 -script $scriptFileName,$scriptFileName } | Should Not Throw
-        Get-PSBreakpoint -Script $scriptFileName | Remove-PSBreakpoint
+        $brk = sbp -line 11,12,13 -column 1 -script $scriptFileName,$scriptFileName 
+        $brk.Line | Should Be 11,12,13
+        $brk.Column | Should Be 1
+        Remove-PSBreakPoint -Id $brk.Id
     }
 
+
+    It "-script and -line are positional" {
+        $brk = sbp $scriptFileName 13 
+        $brk.Line | Should Be 13
+        Remove-PSBreakPoint -Id $brk.Id
+    }
 
     It "-script, -line and -column are positional" {
-        { sbp $scriptFileName 13 } | Should Not Throw
-        Get-PSBreakpoint -Script $scriptFileName | Remove-PSBreakpoint
-
-        { sbp $scriptFileName 13 1 } | Should Not Throw
-        Get-PSBreakpoint -Script $scriptFileName | Remove-PSBreakpoint
+        $brk = sbp $scriptFileName 13 1
+        $brk.Line | Should Be 13
+        $brk.Column | Should Be 1
+        Remove-PSBreakPoint -Id $brk.Id
     }
 
-    It "Should be throw Exception when missing mandatory parameter -line" -Skip:($IsLinux -Or $IsOSX) {
+    #-Skip:($IsLinux -Or $IsOSX)
+    It "Should be throw Exception when missing mandatory parameter -line skip as bug #829" -Skip:$true {
+        $ErrorActionPreference = "Stop"
         try {
             powershell.exe -noninteractive -command 'sbp -column 1' -script $scriptFileName
             Throw "Execution OK"
@@ -78,9 +94,11 @@ return
         catch {
             $_.FullyQualifiedErrorId | Should Be "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
         }
+        $ErrorActionPreference = "SilentlyContinue"
     }
 
-    It "Should be throw Exception when missing mandatory parameter -script" -Skip:($IsLinux -Or $IsOSX) {
+    It "Should be throw Exception when missing mandatory parameter -script skip as bug #829" -Skip:$true {
+        $ErrorActionPreference = "Stop"
         try {
             powershell.exe -noninteractive -command 'sbp -line 1' 
             Throw "Execution OK" 
@@ -88,48 +106,30 @@ return
         catch {
             $_.FullyQualifiedErrorId | Should Be "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
         }
-    }
-
-        
-    It "Should be throw Exception when BUG 104306:	New-PSBreakpoint -Column should not allow numbers less than 1" {
-        try {
-            set-psbreakpoint -line 1 -column -1 -script $scriptFileName 
-            Throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
-        }
-
-    }
-
-    It "Should be throw Exception when BUG 104304:	New-PSBreakpoint -Line should not allow numbers less than 1" {
-        try {
-            set-psbreakpoint -line -1 -script $scriptFileName
-            Throw "Execution OK" 
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should Be "SetPSBreakpoint:LineLessThanOne,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
-        }
-    }
+        $ErrorActionPreference = "SilentlyContinue"
+    }      
     
-
-    It "Should be able to set psbreakpoints for command" {
+    It "Should be able to set psbreakpoints for -command" {
         $brk = set-psbreakpoint -command "write-host" 
         $brk.Command | Should Be "write-host"
         Remove-PSBreakPoint -Id $brk.Id
-
+    }
+   
+    It "Should be able to set psbreakpoints for -command, -script" {
         $brk = set-psbreakpoint -command "write-host" -script $scriptFileName 
         $brk.Command | Should Be "write-host"
-        Remove-PSBreakPoint -Id $brk.Id     
+        Remove-PSBreakPoint -Id $brk.Id
+    }     
 
+    It "Should be able to set psbreakpoints for -command, -action and -script" {
         $brk = set-psbreakpoint -command "write-host" -action {{ break; }} -script $scriptFileName 
         $brk.Action | Should Match "break"
         Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "-Command can take multiple items" {
-        $brk = set-psbreakpoint -command "write-host,Hello"
-        $brk.Command | Should Be "write-host,Hello"
+        $brk = set-psbreakpoint -command write-host,Hello
+        $brk.Command | Should Be write-host,Hello
         Remove-PSBreakPoint -Id $brk.Id
     }
 
@@ -144,21 +144,71 @@ return
     }
 
     It "Should be able to set breakpoints on functions" {
-        $brk = set-psbreakpoint -command "Hello"
-        $brk.Command | Should Be "Hello"
-        Remove-PSBreakPoint -Id $brk.Id 
-
-        $brk = set-psbreakpoint -command "Hello" -script $scriptFileName 
-        $brk.Command | Should Be "Hello"
+        $brk = set-psbreakpoint -command Hello,Goodbye -script $scriptFileName 
+        $brk.Command | Should Be Hello,Goodbye 
         Remove-PSBreakPoint -Id $brk.Id
+    }
 
-        $brk = set-psbreakpoint -command "Hello,Goodbye"
-        $brk.Command | Should Be "Hello,Goodbye" 
-        Remove-PSBreakPoint -Id $brk.Id
+    It "Should be throw Exception when Column number less than 1" {
+        try {
+            set-psbreakpoint -line 1 -column -1 -script $scriptFileName 
+            Throw "Execution OK"
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
+        }
+    }
+
+    It "Should be throw Exception when Line number less than 1" {
+        $ErrorActionPreference = "Stop"
+        try {
+            set-psbreakpoint -line -1 -script $scriptFileName
+            Throw "Execution OK" 
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should Be "SetPSBreakpoint:LineLessThanOne,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
+        }
+        $ErrorActionPreference = "SilentlyContinue"
+    }
+    
+    #Expose Bug 154112 
+    It "Remove implicit script from 'set-psbreakpoint -script'" {
+        if ($IsLinux)
+        {
+            powershell $scriptFileNameBug
+        }
+        else
+        {
+            powershell.exe $scriptFileNameBug
+        }
+
+        $breakpoint = Get-PSBreakpoint -Script $scriptFileNameBug
+        $breakpoint | Should BeNullOrEmpty 
 
     }
 
+    It "Fail to set psbreakpoints when script is a file of wrong type" {
+        $tempFile = [System.IO.Path]::GetTempFileName()
+        $ErrorActionPreference = "Stop"
+        {            
+            Set-PSBreakpoint -Script $tempFile -Line 1 
+        } | Should Throw
+        $ErrorActionPreference = "SilentlyContinue"
+        Remove-Item $tempFile -Force
+    } 
+
+    It "Fail to set psbreakpoints when script file does not exist" {
+        $ErrorActionPreference = "Stop"
+        ${script.ps1} = 10
+        {
+            Set-PSBreakpoint -Script variable:\script.ps1 -Line 1  
+        } | Should Throw
+        $ErrorActionPreference = "SilentlyContinue"
+    }  
+
+    # clean up 
     Remove-Item -Path $scriptFileName -Force
+    Remove-Item -Path $scriptFileNameBug -Force
 }
 
 Describe "Set-PSBreakpoint" {
