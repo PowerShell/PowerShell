@@ -1000,6 +1000,10 @@ namespace System.Management.Automation
             {
                 returnCaps |= RunspaceCapability.NamedPipeTransport;
             }
+            else if (_connectionInfo is VMConnectionInfo)
+            {
+                returnCaps |= RunspaceCapability.VMSocketTransport;
+            }
             else
             {
                 ContainerConnectionInfo containerConnectionInfo = _connectionInfo as ContainerConnectionInfo;
