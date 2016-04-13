@@ -100,7 +100,9 @@ namespace Microsoft.PowerShell
 
             try
             {
+#if !CORECLR
                 _console.StartRender();
+#endif
 
                 bufferLineCount = ConvertOffsetToCoordinates(text.Length).Y - _initialY + 1 + statusLineCount;
                 if (_consoleBuffer.Length != bufferLineCount * bufferWidth)
@@ -247,7 +249,9 @@ namespace Microsoft.PowerShell
             }
             finally
             {
+#if !CORECLR
                 _console.EndRender();
+#endif
             }
 
             for (; j < (_consoleBuffer.Length - (statusLineCount * _bufferWidth)); j++)
@@ -311,7 +315,9 @@ namespace Microsoft.PowerShell
 
             if ((_initialY + bufferLineCount) > (_console.WindowTop + _console.WindowHeight))
             {
+#if !CORECLR               
                 _console.WindowTop = _initialY + bufferLineCount - _console.WindowHeight;
+#endif
             }
 
             _lastRenderTime.Restart();
@@ -638,9 +644,12 @@ namespace Microsoft.PowerShell
             return (_statusLinePrompt.Length + _statusBuffer.Length) / _console.BufferWidth + 1;
         }
 
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         void IPSConsoleReadLineMockableMethods.Ding()
         {
+#if !CORECLR
             switch (Options.BellStyle)
             {
             case BellStyle.None:
@@ -652,6 +661,7 @@ namespace Microsoft.PowerShell
                 // TODO: flash prompt? command line?
                 break;
             }
+#endif
         }
 
         /// <summary>

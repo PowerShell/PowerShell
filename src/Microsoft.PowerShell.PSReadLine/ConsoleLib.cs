@@ -227,7 +227,9 @@ namespace Microsoft.PowerShell.Internal
         public short Right;
         public short Bottom;
 
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         public override string ToString()
         {
             return String.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", Left, Top, Right, Bottom);
@@ -239,7 +241,9 @@ namespace Microsoft.PowerShell.Internal
         public short X;
         public short Y;
 
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         public override string ToString()
         {
             return String.Format(CultureInfo.InvariantCulture, "{0},{1}", X, Y);
@@ -320,21 +324,27 @@ namespace Microsoft.PowerShell.Internal
             Attributes = (ushort)(((int)background << 4) | (int)foreground);
         }
 
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         public ConsoleColor ForegroundColor
         {
             get { return (ConsoleColor)(Attributes & 0xf); }
             set { Attributes = (ushort)((Attributes & 0xfff0) | ((int)value & 0xf)); }
         }
 
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         public ConsoleColor BackgroundColor
         {
             get { return (ConsoleColor)((Attributes & 0xf0) >> 4); }
             set { Attributes = (ushort)((Attributes & 0xff0f) | (((int)value & 0xf) << 4)); }
         }
 
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         public override string ToString()
         {
             var sb = new StringBuilder();
@@ -346,7 +356,9 @@ namespace Microsoft.PowerShell.Internal
             return sb.ToString();
         }
 
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         public override bool Equals(object obj)
         {
             if (!(obj is CHAR_INFO))
@@ -358,7 +370,9 @@ namespace Microsoft.PowerShell.Internal
             return this.UnicodeChar == other.UnicodeChar && this.Attributes == other.Attributes;
         }
 
+#if !CORECLR
         [ExcludeFromCodeCoverage]
+#endif
         public override int GetHashCode()
         {
             return UnicodeChar.GetHashCode() + Attributes.GetHashCode();
@@ -384,6 +398,23 @@ namespace Microsoft.PowerShell.Internal
                 sb.Append("Alt");
             }
 
+#if CORECLR
+            if (sb.Length > 0)
+                sb.Append("+");
+            if ((key.Key >= ConsoleKey.D0 && key.Key <= ConsoleKey.D9)
+                || (key.Key >= ConsoleKey.Oem1 && key.Key <= ConsoleKey.Oem8))
+            {
+                sb.Append(key.KeyChar);
+            }
+            else
+            {
+                if (key.Modifiers.HasFlag(ConsoleModifiers.Shift))
+                {
+                    sb.Append("Shift+");
+                }
+                sb.Append(key.Key);
+            }
+#else
             char c = ConsoleKeyChordConverter.GetCharFromConsoleKey(key.Key,
                 (mods & ConsoleModifiers.Shift) != 0 ? ConsoleModifiers.Shift : 0);
             if (char.IsControl(c) || char.IsWhiteSpace(c))
@@ -404,6 +435,7 @@ namespace Microsoft.PowerShell.Internal
                     sb.Append("+");
                 sb.Append(c);
             }
+#endif
             return sb.ToString();
         }
     }
@@ -575,8 +607,9 @@ namespace Microsoft.PowerShell.Internal
 
         public void WriteBufferLines(CHAR_INFO[] buffer, ref int top, bool ensureBottomLineVisible)
         {
+#if !CORECLR
             var handle = NativeMethods.GetStdHandle((uint) StandardHandleId.Output);
-
+#endif
             int bufferWidth = Console.BufferWidth;
             int bufferLineCount = buffer.Length / bufferWidth;
             if ((top + bufferLineCount) > Console.BufferHeight)
@@ -585,6 +618,34 @@ namespace Microsoft.PowerShell.Internal
                 ScrollBuffer(scrollCount);
                 top -= scrollCount;
             }
+#if CORECLR
+            ConsoleColor foregroundColor = Console.ForegroundColor;
+            ConsoleColor backgroundColor = Console.BackgroundColor;
+
+            Console.SetCursorPosition(0, (top>=0) ? top : 0);
+
+            for (int i = 0; i < buffer.Length; ++i)
+            {
+                /* For some reasons, the default color comes out white on white */
+                /*
+                if (buffer[i].ForegroundColor == ConsoleColor.White
+                    && buffer[i].BackgroundColor == ConsoleColor.White)
+                {
+                    Console.ForegroundColor =  foregroundColor;
+                    Console.BackgroundColor =  backgroundColor;
+                }
+                else
+                {
+                    Console.ForegroundColor =  buffer[i].ForegroundColor;
+                    Console.BackgroundColor = backgroundColor;
+                }
+                */
+                Console.Write((char)buffer[i].UnicodeChar);
+            }
+
+            Console.BackgroundColor = backgroundColor;
+            Console.ForegroundColor = foregroundColor;
+#else
             var bufferSize = new COORD
             {
                 X = (short) bufferWidth,
@@ -608,10 +669,20 @@ namespace Microsoft.PowerShell.Internal
             {
                 Console.CursorTop = bottom;
             }
+#endif
         }
 
         public void ScrollBuffer(int lines)
         {
+#if CORECLR
+//            Console.MoveBufferArea(lines, 0, Console.BufferWidth, Console.BufferHeight - lines, 0, 0, ' ', 
+//                                   Console.ForegroundColor, Console.BackgroundColor);
+            for (int i=0; i<lines; ++i)
+            {
+                Console.SetCursorPosition(Console.BufferWidth, Console.BufferHeight - 1);
+                Console.WriteLine();
+            }
+#else
             var handle = NativeMethods.GetStdHandle((uint) StandardHandleId.Output);
 
             var scrollRectangle = new SMALL_RECT
@@ -624,11 +695,20 @@ namespace Microsoft.PowerShell.Internal
             var destinationOrigin = new COORD {X = 0, Y = 0};
             var fillChar = new CHAR_INFO(' ', Console.ForegroundColor, Console.BackgroundColor);
             NativeMethods.ScrollConsoleScreenBuffer(handle, ref scrollRectangle, IntPtr.Zero, destinationOrigin, ref fillChar);
+#endif
         }
 
         public CHAR_INFO[] ReadBufferLines(int top, int count)
         {
             var result = new CHAR_INFO[BufferWidth * count];
+#if CORECLR
+            for (int i=0; i<BufferWidth*count; ++i)
+            {
+                result[i].UnicodeChar = ' ';
+                result[i].ForegroundColor = Console.ForegroundColor;
+                result[i].BackgroundColor = Console.BackgroundColor;
+            }
+#else
             var handle = NativeMethods.GetStdHandle((uint) StandardHandleId.Output);
 
             var readBufferSize = new COORD {
@@ -644,6 +724,7 @@ namespace Microsoft.PowerShell.Internal
             };
             NativeMethods.ReadConsoleOutput(handle, result,
                 readBufferSize, readBufferCoord, ref readRegion);
+#endif
             return result;
         }
 

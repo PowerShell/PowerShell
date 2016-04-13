@@ -2,6 +2,7 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
+#if !CORECLR
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -194,7 +195,7 @@ namespace Microsoft.PowerShell
             var handle = NativeMethods.GetStdHandle((uint) StandardHandleId.Output);
             var csbe = new NativeMethods.CONSOLE_SCREEN_BUFFER_INFO_EX
             {
-                cbSize = Marshal.SizeOf(typeof(NativeMethods.CONSOLE_SCREEN_BUFFER_INFO_EX))
+                cbSize = Marshal.SizeOf<NativeMethods.CONSOLE_SCREEN_BUFFER_INFO_EX>()
             };
             if (NativeMethods.GetConsoleScreenBufferInfoEx(handle, ref csbe))
             {
@@ -304,3 +305,4 @@ namespace Microsoft.PowerShell
         }
     }
 }
+#endif
