@@ -1,11 +1,14 @@
 language: cpp
-sudo: required
-dist: trusty
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+    - os: osx
+      language: generic
+      env: PATH+=/usr/local/share/dotnet
 git:
   submodules: false
-os:
-  - linux
-  - osx
 before_install:
   - git config --global url.git@github.com:.insteadOf https://github.com/
   - git submodule update --init -- src/windows-build src/Modules/Pester src/libpsl-native/test/googletest
