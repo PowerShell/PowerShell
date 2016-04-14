@@ -149,7 +149,7 @@ OPTIONS
                                 ++i;
                                 break;
                             default:
-                                Console.WriteLine("Invalid command-line option: {0}. Use '-help' option to get a list of valid options.");
+                                Console.WriteLine("Invalid command-line option: {0}. Use '-help' option to get a list of valid options.", arg);
                                 return;
                         }
                     }
