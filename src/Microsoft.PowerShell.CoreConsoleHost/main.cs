@@ -53,6 +53,7 @@ namespace Microsoft.PowerShell.CoreConsoleHost
             // Argument parsing
             string initialScript = null;
             bool loadProfiles = true;
+            bool interactive = true;
 
             if (args.Length > 0)
             {
@@ -141,7 +142,7 @@ OPTIONS
                                 ++i;
                                 break;
                             case Options.NonInteractive:
-                                // TODO, figure out what this option does exactly
+                                interactive = false;
                                 break;
                             case Options.EncodedCommand:
                                 byte[] data = Convert.FromBase64String(nextArg);
@@ -174,7 +175,7 @@ OPTIONS
             ConsoleColor InitialBackgroundColor = Console.BackgroundColor;
 
             // Create the listener and run it
-            Listener listener = new Listener(initialScript, loadProfiles);
+            Listener listener = new Listener(initialScript, loadProfiles, interactive);
 
             // only run if there was no script file passed in
             if (initialScript == null)
@@ -282,13 +283,19 @@ OPTIONS
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether UI should exit.
+        /// Gets or sets a value indicating whether UI exists (display prompt)
         /// </summary>
         public bool HasUI;
 
-        public Listener(string initialScript, bool loadProfiles)
+        /// <summary>
+        /// Gets or sets a value indicating whether session is interactive (allow popup)
+        /// </summary>
+        public bool Interactive;
+
+        public Listener(string initialScript, bool loadProfiles, bool interactive)
         {
-            HasUI = (initialScript == null) ? true : false;
+            this.HasUI = (initialScript == null) ? true : false;
+            this.Interactive = interactive;
 
             // Create the host and runspace instances for this interpreter.
             // Note that this application does not support console files so
