@@ -4,8 +4,10 @@ Build PowerShell on OS X
 This guide supplements the [Linux instructions](./linux.md), as
 building on OS X is almost identical.
 
-Please keep in mind that we do not yet routinely test on OS X, but
-some developers use PowerShell on 10.10 and 10.11.
+.NET Core (and by transitivity, us) only supports OS X 10.11, per
+CoreFX issue #[7731][].
+
+[7731]: https://github.com/dotnet/corefx/issues/7731
 
 Environment
 ===========
@@ -24,6 +26,18 @@ The `Start-PSBootstrap` function does the following:
 Please heed that last step. You may want to add the .NET CLI tool
 location to your path more permanently by adding it to your shell's
 profile.
+
+error: Too many open files
+--------------------------
+
+Due to a [bug][809] in NuGet, the `dotnet restore` command will fail
+without the limit increased. Run `ulimit -n 2048` to fix this in your
+session; add it your shell's profile to fix it permanently.
+
+We cannot do this for you in in the build module due to #[847][].
+
+[809]: https://github.com/dotnet/cli/issues/809
+[847]: https://github.com/PowerShell/PowerShell/issues/847
 
 Build using our module
 ======================
