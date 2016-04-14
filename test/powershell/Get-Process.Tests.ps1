@@ -4,7 +4,7 @@ Describe "Get-Process" {
 	(Get-Process).GetType().Name | Should Be Object[]
     }
 
-    It "Should have not empty Name flags set for Get-Process object" {
+    It "Should have not empty Name flags set for Get-Process object" -Pending:$IsOSX {
 	Get-Process | foreach-object { $_.Name | Should Not BeNullOrEmpty }
     }
 }
