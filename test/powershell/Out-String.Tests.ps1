@@ -1,3 +1,15 @@
+Describe "Out-String DRT Unit Tests" -Tags DRT{
+
+    It "check display of properties with names containing wildcard characters" {
+        $results = new-object psobject | add-member -passthru noteproperty 'name with square brackets: [0]' 'myvalue' | out-string
+        $results.Length | Should BeGreaterThan 1
+        $results.GetType() | Should Be string
+        $results.Contains("myvalue") | Should Be $true
+        $results.Contains("name with square brackets: [0]") | Should Be $true
+    }
+
+}
+
 Describe "Out-String" {
     $nl = [Environment]::NewLine
 
