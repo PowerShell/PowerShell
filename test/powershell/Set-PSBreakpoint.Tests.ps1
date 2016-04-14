@@ -84,8 +84,8 @@ set-psbreakpoint -command foo
         Remove-PSBreakPoint -Id $brk.Id
     }
 
-    #-Skip:($IsLinux -Or $IsOSX)
-    It "Should be throw Exception when missing mandatory parameter -line skip as bug #829" -Skip:$true {
+    # Marking as Pending tracking in Issue #829 
+    It "Should be throw Exception when missing mandatory parameter -line" -Pending {
         $ErrorActionPreference = "Stop"
         try {
             powershell.exe -noninteractive -command 'sbp -column 1' -script $scriptFileName
@@ -97,7 +97,8 @@ set-psbreakpoint -command foo
         $ErrorActionPreference = "SilentlyContinue"
     }
 
-    It "Should be throw Exception when missing mandatory parameter -script skip as bug #829" -Skip:$true {
+    # Marking as Pending tracking in Issue #829 
+    It "Should be throw Exception when missing mandatory parameter" -Pending {
         $ErrorActionPreference = "Stop"
         try {
             powershell.exe -noninteractive -command 'sbp -line 1' 
@@ -171,8 +172,8 @@ set-psbreakpoint -command foo
         $ErrorActionPreference = "SilentlyContinue"
     }
     
-    #Expose Bug 154112 
-    It "Remove implicit script from 'set-psbreakpoint -script'" {
+    # Marking as Pending tracking in Issue #829  
+    It "Remove implicit script from 'set-psbreakpoint -script'" -Pending {
         if ($IsLinux)
         {
             powershell $scriptFileNameBug
@@ -184,7 +185,6 @@ set-psbreakpoint -command foo
 
         $breakpoint = Get-PSBreakpoint -Script $scriptFileNameBug
         $breakpoint | Should BeNullOrEmpty 
-
     }
 
     It "Fail to set psbreakpoints when script is a file of wrong type" {
