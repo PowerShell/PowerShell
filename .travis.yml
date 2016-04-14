@@ -4,9 +4,9 @@ matrix:
     - os: linux
       dist: trusty
       sudo: required
-    - os: osx
-      language: generic
-      env: PATH+=/usr/local/share/dotnet
+    # - os: osx
+    #   language: generic
+    #   env: PATH+=/usr/local/share/dotnet
 git:
   submodules: false
 before_install:
