@@ -256,6 +256,11 @@ function Start-PSxUnit {
         throw "xUnit tests are only currently supported on Linux / OS X"
     }
 
+    if ($IsOSX) {
+        log "Not yet supported on OS X, pretending they passed..."
+        return
+    }
+
     $Content = Split-Path -Parent (Get-PSOutput)
     $Arguments = "--configuration", "Linux"
     try {
