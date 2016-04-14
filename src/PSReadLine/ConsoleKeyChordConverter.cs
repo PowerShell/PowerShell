@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+#if CORECLR
+using System.Reflection;
+#endif
 using System.Runtime.InteropServices;
 using Microsoft.PowerShell.Internal;
 
@@ -211,7 +214,22 @@ namespace Microsoft.PowerShell
         {
             // default for unprintables and unhandled
             char keyChar = '\u0000';
-
+#if CORECLR
+            Type keyType = typeof (Keys);
+            FieldInfo[] keyFields = keyType.GetFields();
+            
+            foreach (FieldInfo field in keyFields)
+            {
+                if (field.FieldType == typeof(ConsoleKeyInfo))
+                {
+                    ConsoleKeyInfo info = (ConsoleKeyInfo)field.GetValue(null);
+                    if (info.Key == key && info.Modifiers == modifiers)
+                    {
+                        return info.KeyChar;
+                    }
+                }
+            }
+#else
             // emulate GetKeyboardState bitmap - set high order bit for relevant modifier virtual keys
             var state = new byte[256];
             state[NativeMethods.VK_SHIFT] = (byte)(((modifiers & ConsoleModifiers.Shift) != 0) ? 0x80 : 0);
@@ -234,7 +252,7 @@ namespace Microsoft.PowerShell
             {
                 keyChar = chars[0];
             }
-
+#endif
             return keyChar;
         }
     }

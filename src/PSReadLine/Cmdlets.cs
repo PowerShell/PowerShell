@@ -690,7 +690,6 @@ namespace Microsoft.PowerShell
                     MethodInfo mi = typeof (PSConsoleReadLine).GetMethod(function);
                     var keyHandler = (Action<ConsoleKeyInfo?, object>)
                         mi.CreateDelegate(typeof (Action<ConsoleKeyInfo?, object>));
-                            
 #else
                     var keyHandler = (Action<ConsoleKeyInfo?, object>)
                         Delegate.CreateDelegate(typeof (Action<ConsoleKeyInfo?, object>),
