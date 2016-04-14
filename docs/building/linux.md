@@ -27,7 +27,7 @@ We use the [.NET Command Line Interface][dotnet-cli] (`dotnet`) to
 build the managed components, and [CMake][] to build the native
 components. Install the following packages for the toolchain:
 
-- `dotnet`
+- `dotnet`: Must be installed from the `Start-PSBootstrap` module as described below. 
 - `cmake`
 - `make`
 - `g++`
