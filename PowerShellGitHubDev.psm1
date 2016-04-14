@@ -723,15 +723,15 @@ using System.Reflection;
 [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 
 internal class {0} {{
-    
+
     private static global::System.Resources.ResourceManager resourceMan;
-    
+
     private static global::System.Globalization.CultureInfo resourceCulture;
-    
+
     [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
     internal {0}() {{
     }}
-    
+
     /// <summary>
     ///   Returns the cached ResourceManager instance used by this class.
     /// </summary>
@@ -745,7 +745,7 @@ internal class {0} {{
             return resourceMan;
         }}
     }}
-    
+
     /// <summary>
     ///   Overrides the current thread's CurrentUICulture property for all
     ///   resource lookups using this strongly typed resource class.
@@ -759,9 +759,9 @@ internal class {0} {{
             resourceCulture = value;
         }}
     }}
-    {2} 
-}} 
-'@    
+    {2}
+}}
+'@
 
     $entry = @'
 
