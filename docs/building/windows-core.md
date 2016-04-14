@@ -11,17 +11,33 @@ Environment
 These instructions are tested on Windows 10 and Windows Server 2012
 R2, though they should work anywhere the dependencies work.
 
+Git Setup
+---------
+
+Using Git requires it to be setup correctly; refer to the
+[README](../../README.md) and
+[Contributing Guidelines](../../CONTRIBUTING.md).
+
+This guide assumes that you have recursively cloned the PowerShell
+repository and `cd`ed into it.
+
 .NET CLI
 --------
 
 We use the [.NET Command Line Interface][dotnet-cli] (`dotnet`) to
-build PowerShell. The following script will install `dotnet` and add
-it to your PowerShell session's path:
+build PowerShell. The `Start-PSBootstrap` function will automatically
+install it and add it to your path:
+
+```powershell
+Import-Module ./PowerShellGitHubDev.psm1
+Start-PSBootstrap
+```
+
+The `Start-PSBootstrap` function itself does exactly this:
 
 ```powershell
 Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
-./install.ps1 -version 1.0.0-beta-002198
-$env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli"
+./install.ps1
 ```
 
 If you have any problems installing `dotnet`, please see their
@@ -42,13 +58,6 @@ CLI can cause odd failures when running. Please check your version.
 [cli-docs]: https://dotnet.github.io/getting-started/
 [redist-2012]: https://www.microsoft.com/en-us/download/confirmation.aspx?id=30679
 [redist-2015]: https://www.microsoft.com/en-us/download/details.aspx?id=48145
-
-Git Setup
----------
-
-Using Git requires it to be setup correctly; refer to the
-[README](../../README.md) and
-[Contributing Guidelines](../../CONTRIBUTING.md).
 
 Build using our module
 ======================

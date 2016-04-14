@@ -23,6 +23,7 @@ try {
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName='CoreCLR')]
     param(
+        [switch]$NoPath,
         [switch]$Restore,
 
         [Parameter(ParameterSetName='CoreCLR')]
@@ -57,6 +58,15 @@ function Start-PSBuild {
         $FullCLR = $true
     }
 
+    if (-not $NoPath) {
+        Write-Verbose "Appending probable .NET CLI tool path"
+        if ($IsWindows) {
+            $env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli"
+        } elseif ($IsOSX) {
+            $env:PATH += ":/usr/local/share/dotnet"
+        }
+    }
+
     # verify we have all tools in place to do the build
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH! See: https://dotnet.github.io/getting-started/"
     if ($FullCLR) {
@@ -65,7 +75,8 @@ function Start-PSBuild {
 
         # msbuild is needed to build powershell.exe
         # msbuild is part of .NET Framework, we can try to get it from well-known location.
-        if (-not (Get-Command -Name msbuild -ErrorAction Ignore)) {
+        if (-nopt $NoPath -and -not (Get-Command -Name msbuild -ErrorAction Ignore)) {
+            Write-Verbose "Appending probable Visual C++ tools path"
             $env:path += ";${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319"
         }
 
@@ -260,6 +271,57 @@ function Start-PSxUnit {
         Pop-Location
     }
 }
+
+
+function Start-PSBootstrap {
+    [CmdletBinding()]param()
+
+    Write-Host "Installing Open PowerShell build dependencies"
+
+    if ($IsLinux) {
+        precheck 'curl' "Bootstrap dependency 'curl' not found in PATH, please install!" > $null
+        precheck 'apt-get' "Bootstrap dependency 'apt-get' not found in PATH, this only supports Ubuntu 14.04!" > $null
+
+        # Setup LLVM feed
+        curl -s http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
+        echo "deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.6 main" | sudo tee /etc/apt/sources.list.d/llvm.list
+        sudo apt-get update -qq
+
+        # Install ours and .NET's dependencies
+        sudo apt-get install -y make g++ cmake libc6 libgcc1 libstdc++6 libcurl3 libgssapi-krb5-2 libicu52 liblldb-3.6 liblttng-ust0 libssl1.0.0 libunwind8 libuuid1 zlib1g clang-3.5
+
+        # Install .NET CLI packages
+        Remove-Item dotnet*.deb
+
+        wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-host-ubuntu-x64.latest.deb
+        sudo dpkg -i dotnet-host-ubuntu-x64.latest.deb
+
+        wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-sharedframework-ubuntu-x64.latest.deb
+        sudo dpkg -i dotnet-sharedframework-ubuntu-x64.latest.deb
+
+        wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-sdk-ubuntu-x64.latest.deb
+        sudo dpkg -i dotnet-sdk-ubuntu-x64.latest.deb
+
+    } elseif ($IsOSX) {
+        precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
+
+        # Install ours and .NET's dependencies
+        brew install cmake wget openssl
+
+        # Install .NET CLI packages
+        Remove-Item dotnet*.pkg
+        wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-dev-osx-x64.latest.pkg
+        sudo installer -pkg dotnet-dev-osx-x64.latest.pkg -target /
+
+    } elseif ($IsWindows -And -Not $IsCore) {
+        Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
+        ./install.ps1
+
+    } else {
+        Write-Warning "Start-PSBootstrap cannot be run in Core PowerShell on Windows (need Invoke-WebRequest!)"
+    }
+}
+
 
 function Start-PSPackage {
     [CmdletBinding()]param(
