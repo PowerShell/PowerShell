@@ -1,3 +1,216 @@
+Describe "Set-PSBreakpoint DRT Unit Tests" -Tags DRT{
+    #Set up 
+    $scriptFileName = Join-Path $TestDrive -ChildPath breakpointTestScript.ps1
+    $scriptFileNameBug = Join-Path -Path $TestDrive -ChildPath SetPSBreakpointTests.ExposeBug154112.ps1
+    
+    $contents = @"
+function Hello
+{
+    `$greeting = 'Hello, world!'
+    write-host `$greeting
+}
+
+function Goodbye
+{
+    `$message = 'Good bye, cruel world!'
+    write-host `$message
+}
+
+Hello
+Goodbye
+
+# The following 2 statements produce null tokens (needed to verify 105473) 
+# 
+`$table = @{}
+
+return 
+"@
+
+    $contentsBug = @" 
+set-psbreakpoint -variable foo 
+set-psbreakpoint -command foo 
+"@ 
+    
+    $contents > $scriptFileName
+    $contentsBug > $scriptFileNameBug
+
+
+    It "Should be able to set psbreakpoints for -Line" {
+        $brk = Set-PSBreakpoint -Line 13 -Script $scriptFileName
+        $brk.Line | Should Be 13
+        Remove-PSBreakPoint -Id $brk.Id
+    }
+
+    It "Should be able to set psbreakpoints for -Line and -column" {
+        $brk = set-psbreakpoint -line 13 -column 1 -script $scriptFileName
+        $brk.Line | Should Be 13
+        $brk.Column | Should Be 1
+        Remove-PSBreakPoint -Id $brk.Id
+    }
+
+    It "Should be able to set psbreakpoints for -Line and -action" {
+        $brk = set-psbreakpoint -line 13 -action {{ break; }} -script $scriptFileName
+        $brk.Line | Should Be 13
+        $brk.Action | Should Match "break"
+        Remove-PSBreakPoint -Id $brk.Id
+    }
+
+    It "Should be able to set psbreakpoints for -Line, -column and -action" {
+        $brk = set-psbreakpoint -line 13 -column 1 -action {{ break; }} -script $scriptFileName
+        $brk.Line | Should Be 13
+        $brk.Column | Should Be 1
+        $brk.Action | Should Match "break"
+        Remove-PSBreakPoint -Id $brk.Id
+    }
+
+    It "-script and -line can take multiple items" {
+        $brk = sbp -line 11,12,13 -column 1 -script $scriptFileName,$scriptFileName 
+        $brk.Line | Should Be 11,12,13
+        $brk.Column | Should Be 1
+        Remove-PSBreakPoint -Id $brk.Id
+    }
+
+
+    It "-script and -line are positional" {
+        $brk = sbp $scriptFileName 13 
+        $brk.Line | Should Be 13
+        Remove-PSBreakPoint -Id $brk.Id
+    }
+
+    It "-script, -line and -column are positional" {
+        $brk = sbp $scriptFileName 13 1
+        $brk.Line | Should Be 13
+        $brk.Column | Should Be 1
+        Remove-PSBreakPoint -Id $brk.Id
+    }
+
+    # Marking as Pending tracking in Issue #829 
+    It "Should be throw Exception when missing mandatory parameter -line" -Pending {
+        $ErrorActionPreference = "Stop"
+        try {
+            powershell.exe -noninteractive -command 'sbp -column 1' -script $scriptFileName
+            Throw "Execution OK"
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should Be "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
+        }
+        $ErrorActionPreference = "SilentlyContinue"
+    }
+
+    # Marking as Pending tracking in Issue #829 
+    It "Should be throw Exception when missing mandatory parameter" -Pending {
+        $ErrorActionPreference = "Stop"
+        try {
+            powershell.exe -noninteractive -command 'sbp -line 1' 
+            Throw "Execution OK" 
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should Be "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
+        }
+        $ErrorActionPreference = "SilentlyContinue"
+    }      
+    
+    It "Should be able to set psbreakpoints for -command" {
+        $brk = set-psbreakpoint -command "write-host" 
+        $brk.Command | Should Be "write-host"
+        Remove-PSBreakPoint -Id $brk.Id
+    }
+   
+    It "Should be able to set psbreakpoints for -command, -script" {
+        $brk = set-psbreakpoint -command "write-host" -script $scriptFileName 
+        $brk.Command | Should Be "write-host"
+        Remove-PSBreakPoint -Id $brk.Id
+    }     
+
+    It "Should be able to set psbreakpoints for -command, -action and -script" {
+        $brk = set-psbreakpoint -command "write-host" -action {{ break; }} -script $scriptFileName 
+        $brk.Action | Should Match "break"
+        Remove-PSBreakPoint -Id $brk.Id
+    }
+
+    It "-Command can take multiple items" {
+        $brk = set-psbreakpoint -command write-host,Hello
+        $brk.Command | Should Be write-host,Hello
+        Remove-PSBreakPoint -Id $brk.Id
+    }
+
+    It "-Script is positional" {
+        $brk = set-psbreakpoint -command "Hello" $scriptFileName
+        $brk.Command | Should Be "Hello" 
+        Remove-PSBreakPoint -Id $brk.Id
+
+        $brk = set-psbreakpoint $scriptFileName -command "Hello" 
+        $brk.Command | Should Be "Hello"
+        Remove-PSBreakPoint -Id $brk.Id
+    }
+
+    It "Should be able to set breakpoints on functions" {
+        $brk = set-psbreakpoint -command Hello,Goodbye -script $scriptFileName 
+        $brk.Command | Should Be Hello,Goodbye 
+        Remove-PSBreakPoint -Id $brk.Id
+    }
+
+    It "Should be throw Exception when Column number less than 1" {
+        try {
+            set-psbreakpoint -line 1 -column -1 -script $scriptFileName 
+            Throw "Execution OK"
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
+        }
+    }
+
+    It "Should be throw Exception when Line number less than 1" {
+        $ErrorActionPreference = "Stop"
+        try {
+            set-psbreakpoint -line -1 -script $scriptFileName
+            Throw "Execution OK" 
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should Be "SetPSBreakpoint:LineLessThanOne,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
+        }
+        $ErrorActionPreference = "SilentlyContinue"
+    }
+    
+    # Marking as Pending tracking in Issue #829  
+    It "Remove implicit script from 'set-psbreakpoint -script'" -Pending {
+        if ($IsLinux)
+        {
+            powershell $scriptFileNameBug
+        }
+        else
+        {
+            powershell.exe $scriptFileNameBug
+        }
+
+        $breakpoint = Get-PSBreakpoint -Script $scriptFileNameBug
+        $breakpoint | Should BeNullOrEmpty 
+    }
+
+    It "Fail to set psbreakpoints when script is a file of wrong type" {
+        $tempFile = [System.IO.Path]::GetTempFileName()
+        $ErrorActionPreference = "Stop"
+        {            
+            Set-PSBreakpoint -Script $tempFile -Line 1 
+        } | Should Throw
+        $ErrorActionPreference = "SilentlyContinue"
+        Remove-Item $tempFile -Force
+    } 
+
+    It "Fail to set psbreakpoints when script file does not exist" {
+        $ErrorActionPreference = "Stop"
+        ${script.ps1} = 10
+        {
+            Set-PSBreakpoint -Script variable:\script.ps1 -Line 1  
+        } | Should Throw
+        $ErrorActionPreference = "SilentlyContinue"
+    }  
+
+    # clean up 
+    Remove-Item -Path $scriptFileName -Force
+    Remove-Item -Path $scriptFileNameBug -Force
+}
+
 Describe "Set-PSBreakpoint" {
     # Set up test script
     $testScript = Join-Path -Path $PSScriptRoot -ChildPath psbreakpointtestscript.ps1
