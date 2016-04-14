@@ -23,9 +23,9 @@
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
-                "System.Security.Principal": "4.0.1-rc3-24004-00",
-                "System.Security.Principal.Windows": "4.0.0-rc3-24004-00",
-                "System.Diagnostics.TraceSource": "4.0.0-rc3-24004-00",
+                "System.Security.Principal": "4.0.1-rc3-24011-00",
+                "System.Security.Principal.Windows": "4.0.0-rc3-24011-00",
+                "System.Diagnostics.TraceSource": "4.0.0-rc3-24011-00",
                 "System.Security.SecureString": "1.0.0-*"
             }
         }

@@ -23,6 +23,7 @@ try {
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName='CoreCLR')]
     param(
+        [switch]$NoPath,
         [switch]$Restore,
 
         [Parameter(ParameterSetName='CoreCLR')]
@@ -57,6 +58,15 @@ function Start-PSBuild {
         $FullCLR = $true
     }
 
+    if (-not $NoPath) {
+        Write-Verbose "Appending probable .NET CLI tool path"
+        if ($IsWindows) {
+            $env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli"
+        } elseif ($IsOSX) {
+            $env:PATH += ":/usr/local/share/dotnet"
+        }
+    }
+
     # verify we have all tools in place to do the build
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH! See: https://dotnet.github.io/getting-started/"
     if ($FullCLR) {
@@ -65,12 +75,13 @@ function Start-PSBuild {
 
         # msbuild is needed to build powershell.exe
         # msbuild is part of .NET Framework, we can try to get it from well-known location.
-        if (-not (Get-Command -Name msbuild -ErrorAction Ignore)) {
+        if (-nopt $NoPath -and -not (Get-Command -Name msbuild -ErrorAction Ignore)) {
+            Write-Verbose "Appending probable Visual C++ tools path"
             $env:path += ";${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319"
         }
 
         $precheck = $precheck -and (precheck 'msbuild' 'msbuild not found. Install Visual Studio 2015.')
-    } elseif ($IsLinux -Or $IsOSX) {
+    } elseif ($IsLinux -or $IsOSX) {
         $InstallCommand = if ($IsLinux) {
             'apt-get'
         } elseif ($IsOSX) {
@@ -82,14 +93,14 @@ function Start-PSBuild {
         }
     }
 
-    if (-Not $Runtime) {
+    if (-not $Runtime) {
         $Runtime = dotnet --info | % {
             if ($_ -match "RID") {
                 $_ -split "\s+" | Select-Object -Last 1
             }
         }
 
-        if (-Not $Runtime) {
+        if (-not $Runtime) {
             Write-Warning "Could not determine Runtime Identifier, please update dotnet"
             $precheck = $false
         } else {
@@ -111,7 +122,7 @@ function Start-PSBuild {
         $Framework = 'netstandardapp1.5'
     }
 
-    if ($IsLinux -Or $IsOSX) {
+    if ($IsLinux -or $IsOSX) {
         $Configuration = "Linux"
         $Executable = "powershell"
     } else {
@@ -132,7 +143,7 @@ function Start-PSBuild {
     # Build the Output path in script scope
     $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework)
     # FullCLR only builds a library, so there is no runtime component
-    if (-Not $FullCLR) {
+    if (-not $FullCLR) {
         $script:Output = [IO.Path]::Combine($script:Output, $Runtime)
     }
     # Publish injects the publish directory
@@ -144,7 +155,7 @@ function Start-PSBuild {
     Write-Verbose "script:Output is $script:Output"
 
     # handle Restore
-    if ($Restore -Or -Not (Test-Path "$Top/project.lock.json")) {
+    if ($Restore -or -not (Test-Path "$Top/project.lock.json")) {
         log "Run dotnet restore"
 
         $RestoreArguments = @("--verbosity")
@@ -160,7 +171,7 @@ function Start-PSBuild {
     }
 
     # Build native components
-    if ($IsLinux -Or $IsOSX) {
+    if ($IsLinux -or $IsOSX) {
         $Ext = if ($IsLinux) {
             "so"
         } elseif ($IsOSX) {
@@ -180,7 +191,7 @@ function Start-PSBuild {
             Pop-Location
         }
 
-        if (-Not (Test-Path $Lib)) {
+        if (-not (Test-Path $Lib)) {
             throw "Compilation of $Lib failed"
         }
     } elseif ($FullCLR) {
@@ -217,7 +228,7 @@ function Start-PSBuild {
 
 function Get-PSOutput {
     [CmdletBinding()]param()
-    if (-Not $Output) {
+    if (-not $Output) {
         throw '$script:Output is not defined, run Start-PSBuild'
     }
 
@@ -261,38 +272,112 @@ function Start-PSxUnit {
     }
 }
 
+
+function Start-PSBootstrap {
+    [CmdletBinding()]param()
+
+    Write-Host "Installing Open PowerShell build dependencies"
+
+    if ($IsLinux) {
+        precheck 'curl' "Bootstrap dependency 'curl' not found in PATH, please install!" > $null
+        precheck 'apt-get' "Bootstrap dependency 'apt-get' not found in PATH, this only supports Ubuntu 14.04!" > $null
+
+        # Setup LLVM feed
+        curl -s http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
+        echo "deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.6 main" | sudo tee /etc/apt/sources.list.d/llvm.list
+        sudo apt-get update -qq
+
+        # Install ours and .NET's dependencies
+        sudo apt-get install -y make g++ cmake libc6 libgcc1 libstdc++6 libcurl3 libgssapi-krb5-2 libicu52 liblldb-3.6 liblttng-ust0 libssl1.0.0 libunwind8 libuuid1 zlib1g clang-3.5
+
+        # Install .NET CLI packages
+        Remove-Item dotnet*.deb
+
+        wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-host-ubuntu-x64.latest.deb
+        sudo dpkg -i dotnet-host-ubuntu-x64.latest.deb
+
+        wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-sharedframework-ubuntu-x64.latest.deb
+        sudo dpkg -i dotnet-sharedframework-ubuntu-x64.latest.deb
+
+        wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-sdk-ubuntu-x64.latest.deb
+        sudo dpkg -i dotnet-sdk-ubuntu-x64.latest.deb
+
+    } elseif ($IsOSX) {
+        precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
+
+        # Install ours and .NET's dependencies
+        brew install cmake wget openssl
+
+        # Install .NET CLI packages
+        Remove-Item dotnet*.pkg
+        wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-dev-osx-x64.latest.pkg
+        sudo installer -pkg dotnet-dev-osx-x64.latest.pkg -target /
+
+    } elseif ($IsWindows -And -Not $IsCore) {
+        Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
+        ./install.ps1
+
+    } else {
+        Write-Warning "Start-PSBootstrap cannot be run in Core PowerShell on Windows (need Invoke-WebRequest!)"
+    }
+}
+
+
 function Start-PSPackage {
-    # PowerShell packages use Semantic Versioning http://semver.org/
-    #
-    # Ubuntu and OS X packages are supported.
     [CmdletBinding()]param(
+        # PowerShell packages use Semantic Versioning http://semver.org/
         [string]$Version,
+        # Package iteration version (rarely changed)
         [int]$Iteration = 1,
+        # Ubuntu, CentOS, and OS X packages are supported
         [ValidateSet("deb", "osxpkg", "rpm")]
         [string]$Type
     )
 
+    $Description = @"
+Open PowerShell on .NET Core
+PowerShell is an open-source, cross-platform, scripting language and rich object shell.
+Built upon .NET Core, it is also a C# REPL.
+"@
+
     if ($IsWindows) { throw "Building Windows packages is not yet supported!" }
 
-    if (-Not (Get-Command "fpm" -ErrorAction SilentlyContinue)) {
+    if (-not (Get-Command "fpm" -ErrorAction SilentlyContinue)) {
         throw "Build dependency 'fpm' not found in PATH! See: https://github.com/jordansissel/fpm"
     }
 
-    if (-Not(Test-Path "$PSScriptRoot/bin/powershell")) {
-        throw "Please Start-PSBuild with the corresponding runtime for the package"
+    $Source = Split-Path -Parent (Get-PSOutput)
+    if ((Split-Path -Leaf $Source) -ne "publish") {
+        throw "Please Start-PSBuild -Package with the corresponding runtime for the package"
     }
 
-    # Change permissions for packaging
-    chmod -R go=u "$PSScriptRoot/bin"
-
     # Decide package output type
-    if (-Not($Type)) {
+    if (-not $Type) {
         $Type = if ($IsLinux) { "deb" } elseif ($IsOSX) { "osxpkg" }
         Write-Warning "-Type was not specified, continuing with $Type"
     }
 
+    # Follow the Filesystem Hierarchy Standard for Linux and OS X
+    $Destination = if ($IsLinux) {
+        "/opt/microsoft/powershell"
+    } elseif ($IsOSX) {
+        "/usr/local/microsoft/powershell"
+    }
+
+    # Destination for symlink to powershell executable
+    $Link = if ($IsLinux) {
+        "/usr/bin"
+    } elseif ($IsOSX) {
+        "/usr/local/bin"
+    }
+
+    New-Item -Force -ItemType SymbolicLink -Path /tmp/powershell -Target $Destination/powershell >$null
+
+    # Change permissions for packaging
+    chmod -R go=u $Source /tmp/powershell
+
     # Use Git tag if not given a version
-    if (-Not($Version)) {
+    if (-not $Version) {
         $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
     }
 
@@ -306,26 +391,32 @@ function Start-PSPackage {
         "rpm" { "libicu" }
     }
 
+
+    $Arguments = @(
+        "--force", "--verbose",
+        "--name", "powershell",
+        "--version", $Version,
+        "--iteration", $Iteration,
+        "--maintainer", "Andrew Schwartzmeyer <andschwa@microsoft.com>",
+        "--vendor", "Microsoft <mageng@microsoft.com>",
+        "--url", "https://github.com/PowerShell/PowerShell",
+        "--license", "Unlicensed",
+        "--description", $Description,
+        "--category", "shells",
+        "--rpm-os", "linux",
+        "--depends", $libunwind,
+        "--depends", $libicu,
+        "--deb-build-depends", "dotnet",
+        "--deb-build-depends", "cmake",
+        "--deb-build-depends", "g++",
+        "-t", $Type,
+        "-s", "dir",
+        "$Source/=$Destination/",
+        "/tmp/powershell=$Link"
+    )
+
     # Build package
-    fpm --force --verbose `
-        --name "powershell" `
-        --version $Version `
-        --iteration $Iteration `
-        --maintainer "Andrew Schwartzmeyer <andschwa@microsoft.com>" `
-        --vendor "Microsoft <mageng@microsoft.com>" `
-        --url "https://github.com/PowerShell/PowerShell" `
-        --license "Unlicensed" `
-        --description "Open PowerShell on .NET Core\nPowerShell is an open-source, cross-platform, scripting language and rich object shell. Built upon .NET Core, it is also a C# REPL.\n" `
-        --category "shells" `
-        --depends $libunwind `
-        --depends $libicu `
-        --deb-build-depends "dotnet" `
-        --deb-build-depends "cmake" `
-        --deb-build-depends "g++" `
-        -t $Type `
-        -s dir `
-        "$PSScriptRoot/bin/=/usr/local/share/powershell/" `
-        "$PSScriptRoot/package/powershell=/usr/local/bin"
+    fpm $Arguments
 }
 
 
@@ -348,7 +439,7 @@ function Start-DevPSGitHub {
             $env:COMPLUS_ZapDisable = 1
         }
 
-        if (-Not (Test-Path $binDir\powershell.exe.config)) {
+        if (-not (Test-Path $binDir\powershell.exe.config)) {
             $configContents = @"
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>

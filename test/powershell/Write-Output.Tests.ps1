@@ -35,22 +35,6 @@ Describe "Write-Output" {
 	}
     }
 
-    Context "Alias Tests" {
-	It "Should have the same result between the echo alias and the cmdlet" {
-	    $alias  = echo -InputObject $testString
-	    $cmdlet = Write-Output -InputObject $testString
-
-	    $alias | Should Be $cmdlet
-	}
-
-	It "Should have the same result between the write alias and the cmdlet" {
-	    $alias  = write -InputObject $testString
-	    $cmdlet = Write-Output -InputObject $testString
-
-	    $alias | Should Be $cmdlet
-	}
-    }
-
     Context "Enumerate Objects" {
 	$enumerationObject = @(1,2,3)
 	It "Should see individual objects when not using the NoEnumerate switch" {

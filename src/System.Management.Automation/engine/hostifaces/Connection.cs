@@ -471,7 +471,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Runspace is based on a named pipe transport.
         /// </summary>
-        NamedPipeTransport = 0x2
+        NamedPipeTransport = 0x2,
+
+        /// <summary>
+        /// Runspace is based on a VM socket transport.
+        /// </summary>
+        VMSocketTransport = 0x4
     }
 
     #endregion
