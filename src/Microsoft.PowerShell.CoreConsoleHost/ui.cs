@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.CoreConsoleHost
             }
             else
             {
-                throw new InvalidOperationException("Cannot prompt user when invoked with --noninteractive option.");
+                throw new PSInvalidOperationException("Cannot prompt user when invoked with --noninteractive option.");
             }
         }
 
@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.CoreConsoleHost
             }
             else
             {
-                throw new InvalidOperationException("Cannot prompt user when invoked with --noninteractive option.");
+                throw new PSInvalidOperationException("Cannot prompt user when invoked with --noninteractive option.");
             }
         }
 
@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell.CoreConsoleHost
             }
             else
             {
-                throw new InvalidOperationException("Cannot prompt user when invoked with --noninteractive option.");
+                throw new PSInvalidOperationException("Cannot prompt user when invoked with --noninteractive option.");
             }
         }
 
