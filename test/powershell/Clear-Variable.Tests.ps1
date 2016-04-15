@@ -1,3 +1,108 @@
+
+Describe "Clear-Variable DRT Unit Tests" -Tags DRT{
+	It "Clear-Variable normal variable Name should works"{
+		Set-Variable foo bar
+		Clear-Variable -Name foo
+		$var1=Get-Variable -Name foo
+		$var1.Name|Should Be "foo"
+		$var1.Value|Should Be $null
+		$var1.Options|Should Be "None"
+		$var1.Description|Should Be ""
+	}
+	
+	It "Clear-Variable ReadOnly variable Name should throw exception and force Clear-Variable should works"{
+		Set-Variable foo bar -Option ReadOnly
+		
+		try {
+			Clear-Variable -Name foo -EA Stop
+			Throw "Execution OK"
+		} 
+		catch {
+			$_.CategoryInfo| Should Match "SessionStateUnauthorizedAccessException"
+			#Comment below because Pester has bug, it will show error for below code.
+			#Error:
+			#-] Clear-Variable ReadOnly variable Name should throw exception and force Clear-Variable should works 526ms
+			#The term 'Sort' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+			#at line: 18 in /workspace/PowerShell/src/Microsoft.PowerShell.CoreConsoleHost/bin/Linux/netstandardapp1.5/ubuntu.14.04-x64/Modules/Pester/Functions/Assertions/Be.ps1
+			#Code:
+			#$_.FullyQualifiedErrorId | Should Be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearAliasCommand"
+		}
+		
+		Clear-Variable -Name foo -Force
+		$var1=Get-Variable -Name foo
+		$var1.Name|Should Be "foo"
+		$var1.Value|Should Be $null
+		$var1.Options|Should Be "ReadOnly"
+		$var1.Description|Should Be ""
+	}
+	
+	It "Clear-Variable normal variable Name with local scope should works"{
+		Set-Variable foo bar
+		&{
+			Set-Variable foo baz
+			Clear-Variable -Name foo -Scope "local"
+		
+			$var1=Get-Variable -Name foo -Scope "local"
+			$var1.Name|Should Be "foo"
+			$var1.Value|Should Be $null
+			$var1.Options|Should Be "None"
+			$var1.Description|Should Be ""
+		}
+		
+		$var1=Get-Variable -Name foo
+		$var1.Name|Should Be "foo"
+		$var1.Value|Should Be "bar"
+		$var1.Options|Should Be "None"
+		$var1.Description|Should Be ""
+	}
+	
+	It "Clear-Variable Private variable Name should works and Get-Variable with local scope should throw exception"{
+		Set-Variable foo bar -Option Private
+		{
+			Clear-Variable -Name foo
+			try {
+				Get-Variable -Name foo -Scope local
+				Throw "Execution OK"
+			} 
+			catch {
+				$_.CategoryInfo| Should Match "RuntimeException"
+			}
+		}
+		
+		$var1=Get-Variable -Name foo
+		$var1.Name|Should Be "foo"
+		$var1.Value|Should Be "bar"
+		$var1.Options|Should Be "Private"
+		$var1.Description|Should Be ""
+	}
+	
+	It "Clear-Variable normal variable Name with local scope should works in different scope"{
+		Set-Variable foo bar
+		&{
+			Set-Variable foo baz
+			Clear-Variable -Name foo -Scope "local"
+		
+			$var1=Get-Variable -Name foo -Scope "local"
+			$var1.Name|Should Be "foo"
+			$var1.Value|Should Be $null
+			$var1.Options|Should Be "None"
+			$var1.Description|Should Be ""
+		}
+		
+		$var1=Get-Variable -Name foo
+		$var1.Name|Should Be "foo"
+		$var1.Value|Should Be "bar"
+		$var1.Options|Should Be "None"
+		$var1.Description|Should Be ""
+		
+		$var1=Get-Variable -Name foo -Scope "local"
+		$var1.Name|Should Be "foo"
+		$var1.Value|Should Be "bar"
+		$var1.Options|Should Be "None"
+		$var1.Description|Should Be ""
+	}
+}
+
 Describe "Clear-Variable" {
     BeforeEach {
 	$var1 = 3
