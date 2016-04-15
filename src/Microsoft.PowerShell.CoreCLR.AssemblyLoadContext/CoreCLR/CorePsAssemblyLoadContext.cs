@@ -141,8 +141,9 @@ namespace System.Management.Automation
                 string asmCultureName = assemblyName.CultureName ?? string.Empty;
                 string asmFilePath = null;
 
-                foreach (var probingPath in probingPaths)
+                for (int i = 0; i < probingPaths.Count; i++)
                 {
+                    string probingPath = probingPaths[i];
                     string asmCulturePath = Path.Combine(probingPath, asmCultureName);
                     for (int k = 0; k < extensions.Length; k++)
                     {
