@@ -521,7 +521,15 @@ namespace System.Management.Automation
             if (!IsInitialized)
             {
                 var psAsmLoadContext = new PowerShellAssemblyLoadContext(basePaths);
-                AssemblyLoadContext.InitializeDefaultContext(psAsmLoadContext);
+                try
+                {
+                    AssemblyLoadContext.InitializeDefaultContext(psAsmLoadContext);
+                }
+                catch (System.InvalidOperationException)
+                {
+                    // We may not be able to set the default context. If we're under the
+                    // xUnit test harness, it has already been set.
+                }
                 IsInitialized = true;
             }
         }
