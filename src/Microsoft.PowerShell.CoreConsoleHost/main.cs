@@ -89,7 +89,7 @@ usage: powershell[.exe] [ (--help | -h | -?) ]
                         [ (--command | -c) <string> ]
                         [ --noprofile | -nop ]
                         [ --noninteractive | -non ]
-                        [ (--encodedcommand | -e) <bas64Command> ]
+                        [ (--encodedcommand | -e) <base64Command> ]
 
 SYNOPSIS
 
