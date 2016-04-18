@@ -394,25 +394,6 @@ OPTIONS
         }
 
         /// <summary>
-        ///  Execute a PowerShell command and capture its output 
-        /// </summary>
-        /*
-        public PSObject CapturePSOutput(Runspace rs, string cmd)
-        {
-            Collection<PSObject> output;
-            Command command = new Command(cmd);
-
-            using (Pipeline pipeline = rs.CreatePipeline())
-            {
-                pipeline.Commands.Add(command);
-                output = pipeline.Invoke();
-            }
-
-            return (output.Count > 0) ? output[0] : null;
-        }
-        */
-
-        /// <summary>
         /// Runs individual commands
         /// </summary>
         /// <param name="command">command to run</param>
