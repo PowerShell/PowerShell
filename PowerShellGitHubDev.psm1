@@ -92,69 +92,28 @@ function Start-PSBuild {
         }
     }
 
-    if (-not $Runtime) {
-        $Runtime = dotnet --info | % {
-            if ($_ -match "RID") {
-                $_ -split "\s+" | Select-Object -Last 1
-            }
-        }
-
-        if (-not $Runtime) {
-            Write-Warning "Could not determine Runtime Identifier, please update dotnet"
-            $precheck = $false
-        } else {
-            log "Runtime not specified, using $Runtime"
-        }
-    }
-
     # Abort if any precheck failed
     if (-not $precheck) {
         return
     }
 
-    # define key build variables
-    if ($FullCLR) {
-        $Top = "$PSScriptRoot\src\Microsoft.PowerShell.ConsoleHost"
-        $Framework = 'net451'
-    } else {
-        $Top = "$PSScriptRoot/src/Microsoft.PowerShell.CoreConsoleHost"
-        $Framework = 'netstandardapp1.5'
-    }
+    # set output options
+    $OptionsArguments = @{Publish=$Publish; FullCLR=$FullCLR; Runtime=$Runtime}
+    $script:Options = New-PSOptions @OptionsArguments
 
-    if ($IsLinux -or $IsOSX) {
-        $Configuration = "Linux"
-        $Executable = "powershell"
-    } else {
-        $Configuration = "Debug"
-        $Executable = "powershell.exe"
-    }
-
+    # setup arguments
     $Arguments = @()
     if ($Publish) {
         $Arguments += "publish"
     } else {
         $Arguments += "build"
     }
-    $Arguments += "--framework", $Framework
-    $Arguments += "--configuration", $Configuration
-    $Arguments += "--runtime", $Runtime
-
-    # Build the Output path in script scope
-    $script:Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework)
-    # FullCLR only builds a library, so there is no runtime component
-    if (-not $FullCLR) {
-        $script:Output = [IO.Path]::Combine($script:Output, $Runtime)
-    }
-    # Publish injects the publish directory
-    if ($Publish) {
-        $script:Output = [IO.Path]::Combine($script:Output, "publish")
-    }
-    $script:Output = [IO.Path]::Combine($script:Output, $Executable)
-
-    Write-Verbose "script:Output is $script:Output"
+    $Arguments += "--configuration", $Options.Configuration
+    $Arguments += "--framework", $Options.Framework
+    $Arguments += "--runtime", $Options.Runtime
 
     # handle Restore
-    if ($Restore -or -not (Test-Path "$Top/project.lock.json")) {
+    if ($Restore -or -not (Test-Path "$($Options.Top)/project.lock.json")) {
         log "Run dotnet restore"
 
         $RestoreArguments = @("--verbosity")
@@ -178,7 +137,7 @@ function Start-PSBuild {
         }
 
         $Native = "$PSScriptRoot/src/libpsl-native"
-        $Lib = "$Top/libpsl-native.$Ext"
+        $Lib = "$($Options.Top)/libpsl-native.$Ext"
         log "Start building $Lib"
 
         try {
@@ -197,7 +156,7 @@ function Start-PSBuild {
         log "Start building native powershell.exe"
 
         try {
-            Push-Location .\src\powershell-native
+            Push-Location "$PSScriptRoot\src\powershell-native"
 
             if ($cmakeGenerator) {
                 cmake -G $cmakeGenerator .
@@ -215,9 +174,9 @@ function Start-PSBuild {
     try {
         # Relative paths do not work well if cwd is not changed to project
         log "Run `dotnet build $Arguments` from $pwd"
-        Push-Location $Top
+        Push-Location $Options.Top
         dotnet $Arguments
-        log "PowerShell output: $script:Output"
+        log "PowerShell output: $($Options.Output)"
     } finally {
         Pop-Location
     }
@@ -225,13 +184,110 @@ function Start-PSBuild {
 }
 
 
-function Get-PSOutput {
-    [CmdletBinding()]param()
-    if (-not $Output) {
-        throw '$script:Output is not defined, run Start-PSBuild'
+function New-PSOptions {
+    [CmdletBinding()]
+    param(
+        [ValidateSet("Linux", "Debug", "Release")]
+        [string]$Configuration,
+
+        [ValidateSet("netstandardapp1.5", "net451")]
+        [string]$Framework,
+
+        # These are duplicated from Start-PSBuild
+        # We do not use ValidateScript since we want tab completion
+        [ValidateSet("",
+                     "ubuntu.14.04-x64",
+                     "centos.7.1-x64",
+                     "win7-x64",
+                     "win81-x64",
+                     "win10-x64",
+                     "osx.10.11-x64")]
+        [string]$Runtime,
+
+        [switch]$Publish,
+
+        [switch]$FullCLR
+    )
+
+    $Top = if ($FullCLR) {
+        "$PSScriptRoot\src\Microsoft.PowerShell.ConsoleHost"
+    } else {
+        "$PSScriptRoot/src/Microsoft.PowerShell.CoreConsoleHost"
+    }
+    Write-Verbose "Top project directory is $Top"
+
+    if (-not $Configuration) {
+        $Configuration = if ($IsLinux -or $IsOSX) {
+            "Linux"
+        } elseif ($IsWindows) {
+            "Debug"
+        }
+        log "Using configuration '$Configuration'"
     }
 
-    $Output
+    if (-not $Framework) {
+        $Framework = if ($FullCLR) {
+            "net451"
+        } else {
+            "netstandardapp1.5"
+        }
+        log "Using framework '$Framework'"
+    }
+
+    if (-not $Runtime) {
+        $Runtime = dotnet --info | % {
+            if ($_ -match "RID") {
+                $_ -split "\s+" | Select-Object -Last 1
+            }
+        }
+
+        if (-not $Runtime) {
+            Throw "Could not determine Runtime Identifier, please update dotnet"
+        } else {
+            log "Using runtime '$Runtime'"
+        }
+    }
+
+    $Executable = if ($IsLinux -or $IsOSX) {
+        "powershell"
+    } elseif ($IsWindows) {
+        "powershell.exe"
+    }
+
+    # Build the Output path in script scope
+    $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework)
+
+    # FullCLR only builds a library, so there is no runtime component
+    if (-not $FullCLR) {
+        $Output = [IO.Path]::Combine($Output, $Runtime)
+    }
+
+    # Publish injects the publish directory
+    if ($Publish) {
+        $Output = [IO.Path]::Combine($Output, "publish")
+    }
+
+    $Output = [IO.Path]::Combine($Output, $Executable)
+
+    return @{ Top = $Top;
+              Configuration = $Configuration;
+              Framework = $Framework;
+              Runtime = $Runtime;
+              Output = $Output }
+}
+
+
+function Get-PSOutput {
+    [CmdletBinding()]param(
+        [hashtable]$Options
+    )
+    if ($Options) {
+        return $Options.Output
+    } elseif ($script:Options) {
+        return $script:Options.Output
+    } else {
+        return (New-PSOptions).Output
+    }
 }
 
 
@@ -723,15 +779,15 @@ using System.Reflection;
 [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 
 internal class {0} {{
-    
+
     private static global::System.Resources.ResourceManager resourceMan;
-    
+
     private static global::System.Globalization.CultureInfo resourceCulture;
-    
+
     [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
     internal {0}() {{
     }}
-    
+
     /// <summary>
     ///   Returns the cached ResourceManager instance used by this class.
     /// </summary>
@@ -745,7 +801,7 @@ internal class {0} {{
             return resourceMan;
         }}
     }}
-    
+
     /// <summary>
     ///   Overrides the current thread's CurrentUICulture property for all
     ///   resource lookups using this strongly typed resource class.
@@ -759,9 +815,9 @@ internal class {0} {{
             resourceCulture = value;
         }}
     }}
-    {2} 
-}} 
-'@    
+    {2}
+}}
+'@
 
     $entry = @'
 
