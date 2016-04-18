@@ -1,3 +1,62 @@
+
+Describe "New-Variable DRT Unit Tests" -Tags DRT{
+	It "New-Variable variable with description should works"{
+		New-Variable foo bar -description "my description"
+		$var1=Get-Variable -Name foo
+		$var1.Name|Should Be "foo"
+		$var1.Value|Should Be "bar"
+		$var1.Options|Should Be "None"
+		$var1.Description|Should Be "my description"
+	}
+	
+	It "New-Variable variable with option should works"{
+		New-Variable foo bar -option Constant
+		$var1=Get-Variable -Name foo
+		$var1.Name|Should Be "foo"
+		$var1.Value|Should Be "bar"
+		$var1.Options|Should Be "Constant"
+		$var1.Description|Should Be ""
+	}
+	
+	It "New-Variable variable twice should throw Exception"{
+		New-Variable foo bogus
+		
+		try {
+			New-Variable foo bar -EA Stop
+			Throw "Execution OK"
+		} 
+		catch {
+			$_.CategoryInfo| Should Match "SessionStateException"
+			$_.FullyQualifiedErrorId | Should Be "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
+		}
+		New-Variable foo bar -Force -PassThru
+		$var1=Get-Variable -Name foo
+		$var1.Name|Should Be "foo"
+		$var1.Value|Should Be "bar"
+		$var1.Options|Should Be "None"
+		$var1.Description|Should Be ""
+	}
+	
+	It "New-Variable ReadOnly variable twice should throw Exception"{
+		New-Variable foo bogus -option ReadOnly
+		
+		try {
+			New-Variable foo bar -EA Stop
+			Throw "Execution OK"
+		} 
+		catch {
+			$_.CategoryInfo| Should Match "SessionStateException"
+			$_.FullyQualifiedErrorId | Should Be "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
+		}
+		New-Variable foo bar -Force -PassThru
+		$var1=Get-Variable -Name foo
+		$var1.Name|Should Be "foo"
+		$var1.Value|Should Be "bar"
+		$var1.Options|Should Be "None"
+		$var1.Description|Should Be ""
+	}
+}
+
 Describe "New-Variable" {
     $nl = [Environment]::NewLine
 
