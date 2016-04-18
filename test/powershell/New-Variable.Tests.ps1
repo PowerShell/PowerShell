@@ -58,8 +58,6 @@ Describe "New-Variable DRT Unit Tests" -Tags DRT{
 }
 
 Describe "New-Variable" {
-    $nl = [Environment]::NewLine
-
     It "Should create a new variable with no parameters" {
 	{ New-Variable var1 } | Should Not Throw
     }
@@ -123,7 +121,7 @@ Describe "New-Variable" {
 
 	$output = $in | Format-List -Property Description | Out-String
 
-	$output | Should Be "${nl}${nl}Description : test description${nl}${nl}${nl}${nl}"
+	$output.Trim() | Should Be "Description : test description"
     }
 
     It "Should be able to set the value using the value switch" {
