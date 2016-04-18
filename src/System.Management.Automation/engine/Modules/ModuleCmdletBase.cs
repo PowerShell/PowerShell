@@ -2010,7 +2010,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Test the required .NET Framework version
-            Version requestedDotNetFrameworkVersion;
+            Version requestedDotNetFrameworkVersion = new Version (0, 0, 0, 0);
+#if !CORECLR
             if (
                 !GetScalarFromData(data, moduleManifestPath, "DotNetFrameworkVersion", manifestProcessingFlags,
                     out requestedDotNetFrameworkVersion))
@@ -2044,6 +2045,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteVerbose(cannotDetectNetFrameworkVersionMessage);
                 }
             }
+#endif
 
             // HelpInfo URI
             string helpInfoUri = null;

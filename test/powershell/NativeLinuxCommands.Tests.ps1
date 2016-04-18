@@ -4,10 +4,6 @@ Describe "NativeLinuxCommands" {
         (hostname).GetType().Name | Should Be String
     }
 
-    It "Should have not empty Name flags set for ps object" {
-        Get-Process | foreach-object { $_.ProcessName | Should Not BeNullOrEmpty }
-    }
-
     It "Should find Application grep" -Skip:$IsWindows {
         (get-command grep).CommandType | Should Be Application
     }

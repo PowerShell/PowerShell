@@ -184,18 +184,20 @@ namespace System.Management.Automation
                         assemblyName.FullName);
                 }
 
-                // Try loading it from the TPA list. All PowerShell dependencies are in the
-                // TPA list when published with dotnet-cli.
                 try
-                {
-                    asmLoaded = Assembly.Load(assemblyName);
-                }
-                // If it wasn't there, try loading from path
-                catch (FileNotFoundException)
                 {
                     asmLoaded = asmFilePath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
                         ? LoadFromNativeImagePath(asmFilePath, null)
                         : LoadFromAssemblyPath(asmFilePath);
+                }
+                // Since .NET CLI built versions of PowerShell have all the
+                // built-in assemblies in the TPA list, the above will throw,
+                // and we have to use Assembly.Load. However, we must try the
+                // above first, otherwise assemblies that exist outside the TPA
+                // list will go into a recursive loop.
+                catch (System.IO.FileLoadException)
+                {
+                    asmLoaded = System.Reflection.Assembly.Load(assemblyName);
                 }
 
                 // If it loaded, add it to the cache
@@ -250,19 +252,21 @@ namespace System.Management.Automation
                 if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
                     return asmLoaded;
 
-                // Try loading it from the TPA list. All PowerShell dependencies are in the
-                // TPA list when published with dotnet-cli.
                 try
-                {
-                    asmLoaded = Assembly.Load(assemblyName);
-                }
-                // If it wasn't there, try loading from path
-                catch (FileNotFoundException)
                 {
                     // Load the assembly through 'LoadFromNativeImagePath' or 'LoadFromAssemblyPath'
                     asmLoaded = assemblyPath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
                         ? LoadFromNativeImagePath(assemblyPath, null)
                         : LoadFromAssemblyPath(assemblyPath);
+                }
+                // Since .NET CLI built versions of PowerShell have all the
+                // built-in assemblies in the TPA list, the above will throw,
+                // and we have to use Assembly.Load. However, we must try the
+                // above first, otherwise assemblies that exist outside the TPA
+                // list will go into a recursive loop.
+                catch (System.IO.FileLoadException)
+                {
+                    asmLoaded = System.Reflection.Assembly.Load(assemblyName);
                 }
 
                 if (asmLoaded != null)
@@ -503,11 +507,11 @@ namespace System.Management.Automation
 
         // Porting note: it's much easier to send an LPStr on Linux
         private const UnmanagedType stringType = 
-#if LINUX
+            #if LINUX
             UnmanagedType.LPStr
-#else
+            #else
             UnmanagedType.LPWStr
-#endif
+            #endif
             ;
 
         /// <summary>
