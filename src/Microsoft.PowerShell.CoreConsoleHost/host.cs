@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.CoreConsoleHost
         public MyHost(Listener Listener)
         {
             this.Listener = Listener;
-            this.myHostUserInterface = new MyHostUserInterface(Listener.HasUI);
+            this.myHostUserInterface = new MyHostUserInterface(Listener.HasUI, Listener.Interactive);
         }
 
         /// <summary>
