@@ -19,13 +19,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags DRT{
 		} 
 		catch {
 			$_.CategoryInfo| Should Match "SessionStateUnauthorizedAccessException"
-			#Comment below because Pester has bug, it will show error for below code.
-			#Error:
-			#-] Clear-Variable ReadOnly variable Name should throw exception and force Clear-Variable should works 526ms
-			#The term 'Sort' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
-			#at line: 18 in /workspace/PowerShell/src/Microsoft.PowerShell.CoreConsoleHost/bin/Linux/netstandardapp1.5/ubuntu.14.04-x64/Modules/Pester/Functions/Assertions/Be.ps1
-			#Code:
-			#$_.FullyQualifiedErrorId | Should Be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearAliasCommand"
+			$_.FullyQualifiedErrorId | Should Be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
 		}
 		
 		Clear-Variable -Name foo -Force
@@ -66,6 +60,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags DRT{
 			} 
 			catch {
 				$_.CategoryInfo| Should Match "RuntimeException"
+				$_.FullyQualifiedErrorId | Should Be "NotSupported,Microsoft.PowerShell.Commands.GetVariableCommand"
 			}
 		}
 		
