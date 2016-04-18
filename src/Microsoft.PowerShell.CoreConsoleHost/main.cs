@@ -722,7 +722,7 @@ OPTIONS
                 int historyFileSize;
                 if (Int32.TryParse(historyFileSizeString, out historyFileSize) && historyFileSize > 0)
                 {
-                    string exportHistory = $"Get-History | Select -Last {historyFileSizeString} | Export-Clixml {historyPath}";
+                    string exportHistory = $"Get-History -Count {historyFileSizeString} | Export-Clixml {historyPath}";
                     Execute(exportHistory, false);
                 }
             }
