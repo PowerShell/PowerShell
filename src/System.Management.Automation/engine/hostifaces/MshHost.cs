@@ -311,7 +311,20 @@ namespace System.Management.Automation.Host
             }
         }
 
+        /// <summary>
+        ///   Control whether command history is persistent across sessions
+        /// </summary>
+        public bool PersistentHistory = true;
 
+        /// <summary>
+        ///   Number of history commands to write to HistoryFile
+        /// </summary>
+        public int HistoryFileSize = 1000;
+
+        /// <summary>
+        ///   Name of history file
+        /// </summary>
+        public string HistoryFile = "CommandHistory.xml";
 
         /// <summary>
         /// 

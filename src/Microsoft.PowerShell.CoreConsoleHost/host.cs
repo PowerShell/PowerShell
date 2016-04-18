@@ -130,6 +130,7 @@ namespace Microsoft.PowerShell.CoreConsoleHost
             get { return this.Listener.myRunSpace; }
             internal set { this.Listener.myRunSpace = value; }
         }
+
 #endregion IHostSupportsInteractiveSession Properties
 
         /// <summary>

@@ -324,7 +324,7 @@ OPTIONS
             // run the initial script
             if (initialScript != null)
             {
-                Execute(initialScript);
+                Execute(initialScript, false);
             }
         }
 
@@ -394,6 +394,25 @@ OPTIONS
         }
 
         /// <summary>
+        ///  Execute a PowerShell command and capture its output 
+        /// </summary>
+        /*
+        public PSObject CapturePSOutput(Runspace rs, string cmd)
+        {
+            Collection<PSObject> output;
+            Command command = new Command(cmd);
+
+            using (Pipeline pipeline = rs.CreatePipeline())
+            {
+                pipeline.Commands.Add(command);
+                output = pipeline.Invoke();
+            }
+
+            return (output.Count > 0) ? output[0] : null;
+        }
+        */
+
+        /// <summary>
         /// Runs individual commands
         /// </summary>
         /// <param name="command">command to run</param>
@@ -419,16 +438,35 @@ OPTIONS
             }
         }
 
+
+        // Similar to ExecuteHelper(), but executes a simple command, capture its output, and return as a string
+        public string CapturePSOutput(string cmd)
+        {
+            Collection<PSObject> output;
+
+            lock (this.instanceLock)
+            {
+                this.currentPowerShell = PowerShell.Create();
+            }
+
+            this.currentPowerShell.Runspace = this.myRunSpace;
+            this.currentPowerShell.AddScript(cmd);
+            output = this.currentPowerShell.Invoke();
+
+            return (output.Count > 0) ? output[0].BaseObject.ToString() : null;
+        }
+
         /// <summary>
         /// A helper class that builds and executes a pipeline that writes
         /// to the default output path. Any exceptions that are thrown are
         /// just passed to the caller. Since all output goes to the default
         /// outter, this method does not return anything.
-        /// </summary>
         /// <param name="cmd">The script to run.</param>
         /// <param name="input">Any input arguments to pass to the script.
         /// If null then nothing is passed in.</param>
-        private void ExecuteHelper(string cmd, object input)
+        /// <param name="addToHistory">Whether to add this command to history.</param>
+        /// </summary>
+        private void ExecuteHelper(string cmd, object input, bool addToHistory)
         {
             // Ignore empty command lines.
             if (string.IsNullOrEmpty(cmd))
@@ -466,7 +504,7 @@ OPTIONS
                 // If there is any input pass it in, otherwise just invoke the
                 // the pipeline.
                 PSInvocationSettings settings = new PSInvocationSettings();
-                settings.AddToHistory = true;
+                settings.AddToHistory = addToHistory;
                 if (input != null)
                 {
                     this.currentPowerShell.Invoke(new object[] { input }, settings);
@@ -572,14 +610,15 @@ OPTIONS
         /// Basic script execution routine. Any runtime exceptions are
         /// caught and passed back to the Windows PowerShell engine to
         /// display.
-        /// </summary>
         /// <param name="cmd">Script to run.</param>
-        private void Execute(string cmd)
+        /// <param name="addToHistory">Whether to add this command to history.</param>
+        /// </summary>
+        private void Execute(string cmd, bool addToHistory)
         {
             try
             {
                 // Run the command with no input.
-                this.ExecuteHelper(cmd, null);
+                this.ExecuteHelper(cmd, null, addToHistory);
             }
             catch (RuntimeException rte)
             {
@@ -622,6 +661,23 @@ OPTIONS
         /// </summary>
         internal void Run()
         {
+            // Load previous history.  Note that this behavior can be changed via $host variables in profile
+            string baseDir = System.Management.Automation.Environment.GetFolderPath
+                (System.Management.Automation.Environment.SpecialFolder.Personal);
+            string persistentHistoryString = CapturePSOutput("$host.PersistentHistory");
+
+            bool persistentHistory;
+            if (bool.TryParse(persistentHistoryString, out persistentHistory) && persistentHistory)
+            {
+                string historyFile = CapturePSOutput("$host.HistoryFile");
+                string historyPath = Path.Combine(baseDir, Utils.ProductNameForDirectory, historyFile);
+                if (File.Exists(historyPath))
+                {
+                    string importHistory = $"Import-Clixml {historyPath} | Add-History";
+                    Execute(importHistory, false);
+                }
+            }
+
             // Set up the control-C handler.
             Console.CancelKeyPress += new ConsoleCancelEventHandler(this.HandleControlC);
 
@@ -650,7 +706,7 @@ OPTIONS
                 string input;
                 if (TryInvokeUserDefinedReadLine(out input, true))
                 {
-                    this.Execute(input);
+                    this.Execute(input, false);
                 }
                 else
                 {
@@ -668,10 +724,25 @@ OPTIONS
                             break;
                         case ConsoleReadLine.ReadResult.State.Complete:
                         default:
-                            this.Execute(result.command);
+                            this.Execute(result.command, true);
                             initialCommand = String.Empty;
                             break;
                     }
+                }
+            }
+
+            // Write history to file
+            persistentHistoryString = CapturePSOutput("$host.PersistentHistory");
+            if (bool.TryParse(persistentHistoryString, out persistentHistory) && persistentHistory)
+            {
+                string historyFile = CapturePSOutput("$host.HistoryFile");
+                string historyPath = Path.Combine(baseDir, Utils.ProductNameForDirectory, historyFile);
+                string historyFileSizeString = CapturePSOutput("$host.HistoryFileSize");
+                int historyFileSize;
+                if (Int32.TryParse(historyFileSizeString, out historyFileSize) && historyFileSize > 0)
+                {
+                    string exportHistory = $"Get-History | Select -Last {historyFileSizeString} | Export-Clixml {historyPath}";
+                    Execute(exportHistory, false);
                 }
             }
         }
