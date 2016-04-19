@@ -19,13 +19,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags DRT{
 		} 
 		catch {
 			$_.CategoryInfo| Should Match "SessionStateUnauthorizedAccessException"
-			#Comment below because Pester has bug, it will show error for below code.
-			#Error:
-			#-] Clear-Variable ReadOnly variable Name should throw exception and force Clear-Variable should works 526ms
-			#The term 'Sort' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
-			#at line: 18 in /workspace/PowerShell/src/Microsoft.PowerShell.CoreConsoleHost/bin/Linux/netstandardapp1.5/ubuntu.14.04-x64/Modules/Pester/Functions/Assertions/Be.ps1
-			#Code:
-			#$_.FullyQualifiedErrorId | Should Be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearAliasCommand"
+			$_.FullyQualifiedErrorId | Should Be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
 		}
 		
 		Clear-Variable -Name foo -Force
@@ -40,6 +34,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags DRT{
 		Set-Variable foo bar
 		&{
 			Set-Variable foo baz
+			$foo | should be baz
 			Clear-Variable -Name foo -Scope "local"
 		
 			$var1=Get-Variable -Name foo -Scope "local"
@@ -58,14 +53,15 @@ Describe "Clear-Variable DRT Unit Tests" -Tags DRT{
 	
 	It "Clear-Variable Private variable Name should works and Get-Variable with local scope should throw exception"{
 		Set-Variable foo bar -Option Private
-		{
+		&{
 			Clear-Variable -Name foo
 			try {
-				Get-Variable -Name foo -Scope local
-				Throw "Execution OK"
+					Get-Variable -Name foo -Scope local -EA Stop
+					Throw "Execution OK"
 			} 
 			catch {
-				$_.CategoryInfo| Should Match "RuntimeException"
+					$_.CategoryInfo| Should Match "ItemNotFoundException"
+					$_.FullyQualifiedErrorId | Should Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 			}
 		}
 		
@@ -120,13 +116,10 @@ Describe "Clear-Variable" {
 	{ Get-Variable var1 } | Should Not Throw
     }
 
-    It "Should have a null value after clearing the variable" {
-	Clear-Variable var1
+    It "Should work using the clv alias" {
+	clv -Name var1
 	$var1 | Should BeNullOrEmpty
-    }
-
-    It "Should call without error using the clv alias" {
-	{ clv -Name var1 } | Should Not Throw
+	{ Get-Variable var1 } | Should Not Throw
     }
 
     It "Should be able to include a set of variables to clear" {
@@ -179,29 +172,38 @@ Describe "Clear-Variable" {
     It "Should not clear environment variables" {
 	$env:TEMPVARIABLE = "test data"
 
-	Clear-Variable -Name env:TEMPVARIABLE -ErrorAction SilentlyContinue | Should Throw
+	{Clear-Variable -Name env:TEMPVARIABLE -ErrorAction Stop} | Should Throw
     }
 
     It "Should clear variable even if it is read-only using the Force parameter" {
-	New-Variable -Name var2 -Option ReadOnly -Value 100
+	try
+	{
+		New-Variable -Name var2 -Option ReadOnly -Value 100
 
-	Clear-Variable -Name var1
-	Clear-Variable -Name var2 -Force
+		Clear-Variable -Name var1
+		Clear-Variable -Name var2 -Force
 
-	$var1 | Should BeNullOrEmpty
-	$var2 | Should BeNullOrEmpty
-
-	Remove-Variable -Name var2 -Force
+		$var1 | Should BeNullOrEmpty
+		$var2 | Should BeNullOrEmpty
+	}
+	finally
+	{
+		Remove-Variable -Name var2 -Force
+	}
     }
 
     It "Should throw error when trying to clear variable that is read-only without using the Force parameter" {
-	New-Variable -Name var2 -Option ReadOnly -Value 100
+		New-Variable -Name var2 -Option ReadOnly -Value 100
+		try {
+			Clear-Variable -Name var2 -ea stop
+			Throw "Execution OK"
+		}
+		catch {
+			$_.FullyQualifiedErrorId | should be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
+		}
+		$var2 | Should Not BeNullOrEmpty
 
-	Clear-Variable -Name var2 -ErrorAction SilentlyContinue | Should Throw
-
-	$var2 | Should Not BeNullOrEmpty
-
-	Remove-Variable -Name var2 -Force
+		Remove-Variable -Name var2 -Force
     }
 
     Context "Scope Tests" {
@@ -218,13 +220,13 @@ Describe "Clear-Variable" {
 	It "Should not be able to clear a global scope variable using the local switch" {
 	    New-Variable globalVar -Value 1 -Scope global -Force
 
-	    Clear-Variable -Name globalVar -Scope local -ErrorAction SilentlyContinue | Should Throw
+	    {Clear-Variable -Name globalVar -Scope local -ErrorAction Stop} | Should Throw
 	}
 
 	It "Should not be able to clear a global variable using the script scope switch" {
 	    New-Variable globalVar -Value 1 -Scope global -Force
 
-	    Clear-Variable -Name localVar -Scope script -ErrorAction SilentlyContinue | Should Throw
+	    {Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should Throw
 	}
 
 	It "Should be able to clear an item locally using the local switch" {
@@ -234,19 +236,19 @@ Describe "Clear-Variable" {
 
 	    $localVar | Should BeNullOrEmpty
 
-	    Clear-Variable -Name localVar -Scope script -ErrorAction SilentlyContinue | Should Throw
+	    {Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should Throw
 	}
 
 	It "Should not be able to clear an item locally using the global switch" {
 	    New-Variable localVar -Value 2 -Scope local -Force
 
-	    Clear-Variable -Name localVar -Scope global -ErrorAction SilentlyContinue | Should Throw
+	    {Clear-Variable -Name localVar -Scope global -ErrorAction Stop} | Should Throw
 	}
 
 	It "Should not be able to clear a local variable using the script scope switch" {
 	    New-Variable localVar -Value 2 -Scope local -Force
 
-	    Clear-Variable -Name localVar -Scope script -ErrorAction SilentlyContinue | Should Throw
+	    {Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should Throw
 	}
 
 	It "Should be able to clear a script variable created using the script switch" {
