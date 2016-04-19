@@ -22,6 +22,7 @@ install:
 
 build_script:
   - ps: |
+      $ErrorActionPreference = 'Stop'
       Import-Module .\PowerShellGitHubDev.psm1
       Start-PSBuild -Publish
       Start-PSBuild -FullCLR
@@ -62,6 +63,7 @@ test_script:
 
 on_finish: 
   - ps: |
+      $ErrorActionPreference = 'Stop'
       # Creating project artifact
       $name = git describe
       $zipFilePath = Join-Path $pwd "$name.zip"
