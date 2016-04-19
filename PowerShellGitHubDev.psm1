@@ -125,7 +125,7 @@ function Start-PSBuild {
 
         $RestoreArguments += "$PSScriptRoot"
 
-        dotnet restore $RestoreArguments
+        Start-NativeExecution { dotnet restore $RestoreArguments }
     }
 
     # Build native components
@@ -164,7 +164,7 @@ function Start-PSBuild {
                 cmake .
             }
 
-            msbuild powershell.vcxproj /p:Configuration=$msbuildConfiguration
+            Start-NativeExecution { msbuild powershell.vcxproj /p:Configuration=$msbuildConfiguration }
 
         } finally {
             Pop-Location
@@ -175,7 +175,7 @@ function Start-PSBuild {
         # Relative paths do not work well if cwd is not changed to project
         Push-Location $Options.Top
         log "Run dotnet $Arguments from $pwd"
-        dotnet $Arguments
+        Start-NativeExecution { dotnet $Arguments }
         log "PowerShell output: $($Options.Output)"
     } finally {
         Pop-Location
@@ -321,9 +321,9 @@ function Start-PSxUnit {
     $Arguments = "--configuration", "Linux"
     try {
         Push-Location $PSScriptRoot/test/csharp
-        dotnet build $Arguments
+        Start-NativeExecution { dotnet build $Arguments }
         Copy-Item -ErrorAction SilentlyContinue -Recurse -Path $Content/* -Include Modules,libpsl-native* -Destination "./bin/Linux/netstandardapp1.5/ubuntu.14.04-x64"
-        dotnet test $Arguments
+        Start-NativeExecution { dotnet test $Arguments }
         if ($LASTEXITCODE -ne 0) {
             throw "$LASTEXITCODE xUnit tests failed"
         }
@@ -758,6 +758,27 @@ function script:Convert-PSObjectToHashtable {
     }
 }
 
+# this function wraps native command Execution
+# for more information, read https://mnaoumov.wordpress.com/2015/01/11/execution-of-external-commands-in-powershell-done-right/
+function script:Start-NativeExecution([scriptblock]$sb)
+{
+    $backupEAP = $script:ErrorActionPreference
+    $script:ErrorActionPreference = "Continue"
+    try
+    {
+        & $sb
+        # note, if $sb doens't have a native invokation, $LASTEXITCODE will
+        # point to the obsolete value
+        if ($LASTEXITCODE -ne 0)
+        {
+            throw "Execution failed with exit code $LASTEXITCODE"
+        }
+    }
+    finally
+    {
+        $script:ErrorActionPreference = $backupEAP
+    }
+}
 
 function script:Get-StronglyTypeCsFileForResx
 {
