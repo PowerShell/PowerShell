@@ -173,8 +173,8 @@ function Start-PSBuild {
 
     try {
         # Relative paths do not work well if cwd is not changed to project
-        log "Run `dotnet build $Arguments` from $pwd"
         Push-Location $Options.Top
+        log "Run dotnet $Arguments from $pwd"
         dotnet $Arguments
         log "PowerShell output: $($Options.Output)"
     } finally {
