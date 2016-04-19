@@ -14,6 +14,30 @@ namespace Microsoft.PowerShell.CoreConsoleHost
 
     public static class Program
     {
+        private enum Options {Help, File, Command, NoProfile, NonInteractive, EncodedCommand, Invalid};
+        private class CommandOptions
+        {
+            public Options opt;
+            public string optString;
+
+            public CommandOptions(Options o, string s)
+            {
+                opt = o;
+                optString = s;
+            }
+        }
+
+        private static CommandOptions[] commandOptions = new CommandOptions[] 
+            {
+                new CommandOptions(Options.Help, "help"), 
+                new CommandOptions(Options.Help, "?"), 
+                new CommandOptions(Options.File, "file"),
+                new CommandOptions(Options.Command, "command"), 
+                new CommandOptions(Options.NoProfile, "noprofile"),
+                new CommandOptions(Options.NonInteractive, "noninteractive"), 
+                new CommandOptions(Options.EncodedCommand, "encodedcommand")
+            };
+
         /// <summary>
         /// Creates and initiates the listener instance.
         /// </summary>
@@ -25,9 +49,11 @@ namespace Microsoft.PowerShell.CoreConsoleHost
             // here eliminates the need for a custom native host.
             PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(string.Empty);
 
+
             // Argument parsing
             string initialScript = null;
             bool loadProfiles = true;
+            bool interactive = true;
 
             if (args.Length > 0)
             {
@@ -37,15 +63,33 @@ namespace Microsoft.PowerShell.CoreConsoleHost
                     bool hasNext = (i+1) < args.Length;
                     string nextArg = hasNext ? args[i+1] : string.Empty;
 
-                    // --help was specified
-                    if (arg == "--help" || arg == "-h")
+                    // options start with "-" or "--"
+
+                    string option;
+                    if (arg.StartsWith("-"))
                     {
-                        Console.WriteLine(@"
-usage: powershell[.exe] [ (--help | -h) ]
+                        if (arg.StartsWith("--"))
+                        {
+                            option = arg.Remove(0, 2);
+                        }
+                        else
+                        {
+                            option = arg.Remove(0, 1);
+                        }
+
+                        Options bestOption = FindOption(option);
+
+                        switch (bestOption)
+                        {
+                            case Options.Help:
+                                Console.WriteLine(@"
+usage: powershell[.exe] [ (--help | -h | -?) ]
                         [ (--file | -f) <filePath> ]
                         [ <script>.ps1 ]
                         [ (--command | -c) <string> ]
-                        [ --noprofile ]
+                        [ --noprofile | -nop ]
+                        [ --noninteractive | -non ]
+                        [ (--encodedcommand | -e) <base64Command> ]
 
 SYNOPSIS
 
@@ -65,46 +109,63 @@ OPTIONS
     (--command | -c) <string>
             Will execute given string as a PowerShell script.
 
-    --noprofile
+    (--noprofile | -nop)
             Disables parsing of PowerShell profiles.
 
-    (--help | -h)
+    (--help | -h | -?)
             Prints this text.
+
+    (--noninteractive | -non)
+            Does not present an interactive prompt to the user.
+
+    (--encodedcommand | -e) <base64Command>
+            Accepts a base-64-encoded string version of a command.
 ");
-                        return;
-                    }
-                    else if (arg == "--noprofile")
-                    {
-                        loadProfiles = false;
-                    }
-                    // lone argument is a script
-                    else if (!hasNext && arg.EndsWith(".ps1"))
-                    {
-                        initialScript = Path.GetFullPath(arg);
-                    }
-                    // lone argument is an inline script
-                    else if (!hasNext)
-                    {
-                        initialScript = arg;
-                    }
-                    // --file <filePath> was specified
-                    else if (hasNext && (arg == "--file" || arg == "-f"))
-                    {
-                        initialScript = Path.GetFullPath(nextArg);
-                        ++i;
-                    }
-                    // --command <string> was specified
-                    else if (hasNext && (arg == "--command" || arg == "-c"))
-                    {
-                        if (nextArg == "-")
-                        {
-                            initialScript = "\"TODO: read stdin using Console.OpenStandardInput\"";
+                                return;
+
+                            case Options.NoProfile:
+                                loadProfiles = false;
+                                break;
+                            case Options.File:
+                                initialScript = Path.GetFullPath(nextArg);
+                                ++i;
+                                break;
+                            case Options.Command:
+                                if (nextArg == "-")
+                                {
+                                    initialScript = "\"TODO: read stdin using Console.OpenStandardInput\"";
+                                }
+                                else
+                                {
+                                    initialScript = nextArg;
+                                }
+                                ++i;
+                                break;
+                            case Options.NonInteractive:
+                                interactive = false;
+                                break;
+                            case Options.EncodedCommand:
+                                byte[] data = Convert.FromBase64String(nextArg);
+                                initialScript = Encoding.UTF8.GetString(data);
+                                ++i;
+                                break;
+                            default:
+                                Console.WriteLine("Invalid command-line option: {0}. Use '-help' option to get a list of valid options.", arg);
+                                return;
                         }
-                        else
+                    }
+                    else  // not an option parameter
+                    {
+                        // lone argument is a script
+                        if (!hasNext && arg.EndsWith(".ps1"))
                         {
-                            initialScript = nextArg;
+                            initialScript = Path.GetFullPath(arg);
                         }
-                        ++i;
+                        // lone argument is an inline script
+                        else if (!hasNext)
+                        {
+                            initialScript = arg;
+                        }
                     }
                 }
             }
@@ -114,7 +175,7 @@ OPTIONS
             ConsoleColor InitialBackgroundColor = Console.BackgroundColor;
 
             // Create the listener and run it
-            Listener listener = new Listener(initialScript, loadProfiles);
+            Listener listener = new Listener(initialScript, loadProfiles, interactive);
 
             // only run if there was no script file passed in
             if (initialScript == null)
@@ -128,6 +189,23 @@ OPTIONS
             // Exit with the desired exit code that was set by the exit command.
             // The exit code is set in the host by the MyHost.SetShouldExit() method.
             System.Environment.Exit(listener.ExitCode);
+        }
+
+        private static Options FindOption(string option)
+        {
+            int matches = 0;
+            int index = -1;
+
+            for (int i=0; i<commandOptions.Length; ++i)
+            {
+                if (commandOptions[i].optString.StartsWith(option, StringComparison.OrdinalIgnoreCase))
+                {
+                    matches++;
+                    index = i;
+                }
+            }
+
+            return (matches == 1) ? commandOptions[index].opt : Options.Invalid;
         }
     }
 
@@ -205,13 +283,19 @@ OPTIONS
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether UI should exit.
+        /// Gets or sets a value indicating whether UI exists (display prompt)
         /// </summary>
         public bool HasUI;
 
-        public Listener(string initialScript, bool loadProfiles)
+        /// <summary>
+        /// Gets or sets a value indicating whether session is interactive (allow popup)
+        /// </summary>
+        public bool Interactive;
+
+        public Listener(string initialScript, bool loadProfiles, bool interactive)
         {
-            HasUI = (initialScript == null) ? true : false;
+            this.HasUI = (initialScript == null) ? true : false;
+            this.Interactive = interactive;
 
             // Create the host and runspace instances for this interpreter.
             // Note that this application does not support console files so

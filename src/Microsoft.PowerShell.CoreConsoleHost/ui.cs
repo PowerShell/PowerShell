@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.CoreConsoleHost
         /// <summary>
         /// Public constructor
         /// </summary>
-        public MyHostUserInterface(bool hasUI)
+        public MyHostUserInterface(bool hasUI, bool interactive)
         {
             myRawUi = (hasUI) ? new MyRawUserInterface() : null;
         }
@@ -40,6 +40,11 @@ namespace Microsoft.PowerShell.CoreConsoleHost
         }
 
         /// <summary>
+        ///   Whether user pop-ups are allowed
+        /// </summary>
+        public bool Interactive;
+
+        /// <summary>
         /// Prompts the user for input.
         /// <param name="caption">The caption or title of the prompt.</param>
         /// <param name="message">The text of the prompt.</param>
@@ -52,26 +57,33 @@ namespace Microsoft.PowerShell.CoreConsoleHost
                 string message,
                 Collection<FieldDescription> descriptions)
         {
-            this.Write(
-                    ConsoleColor.White,
-                    Console.BackgroundColor,
-                    caption + System.Environment.NewLine + message + " ");
-            Dictionary<string, PSObject> results =
-                new Dictionary<string, PSObject>();
-            foreach (FieldDescription fd in descriptions)
+            if (Interactive)
             {
-                string[] label = GetHotkeyAndLabel(fd.Label);
-                this.WriteLine(label[1]);
-                string userData = Console.ReadLine();
-                if (userData == null)
+                this.Write(
+                           ConsoleColor.White,
+                           Console.BackgroundColor,
+                           caption + System.Environment.NewLine + message + " ");
+                Dictionary<string, PSObject> results =
+                    new Dictionary<string, PSObject>();
+                foreach (FieldDescription fd in descriptions)
                 {
-                    return null;
+                    string[] label = GetHotkeyAndLabel(fd.Label);
+                    this.WriteLine(label[1]);
+                    string userData = Console.ReadLine();
+                    if (userData == null)
+                    {
+                        return null;
+                    }
+
+                    results[fd.Name] = PSObject.AsPSObject(userData);
                 }
 
-                results[fd.Name] = PSObject.AsPSObject(userData);
+                return results;
             }
-
-            return results;
+            else
+            {
+                throw new PSInvalidOperationException("Cannot prompt user when invoked with --noninteractive option.");
+            }
         }
 
         /// <summary>
@@ -93,57 +105,64 @@ namespace Microsoft.PowerShell.CoreConsoleHost
                 Collection<ChoiceDescription> choices,
                 int defaultChoice)
         {
-            // Write the caption and message strings in Blue.
-            this.WriteLine(
-                    ConsoleColor.Blue,
-                    Console.BackgroundColor,
-                    caption + System.Environment.NewLine + message + System.Environment.NewLine);
-
-            // Convert the choice collection into something that is
-            // easier to work with. See the BuildHotkeysAndPlainLabels
-            // method for details.
-            string[,] promptData = BuildHotkeysAndPlainLabels(choices);
-
-            // Format the overall choice prompt string to display.
-            StringBuilder sb = new StringBuilder();
-            for (int element = 0; element < choices.Count; element++)
+            if (Interactive)
             {
+                // Write the caption and message strings in Blue.
+                this.WriteLine(
+                               ConsoleColor.Blue,
+                               Console.BackgroundColor,
+                               caption + System.Environment.NewLine + message + System.Environment.NewLine);
+
+                // Convert the choice collection into something that is
+                // easier to work with. See the BuildHotkeysAndPlainLabels
+                // method for details.
+                string[,] promptData = BuildHotkeysAndPlainLabels(choices);
+
+                // Format the overall choice prompt string to display.
+                StringBuilder sb = new StringBuilder();
+                for (int element = 0; element < choices.Count; element++)
+                {
+                    sb.Append(String.Format(
+                                            CultureInfo.CurrentCulture,
+                                            "|{0}> {1} ",
+                                            promptData[0, element],
+                                            promptData[1, element]));
+                }
+
                 sb.Append(String.Format(
-                            CultureInfo.CurrentCulture,
-                            "|{0}> {1} ",
-                            promptData[0, element],
-                            promptData[1, element]));
-            }
+                                        CultureInfo.CurrentCulture,
+                                        "[Default is ({0}]",
+                                        promptData[0, defaultChoice]));
 
-            sb.Append(String.Format(
-                        CultureInfo.CurrentCulture,
-                        "[Default is ({0}]",
-                        promptData[0, defaultChoice]));
-
-            // Read prompts until a match is made, the default is
-            // chosen, or the loop is interrupted with ctrl-C.
-            while (true)
-            {
-                this.WriteLine(ConsoleColor.Cyan, Console.BackgroundColor, sb.ToString());
-                string data = Console.ReadLine().Trim().ToUpper();
-
-                // If the choice string was empty, use the default selection.
-                if (data.Length == 0)
+                // Read prompts until a match is made, the default is
+                // chosen, or the loop is interrupted with ctrl-C.
+                while (true)
                 {
-                    return defaultChoice;
-                }
+                    this.WriteLine(ConsoleColor.Cyan, Console.BackgroundColor, sb.ToString());
+                    string data = Console.ReadLine().Trim().ToUpper();
 
-                // See if the selection matched and return the
-                // corresponding index if it did.
-                for (int i = 0; i < choices.Count; i++)
-                {
-                    if (promptData[0, i] == data)
+                    // If the choice string was empty, use the default selection.
+                    if (data.Length == 0)
                     {
-                        return i;
+                        return defaultChoice;
                     }
-                }
 
-                this.WriteErrorLine("Invalid choice: " + data);
+                    // See if the selection matched and return the
+                    // corresponding index if it did.
+                    for (int i = 0; i < choices.Count; i++)
+                    {
+                        if (promptData[0, i] == data)
+                        {
+                            return i;
+                        }
+                    }
+
+                    this.WriteErrorLine("Invalid choice: " + data);
+                }
+            }
+            else
+            {
+                throw new PSInvalidOperationException("Cannot prompt user when invoked with --noninteractive option.");
             }
         }
 
@@ -167,87 +186,94 @@ namespace Microsoft.PowerShell.CoreConsoleHost
                 Collection<ChoiceDescription> choices,
                 IEnumerable<int> defaultChoices)
         {
-            // Write the caption and message strings in Blue.
-            this.WriteLine(
-                    ConsoleColor.Blue,
-                    Console.BackgroundColor,
-                    caption + System.Environment.NewLine + message + System.Environment.NewLine);
-
-            // Convert the choice collection into something that is
-            // easier to work with. See the BuildHotkeysAndPlainLabels
-            // method for details.
-            string[,] promptData = BuildHotkeysAndPlainLabels(choices);
-
-            // Format the overall choice prompt string to display.
-            StringBuilder sb = new StringBuilder();
-            for (int element = 0; element < choices.Count; element++)
+            if (Interactive)
             {
-                sb.Append(String.Format(
-                            CultureInfo.CurrentCulture,
-                            "|{0}> {1} ",
-                            promptData[0, element],
-                            promptData[1, element]));
-            }
+                // Write the caption and message strings in Blue.
+                this.WriteLine(
+                               ConsoleColor.Blue,
+                               Console.BackgroundColor,
+                               caption + System.Environment.NewLine + message + System.Environment.NewLine);
 
-            Collection<int> defaultResults = new Collection<int>();
-            if (defaultChoices != null)
-            {
-                int countDefaults = 0;
-                foreach (int defaultChoice in defaultChoices)
+                // Convert the choice collection into something that is
+                // easier to work with. See the BuildHotkeysAndPlainLabels
+                // method for details.
+                string[,] promptData = BuildHotkeysAndPlainLabels(choices);
+
+                // Format the overall choice prompt string to display.
+                StringBuilder sb = new StringBuilder();
+                for (int element = 0; element < choices.Count; element++)
                 {
-                    ++countDefaults;
-                    defaultResults.Add(defaultChoice);
+                    sb.Append(String.Format(
+                                            CultureInfo.CurrentCulture,
+                                            "|{0}> {1} ",
+                                            promptData[0, element],
+                                            promptData[1, element]));
                 }
 
-                if (countDefaults != 0)
+                Collection<int> defaultResults = new Collection<int>();
+                if (defaultChoices != null)
                 {
-                    sb.Append(countDefaults == 1 ? "[Default choice is " : "[Default choices are ");
+                    int countDefaults = 0;
                     foreach (int defaultChoice in defaultChoices)
                     {
-                        sb.AppendFormat(
-                                CultureInfo.CurrentCulture,
-                                "\"{0}\",",
-                                promptData[0, defaultChoice]);
+                        ++countDefaults;
+                        defaultResults.Add(defaultChoice);
                     }
 
-                    sb.Remove(sb.Length - 1, 1);
-                    sb.Append("]");
+                    if (countDefaults != 0)
+                    {
+                        sb.Append(countDefaults == 1 ? "[Default choice is " : "[Default choices are ");
+                        foreach (int defaultChoice in defaultChoices)
+                        {
+                            sb.AppendFormat(
+                                            CultureInfo.CurrentCulture,
+                                            "\"{0}\",",
+                                            promptData[0, defaultChoice]);
+                        }
+
+                        sb.Remove(sb.Length - 1, 1);
+                        sb.Append("]");
+                    }
+                }
+
+                this.WriteLine(
+                               ConsoleColor.Cyan,
+                               Console.BackgroundColor,
+                               sb.ToString());
+                // Read prompts until a match is made, the default is
+                // chosen, or the loop is interrupted with ctrl-C.
+                Collection<int> results = new Collection<int>();
+                while (true)
+                {
+                ReadNext:
+                    string prompt = string.Format(CultureInfo.CurrentCulture, "Choice[{0}]:", results.Count);
+                    this.Write(ConsoleColor.Cyan, Console.BackgroundColor, prompt);
+                    string data = Console.ReadLine().Trim().ToUpper();
+
+                    // If the choice string was empty, no more choices have been made.
+                    // If there were no choices made, return the defaults
+                    if (data.Length == 0)
+                    {
+                        return (results.Count == 0) ? defaultResults : results;
+                    }
+
+                    // See if the selection matched and return the
+                    // corresponding index if it did.
+                    for (int i = 0; i < choices.Count; i++)
+                    {
+                        if (promptData[0, i] == data)
+                        {
+                            results.Add(i);
+                            goto ReadNext;
+                        }
+                    }
+
+                    this.WriteErrorLine("Invalid choice: " + data);
                 }
             }
-
-            this.WriteLine(
-                    ConsoleColor.Cyan,
-                    Console.BackgroundColor,
-                    sb.ToString());
-            // Read prompts until a match is made, the default is
-            // chosen, or the loop is interrupted with ctrl-C.
-            Collection<int> results = new Collection<int>();
-            while (true)
+            else
             {
-ReadNext:
-                string prompt = string.Format(CultureInfo.CurrentCulture, "Choice[{0}]:", results.Count);
-                this.Write(ConsoleColor.Cyan, Console.BackgroundColor, prompt);
-                string data = Console.ReadLine().Trim().ToUpper();
-
-                // If the choice string was empty, no more choices have been made.
-                // If there were no choices made, return the defaults
-                if (data.Length == 0)
-                {
-                    return (results.Count == 0) ? defaultResults : results;
-                }
-
-                // See if the selection matched and return the
-                // corresponding index if it did.
-                for (int i = 0; i < choices.Count; i++)
-                {
-                    if (promptData[0, i] == data)
-                    {
-                        results.Add(i);
-                        goto ReadNext;
-                    }
-                }
-
-                this.WriteErrorLine("Invalid choice: " + data);
+                throw new PSInvalidOperationException("Cannot prompt user when invoked with --noninteractive option.");
             }
         }
 
