@@ -49,7 +49,7 @@ module.
 
 The output directory will be slightly different because your runtime
 identifier is different. PowerShell will be at
-`./src/Microsoft.PowerShell.CoreConsoleHost/bin/Linux/netstandardapp1.5/osx.10.11-x64/powershell`,
+`./src/Microsoft.PowerShell.CoreConsoleHost/bin/Linux/netcoreapp1.0/osx.10.11-x64/powershell`,
 or `osx.10.10` depending on your operating system version. Note that
 configration is still `Linux` because it would be silly to make yet
 another separate configuration when it's used soley to work-around a

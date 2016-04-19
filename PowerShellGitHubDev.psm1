@@ -190,7 +190,7 @@ function New-PSOptions {
         [ValidateSet("Linux", "Debug", "Release")]
         [string]$Configuration,
 
-        [ValidateSet("netstandardapp1.5", "net451")]
+        [ValidateSet("netcoreapp1.0", "net451")]
         [string]$Framework,
 
         # These are duplicated from Start-PSBuild
@@ -229,7 +229,7 @@ function New-PSOptions {
         $Framework = if ($FullCLR) {
             "net451"
         } else {
-            "netstandardapp1.5"
+            "netcoreapp1.0"
         }
         log "Using framework '$Framework'"
     }
@@ -321,9 +321,11 @@ function Start-PSxUnit {
     $Arguments = "--configuration", "Linux"
     try {
         Push-Location $PSScriptRoot/test/csharp
+
         Start-NativeExecution { dotnet build $Arguments }
-        Copy-Item -ErrorAction SilentlyContinue -Recurse -Path $Content/* -Include Modules,libpsl-native* -Destination "./bin/Linux/netstandardapp1.5/ubuntu.14.04-x64"
+        Copy-Item -ErrorAction SilentlyContinue -Recurse -Path $Content/* -Include Modules,libpsl-native* -Destination "./bin/Linux/netcoreapp1.0/ubuntu.14.04-x64"
         Start-NativeExecution { dotnet test $Arguments }
+
         if ($LASTEXITCODE -ne 0) {
             throw "$LASTEXITCODE xUnit tests failed"
         }
