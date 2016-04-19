@@ -66,7 +66,7 @@ namespace PSTests
         [Fact]
         public void TestRunspaceWithPowerShellAndHost()
         {
-            Listener listener = new Listener("", false);
+            Listener listener = new Listener("", false, false);
             MyHost myHost = new MyHost(listener);
             using (var runspace = RunspaceFactory.CreateRunspace(myHost))
             {
@@ -94,7 +94,7 @@ namespace PSTests
         [Fact]
         public void TestRunspaceWithFunction()
         {
-            Listener listener = new Listener("", false);
+            Listener listener = new Listener("", false, false);
             MyHost myHost = new MyHost(listener);
             using (var runspace = RunspaceFactory.CreateRunspace(myHost))
             {
