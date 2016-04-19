@@ -74,7 +74,7 @@ function Start-PSBuild {
 
         # msbuild is needed to build powershell.exe
         # msbuild is part of .NET Framework, we can try to get it from well-known location.
-        if (-nopt $NoPath -and -not (Get-Command -Name msbuild -ErrorAction Ignore)) {
+        if (-not $NoPath -and -not (Get-Command -Name msbuild -ErrorAction Ignore)) {
             Write-Verbose "Appending probable Visual C++ tools path"
             $env:path += ";${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319"
         }
