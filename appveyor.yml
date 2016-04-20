@@ -22,6 +22,7 @@ install:
 
 build_script:
   - ps: |
+      $ErrorActionPreference = 'Stop'
       Import-Module .\PowerShellGitHubDev.psm1
       Start-PSBuild -Publish
       Start-PSBuild -FullCLR
@@ -62,19 +63,24 @@ test_script:
 
 on_finish: 
   - ps: |
-      # Creating project artifact
-      $name = git describe
-      $zipFilePath = Join-Path $pwd "$name.zip"
-      $zipFileFullPath = Join-Path $pwd "$name.FullCLR.zip"
-      Add-Type -assemblyname System.IO.Compression.FileSystem
-      [System.IO.Compression.ZipFile]::CreateFromDirectory($env:CoreOutput, $zipFilePath)
-      [System.IO.Compression.ZipFile]::CreateFromDirectory($env:FullOutput, $zipFileFullPath)
-      
-      @(
-          # You can add other artifacts here
-          $zipFilePath,
-          $zipFileFullPath
-      ) | % { 
-          Write-Host "Pushing package $_ as Appveyor artifact"
-          Push-AppveyorArtifact $_
-        }
+      $ErrorActionPreference = 'Stop'
+      try {
+        # Creating project artifact
+        $name = git describe
+        $zipFilePath = Join-Path $pwd "$name.zip"
+        $zipFileFullPath = Join-Path $pwd "$name.FullCLR.zip"
+        Add-Type -assemblyname System.IO.Compression.FileSystem
+        [System.IO.Compression.ZipFile]::CreateFromDirectory($env:CoreOutput, $zipFilePath)
+        [System.IO.Compression.ZipFile]::CreateFromDirectory($env:FullOutput, $zipFileFullPath)
+        
+        @(
+            # You can add other artifacts here
+            $zipFilePath,
+            $zipFileFullPath
+        ) | % { 
+            Write-Host "Pushing package $_ as Appveyor artifact"
+            Push-AppveyorArtifact $_
+          }
+      } catch {
+        Write-Host -Foreground Red $_
+      }
