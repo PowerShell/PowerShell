@@ -54,7 +54,6 @@ Describe "Clear-Variable DRT Unit Tests" -Tags DRT{
 	It "Clear-Variable Private variable Name should works and Get-Variable with local scope should throw exception"{
 		Set-Variable foo bar -Option Private
 		&{
-			Clear-Variable -Name foo
 			try {
 					Get-Variable -Name foo -Scope local -EA Stop
 					Throw "Execution OK"
