@@ -1,3 +1,5 @@
+$ps = Join-Path -Path $PsHome -ChildPath "powershell"
+
 Describe "Set-PSBreakpoint DRT Unit Tests" -Tags DRT{
     #Set up 
     $scriptFileName = Join-Path $TestDrive -ChildPath breakpointTestScript.ps1
@@ -84,30 +86,14 @@ set-psbreakpoint -command foo
         Remove-PSBreakPoint -Id $brk.Id
     }
 
-    # Marking as Pending tracking in Issue #829 
-    It "Should be throw Exception when missing mandatory parameter -line" -Pending {
-        $ErrorActionPreference = "Stop"
-        try {
-            powershell.exe -noninteractive -command 'sbp -column 1' -script $scriptFileName
-            Throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should Be "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
-        }
-        $ErrorActionPreference = "SilentlyContinue"
+    It "Should throw Exception when missing mandatory parameter -line"{
+         $output = & $ps -noninteractive -command "sbp -column 1 -script $scriptFileName"
+         [system.string]::Join(" ", $output) | Should Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }
 
-    # Marking as Pending tracking in Issue #829 
-    It "Should be throw Exception when missing mandatory parameter" -Pending {
-        $ErrorActionPreference = "Stop"
-        try {
-            powershell.exe -noninteractive -command 'sbp -line 1' 
-            Throw "Execution OK" 
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should Be "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
-        }
-        $ErrorActionPreference = "SilentlyContinue"
+    It "Should throw Exception when missing mandatory parameter" {
+         $output = & $ps -noninteractive -command "sbp -line 1"
+         [system.string]::Join(" ", $output) | Should Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }      
     
     It "Should be able to set psbreakpoints for -command" {
@@ -172,16 +158,8 @@ set-psbreakpoint -command foo
         $ErrorActionPreference = "SilentlyContinue"
     }
     
-    # Marking as Pending tracking in Issue #829  
-    It "Remove implicit script from 'set-psbreakpoint -script'" -Pending {
-        if ($IsLinux)
-        {
-            powershell $scriptFileNameBug
-        }
-        else
-        {
-            powershell.exe $scriptFileNameBug
-        }
+    It "Remove implicit script from 'set-psbreakpoint -script'" {
+        & $ps $scriptFileNameBug
 
         $breakpoint = Get-PSBreakpoint -Script $scriptFileNameBug
         $breakpoint | Should BeNullOrEmpty 
