@@ -11,11 +11,11 @@ Describe "Set-Content cmdlet tests" {
             $result = get-content -path testdrive:\$file1
             $result | Should BeExactly "ExpectedContent"
         }
-        It "should Set-Content to testdrive:\dynamicfile.txt with dynamic parameters" -Pending:($IsLinux -Or $IsOSX) {#https://github.com/PowerShell/PowerShell/issues/891
-            $result=set-content -path testdrive:\dynamicfile.txt -value "ExpectedContent" -passthru
+        It "should Set-Content to testdrive:\dynamicfile.txt with dynamic parameters" {
+            $result=set-content -path (Join-Path testdrive: -ChildPath dynamicfile.txt) -value "ExpectedContent" -passthru
             $result| Should BeExactly "ExpectedContent"
         }
-        It "should return expected string from testdrive:\dynamicfile.txt" -Pending:($IsLinux -Or $IsOSX) {#https://github.com/PowerShell/PowerShell/issues/891
+        It "should return expected string from testdrive:\dynamicfile.txt" {
             $result = get-content -path testdrive:\dynamicfile.txt
             $result | Should BeExactly "ExpectedContent"
         }
@@ -38,10 +38,10 @@ Describe "Set-Content cmdlet tests" {
             #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
             {set-content -path HKLM:\\software\\microsoft -value "ShouldNotWorkBecausePathIsUnsupported" -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
         }
-        It "should be able to pass multiple [string]`$objects to Set-Content through the pipeline to output a dynamic Path file" -Pending:($IsLinux -Or $IsOSX) {#https://github.com/PowerShell/PowerShell/issues/891
+        It "should be able to pass multiple [string]`$objects to Set-Content through the pipeline to output a dynamic Path file" {
             #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 9058182)]
-            "hello","world"|set-content testdrive:\dynamicfile2.txt
-            $result=get-content testdrive:\dynamicfile2.txt
+            "hello","world"|set-content (Join-Path testdrive: -ChildPath dynamicfile2.txt)
+            $result=get-content -path testdrive:\dynamicfile2.txt
             $result.length |Should be 2
             $result[0]     |Should be "hello"
             $result[1]     |Should be "world"
