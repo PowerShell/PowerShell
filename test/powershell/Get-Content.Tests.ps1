@@ -24,80 +24,121 @@ Describe "Get-Content" {
     }
 
     It "Should throw an error on a directory  " {
-	# also tests that -erroraction SilentlyContinue will work.
-	Get-Content . -ErrorAction SilentlyContinue | Should Throw
+	    # also tests that -erroraction SilentlyContinue will work.
+	    Get-Content . -ErrorAction SilentlyContinue | Should Throw
     }
-
     It "Should return an Object when listing only a single line" {
-	(Get-Content -Path $testPath).GetType().BaseType.Name | Should Be "Object"
+	    (Get-Content -Path $testPath).GetType().BaseType.Name | Should Be "Object"
     }
-
     It "Should deliver an array object when listing a file with multiple lines" {
-	(Get-Content -Path $testPath2).GetType().BaseType.Name | Should Be "Array"
+	    (Get-Content -Path $testPath2).GetType().BaseType.Name | Should Be "Array"
     }
-
     It "Should return the correct information from a file" {
-	(Get-Content -Path $testPath) | Should Be $testString
+	    (Get-Content -Path $testPath) | Should Be $testString
     }
-
     It "Should be able to call using the gc alias" {
-	{ gc -Path $testPath } | Should Not Throw
+	    { gc -Path $testPath } | Should Not Throw
     }
-
     It "Should be able to call using the type alias" {
-	{ type -Path $testPath } | Should Not Throw
+	    { type -Path $testPath } | Should Not Throw
     }
-
     It "Should return the same values for aliases" {
-	$getContentAlias = Get-Content -Path $testPath
-	$gcAlias         = gc -Path $testPath
-	$typeAlias       = type -Path $testPath
-
-	$getContentAlias | Should Be $gcAlias
-	$getContentAlias | Should Be $typeAlias
+	    $getContentAlias = Get-Content -Path $testPath
+	    $gcAlias         = gc -Path $testPath
+	    $typeAlias       = type -Path $testPath
+        $getContentAlias | Should Be $gcAlias
+        $getContentAlias | Should Be $typeAlias
     }
-
     It "Should be able to return a specific line from a file" {
-	(Get-Content -Path $testPath2)[1] | Should be $secondline
+	    (Get-Content -Path $testPath2)[1] | Should be $secondline
     }
-
     It "Should be able to specify the number of lines to get the content of using the TotalCount switch" {
-	$returnArray = (Get-Content -Path $testPath2 -TotalCount 2)
-
-	$returnArray[0] | Should Be $firstline
-	$returnArray[1] | Should Be $secondline
+	    $returnArray    = (Get-Content -Path $testPath2 -TotalCount 2)
+    	$returnArray[0] | Should Be $firstline
+	    $returnArray[1] | Should Be $secondline
     }
-
     It "Should be able to specify the number of lines to get the content of using the Head switch" {
-	$returnArray = (Get-Content -Path $testPath2 -Head 2)
-
-	$returnArray[0] | Should Be $firstline
-	$returnArray[1] | Should Be $secondline
+	    $returnArray    = (Get-Content -Path $testPath2 -Head 2)
+        $returnArray[0] | Should Be $firstline
+	    $returnArray[1] | Should Be $secondline
     }
-
     It "Should be able to specify the number of lines to get the content of using the First switch" {
-	$returnArray = (Get-Content -Path $testPath2 -First 2)
-
-	$returnArray[0] | Should Be $firstline
-	$returnArray[1] | Should Be $secondline
+	    $returnArray    = (Get-Content -Path $testPath2 -First 2)
+    	$returnArray[0] | Should Be $firstline
+	    $returnArray[1] | Should Be $secondline
     }
-
     It "Should return the last line of a file using the Tail switch" {
-	Get-Content -Path $testPath -Tail 1 | Should Be $testString
+	    Get-Content -Path $testPath -Tail 1 | Should Be $testString
     }
-
-
     It "Should return the last lines of a file using the Last alias" {
-	Get-Content -Path $testPath2 -Last 1 | Should Be $fifthline
+	    Get-Content -Path $testPath2 -Last 1 | Should Be $fifthline
     }
-
     It "Should be able to get content within a different drive" {
-	pushd env:
-	$expectedoutput = [Environment]::GetEnvironmentVariable("PATH");
+	    pushd env:
+	    $expectedoutput = [Environment]::GetEnvironmentVariable("PATH");
+        { Get-Content PATH } | Should Not Throw
+	    Get-Content PATH     | Should Be $expectedoutput
+    	popd
+    }
+    It "should throw 'PSNotSupportedException' when you set-content to an unsupported provider" {
+        #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
+        {get-content -path HKLM:\\software\\microsoft -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
+    }
+    It "should Get-Content with a variety of -Tail and -ReadCount values" {
+        #[DRT]
+        set-content -path $testPath "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
+        $result=get-content -path $testPath -readcount:-1 -tail 5
+        $result.Length | Should Be 4
+        $expected = "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
+        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
 
-	{ Get-Content PATH } | Should Not Throw
-	Get-Content PATH     | Should Be $expectedoutput
+        $result=get-content -path $testPath -readcount 0 -tail 3
+        $result.Length    | Should Be 3
+        $expected = "Hello2,World2","Hello3,World3","Hello4,World4"
+        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
 
-	popd
+        $result=get-content -path $testPath -readcount 1 -tail 3
+        $result.Length    | Should Be 3
+        $expected = "Hello2,World2","Hello3,World3","Hello4,World4"
+        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+
+        $result=get-content -path $testPath -readcount 99999 -tail 3
+        $result.Length    | Should Be 3
+        $expected = "Hello2,World2","Hello3,World3","Hello4,World4"
+        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+
+        $result=get-content -path $testPath -readcount 2 -tail 3
+        $result.Length    | Should Be 2
+        $expected = "Hello2,World2","Hello3,World3"
+        $expected = $expected,"Hello4,World4"
+        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+
+        $result=get-content -path $testPath -readcount 2 -tail 2
+        $result.Length    | Should Be 2
+        $expected = "Hello3,World3","Hello4,World4"
+        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+
+        $result=get-content -path $testPath -delimiter "," -tail 2
+        $result.Length    | Should Be 2
+        $expected = "World3`r`nHello4,","World4`r`n"
+        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+        
+        $result=get-content -path $testPath -delimiter "o" -tail 3
+        $result.Length    | Should Be 3
+        $expected = "rld3`r`nHello","4,Wo","rld4"
+        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i].Trim()  | Should BeExactly $expected[$i]}
+
+        $result=get-content -path $testPath -encoding:Byte -tail 10
+        $result.Length    | Should Be 10
+        $expected = "52","44","87","111","114","108","100","52","13","10"
+        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+    }
+    It "should get-content that matches the input string"{
+        #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 905829)]
+        set-content $testPath "Hello,llllWorlld","Hello2,llllWorlld2"
+        $result=get-content $testPath -delimiter "ll" 
+        $result.Length    | Should Be 9
+        $expected = "Hell","o,ll","ll","Worll","d`r`nHell","o2,ll","ll","Worll","d2`r`n"
+        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
     }
 }
