@@ -1,6 +1,53 @@
 Pester Testing Test Guide
 =========================
 
+Running Pester Tests
+--------------------
+
+Go to the top level of the PowerShell repository and run: `Start-PSPester`
+inside a self-hosted copy of PowerShell.
+
+You can use `Start-PSPester -Tests SomeTestSuite*` to limit the tests run.
+
+Testing new `powershell` processes
+----------------------------------
+
+Any launch of a new `powershell` process must include `-noprofile` so that
+modified user and system profiles do not causes tests to fail. You also must
+take care to call the development copy of PowerShell, which is *not* the first
+one on the path.
+
+Example:
+
+```powershell
+    $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+    & $powershell -noprofile -command "ExampleCommand" | Should Be "ExampleOutput"
+```
+
+Portability
+-----------
+
+Some tests simply must be tied to certain platforms. Use Pester's
+`-Skip` directive on an `It` statement to do this. For instance to run
+the test only on Windows:
+
+```powershell
+It "Should do something on Windows" -Skip:($IsLinux -Or $IsOSX) { ... }
+```
+
+Or only on Linux and OS X:
+
+```powershell
+It "Should do something on Linux" -Skip:$IsWindows { ... }
+```
+
+Pending
+-------
+
+When writing a test that should pass, but does not, please do not skip or delete
+the test, but use `It "Should Pass" -Pending` to mark the test as pending, and
+file an issue on GitHub.
+
 Who this is for
 ---------------
 
@@ -24,35 +71,6 @@ developer in writing a suite in minimal time, while enhancing quality.
 Test suites should proceed as functional and system tests of the
 cmdlets, and the code treated as a black box for the purpose of test
 suite design.
-
-### Portability
-
-Some tests simply must be tied to certain platforms. Use Pester's
-`-Skip` directive on an `It` statement to do this. For instance to run
-the test only on Windows:
-
-```powershell
-It "Should do something on Windows" -Skip:($IsLinux -Or $IsOSX) { ... }
-```
-
-Or only on Linux and OS X:
-
-```powershell
-It "Should do something on Linux" -Skip:$IsWindows { ... }
-```
-
-### Use of Mocks
-
-It is often necessary for the code to interact with the system or
-other components. When possible, use Mock objects to facilitate this
-in order to minimize external dependencies. Note: creating a Mock in
-Powershell on Linux causes PowerShell to look at the Mock, never
-actually hitting any C# code. Cmdlets cannot be tested using Mocks.
-
-### Aliases
-
-Each cmdlet with an alias must be tested with all of its aliases at
-least once to verify the code path calls the original function.
 
 Testing Standards
 -----------------
@@ -125,33 +143,3 @@ Other style standards are no less important to readability of the code:
 - Each test describes a behavior- use the word "Should" at the
   beginning of each test description- so it reads "It 'Should..."
 
-### Basic Unit Tests
-
-The following table should suffice to inspire in the developer sufficient content to create a suite of tests.
-
-test # | test name | entry criteria/setup | exit criteria/assertion
--------|-----------|----------------------|------------------------
-01 | Should be able to be called | without params (if applicable) | no throw
-02 | Should be able to be called | minimal required params | no throw, expected output
-03 | Should be able to use the X alias | minimal required params | no throw, expected output
-04 | Should return the proper data type | required params | no throw, proper data type
-05 | Should be able to accept piped input | piped input | expected output
-06 | Should be able to call using the X parameter | use X parameter | no throw, expected output
-07 | Should be able to call using the Y parameter | use Y parameter | no throw, expected output
-08 | Should be able to call using the Z parameter | use Z parameter | no throw, expected output
-09 | Should throw under condition X | create condition X | Throw error x
-10 | Should throw under condition Y | create condition Y | Throw error y
-11 | Should throw under condition Z | create condition Z | Throw error z
-
-These are the **basic** unit tests required to verify the
-functionality of any Cmdlet. If the above questions cannot be answered
-for each Cmdlet, then they cannot be verified to work.
-
-Look at the existing suites of pester tests located within
-this directory and use that as inspiration.
-
-Running Pester Tests
---------------------
-
-Go to the top level of the PowerShell repository and run:
-`Start-PSPester` inside a self-hosted copy of PowerShell.
