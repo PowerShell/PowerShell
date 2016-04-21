@@ -132,8 +132,10 @@ Describe "Get-Content" {
 
         $result=get-content -path $testPath -encoding:Byte -tail 10
         $result.Length    | Should Be 10
-        $expected = "52","44","87","111","114","108","100","52","13","10"
-        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+        if ($IsWindows) {
+          $expected = "52","44","87","111","114","108","100","52","13","10"
+          for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+        }
     }
     It "should get-content that matches the input string"{
         #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 905829)]
