@@ -339,7 +339,7 @@ namespace Microsoft.PowerShell.CoreConsoleHost
                     this.OnEnd();
                     break;
                 case ConsoleKey.Tab:
-                    this.OnTab();
+                    this.OnTab(!key.Modifiers.HasFlag(ConsoleModifiers.Shift));
                     break;
                 case ConsoleKey.UpArrow:
                     this.OnUpArrow(nested);
@@ -412,7 +412,7 @@ namespace Microsoft.PowerShell.CoreConsoleHost
         /// <summary>
         ///   The Tab key was entered
         /// </summary>
-        private void OnTab()
+        private void OnTab(bool forward)
         {
             //if the prompt is empty simply return
             if (String.IsNullOrWhiteSpace(this.buffer.ToString()) || this.buffer.Length == 0){
@@ -420,20 +420,35 @@ namespace Microsoft.PowerShell.CoreConsoleHost
             }
 
             //if the buffer has been modified in any way, get the new command completion
-            if (previousKeyPress.Key != ConsoleKey.Tab)
+            if (previousKeyPress.Key == ConsoleKey.Tab)
+            {
+                if (cmdCompleteOpt.CompletionMatches.Count == 0)
+                {
+                    return;
+                }
+
+                if (forward)
+                {
+                    tabCompletionPos = (tabCompletionPos < cmdCompleteOpt.CompletionMatches.Count - 1) 
+                        ? tabCompletionPos + 1 : 0;
+                }
+                else
+                {
+                    tabCompletionPos = (tabCompletionPos > 0) 
+                        ? tabCompletionPos - 1 : cmdCompleteOpt.CompletionMatches.Count -1;
+                }
+            }
+            else
             {
                 this.preTabBuffer = this.buffer.ToString();
                 cmdCompleteOpt = CommandCompletion.CompleteInput(this.preTabBuffer, this.current, options, powershell);
-            }
 
-            if (cmdCompleteOpt.CompletionMatches.Count == 0)
-            {
-                return;
-            }
+                if (cmdCompleteOpt.CompletionMatches.Count == 0)
+                {
+                    return;
+                }
 
-            if (tabCompletionPos >= cmdCompleteOpt.CompletionMatches.Count)
-            {
-                tabCompletionPos = 0;
+                tabCompletionPos = forward ? 0 : cmdCompleteOpt.CompletionMatches.Count -1;
             }
 
             string tabResult = cmdCompleteOpt.CompletionMatches[tabCompletionPos].CompletionText;
@@ -444,8 +459,6 @@ namespace Microsoft.PowerShell.CoreConsoleHost
             {
                 tabResult = GetReplacementTextForDirectory(tabResult, ref moveLeftOneSpace);
             }
-
-            tabCompletionPos++;
 
             //if there is a command for the user before the uncompleted option
             if (!String.IsNullOrEmpty(tabResult))
