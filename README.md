@@ -75,26 +75,3 @@ easy, we can just clone recursively.
 ```sh
 git clone --recursive https://github.com/PowerShell/PowerShell.git
 ```
-
-You can verify that the submodules were initialized properly with:
-
-```sh
-git submodule status
-```
-
-If they're initialized, it will look like this:
-
-```
- f23641488f8d7bf8630ca3496e61562aa3a64009 src/Modules/Pester (f23641488)
- c99458533a9b4c743ed51537e25989ea55944908 src/libpsl-native/test/googletest (release-1.7.0)
- e6bf85694ae8352d77175c4c7d304946e018808c src/windows-build (monad/cc6afbeb-3/31)
-```
-
-If they're not, there will be minuses in front (and the folders will
-be empty):
-
-```
--f23641488f8d7bf8630ca3496e61562aa3a64009 src/Modules/Pester (f23641488)
--c99458533a9b4c743ed51537e25989ea55944908 src/libpsl-native/test/googletest (release-1.7.0)
--e6bf85694ae8352d77175c4c7d304946e018808c src/windows-build (monad/cc6afbeb-3/31)
-```
