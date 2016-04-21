@@ -31,7 +31,7 @@ Describe "Add-Content cmdlet tests" {
             #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 903880)]
             {add-content -path $() -value "ShouldNotWorkBecausePathIsInvalid" -ea stop} | Should Throw "Cannot bind argument to parameter 'Path'"
         }
-        It "should throw 'PSNotSupportedException' when you add-content to an unsupported provider" {
+        It "should throw 'PSNotSupportedException' when you add-content to an unsupported provider" -Skip:($IsLinux -Or $IsOSX) {
             #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
             {add-content -path HKLM:\\software\\microsoft -value "ShouldNotWorkBecausePathIsUnsupported" -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
         }

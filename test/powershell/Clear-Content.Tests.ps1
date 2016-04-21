@@ -19,7 +19,7 @@ Describe "Clear-Content cmdlet tests" {
             #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 903880)]
             {clear-content -path $() -ea stop} | Should Throw "Cannot bind argument to parameter 'Path'"
         }
-        It "should throw 'PSNotSupportedException' when you set-content to an unsupported provider" {
+        It "should throw 'PSNotSupportedException' when you set-content to an unsupported provider" -Skip:($IsLinux -Or $IsOSX) {
             #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
             {clear-content -path HKLM:\\software\\microsoft -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
         }

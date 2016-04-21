@@ -80,7 +80,7 @@ Describe "Get-Content" {
 	    Get-Content PATH     | Should Be $expectedoutput
     	popd
     }
-    It "should throw 'PSNotSupportedException' when you set-content to an unsupported provider" {
+    It "should throw 'PSNotSupportedException' when you set-content to an unsupported provider" -Skip:($IsLinux -Or $IsOSX) {
         #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
         {get-content -path HKLM:\\software\\microsoft -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
     }
