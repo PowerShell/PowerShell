@@ -11,11 +11,11 @@ Describe "Add-Content cmdlet tests" {
             $result = get-content -path testdrive:\$file1
             $result | Should BeExactly "ExpectedContent"
         }
-        It "should Add-Content to testdrive:\dynamicfile.txt with dynamic parameters" {
+        It "should Add-Content to testdrive:\dynamicfile.txt with dynamic parameters" -Pending:($IsLinux -Or $IsOSX) {#https://github.com/PowerShell/PowerShell/issues/891
             $result=add-content -path testdrive:\dynamicfile.txt -value "ExpectedContent" -passthru
             $result| Should BeExactly "ExpectedContent"
         }
-        It "should return expected string from testdrive:\dynamicfile.txt" {
+        It "should return expected string from testdrive:\dynamicfile.txt" -Pending:($IsLinux -Or $IsOSX) {#https://github.com/PowerShell/PowerShell/issues/891
             $result = get-content -path testdrive:\dynamicfile.txt
             $result | Should BeExactly "ExpectedContent"
         }
@@ -35,7 +35,7 @@ Describe "Add-Content cmdlet tests" {
             #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
             {add-content -path HKLM:\\software\\microsoft -value "ShouldNotWorkBecausePathIsUnsupported" -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
         }
-        It "should be able to pass multiple [string]`$objects to Add-Content through the pipeline to output a dynamic Path file" {
+        It "should be able to pass multiple [string]`$objects to Add-Content through the pipeline to output a dynamic Path file" -Pending:($IsLinux -Or $IsOSX) {#https://github.com/PowerShell/PowerShell/issues/891
             #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 9058182)]
             "hello","world"|add-content testdrive:\dynamicfile2.txt
             $result=get-content testdrive:\dynamicfile2.txt

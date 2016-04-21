@@ -120,12 +120,14 @@ Describe "Get-Content" {
 
         $result=get-content -path $testPath -delimiter "," -tail 2
         $result.Length    | Should Be 2
-        $expected = "World3`r`nHello4,","World4`r`n"
+        if ($IsWindows) {$expected = "World3`r`nHello4,","World4`r`n"
+        } else {$expected = "World3`nHello4,","World4`n"}
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
         
         $result=get-content -path $testPath -delimiter "o" -tail 3
         $result.Length    | Should Be 3
-        $expected = "rld3`r`nHello","4,Wo","rld4"
+        if ($IsWindows) {$expected = "rld3`r`nHello","4,Wo","rld4"
+        } else {$expected = "rld3`nHello","4,Wo","rld4"}
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i].Trim()  | Should BeExactly $expected[$i]}
 
         $result=get-content -path $testPath -encoding:Byte -tail 10
@@ -138,7 +140,8 @@ Describe "Get-Content" {
         set-content $testPath "Hello,llllWorlld","Hello2,llllWorlld2"
         $result=get-content $testPath -delimiter "ll" 
         $result.Length    | Should Be 9
-        $expected = "Hell","o,ll","ll","Worll","d`r`nHell","o2,ll","ll","Worll","d2`r`n"
+        if ($IsWindows) {$expected = "Hell","o,ll","ll","Worll","d`r`nHell","o2,ll","ll","Worll","d2`r`n"
+        } else {$expected = "Hell","o,ll","ll","Worll","d`nHell","o2,ll","ll","Worll","d2`n"}  
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
     }
 }
