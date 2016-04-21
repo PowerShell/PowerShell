@@ -74,7 +74,7 @@
     }
 
     # Blocked by Issue #874.
-    It "Cannot Add PS Property Or PS Method" -Skip:$true {
+    It "Cannot Add PS Property Or PS Method" -Pending {
         $membersYouCannotAdd = "Method", "Property", "ParameterizedProperty", "AnythingElse"
         foreach ($member in $membersYouCannotAdd)
         {
@@ -172,7 +172,7 @@
     }
 
     # Blocked by Issue #875.
-    It "PropertySet With Wrong Type For Value1" -Skip:$true {
+    It "PropertySet With Wrong Type For Value1" -Pending {
         try
         {
             add-member -InputObject a PropertySet Name ImNotACollection
