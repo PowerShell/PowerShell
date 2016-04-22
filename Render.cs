@@ -131,6 +131,7 @@ namespace Microsoft.PowerShell
                         // use the tokens color otherwise use the initial color.
                         var state = tokenStack.Peek();
                         var token = state.Tokens[state.Index];
+
                         if (i == token.Extent.EndOffset)
                         {
                             if (token == state.Tokens[state.Tokens.Length - 1])
@@ -153,7 +154,6 @@ namespace Microsoft.PowerShell
                             {
                                 foregroundColor = state.ForegroundColor;
                                 backgroundColor = state.BackgroundColor;
-
                                 token = state.Tokens[++state.Index];
                             }
                         }
@@ -231,12 +231,16 @@ namespace Microsoft.PowerShell
                         else if (size > 1)
                         {
                             _consoleBuffer[j].UnicodeChar = charToRender;
+#if !CORECLR
                             _consoleBuffer[j].Attributes = (ushort)(_consoleBuffer[j].Attributes |
                                                            (uint)CHAR_INFO_Attributes.COMMON_LVB_LEADING_BYTE);
+#endif
                             MaybeEmphasize(ref _consoleBuffer[j++], i, foregroundColor, backgroundColor);
                             _consoleBuffer[j].UnicodeChar = charToRender;
+#if !CORECLR
                             _consoleBuffer[j].Attributes = (ushort)(_consoleBuffer[j].Attributes |
                                                            (uint)CHAR_INFO_Attributes.COMMON_LVB_TRAILING_BYTE);
+#endif
                             MaybeEmphasize(ref _consoleBuffer[j++], i, foregroundColor, backgroundColor);
                         }
                         else

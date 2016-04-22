@@ -315,6 +315,18 @@ namespace Microsoft.PowerShell.Internal
 
     public struct CHAR_INFO
     {
+#if CORECLR
+        public char UnicodeChar;
+        public ConsoleColor ForegroundColor;
+        public ConsoleColor BackgroundColor;
+
+        public CHAR_INFO(char c, ConsoleColor foreground, ConsoleColor background)
+        {
+            UnicodeChar = c;
+            ForegroundColor = foreground;
+            BackgroundColor = background;
+        }
+#else
         public ushort UnicodeChar;
         public ushort Attributes;
 
@@ -324,27 +336,21 @@ namespace Microsoft.PowerShell.Internal
             Attributes = (ushort)(((int)background << 4) | (int)foreground);
         }
 
-#if !CORECLR
         [ExcludeFromCodeCoverage]
-#endif
         public ConsoleColor ForegroundColor
         {
             get { return (ConsoleColor)(Attributes & 0xf); }
             set { Attributes = (ushort)((Attributes & 0xfff0) | ((int)value & 0xf)); }
         }
 
-#if !CORECLR
         [ExcludeFromCodeCoverage]
-#endif
         public ConsoleColor BackgroundColor
         {
             get { return (ConsoleColor)((Attributes & 0xf0) >> 4); }
             set { Attributes = (ushort)((Attributes & 0xff0f) | (((int)value & 0xf) << 4)); }
         }
 
-#if !CORECLR
         [ExcludeFromCodeCoverage]
-#endif
         public override string ToString()
         {
             var sb = new StringBuilder();
@@ -356,9 +362,7 @@ namespace Microsoft.PowerShell.Internal
             return sb.ToString();
         }
 
-#if !CORECLR
         [ExcludeFromCodeCoverage]
-#endif
         public override bool Equals(object obj)
         {
             if (!(obj is CHAR_INFO))
@@ -370,14 +374,12 @@ namespace Microsoft.PowerShell.Internal
             return this.UnicodeChar == other.UnicodeChar && this.Attributes == other.Attributes;
         }
 
-#if !CORECLR
         [ExcludeFromCodeCoverage]
-#endif
         public override int GetHashCode()
         {
             return UnicodeChar.GetHashCode() + Attributes.GetHashCode();
         }
-
+#endif
     }
 
     internal static class ConsoleKeyInfoExtension 
@@ -626,20 +628,9 @@ namespace Microsoft.PowerShell.Internal
 
             for (int i = 0; i < buffer.Length; ++i)
             {
-                /* For some reasons, the default color comes out white on white */
-                /*
-                if (buffer[i].ForegroundColor == ConsoleColor.White
-                    && buffer[i].BackgroundColor == ConsoleColor.White)
-                {
-                    Console.ForegroundColor =  foregroundColor;
-                    Console.BackgroundColor =  backgroundColor;
-                }
-                else
-                {
-                    Console.ForegroundColor =  buffer[i].ForegroundColor;
-                    Console.BackgroundColor = backgroundColor;
-                }
-                */
+                Console.ForegroundColor =  buffer[i].ForegroundColor;
+                Console.BackgroundColor =  buffer[i].BackgroundColor;
+
                 Console.Write((char)buffer[i].UnicodeChar);
             }
 
@@ -675,8 +666,6 @@ namespace Microsoft.PowerShell.Internal
         public void ScrollBuffer(int lines)
         {
 #if CORECLR
-//            Console.MoveBufferArea(lines, 0, Console.BufferWidth, Console.BufferHeight - lines, 0, 0, ' ', 
-//                                   Console.ForegroundColor, Console.BackgroundColor);
             for (int i=0; i<lines; ++i)
             {
                 Console.SetCursorPosition(Console.BufferWidth, Console.BufferHeight - 1);
