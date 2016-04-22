@@ -64,7 +64,7 @@
         {
             try
             {
-                Add-Member -InputObject a $memberType Name something somethingElse 
+                Add-Member -InputObject a -memberType $memberType -Name Name -Value something -SecondValue somethingElse 
                 Throw "Execution OK"
             }
             catch{
@@ -73,21 +73,30 @@
         }
     }
 
-    # Blocked by Issue #874.
-    It "Cannot Add PS Property Or PS Method" -Pending {
-        $membersYouCannotAdd = "Method", "Property", "ParameterizedProperty", "AnythingElse"
+    It "Cannot Add PS Property Or PS Method" {
+        $membersYouCannotAdd = "Method", "Property", "ParameterizedProperty"
         foreach ($member in $membersYouCannotAdd)
         {
             try
             {
-                Add-Member -InputObject a $member Name  
+                Add-Member -InputObject a -memberType $member -Name Name  
                 Throw "Execution OK"
             }
             catch
             {
-                $_.FullyQualifiedErrorId | Should Be ""
+                $_.FullyQualifiedErrorId | Should Be "CannotAddMemberType,Microsoft.PowerShell.Commands.AddMemberCommand"
                 
             }
+        }
+
+        try
+        {
+            Add-Member -InputObject a -memberType AnythingElse -Name Name  
+            Throw "Execution OK"
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorId | Should Be "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.AddMemberCommand"
         }
         
     }
@@ -98,7 +107,7 @@
         {
             try
             {
-                Add-Member $memberType PropertyName $null $null -InputObject a
+                Add-Member -memberType $memberType -Name PropertyName -Value $null -SecondValue $null -InputObject a
                 Throw "Execution OK"
             }
             catch
@@ -112,7 +121,7 @@
     It "Fail to add unexisting type" {
         try
         {
-            Add-Member -InputObject a AliasProperty Name something unexistingType
+            Add-Member -InputObject a -MemberType AliasProperty -Name Name -Value something -SecondValue unexistingType
             Throw "Execution OK"
         }
         catch
@@ -122,13 +131,13 @@
     }
 
     It "Successful alias, no type" {
-        $results = Add-Member -InputObject a AliasProperty Cnt Length -passthru
+        $results = Add-Member -InputObject a -MemberType AliasProperty -Name Cnt -Value Length -passthru
         $results.Cnt.GetType().Name | Should Be 'Int32'
         $results.Cnt | Should Be 1
     }
 
     It "Successful alias, with type" {
-        $results = add-member -InputObject a AliasProperty Cnt Length String -passthru
+        $results = add-member -InputObject a -MemberType AliasProperty -Name Cnt -Value Length -SecondValue String -passthru
         $results.Cnt.GetType().Name | Should Be 'String'
         $results.Cnt | Should Be '1'
     }
@@ -136,7 +145,7 @@
     It "CodeProperty Reference Wrong Type" {
         try
         {
-            add-member -InputObject a CodeProperty Name something
+            add-member -InputObject a -MemberType CodeProperty -Name Name -Value something
             Throw "Execution OK"
         }
         catch
@@ -146,7 +155,7 @@
     }
 
     It "Empty Member Set Null Value1" {
-        $results = add-member -InputObject a MemberSet Name $null -passthru
+        $results = add-member -InputObject a -MemberType MemberSet -Name Name -Value $null -passthru
         $results.Length | Should Be 1
         $results.Name.a | Should BeNullOrEmpty 
     }
@@ -155,27 +164,14 @@
         $members = new-object System.Collections.ObjectModel.Collection[System.Management.Automation.PSMemberInfo]
         $n=new-object Management.Automation.PSNoteProperty a,1
         $members.Add($n)
-        $r=add-member -InputObject a MemberSet Name $members -passthru
+        $r=add-member -InputObject a -MemberType MemberSet -Name Name -Value $members -passthru
         $r.Name.a | Should Be '1'
     }
 
     It "MemberSet With Wrong Type For Value1" {
         try
         {
-            add-member -InputObject a MemberSet Name ImNotACollection
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be "ConvertToFinalInvalidCastException,Microsoft.PowerShell.Commands.AddMemberCommand"
-        }
-    }
-
-    # Blocked by Issue #875.
-    It "PropertySet With Wrong Type For Value1" -Pending {
-        try
-        {
-            add-member -InputObject a PropertySet Name ImNotACollection
+            add-member -InputObject a -MemberType MemberSet -Name Name -Value ImNotACollection
             Throw "Execution OK"
         }
         catch
@@ -187,7 +183,7 @@
     It "ScriptMethod Reference Wrong Type" {
         try
         {
-            add-member -InputObject a ScriptMethod Name something
+            add-member -InputObject a -MemberType ScriptMethod -Name Name -Value something
             Throw "Execution OK"
         }
         catch
@@ -197,7 +193,7 @@
     }
 
     It "Add ScriptMethod Success" {
-        $results = add-member -InputObject 'abc' ScriptMethod Name {$this.length} -passthru
+        $results = add-member -InputObject 'abc' -MemberType ScriptMethod -Name Name -Value {$this.length} -passthru
         $results | Should Be abc
         $results.Name() | Should Be 3
     }
@@ -205,7 +201,7 @@
     It "ScriptProperty Reference Wrong Type" {
         try
         {
-            add-member -InputObject a ScriptProperty Name something
+            add-member -InputObject a -MemberType ScriptProperty -Name Name -Value something
             Throw "Execution OK"
         }
         catch
@@ -218,14 +214,14 @@
         set-alias ScriptPropertyTestAlias dir
         $al=(get-alias ScriptPropertyTestAlias)
         $al.Description="MyDescription"
-        $al | add-member ScriptProperty NewDescription {$this.Description} {$this.Description=$args[0]} -passthru
+        $al | add-member -MemberType ScriptProperty -Name NewDescription -Value {$this.Description} -SecondValue {$this.Description=$args[0]} 
         $al.NewDescription | Should Be 'MyDescription' 
         $al.NewDescription = "some description"
         $al.NewDescription | Should Be 'some description'        
     }
 
     It "Add TypeName MemberSet Success" {
-        $a = 'string' | add-member NoteProperty TestNote Any -TypeName MyType -passthru 
+        $a = 'string' | add-member -MemberType NoteProperty -Name TestNote -Value Any -TypeName MyType -passthru 
         $a.PSTypeNames[0] | Should Be MyType 
     }
 
@@ -236,14 +232,14 @@
 
     It "Add Single Note To Array" {
         $a=1,2,3
-        $a = add-member -InputObject $a Name Value -Passthru
+        $a = Add-Member -InputObject $a -MemberType NoteProperty -Name Name -Value Value -PassThru
         $a.Name | Should Be Value
     }
 
     It "Add Multiple Note Members" {
         $obj=new-object psobject 
         $hash=@{Name='Name';TestInt=1;TestNull=$null}
-        add-member -InputObject $obj $hash -Passthru
+        add-member -InputObject $obj $hash 
         $obj.Name | Should Be 'Name'
         $obj.TestInt | Should Be 1
         $obj.TestNull | Should BeNullOrEmpty 
@@ -259,8 +255,8 @@
     It "Add Multiple Members With Force" {
         $obj=new-object psobject 
         $hash=@{TestNote='hello'} 
-        $obj | add-member TestNote 1 
-        $obj | add-member $hash -force -Passthru
+        $obj | Add-Member -MemberType NoteProperty -Name TestNote -Value 1
+        $obj | add-member $hash -force 
         $obj.TestNote | Should Be 'hello'
     }
 
