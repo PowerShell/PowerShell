@@ -27,3 +27,9 @@ Describe "Invoke-Expression" {
 	}
     }
 }
+Describe "Invoke-Expression DRT Unit Tests" -Tags DRT{
+	It "Invoke-Expression should work"{	
+		$result=invoke-expression -Command 2+2
+		$result|Should Be 4
+	}
+}
