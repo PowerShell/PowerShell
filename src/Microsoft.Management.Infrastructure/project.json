@@ -8,7 +8,7 @@
     },
 
     "dependencies": {
-        "Microsoft.Management.Infrastructure.Native": "1.0.0-*"
+        "Microsoft.Management.Infrastructure.Native": "1.0.0-rc3"
     },
 
     "frameworks": {
