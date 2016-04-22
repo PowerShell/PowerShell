@@ -8,9 +8,6 @@ Rules
 
 Don't forget to commit early and often!
 
-Please add `[ci skip]` to commits that should be ignored by the CI systems
-(e.g. changes to documentation).
-
 All pull requests **must** pass both CI systems before they will be approved.
 
 Write *good* commit messages. Follow Tim Pope's [guidelines][]:
@@ -25,10 +22,10 @@ Write *good* commit messages. Follow Tim Pope's [guidelines][]:
 New to Git?
 -----------
 
-- [Git Basics](docs/git/basics.md): install and getting started.
-- [Git for sd users](docs/git/source-depot.md): a handy reference
+- [Git Basics](../docs/git/basics.md): install and getting started.
+- [Git for sd users](../docs/git/source-depot.md): a handy reference
   document for people familiar with `sd`.
-- [Commit process](docs/git/committing.md): step-by-step commit guide
+- [Commit process](../docs/git/committing.md): step-by-step commit guide
   with all gory details.
 
 Authentication
@@ -62,7 +59,7 @@ Particularly:
 [MS-OSS-Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
 [2 factor authentication]: https://github.com/blog/1614-two-factor-authentication
 
-[Branches](docs/workflow/branches.md)
+[Branches](../docs/workflow/branches.md)
 -------------------------------------
 
 * Checkout a new local branch for every change you want to make (bugfix, feature).
@@ -75,16 +72,15 @@ Particularly:
 Permissions
 -----------
 
-If you have difficulty in pushing your changes, there is a high
-probability that you actually don't have permissions.
+If you have difficulty in pushing your changes, there is a high probability that
+you actually don't have permissions.
 
-Be sure that you have write access to corresponding repo (remember
-that submodules have their own privilege).
+Be sure that you have write access to corresponding repo (remember that
+submodules have their own privilege).
 
-You do *not* necessarily need to have write permissions to the main
-repositories, as you can also just [fork a repo][].
-
-[fork a repo]: https://help.github.com/articles/fork-a-repo/
+Your should push to this repository instead of a fork so that the CI system can
+provide credentials to your pull request. If you make a pull request from a
+fork, the CI *will* fail.
 
 Recommended Git configurations
 ------------------------------
@@ -117,13 +113,12 @@ git config --global rerere.autoUpdate true
 git config --global am.threeWay true
 ```
 
-[Mapping](docs/workflow/mapping.md)
+[Mapping](../docs/workflow/mapping.md)
 -----------------------------------
 
 Learn about new files locations in PowerShell/PowerShell.
 
-[Resources](docs/workflow/resources.md)
+[Resources](../docs/workflow/resources.md)
 ---------------------------------------
 
 Learn how to work with string resources in `.resx` files.
-
