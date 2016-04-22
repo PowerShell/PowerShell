@@ -146,7 +146,7 @@ OPTIONS
                                 break;
                             case Options.EncodedCommand:
                                 byte[] data = Convert.FromBase64String(nextArg);
-                                initialScript = Encoding.UTF8.GetString(data);
+                                initialScript = Encoding.Unicode.GetString(data);
                                 ++i;
                                 break;
                             default:
