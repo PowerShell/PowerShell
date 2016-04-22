@@ -1,3 +1,252 @@
+Describe "Get-Random DRT Unit Tests" -Tags DRT{
+   
+    # -minimum is always set to the actual low end of the range, details refer to closed issue #887
+    It "Tests for random-numbers mode" {    
+        # Test for Int32
+        $results = get-random
+        $results.GetType().FullName | Should Be System.Int32
+        $results | Should BeGreaterThan -1
+        $results | Should BeLessThan ([int32]::MaxValue)
+
+        $results = get-random 100
+        $results.GetType().FullName | Should Be System.Int32
+        $results | Should BeGreaterThan -1
+        $results | Should BeLessThan 100
+
+        $x = 10000 
+        $results = get-random $x
+        $results.GetType().FullName | Should Be System.Int32
+        $results | Should BeGreaterThan -1
+        $results | Should BeLessThan 10000
+
+        $results = get-random -Minimum -100 -Maximum 0
+        $results.GetType().FullName | Should Be System.Int32
+        $results | Should BeGreaterThan -101
+        $results | Should BeLessThan 0
+
+        $results = get-random -Minimum -100 -Maximum 100
+        $results.GetType().FullName | Should Be System.Int32
+        $results | Should BeGreaterThan -101
+        $results | Should BeLessThan 100
+
+        $results = get-random -Minimum -200 -Maximum -100
+        $results.GetType().FullName | Should Be System.Int32
+        $results | Should BeGreaterThan -201
+        $results | Should BeLessThan -100
+
+        $results = get-random -Minimum (-200) -Maximum (-100)
+        $results.GetType().FullName | Should Be System.Int32
+        $results | Should BeGreaterThan -201
+        $results | Should BeLessThan -100
+        
+        $results = get-random -Minimum 5 -Maximum '8'
+        $results.GetType().FullName | Should Be System.Int32
+        $results | Should BeGreaterThan 4
+        $results | Should BeLessThan 8
+
+        $results = get-random -Minimum '5' -Maximum 8
+        $results.GetType().FullName | Should Be System.Int32
+        $results | Should BeGreaterThan 4
+        $results | Should BeLessThan 8
+        
+        $results = get-random -Minimum 0 -Maximum +100
+        $results.GetType().FullName | Should Be System.Int32
+        $results | Should BeGreaterThan -1
+        $results | Should BeLessThan 100
+
+        $results = get-random -Minimum 0 -Maximum '+100'
+        $results.GetType().FullName | Should Be System.Int32
+        $results | Should BeGreaterThan -1
+        $results | Should BeLessThan 100
+
+        $results = get-random -Minimum '-100' -Maximum '+100'
+        $results.GetType().FullName | Should Be System.Int32
+        $results | Should BeGreaterThan -101
+        $results | Should BeLessThan 100
+
+        $results = get-random -Minimum 0 -Maximum '1kb'
+        $results.GetType().FullName | Should Be System.Int32
+        $results | Should BeGreaterThan -1
+        $results | Should BeLessThan 1024
+
+        #Test for Int64
+        $results = get-random ([int64]::MaxValue)
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]-1)
+        $results | Should BeLessThan ([int64]::MaxValue)
+
+        $results = get-random ([int64]100)
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]-1)
+        $results | Should BeLessThan ([int64]100)
+
+        $results = get-random 100000000000
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]-1)
+        $results | Should BeLessThan ([int64]100000000000)
+
+        $results = get-random -Minimum ([int64]-100) -Maximum ([int64]0)
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]-101)
+        $results | Should BeLessThan ([int64]0)
+
+        $results = get-random -Minimum ([int64]-100) -Maximum ([int64]100)
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]-101)
+        $results | Should BeLessThan ([int64]100)
+
+        $results = get-random -Minimum ([int64]-200) -Maximum ([int64]-100)
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]-201)
+        $results | Should BeLessThan ([int64]-100)
+
+        $results = get-random -Minimum ([int64](-200)) -Maximum ([int64](-100))
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]-201)
+        $results | Should BeLessThan ([int64]-100)
+
+        
+        $results = get-random -Minimum ([int64]5) -Maximum '8'
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]4)
+        $results | Should BeLessThan ([int64]8)
+
+        $results = get-random -Minimum '5' -Maximum ([int64]8)
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]4)
+        $results | Should BeLessThan ([int64]8)
+        
+        $results = get-random -Minimum ([int64]0) -Maximum +100
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]-1)
+        $results | Should BeLessThan ([int64]100)
+
+        $results = get-random -Minimum ([int64]0) -Maximum '+100'
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]-1)
+        $results | Should BeLessThan ([int64]100)
+
+        $results = get-random -Minimum '-100' -Maximum ([int64]0)
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]-101)
+        $results | Should BeLessThan ([int64]0)
+
+        $results = get-random -Minimum '1mb' -Maximum ([int64]1048585)
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]1048575)
+        $results | Should BeLessThan ([int64]1048585)
+
+        $results = get-random -Minimum '10mb' -Maximum '1tb'
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]10485759)
+        $results | Should BeLessThan ([int64]1099511627776)
+
+        $results = get-random -Minimum ([int64]::MinValue) -Maximum ([int64]::MaxValue)
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]::MinValue)
+        $results | Should BeLessThan ([int64]::MaxValue)
+
+        $results = get-random -Minimum ([int64](([int]::MaxValue)+10)) -Maximum ([int64](([int]::MaxValue)+15))
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]([int32]::MaxValue + 9))
+        $results | Should BeLessThan ([int64]([int32]::MaxValue + 15))
+
+        $results = get-random -Minimum ([int64](([int]::MaxValue)+100)) -Maximum ([int64](([int]::MaxValue)+150))
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]([int32]::MaxValue + 99))
+        $results | Should BeLessThan ([int64]([int32]::MaxValue + 150))
+
+        $results = get-random -Minimum 100000000001 -Maximum '100099000001'
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]100000000000)
+        $results | Should BeLessThan ([int64]100099000001)
+
+        $results = get-random -Minimum '100000002222' -Maximum 100000002230
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]100000002221)
+        $results | Should BeLessThan ([int64]100000002230)
+
+        $results = get-random -Minimum 4 -Maximum 90000000000
+        $results.GetType().FullName | Should Be System.Int64
+        $results | Should BeGreaterThan ([int64]3)
+        $results | Should BeLessThan ([int64]90000000000)
+
+        #Test for double
+        $results = get-random 100.0
+        $results.GetType().FullName | Should Be System.Double
+        $results | Should BeGreaterThan -1.0
+        $results | Should BeLessThan 100.0
+
+        $results = get-random -Minimum -100.0 -Maximum 0.0
+        $results.GetType().FullName | Should Be System.Double
+        $results | Should BeGreaterThan -101.0
+        $results | Should BeLessThan 0.0
+
+        $results = get-random -Minimum -100.0 -Maximum 100.0
+        $results.GetType().FullName | Should Be System.Double
+        $results | Should BeGreaterThan -101.0
+        $results | Should BeLessThan 100.0
+
+        $results = get-random -Minimum 5 -Maximum 8.0
+        $results.GetType().FullName | Should Be System.Double
+        $results | Should BeGreaterThan 4.0
+        $results | Should BeLessThan 8.0
+
+        $results = get-random -Minimum 5.0 -Maximum 8
+        $results.GetType().FullName | Should Be System.Double
+        $results | Should BeGreaterThan 4.0
+        $results | Should BeLessThan 8.0
+
+        $results = get-random -Minimum 0.0 -Maximum 20.
+        $results.GetType().FullName | Should Be System.Double
+        $results | Should BeGreaterThan -1.0
+        $results | Should BeLessThan 20.0
+
+        $results = get-random -Minimum 0.0 -Maximum '20.'
+        $results.GetType().FullName | Should Be System.Double
+        $results | Should BeGreaterThan -1.0
+        $results | Should BeLessThan 20.0
+
+        $results = get-random -Minimum 0 -Maximum +100.0
+        $results.GetType().FullName | Should Be System.Double
+        $results | Should BeGreaterThan -1.0
+        $results | Should BeLessThan 100.0
+
+        $results = get-random -Minimum 0 -Maximum '+100.0'
+        $results.GetType().FullName | Should Be System.Double
+        $results | Should BeGreaterThan -1.0
+        $results | Should BeLessThan 100.0
+
+        $results = get-random -Minimum 1.0e+100
+        $results.GetType().FullName | Should Be System.Double
+        $results | Should BeGreaterThan 1.0e+99
+        $results | Should BeLessThan ([double]::MaxValue)
+
+        $results = get-random -minimum ([double]::MinValue) -maximum ([double]::MaxValue)
+        $results.GetType().FullName | Should Be System.Double
+        $results | Should BeGreaterThan ([double]::MinValue)
+        $results | Should BeLessThan ([double]::MaxValue)
+
+        #Verify Error
+        { get-random -Minimum 20 -Maximum 10 } | Should Throw "The Minimum value (20) cannot be greater than or equal to the Maximum value (10)"
+        { get-random -Minimum 20 -Maximum 20 } | Should Throw "The Minimum value (20) cannot be greater than or equal to the Maximum value (20)"
+        { get-random -Minimum -10 -Maximum -20 } | Should Throw "The Minimum value (-10) cannot be greater than or equal to the Maximum value (-20)"
+        { get-random -Minimum -20 -Maximum -20 } | Should Throw "The Minimum value (-20) cannot be greater than or equal to the Maximum value (-20)"
+        { get-random -Minimum 20.0 -Maximum 10.0 } | Should Throw "The Minimum value (20) cannot be greater than or equal to the Maximum value (10)"
+        { get-random -Minimum 20.0 -Maximum 20.0 } | Should Throw "The Minimum value (20) cannot be greater than or equal to the Maximum value (20)"
+        { get-random -Minimum -10.0 -Maximum -20.0 } | Should Throw "The Minimum value (-10) cannot be greater than or equal to the Maximum value (-20)"
+        { get-random -Minimum -20.0 -Maximum -20.0 } | Should Throw "The Minimum value (-20) cannot be greater than or equal to the Maximum value (-20)"
+        { get-random -10 } | Should Throw "The Minimum value (0) cannot be greater than or equal to the Maximum value (-10)"
+        { $x = -10; get-random $x } | Should Throw "The Minimum value (0) cannot be greater than or equal to the Maximum value (-10)"
+    }
+
+    It "Tests for setting the seed" {
+        $result1 = get-random -SetSeed 123; get-random;
+        $result2 = get-random -SetSeed 123; get-random;
+        $result1 | Should Be $result2
+    }
+}
+
 Describe "Get-Random" {
     It "Should return a random number greater than -1 " {
 	Get-Random | Should BeGreaterThan -1
