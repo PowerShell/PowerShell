@@ -40,10 +40,10 @@ Describe "Get-Variable DRT Unit Tests" -Tags DRT{
 		$var1[2].Value|Should Be "another test"
 	}
 	
-	It "Get-Variable of existing private variable Name should throw ItemNotFoundException skip now as bug#818" -Skip:$true{
+	It "Get-Variable of existing private variable Name should throw ItemNotFoundException"{
 		try { 
 			Set-Variable newVar testing -Option Private
-			&{Get-Variable -Name newVar}
+			&{Get-Variable -Name newVar -EA Stop}
 			Throw "Execution OK"
 		} 
 		catch {
