@@ -1,8 +1,7 @@
 Describe "Get-Culture DRT Unit Tests" -Tags DRT{
     It "Should works proper with get-culture" {
         $results = get-Culture
-        $results | Should Not BeNullOrEmpty 
-        $results[0].GetType() | Should Be CultureInfo
+        $results -is "System.Globalization.CultureInfo" | Should be $true
         $results[0].Name | Should Be $PSCulture
     }
 }
