@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.CoreConsoleHost
         /// <summary>
         /// To keep track of whether we have hit "enter" key since last arrow up/down key
         /// </summary>
-        private bool newHistory = false;
+        private bool newHistory = true;
 
         /// <summary>
         /// Save buffer at time we hit <tab>  
@@ -602,23 +602,18 @@ namespace Microsoft.PowerShell.CoreConsoleHost
             if (this.newHistory)
             {
                 GetHistory(nested);
-                historyIndex = historyResult.Count - 1;
-
-                BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
-                this.Render();
+                historyIndex = historyResult.Count;
             }
-            else
+
+            if ( historyResult == null || historyIndex == 0)
             {
-                if ( historyResult == null || historyIndex == 0)
-                {
-                    return;
-                }
-
-                historyIndex--;
-
-                BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
-                this.Render();
+                return;
             }
+
+            historyIndex--;
+            
+            BufferFromString(historyResult[historyIndex].Members["CommandLine"].Value.ToString());
+            this.Render();
 
             this.newHistory = false;
         }
