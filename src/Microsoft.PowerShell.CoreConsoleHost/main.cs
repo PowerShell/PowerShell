@@ -354,8 +354,13 @@ OPTIONS
                 // accessed by the ctrl-C handler.
                 lock (this.instanceLock)
                 {
-                    this.currentPowerShell.Dispose();
-                    this.currentPowerShell = null;
+                    // The PowerShell instance will be null if it failed to
+                    // start due to, say, a parse exception in a profile.
+                    if (this.currentPowerShell != null) {
+                        this.currentPowerShell.Dispose();
+                        this.currentPowerShell = null;
+                    }
+
                 }
             }
         }
@@ -760,12 +765,12 @@ OPTIONS
                 // Stream output from command processing to console.
                 var output = new PSDataCollection<PSObject>();
                 output.DataAdded += (dSender, dArgs) =>
-                {
-                    foreach (var item in output.ReadAll())
                     {
-                        this.myHost.UI.WriteLine(item.ToString());
-                    }
-                };
+                        foreach (var item in output.ReadAll())
+                        {
+                            this.myHost.UI.WriteLine(item.ToString());
+                        }
+                    };
 
                 // Process command.
                 // The Debugger.ProcesCommand method will parse and handle debugger specific
