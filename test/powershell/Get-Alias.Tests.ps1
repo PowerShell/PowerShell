@@ -161,6 +161,16 @@ Describe "Get-Alias DRT Unit Tests" -Tags DRT{
 			$result.Description| Should Be ""
 			$result.Options| Should Be "None"
 	}
+
+    It "Test get-alias with Definition parameter" {
+        $returnObject = Get-Alias -Definition Get-Process
+        For($i = 0; $i -lt $returnObject.Length;$i++)
+        {
+            $returnObject[$i] | Should Not BeNullOrEmpty 
+            $returnObject[$i].CommandType | Should Be 'Alias'
+            $returnObject[$i].Definition | Should Be 'Get-Process'
+        }
+    }
 }
 
 Describe "Get-Alias" {
