@@ -92,7 +92,7 @@ set-psbreakpoint -command foo
     }
 
     It "Should throw Exception when missing mandatory parameter" {
-         $output = & $ps -noninteractive -command "sbp -line 1"
+         $output = & $ps -noprofile -noninteractive -command "sbp -line 1"
          [system.string]::Join(" ", $output) | Should Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }
 
@@ -159,7 +159,7 @@ set-psbreakpoint -command foo
     }
 
     It "Remove implicit script from 'set-psbreakpoint -script'" {
-        & $ps $scriptFileNameBug
+        & $ps -noprofile $scriptFileNameBug
 
         $breakpoint = Get-PSBreakpoint -Script $scriptFileNameBug
         $breakpoint | Should BeNullOrEmpty
