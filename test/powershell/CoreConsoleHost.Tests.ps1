@@ -8,5 +8,14 @@ Describe "CoreConsoleHost unit tests" {
                 & $powershell -noprofile $x | ?{ $_ -match "usage: powershell" } | Should Not BeNullOrEmpty
             }
         }
+
+        It "Should accept a Base64 encoded command" {
+            $commandString = "Get-Location"
+            $encodedCommand = [System.Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($commandString))
+            # We don't compare to `Get-Location` directly because object and formatted output comparisons are difficult
+            $expected = & $powershell -noprofile -command $commandString
+            $actual = & $powershell -noprofile -EncodedCommand $encodedCommand
+            $actual | Should Be $expected
+        }
     }
 }

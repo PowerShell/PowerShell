@@ -1,11 +1,12 @@
 Describe "New-Alias DRT Unit Tests" -Tags DRT{
-	It "New-Alias Constant should throw SessionStateException skip now as bug#777" -Skip:$true{	
+	It "New-Alias Constant should throw SessionStateUnauthorizedAccessException"{	
 		try {
 			New-Alias -Name "ABCD" -Value "foo" -Option "Constant" -Force:$true
-			New-Alias -Name "ABCD" -Value "foo" -Force:$true
+			New-Alias -Name "ABCD" -Value "foo" -Force:$true -ErrorAction Stop
 			Throw "Execution OK"
 		} 
 		catch {
+			$_.CategoryInfo| Should Match "SessionStateUnauthorizedAccessException"
 			$_.FullyQualifiedErrorId | Should be "AliasNotWritable,Microsoft.PowerShell.Commands.NewAliasCommand"
 		}
 	}
