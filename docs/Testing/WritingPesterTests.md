@@ -157,8 +157,10 @@ Describe it {
     BeforeAll { Write-Host -for DarkGreen "In Describe BeforeAll" }
     AfterAll { Write-Host -for DarkGreen "In Describe AfterAll" }
 } 
-``` 
+```
+
 Now, when run, you can see the execution schedule
+
 ```
 PS# invoke-pester c:\temp\pester.demo.tests.ps1
 Describing it
@@ -182,6 +184,7 @@ In Describe AfterAll
 Tests completed in 79ms
 Passed: 1 Failed: 0 Skipped: 0 Pending: 0 
 ```
+
 The DESCRIBE BeforeAll block is executed before any other code even though it was at the bottom of the Describe block, so if state is set elsewhere in the describe BLOCK, that state will not be visible (as the code will not yet been run). Notice, too, that the BEFOREALL block in Context is executed before any other code in that block.
 Generally, you should have code reside in one of the code block elements of `[Before|After][All|Each]`, especially if those block rely on state set by free code elsewhere in the block.
 
