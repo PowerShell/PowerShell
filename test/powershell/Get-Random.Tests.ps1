@@ -241,9 +241,13 @@ Describe "Get-Random DRT Unit Tests" -Tags DRT{
     }
 
     It "Tests for setting the seed" {
-        $result1 = get-random -SetSeed 123; get-random;
-        $result2 = get-random -SetSeed 123; get-random;
-        $result1 | Should Be $result2
+        $result1 = (get-random -SetSeed 123), (get-random)
+        $result2 = (get-random -SetSeed 123), (get-random)
+        $result1.Length | Should Be $result2.Length
+        for($i = 0;$i -lt $result1.Length;$i++)
+        {
+            $result1[$i] | Should Be $result2[$i]
+        }
     }
 }
 
