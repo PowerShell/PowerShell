@@ -1,3 +1,22 @@
+Describe "Get-Unique DRT Unit Tests" -Tags DRT{
+    It "Command get-unique works with AsString switch" {
+        $inputArray = "aa","aa","Aa","ba","BA","BA"
+        $results = $inputArray | Get-Unique -AsString 
+        
+        $results.Length | Should Be 4 
+               
+        $results[0] | Should Be "aa"
+        $results[1] | Should Be "Aa"
+        $results[2] | Should Be "ba"
+        $results[3] | Should Be "BA"
+
+        $results[0].GetType().FullName | Should be System.String
+        $results[1].GetType().FullName | Should be System.String
+        $results[2].GetType().FullName | Should be System.String
+        $results[3].GetType().FullName | Should be System.String
+    }
+}
+
 Describe "Get-Unique" {
     $sortedList1 = 1,2,2,3,3,4,5
     It "Should be able to use the Get-Unique cmdlet without error with inputObject switch" {
