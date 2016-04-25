@@ -1,9 +1,8 @@
 Because we are planning to continue to extend Pester to support remote/parallel execution, it's important to keep in mind the following when create tests:
-
-	* Tests should not be overly complicated and test too many things
-		* boil down your tests to their essence, test only what you need
-	* Tests should be as simple as they can
-	* Tests should generally not rely on any other test
+* Tests should not be overly complicated and test too many things
+	* boil down your tests to their essence, test only what you need
+* Tests should be as simple as they can
+* Tests should generally not rely on any other test
 
 	
 Examples:
@@ -95,6 +94,7 @@ When this test completes, the contents of the TestDrive PSDrive will be removed.
 #### Parameter Generation
 This is quite a bit different from LITE3, but still possible, see the following:
 
+```
 Describe "A test" {
 function Test-Xor {
     param ($a, $b, $ExpectedResult)
@@ -115,8 +115,7 @@ $testCases = @(
 }
 ```
 
-You can construct the values to pass as parameters, including the expected value, and use that iteratively in a loop. Note the location of the It block
-
+You can construct the values to pass as parameters, including the expected value, and use that iteratively in a loop. Note the location of the `It` block
 
 #### Mocking
 Mocks the behavior of an existing command with an alternate implementation. This creates new behavior for any existing command within the scope of a Describe or Context block. The function allows you to specify a script block that will become the command's new behavior.
@@ -139,14 +138,14 @@ Describe it {
         Write-Host -for DarkRed "Before BeforeAll"
         BeforeAll { write-host -for Blue "In Context BeforeAll" }
         Write-Host -for DarkRed "After BeforeAll"
- 
+Â 
         Write-Host -for DarkRed "Before AfterAll"
         AfterAll { Write-Host -for Blue "In Context AfterAll" }
         Write-Host -for DarkRed "After AfterAll"
- 
+Â 
         BeforeEach { Write-Host -for Blue "In BeforeEach" }
         AfterEach { Write-Host -for Blue "In AfterEach" }
- 
+Â 
         Write-Host -for DarkRed "Before It"
         It "should not be a surprise" {
             1 | should be 1
@@ -158,7 +157,7 @@ Describe it {
     BeforeAll { Write-Host -for DarkGreen "In Describe BeforeAll" }
     AfterAll { Write-Host -for DarkGreen "In Describe AfterAll" }
 } 
-``` 
+```Â 
 Now, when run, you can see the execution schedule
 ```
 PS# invoke-pester c:\temp\pester.demo.tests.ps1
@@ -184,6 +183,6 @@ Tests completed in 79ms
 Passed: 1 Failed: 0 Skipped: 0 Pending: 0 
 ```
 The DESCRIBE BeforeAll block is executed before any other code even though it was at the bottom of the Describe block, so if state is set elsewhere in the describe BLOCK, that state will not be visible (as the code will not yet been run). Notice, too, that the BEFOREALL block in Context is executed before any other code in that block.
-Generally, you should have code reside in one of the code block elements of [Before|After][All|Each], especially if those block rely on state set by free code elsewhere in the block.
+Generally, you should have code reside in one of the code block elements of `[Before|After][All|Each]`, especially if those block rely on state set by free code elsewhere in the block.
 
 
