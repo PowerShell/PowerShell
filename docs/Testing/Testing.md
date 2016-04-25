@@ -1,4 +1,3 @@
-<<<<<<< d74cd7b90a57dd043736c99c54f37e417ed3442d
 # DRAFT
 
 _I have more questions than answers_
