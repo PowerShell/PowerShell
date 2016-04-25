@@ -3,7 +3,7 @@ Describe "Remove-PSBreakpoint" {
     $testScript = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath psbreakpointtestscript.ps1
 
     $script = "`$var = 1
-`$var2 = Get-Process
+`$var2 = Get-Command
 
 # this is a comment
 Get-Date

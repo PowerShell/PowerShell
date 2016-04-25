@@ -163,12 +163,12 @@ Describe "Get-Alias DRT Unit Tests" -Tags DRT{
 	}
 
     It "Test get-alias with Definition parameter" {
-        $returnObject = Get-Alias -Definition Get-Process
+        $returnObject = Get-Alias -Definition Get-Command
         For($i = 0; $i -lt $returnObject.Length;$i++)
         {
             $returnObject[$i] | Should Not BeNullOrEmpty 
             $returnObject[$i].CommandType | Should Be 'Alias'
-            $returnObject[$i].Definition | Should Be 'Get-Process'
+            $returnObject[$i].Definition | Should Be 'Get-Command'
         }
     }
 }

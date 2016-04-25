@@ -20,17 +20,6 @@ Describe "Measure-Object" {
 	$actual | Should Be $expected
     }
 
-    It "Should be able to get additional stats" {
-	$actual = Get-Process | Measure-Object -Property workingset64 -Minimum -Maximum -Average
-
-	$actual.Average    | Should BeGreaterThan 0
-	$actual.Characters | Should BeNullOrEmpty
-	$actual.Lines      | Should BeNullOrEmpty
-	$actual.Maximum    | Should Not BeNullOrEmpty
-	$actual.Minimum    | Should Not BeNullOrEmpty
-	$actual.Sum        | Should BeNullOrEmpty
-    }
-
     Context "Numeric tests" {
 	It "Should be able to sum" {
 	    $actual   = $testObject | Measure-Object -Sum
