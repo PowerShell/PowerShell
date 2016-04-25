@@ -6827,7 +6827,6 @@ namespace Microsoft.PowerShell.Commands
             InitialSessionState iss = InitialSessionState.Create();
             List<string> detectedCmdlets = null;
             List<Tuple<string, string>> detectedAliases = null;
-            PSSnapInException warning;
             Assembly assembly = null;
             Exception error = null;
             bool importSuccessful = false;
@@ -6885,6 +6884,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     PSSnapInInfo snapin = null;
 
+#if !CORECLR
+                    // Avoid trying to load SnapIns with Import-Module
+                    PSSnapInException warning;
                     try
                     {
                         if (importingModule)
@@ -6897,6 +6899,7 @@ namespace Microsoft.PowerShell.Commands
                         //BUGBUG - brucepay - probably want to have a verbose message here...
                         ;
                     }
+#endif
 
                     if (snapin != null)
                     {
