@@ -1,0 +1,35 @@
+﻿;
+; Cabinet Error Messages
+;
+
+; Generic error message.
+1=Error code: {1}
+
+;
+; Cabinet creation messages - offset by 1000
+;
+1000=Unknown error creating cabinet.
+1001=Failure opening file to be stored in cabinet.
+1002=Failure reading file to be stored in cabinet.
+1003=Could not allocate enough memory to create cabinet.
+1004=Could not create a temporary file.
+1005=Unknown compression type.
+1006=Could not create cabinet file.
+1007=Client requested abort.
+1008=Failure compressing data.
+
+;
+; Cabinet extraction messages - offset by 2000
+;
+2000=Unknown error extracting cabinet.
+2001=Cabinet not found.
+2002=Cabinet file does not have the correct format.
+2003=Cabinet file has an unknown version number.
+2004=Cabinet file is corrupt.
+2005=Could not allocate enough memory to extract cabinet.
+2006=Unknown compression type in a cabinet folder.
+2007=Failure decompressing data from a cabinet file.
+2008=Failure writing to target file.
+2009=Cabinets in a set do not have the same RESERVE sizes.
+2010=Cabinet returned on NEXT_CABINET is incorrect.
+2011=Client requested abort.
