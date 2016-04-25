@@ -192,12 +192,12 @@ Describe "Remove-Variable" {
     }
 }
 
-Describe "Remove-Variable DRT Unit Tests" -Tags DRT{
+Describe "Remove-Variable basic functionality" -Tags DRT{
 	It "Remove-Variable variable should works"{
 		New-Variable foo bar
 		Remove-Variable foo
-		$var1=Get-Variable -Name foo -EA SilentlyContinue
-		$var1|Should BeNullOrEmpty
+		$var1 = Get-Variable -Name foo -EA SilentlyContinue
+		$var1 | Should BeNullOrEmpty
 	}
 	
 	It "Remove-Variable Constant variable should throw SessionStateUnauthorizedAccessException"{
@@ -219,6 +219,7 @@ Describe "Remove-Variable DRT Unit Tests" -Tags DRT{
 		try
 		{
 			Remove-Variable foo -EA Stop
+			Throw "Execution OK"
 		}
 		catch 
 		{
@@ -226,8 +227,8 @@ Describe "Remove-Variable DRT Unit Tests" -Tags DRT{
 			$_.FullyQualifiedErrorId | Should be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 		Remove-Variable foo -Force
-		$var1=Get-Variable -Name foo -EA SilentlyContinue
-		$var1|Should BeNullOrEmpty
+		$var1 = Get-Variable -Name foo -EA SilentlyContinue
+		$var1 | Should BeNullOrEmpty
 	}
 	
 	It "Remove-Variable Constant variable should throw SessionStateUnauthorizedAccessException and force remove should also throw exception"{
@@ -255,12 +256,13 @@ Describe "Remove-Variable DRT Unit Tests" -Tags DRT{
 		}
 	}
 	
-	It "Remove-Variable variable in new scope should works and Get-Variable with different scope should have different result skip now as bug#872" -Skip:$true{
+	It "Remove-Variable variable in new scope should works and Get-Variable with different scope should have different result"{
 		New-Variable foo bar
 		&{
+			Clear-Variable foo
 			Remove-Variable foo
 			try{
-				$var1=Get-Variable -Name foo -EA Stop
+				Get-Variable -Name foo -Scope local -EA Stop
 				Throw "Execution OK"
 			}
 			catch 
@@ -270,7 +272,7 @@ Describe "Remove-Variable DRT Unit Tests" -Tags DRT{
 			}
 		}
 		
-		$var1=Get-Variable -Name foo
+		$var1 = Get-Variable -Name foo
 		$var1.Name|Should Be "foo"
 		$var1.Value|Should Be "bar"
 		$var1.Options|Should Be "None"
