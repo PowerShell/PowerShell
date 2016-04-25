@@ -321,6 +321,7 @@ namespace System.Management.Automation
                     baseDirectories.Add(Path.Combine(progFileDir, "Pester"));
 #if CORECLR
                     baseDirectories.Add(Path.Combine(progFileDir, "Json.Net"));
+                    baseDirectories.Add(Path.Combine(progFileDir, "PSReadLine"));
 #else
                     baseDirectories.Add(Path.Combine(progFileDir, "PSReadline"));
 #endif // CORECLR
