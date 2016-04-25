@@ -45,10 +45,10 @@ Describe "New-Alias" {
     }
 
     It "Should have the same output between the alias and the original cmdlet" {
-	New-Alias -Name testAlias -Value Get-Process
+	New-Alias -Name testAlias -Value Get-Command
 
 	$aliasId  = $(testAlias).Id
-	$cmdletId = $(Get-Process).Id
+	$cmdletId = $(Get-Command).Id
 	foreach ($IdNumber in $aliasId)
 	{
 	    $aliasId[$IdNumber] | Should Be $cmdletId[$IdNumber]
@@ -60,9 +60,9 @@ Describe "New-Alias" {
     }
 
     It "Should have the same output between the nal alias and the New-Alias cmdlet" {
-	nal -Name testAlias -Value Get-Process
+	nal -Name testAlias -Value Get-Command
 
-	New-Alias -Name testalias2 -Value Get-Process
+	New-Alias -Name testalias2 -Value Get-Command
 
 	$aliasData = $(testAlias).Id
 	$cmdletData = $(testAlias2).Id

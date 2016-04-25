@@ -114,7 +114,7 @@ Start-PSBuild
 
 Congratulations! If everything went right, PowerShell is now built.
 The `Start-PSBuild` script will output the location of the executable:
-`./src/Microsoft.PowerShell.CoreConsoleHost/bin/Linux/netstandardapp1.5/ubuntu.14.04-x64/powershell`.
+`./src/Microsoft.PowerShell.CoreConsoleHost/bin/Linux/netcoreapp1.0/ubuntu.14.04-x64/powershell`.
 
 You can run our cross-platform Pester tests with `Start-PSPester`, and
 our xUnit tests with `Start-PSxUnit`.
@@ -160,7 +160,7 @@ dotnet build --configuration Linux
 
 The executable will be in
 `./bin/[configuration]/[framework]/[rid]/[binary name]`, where our
-configuration is `Linux`, framework is `netstandardapp1.5`, runtime
+configuration is `Linux`, framework is `netcoreapp1.0`, runtime
 identifier is `ubuntu.14.04-x64`, and binary name is `powershell`. The
 function `Get-PSOutput` will return the path to the executable; thus
 you can execute the development copy via `& (Get-PSOutput)`.

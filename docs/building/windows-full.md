@@ -51,11 +51,11 @@ module.
 Because the `ConsoleHost` project (*not* the `Host` project) is a
 library and not an application (in the sense that .NET CLI does not
 emit a native executable using .NET Core's `corehost`), it targets the
-framework `netstandard1.5`, *not* `netstandardapp1.5`, and the build
+framework `netstandard1.5`, *not* `netcoreapp1.0`, and the build
 output will *not* have a runtime identifier in the path.
 
 Thus the output location of `powershell.exe` will be
-`./src/Microsoft.PowerShell.ConsoleHost/bin/Debug/netstandardapp1.5/powershell.exe`
+`./src/Microsoft.PowerShell.ConsoleHost/bin/Debug/netcoreapp1.0/powershell.exe`
 
 While building is easy, running FullCLR version is not as simple as
 CoreCLR version.
