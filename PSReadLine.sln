@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSReadLine", "PSReadLine.csproj", "{615788CB-1B9A-4B34-97B3-4608686E59CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPSReadLine", "..\TestPSReadLine\TestPSReadLine.csproj", "{08218B1A-8B85-4722-9E3F-4D6C0BF58AD8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestPSReadLine", "..\UnitTestPSReadLine\UnitTestPSReadLine.csproj", "{8ED51D01-158C-4B29-824A-35B9B861E45A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{615788CB-1B9A-4B34-97B3-4608686E59CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{615788CB-1B9A-4B34-97B3-4608686E59CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{615788CB-1B9A-4B34-97B3-4608686E59CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{615788CB-1B9A-4B34-97B3-4608686E59CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08218B1A-8B85-4722-9E3F-4D6C0BF58AD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08218B1A-8B85-4722-9E3F-4D6C0BF58AD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08218B1A-8B85-4722-9E3F-4D6C0BF58AD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08218B1A-8B85-4722-9E3F-4D6C0BF58AD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8ED51D01-158C-4B29-824A-35B9B861E45A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8ED51D01-158C-4B29-824A-35B9B861E45A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8ED51D01-158C-4B29-824A-35B9B861E45A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8ED51D01-158C-4B29-824A-35B9B861E45A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
