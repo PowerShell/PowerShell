@@ -321,9 +321,12 @@ function Start-PSxUnit {
     $Arguments = "--configuration", "Linux"
     try {
         Push-Location $PSScriptRoot/test/csharp
+        # Path manipulation to obtain test project output directory
+        $Output = Join-Path $pwd ((Split-Path -Parent (Get-PSOutput)) -replace (New-PSOptions).Top)
+        Write-Host "Output is $Output"
 
         Start-NativeExecution { dotnet build $Arguments }
-        Copy-Item -ErrorAction SilentlyContinue -Recurse -Path $Content/* -Include Modules,libpsl-native* -Destination "./bin/Linux/netcoreapp1.0/ubuntu.14.04-x64"
+        Copy-Item -ErrorAction SilentlyContinue -Recurse -Path $Content/* -Include Modules,libpsl-native* -Destination $Output
         Start-NativeExecution { dotnet test $Arguments }
 
         if ($LASTEXITCODE -ne 0) {
