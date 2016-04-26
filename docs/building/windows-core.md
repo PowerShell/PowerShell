@@ -16,7 +16,7 @@ Git Setup
 
 Using Git requires it to be setup correctly; refer to the
 [README](../../README.md) and
-[Contributing Guidelines](../../CONTRIBUTING.md).
+[Contributing Guidelines](../../.github/CONTRIBUTING.md).
 
 This guide assumes that you have recursively cloned the PowerShell
 repository and `cd`ed into it.
@@ -71,12 +71,12 @@ Start-PSBuild
 ```
 
 Congratulations! If everything went right, PowerShell is now built and
-executable as `./src/Microsoft.PowerShell.CoreConsoleHost/bin/Debug/netstandardapp1.5/win10-x64/powershell`.
+executable as `./src/Microsoft.PowerShell.CoreConsoleHost/bin/Debug/netcoreapp1.0/win10-x64/powershell`.
 
 This location is of the form
 `./[project]/bin/[configuration]/[framework]/[rid]/[binary name]`, and
 our project is `Microsoft.PowerShell.CoreConsoleHost`, configuration is `Debug`
-by default, framework is `netstandardapp1.5`, runtime identifier is
+by default, framework is `netcoreapp1.0`, runtime identifier is
 **probably** `win10-x64` (but will depend on your operating system;
 don't worry, `dotnet --info` will tell you what it was), and binary
 name is `powershell`. The function `Get-PSOutput` will return the path

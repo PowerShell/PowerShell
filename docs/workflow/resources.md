@@ -28,4 +28,4 @@ When you adding or removing string, `.cs` file need to be changed.
 1. Run `Start-ResGen` function from `PowerShellGitHubDev.psm1`
 1. Make sure your code is building with newly generated resources (run `Start-PSBuild`).
 1. Go to submodule (`cd src\windows-build`) and perform the [submodule commit dance](../git/committing.md).
-Follow working with [submodule rules](../../CONTRIBUTING.md#submodules)
+Follow working with [submodule rules](../../.github/CONTRIBUTING.md#submodules)

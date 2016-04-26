@@ -62,7 +62,7 @@ Obtain the source code
 
 Install [Git][], the version control system.
 
-See the [Contributing Guidelines](CONTRIBUTING.md) for more Git
+See the [Contributing Guidelines](.github/CONTRIBUTING.md) for more Git
 information, such as our installation instructions, contributing
 rules, and Git best practices.
 

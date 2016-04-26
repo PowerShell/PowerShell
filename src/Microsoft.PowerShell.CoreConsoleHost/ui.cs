@@ -23,6 +23,7 @@ namespace Microsoft.PowerShell.CoreConsoleHost
         public MyHostUserInterface(bool hasUI, bool interactive)
         {
             myRawUi = (hasUI) ? new MyRawUserInterface() : null;
+            Interactive = interactive;
         }
 
         /// <summary>

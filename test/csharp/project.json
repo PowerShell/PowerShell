@@ -9,7 +9,7 @@
     },
 
     "frameworks": {
-        "netstandardapp1.5": {
+        "netcoreapp1.0": {
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "dependencies": {
                 "xunit": "2.1.0",

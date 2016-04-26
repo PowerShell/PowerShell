@@ -33,7 +33,7 @@ test_script:
       $ErrorActionPreference = 'Stop'
       #
       # CoreCLR
-      $env:CoreOutput = "$pwd\src\Microsoft.PowerShell.CoreConsoleHost\bin\Debug\netstandardapp1.5\win81-x64\publish"
+      $env:CoreOutput = "$pwd\src\Microsoft.PowerShell.CoreConsoleHost\bin\Debug\netcoreapp1.0\win81-x64\publish"
       Write-Host -Foreground Green 'Run CoreCLR tests'
       $testResultsFile = "$pwd\TestsResults.xml"
       & ("$env:CoreOutput\powershell.exe") -c "Invoke-Pester test/powershell -OutputFormat NUnitXml -OutputFile $testResultsFile"
