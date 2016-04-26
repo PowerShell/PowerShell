@@ -3562,20 +3562,28 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     bool shouldRecurse = Recurse;
-                    if (!Recurse && hasChildren)
+                    System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(providerPath);
+                    if (Platform.IsLinux && di != null && (di.Attributes & System.IO.FileAttributes.ReparsePoint) != 0)
                     {
-                        // Get the localized prompt string
+                        shouldRecurse = false;
+                    }
+                    else
+                    {
+                        if (!Recurse && hasChildren)
+                        {
+                            // Get the localized prompt string
 
-                        string prompt = StringUtil.Format(NavigationResources.RemoveItemWithChildren,resolvedPath.Path);
+                            string prompt = StringUtil.Format(NavigationResources.RemoveItemWithChildren,resolvedPath.Path);
 
-                        // Confirm the user wants to remove all children and the item even if
-                        // they did not specify -recurse
+                            // Confirm the user wants to remove all children and the item even if
+                            // they did not specify -recurse
 
-                        if (!ShouldContinue (prompt, null, ref yesToAll, ref noToAll))
-                        {                            
-                            continue;
+                            if (!ShouldContinue (prompt, null, ref yesToAll, ref noToAll))
+                            {                            
+                                continue;
+                            }
+                            shouldRecurse = true;
                         }
-                        shouldRecurse = true;
                     }
 
                     // Now do the delete
