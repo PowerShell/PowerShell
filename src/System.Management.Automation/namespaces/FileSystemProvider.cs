@@ -2848,13 +2848,16 @@ namespace Microsoft.PowerShell.Commands
 
             bool continueRemoval = true;
 
-            // We only want to confirm the removal if this is the root of the
-            // tree being removed or the recurse flag is specified.
-            if (rootOfRemoval || recurse)
+            if (Platform.IsWindows || (directory.Attributes & FileAttributes.ReparsePoint) == 0)
             {
-                // Confirm the user wants to remove the directory
-                string action = FileSystemProviderStrings.RemoveItemActionDirectory;
-                continueRemoval = ShouldProcess(directory.FullName, action);
+                // We only want to confirm the removal if this is the root of the
+                // tree being removed or the recurse flag is specified.
+                if (rootOfRemoval || recurse)
+                {
+                    // Confirm the user wants to remove the directory
+                    string action = FileSystemProviderStrings.RemoveItemActionDirectory;
+                    continueRemoval = ShouldProcess(directory.FullName, action);
+                }
             }
 
             //if this is a reparse point and force is not specified then warn user but dont remove the directory.
@@ -8452,10 +8455,24 @@ namespace Microsoft.PowerShell.Commands
                         IntPtr dangerousHandle = handle.DangerousGetHandle();
                         int bytesReturned;
                         
+                        // Do a FSCTL_GET_REPARSE_POINT first because the ReparseTag could be 
+                        // IO_REPARSE_TAG_MOUNT_POINT or IO_REPARSE_TAG_SYMLINK.
+                        // Using the wrote one results in mismatched-tag error.
+
                         REPARSE_GUID_DATA_BUFFER junctionData = new REPARSE_GUID_DATA_BUFFER();
+                        ClrFacade.StructureToPtr<REPARSE_GUID_DATA_BUFFER>(junctionData, outBuffer, false);
+
+                        result = DeviceIoControl(dangerousHandle, FSCTL_GET_REPARSE_POINT, IntPtr.Zero, 0, 
+                            outBuffer, inOutBufferSize, out bytesReturned, IntPtr.Zero);
+                        if (!result)
+                        {
+                            int lastError = Marshal.GetLastWin32Error();
+                            throw new Win32Exception(lastError);
+                        }
+
+                        junctionData = ClrFacade.PtrToStructure<REPARSE_GUID_DATA_BUFFER>(outBuffer);                     
                         junctionData.ReparseDataLength = 0;
                         junctionData.DataBuffer = new char[MAX_REPARSE_SIZE];
-                        junctionData.ReparseTag = IO_REPARSE_TAG_MOUNT_POINT;
 
                         ClrFacade.StructureToPtr<REPARSE_GUID_DATA_BUFFER>(junctionData, inBuffer, false);
 
