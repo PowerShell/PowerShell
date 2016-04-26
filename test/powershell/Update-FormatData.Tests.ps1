@@ -13,3 +13,38 @@ Describe "Update-FormatData" {
 	}
     }
 }
+
+Describe "Update-FormatData basic functionality" -Tags DRT{
+	$tmpDirectory = $TestDrive
+    $testfilename = "testfile.ps1xml"
+    $testfile = Join-Path -Path $tmpDirectory -ChildPath $testfilename
+	
+	It "Update-FormatData with WhatIf should work"{
+		$xmlContent=@"
+                <Types>
+                    <Type>
+                        <Name>AnyName</Name>
+                        <Members>
+                            <PropertySet>
+                                <Name>PropertySetName</Name>
+                                <ReferencedProperties>
+                                    <Name>FirstName</Name> 
+                                    <Name>LastName</Name> 
+                                </ReferencedProperties>
+                            </PropertySet>
+                        </Members>
+                    </Type>
+                </Types>
+"@
+		$xmlContent>$testfile
+		try
+		{
+			{Update-FormatData -Append $testfile -WhatIf} | Should Not Throw
+			{Update-FormatData -Prepend $testfile -WhatIf} | Should Not Throw
+		}
+		finally
+		{
+			rm $testfile
+		}
+	}
+}
