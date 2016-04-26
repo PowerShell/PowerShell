@@ -2848,20 +2848,17 @@ namespace Microsoft.PowerShell.Commands
 
             bool continueRemoval = true;
 
-            if (Platform.IsWindows || (directory.Attributes & FileAttributes.ReparsePoint) == 0)
+            // We only want to confirm the removal if this is the root of the
+            // tree being removed or the recurse flag is specified.
+            if (rootOfRemoval || recurse)
             {
-                // We only want to confirm the removal if this is the root of the
-                // tree being removed or the recurse flag is specified.
-                if (rootOfRemoval || recurse)
-                {
-                    // Confirm the user wants to remove the directory
-                    string action = FileSystemProviderStrings.RemoveItemActionDirectory;
-                    continueRemoval = ShouldProcess(directory.FullName, action);
-                }
+                // Confirm the user wants to remove the directory
+                string action = FileSystemProviderStrings.RemoveItemActionDirectory;
+                continueRemoval = ShouldProcess(directory.FullName, action);
             }
 
             //if this is a reparse point and force is not specified then warn user but dont remove the directory.
-            if (((directory.Attributes & FileAttributes.ReparsePoint) != 0) && !Force)
+            if (Platform.IsWindows && ((directory.Attributes & FileAttributes.ReparsePoint) != 0) && !Force)
             {
                 String error = StringUtil.Format(FileSystemProviderStrings.DirectoryReparsePoint, directory.FullName);
                 Exception e = new IOException(error);
