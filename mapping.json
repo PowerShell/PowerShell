@@ -1404,7 +1404,7 @@
     "src/monad/monad/src/oneget/providers/inbox/msiprovider/Deployment/WindowsInstaller/Exceptions.cs": "src/Microsoft.PackageManagement/providers/inbox/msiprovider/Deployment/WindowsInstaller/Exceptions.cs",
     "src/monad/monad/src/oneget/providers/inbox/msiprovider/Deployment/WindowsInstaller/ExternalUIHandler.cs": "src/Microsoft.PackageManagement/providers/inbox/msiprovider/Deployment/WindowsInstaller/ExternalUIHandler.cs",
     "src/monad/monad/src/oneget/providers/inbox/msiprovider/Deployment/WindowsInstaller/FeatureInfo.cs": "src/Microsoft.PackageManagement/providers/inbox/msiprovider/Deployment/WindowsInstaller/FeatureInfo.cs",
-    "src/monad/monad/src/oneget/providers/inbox/msiprovider/Deployment/WindowsInstaller/FeatureInstallation.cs": "src/Microsoft.PackageManagement/providers/ibox/msiprovider/Deployment/WindowsInstaller/FeatureInstallation.cs",
+    "src/monad/monad/src/oneget/providers/inbox/msiprovider/Deployment/WindowsInstaller/FeatureInstallation.cs": "src/Microsoft.PackageManagement/providers/inbox/msiprovider/Deployment/WindowsInstaller/FeatureInstallation.cs",
     "src/monad/monad/src/oneget/providers/inbox/msiprovider/Deployment/WindowsInstaller/Handle.cs": "src/Microsoft.PackageManagement/providers/inbox/msiprovider/Deployment/WindowsInstaller/Handle.cs",
     "src/monad/monad/src/oneget/providers/inbox/msiprovider/Deployment/WindowsInstaller/IEmbeddedUI.cs": "src/Microsoft.PackageManagement/providers/inbox/msiprovider/Deployment/WindowsInstaller/IEmbeddedUI.cs",
     "src/monad/monad/src/oneget/providers/inbox/msiprovider/Deployment/WindowsInstaller/Installation.cs": "src/Microsoft.PackageManagement/providers/inbox/msiprovider/Deployment/WindowsInstaller/Installation.cs",
