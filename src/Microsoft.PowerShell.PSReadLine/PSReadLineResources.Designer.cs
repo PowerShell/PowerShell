@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PSReadLine.PSReadLineResources", typeof(PSReadLineResources).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.PowerShell.PSReadLine.PSReadLineResources", typeof(PSReadLineResources).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
