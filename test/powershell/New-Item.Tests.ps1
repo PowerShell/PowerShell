@@ -2,17 +2,17 @@ function Clean-State
 {
     if (Test-Path $FullyQualifiedLink)
     {
-	Remove-Item $FullyQualifiedLink -Force
+        Remove-Item $FullyQualifiedLink -Force
     }
 
     if (Test-Path $FullyQualifiedFile)
     {
-	Remove-Item $FullyQualifiedFile -Force
+        Remove-Item $FullyQualifiedFile -Force
     }
 
     if (Test-Path $FullyQualifiedFolder)
     {
-	Remove-Item $FullyQualifiedFolder -Force
+        Remove-Item $FullyQualifiedFolder -Force -Recurse
     }
 }
 
@@ -105,13 +105,13 @@ Describe "New-Item" {
     }
 
     It "Should create a symbolic link of a file without error" {
-	New-Item -Name $testfile -Path $tmpDirectory -ItemType file
-	Test-Path $FullyQualifiedFile | Should Be $true
+        New-Item -Name $testfile -Path $tmpDirectory -ItemType file
+        Test-Path $FullyQualifiedFile | Should Be $true
 
-	New-Item -ItemType SymbolicLink -Target $FullyQualifiedFile -Name $testlink -Path $tmpDirectory
-	Test-Path $FullyQualifiedLink | Should Be $true
+        New-Item -ItemType SymbolicLink -Target $FullyQualifiedFile -Name $testlink -Path $tmpDirectory
+        Test-Path $FullyQualifiedLink | Should Be $true
 
-        $fileInfo = Get-ChildItem $FullyQualifiedLink
+        $fileInfo = Get-Item $FullyQualifiedLink
         $fileInfo.Target | Should Be $FullyQualifiedFile
         $fileInfo.LinkType | Should Be "SymbolicLink"
     }
@@ -121,25 +121,34 @@ Describe "New-Item" {
         New-Item -ItemType SymbolicLink -Target $target -Name $testlink -Path $tmpDirectory
         Test-Path $FullyQualifiedLink | Should Be $true
 
-        $fileInfo = Get-ChildItem $FullyQualifiedLink
+        $fileInfo = Get-Item $FullyQualifiedLink
         $fileInfo.Target | Should Be $target
         Test-Path $fileInfo.Target | Should be $false
         $fileInfo.LinkType | Should Be "SymbolicLink"
     }
 
     It "Should create a symbolic link from directory without error" {
-	New-Item -Name $testFolder -Path $tmpDirectory -ItemType directory
-	Test-Path $FullyQualifiedFolder | Should Be $true
+        New-Item -Name $testFolder -Path $tmpDirectory -ItemType directory
+        Test-Path $FullyQualifiedFolder | Should Be $true
+        $nestedFile1 = Join-Path $FullyQualifiedFolder testFile1
+        $nestedFile2 = Join-Path $FullyQualifiedFolder testFile2
+        New-Item -Path $nestedFile1
+        Test-Path $nestedFile1 | Should Be $true
+        New-Item -Path $nestedFile2
+        Test-Path $nestedFile2 | Should Be $true
 
-	New-Item -ItemType SymbolicLink -Target $FullyQualifiedFolder -Name $testlink -Path $tmpDirectory
-	Test-Path $FullyQualifiedLink | Should Be $true
+        New-Item -ItemType SymbolicLink -Target $FullyQualifiedFolder -Name $testlink -Path $tmpDirectory
+        Test-Path $FullyQualifiedLink | Should Be $true
 
-        $fileInfo = Get-ChildItem $FullyQualifiedLink
+        $fileInfo = Get-Item $FullyQualifiedLink
+        write-host  $FullyQualifiedLink
         $fileInfo.Target | Should Be $FullyQualifiedFolder
         $fileInfo.LinkType | Should Be "SymbolicLink"
+        # Bug: Resolve-Path is necessary because of issue #921
+        ((Resolve-Path $fileInfo.Target) | Get-ChildItem).Count | Should Be 2
 
-	# Remove the link explicitly to avoid broken symlink issue
-	Remove-Item $FullyQualifiedLink -Force
+        # Remove the link explicitly to avoid broken symlink issue
+        Remove-Item $FullyQualifiedLink -Force
     }
 
     It "Should create a hard link of a file without error" {
@@ -149,11 +158,8 @@ Describe "New-Item" {
         New-Item -ItemType HardLink -Target $FullyQualifiedFile -Name $testlink -Path $tmpDirectory
         Test-Path $FullyQualifiedLink | Should Be $true
 
-        $fileInfo = Get-ChildItem $FullyQualifiedLink
+        $fileInfo = Get-Item $FullyQualifiedLink
         $fileInfo.Target | Should Be $null
         $fileInfo.LinkType | Should Be "HardLink"
     }
-
-
-
 }
