@@ -1,0 +1,22 @@
+{
+    "name": "Microsoft.PowerShell.PSReadLine",
+    "version": "1.0.0-*",
+    "authors": [ "andschwa" ],
+
+    "compilationOptions": {
+        "warningsAsErrors": true
+    },
+
+    "dependencies": {
+        "System.Management.Automation": "1.0.0-*"
+    },
+
+    "frameworks": {
+        "netstandard1.5": {
+            "compilationOptions": {
+                "define": [ "CORECLR" ]
+            },
+            "imports": [ "dnxcore50", "portable-net45+win8" ]
+        }
+    }
+}
