@@ -30,8 +30,8 @@ Describe "Write-Error DRT Unit Tests" -Tags DRT{
         $Error[0].InvocationInfo.MyCommand.Name | Should BeNullOrEmpty     
     }
 
-    # Skip with issue #846
-    It "Should be works with all parameters" -Pending {
+    #Blocked by issue #846
+    It "Should be works with all parameters" -Pending { 
         $exception = New-Object -TypeName System.ArgumentNullException -ArgumentList paramname 
         Write-Error -Message myerrortext -Exception $exception -ErrorId myerrorid -Category syntaxerror -TargetObject TargetObject -CategoryActivity myactivity -CategoryReason myreason -CategoryTargetName mytargetname -CategoryTargetType mytargettype -RecommendedAction myrecommendedaction -ErrorAction SilentlyContinue
         $Error[0] | Should Not BeNullOrEmpty
@@ -67,6 +67,16 @@ Describe "Write-Error DRT Unit Tests" -Tags DRT{
         #InvocationInfo verification
         $Error[0].InvocationInfo | Should Not BeNullOrEmpty
         $Error[0].InvocationInfo.MyCommand.Name | Should BeNullOrEmpty  
+    }
+
+    #Blocked by issue #846
+    It "Should be works with all parameters" -Pending {
+        write-error -Activity fooAct -Reason fooReason -TargetName fooTargetName -TargetType fooTargetType -Message fooMessage
+        $Error[0].CategoryInfo.Activity | Should Be 'fooAct'
+        $Error[0].CategoryInfo.Reason | Should Be 'fooReason'
+        $Error[0].CategoryInfo.TargetName | Should Be 'fooTargetName'
+        $Error[0].CategoryInfo.TargetType | Should Be 'fooTargetType'
+        $Error[0].CategoryInfo.GetMessage() | Should Be 'NotSpecified: (fooTargetName:fooTargetType) [fooAct], fooReason'
     }
 }
 
