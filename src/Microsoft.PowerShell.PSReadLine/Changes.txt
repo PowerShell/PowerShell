@@ -1,0 +1,293 @@
+### Version 1.2
+
+New features:
+* Vi editing mode
+
+New functions:
+* InsertLineAbove
+    - A new empty line is created above the current line regardless of where the cursor
+      is on the current line.  The cursor moves to the beginning of the new line.
+* InsertLineBelow
+    - A new empty line is created below the current line regardless of where the cursor
+      is on the current line.  The cursor moves to the beginning of the new line.
+
+New key bindings:
+* Ctrl+Enter bound to InsertLineAbove in Windows mode 
+* Ctrl+Shift+Enter bound to InsertLineBelow in Windows mode
+
+Bug fixes:
+* Home the first line of multi-line input fixed
+* CaptureScreen captures colors colors correctly instead of guessing
+* CaptureScreen scrolls the screen to ensure the selected line is visible
+* CaptureScreen allows j/k for up/down (for the vi fans)
+* Fixed uncommon syntax coloring bug with bare words that start with a variable
+* Added sample handler for F7 emulation
+* Fixed sample handler for Set-StrictMode error
+* Improved error message when errors occur in custom handlers
+
+### Version 1.1 (shipped w/ Windows 10)
+
+Breaking change:
+* Namespace PSConsoleUtilities has been renamed to Microsoft.PowerShell
+* Default history file location changed to match Windows 10
+
+### Version 1.0.0.13
+
+New features:
+* Enter now does some extra validation before accepting the input.  If there are any parse
+  errors or a command is not found, an error message is displayed, but you can continue editing,
+  the erroneous line will not be added to history, and the error message will be cleared after
+  you make an edit.
+  You can press Enter a second time to force accepting the line if you choose.  
+
+  If you don't like the new behavior for Enter, you can revert to the old behavior with:
+      Set-PSReadlineKeyHandler -Key Enter -Function AcceptLine
+
+Bug fixes:
+* Occasional exception with AcceptAndGetNext (Ctrl+O) followed by something other than Enter
+* Event handlers that register for the engine event PowerShell.OnIdle should work now.
+* ClearScreen now scrolls the screen to preserve as much output as possible
+* Fix exception on error input during rendering after certain keywords like process, begin, or end.
+* Fix exception after undo from menu completion
+* Support CancelLine (Ctrl+C) and Abort (Ctrl+G in emacs) to cancel DigitArgument
+* History recall now ignores command lines from other currently running sessions, but you can
+  still find command lines from those sessions when searching history.
+* Color any non-whitespace prompt character when there is an error, not just non-characters
+* ScrollDisplayToCursor works a little better now.
+
+New functions:
+* ValidateAndAcceptLine
+    Validate the command line (by making sure there are no parse errors, commands all exist,
+    and possibly other sorts of validation), display an error if any errors, but don't add
+    the command to history and clear the error after an edit.
+* DeleteCharOrExit
+    - emulate Ctrl+D in bash properly by exiting the process if the command line is empty
+* ScrollDisplayUpLine, ScrollDisplayDownLine
+    Scroll the screen up or down by a line instead of by the screen
+
+New key bindings:
+* Ctrl+D bound to DeleteCharOrExit in Emacs mode
+* Ctrl+N/Ctrl+P bound to NextHistory/PreviousHistory in Emacs mode
+* Ctrl+PageUp bound to ScrollDisplayUpLine
+* Ctrl+PageDown bound to ScrollDisplayDownLine
+* Alt+F7 bound to ClearHistory in Windows mode
+
+New options:
+* Set-PSReadlineOption
+      -ErrorForegroundColor
+      -ErrorBackgroundColor
+          Colors used when ValidateAndAcceptLine reports an error
+
+      -CommandValidationHandler
+          A delegate that is called from ValidateAndAcceptLine that can perform custom validation
+          and also fix the command line, e.g. to correct common typos.
+
+New cmdlet:
+* Remove-PSReadlineKeyHandler
+    This will remove a key binding for previously bound keys.
+
+Breaking change:
+* Demo mode removed
+    - Trying to bind functions EnableDemoMode or DisableDemoMode will result in an error.
+
+### Version 1.0.0.12
+
+New features:
+* Multi-line editing is now practical.  Home/End go to the start/end of the current line or
+  start/end of the input in a reasonable way.  Up/Down arrows will move across lines if the
+  input has multiple lines and you are not in the middle of recalling history.
+
+Bug fixes:
+* Color the prompt character if there is an error for any non-alphanumeric character
+* Fix an issue related to undo (which was commonly hit via Escape) and using history search
+* Fix a bug where PowerShell events are not written to the console until PSReadline returns
+* Fixed so PowerTab now works with PSReadline
+* Highlight from history search is cleared before accepting a line now.
+* Fixed MenuComplete so it clears the menu (which only happened on some systems)
+
+New functions:
+* NextLine
+* PreviousLine
+    - These functions are added for completeness, neither is particularly useful as the usual
+      bindings for UpArrow/DownArrow are smart enough to recall history or change lines
+      depending on the context.
+
+New key bindings:
+* F8/Shift+F8 bound to HistorySearchBackward/HistorySearchForward in Windows mode
+
+### Version 1.0.0.11
+
+Bug fixes:
+* Fixed MenuComplete to actually work
+
+### Version 1.0.0.10
+
+New features:
+* Added binding Ctrl+SpaceBar to MenuComplete in Windows and Emacs modes
+  - If you want to old behavior of Ctrl+Spacebar, bind it to PossibleCompletions
+* Added binding Alt+. (YankLastArg) to Windows mode
+* Added diagnostics when an exception occurs to help reporting bugs
+
+Bug fixes:
+* SaveHistoryPath option fixed
+* Fix ShowKeyBindings to not write blank lines
+* Fixed bug with undo
+
+### Version 1.0.0.9
+
+New features:
+* MenuComplete - like an interactive show completion
+* Automatically save history
+    - at process exit
+    - incrementally and shared across sessions
+    - don't save
+  See parameters HistorySaveStyle and HistorySavePath to Set-PSReadlineOption
+* Added sample custom binding for quickly changing directories in SamplePSReadlineProfile.ps1
+
+Bug fixes:
+* Items loaded from history work with RevertLine
+* Recalling current line after up arrow works again
+
+### Version 1.0.0.8
+
+New features:
+* SamplePSReadlineProfile.ps1 added with examples of custom key bindings
+* Word movement takes DigitArgument
+* HistoryNoDuplicates now works a little differently
+    - Dupicates are saved (it was a dubious memory optimization anyway)
+    - Recall will recall the most recently executed item instead of the first
+* When at the last word, NextWord/ForwardWord now move to the end of line instead
+  of the last character of the word.
+* HistorySearchBackward/HistorySearchForward changes behavior slightly:
+    - use emphasis like InteractiveHistorySearch
+    - cursor always moves to end like PreviousHistory/NextHistory
+* New api GetSelectionState to get the current selection (if any).
+* New functions:
+    - SelectBackwardsLine
+    - SelectLine
+    - SelectAll
+    - CopyOrCancelLine
+* New key bindings in Windows mode:
+    - Alt+0 through Alt+9 and Alt+-: DigitArgument
+    - Ctrl+R/Ctrl+S for interactive history search
+
+Bug fixes:
+* Backspace after a failed interactive history search (Ctrl+R) caused searching
+  to fail if you typed anything other than backspace.
+
+### Version 1.0.0.7
+
+New features:
+* CaptureScreen - copies selected portion of screen to clipboard in text and rtf
+* InvokePrompt - re-evaluate the prompt while preserving the current input
+* New functions to scroll the screen w/o using the mouse:
+    - ScrollScreenUp
+    - ScrollScreenDown
+    - ScrollScreenTop
+    - ScrollScreenToCursor
+* Many small bug fixes
+
+### Version 1.0.0.6
+
+New features:
+* CharacterSearch/CharacterSearchBackward
+* AcceptAndGetNext (Ctrl+O in bash)
+* Get-PSReadlineKeyHandler now returns unbound functions
+* Get-PSReadlineKeyHandler has 2 new parameters: -Bound and -Unbound
+* Set-PSReadlineKeyHandler parameter -LongDescription is now -Description
+  (not breaking because I left an alias)
+* WhatIsKey - display binding for a key
+* ShowKeyBindings - show all bound keys
+* Keyboard selection of text for cut/copy/delete.  New functions:
+  - Cut
+  - Copy
+  - KillRegion
+  - SelectBackwardChar
+  - SelectForwardChar
+  - SelectBackwardWord
+  - SelectForwardWord
+  - SelectNextWord
+  - SelectShellForwardWord
+  - SelectShellBackwardWord
+
+Breaking change:
+* The properties in the output of Get-PSReadlineKeyHandler have changed.
+  This is unlikely to break anyone though.
+
+### Version 1.0.0.5
+
+New features:
+* Delimiter support in *Word functions
+* DigitArgument (Alt-0,Alt-1,Alt-2,...,Alt-9,Alt--) to pass numeric arguments
+* YankLastArg/YankNthArg to extract arguments from previous command lines
+* History search is now case insensitive with an option to make it case sensitive
+
+Bugs fixed:
+* Shift+Backspace works like Backspace
+* Ctrl+R with long search lines no longer causes big problems
+
+Behavior change:
+* Word functions now use delimiters.  The previous behavior is availble 
+  via a Shell*Word function, e.g. instead of KillWord, use ShellKillWord.
+
+### Version 1.0.0.4
+
+New features:
+* Interactive history search (Ctrl+R)
+* Brace matching function added (GotoBrace)
+* Clear screen (Ctrl+L)
+
+Bugs fixed:
+* When showing possible completions, truncate at newline
+* Prompt before showing a large number of completions
+* Undo after paste works now
+* Long pause after clicking on X to close powershell is now fixed
+
+### Version 1.0.0.3
+
+Bugs fixed:
+* Removed CLR 4.5 dependency
+* Fix bug where console paste didn't display everything in some cases
+
+### Version 1.0.0.2
+
+New features:
+* Add a "demo mode" that shows keys pressed
+* Add ETW event source for demo mode, key logger, macro recorder etc.
+* Undo/redo
+* Get-PSReadlineOption cmdlet
+* Make specifying key handlers for builtins simpler
+* Current un-entered line is saved and recalled when cycling through history
+* Support syntax coloring of member names
+
+Bugs fixed:
+* Speed up pasting from the console
+* Fix coloring of some operators
+* Fix coloring in some command arguments
+* Ctrl-C is handled a little better
+
+Breaking changes:
+* CLR 4.5 is now required.
+* SetBufferState is gone because it doesn't support Undo/Redo
+
+### Version 1.0.0.1
+
+New features:
+* History imported when module is loaded
+* Ctrl+End/Ctrl+Home bindings emulate cmd
+* Arbitrary two key chords
+* Key handlers passed the invoking key and an optional argument
+* Made Ding public for custom handlers
+  
+Bugs fixed:
+* Alternate keyboards now supported
+* Ctrl-C now properly emulates cmd
+
+Breaking changes:
+* MinimumHistoryCommandLength parameter removed from Set-PSReadlineOption
+    - Can use this instead:
+        Set-PSReadlineOption -AddToHistoryHandler { $args[0].Length -gt 3 }
+
+### Version 1.0.0.0
+
+Initial release
