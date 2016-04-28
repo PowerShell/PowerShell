@@ -472,8 +472,14 @@ namespace Microsoft.PowerShell
                 // to invert only the lower 3 bits to change the color is somewhat
                 // but looks best with the 2 default color schemes - starting PowerShell
                 // from it's shortcut or from a cmd shortcut.
+#if CORECLR                
+                ConsoleColor tempColor = ((int)foregroundColor == -1) ? ConsoleColor.White : foregroundColor;
+                foregroundColor = ((int)backgroundColor == -1) ? ConsoleColor.Black : backgroundColor;
+                backgroundColor = tempColor;
+#else
                 foregroundColor = (ConsoleColor)((int)foregroundColor ^ 7);
                 backgroundColor = (ConsoleColor)((int)backgroundColor ^ 7);
+#endif
             }
 
             charInfo.ForegroundColor = foregroundColor;
