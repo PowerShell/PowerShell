@@ -95,7 +95,17 @@ namespace System.Management.Automation
         internal static IntPtr GetRawProcessHandle(Process process)
         {
 #if CORECLR
+            try
+            {
             return process.SafeHandle.DangerousGetHandle();
+            }
+            catch (InvalidOperationException)
+            {
+                // It's possible that the process has already exited when we try to get its handle.
+                // In that case, InvalidOperationException will be thrown from Process.SafeHandle,
+                // and we return the invalid zero pointer.
+                return IntPtr.Zero;
+            }
 #else
             return process.Handle;
 #endif

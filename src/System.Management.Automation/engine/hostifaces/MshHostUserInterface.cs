@@ -420,12 +420,13 @@ namespace System.Management.Automation.Host
             }
         }
 
-        internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader)
-        {
+        internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader, Guid runspaceInstanceId)        
+        {            
             TranscriptionOption transcript = new TranscriptionOption();
             transcript.Path = path;
             transcript.IncludeInvocationHeader = includeInvocationHeader;
-            TranscriptionData.Transcripts.Add(transcript);
+            transcript.RunspaceInstanceId = runspaceInstanceId;
+            TranscriptionData.Transcripts.Add(transcript);            
 
             LogTranscriptHeader(senderInfo, transcript);
         }
@@ -476,7 +477,7 @@ namespace System.Management.Automation.Host
             TranscribeCommandComplete(null);
         }
 
-        internal string StopTranscribing()
+        internal string StopTranscribing(Guid runspaceInstanceId)
         {
             if (TranscriptionData.Transcripts.Count == 0)
             {
@@ -484,11 +485,17 @@ namespace System.Management.Automation.Host
             }
 
             TranscriptionOption stoppedTranscript = TranscriptionData.Transcripts[TranscriptionData.Transcripts.Count - 1];
-            LogTranscriptFooter(stoppedTranscript);
-            stoppedTranscript.Dispose();
-            TranscriptionData.Transcripts.Remove(stoppedTranscript);
-                        
-            return stoppedTranscript.Path;
+
+            if (stoppedTranscript.RunspaceInstanceId == runspaceInstanceId)
+            {
+                LogTranscriptFooter(stoppedTranscript);
+                stoppedTranscript.Dispose();
+                TranscriptionData.Transcripts.Remove(stoppedTranscript);
+
+                return stoppedTranscript.Path;
+            }
+
+            return null;
         }
 
         private void LogTranscriptFooter(TranscriptionOption stoppedTranscript)
@@ -514,13 +521,13 @@ namespace System.Management.Automation.Host
             }
         }
 
-        internal void StopAllTranscribing()
+        internal void StopAllTranscribing(Guid runspaceInstanceId)
         {
             TranscribeCommandComplete(null);
-
-            while (TranscriptionData.Transcripts.Count > 0)
+                        
+            foreach(var transcription in TranscriptionData.Transcripts)
             {
-                StopTranscribing();
+                StopTranscribing(runspaceInstanceId);
             }
 
             lock (TranscriptionData)
@@ -999,7 +1006,7 @@ namespace System.Management.Automation.Host
         internal TranscriptionOption SystemTranscript { get; set; }
         internal string CommandBeingIgnored { get; set; }
         internal bool IsHelperCommand { get; set; }
-        internal string PromptText { get; set; }
+        internal string PromptText { get; set; }        
     }
 
 
@@ -1058,6 +1065,12 @@ namespace System.Management.Automation.Host
         /// can be done correctly.
         /// </summary>
         internal Encoding Encoding { get; private set; }
+
+        /// <summary>
+        /// RunspaceInstanceId of the transcription session.
+        /// This is used to choose which transcriptions are closed when runspace is disposed.
+        /// </summary>
+        internal Guid RunspaceInstanceId { get; set; }
 
         /// <summary>
         /// Logs buffered content to disk. We use this instead of File.AppendAllLines

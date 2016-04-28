@@ -1421,7 +1421,7 @@ namespace Microsoft.PowerShell
 
                 if (ExitCode == ExitCodeInitFailure) { break; }
 
-                if (!noExit && !ui.ReadFromStdin)
+                if (!noExit && (!ui.ReadFromStdin || Console.In.Peek() == -1))
                 {
                     // Wait for runspace to open, init, and run init script before 
                     // setting ShouldEndSession, to allow debugger to work.

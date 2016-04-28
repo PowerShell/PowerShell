@@ -5474,7 +5474,12 @@ end
 
         internal const string DefaultMoreFunctionText = @"
 param([string[]]$paths)
-$OutputEncoding = [System.Console]::OutputEncoding
+# Nano needs to use Unicode, but Windows and Linux need the default
+$OutputEncoding = if ($IsWindows -and $IsCore) {
+    [System.Text.Encoding]::Unicode
+} else {
+    [System.Console]::OutputEncoding
+}
 
 # Respect PAGER, use more on Windows, and use less on Linux
 if (Test-Path env:PAGER) {

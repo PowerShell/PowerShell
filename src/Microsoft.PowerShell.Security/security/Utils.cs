@@ -131,6 +131,7 @@ namespace Microsoft.PowerShell
         ///
         /// <remarks>  </remarks>
         ///
+        [ArchitectureSensitive]
         internal static string GetStringFromSecureString(SecureString ss)
         {
             IntPtr p = Marshal.SecureStringToGlobalAllocUnicode(ss);

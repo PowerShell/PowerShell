@@ -164,6 +164,7 @@ namespace System.Management.Automation
             }
         }
 
+        [ArchitectureSensitive]
         internal static string GetStringFromSecureString(SecureString ss)
         {
             IntPtr p = IntPtr.Zero;

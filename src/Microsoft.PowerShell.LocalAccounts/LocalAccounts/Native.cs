@@ -149,37 +149,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         public IntPtr SecurityQualityOfService;
 
         private IntPtr objectName;
-
-        public OBJECT_ATTRIBUTES(string name, uint attrs)
-        {
-            Length = 0;
-            RootDirectory = IntPtr.Zero;
-            objectName = IntPtr.Zero;
-            Attributes = attrs;
-            SecurityDescriptor = IntPtr.Zero;
-            SecurityQualityOfService = IntPtr.Zero;
-
-            Length = ClrFacade.SizeOf<OBJECT_ATTRIBUTES>();
-            ObjectName = new UNICODE_STRING(name);
-        }
-
-        public UNICODE_STRING ObjectName
-        {
-            get
-            {
-                return ClrFacade.PtrToStructure<UNICODE_STRING>(objectName);
-            }
-
-            set
-            {
-                bool fDeleteOld = objectName != IntPtr.Zero;
-
-                if (!fDeleteOld)
-                    objectName = Marshal.AllocHGlobal(Marshal.SizeOf(value));
-
-                Marshal.StructureToPtr(value, objectName, fDeleteOld);
-            }
-        }
+        public UNICODE_STRING ObjectName;
 
         public void Dispose()
         {
@@ -463,8 +433,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
                                                       ref uint domainNameLength,
                                                       out SID_NAME_USE peUse);
 
-        [DllImport(PInvokeDllNames.GetComputerNameDllName, CharSet=CharSet.Unicode, SetLastError=true)]
-        internal static extern bool GetComputerName(StringBuilder name, ref uint size);
 
         [DllImport(PInvokeDllNames.GetSecurityDescriptorDaclDllName, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -484,7 +452,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
                                                               [MarshalAs(UnmanagedType.Bool)]
                                                               bool bDaclDefaulted);
 
-        [DllImport(PInvokeDllNames.FormatMessageDllName, SetLastError = true)]
+        [DllImport(PInvokeDllNames.FormatMessageDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern uint FormatMessage(uint dwFlags,
                                                   IntPtr lpSource,
                                                   uint dwMessageId,

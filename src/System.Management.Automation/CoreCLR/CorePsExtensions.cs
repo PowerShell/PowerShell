@@ -1620,7 +1620,7 @@ namespace System.Management.Automation
 
 namespace Microsoft.PowerShell.CoreCLR
 {
-    using System;
+    using System.IO;
     using System.Management.Automation;
 
     /// <summary>
@@ -1629,18 +1629,23 @@ namespace Microsoft.PowerShell.CoreCLR
     public static class AssemblyExtensions
     {
         /// <summary>
-        /// Loads an assembly given its file path.
+        /// Load an assembly given its file path.
         /// </summary>
-        /// <param name="assemblyFile">The path of the file that contains the manifest of the assembly.</param>
+        /// <param name="assemblyPath">The path of the file that contains the manifest of the assembly.</param>
         /// <returns>The loaded assembly.</returns>
-        public static Assembly LoadFrom(string assemblyFile)
+        public static Assembly LoadFrom(string assemblyPath)
         {
-            if (string.IsNullOrEmpty(assemblyFile))
-            {
-                throw new ArgumentNullException("assemblyFile");
+            return ClrFacade.LoadFrom(assemblyPath);
             }
 
-            return ClrFacade.LoadFrom(assemblyFile);
+        /// <summary>
+        /// Load an assembly given its byte stream
+        /// </summary>
+        /// <param name="assembly">The byte stream of assembly</param>
+        /// <returns>The loaded assembly</returns>
+        public static Assembly LoadFrom(Stream assembly)
+        {
+            return ClrFacade.LoadFrom(assembly);
         }
     }
 }

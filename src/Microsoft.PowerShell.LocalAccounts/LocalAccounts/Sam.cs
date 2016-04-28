@@ -11,6 +11,9 @@ using System.Management.Automation.SecurityAccountsManager.Native.NtSam;
 using System.Text;
 
 using Microsoft.PowerShell.LocalAccounts;
+using System.Diagnostics.CodeAnalysis;
+
+[module: SuppressMessage("Microsoft.Design", "CA1014:MarkAssembliesWithClsCompliant")]
 
 namespace System.Management.Automation.SecurityAccountsManager
 {
@@ -262,6 +265,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             /// <summary>
             /// Gets a string containing the type of operation under way.
             /// </summary>
+            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
             public string OperationName
             {
                 get { return operation.ToString(); }
@@ -271,6 +275,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             /// Gets a string containing the type of object ("User" or "Group")
             /// being used.
             /// </summary>
+            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
             public string TypeNamne
             {
                 get { return type.ToString(); }
@@ -1084,31 +1089,6 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Find a named group and return a <see cref="SamRidEnumeration"/> object
-        /// representing the group.
-        /// </summary>
-        /// <param name="groupName">Name of the group to search for.</param>
-        /// <returns>
-        /// A SamRidEnumeration object representing the group.
-        /// </returns>
-        /// <exception cref="GroupNotFoundException">
-        /// Thrown when the specified group is not found.
-        /// </exception>
-        /// <remarks>
-        /// This method saves some time and effort over the GetGroup method
-        /// because it does not have to open a group to populate a full Group
-        /// object.
-        /// </remarks>
-        private SamRidEnumeration GetGroupSre(string groupName)
-        {
-            foreach (var sre in EnumerateGroups())
-                if (sre.Name.Equals(groupName, StringComparison.CurrentCultureIgnoreCase))
-                    return sre;
-
-            throw new GroupNotFoundException(groupName, context.target);
-        }
-
-        /// <summary>
         /// Find a group by SID and return a <see cref="SamRidEnumeration"/> object
         /// representing the group.
         /// </summary>
@@ -1132,31 +1112,6 @@ namespace System.Management.Automation.SecurityAccountsManager
                     return sre;
 
             throw new GroupNotFoundException(sid.ToString(), sid);
-        }
-
-        /// <summary>
-        /// Find a named user and return a <see cref="SamRidEnumeration"/> object
-        /// representing the user.
-        /// </summary>
-        /// <param name="userName">Name of the user to search for.</param>
-        /// <returns>
-        /// A SamRidEnumeration object representing the user.
-        /// </returns>
-        /// <exception cref="UserNotFoundException">
-        /// Thrown when the specified user is not found.
-        /// </exception>
-        /// <remarks>
-        /// This method saves some time and effort over the GetUser method
-        /// because it does not have to open a group to populate a full LocalUser
-        /// object.
-        /// </remarks>
-        private SamRidEnumeration GetUserSre(string userName)
-        {
-            foreach (var sre in EnumerateGroups())
-                if (sre.Name.Equals(userName, StringComparison.CurrentCultureIgnoreCase))
-                    return sre;
-
-            throw new GroupNotFoundException(userName, userName);
         }
 
         /// <summary>
@@ -1205,14 +1160,12 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             do
             {
-                status = SamApi.SamEnumerateUsersInDomain2(domainHandle,
-                                                           ref context,
-                                                           0,
-                                                           SamApi.SAM_USER_ENUMERATION_FILTER_LOCAL,
-                                                           //0, // non-filtered
-                                                           out buffer,
-                                                           1,
-                                                           out countReturned);
+                status = SamApi.SamEnumerateUsersInDomain(domainHandle,
+                                                          ref context,
+                                                          0,
+                                                          out buffer,
+                                                          1,
+                                                          out countReturned);
 
                 if (status == NtStatus.STATUS_MORE_ENTRIES && countReturned == 1)
                 {
@@ -1350,6 +1303,8 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                 status = SamApi.SamDeleteAlias(aliasHandle);
                 ThrowOnFailure(status);
+
+                aliasHandle = IntPtr.Zero; // The handle is freed internally if SamDeleteAlias succeeds
             }
             finally
             {
@@ -1829,6 +1784,8 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                 status = SamApi.SamDeleteUser(userHandle);
                 ThrowOnFailure(status);
+
+                userHandle = IntPtr.Zero; // The handle is freed internally if SamDeleteUser succeeds
             }
             finally
             {
@@ -2677,7 +2634,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             try
             {
-                SamApi.SamRidToSid(domainHandle, rid, out sidBytes);
+                status = SamApi.SamRidToSid(domainHandle, rid, out sidBytes);
 
                 if (status == NtStatus.STATUS_NOT_FOUND)
                     throw new InternalException(status,
@@ -2808,7 +2765,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 // Ideally , accountname should be processed to hold only accout name (without domain)
                 // as we are keeping the domain in 'DomainName' variable.
 
-                int index = accountName.IndexOf("\\");
+                int index = accountName.IndexOf("\\", StringComparison.CurrentCultureIgnoreCase);
                 if (index > -1)
                 {
                     accountName = accountName.Substring(index + 1);

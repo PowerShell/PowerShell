@@ -86,24 +86,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Name of the container target
-        /// </summary>
-        public String ContainerName
-        {
-            get
-            {
-                if (ComputerType == TargetMachineType.Container)
-                {
-                    return remoteRunspace.ConnectionInfo.ComputerName;
-                }
-                else
-                {
-                    return string.Empty;
-                }
-            }
-        }
-
-        /// <summary>
         /// Id of the container target
         /// </summary>
         public String ContainerId

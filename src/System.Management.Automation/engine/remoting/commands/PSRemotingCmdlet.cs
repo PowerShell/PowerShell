@@ -168,11 +168,6 @@ namespace Microsoft.PowerShell.Commands
         protected const string ContainerIdParameterSet = "ContainerId";
 
         /// <summary>
-        /// Container name parameter set
-        /// </summary>
-        protected const string ContainerNameParameterSet = "ContainerName";
-
-        /// <summary>
         /// VM guid parameter set
         /// </summary>
         protected const string VMIdParameterSet = "VMId";
@@ -602,35 +597,12 @@ namespace Microsoft.PowerShell.Commands
         private string[] containerId;
 
         /// <summary>
-        /// Name of target container.
-        /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
-            Justification = "This is by spec.")]
-        [Parameter(Mandatory = true,
-                   ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = PSRemotingBaseCmdlet.ContainerNameParameterSet)]
-        [ValidateNotNullOrEmpty]
-        public virtual string[] ContainerName
-        {
-            get 
-            {
-                return containerName; 
-            }
-            set 
-            {
-                containerName = value;
-            }
-        }
-        private string[] containerName;
-
-        /// <summary>
         /// When set, PowerShell process inside container will be launched with
         /// high privileged account.
         /// Otherwise (default case), PowerShell process inside container will be launched
         /// with low privileged account.
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ContainerIdParameterSet)]
-        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ContainerNameParameterSet)]
         public virtual SwitchParameter RunAsAdministrator
         {
             get 
@@ -723,7 +695,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SessionParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.UriParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ContainerIdParameterSet)]
-        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ContainerNameParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.VMIdParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.VMNameParameterSet)]
         public virtual Int32 ThrottleLimit
@@ -1031,11 +1002,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected const string FilePathContainerIdParameterSet = "FilePathContainerId";
 
-        /// <summary>
-        /// Container name file path parameter set.
-        /// </summary>
-        protected const string FilePathContainerNameParameterSet = "FilePathContainerName";
-
         #endregion
 
         #region Parameters
@@ -1226,25 +1192,6 @@ namespace Microsoft.PowerShell.Commands
         private string[] containerId;
 
         /// <summary>
-        /// Name of target container.
-        /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
-            Justification = "This is by spec.")]
-        [Parameter(Mandatory = true,
-                   ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = InvokeCommandCommand.ContainerNameParameterSet)]
-        [Parameter(Mandatory = true,
-                   ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = InvokeCommandCommand.FilePathContainerNameParameterSet)]
-        [ValidateNotNullOrEmpty]
-        public override string[] ContainerName
-        {
-            get { return containerName; }
-            set { containerName = value; }
-        }
-        private string[] containerName;
-
-        /// <summary>
         /// For WSMan session:
         /// If this parameter is not specified then the value specified in
         /// the environment variable DEFAULTREMOTESHELLNAME will be used. If 
@@ -1264,15 +1211,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = InvokeCommandCommand.ContainerNameParameterSet)]
-        [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.VMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.VMNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = InvokeCommandCommand.FilePathContainerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -1664,26 +1607,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected virtual void CreateHelpersForSpecifiedContainerSession()
         {
-            string[] inputArray;
-            bool isContainerIdSet = false;
             List<string> resolvedNameList = new List<string>();
+
+            Dbg.Assert((ParameterSetName == PSExecutionCmdlet.ContainerIdParameterSet) ||
+                       (ParameterSetName == PSExecutionCmdlet.FilePathContainerIdParameterSet),
+                       "Expected ParameterSetName == ContainerId or FilePathContainerId");
             
-            if ((ParameterSetName == PSExecutionCmdlet.ContainerIdParameterSet) ||
-                (ParameterSetName == PSExecutionCmdlet.FilePathContainerIdParameterSet))
-            {
-                inputArray = ContainerId;
-                isContainerIdSet = true;
-            }
-            else
-            {
-                Dbg.Assert((ParameterSetName == PSExecutionCmdlet.ContainerNameParameterSet) ||
-                           (ParameterSetName == PSExecutionCmdlet.FilePathContainerNameParameterSet),
-                           "Expected ParameterSetName == ContainerId, ContainerName, FilePathContainerId or FilePathContainerName");
-                
-                inputArray = ContainerName;
-            }
-                
-            foreach (var input in inputArray)
+            foreach (var input in ContainerId)
             {
                 //
                 // Create helper objects for container ID or name.
@@ -1697,14 +1627,7 @@ namespace Microsoft.PowerShell.Commands
                     // Hyper-V container uses Hype-V socket as transport.
                     // Windows Server container uses named pipe as transport.
                     //
-                    if (isContainerIdSet)
-                    {
-                        connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoById(input, RunAsAdministrator.IsPresent, this.ConfigurationName);
-                    }
-                    else
-                    {
-                        connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoByName(input, RunAsAdministrator.IsPresent, this.ConfigurationName);
-                    }
+                    connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfo(input, RunAsAdministrator.IsPresent, this.ConfigurationName);
                   
                     resolvedNameList.Add(connectionInfo.ComputerName);
                     
@@ -1975,11 +1898,9 @@ namespace Microsoft.PowerShell.Commands
             if ((ParameterSetName == PSExecutionCmdlet.VMIdParameterSet) ||
                 (ParameterSetName == PSExecutionCmdlet.VMNameParameterSet) ||
                 (ParameterSetName == PSExecutionCmdlet.ContainerIdParameterSet) ||
-                (ParameterSetName == PSExecutionCmdlet.ContainerNameParameterSet) ||
                 (ParameterSetName == PSExecutionCmdlet.FilePathVMIdParameterSet) ||
                 (ParameterSetName == PSExecutionCmdlet.FilePathVMNameParameterSet) ||
-                (ParameterSetName == PSExecutionCmdlet.FilePathContainerIdParameterSet) ||
-                (ParameterSetName == PSExecutionCmdlet.FilePathContainerNameParameterSet))
+                (ParameterSetName == PSExecutionCmdlet.FilePathContainerIdParameterSet))
             {
                 SkipWinRMCheck = true;
             }
@@ -2031,9 +1952,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 case PSExecutionCmdlet.ContainerIdParameterSet:
-                case PSExecutionCmdlet.ContainerNameParameterSet:
                 case PSExecutionCmdlet.FilePathContainerIdParameterSet:
-                case PSExecutionCmdlet.FilePathContainerNameParameterSet:
                     {
                         CreateHelpersForSpecifiedContainerSession();
                     }
@@ -2361,11 +2280,6 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
         protected const string ContainerIdInstanceIdParameterSet = "ContainerIdInstanceId";
 
         /// <summary>
-        /// ContainerNameInstanceId parameter set: container name + session instance id
-        /// </summary>
-        protected const string ContainerNameInstanceIdParameterSet = "ContainerNameInstanceId";
-
-        /// <summary>
         /// VMIdInstanceId parameter set: vm id + session instance id
         /// </summary>
         protected const string VMIdInstanceIdParameterSet = "VMIdInstanceId";
@@ -2484,25 +2398,6 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
         private string[] containerId;
 
         /// <summary>
-        /// Name of target container.
-        /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
-            Justification = "This is by spec.")]
-        [Parameter(Mandatory = true,
-                   ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = PSRunspaceCmdlet.ContainerNameParameterSet)]
-        [Parameter(Mandatory = true,
-                   ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = PSRunspaceCmdlet.ContainerNameInstanceIdParameterSet)]
-        [ValidateNotNullOrEmpty]
-        public virtual string[] ContainerName
-        {
-            get { return containerName; }
-            set { containerName = value; }
-        }
-        private string[] containerName;
-
-        /// <summary>
         /// Guid of target virtual machine.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
@@ -2606,25 +2501,13 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
                 // container id + optional session name
                 case PSRunspaceCmdlet.ContainerIdParameterSet:
                     {
-                        return GetMatchingRunspacesByContainerVMNameContainerId(writeobject, filterState, configurationName, true, true);
+                        return GetMatchingRunspacesByVMNameContainerId(writeobject, filterState, configurationName, true);
                     }
 
                 // container id + session instanceid
                 case PSRunspaceCmdlet.ContainerIdInstanceIdParameterSet:
                     {
-                        return GetMatchingRunspacesByContainerVMNameContainerIdSessionInstanceId(writeobject, filterState, configurationName, true, true);
-                    }
-
-                // container name + optional session name
-                case PSRunspaceCmdlet.ContainerNameParameterSet:
-                    {
-                        return GetMatchingRunspacesByContainerVMNameContainerId(writeobject, filterState, configurationName, true, false);
-                    }
-
-                // container name + session instanceid
-                case PSRunspaceCmdlet.ContainerNameInstanceIdParameterSet:
-                    {
-                        return GetMatchingRunspacesByContainerVMNameContainerIdSessionInstanceId(writeobject, filterState, configurationName, true, false);
+                        return GetMatchingRunspacesByVMNameContainerIdSessionInstanceId(writeobject, filterState, configurationName, true);
                     }
 
                 // vm Guid + optional session name
@@ -2642,13 +2525,13 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
                 // vm name + optional session name
                 case PSRunspaceCmdlet.VMNameParameterSet:
                     {
-                        return GetMatchingRunspacesByContainerVMNameContainerId(writeobject, filterState, configurationName, false, false);
+                        return GetMatchingRunspacesByVMNameContainerId(writeobject, filterState, configurationName, false);
                     }
 
                 // vm name + session instanceid
                 case PSRunspaceCmdlet.VMNameInstanceIdParameterSet:
                     {
-                        return GetMatchingRunspacesByContainerVMNameContainerIdSessionInstanceId(writeobject, filterState, configurationName, false, false);
+                        return GetMatchingRunspacesByVMNameContainerIdSessionInstanceId(writeobject, filterState, configurationName, false);
                     }
             }
 
@@ -2911,44 +2794,34 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
         }
 
         /// <summary>
-        /// Gets the matching runspaces by container name, vm name or container id with optional session name
+        /// Gets the matching runspaces by vm name or container id with optional session name
         /// </summary>
         /// <param name="writeobject">if true write the object down the pipeline</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <param name="isContainer">if true the target is a container instead of virtual machine</param>
-        /// <param name="useContainerId">if true the input is container id</param>
         /// <returns>list of matching runspaces</returns>
-        private Dictionary<Guid, PSSession> GetMatchingRunspacesByContainerVMNameContainerId(bool writeobject,
+        private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMNameContainerId(bool writeobject,
             SessionFilterState filterState,
             String configurationName,
-            bool isContainer,
-            bool useContainerId)
+            bool isContainer)
         {
             String[] inputNames;
             TargetMachineType computerType;
-            bool supportWildChar = false;
+            bool supportWildChar;
             String[] sessionNames = { "*" };
             WildcardPattern configurationNamePattern = 
                 String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);            
             Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
-            // container name and vm name support wild characters, while container id does not. 
+            // vm name support wild characters, while container id does not. 
             // vm id does not apply in this method, which does not support wild characters either.
             if (isContainer)
             {
-                if (useContainerId)
-                {
-                    inputNames = ContainerId;
-                }
-                else
-                {
-                    inputNames = ContainerName;
-                    supportWildChar = true;
-                }
-                
+                inputNames = ContainerId;
                 computerType = TargetMachineType.Container;
+                supportWildChar = false;
             }
             else
             {
@@ -2973,7 +2846,7 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
                         String.IsNullOrEmpty(sessionName) ? null : WildcardPattern.Get(sessionName, WildcardOptions.IgnoreCase);
 
                     var matchingRunspaceInfos = remoteRunspaceInfos
-                        .Where<PSSession>(session => (supportWildChar ? inputNamePattern.IsMatch(isContainer ? session.ContainerName : session.VMName)
+                        .Where<PSSession>(session => (supportWildChar ? inputNamePattern.IsMatch(session.VMName)
                                                                       : inputName.Equals(session.ContainerId)) &&
                                                      ((sessionNamePattern == null) ? true : sessionNamePattern.IsMatch(session.Name)) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&
@@ -2989,43 +2862,33 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
         }
 
         /// <summary>
-        /// Gets the matching runspaces by container name, vm name or container id with session instanceid
+        /// Gets the matching runspaces by vm name or container id with session instanceid
         /// </summary>
         /// <param name="writeobject">if true write the object down the pipeline</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <param name="isContainer">if true the target is a container instead of virtual machine</param>
-        /// <param name="useContainerId">if true the input is container id</param>
         /// <returns>list of matching runspaces</returns>
-        private Dictionary<Guid, PSSession> GetMatchingRunspacesByContainerVMNameContainerIdSessionInstanceId(bool writeobject,
+        private Dictionary<Guid, PSSession> GetMatchingRunspacesByVMNameContainerIdSessionInstanceId(bool writeobject,
             SessionFilterState filterState,
             String configurationName,
-            bool isContainer,
-            bool useContainerId)
+            bool isContainer)
         {
             String[] inputNames;
             TargetMachineType computerType;
-            bool supportWildChar = false;
+            bool supportWildChar;
             WildcardPattern configurationNamePattern = 
                 String.IsNullOrEmpty(configurationName) ? null : WildcardPattern.Get(configurationName, WildcardOptions.IgnoreCase);            
             Dictionary<Guid, PSSession> matches = new Dictionary<Guid, PSSession>();
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
-            // container name and vm name support wild characters, while container id does not. 
+            // vm name support wild characters, while container id does not. 
             // vm id does not apply in this method, which does not support wild characters either.
             if (isContainer)
             {
-                if (useContainerId)
-                {
-                    inputNames = ContainerId;
-                }
-                else
-                {
-                    inputNames = ContainerName;
-                    supportWildChar = true;
-                }
-
+                inputNames = ContainerId;
                 computerType = TargetMachineType.Container;
+                supportWildChar = false;                
             }
             else
             {
@@ -3041,7 +2904,7 @@ private string GetConvertedScript(out List<string> newParameterNames, out List<o
                 foreach (Guid sessionInstanceId in InstanceId)
                 {
                     var matchingRunspaceInfos = remoteRunspaceInfos
-                        .Where<PSSession>(session => (supportWildChar ? inputNamePattern.IsMatch(isContainer ? session.ContainerName : session.VMName)
+                        .Where<PSSession>(session => (supportWildChar ? inputNamePattern.IsMatch(session.VMName)
                                                                       : inputName.Equals(session.ContainerId)) &&
                                                      sessionInstanceId.Equals(session.InstanceId) &&
                                                      QueryRunspaces.TestRunspaceState(session.Runspace, filterState) &&

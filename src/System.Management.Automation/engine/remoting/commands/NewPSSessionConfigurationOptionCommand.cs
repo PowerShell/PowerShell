@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         private int? _processIdleTimeoutSec = null;
 
         internal const string AttribMaxIdleTimeout = "MaxIdleTimeoutms";
-        internal static readonly int? DefaultMaxIdleTimeout = 43200;  // 12 hours in seconds
+        internal static readonly int? DefaultMaxIdleTimeout = int.MaxValue;
         private int? _maxIdleTimeoutSec = null;
 
         internal const string AttribIdleTimeout = "IdleTimeoutms";
@@ -38,27 +38,27 @@ namespace Microsoft.PowerShell.Commands
         private int? _idleTimeoutSec = null;
 
         private const string AttribMaxConcurrentUsers = "MaxConcurrentUsers";
-        internal static readonly int? DefaultMaxConcurrentUsers = 5;
+        internal static readonly int? DefaultMaxConcurrentUsers = int.MaxValue;
         private int? maxConcurrentUsers = null;
 
         private const string AttribMaxProcessesPerSession = "MaxProcessesPerShell";
-        internal static readonly int? DefaultMaxProcessesPerSession = 15;
+        internal static readonly int? DefaultMaxProcessesPerSession = int.MaxValue;
         private int? maxProcessesPerSession = null;
 
         private const string AttribMaxMemoryPerSessionMB = "MaxMemoryPerShellMB";
-        internal static readonly int? DefaultMaxMemoryPerSessionMB = 1024;
+        internal static readonly int? DefaultMaxMemoryPerSessionMB = int.MaxValue;
         private int? maxMemoryPerSessionMB = null;
 
         private const string AttribMaxSessions = "MaxShells";
-        internal static readonly int? DefaultMaxSessions = 25;
+        internal static readonly int? DefaultMaxSessions = int.MaxValue;
         private int? maxSessions = null;
 
         private const string AttribMaxSessionsPerUser = "MaxShellsPerUser";
-        internal static readonly int? DefaultMaxSessionsPerUser = 25;
+        internal static readonly int? DefaultMaxSessionsPerUser = int.MaxValue;
         private int? maxSessionsPerUser = null;
 
         private const string AttribMaxConcurrentCommandsPerSession = "MaxConcurrentCommandsPerShell";
-        internal static readonly int? DefaultMaxConcurrentCommandsPerSession = 1000;
+        internal static readonly int? DefaultMaxConcurrentCommandsPerSession = int.MaxValue;
         private int? maxConcurrentCommandsPerSession = null;
 
         /// <summary>
@@ -350,7 +350,9 @@ namespace Microsoft.PowerShell.Commands
             }
             if (_maxIdleTimeoutSec.HasValue)
             {
-                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxIdleTimeout, 1000 * _maxIdleTimeoutSec));
+                // Special case max int value for unbounded default.
+                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxIdleTimeout, 
+                    (_maxIdleTimeoutSec == int.MaxValue) ? _maxIdleTimeoutSec : (1000 * _maxIdleTimeoutSec)));
             }
 
             return sb.Length > 0

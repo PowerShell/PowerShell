@@ -2526,7 +2526,7 @@ function Get-PSImplicitRemotingSession
             )
 ";
 
-        // index 0 - "-ContainerId <container id>" (ContainerId is used instead of ContainerName due to its uniqueness)
+        // index 0 - "-ContainerId <container id>"
         // index 1 - "-RunAsAdministrator" or empty string
         // index 2 - "-ConfigurationName <configuration name>" or empty string
         private const string NewContainerRunspaceTemplate = @"

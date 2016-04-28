@@ -146,17 +146,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Overriding to suppress this parameter
         /// </summary>
-        public override string[] ContainerName
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Overriding to suppress this parameter
-        /// </summary>
         public override Guid[] VMId
         {
             get

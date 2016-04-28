@@ -226,12 +226,8 @@ namespace System.Management.Automation.Internal
                     string manifestPath = qualifiedPathWithVersion + StringLiterals.PowerShellDataFileExtension;
                     if (File.Exists(manifestPath))
                     {
-                        var isValidModuleVersion = version.Equals(ModuleIntrinsics.GetManifestModuleVersion(manifestPath));
-                        if (isValidModuleVersion)
-                        {
-                            isModuleDirectory = true;
-                            yield return manifestPath;
-                        }
+                        isModuleDirectory = true;
+                        yield return manifestPath;
                     }
                 }
 
@@ -307,6 +303,18 @@ namespace System.Management.Automation.Internal
             {
                 versionFolders.Sort((x, y) => y.CompareTo(x));
             }
+        }
+
+        internal static bool IsModuleInVersionSubdirectory(string modulePath, out Version version)
+        {
+            version = null;
+            var folderName = Path.GetDirectoryName(modulePath);
+            if (folderName != null)
+            {
+                folderName = Path.GetFileName(folderName);
+                return Version.TryParse(folderName, out version);
+            }
+            return false;
         }
 
         /// <summary>

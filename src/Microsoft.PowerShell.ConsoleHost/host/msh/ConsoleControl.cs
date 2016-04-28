@@ -623,29 +623,6 @@ namespace Microsoft.PowerShell
             return _outputHandle.Value;
         }
 
-        internal enum StandardHandleId : uint
-        {
-            // From winnt.h
-            // #define STD_INPUT_HANDLE    ((DWORD)-10)
-            // #define STD_OUTPUT_HANDLE   ((DWORD)-11)
-            // #define STD_ERROR_HANDLE    ((DWORD)-12)
-
-            Input = 0xFFFFFFF6,
-            Output = 0xFFFFFFF5,
-            Error = 0xFFFFFFF4
-        }
-
-        internal static NakedWin32Handle GetStdHandle(StandardHandleId handleId)
-        {
-            unchecked
-            {
-                // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-                // get the error code.
-#pragma warning disable 56523
-                return NativeMethods.GetStdHandle((DWORD)handleId);
-            }
-        }
-
         #endregion
 
         #region Mode
@@ -3491,9 +3468,6 @@ namespace Microsoft.PowerShell
 
             [DllImport(PinvokeDllNames.GetLargestConsoleWindowSizeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern COORD GetLargestConsoleWindowSize(NakedWin32Handle consoleOutput);
-
-            [DllImport(PinvokeDllNames.GetStdHandleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-            internal static extern NakedWin32Handle GetStdHandle(DWORD handleId);
 
             [DllImport(PinvokeDllNames.ReadConsoleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern bool ReadConsole

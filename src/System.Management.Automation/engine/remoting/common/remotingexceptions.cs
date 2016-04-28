@@ -228,8 +228,6 @@ namespace System.Management.Automation.Remoting
         CannotTerminateProcessInContainer = 968,
         ContainersFeatureNotEnabled = 969,
         RemoteSessionHyperVSocketServerConstructorFailure = 970,
-        InvalidContainerNameMultiple = 971,
-        InvalidContainerNameNotExist = 972,
         ContainerSessionConnectFailed = 973,
         RemoteSessionHyperVSocketClientConstructorSetSocketOptionFailure = 974,
         InvalidVMState = 975,

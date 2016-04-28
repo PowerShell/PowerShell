@@ -294,15 +294,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Cmdlet Overrides
 
         #region Private Methods
-        private LocalUser GetUser()
-        {
-            if (InputObject != null)
-                return InputObject;
-
-             return SID != null ? sam.GetLocalUser(SID)
-                                : sam.GetLocalUser(Name);
-        }
-
         private bool CheckShouldProcess(string target)
         {
             return ShouldProcess(target, Strings.ActionSetUser);

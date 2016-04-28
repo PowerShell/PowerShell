@@ -247,7 +247,7 @@ namespace System.Management.Automation.Runspaces
         /// The duration (in ms) for which PowerShell should wait before it times out on cancel operations 
         /// (close runspace or stop powershell). For instance, when the user hits ctrl-C, 
         /// New-PSSession cmdlet tries to call a stop on all remote runspaces which are in the Opening state. 
-        /// The administrator wouldn’t mind waiting for 15 seconds, but this should be time bound and of a shorter duration. 
+        /// The administrator wouldnï¿½t mind waiting for 15 seconds, but this should be time bound and of a shorter duration. 
         /// A high timeout here like 3 minutes will give the administrator a feeling that the PowerShell client has hung.
         /// </summary>
         public int CancelTimeout
@@ -2181,7 +2181,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override string ComputerName
         {
-            get { return _containerProc.ContainerName; }
+            get { return _containerProc.ContainerId; }
             set { throw new PSNotSupportedException(); }
         }
 
@@ -2235,25 +2235,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create ContainerConnectionInfo object based on container id.
         /// </summary>
-        public static ContainerConnectionInfo CreateContainerConnectionInfoById(
+        public static ContainerConnectionInfo CreateContainerConnectionInfo(
             string containerId,
             bool runAsAdmin,
             string configurationName)
         {
-            ContainerProcess containerProc = new ContainerProcess(containerId, null, null, 0, runAsAdmin, configurationName);
-
-            return new ContainerConnectionInfo(containerProc);
-        }
-
-        /// <summary>
-        /// Create ContainerConnectionInfo object based on container name.
-        /// </summary>
-        public static ContainerConnectionInfo CreateContainerConnectionInfoByName(
-            string containerName,
-            bool runAsAdmin,
-            string configurationName)
-        {
-            ContainerProcess containerProc = new ContainerProcess(null, containerName, null, 0, runAsAdmin, configurationName);
+            ContainerProcess containerProc = new ContainerProcess(containerId, null, 0, runAsAdmin, configurationName);
 
             return new ContainerConnectionInfo(containerProc);
         }
@@ -2290,7 +2277,6 @@ namespace System.Management.Automation.Runspaces
         private Guid runtimeId;
         private string containerObRoot;
         private string containerId;
-        private string containerName;
         private int processId;
         private bool runAsAdmin = false;
         private string configurationName;
@@ -2301,8 +2287,6 @@ namespace System.Management.Automation.Runspaces
         private const uint NoError = 0;
         private const uint InvalidContainerId = 1;
         private const uint ContainersFeatureNotEnabled = 2;
-        private const uint InvalidContainerNameMultiple = 3;
-        private const uint InvalidContainerNameNotExist = 4;
         private const uint OtherError = 9999;
 
         #endregion
@@ -2335,15 +2319,6 @@ namespace System.Management.Automation.Runspaces
         {
             get { return containerId; }
             set { containerId = value; }
-        }
-
-        /// <summary>
-        /// Name of the container.
-        /// </summary>
-        public string ContainerName
-        {
-            get { return containerName; }
-            set { containerName = value; }
         }
 
         /// <summary>
@@ -2405,16 +2380,67 @@ namespace System.Management.Automation.Runspaces
 
         #region Native HCS (i.e., host compute service) methods
 
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct HCS_PROCESS_INFORMATION
+        {
+            /// <summary>
+            /// The process id.
+            /// </summary>
+            public uint ProcessId;
+
+            /// <summary>
+            /// Reserved.
+            /// </summary>
+            public uint Reserved;
+
+            /// <summary>
+            /// If created, standard input handle of the process.
+            /// </summary>
+            public IntPtr StdInput;
+
+            /// <summary>
+            /// If created, standard output handle of the process.
+            /// </summary>
+            public IntPtr StdOutput;
+
+            /// <summary>
+            /// If created, standard error handle of the process.
+            /// </summary>
+            public IntPtr StdError;
+        }
+
         [DllImport(PinvokeDllNames.CreateProcessInComputeSystemDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern uint CreateProcessInComputeSystem(
-            string  id,
-            string  ProcessParameters,
-            ref int processId);
-    
+        internal static extern uint HcsOpenComputeSystem(
+            string     id,
+            ref IntPtr computeSystem,
+            ref string result);
+
         [DllImport(PinvokeDllNames.CreateProcessInComputeSystemDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern uint TerminateProcessInComputeSystem(
-            string  id,
-            int     processId);
+        internal static extern uint HcsGetComputeSystemProperties(
+            IntPtr     computeSystem,
+            string     propertyQuery,
+            ref string properties,
+            ref string result);
+
+        [DllImport(PinvokeDllNames.CreateProcessInComputeSystemDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+        internal static extern uint HcsCreateProcess(
+            IntPtr                      computeSystem,
+            string                      processParameters,
+            ref HCS_PROCESS_INFORMATION processInformation,
+            ref IntPtr                  process,
+            ref string                  reslt);
+
+        [DllImport(PinvokeDllNames.CreateProcessInComputeSystemDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+        internal static extern uint HcsOpenProcess(
+            IntPtr     computeSystem,
+            int        processId,
+            ref IntPtr process,
+            ref string result);
+
+        [DllImport(PinvokeDllNames.CreateProcessInComputeSystemDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+        internal static extern uint HcsTerminateProcess(
+            IntPtr     process,
+            ref string result);
 
         #endregion
 
@@ -2423,30 +2449,17 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates an instance used for PowerShell Direct for container.
         /// </summary>
-        public ContainerProcess(string containerId, string containerName, string containerObRoot, int processId, bool runAsAdmin, string configurationName)
+        public ContainerProcess(string containerId, string containerObRoot, int processId, bool runAsAdmin, string configurationName)
         {
             this.ContainerId = containerId;
-            this.ContainerName = containerName;
             this.ContainerObRoot = containerObRoot;
             this.ProcessId = processId;
             this.RunAsAdmin = runAsAdmin;
             this.ConfigurationName = configurationName;
 
-            if (!String.IsNullOrEmpty(containerId))
-            {
-                if (String.IsNullOrEmpty(containerName))
-                {
-                    GetContainerPropertiesFromContainerId();
-                }
-            }
-            else if (!String.IsNullOrEmpty(containerName))
-            {
-                GetContainerPropertiesFromContainerName();
-            }
-            else
-            {
-                Dbg.Assert(false, "containerId and containerName inputs cannot be empty at the same time.");
-            } 
+            Dbg.Assert(!String.IsNullOrEmpty(containerId), "containerId input cannot be empty.");
+
+            GetContainerProperties();
         }
 
         #endregion
@@ -2497,11 +2510,11 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Get container name and object root based on given container id.
+        /// Get object root based on given container id.
         /// </summary>
-        public void GetContainerPropertiesFromContainerId()
+        public void GetContainerProperties()
         {
-            RunOnMTAThread(GetContainerPropertiesFromContainerIdInternal);
+            RunOnMTAThread(GetContainerPropertiesInternal);
 
             //
             // Report error.
@@ -2514,37 +2527,6 @@ namespace System.Management.Automation.Runspaces
                 case ContainersFeatureNotEnabled:
                     throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.ContainersFeatureNotEnabled));
 
-                case OtherError:
-                    throw new PSInvalidOperationException(ErrorMessage);
-            }
-        }
-
-        /// <summary>
-        /// Get container id and object root based on given container name.
-        /// </summary>
-        public void GetContainerPropertiesFromContainerName()
-        {
-            RunOnMTAThread(GetContainerPropertiesFromContainerNameInternal);
-
-            //
-            // Report error.
-            //
-            switch (ErrorCode)
-            {
-                case NoError:
-                    break;
-            
-                case ContainersFeatureNotEnabled:
-                    throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.ContainersFeatureNotEnabled));
-
-                case InvalidContainerNameMultiple:
-                    throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.InvalidContainerNameMultiple,
-                                                                            ContainerName));
-                    
-                case InvalidContainerNameNotExist:
-                    throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.InvalidContainerNameNotExist,
-                                                                            ContainerName));
-                    
                 case OtherError:
                     throw new PSInvalidOperationException(ErrorMessage);
             }
@@ -2583,14 +2565,11 @@ namespace System.Management.Automation.Runspaces
             //
             try
             {
-                Type computeSystemPropertiesType;
-                Type hostComputeInteropType;
-
-                GetHostComputeInteropTypes(out computeSystemPropertiesType, out hostComputeInteropType);
-
-                MethodInfo computeSystemExistsInfo = hostComputeInteropType.GetMethod("ComputeSystemExists");
-
-                if (!(bool)computeSystemExistsInfo.Invoke(null, new object[]{ ContainerId }))
+                IntPtr ComputeSystem = IntPtr.Zero;
+                string resultString = String.Empty;
+                
+                result = HcsOpenComputeSystem(ContainerId, ref ComputeSystem, ref resultString);
+                if (result != 0)
                 {
                     processId = 0;
                     error = InvalidContainerId;
@@ -2606,18 +2585,22 @@ namespace System.Management.Automation.Runspaces
                         (RuntimeId != Guid.Empty) ? "-so -NoProfile" : "-NamedPipeServerMode",
                         String.IsNullOrEmpty(ConfigurationName) ? String.Empty : String.Concat("-Config ", ConfigurationName),
                         (RunAsAdmin) ? "false" : "true");
-                    
+
+                    HCS_PROCESS_INFORMATION ProcessInformation = new HCS_PROCESS_INFORMATION();
+                    IntPtr Process = IntPtr.Zero;
+
                     //
                     // Create PowerShell process inside the container.
                     //
-                    result = CreateProcessInComputeSystem(
-                        ContainerId,
-                        cmd,
-                        ref processId);
+                    result = HcsCreateProcess(ComputeSystem, cmd, ref ProcessInformation, ref Process, ref resultString);
                     if (result != 0)
                     {
                         processId = 0;
                         error = result;
+                    }
+                    else
+                    {
+                        processId = Convert.ToInt32(ProcessInformation.ProcessId);
                     }
                 }
             }
@@ -2654,35 +2637,54 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void TerminateContainerProcessInternal()
         {
-            ProcessTerminated = 
-                (TerminateProcessInComputeSystem(ContainerId, ProcessId) == 0);
+            IntPtr ComputeSystem = IntPtr.Zero;
+            string resultString = String.Empty;
+            IntPtr process = IntPtr.Zero;
+
+            ProcessTerminated = false;
+            
+            if (HcsOpenComputeSystem(ContainerId, ref ComputeSystem, ref resultString) == 0)
+            {
+                if (HcsOpenProcess(ComputeSystem, ProcessId, ref process, ref resultString) == 0)
+                {
+                    if (HcsTerminateProcess(process, ref resultString) == 0)
+                    {
+                        ProcessTerminated = true;
+                    }
+                }
+            }
         }
 
         /// <summary>
-        /// Get container name and object root based on given container id.
+        /// Get object root based on given container id.
         /// </summary>
-        private void GetContainerPropertiesFromContainerIdInternal()
+        private void GetContainerPropertiesInternal()
         {
             try
             {
-                Type computeSystemPropertiesType;
-                Type hostComputeInteropType;
-
-                GetHostComputeInteropTypes(out computeSystemPropertiesType, out hostComputeInteropType);
+                IntPtr ComputeSystem = IntPtr.Zero;
+                string resultString = String.Empty;
                 
-                MethodInfo getComputeSystemPropertiesInfo = hostComputeInteropType.GetMethod("GetComputeSystemProperties");
-                
-                var computeSystemPropertiesHandle = getComputeSystemPropertiesInfo.Invoke(null, new object[]{ ContainerId });
-
-                ContainerName = (string)computeSystemPropertiesType.GetProperty("Name").GetValue(computeSystemPropertiesHandle);
-                RuntimeId = (Guid)computeSystemPropertiesType.GetProperty("RuntimeId").GetValue(computeSystemPropertiesHandle);
-
-                //
-                // Get container object root for Windows Server container.
-                //
-                if (RuntimeId == Guid.Empty)
+                if (HcsOpenComputeSystem(ContainerId, ref ComputeSystem, ref resultString) == 0)
                 {
-                    ContainerObRoot = (string)computeSystemPropertiesType.GetProperty("ObRoot").GetValue(computeSystemPropertiesHandle);
+                    Type computeSystemPropertiesType;
+                    Type hostComputeInteropType;
+                    
+                    GetHostComputeInteropTypes(out computeSystemPropertiesType, out hostComputeInteropType);
+                
+                    MethodInfo getComputeSystemPropertiesInfo = hostComputeInteropType.GetMethod("HcsGetComputeSystemProperties");
+                    
+                    var computeSystemPropertiesHandle = getComputeSystemPropertiesInfo.Invoke(null, new object[]{ ComputeSystem });
+
+                    RuntimeId = (Guid)computeSystemPropertiesType.GetProperty("RuntimeId").GetValue(computeSystemPropertiesHandle);
+                    
+                    //
+                    // Get container object root for Windows Server container.
+                    //
+                    if (RuntimeId == Guid.Empty)
+                    {
+                        ContainerObRoot = (string)computeSystemPropertiesType.GetProperty("ObRoot").GetValue(computeSystemPropertiesHandle);
+                    }
                 }
             }
             catch (FileNotFoundException)
@@ -2709,77 +2711,6 @@ namespace System.Management.Automation.Runspaces
                     ErrorCode = OtherError;
                     ErrorMessage = GetErrorMessageFromException(e);
                 }
-            }
-        }
-
-        /// <summary>
-        /// Get container id and object root based on given container name.
-        /// </summary>
-        private void GetContainerPropertiesFromContainerNameInternal()
-        {
-            try
-            {
-                Type computeSystemPropertiesType;
-                Type hostComputeInteropType;
-                object computeSystemPropertiesHandle = null;
-                int computeSystemPropertiesHandlesCount = 0;
-                var wildCardPattern = WildcardPattern.Get(ContainerName, WildcardOptions.IgnoreCase);
-
-                GetHostComputeInteropTypes(out computeSystemPropertiesType, out hostComputeInteropType);
-
-                MethodInfo enumerateComputeSystemsInfo = hostComputeInteropType.GetMethod("EnumerateComputeSystems");
-
-                var computeSystemPropertiesHandles = (IEnumerable)enumerateComputeSystemsInfo.Invoke(null, new object[] { null, null, null, null });
-
-                foreach (var currentComputeSystemPropertiesHandle in computeSystemPropertiesHandles)
-                {
-                    string name = (string)computeSystemPropertiesType.GetProperty("Name").GetValue(currentComputeSystemPropertiesHandle);
-                    
-                    if (wildCardPattern.IsMatch(name))
-                    {
-                        computeSystemPropertiesHandle = currentComputeSystemPropertiesHandle;
-                        computeSystemPropertiesHandlesCount++;
-
-                        if (computeSystemPropertiesHandlesCount > 1)
-                        {
-                            ErrorCode = InvalidContainerNameMultiple;
-                            return;
-                        }
-                    }
-                }
-
-                if (computeSystemPropertiesHandle == null)
-                {
-                    ErrorCode = InvalidContainerNameNotExist;
-                    return;
-                }
-
-                ContainerId = (string)computeSystemPropertiesType.GetProperty("Id").GetValue(computeSystemPropertiesHandle);
-                ContainerName = (string)computeSystemPropertiesType.GetProperty("Name").GetValue(computeSystemPropertiesHandle);
-                RuntimeId = (Guid)computeSystemPropertiesType.GetProperty("RuntimeId").GetValue(computeSystemPropertiesHandle);
-
-                //
-                // Get container object root for Windows Server container.
-                //
-                if (RuntimeId == Guid.Empty)
-                {
-                    ContainerObRoot = (string)computeSystemPropertiesType.GetProperty("ObRoot").GetValue(computeSystemPropertiesHandle);
-                }
-            }
-            catch (FileNotFoundException)
-            {
-                ErrorCode = ContainersFeatureNotEnabled;
-            }
-            catch (FileLoadException)
-            {
-                ErrorCode = ContainersFeatureNotEnabled;
-            }
-            catch (Exception e)
-            {
-                CommandProcessorBase.CheckForSevereException(e);
-
-                ErrorCode = OtherError;
-                ErrorMessage = GetErrorMessageFromException(e);
             }
         }
 

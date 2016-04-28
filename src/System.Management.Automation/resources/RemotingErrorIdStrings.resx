@@ -1204,12 +1204,6 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   <data name="InvalidContainerId" xml:space="preserve">
     <value>The input ContainerId {0} does not exist, or the corresponding container is not running.</value>
   </data>
-  <data name="InvalidContainerNameMultiple" xml:space="preserve">
-    <value>The input ContainerName {0} does not resolve to a single running container.</value>
-  </data>
-  <data name="InvalidContainerNameNotExist" xml:space="preserve">
-    <value>The input ContainerName {0} does not exist, or the corresponding container is not running.</value>
-  </data>
   <data name="InvalidVMId" xml:space="preserve">
     <value>The input VMId parameter does not resolve to a single virtual machine.</value>
   </data>

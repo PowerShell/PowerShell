@@ -405,8 +405,11 @@ $source = @"
 using System; 
 using System.Net;
 using System.Management.Automation;
+using Microsoft.Win32.SafeHandles;
+using System.Security.Cryptography;
+using System.Runtime.InteropServices;
 
-namespace Microsoft.PowerShell.Get 
+namespace Microsoft.PowerShell.Commands.PowerShellGet 
 { 
     public static class Telemetry  
     { 
@@ -462,6 +465,96 @@ namespace Microsoft.PowerShell.Get
             return false;
         }
     } 
+
+    [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+    public struct CERT_CHAIN_POLICY_PARA {
+        public CERT_CHAIN_POLICY_PARA(int size) {
+            cbSize = (uint) size;
+            dwFlags = 0;
+            pvExtraPolicyPara = IntPtr.Zero;
+        }
+        public uint   cbSize;
+        public uint   dwFlags;
+        public IntPtr pvExtraPolicyPara; 
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+    public struct CERT_CHAIN_POLICY_STATUS {
+        public CERT_CHAIN_POLICY_STATUS(int size) {
+            cbSize = (uint) size;
+            dwError = 0;
+            lChainIndex = IntPtr.Zero;
+            lElementIndex = IntPtr.Zero;
+            pvExtraPolicyStatus = IntPtr.Zero;
+        }
+        public uint   cbSize;
+        public uint   dwError;
+        public IntPtr lChainIndex;
+        public IntPtr lElementIndex;
+        public IntPtr pvExtraPolicyStatus; 
+    }
+
+    public class Win32Helpers
+    {
+        [DllImport("Crypt32.dll", CharSet=CharSet.Auto, SetLastError=true)]
+        public extern static 
+        bool CertVerifyCertificateChainPolicy(
+            [In]     IntPtr                       pszPolicyOID,
+            [In]     SafeX509ChainHandle pChainContext,
+            [In]     ref CERT_CHAIN_POLICY_PARA   pPolicyPara,
+            [In,Out] ref CERT_CHAIN_POLICY_STATUS pPolicyStatus);
+
+        [DllImport("Crypt32.dll", CharSet=CharSet.Auto, SetLastError=true)]
+        public static extern
+        SafeX509ChainHandle CertDuplicateCertificateChain(
+            [In]     IntPtr pChainContext);
+
+        public static bool IsMicrosoftCertificate([In] SafeX509ChainHandle pChainContext)
+        {
+            //-------------------------------------------------------------------------
+            //  CERT_CHAIN_POLICY_MICROSOFT_ROOT  
+            //  
+            //  Checks if the last element of the first simple chain contains a  
+            //  Microsoft root public key. If it doesn't contain a Microsoft root  
+            //  public key, dwError is set to CERT_E_UNTRUSTEDROOT.  
+            //  
+            //  pPolicyPara is optional. However,  
+            //  MICROSOFT_ROOT_CERT_CHAIN_POLICY_ENABLE_TEST_ROOT_FLAG can be set in  
+            //  the dwFlags in pPolicyPara to also check for the Microsoft Test Roots.  
+            //  
+            //  MICROSOFT_ROOT_CERT_CHAIN_POLICY_CHECK_APPLICATION_ROOT_FLAG can be set  
+            //  in the dwFlags in pPolicyPara to check for the Microsoft root for  
+            //  application signing instead of the Microsoft product root. This flag  
+            //  explicitly checks for the application root only and cannot be combined  
+            //  with the test root flag.    
+            //  
+            //  MICROSOFT_ROOT_CERT_CHAIN_POLICY_DISABLE_FLIGHT_ROOT_FLAG can be set  
+            //  in the dwFlags in pPolicyPara to always disable the Flight root.  
+            //  
+            //  pvExtraPolicyPara and pvExtraPolicyStatus aren't used and must be set  
+            //  to NULL.  
+            //--------------------------------------------------------------------------  
+            const uint MICROSOFT_ROOT_CERT_CHAIN_POLICY_ENABLE_TEST_ROOT_FLAG       = 0x00010000;
+            //const uint MICROSOFT_ROOT_CERT_CHAIN_POLICY_CHECK_APPLICATION_ROOT_FLAG = 0x00020000;
+            //const uint MICROSOFT_ROOT_CERT_CHAIN_POLICY_DISABLE_FLIGHT_ROOT_FLAG    = 0x00040000;
+
+            CERT_CHAIN_POLICY_PARA PolicyPara = new CERT_CHAIN_POLICY_PARA(Marshal.SizeOf(typeof(CERT_CHAIN_POLICY_PARA)));
+            CERT_CHAIN_POLICY_STATUS PolicyStatus = new CERT_CHAIN_POLICY_STATUS(Marshal.SizeOf(typeof(CERT_CHAIN_POLICY_STATUS)));
+            int CERT_CHAIN_POLICY_MICROSOFT_ROOT = 7;
+            
+            PolicyPara.dwFlags = (uint) MICROSOFT_ROOT_CERT_CHAIN_POLICY_ENABLE_TEST_ROOT_FLAG;
+            
+            if(!CertVerifyCertificateChainPolicy(new IntPtr(CERT_CHAIN_POLICY_MICROSOFT_ROOT),
+                                                 pChainContext,
+                                                 ref PolicyPara,
+                                                 ref PolicyStatus))
+            {
+                return false;
+            }
+
+            return (PolicyStatus.dwError == 0);
+        }
+    }
 } 
 "@ 
 
@@ -958,14 +1051,26 @@ function Publish-Module
                                         Microsoft.PowerShell.Core\Where-Object {$_.Name -eq $moduleInfo.Name} | 
                                             Microsoft.PowerShell.Utility\Select-Object -Last 1
 
-            if($currentPSGetItemInfo -and $currentPSGetItemInfo.Version -ge $moduleInfo.Version)
+            if($currentPSGetItemInfo)
             {
-                $message = $LocalizedData.ModuleVersionShouldBeGreaterThanGalleryVersion -f ($moduleInfo.Name, $moduleInfo.Version, $currentPSGetItemInfo.Version, $currentPSGetItemInfo.RepositorySourceLocation)
-                ThrowError -ExceptionName "System.InvalidOperationException" `
-                            -ExceptionMessage $message `
-                            -ErrorId "ModuleVersionShouldBeGreaterThanGalleryVersion" `
-                            -CallerPSCmdlet $PSCmdlet `
-                            -ErrorCategory InvalidOperation
+                if($currentPSGetItemInfo.Version -eq $moduleInfo.Version)
+                {
+                    $message = $LocalizedData.ModuleVersionIsAlreadyAvailableInTheGallery -f ($moduleInfo.Name, $moduleInfo.Version, $currentPSGetItemInfo.Version, $currentPSGetItemInfo.RepositorySourceLocation)
+                    ThrowError -ExceptionName 'System.InvalidOperationException' `
+                               -ExceptionMessage $message `
+                               -ErrorId 'ModuleVersionIsAlreadyAvailableInTheGallery' `
+                               -CallerPSCmdlet $PSCmdlet `
+                               -ErrorCategory InvalidOperation
+                }
+                elseif(-not $Force -and ($currentPSGetItemInfo.Version -gt $moduleInfo.Version))
+                {
+                    $message = $LocalizedData.ModuleVersionShouldBeGreaterThanGalleryVersion -f ($moduleInfo.Name, $moduleInfo.Version, $currentPSGetItemInfo.Version, $currentPSGetItemInfo.RepositorySourceLocation)
+                    ThrowError -ExceptionName "System.InvalidOperationException" `
+                               -ExceptionMessage $message `
+                               -ErrorId "ModuleVersionShouldBeGreaterThanGalleryVersion" `
+                               -CallerPSCmdlet $PSCmdlet `
+                               -ErrorCategory InvalidOperation
+                }
             }
 
             $shouldProcessMessage = $LocalizedData.PublishModulewhatIfMessage -f ($moduleInfo.Version, $moduleInfo.Name)
@@ -1483,6 +1588,10 @@ function Install-Module
 
         [Parameter()]
         [switch]
+        $SkipPublisherCheck,
+
+        [Parameter()]
+        [switch]
         $Force
     )
 
@@ -1698,6 +1807,10 @@ function Update-Module
         [Parameter(ValueFromPipelineByPropertyName=$true)]
         [PSCredential]
         $ProxyCredential,
+
+        [Parameter()]
+        [switch]
+        $SkipPublisherCheck,
 
         [Parameter()]
         [Switch]
@@ -2583,17 +2696,32 @@ function Publish-Script
                                         Microsoft.PowerShell.Core\Where-Object {$_.Name -eq $scriptName} | 
                                             Microsoft.PowerShell.Utility\Select-Object -Last 1
 
-            if($currentPSGetItemInfo -and $currentPSGetItemInfo.Version -ge $PSScriptInfo.Version)
+            if($currentPSGetItemInfo)
             {
-                $message = $LocalizedData.ScriptVersionShouldBeGreaterThanGalleryVersion -f ($scriptName,
-                                                                                             $PSScriptInfo.Version,
-                                                                                             $currentPSGetItemInfo.Version,
-                                                                                             $currentPSGetItemInfo.RepositorySourceLocation)
-                ThrowError -ExceptionName "System.InvalidOperationException" `
-                           -ExceptionMessage $message `
-                           -ErrorId "ScriptVersionShouldBeGreaterThanGalleryVersion" `
-                           -CallerPSCmdlet $PSCmdlet `
-                           -ErrorCategory InvalidOperation
+                if($currentPSGetItemInfo.Version -eq $PSScriptInfo.Version)
+                {
+                    $message = $LocalizedData.ScriptVersionIsAlreadyAvailableInTheGallery -f ($scriptName,
+                                                                                              $PSScriptInfo.Version,
+                                                                                              $currentPSGetItemInfo.Version,
+                                                                                              $currentPSGetItemInfo.RepositorySourceLocation)
+                    ThrowError -ExceptionName "System.InvalidOperationException" `
+                               -ExceptionMessage $message `
+                               -ErrorId 'ScriptVersionIsAlreadyAvailableInTheGallery' `
+                               -CallerPSCmdlet $PSCmdlet `
+                               -ErrorCategory InvalidOperation
+                }
+                elseif(-not $Force -and ($currentPSGetItemInfo.Version -gt $PSScriptInfo.Version))
+                {
+                    $message = $LocalizedData.ScriptVersionShouldBeGreaterThanGalleryVersion -f ($scriptName,
+                                                                                                 $PSScriptInfo.Version,
+                                                                                                 $currentPSGetItemInfo.Version,
+                                                                                                 $currentPSGetItemInfo.RepositorySourceLocation)
+                    ThrowError -ExceptionName "System.InvalidOperationException" `
+                               -ExceptionMessage $message `
+                               -ErrorId "ScriptVersionShouldBeGreaterThanGalleryVersion" `
+                               -CallerPSCmdlet $PSCmdlet `
+                               -ErrorCategory InvalidOperation
+                }
             }
 
             $shouldProcessMessage = $LocalizedData.PublishScriptwhatIfMessage -f ($PSScriptInfo.Version, $scriptName)
@@ -8061,7 +8189,7 @@ function Publish-PSArtifactUtility
         $tempOutputFile = Microsoft.PowerShell.Management\Join-Path -Path $nugetPackageRoot -ChildPath "TempPublishOutput.txt"
         
         Microsoft.PowerShell.Management\Start-Process -FilePath "$script:NuGetExePath" `
-                                                      -ArgumentList @('push', "`"$NupkgPath`"", '-source', "`"$Destination`"", '-NonInteractive', '-ApiKey', "`"$NugetApiKey`"") `
+                                                      -ArgumentList @('push', "`"$NupkgPath`"", '-source', "`"$($Destination.TrimEnd('\'))`"", '-NonInteractive', '-ApiKey', "`"$NugetApiKey`"") `
                                                       -RedirectStandardError $tempErrorFile `
                                                       -RedirectStandardOutput $tempOutputFile `
                                                       -NoNewWindow `
@@ -8470,6 +8598,7 @@ function Get-DynamicOptions
                                                                  -PermittedValues @($script:PSArtifactTypeModule,$script:PSArtifactTypeScript, $script:All))
                     Write-Output -InputObject (New-DynamicOption -Category $category -Name "Scope" -ExpectedType String -IsRequired $false -PermittedValues @("CurrentUser","AllUsers"))
                     Write-Output -InputObject (New-DynamicOption -Category $category -Name 'AllowClobber' -ExpectedType Switch -IsRequired $false)
+                    Write-Output -InputObject (New-DynamicOption -Category $category -Name 'SkipPublisherCheck' -ExpectedType Switch -IsRequired $false)
                     Write-Output -InputObject (New-DynamicOption -Category $category -Name "InstallUpdate" -ExpectedType Switch -IsRequired $false)
                     Write-Output -InputObject (New-DynamicOption -Category $category -Name 'NoPathUpdate' -ExpectedType Switch -IsRequired $false)
                 }
@@ -9918,6 +10047,7 @@ function Install-PackageUtility
     Write-Debug ($LocalizedData.FastPackageReference -f $fastPackageReference)     
     
     $Force = $false
+    $SkipPublisherCheck = $false
     $AllowClobber = $false
     $Debug = $false
     $MinimumVersion = $null
@@ -10006,6 +10136,23 @@ function Install-PackageUtility
                            -ErrorId $AdminPreviligeErrorId `
                            -CallerPSCmdlet $PSCmdlet `
                            -ErrorCategory InvalidArgument
+            }
+
+            if($options.ContainsKey('SkipPublisherCheck'))
+            {
+                $SkipPublisherCheck = $options['SkipPublisherCheck']
+
+                if($SkipPublisherCheck.GetType().ToString() -eq 'System.String')
+                {
+                    if($SkipPublisherCheck -eq 'true')
+                    {
+                        $SkipPublisherCheck = $true
+                    }
+                    else
+                    {
+                        $SkipPublisherCheck = $false
+                    }
+                }
             }
             
             if($options.ContainsKey('AllowClobber'))
@@ -10433,6 +10580,7 @@ function Install-PackageUtility
                         $CurrentModuleInfo = Test-ValidManifestModule -ModuleBasePath $sourceModulePath `
                                                                       -InstallLocation $InstallLocation `
                                                                       -AllowClobber:$AllowClobber `
+                                                                      -SkipPublisherCheck:$SkipPublisherCheck `
                                                                       -IsUpdateOperation:$installUpdate
 
                         if(-not $CurrentModuleInfo)
@@ -13492,152 +13640,143 @@ function Validate-ModuleAuthenticodeSignature
 
         [Parameter()]
         [Switch]
-        $AllowClobber,
-
-        [Parameter()]
-        [Switch]
-        $IsUpdateOperation        
+        $SkipPublisherCheck
     )
 
-    $CurrentModuleAuthenticodeIssuer = $null
+    $InstalledModuleDetails = $null
+    $InstalledModuleInfo = Test-ModuleInstalled -Name $CurrentModuleInfo.Name
+    if($InstalledModuleInfo)
+    {
+        $InstalledModuleDetails = Get-InstalledModuleAuthenticodeSignature -InstalledModuleInfo $InstalledModuleInfo `
+                                                                           -InstallLocation $InstallLocation
+    }
 
-    # Validate the catalog signature
+    # Skip the publisher check when -SkipPublisherCheck is specified and 
+    # previously-installed module is not signed by Microsoft
+    if($SkipPublisherCheck)
+    {
+        if($InstalledModuleDetails -and $InstalledModuleDetails.IsMicrosoftCertificate)
+        {
+            $Message = $LocalizedData.ProceedingWithPublisherCheckForMicrosoftModules -f ($CurrentModuleInfo.Name)
+            Write-Verbose -Message $message            
+        }
+        else
+        {
+            $Message = $LocalizedData.SkippingPublisherCheck -f ($CurrentModuleInfo.Version, $CurrentModuleInfo.Name)
+            Write-Verbose -Message $message
+
+            return $true
+        }
+    }
+
+    # Validate the catalog signature for the current module being installed.
     $ev = $null
-    $CurrentModuleAuthenticodeIssuer = ValidateAndGet-CatalogSigningIssuer -ModuleBasePath $CurrentModuleInfo.ModuleBase `
-                                                                           -ModuleName $CurrentModuleInfo.Name `
-                                                                           -ErrorVariable ev
+    $CurrentModuleDetails = ValidateAndGet-AuthenticodeSignature -ModuleInfo $CurrentModuleInfo -ErrorVariable ev
+
     if($ev)
     {
         return $false
     }
 
-    $InstalledModuleInfo = Test-ModuleInstalled -Name $CurrentModuleInfo.Name
-
-    # Remove the version folder on 5.0 to get the actual module base folder without version
-    if(Test-ModuleSxSVersionSupport)
-    {
-        $InstallLocation = Microsoft.PowerShell.Management\Split-Path -Path $InstallLocation
-    }
-
     if($InstalledModuleInfo)
     {
-        # if $InstalledModuleInfo module base is not starting with current module destination
-        # Check if the destination location has a previously-installed version, then use that in the further validation.
-        # 
-        if(-not $InstalledModuleInfo.ModuleBase.StartsWith($InstallLocation, [System.StringComparison]::OrdinalIgnoreCase))
-        {
-            $DestinationModulePath = Microsoft.PowerShell.Management\Join-Path -Path $InstallLocation -ChildPath "$($CurrentModuleInfo.Name)"
-            
-            $ModuleInfoUnderDestination = Microsoft.PowerShell.Core\Get-Module -ListAvailable `
-                                                                               -Name $DestinationModulePath `
-                                                                               -ErrorAction SilentlyContinue `
-                                                                               -WarningAction SilentlyContinue `
-                                                                               -Verbose:$false | 
-                                              Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction SilentlyContinue
+        $CurrentModuleAuthenticodePublisher = $null
+        $IsCurrentModuleSignedByMicrosoft = $false
 
-            if($ModuleInfoUnderDestination)
+        if($CurrentModuleDetails)
+        {
+            $CurrentModuleAuthenticodePublisher = $CurrentModuleDetails.Publisher
+            $IsCurrentModuleSignedByMicrosoft = $CurrentModuleDetails.IsMicrosoftCertificate
+
+            $message = $LocalizedData.NewModuleVersionDetailsForPublisherValidation -f ($CurrentModuleInfo.Name, 
+                                                                                        $CurrentModuleInfo.Version,
+                                                                                        $CurrentModuleDetails.Publisher,
+                                                                                        $CurrentModuleDetails.IsMicrosoftCertificate)
+            Write-Verbose $message
+        }
+
+        $InstalledModuleAuthenticodePublisher = $null
+        $IsInstalledModuleSignedByMicrosoft = $false
+        $InstalledModuleVersion = [Version]'0.0'
+
+        if($InstalledModuleDetails)
+        {
+            $InstalledModuleAuthenticodePublisher = $InstalledModuleDetails.Publisher
+            $IsInstalledModuleSignedByMicrosoft = $InstalledModuleDetails.IsMicrosoftCertificate
+            $InstalledModuleVersion = $InstalledModuleDetails.Version
+
+            $message = $LocalizedData.SourceModuleDetailsForPublisherValidation -f ($CurrentModuleInfo.Name, 
+                                                                                    $InstalledModuleDetails.Version,
+                                                                                    $InstalledModuleDetails.ModuleBase,
+                                                                                    $InstalledModuleDetails.Publisher,
+                                                                                    $InstalledModuleDetails.IsMicrosoftCertificate)
+            Write-Verbose $message
+        }
+
+        Write-Debug -Message "Previously-installed module publisher: $InstalledModuleAuthenticodePublisher"
+        Write-Debug -Message "Current module publisher: $CurrentModuleAuthenticodePublisher"
+        Write-Debug -Message "Is previously-installed module signed by Microsoft: $IsInstalledModuleSignedByMicrosoft"
+        Write-Debug -Message "Is current module signed by Microsoft: $IsCurrentModuleSignedByMicrosoft"
+
+        if($InstalledModuleAuthenticodePublisher)
+        {
+            if(-not $CurrentModuleAuthenticodePublisher)
             {
-                $InstalledModuleInfo = $ModuleInfoUnderDestination
+                $Message = $LocalizedData.ModuleIsNotCatalogSigned -f ($CurrentModuleInfo.Version, $CurrentModuleInfo.Name, "$($CurrentModuleInfo.Name).cat", $InstalledModuleAuthenticodePublisher, $InstalledModuleDetails.Version, $InstalledModuleDetails.ModuleBase)
+                ThrowError -ExceptionName 'System.InvalidOperationException' `
+                            -ExceptionMessage $message `
+                            -ErrorId 'ModuleIsNotCatalogSigned' `
+                            -CallerPSCmdlet $PSCmdlet `
+                            -ErrorCategory InvalidOperation
+                return $false
             }
-        }
-
-        $InstalledModuleAuthenticodeIssuer = ValidateAndGet-CatalogSigningIssuer -ModuleBasePath $InstalledModuleInfo.ModuleBase `
-                                                                                 -ModuleName $InstalledModuleInfo.Name `
-                                                                                 -IsLocal `
-                                                                                 -ErrorAction SilentlyContinue
-        
-        Write-Debug -Message "Previously installed module authenticode issuer: $InstalledModuleAuthenticodeIssuer"
-        Write-Debug -Message "Current module authenticode issuer: $CurrentModuleAuthenticodeIssuer"
-
-        if($InstalledModuleAuthenticodeIssuer -and 
-           $CurrentModuleAuthenticodeIssuer -and
-           ($InstalledModuleAuthenticodeIssuer -eq $CurrentModuleAuthenticodeIssuer))
-        {
-            $Message = $LocalizedData.AuthenticodeIssuerMatch -f ($CurrentModuleAuthenticodeIssuer, $CurrentModuleInfo.Name, $CurrentModuleInfo.Version, $InstalledModuleAuthenticodeIssuer, $InstalledModuleInfo.Name, $InstalledModuleInfo.Version)
-            Write-Verbose -Message $message
-
-            return $true
-        }
-        elseif(-not $InstalledModuleInfo.ModuleBase.StartsWith($PSHome, [System.StringComparison]::OrdinalIgnoreCase) -and
-               $InstalledModuleAuthenticodeIssuer -and 
-               (-not $CurrentModuleAuthenticodeIssuer -or 
-                ($InstalledModuleAuthenticodeIssuer -ne $CurrentModuleAuthenticodeIssuer)))
-        {
-            $Message = $LocalizedData.AuthenticodeIssuerMismatch -f ($CurrentModuleAuthenticodeIssuer, $CurrentModuleInfo.Name, $CurrentModuleInfo.Version, $InstalledModuleAuthenticodeIssuer, $InstalledModuleInfo.Name, $InstalledModuleInfo.Version)
-            ThrowError -ExceptionName 'System.InvalidOperationException' `
-                       -ExceptionMessage $message `
-                       -ErrorId 'AuthenticodeIssuerMismatch' `
-                       -CallerPSCmdlet $PSCmdlet `
-                       -ErrorCategory InvalidOperation
-
-            return $false
-        }
-
-        # Check if there is a system module
-        $SystemModuleBase = $null
-        $SystemModuleManifestFilePath = $null
-
-        if($InstalledModuleInfo -and
-           $InstalledModuleInfo.ModuleBase.StartsWith($PSHome, [System.StringComparison]::OrdinalIgnoreCase))
-        {
-            $SystemModuleBase = $InstalledModuleInfo.ModuleBase
-        }
-        else
-        {
-            $SystemModuleBase = Microsoft.PowerShell.Management\Join-Path -Path $PSHome -ChildPath "Modules\$($CurrentModuleInfo.Name)"
-        }
-
-        if($SystemModuleBase -and 
-           (Microsoft.PowerShell.Management\Test-Path -Path $SystemModuleBase -PathType Container))
-        {                             
-            $ManifestFileName = "$($CurrentModuleInfo.Name).psd1"
-            $SystemModuleManifestFilePath = Microsoft.PowerShell.Management\Join-Path -Path $SystemModuleBase -ChildPath $ManifestFileName
-        }
-
-        if($SystemModuleManifestFilePath -and 
-           (Microsoft.PowerShell.Management\Test-Path -Path $SystemModuleManifestFilePath -PathType Leaf))
-        {
-            $AuthenticodeSignature = Microsoft.PowerShell.Security\Get-AuthenticodeSignature -FilePath $SystemModuleManifestFilePath
-            $SystemModuleAuthenticodeIssuer = Get-AuthentcodeIssuer -AuthenticodeSignature $AuthenticodeSignature
-                                
-            if($SystemModuleAuthenticodeIssuer -eq $CurrentModuleAuthenticodeIssuer)
+            elseif($InstalledModuleAuthenticodePublisher -eq $CurrentModuleAuthenticodePublisher)
             {
-                $Message = $LocalizedData.AuthenticodeIssuerMatch -f ($CurrentModuleAuthenticodeIssuer, $CurrentModuleInfo.Name, $CurrentModuleInfo.Version, $SystemModuleAuthenticodeIssuer, $SystemModuleInfo.Name, $SystemModuleInfo.Version)
+                $Message = $LocalizedData.AuthenticodeIssuerMatch -f ($CurrentModuleAuthenticodePublisher, $CurrentModuleInfo.Name, $CurrentModuleInfo.Version, $InstalledModuleAuthenticodePublisher, $InstalledModuleInfo.Name, $InstalledModuleVersion)
                 Write-Verbose -Message $message
+            }
+            elseif($IsInstalledModuleSignedByMicrosoft)
+            {
+                if($IsCurrentModuleSignedByMicrosoft)
+                {
+                    $Message = $LocalizedData.PublishersMatch -f ($CurrentModuleAuthenticodePublisher, $CurrentModuleInfo.Name, $CurrentModuleInfo.Version, $InstalledModuleAuthenticodePublisher, $InstalledModuleInfo.Name, $InstalledModuleVersion)
+                    Write-Verbose -Message $message
+                }
+                else
+                {
+                    $Message = $LocalizedData.PublishersMismatch -f ($CurrentModuleAuthenticodePublisher, $CurrentModuleInfo.Name, $CurrentModuleInfo.Version, $InstalledModuleAuthenticodePublisher, $InstalledModuleInfo.Name, $InstalledModuleVersion)
+                    ThrowError -ExceptionName 'System.InvalidOperationException' `
+                               -ExceptionMessage $message `
+                               -ErrorId 'PublishersMismatch' `
+                               -CallerPSCmdlet $PSCmdlet `
+                               -ErrorCategory InvalidOperation
 
-                return $true
+                    return $false
+                }
             }
             else
             {
-                $SystemModuleInfo = Microsoft.PowerShell.Core\Test-ModuleManifest -Path $SystemModuleManifestFilePath
-                $Message = $LocalizedData.AuthenticodeIssuerMismatch -f ($CurrentModuleAuthenticodeIssuer, $CurrentModuleInfo.Name, $CurrentModuleInfo.Version, $SystemModuleAuthenticodeIssuer, $SystemModuleInfo.Name, $SystemModuleInfo.Version)
+                $Message = $LocalizedData.AuthenticodeIssuerMismatch -f ($CurrentModuleAuthenticodePublisher, $CurrentModuleInfo.Name, $CurrentModuleInfo.Version, $InstalledModuleAuthenticodePublisher, $InstalledModuleInfo.Name, $InstalledModuleVersion)
                 ThrowError -ExceptionName 'System.InvalidOperationException' `
-                           -ExceptionMessage $message `
-                           -ErrorId 'AuthenticodeIssuerMismatch' `
-                           -CallerPSCmdlet $PSCmdlet `
-                           -ErrorCategory InvalidOperation
-
+                            -ExceptionMessage $message `
+                            -ErrorId 'AuthenticodeIssuerMismatch' `
+                            -CallerPSCmdlet $PSCmdlet `
+                            -ErrorCategory InvalidOperation
                 return $false
             }
         }
     }
 
-    # When module being installed doesn't have the security catalog file, check for the existing commands
-    # We are calling Test-ModuleCommandAlreadyAvailable as InstalledModuleInfo is required for checking the possible clobbering
-    #
-    return Test-ModuleCommandAlreadyAvailable -CurrentModuleInfo $CurrentModuleInfo `
-                                              -InstallLocation $InstallLocation `
-                                              -InstalledModuleInfo $InstalledModuleInfo `
-                                              -AllowClobber:$AllowClobber `
-                                              -IsUpdateOperation:$IsUpdateOperation
+    return $true
 }
 
-function Test-ModuleCommandAlreadyAvailable
+function Validate-ModuleCommandAlreadyAvailable
 {
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory=$true)]
+        [PSModuleInfo]
         $CurrentModuleInfo,
 
         [Parameter(Mandatory=$true)]
@@ -13646,9 +13785,6 @@ function Test-ModuleCommandAlreadyAvailable
         $InstallLocation,
 
         [Parameter()]
-        $InstalledModuleInfo,
-
-        [Parameter()]
         [Switch]
         $AllowClobber,
 
@@ -13656,62 +13792,77 @@ function Test-ModuleCommandAlreadyAvailable
         [Switch]
         $IsUpdateOperation        
     )
-
+    
+    <#
+        Install-Module must generate an error message when there is a conflict.
+        User can specify -AllowClobber to avoid the message.
+        Scenario: A large module could be separated into 2 smaller modules.
+        Reason 1: the consumer might have to change code (aka: import-module) to use the command from the new module.
+        Reason 2: it is too confusing to troubleshoot this problem if the user isn't informed right away.
+    #>
     # When new module has some commands, no clobber error if 
     # - AllowClobber is specified, or
     # - Installing to the same module base, or
     # - Update operation
-    if($CurrentModuleInfo.ExportedCommands.Keys -and
+    if($CurrentModuleInfo.ExportedCommands.Keys.Count -and
        -not $AllowClobber -and 
-       -not $IsUpdateOperation -and
-       ($InstalledModuleInfo -and -not $InstalledModuleInfo.ModuleBase.StartsWith($InstallLocation, [System.StringComparison]::OrdinalIgnoreCase)))
+       -not $IsUpdateOperation)
     {
-        # Throw an error if there is a command with the same name.
-        # Get-Command loads the module if a command is already available.
-        $AvailableCommand = Microsoft.PowerShell.Core\Get-Command -Name $CurrentModuleInfo.ExportedCommands.Values.Name `
-                                                                  -ErrorAction SilentlyContinue `
-                                                                  -WarningAction SilentlyContinue | 
-                                Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction SilentlyContinue
-        if($AvailableCommand)
+        # Remove the version folder on 5.0 to get the actual module base folder without version
+        if(Test-ModuleSxSVersionSupport)
         {
-            $message = $LocalizedData.ModuleCommandAlreadyAvailable -f ($AvailableCommand.Name, $CurrentModuleInfo.Name)
-            ThrowError -ExceptionName 'System.InvalidOperationException' `
-                        -ExceptionMessage $message `
-                        -ErrorId 'CommandAlreadyAvailable' `
-                        -CallerPSCmdlet $PSCmdlet `
-                        -ErrorCategory InvalidOperation
+            $InstallLocation = Microsoft.PowerShell.Management\Split-Path -Path $InstallLocation
+        }
 
-            return $false
+        $InstalledModuleInfo = Test-ModuleInstalled -Name $CurrentModuleInfo.Name
+        if(-not $InstalledModuleInfo -or -not $InstalledModuleInfo.ModuleBase.StartsWith($InstallLocation, [System.StringComparison]::OrdinalIgnoreCase))
+        {
+            # Throw an error if there is a command with the same name from a different source.
+            # Get-Command loads the module if a command is already available.
+            # To avoid that, appending '*' at the end for each name then comparing the results.
+            $CommandNames = $CurrentModuleInfo.ExportedCommands.Values.Name
+            $CommandNamesWithWildcards = $CommandNames | Microsoft.PowerShell.Core\Foreach-Object { "$_*" }
+
+            $AvailableCommand = Microsoft.PowerShell.Core\Get-Command -Name $CommandNamesWithWildcards `
+                                                                      -ErrorAction SilentlyContinue `
+                                                                      -WarningAction SilentlyContinue | 
+                                    Microsoft.PowerShell.Core\Where-Object { ($CommandNames -contains $_.Name) -and 
+                                                                             ($_.Source -ne $CurrentModuleInfo.Name) } |
+                                        Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction SilentlyContinue
+            if($AvailableCommand)
+            {
+                $message = $LocalizedData.ModuleCommandAlreadyAvailable -f ($AvailableCommand.Name, $CurrentModuleInfo.Name)
+                ThrowError -ExceptionName 'System.InvalidOperationException' `
+                           -ExceptionMessage $message `
+                           -ErrorId 'CommandAlreadyAvailable' `
+                           -CallerPSCmdlet $PSCmdlet `
+                           -ErrorCategory InvalidOperation
+
+                return $false
+            }
         }
     }
 
     return $true
 }
 
-function ValidateAndGet-CatalogSigningIssuer
+function ValidateAndGet-AuthenticodeSignature
 {
     [CmdletBinding()]
     Param
     (
         [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $ModuleBasePath,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $ModuleName,
-
-        [Parameter()]
-        [Switch]
-        $IsLocal
+        [PSModuleInfo]
+        $ModuleInfo
     )
     
+    $ModuleDetails = $null
+    $AuthenticodeSignature = $null
+
+    $ModuleName = $ModuleInfo.Name
+    $ModuleBasePath = $ModuleInfo.ModuleBase
     $CatalogFileName = "$ModuleName.cat"
     $CatalogFilePath = Microsoft.PowerShell.Management\Join-Path -Path $ModuleBasePath -ChildPath $CatalogFileName
-
-    $AuthenticodeSignature = $null
 
     if(Microsoft.PowerShell.Management\Test-Path -Path $CatalogFilePath -PathType Leaf)
     {
@@ -13720,72 +13871,72 @@ function ValidateAndGet-CatalogSigningIssuer
 
         $AuthenticodeSignature = Microsoft.PowerShell.Security\Get-AuthenticodeSignature -FilePath $CatalogFilePath
 
-        if(-not $IsLocal)
+        if(-not $AuthenticodeSignature -or ($AuthenticodeSignature.Status -ne "Valid"))
         {
-            if(-not $AuthenticodeSignature -or ($AuthenticodeSignature.Status -ne "Valid"))
-            {
-                $message = $LocalizedData.InvalidModuleAuthenticodeSignature -f ($ModuleName, $CatalogFileName)
-                ThrowError -ExceptionName 'System.InvalidOperationException' `
-                           -ExceptionMessage $message `
-                           -ErrorId 'InvalidAuthenticodeSignature' `
-                           -CallerPSCmdlet $PSCmdlet `
-                           -ErrorCategory InvalidOperation
+            $message = $LocalizedData.InvalidModuleAuthenticodeSignature -f ($ModuleName, $CatalogFileName)
+            ThrowError -ExceptionName 'System.InvalidOperationException' `
+                        -ExceptionMessage $message `
+                        -ErrorId 'InvalidAuthenticodeSignature' `
+                        -CallerPSCmdlet $PSCmdlet `
+                        -ErrorCategory InvalidOperation
 
+            return
+        }
+        
+        Write-Verbose -Message ($LocalizedData.ValidAuthenticodeSignature -f @($CatalogFileName, $ModuleName))
+        
+        if(Get-Command -Name Test-FileCatalog -Module Microsoft.PowerShell.Security -ErrorAction SilentlyContinue)
+        {
+            Write-Verbose -Message ($LocalizedData.ValidatingCatalogSignature -f @($ModuleName, $CatalogFileName))
+            
+            # Skip the PSGetModuleInfo.xml and ModuleName.cat files in the catalog validation
+            $TestFileCatalogResult = Microsoft.PowerShell.Security\Test-FileCatalog -Path $ModuleBasePath `
+                                                                                    -CatalogFilePath $CatalogFilePath `
+                                                                                    -FilesToSkip $script:PSGetItemInfoFileName,'*.cat' `
+                                                                                    -Detailed `
+                                                                                    -ErrorAction SilentlyContinue
+            if(-not $TestFileCatalogResult -or 
+                ($TestFileCatalogResult.Status -ne "Valid") -or 
+                ($TestFileCatalogResult.Signature.Status -ne "Valid"))
+            {
+                $message = $LocalizedData.InvalidCatalogSignature -f ($ModuleName, $CatalogFileName)
+                ThrowError -ExceptionName 'System.InvalidOperationException' `
+                            -ExceptionMessage $message `
+                            -ErrorId 'InvalidCatalogSignature' `
+                            -CallerPSCmdlet $PSCmdlet `
+                            -ErrorCategory InvalidOperation
                 return
             }
-        
-            Write-Verbose -Message ($LocalizedData.ValidAuthenticodeSignature -f @($CatalogFileName, $ModuleName))
-        
-            if(Get-Command -Name Test-FileCatalog -Module Microsoft.PowerShell.Security -ErrorAction SilentlyContinue)
+            else
             {
-                Write-Verbose -Message ($LocalizedData.ValidatingCatalogSignature -f @($ModuleName, $CatalogFileName))
-            
-                # Skip the PSGetModuleInfo.xml and ModuleName.cat files in the catalog validation
-                $TestFileCatalogResult = Microsoft.PowerShell.Security\Test-FileCatalog -Path $ModuleBasePath `
-                                                                                        -CatalogFilePath $CatalogFilePath `
-                                                                                        -FilesToSkip $script:PSGetItemInfoFileName `
-                                                                                        -Detailed
-                if(-not $TestFileCatalogResult -or 
-                   ($TestFileCatalogResult.Status -ne "Valid") -or 
-                   ($TestFileCatalogResult.Signature.Status -ne "Valid"))
-                {
-                    $message = $LocalizedData.InvalidCatalogSignature -f ($ModuleName, $CatalogFileName)
-                    ThrowError -ExceptionName 'System.InvalidOperationException' `
-                               -ExceptionMessage $message `
-                               -ErrorId 'InvalidCatalogSignature' `
-                               -CallerPSCmdlet $PSCmdlet `
-                               -ErrorCategory InvalidOperation
-                    return
-                }
-                else
-                {
-                    Write-Verbose -Message ($LocalizedData.ValidCatalogSignature -f @($CatalogFileName, $ModuleName))
-                }
+                Write-Verbose -Message ($LocalizedData.ValidCatalogSignature -f @($CatalogFileName, $ModuleName))
             }
         }
     }
     else
     {
-        if($IsLocal)
-        {
-            Write-Verbose -Message ($LocalizedData.CatalogFileNotFoundInAvailableModule -f ($CatalogFileName, $ModuleName))
-        }
-        else
-        {
-            Write-Verbose -Message ($LocalizedData.CatalogFileNotFoundInNewModule -f ($CatalogFileName, $ModuleName))
-        }
+        Write-Verbose -Message ($LocalizedData.CatalogFileNotFoundInNewModule -f ($CatalogFileName, $ModuleName))
     }
 
     if($AuthenticodeSignature)
     {
-        return Get-AuthentcodeIssuer -AuthenticodeSignature $AuthenticodeSignature
+        $ModuleDetails = @{}
+        $ModuleDetails['AuthenticodeSignature'] = $AuthenticodeSignature
+        $ModuleDetails['Version'] = $ModuleInfo.Version
+        $ModuleDetails['ModuleBase']=$ModuleInfo.ModuleBase
+        $ModuleDetails['IsMicrosoftCertificate'] = Test-MicrosoftCertificate -AuthenticodeSignature $AuthenticodeSignature
+        $ModuleDetails['Publisher'] = Get-AuthenticodePublisher -AuthenticodeSignature $AuthenticodeSignature
+
+        $message = $LocalizedData.NewModuleVersionDetailsForPublisherValidation -f ($ModuleInfo.Name, $ModuleInfo.Version, $ModuleDetails.Publisher, $ModuleDetails.IsMicrosoftCertificate)
+        Write-Debug $message
     }
+
+    return $ModuleDetails
 }
 
-function Get-AuthentcodeIssuer
+function Get-AuthenticodePublisher
 {
     [CmdletBinding()]
-    [OutputType([bool])]
     Param
     (
         [Parameter(Mandatory=$true)]
@@ -13793,8 +13944,7 @@ function Get-AuthentcodeIssuer
         $AuthenticodeSignature
     )    
 
-    if(($AuthenticodeSignature.Status -eq "Valid") -and 
-       $AuthenticodeSignature.SignerCertificate)
+    if($AuthenticodeSignature.SignerCertificate)
     {
         $chain = New-Object System.Security.Cryptography.X509Certificates.X509Chain
         $null = $chain.Build($AuthenticodeSignature.SignerCertificate)
@@ -13819,6 +13969,121 @@ function Get-AuthentcodeIssuer
     }
 }
 
+function Get-InstalledModuleAuthenticodeSignature
+{
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory=$true)]
+        [PSModuleInfo]
+        $InstalledModuleInfo,
+
+        [Parameter(Mandatory=$true)]
+        [string]
+        $InstallLocation
+    )
+
+    $ModuleName = $InstalledModuleInfo.Name
+
+    # Priority order for getting the published details of the installed module:
+    # 1. Latest version under the $InstallLocation
+    # 2. Latest available version in $PSModulePath
+    # 3. $InstalledModuleInfo    
+    $AvailableModules = Microsoft.PowerShell.Core\Get-Module -ListAvailable `
+                                                             -Name $ModuleName `
+                                                             -ErrorAction SilentlyContinue `
+                                                             -WarningAction SilentlyContinue `
+                                                             -Verbose:$false | 
+                            Microsoft.PowerShell.Utility\Sort-Object -Property Version -Descending
+
+    # Remove the version folder on 5.0 to get the actual module base folder without version
+    if(Test-ModuleSxSVersionSupport)
+    {
+        $InstallLocation = Microsoft.PowerShell.Management\Split-Path -Path $InstallLocation
+    }
+
+    $SourceModule = $AvailableModules | Microsoft.PowerShell.Core\Where-Object {
+                                            $_.ModuleBase.StartsWith($InstallLocation, [System.StringComparison]::OrdinalIgnoreCase) 
+                                        } | Microsoft.PowerShell.Utility\Select-Object -First 1
+
+    if(-not $SourceModule)
+    {
+        $SourceModule = $AvailableModules | Microsoft.PowerShell.Utility\Select-Object -First 1
+    }
+    else
+    {
+        $SourceModule = $InstalledModuleInfo
+    }
+
+    $SignedFilePath = $SourceModule.Path
+        
+    $CatalogFileName = "$ModuleName.cat"
+    $CatalogFilePath = Microsoft.PowerShell.Management\Join-Path -Path $SourceModule.ModuleBase -ChildPath $CatalogFileName
+
+    if(Microsoft.PowerShell.Management\Test-Path -Path $CatalogFilePath -PathType Leaf)
+    {
+        $message = $LocalizedData.CatalogFileFound -f ($CatalogFileName, $ModuleName)
+        Write-Debug -Message $message
+
+        $SignedFilePath = $CatalogFilePath
+    }
+    else
+    {
+        Write-Debug -Message ($LocalizedData.CatalogFileNotFoundInAvailableModule -f ($CatalogFileName, $ModuleName))
+    }
+
+    $message = "Using the previously-installed module '{0}' with version '{1}' under '{2}' for getting the publisher details." -f ($SourceModule.Name, $SourceModule.Version, $SourceModule.ModuleBase)
+    Write-Debug -Message $message
+        
+    $message = "Using the '{0}' file for getting the authenticode signature." -f ($SignedFilePath)
+    Write-Debug -Message $message
+
+    $AuthenticodeSignature = Microsoft.PowerShell.Security\Get-AuthenticodeSignature -FilePath $SignedFilePath
+    $ModuleDetails = $null
+
+    if($AuthenticodeSignature)
+    {
+        $ModuleDetails = @{}
+        $ModuleDetails['AuthenticodeSignature'] = $AuthenticodeSignature
+        $ModuleDetails['Version'] = $SourceModule.Version
+        $ModuleDetails['ModuleBase']=$SourceModule.ModuleBase
+        $ModuleDetails['IsMicrosoftCertificate'] = Test-MicrosoftCertificate -AuthenticodeSignature $AuthenticodeSignature
+        $ModuleDetails['Publisher'] = Get-AuthenticodePublisher -AuthenticodeSignature $AuthenticodeSignature
+
+        $message = $LocalizedData.SourceModuleDetailsForPublisherValidation -f ($ModuleName, $SourceModule.Version, $SourceModule.ModuleBase, $ModuleDetails.Publisher, $ModuleDetails.IsMicrosoftCertificate)
+        Write-Debug $message
+    }
+
+    return $ModuleDetails
+}
+
+function Test-MicrosoftCertificate
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [System.Management.Automation.Signature]
+        $AuthenticodeSignature
+    )
+
+    if($AuthenticodeSignature.SignerCertificate)
+    {
+        try
+        {
+            $X509Chain = New-Object System.Security.Cryptography.X509Certificates.X509Chain
+            $null = $X509Chain.Build($AuthenticodeSignature.SignerCertificate)
+        }
+        catch
+        {
+            return $false
+        }
+
+        $SafeX509ChainHandle = [Microsoft.PowerShell.Commands.PowerShellGet.Win32Helpers]::CertDuplicateCertificateChain($X509Chain.ChainContext)
+        return [Microsoft.PowerShell.Commands.PowerShellGet.Win32Helpers]::IsMicrosoftCertificate($SafeX509ChainHandle)
+    }
+
+    return $false
+}
+
 function Test-ValidManifestModule
 {
     [CmdletBinding()]
@@ -13834,6 +14099,10 @@ function Test-ValidManifestModule
         [ValidateNotNullOrEmpty()]
         [string]
         $InstallLocation,
+
+        [Parameter()]
+        [Switch]
+        $SkipPublisherCheck,
 
         [Parameter()]
         [Switch]
@@ -13865,8 +14134,19 @@ function Test-ValidManifestModule
         {
             $ValidationResult = Validate-ModuleAuthenticodeSignature -CurrentModuleInfo $PSModuleInfo `
                                                                      -InstallLocation $InstallLocation `
-                                                                     -AllowClobber:$AllowClobber `
-                                                                     -IsUpdateOperation:$IsUpdateOperation
+                                                                     -SkipPublisherCheck:$SkipPublisherCheck
+
+            if($ValidationResult)
+            {
+                # Checking for the possible command clobbering.
+                $ValidationResult = Validate-ModuleCommandAlreadyAvailable -CurrentModuleInfo $PSModuleInfo `
+                                                                           -InstallLocation $InstallLocation `
+                                                                           -AllowClobber:$AllowClobber `
+                                                                           -IsUpdateOperation:$IsUpdateOperation
+
+                                                                       
+            }
+
             if(-not $ValidationResult)
             {
                 $PSModuleInfo = $null

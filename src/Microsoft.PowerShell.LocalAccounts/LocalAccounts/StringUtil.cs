@@ -8,6 +8,14 @@ namespace System.Management.Automation.SecurityAccountsManager
     /// </summary>
     internal class StringUtil
     {
+        /// <summary>
+        /// Private constructor to precent auto-generation of a default constructor with greater accessability.
+        /// </summary>
+        private StringUtil()
+        {
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal static string Format(string str)
         {
             return string.Format(CultureInfo.CurrentCulture, str);

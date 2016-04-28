@@ -392,7 +392,7 @@
     <value>Minimum version of the Windows PowerShell engine required by this module</value>
   </data>
   <data name="CLRVersion" xml:space="preserve">
-    <value>Minimum version of the common language runtime (CLR) required by this module</value>
+    <value>Minimum version of the common language runtime (CLR) required by this module. {0}</value>
   </data>
   <data name="RequiredModules" xml:space="preserve">
     <value>Modules that must be imported into the global environment prior to importing this module</value>
@@ -473,7 +473,7 @@
     <value>List of all modules packaged with this module</value>
   </data>
   <data name="DotNetFrameworkVersion" xml:space="preserve">
-    <value>Minimum version of Microsoft .NET Framework required by this module</value>
+    <value>Minimum version of Microsoft .NET Framework required by this module. {0}</value>
   </data>
   <data name="PowerShellHostName" xml:space="preserve">
     <value>Name of the Windows PowerShell host required by this module</value>
@@ -633,5 +633,8 @@
   </data>
   <data name="ManifestMemberNotValid" xml:space="preserve">
     <value>The module to process '{0}', listed in field '{1}' of module manifest '{2}' was not processed. {3}</value>
+  </data>
+  <data name="PrerequisiteForDesktopEditionOnly" xml:space="preserve">
+    <value>This prerequisite is valid for the PowerShell Desktop edition only.</value>
   </data>
 </root>

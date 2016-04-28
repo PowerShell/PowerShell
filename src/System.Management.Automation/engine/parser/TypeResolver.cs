@@ -261,7 +261,7 @@ namespace System.Management.Automation.Language
             //          - Assemblies added by 'using assembly'.
             //          For this case, we REPORT ambiguity, since user explicitly specifies the set of assemblies.                        
             //     * All other loaded assemblies (excluding dynamic assemblies created for PS defined types).
-            //          On FullCLR, IGNORE ambiguity. It mimics PS v4. There are two reasons:
+            //          IGNORE ambiguity. It mimics PS v4. There are two reasons:
             //          1) If we report ambiguity, we need to fix our caching logic accordingly.
             //             Consider this code
             //                  Add-Type 'public class Q {}' # ok
@@ -280,7 +280,8 @@ namespace System.Management.Automation.Language
             //             So [NuGet.VisualStudio.IVsPackageInstallerServices] can be resolved to several different assemblies and it's ok.
             //     * User defined type accelerators (rare - interface was never public)
             //
-            // If nothing is found, we search again, this time applying any 'using namespace ...' declarations including the implicit 'using namespace System'.  We must search all using aliases and REPORT an error if there is an ambiguity.
+            // If nothing is found, we search again, this time applying any 'using namespace ...' declarations including the implicit 'using namespace System'. 
+            // We must search all using aliases and REPORT an error if there is an ambiguity.
 
             var assemList = assemblies ?? ClrFacade.GetAssemblies(typeResolutionState, typeName);
 
@@ -301,15 +302,10 @@ namespace System.Management.Automation.Language
                 return typeName._typeDefinitionAst.Type;
             }
 
-#if CORECLR
-            bool reportAmbigousException = true;
-#else
-            bool reportAmbigousException = false;
-#endif
             result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, typeResolutionState, /* reportAmbigousException */ true, out exception);
             if (exception == null && result == null)
             {
-                result = ResolveTypeNameWorker(typeName, currentScope, assemList, typeResolutionState, reportAmbigousException, out exception);
+                result = ResolveTypeNameWorker(typeName, currentScope, assemList, typeResolutionState, /* reportAmbigousException */ false, out exception);
             }
 
             if (result != null)
@@ -337,7 +333,7 @@ namespace System.Management.Automation.Language
                     var newResult = ResolveTypeNameWorker(newTypeName, currentScope, typeResolutionState.assemblies, typeResolutionState, /* reportAmbigousException */ true, out exception);
                     if (exception == null && newResult == null)
                     {
-                        newResult = ResolveTypeNameWorker(newTypeName, currentScope, assemList, typeResolutionState, reportAmbigousException, out exception);
+                        newResult = ResolveTypeNameWorker(newTypeName, currentScope, assemList, typeResolutionState, /* reportAmbigousException */ false, out exception);
                     }
 
                     if (exception != null)

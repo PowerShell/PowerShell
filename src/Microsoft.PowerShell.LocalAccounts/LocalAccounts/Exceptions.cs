@@ -267,7 +267,11 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class InvalidParametersException : LocalAccountsException
     {
-        internal InvalidParametersException(string message)
+        /// <summary>
+        /// Creates InvalidParametersException using the specified message.
+        /// </summary>
+        /// <param name="message"></param>
+        public InvalidParametersException(string message)
             : base(message, null, ErrorCategory.InvalidArgument)
         {
         }

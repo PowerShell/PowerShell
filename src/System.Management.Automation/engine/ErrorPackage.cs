@@ -1297,9 +1297,6 @@ namespace System.Management.Automation
             //Get Target object
             object targetObject = RemotingDecoder.GetPropertyValue<object>(serializedErrorRecord, "TargetObject");
 
-            //Get InvocationInfo
-            PSObject invocationInfo = RemotingDecoder.GetPropertyValue<PSObject>(serializedErrorRecord, "InvocationInfo");
-
             string exceptionMessage = null;
             if (serializedException != null)
             {
@@ -1323,6 +1320,12 @@ namespace System.Management.Automation
             string errorCategory_TargetName = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "ErrorCategory_TargetName");
             string errorCategory_TargetType = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "ErrorCategory_TargetType");
             string errorCategory_Message = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "ErrorCategory_Message");
+
+            //Get InvocationInfo (optional property)
+            PSObject invocationInfo = Microsoft.PowerShell.DeserializingTypeConverter.GetPropertyValue<PSObject>(
+                serializedErrorRecord, 
+                "InvocationInfo", 
+                Microsoft.PowerShell.DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk);
 
             //Get Error Detail (these note properties are optional, so can't right now use RemotingDecoder...)
             string errorDetails_Message =

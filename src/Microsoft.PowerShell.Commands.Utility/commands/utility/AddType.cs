@@ -347,7 +347,7 @@ namespace Microsoft.PowerShell.Commands
             string activeExtension = null;
             foreach (string path in resolvedPaths)
             {
-                string currentExtension = System.IO.Path.GetExtension(path).ToUpper();
+                string currentExtension = System.IO.Path.GetExtension(path).ToUpperInvariant();
 
                 switch (currentExtension)
                 {
@@ -1063,10 +1063,20 @@ namespace Microsoft.PowerShell.Commands
         private static PortableExecutableReference ObjectDeclaredAssemblyReference =
             MetadataReference.CreateFromFile(ClrFacade.GetAssemblies(typeof(object).FullName).First().Location);
 
+        // CoreCLR RC2 bits don't have SecureString. We are using a separate assembly with SecureString implementation.
+        // This fact is an implementation detail and should not require the user to specify one more assembly, 
+        // if they want to use SecureString in Add-Type -TypeDefinition.
+        // So this assembly should be in the default assemblies list to provide the best experience.
+        //
+        // TODO: This reference should be removed, if we take CoreCLR version that has SecureString implementation.
+        private static PortableExecutableReference SecureStringAssemblyReference =
+            MetadataReference.CreateFromFile(typeof(System.Security.SecureString).GetTypeInfo().Assembly.Location);
+
         private static MetadataReference[] defaultAssemblies = new MetadataReference[]
         {
             ObjectImplementationAssemblyReference,
             ObjectDeclaredAssemblyReference,
+            SecureStringAssemblyReference,
             MetadataReference.CreateFromFile(typeof(PSObject).GetTypeInfo().Assembly.Location)
         };
 
@@ -1210,6 +1220,7 @@ namespace Microsoft.PowerShell.Commands
                 var tempReferences = ReferencedAssemblies.Select(a => MetadataReference.CreateFromFile(ResolveReferencedAssembly(a))).ToList();
                 tempReferences.Add(ObjectImplementationAssemblyReference);
                 tempReferences.Add(ObjectDeclaredAssemblyReference);
+                tempReferences.Add(SecureStringAssemblyReference);
                 references = tempReferences.ToArray();
             }
 
