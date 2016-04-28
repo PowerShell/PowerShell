@@ -1753,41 +1753,6 @@ namespace System.Management.Automation.Tracing
 
 #endif
 
-namespace Microsoft.PowerShell.Commands
-{
-    using System.Management.Automation;
-    
-    /// <summary>
-    /// 
-    /// </summary>
-    public sealed class GetPSSnapinCommand : PSCmdlet
-    {
-        /// <summary>
-        /// Name(s) of PSSnapIn(s).
-        /// </summary>
-        [Parameter(Position = 0, Mandatory = false)]
-        public string[] Name
-        {
-            get
-            {
-                return _pssnapins;
-            }
-            set
-            {
-                _pssnapins = value;
-            }
-        }
-        private string[] _pssnapins;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        protected override void EndProcessing()
-        {
-        }
-    }
-}
-
 namespace Microsoft.PowerShell
 {
     internal static class NativeCultureResolver

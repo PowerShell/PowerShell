@@ -278,6 +278,18 @@ namespace System.Management.Automation.Remoting
                 _streamReader = new StreamReader(_networkStream);
                 _streamWriter = new StreamWriter(_networkStream);
                 _streamWriter.AutoFlush = true;
+
+                //
+                // listenSocket is not closed when it goes out of scope here. Sometimes it is 
+                // closed later in this thread, while other times it is not closed at all. This will
+                // cause problem when we set up a second PowerShell Direct session. Let's 
+                // explicitly close listenSocket here for safe.
+                //
+                if (listenSocket != null)
+                {        
+                    try { listenSocket.Dispose(); } 
+                    catch (ObjectDisposedException) { }
+                }
             }
             catch (Exception e)
             {
@@ -533,6 +545,15 @@ namespace System.Management.Automation.Remoting
             bool isFirstConnection)
         {
             bool result = false;
+
+            //
+            // Check invalid input and throw exception before setting up socket connection.
+            //
+            if (String.IsNullOrEmpty(networkCredential.UserName))
+            {
+                throw new PSDirectException(
+                    PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidUsername));
+            }
             
             _socket.Connect(_endPoint);
             
@@ -548,16 +569,6 @@ namespace System.Management.Automation.Remoting
                     if (String.IsNullOrEmpty(networkCredential.Domain))
                     {
                         networkCredential.Domain = "localhost";
-                    }
-
-                    if (String.IsNullOrEmpty(networkCredential.UserName))
-                    {
-                        throw new PSInvalidOperationException(
-                            PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidUsername),
-                            null,
-                            PSRemotingErrorId.InvalidUsername.ToString(),
-                            ErrorCategory.InvalidOperation,
-                            null);
                     }
 
                     bool emptyPassword = String.IsNullOrEmpty(networkCredential.Password);

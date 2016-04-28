@@ -482,7 +482,6 @@ namespace System.Management.Automation
         }
 
 #if !CORECLR
-        // .NET Core does not have a full DataTable type
         static IEnumerable DataTableEnumerable(object obj)
         {
             return (((DataTable)obj).Rows);
@@ -526,7 +525,6 @@ namespace System.Management.Automation
         static GetEnumerableDelegate CalculateGetEnumerable(Type objectType)
         {
 #if !CORECLR
-            // .NET Core does not have a full DataTable type
             if (typeof(DataTable).IsAssignableFrom(objectType))
             {
                 return LanguagePrimitives.DataTableEnumerable;

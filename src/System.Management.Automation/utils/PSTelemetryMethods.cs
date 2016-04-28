@@ -189,6 +189,127 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             }
         }
 
+        /// <summary>
+        /// Report that a new local session (runspace) is created
+        /// </summary>
+        internal static void ReportLocalSessionCreated(
+            System.Management.Automation.Runspaces.InitialSessionState iss,
+            System.Management.Automation.Host.TranscriptionData transcriptionData)
+        {
+            bool isConstrained = (iss != null) && (iss.DefaultCommandVisibility != SessionStateEntryVisibility.Public) && (iss.LanguageMode != PSLanguageMode.FullLanguage);
+            bool isTranscripting = (transcriptionData != null) && (transcriptionData.SystemTranscript != null);
+
+            TelemetryWrapper.TraceMessage("PSNewLocalSession", new
+            {
+                Constrained = isConstrained,
+                Transcripting = isTranscripting
+            });
+        }
+
+        enum RemoteSessionType
+        {
+            Unknown,
+            LocalProcess,
+            WinRMRemote,
+            HyperVRemote,
+            ContainerRemote
+        }
+
+        enum RemoteConfigurationType
+        {
+            Unknown,
+            PSDefault,
+            PSWorkflow,
+            ServerManagerWorkflow,
+            Custom
+        }
+
+        /// <summary>
+        /// Report that a new remote session (runspace) is created
+        /// </summary>
+        internal static void ReportRemoteSessionCreated(
+            System.Management.Automation.Runspaces.RunspaceConnectionInfo connectionInfo)
+        {
+            RemoteSessionType sessionType = RemoteSessionType.Unknown;
+            RemoteConfigurationType configurationType = RemoteConfigurationType.Unknown;
+            if (connectionInfo is System.Management.Automation.Runspaces.NewProcessConnectionInfo)
+            {
+                sessionType = RemoteSessionType.LocalProcess;
+                configurationType = RemoteConfigurationType.PSDefault;
+            }
+            else
+            {
+                System.Management.Automation.Runspaces.WSManConnectionInfo wsManConnectionInfo = connectionInfo as System.Management.Automation.Runspaces.WSManConnectionInfo;
+                if (wsManConnectionInfo != null)
+                {
+                    sessionType = RemoteSessionType.WinRMRemote;
+
+                    // Parse configuration name from ShellUri:
+                    //  ShellUri = 'http://schemas.microsoft.com/powershell/Microsoft.PowerShell'
+                    //  ConfigName = 'Microsoft.PowerShell'
+                    string configurationName = wsManConnectionInfo.ShellUri;
+                    if (!string.IsNullOrEmpty(configurationName))
+                    {
+                        int index = configurationName.LastIndexOf('/');
+                        if (index > -1)
+                        {
+                            configurationName = configurationName.Substring(index + 1);
+                        }
+                    }
+                    configurationType = GetConfigurationTypefromName(configurationName);
+                }
+                else
+                {
+                    System.Management.Automation.Runspaces.VMConnectionInfo vmConnectionInfo = connectionInfo as System.Management.Automation.Runspaces.VMConnectionInfo;
+                    if (vmConnectionInfo != null)
+                    {
+                        sessionType = RemoteSessionType.HyperVRemote;
+                        configurationType = GetConfigurationTypefromName(vmConnectionInfo.ConfigurationName);
+                    }
+                    else
+                    {
+                        System.Management.Automation.Runspaces.ContainerConnectionInfo containerConnectionInfo = connectionInfo as System.Management.Automation.Runspaces.ContainerConnectionInfo;
+                        if (containerConnectionInfo != null)
+                        {
+                            sessionType = RemoteSessionType.ContainerRemote;
+                            configurationType = GetConfigurationTypefromName(
+                                (containerConnectionInfo.ContainerProc != null) ? containerConnectionInfo.ContainerProc.ConfigurationName : string.Empty);
+                        }
+                    }
+                }
+            }
+
+            TelemetryWrapper.TraceMessage("PSNewRemoteSession", new
+            {
+                Type = sessionType,
+                Configuration = configurationType
+            });
+        }
+
+        private static RemoteConfigurationType GetConfigurationTypefromName(string name)
+        {
+            string configName = (name != null) ? name.Trim() : string.Empty;
+
+            if (string.IsNullOrEmpty(configName) ||
+                configName.Equals("microsoft.powershell", StringComparison.OrdinalIgnoreCase) ||
+                configName.Equals("microsoft.powershell32", StringComparison.OrdinalIgnoreCase))
+            {
+                return RemoteConfigurationType.PSDefault;
+            }
+            else if (configName.Equals("microsoft.powershell.workflow", StringComparison.OrdinalIgnoreCase))
+            {
+                return RemoteConfigurationType.PSWorkflow;
+            }
+            else if (configName.Equals("microsoft.windows.servermanagerworkflows", StringComparison.OrdinalIgnoreCase))
+            {
+                return RemoteConfigurationType.ServerManagerWorkflow;
+            }
+            else
+            {
+                return RemoteConfigurationType.Custom;
+            }
+        }
+
         enum ScriptFileType
         {
             None = 0,

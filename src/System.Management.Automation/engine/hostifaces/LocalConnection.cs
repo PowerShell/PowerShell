@@ -746,6 +746,8 @@ namespace System.Management.Automation.Runspaces
                     throw initError;
                 }
             }
+
+            TelemetryAPI.ReportLocalSessionCreated(InitialSessionState, TranscriptionData);
         }
 
         /// <summary>

@@ -5008,12 +5008,13 @@ namespace System.Management.Automation
                 null);
 
             string providerPath = null;
+            bool pathNotFoundOnClient = false;
             try
             {
                 Collection<string> providerPaths =
                     Globber.GetGlobbedProviderPathsFromMonadPath(
                         path,
-                        !RemoteCopyOperation(context),
+                        true,
                         newContext,
                         out provider,
                         out providerInstance);
@@ -5021,13 +5022,26 @@ namespace System.Management.Automation
                 if (providerPaths.Count > 0)
                     providerPath = providerPaths[0];
             }
+
             catch (DriveNotFoundException)
             {
                 // This exception is expected for remote sessions where drives exist in a remote session but not
-                // on the client.  But we don't know if this is a remote use of copy-item because the FromSession
+                // on the client.
+                pathNotFoundOnClient = true;
+            }
+            catch (ItemNotFoundException)
+            {
+                // This exception is expected for remote sessions where item exist in a remote session but not
+                // on the client.
+                pathNotFoundOnClient = true;
+            }
+
+            if (pathNotFoundOnClient)
+            {
+                // At this point, we don't know if this is a remote use of copy-item because the FromSession
                 // and ToSession dynamic parameters have not been retrieved yet.
-                // Ignore the exception and use the FileSystem provider as default.  If this is a real drive issue 
-                // it will be caught later when the drive path is used.
+                // Ignore these exceptions and use the FileSystem provider as default.  If this is a real drive
+                // issue, or if the item does not exist, it will be caught later when the drive or item path is used.
                 var fileSystemProviders = Providers["FileSystem"];
                 if (fileSystemProviders.Count > 0)
                 {
@@ -5283,17 +5297,6 @@ namespace System.Management.Automation
             return true;
         }
         
-        private bool RemoteCopyOperation(CmdletProviderContext context)
-        {
-            Microsoft.PowerShell.Commands.CopyItemDynamicParameters dynamicParams = context.DynamicParameters as Microsoft.PowerShell.Commands.CopyItemDynamicParameters;
-
-            if (dynamicParams != null)
-            {
-                return ((dynamicParams.FromSession != null) || (dynamicParams.ToSession != null));
-            }
-
-            return false;
-        }
         #endregion CopyItem
 
         #endregion ContainerCmdletProvider accessors

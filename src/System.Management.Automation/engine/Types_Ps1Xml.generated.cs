@@ -53,7 +53,7 @@ namespace System.Management.Automation.Runspaces
           [Microsoft.PowerShell.Commands.FileSystemProvider])
           {
           $driveRoot = ([System.IO.DirectoryInfo] $this.Root).Name.Replace('\','')
-          $drive = Get-WmiObject Win32_LogicalDisk -Filter ""DeviceId='$driveRoot'""
+          $drive = Get-CimInstance Win32_LogicalDisk -Filter ""DeviceId='$driveRoot'""
           $drive.Size - $drive.FreeSpace
           }"), null));
             td4.Members.Add("Free",
@@ -62,7 +62,7 @@ namespace System.Management.Automation.Runspaces
           [Microsoft.PowerShell.Commands.FileSystemProvider])
           {
           $driveRoot = ([System.IO.DirectoryInfo] $this.Root).Root.Name.Replace('\','')
-          $drive = Get-WmiObject Win32_LogicalDisk -Filter ""DeviceId='$driveRoot'""
+          $drive = Get-CimInstance Win32_LogicalDisk -Filter ""DeviceId='$driveRoot'""
           $drive.FreeSpace
           }"), null));
             yield return td4;

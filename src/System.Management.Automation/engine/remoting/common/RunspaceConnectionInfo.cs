@@ -2240,7 +2240,7 @@ namespace System.Management.Automation.Runspaces
             bool runAsAdmin,
             string configurationName)
         {
-            ContainerProcess containerProc = new ContainerProcess(containerId, null, 0, runAsAdmin, configurationName);
+            ContainerProcess containerProc = new ContainerProcess(containerId, null, Guid.Empty, 0, runAsAdmin, configurationName);
 
             return new ContainerConnectionInfo(containerProc);
         }
@@ -2253,7 +2253,7 @@ namespace System.Management.Automation.Runspaces
             bool runAsAdmin,
             string configurationName)
         {
-            ContainerProcess containerProc = new ContainerProcess(null, containerName, 0, runAsAdmin, configurationName);
+            ContainerProcess containerProc = new ContainerProcess(null, containerName, Guid.Empty, 0, runAsAdmin, configurationName);
 
             return new ContainerConnectionInfo(containerProc);
         }
@@ -2288,8 +2288,9 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         private Guid runtimeId;
+        private Guid containerGuid = Guid.Empty;
         private string containerId;
-        private string containerName;        
+        private string containerName;
         private int processId;
         private bool runAsAdmin = false;
         private string configurationName;
@@ -2316,6 +2317,15 @@ namespace System.Management.Automation.Runspaces
         {
             get { return runtimeId; }
             set { runtimeId = value; }
+        }
+
+        /// <summary>
+        /// Guid of the container.
+        /// </summary>
+        public Guid ContainerGuid
+        {
+            get { return containerGuid; }
+            set { containerGuid = value; }
         }
 
         /// <summary>
@@ -2413,10 +2423,11 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates an instance used for PowerShell Direct for container.
         /// </summary>
-        public ContainerProcess(string containerId, string containerName, int processId, bool runAsAdmin, string configurationName)
+        public ContainerProcess(string containerId, string containerName, Guid containerGuid, int processId, bool runAsAdmin, string configurationName)
         {
             this.ContainerId = containerId;
             this.ContainerName = containerName;
+            this.ContainerGuid = containerGuid;
             this.ProcessId = processId;
             this.RunAsAdmin = runAsAdmin;
             this.ConfigurationName = configurationName;
@@ -2425,12 +2436,12 @@ namespace System.Management.Automation.Runspaces
             {
                 if (String.IsNullOrEmpty(containerName))
                 {
-                    GetContainerNameFromContainerId();
+                    GetContainerPropertiesFromContainerId();
                 }
             }
             else if (!String.IsNullOrEmpty(containerName))
             {
-                GetContainerIdFromContainerName();
+                GetContainerPropertiesFromContainerName();
             }
             else
             {
@@ -2486,11 +2497,11 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Get container name based on given container id.
+        /// Get container name and Guid based on given container id.
         /// </summary>
-        public void GetContainerNameFromContainerId()
+        public void GetContainerPropertiesFromContainerId()
         {
-            RunOnMTAThread(GetContainerNameFromContainerIdInternal);
+            RunOnMTAThread(GetContainerPropertiesFromContainerIdInternal);
 
             //
             // Report error.
@@ -2509,11 +2520,11 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Get container id based on given container name.
+        /// Get container id and Guid based on given container name.
         /// </summary>
-        public void GetContainerIdFromContainerName()
+        public void GetContainerPropertiesFromContainerName()
         {
-            RunOnMTAThread(GetContainerIdFromContainerNameInternal);
+            RunOnMTAThread(GetContainerPropertiesFromContainerNameInternal);
 
             //
             // Report error.
@@ -2611,7 +2622,9 @@ namespace System.Management.Automation.Runspaces
                 }
             }
             catch (Exception e)            
-            {                
+            {
+                CommandProcessorBase.CheckForSevereException(e);
+
                 if (e is FileNotFoundException || e is FileLoadException)
                 {
                     //
@@ -2646,9 +2659,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Get container name based on given container id.
+        /// Get container name and Guid based on given container id.
         /// </summary>
-        private void GetContainerNameFromContainerIdInternal()
+        private void GetContainerPropertiesFromContainerIdInternal()
         {
             try
             {
@@ -2661,8 +2674,16 @@ namespace System.Management.Automation.Runspaces
                 
                 var computeSystemPropertiesHandle = getComputeSystemPropertiesInfo.Invoke(null, new object[]{ ContainerId });
 
-                ContainerName = (string)computeSystemPropertiesType.GetProperty("SiloGuid").GetValue(computeSystemPropertiesHandle);
+                ContainerName = (string)computeSystemPropertiesType.GetProperty("Name").GetValue(computeSystemPropertiesHandle);
                 RuntimeId = (Guid)computeSystemPropertiesType.GetProperty("RuntimeId").GetValue(computeSystemPropertiesHandle);
+
+                //
+                // Get container Guid for Windows Server container.
+                //
+                if (RuntimeId == Guid.Empty)
+                {
+                    ContainerGuid = new Guid((string)computeSystemPropertiesType.GetProperty("SiloGuid").GetValue(computeSystemPropertiesHandle));
+                }
             }
             catch (FileNotFoundException)
             {
@@ -2674,6 +2695,8 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception e)
             {
+                CommandProcessorBase.CheckForSevereException(e);
+
                 if (e.InnerException != null &&
                     StringComparer.Ordinal.Equals(
                         e.InnerException.GetType().FullName,
@@ -2690,9 +2713,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Get container id based on given container name.
+        /// Get container id and Guid based on given container name.
         /// </summary>
-        private void GetContainerIdFromContainerNameInternal()
+        private void GetContainerPropertiesFromContainerNameInternal()
         {
             try
             {
@@ -2734,6 +2757,14 @@ namespace System.Management.Automation.Runspaces
                 ContainerId = (string)computeSystemPropertiesType.GetProperty("Id").GetValue(computeSystemPropertiesHandle);
                 ContainerName = (string)computeSystemPropertiesType.GetProperty("Name").GetValue(computeSystemPropertiesHandle);
                 RuntimeId = (Guid)computeSystemPropertiesType.GetProperty("RuntimeId").GetValue(computeSystemPropertiesHandle);
+
+                //
+                // Get container Guid for Windows Server container.
+                //
+                if (RuntimeId == Guid.Empty)
+                {
+                    ContainerGuid = new Guid((string)computeSystemPropertiesType.GetProperty("SiloGuid").GetValue(computeSystemPropertiesHandle));
+                }
             }
             catch (FileNotFoundException)
             {
@@ -2745,6 +2776,8 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception e)
             {
+                CommandProcessorBase.CheckForSevereException(e);
+
                 ErrorCode = OtherError;
                 ErrorMessage = GetErrorMessageFromException(e);
             }
