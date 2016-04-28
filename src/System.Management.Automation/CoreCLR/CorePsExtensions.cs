@@ -1129,16 +1129,6 @@ namespace System.Management.Automation
             }
         }
         
-        //TODO:CORECLR Need to decide what to do with 'requestedClrVersion' and 'requestedDotNetFrameworkVersion' in ModuleCmdletBase.cs [LoadModuleManifest]
-        public static Version Version
-        {
-            get
-            {
-                //dongbow:hack
-                return new Version(4, 0, 30319, 34011);
-            }
-        }
-
 #endregion Property_Extensions
 
 #region SpecialFolder_Extensions

@@ -1217,20 +1217,25 @@ namespace System.Management.Automation.Remoting
         #region Constructors
 
         /// <summary>
-        /// Constructor. Creates Named Pipe based on process Id, app domain name and container Guid.
+        /// Constructor. Creates Named Pipe based on process Id, app domain name and container object root path.
         /// </summary>
         /// <param name="procId">Target process Id for pipe.</param>
         /// <param name="appDomainName">AppDomain name or null for default AppDomain</param>
-        /// <param name="containerGuid">Container Guid.</param>
+        /// <param name="containerObRoot">Container OB root.</param>
         public ContainerSessionNamedPipeClient(
             int procId, 
             string appDomainName, 
-            Guid containerGuid)
-        { 
+            string containerObRoot)
+        {
+            if (String.IsNullOrEmpty(containerObRoot))
+            {
+                throw new PSArgumentNullException("containerObRoot");
+            }
+
             //
             // Named pipe inside Windows Server container is under different name space.
             //
-            _pipeName = @"\\.\Containers\" + containerGuid.ToString() + @"\Device\NamedPipe\" +
+            _pipeName = containerObRoot + @"\Device\NamedPipe\" +
                 NamedPipeUtils.CreateProcessPipeName(procId, appDomainName);
         }
 

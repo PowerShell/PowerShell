@@ -3160,7 +3160,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Walk up the derivation chain to find the first public parent type.
         /// </summary>
-        private static Type GetFirstPublicParentType(TypeInfo typeInfo)
+        internal static Type GetFirstPublicParentType(TypeInfo typeInfo)
         {
             Dbg.Assert(!TypeResolver.IsPublic(typeInfo), "typeInfo should not be public.");
             Type parent = typeInfo.BaseType;
@@ -3347,20 +3347,6 @@ namespace System.Management.Automation
             return t == typeof(PSMemberInfo) || t == typeof(PSParameterizedProperty);
         }
 
-        /// <summary>
-        /// Get an instance that represents 'System.RuntimeType'.
-        /// </summary>
-        private static readonly Type RuntimeType = (typeof(object)).GetType();
-
-        /// <summary>
-        /// Check if an object is a type instance. If it is, such as 'typeof(string)', then 'object.GetType()' 
-        /// should be equal to the type instance that represents 'System.RuntimeType'.
-        /// </summary>
-        internal static bool IsRuntimeTypeInstance(object obj)
-        {
-            return obj.GetType() == RuntimeType;
-        }
-
         internal T GetDotNetProperty<T>(object obj, string propertyName) where T : PSMemberInfo
         {
             bool lookingForProperties = typeof(T).IsAssignableFrom(typeof(PSProperty));
@@ -3372,7 +3358,7 @@ namespace System.Management.Automation
 
             CacheTable typeTable = this.isStatic
                 ? GetStaticPropertyReflectionTable((Type)obj)
-                : GetInstancePropertyReflectionTable(IsRuntimeTypeInstance(obj) ? typeof(Type) : obj.GetType());
+                : GetInstancePropertyReflectionTable(obj.GetType());
 
             object entry = typeTable[propertyName];
             if (entry == null)
@@ -3408,7 +3394,7 @@ namespace System.Management.Automation
 
             CacheTable typeTable = this.isStatic
                 ? GetStaticMethodReflectionTable((Type)obj)
-                : GetInstanceMethodReflectionTable(IsRuntimeTypeInstance(obj) ? typeof(Type) : obj.GetType());
+                : GetInstanceMethodReflectionTable(obj.GetType());
 
             var methods = (MethodCacheEntry)typeTable[methodName];
             if (methods == null)
@@ -3440,7 +3426,7 @@ namespace System.Management.Automation
 
             CacheTable table = this.isStatic
                 ? GetStaticPropertyReflectionTable((Type)obj)
-                : GetInstancePropertyReflectionTable(IsRuntimeTypeInstance(obj) ? typeof(Type) : obj.GetType());
+                : GetInstancePropertyReflectionTable(obj.GetType());
 
             for (int i = 0; i < table.memberCollection.Count; i++)
             {
@@ -3481,7 +3467,7 @@ namespace System.Management.Automation
 
             CacheTable table = this.isStatic
                 ? GetStaticMethodReflectionTable((Type)obj)
-                : GetInstanceMethodReflectionTable(IsRuntimeTypeInstance(obj) ? typeof(Type) : obj.GetType());
+                : GetInstanceMethodReflectionTable(obj.GetType());
 
             for (int i = 0; i < table.memberCollection.Count; i++)
             {
@@ -3515,7 +3501,7 @@ namespace System.Management.Automation
 
             var table = this.isStatic 
                 ? GetStaticEventReflectionTable((Type)obj)
-                : GetInstanceEventReflectionTable(IsRuntimeTypeInstance(obj) ? typeof(Type) : obj.GetType());
+                : GetInstanceEventReflectionTable(obj.GetType());
 
             foreach (var psEvent in table.Values)
             {

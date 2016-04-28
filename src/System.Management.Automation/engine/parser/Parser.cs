@@ -2886,6 +2886,14 @@ namespace System.Management.Automation.Language
                     };
                     keywordToAddForThisConfigurationStatement.Properties.Add(dependsOnProp.Name, dependsOnProp);
 
+                    // Add the PsDscRunAsCredential property.
+                    var RunAsProp = new DynamicKeywordProperty
+                    {
+                        Mandatory = true,
+                        Name = "PsDscRunAsCredential",
+                    };
+                    keywordToAddForThisConfigurationStatement.Properties.Add(RunAsProp.Name, RunAsProp);
+
                     // Extract the parameters, if any and them to the keyword definition.
                     var sbeAst = configurationBodyScriptBlock as ScriptBlockExpressionAst;
                     if (sbeAst != null)
@@ -4399,11 +4407,16 @@ namespace System.Management.Automation.Language
             }
 
             var itemToken = NextToken();
-            if (itemToken.Kind == TokenKind.EndOfInput || itemToken.Kind == TokenKind.NewLine)
+            switch (itemToken.Kind)
             {
-                UngetToken(itemToken);
-                ReportIncompleteInput(After(directiveToken), () => ParserStrings.MissingUsingItemName);
-                return new ErrorStatementAst(ExtentOf(usingToken, directiveToken));
+                case TokenKind.EndOfInput:
+                case TokenKind.NewLine:
+                // Example, using module ,FooBar
+                case TokenKind.Comma:
+                {
+                    ReportIncompleteInput(After(directiveToken), () => ParserStrings.MissingUsingItemName);
+                    return new ErrorStatementAst(ExtentOf(usingToken, directiveToken));
+                }
             }
 
             var itemAst = GetCommandArgument(CommandArgumentContext.CommandArgument, itemToken);

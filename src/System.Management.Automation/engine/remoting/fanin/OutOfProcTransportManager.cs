@@ -1636,7 +1636,7 @@ namespace System.Management.Automation.Remoting.Client
             _clientPipe = new ContainerSessionNamedPipeClient(
                 _connectionInfo.ContainerProc.ProcessId, 
                 string.Empty, // AppDomainName
-                _connectionInfo.ContainerProc.ContainerGuid);
+                _connectionInfo.ContainerProc.ContainerObRoot);
 
             // Wait for named pipe to connect.
             _clientPipe.Connect(_connectionInfo.OpenTimeout);

@@ -491,13 +491,6 @@ namespace Microsoft.PowerShell.Commands
         internal string[] referencedAssemblies = Utils.EmptyArray<string>();
         
         /// <summary>
-        /// Resolve referenced assembly from name or path to a platform specific form.
-        /// </summary>
-        /// <param name="referencedAssembly"></param>
-        /// <returns></returns>
-        internal abstract string ResolveReferencedAssembly(string referencedAssembly);
-
-        /// <summary>
         /// The path to the output assembly
         /// </summary>
         [Parameter(ParameterSetName = "FromSource")]
@@ -998,7 +991,14 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (string assemblyName in assemblies)
             {
-                Assembly assembly = LoadFrom(ResolveReferencedAssembly(assemblyName));
+                // CoreCLR doesn't allow re-load TPA assemblis with different API (i.e. we load them by name and now want to load by path).
+                // LoadAssemblyHelper helps us avoid re-loading them, if they already loaded.
+                Assembly assembly = LoadAssemblyHelper(assemblyName);
+                if (assembly == null)
+                {
+                    assembly = LoadFrom(ResolveReferencedAssembly(assemblyName));
+                }
+
                 if (passThru)
                 {
                     WriteTypes(assembly);
@@ -1072,7 +1072,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool InMemory { get { return String.IsNullOrEmpty(outputAssembly); } }
 
-        internal override string ResolveReferencedAssembly(string referencedAssembly)
+        private string ResolveReferencedAssembly(string referencedAssembly)
         {
             // if it's a path, resolve it
             if (referencedAssembly.Contains(System.IO.Path.DirectorySeparatorChar) || referencedAssembly.Contains(System.IO.Path.AltDirectorySeparatorChar))
@@ -1143,6 +1143,9 @@ namespace Microsoft.PowerShell.Commands
             // Generates a FileNotFoundException if you can't load the strong type.
             // So we'll try from the short name.
             catch (System.IO.FileNotFoundException) { }
+            // File load exception can happen, when we trying to load from the incorrect assembly name
+            // or file corrupted.
+            catch (System.IO.FileLoadException) { }
 
             if (loadedAssembly != null)
                 return loadedAssembly;
@@ -1339,7 +1342,7 @@ namespace Microsoft.PowerShell.Commands
         // Internal mapping table from the shortcut name to the strong name
         private static readonly Lazy<ConcurrentDictionary<string, string>> StrongNames = new Lazy<ConcurrentDictionary<string, string>>(InitializeStrongNameDictionary);
 
-        internal override string ResolveReferencedAssembly(string referencedAssembly)
+        private string ResolveReferencedAssembly(string referencedAssembly)
         {
             if (!String.Equals(System.IO.Path.GetExtension(referencedAssembly), ".dll", StringComparison.OrdinalIgnoreCase))
             {

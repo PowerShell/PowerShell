@@ -2000,6 +2000,7 @@ namespace Microsoft.PowerShell.Commands
                 containedErrors = true;
                 if (bailOnFirstError) return null;
             }
+#if !CORECLR // CLR version is not applicable to CoreCLR
             else if (requestedClrVersion != null)
             {
                 Version currentClrVersion = Environment.Version;
@@ -2018,10 +2019,10 @@ namespace Microsoft.PowerShell.Commands
                     if (bailOnFirstError) return null;
                 }
             }
+#endif
 
             // Test the required .NET Framework version
-            Version requestedDotNetFrameworkVersion = new Version (0, 0, 0, 0);
-#if !CORECLR
+            Version requestedDotNetFrameworkVersion;
             if (
                 !GetScalarFromData(data, moduleManifestPath, "DotNetFrameworkVersion", manifestProcessingFlags,
                     out requestedDotNetFrameworkVersion))
@@ -2029,6 +2030,7 @@ namespace Microsoft.PowerShell.Commands
                 containedErrors = true;
                 if (bailOnFirstError) return null;
             }
+#if !CORECLR // .NET Framework Version is not applicable to CoreCLR
             else if (requestedDotNetFrameworkVersion != null)
             {
                 bool higherThanKnownHighestVersion = false;
@@ -4964,7 +4966,7 @@ namespace Microsoft.PowerShell.Commands
                 Assembly assembly = ExecutionContext.LoadAssembly(name, null, out ignored);
                 if (assembly != null)
                 {
-                    result = ClrFacade.GetAssemblyLocation(assembly);
+                    result = assembly.Location;
                 }
             }
 
@@ -5333,7 +5335,7 @@ namespace Microsoft.PowerShell.Commands
                                 ProviderInfo pi = pl.Value[i];
 
                                 // If it was implemented by this module, remove it
-                                string implAssemblyLocation = ClrFacade.GetAssemblyLocation(pi.ImplementingType.GetTypeInfo().Assembly);
+                                string implAssemblyLocation = pi.ImplementingType.GetTypeInfo().Assembly.Location;
                                 if (implAssemblyLocation.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                                 {
                                     // Remove all drives from the top level session state
@@ -6885,7 +6887,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    modulePath = ClrFacade.GetAssemblyLocation(assemblyToLoad);
+                    modulePath = assemblyToLoad.Location;
                 }
 
                 // And what to use for a module name...
@@ -6992,7 +6994,7 @@ namespace Microsoft.PowerShell.Commands
                         assemblyVersion = GetAssemblyVersionNumber(assembly);
 
                         if (string.IsNullOrEmpty(fileName))
-                            modulePath = ClrFacade.GetAssemblyLocation(assembly);
+                            modulePath = assembly.Location;
                         else
                             modulePath = fileName;
 

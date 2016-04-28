@@ -16,7 +16,6 @@
 #include <assert.h>
 #include "NativeMshConstants.h"
 #include "ClrHostWrapper.h"
-#include "ConfigFileReader.h"
 #include "SystemCallFacade.h"
 #include "IPwrshCommonOutput.h"
 
@@ -26,7 +25,6 @@ namespace NativeMsh
     {
     private:
         IPwrshCommonOutput* output;
-        ConfigFileReader* reader; // TODO: Remove if we are no longer supporting a config file
         SystemCallFacade* sysCalls;
 
     public:
@@ -39,7 +37,6 @@ namespace NativeMsh
         // allocate them with "new".
         PwrshCommon(
             IPwrshCommonOutput* outObj,     // Enables clients to specify how error messages are displayed or suppressed
-            ConfigFileReader* rdr,          // Specifies actions to take when processing config files
             SystemCallFacade* systemCalls); // Wraps all calls to Windows APIs to allow for dependency injection via unit test
 
         ~PwrshCommon();

@@ -1677,7 +1677,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// 
         /// </summary>
-        [ArchitectureSensitive]
         protected override void ProcessRecord()
         {
 
@@ -2065,7 +2064,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Create the service
         /// </summary>
-        [ArchitectureSensitive]
         protected override void BeginProcessing()
         {
             Diagnostics.Assert(!String.IsNullOrEmpty(Name),

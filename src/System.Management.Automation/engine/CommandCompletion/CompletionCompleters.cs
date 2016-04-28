@@ -35,9 +35,24 @@ namespace System.Management.Automation
     {
         static CompletionCompleters()
         {
-#if !CORECLR // TODO:CORECLR AppDomain is not on CoreClr. Disable this part for now until we do a work around in PSAssemblyLoadContext
+#if CORECLR
+            // Porting note: removed until we have full assembly loading solution
+            // ClrFacade.AddAssemblyLoadHandler(UpdateTypeCacheOnAssemblyLoad);
+#else
             AppDomain.CurrentDomain.AssemblyLoad += UpdateTypeCacheOnAssemblyLoad;
 #endif
+        }
+
+#if CORECLR
+        static void UpdateTypeCacheOnAssemblyLoad(Assembly loadedAssembly)
+#else
+        static void UpdateTypeCacheOnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
+#endif
+        {
+            // Just null out the cache - we'll rebuild it the next time someone tries to complete a type.
+            // We could rebuild it now, but we could be loading multiple assemblies (e.g. dependent assemblies)
+            // and there is no sense in rebuilding anything until we're done loading all of the assemblies.
+            Interlocked.Exchange(ref typeCache, null);
         }
 
         #region Command Names
@@ -5972,18 +5987,6 @@ namespace System.Management.Automation
                 entry.Completions.Add(typeCompletionBase);
             }
         }
-
-#if !CORECLR
-        // TODO:CORECLR AssemblyLoadEventArgs is not in CoreClr. Also we have ifdef the whole event registration since AppDomain is not on CoreClr. 
-        // TODO:CORECLR So for now disable this part until we do a work around PSAssemblyLoadContext
-        static void UpdateTypeCacheOnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
-        {
-            // Just null out the cache - we'll rebuild it the next time someone tries to complete a type.
-            // We could rebuild it now, but we could be loading multiple assemblies (e.g. dependent assemblies)
-            // and there is no sense in rebuilding anything until we're done loading all of the assemblies.
-            Interlocked.Exchange(ref typeCache, null);
-        }
-#endif
 
         internal static List<CompletionResult> CompleteNamespace(CompletionContext context, string prefix = "", string suffix = "")
         {

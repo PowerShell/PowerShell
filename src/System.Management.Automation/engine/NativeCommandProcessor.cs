@@ -848,7 +848,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        [ArchitectureSensitive]
         static bool IsWindowsApplication(string fileName)
         {
 #if CORECLR
@@ -1251,7 +1250,6 @@ namespace System.Management.Automation
         private static extern IntPtr FindExecutableW(
           string fileName, string directoryPath, StringBuilder pathFound);
 
-        [ArchitectureSensitive]
         private static string FindExecutable(string filename)
         {
             // Preallocate a

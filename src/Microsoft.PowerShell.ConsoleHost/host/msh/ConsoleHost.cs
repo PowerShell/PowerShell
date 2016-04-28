@@ -1359,7 +1359,7 @@ namespace Microsoft.PowerShell
                 inputFormat = cpp.InputFormat;
                 wasInitialCommandEncoded = cpp.WasInitialCommandEncoded;
 
-                ui.ReadFromStdin = cpp.ExplicitReadCommandsFromStdin || Console.IsInputRedirected;
+                ui.ReadFromStdin = cpp.ExplicitReadCommandsFromStdin || (Console.IsInputRedirected && !cpp.NonInteractive);
                 ui.NoPrompt = cpp.NoPrompt;
                 ui.ThrowOnReadAndPrompt = cpp.ThrowOnReadAndPrompt;
                 noExit = cpp.NoExit;

@@ -151,7 +151,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// runspaceConfiguration information for this runspace
         /// </summary>
-        public override RunspaceConfiguration RunspaceConfiguration
+#if CORECLR
+        internal
+#else
+        public
+#endif
+        override RunspaceConfiguration RunspaceConfiguration
         {
             get
             {

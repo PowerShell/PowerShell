@@ -434,12 +434,12 @@ namespace System.Management.Automation
                 OutputLine(
                     PSTraceSourceOptions.All,
                     "\tAssembly Location: {0}",
-                    ClrFacade.GetAssemblyLocation(callingAssembly));
+                    callingAssembly.Location);
 
                 // Assembly File timestamp
 
                 FileInfo assemblyFileInfo =
-                    new FileInfo(ClrFacade.GetAssemblyLocation(callingAssembly));
+                    new FileInfo(callingAssembly.Location);
 
                 OutputLine(
                     PSTraceSourceOptions.All,

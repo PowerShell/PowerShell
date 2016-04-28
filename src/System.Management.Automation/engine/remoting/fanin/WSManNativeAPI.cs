@@ -84,6 +84,8 @@ namespace System.Management.Automation.Remoting.Client
 
         internal const int ERROR_WSMAN_AUTHENTICATION_FAILED = 1311;
 
+        internal const int ERROR_WSMAN_NO_LOGON_SESSION_EXIST = 1312;
+
         internal const int ERROR_WSMAN_LOGON_FAILURE = 1326;
 
         internal const int ERROR_WSMAN_IMPROPER_RESPONSE = 1722;

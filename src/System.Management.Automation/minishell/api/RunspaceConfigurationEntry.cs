@@ -26,7 +26,12 @@ namespace System.Management.Automation.Runspaces
     /// runspace configuration entries only. Developers should not derive from 
     /// this class. 
     /// </remarks>
-    public abstract class RunspaceConfigurationEntry	
+#if CORECLR
+    internal
+#else
+    public
+#endif
+    abstract class RunspaceConfigurationEntry	
     {
         /// <summary>
         /// Initiate an instance of runspace configuration entry. 
@@ -125,7 +130,12 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Defines class for type configuration entry.
     /// </summary>
-    public sealed class TypeConfigurationEntry : RunspaceConfigurationEntry
+#if CORECLR
+    internal
+#else
+    public
+#endif
+    sealed class TypeConfigurationEntry : RunspaceConfigurationEntry
     {
         /// <summary>
         /// Initiate an instance for type configuration entry.
@@ -233,7 +243,12 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Defines class for type configuration entry.
     /// </summary>
-    public sealed class FormatConfigurationEntry : RunspaceConfigurationEntry
+#if CORECLR
+    internal
+#else
+    public
+#endif
+    sealed class FormatConfigurationEntry : RunspaceConfigurationEntry
     {
         /// <summary>
         /// Initiate an instance for type configuration entry.
@@ -327,7 +342,12 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Class to define configuration data for cmdlets
     /// </summary>
-    public sealed class CmdletConfigurationEntry : RunspaceConfigurationEntry	// Naming: fix
+#if CORECLR
+    internal
+#else
+    public
+#endif
+    sealed class CmdletConfigurationEntry : RunspaceConfigurationEntry
     {
         /// <summary>
         /// Initiate an instance for cmdlet configuration entry.
@@ -415,7 +435,12 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Define class for provider configuration entry
     /// </summary>
-    public sealed class ProviderConfigurationEntry : RunspaceConfigurationEntry	// Naming: fix
+#if CORECLR
+    internal
+#else
+    public
+#endif
+    sealed class ProviderConfigurationEntry : RunspaceConfigurationEntry
     {
         /// <summary>
         /// Initiate an instance for provider configuration entry.
@@ -500,7 +525,12 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Define class for script configuration entry
     /// </summary>
-    public sealed class ScriptConfigurationEntry : RunspaceConfigurationEntry	// Naming: fix
+#if CORECLR
+    internal
+#else
+    public
+#endif
+    sealed class ScriptConfigurationEntry : RunspaceConfigurationEntry
     {
         /// <summary>
         /// Initiate an instance for script configuration entry.
@@ -535,7 +565,12 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Configuration data for assemblies.
     /// </summary>
-    public sealed class AssemblyConfigurationEntry : RunspaceConfigurationEntry
+#if CORECLR
+    internal
+#else
+    public
+#endif
+    sealed class AssemblyConfigurationEntry : RunspaceConfigurationEntry
     {
         /// <summary>
         /// Initiate an instance for assembly configuration entry.

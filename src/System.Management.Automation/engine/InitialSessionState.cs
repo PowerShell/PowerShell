@@ -4611,7 +4611,7 @@ namespace System.Management.Automation.Runspaces
             Dictionary<string, List<SessionStateAliasEntry>> aliases = null;
             Dictionary<string, SessionStateProviderEntry> providers = null;
 
-            string assemblyPath = ClrFacade.GetAssemblyLocation(assembly);
+            string assemblyPath = assembly.Location;
             string throwAwayHelpFile = null;
             PSSnapInHelpers.AnalyzePSSnapInAssembly(assembly, assemblyPath, null, module, true, out cmdlets, out aliases, out providers, out throwAwayHelpFile);
 
@@ -5815,7 +5815,7 @@ if($paths) {
                 }
             }
 
-            string assemblyPath = ClrFacade.GetAssemblyLocation(assembly);
+            string assemblyPath = assembly.Location;
             Type[] assemblyTypes;
             if (cmdlets != null || providers != null)
             {

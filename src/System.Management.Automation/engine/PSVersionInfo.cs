@@ -61,13 +61,17 @@ namespace System.Management.Automation
 
             _psVersionTable[PSVersionInfo.PSVersionName] = _psV51Version;
             _psVersionTable["PSEdition"] = PSEditionValue;
-            _psVersionTable["CLRVersion"] = Environment.Version;
             _psVersionTable["BuildVersion"] = GetBuildVersion();
             _psVersionTable["GitCommitId"] = GetCommitInfo();
             _psVersionTable["PSCompatibleVersions"] = new Version[] { _psV1Version, _psV2Version, _psV3Version, _psV4Version, _psV5Version, _psV51Version };
             _psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             _psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
             _psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
+#if CORECLR
+            _psVersionTable["CLRVersion"] = null;
+#else
+            _psVersionTable["CLRVersion"] = Environment.Version;
+#endif
         }
 
         static internal Hashtable GetPSVersionTable()

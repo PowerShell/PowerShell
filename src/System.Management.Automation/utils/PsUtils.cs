@@ -14,7 +14,6 @@ using System.Security;
 using System.Text;
 using System.Xml;
 using Microsoft.Win32;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
 using Microsoft.Management.Infrastructure;
@@ -146,6 +145,7 @@ namespace System.Management.Automation
             }
         }
 
+#if !CORECLR // .NET Frmework Version is not applicable to CoreCLR
         /// <summary>
         /// Detects the installation of Frmework Versions 1.1, 2.0, 3.0 and 3.5 and 4.0 through
         /// the official registry instalation keys.
@@ -334,7 +334,7 @@ namespace System.Management.Automation
             private static Version V3_0_00 = new Version(3, 0, 0, 0);
             private static Version V2_0_00 = new Version(2, 0, 0, 0);
             private static Version V1_1_00 = new Version(1, 1, 0, 0);
-
+            
             // Dictionary holding compatible .NET framework versions
             // This is used in verifying the .NET framework version for loading module manifest
             internal static Dictionary<Version, HashSet<Version>> CompatibleNetFrameworkVersions = new Dictionary<Version, HashSet<Version>>() {
@@ -348,7 +348,6 @@ namespace System.Management.Automation
 
             // .NET 4.5 is the highest known .NET version for PowerShell 3.0
             internal static Version KnownHighestNetFrameworkVersion = new Version(4,5);
-
 
             /// <summary>
             /// Returns true if IsFrameworkInstalled will be able to check for this framework version.
@@ -532,6 +531,7 @@ namespace System.Management.Automation
                 return true;
             }
         }
+#endif
 
         /// <summary>
         /// Returns processor architecture for the current process.
