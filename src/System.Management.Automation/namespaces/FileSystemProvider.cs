@@ -8454,7 +8454,7 @@ namespace Microsoft.PowerShell.Commands
                         
                         // Do a FSCTL_GET_REPARSE_POINT first because the ReparseTag could be 
                         // IO_REPARSE_TAG_MOUNT_POINT or IO_REPARSE_TAG_SYMLINK.
-                        // Using the wrote one results in mismatched-tag error.
+                        // Using the wrong one results in mismatched-tag error.
 
                         REPARSE_GUID_DATA_BUFFER junctionData = new REPARSE_GUID_DATA_BUFFER();
                         ClrFacade.StructureToPtr<REPARSE_GUID_DATA_BUFFER>(junctionData, outBuffer, false);
