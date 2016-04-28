@@ -76,7 +76,8 @@ namespace Microsoft.PowerShell
                     _singleton.ClearStatusMessage(render: false);
                 }
                 _singleton._edits[_singleton._undoEditIndex - 1].Undo();
-                _singleton._edits.RemoveAt(_singleton._undoEditIndex - 1);
+                // How do you redo if you remove it permanently?
+//                _singleton._edits.RemoveAt(_singleton._undoEditIndex - 1);
                 _singleton._undoEditIndex--;
                 if (_singleton._options.EditMode == EditMode.Vi && _singleton._current >= _singleton._buffer.Length)
                 {
