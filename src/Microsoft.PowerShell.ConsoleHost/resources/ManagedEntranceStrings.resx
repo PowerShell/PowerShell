@@ -124,8 +124,9 @@ Copyright (C) 2016 Microsoft Corporation. All rights reserved.</value>
   <data name="ShellHelp" xml:space="preserve">
     <value>PowerShell[.exe] [-PSConsoleFile &lt;file&gt; | -Version &lt;version&gt;]
     [-NoLogo] [-NoExit] [-Sta] [-Mta] [-NoProfile] [-NonInteractive]
-    [-InputFormat {Text | XML}] [-OutputFormat {Text | XML}] 
-    [-WindowStyle &lt;style&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;] 
+    [-InputFormat {Text | XML}] [-OutputFormat {Text | XML}]
+    [-WindowStyle &lt;style&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
+    [-ConfigurationName &lt;string&gt;]
     [-File &lt;filePath&gt; &lt;args&gt;] [-ExecutionPolicy &lt;ExecutionPolicy&gt;]
     [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
                   | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
@@ -174,6 +175,12 @@ PowerShell[.exe] -Help | -? | /?
     Accepts a base-64-encoded string version of a command. Use this parameter 
     to submit commands to Windows PowerShell that require complex quotation 
     marks or curly braces.
+
+-ConfigurationName
+    Specifies a configuration endpoint in which Windows PowerShell is run.
+    This can be any endpoint registered on the local machine including the
+    default Windows PowerShell remoting endpoints or a custom endpoint having
+    specific user role capabilities.
     
 -File
     Runs the specified script in the local scope ("dot-sourced"), so that the 
@@ -220,6 +227,7 @@ PowerShell[.exe] -Help | -? | /?
 EXAMPLES
     PowerShell -PSConsoleFile SqlSnapIn.Psc1
     PowerShell -version 2.0 -NoLogo -InputFormat text -OutputFormat XML
+    PowerShell -ConfigurationName AdminRoles
     PowerShell -Command {Get-EventLog -LogName security}
     PowerShell -Command "&amp; {Get-EventLog -LogName security}"
 

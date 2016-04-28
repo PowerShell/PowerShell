@@ -24,6 +24,7 @@ using Parser = System.Management.Automation.Language.Parser;
 using ScriptBlock = System.Management.Automation.ScriptBlock;
 using Token = System.Management.Automation.Language.Token;
 using System.Collections.ObjectModel;
+using Microsoft.PowerShell.Telemetry.Internal;
 
 #if CORECLR
 // Use stub for SecurityZone.
@@ -266,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
             }
             set
             {
-                if (value == null)
+                if (string.IsNullOrWhiteSpace(value))
                 {
                     BaseMaximumVersion = null;
                 }
@@ -1752,6 +1753,8 @@ namespace Microsoft.PowerShell.Commands
                     if (null != foundModule)
                     {
                         SetModuleBaseForEngineModules(foundModule.Name, this.Context);
+
+                        TelemetryAPI.ReportModuleLoad(foundModule);
                     }
                 }
             }

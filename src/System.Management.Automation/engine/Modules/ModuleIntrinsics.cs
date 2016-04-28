@@ -479,22 +479,24 @@ namespace System.Management.Automation
             return new Guid();
         }
 
-        // The extensions of all of the files that can be processed with Import-Module
+        // The extensions of all of the files that can be processed with Import-Module, put the ni.dll in front of .dll to have higher priority to be loaded.
         internal static string[] PSModuleProcessableExtensions = new string[] {
                             StringLiterals.PowerShellDataFileExtension,
                             StringLiterals.PowerShellScriptFileExtension,
                             StringLiterals.PowerShellModuleFileExtension,
                             StringLiterals.PowerShellCmdletizationFileExtension,
                             StringLiterals.WorkflowFileExtension,
-                            ".dll" };
+                            StringLiterals.PowerShellNgenAssemblyExtension,
+                            StringLiterals.DependentWorkflowAssemblyExtension};
 
-        // A list of the extensions to check for implicit module loading and discovery
+        // A list of the extensions to check for implicit module loading and discovery, put the ni.dll in front of .dll to have higher priority to be loaded.
         internal static string[] PSModuleExtensions = new string[] {
                             StringLiterals.PowerShellDataFileExtension,
                             StringLiterals.PowerShellModuleFileExtension,
                             StringLiterals.PowerShellCmdletizationFileExtension,
                             StringLiterals.WorkflowFileExtension,
-                            ".dll" };
+                            StringLiterals.PowerShellNgenAssemblyExtension,
+                            StringLiterals.DependentWorkflowAssemblyExtension};
 
         /// <summary>
         /// Returns true if the extension is one of the module extensions...
@@ -519,7 +521,15 @@ namespace System.Management.Automation
         internal static string GetModuleName(string path)
         {
             string fileName = path == null ? string.Empty : Path.GetFileName(path);
-            string ext = Path.GetExtension(fileName);
+            string ext;
+            if (fileName.EndsWith(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                ext = StringLiterals.PowerShellNgenAssemblyExtension;
+            }
+            else
+            {
+                ext = Path.GetExtension(fileName);
+            }
             if (!string.IsNullOrEmpty(ext) && IsPowerShellModuleExtension(ext))
             {
                 return fileName.Substring(0, fileName.Length - ext.Length);

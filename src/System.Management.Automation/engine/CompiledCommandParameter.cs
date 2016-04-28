@@ -60,7 +60,7 @@ namespace System.Management.Automation
 
             Collection<ValidateArgumentsAttribute> validationAttributes = null;
             Collection<ArgumentTransformationAttribute> argTransformationAttributes = null;
-            Collection<string> aliases = null;
+            string[] aliases = null;
 
             // First, process attributes that aren't type conversions
             foreach (Attribute attribute in runtimeDefinedParameter.Attributes)
@@ -166,7 +166,7 @@ namespace System.Management.Automation
 
             Collection<ValidateArgumentsAttribute> validationAttributes = null;
             Collection<ArgumentTransformationAttribute> argTransformationAttributes = null;
-            Collection<string> aliases = null;
+            string[] aliases = null;
 
             foreach (Attribute attr in memberAttributes)
             {
@@ -179,9 +179,7 @@ namespace System.Management.Automation
             this.ArgumentTransformationAttributes = argTransformationAttributes == null
                 ? Utils.EmptyArray<ArgumentTransformationAttribute>()
                 : argTransformationAttributes.ToArray();
-            this.Aliases = aliases == null
-                ? Utils.EmptyArray<string>()
-                : aliases.ToArray();
+            this.Aliases = aliases ?? Utils.EmptyArray<string>();
         }
 
         #endregion ctor
@@ -437,7 +435,7 @@ namespace System.Management.Automation
             Attribute attribute,
             ref Collection<ValidateArgumentsAttribute> validationAttributes,
             ref Collection<ArgumentTransformationAttribute> argTransformationAttributes,
-            ref Collection<string> aliases)
+            ref string[] aliases)
         {
             // NTRAID#Windows Out Of Band Releases-926374-2005/12/22-JonN
             if (null == attribute)
@@ -471,14 +469,15 @@ namespace System.Management.Automation
             {
                 if (aliases == null)
                 {
-                    aliases = new Collection<string>(aliasAttr.aliasNames);
+                    aliases = aliasAttr.aliasNames;
                 }
                 else
                 {
-                    for (int i = 0; i < aliasAttr.aliasNames.Length; i++)
-                    {
-                        aliases.Add(aliasAttr.aliasNames[i]);
-                    }
+                    var prevAliasNames = aliases;
+                    var newAliasNames = aliasAttr.aliasNames;
+                    aliases = new string[prevAliasNames.Length + newAliasNames.Length];
+                    Array.Copy(prevAliasNames, aliases, prevAliasNames.Length);
+                    Array.Copy(newAliasNames, 0, aliases, prevAliasNames.Length, newAliasNames.Length);
                 }
                 return;
             }

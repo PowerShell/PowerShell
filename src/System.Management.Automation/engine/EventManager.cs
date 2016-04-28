@@ -2643,9 +2643,10 @@ namespace System.Management.Automation
 
         private void OnPSEventReceived(Object sender, PSEventArgs e)
         {
-            if (PSEventReceived != null)
+            PSEventReceivedEventHandler eventHandler = PSEventReceived;
+            if (eventHandler != null)
             {
-                PSEventReceived(sender, e);
+                eventHandler(sender, e);
             }
         }
 

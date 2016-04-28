@@ -607,12 +607,9 @@ namespace System.Management.Automation
 
             do // false loop
             {
-                if (!File.Exists(path))
+                if (!Utils.NativeFileExists(path))
                 {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The path does not exist: {0}",
-                        path);
-
+                    CommandDiscovery.discoveryTracer.TraceError("The path does not exist: {0}", path);
                     break;
                 }
 

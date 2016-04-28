@@ -1256,8 +1256,18 @@ namespace Microsoft.PowerShell.Commands
             currentlyProcessingModules[file] = null;
 
             // Create a fake module info for this file
+            string extension;
+            file = file.TrimEnd();
 
-            string extension = Path.GetExtension(file);
+            // In case the file is a Ngen Assembly.
+            if (file.EndsWith(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                extension = StringLiterals.PowerShellNgenAssemblyExtension;
+            }
+            else
+            {
+                extension = Path.GetExtension(file);
+            }
 
             ManifestProcessingFlags flags = ManifestProcessingFlags.NullOnFirstError;
             // We are creating the ModuleInfo for Get-Module..so ignoring
@@ -1334,7 +1344,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     
                 }
-                else if (extension.Equals(".dll", StringComparison.OrdinalIgnoreCase))
+                else if (extension.Equals(StringLiterals.DependentWorkflowAssemblyExtension, StringComparison.OrdinalIgnoreCase) || extension.Equals(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     moduleInfo.SetModuleType(ModuleType.Binary);
                     moduleInfo.RootModule = moduleInfo.Path;
@@ -2273,9 +2283,15 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            string fileName = FixupFileName(moduleBase, assembly, ".dll");
-
+                            string fileName = FixupFileName(moduleBase, assembly, StringLiterals.PowerShellNgenAssemblyExtension);
                             string loadMessage = StringUtil.Format(Modules.LoadingFile, "Assembly", fileName);
+                            WriteVerbose(loadMessage);
+                            iss.Assemblies.Add(new SessionStateAssemblyEntry(assembly, fileName));
+                            fixedUpAssemblyPathList.Add(fileName);
+
+                            fileName = FixupFileName(moduleBase, assembly, StringLiterals.DependentWorkflowAssemblyExtension);
+
+                            loadMessage = StringUtil.Format(Modules.LoadingFile, "Assembly", fileName);
                             WriteVerbose(loadMessage);
                             iss.Assemblies.Add(new SessionStateAssemblyEntry(assembly, fileName));
                             fixedUpAssemblyPathList.Add(fileName);
@@ -5244,8 +5260,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (typeof(IModuleAssemblyCleanup).IsAssignableFrom(type) && type != typeof(IModuleAssemblyCleanup))
                             {
-                                var moduleCleanup = (IModuleAssemblyCleanup) PSSnapInHelpers.CreateModuleInitializerInstance.Target.Invoke(
-                                                                                             PSSnapInHelpers.CreateModuleInitializerInstance, type);
+                                var moduleCleanup = (IModuleAssemblyCleanup)Activator.CreateInstance(type, true);
                                 moduleCleanup.OnRemove(module);
                             }
                         }
@@ -5628,8 +5643,10 @@ namespace Microsoft.PowerShell.Commands
 
             var importingModule = 0 != (manifestProcessingFlags & ManifestProcessingFlags.LoadElements);
 
-            foreach (string ext in extensions)
+            // "ni.dll" has a higher priority then ".dll" to be loaded.
+            for (int i = 0; i < extensions.Length; i++)
             {
+                string ext = extensions[i];
                 string fileName = fileBaseName + ext;
 
                 // Get the resolved file name
@@ -5859,7 +5876,16 @@ namespace Microsoft.PowerShell.Commands
             var importingModule = 0 != (manifestProcessingFlags & ManifestProcessingFlags.LoadElements);
             var writingErrors = 0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors);
 
-            string ext = Path.GetExtension(fileName);
+            // In case the file is a Ngen Assembly.
+            string ext;
+            if (fileName.EndsWith(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                ext = StringLiterals.PowerShellNgenAssemblyExtension;
+            }
+            else
+            {
+                ext = Path.GetExtension(fileName);
+            }
             PSModuleInfo module = null;
 
             // If  MinimumVersion/RequiredVersion/MaximumVersion has been specified, then only try to process manifest modules...
@@ -6113,7 +6139,7 @@ namespace Microsoft.PowerShell.Commands
                         found = false;
                     }
                 }
-                else if (ext.Equals(".dll", StringComparison.OrdinalIgnoreCase))
+                else if (ext.Equals(".dll", StringComparison.OrdinalIgnoreCase) || ext.Equals(StringLiterals.PowerShellNgenAssemblyExtension))
                 {
                     module = LoadBinaryModule(false, ModuleIntrinsics.GetModuleName(fileName), fileName, null,
                         moduleBase, ss, options, manifestProcessingFlags, prefix, true, true, out found);

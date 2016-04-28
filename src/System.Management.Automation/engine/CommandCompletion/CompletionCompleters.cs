@@ -3111,8 +3111,9 @@ namespace System.Management.Automation
                     var moduleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) 
                             {   StringLiterals.PowerShellScriptFileExtension, 
                                 StringLiterals.PowerShellModuleFileExtension, 
-                                StringLiterals.PowerShellDataFileExtension, 
-                                StringLiterals.DependentWorkflowAssemblyExtension, 
+                                StringLiterals.PowerShellDataFileExtension,
+                                StringLiterals.PowerShellNgenAssemblyExtension,
+                                StringLiterals.DependentWorkflowAssemblyExtension,
                                 StringLiterals.PowerShellCmdletizationFileExtension, 
                                 StringLiterals.WorkflowFileExtension 
                             };
@@ -4113,7 +4114,7 @@ namespace System.Management.Automation
                     wordToComplete = WildcardPattern.Escape(wordToComplete, Utils.Separators.StarOrQuestion);
                 }
 
-                if (!defaultRelative && wordToComplete.Length >= 2 && wordToComplete[1] == ':' && char.IsLetter(wordToComplete[0]))
+                if (!defaultRelative && wordToComplete.Length >= 2 && wordToComplete[1] == ':' && char.IsLetter(wordToComplete[0]) && context.ExecutionContext != null)
                 {
                     // We don't actually need the drive, but the drive must be "mounted" in PowerShell before completion
                     // can succeed.  This call will mount the drive if it wasn't already.

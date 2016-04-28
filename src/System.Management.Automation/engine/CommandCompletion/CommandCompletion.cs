@@ -6,11 +6,13 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Collections.ObjectModel;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Text.RegularExpressions;
+using Microsoft.PowerShell.Telemetry.Internal;
 
 namespace System.Management.Automation
 {
@@ -518,6 +520,9 @@ namespace System.Management.Automation
         // This is the start of the real implementation of autocomplete/intellisense/tab completion
         private static CommandCompletion CompleteInputImpl(Ast ast, Token[] tokens, IScriptPosition positionOfCursor, Hashtable options)
         {
+            var sw = new Stopwatch();
+            sw.Start();
+
             using (var powershell = PowerShell.Create(RunspaceMode.CurrentRunspace))
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
@@ -585,8 +590,13 @@ namespace System.Management.Automation
                         }
                         */
                     }
+
+                    var completionResults = results ?? EmptyCompletionResult;
+                    sw.Stop();
+                    TelemetryAPI.ReportTabCompletionTelemetry(sw.ElapsedMilliseconds, completionResults.Count,
+                        completionResults.Count > 0 ? completionResults[0].ResultType : CompletionResultType.Text);
                     return new CommandCompletion(
-                        new Collection<CompletionResult>(results ?? EmptyCompletionResult),
+                        new Collection<CompletionResult>(completionResults),
                         -1,
                         replacementIndex,
                         replacementLength);
