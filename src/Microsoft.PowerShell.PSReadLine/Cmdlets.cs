@@ -72,6 +72,20 @@ namespace Microsoft.PowerShell
 
     public class PSConsoleReadlineOptions
     {
+#if CORECLR
+        public const ConsoleColor DefaultCommentForegroundColor   = ConsoleColor.Magenta;
+        public const ConsoleColor DefaultKeywordForegroundColor   = ConsoleColor.Green;
+        public const ConsoleColor DefaultStringForegroundColor    = ConsoleColor.DarkCyan;
+        public const ConsoleColor DefaultOperatorForegroundColor  = ConsoleColor.Gray;
+        public const ConsoleColor DefaultVariableForegroundColor  = ConsoleColor.Green;
+        public const ConsoleColor DefaultCommandForegroundColor   = ConsoleColor.Yellow;
+        public const ConsoleColor DefaultParameterForegroundColor = ConsoleColor.Green;
+        public const ConsoleColor DefaultTypeForegroundColor      = ConsoleColor.Gray;
+        public const ConsoleColor DefaultNumberForegroundColor    = ConsoleColor.White;
+        public const ConsoleColor DefaultMemberForegroundColor    = ConsoleColor.Gray;
+        public const ConsoleColor DefaultEmphasisForegroundColor  = ConsoleColor.Cyan;
+        public const ConsoleColor DefaultErrorForegroundColor     = ConsoleColor.Red;
+#else
         public const ConsoleColor DefaultCommentForegroundColor   = ConsoleColor.DarkGreen;
         public const ConsoleColor DefaultKeywordForegroundColor   = ConsoleColor.Green;
         public const ConsoleColor DefaultStringForegroundColor    = ConsoleColor.DarkCyan;
@@ -84,7 +98,7 @@ namespace Microsoft.PowerShell
         public const ConsoleColor DefaultMemberForegroundColor    = ConsoleColor.Gray;
         public const ConsoleColor DefaultEmphasisForegroundColor  = ConsoleColor.Cyan;
         public const ConsoleColor DefaultErrorForegroundColor     = ConsoleColor.Red;
-
+#endif
 
         public const EditMode DefaultEditMode = EditMode.Windows;
 
