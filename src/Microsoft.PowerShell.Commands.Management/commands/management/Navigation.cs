@@ -3562,14 +3562,14 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     bool shouldRecurse = Recurse;
-                    bool linuxLink = false;
+                    bool treatAsFile = false;
                     try
                     {
                         System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(providerPath);
-                        if (Platform.IsLinux && di != null && (di.Attributes & System.IO.FileAttributes.ReparsePoint) != 0)
+                        if (!Platform.IsWindows && di != null && (di.Attributes & System.IO.FileAttributes.ReparsePoint) != 0)
                         {
                             shouldRecurse = false;
-                            linuxLink = true;
+                            treatAsFile = true;
                         }
                     }
                     catch (System.IO.FileNotFoundException)
@@ -3577,7 +3577,7 @@ namespace Microsoft.PowerShell.Commands
                         // not a directory
                     }
 
-                    if (!linuxLink && !Recurse && hasChildren)
+                    if (!treatAsFile && !Recurse && hasChildren)
                     {
                         // Get the localized prompt string
 
