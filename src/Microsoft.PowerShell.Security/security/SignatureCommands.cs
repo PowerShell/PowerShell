@@ -78,6 +78,41 @@ namespace Microsoft.PowerShell.Commands
         }
         private Signature signature;
 
+        /// <summary>
+        /// Gets or sets the file type of the byte array containing the content with
+        /// digital signature.
+        /// </summary>
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByContent")]
+        public string[] SourcePathOrExtension
+        {
+            get
+            {
+                return _sourcePathOrExtension;
+            }
+
+            set
+            {
+                _sourcePathOrExtension = value;
+            }
+        }
+        private string[] _sourcePathOrExtension;
+
+        /// <summary>
+        /// File contents as a byte array
+        /// </summary>
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByContent")]
+        [ValidateNotNullOrEmpty]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public byte[] Content
+        {
+            get { return _content; }
+            set
+            {
+                _content = value;
+            }
+        }
+        private byte[] _content;
+
         //
         // name of this command
         //
@@ -109,75 +144,88 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            //
-            // this cannot happen as we have specified the Path
-            // property to be mandatory parameter
-            //
-            Dbg.Assert((FilePath != null) && (FilePath.Length > 0),
-                       "GetSignatureCommand: Param binder did not bind path");
-
-            foreach (string p in FilePath)
+            if (Content == null)
             {
-                Collection<string> paths = new Collection<string>();
+                //
+                // this cannot happen as we have specified the Path
+                // property to be mandatory parameter
+                //
+                Dbg.Assert((FilePath != null) && (FilePath.Length > 0),
+                    "GetSignatureCommand: Param binder did not bind path");
 
-                // Expand wildcard characters
-                if (isLiteralPath)
+                foreach (string p in FilePath)
                 {
-                    paths.Add(SessionState.Path.GetUnresolvedProviderPathFromPSPath(p));
-                }
-                else
-                {
-                    try
+                    Collection<string> paths = new Collection<string>();
+
+                    // Expand wildcard characters
+                    if (isLiteralPath)
                     {
-                        foreach (PathInfo tempPath in SessionState.Path.GetResolvedPSPathFromPSPath(p))
-                        {
-                            paths.Add(tempPath.ProviderPath);
-                        }
+                        paths.Add(SessionState.Path.GetUnresolvedProviderPathFromPSPath(p));
                     }
-                    catch (ItemNotFoundException)
+                    else
                     {
-                        WriteError(
-                            SecurityUtils.CreateFileNotFoundErrorRecord(
-                            SignatureCommands.FileNotFound,
-                            "SignatureCommandsBaseFileNotFound", p));
-                    }
-                }
-
-                if (paths.Count == 0)
-                    continue;
-
-                bool foundFile = false;
-
-                foreach (string path in paths)
-                {
-                    if (! System.IO.Directory.Exists(path))
-                    {
-                        foundFile = true;
-
-                        string resolvedFilePath = SecurityUtils.GetFilePathOfExistingFile(this, path);
-
-                        if (resolvedFilePath == null)
+                        try
                         {
-                            WriteError(SecurityUtils.CreateFileNotFoundErrorRecord(
-                                       SignatureCommands.FileNotFound,
-                                       "SignatureCommandsBaseFileNotFound",
-                                       path));
-                        }
-                        else
-                        {
-                            if ((Signature = PerformAction(resolvedFilePath)) != null)
+                            foreach (PathInfo tempPath in SessionState.Path.GetResolvedPSPathFromPSPath(p))
                             {
-                                WriteObject(Signature);
+                                paths.Add(tempPath.ProviderPath);
                             }
                         }
+                        catch (ItemNotFoundException)
+                        {
+                            WriteError(
+                                SecurityUtils.CreateFileNotFoundErrorRecord(
+                                    SignatureCommands.FileNotFound,
+                                    "SignatureCommandsBaseFileNotFound", p));
+                        }
                     }
-                }
 
-                if (!foundFile)
+                    if (paths.Count == 0)
+                        continue;
+
+                    bool foundFile = false;
+
+                    foreach (string path in paths)
+                    {
+                        if (!System.IO.Directory.Exists(path))
+                        {
+                            foundFile = true;
+
+                            string resolvedFilePath = SecurityUtils.GetFilePathOfExistingFile(this, path);
+
+                            if (resolvedFilePath == null)
+                            {
+                                WriteError(SecurityUtils.CreateFileNotFoundErrorRecord(
+                                    SignatureCommands.FileNotFound,
+                                    "SignatureCommandsBaseFileNotFound",
+                                    path));
+                            }
+                            else
+                            {
+                                if ((Signature = PerformAction(resolvedFilePath)) != null)
+                                {
+                                    WriteObject(Signature);
+                                }
+                           }
+                        }
+                    }
+
+                    if (!foundFile)
+                    {
+                        WriteError(SecurityUtils.CreateFileNotFoundErrorRecord(
+                            SignatureCommands.CannotRetrieveFromContainer,
+                            "SignatureCommandsBaseCannotRetrieveFromContainer"));
+                    }                
+                }
+            }
+            else
+            {
+                foreach (string sourcePathOrExtension in SourcePathOrExtension)
                 {
-                    WriteError(SecurityUtils.CreateFileNotFoundErrorRecord(
-                               SignatureCommands.CannotRetrieveFromContainer,
-                              "SignatureCommandsBaseCannotRetrieveFromContainer"));
+                    if ((Signature = PerformAction(sourcePathOrExtension, Content)) != null)
+                    {
+                        WriteObject(Signature);
+                    }
                 }
             }
         }
@@ -190,6 +238,18 @@ namespace Microsoft.PowerShell.Commands
         /// The name of the file on which to perform the action.
         /// </param>
         protected abstract Signature PerformAction(string filePath);
+
+        /// <summary>
+        /// Performs the action (ie: get signature, or set signature) 
+        /// on the specified contents.
+        /// </summary>
+        /// <param name="fileName">
+        /// The filename used for type if content is specified.
+        /// </param>
+        /// <param name="content">
+        /// The file contents on which to perform the action.
+        /// </param>
+        protected abstract Signature PerformAction(string fileName, byte[] content);
     }
 
     /// <summary>
@@ -217,6 +277,21 @@ namespace Microsoft.PowerShell.Commands
         protected override Signature PerformAction(string filePath)
         {
             return SignatureHelper.GetSignature(filePath, null);
+        }
+
+        /// <summary>
+        /// Gets the signature from the specified file contents.
+        /// </summary>
+        /// <param name="sourcePathOrExtension">The file type associated with the contents</param>
+        /// <param name="content">
+        /// The contents of the file on which to perform the action.
+        /// </param>
+        /// <returns>
+        /// The signature on the specified file contents.
+        /// </returns>
+        protected override Signature PerformAction(string sourcePathOrExtension, byte[] content)
+        {
+            return SignatureHelper.GetSignature(sourcePathOrExtension, System.Text.Encoding.Unicode.GetString(content));
         }
     }
 
@@ -494,6 +569,14 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Not implemented
+        /// </summary>
+        protected override Signature PerformAction(string sourcePathOrExtension, byte[] content)
+        {
+            throw new NotImplementedException();
+        }
+
         private struct SigningOptionInfo
         {
             internal SigningOption option;
@@ -510,7 +593,7 @@ namespace Microsoft.PowerShell.Commands
         /// association between SigningOption.* values and the
         /// corresponding string names.
         /// </summary>
-        static readonly SigningOptionInfo[] sigOptionInfo =
+        private static readonly SigningOptionInfo[] sigOptionInfo =
         {
             new SigningOptionInfo(SigningOption.AddOnlyCertificate, "signer"),
             new SigningOptionInfo(SigningOption.AddFullCertificateChainExceptRoot, "notroot"),

@@ -108,11 +108,11 @@ namespace System.Management.Automation.Security
             MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle")]
         private static SystemEnforcementMode GetWldpPolicy(string path, SafeHandle handle)
         {
-            // If the WLDP assembly is missing, look up the debug lockdown policy
+            // If the WLDP assembly is missing (such as windows 7 or down OS), return default/None to skip WLDP valification
             if (hadMissingWldpAssembly || !IO.File.Exists(IO.Path.Combine(Environment.SystemDirectory, "wldp.dll")))
             {
                 hadMissingWldpAssembly = true;
-                return GetDebugLockdownPolicy(path);
+                return cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             }
 
             // If path is NULL, see if we have the cached system-wide lockdown policy.
@@ -165,7 +165,7 @@ namespace System.Management.Automation.Security
             catch (DllNotFoundException)
             {
                 hadMissingWldpAssembly = true;
-                return GetDebugLockdownPolicy(path);
+                return cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             }
         }
         private static SystemEnforcementMode? cachedWldpSystemPolicy = null;

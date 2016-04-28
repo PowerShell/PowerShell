@@ -285,6 +285,148 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public abstract partial class PSRemotingBaseCmdlet : PSRemotingCmdlet
     {
+        /// <summary>
+        /// State of virtual machine. This is the same as VMState in 
+        /// \vm\ux\powershell\objects\common\Types.cs
+        /// </summary>
+        internal enum VMState
+        {
+            /// <summary>
+            /// Other. Corresponds to CIM_EnabledLogicalElement.EnabledState = Other.
+            /// </summary>
+            Other         = 1,
+        
+            /// <summary>
+            /// Running. Corresponds to CIM_EnabledLogicalElement.EnabledState = Enabled.
+            /// </summary>
+            Running       = 2,
+        
+            /// <summary>
+            /// Off. Corresponds to CIM_EnabledLogicalElement.EnabledState = Disabled.
+            /// </summary>
+            Off           = 3,
+        
+            /// <summary>
+            /// Stopping. Corresponds to CIM_EnabledLogicalElement.EnabledState = ShuttingDown.
+            /// </summary>
+            Stopping      = 4,
+        
+            /// <summary>
+            /// Saved. Corresponds to CIM_EnabledLogicalElement.EnabledState = Enabled but offline.
+            /// </summary>
+            Saved         = 6,
+        
+            /// <summary>
+            /// Paused. Corresponds to CIM_EnabledLogicalElement.EnabledState = Quiesce.
+            /// </summary>
+            Paused        = 9,
+        
+            /// <summary>
+            /// Starting. EnabledStateStarting. State transition from PowerOff or Saved to Running.
+            /// </summary>
+            Starting      = 10,
+        
+            /// <summary>
+            /// Reset. Corresponds to CIM_EnabledLogicalElement.EnabledState = Reset.
+            /// </summary>
+            Reset         = 11,
+        
+            /// <summary>
+            /// Saving. Corresponds to EnabledStateSaving.
+            /// </summary>
+            Saving        = 32773,
+        
+            /// <summary>
+            /// Pausing. Corresponds to EnabledStatePausing.
+            /// </summary>
+            Pausing       = 32776,
+        
+            /// <summary>
+            /// Resuming. Corresponds to EnabledStateResuming.
+            /// </summary>
+            Resuming      = 32777,
+        
+            /// <summary>
+            /// FastSaved. EnabledStateFastSuspend.
+            /// </summary>
+            FastSaved     = 32779,
+        
+            /// <summary>
+            /// FastSaving. EnabledStateFastSuspending.
+            /// </summary>
+            FastSaving    = 32780,
+        
+            /// <summary>
+            /// ForceShutdown. Used to force a graceful shutdown of the virtual machine.
+            /// </summary>
+            ForceShutdown = 32781,
+        
+            /// <summary>
+            /// ForceReboot. Used to force a graceful reboot of the virtual machine.
+            /// </summary>
+            ForceReboot   = 32782,
+        
+            /// <summary>
+            /// RunningCritical. Critical states.
+            /// </summary>
+            RunningCritical,
+        
+            /// <summary>
+            /// OffCritical. Critical states.
+            /// </summary>
+            OffCritical,
+        
+            /// <summary>
+            /// StoppingCritical. Critical states.
+            /// </summary>
+            StoppingCritical,
+        
+            /// <summary>
+            /// SavedCritical. Critical states.
+            /// </summary>
+            SavedCritical,
+        
+            /// <summary>
+            /// PausedCritical. Critical states.
+            /// </summary>
+            PausedCritical,
+        
+            /// <summary>
+            /// StartingCritical. Critical states.
+            /// </summary>
+            StartingCritical,
+        
+            /// <summary>
+            /// ResetCritical. Critical states.
+            /// </summary>
+            ResetCritical,
+        
+            /// <summary>
+            /// SavingCritical. Critical states.
+            /// </summary>
+            SavingCritical,
+        
+            /// <summary>
+            /// PausingCritical. Critical states.
+            /// </summary>
+            PausingCritical,
+        
+            /// <summary>
+            /// ResumingCritical. Critical states.
+            /// </summary>
+            ResumingCritical,
+        
+            /// <summary>
+            /// FastSavedCritical. Critical states.
+            /// </summary>
+            FastSavedCritical,
+        
+            /// <summary>
+            /// FastSavingCritical. Critical states.
+            /// </summary>
+            FastSavingCritical,
+        }
+
         #region Tracer
 
         //PSETWTracer tracer = PSETWTracer.GetETWTracer(PSKeyword.Runspace);
@@ -1331,6 +1473,7 @@ namespace Microsoft.PowerShell.Commands
             int inputArraySize;
             int index;
             string command;
+            bool[] vmIsRunning;
             Collection<PSObject> results;
 
             if ((ParameterSetName == PSExecutionCmdlet.VMIdParameterSet) ||
@@ -1338,9 +1481,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 inputArraySize = this.VMId.Length;
                 this.VMName = new string[inputArraySize];
+                vmIsRunning = new bool[inputArraySize];
 
                 for (index = 0; index < inputArraySize; index++)
                 {
+                    vmIsRunning[index] = false;
+                    
                     command = "Get-VM -Id $args[0]";
 
                     try
@@ -1367,6 +1513,11 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         this.VMName[index] = (string)results[0].Properties["VMName"].Value;
+
+                        if ((VMState)results[0].Properties["State"].Value == VMState.Running)
+                        {
+                            vmIsRunning[index] = true;
+                        }
                     }
                 }
             }
@@ -1378,9 +1529,12 @@ namespace Microsoft.PowerShell.Commands
                 
                 inputArraySize = this.VMName.Length;
                 this.VMId = new Guid[inputArraySize];
+                vmIsRunning = new bool[inputArraySize];
 
                 for (index = 0; index < inputArraySize; index++)
                 {
+                    vmIsRunning[index] = false;
+                
                     command = "Get-VM -Name $args";
 
                     try
@@ -1408,6 +1562,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         this.VMId[index] = (Guid)results[0].Properties["VMId"].Value;
                         this.VMName[index] = (string)results[0].Properties["VMName"].Value;
+
+                        if ((VMState)results[0].Properties["State"].Value == VMState.Running)
+                        {
+                            vmIsRunning[index] = true;
+                        }
                     }
                 }
             }
@@ -1442,6 +1601,18 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.InvalidArgument,
                             null));
 
+                    continue;
+                }
+                else if (!vmIsRunning[index])
+                {
+                    WriteError(
+                        new ErrorRecord(
+                            new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMState, 
+                                                             this.VMName[index])),
+                            PSRemotingErrorId.InvalidVMState.ToString(),
+                            ErrorCategory.InvalidArgument,
+                            null));
+                    
                     continue;
                 }
             

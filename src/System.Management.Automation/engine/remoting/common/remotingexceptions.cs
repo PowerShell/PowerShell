@@ -232,6 +232,7 @@ namespace System.Management.Automation.Remoting
         InvalidContainerNameNotExist = 972,
         ContainerSessionConnectFailed = 973,
         RemoteSessionHyperVSocketClientConstructorSetSocketOptionFailure = 974,
+        InvalidVMState = 975,
 
         // Invoke-Command related error codes.
         InvalidVMIdNotSingle = 981,

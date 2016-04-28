@@ -100,14 +100,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal bool ShowInitialPrompt
-        {
-            get
-            {
-                return showInitialPrompt;
-            }
-        }
-
         internal uint ExitCode
         {
             get
@@ -240,15 +232,11 @@ namespace Microsoft.PowerShell
 
         private void DisplayBanner()
         {
-            // We need to show the banner only if it has not been already shown in native layer
-            if (!showInitialPrompt)
+            // If banner text is not supplied do nothing.
+            if (!String.IsNullOrEmpty(bannerText))
             {
-                // If banner text is not supplied do nothing.
-                if (!String.IsNullOrEmpty(bannerText))
-                {
-                    ui.WriteLine(bannerText);
-                    ui.WriteLine();
-                }
+                ui.WriteLine(bannerText);
+                ui.WriteLine();
             }
         }
 
@@ -384,10 +372,6 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "importsystemmodules", "imp"))
                 {
                     importSystemModules = true;
-                }
-                else if (MatchSwitch(switchKey, "showinitialprompt", "show"))
-                {
-                    showInitialPrompt = true;
                 }
                 else if (MatchSwitch(switchKey, "noprofile", "nop"))
                 {
@@ -960,7 +944,6 @@ namespace Microsoft.PowerShell
         private ConsoleHostUserInterface ui;
         private bool showHelp;
         private bool showBanner = true;
-        private bool showInitialPrompt;
         private bool noInteractive;
         private string bannerText;
         private string helpText;

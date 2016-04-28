@@ -126,7 +126,7 @@ namespace System.Management.Automation
         internal const string WriteConsoleOutputDllName = "api-ms-win-core-console-l2-1-0.dll";              /*111*/
         internal const string ReadConsoleOutputDllName = "api-ms-win-core-console-l2-1-0.dll";               /*112*/
         internal const string ScrollConsoleScreenBufferDllName = "api-ms-win-core-console-l2-1-0.dll";       /*113*/
-        internal const string SendInputDllName = "ext-ms-win-ntuser-keyboard-l1-2-1.dll";                    /*114*/
+        internal const string SendInputDllName = "ext-ms-win-ntuser-keyboard-l1-3-0.dll";                    /*114*/
         internal const string GetConsoleCursorInfoDllName = "api-ms-win-core-console-l2-1-0.dll";            /*115*/
         internal const string SetConsoleCursorInfoDllName = "api-ms-win-core-console-l2-1-0.dll";            /*116*/
         internal const string ReadConsoleInputDllName = "api-ms-win-core-console-l1-1-0.dll";                /*117*/

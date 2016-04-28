@@ -9845,6 +9845,7 @@ function Install-PackageUtility
     Write-Debug ($LocalizedData.FastPackageReference -f $fastPackageReference)     
     
     $Force = $false
+    $Debug = $false
     $MinimumVersion = $null
     $RequiredVersion = $null
     $IsSavePackage = $false
@@ -9950,6 +9951,23 @@ function Install-PackageUtility
                 }
             }
             
+            if($options.ContainsKey('Debug'))
+            {
+                $Debug = $options['Debug']
+
+                if($Debug.GetType().ToString() -eq 'System.String')
+                {
+                    if($Debug -eq 'false')
+                    {
+                        $Debug = $false
+                    }
+                    elseif($Debug -eq 'true')
+                    {
+                        $Debug = $true
+                    }
+                }
+            }            
+
             if($options.ContainsKey('NoPathUpdate'))
             {
                 $NoPathUpdate = $options['NoPathUpdate']
@@ -10155,11 +10173,44 @@ function Install-PackageUtility
             }
 
             Write-Verbose ($LocalizedData.SpecifiedLocationAndOGP -f ($provider.ProviderName, $providerName))
+
+            $InstalledItemsList = $null
+            $pkg = $script:FastPackRefHastable[$fastPackageReference]
+
+            # If an item has dependencies, prepare the list of installed items and 
+            # pass it to the NuGet provider to not download the already installed items.
+            if($pkg.Dependencies.count -and 
+               -not $IsSavePackage -and 
+               -not $Force)
+            {
+                $InstalledItemsList = Microsoft.PowerShell.Core\Get-Module -ListAvailable | 
+                                        Microsoft.PowerShell.Core\ForEach-Object {"$($_.Name)!#!$($_.Version)".ToLower()}
+
+                if($artfactType -eq $script:PSArtifactTypeScript)
+                {
+                    $InstalledItemsList += $script:PSGetInstalledScripts.GetEnumerator() | 
+                                               Microsoft.PowerShell.Core\ForEach-Object { 
+                                                   "$($_.Value.PSGetItemInfo.Name)!#!$($_.Value.PSGetItemInfo.Version)".ToLower() 
+                                               }
+                }
+                
+                $InstalledItemsList | Select-Object -Unique
+
+                if($Debug)
+                {
+                    $InstalledItemsList | Microsoft.PowerShell.Core\ForEach-Object { Write-Debug -Message "Locally available Item: $_"}
+                }
+            } 
 		
             $ProviderOptions = @{
                                     Destination=$tempDestination;
                                     ExcludeVersion=$true
                                 }                                 
+
+            if($InstalledItemsList)
+            {
+                $ProviderOptions['InstalledPackages'] = $InstalledItemsList
+            }
 
             $newRequest = $request.CloneRequest( $ProviderOptions, @($SourceLocation), $request.Credential )
 

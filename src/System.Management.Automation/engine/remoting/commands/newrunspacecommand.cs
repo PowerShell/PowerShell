@@ -958,6 +958,22 @@ namespace Microsoft.PowerShell.Commands
                 {
                     this.VMId[index] = (Guid)results[0].Properties["VMId"].Value;
                     this.VMName[index] = (string)results[0].Properties["VMName"].Value;
+
+                    //
+                    // VM should be in running state.
+                    //
+                    if ((VMState)results[0].Properties["State"].Value != VMState.Running)
+                    {
+                        WriteError(
+                            new ErrorRecord(
+                                new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMState, 
+                                                                 this.VMName[index])),
+                                PSRemotingErrorId.InvalidVMState.ToString(),
+                                ErrorCategory.InvalidArgument,
+                                null));
+                    
+                        continue;
+                    }
                 }
 
                 // create helper objects for VM GUIDs or names
