@@ -1,0 +1,32 @@
+{
+    "name": "TestPSReadLine",
+    "version": "1.0.0-*",
+    "description": "PSReadLine basic tests",
+
+    "compilationOptions": {
+        "warningsAsErrors": true,
+        "emitEntryPoint": true
+    },
+
+    "dependencies": {
+        "Microsoft.PowerShell.PSReadLine": "1.0.0-*"
+    },
+
+    "frameworks": {
+        "netcoreapp1.0": {
+            "imports": [ "dnxcore50", "portable-net45+win8" ],
+            "dependencies": {
+                "Microsoft.NETCore.App": "1.0.0-rc2-3002485"
+            }
+        }
+    },
+
+    "runtimes": {
+        "ubuntu.14.04-x64": { },
+        "centos.7.1-x64": { },
+        "win7-x64": { },
+        "win10-x64": { },
+        "osx.10.10-x64": { },
+        "osx.10.11-x64": { }
+    }
+}
