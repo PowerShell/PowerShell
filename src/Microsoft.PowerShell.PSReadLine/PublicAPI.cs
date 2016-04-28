@@ -54,6 +54,9 @@ namespace Microsoft.PowerShell
             void StartRender();
             int LengthInBufferCells(char c);
             void EndRender();
+#if CORECLR
+            void Clear();
+#endif
         }
 
 #pragma warning restore 1591

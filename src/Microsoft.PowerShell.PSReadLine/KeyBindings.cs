@@ -181,10 +181,12 @@ namespace Microsoft.PowerShell
                 { Keys.ShiftF3,                MakeKeyHandler(CharacterSearchBackward,   "CharacterSearchBackward") },
                 { Keys.F8,                     MakeKeyHandler(HistorySearchBackward,     "HistorySearchBackward") },
                 { Keys.ShiftF8,                MakeKeyHandler(HistorySearchForward,      "HistorySearchForward") },
+#if !CORECLR
                 { Keys.PageUp,                 MakeKeyHandler(ScrollDisplayUp,           "ScrollDisplayUp") },
                 { Keys.PageDown,               MakeKeyHandler(ScrollDisplayDown,         "ScrollDisplayDown") },
                 { Keys.CtrlPageUp,             MakeKeyHandler(ScrollDisplayUpLine,       "ScrollDisplayUpLine") },
                 { Keys.CtrlPageDown,           MakeKeyHandler(ScrollDisplayDownLine,     "ScrollDisplayDownLine") },
+#endif
             };
 
             _chordDispatchTable = new Dictionary<ConsoleKeyInfo, Dictionary<ConsoleKeyInfo, KeyHandler>>();
@@ -267,13 +269,13 @@ namespace Microsoft.PowerShell
                 { Keys.VolumeDown,      MakeKeyHandler(Ignore,               "Ignore") },
                 { Keys.VolumeUp,        MakeKeyHandler(Ignore,               "Ignore") },
                 { Keys.VolumeMute,      MakeKeyHandler(Ignore,               "Ignore") },
-#endif
                 { Keys.PageUp,          MakeKeyHandler(ScrollDisplayUp,      "ScrollDisplayUp") },
                 { Keys.CtrlPageUp,      MakeKeyHandler(ScrollDisplayUpLine,  "ScrollDisplayUpLine") },
                 { Keys.PageDown,        MakeKeyHandler(ScrollDisplayDown,    "ScrollDisplayDown") },
                 { Keys.CtrlPageDown,    MakeKeyHandler(ScrollDisplayDownLine,"ScrollDisplayDownLine") },
                 { Keys.CtrlHome,        MakeKeyHandler(ScrollDisplayTop,     "ScrollDisplayTop") },
                 { Keys.CtrlEnd,         MakeKeyHandler(ScrollDisplayToCursor,"ScrollDisplayToCursor") },
+#endif
             };
 
             _chordDispatchTable = new Dictionary<ConsoleKeyInfo, Dictionary<ConsoleKeyInfo, KeyHandler>>();

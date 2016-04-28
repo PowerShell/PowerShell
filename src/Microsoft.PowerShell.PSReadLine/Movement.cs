@@ -434,6 +434,11 @@ namespace Microsoft.PowerShell
         public static void ClearScreen(ConsoleKeyInfo? key = null, object arg = null)
         {
             var console = _singleton._console;
+#if CORECLR
+            console.Clear();
+            _singleton._initialY = 0; 
+            _singleton.Render();
+#else
             if (_singleton._initialY + console.WindowHeight > console.BufferHeight)
             {
                 var scrollCount = _singleton._initialY - console.WindowTop;
@@ -445,6 +450,7 @@ namespace Microsoft.PowerShell
             {
                 console.SetWindowPosition(0, _singleton._initialY);
             }
+#endif                
         }
 
         // Try to convert the arg to a char, return 0 for failure

@@ -908,6 +908,13 @@ namespace Microsoft.PowerShell.Internal
                 NativeMethods.ReleaseDC(_hwnd, _hDC);
             }
         }
+
+#if CORECLR
+        public void Clear()
+        {
+            Console.Clear();
+        }
+#endif
     }
 
 #pragma warning restore 1591
