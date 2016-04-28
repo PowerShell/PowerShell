@@ -19,8 +19,16 @@ namespace Microsoft.PowerShell
             var buffer = ReadBufferLines(start, count);
             for (int i = 0; i < buffer.Length; i++)
             {
+#if CORECLR                
+                ConsoleColor tempColor = (int)buffer[i].ForegroundColor == -1 
+                    ? ConsoleColor.White : buffer[i].ForegroundColor;
+                buffer[i].ForegroundColor = (int)buffer[i].BackgroundColor == -1 
+                    ? ConsoleColor.Black : buffer[i].BackgroundColor;
+                buffer[i].BackgroundColor = tempColor;
+#else
                 buffer[i].ForegroundColor = (ConsoleColor)((int)buffer[i].ForegroundColor ^ 7);
                 buffer[i].BackgroundColor = (ConsoleColor)((int)buffer[i].BackgroundColor ^ 7);
+#endif
             }
             _singleton._console.WriteBufferLines(buffer, ref start, false);
         }
