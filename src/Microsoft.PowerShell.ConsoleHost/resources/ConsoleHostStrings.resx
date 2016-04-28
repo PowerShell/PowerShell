@@ -185,4 +185,7 @@ The current session does not support debugging; execution will continue.
   <data name="ConflictingServerModeParameters" xml:space="preserve">
     <value>More than one server mode parameter was specified. Server mode parameters must be used exclusively.</value>
   </data>
+  <data name="SlowProfileLoadingMessage" xml:space="preserve">
+    <value>Loading personal and system profiles took {0}ms.</value>
+  </data>
 </root>

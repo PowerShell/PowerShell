@@ -1376,7 +1376,8 @@ namespace System.Management.Automation
                                 var moduleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) 
                                 {   
                                     StringLiterals.PowerShellModuleFileExtension, 
-                                    StringLiterals.PowerShellDataFileExtension, 
+                                    StringLiterals.PowerShellDataFileExtension,
+                                    StringLiterals.PowerShellNgenAssemblyExtension,
                                     StringLiterals.DependentWorkflowAssemblyExtension, 
                                     StringLiterals.PowerShellCmdletizationFileExtension, 
                                     StringLiterals.WorkflowFileExtension 

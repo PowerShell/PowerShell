@@ -2965,7 +2965,7 @@ namespace System.Management.Automation.Runspaces
             // Get initial list of public commands in session.
             HashSet<CommandInfo> publicCommands = new HashSet<CommandInfo>();
             foreach (CommandInfo sessionCommand in initializedRunspace.ExecutionContext.SessionState.InvokeCommand.GetCommands(
-                        "*", CommandTypes.All, true))
+                        "*", CommandTypes.Alias | CommandTypes.Function | CommandTypes.Filter | CommandTypes.Cmdlet, true))
             {
                 if (sessionCommand.Visibility == SessionStateEntryVisibility.Public)
                 {
@@ -3626,15 +3626,12 @@ namespace System.Management.Automation.Runspaces
                 if (this.DefaultCommandVisibility != SessionStateEntryVisibility.Public)
                 {
                     foreach (CommandInfo importedCommand in initializedRunspace.ExecutionContext.SessionState.InvokeCommand.GetCommands(
-                        "*", CommandTypes.All, true))
+                        "*", CommandTypes.Alias | CommandTypes.Function | CommandTypes.Filter | CommandTypes.Cmdlet, true))
                     {
                         try
                         {
                             // All commands except for the initial session public commands should be made private.
-                            // Exclude ApplicationInfo/ExternalScriptInfo commands as they throw on the setter (because 
-                            // visibility is governed via the ExceutionContext.SessionState lists).
-                            if (!(importedCommand is ApplicationInfo) && !(importedCommand is ExternalScriptInfo) &&
-                                (importedCommand.Visibility != this.DefaultCommandVisibility) &&
+                            if ((importedCommand.Visibility != this.DefaultCommandVisibility) &&
                                 !publicCommands.Contains(importedCommand))
                             {
                                 importedCommand.Visibility = this.DefaultCommandVisibility;
@@ -6128,6 +6125,7 @@ if($paths) {
                 {"Invoke-History",                    new SessionStateCmdletEntry("Invoke-History", typeof(InvokeHistoryCommand), helpFile) },
                 {"New-Module",                        new SessionStateCmdletEntry("New-Module", typeof(NewModuleCommand), helpFile) },
                 {"New-ModuleManifest",                new SessionStateCmdletEntry("New-ModuleManifest", typeof(NewModuleManifestCommand), helpFile) },
+                {"New-PSRoleCapabilityFile",          new SessionStateCmdletEntry("New-PSRoleCapabilityFile", typeof(NewPSRoleCapabilityFileCommand), helpFile) },
                 {"New-PSSession",                     new SessionStateCmdletEntry("New-PSSession", typeof(NewPSSessionCommand), helpFile) },
                 {"New-PSSessionConfigurationFile",    new SessionStateCmdletEntry("New-PSSessionConfigurationFile", typeof(NewPSSessionConfigurationFileCommand), helpFile) },
                 {"New-PSSessionOption",               new SessionStateCmdletEntry("New-PSSessionOption", typeof(NewPSSessionOptionCommand), helpFile) },
@@ -6159,7 +6157,6 @@ if($paths) {
                 {"Enable-PSRemoting",                 new SessionStateCmdletEntry("Enable-PSRemoting", typeof(EnablePSRemotingCommand), helpFile) },
                 {"Export-Console",                    new SessionStateCmdletEntry("Export-Console", typeof(ExportConsoleCommand), helpFile) },
                 {"Get-PSSnapin",                      new SessionStateCmdletEntry("Get-PSSnapin", typeof(GetPSSnapinCommand), helpFile) },
-                {"New-PSRoleCapabilityFile",          new SessionStateCmdletEntry("New-PSRoleCapabilityFile", typeof(NewPSRoleCapabilityFileCommand), helpFile) },
                 {"New-PSTransportOption",             new SessionStateCmdletEntry("New-PSTransportOption", typeof(NewPSTransportOptionCommand), helpFile) },
                 {"Remove-PSSnapin",                   new SessionStateCmdletEntry("Remove-PSSnapin", typeof(RemovePSSnapinCommand), helpFile) },
                 {"Resume-Job",                        new SessionStateCmdletEntry("Resume-Job", typeof(ResumeJobCommand), helpFile) },
@@ -6189,9 +6186,6 @@ if($paths) {
             }
         }
 
-        internal static readonly CallSite<Func<CallSite, object, object>> CreateModuleInitializerInstance =
-                CallSite<Func<CallSite, object, object>>.Create(PSCreateInstanceBinder.Get(new CallInfo(0), null));
-
         private static void ExecuteModuleInitializer(Assembly assembly, Type[] assemblyTypes, bool isModuleLoad)
         {
             for (int i = 0; i < assemblyTypes.Length; i++)
@@ -6203,9 +6197,7 @@ if($paths) {
                 if (isModuleLoad && typeof(IModuleAssemblyInitializer).IsAssignableFrom(type) && type != typeof(IModuleAssemblyInitializer))
                 {
                     _assembliesWithModuleInitializerCache.Value[assembly] = true;
-                    var moduleInitializer = (IModuleAssemblyInitializer) CreateModuleInitializerInstance
-                                                                             .Target.Invoke(
-                                                                                 CreateModuleInitializerInstance, type);
+                    IModuleAssemblyInitializer moduleInitializer = (IModuleAssemblyInitializer)Activator.CreateInstance(type, true);
                     moduleInitializer.OnImport();
                 }
             }

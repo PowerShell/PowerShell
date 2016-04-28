@@ -44,10 +44,10 @@ namespace System.Management.Automation.Internal
                 const int EtwSelfDescribingEventFormat = 8;
                 var eventSourceSettingsEnumObject = Enum.ToObject(eventSourceSettingsType, EtwSelfDescribingEventFormat);
 
-                // Create instance of the class EventSource with Provider name of "Microsoft.Windows.PowerShell"     
+                // Create instance of the class EventSource with Provider name of "Microsoft-PowerShell-Telemetry"     
                 // Supply this eventSourceTrait to EventSource constructor to enable Asimov type events
                 var eventSource = (EventSource)Activator.CreateInstance(typeof(EventSource),
-                    new object[] {"Microsoft.Windows.PowerShell",
+                    new object[] {"Microsoft-PowerShell-Telemetry",
                                   eventSourceSettingsEnumObject,
                                   new[] { "ETW_GROUP", "{4f50731a-89cf-4782-b3e0-dce8c90476ba}" }});
 

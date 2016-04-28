@@ -1109,6 +1109,8 @@ namespace System.Management.Automation.Host
         /// </summary>
         public void Dispose()
         {
+            if (disposed) { return; }
+
             // Wait for any pending output to be flushed to disk so that Stop-Transcript
             // can be trusted to immediately have all content from that session in the file)
             int outputWait = 0;
@@ -1124,6 +1126,7 @@ namespace System.Management.Automation.Host
             {
                 contentWriter.Flush();
                 contentWriter.Dispose();
+                contentWriter = null;
             }
 
             disposed = true;

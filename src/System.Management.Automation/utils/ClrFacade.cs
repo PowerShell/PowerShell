@@ -479,6 +479,7 @@ namespace System.Management.Automation
         {
             uint zoneId;
             object curSecMgr = null;
+            const UInt32 MUTZ_DONT_USE_CACHE = 0x00001000;
 
             int hr = NativeMethods.CoInternetCreateSecurityManager(null, out curSecMgr, 0);
             if (hr != NativeMethods.S_OK)
@@ -490,7 +491,7 @@ namespace System.Management.Automation
             try
             {
                 NativeMethods.IInternetSecurityManager ism = (NativeMethods.IInternetSecurityManager)curSecMgr;
-                hr = ism.MapUrlToZone(filePath, out zoneId, 0);
+                hr = ism.MapUrlToZone(filePath, out zoneId, MUTZ_DONT_USE_CACHE);
                 if (hr == NativeMethods.S_OK)
                 {
                     SecurityZone result;

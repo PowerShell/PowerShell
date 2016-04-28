@@ -16,6 +16,7 @@ using System.Diagnostics.CodeAnalysis; // for fxcop
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Diagnostics;
 using System.Linq;
+using Microsoft.PowerShell.Telemetry.Internal;
 
 
 #if CORECLR
@@ -933,6 +934,28 @@ namespace System.Management.Automation.Runspaces
 
             //Raise Event
             RaiseRunspaceStateEvents ();
+
+            // Report telemetry if we have no more open runspaces.
+            bool allRunspacesClosed = true;
+            bool hostProvidesExitTelemetry = false;
+            foreach (var r in Runspace.RunspaceList)
+            {
+                if (r.RunspaceStateInfo.State != RunspaceState.Closed)
+                {
+                    allRunspacesClosed = false;
+                    break;
+                }
+                var localRunspace = r as LocalRunspace;
+                if (localRunspace != null && localRunspace.Host is IHostProvidesTelemetryData)
+                {
+                    hostProvidesExitTelemetry = true;
+                    break;
+                }
+            }
+            if (allRunspacesClosed && !hostProvidesExitTelemetry)
+            {
+                TelemetryAPI.ReportExitTelemetry(null);
+            }
         }
 
         /// <summary>

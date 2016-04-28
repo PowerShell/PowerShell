@@ -141,7 +141,11 @@ namespace Microsoft.PowerShell.Commands
                         {
                             foreach (ModuleSpecification nestedModule in nestedModules)
                             {
-                                if (!IsValidFilePath(nestedModule.Name, module, true) && !IsValidFilePath(nestedModule.Name + ".dll", module, true) && !IsValidFilePath(nestedModule.Name + ".psm1", module, true) && !IsValidGacAssembly(nestedModule.Name))
+                                if (!IsValidFilePath(nestedModule.Name, module, true) 
+                                    && !IsValidFilePath(nestedModule.Name + StringLiterals.DependentWorkflowAssemblyExtension, module, true) 
+                                    && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellNgenAssemblyExtension, module, true) 
+                                    && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellModuleFileExtension, module, true) 
+                                    && !IsValidGacAssembly(nestedModule.Name))
                                 {
                                     // The nested module could be dependencies. We compare if it can be loaded by loadmanifest
                                     bool isDependency = false;
@@ -323,16 +327,23 @@ namespace Microsoft.PowerShell.Commands
         {
             string gacPath = System.Environment.GetEnvironmentVariable("windir") + "\\Microsoft.NET\\assembly";
             string assemblyFile = assemblyName;
-            if (!assemblyName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+            string ngenAssemblyFile = assemblyName;
+            if (!assemblyName.EndsWith(StringLiterals.DependentWorkflowAssemblyExtension, StringComparison.OrdinalIgnoreCase))
             {
-                assemblyFile = assemblyName + ".dll";
+                assemblyFile = assemblyName + StringLiterals.DependentWorkflowAssemblyExtension;
+                ngenAssemblyFile = assemblyName + StringLiterals.PowerShellNgenAssemblyExtension;
             }
             try
             {
                 var allFiles = Directory.GetFiles(gacPath, assemblyFile, SearchOption.AllDirectories);
+
                 if (allFiles.Length == 0)
                 {
-                    return false;
+                    var allNgenFiles = Directory.GetFiles(gacPath, ngenAssemblyFile, SearchOption.AllDirectories);
+                    if (allNgenFiles.Length == 0)
+                    {
+                        return false;
+                    }
                 }
             }
             catch

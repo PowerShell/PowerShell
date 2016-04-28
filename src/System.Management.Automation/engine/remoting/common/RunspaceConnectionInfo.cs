@@ -2661,7 +2661,7 @@ namespace System.Management.Automation.Runspaces
                 
                 var computeSystemPropertiesHandle = getComputeSystemPropertiesInfo.Invoke(null, new object[]{ ContainerId });
 
-                ContainerName = (string)computeSystemPropertiesType.GetProperty("Name").GetValue(computeSystemPropertiesHandle);
+                ContainerName = (string)computeSystemPropertiesType.GetProperty("SiloGuid").GetValue(computeSystemPropertiesHandle);
                 RuntimeId = (Guid)computeSystemPropertiesType.GetProperty("RuntimeId").GetValue(computeSystemPropertiesHandle);
             }
             catch (FileNotFoundException)
