@@ -303,8 +303,16 @@ namespace Microsoft.PowerShell
             for (int i = 0; i < menuColumnWidth; i++)
             {
                 int j = i + start;
+#if CORECLR                
+                ConsoleColor tempColor = (int)buffer[j].ForegroundColor == -1 
+                    ? ConsoleColor.White : buffer[j].ForegroundColor;
+                buffer[j].ForegroundColor = (int)buffer[j].BackgroundColor == -1 
+                    ? ConsoleColor.Black : buffer[j].BackgroundColor;
+                buffer[j].BackgroundColor = tempColor;
+#else
                 buffer[j].ForegroundColor = (ConsoleColor)((int)buffer[j].ForegroundColor ^ 7);
                 buffer[j].BackgroundColor = (ConsoleColor)((int)buffer[j].BackgroundColor ^ 7);
+#endif
             }
         }
 
