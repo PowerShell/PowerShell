@@ -1053,29 +1053,41 @@ namespace System.Management.Automation.Remoting
 
             if (onConnect)
             {
-                // Win10 server can support Win8 client
-                if (clientProtocolVersion == RemotingConstants.ProtocolVersionWin8RTM &&
-                    (
-                        (serverProtocolVersion == RemotingConstants.ProtocolVersionWin10RTM)
-                    ))
+                bool connectSupported = false;
+
+                // Win10 server can support reconstruct/reconnect for all 2.x protocol versions
+                // that support reconstruct/reconnect, Protocol 2.2+
+                // Major protocol version differences (2.x -> 3.x) are not supported.
+                if ((serverProtocolVersion == RemotingConstants.ProtocolVersionWin10RTM) &&
+                    (clientProtocolVersion.Major == serverProtocolVersion.Major))
                 {
-                    // - report that server is Win8 version to the client
-                    serverProtocolVersion = RemotingConstants.ProtocolVersionWin8RTM;
-                    _context.ServerCapability.ProtocolVersion = serverProtocolVersion;
-                }
-                else
-                {
-                    // All other version mismatches, throw an error.
-                    if (clientProtocolVersion != serverProtocolVersion)
+                    if (clientProtocolVersion.Minor == RemotingConstants.ProtocolVersionWin8RTM.Minor)
                     {
-                        PSRemotingDataStructureException reasonOfFailure =
-                            new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnNegotiation,
-                                RemoteDataNameStrings.PS_STARTUP_PROTOCOL_VERSION_NAME,
-                                clientProtocolVersion,
-                                PSVersionInfo.BuildVersion,
-                                RemotingConstants.ProtocolVersion);
-                        throw reasonOfFailure;
+                        // Report that server is Win8 version to the client
+                        // Protocol: 2.2
+                        connectSupported = true;
+                        serverProtocolVersion = RemotingConstants.ProtocolVersionWin8RTM;
+                        _context.ServerCapability.ProtocolVersion = serverProtocolVersion;
                     }
+                    else if (clientProtocolVersion.Minor > RemotingConstants.ProtocolVersionWin8RTM.Minor)
+                    {
+                        // All other minor versions are supported and the server returns its full capability
+                        // Protocol: 2.3, 2.4, 2.5 ...
+                        connectSupported = true;
+                    }
+                }
+
+                if (!connectSupported)
+                {
+                    // Throw for protocol versions 2.x that don't support disconnect/reconnect.
+                    // Protocol: < 2.2
+                    PSRemotingDataStructureException reasonOfFailure =
+                        new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnNegotiation,
+                            RemoteDataNameStrings.PS_STARTUP_PROTOCOL_VERSION_NAME,
+                            clientProtocolVersion,
+                            PSVersionInfo.BuildVersion,
+                            RemotingConstants.ProtocolVersion);
+                    throw reasonOfFailure;
                 }
             }
             else

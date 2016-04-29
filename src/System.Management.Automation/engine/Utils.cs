@@ -319,10 +319,9 @@ namespace System.Management.Automation
                     baseDirectories.Add(Path.Combine(progFileDir, "PackageManagement"));
                     baseDirectories.Add(Path.Combine(progFileDir, "PowerShellGet"));
                     baseDirectories.Add(Path.Combine(progFileDir, "Pester"));
+                    baseDirectories.Add(Path.Combine(progFileDir, "PSReadLine"));
 #if CORECLR
                     baseDirectories.Add(Path.Combine(progFileDir, "Json.Net"));
-#else
-                    baseDirectories.Add(Path.Combine(progFileDir, "PSReadline"));
 #endif // CORECLR
                 }
                 Interlocked.CompareExchange(ref _productFolderDirectories, baseDirectories.ToArray(), null);

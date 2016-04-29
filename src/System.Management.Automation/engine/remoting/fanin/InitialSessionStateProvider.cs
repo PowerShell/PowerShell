@@ -947,12 +947,6 @@ namespace System.Management.Automation.Remoting
         internal static readonly string VisibleProviders = "VisibleProviders";
         internal static readonly string VisibleExternalCommands = "VisibleExternalCommands";
 
-        // Keys that are not allowed in RoleDefinitions or a role capability
-        internal static HashSet<string> DisallowedRoleCapabilityKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-        {
-            PowerShellVersion, SessionType, RoleDefinitions, LanguageMode, ExecutionPolicy
-        };
-
         internal static ConfigTypeEntry[] ConfigFileKeys = new ConfigTypeEntry[] {
             new ConfigTypeEntry(AliasDefinitions,               new ConfigTypeEntry.TypeValidationCallback(AliasDefinitionsTypeValidationCallback)),
             new ConfigTypeEntry(AssembliesToLoad,               new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
@@ -1366,12 +1360,40 @@ namespace System.Management.Automation.Remoting
         }
     }
 
+    #region DISC Utilities
+
     /// <summary>
     /// DISC utilities
     /// </summary>
     internal static class DISCUtils
     {
+        #region Private data
+
         internal static Type ExecutionPolicyType = null;
+
+        /// <summary>
+        /// !! NOTE that this list MUST be updated when new capability session configuration properties are added.
+        /// </summary>
+        private static readonly HashSet<string> AllowedRoleCapabilityKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "RoleCapabilities",
+            "ModulesToImport",
+            "VisibleAliases",
+            "VisibleCmdlets",
+            "VisibleFunctions",
+            "VisibleExternalCommands",
+            "VisibleProviders",
+            "ScriptsToProcess",
+            "AliasDefinitions",
+            "FunctionDefinitions",
+            "VariableDefinitions",
+            "EnvironmentVariables",
+            "TypesToProcess",
+            "FormatsToProcess",
+            "AssembliesToLoad"
+        };
+
+        #endregion
 
         /// <summary>
         /// Create an ExternalScriptInfo object from a file path.
@@ -1431,8 +1453,6 @@ namespace System.Management.Automation.Remoting
 
             return result as Hashtable;
         }
-
-
 
         /// <summary>
         /// Verifies the configuration hashtable
@@ -1606,7 +1626,67 @@ namespace System.Management.Automation.Remoting
                 }
             }
         }
+
+        /// <summary>
+        /// Validates Role Definition hash entries
+        ///
+        /// RoleDefinitions = @{
+        ///     'Everyone' = @{
+        ///         'RoIeCapabilities' = 'Basic' };
+        ///     'Administrators' = @{
+        ///         'VisibleCmdlets' = 'Get-Process','Get-Location'; 'VisibleFunctions = 'TabExpansion2' } }
+        /// </summary>
+        /// <param name="roleDefinitions"></param>
+        internal static void ValidateRoleDefinitions(IDictionary roleDefinitions)
+        {
+            foreach (var roleKey in roleDefinitions.Keys)
+            {
+                if (!(roleKey is string))
+                {
+                    var invalidOperationEx = new PSInvalidOperationException(
+                        string.Format(RemotingErrorIdStrings.InvalidRoleKeyType, roleKey.GetType().FullName));
+                    invalidOperationEx.SetErrorId("InvalidRoleKeyType");
+                    throw invalidOperationEx;
+                }
+
+                //
+                // Each role capability in the role definition item should contain a hash table with allowed role capability key.
+                //
+
+                IDictionary roleDefinition = roleDefinitions[roleKey] as IDictionary;
+                if (roleDefinition == null)
+                {
+                    var invalidOperationEx = new PSInvalidOperationException(
+                        StringUtil.Format(RemotingErrorIdStrings.InvalidRoleValue, roleKey));
+                    invalidOperationEx.SetErrorId("InvalidRoleEntryNotHashtable");
+                    throw invalidOperationEx;
+                }
+
+                foreach (var key in roleDefinition.Keys)
+                {
+                    // Ensure each role capability key is valid.
+                    string roleCapabilityKey = key as string;
+                    if (roleCapabilityKey == null)
+                    {
+                        var invalidOperationEx = new PSInvalidOperationException(
+                            string.Format(RemotingErrorIdStrings.InvalidRoleCapabilityKeyType, key.GetType().FullName));
+                        invalidOperationEx.SetErrorId("InvalidRoleCapabilityKeyType");
+                        throw invalidOperationEx;
+                    }
+
+                    if (!AllowedRoleCapabilityKeys.Contains(roleCapabilityKey))
+                    {
+                        var invalidOperationEx = new PSInvalidOperationException(
+                            string.Format(RemotingErrorIdStrings.InvalidRoleCapabilityKey, roleCapabilityKey));
+                        invalidOperationEx.SetErrorId("InvalidRoleCapabilityKey");
+                        throw invalidOperationEx;
+                    }
+                }
+            }
+        }
     }
+
+    #endregion
 
     /// <summary>
     /// Creates an initial session state based on the configuration language for PSSC files
@@ -1683,12 +1763,15 @@ namespace System.Management.Automation.Remoting
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleEntry, configHash["Roles"].GetType().FullName);
                     PSInvalidOperationException ioe = new PSInvalidOperationException(message);
-                    ioe.SetErrorId("InvalidRoleEntryNotHashtable");
+                    ioe.SetErrorId("InvalidRoleDefinitionNotHashtable");
                     throw ioe;
                 }
 
+                // Ensure that role definitions contain valid entries.
+                DISCUtils.ValidateRoleDefinitions(roleEntry);
+
                 // Go through the Roles hashtable
-                foreach(Object role in roleEntry.Keys)
+                foreach (Object role in roleEntry.Keys)
                 {
                     // Check if this role applies to the connected user
                     if (roleVerifier(role.ToString()))
@@ -1744,13 +1827,6 @@ namespace System.Management.Automation.Remoting
             foreach (Object customization in childConfigHash.Keys)
             {
                 string customizationString = customization.ToString();
-                if (ConfigFileConstants.DisallowedRoleCapabilityKeys.Contains(customizationString))
-                {
-                    string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleCapabilityKey, customizationString);
-                    PSInvalidOperationException ioe = new PSInvalidOperationException(message);
-                    ioe.SetErrorId("InvalidRoleTookitKey");
-                    throw ioe;
-                }
 
                 ArrayList customizationValue = new ArrayList();
 

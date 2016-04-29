@@ -63,6 +63,15 @@ namespace Microsoft.PowerShell
             }
         }
 
+        internal bool ShowBanner
+        {
+            get
+            {
+                Dbg.Assert(dirty, "Parse has not been called yet");
+                return showBanner;
+            }
+        }
+
         internal bool NoExit
         {
             get
@@ -229,7 +238,7 @@ namespace Microsoft.PowerShell
             ui.WriteLine("");
         }
 
-        private void ShowBanner()
+        private void DisplayBanner()
         {
             // We need to show the banner only if it has not been already shown in native layer
             if (!showInitialPrompt)
@@ -699,7 +708,7 @@ namespace Microsoft.PowerShell
             
             if (showBanner && !showHelp)
             {
-                ShowBanner();
+                DisplayBanner();
             }
 
             Dbg.Assert(

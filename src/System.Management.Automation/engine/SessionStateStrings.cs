@@ -138,6 +138,11 @@ namespace System.Management.Automation
         /// </summary>
         internal const string DependentWorkflowAssemblyExtension = ".dll";
 
+        /// <summary>
+        /// The file extension (including the dot) of an workflow dependent Ngen assembly
+        /// </summary>
+        internal const string PowerShellNgenAssemblyExtension = ".ni.dll";
+
         internal const string PowerShellConsoleFileExtension = ".psc1";
 
         /// <summary>

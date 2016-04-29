@@ -323,11 +323,14 @@ namespace System.Management.Automation.Remoting
             {
                 if (_serverDriverRemoteHost.PropagatePop)
                 {
-                    // Optionally forward the PopRunspace command to client.
+                    // Forward the PopRunspace command to client and keep *this* pushed runspace as
+                    // the configured JEA restricted session.
                     _serverMethodExecutor.ExecuteVoidMethod(RemoteHostMethodId.PopRunspace);
                 }
-
-                _serverDriverRemoteHost.PopRunspace();
+                else
+                {
+                    _serverDriverRemoteHost.PopRunspace();
+                }
             }
             else
             {

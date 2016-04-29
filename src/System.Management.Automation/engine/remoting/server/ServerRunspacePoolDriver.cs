@@ -515,8 +515,6 @@ namespace System.Management.Automation
                     // Let exceptions propagate.
                     RemoteRunspace remoteRunspace = HostUtilities.CreateConfiguredRunspace(this.configurationName, this.remoteHost);
 
-                    // Ensure session ends and configured runspace is closed on pop.
-                    remoteRunspace.ShouldCloseOnPop = true;
                     this.remoteHost.AllowPushRunspace = true;
                     this.remoteHost.PropagatePop = true;
 
@@ -665,7 +663,9 @@ namespace System.Management.Automation
                 args.Runspace.ExecutionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
             }
 
-            // Set the current location to Personal folder for this runspace.
+            // Set the current location to MyDocuments folder for this runspace.
+            // This used to be set to the Personal folder but was changed to MyDocuments folder for 
+            // compatibility with PowerShell on Nano Server for PowerShell V5.
             // This is needed because in the remoting scenario, Environment.CurrentDirectory
             // always points to System Folder (%windir%\system32) irrespective of the
             // user as %HOMEDRIVE% and %HOMEPATH% are not available for the logon process.
@@ -676,17 +676,12 @@ namespace System.Management.Automation
                 string personalfolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 args.Runspace.ExecutionContext.EngineSessionState.SetLocation(personalfolder);
             }
-            catch (ArgumentException)
+            catch (Exception e)
             {
-            }
-            catch (ProviderNotFoundException)
-            {
-            }
-            catch (DriveNotFoundException)
-            {
-            }
-            catch (ProviderInvocationException)
-            {
+                // SetLocation API can call 3rd party code and so there is no telling what exception may be thrown.
+                // Setting location is not critical and is expected not to work with some account types, so we want
+                // to ignore all but critical errors.
+                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Run startup scripts
@@ -875,6 +870,7 @@ namespace System.Management.Automation
 
                 StartPowerShellCommandOnPushedRunspace(
                     powershell,
+                    null,
                     data.PowerShellId,
                     data.RunspacePoolId,
                     hostInfo,
@@ -1085,23 +1081,41 @@ namespace System.Management.Automation
                     "Name", "Namespace", "HelpUri", "CommandType", "ResolvedCommandName", "OutputType", "Parameters" });
 
             HostInfo useRunspaceHost = new HostInfo(null);
-            useRunspaceHost.UseRunspaceHost = true;            
-            ServerPowerShellDriver driver = new ServerPowerShellDriver(
-                countingPipeline,
-                mainPipeline,
-                true /* no input */,
-                data.PowerShellId,
-                data.RunspacePoolId,
-                this,
-#if !CORECLR // No ApartmentState In CoreCLR
-                ApartmentState.Unknown,
-#endif
-                useRunspaceHost,
-                0 /* stream options */,
-                false /* addToHistory */,
-                null /* use default rsPool runspace */);
+            useRunspaceHost.UseRunspaceHost = true;
 
-            driver.Start();
+            if (remoteHost.IsRunspacePushed)
+            {
+                // If we have a pushed runspace then execute there.  
+                StartPowerShellCommandOnPushedRunspace(
+                    countingPipeline,
+                    mainPipeline,
+                    data.PowerShellId,
+                    data.RunspacePoolId,
+                    useRunspaceHost,
+                    0,
+                    true,
+                    false);
+            }
+            else
+            {
+                // Run on usual driver.
+                ServerPowerShellDriver driver = new ServerPowerShellDriver(
+                    countingPipeline,
+                    mainPipeline,
+                    true /* no input */,
+                    data.PowerShellId,
+                    data.RunspacePoolId,
+                    this,
+#if !CORECLR // No ApartmentState In CoreCLR
+                    ApartmentState.Unknown,
+#endif
+                    useRunspaceHost,
+                    0 /* stream options */,
+                    false /* addToHistory */,
+                    null /* use default rsPool runspace */);
+
+                driver.Start();
+            }
         }
         
         /// <summary>
@@ -1206,6 +1220,7 @@ namespace System.Management.Automation
         /// Starts the PowerShell command on the currently pushed Runspace
         /// </summary>
         /// <param name="powershell">PowerShell command or script</param>
+        /// <param name="extraPowerShell">PowerShell command to run after first completes</param>
         /// <param name="powershellId">PowerShell Id</param>
         /// <param name="runspacePoolId">RunspacePool Id</param>
         /// <param name="hostInfo">Host Info</param>
@@ -1214,6 +1229,7 @@ namespace System.Management.Automation
         /// <param name="addToHistory">Add to history</param>
         private void StartPowerShellCommandOnPushedRunspace(
             PowerShell powershell,
+            PowerShell extraPowerShell,
             Guid powershellId,
             Guid runspacePoolId,
             HostInfo hostInfo,
@@ -1225,7 +1241,7 @@ namespace System.Management.Automation
 
             ServerPowerShellDriver driver = new ServerPowerShellDriver(
                 powershell,
-                null,
+                extraPowerShell,
                 noInput,
                 powershellId,
                 runspacePoolId,

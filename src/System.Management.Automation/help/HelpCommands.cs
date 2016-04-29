@@ -7,6 +7,7 @@ using System.Linq;
 using System.Management.Automation.Runspaces;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Management.Automation;
 using System.Globalization;
 using System.Management.Automation.Internal;
@@ -306,6 +307,9 @@ namespace Microsoft.PowerShell.Commands
         private GraphicalHostReflectionWrapper graphicalHostReflectionWrapper;
 #endif
 
+        private readonly Stopwatch _timer = new Stopwatch();
+        private bool _updatedHelp;
+
         #endregion
 
         #region Cmdlet API implementation
@@ -315,11 +319,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            _timer.Start();
+
             if (!Online.IsPresent && UpdatableHelpSystem.ShouldPromptToUpdateHelp() && HostUtilities.IsProcessInteractive(MyInvocation) && HasInternetConnection())
             {
                 if(ShouldContinue(HelpDisplayStrings.UpdateHelpPromptBody, HelpDisplayStrings.UpdateHelpPromptTitle))
                 {
                     System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace).AddCommand("Update-Help").Invoke();
+                    _updatedHelp = true;
                 }
                     
                 UpdatableHelpSystem.SetDisablePromptToUpdateHelp();
@@ -396,6 +403,11 @@ namespace Microsoft.PowerShell.Commands
                     }
                     countOfHelpInfos++;
                 }
+
+                _timer.Stop();
+
+                if (!string.IsNullOrEmpty(Name))
+                    Microsoft.PowerShell.Telemetry.Internal.TelemetryAPI.ReportGetHelpTelemetry(Name, countOfHelpInfos, _timer.ElapsedMilliseconds, _updatedHelp);
 
                 // Write full help as there is only one help info object
                 if (1 == countOfHelpInfos)

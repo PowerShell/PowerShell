@@ -584,7 +584,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -739,6 +739,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
+                    DISCUtils.ValidateRoleDefinitions(roleDefinitions);
+
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.RoleDefinitions, RemotingErrorIdStrings.DISCRoleDefinitionsComment,
                         SessionConfigurationUtils.CombineHashtable(roleDefinitions, streamWriter), streamWriter, false));
                 }
@@ -1055,6 +1057,10 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        #endregion
+
+        #region Private methods
+
         private bool ShouldGenerateConfigurationSnippet(string parameterName)
         {
             return Full || MyInvocation.BoundParameters.ContainsKey(parameterName);
@@ -1068,9 +1074,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// Creates a role capability file suitable for use in a Role Capability (which can be referenced in a Session Configuration file)
     /// </summary>
-#if !CORECLR
     [Cmdlet(VerbsCommon.New, "PSRoleCapabilityFile", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=623708")]
-#endif
     public class NewPSRoleCapabilityFileCommand : PSCmdlet
     {
         #region Parameters
@@ -1745,6 +1749,8 @@ namespace Microsoft.PowerShell.Commands
         #endregion
     }
 
+    #region SessionConfigurationUtils
+
     /// <summary>
     /// Utility methods for configuration file commands
     /// </summary>
@@ -2029,4 +2035,6 @@ namespace Microsoft.PowerShell.Commands
             return sb.ToString();
         }
     }
+
+    #endregion
 }

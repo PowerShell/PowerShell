@@ -1071,9 +1071,6 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   <data name="InvalidRoleEntry" xml:space="preserve">
     <value>The 'Roles' entry must be a hashtable, but was a {0}.</value>
   </data>
-  <data name="InvalidRoleCapabilityKey" xml:space="preserve">
-    <value>The key '{0}' is not valid in a role capability or role definition.</value>
-  </data>
   <data name="InvalidRoleValue" xml:space="preserve">
     <value>Could not convert the value of the '{0}' role entry to a hashtable. The 'Roles' entry must be a hashtable with group names for keys, where the value associated with each key is another hashtable of session configuration properties for that role.</value>
   </data>
@@ -1598,5 +1595,14 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   </data>
   <data name="InvalidUserDriveName" xml:space="preserve">
     <value>Cannot create a session User Drive because the current user name contains invalid file path characters.</value>
+  </data>
+  <data name="InvalidRoleCapabilityKey" xml:space="preserve">
+    <value>Invalid role capability key: {0}. Make sure the role capability name is spelled correctly and is a valid session configuration property.</value>
+  </data>
+  <data name="InvalidRoleCapabilityKeyType" xml:space="preserve">
+    <value>Invalid role capability key type: {0}. Role capability keys must be strings that identify a valid session configuration property.</value>
+  </data>
+  <data name="InvalidRoleKeyType" xml:space="preserve">
+    <value>Invalid role key type: {0}. Role keys must be strings that identify a security group.</value>
   </data>
 </root>

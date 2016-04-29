@@ -22,6 +22,7 @@ using System.Text;
 using Microsoft.Win32;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.PowerShell.Telemetry.Internal;
 
 #if CORECLR
 // Use stub for Serializable attribute and ISerializable related types
@@ -63,6 +64,8 @@ namespace System.Management.Automation
 
         internal bool Compile(bool optimized)
         {
+            var sw = new Stopwatch();
+            sw.Start();
             if (_attributes == null)
             {
                 InitializeMetadata();
@@ -85,6 +88,9 @@ namespace System.Management.Automation
             {
                 CompileOptimized();
             }
+
+            sw.Stop();
+            TelemetryAPI.ReportScriptTelemetry((Ast)_ast, !optimized, sw.ElapsedMilliseconds);
 
             return optimized;
         }

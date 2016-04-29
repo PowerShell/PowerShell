@@ -172,7 +172,7 @@ namespace System.Management.Automation
                     XmlElement parameterValue = doc.CreateElement("command:parameterValue", commandURI);
                     parameterValue.SetAttribute("required", isSwitchParameter ? "false" : "true");
                     //parameterValue.SetAttribute("variableLength", "unknown");
-                    XmlText parameterValue_text = doc.CreateTextNode(elementType.Name);
+                    XmlText parameterValue_text = doc.CreateTextNode(type.Name);
                     command_parameter.AppendChild(parameterValue).AppendChild(parameterValue_text);
                 }
             }

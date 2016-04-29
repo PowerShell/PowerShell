@@ -10,6 +10,7 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -36,7 +37,7 @@ using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using NakedWin32Handle = System.IntPtr;
 using System.Management.Automation.Tracing;
 using Microsoft.PowerShell.Telemetry.Internal;
-
+using Debugger = System.Management.Automation.Debugger;
 
 namespace Microsoft.PowerShell
 {
@@ -51,7 +52,8 @@ namespace Microsoft.PowerShell
         :
         PSHost,
         IDisposable,
-        IHostSupportsInteractiveSession
+        IHostSupportsInteractiveSession,
+        IHostProvidesTelemetryData
     {
 
         #region static methods
@@ -202,17 +204,8 @@ namespace Microsoft.PowerShell
                 theConsoleHost.UI.WriteWarningLine(preStartWarning);
             }
 
-            using (theConsoleHost)
+            try
             {
-#region Telemetry
-
-                // Data Point to Collect: PowerShell Version on this device
-                // If null Version is supplied, the Telemetry infrastucture will log an empty value for null
-                string version = theConsoleHost.ver.ToString();
-                Microsoft.PowerShell.Telemetry.Internal.TelemetryAPI.TraceMessage("PSCONSOLEHOST_START", new { PSVersion = version });
-
-#endregion
-
                 cpp = new CommandLineParameterParser(theConsoleHost, theConsoleHost.ver, bannerText, helpText);
                 string[] tempArgs = new string[args.GetLength(0)];
                 args.CopyTo(tempArgs, 0);
@@ -239,15 +232,17 @@ namespace Microsoft.PowerShell
                 else if (cpp.NamedPipeServerMode)
                 {
                     ClrFacade.StartProfileOptimization("StartupProfileData-NamedPipeServerMode");
-                    System.Management.Automation.Remoting.RemoteSessionNamedPipeServer.RunServerMode(cpp.ConfigurationName);
+                    System.Management.Automation.Remoting.RemoteSessionNamedPipeServer.RunServerMode(
+                        cpp.ConfigurationName);
                     exitCode = 0;
                 }
                 else if (cpp.SocketServerMode)
                 {
                     ClrFacade.StartProfileOptimization("StartupProfileData-SocketServerMode");
-                    System.Management.Automation.Remoting.Server.HyperVSocketMediator.Run(cpp.InitialCommand, cpp.ConfigurationName);
+                    System.Management.Automation.Remoting.Server.HyperVSocketMediator.Run(cpp.InitialCommand,
+                        cpp.ConfigurationName);
                     exitCode = 0;
-                } 
+                }
                 else
                 {
                     ClrFacade.StartProfileOptimization(
@@ -256,7 +251,14 @@ namespace Microsoft.PowerShell
                             : "StartupProfileData-NonInteractive");
                     exitCode = theConsoleHost.Run(cpp, !string.IsNullOrEmpty(preStartWarning));
                 }
+
             }
+            finally
+            {
+                TelemetryAPI.ReportExitTelemetry(theConsoleHost);
+                theConsoleHost.Dispose();
+            }
+
             unchecked
             {
                 return (int)exitCode;
@@ -970,6 +972,22 @@ namespace Microsoft.PowerShell
             }
         }
 
+        bool IHostProvidesTelemetryData.HostIsInteractive
+        {
+            get
+            {
+                return !cpp.NonInteractive && !cpp.AbortStartup &&
+                       ((cpp.InitialCommand == null && cpp.File == null) || cpp.NoExit);
+            }
+        }
+        double IHostProvidesTelemetryData.ProfileLoadTimeInMS { get { return _profileLoadTimeInMS; } }
+        double IHostProvidesTelemetryData.ReadyForInputTimeInMS { get { return _readyForInputTimeInMS; } }
+        int IHostProvidesTelemetryData.InteractiveCommandCount { get { return _interactiveCommandCount; } }
+
+        private double _profileLoadTimeInMS;
+        private double _readyForInputTimeInMS;
+        private int _interactiveCommandCount;
+        
 #endregion overrides
 
 #region non-overrides
@@ -1370,6 +1388,7 @@ namespace Microsoft.PowerShell
 
                 RunspaceCreationEventArgs args = new RunspaceCreationEventArgs(initialCommand, skipProfiles, staMode, importSystemModules, configurationName, initialCommandArgs);
                 CreateRunspace(args);
+
                 if (ExitCode == ExitCodeInitFailure) { break; }
 
                 if (!noExit && !ui.ReadFromStdin)
@@ -1564,6 +1583,9 @@ namespace Microsoft.PowerShell
                                                    PSTask.PowershellConsoleStartup, PSKeyword.UseAlwaysOperational);
             }
 
+            // Record how long it took from process start to runspace open for telemetry.
+            _readyForInputTimeInMS = (DateTime.Now - Process.GetCurrentProcess().StartTime).TotalMilliseconds;
+
             DoRunspaceInitialization(importSystemModules, skipProfiles, initialCommand, configurationName, initialCommandArgs);
         }
 
@@ -1697,16 +1719,31 @@ namespace Microsoft.PowerShell
                     // 3. host independent profile of the current user
                     // 4. host specific profile  of the current user
 
+                    var sw = new Stopwatch();
+                    sw.Start();
                     RunProfile(allUsersProfile, exec);
                     RunProfile(allUsersHostSpecificProfile, exec);
                     RunProfile(currentUserProfile, exec);
                     RunProfile(currentUserHostSpecificProfile, exec);
+                    sw.Stop();
+
+                    var profileLoadTimeInMs = sw.ElapsedMilliseconds;
+                    if (profileLoadTimeInMs > 500 && cpp.ShowBanner)
+                    {
+                        Console.Error.WriteLine(ConsoleHostStrings.SlowProfileLoadingMessage, profileLoadTimeInMs);
+                    }
+
+                    _profileLoadTimeInMS = profileLoadTimeInMs;
                 }
                 else
                 {
                     tracer.WriteLine("-noprofile option specified: skipping profiles");
                 }
             }
+
+            // Startup is reported after possibly running the profile, but before running the initial command (or file)
+            // if one is specified.
+            TelemetryAPI.ReportStartupTelemetry(this);
 
             // If a file was specified as the argument to run, then run it...
             if (cpp != null && cpp.File != null)
@@ -2714,6 +2751,9 @@ namespace Microsoft.PowerShell
                                     parent.PopRunspace();
                                 }
                             }
+
+                            if (!inBlockMode)
+                                theConsoleHost._interactiveCommandCount += 1;
                         }
                     }
                     // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
