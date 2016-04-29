@@ -15,11 +15,10 @@ Describe "Update-TypeData" {
 }
 
 Describe "Update-TypeData basic functionality" -Tags DRT{
-	$tmpDirectory = $TestDrive
     $testfilename = "testfile.ps1xml"
-    $testfile = Join-Path -Path $tmpDirectory -ChildPath $testfilename
-	$invalidFileExtensionFile = Join-Path -Path $tmpDirectory -ChildPath "notmshxml"
-	$filelist = Join-Path -Path $tmpDirectory -ChildPath "fileList.ps1xml"
+    $testfile = Join-Path -Path $TestDrive -ChildPath $testfilename
+	$invalidFileExtensionFile = Join-Path -Path $TestDrive -ChildPath "notmshxml"
+	$filelist = Join-Path -Path $TestDrive -ChildPath "fileList.ps1xml"
 	
 	#Pester bug:https://github.com/PowerShell/psl-pester/issues/6
 	It "Update-TypeData with Invalid TypesXml should throw Exception" -Pending{
@@ -112,30 +111,51 @@ Describe "Update-TypeData basic functionality" -Tags DRT{
 	}
 	
 	It "Update-TypeData with Valid Dynamic Type NoteProperty with Force should work"{
-		Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value 2 -TypeName System.String
-		"string".TestNote | Should Be 2
-		Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value "test" -TypeName System.String -Force
-		"string".TestNote | Should Be "test"
-		Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value $null -TypeName System.String -Force
-		"string".TestNote | Should BeNullOrEmpty
+		try
+		{
+			Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value 2 -TypeName System.String
+			"string".TestNote | Should Be 2
+			Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value "test" -TypeName System.String -Force
+			"string".TestNote | Should Be "test"
+			Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value $null -TypeName System.String -Force
+			"string".TestNote | Should BeNullOrEmpty
+		}
+		finally
+		{
+			Remove-TypeData System.String
+		}
 	}
 	
 	It "Update-TypeData with Valid Dynamic Type AliasProperty with Force should work"{
-		Update-TypeData -MemberType AliasProperty -MemberName TestAlias -Value "Length" -TypeName System.String
-		"string".TestAlias.GetType().Name | Should Be "Int32"
-		"string".TestAlias | Should Be 6
-		Update-TypeData -MemberType AliasProperty -MemberName TestAlias -Value "Length" -SecondValue "string" -TypeName System.String -Force
-		"string".TestAlias.GetType().Name | Should Be "String"
-		"string".TestAlias | Should Be 6
+		try
+		{
+			Update-TypeData -MemberType AliasProperty -MemberName TestAlias -Value "Length" -TypeName System.String
+			"string".TestAlias.GetType().Name | Should Be "Int32"
+			"string".TestAlias | Should Be 6
+			Update-TypeData -MemberType AliasProperty -MemberName TestAlias -Value "Length" -SecondValue "string" -TypeName System.String -Force
+			"string".TestAlias.GetType().Name | Should Be "String"
+			"string".TestAlias | Should Be 6
+		}
+		finally
+		{
+			Remove-TypeData System.String
+		}
 	}
 	
 	It "Update-TypeData with Valid Dynamic Type ScriptMethod with Force should work"{
-		$script1={"script method"}
-		Update-TypeData -MemberType ScriptMethod -MemberName TestScriptMethod -Value $script1 -TypeName System.String
-		"string".TestScriptMethod() | Should Be "script method"
-		$script2={"new script method"}
-		Update-TypeData -MemberType ScriptMethod -MemberName TestScriptMethod -Value $script2 -TypeName System.String -Force
-		"string".TestScriptMethod() | Should Be "new script method"
+		try
+		{
+			$script1={"script method"}
+			Update-TypeData -MemberType ScriptMethod -MemberName TestScriptMethod -Value $script1 -TypeName System.String
+			"string".TestScriptMethod() | Should Be "script method"
+			$script2={"new script method"}
+			Update-TypeData -MemberType ScriptMethod -MemberName TestScriptMethod -Value $script2 -TypeName System.String -Force
+			"string".TestScriptMethod() | Should Be "new script method"
+		}
+		finally
+		{
+			Remove-TypeData System.String
+		}
 	}
 	
 	It "Update-TypeData with Valid Dynamic Type Accept TypeData Object should work"{
