@@ -1,0 +1,102 @@
+﻿//  Copyright (c) Microsoft Corporation. All rights reserved.
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+//
+
+namespace Microsoft.PackageManagement.Internal.Utility.Plugin {
+    using System;
+    using System.Globalization;
+
+    public class WrappedFunc<TRet> : Invokable {
+        private readonly Func<TRet> _func;
+
+        public WrappedFunc(Func<TRet> func) {
+            _func = func;
+        }
+
+        public TRet Invoke() {
+            return _func.Invoke();
+        }
+
+		public override object DynamicInvoke(object[] args) {
+			return Invoke();
+		}
+    }
+
+<#
+    for( var i = 1; i< 17; i++ ) {
+        var types = getTypes(i);
+        var paramDecl = getParamDecl(i);
+		var args = getArgs(i);
+        var param = getParams(i);#>
+    public class WrappedFunc<<#= types #>, TRet> : Invokable {
+        private readonly Func<<#= types #>, TRet> _func;
+
+        public WrappedFunc() {
+        }
+
+        public WrappedFunc(Func<<#= types #>, TRet> func) {
+            _func = func;
+        }
+
+        public TRet Invoke(<#= paramDecl #>) {
+            try {
+                return _func.Invoke(<#= param #>);
+            } catch (Exception e) {
+                throw new Exception( string.Format(CultureInfo.InvariantCulture, "{0}/{1}\r\n{2}", e.GetType().Name, e.Message, e.StackTrace));
+            }
+            // return default(TRet);
+        }
+
+		public override object DynamicInvoke(object[] args) {
+			if( args == null ) {
+				throw new ArgumentNullException("args");
+			}
+			if( args.Length < <#= i #> ) {
+                throw new Exception( "DynamicInvoke with too few args");
+			}
+			return Invoke(<#=args#>);
+		}
+    }
+<# } #>
+
+}
+<#+
+    public string getTypes(int count) {
+        var result = "T0";
+        for( var c = 1; c< count ; c++) {
+            result += " ,T"+c;
+        }
+        return result;
+    }
+
+    public string getParams(int count) {
+        var result = "tVal0";
+        for( var c = 1; c< count ; c++) {
+            result += " ,tVal"+c;
+        }
+        return result;
+    }
+	public string getArgs(int count) {
+        var result = "(T0)args[0]";
+        for( var c = 1; c< count ; c++) {
+            result += " ,(T"+c+")args["+c+"]";
+        }
+        return result;
+    }
+    public string  getParamDecl(int count) {
+        var result = "T0 tVal0";
+        for( var c = 1; c< count; c++ ) {
+            result += " ,T"+c + " tVal"+c;
+        }
+        return result;
+    }
+#>
