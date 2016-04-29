@@ -82,7 +82,11 @@ namespace Microsoft.PowerShell
         {
             public bool Equals(ConsoleKeyInfo x, ConsoleKeyInfo y)
             {
+#if CORECLR                
+                return x.Key == y.Key && x.Modifiers == y.Modifiers;
+#else
                 return x.Key == y.Key && x.KeyChar == y.KeyChar && x.Modifiers == y.Modifiers;
+#endif
             }
 
             public int GetHashCode(ConsoleKeyInfo obj)
