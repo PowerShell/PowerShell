@@ -3,9 +3,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-#if CORECLR
-using System.Runtime.InteropServices;
-#endif
 
 namespace Microsoft.PowerShell
 {
