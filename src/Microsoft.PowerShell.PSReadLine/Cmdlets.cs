@@ -180,7 +180,8 @@ namespace Microsoft.PowerShell
             {
                 HistorySavePath = System.IO.Path.Combine(
                                                          Environment.GetEnvironmentVariable("HOME"), 
-                                                         ".psreadline", 
+                                                         ".powershell",
+                                                         "PSReadLine",
                                                          hostName + "_history.txt");
             }
 #else
