@@ -66,3 +66,65 @@ Describe "Format-List" {
 
     }
 }
+
+Describe "Format-List DRT basic functionality" -Tags DRT{
+	It "Format-List with array should work"{
+		$al = (0..255)
+		$info = @{}
+		$info.array = $al
+		$result = $info | Format-List | Out-String
+		$result | Should Match "Name  : array\s+Value : {0, 1, 2, 3...}"
+	}
+	
+	It "Format-List with No Objects for End-To-End should work"{
+		$p = @{}
+		$result = $p | Format-List -Property "foo","bar" | Out-String
+		$result | Should BeNullOrEmpty
+	}
+	
+	It "Format-List with Null Objects for End-To-End should work"{
+		$p = $null
+		$result = $p | Format-List -Property "foo","bar" | Out-String
+		$result | Should BeNullOrEmpty
+	}
+	
+	#pending on issue#900
+	It "Format-List with single line string for End-To-End should work" -pending{
+		$p = "single line string"
+		$result = $p | Format-List -Property "foo","bar" | Out-String
+		$result | Should BeNullOrEmpty
+	}
+	
+	#pending on issue#900
+	It "Format-List with multiple line string for End-To-End should work" -pending{
+		$p = "Line1\nLine2"
+		$result = $p | Format-List -Property "foo","bar" | Out-String
+		$result | Should BeNullOrEmpty
+	}
+	
+	#pending on issue#900
+	It "Format-List with string sequence for End-To-End should work" -pending{
+		$p = "Line1","Line2"
+		$result = $p | Format-List -Property "foo","bar" | Out-String
+		$result | Should BeNullOrEmpty
+	}
+	
+	It "Format-List with complex object for End-To-End should work"{
+		Add-Type -TypeDefinition "public enum MyDayOfWeek{Sun,Mon,Tue,Wed,Thr,Fri,Sat}"
+		$eto = New-Object MyDayOfWeek
+		$info = @{}
+		$info.intArray = 1,2,3,4
+		$info.arrayList = "string1","string2"
+		$info.enumerable = [MyDayOfWeek]$eto
+		$info.enumerableTestObject = $eto
+		$result = $info|Format-List|Out-String
+		$result | Should Match "Name  : enumerableTestObject"
+		$result | Should Match "Value : Sun"
+		$result | Should Match "Name  : arrayList"
+		$result | Should Match "Value : {string1, string2}"
+		$result | Should Match "Name  : enumerable"
+		$result | Should Match "Value : Sun"
+		$result | Should Match "Name  : intArray"
+		$result | Should Match "Value : {1, 2, 3, 4}"
+	}
+}

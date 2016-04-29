@@ -31,3 +31,60 @@ Describe "Format-Wide" {
         { Format-Wide -InputObject $(gps) -View aoeu } | Should Throw
     }
 }
+
+Describe "Format-Wide DRT basic functionality" -Tags DRT{
+	It "Format-Wide with array should work"{
+		$al = (0..255)
+		$info = @{}
+		$info.array = $al
+		$result = $info | Format-Wide | Out-String
+		$result | Should Match "array"
+	}
+	
+	It "Format-Wide with No Objects for End-To-End should work"{
+		$p = @{}
+		$result = $p | Format-Wide | Out-String
+		$result | Should BeNullOrEmpty
+	}
+	
+	It "Format-Wide with Null Objects for End-To-End should work"{
+		$p = $null
+		$result = $p | Format-Wide | Out-String
+		$result | Should BeNullOrEmpty
+	}
+	
+	It "Format-Wide with single line string for End-To-End should work"{
+		$p = "single line string"
+		$result = $p | Format-Wide | Out-String
+		$result | Should Match $p
+	}
+	
+	It "Format-Wide with multiple line string for End-To-End should work"{
+		$p = "Line1\nLine2"
+		$result = $p | Format-Wide | Out-String
+		$result | Should Match "Line1"
+		$result | Should Match "Line2"
+	}
+	
+	It "Format-Wide with string sequence for End-To-End should work"{
+		$p = "Line1","Line2"
+		$result = $p |Format-Wide | Out-String
+		$result | Should Match "Line1"
+		$result | Should Match "Line2"
+	}
+	
+	It "Format-Wide with complex object for End-To-End should work"{
+		Add-Type -TypeDefinition "public enum MyDayOfWeek{Sun,Mon,Tue,Wed,Thr,Fri,Sat}"
+		$eto = New-Object MyDayOfWeek
+		$info = @{}
+		$info.intArray = 1,2,3,4
+		$info.arrayList = "string1","string2"
+		$info.enumerable = [MyDayOfWeek]$eto
+		$info.enumerableTestObject = $eto
+		$result = $info|Format-Wide|Out-String
+		$result | Should Match "intArray"
+		$result | Should Match "arrayList"
+		$result | Should Match "enumerable"
+		$result | Should Match "enumerableTestObject"
+	}
+}
