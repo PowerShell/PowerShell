@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell
         static Keys()
         {
 #if CORECLR
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 Enter = new ConsoleKeyInfo((char)10, ConsoleKey.Enter, false, false, false);
             }
