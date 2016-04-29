@@ -82,12 +82,25 @@ namespace Microsoft.PowerShell
         {
             public bool Equals(ConsoleKeyInfo x, ConsoleKeyInfo y)
             {
-                return x.Key == y.Key && x.KeyChar == y.KeyChar && x.Modifiers == y.Modifiers;
+                // We *must not* compare the KeyChar field as its value is platform-dependent.
+                // We compare exactly the ConsoleKey enum field (which is platform-agnostic)
+                // and the modifiers.
+
+                return x.Key == y.Key && x.Modifiers == y.Modifiers;
             }
 
             public int GetHashCode(ConsoleKeyInfo obj)
             {
-                return obj.GetHashCode();
+                // Because a comparison of two ConsoleKeyInfo objects is a comparison of the
+                // combination of the ConsoleKey and Modifiers, we must combine their hash code
+                // as well. This implementation uses Josh Bloch's implementation from Effective
+                // Java, see
+                // https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
+
+                int hash = 17;
+                hash = hash * 23 + obj.Key.GetHashCode();
+                hash = hash * 23 + obj.Modifiers.GetHashCode();
+                return hash;
             }
         }
 
