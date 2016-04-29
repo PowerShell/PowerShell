@@ -11,22 +11,6 @@ namespace Microsoft.PowerShell
 {
     internal static class Keys
     {
-        static Keys()
-        {
-#if CORECLR
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                Enter = new ConsoleKeyInfo((char)10, ConsoleKey.Enter, false, false, false);
-            }
-            else
-            {
-                Enter = new ConsoleKeyInfo((char)13, ConsoleKey.Enter, false, false, false);
-            }
-#else
-            Enter = new ConsoleKeyInfo((char)13, ConsoleKey.Enter, false, false, false);
-#endif
-        }
-
         public static ConsoleKeyInfo A = new ConsoleKeyInfo('a', ConsoleKey.A, false, false, false);
         public static ConsoleKeyInfo B = new ConsoleKeyInfo('b', ConsoleKey.B, false, false, false);
         public static ConsoleKeyInfo C = new ConsoleKeyInfo('c', ConsoleKey.C, false, false, false);
@@ -224,7 +208,7 @@ namespace Microsoft.PowerShell
         public static ConsoleKeyInfo End          = new ConsoleKeyInfo((char)0, ConsoleKey.End, false, false, false);
         public static ConsoleKeyInfo CtrlEnd      = new ConsoleKeyInfo((char)0, ConsoleKey.End, false, false, true);
         public static ConsoleKeyInfo ShiftEnd     = new ConsoleKeyInfo((char)0, ConsoleKey.End, true, false, false);
-        public static ConsoleKeyInfo Enter; 
+        public static ConsoleKeyInfo Enter        = new ConsoleKeyInfo((char)13, ConsoleKey.Enter, false, false, false);
         public static ConsoleKeyInfo Escape       = new ConsoleKeyInfo((char)27, ConsoleKey.Escape, false, false, false);
         public static ConsoleKeyInfo Home         = new ConsoleKeyInfo((char)0, ConsoleKey.Home, false, false, false);
         public static ConsoleKeyInfo CtrlHome     = new ConsoleKeyInfo((char)0, ConsoleKey.Home, false, false, true);
