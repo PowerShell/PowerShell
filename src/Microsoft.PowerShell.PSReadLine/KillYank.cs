@@ -6,7 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Language;
-//using System.Windows.Forms;
+#if !CORECLR
+using System.Windows.Forms;
+#endif
 
 namespace Microsoft.PowerShell
 {
