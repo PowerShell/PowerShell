@@ -14,7 +14,9 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
 using System.Security;
 using Dbg = System.Management.Automation.Diagnostics;
+#if !OPEN
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
+#endif
 
 namespace Microsoft.PowerShell
 {
@@ -58,7 +60,11 @@ namespace Microsoft.PowerShell
 
             this.parent = parent;
             this.rawui = new ConsoleHostRawUserInterface(this);
+            isInteractiveTestToolListening = false;
 
+#if OPEN
+            this._supportsVirtualTerminal = false;
+#else
             // Turn on virtual terminal if possible.
             var handle = ConsoleControl.GetActiveScreenBufferHandle();
             var m = ConsoleControl.GetMode(handle);
@@ -71,9 +77,8 @@ namespace Microsoft.PowerShell
             // systems ignore the setting.
             m = ConsoleControl.GetMode(handle);
             this._supportsVirtualTerminal = (m & ConsoleControl.ConsoleModes.VirtualTerminal) != 0;
-
-            isInteractiveTestToolListening = false;
             isTestingShiftTab = false;
+#endif
         }
 
         /// <summary>
@@ -284,6 +289,9 @@ namespace Microsoft.PowerShell
 
         private object ReadLineSafe(bool isSecureString, char? printToken)
         {
+#if OPEN
+            throw new PlatformNotSupportedException("Cannot read secure strings!");
+#else
             // Don't lock (instanceLock) in here -- the caller needs to do that...
 
             PreRead();
@@ -404,6 +412,7 @@ namespace Microsoft.PowerShell
             {
                 return result;
             }
+#endif
         }
 
         /// <summary>
@@ -535,7 +544,7 @@ namespace Microsoft.PowerShell
         /// false otherwise
         /// 
         /// </returns>
-
+#if !OPEN
         private static bool shouldUnsetMode(
             ConsoleControl.ConsoleModes flagToUnset,
             ref ConsoleControl.ConsoleModes m)
@@ -547,11 +556,15 @@ namespace Microsoft.PowerShell
             }
             return false;
         }
+#endif
 
         #region WriteToConsole
 
         internal void WriteToConsole(string value, bool transcribeResult)
         {
+#if OPEN
+            Console.Write(value);
+#else
             ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
 
             // Ensure that we're in the proper line-output mode.  We don't lock here as it does not matter if we
@@ -574,6 +587,7 @@ namespace Microsoft.PowerShell
             // This is atomic, so we don't lock here...
 
             ConsoleControl.WriteConsole(handle, value);
+#endif
 
             if (isInteractiveTestToolListening && parent.IsStandardOutputRedirected)
             {
@@ -1480,9 +1494,9 @@ namespace Microsoft.PowerShell
 
 
 
-        // We don't use System.Environment.NewLine because we are very platform specific with our use of the win32 console APIs
+        // We use System.Environment.NewLine because we are platform-agnostic
 
-        internal const string Crlf = "\x000D\x000A";
+        internal static string Crlf = System.Environment.NewLine;
         private const string Tab = "\x0009";
 
         internal enum ReadLineResult
@@ -1550,6 +1564,10 @@ namespace Microsoft.PowerShell
 
         internal string ReadLine(bool endOnTab, string initialContent, out ReadLineResult result, bool calledFromPipeline, bool transcribeResult)
         {
+#if OPEN
+            result = ReadLineResult.endedOnEnter;
+            return Console.ReadLine();
+#else
             result = ReadLineResult.endedOnEnter;
 
             // If the test hook is set, read from it.
@@ -1705,6 +1723,7 @@ namespace Microsoft.PowerShell
                 s += restOfLine;
 
             return s;
+#endif
         }
 
         /// <summary>
@@ -1712,6 +1731,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="cursorPosition">the cursor position where 'tab' is hit</param>
         /// <returns></returns>
+#if !OPEN
         private char GetCharacterUnderCursor(Coordinates cursorPosition)
         {
             Rectangle region = new Rectangle(0, cursorPosition.Y, RawUI.BufferSize.Width - 1, cursorPosition.Y);
@@ -1734,6 +1754,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(false, "the character at the cursor should be retrieved, never gets to here");
             return '\0';
         }
+#endif
 
 
         /// <summary>
@@ -1780,8 +1801,6 @@ namespace Microsoft.PowerShell
         /// </returns>
         internal string ReadLineWithTabCompletion(Executor exec, bool useUserDefinedCustomReadLine)
         {
-            ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
-
             string input = null;
             string lastInput = "";
             string lastCompletion = "";
@@ -1912,13 +1931,19 @@ namespace Microsoft.PowerShell
 
                     if (deltaInput > 0)
                     {
-                        ConsoleControl.FillConsoleOutputCharacter(handle, ' ', deltaInput, endOfCompletionCursorPos);
+                        Console.SetCursorPosition(endOfCompletionCursorPos.X, endOfCompletionCursorPos.Y);
+                        for (int i = 0; i < deltaInput; i++)
+                        {
+                            Console.Write(' ');
+                        }
                     }
 
                     if (restOfLine != string.Empty)
                     {
                         lastCompletion = completedInput.Remove(completedInput.Length - restOfLine.Length);
+#if !OPEN
                         SendLeftArrows(restOfLine.Length);
+#endif
                     }
                     else
                     {
@@ -1942,6 +1967,7 @@ namespace Microsoft.PowerShell
             return input;
         }
 
+#if !OPEN
         private void SendLeftArrows(int length)
         {
             var inputs = new ConsoleControl.INPUT[length * 2];
@@ -1971,6 +1997,7 @@ namespace Microsoft.PowerShell
 
             ConsoleControl.MimicKeyPress(inputs);
         }
+#endif
 
         private CommandCompletion GetNewCompletionResults(string input)
         {
@@ -2086,7 +2113,9 @@ namespace Microsoft.PowerShell
         // this is a test hook for the ConsoleInteractiveTestTool, which sets this field to true.
 
         private bool isInteractiveTestToolListening;
+#if !OPEN
         private bool isTestingShiftTab;
+#endif
 
         // This instance data is "read-only" and need not have access serialized.
 
