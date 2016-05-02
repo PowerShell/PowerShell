@@ -26,7 +26,9 @@ namespace Microsoft.PowerShell
         /// <param name="args">
         /// Command line arguments to the managed MSH
         /// </param>
-#if CORECLR
+#if OPEN && CORECLR // Open PowerShell needs an actual Main entry-point
+        public static int Main(string[] args)
+#elif CORECLR
         #pragma warning disable 1573
         public static int Start(string consoleFilePath, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)]string[] args, int argc)
         #pragma warning restore 1573
@@ -34,6 +36,9 @@ namespace Microsoft.PowerShell
         public int Start(string consoleFilePath, string[] args)
 #endif
         {
+#if OPEN && CORECLR // Open PowerShell has to set the ALC here, since we don't own the native host
+            PowerShellAssemblyLoadContextInitializer.SetPowerShellAssemblyLoadContext(string.Empty);
+#endif
             System.Management.Automation.Runspaces.EarlyStartup.Init();
 
             // Set ETW activity Id
@@ -69,7 +74,9 @@ namespace Microsoft.PowerShell
                 //      PSSnapInException will cause the control to return back to the native code
                 //      and stuff the EXCEPINFO field with the message of the exception.
                 //      The native code will print this out and exit the process.
+#if !OPEN // consoleFilePath is not available in Open PowerShell
                 if (string.IsNullOrEmpty(consoleFilePath))
+#endif
                 {
 #if DEBUG
                     // Special switches for debug mode to allow self-hosting on InitialSessionState instead
@@ -96,12 +103,14 @@ namespace Microsoft.PowerShell
                 configuration = null;
 #endif
                 }
+#if !OPEN // consoleFilePath is not available in Open PowerShell
                 else
                 {
                     //TODO : Deprecate RunspaceConfiguration and use InitialSessionState
                     configuration =
                         RunspaceConfigForSingleShell.Create(consoleFilePath, out warning);
                 }
+#endif
                 int exitCode = 0;
                 try
                 {
