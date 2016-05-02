@@ -60,7 +60,10 @@ namespace System.Management.Automation.Runspaces
                 var unused0 = RunspaceInit.OutputEncodingDescription;
 
                 // Amsi initialize can also be a little slow
-                AmsiUtils.Init();
+                if (Platform.IsWindows)
+                {
+                    AmsiUtils.Init();
+                }
 
                 // This will init some tables and could load some assemblies.
                 var unused1 = TypeAccelerators.builtinTypeAccelerators;
