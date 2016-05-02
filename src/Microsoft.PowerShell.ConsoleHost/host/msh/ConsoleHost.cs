@@ -170,8 +170,15 @@ namespace Microsoft.PowerShell
         {
             try
             {
-                var profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +
-                                 @"\Microsoft\Windows\PowerShell";
+                string profileDir;
+                if (Platform.IsWindows)
+                {
+                    profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +
+                        @"\Microsoft\Windows\PowerShell";
+                } else
+                {
+                    profileDir = System.IO.Path.Combine(Environment.GetEnvironmentVariable("HOME"), ".powershell");
+                }
 
                 if (!Directory.Exists(profileDir))
                 {
