@@ -190,9 +190,11 @@ namespace Microsoft.PowerShell
             System.Threading.Thread.CurrentThread.Name = "ConsoleHost main thread";
 
             theConsoleHost = ConsoleHost.CreateSingletonInstance(configuration);
+#if !OPEN
             theConsoleHost.BindBreakHandler();
 
             PSHost.IsStdOutputRedirected = theConsoleHost.IsStandardOutputRedirected;
+#endif
 
             if (args == null)
             {
@@ -268,6 +270,7 @@ namespace Microsoft.PowerShell
 
 
 
+#if !OPEN
         /// <summary>
         /// 
         /// The break handler for the program.  Dispatches a break event to the current Executor.
@@ -307,6 +310,7 @@ namespace Microsoft.PowerShell
                     return false;
             }
         }
+#endif
 
         private static bool BreakIntoDebugger()
         {
@@ -425,8 +429,10 @@ namespace Microsoft.PowerShell
             // call the console APIs directly, instead of ui.rawui.FlushInputHandle, as ui may be finalized
             // already if this thread is lagging behind the main thread.
 
+#if !OPEN
             ConsoleHandle handle = ConsoleControl.GetInputHandle();
             ConsoleControl.FlushConsoleInputBuffer(handle);
+#endif
 
             ConsoleHost.SingletonInstance.breakHandlerThread = null;
         }
@@ -1019,11 +1025,13 @@ namespace Microsoft.PowerShell
 #endif
         }
 
+#if !OPEN
         private void BindBreakHandler()
         {
             breakHandlerGcHandle = GCHandle.Alloc(new ConsoleControl.BreakHandler(MyBreakHandler));
             ConsoleControl.AddBreakHandler((ConsoleControl.BreakHandler)breakHandlerGcHandle.Target);
         }
+#endif
 
 #if !CORECLR // Not used on NanoServer: CurrentDomain.UnhandledException not supported on CoreCLR
         private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
@@ -1076,9 +1084,11 @@ namespace Microsoft.PowerShell
         {
             if (!isDisposed)
             {
+#if !OPEN
                 Dbg.Assert(breakHandlerGcHandle != null, "break handler should be set");
                 ConsoleControl.RemoveBreakHandler();
                 breakHandlerGcHandle.Free();
+#endif
 
                 if (isDisposingNotFinalizing)
                 {
@@ -2053,9 +2063,12 @@ namespace Microsoft.PowerShell
 
 
 
+#if !OPEN
         private delegate void InitializeStandardHandleDelegate(NakedWin32Handle handle);
+#endif
 
 
+#if !OPEN
         [ArchitectureSensitive]
         private bool IsStandardHandleRedirected(
             ConsoleControl.StandardHandleId handleId,
@@ -2091,11 +2104,15 @@ namespace Microsoft.PowerShell
 
             return isHandleRedirected;
         }
+#endif
 
         internal bool IsStandardOutputRedirected
         {
             get
             {
+#if OPEN
+                return Console.IsOutputRedirected;
+#else
                 if (initStandardOutDelegate == null)
                 {
                     initStandardOutDelegate = new InitializeStandardHandleDelegate(InitializeStandardOutputWriter);
@@ -2107,6 +2124,7 @@ namespace Microsoft.PowerShell
                         ref isStandardOutputRedirectionDetermined,
                         ref isStandardOutputRedirected,
                         initStandardOutDelegate);
+#endif
             }
         }
 
@@ -2114,6 +2132,9 @@ namespace Microsoft.PowerShell
         {
             get
             {
+#if OPEN
+                return Console.IsInputRedirected;
+#else
                 if (initStandardInDelegate == null)
                 {
                     initStandardInDelegate = new InitializeStandardHandleDelegate(InitializeStandardInputReader);
@@ -2125,6 +2146,7 @@ namespace Microsoft.PowerShell
                         ref isStandardInputRedirectionDetermined,
                         ref isStandardInputRedirected,
                         initStandardInDelegate);
+#endif
             }
         }
 
@@ -2132,6 +2154,9 @@ namespace Microsoft.PowerShell
         {
             get
             {
+#if OPEN
+                return Console.IsErrorRedirected;
+#else
                 if (initStandardErrorDelegate == null)
                 {
                     initStandardErrorDelegate = new InitializeStandardHandleDelegate(InitializeStandardErrorWriter);
@@ -2143,9 +2168,11 @@ namespace Microsoft.PowerShell
                         ref isStandardErrorRedirectionDetermined,
                         ref isStandardErrorRedirected,
                         initStandardErrorDelegate);
+#endif
             }
         }
 
+#if !OPEN
         [ArchitectureSensitive]
         private void InitializeStandardInputReader(NakedWin32Handle stdHandle)
         {
@@ -2200,6 +2227,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(standardErrorWriter == null, "standardErrorWriter should not exist at this point");
             standardErrorWriter = Console.Error;
         }
+#endif
 
         internal TextWriter StandardOutputWriter
         {
@@ -3047,7 +3075,9 @@ namespace Microsoft.PowerShell
             /// </summary>
             private RunspaceRef runspaceRef;
 
+#if !OPEN
         private GCHandle breakHandlerGcHandle;
+#endif
         private System.Threading.Thread breakHandlerThread;
         private bool isDisposed;
         internal ConsoleHostUserInterface ui;
@@ -3076,18 +3106,22 @@ namespace Microsoft.PowerShell
         private bool shouldEndSession;
         private int beginApplicationNotifyCount;
 
+#if !OPEN
         private bool isStandardOutputRedirectionDetermined;
         private bool isStandardOutputRedirected;
-        private TextWriter standardOutputWriter;
         private bool isStandardErrorRedirectionDetermined;
         private bool isStandardErrorRedirected;
-        private TextWriter standardErrorWriter;
         private bool isStandardInputRedirectionDetermined;
         private bool isStandardInputRedirected;
-        private TextReader standardInputReader;
+#endif
+        private TextWriter standardOutputWriter = null;
+        private TextWriter standardErrorWriter = null;
+        private TextReader standardInputReader = null;
+#if !OPEN
         private InitializeStandardHandleDelegate initStandardOutDelegate;
         private InitializeStandardHandleDelegate initStandardInDelegate;
         private InitializeStandardHandleDelegate initStandardErrorDelegate;
+#endif
         private ConsoleTextWriter consoleWriter;
         private WrappedSerializer outputSerializer;
         private WrappedSerializer errorSerializer;
