@@ -1545,7 +1545,7 @@ namespace Microsoft.PowerShell
                     {
                         // Create and open Runspace with PSReadline.
                         defaultImportModulesList = DefaultInitialSessionState.Modules;
-                        DefaultInitialSessionState.ImportPSModule(new[] { "PSReadline" });
+                        DefaultInitialSessionState.ImportPSModule(new[] { "PSReadLine" });
                         consoleRunspace = RunspaceFactory.CreateRunspace(this, DefaultInitialSessionState);
                         try
                         {
