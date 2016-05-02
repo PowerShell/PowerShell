@@ -1,12 +1,13 @@
 {
-    "name": "Microsoft.PowerShell.ConsoleHost",
+    "name": "powershell",
     "version": "1.0.0-*",
-    "description": "Full Windows PowerShell Host (requires native host)",
+    "description": "Windows PowerShell Host",
     "authors": [ "sevoroby", "andschwa" ],
 
     "compilationOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true
+        "allowUnsafe": true,
+        "emitEntryPoint": true
     },
 
     "dependencies": {
@@ -16,13 +17,33 @@
 
     "content": [
         "Modules",
-        "../Modules",
-        "powershell.exe"
+        "../Modules"
     ],
 
     "frameworks": {
+        "netcoreapp1.0": {
+            "imports": [ "dnxcore50", "portable-net45+win8" ],
+            "compilationOptions": {
+                "define": [ "CORECLR", "OPEN" ]
+            },
+            "dependencies": {
+                "Microsoft.NETCore.App": "1.0.0-rc2-3002668",
+                "Newtonsoft.Json": "8.0.2",
+                "System.Xml.XDocument": "4.0.11-rc2-24103",
+                "System.IO.MemoryMappedFiles": "4.0.0-rc2-24103"
+            }
+        },
         "net451": {
         }
+    },
+
+    "runtimes": {
+        "ubuntu.14.04-x64": { },
+        "centos.7.1-x64": { },
+        "win7-x64": { },
+        "win81-x64": { },
+        "win10-x64": { },
+        "osx.10.11-x64": { }
     },
 
     "compile": [
