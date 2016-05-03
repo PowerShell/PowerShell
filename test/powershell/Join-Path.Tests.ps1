@@ -28,16 +28,19 @@ Describe "Join-Path cmdlet tests" {
     #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 913084)]
     It "should be able to join-path special string 'Variable:' with 'foo'" {
         $result=Join-Path "Variable:" "foo"
-        $result |Should BeExactly "Variable:\foo"
+        $result.Count | Should be 1
+        $result       | Should BeExactly "Variable:\foo"
     }
     #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 913084)]
     It "should be able to join-path special string 'Alias:' with 'foo'" {
         $result=Join-Path "Alias:" "foo"
-        $result |Should BeExactly "Alias:\foo"
+        $result.Count | Should be 1
+        $result       | Should BeExactly "Alias:\foo"
     }
     #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 913084)]
     It "should be able to join-path special string 'Env:' with 'foo'" {
         $result=Join-Path "Env:" "foo"
-        $result |Should BeExactly "Env:\foo"
+        $result.Count | Should be 1
+        $result       | Should BeExactly "Env:\foo"
     }
 } 
