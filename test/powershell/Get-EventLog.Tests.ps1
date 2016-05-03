@@ -1,4 +1,4 @@
-﻿if (!$IsLinux -And !$IsOSX) {
+﻿if ($IsWindows) {
     #check to see whether we're running as admin in Windows...
     $windowsIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
     $windowsPrincipal = new-object 'Security.Principal.WindowsPrincipal' $windowsIdentity
@@ -23,14 +23,14 @@ Describe "Get-EventLog cmdlet tests" {
     AfterAll { 
         Remove-EventLog -LogName TestLog -ea Ignore
     }
-    It "should return an array of strings when called with -AsString parameter" -Skip:($IsLinux -Or $IsOSX) {
+    It "should return an array of strings when called with -AsString parameter" -Skip:($IsLinux -Or $IsOSX) -Tag DRT {
         {$result=Get-EventLog -AsString -ea stop}  | Should Not Throw
         {$result.GetType()|% { $_.IsArray }}       | Should Be $true
         {$result.Contains("System")}               | Should Be $true
         {$result.Contains("TestLog")}              | Should Be $true
         ($result.Count -ge 4)                      | Should Be $true
     }
-    It "should return a list of strings when called with -List parameter" -Skip:($IsLinux -Or $IsOSX) {
+    It "should return a list of strings when called with -List parameter" -Skip:($IsLinux -Or $IsOSX) -Tag DRT {
         {$result=Get-EventLog -List -ea stop}      | Should Not Throw
         {$result.GetType()|% { $_.IsArray }}       | Should Be $true
         {$logs=$result|Select -ExpandProperty Log} | Should Not Throw
@@ -38,23 +38,23 @@ Describe "Get-EventLog cmdlet tests" {
         {$logs.Contains("TestLog")}                | Should Be $true
         ($logs.Count -ge 4)                        | Should Be $true
     }
-    It "should be able to Get-EventLog -LogName Application -Newest 100" -Skip:($IsLinux -Or $IsOSX){
+    It "should be able to Get-EventLog -LogName Application -Newest 100" -Skip:($IsLinux -Or $IsOSX) -Tag DRT {
         {$result=get-eventlog -LogName Application -Newest 100 -ea stop} | Should Not Throw
         ($result)                                  | Should Not BeNullOrEmpty
         ($result.Length -le 100)                   | Should Be $true
         ($result[0].GetType().Name)                | Should Be EventLog
     }
-    It "should throw 'ParameterBindingException' when called with both -List and -AsString" -Skip:($IsLinux -Or $IsOSX){
+    It "should throw 'ParameterBindingException' when called with both -List and -AsString" -Skip:($IsLinux -Or $IsOSX) -Tag DRT {
         {Get-EventLog  -LogName MissingTestLog -ea stop} | Should Throw
     }
-    It "should be able to Get-EventLog -LogName * with multiple matches" -Skip:($IsLinux -Or $IsOSX){
+    It "should be able to Get-EventLog -LogName * with multiple matches" -Skip:($IsLinux -Or $IsOSX) -Tag DRT {
         {$result=get-eventlog -LogName *  -ea stop}| Should Not Throw
         ($result)                                  | Should Not BeNullOrEmpty
         {$result.Contains("System")}               | Should Be $true
         {$result.Contains("TestLog")}              | Should Be $true
         ($result.count -ge 4)                      | Should Be $true
     }
-    It "should throw 'The Log name 'MissingTestLog' does not exist' when asked to get a log that does not exist" -Skip:($IsLinux -Or $IsOSX){
+    It "should throw 'The Log name 'MissingTestLog' does not exist' when asked to get a log that does not exist" -Skip:($IsLinux -Or $IsOSX) -Tag DRT {
         {Get-EventLog  -LogName MissingTestLog -ea stop} | Should Throw 'does not exist'
     }
 } 

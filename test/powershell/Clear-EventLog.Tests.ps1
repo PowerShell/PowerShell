@@ -23,7 +23,7 @@ Describe "Clear-EventLog cmdlet tests" {
     AfterAll { 
         Remove-EventLog -LogName TestLog -ea Ignore
     }
-    It "should be able to Clear-EventLog" -Skip:($NonWinAdmin -or $IsLinux -Or $IsOSX) {
+    It "should be able to Clear-EventLog" -Skip:($NonWinAdmin -or $IsLinux -Or $IsOSX) -Tag DRT {
         $result=Get-EventLog -LogName TestLog
         $result.Count   | Should be 1
         $result.Message | Should BeExactly "Test"
@@ -31,7 +31,7 @@ Describe "Clear-EventLog cmdlet tests" {
         $result=Get-EventLog -LogName TestLog -ea Ignore
         $result.Count   | Should be 0
     }
-    It "should throw 'The Log name 'MissingTestLog' does not exist' when asked to clear a log that does not exist" -Skip:($IsLinux -Or $IsOSX){
+    It "should throw 'The Log name 'MissingTestLog' does not exist' when asked to clear a log that does not exist" -Skip:($IsLinux -Or $IsOSX) -Tag DRT {
         {Clear-EventLog  -LogName MissingTestLog -ea stop} | Should Throw 'The Log name "MissingTestLog" does not exist'
     }
 } 

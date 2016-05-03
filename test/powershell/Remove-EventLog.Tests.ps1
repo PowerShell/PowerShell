@@ -1,4 +1,4 @@
-﻿if (!$IsLinux -And !$IsOSX) {
+﻿if ($IsWindows) {
     #check to see whether we're running as admin in Windows...
     $windowsIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
     $windowsPrincipal = new-object 'Security.Principal.WindowsPrincipal' $windowsIdentity
@@ -14,12 +14,12 @@ Describe "New-EventLog cmdlet tests" {
         New-EventLog -LogName TestLog -Source TestSource -ea Ignore
         Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ea ignore
     }
-    It "should be able to Remove-EventLog -LogName <string> -ComputerName <string>" -Skip:($NonWinAdmin -or $IsLinux -Or $IsOSX) {
+    It "should be able to Remove-EventLog -LogName <string> -ComputerName <string>" -Skip:($NonWinAdmin -or $IsLinux -Or $IsOSX) -Tag DRT {
         {Remove-EventLog -LogName TestLog -ComputerName $env:COMPUTERNAME -ea stop}   | Should Not Throw
         {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ea stop} | Should Throw
         {Get-EventLog -LogName TestLog -ea stop}                                      | Should Throw
     }
-    It "should be able to Remove-EventLog -Source <string> -ComputerName <string>" -Skip:($true -Or $NonWinAdmin -Or $IsLinux -Or $IsOSX) {
+    It "should be able to Remove-EventLog -Source <string> -ComputerName <string>" -Skip:($true -Or $NonWinAdmin -Or $IsLinux -Or $IsOSX) -Tag DRT {
         {Remove-EventLog -Source TestSource -ComputerName $env:COMPUTERNAME -ea stop}   | Should Not Throw
         {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ea stop} | Should Throw
         {Get-EventLog -LogName TestLog -ea stop}                                      | Should Throw
