@@ -8,27 +8,34 @@ Describe "Format-Wide" {
     }
 
     It "Should be able to specify the columns in output using the column switch" {
-        { ls | Format-Wide -Column 3 } | Should Not Throw
+        { Get-ChildItem | Format-Wide -Column 3 } | Should Not Throw
     }
 
     It "Should be able to use the autosize switch" {
-        { ls | Format-Wide -Autosize } | Should Not Throw
+        { Get-ChildItem | Format-Wide -Autosize } | Should Not Throw
     }
 
     It "Should be able to take inputobject instead of pipe" {
-        { Format-Wide -InputObject $(ls) } | Should Not Throw
+        { Format-Wide -InputObject $(Get-ChildItem) } | Should Not Throw
     }
 
     It "Should be able to use the property switch" {
-        { Format-Wide -InputObject $(ls) -Property Mode } | Should Not Throw
+        { Format-Wide -InputObject $(Get-ChildItem) -Property Mode } | Should Not Throw
     }
 
     It "Should throw an error when property switch and view switch are used together" {
-        { Format-Wide -InputObject $(ls) -Property CreationTime -View aoeu } | Should Throw "Found invalid data"
+        try
+		{
+			Format-Wide -InputObject $(Get-ChildItem) -Property CreationTime -View aoeu
+		}
+		catch
+		{
+			$_.FullyQualifiedErrorId | Should be "FormatCannotSpecifyViewAndProperty,Microsoft.PowerShell.Commands.FormatWideCommand"
+		}
     }
 
     It "Should throw and suggest proper input when view is used with invalid input without the property switch" {
-        { Format-Wide -InputObject $(gps) -View aoeu } | Should Throw
+        { Format-Wide -InputObject $(Get-Process) -View aoeu } | Should Throw
     }
 }
 

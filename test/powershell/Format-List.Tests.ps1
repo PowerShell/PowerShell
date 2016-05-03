@@ -32,27 +32,27 @@ Describe "Format-List" {
 
     It "Should be able to call a property of the piped input" {
         # Tested on two input commands to verify functionality.
-        { Get-Command | Format-List -Property Name }        | Should Not BeNullOrEmpty
+        { Get-Command | Select-Object -First 5 | Format-List -Property Name }        | Should Not BeNullOrEmpty
 
         { Get-Date    | Format-List -Property DisplayName } | Should Not BeNullOrEmpty
     }
 
     It "Should be able to display a list of props when separated by a comma" {
 
-        (Get-Command | Format-List -Property Name,Source | Out-String) -Split "${nl}" |
+        (Get-Command | Select-Object -First 5 | Format-List -Property Name,Source | Out-String) -Split "${nl}" |
           Where-Object { $_.trim() -ne "" } |
           ForEach-Object { $_ | Should Match "(Name)|(Source)" }
     }
 
     It "Should show the requested prop in every element" {
         # Testing each element of format-list, using a for-each loop since the Format-List is so opaque
-        (Get-Command | Format-List -Property Source | Out-String) -Split "${nl}" |
+        (Get-Command | Select-Object -First 5 | Format-List -Property Source | Out-String) -Split "${nl}" |
           Where-Object { $_.trim() -ne "" } |
           ForEach-Object { $_ | Should Match "Source :" }
     }
 
     It "Should not show anything other than the requested props" {
-        $output = Get-Command | Format-List -Property Name | Out-String
+        $output = Get-Command | Select-Object -First 5 | Format-List -Property Name | Out-String
 
         $output | Should Not Match "CommandType :"
         $output | Should Not Match "Source :"
@@ -78,35 +78,32 @@ Describe "Format-List DRT basic functionality" -Tags DRT{
 	
 	It "Format-List with No Objects for End-To-End should work"{
 		$p = @{}
-		$result = $p | Format-List -Property "foo","bar" | Out-String
-		$result | Should BeNullOrEmpty
+		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
+		$result.Trim() | Should BeNullOrEmpty
 	}
 	
 	It "Format-List with Null Objects for End-To-End should work"{
 		$p = $null
-		$result = $p | Format-List -Property "foo","bar" | Out-String
-		$result | Should BeNullOrEmpty
+		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
+		$result.Trim() | Should BeNullOrEmpty
 	}
 	
-	#pending on issue#900
-	It "Format-List with single line string for End-To-End should work" -pending{
+	It "Format-List with single line string for End-To-End should work"{
 		$p = "single line string"
-		$result = $p | Format-List -Property "foo","bar" | Out-String
-		$result | Should BeNullOrEmpty
+		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
+		$result.Trim() | Should BeNullOrEmpty
 	}
 	
-	#pending on issue#900
-	It "Format-List with multiple line string for End-To-End should work" -pending{
+	It "Format-List with multiple line string for End-To-End should work"{
 		$p = "Line1\nLine2"
-		$result = $p | Format-List -Property "foo","bar" | Out-String
-		$result | Should BeNullOrEmpty
+		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
+		$result.Trim() | Should BeNullOrEmpty
 	}
 	
-	#pending on issue#900
-	It "Format-List with string sequence for End-To-End should work" -pending{
+	It "Format-List with string sequence for End-To-End should work"{
 		$p = "Line1","Line2"
-		$result = $p | Format-List -Property "foo","bar" | Out-String
-		$result | Should BeNullOrEmpty
+		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
+		$result.Trim() | Should BeNullOrEmpty
 	}
 	
 	It "Format-List with complex object for End-To-End should work"{
