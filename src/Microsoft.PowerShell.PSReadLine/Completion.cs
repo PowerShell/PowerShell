@@ -5,6 +5,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -226,6 +227,7 @@ namespace Microsoft.PowerShell
                         ps.Runspace = _runspace;
                     }
                     _tabCompletions = _mockableMethods.CompleteInput(_buffer.ToString(), _current, null, ps);
+                    RemoveDuplicates(ref _tabCompletions);
 
                     if (_tabCompletions.CompletionMatches.Count == 0)
                         return null;
@@ -236,6 +238,39 @@ namespace Microsoft.PowerShell
             }
 
             return _tabCompletions;
+        }
+
+        private void RemoveDuplicates(ref CommandCompletion completions)
+        {
+            if (completions == null)
+                return;
+
+            Collection<CompletionResult> matches = completions.CompletionMatches;
+            Collection<CompletionResult> newMatches = new Collection<CompletionResult>();
+            
+            for (int i=0; i<matches.Count; ++i)
+            {
+                if (matches[i].CompletionText == matches[i].ListItemText)
+                {
+                    newMatches.Add(matches[i]);
+                }
+                else
+                {
+                    int j;
+                    for (j=0; j<matches.Count && j!=i; ++j)
+                    {
+                        if (matches[i].ListItemText == matches[j].ListItemText)
+                            break;
+                    }
+
+                    if (j == matches.Count)
+                    {
+                        newMatches.Add(matches[i]);
+                    }
+                }
+            }
+            
+            completions.CompletionMatches = newMatches;
         }
 
         private void Complete(bool forward)
