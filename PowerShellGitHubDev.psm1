@@ -66,10 +66,12 @@ function Start-PSBuild {
         }
     }
 
-	# use custom package store - this value is also defined in nuget.config under config/repositoryPath
-	# dotnet restore uses this value as the target for installing the assemblies for referenced nuget packages.
-	# dotnet build does not currently consume the  config value but will consume env:NUGET_PACKAGES to resolve these dependencies
-	$env:NUGET_PACKAGES="$PSScriptRoot\Packages"
+    if ($IsWindows) {
+        # use custom package store - this value is also defined in nuget.config under config/repositoryPath
+        # dotnet restore uses this value as the target for installing the assemblies for referenced nuget packages.
+        # dotnet build does not currently consume the  config value but will consume env:NUGET_PACKAGES to resolve these dependencies
+        $env:NUGET_PACKAGES="$PSScriptRoot\Packages"
+    }
 
     # verify we have all tools in place to do the build
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH! See: https://dotnet.github.io/getting-started/"
