@@ -351,18 +351,6 @@ namespace System.Management.Automation
             }
         }
 
-        internal static string NonWindowsGetMachineName()
-        {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.HostName;
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
-        }
-
         // Hostname in this context seems to be the FQDN
         internal static string NonWindowsGetHostName()
         {
@@ -470,22 +458,6 @@ namespace System.Management.Automation
 
     internal static class LinuxPlatform
     {
-        public static string HostName
-        {
-            get
-            {
-                StringBuilder value = new StringBuilder(1024);
-                uint valueLen = (uint)value.Capacity;
-                string computerName = Native.GetComputerName();
-                if (string.IsNullOrEmpty(computerName))
-                {
-                    int lastError = Marshal.GetLastWin32Error();
-                    throw new InvalidOperationException("LinuxPlatform.HostName error: " + lastError);
-                }
-                return computerName;
-            }
-        }
-
         private static string _userName;
         public static string UserName
         {
@@ -695,10 +667,6 @@ namespace System.Management.Automation
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.LPStr)]
             internal static extern string GetUserName();
-
-            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.LPStr)]
-            internal static extern string GetComputerName();
 
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
             internal static extern int GetLinkCount([MarshalAs(UnmanagedType.LPStr)]string filePath, out int linkCount);
