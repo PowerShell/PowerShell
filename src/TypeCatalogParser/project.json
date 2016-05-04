@@ -5,8 +5,8 @@
     },
 
     "dependencies": {
-        "Microsoft.DotNet.ProjectModel": "1.0.0-*",
-        "Microsoft.DotNet.Cli.Utils": "1.0.0-*"
+        "Microsoft.DotNet.ProjectModel": "1.0.0-rc2-002665",
+        "Microsoft.DotNet.Cli.Utils": "1.0.0-rc2-002665"
     },
 
     "frameworks": {
