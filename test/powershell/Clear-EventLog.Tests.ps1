@@ -1,37 +1,29 @@
-if (!$IsLinux -And !$IsOSX) {
-    #check to see whether we're running as admin in Windows...
-    $windowsIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
-    $windowsPrincipal = new-object 'Security.Principal.WindowsPrincipal' $windowsIdentity
-    if ($windowsPrincipal.IsInRole("Administrators") -eq $true) {
-        $NonWinAdmin=$false
-    } else {$NonWinAdmin=$true}
+if ($IsWindows) {
+  #check to see whether we're running as admin in Windows...
+  $windowsIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
+  $windowsPrincipal = new-object 'Security.Principal.WindowsPrincipal' $windowsIdentity
+  if ($windowsPrincipal.IsInRole("Administrators") -eq $true) {
+      $NonWinAdmin=$false
+  } else {$NonWinAdmin=$true}
+  Describe "Clear-EventLog cmdlet tests" -Tags:DRT {
+    #DRT - CmdLet is NYI - change to -Skip:($NonWinAdmin) when implemented
+    It "should be able to Clear-EventLog" -Pending:($True -Or $NonWinAdmin) {
+      Remove-EventLog -LogName TestLog -ea Ignore
+      {New-EventLog -LogName TestLog -Source TestSource -ea Stop} | Should Not Throw
+      {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ea stop } | Should Not Throw
+      {$result=Get-EventLog -LogName TestLog}                     | Should Not Throw
+      ($result.Count)                                             | Should be 1
+      {Clear-EventLog -LogName TestLog}                           | Should Not Throw
+      $result=Get-EventLog -LogName TestLog -ea Ignore
+      ($result.Count)                                             | Should be 0
+      {Remove-EventLog -LogName TestLog -ea Stop}                 | Should Not Throw
+    }
+    It "should throw 'The Log name 'MissingTestLog' does not exist' when asked to clear a log that does not exist" -Pending:($True -Or $NonWinAdmin) {
+      Remove-EventLog -LogName MissingTestLog -ea Ignore
+      try {Clear-EventLog -LogName MissingTestLog -ea stop; Throw "Previous statement unexpectedly succeeded..."
+    }
+    It "should throw 'System.InvalidOperationException' when asked to clear a log that does not exist" -Pending:($True -Or $NonWinAdmin) {
+      try {Clear-EventLog -LogName MissingTestLog -ea stop; Throw "Previous statement unexpectedly succeeded..."
+    }
+  }
 }
-
-
-Describe "Clear-EventLog cmdlet tests" {
-    BeforeAll {
-        Remove-EventLog -LogName TestLog -ea Ignore
-        Remove-EventLog -LogName MissingTestLog -ea Ignore
-        New-EventLog -LogName TestLog -Source TestSource -ea Ignore
-    }
-    BeforeEach {
-        Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ea Ignore
-    }
-    AfterEach { 
-        Clear-EventLog -LogName TestLog -ea Ignore
-    }
-    AfterAll { 
-        Remove-EventLog -LogName TestLog -ea Ignore
-    }
-    It "should be able to Clear-EventLog" -Skip:($NonWinAdmin -or $IsLinux -Or $IsOSX) -Tag DRT {
-        $result=Get-EventLog -LogName TestLog
-        $result.Count   | Should be 1
-        $result.Message | Should BeExactly "Test"
-        Clear-EventLog -LogName TestLog
-        $result=Get-EventLog -LogName TestLog -ea Ignore
-        $result.Count   | Should be 0
-    }
-    It "should throw 'The Log name 'MissingTestLog' does not exist' when asked to clear a log that does not exist" -Skip:($IsLinux -Or $IsOSX) -Tag DRT {
-        {Clear-EventLog  -LogName MissingTestLog -ea stop} | Should Throw 'The Log name "MissingTestLog" does not exist'
-    }
-} 
