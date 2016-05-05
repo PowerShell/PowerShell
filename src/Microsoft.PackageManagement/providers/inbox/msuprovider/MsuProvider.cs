@@ -33,7 +33,11 @@ namespace Microsoft.PackageManagement.Msu.Internal {
         /// <summary>
         /// Windows Update executable
         /// </summary>
+#if !CORECLR
         private readonly string WusaExecutableLocation = Path.Combine(Environment.SystemDirectory, "wusa.exe");
+#else
+        private readonly string WusaExecutableLocation = Path.Combine(Environment.GetEnvironmentVariable("windir"), "system32", "wusa.exe");
+#endif
 
         private static readonly Dictionary<string, string[]> _features = new Dictionary<string, string[]> {
             {Constants.Features.SupportedExtensions, new[] {"msu"}},

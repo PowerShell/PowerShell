@@ -17,7 +17,7 @@
 
     "dependencies": {
         "Microsoft.Management.Infrastructure": "1.0.0-*",
-		"System.Management.Automation": "1.0.0-*"
+		"System.Management.Automation": "1.0.0-*",
     },
 
     "frameworks": {
@@ -48,7 +48,8 @@
             },
             "dependencies": {
 				"NETStandard.Library": "1.5.0-rc2-24022", 
-                "System.Runtime.Loader": "4.0.0-rc2-24022" 
+                "System.Runtime.Loader": "4.0.0-rc2-24022",
+				"System.Net.Requests": "4.0.11-rc3-24105-00"
             }
         }
     }

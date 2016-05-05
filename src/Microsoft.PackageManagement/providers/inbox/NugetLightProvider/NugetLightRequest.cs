@@ -907,7 +907,11 @@
                 return Enumerable.Empty<PackageItem>();
             }
 
+#if CORECLR
+            return SelectedSources.SelectMany(source => GetPackageById(source, name, request, requiredVersion, minimumVersion, maximumVersion, minInclusive, maxInclusive));
+#else
             return SelectedSources.AsParallel().WithMergeOptions(ParallelMergeOptions.NotBuffered).SelectMany(source => GetPackageById(source, name, request, requiredVersion, minimumVersion, maximumVersion, minInclusive, maxInclusive));
+#endif
         }
 
         /// <summary>
@@ -1508,7 +1512,11 @@
 
         internal IEnumerable<PackageItem> SearchForPackages(string name) 
         {
+#if CORECLR
+            var sources = SelectedSources;
+#else
             var sources = SelectedSources.AsParallel().WithMergeOptions(ParallelMergeOptions.NotBuffered);
+#endif
 
             return sources.SelectMany(source => SearchForPackages(source, name));
         }

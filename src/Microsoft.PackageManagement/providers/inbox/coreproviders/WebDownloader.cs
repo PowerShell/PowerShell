@@ -194,7 +194,7 @@ namespace Microsoft.PackageManagement.Providers.Internal
             clientHandler.UseDefaultCredentials = true;
 
             // defaultwebproxy will use default ie settings
-            clientHandler.Proxy = WebRequest.DefaultWebProxy;
+            clientHandler.Proxy = System.Net.WebRequest.DefaultWebProxy;
         
             // set credential of user to the proxy
             clientHandler.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;

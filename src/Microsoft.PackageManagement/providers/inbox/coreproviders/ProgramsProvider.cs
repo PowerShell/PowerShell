@@ -25,6 +25,9 @@ namespace Microsoft.PackageManagement.Providers.Internal {
     using PackageManagement.Internal.Utility.Extensions;
     using Win32;
     using File = System.IO.File;
+#if CORECLR
+    using System.Runtime.InteropServices;
+#endif
 
     public class ProgramsProvider {
         /// <summary>
@@ -136,9 +139,13 @@ namespace Microsoft.PackageManagement.Providers.Internal {
             request.Debug("Calling '{0}::GetInstalledPackages' '{1}','{2}','{3}','{4}'", ProviderName, name, requiredVersion, minimumVersion, maximumVersion);
 
             // dump out results.
-
+#if CORECLR
+            if (RuntimeInformation.OSArchitecture == Architecture.X64) {
+                using (var hklm64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", RegistryRights.ReadKey)) {
+#else
             if (Environment.Is64BitOperatingSystem) {
                 using (var hklm64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", RegistryKeyPermissionCheck.ReadSubTree, RegistryRights.ReadKey)) {
+#endif
                     if (!YieldPackages("hklm64", hklm64, name,requiredVersion, minimumVersion,maximumVersion, request)) {
                         return;
                     }
@@ -264,7 +271,11 @@ namespace Microsoft.PackageManagement.Providers.Internal {
             if (path.Length == 3) {
                 switch (path[0].ToLowerInvariant()) {
                     case "hklm64":
+#if CORECLR
+                        using (var product = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(path[2], RegistryRights.ReadKey)) {
+#else
                         using (var product = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey(path[2], RegistryKeyPermissionCheck.ReadSubTree, RegistryRights.ReadKey)) {
+#endif
                             if (product == null) {
                                 return;
                             }
@@ -273,7 +284,11 @@ namespace Microsoft.PackageManagement.Providers.Internal {
                         }
                         break;
                     case "hkcu64":
+#if CORECLR
+                        using (var product = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64).OpenSubKey(path[2], RegistryRights.ReadKey)) {
+#else
                         using (var product = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64).OpenSubKey(path[2], RegistryKeyPermissionCheck.ReadSubTree, RegistryRights.ReadKey)) {
+#endif
                             if (product == null) {
                                 return;
                             }
@@ -282,7 +297,11 @@ namespace Microsoft.PackageManagement.Providers.Internal {
                         }
                         break;
                     case "hklm32":
+#if CORECLR
+                        using (var product = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(path[2], RegistryRights.ReadKey)) {
+#else
                         using (var product = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(path[2], RegistryKeyPermissionCheck.ReadSubTree, RegistryRights.ReadKey)) {
+#endif
                             if (product == null) {
                                 return;
                             }
@@ -291,7 +310,11 @@ namespace Microsoft.PackageManagement.Providers.Internal {
                         }
                         break;
                     case "hkcu32":
+#if CORECLR
+                        using (var product = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32).OpenSubKey(path[2], RegistryRights.ReadKey)) {
+#else
                         using (var product = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32).OpenSubKey(path[2], RegistryKeyPermissionCheck.ReadSubTree, RegistryRights.ReadKey)) {
+#endif
                             if (product == null) {
                                 return;
                             }
