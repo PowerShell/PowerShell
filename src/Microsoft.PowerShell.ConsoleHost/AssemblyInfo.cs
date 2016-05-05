@@ -7,6 +7,8 @@ using System.Runtime.ConstrainedExecution;
 using System.Security.Permissions;
 #endif
 
+[assembly:InternalsVisibleTo("powershell-tests")]
+
 [assembly:AssemblyCulture("")]
 [assembly:NeutralResourcesLanguage("en-US")]
 
