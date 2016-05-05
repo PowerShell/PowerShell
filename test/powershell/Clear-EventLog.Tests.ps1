@@ -21,9 +21,11 @@ if ($IsWindows) {
     It "should throw 'The Log name 'MissingTestLog' does not exist' when asked to clear a log that does not exist" -Pending:($True -Or $NonWinAdmin) {
       Remove-EventLog -LogName MissingTestLog -ea Ignore
       try {Clear-EventLog -LogName MissingTestLog -ea stop; Throw "Previous statement unexpectedly succeeded..."
+      } catch {$_.FullyQualifiedErrorId      | Should Be "Microsoft.PowerShell.Commands.ClearEventLogCommand"}
     }
     It "should throw 'System.InvalidOperationException' when asked to clear a log that does not exist" -Pending:($True -Or $NonWinAdmin) {
       try {Clear-EventLog -LogName MissingTestLog -ea stop; Throw "Previous statement unexpectedly succeeded..."
+      } catch {$_.FullyQualifiedErrorId      | Should Be "Microsoft.PowerShell.Commands.ClearEventLogCommand"}
     }
   }
 }
