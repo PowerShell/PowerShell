@@ -365,6 +365,12 @@ namespace Microsoft.PowerShell
 
                 switchKey = switchKey.Substring(1);
 
+                // chop off the second dash so we're agnostic wrt specifying - or --
+                if (SpecialCharacters.IsDash(switchKey[0]))
+                {
+                    switchKey = switchKey.Substring(1);
+                }
+
                 if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
                 {
                     showHelp = true;
