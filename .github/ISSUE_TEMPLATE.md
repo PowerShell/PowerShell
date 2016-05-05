@@ -26,7 +26,7 @@ Please fill in the results of the following commands:
 $ dotnet --info
 
 
-$ git rev-parse HEAD && git status
+$ git rev-parse HEAD; git status
 
 
 ```
