@@ -78,12 +78,12 @@ Describe "Get-Unique" {
 	$collection     = "a", "b", "b", "d"
 	$expectedOutput = "a", "b", "d"
 
-	$actual = Get-Unique -InputObject $collection
+	$actual = $collection | Get-Unique
 
-	$actual.Length | Should Be $collection.Length
+	$actual.Length | Should Be $expectedOutput.Length
 
-	$actual[0] | Should Be $collection[0]
-	$actual[1] | Should Be $collection[1]
-	$actual[2] | Should Be $collection[2]
+	$actual[0] | Should Be $expectedOutput[0]
+	$actual[1] | Should Be $expectedOutput[1]
+	$actual[2] | Should Be $expectedOutput[2]
     }
 }
