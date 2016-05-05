@@ -1673,6 +1673,16 @@ namespace Microsoft.PowerShell.CoreCLR
 
             return ClrFacade.LoadFrom(assemblyFile);
         }
+
+        public static IEnumerable<Assembly> GetAssemblies(string namespaceQualifiedTypeName = null)
+        {
+            return ClrFacade.GetAssemblies(namespaceQualifiedTypeName);
+        }
+
+        public static System.Runtime.Loader.AssemblyLoadContext GetAssemblyLoadContext()
+        {
+            return ClrFacade.GetAssemblyLoadContext();
+        }
     }
 }
 
