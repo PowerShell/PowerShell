@@ -2,7 +2,6 @@ using Xunit;
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using Microsoft.PowerShell.CoreConsoleHost;
 
 namespace PSTests
 {
