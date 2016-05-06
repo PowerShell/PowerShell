@@ -25,6 +25,7 @@ function Start-PSBuild {
     param(
         [switch]$NoPath,
         [switch]$Restore,
+        [string]$Output,
 
         [Parameter(ParameterSetName='CoreCLR')]
         [switch]$Publish,
@@ -105,7 +106,7 @@ function Start-PSBuild {
     }
 
     # set output options
-    $OptionsArguments = @{Publish=$Publish; FullCLR=$FullCLR; Runtime=$Runtime}
+    $OptionsArguments = @{Publish=$Publish; Output=$Output; FullCLR=$FullCLR; Runtime=$Runtime}
     $script:Options = New-PSOptions @OptionsArguments
 
     # setup arguments
@@ -114,6 +115,9 @@ function Start-PSBuild {
         $Arguments += "publish"
     } else {
         $Arguments += "build"
+    }
+    if ($Output) {
+        $Arguments += "--output", (Join-Path $PSScriptRoot $Output)
     }
     $Arguments += "--configuration", $Options.Configuration
     $Arguments += "--framework", $Options.Framework
@@ -212,6 +216,7 @@ function New-PSOptions {
         [string]$Runtime,
 
         [switch]$Publish,
+        [string]$Output,
 
         [switch]$FullCLR
     )
@@ -261,20 +266,24 @@ function New-PSOptions {
         "powershell.exe"
     }
 
-    # Build the Output path in script scope
-    $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework)
+    # Build the Output path
+    if ($Output) {
+        $Output = Join-Path $PSScriptRoot $Output
+    } else {
+        $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework)
 
-    # FullCLR only builds a library, so there is no runtime component
-    if (-not $FullCLR) {
-        $Output = [IO.Path]::Combine($Output, $Runtime)
+        # FullCLR only builds a library, so there is no runtime component
+        if (-not $FullCLR) {
+            $Output = [IO.Path]::Combine($Output, $Runtime)
+        }
+
+        # Publish injects the publish directory
+        if ($Publish) {
+            $Output = [IO.Path]::Combine($Output, "publish")
+        }
+
+        $Output = [IO.Path]::Combine($Output, $Executable)
     }
-
-    # Publish injects the publish directory
-    if ($Publish) {
-        $Output = [IO.Path]::Combine($Output, "publish")
-    }
-
-    $Output = [IO.Path]::Combine($Output, $Executable)
 
     return @{ Top = $Top;
               Configuration = $Configuration;
