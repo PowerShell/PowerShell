@@ -1070,17 +1070,6 @@ namespace System.Management.Automation
             }
         }
 
-        internal static string WinGetMachineName()
-        {
-            // In future release of operating systems, you might be able to rename a machine without
-            // rebooting.  Therefore, don't cache this machine name.
-            StringBuilder buf = new StringBuilder(MaxMachineNameLength);
-            int len = MaxMachineNameLength;
-            if (Win32Native.GetComputerName(buf, ref len) == 0)
-                throw new InvalidOperationException(CoreClrStubResources.CannotGetComputerName);
-            return buf.ToString();
-        }
-
         /// <summary>
         /// MachineName
         /// </summary>
@@ -1088,14 +1077,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Platform.IsWindows)
-                {
-                    return WinGetMachineName();
-                }
-                else
-                {
-                    return Platform.NonWindowsGetMachineName();
-                }
+                return System.Environment.MachineName;
             }
         }
 
@@ -1275,9 +1257,6 @@ namespace System.Management.Automation
             [DllImport("SspiCli.dll", CharSet = CharSet.Unicode, SetLastError = true)]
             // Win32 return type is BOOLEAN (which is 1 byte and not BOOL which is 4bytes)
             internal static extern byte GetUserNameEx(int format, [Out] StringBuilder domainName, ref uint domainNameLen);
-
-            [DllImport("api-ms-win-downlevel-kernel32-l2-1-0.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-            internal extern static int GetComputerName([Out]StringBuilder nameBuffer, ref int bufferSize);
 
             [DllImport("api-ms-win-core-localization-l1-2-1.dll", CharSet = CharSet.Unicode)]
             internal static extern int FormatMessage(int dwFlags, IntPtr lpSource, int dwMessageId, 
