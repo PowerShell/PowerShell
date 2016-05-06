@@ -2858,7 +2858,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             //if this is a reparse point and force is not specified then warn user but dont remove the directory.
-            if (((directory.Attributes & FileAttributes.ReparsePoint) != 0) && !Force)
+            if (Platform.IsWindows && ((directory.Attributes & FileAttributes.ReparsePoint) != 0) && !Force)
             {
                 String error = StringUtil.Format(FileSystemProviderStrings.DirectoryReparsePoint, directory.FullName);
                 Exception e = new IOException(error);
@@ -8452,10 +8452,24 @@ namespace Microsoft.PowerShell.Commands
                         IntPtr dangerousHandle = handle.DangerousGetHandle();
                         int bytesReturned;
                         
+                        // Do a FSCTL_GET_REPARSE_POINT first because the ReparseTag could be 
+                        // IO_REPARSE_TAG_MOUNT_POINT or IO_REPARSE_TAG_SYMLINK.
+                        // Using the wrong one results in mismatched-tag error.
+
                         REPARSE_GUID_DATA_BUFFER junctionData = new REPARSE_GUID_DATA_BUFFER();
+                        ClrFacade.StructureToPtr<REPARSE_GUID_DATA_BUFFER>(junctionData, outBuffer, false);
+
+                        result = DeviceIoControl(dangerousHandle, FSCTL_GET_REPARSE_POINT, IntPtr.Zero, 0, 
+                            outBuffer, inOutBufferSize, out bytesReturned, IntPtr.Zero);
+                        if (!result)
+                        {
+                            int lastError = Marshal.GetLastWin32Error();
+                            throw new Win32Exception(lastError);
+                        }
+
+                        junctionData = ClrFacade.PtrToStructure<REPARSE_GUID_DATA_BUFFER>(outBuffer);                     
                         junctionData.ReparseDataLength = 0;
                         junctionData.DataBuffer = new char[MAX_REPARSE_SIZE];
-                        junctionData.ReparseTag = IO_REPARSE_TAG_MOUNT_POINT;
 
                         ClrFacade.StructureToPtr<REPARSE_GUID_DATA_BUFFER>(junctionData, inBuffer, false);
 
