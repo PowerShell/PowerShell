@@ -86,12 +86,12 @@ set-psbreakpoint -command foo
         Remove-PSBreakPoint -Id $brk.Id
     }
 
-    It "Should throw Exception when missing mandatory parameter -line"{
+    It "Should throw Exception when missing mandatory parameter -line" -Pending {
          $output = & $ps -noninteractive -command "sbp -column 1 -script $scriptFileName"
          [system.string]::Join(" ", $output) | Should Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }
 
-    It "Should throw Exception when missing mandatory parameter" {
+    It "Should throw Exception when missing mandatory parameter" -Pending {
          $output = & $ps -noprofile -noninteractive -command "sbp -line 1"
          [system.string]::Join(" ", $output) | Should Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }
