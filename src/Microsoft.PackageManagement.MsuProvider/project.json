@@ -1,7 +1,7 @@
 {
     "name": "Microsoft.PackageManagement.MsuProvider",
     "version": "1.0.0-*",
-    "authors": [ "dagrala" ],
+    "authors": [ "dagrala", "andschwa" ],
 
     "compilationOptions": {
         "warningsAsErrors": true
@@ -16,10 +16,7 @@
     },
 
     "dependencies": {
-        "Microsoft.Management.Infrastructure": "1.0.0-*",
-		"System.Management.Automation": "1.0.0-*",
-		"Microsoft.PackageManagement": "1.0.0-*",
-		"Microsoft.PackageManagement.ArchiverProviders": "1.0.0-*"
+        "Microsoft.PackageManagement.ArchiverProviders": "1.0.0-*"
     },
 
     "frameworks": {
@@ -37,21 +34,16 @@
                 "System.Management": "",
                 "System.Configuration": "",
                 "System.Configuration.Install": "",
-				"System.Net": "",
-				"System.Net.Http": "",
-				"System.IO.Compression": "",
-				"System.IO.Compression.FileSystem": ""
+                "System.Net": "",
+                "System.Net.Http": "",
+                "System.IO.Compression": "",
+                "System.IO.Compression.FileSystem": ""
             }
         },
-		"netstandard1.5": {
+        "netstandard1.5": {
             "imports": [ "dnxcore50" ],
             "compilationOptions": {
                 "define": [ "CORECLR" ]
-            },
-            "dependencies": {
-				"NETStandard.Library": "1.5.0-rc2-24022", 
-                "System.Runtime.Loader": "4.0.0-rc2-24022",
-				"System.Net.Requests": "4.0.11-rc3-24105-00"
             }
         }
     }
