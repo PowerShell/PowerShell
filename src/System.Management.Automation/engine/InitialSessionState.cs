@@ -5666,7 +5666,7 @@ if($paths) {
             try
             {
                 // WARNING: DUPLICATE CODE see RunspaceConfigForSingleShell
-                assembly = ClrFacade.Load(new AssemblyName(psSnapInInfo.AssemblyName));
+                assembly = Assembly.Load(new AssemblyName(psSnapInInfo.AssemblyName));
             }
             catch (BadImageFormatException e)
             {
