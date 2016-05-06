@@ -153,8 +153,8 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
             };
         }
 
-        internal string DownloadAndValidateFile(string name, Swidtag swidtag) {
-            var file = DownLoadFileFromLinks(name, swidtag.Links.Where(each => each.Relationship == Iso19770_2.Relationship.InstallationMedia));
+        internal string DownloadAndValidateFile(Swidtag swidtag) {
+            var file = DownLoadFileFromLinks(swidtag.Links.Where(each => each.Relationship == Iso19770_2.Relationship.InstallationMedia));
             if (string.IsNullOrWhiteSpace(file)) {
                 return null;
             }
@@ -211,12 +211,14 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                         remainingTry = 0;
                     }
                 }
-            }
+           } 
 
             return file;
         }
 
-        internal string DownLoadFileFromLinks(string name, IEnumerable<Link> links) {
+        
+        
+        internal string DownLoadFileFromLinks(IEnumerable<Link> links) {
             string file = null;
 
             foreach (var link in links) {
@@ -229,7 +231,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                     link.HRef);
 
                 // got a valid file!
-                if (file != null && file.FileExists()) {
+                if (file != null && file.FileExists()) {                    
                     return file;
                 }
             }

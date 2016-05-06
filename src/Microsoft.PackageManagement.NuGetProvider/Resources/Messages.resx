@@ -126,6 +126,9 @@
   <data name="CompletedIterating" xml:space="preserve">
     <value>Completed iterating for '{0}'.</value>
   </data>
+  <data name="CopyUnzippedFiles" xml:space="preserve">
+    <value>Copying unzipped package to '{0}'</value>
+  </data>
   <data name="CouldNotGetResponseFromQuery" xml:space="preserve">
     <value>Could not get response from query '{0}'.</value>
   </data>
@@ -156,11 +159,17 @@
   <data name="DownloadingPackage" xml:space="preserve">
     <value>Downloading '{0}'.</value>
   </data>
+  <data name="DownloadingProgress" xml:space="preserve">
+    <value>Downloaded {0:0.00} MB out of {1:0.00} MB.</value>
+  </data>
   <data name="FailedDownloadPackage" xml:space="preserve">
     <value>Downloading package '{0}' failed, please make sure '{1}' is accessable.</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
     <value>File '{0}' does not exist in '{1}'.</value>
+  </data>
+  <data name="FinishInstalling" xml:space="preserve">
+    <value>Finish installing package '{0}'</value>
   </data>
   <data name="FoundRegisteredSource" xml:space="preserve">
     <value>Source '{0}' is one of the registered sources in '{1}' provider.</value>
@@ -228,8 +237,14 @@
   <data name="PackageFailedInstallOrDownload" xml:space="preserve">
     <value>Package '{0}' failed to {1}.</value>
   </data>
+  <data name="PackageFailedToInstallReason" xml:space="preserve">
+    <value>Package '{0}' failed to be installed because: {1}</value>
+  </data>
   <data name="PackagesReceived" xml:space="preserve">
     <value>'{0}' packages recevied in the last request.</value>
+  </data>
+  <data name="ReadingManifest" xml:space="preserve">
+    <value>Process Package Manifest</value>
   </data>
   <data name="RegisteredSources" xml:space="preserve">
     <value>There are '{0}' registered sources in '{1}' provider.</value>
@@ -239,6 +254,9 @@
   </data>
   <data name="RequestCanceled" xml:space="preserve">
     <value>Request is canceled in '{0}'::'{1}'.</value>
+  </data>
+  <data name="RetryingDownload" xml:space="preserve">
+    <value>Retry downloading '{0}' for '{1}' more times</value>
   </data>
   <data name="SavingConfigurationWithFile" xml:space="preserve">
     <value>Saving a config with a file path '{0}'.</value>
@@ -257,6 +275,9 @@
   </data>
   <data name="SourceIsAFilePath" xml:space="preserve">
     <value>Source '{0}' is a file path.</value>
+  </data>
+  <data name="SourceLocationNotValid" xml:space="preserve">
+    <value>Source Location '{0}' is not valid.</value>
   </data>
   <data name="SuccessfullyDownloaded" xml:space="preserve">
     <value>Package '{0}' is downloaded.</value>
@@ -290,6 +311,9 @@
   </data>
   <data name="UnkownCategory" xml:space="preserve">
     <value>Unknown category for '{0}'::'{1}': '{2}'</value>
+  </data>
+  <data name="Unzipping" xml:space="preserve">
+    <value>Unzipping</value>
   </data>
   <data name="UriSchemeNotSupported" xml:space="preserve">
     <value>Uri Scheme '{0}' is not supported.</value>

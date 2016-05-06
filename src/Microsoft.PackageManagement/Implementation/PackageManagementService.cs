@@ -68,6 +68,7 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
         private readonly Dictionary<string, byte[]> _providerFiles = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
         private string _baseDir;
         internal bool InternalPackageManagementInstallOnly = false;
+        private readonly string _nuget ="NuGet";
 
         internal enum ProviderOption
         {
@@ -261,14 +262,35 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
                             return _packageProviders[providerName].SingleItemAsEnumerable();
                         }
                     }
-                   
+
                     // SelectProviders() is iterating through the loaded provider list. As we still need to go through the
                     // unloaded provider list, we should not warn users yet at this point of time.
                     // If the provider is not found, eventually we will error out in SelectProviders()/cmdletbase.cs(). 
-                    
+
                     //hostApi.Warn(hostApi.FormatMessageString(Constants.Messages.UnknownProvider, providerName));                   
                 }
                 return Enumerable.Empty<PackageProvider>();
+            } else {
+                // If a user does not specify -provider or -provider name, we will bootstrap the nuget provider if it does not exist.                
+                //Only find, install, uninstall, and save cmdlets requires the bootstrap.                   
+                var bootstrapNuGet = hostApi.GetOptionValues(Constants.BootstrapNuGet).FirstOrDefault();
+
+                if ((bootstrapNuGet != null) && bootstrapNuGet.EqualsIgnoreCase("true")) {
+                    //check if the NuGet provider is already loaded                   
+                    if (!_packageProviders.Keys.Any(each => each.EqualsIgnoreCase(_nuget))) {
+                        //we'll bootstrap NuGet provider under the following cases:
+                        //case 1: on a clean VM, type install-package foobar
+                        //case 2: on a existing VM, if the nuget provider does not exist and type install-package foobar
+                        //case 3: An existing VM has a old version of the NuGet installed, no bootstrap will occur. This means there is no changes
+                        //        to the user, unless he does 'install-packageprovider -name nuget -force'.
+                        if (RequirePackageProvider(null, _nuget, Constants.MinVersion, hostApi)) {
+                            // seems to think we found it.
+                            if (_packageProviders.ContainsKey(_nuget)) {
+                                return PackageProviders.Concat(_packageProviders[_nuget].SingleItemAsEnumerable());
+                            }
+                        }
+                    }
+                }
             }
 
             return PackageProviders;
@@ -548,7 +570,7 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
 
             var providers = isPathRooted ? ImportPackageProviderViaPath(request, providerName, requiredVersion, minimumVersion, maximumVersion, force)
                 : ImportPackageProviderViaName(request, providerName, requiredVersion, minimumVersion, maximumVersion, force, throwErrorWhenImportWithName);
-
+          
             return providers;
         }
 
@@ -1113,7 +1135,7 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
             return _packageProviders.Values.SelectMany(each => each.ResolvePackageSources(request));
         }
 
-    
+
         /// <summary>
         ///     Searches for the assembly, interrogates it for it's providers and then proceeds to load
         /// </summary>

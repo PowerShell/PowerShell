@@ -14,6 +14,7 @@
 
 namespace Microsoft.PackageManagement.Internal.Implementation {
     using System;
+    using System.Net;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
@@ -65,6 +66,8 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
         public abstract IEnumerable<string> GetOptionValues(string key);
 
         public abstract IEnumerable<string> Sources {get;}
+
+        public abstract IWebProxy WebProxy { get; }
 
         public abstract string CredentialUsername { get; }
 
@@ -234,7 +237,7 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
 
         #endregion
 
-        private string FormatMessageString(string messageText, params object[] args) {
+        protected string FormatMessageString(string messageText, params object[] args) {
             if (string.IsNullOrWhiteSpace(messageText)) {
                 return string.Empty;
             }

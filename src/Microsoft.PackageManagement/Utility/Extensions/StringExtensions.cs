@@ -192,6 +192,20 @@ namespace Microsoft.PackageManagement.Internal.Utility.Extensions {
         }
 
         /// <summary>
+        ///  Determines whether the input string is equals to the source string
+        /// ignoring a single / at the end
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static bool EqualsIgnoreEndSlash(this string source, string input)
+        {
+            return source.EqualsIgnoreCase(input)
+                || (string.Concat(source, "/")).EqualsIgnoreCase(input)
+                || (string.Concat(input, "/")).EqualsIgnoreCase(source);
+        }
+
+        /// <summary>
         ///     Determines whether the input string contains the specified substring
         /// </summary>
         public static bool ContainsIgnoreCase(this string source, string input) {

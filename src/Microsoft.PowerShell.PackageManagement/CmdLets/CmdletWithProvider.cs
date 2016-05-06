@@ -60,6 +60,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
         }
 
         protected bool IsFailingEarly;
+        protected Dictionary<string, string> UserSpecifiedSourcesList = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         protected virtual IEnumerable<PackageProvider> SelectedProviders {
             get {
@@ -94,11 +95,15 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                     // sources must actually match a name or location. Keeps providers from being a bit dishonest
 
                     var potentialSources = providers.SelectMany(each => each.ResolvePackageSources(this.SuppressErrorsAndWarnings(IsProcessing))
-                                        // check either that the source name or source location can be found in user specifed sources
-                        .Where(source => userSpecifiedSources.ContainsAnyOfIgnoreCase(source.Name, source.Location)
-                                        // or that the source.location contains any of the user specified sources
-                                        || userSpecifiedSources.Any(userSpecifiedSource => source.Location.ContainsIgnoreCase(userSpecifiedSource)))).ReEnumerable();
+                        .Where(source => userSpecifiedSources.Any(
+                            // check whether location of the resolved source contains the userspecified source
+                            userSpecifiedSource => source.Location.EqualsIgnoreEndSlash(userSpecifiedSource)
+                            // or the name equals to the name provided by the user
+                            || source.Name.EqualsIgnoreCase(userSpecifiedSource)))).ReEnumerable();
 
+                    // save the resolved package source name and location
+                    potentialSources.SerialForEach(src => UserSpecifiedSourcesList.AddOrSet(src.Name, src.Location));
+                
                     // prefer registered sources
                     registeredSources = potentialSources.Where(source => source.IsRegistered).ReEnumerable();
 
@@ -109,7 +114,8 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                         // we've filtered out everthing!
 
                         if (!didUserSpecifyProviders) {
-                            if (IsInvocation && CmdletState > AsyncCmdletState.GenerateParameters ) {
+                            // if cmdlet is generating parameter, we have to log error that source is wrong
+                            if (IsInvocation && CmdletState >= AsyncCmdletState.GenerateParameters ) {
                                 
                                 // user didn't actually specify provider(s), the sources can't be tied to any particular provider
                                 QueueHeldMessage(() => Error(Constants.Errors.SourceNotFound, userSpecifiedSources.JoinWithComma()));

@@ -84,78 +84,129 @@ namespace Microsoft.PackageManagement.NuGetProvider
 
         internal static HttpResponseMessage GetHttpResponse(HttpClient httpClient, string query, Request request)
         {
-            var cts = new CancellationTokenSource();
-
+            // try downloading for 3 times
+            int remainingTry = 3;
+            object timerLock = new object();
             Timer timer = null;
+            CancellationTokenSource cts = null;
+            bool cleanUp = true;
 
-            try
+            Action cleanUpAction = () =>
             {
-                Task task = httpClient.GetAsync(query, cts.Token);
-
-                // check every second to see whether request is cancelled
-                timer = new Timer(_ =>
+                lock (timerLock)
+                {
+                    // check whether clean up is already done before or not
+                    if (!cleanUp)
                     {
-                        if (request.IsCanceled)
+                        try
                         {
-                            cts.Cancel();
-                        }
-                    },
-                    null, 0, 1000);                
-                
-                // start the task
-                task.Wait();
+                            if (timer != null)
+                            {
+                                // stop timer
+                                timer.Change(Timeout.Infinite, Timeout.Infinite);
+                                // dispose it
+                                timer.Dispose();
+                            }
 
-                if (task.IsCompleted && task is Task<HttpResponseMessage>)
-                {
-                    return (task as Task<HttpResponseMessage>).Result;
+                            // dispose the token
+                            if (cts != null)
+                            {
+                                cts.Cancel();
+                                cts.Dispose();
+                            }
+                        }
+                        catch { }
+
+                        cleanUp = true;
+                    }
                 }
-            }
-            finally
+            };
+
+            while (remainingTry > 0)
             {
-                // dispose the token
-                cts.Dispose();
-                if (timer != null)
+                // if user cancel the request, no need to do anything
+                if (request.IsCanceled)
                 {
-                    // stop timer
-                    timer.Change(Timeout.Infinite, Timeout.Infinite);
-                    // dispose it
-                    timer.Dispose();
+                    break;
+                }
+
+                try
+                {
+                    // decrease try by 1
+                    remainingTry -= 1;
+
+                    // create new timer and cancellation token source
+                    lock (timerLock)
+                    {
+                        // check every second to see whether request is cancelled
+                        timer = new Timer(_ =>
+                        {
+                            if (request.IsCanceled)
+                            {
+                                cleanUpAction();
+                            }
+                        }, null, 500, 1000);
+
+                        cts = new CancellationTokenSource();
+
+                        cleanUp = false;
+                    }
+
+                    Task task = httpClient.GetAsync(query, cts.Token);
+
+                    // start the task
+                    task.Wait();
+
+                    if (task.IsCompleted && task is Task<HttpResponseMessage>)
+                    {
+                        var result = (task as Task<HttpResponseMessage>).Result;
+
+                        // if success, returns result
+                        if (result.IsSuccessStatusCode)
+                        {
+                            return result;
+                        }
+
+                        // otherwise, we have to retry again
+                    }
+
+                    // if request is canceled, don't retry
+                    if (request.IsCanceled)
+                    {
+                        break;
+                    }
+
+                    request.Verbose(Resources.Messages.RetryingDownload, query, remainingTry);
+                }
+                catch (Exception ex)
+                {
+                    if (ex is AggregateException)
+                    {
+                        (ex as AggregateException).Handle(singleException =>
+                            {
+                                // report each of the exception
+                                request.Verbose(singleException.Message);
+                                request.Debug(singleException.StackTrace);
+                                return true;
+                            });
+                    }
+                    else
+                    {
+                        // single exception, just report the message and stacktrace
+                        request.Verbose(ex.Message);
+                        request.Debug(ex.StackTrace);
+                    }
+
+                    // if there is exception, we will retry too
+                    request.Verbose(Resources.Messages.RetryingDownload, query, remainingTry);
+                }
+                finally
+                {
+                    cleanUpAction();
                 }
             }
 
             return null;
-        }
-
-        internal static HttpClient GetHttpClientHelper(NetworkCredential networkCredential)
-        {
-            var clientHandler = new HttpClientHandler();
-
-            // if we are given a network credential, use that
-            if (networkCredential != null)
-            {
-                // else use the one given to us
-                clientHandler.Credentials = networkCredential;
-                clientHandler.PreAuthenticate = true;
-            }
-            else
-            {
-                clientHandler.UseDefaultCredentials = true;
-            }
-
-#if !CORECLR
-            // defaultwebproxy will use default ie settings
-            clientHandler.Proxy = WebRequest.DefaultWebProxy;
-#endif
-
-            // set credential of user to the proxy
-            clientHandler.Proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
-
-            var httpClient = new HttpClient(clientHandler);
-
-            // Mozilla/5.0 is the general token that says the browser is Mozilla compatible, and is common to almost every browser today.
-            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 NuGet");
-
-            return httpClient;
         }
 
         /// <summary>
@@ -166,7 +217,7 @@ namespace Microsoft.PackageManagement.NuGetProvider
         /// <returns></returns>
         internal static Uri ValidateUri(Uri query, NuGetRequest request)
         {
-            var client = GetHttpClientHelper(request.GetNetworkCredential());
+            var client = request.ClientWithoutAcceptHeader;
 
             var response = GetHttpResponse(client, query.AbsoluteUri, request);
 

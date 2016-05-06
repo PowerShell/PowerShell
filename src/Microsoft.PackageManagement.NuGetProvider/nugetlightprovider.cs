@@ -447,7 +447,7 @@
                 }
 
                 NuGetClient.InstallOrDownloadPackageHelper(pkgItem, request, Constants.Download,
-                    (packageItem) => NuGetClient.DownloadSinglePackage(packageItem, request, destLocation));
+                    (packageItem, progressTracker) => NuGetClient.DownloadSinglePackage(packageItem, request, destLocation, progressTracker));
             } catch (Exception ex) {
                 ex.Dump(request);
                 request.WriteError(ErrorCategory.InvalidOperation, fastPackageReference, ex.Message);
@@ -486,7 +486,7 @@
 
                 // got this far, let's install the package we came here for.
                 if (!NuGetClient.InstallOrDownloadPackageHelper(pkgItem, request, Constants.Install,
-                    (packageItem) => NuGetClient.InstallSinglePackage(packageItem, request)))
+                    (packageItem, progressTracker) => NuGetClient.InstallSinglePackage(packageItem, request, progressTracker)))
                 {
                     // package itself didn't install. Write error
                     request.WriteError(ErrorCategory.InvalidResult, pkgItem.Id, Constants.Messages.PackageFailedInstallOrDownload, pkgItem.Id, CultureInfo.CurrentCulture.TextInfo.ToLower(Constants.Install));

@@ -78,7 +78,14 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                 }));
             }
         }
-
+        protected override string BootstrapNuGet
+        {
+            get
+            {
+                // need bootstrap NuGet if does not exists.
+                return "true";
+            }
+        }
         public override bool ProcessRecordAsync() {
             if (IsPackageByObject) {
                 return UninstallPackages(InputObject);
@@ -150,7 +157,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                                 return false;
                             }
                             WriteObject(installedPkg);
-                            LogEvent(EventTask.Uninstall, EventId.Uninstall, Resources.Messages.PackageUnInstalled, installedPkg.Name, installedPkg.Version, installedPkg.ProviderName, installedPkg.Source ?? string.Empty, installedPkg.Status ?? string.Empty);
+                            LogEvent(EventTask.Uninstall, EventId.Uninstall, Resources.Messages.PackageUnInstalled, installedPkg.Name, installedPkg.Version, installedPkg.ProviderName, installedPkg.Source ?? string.Empty, installedPkg.Status ?? string.Empty, installedPkg.InstallationPath ?? string.Empty);
                             TraceMessage(Constants.UnInstallPackageTrace, installedPkg);
                         }
                     }

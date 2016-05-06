@@ -21,6 +21,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using System.Management.Automation;
     using Microsoft.PackageManagement.Implementation;
     using Microsoft.PackageManagement.Internal.Packaging;
+    using Microsoft.PackageManagement.Internal.Utility.Collections;
     using Microsoft.PackageManagement.Internal.Utility.Extensions;
     using Microsoft.PackageManagement.Packaging;
 
@@ -144,14 +145,16 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                 return false;
             }
 
-            if (!CheckMatchedDuplicates()) {
+            var swids = CheckMatchedDuplicates().ReEnumerable();
+            if (swids == null || !swids.Any())
+            {
                 // there are duplicate packages
                 // not going to install.
                 return false;
             }
 
             // good list. Let's roll...
-            return base.InstallPackages(_resultsPerName.Values.SelectMany(each => each).ToArray());
+            return base.InstallPackages(swids.ToArray());
         }
 
         protected override void ProcessPackage(PackageProvider provider, IEnumerable<string> searchKey, SoftwareIdentity package) {
@@ -207,7 +210,6 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
         /// <param name="dependencyToBeInstalled"></param>
         /// <param name="permanentlyMarked"></param>
         /// <param name="temporarilyMarked"></param>
-        /// <param name="request"></param>
         /// <returns></returns>
         internal bool DepthFirstVisit(SoftwareIdentity packageItem, HashSet<SoftwareIdentity> temporarilyMarked,
             HashSet<SoftwareIdentity> permanentlyMarked, List<SoftwareIdentity> dependencyToBeInstalled)

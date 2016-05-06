@@ -106,6 +106,14 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
         [Parameter]
         public virtual PSCredential Credential {get; set;}
 
+        [Parameter]
+        [ValidateNotNull()]
+        public Uri Proxy { get; set; }
+
+        [Parameter]
+        [ValidateNotNull()]
+        public PSCredential ProxyCredential { get; set; }
+
         public override IEnumerable<string> Sources
         {
             get
@@ -140,6 +148,18 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             }
         }
         */
+
+        /// <summary>
+        /// Returns web proxy that provider can use
+        /// Construct the webproxy using InternalWebProxy
+        /// </summary>
+        public override System.Net.IWebProxy WebProxy
+        {
+            get
+            {
+                return new PackageManagement.Utility.InternalWebProxy(Proxy, ProxyCredential == null ? null : ProxyCredential.GetNetworkCredential());
+            }
+        }
 
         public override string CredentialUsername
         {
@@ -245,6 +265,15 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             return true;
         }
 
+
+        protected override string BootstrapNuGet
+        {
+            get
+            {
+                //find, install, save- inherits from this class. They all need bootstrap NuGet if does not exists.
+                return "true";
+            }
+        }
         /// <summary>
         ///  Validate if the package is a provider package. 
         /// </summary>
@@ -303,7 +332,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                             name
                         },
                     provider = pv,
-                    packages = pv.FindPackage(name, RequiredVersion, MinimumVersion, MaximumVersion, host)
+                    packages = pv.FindPackage(name, RequiredVersion, MinimumVersion, MaximumVersion, (Sources != null && Sources.Count() > 1) ? host.SuppressErrorsAndWarnings(IsProcessing) : host)
                 });
 
                 return a.Concat(b).Concat(c);
@@ -431,53 +460,115 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             return result;
         }
 
-        protected bool CheckMatchedDuplicates() {
-            var overMatched = _resultsPerName.Keys.Select(each => _resultsPerName[each])
-                .Where(each => each != null && each.Count > 1).ReEnumerable();
-
-            // todo: we should think this thru one more time. I'm not convinced we're doing the exact right thing.
+         protected IEnumerable<SoftwareIdentity> CheckMatchedDuplicates() {
             // if there are overmatched packages we need to know why:
             // are they found across multiple providers?
             // are they found accross multiple sources?
             // are they all from the same source?
+ 
+            foreach (var list in _resultsPerName.Values.Where(each => each != null && each.Any())) {
+                if (list.Count == 1) {
+                    //no overmatched
+                    yield return list.FirstOrDefault();
+                } else {
+                    //process the overmatched case
+                    SoftwareIdentity selectedPackage = null;
 
-            if (overMatched.Any()) {
+                    var providers = list.Select(each => each.ProviderName).Distinct().ToArray();
+                    var sources = list.Select(each => each.Source).Distinct().ToArray();
 
-                foreach (var set in overMatched) {
-                    var suggestion = "";
+                    //case: a user specifies -Source and multiple packages are found. In this case to determine which one should be installed,
+                    //      We treat the user's package source array is in a priority order, i.e. the first package source has the highest priority.
+                    //      Of course, these packages should not be from a single source with the same provider.
+                    //      Example: install-package -Source @('src1', 'src2')
+                    //               install-package -Source @('src1', 'src2') -Provider @('p1', 'p2')
+                    if (Sources.Any() && (providers.Length != 1 || sources.Length != 1)) {
+                        // let's use the first source as our priority.As long as we find a package, we exit the 'for' loop righ away
+                        foreach (var source in Sources) {
+                            //select all packages matched source
+                            var pkgs = list.Where(package => source.EqualsIgnoreCase(package.Source) || (UserSpecifiedSourcesList.Keys.ContainsIgnoreCase(package.Source) && source.EqualsIgnoreCase(UserSpecifiedSourcesList[package.Source]))).ToArray();
+                            if (pkgs.Length == 0) {
+                                continue;
+                            }
+                            if (pkgs.Length == 1) {
+                                //only one provider found the package
+                                selectedPackage = pkgs[0];
+                                break;
+                            }
+                            if (ProviderName == null) {
+                                //user does not specify '-providerName' but we found multiple packages with a source, can not determine which one
+                                //will error out
+                                break;
+                            }
+                            if (pkgs.Length > 1) {
+                                //case: multiple providers matched the same source. 
+                                //need to process provider's priority order                               
+                                var pkg = ProviderName.Select(p => pkgs.FirstOrDefault(each => each.ProviderName.EqualsIgnoreCase(p))).FirstOrDefault();
+                                if (pkg != null) {
+                                    selectedPackage = pkg;
+                                    break;
+                                }
+                            }
+                        }//inner foreach
 
-                    var providers = set.Select(each => each.ProviderName).Distinct().ToArray();
-                    var sources = set.Select(each => each.Source).Distinct().ToArray();
-                    if (providers.Length == 1) {
-                        // it's matching this package multiple times in the same provider.
-                        if (sources.Length == 1) {
-                            // matching it from a single source.
-                            // be more exact on matching name? or version?
-                            suggestion = Resources.Messages.SuggestRequiredVersion;
-                        } else {
-                            // it's matching the same package from multiple sources
-                            // tell them to use -source
-                            suggestion = Resources.Messages.SuggestSingleSource;
+                        //case: a user specifies -Provider array but no -Source and multiple packages are found. In this case to determine which one should be installed,
+                        //      We treat the user's package provider array is in a priority order, i.e. the first provider in the array has the highest priority.
+                        //      Of course, these packages should not be from a single source with the same provider.
+                        //      Example: install-package -Provider @('p1', 'p2')
+                    } else if (ProviderName != null && ProviderName.Any() && (providers.Length != 1 || sources.Length != 1)) {
+                        foreach (var providerName in ProviderName) {
+
+                            //select all packages matched with the provider name
+                            var packages = list.Where(each => providerName.EqualsIgnoreCase(each.ProviderName)).ToArray();
+                            if (packages.Length == 0) {
+                                continue;
+                            }
+                            if (packages.Length == 1) {
+                                //only one provider found the package, that's good
+                                selectedPackage = packages[0];
+                                break;
+                            } else {
+                                //user does not specify '-source' but we found multiple packages with one provider, we can not determine which one
+                                //will error out 
+                                break;
+                            }
                         }
+                    }
+
+                    if (selectedPackage != null) {
+                        yield return selectedPackage;
                     } else {
-                        // found across multiple providers
-                        // must specify -provider
-                        suggestion = Resources.Messages.SuggestSingleProviderName;
+                        //error out for the overmatched case
+                        var suggestion = "";
+                        if (providers.Length == 1) {
+                            // it's matching this package multiple times in the same provider.
+                            if (sources.Length == 1) {
+                                // matching it from a single source.
+                                // be more exact on matching name? or version?
+                                suggestion = Resources.Messages.SuggestRequiredVersion;
+                            } else {
+                                // it's matching the same package from multiple sources
+                                // tell them to use -source
+                                suggestion = Resources.Messages.SuggestSingleSource;
+                            }
+                        } else {
+                            // found across multiple providers
+                            // must specify -provider
+                            suggestion = Resources.Messages.SuggestSingleProviderName;
+                        }
+
+                        string searchKey = null;
+
+                        foreach (var pkg in list) {
+
+                            Warning(Constants.Messages.MatchesMultiplePackages, pkg.SearchKey, pkg.ProviderName, pkg.Name, pkg.Version, GetPackageSourceNameOrLocation(pkg));
+                            searchKey = pkg.SearchKey;
+                        }
+                        Error(Constants.Errors.DisambiguateForInstall, searchKey, GetMessageString(suggestion, suggestion));
                     }
-
-                    string searchKey = null;
-
-                    foreach (var pkg in set) {
-
-                        Warning(Constants.Messages.MatchesMultiplePackages, pkg.SearchKey, pkg.ProviderName, pkg.Name, pkg.Version, GetPackageSourceNameOrLocation(pkg));                        
-                        searchKey = pkg.SearchKey;
-                    }
-                    Error(Constants.Errors.DisambiguateForInstall, searchKey, GetMessageString(suggestion, suggestion));
                 }
-                return false;
             }
-            return true;
-        }
+        }     
 
         // Performs a reverse lookup from Package Source Location -> Source Name for a Provider
         private string GetPackageSourceNameOrLocation(SoftwareIdentity package)
@@ -518,6 +609,11 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
         }
 
         protected bool InstallPackages(params SoftwareIdentity[] packagesToInstall) {
+
+            if(packagesToInstall == null || packagesToInstall.Length == 0)
+            {
+                return false;
+            }
             // first, check to see if we have all the required dynamic parameters
             // for each package/provider
             foreach (var package in packagesToInstall) {
@@ -536,6 +632,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                 return false;
             }
             var progressId = 0;
+            var triedInstallCount = 0;
 
             if (packagesToInstall.Length > 1) {
                 progressId = StartProgress(0, Constants.Messages.InstallingPackagesCount, packagesToInstall.Length);
@@ -573,6 +670,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                     }
                 }
 
+                
                 try {
                     if (ShouldProcessPackageInstall(pkg.Name, pkg.Version, pkg.Source)) {
                         foreach (var installedPkg in provider.InstallPackage(pkg, this).CancelWhen(CancellationEvent.Token)) {
@@ -588,8 +686,10 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                                 installedPkg.Version,
                                 installedPkg.ProviderName,
                                 installedPkg.Source ?? string.Empty,
-                                installedPkg.Status ?? string.Empty);
-                            TraceMessage(Constants.InstallPackageTrace, installedPkg);                           
+                                installedPkg.Status ?? string.Empty,
+                                installedPkg.InstallationPath ?? string.Empty);
+                            TraceMessage(Constants.InstallPackageTrace, installedPkg);
+                            triedInstallCount++;
                         }
                     }
                 } catch (Exception e) {
@@ -600,9 +700,10 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                 if (packagesToInstall.Length > 1) {
                     Progress(progressId, (n*100/packagesToInstall.Length) + 1, Constants.Messages.InstalledPackageMultiple, pkg.Name, n, packagesToInstall.Length);
                 }
+                
             }
 
-            return true;
+            return (triedInstallCount == packagesToInstall.Length);
         }
 
         protected bool ShouldProcessPackageInstall(string packageName, string version, string source) {

@@ -52,14 +52,6 @@ namespace Microsoft.PackageManagement.MetaProvider.PowerShell.Internal {
             }
         }
 
-        private static string FixMeFormat(string formatString, object[] args) {
-            if (args == null || args.Length == 0) {
-                // not really any args, and not really expectng any
-                return formatString.Replace('{', '\u00ab').Replace('}', '\u00bb');
-            }
-            return args.Aggregate(formatString.Replace('{', '\u00ab').Replace('}', '\u00bb'), (current, arg) => current + string.Format(CultureInfo.CurrentCulture, " \u00ab{0}\u00bb", arg));
-        }
-
         internal IRequest Extend(params object[] objects) {
             return objects.ConcatSingleItem(this).As<IRequest>();
         }
@@ -68,28 +60,13 @@ namespace Microsoft.PackageManagement.MetaProvider.PowerShell.Internal {
             return Messages.ResourceManager.GetString(messageText);
         }
 
-        internal string FormatMessageString(string messageText, params object[] args) {
-            if (string.IsNullOrWhiteSpace(messageText)) {
-                return string.Empty;
-            }
-
-            if (messageText.IndexOf(PackageManagement.Internal.Constants.MSGPrefix, StringComparison.CurrentCultureIgnoreCase) == 0) {
-                // check with the caller first, then with the local resources, and fallback to using the messageText itself.
-                messageText = GetMessageString(messageText.Substring(PackageManagement.Internal.Constants.MSGPrefix.Length), GetMessageStringInternal(messageText) ?? messageText) ?? GetMessageStringInternal(messageText) ?? messageText;
-            }
-
-            // if it doesn't look like we have the correct number of parameters
-            // let's return a fix-me-format string.
-            var c = Enumerable.Count(Enumerable.Where(messageText.ToCharArray(), each => each == '{'));
-            if (c < args.Length) {
-                return FixMeFormat(messageText, args);
-            }
-            return string.Format(CultureInfo.CurrentCulture, messageText, args);
-        }
-
         public PSCredential Credential {
-            get {
-                return new PSCredential(CredentialUsername,CredentialPassword);
+            get
+            {
+                if (CredentialUsername != null && CredentialPassword != null) {
+                    return new PSCredential(CredentialUsername, CredentialPassword);
+                }
+                return null;
             }
         }
 

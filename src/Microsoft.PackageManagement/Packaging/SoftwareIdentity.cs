@@ -36,7 +36,7 @@ namespace Microsoft.PackageManagement.Packaging {
         public SoftwareIdentity() {
         }
 
-        internal string FastPackageReference {get; set;}
+        public string FastPackageReference {get; set;}
         internal PackageProvider Provider {get; set;}
 
         public string ProviderName {
@@ -45,18 +45,12 @@ namespace Microsoft.PackageManagement.Packaging {
             }
         }
 
-        public IEnumerable<string> Dependencies {
-            get {
-                return Links.Where(each => Iso19770_2.Relationship.Requires == each.Relationship).Select(each => each.HRef).WhereNotNull().Select(each => Uri.UnescapeDataString(each.ToString())).ReEnumerable();
-            }
-        }
-
         public string Source {get; internal set;}
         public string Status {get; internal set;}
         public string SearchKey {get; internal set;}
         public string FullPath {get; internal set;}
         public string PackageFilename {get; internal set;}
-        public bool FromTrustedSource {get; internal set;}
+        public bool FromTrustedSource {get; set;}
 
         public string Summary {
             get {
@@ -91,6 +85,31 @@ namespace Microsoft.PackageManagement.Packaging {
         public MetadataIndexer Metadata {
             get {
                 return new MetadataIndexer(this);
+            }
+        }
+
+        internal string InstallationPath
+        {
+            get
+            {
+                // no payload or directories, just returns empty string
+                if (Payload == null || Payload.Directories == null)
+                {
+                    return string.Empty;
+                }
+
+                // find the installation directories based on the payload.
+                var installationDirectories = Payload.Directories
+                    // Use the directory if it is key, if its location is not null or white space and its name is not null or whitespace
+                    .Where(directory => directory.IsKey.HasValue
+                        && (bool)directory.IsKey
+                        && !string.IsNullOrWhiteSpace(directory.Location)
+                        && !string.IsNullOrWhiteSpace(directory.Name))
+                    // combine location and name to get the directory
+                    .Select(directory => System.IO.Path.Combine(directory.Location, directory.Name));
+
+                // if there is installation directories, concat them with comma
+                return installationDirectories.JoinWithComma();
             }
         }
 

@@ -30,6 +30,26 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             : base(new[] {OptionCategory.Provider, OptionCategory.Source}) {
         }
 
+        [Parameter]
+        [ValidateNotNull()]
+        public Uri Proxy { get; set; }
+
+        [Parameter]
+        [ValidateNotNull()]
+        public PSCredential ProxyCredential { get; set; }
+
+        /// <summary>
+        /// Returns web proxy that provider can use
+        /// Construct the webproxy using InternalWebProxy
+        /// </summary>
+        public override System.Net.IWebProxy WebProxy
+        {
+            get
+            {
+                return new PackageManagement.Utility.InternalWebProxy(Proxy, ProxyCredential == null ? null : ProxyCredential.GetNetworkCredential());
+            }
+        }
+
         protected override IEnumerable<string> ParameterSets {
             get {
                 return new[] {""};

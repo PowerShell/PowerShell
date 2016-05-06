@@ -7,6 +7,7 @@ namespace Microsoft.PackageManagement.NuGetProvider
     using System.Linq;
     using System.Security;
     using Resources;
+    using System.Net;
 
     public abstract class Request {
         //private Dictionary<string, string[]> _options;
@@ -116,6 +117,8 @@ namespace Microsoft.PackageManagement.NuGetProvider
         public abstract string CredentialUsername {get;}
 
         public abstract SecureString CredentialPassword {get;}
+
+        public abstract IWebProxy WebProxy { get; }
 
         public abstract bool ShouldBootstrapProvider(string requestor, string providerName, string providerVersion, string providerType, string location, string destination);
 

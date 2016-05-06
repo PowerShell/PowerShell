@@ -94,6 +94,15 @@ namespace Microsoft.PackageManagement.NuGetProvider.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copying unzipped package to &apos;{0}&apos;.
+        /// </summary>
+        internal static string CopyUnzippedFiles {
+            get {
+                return ResourceManager.GetString("CopyUnzippedFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not get response from query &apos;{0}&apos;..
         /// </summary>
         internal static string CouldNotGetResponseFromQuery {
@@ -184,6 +193,15 @@ namespace Microsoft.PackageManagement.NuGetProvider.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Downloaded {0:0.00} MB out of {1:0.00} MB..
+        /// </summary>
+        internal static string DownloadingProgress {
+            get {
+                return ResourceManager.GetString("DownloadingProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Downloading package &apos;{0}&apos; failed, please make sure &apos;{1}&apos; is accessable..
         /// </summary>
         internal static string FailedDownloadPackage {
@@ -198,6 +216,15 @@ namespace Microsoft.PackageManagement.NuGetProvider.Resources {
         internal static string FileNotFound {
             get {
                 return ResourceManager.GetString("FileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Finish installing package &apos;{0}&apos;.
+        /// </summary>
+        internal static string FinishInstalling {
+            get {
+                return ResourceManager.GetString("FinishInstalling", resourceCulture);
             }
         }
         
@@ -400,11 +427,29 @@ namespace Microsoft.PackageManagement.NuGetProvider.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Package &apos;{0}&apos; failed to be installed because: {1}.
+        /// </summary>
+        internal static string PackageFailedToInstallReason {
+            get {
+                return ResourceManager.GetString("PackageFailedToInstallReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; packages recevied in the last request..
         /// </summary>
         internal static string PackagesReceived {
             get {
                 return ResourceManager.GetString("PackagesReceived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Process Package Manifest.
+        /// </summary>
+        internal static string ReadingManifest {
+            get {
+                return ResourceManager.GetString("ReadingManifest", resourceCulture);
             }
         }
         
@@ -432,6 +477,15 @@ namespace Microsoft.PackageManagement.NuGetProvider.Resources {
         internal static string RequestCanceled {
             get {
                 return ResourceManager.GetString("RequestCanceled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retry downloading &apos;{0}&apos; for &apos;{1}&apos; more times.
+        /// </summary>
+        internal static string RetryingDownload {
+            get {
+                return ResourceManager.GetString("RetryingDownload", resourceCulture);
             }
         }
         
@@ -486,6 +540,15 @@ namespace Microsoft.PackageManagement.NuGetProvider.Resources {
         internal static string SourceIsAFilePath {
             get {
                 return ResourceManager.GetString("SourceIsAFilePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source Location &apos;{0}&apos; is not valid..
+        /// </summary>
+        internal static string SourceLocationNotValid {
+            get {
+                return ResourceManager.GetString("SourceLocationNotValid", resourceCulture);
             }
         }
         
@@ -585,6 +648,15 @@ namespace Microsoft.PackageManagement.NuGetProvider.Resources {
         internal static string UnkownCategory {
             get {
                 return ResourceManager.GetString("UnkownCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unzipping.
+        /// </summary>
+        internal static string Unzipping {
+            get {
+                return ResourceManager.GetString("Unzipping", resourceCulture);
             }
         }
         

@@ -599,6 +599,24 @@ namespace Microsoft.PowerShell.PackageManagement.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Imported provider &apos;{0}&apos; ..
+        /// </summary>
+        internal static string ProviderImported {
+            get {
+                return ResourceManager.GetString("ProviderImported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import-PackageProvider failed. Possibly the provider name is different from the package name &apos;{0}&apos;. Try Get-PackageProvider -ListAvailable to identify the associated provider name and run Import-PackageProvider&quot;..
+        /// </summary>
+        internal static string ProviderNameDifferentFromPackageName {
+            get {
+                return ResourceManager.GetString("ProviderNameDifferentFromPackageName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ProviderName must be specified. Available Providers: {0}..
         /// </summary>
         internal static string ProviderNameNotSpecified {

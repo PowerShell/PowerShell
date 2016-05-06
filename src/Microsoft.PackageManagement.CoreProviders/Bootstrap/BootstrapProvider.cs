@@ -117,6 +117,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                 case "install":
                     request.YieldDynamicOption("DestinationPath", "Folder", false);
                     request.YieldDynamicOption("Scope", "String", false, new[] { "CurrentUser", "AllUsers" });
+                    request.YieldDynamicOption("DisplayLongSourceName", "Switch", false);
                     break;
             }
         }
@@ -318,7 +319,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                             return InstallPackageReference(provider, fastPath, request, packages);
 
                         default:
-                            request.Warning("Package Reference '{0}' resolves to {1} packages.", packages.Length);
+                            request.Warning("Package Reference '{0}' resolves to {1} packages.", link.HRef, packages.Length);
                             return false;
                     }
 
@@ -334,7 +335,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
         private bool InstallNugetPackage(Package provider, Link link, string fastPath, BootstrapRequest request)
         {
             // download the nuget package
-            string downloadedNupkg = request.DownloadAndValidateFile(provider.Name, provider._swidtag);
+            string downloadedNupkg = request.DownloadAndValidateFile(provider._swidtag);
 
             if (downloadedNupkg != null)
             {
@@ -445,7 +446,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
 
         private bool InstallPackageFile(Package provider, string fastPath, BootstrapRequest request) {
             // we can download and verify this package and get the core to install it.
-            var file = request.DownloadAndValidateFile(provider.Name, provider._swidtag);
+            var file = request.DownloadAndValidateFile(provider._swidtag);
             if (file != null) {
                 // we have a valid file.
                 // run the installer
@@ -525,11 +526,13 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
             string file = fastPath;
 
             //source can be from install-packageprovider or can be from the pipeline
-            if (!request.LocalSource.Any() && !fastPath.IsFile()) {
+            if (!request.LocalSource.Any() && !fastPath.IsFile() && link != null) {
 
                 targetFilename = link.Attributes[Iso19770_2.Discovery.TargetFilename];
+
                 // download the file
-                file = request.DownloadAndValidateFile(provider.Name, provider._swidtag);
+                file = request.DownloadAndValidateFile(provider._swidtag);              
+
             }
 
             if (string.IsNullOrWhiteSpace(targetFilename)) {
@@ -538,7 +541,6 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
             }
 
             targetFilename = Path.GetFileName(targetFilename);
-
             if (string.IsNullOrWhiteSpace(provider.Version)) {
                 request.Error(ErrorCategory.InvalidOperation, fastPath, Resources.Messages.MissingVersion);
                 return false;
@@ -579,11 +581,13 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                         return false;
                     }
 
-                    //do not need to load the assembly here.The caller in the PackageManangemnt.RequirePackageProvider() is loading assembly
-                    //after the install
                     if (File.Exists(targetFile)) {
                         request.Verbose(Resources.Messages.InstalledPackage, provider.Name, targetFile);
                         request.YieldFromSwidtag(provider, fastPath);
+
+                        //Load the provider. This is needed when a provider has dependencies. For example, if Nuget provider has a dependent foobar 
+                        // provider and when 'Install-PackageProvider -name NuGet', we want both NuGet and Foobar provider gets loaded.
+                        PackageManagementService.LoadProviderAssembly(request, targetFile, false);
                         return true;
                     }
 
@@ -610,7 +614,15 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
             }
         }
 
-        public void InstallPackage(string fastPath, BootstrapRequest request) {
+        public void InstallPackage(string fastPath, BootstrapRequest request)
+        {
+            InstallPackage(fastPath, request, false);
+        }
+
+        internal void InstallPackage(string fastPath, BootstrapRequest request, bool errorContinue) {
+            if (fastPath == null) {
+                throw new ArgumentNullException("fastPath");
+            }
             if (request == null) {
                 throw new ArgumentNullException("request");
             }
@@ -618,8 +630,8 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
             request.Debug("Calling 'Bootstrap::InstallPackage'");
             var triedAndFailed = false;
 
-            //source can be from install-packageprovider or can be from the pipeline
-            if (fastPath != null && (request.LocalSource.Any() || fastPath.IsFile()))
+            //source can be from install - packageprovider or can be from the pipeline
+            if ((request.LocalSource.Any() || fastPath.IsFile()))
             {
                 InstallPackageFromFile(fastPath, request);
                 return;
@@ -629,12 +641,41 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
 
             var provider = request.GetProvider(new Uri(fastPath));
             if (provider == null || !provider.IsValid) {
-                request.Error(ErrorCategory.InvalidData, fastPath, Constants.Messages.UnableToResolvePackage, fastPath);
+                var result = errorContinue ? request.Warning(Constants.Messages.UnableToResolvePackage, fastPath) : request.Error(ErrorCategory.InvalidData, fastPath, Constants.Messages.UnableToResolvePackage, fastPath);
                 return;
+            }
+
+            // first install the dependencies if any
+            var dependencyLinks = provider._swidtag.Links.Where(link => link.Relationship == Iso19770_2.Relationship.Requires).GroupBy(link => link.Artifact);
+            foreach (var depLinks in dependencyLinks) {
+                foreach (var item in depLinks) {
+                    Package packages = null;
+                    if (string.IsNullOrWhiteSpace(item.Attributes[Iso19770_2.Discovery.Name])) {
+                        //select the packages that marked as "latest"
+                        packages = (new Feed(request, new[] {item.HRef})).Query().FirstOrDefault();
+                    } else {
+                        if (string.IsNullOrWhiteSpace(item.Attributes[Iso19770_2.Discovery.Version])) {
+                            //select the packages that marked as "latest" and matches the name specified
+                            packages = (new Feed(request, new[] { item.HRef })).Query().FirstOrDefault(p => p.Name.EqualsIgnoreCase(item.Attributes[Iso19770_2.Discovery.Name]));
+                        } else {
+                            //select the packages that matches version and name
+                            packages = (new Feed(request, new[] { item.HRef })).Query(item.Attributes[Iso19770_2.Discovery.Name], item.Attributes[Iso19770_2.Discovery.Version]).FirstOrDefault();
+                        }
+                    }
+
+                    if (packages == null) {
+                        // no package found
+                        request.Warning(Resources.Messages.NoDependencyPackageFound, item.HRef);
+                        continue;
+                    }
+                    // try to install dependent providers. If fails, continue
+                    InstallPackage(packages.Location.AbsoluteUri, request, errorContinue: true);
+                }
             }
 
             // group the links along 'artifact' lines
             var artifacts = provider._swidtag.Links.Where(link => link.Relationship == Iso19770_2.Relationship.InstallationMedia).GroupBy(link => link.Artifact);
+
 
             // try one artifact set at a time.
             foreach (var artifact in artifacts) {
@@ -660,10 +701,10 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
 
             if (triedAndFailed) {
                 // we tried installing something and it didn't go well.
-                request.Error(ErrorCategory.InvalidOperation, fastPath, Constants.Messages.FailedProviderBootstrap, fastPath);
+                var result = errorContinue ? request.Warning(Constants.Messages.FailedProviderBootstrap, fastPath) : request.Error(ErrorCategory.InvalidOperation, fastPath, Constants.Messages.FailedProviderBootstrap, fastPath);
             } else {
                 // we didn't even find a link to bootstrap.
-                request.Error(ErrorCategory.InvalidOperation, fastPath, "Provider {0} missing installationmedia to install.", fastPath);
+                var result = errorContinue ? request.Warning(Resources.Messages.MissingInstallationmedia, fastPath) : request.Error(ErrorCategory.InvalidOperation, fastPath, Resources.Messages.MissingInstallationmedia, fastPath);
             }
         }
     }

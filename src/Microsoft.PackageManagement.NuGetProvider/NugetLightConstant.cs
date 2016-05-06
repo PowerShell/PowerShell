@@ -28,7 +28,7 @@ namespace Microsoft.PackageManagement.NuGetProvider
         /// <summary>
         /// Version of this provider
         /// </summary>
-        public static readonly string ProviderVersion = "2.8.5.204";     
+        public static readonly string ProviderVersion = "2.8.5.205";     
 
         /// <summary>
         /// Represents a method that the V2 web service supports to find a package

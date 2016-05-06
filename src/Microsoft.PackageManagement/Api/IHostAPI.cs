@@ -15,6 +15,7 @@
 namespace Microsoft.PackageManagement.Internal.Api {
     using System.Collections.Generic;
     using System.Security;
+    using System.Net;
 
     /// <summary>
     /// Functions implemented by the HOST to provide contexual information and control to for the current request.
@@ -153,6 +154,11 @@ namespace Microsoft.PackageManagement.Internal.Api {
         /// <param name="key">the dynamic option Key (should be present in OptionKeys)</param>
         /// <returns>an collection of the value for the specified dynamic option</returns>
         IEnumerable<string> GetOptionValues(string key);
+
+        /// <summary>
+        /// Proxy used by provider
+        /// </summary>
+        IWebProxy WebProxy { get; }
 
         /// <summary>
         /// A collection of sources specified by the user. If this is null or empty, the provider should assume 'all the registered sources'

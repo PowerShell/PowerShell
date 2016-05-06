@@ -23,6 +23,7 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
     using Utility.Async;
     using Utility.Extensions;
     using Microsoft.PackageManagement.Internal.Packaging;
+    using System.Net;
 
     public abstract class RequestObject : AsyncAction, IRequest, IHostApi {
         private static int _c;
@@ -200,6 +201,14 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
                     return _hostApi.Sources;
                 }
                 return new string[0];
+            }
+        }
+
+        public IWebProxy WebProxy
+        {
+            get
+            {
+                return CanCallHost ? _hostApi.WebProxy : null;
             }
         }
 

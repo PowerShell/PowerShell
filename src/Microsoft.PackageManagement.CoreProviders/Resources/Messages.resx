@@ -136,6 +136,9 @@
   <data name="InvalidFileType" xml:space="preserve">
     <value>Install-PackageProvider -Source only supports '{0}' for file-based installation. '{1}' is not a supported file type. To install a PowerShell-based provider, you must install it from a PSRepository.</value>
   </data>
+  <data name="MissingInstallationmedia" xml:space="preserve">
+    <value>Provider '{0}' missing installationmedia to install.</value>
+  </data>
   <data name="MissingProviderManifest" xml:space="preserve">
     <value>'{0}' does not contain a package provider manifest. Refer to 'Get-Help Import-PackageProvider' for guidance.</value>
   </data>
@@ -146,6 +149,10 @@
   <data name="MoreThanOneDllExists" xml:space="preserve">
     <value>More than 1 dll with provider manifest exists in provider '{0}'.</value>
     <comment>0 - package name</comment>
+  </data>
+  <data name="NoDependencyPackageFound" xml:space="preserve">
+    <value>Cannot find dependency packages from link '{0}'.</value>
+    <comment>0 - uri link</comment>
   </data>
   <data name="OnlyHttpsSchemeSupported" xml:space="preserve">
     <value>Link '{0}' is not using https.</value>

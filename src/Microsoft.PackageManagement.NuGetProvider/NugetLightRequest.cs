@@ -2,6 +2,7 @@
 {
     using System;
     using System.Text;
+    using System.Net.Http;
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
@@ -11,6 +12,7 @@
     using System.Xml;
     using System.Xml.Linq;
     using System.Collections.Concurrent;
+    using System.Diagnostics.CodeAnalysis;
     using Resources;
     using System.Security.Cryptography;
     using System.Security;
@@ -45,6 +47,8 @@
         //internal ImplictLazy<bool> ContinueOnFailure;
         //internal ImplictLazy<bool> FindByCanonicalId;
 
+        private HttpClient _httpClient;
+        private HttpClient _httpClientWithoutAcceptHeader;
 
         internal const string DefaultConfig = @"<?xml version=""1.0""?>
 <configuration>
@@ -554,12 +558,104 @@
         }
 
         /// <summary>
+        /// HttpClient with Accept-CharSet and Accept-Encoding Header
+        /// We want to reuse HttpClient
+        /// </summary>
+        internal HttpClient Client
+        {
+            get
+            {
+                if (_httpClient == null)
+                {
+                    _httpClient = GetHttpClientHelper();
+
+                    _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "UTF-8");
+                    // Request for gzip and deflate encoding to make the response lighter.
+                    _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip,deflate");
+
+                    foreach (var header in Headers.Value)
+                    {
+                        // header is in the format "A=B" because OneGet doesn't support Dictionary parameters
+                        if (!String.IsNullOrEmpty(header))
+                        {
+                            var headerSplit = header.Split(new string[] { "=" }, 2, StringSplitOptions.RemoveEmptyEntries);
+
+                            // ignore wrong entries
+                            if (headerSplit.Count() == 2)
+                            {
+                                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation(headerSplit[0], headerSplit[1]);
+                            }
+                            else
+                            {
+                                Warning(Messages.HeaderIgnored, header);
+                            }
+                        }
+                    }
+                }
+
+                return _httpClient;
+            }
+        }
+
+        /// <summary>
+        /// HttpClient without any Accept header (this will only have User-Agent header)
+        /// </summary>
+        internal HttpClient ClientWithoutAcceptHeader
+        {
+            get
+            {
+                if (_httpClientWithoutAcceptHeader == null)
+                {
+                    _httpClientWithoutAcceptHeader = GetHttpClientHelper();
+                }
+
+                return _httpClientWithoutAcceptHeader;
+            }
+        }
+
+        private HttpClient GetHttpClientHelper()
+        {
+            var clientHandler = new HttpClientHandler();
+
+            var networkCredential = GetNetworkCredential();
+
+            // if we are given a network credential, use that
+            if (networkCredential != null)
+            {
+                // else use the one given to us
+                clientHandler.Credentials = networkCredential;
+                clientHandler.PreAuthenticate = true;
+            }
+            else
+            {
+                clientHandler.UseDefaultCredentials = true;
+            }
+
+            // do not need to set proxy of httpClient or httpClientHandler because it will use system proxy setting by default
+            // discussion here (https://github.com/dotnet/corefx/issues/7037)
+
+            if (WebProxy != null)
+            {
+                // if webproxy is not null, use that
+                clientHandler.Proxy = WebProxy;
+            }
+
+            var httpClient = new HttpClient(clientHandler);
+
+            // Mozilla/5.0 is the general token that says the browser is Mozilla compatible, and is common to almost every browser today.
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 NuGet");
+
+            return httpClient;
+        }
+
+        /// <summary>
         /// Communicate to the PackageManagement platform about the package info
         /// </summary>
         /// <param name="pkg"></param>
         /// <param name="searchKey"></param>
+        /// <param name="destinationPath"></param>
         /// <returns></returns>
-        internal bool YieldPackage(PackageItem pkg, string searchKey) 
+        internal bool YieldPackage(PackageItem pkg, string searchKey, string destinationPath=null)
         {
             try 
             {
@@ -580,6 +676,19 @@
                     // downlevel machine does not have AddTagId interface in request object so it will return null
                     // hence we can't check it here.
                     AddTagId(MakeTagId(pkg));
+
+                    // if we need to report installation location, add a payload and add directory to that
+                    if (!string.IsNullOrWhiteSpace(destinationPath))
+                    {
+                        string payload = AddPayload();
+
+                        if (string.IsNullOrWhiteSpace(payload))
+                        {
+                            return false;
+                        }
+
+                        AddDirectory(payload, Path.GetFileName(destinationPath), Path.GetDirectoryName(destinationPath), null, true);
+                    }
                     
                     if (AddMetadata(pkg.FastPath, "copyright", pkg.Package.Copyright) == null) {
                         return false;
@@ -762,14 +871,16 @@
             try
             {
                 bool found = false;
+                var paths = InstalledPath.Where(Directory.Exists).ToArray();
+
                 // if directory does not exist then just return false
-                if (!InstalledPath.Any(Directory.Exists))
+                if (!paths.Any())
                 {
-                    return found;
+                    return false;
                 }
 
                 // look in the destination directory for directories that contain *.nupkg & .nuspec files.  
-                var subdirs = InstalledPath.SelectMany(Directory.EnumerateDirectories);
+                var subdirs = paths.SelectMany(Directory.EnumerateDirectories);
 
                 foreach (var subdir in subdirs)
                 {
@@ -946,6 +1057,8 @@
                     // return them all.
                     foreach (var src in pkgSources.Values) {
                         Debug(src.Name);
+                        // set the request of the registered one to the current request because it may have additional information like credential
+                        src.Request = this;
                         yield return src;
                     }
                     yield break;
@@ -968,6 +1081,7 @@
                     {
                         Debug(Resources.Messages.FoundRegisteredSource, src, NuGetConstant.ProviderName);
                         _checkedUnregisteredPackageSources.Add(src, pkgSources[src]);
+                        pkgSources[src].Request = this;
                         yield return pkgSources[src];
                         continue;
                     }
@@ -984,7 +1098,11 @@
                             continue;
                         }
 
-                        _checkedUnregisteredPackageSources.Add(srcLoc, byLoc);
+                        // in this case, do not store the srcLoc into the dictionary, otherwise, the provider may resolve http://www.nuget.org/api/v2 to some source with location
+                        // http://www.nuget.org/api/v2/ and oneget will raise an error (it thinks we are dishonest :()
+                        byLoc.Location = srcLoc;
+                        // set request of byloc to this because this request may have credential information
+                        byLoc.Request = this;
                         yield return byLoc;
                         found = true;
                     }
@@ -1007,7 +1125,13 @@
 
                             if (!SkipValidate.Value)
                             {
-                                isValidated = PathUtility.ValidateSourceUri(SupportedSchemes, srcUri, this);
+                                try{
+                                    isValidated = PathUtility.ValidateSourceUri(SupportedSchemes, srcUri, this);
+                                }
+                                catch (Exception ex)
+                                {
+                                    ex.Dump(this);
+                                }
                             }
 
                             if (SkipValidate.Value || isValidated)
@@ -1357,6 +1481,7 @@
             return null;
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "It's used in Nano")]
         internal static string SecureStringToString(SecureString secure)
         {
             IntPtr value = IntPtr.Zero;

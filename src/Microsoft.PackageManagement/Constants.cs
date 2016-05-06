@@ -32,6 +32,7 @@ namespace Microsoft.PackageManagement.Internal {
         internal static TimeSpan DefaultResponsiveness = TimeSpan.FromSeconds(15 * 60);
 
         internal static TimeSpan Zero = new TimeSpan(0);
+        internal static string BootstrapNuGet = "BootstrapNuGet";
 
         #region declare common-constants-implementation
 

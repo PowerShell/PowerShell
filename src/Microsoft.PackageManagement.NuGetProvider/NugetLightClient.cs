@@ -8,10 +8,11 @@
     using System.Net.Http;
     using System.Threading.Tasks;
     using System.Linq;
-    using System.Xml.Linq;
     using System.IO.Compression;
     using System.Net;
     using System.Security.Cryptography;
+    using System.Threading;
+    using Microsoft.PackageManagement.NuGetProvider.Utility;
 
     /// <summary>
     /// Utility to handle the Find, Install, Uninstall-Package etc operations.
@@ -42,6 +43,7 @@
         /// <param name="queryUrl">Full uri</param>
         /// <param name="packageHash">the hash of the package</param>
         /// <param name="packageHashAlgorithm">the hash algorithm of the package</param>
+        /// <param name="progressTracker">progress tracker to help keep track of progressid, start and end of the progress</param>
         /// <returns>PackageItem object</returns>
         internal static PackageItem InstallPackage(
             string packageName,
@@ -50,7 +52,8 @@
             PackageSource source,
             string queryUrl,
             string packageHash,
-            string packageHashAlgorithm
+            string packageHashAlgorithm,
+            ProgressTracker progressTracker
             ) 
         {
             request.Debug(Messages.DebugInfoCallMethod, "NuGetClient", "InstallPackage");
@@ -89,15 +92,19 @@
 
                 installFullPath = Path.Combine(installDir, fileName);
 
+                // we assume downloading takes 70% of the progress
+                int endProgressDownloading = progressTracker.ConvertPercentToProgress(0.7);
+
                 //download to fetch the package
-                DownloadPackage(packageName, version, installFullPath, queryUrl, request, source);
+                DownloadPackage(packageName, version, installFullPath, queryUrl, request, source, new ProgressTracker(progressTracker.ProgressID, progressTracker.StartPercent, endProgressDownloading));
 
                 // check that we have the file
                 if (!File.Exists(installFullPath))
                 {
                     needToDelete = true;
+                    // error message is package failed to be downloaded
                     request.WriteError(ErrorCategory.ResourceUnavailable, installFullPath, Constants.Messages.PackageFailedInstallOrDownload, packageName,
-                        CultureInfo.CurrentCulture.TextInfo.ToLower(Constants.Install));
+                        CultureInfo.CurrentCulture.TextInfo.ToLower(Constants.Download));
                     return null;
                 }
 
@@ -105,12 +112,13 @@
                 //we don't enable checking for hash here because it seems like nuget provider does not
                 //checks that there is hash. Otherwise we don't carry out the install
                 
-                if (string.IsNullOrWhiteSpace(packageHash) || string.IsNullOrWhiteSpace(packageHashAlgorithm))
+                if (string.IsNullOrWhiteSpace(packageHash))
                 {
-                    // delete the file downloaded. VIRUS!!!
-                    needToDelete = true;
-                    request.WriteError(ErrorCategory.SecurityError, packageName, Constants.Messages.HashNotFound, packageName);
-                    return null;
+                    // if no hash (for example, vsts feed, install the package but log verbose message)
+                    request.Verbose(string.Format(CultureInfo.CurrentCulture, Resources.Messages.HashNotFound, packageName));
+                    //parse the package
+                    var pkgItem = InstallPackageLocal(packageName, version, request, source, installFullPath, new ProgressTracker(progressTracker.ProgressID, endProgressDownloading, progressTracker.EndPercent));
+                    return pkgItem;
                 }
 
                 // Verify the hash
@@ -118,7 +126,7 @@
                 {
                     HashAlgorithm hashAlgorithm = null;
 
-                    switch (packageHashAlgorithm.ToLowerInvariant())
+                    switch (packageHashAlgorithm == null ? string.Empty : packageHashAlgorithm.ToLowerInvariant())
                     {
                         case "sha256":
                             hashAlgorithm = SHA256.Create();
@@ -161,15 +169,18 @@
                     }
 
                     //parse the package
-                    var pkgItem = InstallPackageLocal(packageName, version, request, source, installFullPath);
+                    var pkgItem = InstallPackageLocal(packageName, version, request, source, installFullPath, new ProgressTracker(progressTracker.ProgressID, endProgressDownloading, progressTracker.EndPercent));
                     return pkgItem;
                 }
+
                 #endregion
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                request.Debug(e.Message);
+                // the error will be package "packageName" failed to install because : "reason"
+                ex.Dump(request);
+                request.WriteError(ErrorCategory.InvalidResult, packageName, Resources.Messages.PackageFailedToInstallReason, packageName, ex.Message);
                 needToDelete = true;
             }
             finally
@@ -203,8 +214,9 @@
         /// </summary>
         /// <param name="pkgItem"></param>
         /// <param name="request"></param>
+        /// <param name="progressTracker"></param>
         /// <returns></returns>
-        internal static bool InstallSinglePackage(PackageItem pkgItem, NuGetRequest request)
+        internal static bool InstallSinglePackage(PackageItem pkgItem, NuGetRequest request, ProgressTracker progressTracker)
         {
             PackageItem packageToBeInstalled;
 
@@ -217,7 +229,7 @@
             if (Directory.Exists(pkgItem.PackageSource.Location))
             {
                 var fileLocation = pkgItem.PackageSource.Repository.FindPackage(pkgItem.Id, new SemanticVersion(pkgItem.Version), request).FullFilePath;
-                packageToBeInstalled = NuGetClient.InstallPackageLocal(pkgItem.Id, pkgItem.Version, request, pkgItem.PackageSource, fileLocation);
+                packageToBeInstalled = NuGetClient.InstallPackageLocal(pkgItem.Id, pkgItem.Version, request, pkgItem.PackageSource, fileLocation, progressTracker);
             }
             else
             {             
@@ -228,8 +240,8 @@
 
                 // wait for the result from installpackage
                 packageToBeInstalled = NuGetClient.InstallPackage(pkgItem.Id, pkgItem.Version, request, pkgItem.PackageSource,
-                    string.IsNullOrWhiteSpace(pkgItem.Package.ContentSrcUrl) ? httpquery : pkgItem.Package.ContentSrcUrl, 
-                    pkgItem.Package.PackageHash, pkgItem.Package.PackageHashAlgorithm);
+                    string.IsNullOrWhiteSpace(pkgItem.Package.ContentSrcUrl) ? httpquery : pkgItem.Package.ContentSrcUrl,
+                    pkgItem.Package.PackageHash, pkgItem.Package.PackageHashAlgorithm, progressTracker);
             }
 
             // Package is installed successfully
@@ -238,11 +250,11 @@
                 // if this is a http repository, return metadata from online
                 if (!pkgItem.PackageSource.Repository.IsFile)
                 {
-                    request.YieldPackage(pkgItem, packageToBeInstalled.PackageSource.Name);
+                    request.YieldPackage(pkgItem, packageToBeInstalled.PackageSource.Name, packageToBeInstalled.FullPath);
                 }
                 else
                 {
-                    request.YieldPackage(packageToBeInstalled, packageToBeInstalled.PackageSource.Name);
+                    request.YieldPackage(packageToBeInstalled, packageToBeInstalled.PackageSource.Name, packageToBeInstalled.FullPath);
                 }
 
                 request.Debug(Messages.DebugInfoReturnCall, "NuGetClient", "InstallSinglePackage");
@@ -256,10 +268,11 @@
         /// Download a single package to destination without checking for dependencies
         /// </summary>
         /// <param name="pkgItem"></param>
+        /// <param name="progressTracker"></param>
         /// <param name="request"></param>
         /// <param name="destLocation"></param>
         /// <returns></returns>
-        internal static bool DownloadSinglePackage(PackageItem pkgItem, NuGetRequest request, string destLocation)
+        internal static bool DownloadSinglePackage(PackageItem pkgItem, NuGetRequest request, string destLocation, ProgressTracker progressTracker)
         {
             if (string.IsNullOrWhiteSpace(pkgItem.PackageFilename) || pkgItem.PackageSource == null || pkgItem.PackageSource.Location == null
             || (pkgItem.PackageSource.IsSourceAFile && pkgItem.Package == null))
@@ -322,7 +335,7 @@
                     string httpquery = PathUtility.UriCombine(pkgItem.PackageSource.Repository.Source, append);
 
                     NuGetClient.DownloadPackage(pkgItem.Id, pkgItem.Version, destLocation,
-                        string.IsNullOrWhiteSpace(pkgItem.Package.ContentSrcUrl) ? httpquery : pkgItem.Package.ContentSrcUrl, request, pkgItem.PackageSource);
+                        string.IsNullOrWhiteSpace(pkgItem.Package.ContentSrcUrl) ? httpquery : pkgItem.Package.ContentSrcUrl, request, pkgItem.PackageSource, progressTracker);
                 }
             }
             catch (Exception ex)
@@ -332,7 +345,8 @@
             }
 
             request.Verbose(Resources.Messages.SuccessfullyDownloaded, pkgItem.Id);
-            request.YieldPackage(pkgItem, pkgItem.PackageSource.Name);
+            // provide the directory we save to to yieldpackage
+            request.YieldPackage(pkgItem, pkgItem.PackageSource.Name, Path.GetDirectoryName(destLocation));
 
             return true;
         }
@@ -348,12 +362,11 @@
         /// <param name="operation"></param>
         /// <param name="installOrDownloadFunction"></param>
         /// <returns></returns>
-        internal static bool InstallOrDownloadPackageHelper(PackageItem pkgItem, NuGetRequest request, string operation, Func<PackageItem, bool> installOrDownloadFunction)
+        internal static bool InstallOrDownloadPackageHelper(PackageItem pkgItem, NuGetRequest request, string operation,
+            Func<PackageItem, ProgressTracker, bool> installOrDownloadFunction)
         {
             // pkgItem.Sources is the source that the user input. The request will try this source.
             request.OriginalSources = pkgItem.Sources;
-
-            int progressId = 0;
 
             bool hasDependencyLoop = false;
             // Get the dependencies that are not already installed
@@ -377,7 +390,7 @@
             int numberOfDependencies = dependencies.Count();
 
             // Start progress
-            progressId = request.StartProgress(0, string.Format(CultureInfo.InvariantCulture, Messages.InstallingOrDownloadingPackage, operation, pkgItem.Id));
+            ProgressTracker progressTracker = ProgressTracker.StartProgress(null, string.Format(CultureInfo.InvariantCulture, Messages.InstallingOrDownloadingPackage, operation, pkgItem.Id), request);
 
             try
             {
@@ -387,20 +400,32 @@
                     // let's install dependencies
                     foreach (var dep in dependencies)
                     {
-                        request.Progress(progressId, (n * 100 / (numberOfDependencies + 1)) + 1, string.Format(CultureInfo.InvariantCulture, Messages.InstallingOrDownloadingDependencyPackage, operation, dep.Id));
-                        // Check that we successfully installed the dependency
-                        if (!installOrDownloadFunction(dep))
+                        request.Progress(progressTracker.ProgressID, (n * 100 / (numberOfDependencies + 1)), string.Format(CultureInfo.InvariantCulture, Messages.InstallingOrDownloadingDependencyPackage, operation, dep.Id));
+
+                        // start a subprogress bar for the dependent package
+                        ProgressTracker subProgressTracker = ProgressTracker.StartProgress(progressTracker, string.Format(CultureInfo.InvariantCulture, Messages.InstallingOrDownloadingPackage, operation, dep.Id), request);
+                        try
                         {
-                            request.WriteError(ErrorCategory.InvalidResult, dep.Id, Constants.Messages.DependentPackageFailedInstallOrDownload, dep.Id, CultureInfo.CurrentCulture.TextInfo.ToLower(operation));
-                            return false;
+                            // Check that we successfully installed the dependency
+                            if (!installOrDownloadFunction(dep, subProgressTracker))
+                            {
+                                request.WriteError(ErrorCategory.InvalidResult, dep.Id, Constants.Messages.DependentPackageFailedInstallOrDownload, dep.Id, CultureInfo.CurrentCulture.TextInfo.ToLower(operation));
+                                return false;
+                            }
                         }
+                        finally
+                        {
+                            request.CompleteProgress(subProgressTracker.ProgressID, true);
+                        }
+
                         n++;
-                        request.Progress(progressId, (n * 100 / (numberOfDependencies + 1)), string.Format(CultureInfo.InvariantCulture, Messages.InstalledOrDownloadedDependencyPackage, operation, dep.Id));
+                        request.Progress(progressTracker.ProgressID, (n * 100 / (numberOfDependencies + 1)), string.Format(CultureInfo.InvariantCulture, Messages.InstalledOrDownloadedDependencyPackage, operation, dep.Id));
                     }
                 }
 
                 // Now let's install the main package
-                if (installOrDownloadFunction(pkgItem))
+                // the start progress should be where we finished installing the dependencies
+                if (installOrDownloadFunction(pkgItem, new ProgressTracker(progressTracker.ProgressID, (n * 100 / (numberOfDependencies + 1)), 100)))
                 {
                     return true;
                 }
@@ -413,7 +438,7 @@
             {
                 // Report that we have completed installing the package and its dependency this does not mean there are no errors.
                 // Just that it's completed.
-                request.CompleteProgress(progressId, false);
+                request.CompleteProgress(progressTracker.ProgressID, true);
             }
             
             // package itself didn't install. Report error
@@ -434,7 +459,7 @@
             request.Debug(Messages.DebugInfoCallMethod, "NuGetClient", "GetPackageDependencies");
 
             // No dependency
-            if (packageItem.Package.DependencySetList == null)
+            if (packageItem.Package == null || packageItem.Package.DependencySetList == null)
             {
                 request.Debug(Messages.DebugInfoReturnCall, "NuGetClient", "GetPackageDependencies");
                 return Enumerable.Empty<PackageItem>();
@@ -524,6 +549,7 @@
                 yield break;
             }
 
+            bool force = request.GetOptionValue("Force") != null;
             foreach (var depSet in packageItem.Package.DependencySetList)
             {
                 if (depSet.Dependencies == null)
@@ -540,7 +566,7 @@
                     string maxVersion = dep.DependencyVersion.MaxVersion.ToStringSafe();
 
                     // check whether it is already installed at the destination
-                    if (request.GetInstalledPackages(dep.Id, null, minVersion, maxVersion, minInclusive: dep.DependencyVersion.IsMinInclusive, maxInclusive: dep.DependencyVersion.IsMaxInclusive, terminateFirstFound: true))
+                    if (!force & request.GetInstalledPackages(dep.Id, null, minVersion, maxVersion, minInclusive: dep.DependencyVersion.IsMinInclusive, maxInclusive: dep.DependencyVersion.IsMaxInclusive, terminateFirstFound: true))
                     {
                         request.Verbose(String.Format(CultureInfo.CurrentCulture, Messages.AlreadyInstalled, dep.Id));
                         // already have a dependency so move on
@@ -571,13 +597,15 @@
         /// <param name="request">An object passed in from the PackageManagement platform that contains APIs that can be used to interact with it </param>  
         /// <param name="source">Package source</param>
         /// <param name="sourceFilePath">File source path pointing to the package to be installed</param>
+        /// <param name="progressTracker">progress tracker to help keep track of progressid, start and end of the progress</param>
         /// <returns>PackageItem object</returns>
         internal static PackageItem InstallPackageLocal(
             string packageName, 
             string version,
             NuGetRequest request, 
             PackageSource source,             
-            string sourceFilePath 
+            string sourceFilePath,
+            ProgressTracker progressTracker
             )
         {
             request.Debug(Messages.DebugInfoCallMethod, "NuGetClient", "InstallPackageLocal");
@@ -615,10 +643,11 @@
                 //Copy over the source file from  the folder repository to the temp folder
                 File.Copy(sourceFilePath, tempSourceFilePath, true);
 
+                request.Progress(progressTracker.ProgressID, progressTracker.StartPercent, string.Format(CultureInfo.CurrentCulture, Messages.Unzipping));
                 //Unzip it
                 tempSourceDirectory = PackageUtility.DecompressFile(tempSourceFilePath);
 
-                //Get a packge directory under the destination path to store the package
+                //Get a package directory under the destination path to store the package
                 string installedFolder = FileUtility.MakePackageDirectoryName(request.ExcludeVersion.Value, destinationFilePath, packageName, version);
 
                 // if we did not set the directory before, then the destinationFilePath already exists, so we should not delete it
@@ -632,8 +661,16 @@
                 //  - JQuery.2.0.1.nupkg
                 //  - contents and other stuff
 
+                // unzipping should take most of the time (assuming 70%)
+
+                request.Progress(progressTracker.ProgressID, progressTracker.ConvertPercentToProgress(0.7), string.Format(CultureInfo.CurrentCulture, Messages.CopyUnzippedFiles, installedFolder));
+
                 //Copy the unzipped files to under the package installed folder
                 FileUtility.CopyDirectory(tempSourceDirectory, installedFolder, true);
+
+                // copying should take another 15%
+
+                request.Progress(progressTracker.ProgressID, progressTracker.ConvertPercentToProgress(0.85), string.Format(CultureInfo.CurrentCulture, Messages.ReadingManifest));
 
                  //Read the package manifest and return the package object
                 string nuspec = Path.Combine(installedFolder, packageName) + NuGetConstant.ManifestExtension;
@@ -658,13 +695,15 @@
 
                 request.Debug(Messages.DebugInfoReturnCall, "NuGetClient", "InstallPackageLocal");
 
+                request.Progress(progressTracker.ProgressID, progressTracker.EndPercent, string.Format(CultureInfo.CurrentCulture, Messages.FinishInstalling, packageName));
+
                 return pkgItem;
 
             } catch (Exception ex) {
                 needToDelete = true;
-                // the warning will be package "packageName" failed to install
+                // the error will be package "packageName" failed to install because : "reason"
                 ex.Dump(request);
-                request.WriteError(ErrorCategory.InvalidResult, packageName, Constants.Messages.PackageFailedInstallOrDownload, packageName, CultureInfo.CurrentCulture.TextInfo.ToLower(Constants.Install));
+                request.WriteError(ErrorCategory.InvalidResult, packageName, Resources.Messages.PackageFailedToInstallReason, packageName, ex.Message);
                 throw;
             } finally {
                 if (needToDelete && Directory.Exists(directoryToDeleteWhenFailed))
@@ -715,8 +754,9 @@
         /// <param name="queryUrl">Uri to query the package</param>
         /// <param name="request">An object passed in from the PackageManagement platform that contains APIs that can be used to interact with it </param>   
         /// <param name="pkgSource">source to download the package</param>
+        /// <param name="progressTracker">Utility class to help track progress</param>
         /// 
-        internal static void DownloadPackage(string packageName, string version, string destination, string queryUrl, NuGetRequest request, PackageSource pkgSource) 
+        internal static void DownloadPackage(string packageName, string version, string destination, string queryUrl, NuGetRequest request, PackageSource pkgSource, ProgressTracker progressTracker) 
         {
             try {                
                 request.Verbose(string.Format(CultureInfo.InvariantCulture, "DownloadPackage' - name='{0}', version='{1}',destination='{2}', uri='{3}'", packageName, version, destination, queryUrl));
@@ -730,7 +770,7 @@
                 // Do not need to validate here again because the job is done by the httprepository that supplies the queryurl
                 //Downloading the package
                 //request.Verbose(httpquery);
-                result = DownloadDataToFileAsync(destination, queryUrl, request, request.GetNetworkCredential()).Result;                   
+                result = DownloadDataToFileAsync(destination, queryUrl, request, request.GetNetworkCredential(), progressTracker).Result;                   
 
                 if (result == 0 || !File.Exists(destination))
                 {
@@ -744,44 +784,6 @@
                 request.Warning(Constants.Messages.PackageFailedInstallOrDownload, packageName, CultureInfo.CurrentCulture.TextInfo.ToLower(Constants.Download));
                 throw;
             }
-        }
-
-        /// <summary>
-        /// Returns a httpclient with the headers set.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        private static HttpClient GetHttpClient(NuGetRequest request) {
-            var client = PathUtility.GetHttpClientHelper(request.GetNetworkCredential());
-
-            client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "UTF-8");
-            // Request for gzip and deflate encoding to make the response lighter.
-            client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip,deflate");
-
-            var nuGetRequest = request as NuGetRequest;
-            if (nuGetRequest != null && nuGetRequest.Headers != null)
-            {
-                foreach (var header in nuGetRequest.Headers.Value)
-                {
-                    // header is in the format "A=B" because OneGet doesn't support Dictionary parameters
-                    if (!String.IsNullOrEmpty(header))
-                    {
-                        var headerSplit = header.Split(new string[] { "=" }, 2, StringSplitOptions.RemoveEmptyEntries);
-
-                        // ignore wrong entries
-                        if (headerSplit.Count() == 2)
-                        {
-                            client.DefaultRequestHeaders.TryAddWithoutValidation(headerSplit[0], headerSplit[1]);
-                        }
-                        else
-                        {
-                            request.Warning(Messages.HeaderIgnored, header);
-                        }
-                    }
-                }
-            }
-
-            return client;
         }
 
         /// <summary>
@@ -818,7 +820,7 @@
         {
             request.Debug(Messages.DownloadingPackage, query);
 
-            var client = GetHttpClient(request);
+            var client = request.Client;
 
             var response = PathUtility.GetHttpResponse(client, query, request);
 
@@ -853,7 +855,7 @@
             var uri = String.Format(CultureInfo.CurrentCulture, query.Uri.ToString(), startPoint, bufferSize);
             request.Debug(Messages.DownloadingPackage, uri);
 
-            var client = GetHttpClient(request);
+            var client = request.Client;
 
             var response = PathUtility.GetHttpResponse(client, uri, request);
 
@@ -885,32 +887,185 @@
         /// <param name="query">Uri query</param>
         /// <param name="request">An object passed in from the PackageManagement platform that contains APIs that can be used to interact with it </param>   
         /// <param name="networkCredential">Credential to pass along to get httpclient</param>
+        /// <param name="progressTracker">Utility class to help track progress</param>
         /// <returns></returns>
-        internal static async Task<long> DownloadDataToFileAsync(string fileName, string query, NuGetRequest request, NetworkCredential networkCredential)
+        internal static async Task<long> DownloadDataToFileAsync(string fileName, string query, NuGetRequest request,
+            NetworkCredential networkCredential, ProgressTracker progressTracker)
         {
             request.Verbose(Messages.DownloadingPackage, query);
 
-            var client = GetHttpClient(request);
+            var httpClient = request.Client;
 
-            var response = PathUtility.GetHttpResponse(client, query, request);
+            // try downloading for 3 times
+            int remainingTry = 3;
+            long totalDownloaded = 0;
+            bool cleanUp = false;
+            CancellationTokenSource cts = new CancellationTokenSource(); ;
+            Stream input = null;
+            Timer timer = null;
+            FileStream output = null;
+            totalDownloaded = 0;
+            object lockObject = new object();
 
-            // Check that response was successful or write error
-            if (response == null || !response.IsSuccessStatusCode)
+            // function to perform cleanup
+            Action cleanUpAction = () => {
+                lock (lockObject)
+                {
+                    // if clean up is done before, don't need to do again
+                    if (!cleanUp)
+                    {
+                        try
+                        {
+                            // dispose timer
+                            if (timer != null)
+                            {
+                                timer.Change(Timeout.Infinite, Timeout.Infinite);
+                                timer.Dispose();
+                            }
+
+                            // dispose cts token
+                            if (cts != null)
+                            {
+                                cts.Cancel();
+                                cts.Dispose();
+                            }
+
+                            // dispose input and output stream
+                            if (input != null)
+                            {
+                                input.Dispose();
+                            }
+
+                            if (output != null)
+                            {
+                                output.Dispose();
+                            }
+                        }
+                        catch { }
+
+                        cleanUp = true;
+                    }
+                }
+            };
+
+            while (remainingTry > 0)
             {
-                request.Warning(Resources.Messages.CouldNotGetResponseFromQuery, query);
-                return 0;
+                // if user cancel the request, no need to do anything
+                if (request.IsCanceled)
+                {
+                    break;
+                }
+
+                input = null;
+                output = null;
+                totalDownloaded = 0;
+
+                try
+                {
+                    // decrease try by 1
+                    remainingTry -= 1;
+
+                    // create new timer and cancellation token source
+                    lock (lockObject)
+                    {
+                        // check every second to see whether request is cancelled
+                        timer = new Timer(_ =>
+                        {
+                            if (request.IsCanceled)
+                            {
+                                cleanUpAction();
+                            }
+                        }, null, 500, 1000);
+
+                        cts = new CancellationTokenSource();
+
+                        cleanUp = false;
+                    }
+                    
+                    var response = await httpClient.GetAsync(query, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+
+                    if (response.Content != null && response.Content.Headers != null)
+                    {
+                        long totalBytesToReceive = response.Content.Headers.ContentLength ?? 0;
+                        // the total amount of bytes we need to download in megabytes
+                        double totalBytesToReceiveMB = (totalBytesToReceive / 1024f) / 1024f;
+
+                        // Read response asynchronously and write out a file
+                        // The return value is for the caller to wait for the async operation to complete.
+                        input = await response.Content.ReadAsStreamAsync();
+
+                        // buffer size of 64 KB, this seems to be preferable buffer size, not too small and not too big
+                        byte[] bytes = new byte[1024 * 64];
+                        output = File.Open(fileName, FileMode.OpenOrCreate);
+
+                        int current = 0;
+                        double lastPercent = 0;
+
+                        // here we read content that we got from the http response stream into the bytes array
+                        current = await input.ReadAsync(bytes, 0, bytes.Length, cts.Token);
+
+                        // report initial progress
+                        request.Progress(progressTracker.ProgressID, progressTracker.StartPercent,
+                            string.Format(CultureInfo.CurrentCulture, Resources.Messages.DownloadingProgress, 0, (totalBytesToReceive / 1024f) / 1024f));
+
+                        while (current > 0)
+                        {
+                            totalDownloaded += current;
+
+                            // here we write the bytes array content into the file
+                            await output.WriteAsync(bytes, 0, current, cts.Token);
+
+                            double percent = totalDownloaded * 1.0 / totalBytesToReceive;
+
+                            // don't want to report too often (slow down performance)
+                            if (percent > lastPercent + 0.1)
+                            {
+                                lastPercent = percent;
+                                // percent between startProgress and endProgress
+                                var progressPercent = progressTracker.ConvertPercentToProgress(percent);
+
+                                // report the progress
+                                request.Progress(progressTracker.ProgressID, (int)progressPercent,
+                                    string.Format(CultureInfo.CurrentCulture, Resources.Messages.DownloadingProgress, (totalDownloaded / 1024f) / 1024f, totalBytesToReceiveMB));
+                            }
+
+                            // here we read content that we got from the http response stream into the bytes array
+                            current = await input.ReadAsync(bytes, 0, bytes.Length, cts.Token);
+                        }
+
+                        // report that we finished with the download
+                        request.Progress(progressTracker.ProgressID, progressTracker.EndPercent,
+                            string.Format(CultureInfo.CurrentCulture, Resources.Messages.DownloadingProgress, totalBytesToReceiveMB, totalBytesToReceiveMB));
+
+                        request.Verbose(Messages.CompletedDownload, query);
+
+                        break;
+
+                        // otherwise, we have to retry again
+                    }
+
+                    // if request is canceled, don't retry
+                    if (request.IsCanceled)
+                    {
+                        break;
+                    }
+
+                    request.Verbose(Resources.Messages.RetryingDownload, query, remainingTry);
+                }
+                catch (Exception ex)
+                {
+                    request.Verbose(ex.Message);
+                    request.Debug(ex.StackTrace);
+                    // if there is exception, we will retry too
+                    request.Verbose(Resources.Messages.RetryingDownload, query, remainingTry);
+                }
+                finally
+                {
+                    cleanUpAction();
+                }
             }
 
-            // Check that response was successful or throw exception
-            response.EnsureSuccessStatusCode();
-
-            // Read response asynchronously and write out a file
-            // The return value is for the caller to wait for the async operation to complete.
-            var fileLength = await response.Content.ReadAsFileAsync(fileName);
-
-            request.Verbose(Messages.CompletedDownload, query);
-
-            return fileLength;
+            return totalDownloaded;
         }
     }
 }

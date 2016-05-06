@@ -258,9 +258,10 @@ function New-SoftwareIdentity {
 		[bool] $fromTrustedSource = $false,
 		[System.Collections.ArrayList] $dependencies = $null,
 		[string] $tagId = $null,
-		[string] $culture = $null
+		[string] $culture = $null,
+        [string] $destination = $null
 	)
-	return New-Object -TypeName Microsoft.PackageManagement.MetaProvider.PowerShell.SoftwareIdentity -ArgumentList $fastPackageReference, $name, $version,  $versionScheme,  $source,  $summary,  $searchKey, $fullPath, $filename , $details , $entities, $links, $fromTrustedSource, $dependencies, $tagId, $culture
+	return New-Object -TypeName Microsoft.PackageManagement.MetaProvider.PowerShell.SoftwareIdentity -ArgumentList $fastPackageReference, $name, $version,  $versionScheme,  $source,  $summary,  $searchKey, $fullPath, $filename , $details , $entities, $links, $fromTrustedSource, $dependencies, $tagId, $culture, $destination
 }
 
 <#

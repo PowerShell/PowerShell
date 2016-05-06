@@ -105,6 +105,14 @@ namespace Microsoft.PackageManagement.Internal.Packaging {
             return MediaQuery.IsApplicable(AppliesToMedia, environment);
         }
 
+        public IEnumerable<string> Dependencies
+        {
+            get
+            {
+                return Links.Where(each => Iso19770_2.Relationship.Requires == each.Relationship).Select(each => each.HRef).WhereNotNull().Select(each => Uri.UnescapeDataString(each.ToString())).ReEnumerable();
+            }
+        }
+
         #region Attributes
 
         public bool? IsCorpus {

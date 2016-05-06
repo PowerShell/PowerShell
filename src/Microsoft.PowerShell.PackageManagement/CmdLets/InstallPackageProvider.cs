@@ -127,6 +127,23 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
             }
         }
 
+        protected override string BootstrapNuGet
+        {
+            get
+            {
+                // Generally bootstrapping NuGet is required for the install-packageprovider as PowerShellGet uses it.
+                // However, when a user specifies Name as NuGet, e.g., 'install-packageprovider -name NuGet', we do not need to perform a hard 
+                // bootstrap on NuGet because this case has been taken care of already. There is no difference from installing other packages.
+                return InstallingNugetProvider ? "false" : "true";
+            }
+        }
+        private bool InstallingNugetProvider
+        {
+            get
+            {
+                return (Name != null) && (Name.Length == 1 && Name.ContainsAnyOfIgnoreCase("NuGet"));
+            }
+        }
 
         public override bool ProcessRecordAsync() {
             ValidateVersion(RequiredVersion);
@@ -185,7 +202,10 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
             get {
                 var availableProviders = base.SelectedProviders.ToArray();
                 if (availableProviders.Any(each => RequiredProviders.ContainsAnyOfIgnoreCase(each.ProviderName))) {
-                    return availableProviders.Where(each => RequiredProviders.ContainsIgnoreCase(each.ProviderName));
+                    //For 'install-packageprovider NuGet', the PowerShellGet provider does not need to be involved.
+                    //It will causes round trip as the PowerShellGet depends on NuGet. Here we choose the Bootstrap provider only.
+                    return (InstallingNugetProvider)? availableProviders.Where(each => Bootstrap.EqualsIgnoreCase(each.ProviderName)):
+                        availableProviders.Where(each => RequiredProviders.ContainsIgnoreCase(each.ProviderName));
                 }
 
                 Error(Constants.Errors.RegisterPackageSourceRequired, Source.JoinWithComma());
@@ -235,7 +255,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
         {
             if (IsPackageByObject) {
                 // we should have handled these already.
-                return true;
+                return ImportProvider(InputObject);
             }
 
             var unmatched = _resultsPerName.Keys.Where(each => _resultsPerName[each] == null);
@@ -251,12 +271,32 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
                 return false;
             }
 
-            var list = ProcessMatchedDuplicates();
+            var list = ProcessMatchedDuplicates().ToArray();
 
             // Now install the provider
-            return base.InstallPackages(list.ToArray());
+            if(!base.InstallPackages(list)) {
+                return false;
+            }
+
+            return ImportProvider(list);
         }
 
+        private bool ImportProvider(SoftwareIdentity[] list)
+        {
+            Verbose("Importing the package provider {0}", Name.JoinWithComma());
+
+            //after the provider gets installed, we are trying to load it           
+            var providers = list.SelectMany(each => PackageManagementService.ImportPackageProvider(this.SuppressErrorsAndWarnings(IsProcessing), each.Name, each.Version.ToVersion(), null, null, false, true)).ToArray();
+            if (providers.Any()) {
+                Verbose(Resources.Messages.ProviderImported, providers.Select(e => e.ProviderPath).JoinWithComma());
+                return true;
+            }
+            else
+            {
+                Warning(Resources.Messages.ProviderNameDifferentFromPackageName, Name.JoinWithComma());
+            }
+            return false;
+        }
 
         private List<SoftwareIdentity> ProcessMatchedDuplicates() {
             List<SoftwareIdentity> filteredSoftwareIdentity = new List<SoftwareIdentity>();

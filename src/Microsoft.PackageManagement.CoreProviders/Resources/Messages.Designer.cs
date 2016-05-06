@@ -112,6 +112,15 @@ namespace Microsoft.PackageManagement.Providers.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Provider &apos;{0}&apos; missing installationmedia to install..
+        /// </summary>
+        internal static string MissingInstallationmedia {
+            get {
+                return ResourceManager.GetString("MissingInstallationmedia", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; does not contain a package provider manifest. Refer to &apos;Get-Help Import-PackageProvider&apos; for guidance..
         /// </summary>
         internal static string MissingProviderManifest {
@@ -135,6 +144,15 @@ namespace Microsoft.PackageManagement.Providers.Resources {
         internal static string MoreThanOneDllExists {
             get {
                 return ResourceManager.GetString("MoreThanOneDllExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find dependency packages from link &apos;{0}&apos;..
+        /// </summary>
+        internal static string NoDependencyPackageFound {
+            get {
+                return ResourceManager.GetString("NoDependencyPackageFound", resourceCulture);
             }
         }
         

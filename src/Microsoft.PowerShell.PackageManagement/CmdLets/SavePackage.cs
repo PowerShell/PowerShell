@@ -23,11 +23,13 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using Microsoft.PackageManagement.Internal.Implementation;
     using Microsoft.PackageManagement.Internal.Packaging;
     using Microsoft.PackageManagement.Internal.Utility.Async;
+    using Microsoft.PackageManagement.Internal.Utility.Collections;
     using Microsoft.PackageManagement.Internal.Utility.Extensions;
     using Microsoft.PackageManagement.Packaging;
     using Utility;
     using Directory = System.IO.Directory;
     using File = System.IO.File;
+    using Microsoft.PackageManagement.Internal.Utility.Versions;
 
     [Cmdlet(VerbsData.Save, Constants.Nouns.PackageNoun, SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=517140")]
     public sealed class SavePackage : CmdletWithSearchAndSource {
@@ -160,9 +162,9 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                 return false;
             }
 
-            if (IsPackageByObject) {
-                ProcessPackage(SelectProviders(InputObject.ProviderName).FirstOrDefault(), InputObject.Name.SingleItemAsEnumerable(), InputObject);
-                return true;
+            if (IsPackageByObject)
+            {
+                return DownloadPackage(InputObject);
             }
 
             if (Name.Any(each => each.ContainsWildcards()))
@@ -174,65 +176,103 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             return base.ProcessRecordAsync();
         }
 
-        protected override void ProcessPackage(PackageProvider provider, IEnumerable<string> searchKey, SoftwareIdentity package) {
-            // if provider does not implement downloadpackage throw error saying that save-package is not implemented by provider
-            if (!provider.IsMethodImplemented("DownloadPackage"))
+        public override bool EndProcessingAsync()
+        {
+            if (IsCanceled)
             {
-                Error(Constants.Errors.MethodNotImplemented, provider.ProviderName, "Save-Package");
-            }
-
-            base.ProcessPackage(provider, searchKey, package);
-
-            // if we do save-package jquery -path C:\test then savepath would be C:\test
-            var savePath = SaveFileName(package.PackageFilename);
-
-            bool mainPackageDownloaded = false;
-
-            if (!string.IsNullOrWhiteSpace(savePath)) {                
-                // let the provider handles everything
-                // message would be something like What if: Performing the operation "Save Package" on target "'jQuery' to location 'C:\test\test'".
-                if (ShouldProcess(FormatMessageString(Resources.Messages.SavePackageWhatIfDescription, package.Name, savePath), FormatMessageString(Resources.Messages.SavePackage)).Result)
-                {
-                    foreach (var downloadedPkg in provider.DownloadPackage(package, savePath, this.ProviderSpecific(provider)).CancelWhen(CancellationEvent.Token))
-                    {
-                        if (IsCanceled)
-                        {
-                            Error(Constants.Errors.ProviderFailToDownloadFile, downloadedPkg.PackageFilename, provider.ProviderName);
-                            return;
-                        }
-
-                        // check whether main package is downloaded;
-                        if (downloadedPkg.Name.EqualsIgnoreCase(package.Name) && downloadedPkg.Version.EqualsIgnoreCase(package.Version))
-                        {
-                            mainPackageDownloaded = true;
-                        }
-
-                        WriteObject(AddPropertyToSoftwareIdentity(downloadedPkg));
-                        LogEvent(EventTask.Download, EventId.Save, Resources.Messages.PackageSaved, downloadedPkg.Name, downloadedPkg.Version, downloadedPkg.ProviderName, downloadedPkg.Source ?? string.Empty, downloadedPkg.Status ?? string.Empty);
-                        TraceMessage(Constants.SavePackageTrace, downloadedPkg);
-                    }
-                }
-                else
-                {
-                    // What if scenario, don't error out
-                    return;
-                }
-            }
-
-            if (!mainPackageDownloaded)
-            {
-                Error(Constants.Errors.ProviderFailToDownloadFile, package.PackageFilename, provider.ProviderName);
-                return;
-            }
-        }
-
-        public override bool EndProcessingAsync() {
-            if (IsCanceled) {
                 return false;
             }
-            if (!IsSourceByObject) {
-                return CheckUnmatchedPackages();
+
+            if (IsPackageByObject)
+            {
+                // we should have handled these already in ProcessRecordAsync()
+                return true;
             }
+
+            if (!CheckUnmatchedPackages())
+            {
+                // there are unmatched packages
+                // not going to install.
+                return false;
+            }
+
+            var swids = CheckMatchedDuplicates().ReEnumerable();
+            if (swids == null || !swids.Any())
+            {
+                // there are duplicate packages
+                // not going to install.
+                return false;
+            }
+
+            // good list. Let's roll...
+            return DownloadPackage(swids.ToArray());
+        }
+
+        private bool DownloadPackage(params SoftwareIdentity[] packagesToSave)
+        {
+            foreach (var package in packagesToSave)
+            {
+                if (IsCanceled)
+                {
+                    return false;
+                }
+
+                var provider = package.Provider;
+
+
+                if (!provider.IsMethodImplemented("DownloadPackage"))
+                {
+                    Error(Constants.Errors.MethodNotImplemented, provider.ProviderName, "Save-Package");
+                    return false;
+                }
+
+                // if we do save-package jquery -path C:\test then savepath would be C:\test
+                var savePath = SaveFileName(package.PackageFilename);
+
+                bool mainPackageDownloaded = false;
+
+                if (!string.IsNullOrWhiteSpace(savePath))
+                {
+                    // let the provider handles everything
+                    // message would be something like What if: Performing the operation "Save Package" on target "'jQuery' to location 'C:\test\test'".
+                    if (ShouldProcess(FormatMessageString(Resources.Messages.SavePackageWhatIfDescription, package.Name, savePath), FormatMessageString(Resources.Messages.SavePackage)).Result)
+                    {
+                        var host = this.ProviderSpecific(provider);
+                        foreach (var downloadedPkg in provider.DownloadPackage(package, savePath, host).CancelWhen(CancellationEvent.Token))
+                            //foreach (var downloadedPkg in provider.DownloadPackage(package, savePath, ErrorAndWarningContinue ? host.SuppressErrorsAndWarnings(IsProcessing) : host).CancelWhen(CancellationEvent.Token))
+                        {
+                            if (IsCanceled)
+                            {
+                                Error(Constants.Errors.ProviderFailToDownloadFile, downloadedPkg.PackageFilename, provider.ProviderName);
+                                return false;
+                            }
+
+                            // check whether main package is downloaded;
+                            if (downloadedPkg.Name.EqualsIgnoreCase(package.Name) && (FourPartVersion)downloadedPkg.Version >= (FourPartVersion)package.Version)
+                            {
+                                mainPackageDownloaded = true;
+                            }
+
+                            WriteObject(AddPropertyToSoftwareIdentity(downloadedPkg));
+                            LogEvent(EventTask.Download, EventId.Save, Resources.Messages.PackageSaved, downloadedPkg.Name, downloadedPkg.Version, downloadedPkg.ProviderName, downloadedPkg.Source ?? string.Empty, downloadedPkg.Status ?? string.Empty, downloadedPkg.InstallationPath ?? string.Empty);
+                            TraceMessage(Constants.SavePackageTrace, downloadedPkg);
+                        }
+
+                    }
+                    else
+                    {
+                        // What if scenario, don't error out
+                        return true;
+                    }
+                }
+
+                if (!mainPackageDownloaded)
+                {
+                    Error(Constants.Errors.ProviderFailToDownloadFile, package.PackageFilename, provider.ProviderName);
+                    return false;
+                }
+            }
+
             return true;
         }
     }

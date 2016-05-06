@@ -464,7 +464,7 @@
   </data>
   <data name="WildCardCharsAreNotSupported" xml:space="preserve">
     <value>The specified name '{0}' should not contain any wildcard characters, please correct it and try again.</value>
-    <comment>0 - packge or provider name</comment>
+    <comment>0 - package or provider name</comment>
   </data>
   <data name="SuggestRequiredVersion" xml:space="preserve">
     <value>Please specify an exact -Name and -RequiredVersion.</value>
@@ -502,5 +502,12 @@
   <data name="SavePackageWhatIfDescription" xml:space="preserve">
     <value>'{0}' to location '{1}'</value>
     <comment>0 - package name, 1 - save location</comment>
+  </data>
+  <data name="ProviderImported" xml:space="preserve">
+    <value>Imported provider '{0}' .</value>
+    <comment>0 - provider name</comment>
+  </data>
+  <data name="ProviderNameDifferentFromPackageName" xml:space="preserve">
+    <value>Import-PackageProvider failed. Possibly the provider name is different from the package name '{0}'. Try Get-PackageProvider -ListAvailable to identify the associated provider name and run Import-PackageProvider".</value>
   </data>
 </root>

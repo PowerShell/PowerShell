@@ -64,6 +64,19 @@ namespace Microsoft.PackageManagement.MetaProvider.PowerShell {
             _xmlLang = xmlLang;
         }
 
+        public SoftwareIdentity(string fastPackageReference, string name, string version, string versionScheme, string source, string summary, string searchKey, string fullPath, string filename, Hashtable details, ArrayList entities, ArrayList links, bool fromTrustedSource, ArrayList dependencies, string tagId, string xmlLang, string destinationPath)
+            : this(fastPackageReference, name, version, versionScheme, source, summary, searchKey, fullPath, filename)
+        {
+            _details = details;
+            _entities = entities;
+            _links = links;
+            FromTrustedSource = fromTrustedSource;
+            _dependencies = dependencies;
+            _tagId = tagId;
+            _xmlLang = xmlLang;
+            _destinationPath = destinationPath;
+        }
+
         public SoftwareIdentity(string xmlSwidTag, bool commitImmediately)
         {
             _xmlSwidTag = xmlSwidTag;
@@ -96,12 +109,34 @@ namespace Microsoft.PackageManagement.MetaProvider.PowerShell {
                 return r.YieldSoftwareIdentityXml(_xmlSwidTag, _commitImmediately) != null;
             }
 
-            return r.YieldSoftwareIdentity(FastPackageReference, Name, Version, VersionScheme, Summary, Source, SearchKey, FullPath, Filename) != null && YieldTagId(r) && YieldXmlLang(r) && YieldDetails(r) && YieldEntities(r) && YieldLinks(r) && YieldDependencies(r) && r.AddMetadata(FastPackageReference, "FromTrustedSource", FromTrustedSource.ToString()) != null;
+            bool result = r.YieldSoftwareIdentity(FastPackageReference, Name, Version, VersionScheme, Summary, Source, SearchKey, FullPath, Filename) != null && YieldTagId(r) && YieldXmlLang(r)
+                && YieldDetails(r) && YieldEntities(r) && YieldLinks(r) && YieldDependencies(r) && r.AddMetadata(FastPackageReference, "FromTrustedSource", FromTrustedSource.ToString()) != null;
+
+            // check whether we have destination
+            if (!string.IsNullOrWhiteSpace(_destinationPath))
+            {
+                var payload = r.AddPayload();
+
+                // could not add the payload, return false
+                if (string.IsNullOrWhiteSpace(payload))
+                {
+                    return false;
+                }
+
+                if (r.AddDirectory(payload, System.IO.Path.GetFileName(_destinationPath), System.IO.Path.GetDirectoryName(_destinationPath), null, true) == null)
+                {
+                    // cannot add directory
+                    return false;
+                }
+            }
+
+            return result;
         }
 
         private ArrayList _links;
         private ArrayList _entities;
         private ArrayList _dependencies;
+        private string _destinationPath;
         private string _tagId;
         private string _xmlLang;
         private string _xmlSwidTag;

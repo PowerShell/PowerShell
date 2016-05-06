@@ -37,6 +37,9 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using Microsoft.PackageManagement.Packaging;
     using Telemetry.Internal;
     using System.Management.Automation.Runspaces;
+    using System.Net;
+    using Microsoft.PackageManagement.Internal.Utility.Plugin;
+
 
     public delegate string GetMessageString(string messageId, string defaultText);
 
@@ -46,6 +49,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
         private bool _messageResolverNotResponding = false;
         private readonly int _callCount;
         private readonly Hashtable _dynamicOptions = new Hashtable();
+        private string _bootstrapNuGet = "false";
 
         [Parameter]
         public SwitchParameter Force;
@@ -308,6 +312,14 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             return Enumerable.Empty<string>();
         }
 
+        public virtual IWebProxy WebProxy
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         public virtual string CredentialUsername {
             get {
                 return null;
@@ -387,10 +399,42 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             }
         }
 
+        protected virtual string BootstrapNuGet
+        {
+            get
+            {
+                return _bootstrapNuGet;
+            }
+            set
+            {
+                _bootstrapNuGet = value;
+            }
+        }
+
+        protected virtual IHostApi PackageManagementHost
+        {
+            get
+            {
+                IHostApi parent = this;
+                return new object[] {
+                    new {
+                        GetOptionValues = new Func<string, IEnumerable<string>>(key => {
+                            if (key.EqualsIgnoreCase(Microsoft.PackageManagement.Internal.Constants.BootstrapNuGet)) {
+                                return BootstrapNuGet.SingleItemAsEnumerable();
+                            }
+
+                            return this.GetOptionValues(key);
+                        }),
+                    },
+                    parent,
+                }.As<IHostApi>();
+            }
+        }
+
         protected IEnumerable<PackageProvider> SelectProviders(string[] names) {
             if (names.IsNullOrEmpty()) {
-                return ShouldSelectAllProviders ? PackageManagementService.SelectProviders(null, this.SuppressErrorsAndWarnings(IsProcessing))
-                     : PackageManagementService.SelectProviders(null, this.SuppressErrorsAndWarnings(IsProcessing)).Where(each => !each.Features.ContainsKey(Microsoft.PackageManagement.Internal.Constants.Features.AutomationOnly));               
+                return ShouldSelectAllProviders ? PackageManagementService.SelectProviders(null, PackageManagementHost.SuppressErrorsAndWarnings(IsProcessing))
+                     : PackageManagementService.SelectProviders(null, PackageManagementHost.SuppressErrorsAndWarnings(IsProcessing)).Where(each => !each.Features.ContainsKey(Microsoft.PackageManagement.Internal.Constants.Features.AutomationOnly));               
                 
             }
             // you can manually ask for any provider by name, if it is for automation only.
@@ -398,20 +442,20 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             
                 return names.SelectMany(each => PackageManagementService.SelectProviders(each, this));
             }
-            return names.SelectMany(each => PackageManagementService.SelectProviders(each, this.SuppressErrorsAndWarnings(IsProcessing)));
+            return names.SelectMany(each => PackageManagementService.SelectProviders(each, PackageManagementHost.SuppressErrorsAndWarnings(IsProcessing)));
         }
 
         protected IEnumerable<PackageProvider> SelectProviders(string name) {
             // you can manually ask for any provider by name, if it is for automation only.
             if (IsInvocation) {
-                var result = PackageManagementService.SelectProviders(name, this).ToArray();
+                var result = PackageManagementService.SelectProviders(name, PackageManagementHost).ToArray();
                 if ((result.Length == 0) && ShouldLogError) {
                     Error(Constants.Errors.UnknownProvider, name);
                 }
                 return result;
             }
 
-            var r = PackageManagementService.SelectProviders(name, this.SuppressErrorsAndWarnings(IsProcessing)).ToArray();
+            var r = PackageManagementService.SelectProviders(name, PackageManagementHost.SuppressErrorsAndWarnings(IsProcessing)).ToArray();
             if ((r.Length == 0) && ShouldLogError){
                 Error(Constants.Errors.UnknownProvider, name);               
             }
@@ -462,7 +506,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             Save = 4103
         }
 
-        protected void LogEvent(EventTask task, EventId id, string context, string name, string version, string providerName, string source, string status)
+        protected void LogEvent(EventTask task, EventId id, string context, string name, string version, string providerName, string source, string status, string destinationPath)
         {
             var iis = InitialSessionState.CreateDefault2();
 
@@ -480,7 +524,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
 
                         powershell.AddParameter("Payload", new object[] {
                         task.ToString(),
-                        string.Format(CultureInfo.InvariantCulture, "Package={0}, Version={1}, Provider={2}, Source={3}, Status={4}", name, version, providerName, source, status),
+                        string.Format(CultureInfo.InvariantCulture, "Package={0}, Version={1}, Provider={2}, Source={3}, Status={4}, DestinationPath={5}", name, version, providerName, source, status, destinationPath),
                         context});
 
                         powershell.Invoke();
