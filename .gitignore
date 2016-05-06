@@ -1,5 +1,6 @@
 bin/
 obj/
+debug/
 project.lock.json
 *-tests.xml
 
