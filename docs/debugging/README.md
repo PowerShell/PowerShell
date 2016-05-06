@@ -2,7 +2,7 @@ Debugging
 =========
 
 VS Code
--------
+=======
 
 [Experimental .NET Core Debugging in VS Code][core-debug] enables
 cross-platform debugging with the [Visual Studio Code][vscode] editor.
@@ -38,19 +38,32 @@ process named `powershell`, and will attach to it. If you need more
 fine grained control, replace `processName` with `processId` and
 provide a PID. (Please be careful not to commit such a change).
 
+Important Note
+--------------
+
+Debugging is very sensitive to the versions of our .NET Core packages, VS Code,
+and the C# extension.
+
+- Use the VS Code [Insiders][] build
+- Use the latest pre-release of the [C# extension][]
+- Refer to the pre-release [documentation][]
+
 [core-debug]: https://blogs.msdn.microsoft.com/visualstudioalm/2016/03/10/experimental-net-core-debugging-in-vs-code/
 [vscode]: https://code.visualstudio.com/
 [OmniSharp]: https://github.com/OmniSharp/omnisharp-vscode
 [vscclrdebugger]: http://aka.ms/vscclrdebugger
+[insiders]: https://code.visualstudio.com/insiders
+[C# extension]: https://github.com/OmniSharp/omnisharp-vscode/releases
+[documentation]: https://github.com/OmniSharp/omnisharp-vscode/pull/157
 
 corehost
---------
+========
 
 The native executable prouduced by .NET CLI will produce trace output
 if launched with `COREHOST_TRACE=1 ./powershell`.
 
 CoreCLR PAL
------------
+===========
 
 The native code in the CLR has debug channels to selectively output
 information to the console. These are controlled by the
