@@ -7,7 +7,7 @@
             "request": "launch",
             "justMyCode": false,
             "stopAtEntry": true,
-            "program": "${workspaceRoot}/bin/powershell",
+            "program": "${workspaceRoot}/debug/powershell",
             "args": [ ],
             "preLaunchTask": "build",
             "cwd": "${workspaceRoot}"
