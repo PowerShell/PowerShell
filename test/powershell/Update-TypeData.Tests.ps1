@@ -94,7 +94,7 @@ Describe "Update-TypeData basic functionality" -Tags DRT{
 		try
 		{
 			Update-TypeData -AppendPath $filelist -EA Stop
-			Throw "Execution OK"
+			Throw "We expect TypesXmlUpdateException, but it didn't throw."
 		}
 		catch 
 		{
@@ -109,6 +109,7 @@ Describe "Update-TypeData basic functionality" -Tags DRT{
 			rm $filelist
 		}
 	}
+
 	
 	It "Update-TypeData with Valid Dynamic Type NoteProperty with Force should work"{
 		try
