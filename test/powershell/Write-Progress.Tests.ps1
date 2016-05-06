@@ -35,11 +35,11 @@
         }
     }
 
-    It "all mandatory params works" {
+    It "all mandatory params works" -Pending {
         { write-progress -activity 'myactivity' -status 'mystatus' } | Should Not Throw 
     }
 
-    It "all params works" {
+    It "all params works" -Pending {
         { write-progress -activity 'myactivity' -status 'mystatus' -id 1 -parentId 2 -completed:$false -current 'current' -sec 1 -percent 1 } | Should Not Throw 
     }
 }
