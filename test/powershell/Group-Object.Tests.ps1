@@ -1,3 +1,16 @@
+Describe "Group-Object DRT Unit Tests" -Tags DRT{
+    It "Test for CaseSensitive switch" {
+        $testObject = 'aA', 'aA', 'AA', 'AA'
+        $results = $testObject | Group-Object -CaseSensitive
+        $results.Count | Should Be 2
+        $results.Name.Count | Should Be 2
+        $results.Group.Count | Should Be 4
+        $results.Name | Should Be aA,AA
+        $results.Group | Should Be aA,aA,AA,AA
+        $results.Group.GetType().BaseType | Should Be Array
+    }
+}
+
 Describe "Group-Object" {
     $testObject = Get-ChildItem
 
