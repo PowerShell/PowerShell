@@ -3562,7 +3562,22 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     bool shouldRecurse = Recurse;
-                    if (!Recurse && hasChildren)
+                    bool treatAsFile = false;
+                    try
+                    {
+                        System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(providerPath);
+                        if (!Platform.IsWindows && di != null && (di.Attributes & System.IO.FileAttributes.ReparsePoint) != 0)
+                        {
+                            shouldRecurse = false;
+                            treatAsFile = true;
+                        }
+                    }
+                    catch (System.IO.FileNotFoundException)
+                    {
+                        // not a directory
+                    }
+
+                    if (!treatAsFile && !Recurse && hasChildren)
                     {
                         // Get the localized prompt string
 

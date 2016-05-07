@@ -1,3 +1,23 @@
+Describe "ConvertFrom-StringData DRT Unit Tests" -Tags DRT {  
+    It "Should able to throw error when convert invalid line" {
+        $str =@"
+#comments here
+abc
+#comments here
+def=content of def
+"@
+        try
+        {
+            ConvertFrom-StringData $str
+            Throw "we expect 'InvalidOperation' exception"
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorId | Should be "InvalidOperation,Microsoft.PowerShell.Commands.ConvertFromStringDataCommand"
+        }
+    }
+}
+
 Describe "ConvertFrom-StringData" {
     $sampleData = @'
 foo  = 0

@@ -99,7 +99,7 @@ namespace PSTests
                 // The process should return an exit code of 0 on success
                 Assert.Equal(0, process.ExitCode);
                 // It should be the same as what our platform code returns
-                Assert.Equal(hostname, Platform.NonWindowsGetMachineName());
+                Assert.Equal(hostname, System.Management.Automation.Environment.MachineName);
             }
         }
 

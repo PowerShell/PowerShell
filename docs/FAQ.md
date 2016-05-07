@@ -43,6 +43,20 @@ more information.
 
 [error]: https://blogs.msdn.microsoft.com/kebab/2013/06/09/an-introduction-to-error-handling-in-powershell/
 
+I just pulled master, why did my build fail?
+============================================
+
+There are two likely reasons:
+
+If the `src/windows-build` submodule was changed, you need to manually run `git
+submodule update` to check your sources out to the correct commits. Pulling does
+not automatically do this. When a submodule is out-of-date, you will likely be
+missing required build files.
+
+If package dependencies were changed in any `project.json`, you need to manually
+run `dotnet restore` to update your local dependency graphs. `Start-PSBuild
+-Restore` can automatically do this.
+
 Why did `Start-PSBuild` tell me to update `dotnet`?
 ===================================================
 
