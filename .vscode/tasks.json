@@ -8,7 +8,7 @@
     "tasks": [
         {
             "taskName": "build",
-            "args": [ "Import-Module ${workspaceRoot}/PowerShellGitHubDev.psm1; Start-PSBuild" ],
+            "args": [ "Import-Module ${workspaceRoot}/PowerShellGitHubDev.psm1; Start-PSBuild -Output debug" ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"
         }
