@@ -14,7 +14,7 @@ using System.Resources;
 [assembly:InternalsVisibleTo("Microsoft.PowerShell.Commands.Utility")]
 [assembly:InternalsVisibleTo("Microsoft.PowerShell.Security")]
 [assembly:InternalsVisibleTo("Microsoft.PowerShell.CoreCLR.AssemblyLoadContext")]
-[assembly:InternalsVisibleTo("powershell")]
+[assembly:InternalsVisibleTo("Microsoft.PowerShell.ConsoleHost")]
 [assembly:InternalsVisibleTo("powershell-tests")]
 
 #else
