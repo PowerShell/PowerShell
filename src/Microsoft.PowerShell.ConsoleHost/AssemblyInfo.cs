@@ -7,12 +7,11 @@ using System.Runtime.ConstrainedExecution;
 using System.Security.Permissions;
 #endif
 
-[assembly:InternalsVisibleTo("powershell-tests")]
-
+#if CORECLR
 [assembly:AssemblyCulture("")]
 [assembly:NeutralResourcesLanguage("en-US")]
-
-#if !CORECLR
+[assembly:InternalsVisibleTo("powershell-tests")]
+#else
 [assembly:AssemblyConfiguration("")]
 [assembly:AssemblyInformationalVersionAttribute (@"10.0.10011.16384")]
 [assembly:ReliabilityContractAttribute(Consistency.MayCorruptAppDomain, Cer.MayFail)]
@@ -24,6 +23,7 @@ using System.Security.Permissions;
 [assembly:AssemblyKeyFileAttribute(@"..\signing\visualstudiopublic.snk")]
 [assembly:System.Reflection.AssemblyDelaySign(true)]
 #endif
+
 [assembly:System.Runtime.InteropServices.ComVisible(false)]
 [assembly:System.Reflection.AssemblyVersion("3.0.0.0")]
 [assembly:System.Reflection.AssemblyProduct("Microsoft (R) Windows (R) Operating System")]
