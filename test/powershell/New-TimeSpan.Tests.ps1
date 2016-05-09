@@ -1,3 +1,14 @@
+Describe "New-TimeSpan DRT Unit Tests" -Tags DRT{ 
+     It "Should works proper with new-timespan"{
+         $results =  New-TimeSpan -Days 10 -Hours 10 -Minutes 10 -Seconds 10
+         $results.GetType() | Should Be timespan
+         $results.Days | Should Be 10
+         $results.Hours | Should Be 10
+         $results.Minutes | Should Be 10
+         $results.Seconds | Should Be 10
+    }
+}
+
 Describe "New-TimeSpan" {
     It "Should be able to create a new timespan object" {
 	New-Variable -Name testObject -Value $(New-TimeSpan)
