@@ -221,7 +221,12 @@ function New-PSOptions {
         [switch]$FullCLR
     )
 
-    $Top = "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost"
+    if ($FullCLR) {
+        $Top = "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost"
+    } else {
+        $Top = "$PSScriptRoot/src/powershell"
+    }
+    Write-Verbose "Top project directory is $Top"
 
     if (-not $Configuration) {
         $Configuration = if ($IsLinux -or $IsOSX) {
