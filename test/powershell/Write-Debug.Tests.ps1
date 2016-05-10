@@ -13,7 +13,7 @@
         )
 
         $PSBoundParameters.GetEnumerator() | ForEach {
-        Write-Verbose $_
+            Write-Verbose $_
         }
         Write-Verbose "DebugPreference: $DebugPreference"
 
