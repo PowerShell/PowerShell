@@ -77,7 +77,6 @@ namespace Microsoft.PowerShell
             // systems ignore the setting.
             m = ConsoleControl.GetMode(handle);
             this._supportsVirtualTerminal = (m & ConsoleControl.ConsoleModes.VirtualTerminal) != 0;
-            isTestingShiftTab = false;
 #endif
         }
 
@@ -145,17 +144,7 @@ namespace Microsoft.PowerShell
         /// 
         /// </summary>
 
-        internal bool ReadFromStdin
-        {
-            get
-            {
-                return readFromStdin;
-            }
-            set
-            {
-                readFromStdin = value;
-            }
-        }
+        internal bool ReadFromStdin { get; set; }
 
         /// <summary>
         /// 
@@ -563,7 +552,7 @@ namespace Microsoft.PowerShell
         internal void WriteToConsole(string value, bool transcribeResult)
         {
 #if OPEN
-            Console.Write(value);
+            Console.Out.Write(value);
 #else
             ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
 
@@ -589,10 +578,9 @@ namespace Microsoft.PowerShell
             ConsoleControl.WriteConsole(handle, value);
 #endif
 
-            if (isInteractiveTestToolListening && parent.IsStandardOutputRedirected)
+            if (isInteractiveTestToolListening && Console.IsOutputRedirected)
             {
-                Dbg.Assert(parent.StandardOutputWriter != null, "stdout writer should be initialized");
-                parent.StandardOutputWriter.Write(value);
+                Console.Out.Write(value);
             }
 
             if (transcribeResult)
@@ -673,10 +661,7 @@ namespace Microsoft.PowerShell
             // If the test hook is set, write to it and continue.
             if (_h != null) _h.Write(value);
 
-            TextWriter writer =
-                  (!parent.IsStandardOutputRedirected || parent.IsInteractive)
-                ? parent.ConsoleTextWriter
-                : parent.StandardOutputWriter;
+            TextWriter writer = Console.IsOutputRedirected ? Console.Out : parent.ConsoleTextWriter;
 
             if (parent.IsRunningAsync)
             {
@@ -1376,9 +1361,9 @@ namespace Microsoft.PowerShell
             }
 
             TextWriter writer =
-                  (!parent.IsStandardErrorRedirected || parent.IsInteractive)
+                  (!Console.IsErrorRedirected || parent.IsInteractive)
                 ? parent.ConsoleTextWriter
-                : parent.StandardErrorWriter;
+                : Console.Error;
 
             if (parent.ErrorFormat == Serialization.DataFormat.XML)
             {
@@ -1392,7 +1377,7 @@ namespace Microsoft.PowerShell
                     WriteLine(errorForegroundColor, errorBackgroundColor, value);
                 else
 
-                    parent.StandardErrorWriter.Write(value + Crlf);
+                    Console.Error.Write(value + Crlf);
             }
         }
 
@@ -1564,30 +1549,80 @@ namespace Microsoft.PowerShell
 
         internal string ReadLine(bool endOnTab, string initialContent, out ReadLineResult result, bool calledFromPipeline, bool transcribeResult)
         {
-#if OPEN
-            result = ReadLineResult.endedOnEnter;
-            return Console.ReadLine();
-#else
             result = ReadLineResult.endedOnEnter;
 
             // If the test hook is set, read from it.
             if (_h != null) return _h.ReadLine();
 
-            string s = "";
-            if (parent.IsStandardInputRedirected && readFromStdin)
+            string restOfLine = null;
+
+            string s = ReadFromStdin
+                ? ReadLineFromFile(initialContent)
+                : ReadLineFromConsole(endOnTab, initialContent, calledFromPipeline, ref restOfLine, ref result);
+
+            if (transcribeResult)
             {
-                // When reading from a file handle instead of a console, endOnTab and initial content are ignored.
-
-                // StreamReader.ReadLine simply returns null when EOF is reached.
-
-                s = parent.StandardInReader.ReadLine();
-                if (endOnTab && !string.IsNullOrEmpty(s) && s.IndexOf(Tab, StringComparison.OrdinalIgnoreCase) != -1)
-                {
-                    result = isTestingShiftTab ? ReadLineResult.endedOnShiftTab : ReadLineResult.endedOnTab;
-                    return s;
-                }
-                return s;
+                PostRead(s);
             }
+            else
+            {
+                PostRead();
+            }
+
+            if (restOfLine != null)
+                s += restOfLine;
+
+            return s;
+        }
+
+        private string ReadLineFromFile(string initialContent)
+        {
+            var sb = new StringBuilder();
+            if (initialContent != null)
+            {
+                sb.Append(initialContent);
+            }
+
+            while (true)
+            {
+                var inC = Console.In.Read();
+                if (inC == -1)
+                {
+                    // EOF - we return null which tells our caller to exit
+                    return null;
+                }
+
+                var c = unchecked((char)inC);
+                if (!NoPrompt) Console.Out.Write(c);
+
+                if (c == '\r')
+                {
+                    // Treat as newline, but consume \n if there is one.
+                    if (Console.In.Peek() == '\n')
+                    {
+                        if (!NoPrompt) Console.Out.Write('\n');
+                        Console.In.Read();
+                    }
+                    sb.Append('\n');
+                    break;
+                }
+
+                sb.Append(c);
+
+                if (c == '\n')
+                {
+                    break;
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        private string ReadLineFromConsole(bool endOnTab, string initialContent, bool calledFromPipeline, ref string restOfLine, ref ReadLineResult result)
+        {
+            #if OPEN
+            return ReadLineFromFile(initialContent);
+            #else
 
             ConsoleHandle handle = ConsoleControl.GetInputHandle();
             PreRead();
@@ -1606,6 +1641,7 @@ namespace Microsoft.PowerShell
                 m |= desiredMode;
                 ConsoleControl.SetMode(handle, m);
             }
+
             // If more characters are typed than you asked, then the next call to ReadConsole will return the 
             // additional characters beyond those you requested.
             // 
@@ -1622,10 +1658,10 @@ namespace Microsoft.PowerShell
             // the empty string.
 
             uint keyState = 0;
-            string restOfLine = null;
 
             rawui.ClearKeyCache();
 
+            string s = "";
             do
             {
                 s += ConsoleControl.ReadConsole(handle, initialContent, maxInputLineLength, endOnTab, out keyState);
@@ -1706,24 +1742,12 @@ namespace Microsoft.PowerShell
             while (true);
 
             Dbg.Assert(
-                    (s == null && result == ReadLineResult.endedOnBreak)
-                || (s != null && result != ReadLineResult.endedOnBreak),
-                "s should only be null if input ended with a break");
-
-            if (transcribeResult)
-            {
-                PostRead(s);
-            }
-            else
-            {
-                PostRead();
-            }
-
-            if (restOfLine != null)
-                s += restOfLine;
+                       (s == null && result == ReadLineResult.endedOnBreak)
+                       || (s != null && result != ReadLineResult.endedOnBreak),
+                       "s should only be null if input ended with a break");
 
             return s;
-#endif
+            #endif
         }
 
         /// <summary>
@@ -1848,15 +1872,11 @@ namespace Microsoft.PowerShell
                     if (leftover > 0)
                     {
                         // Check if the std input is redirected, e.g. reading from a file
-                        bool isStdInputRedirected = parent.IsStandardInputRedirected && readFromStdin;
-                        if (!isStdInputRedirected)
-                        {
-                            // We are reading from the console
-                            // If the cursor is at the end of a line, there is actually a space character at the cursor's position and when we type tab
-                            // at the end of a line, that space character is replaced by the tab. But when we type tab at the middle of a line, the space
-                            // character at the end is preserved, we should remove that space character because it's not provided by the user.
-                            input = input.Remove(input.Length - 1);
-                        }
+                        // We are reading from the console
+                        // If the cursor is at the end of a line, there is actually a space character at the cursor's position and when we type tab
+                        // at the end of a line, that space character is replaced by the tab. But when we type tab at the middle of a line, the space
+                        // character at the end is preserved, we should remove that space character because it's not provided by the user.
+                        input = input.Remove(input.Length - 1);
                         restOfLine = input.Substring(tabIndex + 1);
                     }
                     input = input.Remove(tabIndex);
@@ -2088,7 +2108,6 @@ namespace Microsoft.PowerShell
 
         private object instanceLock = new object();
 
-        private bool readFromStdin;
         private bool noPrompt;
 
         //If this is true, class throws on read or prompt method which require
@@ -2113,9 +2132,6 @@ namespace Microsoft.PowerShell
         // this is a test hook for the ConsoleInteractiveTestTool, which sets this field to true.
 
         private bool isInteractiveTestToolListening;
-#if !OPEN
-        private bool isTestingShiftTab;
-#endif
 
         // This instance data is "read-only" and need not have access serialized.
 

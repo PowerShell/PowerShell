@@ -865,7 +865,7 @@ namespace Microsoft.PowerShell
                     return false;
                 }
 
-                if (!parent.IsStandardInputRedirected)
+                if (!Console.IsInputRedirected)
                 {
                     ui.WriteErrorLine(CommandLineParameterParserStrings.StdinNotRedirected);
                     showHelp = true;
