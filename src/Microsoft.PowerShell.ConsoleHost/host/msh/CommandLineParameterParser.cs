@@ -118,13 +118,13 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal bool ReadFromStdin
+        internal bool ExplicitReadCommandsFromStdin
         {
             get
             {
                 Dbg.Assert(dirty, "Parse has not been called yet");
 
-                return readFromStdin;
+                return explicitReadCommandsFromStdin;
             }
         }
 
@@ -488,7 +488,7 @@ namespace Microsoft.PowerShell
                     {
                         // the arg to -file is -, which is secret code for "read the commands from stdin with prompts"
 
-                        readFromStdin = true;
+                        explicitReadCommandsFromStdin = true;
                         noPrompt = false;
                     }
                     else
@@ -850,7 +850,7 @@ namespace Microsoft.PowerShell
             {
                 // the arg to -command is -, which is secret code for "read the commands from stdin with no prompts"
 
-                readFromStdin = true;
+                explicitReadCommandsFromStdin = true;
                 noPrompt = true;
 
                 ++i;
@@ -865,7 +865,7 @@ namespace Microsoft.PowerShell
                     return false;
                 }
 
-                if (!parent.IsStandardInputRedirected)
+                if (!Console.IsInputRedirected)
                 {
                     ui.WriteErrorLine(CommandLineParameterParserStrings.StdinNotRedirected);
                     showHelp = true;
@@ -974,7 +974,7 @@ namespace Microsoft.PowerShell
         // default is sta.
         private bool? staMode = null;
         private bool noExit = true;
-        private bool readFromStdin;
+        private bool explicitReadCommandsFromStdin;
         private bool noPrompt;
         private string commandLineCommand;
         private bool wasCommandEncoded;

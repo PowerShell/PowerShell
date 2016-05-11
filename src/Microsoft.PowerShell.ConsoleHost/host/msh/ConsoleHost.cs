@@ -199,9 +199,9 @@ namespace Microsoft.PowerShell
             theConsoleHost = ConsoleHost.CreateSingletonInstance(configuration);
 #if !OPEN
             theConsoleHost.BindBreakHandler();
-
-            PSHost.IsStdOutputRedirected = theConsoleHost.IsStandardOutputRedirected;
 #endif
+
+            PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
 
             if (args == null)
             {
@@ -1210,7 +1210,7 @@ namespace Microsoft.PowerShell
 
                 //If this shell is invoked in minishell interop mode and error is redirected,
                 //always write data in error stream in xml format.
-                if (IsInteractive == false && IsStandardErrorRedirected && wasInitialCommandEncoded)
+                if (IsInteractive == false && Console.IsErrorRedirected && wasInitialCommandEncoded)
                 {
                     format = Serialization.DataFormat.XML;
                 }
@@ -1222,19 +1222,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (IsInteractive)
-                {
-                    return false;
-                }
-
-                if (
-                        (OutputFormat != Serialization.DataFormat.Text)
-                    || (IsStandardInputRedirected && !ui.ReadFromStdin))
-                {
-                    return true;
-                }
-
-                return false;
+                return !IsInteractive && ((OutputFormat != Serialization.DataFormat.Text) || Console.IsInputRedirected);
             }
         }
 
@@ -1253,7 +1241,7 @@ namespace Microsoft.PowerShell
                         new WrappedSerializer(
                             outputFormat,
                             "Output",
-                            IsStandardOutputRedirected ? StandardOutputWriter : ConsoleTextWriter);
+                            Console.IsOutputRedirected ? Console.Out : ConsoleTextWriter);
                 }
                 return outputSerializer;
             }
@@ -1269,7 +1257,7 @@ namespace Microsoft.PowerShell
                         new WrappedSerializer(
                             ErrorFormat,
                             "Error",
-                            IsStandardErrorRedirected ? StandardErrorWriter : ConsoleTextWriter);
+                            Console.IsErrorRedirected ? Console.Error : ConsoleTextWriter);
                 }
                 return errorSerializer;
             }
@@ -1345,7 +1333,7 @@ namespace Microsoft.PowerShell
                 inputFormat = cpp.InputFormat;
                 wasInitialCommandEncoded = cpp.WasInitialCommandEncoded;
 
-                ui.ReadFromStdin = cpp.ReadFromStdin;
+                ui.ReadFromStdin = cpp.ExplicitReadCommandsFromStdin || Console.IsInputRedirected;
                 ui.NoPrompt = cpp.NoPrompt;
                 ui.ThrowOnReadAndPrompt = cpp.ThrowOnReadAndPrompt;
                 noExit = cpp.NoExit;
@@ -1503,8 +1491,15 @@ namespace Microsoft.PowerShell
 
         private bool LoadPSReadline()
         {
-            return ((cpp.InitialCommand == null && cpp.File == null) || cpp.NoExit) &&
-                   (!IsStandardInputRedirected && !cpp.NonInteractive && !cpp.ReadFromStdin);
+            // Don't load PSReadline if:
+            //   * we don't think the process will be interactive, e.g. -command or -file
+            //     - exception: when -noexit is specified, we will be interactive after the command/file finishes
+            //   * -noniteractive: this should be obvious, they've asked that we don't every prompt
+            //
+            // Note that PSReadline doesn't support redirected stdin/stdout, but we don't check that here because
+            // a future version might, and we should automatically load it at that unknown point in the future.
+            // PSReadline will ideally fall back to Console.ReadLine or whatever when stdin/stdout is redirected.
+            return ((cpp.InitialCommand == null && cpp.File == null) || cpp.NoExit) && !cpp.NonInteractive;
         }
 
         /// <summary>
@@ -1804,6 +1799,9 @@ namespace Microsoft.PowerShell
                     if (AstSearcher.IsUsingDollarInput(parsedInput))
                     {
                         executionOptions |= Executor.ExecutionOptions.ReadInputObjects;
+
+                        // We will consume all of the input to pass to the script, so don't try to read commands from stdin.
+                        ui.ReadFromStdin = false;
                     }
 
                     exec.ExecuteCommandAsyncHelper(tempPipeline, out e1, executionOptions);
@@ -1863,6 +1861,9 @@ namespace Microsoft.PowerShell
                     if (AstSearcher.IsUsingDollarInput(parsedInput))
                     {
                         executionOptions |= Executor.ExecutionOptions.ReadInputObjects;
+
+                        // We will consume all of the input to pass to the script, so don't try to read commands from stdin.
+                        ui.ReadFromStdin = false;
                     }
 
                     exec.ExecuteCommandAsyncHelper(tempPipeline, out e1, executionOptions);
@@ -2065,223 +2066,6 @@ namespace Microsoft.PowerShell
 
 
 #endregion non-overrides
-
-#region stdio redirection
-
-
-
-#if !OPEN
-        private delegate void InitializeStandardHandleDelegate(NakedWin32Handle handle);
-#endif
-
-
-#if !OPEN
-        [ArchitectureSensitive]
-        private bool IsStandardHandleRedirected(
-            ConsoleControl.StandardHandleId handleId,
-            ref bool isHandleRedirectionDetermined,
-            ref bool isHandleRedirected,
-            InitializeStandardHandleDelegate handleInit)
-        {
-            // lock because we update a bunch of instance vars here...
-
-            lock (hostGlobalLock)
-            {
-                if (!isHandleRedirectionDetermined)
-                {
-                    isHandleRedirected = false;
-
-                    NakedWin32Handle stdHandle = ConsoleControl.GetStdHandle(handleId);
-                    SafeFileHandle sfh = new SafeFileHandle(stdHandle, false);
-                    if (!sfh.IsInvalid)
-                    {
-                        var fileType = ConsoleControl.NativeMethods.GetFileType(stdHandle);
-                        if (fileType != ConsoleControl.NativeMethods.FileType.Char)
-                        {
-                            // stdHandle is not a console handle; so it has been redirected.
-
-                            isHandleRedirected = true;
-                            handleInit(stdHandle);
-                        }
-                    }
-
-                    isHandleRedirectionDetermined = true;
-                }
-            }
-
-            return isHandleRedirected;
-        }
-#endif
-
-        internal bool IsStandardOutputRedirected
-        {
-            get
-            {
-#if OPEN
-                return Console.IsOutputRedirected;
-#else
-                if (initStandardOutDelegate == null)
-                {
-                    initStandardOutDelegate = new InitializeStandardHandleDelegate(InitializeStandardOutputWriter);
-                }
-
-                return
-                    IsStandardHandleRedirected(
-                        ConsoleControl.StandardHandleId.Output,
-                        ref isStandardOutputRedirectionDetermined,
-                        ref isStandardOutputRedirected,
-                        initStandardOutDelegate);
-#endif
-            }
-        }
-
-        internal bool IsStandardInputRedirected
-        {
-            get
-            {
-#if OPEN
-                return Console.IsInputRedirected;
-#else
-                if (initStandardInDelegate == null)
-                {
-                    initStandardInDelegate = new InitializeStandardHandleDelegate(InitializeStandardInputReader);
-                }
-
-                return
-                    IsStandardHandleRedirected(
-                        ConsoleControl.StandardHandleId.Input,
-                        ref isStandardInputRedirectionDetermined,
-                        ref isStandardInputRedirected,
-                        initStandardInDelegate);
-#endif
-            }
-        }
-
-        internal bool IsStandardErrorRedirected
-        {
-            get
-            {
-#if OPEN
-                return Console.IsErrorRedirected;
-#else
-                if (initStandardErrorDelegate == null)
-                {
-                    initStandardErrorDelegate = new InitializeStandardHandleDelegate(InitializeStandardErrorWriter);
-                }
-
-                return
-                    IsStandardHandleRedirected(
-                        ConsoleControl.StandardHandleId.Error,
-                        ref isStandardErrorRedirectionDetermined,
-                        ref isStandardErrorRedirected,
-                        initStandardErrorDelegate);
-#endif
-            }
-        }
-
-#if !OPEN
-        [ArchitectureSensitive]
-        private void InitializeStandardInputReader(NakedWin32Handle stdHandle)
-        {
-            Dbg.Assert(standardInputReader == null, "standardInputReader should not exist at this point");
-
-            // stdin has been redirected. Use ReadFile instead of ReadConsole.
-
-            uint codePage = (uint) ConsoleControl.NativeMethods.GetConsoleCP();
-            Encoding encoding = Encoding.GetEncoding((int) codePage);
-
-            try
-            {
-                Stream s =
-                    new FileStream(
-
-                        // since stdHandle was retreived not with an open, flag its safe wrapper as not needing to be closed.
-
-                        new SafeFileHandle(stdHandle, false),
-                        FileAccess.Read);
-
-                // The "false" flag here means "don't detect the byte order mark in the input stream."  I hope that's the right 
-                // thing.
-
-#if CORECLR // There is no TextReader.Synchronized on CoreCLR
-                standardInputReader = new StreamReader(s, encoding, false);
-#else
-                standardInputReader = TextReader.Synchronized(new StreamReader(s, encoding, false));
-#endif
-            }
-            catch (System.IO.IOException)
-            {
-#if CORECLR // There is no TextReader.Synchronized on CoreCLR
-                standardInputReader = new StringReader("");
-#else
-                standardInputReader = TextReader.Synchronized(new StringReader(""));
-#endif
-            }
-        }
-
-        [ArchitectureSensitive]
-        private void InitializeStandardOutputWriter(NakedWin32Handle stdHandle)
-        {
-            Dbg.Assert(standardOutputWriter == null, "standardOutputWriter should not exist at this point");
-            standardOutputWriter = Console.Out;
-        }
-
-
-
-        [ArchitectureSensitive]
-        private void InitializeStandardErrorWriter(NakedWin32Handle stdHandle)
-        {
-            Dbg.Assert(standardErrorWriter == null, "standardErrorWriter should not exist at this point");
-            standardErrorWriter = Console.Error;
-        }
-#endif
-
-        internal TextWriter StandardOutputWriter
-        {
-            get
-            {
-                if (IsStandardOutputRedirected)
-                {
-                    Dbg.Assert(standardOutputWriter != null, "standardOutputWriter should be initialized");
-
-                    return standardOutputWriter;
-                }
-
-                return null;
-            }
-        }
-
-        internal TextWriter StandardErrorWriter
-        {
-            get
-            {
-                if (IsStandardErrorRedirected)
-                {
-                    Dbg.Assert(standardErrorWriter != null, "standardErrorWriter should be initialized");
-
-                    return standardErrorWriter;
-                }
-
-                return null;
-            }
-        }
-
-        internal TextReader StandardInReader
-        {
-            get
-            {
-                if (IsStandardInputRedirected)
-                {
-                    Dbg.Assert(standardInputReader != null, "standardInputReader should be initialized");
-
-                    return standardInputReader;
-                }
-
-                return null;
-            }
-        }
-
-#endregion stdio redirection
 
 #region debugger
 
@@ -2579,12 +2363,6 @@ namespace Microsoft.PowerShell
                 bool inBlockMode = false;
                 bool previousResponseWasEmpty = false;
                 StringBuilder inputBlock = new StringBuilder();
-                bool displayPrompt = false;
-                // If the prompt has not been displayed in the native code or if the input loop is nested, we need to display the prompt here
-                if (!parent.promptDisplayedInNativeCode || inputLoopIsNested)
-                {
-                    displayPrompt = true;
-                }
 
                 while (!parent.ShouldEndSession && !shouldExit)
                 {
@@ -2594,53 +2372,42 @@ namespace Microsoft.PowerShell
 
                         string prompt = null;
                         string line = null;
-                        if (displayPrompt)
+                        if (!ui.NoPrompt)
                         {
-                            if (!ui.NoPrompt)
+                            if (inBlockMode)
                             {
-                                if (inBlockMode)
-                                {
-                                    // use a special prompt that denotes block mode
+                                // use a special prompt that denotes block mode
 
-                                    prompt = ">> ";
-                                }
-                                else
-                                {
-                                    // Make sure the cursor is at the start of the line - some external programs don't
-                                    // write a newline, so we do that for them.
-                                    if (ui.RawUI.CursorPosition.X != 0)
-                                        ui.WriteLine();
-
-                                    // Evaluate any suggestions
-                                    if(! previousResponseWasEmpty)
-                                    {
-                                        EvaluateSuggestions(ui);
-                                    }
-
-                                    // Then output the prompt
-                                    if (this.parent.InDebugMode)
-                                    {
-                                        prompt = EvaluateDebugPrompt();
-                                    }
-                                    if (prompt == null)
-                                    {
-                                        prompt = EvaluatePrompt();
-                                    }
-                                }
-                                ui.Write(prompt);
+                                prompt = ">> ";
                             }
-                            previousResponseWasEmpty = false;
-                            // There could be a profile. So there could be a user defined custom readline command
-                            line = ui.ReadLineWithTabCompletion(exec, useUserDefinedCustomReadLine: true);
+                            else
+                            {
+                                // Make sure the cursor is at the start of the line - some external programs don't
+                                // write a newline, so we do that for them.
+                                if (ui.RawUI.CursorPosition.X != 0)
+                                    ui.WriteLine();
 
+                                // Evaluate any suggestions
+                                if(! previousResponseWasEmpty)
+                                {
+                                    EvaluateSuggestions(ui);
+                                }
+
+                                // Then output the prompt
+                                if (this.parent.InDebugMode)
+                                {
+                                    prompt = EvaluateDebugPrompt();
+                                }
+                                if (prompt == null)
+                                {
+                                    prompt = EvaluatePrompt();
+                                }
+                            }
+                            ui.Write(prompt);
                         }
-                        else
-                        {
-                            previousResponseWasEmpty = false;
-                            // There are no profiles. So there is no user defined custom readline command
-                            line = ui.ReadLineWithTabCompletion(exec, useUserDefinedCustomReadLine: false);
-                            displayPrompt = true;
-                        }
+                        previousResponseWasEmpty = false;
+                        // There could be a profile. So there could be a user defined custom readline command
+                        line = ui.ReadLineWithTabCompletion(exec);
 
                         // line will be null in the case that Ctrl-C terminated the input
 
@@ -2658,7 +2425,7 @@ namespace Microsoft.PowerShell
                             }
                             inBlockMode = false;
 
-                            if (parent.IsStandardInputRedirected)
+                            if (Console.IsInputRedirected)
                             {
                                 // null is also the result of reading stdin to EOF.
 
@@ -2746,7 +2513,7 @@ namespace Microsoft.PowerShell
                         }
                         else
                         {
-                            if (parent.IsRunningAsync)
+                            if (parent.IsRunningAsync && !parent.IsNested)
                             {
                                 exec.ExecuteCommandAsync(line, out e, Executor.ExecutionOptions.AddOutputter | Executor.ExecutionOptions.AddToHistory);
                             }
@@ -3113,22 +2880,6 @@ namespace Microsoft.PowerShell
         private bool shouldEndSession;
         private int beginApplicationNotifyCount;
 
-#if !OPEN
-        private bool isStandardOutputRedirectionDetermined;
-        private bool isStandardOutputRedirected;
-        private bool isStandardErrorRedirectionDetermined;
-        private bool isStandardErrorRedirected;
-        private bool isStandardInputRedirectionDetermined;
-        private bool isStandardInputRedirected;
-#endif
-        private TextWriter standardOutputWriter = null;
-        private TextWriter standardErrorWriter = null;
-        private TextReader standardInputReader = null;
-#if !OPEN
-        private InitializeStandardHandleDelegate initStandardOutDelegate;
-        private InitializeStandardHandleDelegate initStandardInDelegate;
-        private InitializeStandardHandleDelegate initStandardErrorDelegate;
-#endif
         private ConsoleTextWriter consoleWriter;
         private WrappedSerializer outputSerializer;
         private WrappedSerializer errorSerializer;
