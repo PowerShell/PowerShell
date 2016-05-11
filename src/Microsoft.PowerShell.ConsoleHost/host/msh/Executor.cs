@@ -215,11 +215,11 @@ namespace Microsoft.PowerShell
                 PipelineFinishedWaitHandle waiterThereIsAFlyInMySoup = new PipelineFinishedWaitHandle(tempPipeline);
 
                 tempPipeline.InvokeAsync();
-                if ((options & ExecutionOptions.ReadInputObjects) > 0 && parent.IsStandardInputRedirected)
+                if ((options & ExecutionOptions.ReadInputObjects) > 0 && Console.IsInputRedirected)
                 {
                     // read input objects from stdin
 
-                    WrappedDeserializer des = new WrappedDeserializer(parent.InputFormat, "Input", parent.StandardInReader);
+                    WrappedDeserializer des = new WrappedDeserializer(parent.InputFormat, "Input", Console.In);
                     while (!des.AtEnd)
                     {
                         object o = des.Deserialize();
