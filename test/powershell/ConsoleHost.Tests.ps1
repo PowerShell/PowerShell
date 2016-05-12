@@ -108,7 +108,7 @@ Describe "ConsoleHost unit tests" {
             EnsureChildHasExited $process
         }
 
-        It "Redirected input explicit prompting" -Skip:$IsCore {
+        It "Redirected input explicit prompting" -Pending:$IsCore {
             $si = NewProcessStartInfo "-noprofile -File -" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$function:prompt = { 'PS> ' }`n")
@@ -121,7 +121,7 @@ Describe "ConsoleHost unit tests" {
             EnsureChildHasExited $process
         }
 
-        It "Redirected input no prompting" -Skip:$IsCore {
+        It "Redirected input no prompting" -Pending:$IsCore {
             $si = NewProcessStartInfo "-noprofile -" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
@@ -130,7 +130,7 @@ Describe "ConsoleHost unit tests" {
             EnsureChildHasExited $process
         }
 
-        It "Redirected input w/ nested prompt" -Skip:$IsCore {
+        It "Redirected input w/ nested prompt" -Pending:$IsCore {
             $si = NewProcessStartInfo "-noprofile ""`$function:prompt = { 'PS' + ('>'*(`$nestedPromptLevel+1)) + ' ' }""" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$host.EnterNestedPrompt()`n")
