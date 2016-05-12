@@ -1551,7 +1551,22 @@ namespace Microsoft.PowerShell
         /// </summary>
         public override Size BufferSize
         {
-            get { return new Size(Console.BufferWidth, Console.BufferHeight); }
+            get
+            {
+                try
+                {
+                    return new Size(Console.BufferWidth, Console.BufferHeight);
+                }
+                catch (System.IO.IOException)
+                {
+                    // When running without a proper terminal (like on AppVeyor)
+                    // the above will throw because there is no available buffer
+                    // information, so we make a good guess here (since this
+                    // size is mostly used for formatting, this lets wrapping
+                    // work well).
+                    return new Size(80, 80);
+                }
+            }
             set { Console.SetBufferSize(value.Width, value.Height); }
         }
 
