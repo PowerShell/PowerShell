@@ -30,8 +30,8 @@ Describe "Write-Error DRT Unit Tests" -Tags DRT{
         $Error[0].InvocationInfo.MyCommand.Name | Should BeNullOrEmpty     
     }
 
-    #Skip with issue #846
-    It "Should be works with all parameters" -Skip:$true { 
+    # Skip with issue #846
+    It "Should be works with all parameters" -Pending {
         $exception = New-Object -TypeName System.ArgumentNullException -ArgumentList paramname 
         Write-Error -Message myerrortext -Exception $exception -ErrorId myerrorid -Category syntaxerror -TargetObject TargetObject -CategoryActivity myactivity -CategoryReason myreason -CategoryTargetName mytargetname -CategoryTargetType mytargettype -RecommendedAction myrecommendedaction -ErrorAction SilentlyContinue
         $Error[0] | Should Not BeNullOrEmpty
