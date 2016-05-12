@@ -404,6 +404,8 @@ namespace Microsoft.PowerShell
 #endif
         }
 
+#if !OPEN
+
         /// <summary>
         ///
         /// Handle writing print token with proper cursor adjustment for ReadLineSafe
@@ -533,7 +535,6 @@ namespace Microsoft.PowerShell
         /// false otherwise
         /// 
         /// </returns>
-#if !OPEN
         private static bool shouldUnsetMode(
             ConsoleControl.ConsoleModes flagToUnset,
             ref ConsoleControl.ConsoleModes m)
