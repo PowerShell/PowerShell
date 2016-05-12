@@ -46,21 +46,18 @@
         $a.Yada | Should be 3
         $a.Yoda | Should Be 3
         Remove-TypeData -Path $XMLFile1
-        $a = 1..3
         $a.Yada | Should BeNullOrEmpty 
         $a.Yoda | Should Be 3
         
         #clean up
         Remove-TypeData -Path $XMLFile2
-        Remove-Item $XMLFile1 -ErrorAction SilentlyContinue
-        Remove-Item $XMLFile2 -ErrorAction SilentlyContinue 
     }
 
     It "Remove Type File In Initial Session State File Not In Cache" {
         try
         {
             Remove-TypeData -Path "fakefile" -ErrorAction Stop
-            Throw "TypePathException"
+            Throw "OK"
         }
         catch
         {
