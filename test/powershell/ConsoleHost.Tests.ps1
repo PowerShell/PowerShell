@@ -93,7 +93,8 @@ Describe "ConsoleHost unit tests" {
 
         $nl = [Environment]::Newline
 
-        It "Redirected input" {
+        # Redirected input is broken on Windows in .NET Core
+        It "Redirected input" -Pending:$IsWindows {
             $si = NewProcessStartInfo "-noprofile ""`$function:prompt = { 'PS> ' }""" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
