@@ -21,7 +21,8 @@ Describe "Import-Alias DRT Unit Tests" -Tags DRT{
 		Remove-Item -Path $testAliasDirectory -Recurse -Force
 	}
 	
-	It "Import-Alias Resolve To Multiple will throw PSInvalidOperationException" {	
+	It "Import-Alias Resolve To Multiple will throw PSInvalidOperationException" {
+			$ErrorActionPreference = "Stop"
 		try {
 			Import-Alias *
 			Throw "Execution OK"
@@ -31,7 +32,8 @@ Describe "Import-Alias DRT Unit Tests" -Tags DRT{
 		}
 	}
 	
-	It "Import-Alias From Exported Alias File Aliases Already Exist should throw SessionStateException skip now as bug#777" -Skip:$true{
+	It "Import-Alias From Exported Alias File Aliases Already Exist should throw SessionStateException" {
+			$ErrorActionPreference = "Stop"
 		{Export-Alias  $fulltestpath abcd*}| Should Not Throw
 		try {
 			Import-Alias $fulltestpath
