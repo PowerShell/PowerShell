@@ -552,9 +552,8 @@ namespace Microsoft.PowerShell
 
         internal void WriteToConsole(string value, bool transcribeResult)
         {
-#if OPEN
-            Console.Out.Write(value);
-#else
+
+#if !OPEN
             ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
 
             // Ensure that we're in the proper line-output mode.  We don't lock here as it does not matter if we
@@ -571,12 +570,16 @@ namespace Microsoft.PowerShell
                 m |= desiredMode;
                 ConsoleControl.SetMode(handle, m);
             }
+#endif
 
             PreWrite();
 
             // This is atomic, so we don't lock here...
 
+#if !OPEN
             ConsoleControl.WriteConsole(handle, value);
+#else
+            Console.Out.Write(value);
 #endif
 
             if (isInteractiveTestToolListening && Console.IsOutputRedirected)
