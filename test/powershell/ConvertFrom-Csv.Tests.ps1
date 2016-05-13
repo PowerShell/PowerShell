@@ -53,16 +53,8 @@ a,b,c
 
 Describe "ConvertFrom-Csv DRT Unit Tests" -Tags DRT{
     It "Test ConvertFrom-Csv with pipelined InputObject and Header" {
-        $prop = "First", "Second" 
-        $val = "1", "2"
-        $inputObject = new-object psobject
-        For ($i = 0; $i -lt $prop.Count;$i++)
-        {
-            $inputObject | Add-Member -MemberType NoteProperty -Name $prop[$i] -Value $val[$i] 
-        }
-
-        $res = $inputObject | ConvertTo-Csv 
-        $res = $res[0], $res[1], $res[2]
+        $inputObject = [pscustomobject]@{ First = 1; Second = 2 } 
+        $res = $inputObject | ConvertTo-Csv         
         $result = $res | ConvertFrom-Csv -Header "Header1","Header2"
 
         $result[0].Header1 | Should Be "First"
