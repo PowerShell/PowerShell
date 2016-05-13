@@ -1,7 +1,7 @@
 Describe "Export-FormatData DRT Unit Tests" -Tags DRT{
     It "Test basic functionality" {
         $fd = Get-FormatData
-        $tempFile = [io.path]::GetTempFileName()
+        $tempFile = Join-Path $TestDrive -ChildPath "exportFormatTest.txt"
         $results = Export-FormatData -InputObject $fd[0] -Path $tempFile
         $content = Get-Content $tempFile
         $formatViewDefinition = $fd[0].FormatViewDefinition
