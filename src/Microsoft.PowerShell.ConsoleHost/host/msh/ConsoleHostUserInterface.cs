@@ -1148,7 +1148,7 @@ namespace Microsoft.PowerShell
             // we leave a 1-cell margin on the end because if the very last character butts up against the 
             // edge of the screen buffer, then the console will wrap the line.
 
-            List<string> lines = WrapText(text, RawUI.WindowSize.Width - 1);
+            List<string> lines = WrapText(text, RawUI.BufferSize.Width - 1);
             int count = 0;
             foreach (string s in lines)
             {
