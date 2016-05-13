@@ -1545,6 +1545,9 @@ namespace Microsoft.PowerShell
             set { Console.BackgroundColor = value; }
         }
 
+        // TODO: Make wrap width user-customizable.
+        private static Size WrapSize = new Size(80, 40);
+
         /// <summary>
         /// Gets or sets the size of the host buffer. In this example the
         /// buffer size is adapted from the Console buffer size members.
@@ -1553,18 +1556,16 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                try
+                // When stdout is redirected, the buffer size is (0, 0);
+                // however, this is still queried for use in formatting, so we
+                // provide the WrapSize.
+                if (Console.IsOutputRedirected)
+                {
+                    return WrapSize;
+                }
+                else
                 {
                     return new Size(Console.BufferWidth, Console.BufferHeight);
-                }
-                catch (System.IO.IOException)
-                {
-                    // When running without a proper terminal (like on AppVeyor)
-                    // the above will throw because there is no available buffer
-                    // information, so we make a good guess here (since this
-                    // size is mostly used for formatting, this lets wrapping
-                    // work well).
-                    return new Size(80, 80);
                 }
             }
             set { Console.SetBufferSize(value.Width, value.Height); }
