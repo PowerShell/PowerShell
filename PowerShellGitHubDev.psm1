@@ -61,7 +61,7 @@ function Start-PSBuild {
     if (-not $NoPath) {
         Write-Verbose "Appending probable .NET CLI tool path"
         if ($IsWindows) {
-            $env:Path += ";$env:LocalAppData\Microsoft\dotnet\cli"
+            $env:Path += ";$env:LocalAppData\Microsoft\dotnet"
         } elseif ($IsOSX) {
             $env:PATH += ":/usr/local/share/dotnet"
         }
