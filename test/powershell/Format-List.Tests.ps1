@@ -20,7 +20,7 @@ Describe "Format-List" {
         $actual | Should Be $expected
     }
 
-    It "Should produce the expected output" {
+    It "Should produce the expected output" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
         $expected = "${nl}${nl}testName : testValue${nl}${nl}${nl}${nl}"
         $in = New-Object PSObject
         Add-Member -InputObject $in -MemberType NoteProperty -Name testName -Value testValue
@@ -68,14 +68,14 @@ Describe "Format-List" {
 }
 
 Describe "Format-List DRT basic functionality" -Tags DRT{
-	It "Format-List with array should work"{
-		$al = (0..255)
-		$info = @{}
-		$info.array = $al
-		$result = $info | Format-List | Out-String
-		$result | Should Match "Name  : array\s+Value : {0, 1, 2, 3...}"
-	}
-	
+    It "Format-List with array should work"-Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+        $al = (0..255)
+        $info = @{}
+        $info.array = $al
+        $result = $info | Format-List | Out-String
+        $result | Should Match "Name  : array\s+Value : {0, 1, 2, 3...}"
+    }
+
 	It "Format-List with No Objects for End-To-End should work"{
 		$p = @{}
 		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
@@ -106,22 +106,22 @@ Describe "Format-List DRT basic functionality" -Tags DRT{
 		$result.Trim() | Should BeNullOrEmpty
 	}
 	
-	It "Format-List with complex object for End-To-End should work"{
-		Add-Type -TypeDefinition "public enum MyDayOfWeek{Sun,Mon,Tue,Wed,Thr,Fri,Sat}"
-		$eto = New-Object MyDayOfWeek
-		$info = @{}
-		$info.intArray = 1,2,3,4
-		$info.arrayList = "string1","string2"
-		$info.enumerable = [MyDayOfWeek]$eto
-		$info.enumerableTestObject = $eto
-		$result = $info|Format-List|Out-String
-		$result | Should Match "Name  : enumerableTestObject"
-		$result | Should Match "Value : Sun"
-		$result | Should Match "Name  : arrayList"
-		$result | Should Match "Value : {string1, string2}"
-		$result | Should Match "Name  : enumerable"
-		$result | Should Match "Value : Sun"
-		$result | Should Match "Name  : intArray"
-		$result | Should Match "Value : {1, 2, 3, 4}"
-	}
+    It "Format-List with complex object for End-To-End should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+        Add-Type -TypeDefinition "public enum MyDayOfWeek{Sun,Mon,Tue,Wed,Thr,Fri,Sat}"
+        $eto = New-Object MyDayOfWeek
+        $info = @{}
+        $info.intArray = 1,2,3,4
+        $info.arrayList = "string1","string2"
+        $info.enumerable = [MyDayOfWeek]$eto
+        $info.enumerableTestObject = $eto
+        $result = $info|Format-List|Out-String
+        $result | Should Match "Name  : enumerableTestObject"
+        $result | Should Match "Value : Sun"
+        $result | Should Match "Name  : arrayList"
+        $result | Should Match "Value : {string1, string2}"
+        $result | Should Match "Name  : enumerable"
+        $result | Should Match "Value : Sun"
+        $result | Should Match "Name  : intArray"
+        $result | Should Match "Value : {1, 2, 3, 4}"
+    }
 }

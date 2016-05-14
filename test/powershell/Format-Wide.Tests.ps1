@@ -40,7 +40,7 @@ Describe "Format-Wide" {
 }
 
 Describe "Format-Wide DRT basic functionality" -Tags DRT{
-	It "Format-Wide with array should work"{
+  It "Format-Wide with array should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
 		$al = (0..255)
 		$info = @{}
 		$info.array = $al
@@ -80,7 +80,7 @@ Describe "Format-Wide DRT basic functionality" -Tags DRT{
 		$result | Should Match "Line2"
 	}
 	
-	It "Format-Wide with complex object for End-To-End should work"{
+   It "Format-Wide with complex object for End-To-End should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
 		Add-Type -TypeDefinition "public enum MyDayOfWeek{Sun,Mon,Tue,Wed,Thr,Fri,Sat}"
 		$eto = New-Object MyDayOfWeek
 		$info = @{}
