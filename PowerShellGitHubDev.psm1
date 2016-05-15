@@ -430,7 +430,7 @@ Built upon .NET Core, it is also a C# REPL.
 
     $Source = Split-Path -Parent (Get-PSOutput)
     if ((Split-Path -Leaf $Source) -ne "publish") {
-        throw "Please Start-PSBuild -Package with the corresponding runtime for the package"
+        throw "Please Start-PSBuild -Publish with the corresponding runtime for the package"
     }
 
     # Decide package output type
