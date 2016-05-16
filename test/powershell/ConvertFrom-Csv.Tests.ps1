@@ -50,3 +50,16 @@ a,b,c
 	$actualLength | Should Be 3
     }
 }
+
+Describe "ConvertFrom-Csv DRT Unit Tests" -Tags DRT{
+    It "Test ConvertFrom-Csv with pipelined InputObject and Header" {
+        $inputObject = [pscustomobject]@{ First = 1; Second = 2 } 
+        $res = $inputObject | ConvertTo-Csv         
+        $result = $res | ConvertFrom-Csv -Header "Header1","Header2"
+
+        $result[0].Header1 | Should Be "First"
+        $result[0].Header2 | Should Be "Second"
+        $result[1].Header1 | Should Be "1"
+        $result[1].Header2 | Should Be "2"
+    }
+}
