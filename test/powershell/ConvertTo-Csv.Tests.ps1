@@ -1,3 +1,36 @@
+Describe "ConvertTo-Csv DRT Unit Tests" -Tags DRT{
+    $inputObject = [pscustomobject]@{ First = 1; Second = 2 } 
+
+    It "Test convertto-csv with psobject pipelined" {        
+        $returnObject = $inputObject | ConvertTo-Csv
+        $returnObject[0] | Should Be "#TYPE System.Management.Automation.PSCustomObject"
+        $returnObject[1] | Should Be "`"First`",`"Second`""
+        $returnObject[2] | Should Be "`"1`",`"2`""
+    }
+
+    It "Test convertto-csv with NoTypeInformation and psobject pipelined" {
+        $returnObject = $inputObject | ConvertTo-Csv -NoTypeInformation
+        $returnObject[0] | Should Be "`"First`",`"Second`""
+        $returnObject[1] | Should Be "`"1`",`"2`""
+    }
+
+    It "Test convertto-csv with a useculture flag" {
+        #The default value is ','
+        $returnObject = $inputObject | ConvertTo-Csv -UseCulture
+        $returnObject[0] | Should Be "#TYPE System.Management.Automation.PSCustomObject"
+        $returnObject[1] | Should Be "`"First`",`"Second`""
+        $returnObject[2] | Should Be "`"1`",`"2`""
+    }
+
+    It "Test convertto-csv with Delimiter" {
+        #The default value is ','
+        $returnObject = $inputObject | ConvertTo-Csv -Delimiter ";"
+        $returnObject[0] | Should Be "#TYPE System.Management.Automation.PSCustomObject"
+        $returnObject[1] | Should Be "`"First`";`"Second`""
+        $returnObject[2] | Should Be "`"1`";`"2`""
+    }
+}
+
 Describe "ConvertTo-Csv" {
     $Name = "Hello"; $Data = "World";
     $testObject = New-Object psobject -Property @{ FirstColumn = $Name; SecondColumn = $Data }
