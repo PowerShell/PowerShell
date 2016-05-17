@@ -112,3 +112,149 @@ Describe "Select-Object" {
 	$dirObject[$TestLength].Size | Should Be ($orig2 + 1)
     }
 }
+
+Describe "Select-Object DRT basic functionality" -Tags DRT{
+	It "Select-Object with empty script block property should throw"{
+		try  
+		{  
+			"bar" | select-object -Prop {} -EA Stop  
+			Throw "Execution OK"   
+		}  
+		catch   
+		{  
+			$_.CategoryInfo | Should Match "PSArgumentException"    
+			$_.FullyQualifiedErrorId | Should be "EmptyScriptBlockAndNoName,Microsoft.PowerShell.Commands.SelectObjectCommand"  
+		}
+	}
+	
+	It "Select-Object with string property should work"{
+		$result = "bar" | select-object -Prop foo | Measure-Object
+		$result.Count | Should Be 1
+	}
+	
+	It "Select-Object with Property First Last Overlap should work"{
+		$employee1 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee2 = New-Object PSObject -Property @{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = New-Object PSObject -Property @{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=5}
+		$employee4 = New-Object PSObject -Property @{"FirstName"="edmund"; "LastName"="bush"; "YearsInMS"=9}
+		$employees = @($employee1,$employee2,$employee3,$employee4)
+		$results = $employees | Select-Object -Property "YearsInMS", "L*" -First 2 -Last 3
+		
+		$results.Count | Should Be 4
+		
+		$results[0].LastName | Should Be $employees[0].LastName
+		$results[1].LastName | Should Be $employees[1].LastName
+		$results[2].LastName | Should Be $employees[2].LastName
+		$results[3].LastName | Should Be $employees[3].LastName
+		
+		$results[0].YearsInMS | Should Be $employees[0].YearsInMS
+		$results[1].YearsInMS | Should Be $employees[1].YearsInMS
+		$results[2].YearsInMS | Should Be $employees[2].YearsInMS
+		$results[3].YearsInMS | Should Be $employees[3].YearsInMS
+	}
+	
+	It "Select-Object with Property First Last should work"{
+		$employee1 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee2 = New-Object PSObject -Property @{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = New-Object PSObject -Property @{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=15}
+		$employee4 = New-Object PSObject -Property @{"FirstName"="edmund"; "LastName"="bush"; "YearsInMS"=9}
+		$employees = @($employee1,$employee2,$employee3,$employee4)
+		$results = $employees | Select-Object -Property "YearsInMS", "L*" -First 2 -Last 1
+		
+		$results.Count | Should Be 3
+		
+		$results[0].LastName | Should Be $employees[0].LastName
+		$results[1].LastName | Should Be $employees[1].LastName
+		$results[2].LastName | Should Be $employees[3].LastName
+		
+		$results[0].YearsInMS | Should Be $employees[0].YearsInMS
+		$results[1].YearsInMS | Should Be $employees[1].YearsInMS
+		$results[2].YearsInMS | Should Be $employees[3].YearsInMS
+	}
+	
+	It "Select-Object with Property First should work"{
+		$employee1 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee2 = New-Object PSObject -Property @{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = New-Object PSObject -Property @{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=15}
+		$employee4 = New-Object PSObject -Property @{"FirstName"="edmund"; "LastName"="bush"; "YearsInMS"=9}
+		$employees = @($employee1,$employee2,$employee3,$employee4)
+		$results = $employees | Select-Object -Property "YearsInMS", "L*" -First 2
+		
+		$results.Count | Should Be 2
+		
+		$results[0].LastName | Should Be $employees[0].LastName
+		$results[1].LastName | Should Be $employees[1].LastName
+		
+		$results[0].YearsInMS | Should Be $employees[0].YearsInMS
+		$results[1].YearsInMS | Should Be $employees[1].YearsInMS
+	}
+	
+	It "Select-Object with Property First Zero should work"{
+		$employee1 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee2 = New-Object PSObject -Property @{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = New-Object PSObject -Property @{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=15}
+		$employee4 = New-Object PSObject -Property @{"FirstName"="edmund"; "LastName"="bush"; "YearsInMS"=9}
+		$employees = @($employee1,$employee2,$employee3,$employee4)
+		$results = $employees | Select-Object -Property "YearsInMS", "L*" -First 0
+		
+		$results.Count | Should Be 0
+	}
+	
+	It "Select-Object with Property Last Zero should work"{
+		$employee1 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee2 = New-Object PSObject -Property @{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = New-Object PSObject -Property @{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=15}
+		$employee4 = New-Object PSObject -Property @{"FirstName"="edmund"; "LastName"="bush"; "YearsInMS"=9}
+		$employees = @($employee1,$employee2,$employee3,$employee4)
+		$results = $employees | Select-Object -Property "YearsInMS", "L*" -Last 0
+		
+		$results.Count | Should Be 0
+	}
+	
+	It "Select-Object with Unique should work"{
+		$employee1 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee2 = New-Object PSObject -Property @{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = New-Object PSObject -Property @{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=15}
+		$employee4 = New-Object PSObject -Property @{"FirstName"="edmund"; "LastName"="bush"; "YearsInMS"=9}
+		$employees = @($employee1,$employee2,$employee3,$employee4)
+		$results = $employees | Select-Object -Property "YearsInMS", "L*" -Unique:$true
+		
+		$results.Count | Should Be 3
+		
+		$results[0].LastName | Should Be $employees[1].LastName
+		$results[1].LastName | Should Be $employees[2].LastName
+		$results[2].LastName | Should Be $employees[3].LastName
+		
+		$results[0].YearsInMS | Should Be $employees[1].YearsInMS
+		$results[1].YearsInMS | Should Be $employees[2].YearsInMS
+		$results[2].YearsInMS | Should Be $employees[3].YearsInMS
+	}
+	
+	It "Select-Object with Simple should work"{
+		$employee1 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee2 = New-Object PSObject -Property @{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = New-Object PSObject -Property @{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=15}
+		$employees = @($employee1,$employee2,$employee3,$employee4)
+		$results = $employees | Select-Object -Property "FirstName", "YearsInMS"
+		
+		$results.Count | Should Be 3
+		
+		$results[0].FirstName | Should Be $employees[0].FirstName
+		$results[1].FirstName | Should Be $employees[1].FirstName
+		$results[2].FirstName | Should Be $employees[2].FirstName
+		
+		$results[0].YearsInMS | Should Be $employees[0].YearsInMS
+		$results[1].YearsInMS | Should Be $employees[1].YearsInMS
+		$results[2].YearsInMS | Should Be $employees[2].YearsInMS
+	}
+	
+	It "Select-Object with no input should work"{
+		$results = $null | Select-Object -Property "FirstName", "YearsInMS", "FirstNa*"
+		$results.Count | Should Be 0
+	}
+	
+	It "Select-Object with Start-Time In Idle Process should work"{
+		$results = Get-Process i* | Select-Object ProcessName
+		$results.Count | Should Not Be 0
+	}
+}
