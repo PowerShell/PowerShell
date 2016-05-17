@@ -3,6 +3,7 @@ Describe "ConvertTo-Csv DRT Unit Tests" -Tags DRT{
 
     It "Test convertto-csv with psobject pipelined" {        
         $returnObject = $inputObject | ConvertTo-Csv
+        $returnObject.Count | Should Be 3
         $returnObject[0] | Should Be "#TYPE System.Management.Automation.PSCustomObject"
         $returnObject[1] | Should Be "`"First`",`"Second`""
         $returnObject[2] | Should Be "`"1`",`"2`""
@@ -10,6 +11,7 @@ Describe "ConvertTo-Csv DRT Unit Tests" -Tags DRT{
 
     It "Test convertto-csv with NoTypeInformation and psobject pipelined" {
         $returnObject = $inputObject | ConvertTo-Csv -NoTypeInformation
+        $returnObject.Count | Should Be 2
         $returnObject[0] | Should Be "`"First`",`"Second`""
         $returnObject[1] | Should Be "`"1`",`"2`""
     }
@@ -17,6 +19,7 @@ Describe "ConvertTo-Csv DRT Unit Tests" -Tags DRT{
     It "Test convertto-csv with a useculture flag" {
         #The default value is ','
         $returnObject = $inputObject | ConvertTo-Csv -UseCulture
+        $returnObject.Count | Should Be 3
         $returnObject[0] | Should Be "#TYPE System.Management.Automation.PSCustomObject"
         $returnObject[1] | Should Be "`"First`",`"Second`""
         $returnObject[2] | Should Be "`"1`",`"2`""
@@ -25,6 +28,7 @@ Describe "ConvertTo-Csv DRT Unit Tests" -Tags DRT{
     It "Test convertto-csv with Delimiter" {
         #The default value is ','
         $returnObject = $inputObject | ConvertTo-Csv -Delimiter ";"
+        $returnObject.Count | Should Be 3
         $returnObject[0] | Should Be "#TYPE System.Management.Automation.PSCustomObject"
         $returnObject[1] | Should Be "`"First`";`"Second`""
         $returnObject[2] | Should Be "`"1`";`"2`""
