@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell
             isInteractiveTestToolListening = false;
 
 #if PORTABLE
-            this._supportsVirtualTerminal = false;
+            this._supportsVirtualTerminal = true;
 #else
             // Turn on virtual terminal if possible.
             var handle = ConsoleControl.GetActiveScreenBufferHandle();
