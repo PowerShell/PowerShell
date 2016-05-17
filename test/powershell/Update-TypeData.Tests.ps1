@@ -55,7 +55,7 @@ Describe "Update-TypeData basic functionality" -Tags DRT{
 		finally
 		{
 			Remove-TypeData -Path $testfile
-			Remove-Item $testfile -Force
+			Remove-Item $testfile -ErrorAction Ignore
 		}
 	}
 	
@@ -327,7 +327,7 @@ Describe "Update-TypeData basic functionality" -Tags DRT{
 		finally
 		{
 			Remove-TypeData -Path $testfile
-			Remove-Item $testfile -ErrorAction SilentlyContinue
+			Remove-Item $testfile -ErrorAction Ignore
 		}
 	}
 }
