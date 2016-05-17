@@ -14,7 +14,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
 using System.Security;
 using Dbg = System.Management.Automation.Diagnostics;
-#if !OPEN
+#if !PORTABLE
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 #endif
 
@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell
             this.rawui = new ConsoleHostRawUserInterface(this);
             isInteractiveTestToolListening = false;
 
-#if OPEN
+#if PORTABLE
             this._supportsVirtualTerminal = false;
 #else
             // Turn on virtual terminal if possible.
@@ -278,7 +278,7 @@ namespace Microsoft.PowerShell
 
         private object ReadLineSafe(bool isSecureString, char? printToken)
         {
-#if OPEN
+#if PORTABLE
             throw new PlatformNotSupportedException("Cannot read secure strings!");
 #else
             // Don't lock (instanceLock) in here -- the caller needs to do that...
@@ -404,7 +404,7 @@ namespace Microsoft.PowerShell
 #endif
         }
 
-#if !OPEN
+#if !PORTABLE
 
         /// <summary>
         ///
@@ -553,7 +553,7 @@ namespace Microsoft.PowerShell
         internal void WriteToConsole(string value, bool transcribeResult)
         {
 
-#if !OPEN
+#if !PORTABLE
             ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
 
             // Ensure that we're in the proper line-output mode.  We don't lock here as it does not matter if we
@@ -576,7 +576,7 @@ namespace Microsoft.PowerShell
 
             // This is atomic, so we don't lock here...
 
-#if !OPEN
+#if !PORTABLE
             ConsoleControl.WriteConsole(handle, value);
 #else
             Console.Out.Write(value);
@@ -1624,7 +1624,7 @@ namespace Microsoft.PowerShell
 
         private string ReadLineFromConsole(bool endOnTab, string initialContent, bool calledFromPipeline, ref string restOfLine, ref ReadLineResult result)
         {
-#if OPEN
+#if PORTABLE
             return ReadLineFromFile(initialContent);
 #else
 
@@ -1759,7 +1759,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="cursorPosition">the cursor position where 'tab' is hit</param>
         /// <returns></returns>
-#if !OPEN
+#if !PORTABLE
         private char GetCharacterUnderCursor(Coordinates cursorPosition)
         {
             Rectangle region = new Rectangle(0, cursorPosition.Y, RawUI.BufferSize.Width - 1, cursorPosition.Y);
@@ -1956,7 +1956,7 @@ namespace Microsoft.PowerShell
                     if (restOfLine != string.Empty)
                     {
                         lastCompletion = completedInput.Remove(completedInput.Length - restOfLine.Length);
-#if !OPEN
+#if !PORTABLE
                         SendLeftArrows(restOfLine.Length);
 #endif
                     }
@@ -1982,7 +1982,7 @@ namespace Microsoft.PowerShell
             return input;
         }
 
-#if !OPEN
+#if !PORTABLE
         private void SendLeftArrows(int length)
         {
             var inputs = new ConsoleControl.INPUT[length * 2];
