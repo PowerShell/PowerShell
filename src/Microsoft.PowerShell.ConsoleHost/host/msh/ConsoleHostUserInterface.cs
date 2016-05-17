@@ -1858,6 +1858,9 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
+#if PORTABLE // Portable code only ends on enter (or no input), so tab is not processed
+                throw new PlatformNotSupportedException("This readline state is unsupported in portable code!");
+#else
                 if (rlResult == ReadLineResult.endedOnTab || rlResult == ReadLineResult.endedOnShiftTab)
                 {
                     int tabIndex = input.IndexOf(Tab, StringComparison.CurrentCulture);
@@ -1946,19 +1949,13 @@ namespace Microsoft.PowerShell
 
                     if (deltaInput > 0)
                     {
-                        Console.SetCursorPosition(endOfCompletionCursorPos.X, endOfCompletionCursorPos.Y);
-                        for (int i = 0; i < deltaInput; i++)
-                        {
-                            Console.Write(' ');
-                        }
+                        ConsoleControl.FillConsoleOutputCharacter(handle, ' ', deltaInput, endOfCompletionCursorPos);
                     }
 
                     if (restOfLine != string.Empty)
                     {
                         lastCompletion = completedInput.Remove(completedInput.Length - restOfLine.Length);
-#if !PORTABLE
                         SendLeftArrows(restOfLine.Length);
-#endif
                     }
                     else
                     {
@@ -1967,6 +1964,7 @@ namespace Microsoft.PowerShell
 
                     lastInput = completedInput;
                 }
+#endif
             }
             while (true);
 
