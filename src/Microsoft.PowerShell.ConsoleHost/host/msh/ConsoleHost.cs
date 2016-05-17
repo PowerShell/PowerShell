@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell
             System.Threading.Thread.CurrentThread.Name = "ConsoleHost main thread";
 
             theConsoleHost = ConsoleHost.CreateSingletonInstance(configuration);
-#if !OPEN
+#if !PORTABLE
             theConsoleHost.BindBreakHandler();
 #endif
 
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell
 
 
 
-#if !OPEN
+#if !PORTABLE
         /// <summary>
         /// 
         /// The break handler for the program.  Dispatches a break event to the current Executor.
@@ -436,7 +436,7 @@ namespace Microsoft.PowerShell
             // call the console APIs directly, instead of ui.rawui.FlushInputHandle, as ui may be finalized
             // already if this thread is lagging behind the main thread.
 
-#if !OPEN
+#if !PORTABLE
             ConsoleHandle handle = ConsoleControl.GetInputHandle();
             ConsoleControl.FlushConsoleInputBuffer(handle);
 #endif
@@ -1032,7 +1032,7 @@ namespace Microsoft.PowerShell
 #endif
         }
 
-#if !OPEN
+#if !PORTABLE
         private void BindBreakHandler()
         {
             breakHandlerGcHandle = GCHandle.Alloc(new ConsoleControl.BreakHandler(MyBreakHandler));
@@ -1091,7 +1091,7 @@ namespace Microsoft.PowerShell
         {
             if (!isDisposed)
             {
-#if !OPEN
+#if !PORTABLE
                 Dbg.Assert(breakHandlerGcHandle != null, "break handler should be set");
                 ConsoleControl.RemoveBreakHandler();
                 breakHandlerGcHandle.Free();
@@ -2849,7 +2849,7 @@ namespace Microsoft.PowerShell
             /// </summary>
             private RunspaceRef runspaceRef;
 
-#if !OPEN
+#if !PORTABLE
         private GCHandle breakHandlerGcHandle;
 #endif
         private System.Threading.Thread breakHandlerThread;
