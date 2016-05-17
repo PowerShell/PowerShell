@@ -221,10 +221,10 @@ function New-PSOptions {
         [switch]$FullCLR
     )
 
-    $Top = if ($FullCLR) {
-        "$PSScriptRoot\src\Microsoft.PowerShell.ConsoleHost"
+    if ($FullCLR) {
+        $Top = "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost"
     } else {
-        "$PSScriptRoot/src/Microsoft.PowerShell.CoreConsoleHost"
+        $Top = "$PSScriptRoot/src/powershell"
     }
     Write-Verbose "Top project directory is $Top"
 
@@ -315,7 +315,7 @@ function Start-PSPester {
         [string]$Directory = "$PSScriptRoot/test/powershell"
     )
 
-    & (Get-PSOutput) -c "Invoke-Pester $Flags $Directory/$Tests"
+    & (Get-PSOutput) -noprofile -c "Invoke-Pester $Flags $Directory/$Tests"
     if ($LASTEXITCODE -ne 0) {
         throw "$LASTEXITCODE Pester tests failed"
     }

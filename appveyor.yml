@@ -33,17 +33,17 @@ test_script:
       $ErrorActionPreference = 'Stop'
       #
       # CoreCLR
-      $env:CoreOutput = "$pwd\src\Microsoft.PowerShell.CoreConsoleHost\bin\Debug\netcoreapp1.0\win81-x64\publish"
+      $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
       Write-Host -Foreground Green 'Run CoreCLR tests'
       $testResultsFile = "$pwd\TestsResults.xml"
-      & ("$env:CoreOutput\powershell.exe") -c "Invoke-Pester test/powershell -OutputFormat NUnitXml -OutputFile $testResultsFile"
+      & ("$env:CoreOutput\powershell.exe") -noprofile -noninteractive -c "Invoke-Pester test/powershell -OutputFormat NUnitXml -OutputFile $testResultsFile"
       (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFile))
       #
       # FullCLR
-      $env:FullOutput = "$pwd\src\Microsoft.PowerShell.ConsoleHost\bin\Debug\net451"
+      $env:FullOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -FullCLR))
       Write-Host -Foreground Green 'Run FullCLR tests'
       $testResultsFileFullCLR = "$pwd\TestsResults.FullCLR.xml"
-      Start-DevPSGitHub -binDir $env:FullOutput -NoNewWindow -ArgumentList '-command', "Import-Module .\src\Modules\Pester; Invoke-Pester test/fullCLR -OutputFormat NUnitXml -OutputFile $testResultsFileFullCLR"
+      Start-DevPSGitHub -binDir $env:FullOutput -NoNewWindow -ArgumentList '-noprofile', '-noninteractive', '-command', "Import-Module .\src\Modules\Pester; Invoke-Pester test/fullCLR -OutputFormat NUnitXml -OutputFile $testResultsFileFullCLR"
       (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFileFullCLR))
       #
       # Fail the build, if tests failed

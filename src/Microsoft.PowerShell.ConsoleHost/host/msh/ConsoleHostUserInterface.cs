@@ -14,7 +14,9 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
 using System.Security;
 using Dbg = System.Management.Automation.Diagnostics;
+#if !PORTABLE
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
+#endif
 
 namespace Microsoft.PowerShell
 {
@@ -58,7 +60,11 @@ namespace Microsoft.PowerShell
 
             this.parent = parent;
             this.rawui = new ConsoleHostRawUserInterface(this);
+            isInteractiveTestToolListening = false;
 
+#if PORTABLE
+            this._supportsVirtualTerminal = true;
+#else
             // Turn on virtual terminal if possible.
             var handle = ConsoleControl.GetActiveScreenBufferHandle();
             var m = ConsoleControl.GetMode(handle);
@@ -71,9 +77,7 @@ namespace Microsoft.PowerShell
             // systems ignore the setting.
             m = ConsoleControl.GetMode(handle);
             this._supportsVirtualTerminal = (m & ConsoleControl.ConsoleModes.VirtualTerminal) != 0;
-
-            isInteractiveTestToolListening = false;
-            isTestingShiftTab = false;
+#endif
         }
 
         /// <summary>
@@ -140,17 +144,7 @@ namespace Microsoft.PowerShell
         /// 
         /// </summary>
 
-        internal bool ReadFromStdin
-        {
-            get
-            {
-                return readFromStdin;
-            }
-            set
-            {
-                readFromStdin = value;
-            }
-        }
+        internal bool ReadFromStdin { get; set; }
 
         /// <summary>
         /// 
@@ -284,6 +278,9 @@ namespace Microsoft.PowerShell
 
         private object ReadLineSafe(bool isSecureString, char? printToken)
         {
+#if PORTABLE
+            throw new PlatformNotSupportedException("Cannot read secure strings!");
+#else
             // Don't lock (instanceLock) in here -- the caller needs to do that...
 
             PreRead();
@@ -404,7 +401,10 @@ namespace Microsoft.PowerShell
             {
                 return result;
             }
+#endif
         }
+
+#if !PORTABLE
 
         /// <summary>
         ///
@@ -535,7 +535,6 @@ namespace Microsoft.PowerShell
         /// false otherwise
         /// 
         /// </returns>
-
         private static bool shouldUnsetMode(
             ConsoleControl.ConsoleModes flagToUnset,
             ref ConsoleControl.ConsoleModes m)
@@ -547,11 +546,14 @@ namespace Microsoft.PowerShell
             }
             return false;
         }
+#endif
 
         #region WriteToConsole
 
         internal void WriteToConsole(string value, bool transcribeResult)
         {
+
+#if !PORTABLE
             ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
 
             // Ensure that we're in the proper line-output mode.  We don't lock here as it does not matter if we
@@ -568,17 +570,21 @@ namespace Microsoft.PowerShell
                 m |= desiredMode;
                 ConsoleControl.SetMode(handle, m);
             }
+#endif
 
             PreWrite();
 
             // This is atomic, so we don't lock here...
 
+#if !PORTABLE
             ConsoleControl.WriteConsole(handle, value);
+#else
+            Console.Out.Write(value);
+#endif
 
-            if (isInteractiveTestToolListening && parent.IsStandardOutputRedirected)
+            if (isInteractiveTestToolListening && Console.IsOutputRedirected)
             {
-                Dbg.Assert(parent.StandardOutputWriter != null, "stdout writer should be initialized");
-                parent.StandardOutputWriter.Write(value);
+                Console.Out.Write(value);
             }
 
             if (transcribeResult)
@@ -659,10 +665,7 @@ namespace Microsoft.PowerShell
             // If the test hook is set, write to it and continue.
             if (_h != null) _h.Write(value);
 
-            TextWriter writer =
-                  (!parent.IsStandardOutputRedirected || parent.IsInteractive)
-                ? parent.ConsoleTextWriter
-                : parent.StandardOutputWriter;
+            TextWriter writer = Console.IsOutputRedirected ? Console.Out : parent.ConsoleTextWriter;
 
             if (parent.IsRunningAsync)
             {
@@ -1362,9 +1365,9 @@ namespace Microsoft.PowerShell
             }
 
             TextWriter writer =
-                  (!parent.IsStandardErrorRedirected || parent.IsInteractive)
+                  (!Console.IsErrorRedirected || parent.IsInteractive)
                 ? parent.ConsoleTextWriter
-                : parent.StandardErrorWriter;
+                : Console.Error;
 
             if (parent.ErrorFormat == Serialization.DataFormat.XML)
             {
@@ -1378,7 +1381,7 @@ namespace Microsoft.PowerShell
                     WriteLine(errorForegroundColor, errorBackgroundColor, value);
                 else
 
-                    parent.StandardErrorWriter.Write(value + Crlf);
+                    Console.Error.Write(value + Crlf);
             }
         }
 
@@ -1480,9 +1483,9 @@ namespace Microsoft.PowerShell
 
 
 
-        // We don't use System.Environment.NewLine because we are very platform specific with our use of the win32 console APIs
+        // We use System.Environment.NewLine because we are platform-agnostic
 
-        internal const string Crlf = "\x000D\x000A";
+        internal static string Crlf = System.Environment.NewLine;
         private const string Tab = "\x0009";
 
         internal enum ReadLineResult
@@ -1555,21 +1558,75 @@ namespace Microsoft.PowerShell
             // If the test hook is set, read from it.
             if (_h != null) return _h.ReadLine();
 
-            string s = "";
-            if (parent.IsStandardInputRedirected && readFromStdin)
+            string restOfLine = null;
+
+            string s = ReadFromStdin
+                ? ReadLineFromFile(initialContent)
+                : ReadLineFromConsole(endOnTab, initialContent, calledFromPipeline, ref restOfLine, ref result);
+
+            if (transcribeResult)
             {
-                // When reading from a file handle instead of a console, endOnTab and initial content are ignored.
-
-                // StreamReader.ReadLine simply returns null when EOF is reached.
-
-                s = parent.StandardInReader.ReadLine();
-                if (endOnTab && !string.IsNullOrEmpty(s) && s.IndexOf(Tab, StringComparison.OrdinalIgnoreCase) != -1)
-                {
-                    result = isTestingShiftTab ? ReadLineResult.endedOnShiftTab : ReadLineResult.endedOnTab;
-                    return s;
-                }
-                return s;
+                PostRead(s);
             }
+            else
+            {
+                PostRead();
+            }
+
+            if (restOfLine != null)
+                s += restOfLine;
+
+            return s;
+        }
+
+        private string ReadLineFromFile(string initialContent)
+        {
+            var sb = new StringBuilder();
+            if (initialContent != null)
+            {
+                sb.Append(initialContent);
+            }
+
+            while (true)
+            {
+                var inC = Console.In.Read();
+                if (inC == -1)
+                {
+                    // EOF - we return null which tells our caller to exit
+                    return null;
+                }
+
+                var c = unchecked((char)inC);
+                if (!NoPrompt) Console.Out.Write(c);
+
+                if (c == '\r')
+                {
+                    // Treat as newline, but consume \n if there is one.
+                    if (Console.In.Peek() == '\n')
+                    {
+                        if (!NoPrompt) Console.Out.Write('\n');
+                        Console.In.Read();
+                    }
+                    sb.Append('\n');
+                    break;
+                }
+
+                sb.Append(c);
+
+                if (c == '\n')
+                {
+                    break;
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        private string ReadLineFromConsole(bool endOnTab, string initialContent, bool calledFromPipeline, ref string restOfLine, ref ReadLineResult result)
+        {
+#if PORTABLE
+            return ReadLineFromFile(initialContent);
+#else
 
             ConsoleHandle handle = ConsoleControl.GetInputHandle();
             PreRead();
@@ -1588,6 +1645,7 @@ namespace Microsoft.PowerShell
                 m |= desiredMode;
                 ConsoleControl.SetMode(handle, m);
             }
+
             // If more characters are typed than you asked, then the next call to ReadConsole will return the 
             // additional characters beyond those you requested.
             // 
@@ -1604,10 +1662,10 @@ namespace Microsoft.PowerShell
             // the empty string.
 
             uint keyState = 0;
-            string restOfLine = null;
 
             rawui.ClearKeyCache();
 
+            string s = "";
             do
             {
                 s += ConsoleControl.ReadConsole(handle, initialContent, maxInputLineLength, endOnTab, out keyState);
@@ -1688,23 +1746,12 @@ namespace Microsoft.PowerShell
             while (true);
 
             Dbg.Assert(
-                    (s == null && result == ReadLineResult.endedOnBreak)
-                || (s != null && result != ReadLineResult.endedOnBreak),
-                "s should only be null if input ended with a break");
-
-            if (transcribeResult)
-            {
-                PostRead(s);
-            }
-            else
-            {
-                PostRead();
-            }
-
-            if (restOfLine != null)
-                s += restOfLine;
+                       (s == null && result == ReadLineResult.endedOnBreak)
+                       || (s != null && result != ReadLineResult.endedOnBreak),
+                       "s should only be null if input ended with a break");
 
             return s;
+#endif
         }
 
         /// <summary>
@@ -1712,6 +1759,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="cursorPosition">the cursor position where 'tab' is hit</param>
         /// <returns></returns>
+#if !PORTABLE
         private char GetCharacterUnderCursor(Coordinates cursorPosition)
         {
             Rectangle region = new Rectangle(0, cursorPosition.Y, RawUI.BufferSize.Width - 1, cursorPosition.Y);
@@ -1734,6 +1782,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(false, "the character at the cursor should be retrieved, never gets to here");
             return '\0';
         }
+#endif
 
 
         /// <summary>
@@ -1764,29 +1813,23 @@ namespace Microsoft.PowerShell
         /// 
         /// The Executor instance on which to run any pipelines that are needed to find matches
         /// 
-        /// </param>
-        /// 
-        ///  <param name="useUserDefinedCustomReadLine">
-        /// 
-        /// Flag which decides if we should look for a user defined ReadLine function
-        /// 
-        /// </param>
-        /// 
         /// <returns>
         /// 
         /// null on a break event
         /// the completed line otherwise
         /// 
         /// </returns>
-        internal string ReadLineWithTabCompletion(Executor exec, bool useUserDefinedCustomReadLine)
+        internal string ReadLineWithTabCompletion(Executor exec)
         {
-            ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
-
             string input = null;
             string lastInput = "";
-            string lastCompletion = "";
 
             ReadLineResult rlResult = ReadLineResult.endedOnEnter;
+
+#if !PORTABLE
+            ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
+
+            string lastCompletion = "";
             Size screenBufferSize = RawUI.BufferSize;
 
             // Save the cursor position at the end of the prompt string so that we can restore it later to write the
@@ -1796,18 +1839,16 @@ namespace Microsoft.PowerShell
 
             CommandCompletion commandCompletion = null;
             string completionInput = null;
+#endif
 
             do
             {
-                if (TryInvokeUserDefinedReadLine(out input, useUserDefinedCustomReadLine))
+                if (!ReadFromStdin && TryInvokeUserDefinedReadLine(out input))
                 {
                     break;
                 }
 
                 input = ReadLine(true, lastInput, out rlResult, false, false);
-
-                Coordinates endOfInputCursorPos = RawUI.CursorPosition;
-                string completedInput = null;
 
                 if (input == null)
                 {
@@ -1819,6 +1860,13 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
+#if PORTABLE // Portable code only ends on enter (or no input), so tab is not processed
+                throw new PlatformNotSupportedException("This readline state is unsupported in portable code!");
+#else
+
+                Coordinates endOfInputCursorPos = RawUI.CursorPosition;
+                string completedInput = null;
+
                 if (rlResult == ReadLineResult.endedOnTab || rlResult == ReadLineResult.endedOnShiftTab)
                 {
                     int tabIndex = input.IndexOf(Tab, StringComparison.CurrentCulture);
@@ -1828,16 +1876,11 @@ namespace Microsoft.PowerShell
                     int leftover = input.Length - tabIndex - 1;
                     if (leftover > 0)
                     {
-                        // Check if the std input is redirected, e.g. reading from a file
-                        bool isStdInputRedirected = parent.IsStandardInputRedirected && readFromStdin;
-                        if (!isStdInputRedirected)
-                        {
-                            // We are reading from the console
-                            // If the cursor is at the end of a line, there is actually a space character at the cursor's position and when we type tab
-                            // at the end of a line, that space character is replaced by the tab. But when we type tab at the middle of a line, the space
-                            // character at the end is preserved, we should remove that space character because it's not provided by the user.
-                            input = input.Remove(input.Length - 1);
-                        }
+                        // We are reading from the console (not redirected, b/c we don't end on tab when redirected)
+                        // If the cursor is at the end of a line, there is actually a space character at the cursor's position and when we type tab
+                        // at the end of a line, that space character is replaced by the tab. But when we type tab at the middle of a line, the space
+                        // character at the end is preserved, we should remove that space character because it's not provided by the user.
+                        input = input.Remove(input.Length - 1);
                         restOfLine = input.Substring(tabIndex + 1);
                     }
                     input = input.Remove(tabIndex);
@@ -1927,6 +1970,7 @@ namespace Microsoft.PowerShell
 
                     lastInput = completedInput;
                 }
+#endif
             }
             while (true);
 
@@ -1942,6 +1986,7 @@ namespace Microsoft.PowerShell
             return input;
         }
 
+#if !PORTABLE
         private void SendLeftArrows(int length)
         {
             var inputs = new ConsoleControl.INPUT[length * 2];
@@ -1971,6 +2016,7 @@ namespace Microsoft.PowerShell
 
             ConsoleControl.MimicKeyPress(inputs);
         }
+#endif
 
         private CommandCompletion GetNewCompletionResults(string input)
         {
@@ -2011,43 +2057,42 @@ namespace Microsoft.PowerShell
         }
 
         const string CustomReadlineCommand = "PSConsoleHostReadLine";
-        private bool TryInvokeUserDefinedReadLine(out string input, bool useUserDefinedCustomReadLine)
+        private bool TryInvokeUserDefinedReadLine(out string input)
         {
             // We're using GetCommands instead of GetCommand so we don't auto-load a module should the command exist, but isn't loaded.
             // The idea is that if someone hasn't defined the command (say because they started -noprofile), we shouldn't auto-load
             // this function.
 
-            // If we need to look for user defined custom readline command, then we need to wait for Runspace to be created.
-            if (useUserDefinedCustomReadLine)
+            var runspace = this.parent.LocalRunspace;
+            if (runspace != null &&
+                runspace.Engine.Context.EngineIntrinsics.InvokeCommand.
+                GetCommands(CustomReadlineCommand,
+                            CommandTypes.Function | CommandTypes.Cmdlet, nameIsPattern: false).Any())
             {
-                var runspace = this.parent.LocalRunspace;
-                if (runspace != null
-                    && runspace.Engine.Context.EngineIntrinsics.InvokeCommand.GetCommands(CustomReadlineCommand, CommandTypes.Function | CommandTypes.Cmdlet, nameIsPattern: false).Any())
+                try
                 {
-                    try
+                    PowerShell ps;
+                    if ((runspace.ExecutionContext.EngineHostInterface.NestedPromptCount > 0) &&
+                        (Runspace.DefaultRunspace != null))
                     {
-                        PowerShell ps;
-                        if ((runspace.ExecutionContext.EngineHostInterface.NestedPromptCount > 0) && (Runspace.DefaultRunspace != null))
-                        {
-                            ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
-                        }
-                        else
-                        {
-                            ps = PowerShell.Create();
-                            ps.Runspace = runspace;
-                        }
+                        ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
+                    }
+                    else
+                    {
+                        ps = PowerShell.Create();
+                        ps.Runspace = runspace;
+                    }
 
-                        var result = ps.AddCommand(CustomReadlineCommand).Invoke();
-                        if (result.Count == 1)
-                        {
-                            input = PSObject.Base(result[0]) as string;
-                            return true;
-                        }
-                    }
-                    catch (Exception e)
+                    var result = ps.AddCommand(CustomReadlineCommand).Invoke();
+                    if (result.Count == 1)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
+                        input = PSObject.Base(result[0]) as string;
+                        return true;
                     }
+                }
+                catch (Exception e)
+                {
+                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
 
@@ -2061,7 +2106,6 @@ namespace Microsoft.PowerShell
 
         private object instanceLock = new object();
 
-        private bool readFromStdin;
         private bool noPrompt;
 
         //If this is true, class throws on read or prompt method which require
@@ -2086,7 +2130,6 @@ namespace Microsoft.PowerShell
         // this is a test hook for the ConsoleInteractiveTestTool, which sets this field to true.
 
         private bool isInteractiveTestToolListening;
-        private bool isTestingShiftTab;
 
         // This instance data is "read-only" and need not have access serialized.
 

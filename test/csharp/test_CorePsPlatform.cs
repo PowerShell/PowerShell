@@ -10,18 +10,6 @@ namespace PSTests
     public static class PlatformTests
     {
         [Fact]
-        public static void TestIsLinux()
-        {
-            Assert.True(Platform.IsLinux);
-        }
-
-        [Fact]
-        public static void TestIsWindows()
-        {
-            Assert.False(Platform.IsWindows);
-        }
-
-        [Fact]
         public static void TestIsCore()
         {
             Assert.True(Platform.IsCore);
@@ -80,7 +68,7 @@ namespace PSTests
             }
         }
 
-        [Fact]
+        [Fact(Skip="Bad arguments for OS X")]
         public static void TestGetMachineName()
         {
             var startInfo = new ProcessStartInfo
@@ -103,7 +91,7 @@ namespace PSTests
             }
         }
 
-        [Fact]
+        [Fact(Skip="Bad arguments for OS X")]
         public static void TestGetFQDN()
         {
             var startInfo = new ProcessStartInfo
@@ -126,7 +114,7 @@ namespace PSTests
             }
         }
 
-        [Fact]
+        [Fact(Skip="Bad arguments for OS X")]
         public static void TestGetDomainName()
         {
             var startInfo = new ProcessStartInfo

@@ -2,7 +2,6 @@ using Xunit;
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using Microsoft.PowerShell.CoreConsoleHost;
 
 namespace PSTests
 {
@@ -57,55 +56,6 @@ namespace PSTests
                         Assert.NotNull(result);
                     }
                     Assert.Equal(count, objCount);
-                }
-
-                runspace.Close();
-            }
-        }
-
-        [Fact]
-        public void TestRunspaceWithPowerShellAndHost()
-        {
-            Listener listener = new Listener("", false, false);
-            MyHost myHost = new MyHost(listener);
-            using (var runspace = RunspaceFactory.CreateRunspace(myHost))
-            {
-                runspace.Open();
-
-                using (PowerShell powerShell = PowerShell.Create())
-                {
-                    powerShell.Runspace = runspace;
-
-                    powerShell.AddScript(script);
-
-                    int objCount = 0;
-                    foreach (var result in powerShell.Invoke())
-                    {
-                        ++objCount;
-                        Assert.NotNull(result);
-                    }
-                    Assert.Equal(count, objCount);
-                }
-
-                runspace.Close();
-            }
-        }
-
-        [Fact]
-        public void TestRunspaceWithFunction()
-        {
-            Listener listener = new Listener("", false, false);
-            MyHost myHost = new MyHost(listener);
-            using (var runspace = RunspaceFactory.CreateRunspace(myHost))
-            {
-                runspace.Open();
-
-                using (PowerShell powerShell = PowerShell.Create())
-                {
-                    powerShell.Runspace = runspace;
-
-                    powerShell.AddScript("{1}.Invoke()");
-                    powerShell.Invoke();
                 }
 
                 runspace.Close();
