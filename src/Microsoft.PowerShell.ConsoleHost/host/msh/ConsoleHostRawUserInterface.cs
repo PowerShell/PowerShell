@@ -1653,7 +1653,17 @@ namespace Microsoft.PowerShell
         /// </summary>
         public override Size WindowSize
         {
-            get { return new Size(Console.WindowWidth, Console.WindowHeight); }
+            get
+            {
+                if (Console.IsOutputRedirected)
+                {
+                    return WrapSize;
+                }
+                else
+                {
+                    return new Size(Console.WindowWidth, Console.WindowHeight);
+                }
+            }
             set { Console.SetWindowSize(value.Width, value.Height); }
         }
 
