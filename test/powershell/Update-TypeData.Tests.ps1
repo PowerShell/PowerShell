@@ -11,8 +11,7 @@ Describe "Update-TypeData" {
 Describe "Update-TypeData basic functionality" -Tags DRT{
     $testfilename = "testfile.ps1xml"
     $testfile = Join-Path -Path $TestDrive -ChildPath $testfilename
-	$invalidFileExtensionFile = Join-Path -Path $TestDrive -ChildPath "notmshxml"
-	$filelist = Join-Path -Path $TestDrive -ChildPath "fileList.ps1xml"
+    $invalidFileExtensionFile = Join-Path -Path $TestDrive -ChildPath "notmshxml"
 	
 	#Pester bug:https://github.com/PowerShell/psl-pester/issues/6
 	It "Update-TypeData with Invalid TypesXml should throw Exception" -Pending{
@@ -56,7 +55,7 @@ Describe "Update-TypeData basic functionality" -Tags DRT{
 		finally
 		{
 			Remove-TypeData -Path $testfile
-			Remove-Item $testfile -ErrorAction SilentlyContinue
+			Remove-Item $testfile -Force
 		}
 	}
 	
@@ -79,31 +78,6 @@ Describe "Update-TypeData basic functionality" -Tags DRT{
 			Remove-Item $invalidFileExtensionFile -ErrorAction SilentlyContinue
 		}
 	}
-	
-	It "Update-TypeData with Invalid File List Extension should throw Exception"{
-		$xmlContent="not really an xml file, but we will not use it"
-		$xmlContent>$invalidFileExtensionFile
-		$filelistContent = "<Files><File>" + $invalidFileExtensionFile + "</File></Files>"
-		$filelistContent>$filelist
-		try
-		{
-			Update-TypeData -AppendPath $filelist -EA Stop
-			Throw "We expect TypesXmlUpdateException, but it didn't throw."
-		}
-		catch 
-		{
-			$error[0] | Should Match "ps1xml"
-			$_.CategoryInfo | Should Match "RuntimeException"
-			$_.FullyQualifiedErrorId | Should be "TypesXmlUpdateException,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
-		}
-		finally
-		{
-			Remove-TypeData -Path $filelist
-			Remove-Item $invalidFileExtensionFile -ErrorAction SilentlyContinue
-			Remove-Item $filelist -ErrorAction SilentlyContinue
-		}
-	}
-
 	
 	It "Update-TypeData with Valid Dynamic Type NoteProperty with Force should work"{
 		try
