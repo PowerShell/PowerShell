@@ -454,6 +454,22 @@ Built upon .NET Core, it is also a C# REPL.
     }
 
     New-Item -Force -ItemType SymbolicLink -Path /tmp/powershell -Target $Destination/powershell >$null
+    
+    # there is a weired bug in fpm
+    # if the target of the powershell symlink exists, `fpm` aborts
+    # with a `utime` error on OS X.
+    # so we move it to make symlink broken
+    $symlink_dest = "$Destination/powershell"
+    $hack_dest = "./_fpm_symlink_hack_powershell"
+    if ($IsOSX)
+    {
+        if (Test-Path $symlink_dest)
+        {
+            Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
+            Move-Item $symlink_dest $hack_dest
+        }
+    }
+
 
     # Change permissions for packaging
     chmod -R go=u $Source /tmp/powershell
@@ -499,6 +515,16 @@ Built upon .NET Core, it is also a C# REPL.
 
     # Build package
     fpm $Arguments
+
+    if ($IsOSX)
+    {
+        # this is continuation of a fpm hack for a weired bug
+        if (Test-Path $hack_dest)
+        {
+            Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
+            Move-Item $hack_dest $symlink_dest
+        }
+    }
 }
 
 
