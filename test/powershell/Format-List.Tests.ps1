@@ -124,4 +124,36 @@ Describe "Format-List DRT basic functionality" -Tags DRT{
         $result | Should Match "Name  : intArray"
         $result | Should Match "Value : {1, 2, 3, 4}"
     }
+	
+	It "Format-List with multiple same class object should work"{
+		Add-Type -TypeDefinition "public class TestClass{public TestClass(string name,int length){Name = name;Length = length;}public string Name;public int Length;}"
+		$testobject1 = New-Object TestClass 'name1',1
+		$testobject2 = New-Object TestClass 'name2',2
+		$testobject3 = New-Object TestClass 'name3',3
+		$testobjects = @($testobject1,$testobject2,$testobject3)
+		$result = $testobjects|Format-List|Out-String
+		$result | Should Match "Name   : name1"
+		$result | Should Match "Length : 1"
+		$result | Should Match "Name   : name2"
+		$result | Should Match "Length : 2"
+		$result | Should Match "Name   : name3"
+		$result | Should Match "Length : 3"
+	}
+	
+	It "Format-List with multiple different class object should work"{
+		Add-Type -TypeDefinition "public class TestClass{public TestClass(string name,int length){Name = name;Length = length;}public string Name;public int Length;}"
+		Add-Type -TypeDefinition "public class TestClass2{public TestClass2(string name,string value,int length){Name = name;Value = value; Length = length;}public string Name;public string Value;public int Length;}"
+		$testobject1 = New-Object TestClass 'name1',1
+		$testobject2 = New-Object TestClass2 'name2',"value2",2
+		$testobject3 = New-Object TestClass 'name3',3
+		$testobjects = @($testobject1,$testobject2,$testobject3)
+		$result = $testobjects|Format-List|Out-String
+		$result | Should Match "Name   : name1"
+		$result | Should Match "Length : 1"
+		$result | Should Match "Name   : name2"
+		$result | Should Match "Value  : value2"
+		$result | Should Match "Length : 2"
+		$result | Should Match "Name   : name3"
+		$result | Should Match "Length : 3"
+	}
 }
