@@ -45,7 +45,7 @@ choco install cmake.portable
 Build using our module
 ======================
 
-Use `Start-PSBuild -FullCLR` from the `PowerShellGitHubDev.psm1`
+Use `Start-PSBuild -FullCLR` from the `build.psm1`
 module.
 
 Because the `ConsoleHost` project (*not* the `Host` project) is a

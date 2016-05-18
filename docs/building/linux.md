@@ -65,7 +65,7 @@ import our module, bootsrap the dependencies, and build!
 In PowerShell:
 
 ```powershell
-Import-Module ./PowerShellGitHubDev.psm1
+Import-Module ./build.psm1
 Start-PSBootstrap
 ```
 
@@ -98,7 +98,7 @@ uninstall prior any prior versions.
 Build using our module
 ======================
 
-We maintain a [PowerShell module](../../PowerShellGitHubDev.psm1) with
+We maintain a [PowerShell module](../../build.psm1) with
 the function `Start-PSBuild` to build PowerShell. Since this is
 PowerShell code, it requires self-hosting. If you have followed the
 toolchain setup section above, you should have `powershell` installed.
@@ -108,7 +108,7 @@ toolchain setup section above, you should have `powershell` installed.
 > in Bash; see [Build manually][#Build manually] below.
 
 ```powershell
-Import-Module ./PowerShellGitHubDev.psm1
+Import-Module ./build.psm1
 Start-PSBuild
 ```
 

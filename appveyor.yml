@@ -18,12 +18,12 @@ install:
   - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
   - git config --global url.git@github.com:.insteadOf https://github.com/
   - git submodule update --init -- src/windows-build src/Modules/Pester
-  - ps: Import-Module .\PowerShellGitHubDev.psm1; Start-PSBootstrap
+  - ps: Import-Module .\build.psm1; Start-PSBootstrap
 
 build_script:
   - ps: |
       $ErrorActionPreference = 'Stop'
-      Import-Module .\PowerShellGitHubDev.psm1
+      Import-Module .\build.psm1
       Start-PSBuild -Publish
       Start-PSBuild -FullCLR
 
