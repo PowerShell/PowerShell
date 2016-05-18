@@ -7,12 +7,6 @@ temporarily from `Microsoft.PowerShell.Commands.Management` because we
 cannot resolve `[Shell32.ShellFolderItem]` for FullCLR builds. This must be
 fixed ASAP.
 
-## `Microsoft.Management.Infrastructure.Native`
-
-Windows builds currently use the native stub; this should be replaced with
-actual compilation of the managed C++ library on Windows (with the stub used on
-Linux).
-
 ## CorePS Eventing Library
 
 The Eventing library reimplementation for Core PowerShell does not exist on
