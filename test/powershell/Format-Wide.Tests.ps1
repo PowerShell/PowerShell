@@ -95,7 +95,7 @@ Describe "Format-Wide DRT basic functionality" -Tags DRT{
 		$result | Should Match "enumerableTestObject"
 	}
 	
-	It "Format-Wide with multiple same class object with grouping should work"{
+	It "Format-Wide with multiple same class object with grouping should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx"){
 		Add-Type -TypeDefinition "public class TestGroupingClass{public TestGroupingClass(string name,int length){Name = name;Length = length;}public string Name;public int Length;public string GroupingKey;}"
 		$testobject1 = New-Object TestGroupingClass 'name1',1
 		$testobject1.GroupingKey = "foo"
