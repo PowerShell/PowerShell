@@ -7,19 +7,6 @@ temporarily from `Microsoft.PowerShell.Commands.Management` because we
 cannot resolve `[Shell32.ShellFolderItem]` for FullCLR builds. This must be
 fixed ASAP.
 
-## `Microsoft.Management.Infrastructure.Native`
-
-Windows builds currently use the native stub; this should be replaced with
-actual compilation of the managed C++ library on Windows (with the stub used on
-Linux).
-
-## CorePS Eventing Library
-
-The Eventing library reimplementation for Core PowerShell does not exist on
-Linux, and so the ETW stub is used via a `#if LINUX` guard. On Windows, this
-library now exists, but its build needs to be ported to .NET CLI. Until then,
-the stub is also used with a `#if ETW` guard.
-
 ## xUnit
 
 The xUnit tests can only be run on Linux.
@@ -30,14 +17,26 @@ Performance issues have been seen in some scenarios, such as nested SSH
 sessions. We believe this is likely an issue with `Console.ReadKey()` and are
 investigating.
 
-## Remoting
+## Non-interactive console bugs
 
-Only basic authentication is implemented
+The `ConsoleHost` is buggy when running under an environment without a proper
+TTY. This is due to exceptions thrown in the `RawUI` class from `System.Console`
+that are silenced in the formatting subsystem. See issue [#984][].
 
-Multiple sessions are not yet supported
+[#984]: https://github.com/PowerShell/PowerShell/issues/984
 
-Server shut-down is not complete (must restart `omiserver` after a session is
-completed.
+## Sessions
+
+PowerShell sessions do not work because of remoting requirements, so
+`New-PSSession` etc. crash.
+
+## Aliases
+
+The aliases that conflict with native Linux / OS X commands are removed. This is
+an open discussion in issue [#929][]. See commit 7d9f43966 for their removal,
+and 3582bb421 for the merge.
+
+[#929]: https://github.com/PowerShell/PowerShell/issues/929
 
 ## Unavailable cmdlets
 

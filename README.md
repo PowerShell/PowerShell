@@ -48,7 +48,8 @@ Team coordination
 - [Waffle.io scrum board](https://waffle.io/PowerShell/PowerShell)
 - [VSO items](https://aka.ms/openps)
 - [PowerShell subsystem maintainers](https://aka.ms/psowners)
-- [Internal documents](https://aka.ms/pscore)
+- [Automation Sharepoint](https://aka.ms/pscore)
+- [Internal Open PowerShell Documents](https://github.com/PowerShell/Internal-PowerShellTeam-Tools/tree/master/OpenPowerShellDocs)
 
 If you encounter any problems, see the [known issues](KNOWNISSUES.md),
 search the [issues][], and if all else fails, open a new issue.
