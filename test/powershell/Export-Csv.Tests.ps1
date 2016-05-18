@@ -64,3 +64,39 @@ Describe "Export-Csv" {
 	Remove-Item $aliasObject -Force
     }
 }
+
+Describe "Export-Csv DRT Unit Tests" -Tags DRT{
+    $filePath = Join-Path $TestDrive -ChildPath "test.csv"
+    $newLine = [environment]::NewLine
+    It "Test basic function works well" {
+        $input = [pscustomobject]@{ "P1" = "V11"; "P2" = "V12"; "P3" = "V13" } 
+        $input | Export-Csv -Path $filePath -NoTypeInformation
+        $results = Import-Csv $filePath
+        $results.P1 | Should Be "V11"
+        $results.P2 | Should Be "V12"
+        $results.P3 | Should Be "V13"
+    }
+
+    It "Test if it works with special character" {
+        $v3 = "abc" + $newLine + "foo"
+        $input = [pscustomobject]@{ "P1" = "  "; "P2" = "abc,foo"; "P3" = $v3} 
+        $input | Export-Csv -Path $filePath -NoTypeInformation
+        $results = Import-Csv $filePath
+        $results.P1 | Should Be "  " 
+        $results.P2 | Should Be "abc,foo"
+        $results.P3 | Should Be $v3
+    }
+
+    It "Test force switch works well" {
+        $input = [pscustomobject]@{ "P1" = "first" } 
+        $input | Export-Csv -Path $filePath
+        
+        $input =  [pscustomobject]@{ "P2" = "second" } 
+        $input | Export-Csv -Path $filePath -Force
+        $results = Import-Csv $filePath
+
+        $results.P2 | Should be "second"
+        $property = $results | Get-Member | ? { $_.MemberType -eq "NoteProperty" } | % { $_.Name } 
+        $property -notcontains "P1" | Should Be $true
+    }
+}
