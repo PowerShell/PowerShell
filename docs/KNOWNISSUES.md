@@ -7,13 +7,6 @@ temporarily from `Microsoft.PowerShell.Commands.Management` because we
 cannot resolve `[Shell32.ShellFolderItem]` for FullCLR builds. This must be
 fixed ASAP.
 
-## CorePS Eventing Library
-
-The Eventing library reimplementation for Core PowerShell does not exist on
-Linux, and so the ETW stub is used via a `#if LINUX` guard. On Windows, this
-library now exists, but its build needs to be ported to .NET CLI. Until then,
-the stub is also used with a `#if ETW` guard.
-
 ## xUnit
 
 The xUnit tests can only be run on Linux.
