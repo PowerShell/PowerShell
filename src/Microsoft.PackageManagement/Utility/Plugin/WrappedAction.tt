@@ -1,0 +1,120 @@
+﻿//  Copyright (c) Microsoft Corporation. All rights reserved.
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+//
+
+<#@ template debug="true" hostspecific="true" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+namespace Microsoft.PackageManagement.Internal.Utility.Plugin {
+    using System;
+    using System.Globalization;
+
+	public abstract class Invokable : MarshalByRefObject {
+		public abstract object DynamicInvoke(object[] args);
+
+		// we don't want these objects being gc's out because they remain unused...
+        public override object InitializeLifetimeService() {
+            return null;
+        }
+	}
+
+	public class WrappedAction : Invokable {
+        private readonly Action _action;
+
+        public WrappedAction() { 
+
+        }
+
+        public WrappedAction(Action action) {
+            _action = action;
+        }
+
+        public void Invoke() {
+            _action.Invoke();
+        }
+
+		public override object DynamicInvoke(object[] args) {
+			Invoke();
+			return null;
+		}
+    }
+
+<#
+	for( var i = 1; i< 17; i++ ) {
+	var types = getTypes(i);
+	var paramDecl = getParamDecl(i);
+	var args = getArgs(i);
+	var param = getParams(i); #>
+    public class WrappedAction< <#= types #> > : Invokable {
+        private readonly Action<<#= types #> > _action;
+
+        public WrappedAction() {
+        }
+
+        public WrappedAction(Action<<#= types #> > action) {
+            _action = action;
+        }
+
+        public void Invoke(<#= paramDecl #> ) {
+            try {
+                _action.Invoke(<#= param #>);
+            } catch (Exception e) {
+                throw new Exception( string.Format(CultureInfo.InvariantCulture, "{0}/{1}\r\n{2}", e.GetType().Name, e.Message, e.StackTrace));
+            }
+        }
+
+		public override object DynamicInvoke(object[] args) {
+			if( args == null ) {
+				throw new ArgumentNullException("args");
+			}
+			if( args.Length < <#= i #> ) {
+                throw new Exception( "DynamicInvoke with too few args");
+			}
+			Invoke(<#=args#>);
+			return null;
+		}
+    }
+<# } #>
+
+}
+<#+
+    public string getTypes(int count) {
+        var result = "T0";
+        for( var c = 1; c< count ; c++) {
+            result += " ,T"+c;
+        }
+        return result;
+    }
+
+    public string getParams(int count) {
+        var result = "tVal0";
+        for( var c = 1; c< count ; c++) {
+            result += " ,tVal"+c;
+        }
+        return result;
+    }
+	public string getArgs(int count) {
+        var result = "(T0)args[0]";
+        for( var c = 1; c< count ; c++) {
+            result += " ,(T"+c+")args["+c+"]";
+        }
+        return result;
+    }
+
+    public string  getParamDecl(int count) {
+        var result = "T0 tVal0";
+        for( var c = 1; c< count; c++ ) {
+            result += " ,T"+c + " tVal"+c;
+        }
+        return result;
+    }
+#>
