@@ -22,6 +22,14 @@ investigating.
 PowerShell sessions do not work because of remoting requirements, so
 `New-PSSession` etc. crash.
 
+## Aliases
+
+The aliases that conflict with native Linux / OS X commands are removed. This is
+an open discussion in issue [#929][]. See commit 7d9f43966 for their removal,
+and 3582bb421 for the merge.
+
+[#929]: https://github.com/PowerShell/PowerShell/issues/929
+
 ## Unavailable cmdlets
 
 This project includes the CoreCLR versions of the `Commands.Management`,
