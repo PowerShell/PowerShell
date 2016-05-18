@@ -125,7 +125,7 @@ Describe "Format-List DRT basic functionality" -Tags DRT{
         $result | Should Match "Value : {1, 2, 3, 4}"
     }
 	
-	It "Format-List with multiple same class object should work"{
+	It "Format-List with multiple same class object should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx"){
 		Add-Type -TypeDefinition "public class TestClass{public TestClass(string name,int length){Name = name;Length = length;}public string Name;public int Length;}"
 		$testobject1 = New-Object TestClass 'name1',1
 		$testobject2 = New-Object TestClass 'name2',2
@@ -140,7 +140,7 @@ Describe "Format-List DRT basic functionality" -Tags DRT{
 		$result | Should Match "Length : 3"
 	}
 	
-	It "Format-List with multiple different class object should work"{
+	It "Format-List with multiple different class object should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx"){
 		Add-Type -TypeDefinition "public class TestClass{public TestClass(string name,int length){Name = name;Length = length;}public string Name;public int Length;}"
 		Add-Type -TypeDefinition "public class TestClass2{public TestClass2(string name,string value,int length){Name = name;Value = value; Length = length;}public string Name;public string Value;public int Length;}"
 		$testobject1 = New-Object TestClass 'name1',1
