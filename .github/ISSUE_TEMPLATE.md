@@ -1,4 +1,7 @@
 <!--
+
+If you are running a released version of powershell, but not the latest one, install the latest from https://github.com/PowerShell/PowerShell/releases and try to repro it again
+
 Before submitting this issue, please first:
 
 - [ ] Search the existing issues.
@@ -22,7 +25,11 @@ Actual behavior
 Environment data
 ----------------
 
-<!-- Please fill in the results of the following commands: -->
+<!-- If running the latest released version, specify the version, i.e. -->
+
+v0.4.0
+
+<!-- If running you own build, please fill in the results of the following commands: -->
 
 ```sh
 $ dotnet --info
