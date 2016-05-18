@@ -257,4 +257,17 @@ Describe "Select-Object DRT basic functionality" -Tags DRT{
 		$results = Get-Process i* | Select-Object ProcessName
 		$results.Count | Should Not Be 0
 	}
+	
+	It "Select-Object with Skip should work"{
+		$results = "1","2","3" | Select-Object -Skip 1
+		$results.Count | Should Be 2
+		$results[0] | Should Be 2
+		$results[1] | Should Be 3
+	}
+	
+	It "Select-Object with Index should work"{
+		$results = "1","2","3" | Select-Object -Index 2
+		$results.Count | Should Be 1
+		$results[0] | Should Be "3"
+	}
 }
