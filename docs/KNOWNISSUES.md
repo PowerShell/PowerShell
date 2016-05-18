@@ -17,15 +17,6 @@ Performance issues have been seen in some scenarios, such as nested SSH
 sessions. We believe this is likely an issue with `Console.ReadKey()` and are
 investigating.
 
-## Remoting
-
-Only basic authentication is implemented
-
-Multiple sessions are not yet supported
-
-Server shut-down is not complete (must restart `omiserver` after a session is
-completed.
-
 ## Unavailable cmdlets
 
 This project includes the CoreCLR versions of the `Commands.Management`,
