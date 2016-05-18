@@ -17,6 +17,11 @@ Performance issues have been seen in some scenarios, such as nested SSH
 sessions. We believe this is likely an issue with `Console.ReadKey()` and are
 investigating.
 
+## Sessions
+
+PowerShell sessions do not work because of remoting requirements, so
+`New-PSSession` etc. crash.
+
 ## Unavailable cmdlets
 
 This project includes the CoreCLR versions of the `Commands.Management`,
