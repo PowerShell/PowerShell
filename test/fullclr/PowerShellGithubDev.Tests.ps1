@@ -1,4 +1,4 @@
-Describe 'PowerShellGithubDev.psm1 and powershell.exe' {
+Describe 'build.psm1 and powershell.exe' {
     Context '$env:DEVPATH assemblies loading' {
         It 'has $env:DEVPATH set' {
             $env:DEVPATH | Should Not Be $null

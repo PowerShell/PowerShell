@@ -15,7 +15,7 @@ Values are relative file paths in PowerShell/PowerShell GitHub project.
 We used to have a submodule at this path.
 If you replace this `src\monad` with path to the **admin** enlistment, you will get the mapping to source depot.
 
-### PowerShellGitHubDev.psm1
+### build.psm1
 
 Our dev module contains a number of functions to work that can be used to work with this mapping file.
 

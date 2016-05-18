@@ -29,7 +29,7 @@ build PowerShell. The `Start-PSBootstrap` function will automatically
 install it and add it to your path:
 
 ```powershell
-Import-Module ./PowerShellGitHubDev.psm1
+Import-Module ./build.psm1
 Start-PSBootstrap
 ```
 
@@ -62,11 +62,11 @@ CLI can cause odd failures when running. Please check your version.
 Build using our module
 ======================
 
-We maintain a [PowerShell module](../../PowerShellGitHubDev.psm1) with
+We maintain a [PowerShell module](../../build.psm1) with
 the function `Start-PSBuild` to build PowerShell.
 
 ```powershell
-Import-Module ./PowerShellGitHubDev.psm1
+Import-Module ./build.psm1
 Start-PSBuild
 ```
 
