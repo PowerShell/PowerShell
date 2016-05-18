@@ -819,7 +819,7 @@ function script:Start-NativeExecution([scriptblock]$sb)
         # point to the obsolete value
         if ($LASTEXITCODE -ne 0)
         {
-            throw "Execution failed with exit code $LASTEXITCODE"
+            throw "Execution of {$sb} failed with exit code $LASTEXITCODE"
         }
     }
     finally
