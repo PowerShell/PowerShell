@@ -17,6 +17,14 @@ Performance issues have been seen in some scenarios, such as nested SSH
 sessions. We believe this is likely an issue with `Console.ReadKey()` and are
 investigating.
 
+## Non-interactive console bugs
+
+The `ConsoleHost` is buggy when running under an environment without a proper
+TTY. This is due to exceptions thrown in the `RawUI` class from `System.Console`
+that are silenced in the formatting subsystem. See issue [#984][].
+
+[#984]: https://github.com/PowerShell/PowerShell/issues/984
+
 ## Sessions
 
 PowerShell sessions do not work because of remoting requirements, so
