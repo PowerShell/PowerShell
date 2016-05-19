@@ -13,6 +13,12 @@ The file
 `src\Microsoft.PowerShell.Commands.Management\commands\management\GetComputerInfoCommand.cs`
 is not currently compiled because it needs resources.
 
+## Jobs
+
+The PowerShell jobs fail, see [#1010][].
+
+[#1010]: https://github.com/PowerShell/PowerShell/issues/1010
+
 ## xUnit
 
 The xUnit tests can only be run on Linux.
