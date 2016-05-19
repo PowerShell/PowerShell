@@ -18,7 +18,8 @@
     "content": [
         "Modules",
         "../Modules",
-        "powershell.exe"
+        "powershell.exe",
+        "../../.version"
     ],
 
     "frameworks": {
