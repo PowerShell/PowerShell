@@ -31,7 +31,7 @@ Get PowerShell
 | Get **Binaries**      | [Releases][] | [Artifacts][] | [Artifacts][] | [Releases][] | TBD |
 
 Building summary: `Start-PSBuild` from the module
-`./PowerShellGitHubDev.psm1` (self-host on Linux / OS X)
+`./build.psm1` (self-host on Linux / OS X)
 
 See [Linux releases](docs/installation/linux.md) and
 [Windows artifacts](docs/installation/windows.md) installation
