@@ -1,5 +1,18 @@
 # Known Issues
 
+## SecureString
+
+The `SecureString` class is *not* the well-known C# `SecureString`, as the
+library is not available in .NET Core. However, PowerShell continues to use the
+type for two main reasons: FullCLR compatibility, and as a specially-treated
+type (that is, behavior is dependent on the type being `SecureString`). Instead,
+the `SecureString` is Mono's completely not secure whatsoever, but open-source
+and "compatible" stub that acts just like a plaintext `StringBuilder`. **It has
+no encryption.**
+
+Additionally `ReadLineSafe` is not implemented, meaning `Get-Credential` fails
+with `PlatformNotSupportedException`.
+
 ## `ControlPanelItemCommand.cs`
 
 The file `monad/src/commands/management/ControlPanelItemCommand.cs` has been removed
