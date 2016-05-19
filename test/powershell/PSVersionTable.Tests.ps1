@@ -15,6 +15,9 @@ Describe "PSVersionTable" {
 	$PSVersionTable.ContainsKey("GitCommitId")               | Should Be True
 
     }
+    It "GitCommitId property should not contain an error" {
+        $PSVersionTable.GitCommitId | Should not match "powershell.version"
+    }
 
     It "Should have the correct edition" -Skip:(!$IsCore) {
 	$expected =

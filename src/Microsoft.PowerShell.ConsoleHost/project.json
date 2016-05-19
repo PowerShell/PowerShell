@@ -19,7 +19,7 @@
         "Modules",
         "../Modules",
         "powershell.exe",
-        "../../.version"
+        "../../powershell.version"
     ],
 
     "frameworks": {
