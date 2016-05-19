@@ -463,7 +463,7 @@ namespace System.Management.Automation.Security
 
         [DllImport("crypt32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern
-        string CryptFindLocalizedName(string pwszCryptName);
+        IntPtr CryptFindLocalizedName(string pwszCryptName);
 
         [DllImport(PinvokeDllNames.CryptAcquireContextDllName, SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern

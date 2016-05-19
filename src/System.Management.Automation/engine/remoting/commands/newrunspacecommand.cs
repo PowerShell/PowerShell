@@ -96,9 +96,11 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = PSRemotingBaseCmdlet.ComputerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRemotingBaseCmdlet.UriParameterSet)]
-        [Parameter(ValueFromPipelineByPropertyName = true,
+        [Parameter(Mandatory = true,
+                   ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRemotingBaseCmdlet.VMIdParameterSet)]
-        [Parameter(ValueFromPipelineByPropertyName = true,
+        [Parameter(Mandatory = true,
+                   ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRemotingBaseCmdlet.VMNameParameterSet)]
         [Credential()]
         public override PSCredential Credential
@@ -156,7 +158,9 @@ namespace Microsoft.PowerShell.Commands
         /// i.e., allows going off box.  When this property is true and a PSSession is disconnected, 
         /// reconnection is allowed only if reconnecting from a PowerShell session on the same box.
         /// </summary>
-        [Parameter()]
+        [Parameter(ParameterSetName = NewPSSessionCommand.ComputerNameParameterSet)]
+        [Parameter(ParameterSetName = NewPSSessionCommand.SessionParameterSet)]
+        [Parameter(ParameterSetName = NewPSSessionCommand.UriParameterSet)]
         public SwitchParameter EnableNetworkAccess
         {
             get { return enableNetworkAccess; }

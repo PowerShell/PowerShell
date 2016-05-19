@@ -566,7 +566,7 @@ namespace System.Management.Automation
             // This is the path to the help file.
             string location = null;
 
-            if (helpFile.EndsWith(".ni.dll-Help.xml"))
+            if (helpFile.EndsWith(".ni.dll-Help.xml", StringComparison.OrdinalIgnoreCase))
             {
                 // For PowerShell on OneCore, we ship Ngen binaries. As a result, the name of the assembly now contains '.ni' on it,
                 // e.g., <AssemblyName>.ni.dll as supposed to <AssemblyName>.dll.

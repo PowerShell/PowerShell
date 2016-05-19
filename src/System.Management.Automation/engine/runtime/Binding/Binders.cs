@@ -556,7 +556,7 @@ namespace System.Management.Automation.Language
             }
 
 #if !CORECLR
-            // .NET Core does not have a full DataTable type
+            // In CORECLR System.Data.DataTable does not have the DataRowCollection IEnumerable, so disabling code.
             if (targetValue is DataTable)
             {
                 // Generate:

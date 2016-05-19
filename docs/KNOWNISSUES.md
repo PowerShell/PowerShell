@@ -7,6 +7,12 @@ temporarily from `Microsoft.PowerShell.Commands.Management` because we
 cannot resolve `[Shell32.ShellFolderItem]` for FullCLR builds. This must be
 fixed ASAP.
 
+## `GetComputerInfoCommand.cs`
+
+The file
+`src\Microsoft.PowerShell.Commands.Management\commands\management\GetComputerInfoCommand.cs`
+is not currently compiled because it needs resources.
+
 ## xUnit
 
 The xUnit tests can only be run on Linux.

@@ -2001,6 +2001,11 @@ function Find-DscResource
         [ValidateNotNull()]
         [Version]
         $MinimumVersion,
+
+        [Parameter()]
+        [ValidateNotNull()]
+        [Version]
+        $MaximumVersion,
         
         [Parameter()]
         [ValidateNotNull()]
@@ -2104,6 +2109,11 @@ function Find-Command
         [ValidateNotNull()]
         [Version]
         $MinimumVersion,
+
+        [Parameter()]
+        [ValidateNotNull()]
+        [Version]
+        $MaximumVersion,
         
         [Parameter()]
         [ValidateNotNull()]
@@ -2210,6 +2220,11 @@ function Find-RoleCapability
         [Version]
         $MinimumVersion,
         
+        [Parameter()]
+        [ValidateNotNull()]
+        [Version]
+        $MaximumVersion,
+
         [Parameter()]
         [ValidateNotNull()]
         [Version]
@@ -3729,6 +3744,11 @@ function Register-PSRepository
         [Uri]
         $ScriptPublishLocation,
 
+        [Parameter(ValueFromPipelineByPropertyName=$true,
+                   ParameterSetName='NameParameterSet')]
+        [PSCredential]
+        $Credential,
+
         [Parameter(Mandatory=$true,
                    ParameterSetName='PSGalleryParameterSet')]
         [Switch]
@@ -3834,6 +3854,7 @@ function Register-PSRepository
             # Ping and resolve the specified location
             $SourceLocation = Resolve-Location -Location (Get-LocationString -LocationUri $SourceLocation) `
                                                -LocationParameterName 'SourceLocation' `
+                                               -Credential $Credential `
                                                -Proxy $Proxy `
                                                -ProxyCredential $ProxyCredential `
                                                -CallerPSCmdlet $PSCmdlet
@@ -3929,6 +3950,10 @@ function Set-PSRepository
         [Uri]
         $ScriptPublishLocation,
 
+        [Parameter(ValueFromPipelineByPropertyName=$true)]
+        [PSCredential]
+        $Credential,
+
         [Parameter()]
         [ValidateSet('Trusted','Untrusted')]
         [string]
@@ -4015,6 +4040,7 @@ function Set-PSRepository
             # Ping and resolve the specified location
             $SourceLocation = Resolve-Location -Location (Get-LocationString -LocationUri $SourceLocation) `
                                                -LocationParameterName 'SourceLocation' `
+                                               -Credential $Credential `
                                                -Proxy $Proxy `
                                                -ProxyCredential $ProxyCredential `
                                                -CallerPSCmdlet $PSCmdlet
@@ -5746,13 +5772,14 @@ function Check-PSGalleryApiAvailability
 
     # check internet availability first
     $connected = $false
+    $microsoftDomain = 'www.microsoft.com'
     if(Get-Command Microsoft.PowerShell.Management\Test-Connection -ErrorAction SilentlyContinue)
     {        
-        $connected = Microsoft.PowerShell.Management\Test-Connection -ComputerName "www.microsoft.com" -Count 1 -Quiet
+        $connected = Microsoft.PowerShell.Management\Test-Connection -ComputerName $microsoftDomain -Count 1 -Quiet
     }
     else
     {
-        $connected = NetTCPIP\Test-NetConnection -ComputerName "www.microsoft.com" -InformationLevel Quiet
+        $connected = NetTCPIP\Test-NetConnection -ComputerName $microsoftDomain -InformationLevel Quiet
     }
     if ( -not $connected)
     {
@@ -5877,6 +5904,9 @@ function Ping-Endpoint
         $Endpoint,
 
         [Parameter()]
+        $Credential,
+
+        [Parameter()]
         $Proxy,
 
         [Parameter()]
@@ -5907,7 +5937,15 @@ function Ping-Endpoint
         try
         {
             $handler = New-Object System.Net.Http.HttpClientHandler
-            $handler.UseDefaultCredentials = $true
+            
+            if($Credential)
+            {
+                $handler.Credentials = $Credential.GetNetworkCredential()
+            }
+            else
+            {
+                $handler.UseDefaultCredentials = $true
+            }
 
             if($WebProxy)
             {
@@ -5935,14 +5973,22 @@ function Ping-Endpoint
         $iss.LanguageMode = "FullLanguage"
 
         $WebRequestcmd =  @'
-            param($WebProxy)  
+            param($Credential, $WebProxy)  
 
             try
             {{
                 $request = [System.Net.WebRequest]::Create("{0}")
                 $request.Method = 'GET'
                 $request.Timeout = 30000
-                $request.Credentials = [System.Net.CredentialCache]::DefaultNetworkCredentials
+                if($Credential)
+                {{
+                    $request.Credentials = $Credential.GetNetworkCredential()
+                }}
+                else
+                {{
+                    $request.Credentials = [System.Net.CredentialCache]::DefaultNetworkCredentials
+                }}
+
                 $request.AllowAutoRedirect = ${1}
                 
                 if($WebProxy)
@@ -5971,7 +6017,12 @@ function Ping-Endpoint
 
         if($WebProxy)
         {
-            $ps.AddParameter($WebProxy)
+            $null = $ps.AddParameter('WebProxy', $WebProxy)
+        }
+
+        if($Credential)
+        {
+            $null = $ps.AddParameter('Credential', $Credential)
         }
 
         $response = $ps.Invoke()
@@ -8373,6 +8424,8 @@ function Add-PackageSource
     {
         return
     }
+    
+    $Credential = $request.Credential
 
     $IsNewModuleSource = $false
     $Options = $request.Options
@@ -8615,6 +8668,7 @@ function Add-PackageSource
         # Ping and resolve the specified location
         $Location = Resolve-Location -Location $Location `
                                      -LocationParameterName 'Location' `
+                                     -Credential $Credential `
                                      -Proxy $Proxy `
                                      -ProxyCredential $ProxyCredential `
                                      -CallerPSCmdlet $PSCmdlet
@@ -8663,7 +8717,7 @@ function Add-PackageSource
                     -ExceptionObject $Name
     }
 
-    $LocationString = Get-ValidModuleLocation -LocationString $Location -ParameterName "Location" -Proxy $Proxy -ProxyCredential $ProxyCredential
+    $LocationString = Get-ValidModuleLocation -LocationString $Location -ParameterName "Location" -Proxy $Proxy -ProxyCredential $ProxyCredential -Credential $Credential
 
     # Check if Location is already registered with another Name
     $existingSourceName = Get-SourceName -Location $LocationString
@@ -8866,7 +8920,7 @@ function Add-PackageSource
 
     if(-not $ScriptSourceLocation)
     {
-        $ScriptSourceLocation = Get-ScriptSourceLocation -Location $LocationString -Proxy $Proxy -ProxyCredential $ProxyCredential
+        $ScriptSourceLocation = Get-ScriptSourceLocation -Location $LocationString -Proxy $Proxy -ProxyCredential $ProxyCredential -Credential $Credential
     }
     elseif($Options.ContainsKey($script:ScriptSourceLocation))
     {
@@ -11727,6 +11781,9 @@ function Get-ValidModuleLocation
         $ParameterName,
 
         [Parameter()]
+        $Credential,
+
+        [Parameter()]
         $Proxy,
 
         [Parameter()]
@@ -11764,6 +11821,7 @@ function Get-ValidModuleLocation
                 # Ping and resolve the specified location
                 $tempLocation = Resolve-Location -Location $tempLocation `
                                                  -LocationParameterName $ParameterName `
+                                                 -Credential $Credential `
                                                  -Proxy $Proxy `
                                                  -ProxyCredential $ProxyCredential `
                                                  -ErrorAction SilentlyContinue `
@@ -11779,6 +11837,7 @@ function Get-ValidModuleLocation
         # Ping and resolve the specified location
         $LocationString = Resolve-Location -Location $LocationString `
                                            -LocationParameterName $ParameterName `
+                                           -Credential $Credential `
                                            -Proxy $Proxy `
                                            -ProxyCredential $ProxyCredential `
                                            -CallerPSCmdlet $PSCmdlet   
@@ -13307,6 +13366,9 @@ function Get-ScriptSourceLocation
         $Location,
 
         [Parameter()]
+        $Credential,
+
+        [Parameter()]
         $Proxy,
 
         [Parameter()]
@@ -13340,6 +13402,7 @@ function Get-ScriptSourceLocation
                 # Ping and resolve the specified location
                 $scriptLocation = Resolve-Location -Location $tempScriptLocation `
                                                    -LocationParameterName 'ScriptSourceLocation' `
+                                                   -Credential $Credential `
                                                    -Proxy $Proxy `
                                                    -ProxyCredential $ProxyCredential `
                                                    -ErrorAction SilentlyContinue `
@@ -13408,6 +13471,9 @@ function Resolve-Location
         $LocationParameterName,
         
         [Parameter()]
+        $Credential,
+
+        [Parameter()]
         $Proxy,
 
         [Parameter()]
@@ -13438,7 +13504,7 @@ function Resolve-Location
     }
     else
     {
-        $pingResult = Ping-Endpoint -Endpoint $Location -Proxy $Proxy -ProxyCredential $ProxyCredential
+        $pingResult = Ping-Endpoint -Endpoint $Location -Credential $Credential -Proxy $Proxy -ProxyCredential $ProxyCredential
         $statusCode = $null
         $exception = $null
         $resolvedLocation = $null

@@ -1364,7 +1364,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "FromSource")]
         [Parameter(ParameterSetName = "FromMember")]
-        [Alias("Provider")]            
+        [Alias("Provider")]
+        // Disabling OACR warning 26506 and 26505, which complains that there could be null pointer.
+        // Since we are using [ValidateNotNullOrEmpty], PowerShell will throw an error if CodeDomProvider is null or empty.
+        [SuppressMessage("Microsoft.Usage", "#pw26506")]
+        [SuppressMessage("Microsoft.Usage", "#pw26505")]
+        [ValidateNotNullOrEmpty]
         public CodeDomProvider CodeDomProvider
         {
             get

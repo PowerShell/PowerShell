@@ -333,9 +333,6 @@
   <data name="CopyItemRemotelyOperationNotSupported" xml:space="preserve">
     <value>Remote copy with {0} is not supported.</value>
   </data>
-  <data name="CopyItemDirectoryNotFound" xml:space="preserve">
-    <value>Destination folder '{0}' does not exist.</value>
-  </data>
   <data name="CopyItemRemotelyFailedToCreateDirectory" xml:space="preserve">
     <value>Failed to create directory '{0}' on remote destination.</value>
   </data>

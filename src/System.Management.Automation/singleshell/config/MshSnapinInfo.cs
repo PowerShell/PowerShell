@@ -1408,13 +1408,12 @@ namespace System.Management.Automation
                         {
                             defaultMshSnapins = new List<DefaultPSSnapInInformation>()
                             {
-#if !CORECLR //TODO:CORECLR - The 'Diagnostics' and 'Host' modules are not available on OneCore yet
                                 new DefaultPSSnapInInformation("Microsoft.PowerShell.Diagnostics", "Microsoft.PowerShell.Commands.Diagnostics", null,
                                     "GetEventResources,Description", "GetEventResources,Vendor"),
 
-                                new DefaultPSSnapInInformation("Microsoft.PowerShell.CoreConsoleHost", "Microsoft.PowerShell.ConsoleHost", null,
+                                new DefaultPSSnapInInformation("Microsoft.PowerShell.Host", "Microsoft.PowerShell.ConsoleHost", null,
                                     "HostMshSnapInResources,Description","HostMshSnapInResources,Vendor"),
-#endif
+
                                 CoreSnapin,
 
                                 new DefaultPSSnapInInformation("Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Commands.Utility", null,
@@ -1427,7 +1426,7 @@ namespace System.Management.Automation
                                     "SecurityMshSnapInResources,Description","SecurityMshSnapInResources,Vendor")
                             };
 
-#if !CORECLR //TODO:CORECLR - The 'Microsoft.WSMan.Management' module will be available on OneCore soon
+#if !LINUX
                             if (!Utils.IsWinPEHost())
                             {
                                 defaultMshSnapins.Add(new DefaultPSSnapInInformation("Microsoft.WSMan.Management", "Microsoft.WSMan.Management", null,

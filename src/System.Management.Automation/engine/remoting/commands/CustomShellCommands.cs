@@ -248,7 +248,7 @@ function Register-PSSessionConfiguration
         if ($?){{
             try{{
                 $s = New-PSSession -ComputerName localhost -ConfigurationName $pluginName -ErrorAction Stop
-                # session is ok, no need to restart WinRM service                
+                # session is ok, no need to restart WinRM service 
                 Remove-PSSession $s -Confirm:$false
             }}catch{{
                 # session is NOT ok, we need to restart winrm if -Force was specified, otherwise show a warning
@@ -576,6 +576,15 @@ else
 
                 ArrayList errorList = (ArrayList)Context.DollarErrorVariable;
                 int errorCountBefore = errorList.Count;
+
+                if (force && 
+                this.Context != null &&
+                this.Context.EngineHostInterface != null &&
+                this.Context.EngineHostInterface.ExternalHost != null &&
+                this.Context.EngineHostInterface.ExternalHost is System.Management.Automation.Remoting.ServerRemoteHost)
+                {
+                    WriteWarning(RemotingErrorIdStrings.WinRMForceRestartWarning);
+                }
 
                 newPluginSb.InvokeUsingCmdlet(
                     contextCmdlet: this,

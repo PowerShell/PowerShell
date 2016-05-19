@@ -8,7 +8,7 @@ PowerShellVersion="3.0"
 CLRVersion="4.0"
 NestedModules="Microsoft.PowerShell.Commands.Management.dll"
 HelpInfoURI = 'http://go.microsoft.com/fwlink/?linkid=390785'
-AliasesToExport = @("gcb", "scb")
+AliasesToExport = @("gcb", "scb","gin")
 FunctionsToExport = @()
 CmdletsToExport=@("Add-Content",
     "Clear-Content",
@@ -95,5 +95,6 @@ CmdletsToExport=@("Add-Content",
     "Show-ControlPanelItem",
     "Clear-Recyclebin",
     "Get-Clipboard",
-    "Set-Clipboard")
+    "Set-Clipboard",
+    "Get-ComputerInfo")
 }

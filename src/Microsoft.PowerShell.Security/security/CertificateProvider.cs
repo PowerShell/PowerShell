@@ -1930,9 +1930,9 @@ namespace Microsoft.PowerShell.Commands
         private void RemoveCertStore(string storeName, bool fDeleteKey, string sourcePath)
         {
             //if recurse is true, remove every cert in the store
-            string localName = Security.NativeMethods.CryptFindLocalizedName(storeName);
+            IntPtr localName = Security.NativeMethods.CryptFindLocalizedName(storeName);
             string[] pathElements = GetPathElements(sourcePath);
-            if (null == localName)//not find, we can remove
+            if (IntPtr.Zero == localName)//not find, we can remove
             {
                 X509NativeStore store = null;
 

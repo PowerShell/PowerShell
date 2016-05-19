@@ -14,6 +14,7 @@ using System.Management.Automation.Runspaces.Internal;
 using System.Management.Automation.Host;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Remoting.Client;
+using Microsoft.PowerShell.Telemetry.Internal;
 
 namespace System.Management.Automation.Runspaces.Internal
 {
@@ -883,6 +884,8 @@ namespace System.Management.Automation.Runspaces.Internal
             PSEtwLog.SetActivityIdForCurrentThread(this.InstanceId);
             PSEtwLog.LogOperationalVerbose(PSEventId.RunspacePoolOpen, PSOpcode.Open,
                             PSTask.CreateRunspace, PSKeyword.UseAlwaysOperational);
+
+            TelemetryAPI.ReportRemoteSessionCreated(connectionInfo);
 
             lock (syncObject)
             {

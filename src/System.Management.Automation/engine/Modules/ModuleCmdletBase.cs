@@ -4089,27 +4089,10 @@ namespace Microsoft.PowerShell.Commands
             // If the RequiredModule is one of the Engine modules, then they could have been loaded as snapins (using RunspaceConfiguration or InitialSessionState.CreateDefault())
             if (result == null && InitialSessionState.IsEngineModule(requiredModule.Name))
             {
-                using (var powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
+                result = ModuleCmdletBase.GetEngineSnapIn(context, requiredModule.Name);
+                if (result != null)
                 {
-                    Collection<PSSnapInInfo> loadedSnapins = null;
-                    powerShell.AddCommand("Get-PSSnapin");
-                    powerShell.AddParameter("Name", requiredModule.Name);
-                    try
-                    {
-                        loadedSnapins = powerShell.Invoke<PSSnapInInfo>();
-                    }
-                    catch (Exception e)
-                    {
-                        // Catch-all OK, third-party call-out.
-                        CommandProcessorBase.CheckForSevereException(e);
-                    }
-
-                    if (loadedSnapins != null && loadedSnapins.Count > 0)
-                    {
-                        Dbg.Assert(loadedSnapins.Count == 1, " There should only be one snapin by name " + requiredModule.Name);
-                        result = loadedSnapins[0];
-                        loaded = true;
-                    }
+                    loaded = true;
                 }
             }
 
@@ -7814,6 +7797,30 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
         }
+
+        /// <summary>
+        /// Search a PSSnapin with the specified name
+        /// </summary>
+        internal static PSSnapInInfo GetEngineSnapIn(ExecutionContext context, string name)
+        {
+            HashSet<PSSnapInInfo> snapinSet = new HashSet<PSSnapInInfo>();
+            List<CmdletInfo> cmdlets = context.SessionState.InvokeCommand.GetCmdlets();
+            foreach (CmdletInfo cmdlet in cmdlets)
+            {
+                PSSnapInInfo snapin = cmdlet.PSSnapIn;
+                if (snapin != null && !snapinSet.Contains(snapin))
+                    snapinSet.Add(snapin);
+            }
+
+            foreach (PSSnapInInfo snapin in snapinSet)
+            {
+                if (string.Equals(snapin.Name, name, StringComparison.OrdinalIgnoreCase))
+                    return snapin;
+            }
+
+            return null;
+        }
+
     } // end ModuleCmdletBase
 
     /// <summary>

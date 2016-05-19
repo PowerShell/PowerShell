@@ -672,44 +672,19 @@ namespace Microsoft.PowerShell.Commands
                     // Check if module could be a snapin. This was the case for PowerShell version 2 engine modules.
                     if (InitialSessionState.IsEngineModule(name))
                     {
-                        CmdletInfo cmdletInfo = Context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Get-PSSnapIn");
-                        if (cmdletInfo != null && cmdletInfo.Visibility == SessionStateEntryVisibility.Public)
+                        PSSnapInInfo snapin = ModuleCmdletBase.GetEngineSnapIn(Context, name);
+                        
+                        // Return the command if we found a module
+                        if (snapin != null)
                         {
-                            CommandInfo commandInfo = new CmdletInfo("Get-PSSnapIn",
-                                                                     typeof(Microsoft.PowerShell.Commands.GetPSSnapinCommand),
-                                                                     null, null, Context);
-                            Command getPSSnapInCommand = new Command(commandInfo);
-
-                            Collection<PSSnapInInfo> matchingSnapins = null;
-
-                            try
-                            {
-                                using (System.Management.Automation.PowerShell powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
-                                {
-                                    powerShell.AddCommand(getPSSnapInCommand)
-                                        .AddParameter("Name", name)
-                                        .AddParameter("ErrorAction", ActionPreference.Ignore);
-                                    matchingSnapins = powerShell.Invoke<PSSnapInInfo>();
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                // Call-out to user code, catch-all OK
-                                CommandProcessorBase.CheckForSevereException(e);
-                            }
-
-                            // Return the command if we found a module
-                            if (matchingSnapins != null && matchingSnapins.Count == 1)
-                            {
-                                // warn that this module already exists as a snapin 
-                                string warningMessage = string.Format(
-                                    CultureInfo.InvariantCulture,
-                                    Modules.ModuleLoadedAsASnapin,
-                                    matchingSnapins[0].Name);
-                                WriteWarning(warningMessage);
-                                found = true;
-                                return foundModule;
-                            }
+                            // warn that this module already exists as a snapin 
+                            string warningMessage = string.Format(
+                                CultureInfo.InvariantCulture,
+                                Modules.ModuleLoadedAsASnapin,
+                                snapin.Name);
+                            WriteWarning(warningMessage);
+                            found = true;
+                            return foundModule;
                         }
                     }
 

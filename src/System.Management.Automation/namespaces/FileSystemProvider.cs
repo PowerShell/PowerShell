@@ -1896,11 +1896,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Verify that the target doesn't represent a device name
-            if (Utils.IsReservedDeviceName(newName))
+            if (PathIsReservedDeviceName(newName, "RenameError"))
             {
-                String error = StringUtil.Format(FileSystemProviderStrings.TargetCannotContainDeviceName, newName);
-                Exception e = new IOException(error);
-                WriteError(new ErrorRecord(e, "RenameError", ErrorCategory.WriteError, newName));
                 return;
             }
 
@@ -3787,11 +3784,8 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Verify that the target doesn't represent a device name
-                if (Utils.IsReservedDeviceName(destinationPath))
+                if (PathIsReservedDeviceName(destinationPath, "CopyError"))
                 {
-                    String error = StringUtil.Format(FileSystemProviderStrings.TargetCannotContainDeviceName, destinationPath);
-                    Exception e = new IOException(error);
-                    WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, destinationPath));
                     return;
                 }
             }
@@ -4110,15 +4104,20 @@ namespace Microsoft.PowerShell.Commands
         {
             Dbg.Diagnostics.Assert(sourceFileFullName != null, "The caller should verify file.");
 
-            // If the destination directory does not exist, error out.
-            if(!Utils.NativeDirectoryExists(destinationPath))
+            // If the destination is a container, add the file name
+            // to the destination path.
+            if (IsItemContainer(destinationPath))
             {
-                Exception e = new IOException(String.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemDirectoryNotFound, destinationPath));
-                WriteError(new ErrorRecord(e, "DirectoryNotFound", ErrorCategory.WriteError, destinationPath));
+                destinationPath = MakePath(destinationPath, sourceFileName);
+            }
+
+            // Verify that the target doesn't represent a device name
+            if (PathIsReservedDeviceName(destinationPath, "CopyError"))
+            {
                 return;
             }
 
-            FileInfo destinationFile = new FileInfo(Path.Combine(destinationPath, sourceFileName));
+            FileInfo destinationFile = new FileInfo(destinationPath);
 
             string action = FileSystemProviderStrings.CopyItemActionFile;
             string resource = StringUtil.Format(FileSystemProviderStrings.CopyItemResourceFileTemplate, sourceFileFullName, destinationPath);
@@ -4350,6 +4349,61 @@ namespace Microsoft.PowerShell.Commands
             return supportsAlternateStreams;
         }
 
+        // Validate that the given remotePath exists, and do the following:
+        // 1) If the remotePath is a FileInfo, then just return the remotePath.
+        // 2) If the remotePath is a DirectoryInfo, then return the remotePath + the given filename.
+        // 3) If the remote path does not exist, but its parent does, and it is a DirectoryInfo, then return the remotePath.
+        // 4) If the remotePath or its parent do not exist, return null.
+        private string MakeRemotePath(System.Management.Automation.PowerShell ps, string remotePath, string filename)
+        {
+            bool isFileInfo = false;
+            bool isDirectoryInfo = false;
+            bool parentIsDirectoryInfo = false;
+            string path = null;
+
+            ps.AddCommand(CopyFileRemoteUtils.PSCopyToSessionHelperName);
+            ps.AddParameter("remotePath", remotePath);
+            Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
+
+            if (op != null)
+            {
+                if (op["IsDirectoryInfo"] != null)
+                {
+                    isDirectoryInfo = (bool) op["IsDirectoryInfo"];
+                }
+                if (op["IsFileInfo"] != null)
+                {
+                    isFileInfo = (bool) op["IsFileInfo"];
+                }
+                if (op["ParentIsDirectoryInfo"] != null)
+                {
+                    parentIsDirectoryInfo = (bool)op["ParentIsDirectoryInfo"];
+                }
+            }
+
+            if (isFileInfo)
+            {
+                // The destination is a file, so we are going to overwrite it.
+                path =  remotePath;
+            }
+            else if (isDirectoryInfo)
+            {
+                // The destination is a directory, so append the file name to the path.
+                path = Path.Combine(remotePath, filename);
+            }
+            else if (parentIsDirectoryInfo)
+            {
+                // At this point we know that the remotePath is neither a file or a directory on the remote target.
+                // However, if the parent of the remotePath exists, then we are doing a copy-item operation in which 
+                // the destination file name is already being passed, e.g., 
+                // copy-item -path c:\localDir\foo.txt -destination d:\remoteDir\bar.txt -toSession $s
+                // Note that d:\remoteDir is a directory that exists on the remote target machine.
+                path = remotePath;
+            }
+
+            return path;
+        }
+
         private bool RemoteDirectoryExist(System.Management.Automation.PowerShell ps, string path)
         {
             bool pathExists = false;
@@ -4377,9 +4431,6 @@ namespace Microsoft.PowerShell.Commands
                                                      FileSystemProviderStrings.CopyItemRemotelyStatusDescription,
                                                      "localhost",
                                                      ps.Runspace.ConnectionInfo.ComputerName);
-
-            // The destinationPath was verified by the caller so we can create the final filePath here.
-            var filePath = Path.Combine(destinationPath, file.Name);
 
             ProgressRecord progress = new ProgressRecord(0, activity, statusDescription);
             progress.PercentComplete = 0;
@@ -4441,14 +4492,31 @@ namespace Microsoft.PowerShell.Commands
                     if (!isAlternateStream)
                     {
                         ps.AddCommand(CopyFileRemoteUtils.PSCopyToSessionHelperName);
-                        ps.AddParameter("copyToFilePath", filePath);
-                        ps.AddParameter("b64Fragment", b64Fragment);
-                        ps.AddParameter("createFile", (iteration == 1) ? true : false);
+                        ps.AddParameter("copyToFilePath", destinationPath);
+                        ps.AddParameter("createFile", (iteration == 1));
+
+                        if ((iteration == 1) && (b64Fragment.Length == 0))
+                        {
+                            // This fixes the case in which the user tries to copy an empty file between sessions.
+                            // Scenario 1: The user creates an empty file using the Out-File cmdlet.
+                            //             In this case the file length is 6.
+                            //             "" | out-file test.txt
+                            // Scenario 2: The user generates an empty file using the New-Item cmdlet.
+                            //             In this case the file length is 0.
+                            //             New-Item -Path test.txt -Type File
+                            // Because of this, when we create the file on the remote session, we need to check
+                            // the length of b64Fragment to figure out if we are creating an empty file.
+                            ps.AddParameter("emptyFile", true);
+                        }
+                        else
+                        {
+                            ps.AddParameter("b64Fragment", b64Fragment);
+                        }
                     }
                     else
                     {
                         ps.AddCommand(CopyFileRemoteUtils.PSCopyToSessionHelperName);
-                        ps.AddParameter("copyToFilePath", filePath);
+                        ps.AddParameter("copyToFilePath", destinationPath);
                         ps.AddParameter("b64Fragment", b64Fragment);
                         ps.AddParameter("streamName", streamName);
                     }
@@ -4540,17 +4608,19 @@ namespace Microsoft.PowerShell.Commands
 
         private bool PerformCopyFileToRemoteSession(FileInfo file, string destinationPath, System.Management.Automation.PowerShell ps)
         {
-            // Validate the the destination directory exist on the remote target.
-            if (!RemoteDirectoryExist(ps, destinationPath))
+            // Make the remote path
+            var remoteFilePath = MakeRemotePath(ps, destinationPath, file.Name);
+
+            if (String.IsNullOrEmpty(remoteFilePath))
             {
-                Exception e = new IOException(String.Format(CultureInfo.InvariantCulture, FileSystemProviderStrings.CopyItemDirectoryNotFound, destinationPath));
-                WriteError(new ErrorRecord(e, "RemoteDirectoryNotFound", ErrorCategory.WriteError, destinationPath));
+                Exception e = new ArgumentException(String.Format(CultureInfo.InvariantCulture, SessionStateStrings.PathNotFound, destinationPath));
+                WriteError(new ErrorRecord(e, "RemotePathNotFound", ErrorCategory.WriteError, destinationPath));
                 return false;
             }
 
-            bool result = CopyFileStreamToRemoteSession(file, destinationPath, ps, false, null);
+            bool result = CopyFileStreamToRemoteSession(file, remoteFilePath, ps, false, null);
 
-            bool targetSupportsAlternateStreams = RemoteTargetSupportsAlternateStreams(ps, Path.Combine(destinationPath, file.Name));
+            bool targetSupportsAlternateStreams = RemoteTargetSupportsAlternateStreams(ps, remoteFilePath);
 
             // Once the file is copied sucessfully, check if the file has any alternate data streams
             if (result && targetSupportsAlternateStreams)
@@ -4559,7 +4629,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!(String.Equals(":$DATA", stream.Stream, StringComparison.OrdinalIgnoreCase)))
                     {
-                        result = CopyFileStreamToRemoteSession(file, destinationPath, ps, true, stream.Stream);
+                        result = CopyFileStreamToRemoteSession(file, remoteFilePath, ps, true, stream.Stream);
                         if (!result)
                         {
                             break;
@@ -4634,6 +4704,21 @@ namespace Microsoft.PowerShell.Commands
 
             return path;
         } // CreateDirectoryOnRemoteSession
+
+        // Returns true if the destination path represents a device name, and write an error to the user.
+        private bool PathIsReservedDeviceName(string destinationPath, string errorId)
+        {
+            bool pathIsReservedDeviceName = false;
+            if (Utils.IsReservedDeviceName(destinationPath))
+            {
+                pathIsReservedDeviceName = true;
+                String error = StringUtil.Format(FileSystemProviderStrings.TargetCannotContainDeviceName, destinationPath);
+                Exception e = new IOException(error);
+                WriteError(new ErrorRecord(e, errorId, ErrorCategory.WriteError, destinationPath));
+            }
+
+            return pathIsReservedDeviceName;
+        }
 
         #endregion CopyItem
 
@@ -5573,14 +5658,10 @@ namespace Microsoft.PowerShell.Commands
             destination = NormalizePath(destination);
 
             // Verify that the target doesn't represent a device name
-            if (Utils.IsReservedDeviceName(destination))
+            if (PathIsReservedDeviceName(destination, "MoveError"))
             {
-                String error = StringUtil.Format(FileSystemProviderStrings.TargetCannotContainDeviceName, destination);
-                Exception e = new IOException(error);
-                WriteError(new ErrorRecord(e, "MoveError", ErrorCategory.WriteError, destination));
                 return;
             }
-
 
             try
             {
@@ -8772,13 +8853,16 @@ namespace System.Management.Automation.Internal
             {0}
             [string] $copyToFilePath,
 
-            [Parameter(ParameterSetName=""PSCopyFileToRemoteSession"", Mandatory=$true)]
+            [Parameter(ParameterSetName=""PSCopyFileToRemoteSession"", Mandatory=$false)]
             [Parameter(ParameterSetName=""PSCopyAlternateStreamToRemoteSession"")]
             [ValidateNotNullOrEmpty()]
             [string] $b64Fragment,
 
             [Parameter(ParameterSetName=""PSCopyFileToRemoteSession"")]
             [switch] $createFile = $false,
+
+            [Parameter(ParameterSetName=""PSCopyFileToRemoteSession"")]
+            [switch] $emptyFile = $false,
 
             [Parameter(ParameterSetName=""PSCopyAlternateStreamToRemoteSession"", Mandatory=$true)]
             [ValidateNotNullOrEmpty()]
@@ -8799,6 +8883,10 @@ namespace System.Management.Automation.Internal
             [Parameter(ParameterSetName=""PSRemoteDestinationPathIsFile"", Mandatory=$true)]
             {0}
             [string] $isFilePath,
+
+            [Parameter(ParameterSetName=""PSGetRemotePathInfo"", Mandatory=$true)]
+            {0}
+            [string] $remotePath,
 
             [Parameter(ParameterSetName=""PSCreateDirectoryOnRemoteSession"", Mandatory=$true)]
             {0}
@@ -8840,9 +8928,10 @@ namespace System.Management.Automation.Internal
             param(
                 [string] $copyToFilePath, 
                 [string] $b64Fragment, 
-                [switch] $createFile = $false
+                [switch] $createFile = $false,
+                [switch] $emptyFile = $false
             )
-                    
+
             $op = @{{
                 BytesWritten = $null
             }}
@@ -8851,9 +8940,6 @@ namespace System.Management.Automation.Internal
 
             try
             {{
-                # Decode 
-                $fragment = [System.Convert]::FromBase64String($b64Fragment)
-
                 $filePathExists = Microsoft.PowerShell.Management\Test-Path -Path $copyToFilePath
 
                 if ($createFile -or (! $filePathExists))
@@ -8866,10 +8952,20 @@ namespace System.Management.Automation.Internal
 
                     # Create the new file.
                     $fileInfo = Microsoft.PowerShell.Management\New-Item -Path $copyToFilePath -Type File -Force
+
+                    if ($emptyFile)
+                    {{
+                        # Handle the empty file scenario.
+                        $op['BytesWritten'] = 0
+                        return $op
+                    }}
                 }}
 
                 # Resolve path in case it is a PSDrive
                 $resolvedPath = Microsoft.PowerShell.Management\Resolve-Path -literal $copyToFilePath
+
+                # Decode
+                $fragment = [System.Convert]::FromBase64String($b64Fragment)
 
                 # Check if drive specifies max size and if max size is exceeded
                 CheckPSDriveSize $resolvedPath $fragment.Length
@@ -9012,6 +9108,53 @@ namespace System.Management.Automation.Internal
             }}
         }}
 
+        # Returns a hashtable with the following member:
+        #    IsFileInfo - boolean to keep track of whether the given path is a remote file.
+        #    IsDirectoryInfo - boolean to keep track of whether the given path is a remote directory.
+        #    ParentIsDirectoryInfo - boolean to keep track of whether the given parent path is a remote directory.
+        #
+        function PSGetRemotePathInfo
+        {{
+            param (
+                [string] $remotePath
+            )
+
+            try
+            {{
+
+                try
+                {{
+                    $parentPath = Microsoft.PowerShell.Management\Split-Path $remotePath
+                }}
+                # catch everything and ignore the error.
+                catch {{}}
+
+                $result = @{{
+                    IsFileInfo = (Microsoft.PowerShell.Management\Test-Path $remotePath -PathType Leaf)
+                    IsDirectoryInfo = (Microsoft.PowerShell.Management\Test-Path $remotePath -PathType Container)
+                }}
+
+                if ($parentPath)
+                {{
+                    $result['ParentIsDirectoryInfo'] = (Microsoft.PowerShell.Management\Test-Path $parentPath -PathType Container)
+                }}
+
+            }}
+            catch
+            {{
+                if ($_.Exception.InnerException)
+                {{
+                    Microsoft.PowerShell.Utility\Write-Error -Exception $_.Exception.InnerException
+                }}
+                else
+                {{
+                    Microsoft.PowerShell.Utility\Write-Error -Exception $_.Exception
+                }}
+            }}
+
+            return $result
+        }}
+
         # Returns a hashtable with the following information:
         #  - IsFileInfotrue bool to keep track if the given destination is a FileInfo type.
         function PSRemoteDestinationPathIsFile
@@ -9128,6 +9271,11 @@ namespace System.Management.Automation.Internal
             ""PSRemoteDestinationPathIsFile""
             {{
                 return PSRemoteDestinationPathIsFile @params
+            }}
+
+            ""PSGetRemotePathInfo""
+            {{
+                return PSGetRemotePathInfo @params
             }}
 
             ""PSCreateDirectoryOnRemoteSession""
