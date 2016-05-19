@@ -142,4 +142,24 @@ Describe "ConsoleHost unit tests" {
             EnsureChildHasExited $process
         }
     }
+
+    Context "Exception handling" {
+        It "Should handle a CallDepthOverflow" {
+            # Infinite recursion
+            function recurse
+            {
+                recurse $args
+            }
+
+            try
+            {
+                recurse "args"
+                Throw "Incorrect exception"
+            }
+            catch
+            {
+                $_.FullyQualifiedErrorId | Should Be "CallDepthOverflow"
+            }
+        }
+    }
 }
