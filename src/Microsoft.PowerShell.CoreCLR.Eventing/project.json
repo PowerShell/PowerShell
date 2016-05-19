@@ -15,7 +15,7 @@
             }
         }
     },
-    
+
     "frameworks": {
         "netstandard1.5": {
             "imports": [ "dnxcore50" ],
@@ -26,7 +26,7 @@
                 "System.Security.Principal": "4.0.1-rc2-24103",
                 "System.Security.Principal.Windows": "4.0.0-rc2-24103",
                 "System.Diagnostics.TraceSource": "4.0.0-rc2-24103",
-                "System.Security.SecureString": "1.0.0-*"
+                "System.Security.SecureString": "4.0.0-*"
             }
         }
     },
