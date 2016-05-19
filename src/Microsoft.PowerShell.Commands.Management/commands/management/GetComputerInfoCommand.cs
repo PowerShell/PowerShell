@@ -1,4 +1,6 @@
-﻿/********************************************************************++
+﻿#if false // TODO: make this build
+
+/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 using System;
@@ -5037,3 +5039,5 @@ namespace Microsoft.PowerShell.Commands
     }
     #endregion Native
 }
+
+#endif
