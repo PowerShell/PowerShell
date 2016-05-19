@@ -1,4 +1,4 @@
-Describe "Send-Greeting cmdlet" {
+Describe "Send-Greeting cmdlet" -Tag 'Slow' {
     It "Should be able build the cmdlet" {
         Remove-Item -Recurse -Force bin -ErrorAction SilentlyContinue
         dotnet restore --verbosity Error | Should BeNullOrEmpty
