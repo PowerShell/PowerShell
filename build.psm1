@@ -311,7 +311,7 @@ function Get-PSOutput {
 
 function Start-PSPester {
     [CmdletBinding()]param(
-        [string]$Flags = '-EnableExit -OutputFile pester-tests.xml -OutputFormat NUnitXml',
+        [string]$Flags = "-ExcludeTag 'Slow' -EnableExit -OutputFile pester-tests.xml -OutputFormat NUnitXml",
         [string]$Tests = "*",
         [ValidateScript({ Test-Path -PathType Container $_})]
         [string]$Directory = "$PSScriptRoot/test/powershell"
