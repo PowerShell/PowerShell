@@ -53,7 +53,7 @@ function Start-PSBuild {
         [string]$msbuildConfiguration = "Release"
     )
 
-    git describe --dirty --abbrev=60 > "$psscriptroot/.version"
+    git describe --dirty --abbrev=60 > "$psscriptroot/powershell.version"
 
     # simplify ParameterSetNames
     if ($PSCmdlet.ParameterSetName -eq 'FullCLR') {

@@ -19,7 +19,8 @@
         "../Modules",
         "*_profile.ps1",
         "*.so",
-        "*.dylib"
+        "*.dylib",
+        "../../powershell.version"
     ],
 
     "frameworks": {
