@@ -114,6 +114,13 @@ Describe "Select-Object" {
 }
 
 Describe "Select-Object DRT basic functionality" -Tags DRT{
+	BeforeAll {
+		$employees = [pscustomobject]@{"FirstName"="joseph"; "LastName"="smith"; "YearsInMS"=15},
+                            [pscustomobject]@{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15},
+                            [pscustomobject]@{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=5},
+                            [pscustomobject]@{"FirstName"="edmund"; "LastName"="bush"; "YearsInMS"=9}
+	}
+
 	It "Select-Object with empty script block property should throw"{
 		try  
 		{  
@@ -133,11 +140,6 @@ Describe "Select-Object DRT basic functionality" -Tags DRT{
 	}
 	
 	It "Select-Object with Property First Last Overlap should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=5}
-		$employee4 = New-Object PSObject -Property @{"FirstName"="edmund"; "LastName"="bush"; "YearsInMS"=9}
-		$employees = @($employee1,$employee2,$employee3,$employee4)
 		$results = $employees | Select-Object -Property "YearsInMS", "L*" -First 2 -Last 3
 		
 		$results.Count | Should Be 4
@@ -154,11 +156,6 @@ Describe "Select-Object DRT basic functionality" -Tags DRT{
 	}
 	
 	It "Select-Object with Property First Last should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=15}
-		$employee4 = New-Object PSObject -Property @{"FirstName"="edmund"; "LastName"="bush"; "YearsInMS"=9}
-		$employees = @($employee1,$employee2,$employee3,$employee4)
 		$results = $employees | Select-Object -Property "YearsInMS", "L*" -First 2 -Last 1
 		
 		$results.Count | Should Be 3
@@ -173,11 +170,6 @@ Describe "Select-Object DRT basic functionality" -Tags DRT{
 	}
 	
 	It "Select-Object with Property First should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=15}
-		$employee4 = New-Object PSObject -Property @{"FirstName"="edmund"; "LastName"="bush"; "YearsInMS"=9}
-		$employees = @($employee1,$employee2,$employee3,$employee4)
 		$results = $employees | Select-Object -Property "YearsInMS", "L*" -First 2
 		
 		$results.Count | Should Be 2
@@ -190,33 +182,18 @@ Describe "Select-Object DRT basic functionality" -Tags DRT{
 	}
 	
 	It "Select-Object with Property First Zero should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=15}
-		$employee4 = New-Object PSObject -Property @{"FirstName"="edmund"; "LastName"="bush"; "YearsInMS"=9}
-		$employees = @($employee1,$employee2,$employee3,$employee4)
 		$results = $employees | Select-Object -Property "YearsInMS", "L*" -First 0
 		
 		$results.Count | Should Be 0
 	}
 	
 	It "Select-Object with Property Last Zero should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=15}
-		$employee4 = New-Object PSObject -Property @{"FirstName"="edmund"; "LastName"="bush"; "YearsInMS"=9}
-		$employees = @($employee1,$employee2,$employee3,$employee4)
 		$results = $employees | Select-Object -Property "YearsInMS", "L*" -Last 0
 		
 		$results.Count | Should Be 0
 	}
 	
 	It "Select-Object with Unique should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=15}
-		$employee4 = New-Object PSObject -Property @{"FirstName"="edmund"; "LastName"="bush"; "YearsInMS"=9}
-		$employees = @($employee1,$employee2,$employee3,$employee4)
 		$results = $employees | Select-Object -Property "YearsInMS", "L*" -Unique:$true
 		
 		$results.Count | Should Be 3
@@ -231,21 +208,21 @@ Describe "Select-Object DRT basic functionality" -Tags DRT{
 	}
 	
 	It "Select-Object with Simple should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=15}
-		$employees = @($employee1,$employee2,$employee3,$employee4)
-		$results = $employees | Select-Object -Property "FirstName", "YearsInMS"
+		$employee1 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee2 = [pscustomobject]@{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = [pscustomobject]@{"FirstName"="mary"; "LastName"="soe"; "YearsInMS"=15}
+		$employees3 = @($employee1,$employee2,$employee3,$employee4)
+		$results = $employees3 | Select-Object -Property "FirstName", "YearsInMS"
 		
 		$results.Count | Should Be 3
 		
-		$results[0].FirstName | Should Be $employees[0].FirstName
-		$results[1].FirstName | Should Be $employees[1].FirstName
-		$results[2].FirstName | Should Be $employees[2].FirstName
+		$results[0].FirstName | Should Be $employees3[0].FirstName
+		$results[1].FirstName | Should Be $employees3[1].FirstName
+		$results[2].FirstName | Should Be $employees3[2].FirstName
 		
-		$results[0].YearsInMS | Should Be $employees[0].YearsInMS
-		$results[1].YearsInMS | Should Be $employees[1].YearsInMS
-		$results[2].YearsInMS | Should Be $employees[2].YearsInMS
+		$results[0].YearsInMS | Should Be $employees3[0].YearsInMS
+		$results[1].YearsInMS | Should Be $employees3[1].YearsInMS
+		$results[2].YearsInMS | Should Be $employees3[2].YearsInMS
 	}
 	
 	It "Select-Object with no input should work"{
