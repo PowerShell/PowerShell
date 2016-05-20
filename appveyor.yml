@@ -23,7 +23,6 @@ install:
 build_script:
   - ps: |
       $ErrorActionPreference = 'Stop'
-      Import-Module .\build.psm1
       Start-PSBuild -Publish
       Start-PSBuild -FullCLR
 
@@ -73,12 +72,17 @@ on_finish:
         [System.IO.Compression.ZipFile]::CreateFromDirectory($env:CoreOutput, $zipFilePath)
         [System.IO.Compression.ZipFile]::CreateFromDirectory($env:FullOutput, $zipFileFullPath)
         
-        @(
-            # You can add other artifacts here
+        $artifacts = @(
             $zipFilePath,
             $zipFileFullPath
-        ) | % { 
-            Write-Host "Pushing package $_ as Appveyor artifact"
+        )
+
+        Publish-NuGetFeed -OutputPath .\nuget-artifacts -VersionSuffix $env:APPVEYOR_BUILD_NUMBER
+
+        $artifacts += (ls .\nuget-artifacts | % {$_.FullName})
+
+        $artifacts | % { 
+            Write-Host "Pushing $_ as Appveyor artifact"
             Push-AppveyorArtifact $_
           }
       } catch {

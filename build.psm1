@@ -529,6 +529,34 @@ Built upon .NET Core, it is also a C# REPL.
     }
 }
 
+function Publish-NuGetFeed
+{
+    param(
+        [string]$OutputPath = "$PSScriptRoot/nuget-artifacts",
+        [Parameter(Mandatory=$true)]
+        [string]$VersionSuffix
+    )
+
+    @(
+'Microsoft.Management.Infrastructure',
+'Microsoft.PowerShell.Commands.Management',
+'Microsoft.PowerShell.Commands.Utility',
+'Microsoft.PowerShell.ConsoleHost',
+'Microsoft.PowerShell.PSReadLine',
+'Microsoft.PowerShell.Security',
+'System.Management.Automation'
+    ) | % {
+        if ($VersionSuffix)
+        {
+            dotnet pack "src/$_" --output $OutputPath --version-suffix $VersionSuffix
+        }
+        else
+        {
+            dotnet pack "src/$_" --output $OutputPath
+        }
+    }
+}
+
 
 function Start-DevPSGitHub {
     param(
