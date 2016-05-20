@@ -99,4 +99,16 @@ Describe "Export-Csv DRT Unit Tests" -Tags DRT{
         $property = $results | Get-Member | ? { $_.MemberType -eq "NoteProperty" } | % { $_.Name } 
         $property | should not be P1
     }
+
+    It "Test export-csv with a useculture flag" {
+        $outputFilesDir = Join-Path $TestDrive -ChildPath "Monad"        
+        $fileToGenerate = Join-Path $outputFilesDir -ChildPath "CSVTests.csv"
+        $delimiter = (Get-Culture).TextInfo.ListSeparator
+        New-Item -Path $outputFilesDir -ItemType Directory -Force
+        Get-Item -Path $outputFilesDir| Export-Csv -Path $fileToGenerate -UseCulture -NoTypeInformation
+        $contents = Get-Content -Path $fileToGenerate
+        $contents.Count | Should Be 2
+        $contents[0].Contains($delimiter) | Should Be $true
+        $contents[1].Contains($delimiter) | Should Be $true       
+    }
 }
