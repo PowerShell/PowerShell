@@ -1,6 +1,7 @@
-image: Visual Studio 2015
+version: 0.4.0.{build}
 
-version: 0.2.0.{build}
+nuget:
+  project_feed: true
 
 environment:
   priv_key:
