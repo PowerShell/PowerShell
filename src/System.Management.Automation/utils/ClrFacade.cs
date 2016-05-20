@@ -391,13 +391,7 @@ namespace System.Management.Automation
         {
             if (_psLoadContext == null)
             {
-                _psLoadContext = AssemblyLoadContext.Default as PowerShellAssemblyLoadContext;
-                if (_psLoadContext == null)
-                {
-                    // The default load context may not be ours. This can happen during,
-                    // for instance, xUnit testing.
-                    _psLoadContext = new PowerShellAssemblyLoadContext(String.Empty);
-                }
+                _psLoadContext = PowerShellAssemblyLoadContext.Instance;
             }
             return _psLoadContext;
         }
