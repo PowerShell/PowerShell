@@ -22,10 +22,10 @@
 
 Describe "Sort-Object DRT Unit Tests" -Tags DRT{
 	It "Sort-Object with object array should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="Eight"; "LastName"="Eight"; "YearsInMS"=8}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="Eight"; "YearsInMS"=$null}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="Minus"; "LastName"="Two"; "YearsInMS"=-2}
-		$employee4 = New-Object PSObject -Property @{"FirstName"="One"; "LastName"="One"; "YearsInMS"=1}
+		$employee1 = [pscustomobject]@{"FirstName"="Eight"; "LastName"="Eight"; "YearsInMS"=8}
+		$employee2 = [pscustomobject]@{"FirstName"="Eight"; "YearsInMS"=$null}
+		$employee3 = [pscustomobject]@{"FirstName"="Minus"; "LastName"="Two"; "YearsInMS"=-2}
+		$employee4 = [pscustomobject]@{"FirstName"="One"; "LastName"="One"; "YearsInMS"=1}
 		$employees = @($employee1,$employee2,$employee3,$employee4)
 		$results = $employees | Sort-Object -Property YearsInMS
 		
@@ -46,9 +46,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags DRT{
 	}
 	
 	It "Sort-Object with Non Conflicting Order Entry Keys should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=2}
+		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
+		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=2}
 		$employees = @($employee1,$employee2,$employee3)
 		$ht = @{"e"="YearsInMS"; "descending"=$false; "ascending"=$true}
 		$results = $employees | Sort-Object -Property $ht -Descending
@@ -59,9 +59,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags DRT{
 	}
 	
 	It "Sort-Object with Conflicting Order Entry Keys should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=2}
+		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
+		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=2}
 		$employees = @($employee1,$employee2,$employee3)
 		$ht = @{"e"="YearsInMS"; "descending"=$false; "ascending"=$false}
 		$results = $employees | Sort-Object -Property $ht -Descending
@@ -72,9 +72,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags DRT{
 	}
 	
 	It "Sort-Object with One Order Entry Key should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=2}
+		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
+		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=2}
 		$employees = @($employee1,$employee2,$employee3)
 		$ht = @{"e"="YearsInMS"; "descending"=$false}
 		$results = $employees | Sort-Object -Property $ht -Descending
@@ -87,9 +87,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags DRT{
 	It "Sort-Object with HistoryInfo object should work"{
 		Add-Type -TypeDefinition "public enum PipelineState{NotStarted,Running,Stopping,Stopped,Completed,Failed,Disconnected}"
 		
-		$historyInfo1 = New-Object PSObject -Property @{"PipelineId"=1; "Cmdline"="cmd3"; "Status"=[PipelineState]::Completed; "StartTime" = [DateTime]::Now;"EndTime" = [DateTime]::Now.AddSeconds(5.0);}
-		$historyInfo2 = New-Object PSObject -Property @{"PipelineId"=2; "Cmdline"="cmd1"; "Status"=[PipelineState]::Completed; "StartTime" = [DateTime]::Now;"EndTime" = [DateTime]::Now.AddSeconds(5.0);}
-		$historyInfo3 = New-Object PSObject -Property @{"PipelineId"=3; "Cmdline"="cmd2"; "Status"=[PipelineState]::Completed; "StartTime" = [DateTime]::Now;"EndTime" = [DateTime]::Now.AddSeconds(5.0);}
+		$historyInfo1 = [pscustomobject]@{"PipelineId"=1; "Cmdline"="cmd3"; "Status"=[PipelineState]::Completed; "StartTime" = [DateTime]::Now;"EndTime" = [DateTime]::Now.AddSeconds(5.0);}
+		$historyInfo2 = [pscustomobject]@{"PipelineId"=2; "Cmdline"="cmd1"; "Status"=[PipelineState]::Completed; "StartTime" = [DateTime]::Now;"EndTime" = [DateTime]::Now.AddSeconds(5.0);}
+		$historyInfo3 = [pscustomobject]@{"PipelineId"=3; "Cmdline"="cmd2"; "Status"=[PipelineState]::Completed; "StartTime" = [DateTime]::Now;"EndTime" = [DateTime]::Now.AddSeconds(5.0);}
 		
 		$historyInfos = @($historyInfo1,$historyInfo2,$historyInfo3)
 		
@@ -135,9 +135,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags DRT{
 	}
 	
 	It "Sort-Object with Non Case-Sensitive Unique should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
+		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
+		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
 		$employees = @($employee1,$employee2,$employee3)
 		$results = $employees | Sort-Object -Property "LastName" -Descending -Unique
 		
@@ -147,9 +147,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags DRT{
 	}
 	
 	It "Sort-Object with Case-Sensitive Unique should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
+		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
+		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
 		$employees = @($employee1,$employee2,$employee3)
 		$results = $employees | Sort-Object -Property "LastName","FirstName" -Descending -Unique -CaseSensitive
 		
@@ -159,9 +159,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags DRT{
 	}
 	
 	It "Sort-Object with Two Order Entry Keys should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=2}
+		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
+		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=2}
 		$employees = @($employee1,$employee2,$employee3)
 		$ht1 = @{"expression"="LastName"; "ascending"=$false}
 		$ht2 = @{"expression"="FirstName"; "ascending"=$true}
@@ -173,9 +173,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags DRT{
 	}
 	
 	It "Sort-Object with -Descending:$false and Two Order Entry Keys should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
+		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
+		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
 		$employees = @($employee1,$employee2,$employee3)
 		$results = $employees | Sort-Object -Property "LastName","FirstName" -Descending:$false
 		
@@ -185,9 +185,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags DRT{
 	}
 	
 	It "Sort-Object with -Descending and Two Order Entry Keys should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
+		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
+		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
 		$employees = @($employee1,$employee2,$employee3)
 		$results = $employees | Sort-Object -Property "LastName","FirstName" -Descending
 		
@@ -197,9 +197,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags DRT{
 	}
 	
 	It "Sort-Object with Two Order Entry Keys with asc=true should work"{
-		$employee1 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
-		$employee2 = New-Object PSObject -Property @{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
-		$employee3 = New-Object PSObject -Property @{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
+		$employee1 = [pscustomobject]@{"FirstName"="john"; "LastName"="smith"; "YearsInMS"=5}
+		$employee2 = [pscustomobject]@{"FirstName"="joesph"; "LastName"="smith"; "YearsInMS"=15}
+		$employee3 = [pscustomobject]@{"FirstName"="john"; "LastName"="smyth"; "YearsInMS"=12}
 		$employees = @($employee1,$employee2,$employee3)
 		$ht1 = @{"e"="FirstName"; "asc"=$true}
 		$ht2 = @{"e"="LastName";}
