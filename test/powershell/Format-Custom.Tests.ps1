@@ -198,8 +198,8 @@ class MyContainer1
 
 		$objectList = @($c1,$c2,$cDeep,$cx)
 		$result = $objectList | Format-Custom | Out-String
-		$result = $result -replace "{","" -replace "}","" -replace " ","" -replace "`n","" -replace "\r",""
-		$expectedResult = $expectedResult -replace "{","" -replace "}","" -replace " ","" -replace "`n","" -replace "\r",""
+		$result = $result -replace "[{} `n\r]",""
+		$expectedResult = $expectedResult -replace "[{} `n\r]",""
 		$result | Should Be $expectedResult
 	}
 	
@@ -220,8 +220,8 @@ class MyContainer1
 		$objectList = @($c)
 		
 		$result = $objectList | Format-Custom | Out-String
-		$result = $result -replace "{","" -replace "}","" -replace " ","" -replace "`n","" -replace "\r",""
-		$expectedResult = $expectedResult -replace "{","" -replace "}","" -replace " ","" -replace "`n","" -replace "\r",""
+		$result = $result -replace "[{} `n\r]",""
+		$expectedResult = $expectedResult -replace "[{} `n\r]",""
 		$result | Should Be $expectedResult
 	}
 	
@@ -263,8 +263,8 @@ class MyContainer1
 		$objectList = @($root)
 		
 		$result = $objectList | Format-Custom | Out-String
-		$result = $result -replace "{","" -replace "}","" -replace " ","" -replace "`n","" -replace "\r",""
-		$expectedResult = $expectedResult -replace "{","" -replace "}","" -replace " ","" -replace "`n","" -replace "\r",""
+		$result = $result -replace "[{} `n\r]",""
+		$expectedResult = $expectedResult -replace "[{} `n\r]",""
 		$result | Should Be $expectedResult
 	}
 	
@@ -293,8 +293,8 @@ class MyLeaf2
 
 		$objectList = @($leaf1,$leaf2)
 		$result = $objectList | Format-Custom | Out-String
-		$result = $result -replace "{","" -replace "}","" -replace " ","" -replace "`n","" -replace "\r",""
-		$expectedResult = $expectedResult -replace "{","" -replace "}","" -replace " ","" -replace "`n","" -replace "\r",""
+		$result = $result -replace "[{} `n\r]",""
+		$expectedResult = $expectedResult -replace "[{} `n\r]",""
 		$result | Should Be $expectedResult
 	}
 }

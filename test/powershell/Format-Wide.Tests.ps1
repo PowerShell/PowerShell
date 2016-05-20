@@ -97,11 +97,11 @@ Describe "Format-Wide DRT basic functionality" -Tags DRT{
 	
 	It "Format-Wide with multiple same class object with grouping should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx"){
 		Add-Type -TypeDefinition "public class TestGroupingClass{public TestGroupingClass(string name,int length){Name = name;Length = length;}public string Name;public int Length;public string GroupingKey;}"
-		$testobject1 = New-Object TestGroupingClass 'name1',1
+		$testobject1 = [TestGroupingClass]::New('name1',1)
 		$testobject1.GroupingKey = "foo"
-		$testobject2 = New-Object TestGroupingClass 'name2',2
+		$testobject2 = [TestGroupingClass]::New('name2',2)
 		$testobject1.GroupingKey = "bar"
-		$testobject3 = New-Object TestGroupingClass 'name3',3
+		$testobject3 = [TestGroupingClass]::New('name3',3)
 		$testobject1.GroupingKey = "bar"
 		$testobjects = @($testobject1,$testobject2,$testobject3)
 		$result = $testobjects|Format-Wide -GroupBy GroupingKey|Out-String
