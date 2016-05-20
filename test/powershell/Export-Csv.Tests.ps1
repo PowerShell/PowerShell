@@ -97,6 +97,6 @@ Describe "Export-Csv DRT Unit Tests" -Tags DRT{
 
         $results.P2 | Should be "second"
         $property = $results | Get-Member | ? { $_.MemberType -eq "NoteProperty" } | % { $_.Name } 
-        $property -notcontains "P1" | Should Be $true
+        $property | should not be P1
     }
 }
