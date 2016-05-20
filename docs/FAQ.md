@@ -148,3 +148,10 @@ This means you're not signed into AppVeyor. Follow these steps carefully:
 6. Go back to the original link you followed to AppVeyor and click it again
 
 You should now be signed into AppVeyor and able to access our builds.
+
+Why did `dotnet restore` say `error: Failed to retrieve information from remote source './src/windows-build/nuget-feed'`?
+=========================================================================================================================
+
+Your `src/windows-build` submodule is probably empty. See "Why is my submodule
+empty?" above. This submodule contains a local NuGet feed with packages
+necessary for the build. The quick fix is `git submodule update --init`.
