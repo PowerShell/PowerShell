@@ -336,7 +336,7 @@ function Start-PSxUnit {
     }
 
     $Content = Split-Path -Parent (Get-PSOutput)
-    $Arguments = "--configuration", "Linux"
+    $Arguments = "--configuration", "Linux", "-verbose", "-parallel", "none"
     try {
         Push-Location $PSScriptRoot/test/csharp
         # Path manipulation to obtain test project output directory

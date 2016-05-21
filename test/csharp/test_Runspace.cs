@@ -12,7 +12,7 @@ namespace PSTests
     public class RunspaceTests
     {
         private static int count = 3;
-        private static string script = String.Format($"get-process | select-object -first {count}");
+        private static string script = String.Format($"get-command | select-object -first {count}");
 
         [Fact]
         public void TestRunspaceWithPipeline()

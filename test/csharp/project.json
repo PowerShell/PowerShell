@@ -5,7 +5,7 @@
     "authors": [ "andschwa" ],
 
     "dependencies": {
-        "Microsoft.PowerShell.ConsoleHost": "1.0.0-*"
+        "powershell": "1.0.0-*"
     },
 
     "frameworks": {
@@ -13,7 +13,7 @@
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "dependencies": {
                 "xunit": "2.1.0",
-                "dotnet-test-xunit": "1.0.0-rc2-173384-19"
+                "dotnet-test-xunit": "1.0.0-rc2-192208-24"
             }
         }
     },
