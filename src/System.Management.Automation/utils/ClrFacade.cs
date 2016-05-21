@@ -276,7 +276,7 @@ namespace System.Management.Automation
         internal static IEnumerable<Assembly> GetAssemblies(string namespaceQualifiedTypeName = null)
         {
 #if CORECLR
-            var psAssemblyLoader = GetAssemblyLoadContext();
+            var psAssemblyLoader = GetAssemblyLoader();
             return psAssemblyLoader.GetAssemblies(namespaceQualifiedTypeName);
 #else
             return AppDomain.CurrentDomain.GetAssemblies().Where(a => !(a.FullName.Length > 0 && a.FullName[0] == FIRST_CHAR_PSASSEMBLY_MARK));
@@ -290,7 +290,7 @@ namespace System.Management.Automation
         internal static Assembly LoadFrom(string assemblyPath)
         {
 #if CORECLR
-            var psAssemblyLoader = GetAssemblyLoadContext();
+            var psAssemblyLoader = GetAssemblyLoader();
             return psAssemblyLoader.LoadFrom(assemblyPath);
 #else
             return Assembly.LoadFrom(assemblyPath);
@@ -303,7 +303,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static Assembly LoadFrom(Stream assembly)
         {
-            var psAssemblyLoader = GetAssemblyLoadContext();
+            var psAssemblyLoader = GetAssemblyLoader();
             return psAssemblyLoader.LoadFrom(assembly);
         }
 #endif
@@ -315,7 +315,7 @@ namespace System.Management.Automation
         internal static Assembly Load(AssemblyName assembly)
         {
 #if CORECLR
-            var psAssemblyLoader = GetAssemblyLoadContext();
+            var psAssemblyLoader = GetAssemblyLoader();
             return psAssemblyLoader.LoadFromAssemblyName(assembly);
 #else
             return Assembly.Load(assembly);
@@ -328,7 +328,7 @@ namespace System.Management.Automation
         internal static Assembly Load(string assembly)
         {
 #if CORECLR
-            var psAssemblyLoader = GetAssemblyLoadContext();
+            var psAssemblyLoader = GetAssemblyLoader();
             return psAssemblyLoader.LoadFromAssemblyName(new AssemblyName(assembly));
 #else
             return Assembly.Load(assembly);
@@ -347,7 +347,7 @@ namespace System.Management.Automation
 #if CORECLR
             // Create the enum type and add the dynamic assembly to assembly cache.
             TypeInfo enumTypeinfo = enumBuilder.CreateTypeInfo();
-            var psAssemblyLoader = GetAssemblyLoadContext();
+            var psAssemblyLoader = GetAssemblyLoader();
             psAssemblyLoader.TryAddAssemblyToCache(enumTypeinfo.Assembly);
 #else
             enumBuilder.CreateTypeInfo();
@@ -370,7 +370,7 @@ namespace System.Management.Automation
                 throw new ArgumentNullException("assemblyShortName");
             }
 
-            var psAssemblyLoader = GetAssemblyLoadContext();
+            var psAssemblyLoader = GetAssemblyLoader();
             return psAssemblyLoader.ProbeAssemblyFileForMetadataAnalysis(assemblyShortName, additionalSearchPath);
         }
 
@@ -380,22 +380,22 @@ namespace System.Management.Automation
         /// </summary>
         internal static IEnumerable<string> GetAvailableCoreClrDotNetTypes()
         {
-            var psAssemblyLoader = GetAssemblyLoadContext();
+            var psAssemblyLoader = GetAssemblyLoader();
             return psAssemblyLoader.GetAvailableDotNetTypes();
         }
 
         /// <summary>
         /// Get the powershell custom AssemblyLoadContext.
         /// </summary>
-        internal static PowerShellAssemblyLoadContext GetAssemblyLoadContext()
+        internal static PowerShellAssemblyLoader GetAssemblyLoader()
         {
             if (_psLoadContext == null)
             {
-                _psLoadContext = PowerShellAssemblyLoadContext.Instance;
+                _psLoadContext = PowerShellAssemblyLoader.Instance;
             }
             return _psLoadContext;
         }
-        private static volatile PowerShellAssemblyLoadContext _psLoadContext;
+        private static volatile PowerShellAssemblyLoader _psLoadContext;
 #endif
 
         /// <summary>

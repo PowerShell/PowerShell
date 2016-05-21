@@ -17,12 +17,12 @@ namespace System.Management.Automation
     /// <summary>
     /// The powershell custom assembly loader implementation
     /// </summary>
-    internal partial class PowerShellAssemblyLoadContext
+    internal partial class PowerShellAssemblyLoader
     {
         #region Resource_Strings
 
         // We cannot use a satellite resources.dll to store resource strings for Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll. This is because when retrieving resource strings, ResourceManager 
-        // tries to load the satellite resources.dll using a probing approach, which will cause an infinite loop to PowerShellAssemblyLoadContext.Load(AssemblyName).
+        // tries to load the satellite resources.dll using a probing approach, which will cause an infinite loop to PowerShellAssemblyLoader.Load(AssemblyName).
         // Take the 'en-US' culture as an example. When retrieving resource string to construct an exception, ResourceManager calls Assembly.Load(..) in the following order to load the resource dll:
         //     1. Load assembly with culture 'en-US' (Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.resources, Version=3.0.0.0, Culture=en-US, PublicKeyToken=31bf3856ad364e35)
         //     2. Load assembly with culture 'en'    (Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.resources, Version=3.0.0.0, Culture=en, PublicKeyToken=31bf3856ad364e35) 
@@ -44,7 +44,7 @@ namespace System.Management.Automation
         /// Base directory paths that are separated by semicolon ';'.
         /// They will be the default paths to probe assemblies.
         /// </param>
-        internal PowerShellAssemblyLoadContext(string basePaths)
+        internal PowerShellAssemblyLoader(string basePaths)
         {
             #region Validation
             this.basePaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
@@ -117,9 +117,9 @@ namespace System.Management.Automation
         #region Protected_Internal_Methods
 
         /// <summary>
-        /// The global instance of PowerShellAssemblyLoadContext
+        /// The global instance of PowerShellAssemblyLoader
         /// </summary>
-        internal static PowerShellAssemblyLoadContext Instance { get; set; }
+        internal static PowerShellAssemblyLoader Instance { get; set; }
 
         /// <summary>
         /// Implement the AssemblyLoadContext.Resolving event handler. Search the requested assembly in probing paths.
@@ -510,7 +510,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Set an instance of PowerShellAssemblyLoadContext to be the default Assembly Load Context.
+    /// Set an instance of PowerShellAssemblyLoader to be the default Assembly Load Context.
     /// This is the managed entry point for Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll.
     /// </summary>
     public class PowerShellAssemblyLoadContextInitializer
@@ -529,9 +529,9 @@ namespace System.Management.Automation
         /// </summary>
         public static void SetPowerShellAssemblyLoadContext([MarshalAs(stringType)]string basePaths)
         {
-            if (PowerShellAssemblyLoadContext.Instance == null)
+            if (PowerShellAssemblyLoader.Instance == null)
             {
-                PowerShellAssemblyLoadContext.Instance = new PowerShellAssemblyLoadContext(basePaths);
+                PowerShellAssemblyLoader.Instance = new PowerShellAssemblyLoader(basePaths);
             }
         }
     }
