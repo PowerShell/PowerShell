@@ -78,7 +78,7 @@ on_finish:
             $zipFileFullPath
         )
 
-        Publish-NuGetFeed -OutputPath .\nuget-artifacts -VersionSuffix $env:APPVEYOR_BUILD_NUMBER
+        Publish-NuGetFeed -OutputPath .\nuget-artifacts -VersionSuffix "b$($env:APPVEYOR_BUILD_NUMBER)"
 
         $artifacts += (ls .\nuget-artifacts | % {$_.FullName})
 
