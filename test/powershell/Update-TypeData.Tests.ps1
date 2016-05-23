@@ -9,12 +9,11 @@ Describe "Update-TypeData" {
 }
 
 Describe "Update-TypeData basic functionality" -Tags DRT{
-    $testfilename = "testfile.ps1xml"
-    $testfile = Join-Path -Path $TestDrive -ChildPath $testfilename
-    $invalidFileExtensionFile = Join-Path -Path $TestDrive -ChildPath "notmshxml"
-	
-	#Pester bug:https://github.com/PowerShell/psl-pester/issues/6
-	It "Update-TypeData with Invalid TypesXml should throw Exception" -Pending{
+    BeforeAll {
+        $testfilename = "testfile.ps1xml"
+        $testfile = Join-Path -Path $TestDrive -ChildPath $testfilename
+        $invalidFileExtensionFile = Join-Path -Path $TestDrive -ChildPath "notmshxml"
+
 		$xmlContent=@"
 				<Types>
                     <Type>
@@ -41,245 +40,242 @@ Describe "Update-TypeData basic functionality" -Tags DRT{
 				</Types>
 "@
 		$xmlContent>$testfile
-		try
-		{
-			Update-TypeData -PrependPath $testfile -EA Stop
-			Throw "Execution OK"
-		}
-		catch 
-		{
-			$error[0] | Should Match "Error: The node MembersTypo2 is not allowed."
-			$_.CategoryInfo | Should Match "RuntimeException"
-			$_.FullyQualifiedErrorId | Should be "TypesXmlUpdateException,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
-		}
-		finally
-		{
-			Remove-TypeData -Path $testfile
-			Remove-Item $testfile -ErrorAction Ignore
-		}
-	}
+    }
+
+    BeforeEach {
+        $ps = [powershell]::Create()
+        $iss = [system.management.automation.runspaces.initialsessionstate]::CreateDefault2()
+        $rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace($iss)
+        $rs.Open()
+        $ps.Runspace = $rs
+    }
+        
+    AfterEach {
+        $rs.Close()
+        $ps.Dispose()
+    }
 	
+	#Pester bug:https://github.com/PowerShell/psl-pester/issues/6
+	It "Update-TypeData with Invalid TypesXml should throw Exception" {
+
+        $null = $ps.AddScript("Update-TypeData -PrependPath $testfile")
+        $ps.Invoke()
+        $ps.HadErrors | Should be $true
+        $ps.Streams.Error[0].FullyQualifiedErrorID | Should be "TypesXmlUpdateException,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
+	}
+
 	It "Update-TypeData with Invalid File Extension should throw Exception"{
 		$xmlContent="not really an xml file, but we will not use it"
 		$xmlContent>$invalidFileExtensionFile
-		try
-		{
-			Update-TypeData -PrependPath $invalidFileExtensionFile -EA Stop
-			Throw "Execution OK"
-		}
-		catch 
-		{
-			$error[0] | Should Match "because it does not have the file name extension"
-			$_.CategoryInfo | Should Match "PSInvalidOperationException"
-			$_.FullyQualifiedErrorId | Should be "WrongExtension,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
-		}
-		finally
-		{
-			Remove-Item $invalidFileExtensionFile -ErrorAction SilentlyContinue
-		}
+        $null = $ps.AddScript("Update-TypeData -PrependPath $invalidFileExtensionFile")
+        $ps.Invoke()
+        $ps.HadErrors | Should be $true
+        $ps.Streams.Error[0].FullyQualifiedErrorId | Should be "WrongExtension,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 	
 	It "Update-TypeData with Valid Dynamic Type NoteProperty with Force should work"{
-		try
-		{
-			Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value 2 -TypeName System.String
-			"string".TestNote | Should Be 2
-			Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value "test" -TypeName System.String -Force
-			"string".TestNote | Should Be "test"
-			Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value $null -TypeName System.String -Force
-			"string".TestNote | Should BeNullOrEmpty
-		}
-		finally
-		{
-			Remove-TypeData System.String
-		}
+        $null = $ps.AddScript("Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value 2 -TypeName System.String")
+        $ps.Invoke()
+        $ps.Commands.Clear()
+        $null = $ps.AddScript("'string'.TestNote")
+        $ps.Invoke() | should be 2
+        $ps.Commands.Clear()
+        $null = $ps.AddScript("Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value 'test' -TypeName System.String -Force")
+        $ps.Invoke()
+        $ps.commands.clear()
+        $null = $ps.AddScript("'string'.TestNote")
+        $ps.Invoke()| Should Be "test"
+        $ps.commands.clear()
+        $null = $ps.AddScript('Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value $null -TypeName System.String -Force')
+        $ps.Invoke()
+        $ps.Commands.Clear()
+        $null = $ps.AddScript("'string'.TestNote")
+        $ps.Invoke()| Should BeNullOrEmpty
 	}
 	
-	It "Update-TypeData with Valid Dynamic Type AliasProperty with Force should work"{
-		try
-		{
-			Update-TypeData -MemberType AliasProperty -MemberName TestAlias -Value "Length" -TypeName System.String
-			"string".TestAlias.GetType().Name | Should Be "Int32"
-			"string".TestAlias | Should Be 6
-			Update-TypeData -MemberType AliasProperty -MemberName TestAlias -Value "Length" -SecondValue "string" -TypeName System.String -Force
-			"string".TestAlias.GetType().Name | Should Be "String"
-			"string".TestAlias | Should Be 6
-		}
-		finally
-		{
-			Remove-TypeData System.String
-		}
-	}
+    It "Update-TypeData with Valid Dynamic Type AliasProperty with Force should work"{
+        # setup
+        $null = $ps.AddScript("Update-TypeData -MemberType AliasProperty -MemberName TestAlias -Value Length -TypeName System.String")
+        $ps.Invoke()
+        $ps.Commands.Clear()
+        $null = $ps.AddScript("'string'.TestAlias.GetType().Name")
+        $ps.Invoke()| Should Be "Int32"
+
+        # test
+        $ps.Commands.Clear()
+        $null = $ps.AddScript("'string'.TestAlias")
+        $ps.Invoke()| Should Be 6
+
+        # setup
+        $ps.Commands.Clear()
+        $null = $ps.AddScript("Update-TypeData -MemberType AliasProperty -MemberName TestAlias -Value 'Length' -SecondValue 'string' -TypeName System.String -Force")
+        $ps.Invoke()
+
+        # test
+        $ps.Commands.Clear()
+        $null = $ps.AddScript("'string'.TestAlias.GetType().Name")
+        $ps.Invoke()| Should Be "String"
+
+        # test
+        $ps.Commands.Clear()
+        $null = $ps.AddScript("'string'.TestAlias")
+        $ps.Invoke()| Should Be 6
+    }
 	
 	It "Update-TypeData with Valid Dynamic Type ScriptMethod with Force should work"{
-		try
-		{
-			$script1={"script method"}
-			Update-TypeData -MemberType ScriptMethod -MemberName TestScriptMethod -Value $script1 -TypeName System.String
-			"string".TestScriptMethod() | Should Be "script method"
-			$script2={"new script method"}
-			Update-TypeData -MemberType ScriptMethod -MemberName TestScriptMethod -Value $script2 -TypeName System.String -Force
-			"string".TestScriptMethod() | Should Be "new script method"
-		}
-		finally
-		{
-			Remove-TypeData System.String
-		}
+        $script1="script method"
+        $null = $ps.AddScript("Update-TypeData -MemberType ScriptMethod -MemberName TestScriptMethod -Value {'$script1'} -TypeName System.String")
+        $ps.Invoke()
+
+        $ps.Commands.Clear()
+        $null = $ps.AddScript('"string".TestScriptMethod()')
+        $ps.Invoke()| Should Be "script method"
+        $ps.Commands.Clear()
+        $script2="new script method"
+        $null = $ps.AddScript("Update-TypeData -MemberType ScriptMethod -MemberName TestScriptMethod -Value {'$script2'} -TypeName System.String -Force")
+        $ps.Invoke()
+
+        $ps.Commands.Clear()
+        $null = $ps.AddScript('"string".TestScriptMethod()') 
+        $ps.Invoke() | Should Be "new script method"
 	}
 	
 	It "Update-TypeData with Valid Dynamic Type Accept TypeData Object should work"{
-		Add-Type -TypeDefinition "public class TypeDataTest{}"
-		Update-TypeData -TypeName TypeDataTest -MemberType NoteProperty -MemberName TestNote1 -Value "Hello"
-		Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value 2 -TypeName TypeDataTest
-		$result=new-object TypeDataTest
-		$result.TestNote1 | Should Be "Hello"
-		$result.TestNote | Should Be 2
+		$ps.Commands.AddScript('Add-Type -TypeDefinition "public class TypeDataTest{}"')
+        $ps.Commands.AddStatement()
+		$ps.Commands.AddScript('Update-TypeData -TypeName TypeDataTest -MemberType NoteProperty -MemberName TestNote1 -Value "Hello"')
+        $ps.Commands.AddStatement()
+		$ps.Commands.AddScript('Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value 2 -TypeName TypeDataTest')
+        $ps.Commands.AddStatement()
+		$ps.Commands.AddScript('$result=new-object TypeDataTest')
+        $ps.Invoke()
+
+        # tests
+		$ps.Commands.Clear()
+        $ps.AddScript('$result.TestNote1').Invoke() | Should Be "Hello"
+		$ps.Commands.Clear()
+		$ps.AddScript('$result.TestNote').Invoke() | Should Be 2
 	}
 	
 	It "Update-TypeData with Invalid DynamicType Null Value For AliasProperty should throw Exception"{
-		try
-		{
-			Update-TypeData -MemberType AliasProperty -MemberName TestAlias -Value $null -TypeName System.String -EA Stop
-			Throw "Execution OK"
-		}
-		catch 
-		{
-			$error[0] | Should Match 'The Value parameter should not be null or an empty string for a member of type "AliasProperty". Specify a non-null value for the Value parameter when updating this member type.'
-			$_.CategoryInfo | Should Match "InvalidOperationException"
-			$_.FullyQualifiedErrorId | Should be "ValueShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
-		}
+        $null = $ps.AddScript('Update-TypeData -MemberType AliasProperty -MemberName TestAlias -Value $null -TypeName System.String')
+        $ps.Invoke()
+        $ps.HadErrors  |Should be $true
+        $ps.Streams.Error[0].FullyQualifiedErrorId  | Should be "ValueShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 	
+
 	It "Update-TypeData with Invalid DynamicType with No MemberName should throw Exception"{
-		try
-		{
-			Update-TypeData -MemberType NoteProperty -Value "Error" -TypeName System.String -EA Stop
-			Throw "Execution OK"
-		}
-		catch 
-		{
-			$error[0] | Should Match 'The MemberName parameter is required for the type "NoteProperty". Please specify the MemberName parameter.'
-			$_.CategoryInfo | Should Match "InvalidOperationException"
-			$_.FullyQualifiedErrorId | Should be "MemberNameShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
-		}
+	    $null = $ps.AddScript('Update-TypeData -MemberType NoteProperty -Value "Error" -TypeName System.String')
+        $ps.Invoke()
+        $ps.HadErrors  |Should be $true
+        $ps.Streams.Error[0].FullyQualifiedErrorId  | Should be "MemberNameShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 	
 	It "Update-TypeData with Invalid DynamicType with No Value should throw Exception"{
-		try
-		{
-			Update-TypeData -MemberType NoteProperty -MemberName TestNote -TypeName System.String -EA Stop
-			Throw "Execution OK"
-		}
-		catch 
-		{
-			$error[0] | Should Match 'The Value parameter is required for the type "NoteProperty". Please specify the Value parameter.'
-			$_.CategoryInfo | Should Match "InvalidOperationException"
-			$_.FullyQualifiedErrorId | Should be "ValueShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
-		}
+		$null = $ps.AddScript('Update-TypeData -MemberType NoteProperty -MemberName TestNote -TypeName System.String')
+        $ps.Invoke()
+        $ps.HadErrors  |Should be $true
+        $ps.Streams.Error[0].FullyQualifiedErrorId  | Should be "ValueShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 	
 	It "Update-TypeData with Invalid DynamicType with Empty TypeData should throw Exception"{
-		try
-		{
-			Update-TypeData -TypeName System.String -EA Stop
-			Throw "Execution OK"
-		}
-		catch 
-		{
-			$error[0] | Should Match 'No member is specified for the update on type "System.String".'
-			$_.CategoryInfo | Should Match "InvalidOperationException"
-			$_.FullyQualifiedErrorId | Should be "TypeDataEmpty,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
-		}
+		$null = $ps.AddScript("Update-TypeData -TypeName System.String")
+        $ps.Invoke()
+        $ps.HadErrors  |Should be $true
+        $ps.Streams.Error[0].FullyQualifiedErrorId  | Should be "TypeDataEmpty,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 	
 	It "Update-TypeData with Valid Standard Members Serialization Method String should work"{
-		try{
-			Update-TypeData -SerializationMethod string -StringSerializationSource Length -TargetTypeForDeserialization string -TypeName System.String
-			"string".PSStandardMembers.SerializationMethod | Should Be "String"
-			"string".PSStandardMembers.StringSerializationSource | Should Be 6
-			"string".PSStandardMembers.TargetTypeForDeserialization | Should Be "string"
-		}
-		finally
-		{
-			Remove-TypeData System.String
-		}
+        $null = $ps.AddScript('Update-TypeData -SerializationMethod string -StringSerializationSource Length -TargetTypeForDeserialization string -TypeName System.String')
+        $ps.Invoke()
+        $ps.Commands.Clear(); $null = $ps.AddScript('"string".PSStandardMembers.SerializationMethod')
+        $ps.Invoke()| Should Be "String"
+        $ps.Commands.Clear(); $null = $ps.AddScript('"string".PSStandardMembers.StringSerializationSource')
+        $ps.Invoke()| Should Be 6
+        $ps.Commands.Clear(); $null = $ps.AddScript('"string".PSStandardMembers.TargetTypeForDeserialization')
+        $ps.Invoke()| Should Be "string"
 	}
 	
 	It "Update-TypeData with Valid Standard Members Serialization Method SpecificProperties should work"{
-		try{
-			Update-TypeData -SerializationMethod SpecificProperties -StringSerializationSource Length -PropertySerializationSet Length -InheritPropertySerializationSet $true -SerializationDepth 2 -TypeName System.String
-			"string".PSStandardMembers.SerializationMethod | Should Be "SpecificProperties"
-			"string".PSStandardMembers.StringSerializationSource | Should Be 6
-			"string".PSStandardMembers.SerializationDepth | Should Be 2
-			"string".PSStandardMembers.InheritPropertySerializationSet | Should Be "True"
-		}
-		finally
-		{
-			Remove-TypeData System.String
-		}
-	}
-	
+        $null = $ps.AddScript('Update-TypeData -SerializationMethod SpecificProperties -StringSerializationSource Length -PropertySerializationSet Length -InheritPropertySerializationSet $true -SerializationDepth 2 -TypeName System.String')
+        $ps.Invoke()
+        $ps.Commands.Clear();$null=$ps.AddScript('"string".PSStandardMembers.SerializationMethod')
+        $ps.Invoke() | Should Be "SpecificProperties"
+        $ps.Commands.Clear();$null=$ps.AddScript('"string".PSStandardMembers.StringSerializationSource')
+        $ps.Invoke() | Should Be 6
+        $ps.Commands.Clear();$null=$ps.AddScript('"string".PSStandardMembers.SerializationDepth')
+        $ps.Invoke() | Should Be 2
+        $ps.Commands.Clear();$null=$ps.AddScript('"string".PSStandardMembers.InheritPropertySerializationSet')
+        $ps.Invoke() | Should Be "True"
+    }
+
 	It "Update-TypeData with Valid Standard Members Serialization Method AllPublicProperties should work"{
-		try{
-			Update-TypeData -SerializationMethod AllPublicProperties -StringSerializationSource Length -SerializationDepth 2 -TypeName System.String
-			"string".PSStandardMembers.SerializationMethod | Should Be "AllPublicProperties"
-			"string".PSStandardMembers.StringSerializationSource | Should Be 6
-			"string".PSStandardMembers.SerializationDepth | Should Be 2
-		}
-		finally
-		{
-			Remove-TypeData System.String
-		}
-	}
+        $null = $ps.AddScript('Update-TypeData -SerializationMethod AllPublicProperties -StringSerializationSource Length -SerializationDepth 2 -TypeName System.String')
+        $ps.Invoke()
+        $ps.Commands.Clear();$ps.AddScript('"string".PSStandardMembers.SerializationMethod')
+        $ps.Invoke()| Should Be "AllPublicProperties"
+        $ps.Commands.Clear();$ps.AddScript('"string".PSStandardMembers.StringSerializationSource')
+        $ps.Invoke()| Should Be 6
+        $ps.Commands.Clear();$ps.AddScript('"string".PSStandardMembers.SerializationDepth')
+        $ps.Invoke()| Should Be 2
+    }
 	
-	It "Update-TypeData with Valid ISS UpdateType Command Test With DynamicType Set should work"{
-		try{
-			Update-TypeData -MemberType NoteProperty -MemberName "TestNote" -Value "test the note" -SerializationMethod SpecificProperties -SerializationDepth 5 -PropertySerializationSet Length -DefaultDisplayPropertySet Length -TypeName System.String
-			"string".TestNote | Should Be "test the note"
-			"string".PSStandardMembers.SerializationMethod | Should Be "SpecificProperties"
-			"string".PSStandardMembers.SerializationDepth | Should Be 5
-			"string".PSStandardMembers.PropertySerializationSet.ReferencedPropertyNames[0] | Should Be "Length"
-			"string".PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames[0] | Should Be "Length"
-			
-			Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value "test the note again" -TargetTypeForDeserialization string -Force -TypeName System.String
-			"string".TestNote | Should Be "test the note again"
-			"string".PSStandardMembers.SerializationMethod | Should Be "SpecificProperties"
-			"string".PSStandardMembers.SerializationDepth | Should Be 5
-			"string".PSStandardMembers.PropertySerializationSet.ReferencedPropertyNames[0] | Should Be "Length"
-			"string".PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames[0] | Should Be "Length"
-			"string".PSStandardMembers.TargetTypeForDeserialization | Should Be "string"
-		}
-		finally
-		{
-			Remove-TypeData System.String
-		}
-	}
+    It "Update-TypeData with Valid ISS UpdateType Command Test With DynamicType Set should work"{
+        $ps.AddScript('Update-TypeData -MemberType NoteProperty -MemberName "TestNote" -Value "test the note" -SerializationMethod SpecificProperties -SerializationDepth 5 -PropertySerializationSet Length -DefaultDisplayPropertySet Length -TypeName System.String')
+        $ps.Invoke()
+        $ps.Commands.Clear();$null = $ps.AddScript('"string".TestNote')
+        $ps.Invoke()| Should Be "test the note"
+        $ps.Commands.Clear();$null = $ps.AddScript('"string".PSStandardMembers.SerializationMethod')
+        $ps.Invoke()| Should Be "SpecificProperties"
+        $ps.Commands.Clear();$null = $ps.AddScript('"string".PSStandardMembers.SerializationDepth')
+        $ps.Invoke()| Should Be 5
+        $ps.Commands.Clear();$null = $ps.AddScript('"string".PSStandardMembers.PropertySerializationSet.ReferencedPropertyNames[0]')
+        $ps.Invoke()| Should Be "Length"
+        $ps.Commands.Clear();$null = $ps.AddScript('"string".PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames[0]')
+        $ps.Invoke()| Should Be "Length"
+        
+        $ps.Commands.Clear();$null = $ps.AddScript('Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value "test the note again" -TargetTypeForDeserialization string -Force -TypeName System.String')
+        $ps.Invoke()
+        $ps.Commands.Clear();$null = $ps.AddScript('"string".TestNote')
+        $ps.Invoke()| Should Be "test the note again"
+        $ps.Commands.Clear();$null = $ps.AddScript('"string".PSStandardMembers.SerializationMethod')
+        $ps.Invoke()| Should Be "SpecificProperties"
+        $ps.Commands.Clear();$null = $ps.AddScript('"string".PSStandardMembers.SerializationDepth')
+        $ps.Invoke()| Should Be 5
+        $ps.Commands.Clear();$null = $ps.AddScript('"string".PSStandardMembers.PropertySerializationSet.ReferencedPropertyNames[0]')
+        $ps.Invoke()| Should Be "Length"
+        $ps.Commands.Clear();$null = $ps.AddScript('"string".PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames[0]')
+        $ps.Invoke()| Should Be "Length"
+        $ps.Commands.Clear();$null = $ps.AddScript('"string".PSStandardMembers.TargetTypeForDeserialization')
+        $ps.Invoke()| Should Be "string"
+    }
 	
-	It "Update-TypeData with Valid ISS UpdateType Command Test With StrongType Set should work"{
-		try{
-			Update-TypeData -TypeName System.Array -MemberType NoteProperty -MemberName TestNote -Value "TestNote"
-			Update-TypeData -TypeName System.Array -MemberType AliasProperty -MemberName TestAlias -Value "Length"
-			$script1={"script method"}
-			Update-TypeData -TypeName System.Array -MemberType ScriptMethod -MemberName TestScriptMethod -Value $script1
-			$script2={$this.Length}
-			Update-TypeData -TypeName System.Array -MemberType ScriptProperty -MemberName TestScriptProperty -Value $script2
-			Update-TypeData -TypeName System.Array -SerializationMethod AllPublicProperties -SerializationDepth 2 -StringSerializationSource Length -TargetTypeForDeserialization string
-			(1, 3).TestNote | Should Be "TestNote"
-			(1, 3).TestAlias | Should Be 2
-			(1, 3).TestScriptMethod() | Should Be "script method"
-			(1, 3).TestScriptProperty | Should Be 2
-			(1, 3).PSStandardMembers.SerializationMethod | Should Be "AllPublicProperties"
-			(1, 3).PSStandardMembers.SerializationDepth | Should Be 2
-			(1, 3).PSStandardMembers.StringSerializationSource | Should Be 2
-			(1, 3).PSStandardMembers.TargetTypeForDeserialization | Should Be "string"
-		}
-		finally
-		{
-			Remove-TypeData System.Array
-		}
-	}
-	
-	It "Update-TypeData with ISS Type Table API Test Add And Remove TypeData should work"{
+    It "Update-TypeData with Valid ISS UpdateType Command Test With StrongType Set should work"{
+        $ps.AddScript('Update-TypeData -TypeName System.Array -MemberType NoteProperty -MemberName TestNote -Value "TestNote"')
+        $ps.Commands.AddStatement()
+        $ps.AddScript('Update-TypeData -TypeName System.Array -MemberType AliasProperty -MemberName TestAlias -Value "Length"')
+        $script1="script method"
+        $ps.Commands.AddStatement()
+        $ps.AddScript("Update-TypeData -TypeName System.Array -MemberType ScriptMethod -MemberName TestScriptMethod -Value {'$script1'}")
+        $script2='$this.Length'
+        $ps.Commands.AddStatement()
+        $ps.AddScript("Update-TypeData -TypeName System.Array -MemberType ScriptProperty -MemberName TestScriptProperty -Value {$script2}")
+        $ps.Commands.AddStatement()
+        $ps.AddScript('Update-TypeData -TypeName System.Array -SerializationMethod AllPublicProperties -SerializationDepth 2 -StringSerializationSource Length -TargetTypeForDeserialization string')
+        $ps.Invoke()
+        $ps.Commands.Clear();$ps.AddScript('(1, 3).TestNote').Invoke() | Should Be "TestNote"
+        $ps.Commands.Clear();$ps.AddScript('(1, 3).TestAlias').Invoke() | Should Be 2
+        $ps.Commands.Clear();$ps.AddScript('(1, 3).TestScriptMethod()').Invoke() | Should Be "script method"
+        $ps.Commands.Clear();$ps.AddScript('(1, 3).TestScriptProperty').Invoke() | Should Be 2
+        $ps.Commands.Clear();$ps.AddScript('(1, 3).PSStandardMembers.SerializationMethod').Invoke() | Should Be "AllPublicProperties"
+        $ps.Commands.Clear();$ps.AddScript('(1, 3).PSStandardMembers.SerializationDepth').Invoke() | Should Be 2
+        $ps.Commands.Clear();$ps.AddScript('(1, 3).PSStandardMembers.StringSerializationSource').Invoke() | Should Be 2
+        $ps.Commands.Clear();$ps.AddScript('(1, 3).PSStandardMembers.TargetTypeForDeserialization').Invoke() | Should Be "string"
+    }
+
+# this looks identical to the test directly above
+	It "Update-TypeData with ISS Type Table API Test Add And Remove TypeData should work" -pending {
 		try{
 			Update-TypeData -TypeName System.Object[] -MemberType NoteProperty -MemberName TestNote -Value "TestNote"
 			Update-TypeData -TypeName System.Object[] -MemberType AliasProperty -MemberName TestAlias -Value "Length"
@@ -302,32 +298,33 @@ Describe "Update-TypeData basic functionality" -Tags DRT{
 			Remove-TypeData System.Object[]
 		}
 	}
-	
-	It "Update-TypeData with Duplicate XML Files should work"{
-		$xmlContent=@"
-                <Types>
-                    <Type>
-                        <Name>System.Array</Name>
-                            <Members>
-                                <AliasProperty>
-                                    <Name>Yada</Name>
-                                    <ReferencedMemberName>Length</ReferencedMemberName>
-                                </AliasProperty>
-                            </Members>
-                    </Type>
-                </Types>
+
+    Context "Duplicate XML files" {
+        BeforeAll {
+            $xmlContent=@"
+                    <Types>
+                        <Type>
+                            <Name>System.Array</Name>
+                                <Members>
+                                    <AliasProperty>
+                                        <Name>Yada</Name>
+                                        <ReferencedMemberName>Length</ReferencedMemberName>
+                                    </AliasProperty>
+                                </Members>
+                        </Type>
+                    </Types>
 "@
-		$xmlContent>$testfile
-		try
-		{
-			Update-TypeData -AppendPath $testfile
-			$a=1..3
-			$a.Yada | Should Be 3
-		}
-		finally
-		{
-			Remove-TypeData -Path $testfile
-			Remove-Item $testfile -ErrorAction Ignore
-		}
-	}
+            $xmlContent>$testfile
+        }
+        It "Update-TypeData with Duplicate XML Files should work"{
+            $null = $ps.AddScript("Update-TypeData -AppendPath $testfile")
+            $ps.Invoke()
+            $ps.Commands.Clear()
+            $ps.AddScript('$a=1..3').Invoke()
+            $ps.Commands.Clear()
+            $ps.AddScript('$a.Yada').Invoke() | Should Be 3
+            $ps.AddScript("Remove-TypeData -Path $testfile").Invoke()
+            $ps.HadErrors|Should be $false
+        }
+    }
 }
