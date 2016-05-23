@@ -398,8 +398,8 @@ function Start-PSBootstrap {
 
     } elseif ($IsWindows -And -Not $IsCore) {
         Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
-        Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1 -OutFile install.ps1
-        ./install.ps1 -Version 1.0.0-rc2-002655
+        Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/dotnet-install.ps1 -OutFile dotnet-install.ps1
+        ./dotnet-install.ps1
 
     } else {
         Write-Warning "Start-PSBootstrap cannot be run in Core PowerShell on Windows (need Invoke-WebRequest!)"
