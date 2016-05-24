@@ -424,15 +424,21 @@ PowerShell is an open-source, cross-platform, scripting language and rich object
 Built upon .NET Core, it is also a C# REPL.
 "@
 
-    if ($IsWindows) { throw "Building Windows packages is not yet supported!" }
+    # Use Git tag if not given a version
+    if (-not $Version) {
+        $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
+    }
+
+    $Source = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
+    Write-Verbose "Packaging $Source"
+
+    if ($IsWindows) {
+        Create-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -Verbose
+        return
+    }
 
     if (-not (Get-Command "fpm" -ErrorAction SilentlyContinue)) {
         throw "Build dependency 'fpm' not found in PATH! See: https://github.com/jordansissel/fpm"
-    }
-
-    $Source = Split-Path -Parent (Get-PSOutput)
-    if ((Split-Path -Leaf $Source) -ne "publish") {
-        throw "Please Start-PSBuild -Publish with the corresponding runtime for the package"
     }
 
     # Decide package output type
@@ -456,7 +462,7 @@ Built upon .NET Core, it is also a C# REPL.
     }
 
     New-Item -Force -ItemType SymbolicLink -Path /tmp/powershell -Target $Destination/powershell >$null
-    
+
     # there is a weired bug in fpm
     # if the target of the powershell symlink exists, `fpm` aborts
     # with a `utime` error on OS X.
@@ -472,14 +478,8 @@ Built upon .NET Core, it is also a C# REPL.
         }
     }
 
-
     # Change permissions for packaging
     chmod -R go=u $Source /tmp/powershell
-
-    # Use Git tag if not given a version
-    if (-not $Version) {
-        $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
-    }
 
     $libunwind = switch ($Type) {
         "deb" { "libunwind8" }
@@ -986,8 +986,6 @@ function Create-MSIPackage
     $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
     $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
     
-    $ProductVersion = Split-Path $ProductSourcePath -Leaf
-
     # Wix tooling does not like hyphen in the foldername
     $ProductVersion = $ProductVersion.Replace('-', '_')
 
