@@ -433,8 +433,7 @@ Built upon .NET Core, it is also a C# REPL.
     Write-Verbose "Packaging $Source"
 
     if ($IsWindows) {
-        Create-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -Verbose
-        return
+        return Create-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -Verbose
     }
 
     if (-not (Get-Command "fpm" -ErrorAction SilentlyContinue)) {
@@ -1009,8 +1008,9 @@ function Create-MSIPackage
     & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -arch x64 -v
     & $wixLightExePath -out "$productVersionWithName.msi" $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -v
     
-    Write-Verbose "You can find the MSI @ $msiLocationPath"
 
     del *.wixpdb -Force
+    Write-Verbose "You can find the MSI @ $msiLocationPath"
+    return $msiLocationPath
 }
 
