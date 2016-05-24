@@ -155,3 +155,20 @@ Why did `dotnet restore` say `error: Failed to retrieve information from remote 
 Your `src/windows-build` submodule is probably empty. See "Why is my submodule
 empty?" above. This submodule contains a local NuGet feed with packages
 necessary for the build. The quick fix is `git submodule update --init`.
+
+Why did my Travis CI build fail with `GITHUB_TOKEN variable is undefined, please provide token`?
+================================================================================================
+
+Travis CI uses an encrypted environment variable to authorize with GitHub and
+download PowerShell (which it then uses to build and test through the
+`build.psm1` module). However, the following caveat applies:
+
+> Encrypted variables are not added to untrusted builds such as pull requests
+> coming from another repository.
+
+Thus a pull request made from a fork of the PowerShell repository will not pass
+the Travis CI as it will be unable to build. Please instead push your branch to
+the upstream PowerShell repository on GitHub (that is,
+https://github.com/PowerShell/PowerShell), and issue a new Pull Request. If you
+cannot do this, please get in contact with us to obtain the necessary
+permissions.
