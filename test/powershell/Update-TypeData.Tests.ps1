@@ -14,7 +14,7 @@ Describe "Update-TypeData basic functionality" -Tags DRT{
         $testfile = Join-Path -Path $TestDrive -ChildPath $testfilename
         $invalidFileExtensionFile = Join-Path -Path $TestDrive -ChildPath "notmshxml"
 
-		$xmlContent=@"
+        $xmlContent=@"
 				<Types>
                     <Type>
                         <Name>AnyName</Name>
@@ -39,7 +39,7 @@ Describe "Update-TypeData basic functionality" -Tags DRT{
                     </Type>
 				</Types>
 "@
-		$xmlContent>$testfile
+        $xmlContent>$testfile
     }
 
     BeforeEach {
@@ -49,15 +49,13 @@ Describe "Update-TypeData basic functionality" -Tags DRT{
         $rs.Open()
         $ps.Runspace = $rs
     }
-        
+
     AfterEach {
         $rs.Close()
         $ps.Dispose()
     }
-	
-	#Pester bug:https://github.com/PowerShell/psl-pester/issues/6
-	It "Update-TypeData with Invalid TypesXml should throw Exception" {
 
+  It "Update-TypeData with Invalid TypesXml should throw Exception" {
         $null = $ps.AddScript("Update-TypeData -PrependPath $testfile")
         $ps.Invoke()
         $ps.HadErrors | Should be $true
