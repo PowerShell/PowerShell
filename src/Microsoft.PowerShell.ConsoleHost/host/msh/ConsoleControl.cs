@@ -513,7 +513,6 @@ namespace Microsoft.PowerShell
         /// If Win32's SetConsoleCtrlHandler fails
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static void AddBreakHandler(BreakHandler handlerDelegate)
         {
             bool result = NativeMethods.SetConsoleCtrlHandler(handlerDelegate, true);
@@ -553,7 +552,7 @@ namespace Microsoft.PowerShell
 
         #region Win32Handles
 
-        static readonly Lazy<ConsoleHandle> _inputHandle = new Lazy<SafeFileHandle>(() =>
+        static readonly Lazy<ConsoleHandle> _keyboardInputHandle = new Lazy<SafeFileHandle>(() =>
             {
                 var handle =  NativeMethods.CreateFile(
                     "CONIN$",
@@ -580,19 +579,11 @@ namespace Microsoft.PowerShell
         );
 
         /// <summary>
-        /// 
-        /// Returns a ConsoleHandle to the console input device, even if stdin has been redirected.
-        /// 
+        /// Returns a ConsoleHandle to the console (keyboard device)
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="HostException">
-        /// If Win32's CreateFile fails
-        /// </exception>
-
-        [ArchitectureSensitive]
-        internal static ConsoleHandle GetInputHandle()
+        internal static ConsoleHandle GetConioDeviceHandle()
         {
-            return _inputHandle.Value;
+            return _keyboardInputHandle.Value;
         }
 
         static readonly Lazy<ConsoleHandle> _outputHandle = new Lazy<SafeFileHandle>(() =>
@@ -627,7 +618,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If Win32's CreateFile fails
         /// </exception>
-        [ArchitectureSensitive]
         internal static ConsoleHandle GetActiveScreenBufferHandle()
         {
             return _outputHandle.Value;
@@ -645,7 +635,6 @@ namespace Microsoft.PowerShell
             Error = 0xFFFFFFF4
         }
 
-        [ArchitectureSensitive]
         internal static NakedWin32Handle GetStdHandle(StandardHandleId handleId)
         {
             unchecked
@@ -656,8 +645,6 @@ namespace Microsoft.PowerShell
                 return NativeMethods.GetStdHandle((DWORD)handleId);
             }
         }
-
-
 
         #endregion
 
@@ -697,7 +684,6 @@ namespace Microsoft.PowerShell
         /// If Win32's GetConsoleMode fails
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static ConsoleModes GetMode(ConsoleHandle consoleHandle)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "consoleHandle is not valid");
@@ -739,7 +725,6 @@ namespace Microsoft.PowerShell
         /// 
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static void SetMode(ConsoleHandle consoleHandle, ConsoleModes mode)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "consoleHandle is not valid");
@@ -800,7 +785,6 @@ namespace Microsoft.PowerShell
         /// 
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static string ReadConsole(ConsoleHandle consoleHandle, string initialContent,
             int charactersToRead, bool endOnTab, out uint keyState)
         {
@@ -867,7 +851,6 @@ namespace Microsoft.PowerShell
         /// If Win32's ReadConsoleInput fails
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static int ReadConsoleInput(ConsoleHandle consoleHandle, ref INPUT_RECORD[] buffer)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
@@ -913,7 +896,6 @@ namespace Microsoft.PowerShell
         /// If Win32's PeekConsoleInput fails
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static int PeekConsoleInput
         (
             ConsoleHandle consoleHandle,
@@ -960,7 +942,6 @@ namespace Microsoft.PowerShell
         /// If Win32's GetNumberOfConsoleInputEvents fails
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static int GetNumberOfConsoleInputEvents(ConsoleHandle consoleHandle)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
@@ -992,7 +973,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If Win32's FlushConsoleInputBuffer fails
         /// </exception>
-        [ArchitectureSensitive]
         internal static void FlushConsoleInputBuffer(ConsoleHandle consoleHandle)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
@@ -1033,7 +1013,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If Win32's GetConsoleScreenBufferInfo fails
         /// </exception>
-        [ArchitectureSensitive]
         internal static CONSOLE_SCREEN_BUFFER_INFO GetConsoleScreenBufferInfo(ConsoleHandle consoleHandle)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
@@ -1063,7 +1042,6 @@ namespace Microsoft.PowerShell
         /// If Win32's SetConsoleScreenBufferSize fails
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static void SetConsoleScreenBufferSize(ConsoleHandle consoleHandle, Size newSize)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
@@ -1086,7 +1064,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-        [ArchitectureSensitive]
         internal static bool IsConsoleColor(ConsoleColor c)
         {
             switch (c)
@@ -1112,7 +1089,6 @@ namespace Microsoft.PowerShell
             return false;
         }
 
-        [ArchitectureSensitive]
         internal static void WORDToColor(WORD attribute, out ConsoleColor foreground, out ConsoleColor background)
         {
             // foreground color is the low-byte in the word, background color is the hi-byte.
@@ -1122,7 +1098,6 @@ namespace Microsoft.PowerShell
             Dbg.Assert(IsConsoleColor(background), "unknown color");
         }
 
-        [ArchitectureSensitive]
         internal static WORD ColorToWORD(ConsoleColor foreground, ConsoleColor background)
         {
             WORD result = (WORD)(((int)background << 4) | (int)foreground);
@@ -1161,7 +1136,6 @@ namespace Microsoft.PowerShell
         /// If it is illegal to write <paramref name="contents"/> to the output buffer 
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static void WriteConsoleOutput(ConsoleHandle consoleHandle, Coordinates origin, BufferCell[,] contents)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
@@ -1235,7 +1209,6 @@ namespace Microsoft.PowerShell
 
         }
 
-        [ArchitectureSensitive]
         private static void BuildEdgeTypeInfo(
             Rectangle contentsRegion,
             BufferCell[,] contents,
@@ -1281,7 +1254,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-        [ArchitectureSensitive]
         private static BufferCellArrayRowType GetEdgeType(BufferCell left, BufferCell right)
         {
             BufferCellArrayRowType edgeType = 0;
@@ -1327,7 +1299,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If there is not enough memory to complete calls to Win32's ReadConsoleOutput
         /// </exception>
-        [ArchitectureSensitive]
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called in CHK builds")]
         internal static void CheckWriteEdges(
             ConsoleHandle consoleHandle,
@@ -1393,7 +1364,6 @@ namespace Microsoft.PowerShell
         }
 
 
-        [ArchitectureSensitive]
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called in CHK builds")]
         private static void CheckWriteConsoleOutputContents(BufferCell[,] contents, Rectangle contentsRegion)
         {
@@ -1429,7 +1399,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-        [ArchitectureSensitive]
         private static void WriteConsoleOutputCJK(ConsoleHandle consoleHandle, Coordinates origin, Rectangle contentsRegion, BufferCell[,] contents, BufferCellArrayRowType rowType)
         {
             Dbg.Assert(origin.X >= 0 && origin.Y >= 0,
@@ -1635,7 +1604,6 @@ namespace Microsoft.PowerShell
             }  // row iteration
         }
 
-        [ArchitectureSensitive]
         private static void WriteConsoleOutputPlain(ConsoleHandle consoleHandle, Coordinates origin, BufferCell[,] contents)
         {
             int rows = contents.GetLength(0);
@@ -1792,7 +1760,6 @@ namespace Microsoft.PowerShell
         /// If there is not enough memory to complete calls to Win32's ReadConsoleOutput
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static void ReadConsoleOutput
         (
             ConsoleHandle consoleHandle,
@@ -1877,7 +1844,6 @@ namespace Microsoft.PowerShell
             return false;
         }
 
-        [ArchitectureSensitive]
         private static bool ReadConsoleOutputCJKSmall
         (
             ConsoleHandle consoleHandle,
@@ -1979,7 +1945,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If there is not enough memory to complete calls to Win32's ReadConsoleOutput
         /// </exception>
-        [ArchitectureSensitive]
         internal static void ReadConsoleOutputCJK
         (
             ConsoleHandle consoleHandle,
@@ -2153,7 +2118,6 @@ namespace Microsoft.PowerShell
         #endregion ReadConsoleOutput CJK
 
 
-        [ArchitectureSensitive]
         private static void ReadConsoleOutputPlain
         (
             ConsoleHandle consoleHandle,
@@ -2360,7 +2324,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If Win32's FillConsoleOutputCharacter fails
         /// </exception>
-        [ArchitectureSensitive]
         internal static void FillConsoleOutputCharacter
         (
             ConsoleHandle consoleHandle,
@@ -2423,7 +2386,6 @@ namespace Microsoft.PowerShell
         /// <exception cref="HostException">
         /// If Win32's FillConsoleOutputAttribute fails
         /// </exception>
-        [ArchitectureSensitive]
         internal static void FillConsoleOutputAttribute
         (
             ConsoleHandle consoleHandle,
@@ -2491,7 +2453,6 @@ namespace Microsoft.PowerShell
         /// If Win32's ScrollConsoleScreenBuffer fails
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static void ScrollConsoleScreenBuffer
         (
             ConsoleHandle consoleHandle,
@@ -2549,7 +2510,6 @@ namespace Microsoft.PowerShell
         /// If Win32's SetConsoleWindowInfo fails
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static void SetConsoleWindowInfo(ConsoleHandle consoleHandle, bool absolute, SMALL_RECT windowInfo)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
@@ -2584,7 +2544,6 @@ namespace Microsoft.PowerShell
         /// If Win32's GetLargestConsoleWindowSize fails
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static Size GetLargestConsoleWindowSize(ConsoleHandle consoleHandle)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
@@ -2619,7 +2578,6 @@ namespace Microsoft.PowerShell
         /// If Win32's GetConsoleTitle fails
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static string GetConsoleWindowTitle()
         {
             const int MaxWindowTitleLength = 1024;
@@ -2654,7 +2612,6 @@ namespace Microsoft.PowerShell
         /// If Win32's SetConsoleTitle fails
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static void SetConsoleWindowTitle(string consoleTitle)
         {
             bool result = NativeMethods.SetConsoleTitle(consoleTitle);
@@ -2795,7 +2752,6 @@ namespace Microsoft.PowerShell
         /// 
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static void WriteConsole(ConsoleHandle consoleHandle, string output)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
@@ -2864,7 +2820,6 @@ namespace Microsoft.PowerShell
         /// 
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static void SetConsoleTextAttribute(ConsoleHandle consoleHandle, WORD attribute)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
@@ -3080,7 +3035,6 @@ namespace Microsoft.PowerShell
         /// <param name="c"></param>
         /// <param name="codePage"></param>
         /// <returns></returns>
-        [ArchitectureSensitive]
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults",
             MessageId = "Microsoft.PowerShell.ConsoleControl+NativeMethods.ReleaseDC(System.IntPtr,System.IntPtr)")]
         private static int LengthInBufferCells(char c, uint codePage)
@@ -3148,7 +3102,6 @@ namespace Microsoft.PowerShell
         /// From IsConsoleFullWidth in \windows\core\ntcon\server\dbcs.c
         /// </summary>
         /// <returns></returns>
-        [ArchitectureSensitive]
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults",
             MessageId = "Microsoft.PowerShell.ConsoleControl+NativeMethods.ReleaseDC(System.IntPtr,System.IntPtr)")]
         internal static int LengthInBufferCells(string str, int offset, bool checkEscapeSequences)
@@ -3209,7 +3162,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="codePage"></param>
         /// <returns></returns>
-        [ArchitectureSensitive]
         internal static bool IsCJKOutputCodePage(out uint codePage) 
         {
             codePage = NativeMethods.GetConsoleOutputCP();
@@ -3241,7 +3193,6 @@ namespace Microsoft.PowerShell
         /// If Win32's SetConsoleCursorPosition fails
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static void SetConsoleCursorPosition(ConsoleHandle consoleHandle, Coordinates cursorPosition)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
@@ -3283,7 +3234,6 @@ namespace Microsoft.PowerShell
         /// If Win32's GetConsoleCursorInfo fails
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static CONSOLE_CURSOR_INFO GetConsoleCursorInfo(ConsoleHandle consoleHandle)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
@@ -3304,7 +3254,6 @@ namespace Microsoft.PowerShell
             return cursorInfo;
         }
 
-        [ArchitectureSensitive]
         internal static CONSOLE_FONT_INFO_EX GetConsoleFontInfo(ConsoleHandle consoleHandle)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
@@ -3342,7 +3291,6 @@ namespace Microsoft.PowerShell
         /// If Win32's SetConsoleCursorInfo fails
         /// </exception>
 
-        [ArchitectureSensitive]
         internal static void SetConsoleCursorInfo(ConsoleHandle consoleHandle, CONSOLE_CURSOR_INFO cursorInfo)
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");

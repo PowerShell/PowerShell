@@ -60,24 +60,31 @@ namespace Microsoft.PowerShell
 
             this.parent = parent;
             this.rawui = new ConsoleHostRawUserInterface(this);
-            isInteractiveTestToolListening = false;
 
 #if PORTABLE
             this._supportsVirtualTerminal = true;
 #else
-            // Turn on virtual terminal if possible.
-            var handle = ConsoleControl.GetActiveScreenBufferHandle();
-            var m = ConsoleControl.GetMode(handle);
+            try
+            {
+                // Turn on virtual terminal if possible.
 
-            // We don't call ConsoleControl.SetMode because we want to ignore the return value as it doesn't tell us reliably if conhost
-            // supports a virtual terminal.
-            ConsoleControl.NativeMethods.SetConsoleMode(handle.DangerousGetHandle(), (uint)(m | ConsoleControl.ConsoleModes.VirtualTerminal));
-
-            // We only know if vt100 is supported if the previous call actually set the new flag, older
-            // systems ignore the setting.
-            m = ConsoleControl.GetMode(handle);
-            this._supportsVirtualTerminal = (m & ConsoleControl.ConsoleModes.VirtualTerminal) != 0;
+                // This might throw - not sure how exactly (no console), but if it does, we shouldn't fail to start.
+                var handle = ConsoleControl.GetActiveScreenBufferHandle();
+                var m = ConsoleControl.GetMode(handle);
+                if (ConsoleControl.NativeMethods.SetConsoleMode(handle.DangerousGetHandle(), (uint) (m | ConsoleControl.ConsoleModes.VirtualTerminal)))
+                {
+                    // We only know if vt100 is supported if the previous call actually set the new flag, older
+                    // systems ignore the setting.
+                    m = ConsoleControl.GetMode(handle);
+                    this._supportsVirtualTerminal = (m & ConsoleControl.ConsoleModes.VirtualTerminal) != 0;
+                }
+            }
+            catch
+            {
+            }
 #endif
+
+            isInteractiveTestToolListening = false;
         }
 
         /// <summary>
@@ -289,7 +296,7 @@ namespace Microsoft.PowerShell
                 null;
             SecureString secureResult = new SecureString();
             StringBuilder result = new StringBuilder();
-            ConsoleHandle handle = ConsoleControl.GetInputHandle();
+            ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             ConsoleControl.ConsoleModes originalMode = ConsoleControl.GetMode(handle);
             bool isModeChanged = true; // assume ConsoleMode is changed so that if ReadLineSetMode
             // fails to return the value correctly, the original mode is
@@ -1364,8 +1371,7 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            TextWriter writer =
-                  (!Console.IsErrorRedirected || parent.IsInteractive)
+            TextWriter writer = (!Console.IsErrorRedirected || parent.IsInteractive)
                 ? parent.ConsoleTextWriter
                 : Console.Error;
 
@@ -1380,7 +1386,6 @@ namespace Microsoft.PowerShell
                 if (writer == parent.ConsoleTextWriter)
                     WriteLine(errorForegroundColor, errorBackgroundColor, value);
                 else
-
                     Console.Error.Write(value + Crlf);
             }
         }
@@ -1611,7 +1616,15 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
-                sb.Append(c);
+                if (c == '\b')
+                {
+                    sb.Remove(sb.Length - 1, 1);
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+
 
                 if (c == '\n')
                 {
@@ -1627,8 +1640,7 @@ namespace Microsoft.PowerShell
 #if PORTABLE
             return ReadLineFromFile(initialContent);
 #else
-
-            ConsoleHandle handle = ConsoleControl.GetInputHandle();
+            ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             PreRead();
             // Ensure that we're in the proper line-input mode.
 
@@ -1813,6 +1825,8 @@ namespace Microsoft.PowerShell
         /// 
         /// The Executor instance on which to run any pipelines that are needed to find matches
         /// 
+        /// </param>
+        /// 
         /// <returns>
         /// 
         /// null on a break event
@@ -1843,7 +1857,7 @@ namespace Microsoft.PowerShell
 
             do
             {
-                if (!ReadFromStdin && TryInvokeUserDefinedReadLine(out input))
+                if (TryInvokeUserDefinedReadLine(out input))
                 {
                     break;
                 }
@@ -2065,9 +2079,8 @@ namespace Microsoft.PowerShell
 
             var runspace = this.parent.LocalRunspace;
             if (runspace != null &&
-                runspace.Engine.Context.EngineIntrinsics.InvokeCommand.
-                GetCommands(CustomReadlineCommand,
-                            CommandTypes.Function | CommandTypes.Cmdlet, nameIsPattern: false).Any())
+                runspace.Engine.Context.EngineIntrinsics.InvokeCommand.GetCommands(CustomReadlineCommand,
+                    CommandTypes.Function | CommandTypes.Cmdlet, nameIsPattern: false).Any())
             {
                 try
                 {

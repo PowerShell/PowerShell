@@ -568,7 +568,7 @@ namespace Microsoft.PowerShell.Commands
             // what sort of commands people expect but either don't exist, or maybe should be installed by default.
             // The StartsWith is to avoid logging telemetry when suggestion mode checks the
             // current directory for scripts/exes in the current directory and '.' is not in the path.
-            if (count == 0 && Name != null && Name.Length > 0 && !Name[0].StartsWith(".\\"))
+            if (count == 0 && Name != null && Name.Length > 0 && !Name[0].StartsWith(".\\", StringComparison.OrdinalIgnoreCase))
             {
                 Telemetry.Internal.TelemetryAPI.ReportGetCommandFailed(Name, _timer.ElapsedMilliseconds);
             }

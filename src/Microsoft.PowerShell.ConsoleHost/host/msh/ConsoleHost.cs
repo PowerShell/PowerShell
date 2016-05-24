@@ -168,6 +168,16 @@ namespace Microsoft.PowerShell
             string preStartWarning,
             string[] args)
         {
+#if DEBUG
+            if (Environment.GetEnvironmentVariable("POWERSHELL_DEBUG_STARTUP") != null)
+            {
+                while (!System.Diagnostics.Debugger.IsAttached)
+                {
+                    Thread.Sleep(1000);
+                }
+            }
+#endif
+
             try
             {
                 string profileDir;
@@ -437,7 +447,7 @@ namespace Microsoft.PowerShell
             // already if this thread is lagging behind the main thread.
 
 #if !PORTABLE
-            ConsoleHandle handle = ConsoleControl.GetInputHandle();
+            ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             ConsoleControl.FlushConsoleInputBuffer(handle);
 #endif
 
@@ -1348,7 +1358,7 @@ namespace Microsoft.PowerShell
 
                 // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
                 // Removed HandleUnexpectedExceptions infrastructure
-                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, cpp.StaMode, cpp.ImportSystemModules, cpp.ShowInitialPrompt, cpp.ConfigurationName);
+                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, cpp.StaMode, cpp.ImportSystemModules, cpp.ConfigurationName);
             }
             while (false);
 
@@ -1383,14 +1393,12 @@ namespace Microsoft.PowerShell
         /// 
         /// </returns>
         private uint DoRunspaceLoop(string initialCommand, bool skipProfiles, Collection<CommandParameter> initialCommandArgs, bool staMode,
-            bool importSystemModules, bool showInitialPrompt, string configurationName)
+            bool importSystemModules, string configurationName)
         {
             ExitCode = ExitCodeSuccess;
 
             while (!ShouldEndSession)
             {
-                this.promptDisplayedInNativeCode = showInitialPrompt;
-
                 RunspaceCreationEventArgs args = new RunspaceCreationEventArgs(initialCommand, skipProfiles, staMode, importSystemModules, configurationName, initialCommandArgs);
                 CreateRunspace(args);
 
@@ -2154,8 +2162,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal bool promptDisplayedInNativeCode = false;
-
         /// <summary>
         /// True when debugger command is user and available 
         /// for stopping.
@@ -2372,6 +2378,7 @@ namespace Microsoft.PowerShell
 
                         string prompt = null;
                         string line = null;
+
                         if (!ui.NoPrompt)
                         {
                             if (inBlockMode)

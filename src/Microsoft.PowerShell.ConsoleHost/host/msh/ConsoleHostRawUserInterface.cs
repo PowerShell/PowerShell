@@ -720,7 +720,7 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                ConsoleHandle handle = ConsoleControl.GetInputHandle();
+                ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
                 ConsoleControl.INPUT_RECORD[] inputRecords = new ConsoleControl.INPUT_RECORD[1];
                 ConsoleControl.ConsoleModes originalMode = ConsoleControl.GetMode(handle);
 
@@ -826,7 +826,7 @@ namespace Microsoft.PowerShell
         void
         FlushInputBuffer()
         {
-            ConsoleHandle handle = ConsoleControl.GetInputHandle();
+            ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             ConsoleControl.FlushConsoleInputBuffer(handle);
 
             cachedKeyEvent.RepeatCount = 0;
@@ -861,7 +861,7 @@ namespace Microsoft.PowerShell
                     return true;
                 }
 
-                ConsoleHandle handle = ConsoleControl.GetInputHandle();
+                ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
                 ConsoleControl.INPUT_RECORD[] inputRecords =
                     new ConsoleControl.INPUT_RECORD[ConsoleControl.GetNumberOfConsoleInputEvents(handle)];
 

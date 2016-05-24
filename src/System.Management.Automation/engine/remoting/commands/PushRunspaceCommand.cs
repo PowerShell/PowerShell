@@ -1014,7 +1014,7 @@ namespace Microsoft.PowerShell.Commands
 
                     return null;
                 }
-                
+
                 this.VMName = (string)results[0].Properties["VMName"].Value;
             }
             else
@@ -1065,6 +1065,22 @@ namespace Microsoft.PowerShell.Commands
 
                 this.VMId = (Guid)results[0].Properties["VMId"].Value;
                 this.VMName = (string)results[0].Properties["VMName"].Value;
+            }
+
+            //
+            // VM should be in running state.
+            //
+            if ((VMState)results[0].Properties["State"].Value != VMState.Running)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMState, 
+                                                         this.VMName)),
+                        PSRemotingErrorId.InvalidVMState.ToString(),
+                        ErrorCategory.InvalidArgument,
+                        null));
+
+                return null;
             }
             
             try

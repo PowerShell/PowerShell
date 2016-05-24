@@ -8,7 +8,7 @@ PowerShellVersion="3.0"
 CLRVersion="4.0"
 NestedModules="Microsoft.PowerShell.Commands.Management.dll"
 HelpInfoURI = 'http://go.microsoft.com/fwlink/?linkid=390785'
-AliasesToExport = @("gcb", "scb","gin")
+AliasesToExport = @("gcb", "scb", "gin", "gtz", "stz")
 FunctionsToExport = @()
 CmdletsToExport=@("Add-Content",
     "Clear-Content",
@@ -96,5 +96,7 @@ CmdletsToExport=@("Add-Content",
     "Clear-Recyclebin",
     "Get-Clipboard",
     "Set-Clipboard",
-    "Get-ComputerInfo")
+    "Get-ComputerInfo",
+    "Get-TimeZone",
+    "Set-TimeZone")
 }

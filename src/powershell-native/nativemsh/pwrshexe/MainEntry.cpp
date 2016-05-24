@@ -28,8 +28,6 @@
 #include "OutputWriter.h"
 #include "WinSystemCallFacade.h"
 
-#define PSREADLINE_SUPPORTED  1
-
 // include the tlb for mscorlib for access to the default AppDomain through COM Interop
 #import <mscorlib.tlb> raw_interfaces_only high_property_prefixes("_get","_put","_putref")\
     rename("ReportEvent", "CLRReportEvent")
@@ -53,18 +51,12 @@ WCHAR g_IconApp[MAX_PATH+1];
 PwrshExeOutput* pwrshExeOutput = new PwrshExeOutput();
 PwrshCommon pwrshCommon(pwrshExeOutput, new ConfigFileReader(), new WinSystemCallFacade());
 
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
 bool ConvertArgvToSafeArray(
     IN int argc,
     __in_ecount(argc) LPWSTR * argv,
     IN int skipIndex,
-    __deref_out_opt SAFEARRAY ** ppSafeArray,
-    bool showInitialPrompt)
+    __deref_out_opt SAFEARRAY ** ppSafeArray)
 {
-    
-    LPWSTR showInitialPromptParameter = L"-showinitialprompt";
     // Collect the command line arguments to the managed exe
     SAFEARRAY *psa = NULL;
     SAFEARRAYBOUND rgsabound[1];
@@ -80,12 +72,7 @@ bool ConvertArgvToSafeArray(
         rgsabound[0].lLbound = 0;
          
         // rgsabound[0].cElements holds the number of elements that need to be passed to managed exe
-        // +1 is for the value - showInitialPrompt
         rgsabound[0].cElements = argc - 1 - skipIndex;
-        if (showInitialPrompt)
-        {
-            rgsabound[0].cElements += 1;
-        }
         psa = SafeArrayCreate(VT_BSTR, 1, rgsabound);
 
         if (psa == NULL)
@@ -96,25 +83,6 @@ bool ConvertArgvToSafeArray(
 
         long psaIndex[1];
         psaIndex[0] = 0; 
-
-        if (showInitialPrompt)
-        {
-            BSTR bArg = SysAllocString(showInitialPromptParameter);
-            if (NULL == bArg)
-            {
-                returnResult = false;
-                break;
-            }
-            HRESULT hr = SafeArrayPutElement(psa, psaIndex, bArg);
-            // Free bArg
-            SysFreeString(bArg);
-            psaIndex[0]++;
-            if (FAILED(hr))
-            {
-                returnResult = false;
-                break;
-            }
-        }
 
         if (0 != rgsabound[0].cElements)
         {
@@ -145,247 +113,11 @@ bool ConvertArgvToSafeArray(
     return returnResult;
 }
 
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
 bool FileExists(__in LPWSTR pszFileName)
 {
     return (GetFileAttributesW(pszFileName) != INVALID_FILE_ATTRIBUTES);    
 }
 
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
-bool DoesProfileExist(bool hasShellID, bool forCurrentUser)
-{
-    wchar_t *basePath = NULL;
-    size_t basePathLength;
-    wchar_t *tempBasePath = NULL;
-        
-    wchar_t *resultProfileFile = NULL;
-    size_t resultProfileFileLength;
-
-    size_t productNameLength = RTL_NUMBER_OF_V2(g_PRODUCT_NAME) - 1;
-    size_t profileStringLength = RTL_NUMBER_OF_V2(g_PROFILE) - 1;    
-    size_t profileStringWithShellIdLength = RTL_NUMBER_OF_V2(g_PROFILE_WITH_SHELL_ID) - 1;
-    size_t versionStringLength = RTL_NUMBER_OF_V2(g_PSHOME_VERSION) - 1;
-
-    if (forCurrentUser)
-    {
-        if(S_OK != SHGetKnownFolderPath(FOLDERID_Documents,0, NULL, &basePath))
-        {
-            // In case of any error, assume the profile file exists. 
-            // Running the profile (if it does actually exist will be taken care of by the managed layer)
-            return true;
-        }
-        else
-        {
-            if (S_OK != StringCchLength(basePath, STRSAFE_MAX_LENGTH, &basePathLength))
-            {
-                if (NULL != basePath)
-                {
-                    CoTaskMemFree(basePath);
-                }
-
-                // In case of any error, assume the profile file exists. 
-                //Running the profile (if it does actually exist will be taken care of by the managed layer)
-                return true;
-            }
-
-            size_t originalBasePathLength = basePathLength;
-            basePathLength = basePathLength + productNameLength + 1;
-            tempBasePath = new wchar_t[basePathLength];
-            tempBasePath[0]='\0';
-            if (S_OK != StringCchCatN(tempBasePath, basePathLength, basePath, originalBasePathLength))
-            {
-                // In case of any error, assume the profile file exists. 
-                // Running the profile (if it does actually exist will be taken care of by the managed layer)
-                CoTaskMemFree(basePath);
-                delete[] tempBasePath;
-                return true;
-            }
-            // free up basePath as it is not used anymore
-            CoTaskMemFree(basePath);
-            
-            if (S_OK != StringCchCatN(tempBasePath, basePathLength, g_PRODUCT_NAME, productNameLength))
-            {
-                delete[] tempBasePath;
-                return true;
-            }
-            basePath = tempBasePath;
-        }
-    }
-    else
-    {
-        if(S_OK != SHGetKnownFolderPath(FOLDERID_System,0, NULL, &basePath))
-        {
-            // In case of any error, assume the profile file exists. 
-            // Running the profile (if it does actually exist will be taken care of by the managed layer)
-            return true;
-        }
-        else
-        {
-            if (S_OK != StringCchLength(basePath, STRSAFE_MAX_LENGTH, &basePathLength))
-            {
-                if (NULL != basePath)
-                {
-                    CoTaskMemFree(basePath);
-                }
-                // In case of any error, assume the profile file exists. 
-                // Running the profile (if it does actually exist will be taken care of by the managed layer)
-                return true;
-            }
-
-            size_t originalBasePathLength = basePathLength;
-            basePathLength = basePathLength + productNameLength + versionStringLength + 1;
-            tempBasePath = new wchar_t[basePathLength];
-            tempBasePath[0]='\0';
-            if (S_OK != StringCchCatN(tempBasePath, basePathLength, basePath, originalBasePathLength))            
-            {
-                // In case of any error, assume the profile file exists. 
-                // Running the profile (if it does actually exist will be taken care of by the managed layer)
-                CoTaskMemFree(basePath);
-                delete[] tempBasePath;
-                return true;
-            }
-            // free up basePath as it is not used anymore
-            CoTaskMemFree(basePath);
-
-            if (S_OK != StringCchCatN(tempBasePath, basePathLength, g_PRODUCT_NAME, productNameLength))
-            {                
-                delete[] tempBasePath;
-                return true;
-            }            
-            if (S_OK != StringCchCatN(tempBasePath, basePathLength, g_PSHOME_VERSION, versionStringLength))
-            {
-                delete[] tempBasePath;
-                return true;
-            }
-
-            basePath = tempBasePath;
-        }
-    }
-
-    if (hasShellID)
-    {
-        resultProfileFileLength = basePathLength + profileStringWithShellIdLength + 1;
-        resultProfileFile = new wchar_t[resultProfileFileLength];
-        resultProfileFile[0] = '\0';
-        if (S_OK != StringCchCatN(resultProfileFile, resultProfileFileLength, basePath, basePathLength))
-        {
-            // In case of any error, assume the profile file exists. 
-            // Running the profile (if it does actually exist will be taken care of by the managed layer)
-            delete[] tempBasePath;
-            delete[] resultProfileFile;
-            return true;
-        }        
-        
-        if (S_OK != StringCchCatN(resultProfileFile, resultProfileFileLength, g_PROFILE_WITH_SHELL_ID, profileStringWithShellIdLength))
-        {
-            delete[] tempBasePath;
-            delete[] resultProfileFile;
-            return true;
-        }
-    }
-    else
-    {
-        resultProfileFileLength = basePathLength + profileStringLength + 1;
-        resultProfileFile = new wchar_t[resultProfileFileLength];
-        resultProfileFile[0]='\0';
-        if (S_OK != StringCchCatN(resultProfileFile, resultProfileFileLength, basePath, basePathLength))        
-        {
-            // In case of any error, assume the profile file exists. 
-            // Running the profile (if it does actually exist will be taken care of by the managed layer)
-            delete[] tempBasePath;
-            delete[] resultProfileFile;
-            return true;
-        }
-        
-        if (S_OK != StringCchCatN(resultProfileFile, resultProfileFileLength, g_PROFILE, profileStringLength))
-        {
-            delete[] tempBasePath;
-            delete[] resultProfileFile;
-            return true;
-        }
-    }
-
-    delete[] tempBasePath;
-    
-    bool result = FileExists(resultProfileFile);
-    if (NULL != resultProfileFile)
-    {
-        delete[] resultProfileFile;
-    }
-
-    return result;
-}
-
-
-#if !PSREADLINE_SUPPORTED
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
-bool DoWeHaveProfileFiles()
-{
-    // Returns true if either one of the four locations exist
-    // allUsersProfile                    "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\profile.ps1"
-    // allUsersHostSpecificProfile        "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\Microsoft.PowerShell_profile.ps1"
-    // currentUserProfile                "C:\\Users\\<userName>\\Documents\\WindowsPowerShell\\profile.ps1"
-    // currentUserHostSpecificProfile    "C:\\Users\\<userName>\\Documents\\WindowsPowerShell\\Microsoft.PowerShell_profile.ps1"    
-    
-    bool allUsersProfilePath = DoesProfileExist(false, false);
-    bool allUsersHostSpecificProfile = DoesProfileExist(true, false);
-    bool currentUserProfile = DoesProfileExist(false, true);
-    bool currentUserHostSpecificProfile = DoesProfileExist(true, true);
-    if (allUsersProfilePath || allUsersHostSpecificProfile || currentUserProfile || currentUserHostSpecificProfile)
-    {
-        return true;
-    }
-    return false;
-}
-#endif
-
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
-bool DisplayBannerAndPrompt()
-{
-    bool isPromptDisplayed = false;
-    TCHAR Buffer[MAX_PATH];
-    DWORD dwRet;
-    dwRet = GetCurrentDirectory(MAX_PATH, Buffer);
-        
-    if( dwRet == 0 )
-    {
-        return false;
-    }
-    if(dwRet > MAX_PATH)
-    {
-        return false;
-    }
-
-    size_t length;
-    if (S_OK != StringCchLength(Buffer, STRSAFE_MAX_LENGTH, &length))
-    {
-        return false;
-    }
-
-    // Display Banner
-    pwrshExeOutput->DisplayMessage(false, g_SHELLBANNER1);
-    pwrshExeOutput->DisplayMessage(false, g_SHELLBANNER2);
-    WriteStandard(false, L"\n", 1);    
-
-    // Display Prompt
-    WriteStandard(false, L"PS ", 3);
-    WriteStandard(false, Buffer, length);
-    WriteStandard(false, L"> ", 2);
-    
-    return true;
-}
-
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
 unsigned int LaunchManagedMonad(
     LPCWSTR wszMonadVersion,
     int monadMajorVersion,
@@ -393,7 +125,6 @@ unsigned int LaunchManagedMonad(
     LPCWSTR wszRuntimeVersion,
     LPCWSTR wszConsoleHostAssemblyName,
     __in_ecount_opt(1) SAFEARRAY * pArgvSA,
-    bool showInitialPrompt,
     int skipIndex,
     int argc,
     __in_ecount(argc) LPWSTR * argv)
@@ -421,23 +152,11 @@ unsigned int LaunchManagedMonad(
             break;
         }
 
-        if (showInitialPrompt)
-        {
-            // Display both banner and prompt from native code or display both from managed layer. 
-            // This helps keeping things simple when we want to decide whether to show the initial prompt from the managed layer.
-            if (!DisplayBannerAndPrompt())
-            {
-                // If there was an error while displaying prompt, set this flag to false so that the initial prompt is displayed from the managed layer.
-                showInitialPrompt = false;
-            }
-        }
-
         if(!ConvertArgvToSafeArray(
                 argc,
                 argv,
                 skipIndex,
-                &pArgvSA,
-                showInitialPrompt))
+                &pArgvSA))
         {
             exitCode = EXIT_CODE_INIT_FAILURE;
             break;
@@ -582,9 +301,6 @@ static bool IsDash(WCHAR wch)
     return (enDash == wch || emDash == wch || horizontalBar == wch || '-' == wch);
 }
 
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
 static bool IsParameterMatched(
     LPCWSTR wszParameter,
     int cchParameter,
@@ -649,9 +365,6 @@ static bool IsParameterMatched(
     return bReturnResult;
 }
 
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
 static bool CheckConsoleFileExtension(
     LPCWSTR wszFileName)
 {
@@ -872,9 +585,6 @@ void DisplaySpecificXMLDOMError(
     }
 }
 
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
 static bool ReadVersionFromConsoleFile(
     LPCWSTR wszFileName,
     __deref_out_opt PWSTR * pwszMonadVersion,
@@ -1022,9 +732,6 @@ static bool ReadVersionFromConsoleFile(
 #pragma prefast (disable: 6101) // Returning uninitialized memory - pwszRuntimeVersion, pwszConsoleFile, pwszMonadVersion, and pwszRuntimeVersion are not always set on success.
 
 
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
 unsigned int ParseCommandLineArguments(
                                 IN int argc,
                                 __in_ecount(argc) LPWSTR * argv,
@@ -1847,9 +1554,6 @@ void CreateCustomDestinationList(STARTUPINFO &startupInfo)
 
 #endif
 
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
 int __cdecl
     wmain(
           int argc,
@@ -1988,56 +1692,6 @@ int __cdecl
         
         skipIndex = skipIndex + 1;
 
-        bool showInitialPrompt = false;
-#if !PSREADLINE_SUPPORTED
-        // If there are any more parameters to be passed to managed layer, do not do anything here. 
-        // Handle everything in the managed layer
-        // Do not do any optimization for PowerShell 1.0 or PowerShell 2.0
-        if (monadMajorVersion != 1 && monadMajorVersion != 2)
-        {
-            if (skipProfile)
-            {
-                // Are there any more parameters to managed layer? 
-                // Yes --> Do not show prompt here. 
-                // No --> Show prompt here
-                // We check for a difference of 2 here (1 for PowerShell.exe and 1 for NoProfile)
-                if (argc - skipIndex > 2)
-                {
-                    showInitialPrompt = false;
-                }
-                else
-                {
-                    showInitialPrompt = true;
-                }
-            }
-            else
-            {
-                // Are there any more parameters to managed layer? 
-                // Yes --> Do not show prompt here. 
-                // No --> Additional checks
-                // We check for a difference of 1 here (1 for PowerShell.exe)
-                if (argc - skipIndex > 1)
-                {
-                    showInitialPrompt = false;
-                }
-                else
-                {
-                    // Do we have profile files?
-                    // Yes -> Do not show prompt here. 
-                    // No -> Show prompt here
-                    if (DoWeHaveProfileFiles())
-                    {
-                        showInitialPrompt = false;
-                    }
-                    else
-                    {
-                        showInitialPrompt = true;
-                    }
-                }
-            }
-        }
-#endif
-
         // WTR  - Check for the key that indicates absence of NetFx4 and output appropriate message to the user        
         
         // Open PowerShellEngine Registry Key
@@ -2088,7 +1742,6 @@ int __cdecl
             wszRuntimeVersion,
             wszConsoleHostAssemblyName,
             pArgvSA,
-            showInitialPrompt,
             skipIndex,
             argc,
             argv);

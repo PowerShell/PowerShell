@@ -548,11 +548,15 @@ namespace System.Management.Automation.Remoting
 
             //
             // Check invalid input and throw exception before setting up socket connection.
+            // This check is done only in VM case.
             //
-            if (String.IsNullOrEmpty(networkCredential.UserName))
+            if (isFirstConnection)
             {
-                throw new PSDirectException(
-                    PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidUsername));
+                if (String.IsNullOrEmpty(networkCredential.UserName))
+                {
+                    throw new PSDirectException(
+                        PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidUsername));
+                }
             }
             
             _socket.Connect(_endPoint);

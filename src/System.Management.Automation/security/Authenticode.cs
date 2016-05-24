@@ -318,15 +318,18 @@ namespace System.Management.Automation
         {
             Signature signature = null;
 
-            // First, try to get the signature from the catalog signature APIs.
-            signature = GetSignatureFromCatalog(fileName);
+            if (fileContent == null)
+            {
+                // First, try to get the signature from the catalog signature APIs.
+                signature = GetSignatureFromCatalog(fileName);
+            }
 
             // If there is no signature or it is invalid, go by the file content
             // with the older WinVerifyTrust APIs
             if ((signature == null) || (signature.Status != SignatureStatus.Valid))
             {
                 signature = GetSignatureFromWinVerifyTrust(fileName, fileContent);
-            }
+            }                
         
             return signature;
         }
@@ -469,13 +472,17 @@ namespace System.Management.Automation
             NativeMethods.WINTRUST_DATA wtd;
             DWORD error = Win32Errors.E_FAIL;
 
-            Utils.CheckArgForNullOrEmpty(fileName, "fileName");
-            SecuritySupport.CheckIfFileExists(fileName);
-            //SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
+            if (fileContent == null)
+            {
+                Utils.CheckArgForNullOrEmpty(fileName, "fileName");
+                SecuritySupport.CheckIfFileExists(fileName);
+                //SecurityUtils.CheckIfFileSmallerThan4Bytes(fileName);
+            }
 
             try
             {
                 error = GetWinTrustData(fileName, fileContent, out wtd);
+
                 if (error != Win32Errors.NO_ERROR)
                 {
                     tracer.WriteLine("GetWinTrustData failed: {0:x}", error);

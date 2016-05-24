@@ -1225,6 +1225,9 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   <data name="InvalidVMNameNotSingle" xml:space="preserve">
     <value>The input VMName {0} does not resolve to a single virtual machine.</value>
   </data>
+  <data name="InvalidVMState" xml:space="preserve">
+    <value>The virtual machine {0} is not in running state.</value>
+  </data>
   <data name="InvalidCredential" xml:space="preserve">
     <value>The credential is invalid.</value>
   </data>

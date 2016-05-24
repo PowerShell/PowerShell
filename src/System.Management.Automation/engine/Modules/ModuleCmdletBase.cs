@@ -2145,6 +2145,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (ModuleSpecification s in tmpNestedModules)
                 {
+                    s.Name = GetAbsolutePath(moduleBase, s.Name);
                     if (WildcardPattern.ContainsWildcardCharacters(s.Name))
                     {
                         PSInvalidOperationException invalidOperation = PSTraceSource.NewInvalidOperationException(
@@ -2617,13 +2618,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var f in fileList)
                 {
-                    manifestInfo.AddToFileList(f);
+                    string absuluteFilePath = GetAbsolutePath(moduleBase, f);
+                    manifestInfo.AddToFileList(absuluteFilePath);
                 }
             }
             if (moduleList != null)
             {
                 foreach (var m in moduleList)
                 {
+                    m.Name = GetAbsolutePath(moduleBase, m.Name);
                     manifestInfo.AddToModuleList(m);
                 }
             }
@@ -4925,8 +4928,18 @@ namespace Microsoft.PowerShell.Commands
         internal string FixupFileName(string moduleBase, string name, string extension)
         {
             // First check for full-qualified paths - either absolute or relative
-            string resolvedName = ResolveRootedFilePath(name, this.Context);
-            if (String.IsNullOrEmpty(resolvedName))
+            string resolvedName;
+            if (!IsRooted(name))
+            {
+                // The manifest file should only be related to moduleBase path.
+                resolvedName = ResolveRootedFilePath(Path.Combine(moduleBase, name), this.Context);
+            }
+            else
+            {
+                resolvedName = ResolveRootedFilePath(name, this.Context);
+            }
+
+            if (string.IsNullOrEmpty(resolvedName))
             {
                 resolvedName = Path.Combine(moduleBase, name);
             }
@@ -4956,6 +4969,25 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// A utility routine to fix up a file name, if it is relative path convert it to absolute path combining moduleBase, if it is not a relative path, leave as it is.
+        /// </summary>
+        /// <param name="moduleBase">The base path to use if the file is not rooted</param>
+        /// <param name="path">The file name to resolve.</param>
+        /// 
+        /// <returns></returns>
+        internal string GetAbsolutePath(string moduleBase, string path)
+        {
+            if (!IsRooted(path) && (path.Contains('/') || path.Contains('\\')) && !path.Contains('$'))
+            {
+                return Path.Combine(moduleBase, path);
+            }
+            else
+            {
+                return path;
+            }
         }
 
         static internal bool IsRooted(string filePath)
