@@ -185,14 +185,18 @@ namespace Microsoft.PowerShell
                 {
                     profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +
                         @"\Microsoft\Windows\PowerShell";
-                } else
+                } 
+                
+                else
                 {
-                    profileDir = System.IO.Path.Combine(Environment.GetEnvironmentVariable("HOME"), ".powershell");
+                    //check if the user has set an XDG path in their environment variables
+                    profileDir = Platform.SelectProductNameForDirectory("profile");                  
                 }
-
-                if (!Directory.Exists(profileDir))
+   
+                if (!Directory.Exists(profileDir)) //xdg value may have been set but not a valid directory 
                 {
-                    Directory.CreateDirectory(profileDir);
+                    Console.WriteLine("The selected directory for the profile does not exist. Using the default path.");
+                    profileDir = Platform.SelectProductNameForDirectory("default");
                 }
                 ClrFacade.SetProfileOptimizationRoot(profileDir);
             }
@@ -268,7 +272,6 @@ namespace Microsoft.PowerShell
                             : "StartupProfileData-NonInteractive");
                     exitCode = theConsoleHost.Run(cpp, !string.IsNullOrEmpty(preStartWarning));
                 }
-
             }
             finally
             {

@@ -178,14 +178,25 @@ namespace Microsoft.PowerShell
             }
             else
             {
+                //PSReadline does not have access to Utils.CorePSPlatform. Must set PSReadline path seperately                
+                string modulepath = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
+               
+                if (String.IsNullOrEmpty(modulepath))
+                {
+                        modulepath = System.IO.Path.Combine(
+                                                             Environment.GetEnvironmentVariable("HOME"), 
+                                                             ".config/powershell/modules");
+                }
+                        
                 HistorySavePath = System.IO.Path.Combine(
                                                          Environment.GetEnvironmentVariable("HOME"), 
-                                                         ".powershell",
+                                                         modulepath,
                                                          "PSReadLine",
                                                          hostName + "_history.txt");
-            }
-#else
-            HistorySavePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                            
+                }
+    #else
+                HistorySavePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
                 + @"\Microsoft\Windows\PowerShell\PSReadline\" + hostName + "_history.txt";
 #endif
             CommandValidationHandler = null;
@@ -205,7 +216,7 @@ namespace Microsoft.PowerShell
                 "Where-Object", "?", "where",
             };
         }
-
+        
         public EditMode EditMode { get; set; }
 
         public string ContinuationPrompt { get; set; }
