@@ -13,8 +13,9 @@ dotnet-install.ps1
 *.xproj
 *.xproj.user
 
-# We copy powershell.exe as a content in host dotnet cli projects
+# Ignore executables
 *.exe
+*.msi
 
 # ignore the version file as it is generated at build time
 powershell.version

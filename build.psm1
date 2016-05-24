@@ -424,15 +424,20 @@ PowerShell is an open-source, cross-platform, scripting language and rich object
 Built upon .NET Core, it is also a C# REPL.
 "@
 
-    if ($IsWindows) { throw "Building Windows packages is not yet supported!" }
+    # Use Git tag if not given a version
+    if (-not $Version) {
+        $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
+    }
+
+    $Source = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
+    Write-Verbose "Packaging $Source"
+
+    if ($IsWindows) {
+        return Create-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -Verbose
+    }
 
     if (-not (Get-Command "fpm" -ErrorAction SilentlyContinue)) {
         throw "Build dependency 'fpm' not found in PATH! See: https://github.com/jordansissel/fpm"
-    }
-
-    $Source = Split-Path -Parent (Get-PSOutput)
-    if ((Split-Path -Leaf $Source) -ne "publish") {
-        throw "Please Start-PSBuild -Publish with the corresponding runtime for the package"
     }
 
     # Decide package output type
@@ -456,7 +461,7 @@ Built upon .NET Core, it is also a C# REPL.
     }
 
     New-Item -Force -ItemType SymbolicLink -Path /tmp/powershell -Target $Destination/powershell >$null
-    
+
     # there is a weired bug in fpm
     # if the target of the powershell symlink exists, `fpm` aborts
     # with a `utime` error on OS X.
@@ -472,14 +477,8 @@ Built upon .NET Core, it is also a C# REPL.
         }
     }
 
-
     # Change permissions for packaging
     chmod -R go=u $Source /tmp/powershell
-
-    # Use Git tag if not given a version
-    if (-not $Version) {
-        $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
-    }
 
     $libunwind = switch ($Type) {
         "deb" { "libunwind8" }
@@ -538,7 +537,6 @@ function Publish-NuGetFeed
     )
 
     @(
-'Microsoft.Management.Infrastructure',
 'Microsoft.PowerShell.Commands.Management',
 'Microsoft.PowerShell.Commands.Utility',
 'Microsoft.PowerShell.ConsoleHost',
@@ -942,5 +940,76 @@ internal class {0} {{
         }
     } | Out-String
     $body -f $ClassName,$ModuleName,$entries
+}
+
+function Create-MSIPackage
+{
+    [CmdletBinding()]
+    param (
+    
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductName = 'OpenPowerShell', 
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductVersion,
+
+        # Product Guid needs to change for every version to support SxS install
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductGuid = 'a5249933-73a1-4b10-8a4c-13c98bdc16fe',
+
+        # Source Path to the Product Files - required to package the contents into an MSI
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductSourcePath,
+
+        # File describing the MSI Package creation semantics
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductWxsPath = (Join-Path $pwd 'Product.wxs')
+
+    )    
+
+    $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset v3.10\bin"
+
+    Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
+    if (-not (Test-Path $wixToolsetBinPath))
+    {
+        throw "Install Wix Toolset prior to running this script - https://wix.codeplex.com/downloads/get/1540240"
+    }
+
+    Write-Verbose "Initialize Wix executables - Heat.exe, Candle.exe, Light.exe"
+    $wixHeatExePath = Join-Path $wixToolsetBinPath "Heat.exe"
+    $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
+    $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
+    
+    # Wix tooling does not like hyphen in the foldername
+    $ProductVersion = $ProductVersion.Replace('-', '_')
+
+    $productVersionWithName = $ProductName + "_" + $ProductVersion
+    Write-Verbose "Create MSI for Product $productVersionWithName"
+
+    [Environment]::SetEnvironmentVariable("ProductSourcePath", $ProductSourcePath, "Process")
+    [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
+    [Environment]::SetEnvironmentVariable("ProductGuid", $ProductGuid, "Process")
+    [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
+    [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
+
+    $wixFragmentPath = (Join-path $env:Temp "Fragment.wxs")
+    $wixObjProductPath = (Join-path $env:Temp "Product.wixobj")
+    $wixObjFragmentPath = (Join-path $env:Temp "Fragment.wixobj")
+    
+    $msiLocationPath = Join-Path $pwd "$productVersionWithName.msi"    
+    Remove-Item -ErrorAction SilentlyContinue $msiLocationPath -Force
+
+    & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v | Write-Verbose
+    & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -arch x64 -v | Write-Verbose
+    & $wixLightExePath -out "$productVersionWithName.msi" $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -v | Write-Verbose
+    
+    Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
+
+    Write-Verbose "You can find the MSI @ $msiLocationPath"
+    return $msiLocationPath
 }
 

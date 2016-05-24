@@ -1,0 +1,81 @@
+﻿<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+  <?define Win7SP1OrLater = "(VersionNT = 601 AND ServicePackLevel >= 1) OR VersionNT > 601" ?>
+
+  <!-- The URL for add/remove programs -->
+  <!-- TBD:Point to the actual release -->
+  <?define InfoURL="https://github.com/PowerShell/PowerShell" ?>
+
+  <?define ProductName = "$(env.ProductName)" ?>
+  <?define ProductGuid = "$(env.ProductGuid)" ?>
+  <?define ProductVersion = "$(env.ProductVersion)" ?>
+  <?define ProductVersionWithName = "$(var.ProductName)_$(var.ProductVersion)"?>
+
+  <!-- Generate Your Own GUID for both ID and UpgradeCode attributes. -->
+  <!-- Note:  UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS -->
+  <!-- Otherwise, updates won’t occur -->
+  <Product Id="$(var.ProductGuid)" Name="$(var.ProductVersionWithName)" Language="1033" Version="0.1.0.0" Manufacturer="Microsoft Corporation" UpgradeCode="{f7ba3e58-0be8-443b-ac91-f99dd1e7bd3b}">
+    <!-- Properties About The Package -->
+    <Package Id="*" Keywords="Installer" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="OpenPowerShell package" Comments="OpenPowerShell" />
+
+    <!-- Set properties for add/remove programs -->
+    <Property Id="ARPHELPLINK" Value="$(var.InfoURL)" />
+    
+    <!-- Prerequisites -->
+    <Condition Message="Supported only on Win7SP1 or later"><![CDATA[ Installed OR $(var.Win7SP1OrLater) ]]></Condition>
+
+    <!-- Information About When Older Versions Are Trying To Be Installed-->
+    <MajorUpgrade DowngradeErrorMessage="A newer version of OpenPowerShell is already installed." />
+    
+    <!-- Embed Cabinet Files in Product-->
+    <MediaTemplate EmbedCab="yes" />
+    
+    <!-- In Your Wix Setup Project, Add A Reference To WixUIExtension.dll -->
+    <!-- This is a minimal User Interface.  In fact, it only displays a license -->
+    <!-- acceptance dialog.  It doesn’t do anything else except provide -->
+    <!-- basic status during installation. -->
+    <UIRef Id="WixUI_Minimal" />
+
+    <!-- Features are mandatory.  Need At Least One. -->
+    <Feature Id="ProductFeature" Title="OpenPowerShell" Level="1">
+      <ComponentGroupRef Id="$(var.ProductVersionWithName)"/>
+      <ComponentRef Id="ProductVersionFolder"/>
+      <ComponentRef Id="ApplicationProgramsMenuShortcut"/>
+    </Feature>
+
+    <!--We need to show EULA, but not provide option to customize download location-->    
+    <Property Id="WixUI_Minimal" Value="$(var.ProductVersionWithName)" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="OpenPowerShell">
+          <Directory Id="$(var.ProductVersionWithName)" Name="$(var.ProductVersion)">
+            <Component Id="ProductVersionFolder" Guid="{e1a7f05e-0cd6-4227-80a8-e4fb311f045c}">
+              <CreateFolder/>
+            </Component>
+          </Directory>
+        </Directory>        
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductVersionWithName)">
+          <Component Id="ApplicationProgramsMenuShortcut" Guid="{A77507A7-F970-4618-AC30-20AFE36EE2EB}">
+            <Shortcut Id="OpenPowerShell_ProgramsMenuShortcut"
+              Name="$(var.ProductVersionWithName)"
+              Description="$(var.ProductVersionWithName)"
+              Target="[$(var.ProductVersionWithName)]PowerShell.exe"
+              WorkingDirectory="$(var.ProductVersionWithName)"/>
+
+            <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+
+            <RegistryValue Root="HKCU"
+                           Key="Software\Microsoft\$(var.ProductVersionWithName)\ProgramsMenuShortcut"
+                           Name="installed"
+                           Type="integer"
+                           Value="1" KeyPath="yes"/>
+          </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+
+  </Product>
+</Wix>

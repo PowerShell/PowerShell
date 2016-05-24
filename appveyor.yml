@@ -65,6 +65,8 @@ on_finish:
   - ps: |
       $ErrorActionPreference = 'Stop'
       try {
+        # Build package
+        $package = Start-PSPackage
         # Creating project artifact
         $name = git describe
         $zipFilePath = Join-Path $pwd "$name.zip"
@@ -74,6 +76,7 @@ on_finish:
         [System.IO.Compression.ZipFile]::CreateFromDirectory($env:FullOutput, $zipFileFullPath)
         
         $artifacts = @(
+            $package,
             $zipFilePath,
             $zipFileFullPath
         )
