@@ -1,13 +1,5 @@
-﻿Describe "Remove-TypeData DRT Unit Tests" -Tags DRT{
-    It "Remove With Pipe line Input Pass Type Shortcut String" {
-        { Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value TestNote -TypeName int } | Should Not Throw
-        $a = Get-TypeData System.Int32
-        $a.TypeName | Should Be System.Int32
-
-        { 'int' | Remove-TypeData } | Should Not Throw
-    }
-
-    It "Remove Type File In Initial Session State" {
+﻿Describe "Remove-TypeData DRT Unit Tests" -Tags DRT {
+    BeforeAll {
         $XMLFile1 = Join-Path $TestDrive -ChildPath "testFile1.ps1xml"
         $XMLFile2 = Join-Path $TestDrive -ChildPath "testFile2.ps1xml"
         $content1 = @"
@@ -23,7 +15,6 @@
             </Type>
         </Types>
 "@
-
         $content2 = @"
                 <Types>
                     <Type>
@@ -37,31 +28,56 @@
                     </Type>
                 </Types>
 "@
-
         $content1 > $XMLFile1
         $content2 > $XMLFile2
-        Update-TypeData -AppendPath $XMLFile1
-        Update-TypeData -AppendPath $XMLFile2
-        $a = 1..3
-        $a.Yada | Should be 3
-        $a.Yoda | Should Be 3
-        Remove-TypeData -Path $XMLFile1
-        $a.Yada | Should BeNullOrEmpty 
-        $a.Yoda | Should Be 3
-        
-        #clean up
-        Remove-TypeData -Path $XMLFile2
+    }
+
+    BeforeEach {
+        $ps = [powershell]::Create()
+        $iss = [system.management.automation.runspaces.initialsessionstate]::CreateDefault2()
+        $rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace($iss)
+        $rs.Open()
+        $ps.Runspace = $rs
+    }
+
+    AfterEach {
+        $rs.Close()
+        $ps.Dispose()
+    }
+
+    It "Remove With Pipe line Input Pass Type Shortcut String" {
+        $null = $ps.AddScript("Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value TestNote -TypeName int").Invoke()
+        $ps.Commands.Clear()
+        $null = $ps.AddScript("(Get-TypeData System.Int32).TypeName").Invoke() | Should Be System.Int32
+        $ps.Commands.Clear()
+        $null = $ps.AddScript("'int' | Remove-TypeData").Invoke()
+        $ps.HadErrors | Should be $false
+    }
+
+    It "Remove Type File In Initial Session State" {
+        # setup
+        $null = $ps.AddScript("Update-TypeData -AppendPath $XMLFile1").Invoke()
+        $ps.Commands.Clear()
+        $null = $ps.AddScript("Update-TypeData -AppendPath $XMLFile2").Invoke()
+        $ps.Commands.Clear()
+        $null = $ps.AddScript('$a = 1..3').Invoke()
+        $ps.Commands.Clear()
+        # test
+        $ps.AddScript('$a.Yada').Invoke() | Should be 3
+        $ps.Commands.Clear()
+        $ps.AddScript('$a.Yoda').Invoke() | Should Be 3
+        $ps.Commands.Clear()
+        $null = $ps.AddScript("Remove-TypeData -Path $XMLFile1").Invoke()
+        $ps.Commands.Clear()
+        $ps.AddScript('$a.Yada').Invoke() | Should BeNullOrEmpty
+        $ps.Commands.Clear()
+        $ps.AddScript('$a.Yoda').Invoke() | Should Be 3
+        $ps.Commands.Clear()
     }
 
     It "Remove Type File In Initial Session State File Not In Cache" {
-        try
-        {
-            Remove-TypeData -Path "fakefile" -ErrorAction Stop
-            Throw "OK"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be "TypePathException,Microsoft.PowerShell.Commands.RemoveTypeDataCommand"
-        }
+        $null = $ps.AddScript("Remove-TypeData -Path fakefile").Invoke()
+        $ps.HadErrors | Should be $true
+        $ps.Streams.Error[0].FullyQualifiedErrorID | Should Be "TypePathException,Microsoft.PowerShell.Commands.RemoveTypeDataCommand"
     }
 }
