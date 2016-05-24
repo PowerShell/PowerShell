@@ -548,12 +548,7 @@ namespace System.Management.Automation
         /// <returns>personal module path</returns>
         internal static string GetPersonalModulePath()
         {
-            string personalModuleRoot = Path.Combine(
-                    Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                            Utils.ProductNameForDirectory),
-                    Utils.ModuleDirectory);
-
+            string personalModuleRoot = Platform.SelectProductNameForDirectory("modules");
             return personalModuleRoot;
         }
 
@@ -597,6 +592,7 @@ namespace System.Management.Automation
                     psHome = psHome.ToLowerInvariant().Replace("\\syswow64\\", "\\system32\\");
                 }
                 Interlocked.CompareExchange(ref SystemWideModulePath, Path.Combine(psHome, Utils.ModuleDirectory), null);
+                   
             }
 
             return SystemWideModulePath;

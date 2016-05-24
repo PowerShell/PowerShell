@@ -152,6 +152,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 command = new PSCommand();
                 command.AddCommand(profilePath, false);
                 commands.Add(command);
@@ -186,7 +187,14 @@ namespace System.Management.Automation
             {
                 basePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
                 basePath = IO.Path.Combine(basePath, Utils.ProductNameForDirectory);
+                
+                //If the profile path doesn't exist, create it.
+                if (!System.IO.Directory.Exists(basePath))
+                {
+                    System.IO.Directory.CreateDirectory(basePath);
+                }
             }
+        
             else
             {
                 basePath = GetAllUsersFolderPath(shellId);
@@ -197,7 +205,6 @@ namespace System.Management.Automation
             }
 
             string profileName = useTestProfile ? "profile_test.ps1" : "profile.ps1";
-
 
             if (!string.IsNullOrEmpty(shellId))
             {

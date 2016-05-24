@@ -606,13 +606,13 @@ namespace System.Management.Automation
         /// Profile uses this to control profile loading.
         /// </remarks>
         internal static string ProductNameForDirectory =
-            Platform.IsWindows ? "WindowsPowerShell" : Platform.ProductNameForDirectory;
+            Platform.IsWindows ? "WindowsPowerShell" : Platform.SelectProductNameForDirectory("profile");
 
         /// <summary>
         /// The name of the subdirectory that contains packages.
         /// </summary>
         internal static string ModuleDirectory = "Modules";
-
+        
         /// <summary>
         /// The partial path to the DSC module directory
         /// </summary>
