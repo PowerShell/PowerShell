@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace System.Management.Automation
 {
-    internal partial class PowerShellAssemblyLoadContext
+    internal partial class PowerShellAssemblyLoader
     {
         private Dictionary<string, string> InitializeTypeCatalog()
         {
