@@ -1002,14 +1002,14 @@ function Create-MSIPackage
     $wixObjFragmentPath = (Join-path $env:Temp "Fragment.wixobj")
     
     $msiLocationPath = Join-Path $pwd "$productVersionWithName.msi"    
-    del $msiLocationPath -Force
+    Remove-Item -ErrorAction SilentlyContinue $msiLocationPath -Force
 
     & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v
     & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -arch x64 -v
     & $wixLightExePath -out "$productVersionWithName.msi" $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -v
     
+    Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
 
-    del *.wixpdb -Force
     Write-Verbose "You can find the MSI @ $msiLocationPath"
     return $msiLocationPath
 }
