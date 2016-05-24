@@ -944,3 +944,75 @@ internal class {0} {{
     $body -f $ClassName,$ModuleName,$entries
 }
 
+function Create-MSIPackage
+{
+    [CmdletBinding()]
+    param (
+    
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductName = 'OpenPowerShell', 
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductVersion,
+
+        # Product Guid needs to change for every version to support SxS install
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductGuid = 'a5249933-73a1-4b10-8a4c-13c98bdc16fe',
+
+        # Source Path to the Product Files - required to package the contents into an MSI
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductSourcePath,
+
+        # File describing the MSI Package creation semantics
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductWxsPath = (Join-Path $pwd 'Product.wxs')
+
+    )    
+
+    $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset v3.10\bin"
+
+    Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
+    if (-not (Test-Path $wixToolsetBinPath))
+    {
+        throw "Install Wix Toolset prior to running this script - https://wix.codeplex.com/downloads/get/1540240"
+    }
+
+    Write-Verbose "Initialize Wix executables - Heat.exe, Candle.exe, Light.exe"
+    $wixHeatExePath = Join-Path $wixToolsetBinPath "Heat.exe"
+    $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
+    $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
+    
+    $ProductVersion = Split-Path $ProductSourcePath -Leaf
+
+    # Wix tooling does not like hyphen in the foldername
+    $ProductVersion = $ProductVersion.Replace('-', '_')
+
+    $productVersionWithName = $ProductName + "_" + $ProductVersion
+    Write-Verbose "Create MSI for Product $productVersionWithName"
+
+    [Environment]::SetEnvironmentVariable("ProductSourcePath", $ProductSourcePath, "Process")
+    [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
+    [Environment]::SetEnvironmentVariable("ProductGuid", $ProductGuid, "Process")
+    [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
+    [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
+
+    $wixFragmentPath = (Join-path $env:Temp "Fragment.wxs")
+    $wixObjProductPath = (Join-path $env:Temp "Product.wixobj")
+    $wixObjFragmentPath = (Join-path $env:Temp "Fragment.wixobj")
+    
+    $msiLocationPath = Join-Path $pwd "$productVersionWithName.msi"    
+    del $msiLocationPath -Force
+
+    & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v
+    & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -arch x64 -v
+    & $wixLightExePath -out "$productVersionWithName.msi" $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -v
+    
+    Write-Verbose "You can find the MSI @ $msiLocationPath"
+
+    del *.wixpdb -Force
+}
+
