@@ -537,7 +537,6 @@ function Publish-NuGetFeed
     )
 
     @(
-'Microsoft.Management.Infrastructure',
 'Microsoft.PowerShell.Commands.Management',
 'Microsoft.PowerShell.Commands.Utility',
 'Microsoft.PowerShell.ConsoleHost',
