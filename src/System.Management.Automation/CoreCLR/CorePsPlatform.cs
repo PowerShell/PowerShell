@@ -97,7 +97,7 @@ namespace System.Management.Automation
             };
 
         // directory location of PowerShell for profile loading
-        public static string ProductNameForDirectory = ".powershell";
+        public static string ProductNameForDirectory = @".config/powershell";
 
         // ComObjectType is null on CoreCLR for Linux since there is
         // no COM support on Linux

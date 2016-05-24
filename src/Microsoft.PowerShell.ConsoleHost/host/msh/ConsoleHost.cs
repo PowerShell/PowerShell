@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell
                         @"\Microsoft\Windows\PowerShell";
                 } else
                 {
-                    profileDir = System.IO.Path.Combine(Environment.GetEnvironmentVariable("HOME"), ".powershell");
+                    profileDir = System.IO.Path.Combine(Environment.GetEnvironmentVariable("HOME"), ".config", "powershell");
                 }
 
                 if (!Directory.Exists(profileDir))
