@@ -1003,9 +1003,9 @@ function Create-MSIPackage
     $msiLocationPath = Join-Path $pwd "$productVersionWithName.msi"    
     Remove-Item -ErrorAction SilentlyContinue $msiLocationPath -Force
 
-    & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v
-    & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -arch x64 -v
-    & $wixLightExePath -out "$productVersionWithName.msi" $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -v
+    & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v | Write-Verbose
+    & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -arch x64 -v | Write-Verbose
+    & $wixLightExePath -out "$productVersionWithName.msi" $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -v | Write-Verbose
     
     Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
 
