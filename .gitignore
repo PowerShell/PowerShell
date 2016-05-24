@@ -18,3 +18,6 @@ dotnet-install.ps1
 
 # ignore the version file as it is generated at build time
 powershell.version
+
+# default location for produced nuget packages
+/nuget-artifacts
