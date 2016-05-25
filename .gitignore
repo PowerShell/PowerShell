@@ -17,6 +17,13 @@ dotnet-install.ps1
 *.exe
 *.msi
 
+# Ignore packages
+*.deb
+*.msi
+*.zip
+*.rpm
+*.pkg
+
 # ignore the version file as it is generated at build time
 powershell.version
 
