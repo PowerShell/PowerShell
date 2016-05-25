@@ -207,9 +207,7 @@ namespace Microsoft.PowerShell
             System.Threading.Thread.CurrentThread.Name = "ConsoleHost main thread";
 
             theConsoleHost = ConsoleHost.CreateSingletonInstance(configuration);
-#if !PORTABLE
             theConsoleHost.BindBreakHandler();
-#endif
 
             PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
 
@@ -287,7 +285,6 @@ namespace Microsoft.PowerShell
 
 
 
-#if !PORTABLE
         /// <summary>
         /// 
         /// The break handler for the program.  Dispatches a break event to the current Executor.
@@ -295,6 +292,23 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="signal"></param>
         /// <returns></returns>
+#if PORTABLE
+        private static void MyBreakHandler(object sender, ConsoleCancelEventArgs args)
+        {
+            // Set the Cancel property to true to prevent the process from terminating.
+            args.Cancel = true;
+            switch (args.SpecialKey)
+            {
+                case ConsoleSpecialKey.ControlC:
+                    SpinUpBreakHandlerThread(false);
+                    return;
+                case ConsoleSpecialKey.ControlBreak:
+                    // Break into script debugger.
+                    BreakIntoDebugger();
+                    return;
+            }
+        }
+#else
         private static bool MyBreakHandler(ConsoleControl.ConsoleBreakSignal signal)
         {
             switch (signal)
@@ -1042,13 +1056,15 @@ namespace Microsoft.PowerShell
 #endif
         }
 
-#if !PORTABLE
         private void BindBreakHandler()
         {
+#if PORTABLE
+            Console.CancelKeyPress += new ConsoleCancelEventHandler(MyBreakHandler);
+#else
             breakHandlerGcHandle = GCHandle.Alloc(new ConsoleControl.BreakHandler(MyBreakHandler));
             ConsoleControl.AddBreakHandler((ConsoleControl.BreakHandler)breakHandlerGcHandle.Target);
-        }
 #endif
+        }
 
 #if !CORECLR // Not used on NanoServer: CurrentDomain.UnhandledException not supported on CoreCLR
         private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
