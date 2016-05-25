@@ -4,7 +4,7 @@
         @{ Name = 'Separator';Command = "Write-Host a,b,c -Separator '+'"; returnValue = "a+b+c" }
     )
    
-    It "write-Host works with '<Name>' switch" -TestCases $testData { 
+    It "write-Host works with '<Name>' switch" -TestCases $testData -Pending:$IsOSX { 
         param($Command, $returnValue) 
 
         $tempFile = [io.path]::getTempFIleName() 
@@ -12,11 +12,12 @@
         
         $Command > $script
 
-        if($IsLinux)
+        If($IsLinux)
         {
             powershell $script > $tempFile
         }
-        else
+        
+        If ($IsWindows)
         {
             powershell.exe $script > $tempFile
         }
