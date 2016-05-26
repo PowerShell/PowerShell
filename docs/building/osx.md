@@ -39,6 +39,35 @@ We cannot do this for you in in the build module due to #[847][].
 [809]: https://github.com/dotnet/cli/issues/809
 [847]: https://github.com/PowerShell/PowerShell/issues/847
 
+error: dotnet restore
+-------------------------
+
+If you run `dotnet restore` and get error like
+
+```
+PS /Users/vors/dev/PowerShell> dotnet restore                                                                                         
+log  : Restoring packages for /Users/vors/dev/PowerShell/src/TypeCatalogGen/project.json...
+log  : Restoring packages for /Users/vors/dev/PowerShell/src/TypeCatalogParser/project.json...
+log  : Restoring packages for /Users/vors/dev/PowerShell/test/PSReadLine/project.json...
+log  : Restoring packages for /Users/vors/dev/PowerShell/test/csharp/project.json...
+error: Unable to load the service index for source http://www.myget.org/F/dotnet-core/api/v3/index.json.
+error:   The type initializer for 'Crypto' threw an exception.
+error:   The type initializer for 'CryptoInitializer' threw an exception.
+error:   Unable to load DLL 'System.Security.Cryptography.Native': The specified module could not be found.
+error:    (Exception from HRESULT: 0x8007007E)
+
+```
+
+Try the following
+
+* Make sure you have latest opensll and re-link it
+
+```
+brew update
+brew install openssl
+brew link --force openssl
+```
+
 Build using our module
 ======================
 
