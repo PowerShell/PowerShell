@@ -8,7 +8,7 @@
             "justMyCode": false,
             "stopAtEntry": true,
             "program": "${workspaceRoot}/debug/powershell",
-            "args": [ "-NonInteractive" ],
+            "args": ["-NonInteractive"],
             "preLaunchTask": "build",
             "cwd": "${workspaceRoot}"
         },

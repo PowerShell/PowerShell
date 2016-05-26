@@ -4,11 +4,11 @@
     "isShellCommand": true,
     "showOutput": "always",
     "args": [ "-c" ],
-
+    "suppressTaskName": true,
     "tasks": [
         {
             "taskName": "build",
-            "args": [ "Import-Module ${workspaceRoot}/PowerShellGitHubDev.psm1; Start-PSBuild -Output debug" ],
+            "args": [ "Import-Module ${workspaceRoot}/Build.psm1; Start-PSBuild -Output debug" ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"
         }
