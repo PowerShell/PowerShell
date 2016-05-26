@@ -260,7 +260,6 @@ namespace Microsoft.PowerShell
                             : "StartupProfileData-NonInteractive");
                     exitCode = theConsoleHost.Run(cpp, !string.IsNullOrEmpty(preStartWarning));
                 }
-
             }
             finally
             {
@@ -1499,7 +1498,7 @@ namespace Microsoft.PowerShell
             // Note that PSReadline doesn't support redirected stdin/stdout, but we don't check that here because
             // a future version might, and we should automatically load it at that unknown point in the future.
             // PSReadline will ideally fall back to Console.ReadLine or whatever when stdin/stdout is redirected.
-            return ((cpp.InitialCommand == null && cpp.File == null) || cpp.NoExit) && !cpp.NonInteractive;
+            return ((cpp.InitialCommand == null && cpp.File == null) || cpp.NoExit) && !cpp.NonInteractive;            
         }
 
         /// <summary>

@@ -96,8 +96,46 @@ namespace System.Management.Automation
                 "WSMan.format.ps1xml"
             };
 
-        // directory location of PowerShell for profile loading
-        public static string ProductNameForDirectory = @".config/powershell";
+        // function for choosing directory location of PowerShell for profile loading 
+        public static string SelectProductNameForDirectory (string dir){
+            
+            var envs = System.Environment.GetEnvironmentVariables();
+            foreach (var item in envs )
+            {
+                Console.WriteLine(item.ToString());
+            }
+            string xdgconfighome = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
+            string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME"); 
+            string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
+            
+            //the user has set XDG_CONFIG_HOME corrresponding to profile path
+            if (!String.IsNullOrEmpty(xdgconfighome) && dir == "profile")
+            {
+                Console.WriteLine(xdgconfighome);
+                return xdgconfighome;         
+            } 
+            
+            //the user has set XDG_DATA_HOME corresponding to module path 
+            if (!String.IsNullOrEmpty(xdgdatahome))
+            {
+                Console.WriteLine(xdgdatahome);
+                return xdgdatahome; 
+            }
+            
+            //the user has set XDG_CACHE_HOME
+            if (!String.IsNullOrEmpty(xdgcachehome))
+            {
+                Console.WriteLine(xdgcachehome);
+                return xdgcachehome; 
+            }
+            
+            //the user has set XDG_DATA_HOME
+            else //xdg values have not been set 
+            {
+                Console.WriteLine("in else");
+                return @".config/powershell"; //default on Linux 
+            }
+        }
 
         // ComObjectType is null on CoreCLR for Linux since there is
         // no COM support on Linux
