@@ -183,18 +183,20 @@ namespace Microsoft.PowerShell
                
                 if (String.IsNullOrEmpty(modulepath))
                 {
-                    modulepath = ".config/powershell";
+                        modulepath = System.IO.Path.Combine(
+                                                             Environment.GetEnvironmentVariable("HOME"), 
+                                                             ".config/powershell/modules");
                 }
-                       
-                    HistorySavePath = System.IO.Path.Combine(
-                                                            Environment.GetEnvironmentVariable("HOME"), 
-                                                            modulepath,
-                                                            "PSReadLine",
-                                                            hostName + "_history.txt");
-                         
-            }
-#else
-            HistorySavePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                        
+                HistorySavePath = System.IO.Path.Combine(
+                                                         Environment.GetEnvironmentVariable("HOME"), 
+                                                         modulepath,
+                                                         "PSReadLine",
+                                                         hostName + "_history.txt");
+                            
+                }
+    #else
+                HistorySavePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
                 + @"\Microsoft\Windows\PowerShell\PSReadline\" + hostName + "_history.txt";
 #endif
             CommandValidationHandler = null;

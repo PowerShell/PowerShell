@@ -592,6 +592,7 @@ namespace System.Management.Automation
                     psHome = psHome.ToLowerInvariant().Replace("\\syswow64\\", "\\system32\\");
                 }
                 Interlocked.CompareExchange(ref SystemWideModulePath, Path.Combine(psHome, Utils.ModuleDirectory), null);
+                   
             }
 
             return SystemWideModulePath;
