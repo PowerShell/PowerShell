@@ -28,9 +28,9 @@ Building Packages
 Linux / OS X
 ------------
 
-The `PowerShellGitHubDev` module contains a `Start-PSPackage` function to build
-Linux packages. It requires that `Start-PSBuild -Publish` has been run. The
-output *must* be published so that it includes the runtime. This function will
+The `build.psm1` module contains a `Start-PSPackage` function to build Linux
+packages. It requires that `Start-PSBuild -Publish` has been run. The output
+*must* be published so that it includes the runtime. This function will
 automatically deduce the correct version from the most recent annotated tag
 (using `git describe`), and if not specified, will build a package for the
 current platform.
@@ -53,7 +53,14 @@ file layout).
 Windows
 -------
 
-We do not yet create Windows installers. However, Open PowerShell is
-self-contained. Thus a ZIP archive of the resulting `Start-PSBuild -Publish`
-output will contain all the necessary dependencies and the `powershell.exe`
-executable.
+The `Start-PSBuild` function delegates to `Create-MSIPackage` which creates a
+Windows Installer Package of Open PowerShell. It uses the Windows Installer XML
+Toolset (WiX) to generate a `OpenPowerShell_<version>.msi`, which installs a
+self-contained copy of the current version (commit) of Open PowerShell. It
+copies the output of the published PowerShell application to a version-specific
+folder in Program Files, and installs a shortcut in the start-menu. It can be
+uninstalled through Programs and Features.
+
+Note that Open PowerShell is always self-contained, thus using it does not
+require installing it. The output of `Start-PSBuild -Publish` includes a
+`powershell.exe` executable which can simply be launched.
