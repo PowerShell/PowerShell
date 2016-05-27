@@ -209,48 +209,36 @@ Describe "Get-Member DRT Unit Tests" -Tags DRT {
             $obj = New-Object -TypeName System.Int32
             $results = $obj | Get-Member -Static
             $members = "MaxValue", "MinValue", "Parse", "TryParse"
-            foreach ($member in $members)
+            foreach($member in $members)
             {
-                foreach ($result in $results)
-                {
-                    if($result.Name.Equals($member))
-                    {
-                        return $true
-                    }
+                if(!($results.Name -contains $member))
+                { 
+                    Throw "Didn't find: $member"
                 }
-                return $false
             }
         }
 
         It "Get the static properties and methods of int instance" {
             $results = 1 | Get-Member -Static
             $members = "MaxValue", "MinValue", "Parse", "TryParse"
-            foreach ($member in $members)
+            foreach($member in $members)
             {
-                foreach ($result in $results)
-                {
-                    if($result.Name.Equals($member))
-                    {
-                        return $true
-                    }
+                if(!($results.Name -contains $member))
+                { 
+                    Throw "Didn't find: $member"
                 }
-                return $false
             }
         }
 
         It "Get the static properties and methods of int instance Wrapped" {
             $results = [pscustomobject]1 | Get-Member -Static
             $members = "MaxValue", "MinValue", "Parse", "TryParse"
-            foreach ($member in $members)
+            foreach($member in $members)
             {
-                foreach ($result in $results)
-                {
-                    if($result.Name.Equals($member))
-                    {
-                        return $true
-                    }
+                if(!($results.Name -contains $member))
+                { 
+                    Throw "Didn't find: $member"
                 }
-                return $false
             }
         }
     }
@@ -264,33 +252,25 @@ Describe "Get-Member DRT Unit Tests" -Tags DRT {
         It 'Get hidden members'{
             $results = 'abc' | Get-Member -force
             $hiddenMembers = "psbase", "psextended", "psadapted", "pstypenames", "psobject"
-            foreach ($member in $hiddenMembers)
+            foreach($member in $hiddenMembers)
             {
-                foreach ($result in $results)
-                {
-                    if($result.Name.Equals($member))
-                    {
-                        return $true
-                    }
+                if(!($results.Name -contains $member))
+                { 
+                    Throw "Didn't find: $member"
                 }
-                return $false
             }
         }
 
         It 'Get Set Property Accessors On PsBase'{
             $results = ('abc').psbase | Get-Member -force get_*
             $expectedMembers = "get_Chars", "get_Length"
-            foreach ($member in $expectedMembers)
+            foreach($member in $expectedMembers)
             {
-                foreach ($result in $results)
-                {
-                    if($result.Name.Equals($member))
-                    {
-                        return $true
-                    }
+                if(!($results.Name -contains $member))
+                { 
+                    Throw "Didn't find: $member"
                 }
-                return $false
-            }
+            } 
         }
     }
 }
