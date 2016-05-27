@@ -16,3 +16,24 @@ Describe "NativeLinuxCommands" {
         (get-command touch).CommandType | Should Be Application
     }
 }
+
+Describe "Scripts with extensions" {
+    BeforeAll {
+        $data = "Hello World"
+        Setup -File testScript.ps1 -Content "'$data'"
+        $originalPath = $env:PATH
+        $env:PATH += [IO.Path]::PathSeparator + $TestDrive
+    }
+
+    AfterAll {
+        $env:PATH = $originalPath
+    }
+
+    It "Should run a script with its full name" {
+        testScript.ps1 | Should Be $data
+    }
+
+    It "Should run a script with its short name" {
+        testScript | Should Be $data
+    }
+}
