@@ -98,42 +98,53 @@ namespace System.Management.Automation
 
         // function for choosing directory location of PowerShell for profile loading 
         public static string SelectProductNameForDirectory (string dir){
-            
-            var envs = System.Environment.GetEnvironmentVariables();
-            foreach (var item in envs )
-            {
-                Console.WriteLine(item.ToString());
-            }
+
             string xdgconfighome = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME"); 
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
             
+            
             //the user has set XDG_CONFIG_HOME corrresponding to profile path
             if (!String.IsNullOrEmpty(xdgconfighome) && dir == "profile")
             {
-                Console.WriteLine(xdgconfighome);
                 return xdgconfighome;         
             } 
             
             //the user has set XDG_DATA_HOME corresponding to module path 
-            if (!String.IsNullOrEmpty(xdgdatahome))
+            if (!String.IsNullOrEmpty(xdgdatahome) && dir == "modules")
             {
-                Console.WriteLine(xdgdatahome);
                 return xdgdatahome; 
             }
             
             //the user has set XDG_CACHE_HOME
-            if (!String.IsNullOrEmpty(xdgcachehome))
+            if (!String.IsNullOrEmpty(xdgcachehome) && dir == "history")
             {
-                Console.WriteLine(xdgcachehome);
                 return xdgcachehome; 
             }
             
+            if (dir == "default")
+            {
+                return @".config/powershell"; 
+            }
             //the user has set XDG_DATA_HOME
             else //xdg values have not been set 
             {
-                Console.WriteLine("in else");
-                return @".config/powershell"; //default on Linux 
+                if (dir == "profile" || dir == "history")
+                {
+                    return @".config/powershell"; //default on Linux
+                } 
+                if (dir == "modules")
+                {
+                    if (!Directory.Exists(@".config/powershell/modules"))
+                    {                        
+                        Directory.CreateDirectory(@".config/powershell/modules");
+                           
+                    }
+                    
+                    return @".config/powershell/modules"; //default on Linux
+                }
+                
+                return @".config/powershell";
             }
         }
 

@@ -612,7 +612,7 @@ namespace System.Management.Automation
         /// The name of the subdirectory that contains packages.
         /// </summary>
         internal static string ModuleDirectory = "Modules";
-
+        
         /// <summary>
         /// The partial path to the DSC module directory
         /// </summary>

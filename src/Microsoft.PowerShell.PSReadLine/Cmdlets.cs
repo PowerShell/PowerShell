@@ -178,12 +178,20 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                HistorySavePath = System.IO.Path.Combine(
-                                                         Environment.GetEnvironmentVariable("HOME"), 
-                                                         ".config",
-                                                         "powershell",
-                                                         "PSReadLine",
-                                                         hostName + "_history.txt");
+                //PSReadline does not have access to Utils.CorePSPlatform. Must set PSReadline path seperately                
+                string modulepath = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
+               
+                if (String.IsNullOrEmpty(modulepath))
+                {
+                    modulepath = ".config/powershell";
+                }
+                       
+                    HistorySavePath = System.IO.Path.Combine(
+                                                            Environment.GetEnvironmentVariable("HOME"), 
+                                                            modulepath,
+                                                            "PSReadLine",
+                                                            hostName + "_history.txt");
+                         
             }
 #else
             HistorySavePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
@@ -206,7 +214,7 @@ namespace Microsoft.PowerShell
                 "Where-Object", "?", "where",
             };
         }
-
+        
         public EditMode EditMode { get; set; }
 
         public string ContinuationPrompt { get; set; }

@@ -168,24 +168,30 @@ namespace Microsoft.PowerShell
             string preStartWarning,
             string[] args)
         {
+            string profileDir;
+            
             try
             {
-                string profileDir;
                 if (Platform.IsWindows)
                 {
                     profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +
                         @"\Microsoft\Windows\PowerShell";
-                } else
+                } 
+                
+                else
                 {
-                    profileDir = System.IO.Path.Combine(Environment.GetEnvironmentVariable("HOME"), ".config", "powershell");
+                    profileDir = Platform.SelectProductNameForDirectory("profile");                  
                 }
-
-                if (!Directory.Exists(profileDir))
+   
+                if (!Directory.Exists(profileDir)) //xdg value may have been set but not a valid directory 
                 {
-                    Directory.CreateDirectory(profileDir);
+                    Console.WriteLine("The selected directory for the profile does not exist. Using default.");
+                    profileDir = Platform.SelectProductNameForDirectory("default");
                 }
+                
                 ClrFacade.SetProfileOptimizationRoot(profileDir);
             }
+
             catch
             {
                 // It's safe to ignore errors, the guarded code is just there to try and
