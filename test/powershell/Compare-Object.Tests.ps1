@@ -129,3 +129,296 @@ Describe "Compare-Object" {
     Remove-Item $testDirectory -Recurse -Force
     Test-Path $testDirectory | Should Be $false
 }
+
+Describe "Compare-Object DRT basic functionality" -Tags DRT{
+	Add-Type -TypeDefinition @"
+    public class Employee
+    {
+        public Employee(){}
+        public Employee(string firstName, string lastName, int yearsInMS)
+        {
+            FirstName = firstName;
+            LastName  = lastName;
+            YearsInMS = yearsInMS;
+        }
+        public string FirstName;
+        public string LastName;
+        public int YearsInMS;
+    }
+    public class EmployeeComparable : Employee, System.IComparable
+    {
+        public EmployeeComparable(
+            string firstName, string lastName, int yearsInMS)
+            : base(firstName, lastName, yearsInMS)
+        {}
+
+        public int CompareTo(object obj)
+        {
+            EmployeeComparable ec = obj as EmployeeComparable;
+            if (null == ec)
+                return -1;
+            if (FirstName != ec.FirstName)
+                return -1;
+            if (LastName != ec.LastName)
+                return -1;
+            if (YearsInMS != ec.YearsInMS)
+                return -1;
+            return 0;
+        }
+    }
+
+    public class EmployeeDefinesSideIndicator : EmployeeComparable
+    {
+        public EmployeeDefinesSideIndicator(
+            string firstName, string lastName, int yearsInMS)
+            : base(firstName, lastName, yearsInMS)
+        {}
+
+        public string SideIndicator
+        {
+            get { throw new System.ArgumentException("get_SideIndicator"); }
+            set { throw new System.ArgumentException("get_SideIndicator"); }
+        }
+    }
+"@
+	It "Compare-Object with 1 referenceObject and 1 differenceObject should work"{
+		$empsReference = @([EmployeeComparable]::New("john","smith",5))
+		$empsDifference = @([EmployeeComparable]::New("mary","jane",5))
+		$boolvalues=@($true,$false)
+		foreach($recordEqual in $boolvalues)
+		{
+			foreach($excludeDifferent in $boolvalues)
+			{
+				foreach($passthru in $boolvalues)
+				{
+					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -Passthru:$passthru -DifferenceObject $empsDifference
+					
+					if(!$excludeDifferent)
+					{
+						$result.Count | Should Be 2
+						if($passthru)
+						{
+							$result[0] | Should Be $empsDifference
+							$result[1] | Should Be $empsReference
+						}
+						else
+						{
+							$result[0].InputObject | Should Be $empsDifference
+							$result[1].InputObject | Should Be $empsReference
+							$result[0].SideIndicator | Should Be "=>"
+							$result[1].SideIndicator | Should Be "<="
+						}
+					}
+					else
+					{
+						$result.Count | Should Be 0
+					}
+				}
+			}
+		}
+	}
+	
+	It "Compare-Object with 2 referenceObjects and 1 differenceObject should work"{
+		$empsReference = @([EmployeeComparable]::New("john","smith",5),[EmployeeComparable]::New("mary","jane",3))
+		$empsDifference = @([EmployeeComparable]::New("john","smith",5))
+		$boolvalues=@($true,$false)
+		foreach($recordEqual in $boolvalues)
+		{
+			foreach($excludeDifferent in $boolvalues)
+			{
+				foreach($passthru in $boolvalues)
+				{
+					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -Passthru:$passthru -DifferenceObject $empsDifference
+					if($recordEqual)
+					{
+						if(!$excludeDifferent)
+						{
+							$result.Count | Should Be 2
+							if($passthru)
+							{
+								$result[0] | Should Be $empsReference[0]
+								$result[1] | Should Be $empsReference[1]
+							}
+							else
+							{
+								$result[0].InputObject | Should Be $empsReference[0]
+								$result[1].InputObject | Should Be $empsReference[1]
+								$result[0].SideIndicator | Should Be "=="
+								$result[1].SideIndicator | Should Be "<="
+							}
+						}
+						else
+						{
+							if($passthru)
+							{
+								$result | Should Be $empsReference[0]
+							}
+							else
+							{
+								$result.InputObject | Should Be $empsReference[0]
+								$result.SideIndicator | Should Be "=="
+							}
+						}
+					}
+					else
+					{
+						if(!$excludeDifferent)
+						{
+							if($passthru)
+							{
+								$result | Should Be $empsReference[1]
+							}
+							else
+							{
+								$result.InputObject | Should Be $empsReference[1]
+								$result.SideIndicator | Should Be "<="
+							}
+						}
+						else
+						{
+							$result.Count | Should Be 0
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	It "Compare-Object with 0 SyncWindow should work"{
+		$empsReference = @([EmployeeComparable]::New("john","smith",5))
+		$empsDifference = @([EmployeeComparable]::New("john","smith",5),[EmployeeComparable]::New("mary","jane",3))
+		$boolvalues=@($true,$false)
+		foreach($recordEqual in $boolvalues)
+		{
+			foreach($excludeDifferent in $boolvalues)
+			{
+				foreach($passthru in $boolvalues)
+				{
+					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -Passthru:$passthru -DifferenceObject $empsDifference -SyncWindow:0
+					if($recordEqual)
+					{
+						if(!$excludeDifferent)
+						{
+							$result.Count | Should Be 2
+							if($passthru)
+							{
+								$result[0] | Should Be $empsReference
+								$result[1] | Should Be $empsDifference[1]
+							}
+							else
+							{
+								$result[0].InputObject | Should Be $empsReference
+								$result[1].InputObject | Should Be $empsDifference[1]
+								$result[0].SideIndicator | Should Be "=="
+								$result[1].SideIndicator | Should Be "=>"
+							}
+						}
+						else
+						{
+							if($passthru)
+							{
+								$result | Should Be $empsReference
+							}
+							else
+							{
+								$result.InputObject | Should Be $empsReference
+								$result.SideIndicator | Should Be "=="
+							}
+						}
+					}
+					else
+					{
+						if(!$excludeDifferent)
+						{
+							if($passthru)
+							{
+								$result | Should Be $empsDifference[1]
+							}
+							else
+							{
+								$result.InputObject | Should Be $empsDifference[1]
+								$result.SideIndicator | Should Be "=>"
+							}
+						}
+						else
+						{
+							$result.Count | Should Be 0
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	It "Compare-Object with SyncWindow should work"{
+		$empsReference = @([EmployeeComparable]::New("mary","jane",3),[EmployeeComparable]::New("john","smith",5),[EmployeeComparable]::New("jack", "black", 15),[EmployeeComparable]::New("jim", "bob", 1))
+		$empsDifference = @([EmployeeComparable]::New("jack", "black", 15),[EmployeeComparable]::New("jim", "bob", 1),[EmployeeComparable]::New("mary","jane",3),[EmployeeComparable]::New("john","smith",5))
+		$boolvalues=@($true,$false)
+		foreach($recordEqual in $boolvalues)
+		{
+			foreach($excludeDifferent in $boolvalues)
+			{
+				foreach($passthru in $boolvalues)
+				{
+					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -Passthru:$passthru -DifferenceObject $empsDifference -SyncWindow:2
+					
+					if($recordEqual)
+					{
+						$result.Count | Should Be 4
+						if($passthru)
+						{
+							$result[0] | Should Be $empsReference[0]
+							$result[1] | Should Be $empsReference[2]
+							$result[2] | Should Be $empsReference[1]
+							$result[3] | Should Be $empsReference[3]
+						}
+						else
+						{
+							$result[0].InputObject | Should Be $empsReference[0]
+							$result[0].SideIndicator | Should Be "=="
+							$result[1].InputObject | Should Be $empsReference[2]
+							$result[1].SideIndicator | Should Be "=="
+							$result[2].InputObject | Should Be $empsReference[1]
+							$result[2].SideIndicator | Should Be "=="
+							$result[3].InputObject | Should Be $empsReference[3]
+							$result[3].SideIndicator | Should Be "=="
+						}
+					}
+					else
+					{
+						$result.Count | Should Be 0
+					}
+				}
+			}
+		}
+	}
+	
+	It "Compare-Object with Script Block Property Parameter should work"{
+		$a = [version]"1.2.3.4"
+		$b = [version]"5.6.7.8"
+		$result = Compare-Object $a $b -IncludeEqual -Property {$_.Major},{$_.Minor}
+		$result[0]|Select -ExpandProperty "*Major" | Should Be 5
+		$result[0]|Select -ExpandProperty "*Minor" | Should Be 6
+		$result[0].SideIndicator | Should Be "=>"
+		$result[1]|Select -ExpandProperty "*Major" | Should Be 1
+		$result[1]|Select -ExpandProperty "*Minor" | Should Be 2
+		$result[1].SideIndicator | Should Be "<="
+	}
+	
+	It "Compare-Object with no ReferenceObject nor DifferenceObject: output nothing, no error and should work"{
+		$result = Compare-Object @() @()
+		$result | Should BeNullOrEmpty
+	}
+	
+	It "Compare-Object with no DifferenceObject should work"{
+		$result = Compare-Object @() @("diffObject")
+		$result.InputObject | Should Be "diffObject"
+		$result.SideIndicator | Should Be "=>"
+	}
+	
+	It "Compare-Object with no ReferenceObject should work"{
+		$result = Compare-Object @("refObject") @()
+		$result.InputObject | Should Be "refObject"
+		$result.SideIndicator | Should Be "<="
+	}
+}
