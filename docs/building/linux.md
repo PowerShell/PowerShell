@@ -114,7 +114,7 @@ Start-PSBuild
 
 Congratulations! If everything went right, PowerShell is now built.
 The `Start-PSBuild` script will output the location of the executable:
-`./src/Microsoft.PowerShell.CoreConsoleHost/bin/Linux/netcoreapp1.0/ubuntu.14.04-x64/powershell`.
+`./src/powershell/bin/Linux/netcoreapp1.0/ubuntu.14.04-x64/powershell`.
 
 You can run our cross-platform Pester tests with `Start-PSPester`, and
 our xUnit tests with `Start-PSxUnit`.
@@ -138,23 +138,20 @@ make test
 popd
 ```
 
-This library will be emitted in the `src/Microsoft.PowerShell.CoreConsoleHost`
-project, where `dotnet` consumes it as "content" and thus
-automatically deploys it.
+This library will be emitted in the `src/powershell` project, where `dotnet`
+consumes it as "content" and thus automatically deploys it.
 
 Build the managed projects
 --------------------------
 
-The `Microsoft.PowerShell.CoreConsoleHost` project is the cross-platform host for
-PowerShell targetting .NET Core. It is the top level project, so
-`dotnet build` transitively builds all its dependencies, and emits a
-`powershell` executable. The `--configuration Linux` flag is
-necessary to ensure that the preprocessor definition `LINUX` is
-defined (see [issue #673][]).
+The `powershell` project is the .NET Core PowerShell host. It is the top level
+project, so `dotnet build` transitively builds all its dependencies, and emits a
+`powershell` executable. The `--configuration Linux` flag is necessary to ensure
+that the preprocessor definition `LINUX` is defined (see [issue #673][]).
 
 ```sh
 dotnet restore
-cd src/Microsoft.PowerShell.CoreConsoleHost
+cd src/powershell
 dotnet build --configuration Linux
 ```
 
