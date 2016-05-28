@@ -7,7 +7,7 @@ using Microsoft.DotNet.ProjectModel;
 using Microsoft.DotNet.ProjectModel.Graph;
 using Microsoft.Extensions.DependencyModel.Resolution;
 
-namespace ConsoleApplication
+namespace TypeCatalogParser
 {
     public class Program
     {
@@ -17,7 +17,7 @@ namespace ConsoleApplication
             var outputPath = "../TypeCatalogGen/powershell.inc";
 
             // Get a context for our top level project
-            var context = ProjectContext.Create("../Microsoft.PowerShell.CoreConsoleHost", NuGetFramework.Parse("netcoreapp1.0"));
+            var context = ProjectContext.Create("../powershell", NuGetFramework.Parse("netcoreapp1.0"));
 
             System.IO.File.WriteAllLines(outputPath,
                                          // Get the target for the current runtime

@@ -64,7 +64,7 @@ namespace System.Management.Automation
 
         //Name of default mshsnapins
         internal const string CoreMshSnapinName = "Microsoft.PowerShell.Core";
-        internal const string HostMshSnapinName = "Microsoft.PowerShell.CoreConsoleHost";
+        internal const string HostMshSnapinName = "Microsoft.PowerShell.Host";
         internal const string ManagementMshSnapinName = "Microsoft.PowerShell.Management";
         internal const string SecurityMshSnapinName = "Microsoft.PowerShell.Security";
         internal const string UtilityMshSnapinName = "Microsoft.PowerShell.Utility";
