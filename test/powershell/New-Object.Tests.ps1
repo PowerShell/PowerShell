@@ -144,4 +144,9 @@ Describe "New-Object DRT basic functionality" -Tags DRT{
 			$_.FullyQualifiedErrorId | Should be "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
 		}
 	}
+	
+	It "New-Object with TypeName and Property parameter should work"{
+		$result = New-Object -TypeName PSObject -property @{foo=123}
+		$result.foo | Should Be 123
+	}
 }
