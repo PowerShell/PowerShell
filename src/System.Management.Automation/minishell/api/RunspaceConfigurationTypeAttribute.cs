@@ -23,7 +23,12 @@ namespace System.Management.Automation.Runspaces
     /// the type name for MiniShellConguration derived class.
     /// -->
     [AttributeUsage(AttributeTargets.Assembly)]
-    public sealed class RunspaceConfigurationTypeAttribute: Attribute
+#if CORECLR
+    internal
+#else
+    public
+#endif
+    sealed class RunspaceConfigurationTypeAttribute: Attribute
     {
         /// <summary>
         /// Initiate an instance of RunspaceConfigurationTypeAttribute.

@@ -633,7 +633,7 @@ namespace System.Management.Automation
                         await Task.Delay(3000);
                         counter2 = _saveCacheToDiskQueued;
                     } while (counter1 != counter2);
-                    Serialize(GetCacheStoreLocation());
+                    Serialize(cacheStoreLocation);
                 });
             }
         }
@@ -642,6 +642,9 @@ namespace System.Management.Automation
         // If anything is removed, save the cache.
         private void Cleanup()
         {
+            Diagnostics.Assert(Environment.GetEnvironmentVariable("PSDisableModuleAnalysisCacheCleanup") == null,
+                "Caller to check environment variable before calling");
+
             bool removedSomething = false;
             var keys = Entries.Keys;
             foreach (var key in keys)
@@ -753,50 +756,57 @@ namespace System.Management.Automation
             //   int     ( 4 bytes) -> type name length
             //   string  (?? bytes) -> utf8 encoded type name
             //   int     ( 4 bytes) -> type attributes
-
-            var bytes = new byte[8];
-            using (var stream = File.Create(filename))
+            try
             {
-                var headerBytes = GetHeader();
-                stream.Write(headerBytes, 0, headerBytes.Length);
+                var bytes = new byte[8];
 
-                // Count of entries
-                Write(Entries.Count, bytes, stream);
-
-                foreach (var pair in Entries.ToArray())
+                using (var stream = File.Create(filename))
                 {
-                    var path = pair.Key;
-                    var entry = pair.Value;
+                    var headerBytes = GetHeader();
+                    stream.Write(headerBytes, 0, headerBytes.Length);
 
-                    // Module last write time
-                    Write(entry.LastWriteTime.Ticks, bytes, stream);
+                    // Count of entries
+                    Write(Entries.Count, bytes, stream);
 
-                    // Module path
-                    Write(path, bytes, stream);
-
-                    // Commands
-                    var commandPairs = entry.Commands.ToArray();
-                    Write(commandPairs.Length, bytes, stream);
-
-                    foreach (var command in commandPairs)
+                    foreach (var pair in Entries.ToArray())
                     {
-                        Write(command.Key, bytes, stream);
-                        Write((int)command.Value, bytes, stream);
-                    }
+                        var path = pair.Key;
+                        var entry = pair.Value;
 
-                    // Types
-                    var typePairs = entry.Types.ToArray();
-                    Write(entry.TypesAnalyzed ? typePairs.Length : -1, bytes, stream);
+                        // Module last write time
+                        Write(entry.LastWriteTime.Ticks, bytes, stream);
 
-                    foreach (var type in typePairs)
-                    {
-                        Write(type.Key, bytes, stream);
-                        Write((int)type.Value, bytes, stream);
+                        // Module path
+                        Write(path, bytes, stream);
+
+                        // Commands
+                        var commandPairs = entry.Commands.ToArray();
+                        Write(commandPairs.Length, bytes, stream);
+
+                        foreach (var command in commandPairs)
+                        {
+                            Write(command.Key, bytes, stream);
+                            Write((int) command.Value, bytes, stream);
+                        }
+
+                        // Types
+                        var typePairs = entry.Types.ToArray();
+                        Write(entry.TypesAnalyzed ? typePairs.Length : -1, bytes, stream);
+
+                        foreach (var type in typePairs)
+                        {
+                            Write(type.Key, bytes, stream);
+                            Write((int) type.Value, bytes, stream);
+                        }
                     }
                 }
+                // We just wrote the file, note this so we can detect writes from another process
+                LastReadTime = new FileInfo(filename).LastWriteTime;
             }
-            // We just wrote the file, note this so we can detect writes from another process
-            LastReadTime = new FileInfo(filename).LastWriteTime;
+            catch (Exception e)
+            {
+                ModuleIntrinsics.Tracer.WriteLine("Exception writing module analysis cache {0}: {1} ", filename, e.Message);
+            }
 
             // Reset our counter so we can write again if asked.
             Interlocked.Exchange(ref _saveCacheToDiskQueued, 0);
@@ -949,24 +959,16 @@ namespace System.Management.Automation
                     entries -= 1;
                 }
 
-                Task.Delay(10000).ContinueWith(_ => result.Cleanup());
+                if (Environment.GetEnvironmentVariable("PSDisableModuleAnalysisCacheCleanup") == null)
+                {
+                    Task.Delay(10000).ContinueWith(_ => result.Cleanup());
+                }
                 return result;
             }
         }
 
-        internal static string GetCacheStoreLocation()
-        {
-            string cacheStoreLocation = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                @"Microsoft\Windows\PowerShell\ModuleAnalysisCache");
-
-            return cacheStoreLocation;
-        }
-
         internal static AnalysisCacheData Get()
         {
-            var cacheStoreLocation = GetCacheStoreLocation();
-
             int retryCount = 3;
 
             do
@@ -1005,6 +1007,16 @@ namespace System.Management.Automation
 
         private AnalysisCacheData()
         {
+        }
+
+        private static readonly string cacheStoreLocation;
+
+        static AnalysisCacheData()
+        {
+            cacheStoreLocation = 
+                Environment.GetEnvironmentVariable("PSModuleAnalysisCachePath") ??
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                             @"Microsoft\Windows\PowerShell\ModuleAnalysisCache");
         }
     }
 

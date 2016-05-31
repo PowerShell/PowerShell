@@ -426,12 +426,23 @@ namespace System.Management.Automation.Runspaces.Internal
                          stateInfo.State == PSInvocationState.Failed ||
                          stateInfo.State == PSInvocationState.Completed)
                 {
+                    // Special case for failure error due to ErrorCode==-2144108453 (no ShellId found).
+                    // In this case terminate session since there is no longer a shell to communicate
+                    // with.
+                    bool terminateSession = false;
+                    if (stateInfo.State == PSInvocationState.Failed)
+                    {
+                        PSRemotingTransportException remotingTransportException = stateInfo.Reason as PSRemotingTransportException;
+                        terminateSession = (remotingTransportException != null) && 
+                                           (remotingTransportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_TARGETSESSION_DOESNOTEXIST);
+                    }
+
                     // if state is completed or failed or stopped, 
                     // then the collections need to be closed as 
                     // well, else the enumerator will block
                     UnblockCollections();
                         
-                    if (stopCalled)
+                    if (stopCalled || terminateSession)
                     {
                         // Reset stop called flag.
                         stopCalled = false;
@@ -468,7 +479,8 @@ namespace System.Management.Automation.Runspaces.Internal
             PSRemotingTransportException transportException = ex as PSRemotingTransportException;
             if (transportException != null &&
                 (transportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_SENDDATA_CANNOT_CONNECT ||
-                 transportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_SENDDATA_CANNOT_COMPLETE))
+                 transportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_SENDDATA_CANNOT_COMPLETE ||
+                 transportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_TARGETSESSION_DOESNOTEXIST))
             {
                 object rsObject = shell.GetRunspaceConnection();
                 if (rsObject is Runspace)

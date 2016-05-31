@@ -164,7 +164,6 @@ namespace System.Management.Automation
             }
         }
 
-        [ArchitectureSensitive]
         internal static string GetStringFromSecureString(SecureString ss)
         {
             IntPtr p = IntPtr.Zero;
@@ -253,7 +252,7 @@ namespace System.Management.Automation
 #if CORECLR // Use the location of SMA.dll as the application base
             // Assembly.GetEntryAssembly is not in CoreCLR. GAC is not in CoreCLR.
             Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
-            return Path.GetDirectoryName(ClrFacade.GetAssemblyLocation(assembly));
+            return Path.GetDirectoryName(assembly.Location);
 #else
             // The default keys aren't installed, so try and use the entry assembly to
             // get the application base. This works for managed apps like minishells...
@@ -536,6 +535,7 @@ namespace System.Management.Automation
             return AllowedEditionValues.Contains(editionValue, StringComparer.OrdinalIgnoreCase);
         }
 
+#if !CORECLR
         /// <summary>
         /// Checks whether current monad session supports NetFrameworkVersion specified
         /// by checkVersion. The specified version is treated as the the minimum required 
@@ -592,7 +592,7 @@ namespace System.Management.Automation
 
             return isSupported;
         }
-        
+#endif
         #endregion
 
         /// <summary>

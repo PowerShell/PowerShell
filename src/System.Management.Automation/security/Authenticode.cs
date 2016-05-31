@@ -121,7 +121,6 @@ namespace System.Management.Automation
         /// 
         /// <remarks>  </remarks>
         ///
-        [ArchitectureSensitive]
         internal static Signature SignFile(SigningOption option,
                                            string fileName,
                                            X509Certificate2 certificate,
@@ -313,7 +312,6 @@ namespace System.Management.Automation
         /// 
         /// <remarks>  </remarks>
         ///
-        [ArchitectureSensitive]
         internal static Signature GetSignature(string fileName, string fileContent)
         {
             Signature signature = null;
@@ -505,7 +503,6 @@ namespace System.Management.Automation
             return signature;
         }
 
-        [ArchitectureSensitive]
         private static DWORD GetWinTrustData(string fileName, string fileContent,
                                             out NativeMethods.WINTRUST_DATA wtData)
         {
@@ -562,7 +559,6 @@ namespace System.Management.Automation
             return dwResult;
         }
 
-        [ArchitectureSensitive]
         private static X509Certificate2 GetCertFromChain(IntPtr pSigner)
         {
             X509Certificate2 signerCert = null;
@@ -585,7 +581,6 @@ namespace System.Management.Automation
             return signerCert;
         }
 
-        [ArchitectureSensitive]
         private static Signature GetSignatureFromWintrustData(
             string filePath,
             DWORD error,
@@ -658,7 +653,6 @@ namespace System.Management.Automation
             return signature;
         }
 
-        [ArchitectureSensitive]
         private static DWORD GetLastWin32Error()
         {
             int error = Marshal.GetLastWin32Error();

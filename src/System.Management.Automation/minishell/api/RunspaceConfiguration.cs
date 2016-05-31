@@ -103,9 +103,14 @@ namespace System.Management.Automation.Runspaces
     ///     6. ETS will use type information.
     ///     7. Format and output will use format information. 
     /// -->
-    public abstract class RunspaceConfiguration
+#if CORECLR
+    internal
+#else
+    public
+#endif
+    abstract class RunspaceConfiguration
     {
-        #region RunspaceConfiguration Factory
+#region RunspaceConfiguration Factory
 
 #if V2
 
@@ -281,9 +286,9 @@ namespace System.Management.Automation.Runspaces
             return (RunspaceConfiguration)method.Invoke(null, null);
         }
 
-        #endregion RunspaceConfiguration Factory
+#endregion RunspaceConfiguration Factory
 
-        #region Shell Id
+#region Shell Id
 
         /// <summary>
         /// Gets the shell id for current runspace configuration.
@@ -293,9 +298,9 @@ namespace System.Management.Automation.Runspaces
             get;
         }
 
-        #endregion
+#endregion
 
-        #region PSSnapin Api's
+#region PSSnapin Api's
 
         /// <summary>
         /// Add a PSSnapin to runspace configuration.
@@ -340,9 +345,9 @@ namespace System.Management.Automation.Runspaces
             throw PSTraceSource.NewNotSupportedException();
         }
 
-        #endregion
+#endregion
 
-        #region Cmdlet, Provider, Relationship
+#region Cmdlet, Provider, Relationship
 
         private RunspaceConfigurationEntryCollection<CmdletConfigurationEntry> _cmdlets;
 
@@ -396,9 +401,9 @@ namespace System.Management.Automation.Runspaces
         }
         */
 
-        #endregion
+#endregion
 
-        #region Types and Formats
+#region Types and Formats
 
         /// <summary>
         /// types.ps1xml information
@@ -465,9 +470,9 @@ namespace System.Management.Automation.Runspaces
             get { return formatDBManger; }
         }
 	
-        #endregion
+#endregion
 
-        #region Script Data
+#region Script Data
 
         private RunspaceConfigurationEntryCollection<ScriptConfigurationEntry> _scripts;
 
@@ -491,9 +496,9 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        #endregion
+#endregion
 
-        #region Profile configuration
+#region Profile configuration
 
         private RunspaceConfigurationEntryCollection<ScriptConfigurationEntry> _initializationScripts;
 
@@ -517,9 +522,9 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        #endregion
+#endregion
 
-        #region Assemblies
+#region Assemblies
 
         private RunspaceConfigurationEntryCollection<AssemblyConfigurationEntry> _assemblies;
 
@@ -543,9 +548,9 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        #endregion
+#endregion
 
-        #region Security Manager
+#region Security Manager
 
         private AuthorizationManager _authorizationManager = null;
 
@@ -569,9 +574,9 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        #endregion
+#endregion
 
-        #region Configuration Update
+#region Configuration Update
 
         private PSHost _host = null;
         internal void Bind(ExecutionContext executionContext)
@@ -790,7 +795,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        #endregion
+#endregion
 
         [TraceSource("RunspaceInit", "Initialization code for Runspace")]
         static private PSTraceSource runspaceInitTracer = PSTraceSource.GetTracer("RunspaceInit", "Initialization code for Runspace", false);

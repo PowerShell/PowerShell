@@ -6786,6 +6786,8 @@ namespace System.Management.Automation.Language
                                 $InstanceName,
                             [string[]]
                                 $DependsOn,
+                            [PSCredential]
+                                $PsDscRunAsCredential,                          
                             [string]
                                 $OutputPath,
                             [hashtable]

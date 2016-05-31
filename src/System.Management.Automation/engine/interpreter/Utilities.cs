@@ -328,7 +328,7 @@ namespace System.Management.Automation.Interpreter
         /// </summary>
         public static Exception UpdateForRethrow(Exception rethrow)
         {
-#if !SILVERLIGHT && !CORECLR
+#if !SILVERLIGHT
             List<StackTrace> prev;
 
             // we don't have any dynamic stack trace data, capture the data we can
@@ -342,12 +342,10 @@ namespace System.Management.Automation.Interpreter
             }
 
             prev.Add(st);
-
 #endif
             return rethrow;
         }
 
-#if !CORECLR
         /// <summary>
         /// Returns all the stack traces associates with an exception
         /// </summary>
@@ -367,7 +365,6 @@ namespace System.Management.Automation.Interpreter
             traces = e.Data[prevStackTraces] as List<StackTrace>;
             return traces != null;
         }
-#endif
     }
 
     /// <summary>

@@ -31,7 +31,12 @@ namespace System.Management.Automation.Runspaces
     ///        components. For example, if cmdlets/providers list is updated, it 
     ///        has to be communicated to engine. 
     /// -->
-    public sealed class RunspaceConfigurationEntryCollection<T> : IEnumerable<T> where T : RunspaceConfigurationEntry
+#if CORECLR
+    internal
+#else
+    public
+#endif
+    sealed class RunspaceConfigurationEntryCollection<T> : IEnumerable<T> where T : RunspaceConfigurationEntry
     {
         /// <summary>
         /// Constructor

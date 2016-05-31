@@ -511,7 +511,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     
-                    if (pair.Value.Path.Equals(ClrFacade.GetAssemblyLocation(suppliedAssembly), StringComparison.OrdinalIgnoreCase))
+                    if (pair.Value.Path.Equals(suppliedAssembly.Location, StringComparison.OrdinalIgnoreCase))
                     {
                         moduleLoaded = true;
                         if (BasePassThru)

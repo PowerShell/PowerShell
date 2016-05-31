@@ -128,7 +128,7 @@ namespace System.Management.Automation
             if (providerInfo.ImplementingType == null)
                 return null;
 
-            return Path.GetDirectoryName(ClrFacade.GetAssemblyLocation(providerInfo.ImplementingType.GetTypeInfo().Assembly));
+            return Path.GetDirectoryName(providerInfo.ImplementingType.GetTypeInfo().Assembly.Location);
         }
 
         /// <summary>

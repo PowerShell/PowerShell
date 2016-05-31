@@ -860,21 +860,7 @@ namespace NativeMsh
         hostPath[lastBackslashIndex + 1] = '\0';
         hostEnvironment.SetHostPath(hostPath);
 
-        unsigned int result = EXIT_CODE_SUCCESS;
-
-        result = reader->Read(hostPath); // Is this OK? Should I first try the default location?
-        if (EXIT_CODE_SUCCESS == result)
-        {
-            // The config file was successfully parsed. Use that directory.
-            hostEnvironment.SetHostDirectoryPath(reader->GetPathToPowerShell().c_str());
-        }
-        else 
-        {
-            // There was an issue accessing or parsing the config file OR
-            // we are working for the EXE.
-            // Fall back to the default PowerShell install directory.
-            hostEnvironment.SetHostDirectoryPath(powerShellInstallPath);
-        }
+        hostEnvironment.SetHostDirectoryPath(powerShellInstallPath);
 
         return EXIT_CODE_SUCCESS;
     }
@@ -1037,24 +1023,18 @@ namespace NativeMsh
     //
 
     PwrshCommon::PwrshCommon() 
-        : output(new PwrshCommonOutputDefault()), reader(new ConfigFileReader()), sysCalls(new WinSystemCallFacade())
+        : output(new PwrshCommonOutputDefault()), sysCalls(new WinSystemCallFacade())
     {
     }
 
     PwrshCommon::PwrshCommon(
         IPwrshCommonOutput* outObj, 
-        ConfigFileReader* rdr,
         SystemCallFacade* systemCalls) 
-        : output(outObj), reader(rdr), sysCalls(systemCalls)
+        : output(outObj), sysCalls(systemCalls)
     {
         if (NULL == output)
         {
             output = new PwrshCommonOutputDefault();
-        }
-
-        if (NULL == reader)
-        {
-            reader = new ConfigFileReader();
         }
 
         if (NULL == sysCalls)
@@ -1069,12 +1049,6 @@ namespace NativeMsh
         {
             delete output;
             output = NULL;
-        }
-
-        if (reader)
-        {
-            delete reader;
-            reader = NULL;
         }
 
         if (sysCalls)

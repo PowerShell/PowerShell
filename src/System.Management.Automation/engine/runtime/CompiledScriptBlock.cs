@@ -1890,7 +1890,7 @@ namespace System.Management.Automation
 
             if (_scriptBlock.HasBeginBlock)
             {
-                RunClause(_runOptimized ? _scriptBlock.BeginBlock : _scriptBlock.UnoptimizedBeginBlock, AutomationNull.Value, _input);
+                RunClause(_runOptimized ? _scriptBlock.BeginBlock : _scriptBlock.UnoptimizedBeginBlock, AutomationNull.Value, _input.GetEnumerator());
             }
         }
 
@@ -1901,11 +1901,19 @@ namespace System.Management.Automation
                 return;
             }
 
-            _input.Add(this.CurrentPipelineObject);
+            object dollarUnder;
+            if (CurrentPipelineObject == AutomationNull.Value)
+            {
+                dollarUnder = null;
+            }
+            else
+            {
+                dollarUnder = CurrentPipelineObject;
+                _input.Add(dollarUnder);
+            }
             if (_scriptBlock.HasProcessBlock)
             {
-                var dollarUnder = this.CurrentPipelineObject == AutomationNull.Value ? null : this.CurrentPipelineObject;
-                RunClause(_runOptimized ? _scriptBlock.ProcessBlock : _scriptBlock.UnoptimizedProcessBlock, dollarUnder, _input);
+                RunClause(_runOptimized ? _scriptBlock.ProcessBlock : _scriptBlock.UnoptimizedProcessBlock, dollarUnder, _input.GetEnumerator());
                 _input.Clear();
             }
         }
@@ -1919,7 +1927,7 @@ namespace System.Management.Automation
 
             if (_scriptBlock.HasEndBlock)
             {
-                RunClause(_runOptimized ? _scriptBlock.EndBlock : _scriptBlock.UnoptimizedEndBlock, AutomationNull.Value, _input.ToArray());
+                RunClause(_runOptimized ? _scriptBlock.EndBlock : _scriptBlock.UnoptimizedEndBlock, AutomationNull.Value, _input.ToArray().GetEnumerator());
             }
         }
 

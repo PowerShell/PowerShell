@@ -485,10 +485,11 @@ namespace Microsoft.PowerShell.Commands
                         PSRemotingTransportException transException =
                             reason as PSRemotingTransportException;
                         String errorDetails = null;
+                        int transErrorCode = 0;
                         if (transException != null)
                         {
                             OpenRunspaceOperation senderAsOp = sender as OpenRunspaceOperation;
-
+                            transErrorCode = transException.ErrorCode;
                             if (senderAsOp != null)
                             {
                                 String host = senderAsOp.OperatedRunspace.ConnectionInfo.ComputerName;
@@ -507,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
                                         "AllowRedirection");
 
                                     errorDetails = "[" + host + "] " + message;
-                                        
+
                                 }
                                 else
                                 {
@@ -546,8 +547,13 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         string fullyQualifiedErrorId = WSManTransportManagerUtils.GetFQEIDFromTransportError(
-                            (transException != null) ? transException.ErrorCode : 0,
+                            transErrorCode,
                             _defaultFQEID);
+
+                        if (WSManNativeApi.ERROR_WSMAN_NO_LOGON_SESSION_EXIST == transErrorCode)
+                        {
+                            errorDetails += System.Environment.NewLine + String.Format(System.Globalization.CultureInfo.CurrentCulture, RemotingErrorIdStrings.RemotingErrorNoLogonSessionExist);
+                        }
                         ErrorRecord errorRecord = new ErrorRecord(reason,
                              remoteRunspace, fullyQualifiedErrorId,
                                    ErrorCategory.OpenError, null, null,

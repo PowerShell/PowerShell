@@ -692,7 +692,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// RunspaceConfiguration information for this runspace.
         /// </summary>
-        public abstract RunspaceConfiguration RunspaceConfiguration
+#if CORECLR
+        internal
+#else
+        public
+#endif
+        abstract RunspaceConfiguration RunspaceConfiguration
         {
             get;
         }

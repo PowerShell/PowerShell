@@ -1447,4 +1447,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="AssignmentStatementToAutomaticNotSupported" xml:space="preserve">
     <value>Cannot assign automatic variable '{0}' with type '{1}'</value>
   </data>
+  <data name="PsDscRunAsCredentialMergeErrorForCompositeResources" xml:space="preserve">
+    <value>Conflict in using PsDscRunAsCredential for Resource {0} because it already specifies PsDscRunAsCredential value. We can only use one PsDscRunAsCredential for the composite resource. </value>
+  </data>
 </root>

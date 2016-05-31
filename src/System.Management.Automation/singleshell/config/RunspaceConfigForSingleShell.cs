@@ -425,7 +425,7 @@ namespace System.Management.Automation.Runspaces
             Dictionary<string, List<SessionStateAliasEntry>> aliases = null;
             Dictionary<string, SessionStateProviderEntry> providers = null;
             string throwAwayHelpFile = null;
-            PSSnapInHelpers.AnalyzePSSnapInAssembly(assembly, ClrFacade.GetAssemblyLocation(assembly), mshsnapinInfo, null, false, out cmdlets, out aliases, out providers, out throwAwayHelpFile);
+            PSSnapInHelpers.AnalyzePSSnapInAssembly(assembly, assembly.Location, mshsnapinInfo, null, false, out cmdlets, out aliases, out providers, out throwAwayHelpFile);
             if (cmdlets != null)
             {
                 foreach (var c in cmdlets)

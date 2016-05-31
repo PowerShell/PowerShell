@@ -91,7 +91,7 @@ namespace System.Management.Automation.Runspaces
                 returnValue = Path.GetDirectoryName(returnValue);
                 if (!Directory.Exists(returnValue))
                 {
-                    string newReturnValue = Path.GetDirectoryName(ClrFacade.GetAssemblyLocation(typeof(FormatAndTypeDataHelper).GetTypeInfo().Assembly));
+                    string newReturnValue = Path.GetDirectoryName(typeof(FormatAndTypeDataHelper).GetTypeInfo().Assembly.Location);
                     string error = StringUtil.Format(TypesXmlStrings.CannotFindRegistryKeyPath, returnValue,
                         Utils.GetRegistryConfigurationPath(runspaceConfiguration.ShellId), "\\Path", newReturnValue);
                     independentErrors.Add(error);

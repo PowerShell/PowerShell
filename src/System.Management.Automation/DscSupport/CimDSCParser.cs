@@ -3382,6 +3382,20 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
+        /// Returns an error record to use when composite resource and its resource instances both has PsDscRunAsCredentials value  
+        /// </summary>
+        /// <param name="resourceId">resourceId of resource</param>        
+        /// <returns></returns>
+        public static ErrorRecord PsDscRunAsCredentialMergeErrorForCompositeResources(string resourceId)
+        {
+            PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
+                 ParserStrings.PsDscRunAsCredentialMergeErrorForCompositeResources, resourceId);
+
+            e.SetErrorId("PsDscRunAsCredentialMergeErrorForCompositeResources");
+            return e.ErrorRecord;
+        }
+
+        /// <summary>
         /// Routine to format a usage string from keyword. The resulting string should look like:
         ///        User [string] #ResourceName
         ///        {
@@ -3653,6 +3667,23 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 # This routine also adds the resource to the global node resources table.
             Test-DependsOn
 
+# Check if PsDscRunCredetial is being specified as Arguments to Configuration
+        if($PsDscRunAsCredential -ne $null)
+        {
+# Check if resource is also trying to set the value for RunAsCred
+# In that case we will generate error during compilation, this is merge error 
+        if($value['PsDscRunAsCredential'] -ne $null)
+        {
+            Update-ConfigurationErrorCount
+            Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::PsDscRunAsCredentialMergeErrorForCompositeResources($resourceId))            
+        }
+# Set the Value of RunAsCred to that of outer configuration 
+        else
+        {
+            $value['PsDscRunAsCredential'] = $PsDscRunAsCredential
+        }
+    }
+ 
 # Save the resource id in a per-node dictionary to do cross validation at the end
             if($keywordData.ImplementingModule -ieq ""PSDesiredStateConfigurationEngine"")
             {
@@ -3830,6 +3861,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             -or ($keywordData.ResourceName -eq 'MSFT_WebResourceManager') `
             -or ($keywordData.ResourceName -eq 'MSFT_FileResourceManager') `
             -or ($keywordData.ResourceName -eq 'MSFT_WebReportManager') `
+            -or ($keywordData.ResourceName -eq 'MSFT_SignatureValidation') `
             -or ($keywordData.ResourceName -eq 'MSFT_PartialConfiguration'))
         {
             Set-PSMetaConfigVersionInfoV2

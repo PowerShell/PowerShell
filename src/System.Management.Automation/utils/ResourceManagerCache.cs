@@ -63,7 +63,7 @@ namespace System.Management.Automation
             ResourceManager manager = null;
             Dictionary<string, ResourceManager> baseNameCache;
 
-            string assemblyManifestFileLocation = ClrFacade.GetAssemblyLocation(assembly);
+            string assemblyManifestFileLocation = assembly.Location;
             lock (syncRoot)
             {
                 // First do the lookup based on the assembly location

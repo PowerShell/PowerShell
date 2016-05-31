@@ -313,6 +313,10 @@ namespace System.Management.Automation
                 {
                     commandOrigin = this._cmdlet.CommandOrigin;
                 }
+                else if (this._context != null)
+                {
+                    commandOrigin = this._context.EngineSessionState.CurrentScope.ScopeOrigin;
+                }
 
                 result = CommandDiscovery.LookupCommandInfo(commandName, type, SearchResolutionOptions.None, commandOrigin, this._context);
 

@@ -1488,10 +1488,17 @@ else
         internal static void CheckIfPowerShellVersionIsInstalled(Version version)
         {
             // Check if PowerShell 2.0 is installed
-            // Because of app-compat issues, in Win8, we will have PS 2.0 installed by default but not .NET 2.0
-            // In such a case, it is not enough if we check just PowerShell registry keys. We also need to check if .NET 2.0 is installed.
             if (version != null && version.Major == 2)
             {
+#if CORECLR
+                // PowerShell 2.0 is not available for CoreCLR
+                throw new ArgumentException(
+                    PSRemotingErrorInvariants.FormatResourceString(
+                        RemotingErrorIdStrings.PowerShellNotInstalled,
+                        version, "PSVersion"));
+#else
+                // Because of app-compat issues, in Win8, we will have PS 2.0 installed by default but not .NET 2.0
+                // In such a case, it is not enough if we check just PowerShell registry keys. We also need to check if .NET 2.0 is installed.
                 try
                 {
                     RegistryKey engineKey = PSSnapInReader.GetPSEngineKey(PSVersionInfo.RegistryVersion1Key);
@@ -1511,6 +1518,7 @@ else
                             RemotingErrorIdStrings.PowerShellNotInstalled,
                             version, "PSVersion"));
                 }
+#endif
             }
         }
 

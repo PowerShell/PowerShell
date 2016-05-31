@@ -1611,4 +1611,8 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   <data name="InvalidRoleKeyType" xml:space="preserve">
     <value>Invalid role key type: {0}. Role keys must be strings that identify a security group.</value>
   </data>
+  <data name="RemotingErrorNoLogonSessionExist" xml:space="preserve">
+    <value> Other Possible Cause:
+  -The domain or computer name was not included with the specified credential, for example: DOMAIN\UserName or COMPUTER\UserName.</value>
+  </data>
 </root>

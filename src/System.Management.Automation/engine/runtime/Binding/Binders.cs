@@ -5224,13 +5224,21 @@ namespace System.Management.Automation.Language
                 value = PSObject.Base(value);
             }
 
-            // If the target value is a Type instance, we need to use 'typeof(Type)' as the type of the value, so as to avoid 
-            // casting the expression to the internal type 'System.RuntimeType'. 
-            // Reflection execution on internal framework types is unconditionally disallowed in CoreCLR.
-            var type = castToType ??
-                       ((value != null)
-                            ? (DotNetAdapter.IsRuntimeTypeInstance(value)) ? typeof(Type) : value.GetType()
-                            : typeof(object));
+            var type = castToType ??  ((value != null) ? value.GetType() : typeof(object));
+#if CORECLR 
+            var typeInfo = type.GetTypeInfo();
+            // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up 
+            // the derivation chain to find the first public parent, and use reflection methods on the public parent.
+            if (!TypeResolver.IsPublic(typeInfo) && DotNetAdapter.DisallowPrivateReflection(typeInfo))
+            {
+                var publicType = DotNetAdapter.GetFirstPublicParentType(typeInfo);
+                if (publicType != null)
+                {
+                    type = publicType;
+                }
+                // else we'll probably fail, but the error message might be more helpful than NullReferenceException
+            }
+#endif
             if (expr.Type != type)
             {
                 // Unbox value types (or use Nullable<T>.Value) to avoid a copy in case the value is mutated.
