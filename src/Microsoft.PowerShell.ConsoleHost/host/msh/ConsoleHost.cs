@@ -190,14 +190,15 @@ namespace Microsoft.PowerShell
                 else
                 {
                     //check if the user has set an XDG path in their environment variables
-                    profileDir = Platform.SelectProductNameForDirectory("profile");                  
+                    profileDir = Platform.SelectProductNameForDirectory(Platform.XDG_Type.PROFILE);                  
                 }
    
                 if (!Directory.Exists(profileDir)) //xdg value may have been set but not a valid directory 
                 {
                     Console.WriteLine("The selected directory for the profile does not exist. Using the default path.");
-                    profileDir = Platform.SelectProductNameForDirectory("default");
+                    profileDir = Platform.SelectProductNameForDirectory(Platform.XDG_Type.DEFAULT);
                 }
+
                 ClrFacade.SetProfileOptimizationRoot(profileDir);
             }
             catch

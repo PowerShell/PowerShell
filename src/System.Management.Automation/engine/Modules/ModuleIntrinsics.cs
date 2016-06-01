@@ -548,7 +548,7 @@ namespace System.Management.Automation
         /// <returns>personal module path</returns>
         internal static string GetPersonalModulePath()
         {
-            string personalModuleRoot = Platform.SelectProductNameForDirectory("modules");
+            string personalModuleRoot = Platform.SelectProductNameForDirectory(Platform.XDG_Type.MODULES);
             return personalModuleRoot;
         }
 
