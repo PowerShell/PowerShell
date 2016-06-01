@@ -14,8 +14,8 @@ Describe "Measure-Object" {
     }
 
     It "Should be able to count using the Property switch" {
-	$expected = $(Get-ChildItem).Length
-	$actual   = $(Get-ChildItem | Measure-Object -Property Length).Count
+	$expected = $(Get-ChildItem $TestDrive).Length
+	$actual   = $(Get-ChildItem $TestDrive | Measure-Object -Property Length).Count
 
 	$actual | Should Be $expected
     }
@@ -143,7 +143,11 @@ Describe "Measure-Object" {
 }
 
 Describe "Measure-Object DRT basic functionality" -Tags DRT{
-	Add-Type -TypeDefinition @"
+
+	BeforeAll {
+		if(-not ([System.Management.Automation.PSTypeName]'TestMeasureGeneric').Type)
+		{
+			Add-Type -TypeDefinition @"
     [System.Flags]
     public enum TestMeasureGeneric : uint
     {
@@ -153,7 +157,10 @@ Describe "Measure-Object DRT basic functionality" -Tags DRT{
         TestMin = 8
     }
 "@
-	Add-Type -TypeDefinition @"
+		}
+		if(-not ([System.Management.Automation.PSTypeName]'TestMeasureText').Type)
+		{
+			Add-Type -TypeDefinition @"
     [System.Flags]
     public enum TestMeasureText : uint
     {
@@ -163,8 +170,7 @@ Describe "Measure-Object DRT basic functionality" -Tags DRT{
         TestLine = 8
     }
 "@
-
-	BeforeAll {
+	}
 		$employees = [pscustomobject]@{"FirstName"="joseph"; "LastName"="smith"; "YearsInMS"=15},
                             [pscustomobject]@{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15},
                             [pscustomobject]@{"FirstName"="mary jo"; "LastName"="soe"; "YearsInMS"=5},
