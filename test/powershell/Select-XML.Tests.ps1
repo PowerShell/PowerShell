@@ -1,10 +1,8 @@
 
 Describe "Select-XML DRT Unit Tests" -Tags DRT{
-	$tmpDirectory = $TestDrive
-	$testfilename = "testfile.xml"
-	$testfile = Join-Path -Path $tmpDirectory -ChildPath $testfilename
 	
-	It "Select-XML should work"{
+	BeforeAll {
+		$testfile = Join-Path -Path $TestDrive -ChildPath "testfile.xml"
 		$xmlContent = @"
 <?xml version ="1.0" encoding="ISO-8859-1"?>
 <bookstore>
@@ -19,16 +17,15 @@ Describe "Select-XML DRT Unit Tests" -Tags DRT{
 </bookstore>
 "@
 		$xmlContent >$testfile
-		try
-		{
-			$results=Select-XML -Path $testfile -XPath "/bookstore/book/title"
-			$results.Count | Should Be 2
-			$results[0].Node."#text" | Should Be "Harry Potter"
-			$results[1].Node."#text" | Should Be "Learning XML"
-		}
-		finally  
-		{  
-			rm $testfile  
-		}
+	}
+	AfterAll {
+		rm $testfile
+	}
+	
+	It "Select-XML should work"{
+		$results = Select-XML -Path $testfile -XPath "/bookstore/book/title"
+		$results.Count | Should Be 2
+		$results[0].Node."#text" | Should Be "Harry Potter"
+		$results[1].Node."#text" | Should Be "Learning XML"
 	}
 }
