@@ -73,6 +73,7 @@ Describe "New-Object DRT basic functionality" -Tags DRT{
 		try
 		{
 			New-Object -TypeName LiarType -EA Stop
+			Throw "Execution OK"
 		}
 		catch
 		{
@@ -85,6 +86,7 @@ Describe "New-Object DRT basic functionality" -Tags DRT{
 		try
 		{
 			New-Object -TypeName System.Management.Automation.PSVariable -ArgumentList "A", 1, None, "asd" -EA Stop
+			Throw "Execution OK"
 		}
 		catch
 		{
@@ -98,6 +100,7 @@ Describe "New-Object DRT basic functionality" -Tags DRT{
 		try
 		{
 			New-Object -TypeName AbstractEmployee -EA Stop
+			Throw "Execution OK"
 		}
 		catch
 		{
@@ -111,6 +114,7 @@ Describe "New-Object DRT basic functionality" -Tags DRT{
 		try
 		{
 			New-Object -TypeName Employee -ArgumentList 11 -EA Stop
+			Throw "Execution OK"
 		}
 		catch
 		{
@@ -124,6 +128,7 @@ Describe "New-Object DRT basic functionality" -Tags DRT{
 		try
 		{
 			New-Object -TypeName Employee -EA Stop
+			Throw "Execution OK"
 		}
 		catch
 		{
@@ -137,6 +142,7 @@ Describe "New-Object DRT basic functionality" -Tags DRT{
 		try
 		{
 			New-Object -TypeName WeirdEmployee+PrivateNestedWeirdEmployee -EA Stop
+			Throw "Execution OK"
 		}
 		catch
 		{
