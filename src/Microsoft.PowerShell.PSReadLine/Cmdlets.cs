@@ -176,6 +176,7 @@ namespace Microsoft.PowerShell
                                                          @"\Microsoft\Windows\PowerShell\PSReadline\",
                                                          hostName + "_history.txt");
             }
+
             else
             {
                 //PSReadline does not have access to Utils.CorePSPlatform. Must set PSReadline path seperately                
@@ -186,13 +187,20 @@ namespace Microsoft.PowerShell
                         modulepath = System.IO.Path.Combine(
                                                              Environment.GetEnvironmentVariable("HOME"), 
                                                              ".config/powershell/modules");
-                }
                         
-                HistorySavePath = System.IO.Path.Combine(
+                        HistorySavePath = System.IO.Path.Combine(
                                                          Environment.GetEnvironmentVariable("HOME"), 
                                                          modulepath,
                                                          "PSReadLine",
                                                          hostName + "_history.txt");
+                }
+                 
+                else {
+                    
+                    HistorySavePath = modulepath; 
+                   
+                }
+
                             
                 }
     #else

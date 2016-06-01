@@ -21,7 +21,6 @@ using SpecialFolder = System.Management.Automation.Environment.SpecialFolder;
 
 namespace System.Management.Automation
 {
-
     /// <summary>
     /// These are platform abstractions and platform specific implementations
     ///
@@ -42,6 +41,16 @@ namespace System.Management.Automation
                 return false;
                 #endif
             }
+        }
+        
+        //enum for selecting the xdgpaths
+        public enum XDG_Type
+        {
+            PROFILE,
+            MODULES,
+            HISTORY, 
+            DEFAULT
+        
         }
 
         public static bool IsOSX
@@ -97,55 +106,64 @@ namespace System.Management.Automation
             };
 
         // function for choosing directory location of PowerShell for profile loading 
-        public static string SelectProductNameForDirectory (string dir){
+        public static string SelectProductNameForDirectory (Platform.XDG_Type dirpath){
 
             string xdgconfighome = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME"); 
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
+            string profileDefault =  Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".config/powershell");
+            string moduleDefault = Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".config/powershell/modules");
             
-            
-            //the user has set XDG_CONFIG_HOME corrresponding to profile path
-            if (!String.IsNullOrEmpty(xdgconfighome) && dir == "profile")
-            {
-                return xdgconfighome;         
-            } 
-            
-            //the user has set XDG_DATA_HOME corresponding to module path 
-            if (!String.IsNullOrEmpty(xdgdatahome) && dir == "modules")
-            {
-                return xdgdatahome; 
-            }
-            
-            //the user has set XDG_CACHE_HOME
-            if (!String.IsNullOrEmpty(xdgcachehome) && dir == "history")
-            {
-                return xdgcachehome; 
-            }
-            
-            if (dir == "default")
-            {
-                return @".config/powershell"; 
-            }
-            //the user has set XDG_DATA_HOME
-            else //xdg values have not been set 
-            {
-                if (dir == "profile" || dir == "history")
-                {
-                    return @".config/powershell"; //default on Linux
-                } 
-                if (dir == "modules")
-                {
-                    if (!Directory.Exists(@".config/powershell/modules"))
-                    {                        
-                        Directory.CreateDirectory(@".config/powershell/modules");
-                           
+            switch (dirpath){
+                case Platform.XDG_Type.PROFILE: 
+                    //the user has set XDG_CONFIG_HOME corrresponding to profile path
+                    if (!String.IsNullOrEmpty(xdgconfighome)){
+
+                        return xdgconfighome; 
+                    }
+
+                    else {
+                        //xdg values have not been set
+                        return profileDefault;                         
                     }
                     
-                    return @".config/powershell/modules"; //default on Linux
-                }
-                
-                return @".config/powershell";
+                case Platform.XDG_Type.MODULES: 
+                    //the user has set XDG_DATA_HOME corresponding to module path 
+                    if (!String.IsNullOrEmpty(xdgdatahome)){
+                        return xdgdatahome; 
+                    }
+
+                    else{
+                        //xdg values have not been set 
+                        if (!Directory.Exists(profileDefault)) //module folder not always guaranteed to exist
+                        {   
+                            Directory.CreateDirectory(moduleDefault);                           
+                        }
+
+                        return profileDefault; 
+                    }                                        
+                   
+                case Platform.XDG_Type.HISTORY: 
+                    //the user has set XDG_CACHE_HOME
+                    if (!String.IsNullOrEmpty(xdgcachehome)){
+                        return xdgcachehome; 
+                    }
+                    else{
+                        return profileDefault; 
+                    }
+
+                case Platform.XDG_Type.DEFAULT:     
+                    //default for profile location
+                    return profileDefault;
+
+                default:                    
+                    if (!Directory.Exists(profileDefault)) 
+                    {   
+                        Directory.CreateDirectory(profileDefault);                        
+                    }
+                    return profileDefault; 
             }
+      
         }
 
         // ComObjectType is null on CoreCLR for Linux since there is
