@@ -1,28 +1,23 @@
 Describe "Compare-Object" {
-    $nl            = [Environment]::NewLine
-    $slash         = [System.IO.Path]::DirectorySeparatorChar
-    $testDirectory = $HOME + $slash + "testDirectory"
-    $dir           = $testDirectory
+	BeforeAll {
+		$nl            = [Environment]::NewLine
 
-    New-Item $testDirectory -ItemType directory -Force
+		$content1 = "line 1" + $nl + "line 2"
+		$content2 = "line 1" + $nl + "line 2.1"
+		$content3 = "line 1" + $nl + "line 2" + $nl + "line 3"
+		$content4 = "line 1" + $nl + "line 2.1" + $nl + "Line 3"
 
-    $content1 = "line 1" + $nl + "line 2"
-    $content2 = "line 1" + $nl + "line 2.1"
-    $content3 = "line 1" + $nl + "line 2" + $nl + "line 3"
-    $content4 = "line 1" + $nl + "line 2.1" + $nl + "Line 3"
+		$file1 = Join-Path -Path $TestDrive -ChildPath "test1.txt"
+		$file2 = Join-Path -Path $TestDrive -ChildPath "test2.txt"
+		$file3 = Join-Path -Path $TestDrive -ChildPath "test3.txt"
+		$file4 = Join-Path -Path $TestDrive -ChildPath "test4.txt"
 
-    $file1 = $testDirectory + $slash + "test1.txt"
-    $file2 = $testDirectory + $slash + "test2.txt"
-    $file3 = $testDirectory + $slash + "test3.txt"
-    $file4 = $testDirectory + $slash + "test4.txt"
-
-    New-Item $file1 -ItemType file -Value $content1 -Force
-    New-Item $file2 -ItemType file -Value $content2 -Force
-    New-Item $file3 -ItemType file -Value $content3 -Force
-    New-Item $file4 -ItemType file -Value $content4 -Force
-
-    Test-Path $testDirectory | Should Be $true
-
+		New-Item $file1 -ItemType file -Value $content1 -Force
+		New-Item $file2 -ItemType file -Value $content2 -Force
+		New-Item $file3 -ItemType file -Value $content3 -Force
+		New-Item $file4 -ItemType file -Value $content4 -Force
+	}
+	
     It "Should be able to compare the same object using the referenceObject and differenceObject switches" {
 	{ Compare-Object -ReferenceObject $(Get-Content $file1) -DifferenceObject $(Get-Content $file2) } | Should Not Throw
     }
@@ -96,9 +91,8 @@ Describe "Compare-Object" {
     }
 
     It "Should be able to specify the property of two objects to compare" {
-	$actualOutput = Compare-Object -ReferenceObject $file3 -DifferenceObject $testDirectory -Property Length
-
-	$actualOutput[0].Length | Should BeGreaterThan 0
+	$actualOutput = Compare-Object -ReferenceObject $file3 -DifferenceObject $TestDrive -Property Length
+	$actualOutput[0].Length | Should BeNullOrEmpty
 	$actualOutput[1].Length | Should BeGreaterThan 0
 	$actualOutput[0].Length | Should Not Be $actualOutput[1].Length
     }
@@ -124,10 +118,6 @@ Describe "Compare-Object" {
 	$actualOutput[2].SideIndicator | Should be "=>"
 	$actualOutput[3].SideIndicator | Should be "<="
     }
-
-    # Clean up after yourself
-    Remove-Item $testDirectory -Recurse -Force
-    Test-Path $testDirectory | Should Be $false
 }
 
 Describe "Compare-Object DRT basic functionality" -Tags DRT{
