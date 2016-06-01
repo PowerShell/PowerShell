@@ -335,22 +335,24 @@ function Start-PSxUnit {
         return
     }
 
+    $Arguments = "--configuration", "Linux", "-parallel", "none"
     if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-        $Verbose = "--verbose"
+        $Arguments += "-verbose"
     }
 
     $Content = Split-Path -Parent (Get-PSOutput)
-    $BuildArguments = "--configuration", "Linux"
-    $TestAruments = $BuildArguments + @("-parallel", "none")
+    if (-not (Test-Path $Content)) {
+        throw "PowerShell must be built before running tests!"
+    }
+
     try {
         Push-Location $PSScriptRoot/test/csharp
         # Path manipulation to obtain test project output directory
         $Output = Join-Path $pwd ((Split-Path -Parent (Get-PSOutput)) -replace (New-PSOptions).Top)
-        Write-Host "Output is $Output"
+        Write-Verbose "Output is $Output"
 
-        Start-NativeExecution { dotnet $Verbose build $BuildArguments }
         Copy-Item -ErrorAction SilentlyContinue -Recurse -Path $Content/* -Include Modules,libpsl-native* -Destination $Output
-        Start-NativeExecution { dotnet $Verbose test $TestArguments }
+        Start-NativeExecution { dotnet test $Arguments }
 
         if ($LASTEXITCODE -ne 0) {
             throw "$LASTEXITCODE xUnit tests failed"
