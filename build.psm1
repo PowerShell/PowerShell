@@ -53,7 +53,8 @@ function Start-PSBuild {
         [string]$msbuildConfiguration = "Release"
     )
 
-    git describe --dirty --abbrev=60 > "$psscriptroot/powershell.version"
+    # save Git description to file for PowerShell to include in PSVersionTable
+    git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60 > "$psscriptroot/powershell.version"
 
     # simplify ParameterSetNames
     if ($PSCmdlet.ParameterSetName -eq 'FullCLR') {
