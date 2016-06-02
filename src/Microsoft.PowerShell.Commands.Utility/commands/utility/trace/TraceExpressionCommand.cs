@@ -1,4 +1,3 @@
-#if !CORECLR
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -573,6 +572,3 @@ namespace Microsoft.PowerShell.Commands
         private Collection<PSTraceSource> matchingSources = new Collection<PSTraceSource>();
     }
 }
-
-
-#endif
