@@ -1052,7 +1052,7 @@ function New-AppxPackage
         [string] $AssetsPath        
     )
     
-    Write-Verbose "Extract the version in the form of a.b.c.d"
+    Write-Verbose "Extract the version in the form of a.b.c.d for $PackageVersion"
     $PackageVersion = ([regex]::matches($PackageVersion, "\d+(\.\d+)+"))[0].value
 
     # Need to add the last version field for makeappx
