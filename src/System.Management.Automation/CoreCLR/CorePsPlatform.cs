@@ -106,10 +106,11 @@ namespace System.Management.Automation
             };
 
         // function for choosing directory location of PowerShell for profile loading 
-        public static string SelectProductNameForDirectory (Platform.XDG_Type dirpath){
+        public static string SelectProductNameForDirectory (Platform.XDG_Type dirpath)
+        {
 
             string xdgconfighome = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
-            string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME"); 
+            string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
             string profileDefault =  Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".config/powershell");
             string moduleDefault = Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".config/powershell/modules");
@@ -117,12 +118,14 @@ namespace System.Management.Automation
             switch (dirpath){
                 case Platform.XDG_Type.PROFILE: 
                     //the user has set XDG_CONFIG_HOME corrresponding to profile path
-                    if (!String.IsNullOrEmpty(xdgconfighome)){
-
+                    if (!String.IsNullOrEmpty(xdgconfighome))
+                    {
+                        xdgconfighome = Path.Combine(xdgconfighome, "powershell"); 
                         return xdgconfighome; 
                     }
 
-                    else {
+                    else
+                    {
                         //xdg values have not been set
                         return profileDefault;                         
                     }
@@ -130,10 +133,12 @@ namespace System.Management.Automation
                 case Platform.XDG_Type.MODULES: 
                     //the user has set XDG_DATA_HOME corresponding to module path 
                     if (!String.IsNullOrEmpty(xdgdatahome)){
+                        xdgdatahome = Path.Combine(xdgdatahome, "powershell"); 
                         return xdgdatahome; 
                     }
 
-                    else{
+                    else
+                    {
                         //xdg values have not been set 
                         if (!Directory.Exists(profileDefault)) //module folder not always guaranteed to exist
                         {   
@@ -146,9 +151,11 @@ namespace System.Management.Automation
                 case Platform.XDG_Type.HISTORY: 
                     //the user has set XDG_CACHE_HOME
                     if (!String.IsNullOrEmpty(xdgcachehome)){
+                        xdgcachehome = Path.Combine(xdgcachehome, "powershell"); 
                         return xdgcachehome; 
                     }
-                    else{
+                    else
+                    {
                         return profileDefault; 
                     }
 
