@@ -67,7 +67,7 @@ on_finish:
       try {
         # Build packages
         $packages = Start-PSPackage
-
+        
         # Creating project artifact
         $name = git describe
         $zipFilePath = Join-Path $pwd "$name.zip"
@@ -80,10 +80,10 @@ on_finish:
         foreach ($package in $packages) {
         $artifacts.Add($package)
         }
-	
+        
         $artifacts.Add($zipFilePath)
         $artifacts.Add($zipFileFullPath)
-
+        
         )
 
         Publish-NuGetFeed -OutputPath .\nuget-artifacts -VersionSuffix "b$($env:APPVEYOR_BUILD_NUMBER)"
