@@ -42,67 +42,68 @@ Describe "Get-Member" {
 
 Describe "Get-Member DRT Unit Tests" -Tags DRT {
     Context "Verify Get-Member with Class" {
-        Add-Type -TypeDefinition @"
-        public class Employee
-        {
-            private string firstName;
-            private string lastName;
-            private int    yearsInMS;
-
-            public string FirstName
+        BeforeAll {
+            Add-Type -TypeDefinition @"
+            public class Employee
             {
-                get
+                private string firstName;
+                private string lastName;
+                private int    yearsInMS;
+
+                public string FirstName
                 {
-                    return firstName;
+                    get
+                    {
+                        return firstName;
+                    }
+                    set
+                    {
+                        firstName = value;
+                    }
                 }
-                set
-                {
-                    firstName = value;
-                }
-            }
 
 
-            public string LastName
-            {
-                get
+                public string LastName
                 {
-                    return lastName;
+                    get
+                    {
+                        return lastName;
+                    }
+                    set
+                    {
+                        lastName = value;
+                    }
                 }
-                set
-                {
-                    lastName = value;
-                }
-            }
 
 
-            public int YearsInMS
-            {
-                get
+                public int YearsInMS
                 {
-                    return yearsInMS;
+                    get
+                    {
+                        return yearsInMS;
+                    }
+                    set
+                    {
+                        yearsInMS = value;
+                    }
                 }
-                set
-                {
-                    yearsInMS = value;
-                }
-            }
 
-            public void GetEmployee() {}
+                public void GetEmployee() {}
 
-            public void SetEmployee() {}
+                public void SetEmployee() {}
  
-            public Employee(string firstName, string lastName, int yearsInMS)
-            {
-                this.firstName = firstName;
-                this.lastName  = lastName;
-                this.yearsInMS = yearsInMS;
+                public Employee(string firstName, string lastName, int yearsInMS)
+                {
+                    this.firstName = firstName;
+                    this.lastName  = lastName;
+                    this.yearsInMS = yearsInMS;
+                }
             }
-        }
 "@
     
 
-        $fileToDeleteName = Join-Path $TestDrive -ChildPath "getMemberTest.ps1xml"
-        $XMLFile= @"
+            $fileToDeleteName = Join-Path $TestDrive -ChildPath "getMemberTest.ps1xml"
+            $XMLFile= @"
 <Types>
     <Type>
     <Name>Employee</Name>
@@ -147,8 +148,9 @@ Describe "Get-Member DRT Unit Tests" -Tags DRT {
 </Types>
 "@
 
-        $XMLFile > $fileToDeleteName
-        Update-TypeData -AppendPath $fileToDeleteName
+            $XMLFile > $fileToDeleteName
+            Update-TypeData -AppendPath $fileToDeleteName
+        }
 
         It "Fail to get member without any input" {
             try 
