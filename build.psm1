@@ -1053,10 +1053,11 @@ function New-AppxPackage
     )
     
     Write-Verbose "Extract the version in the form of a.b.c.d for $PackageVersion"
+    $PackageVersionTokens = $PackageVersion.Split('-')
     $PackageVersion = ([regex]::matches($PackageVersion, "\d+(\.\d+)+"))[0].value
 
     # Need to add the last version field for makeappx
-    $PackageVersion = $PackageVersion + '.0'
+    $PackageVersion = $PackageVersion + '.' + $PackageVersionTokens[1]
     Write-Verbose "Package Version is $PackageVersion"
 
     $win10sdkBinPath = "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64"
