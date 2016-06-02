@@ -51,9 +51,10 @@ Describe "Import-Csv" {
 }
 
 Describe "Import-Csv DRT Unit Tests" -Tags DRT {
-
-    $fileToGenerate = Join-Path $TestDrive -ChildPath "importCSVTest.csv"
-    $psObject = [pscustomobject]@{ "First" = "1"; "Second" = "2" } 
+    BeforeAll {
+        $fileToGenerate = Join-Path $TestDrive -ChildPath "importCSVTest.csv"
+        $psObject = [pscustomobject]@{ "First" = "1"; "Second" = "2" } 
+    }
     
     It "Test import-csv with a delimiter parameter" {
         $delimiter = ';'        
