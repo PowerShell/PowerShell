@@ -21,21 +21,19 @@ Describe "Tee-Object" {
 }
 
 Describe "Tee-Object DRT Unit Tests" -Tags DRT {
-    $tempDirectory = Join-Path $TestDrive -ChildPath "TeeObjectTestsTempDir"
-    $tempFile = "TeeObjectTestsTempFile"
-    New-Item $tempDirectory -ItemType Directory -Force
-
+    BeforeAll {
+        $tempFile = Join-Path $TestDrive -ChildPath "TeeObjectTestsTempFile"
+    }
     It "Positive File Test" {
         $expected = "1", "2", "3"
-        $filePath = Join-Path $tempDirectory -ChildPath $tempFile
-        $results = $expected | Tee-Object -FilePath $filePath
+        $results = $expected | Tee-Object -FilePath $tempFile
         $results.Length | Should be 3
         $results | Should Be $expected
-        $content = Get-Content $filePath
+        $content = Get-Content $tempFile
         $content | Should Be $expected
     }
 
-    It "Positive Var Test" {
+    It "Positive Variable Test" {
         $expected = "1", "2", "3" 
         $varName = "teeObjectTestVar"
         $results = $expected | Tee-Object -Variable $varName
