@@ -181,29 +181,27 @@ namespace Microsoft.PowerShell
             {
                 //PSReadline does not have access to Utils.CorePSPlatform. Must set PSReadline path seperately                
                 string modulepath = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
-               
-                if (String.IsNullOrEmpty(modulepath))
-                {
-                        modulepath = System.IO.Path.Combine(
-                                                             Environment.GetEnvironmentVariable("HOME"), 
-                                                             ".config/powershell/modules");
-                        
-                        HistorySavePath = System.IO.Path.Combine(
-                                                         Environment.GetEnvironmentVariable("HOME"), 
-                                                         modulepath,
-                                                         "PSReadLine",
-                                                         hostName + "_history.txt");
-                }
-                 
-                else {
                     
+                if (!String.IsNullOrEmpty(modulepath))
+                {
+                    modulepath = System.IO.Path.Combine(modulepath, "powershell");
                     HistorySavePath = modulepath; 
-                   
                 }
 
-                            
+                else
+                {
+                    modulepath = System.IO.Path.Combine(
+                                                        Environment.GetEnvironmentVariable("HOME"), 
+                                                        ".config/powershell/modules");
+                        
+                    HistorySavePath = System.IO.Path.Combine(
+                                                             Environment.GetEnvironmentVariable("HOME"), 
+                                                             modulepath,
+                                                             "PSReadLine",
+                                                             hostName + "_history.txt");
                 }
-    #else
+            }
+#else
                 HistorySavePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
                 + @"\Microsoft\Windows\PowerShell\PSReadline\" + hostName + "_history.txt";
 #endif
