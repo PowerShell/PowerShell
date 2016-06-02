@@ -1054,6 +1054,9 @@ function New-AppxPackage
     
     Write-Verbose "Extract the version in the form of a.b.c.d"
     $PackageVersion = ([regex]::matches($PackageVersion, "\d+(\.\d+)+"))[0].value
+
+    # Need to add the last version field for makeappx
+    $PackageVersion = $PackageVersion + '.0'
     Write-Verbose "Package Version is $PackageVersion"
 
     $win10sdkBinPath = "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64"
@@ -1121,8 +1124,9 @@ function New-AppxPackage
 
     Write-Verbose "Place AppxManifest dependencies such as images to $assetsInSourcePath" 
     Copy-Item "$AssetsPath\*.png" $assetsInSourcePath -Force
-        
-    $appxPackagePath = "$pwd\$PackageName_$PackageVersion.appx"
+    
+    $appxPackageName = $PackageName + "_" + $PackageVersion
+    $appxPackagePath = "$pwd\$appxPackageName.appx"
     Write-Verbose "Calling MakeAppx from $makeappxExePath to create the package @ $appxPackagePath"
     & $makeappxExePath pack /o /v /d $SourcePath  /p $appxPackagePath | Write-Verbose
 
