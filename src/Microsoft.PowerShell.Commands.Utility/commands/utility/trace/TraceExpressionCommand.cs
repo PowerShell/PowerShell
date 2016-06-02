@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (FileStream fileStream in this.FileStreams)
                     {
                         fileStream.Flush();
-                        fileStream.Close();
+                        fileStream.Dispose();
                     }
                 }
                 GC.SuppressFinalize(this);

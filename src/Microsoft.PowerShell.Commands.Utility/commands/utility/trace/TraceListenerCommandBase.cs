@@ -460,7 +460,7 @@ namespace Microsoft.PowerShell.Commands
                             true))
                     {
                         listenerToRemove.Flush();
-                        listenerToRemove.Close();
+                        listenerToRemove.Dispose();
                         source.Listeners.RemoveAt(index);
                     }
                 }
@@ -619,7 +619,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (TraceListener listener in pair.Value)
                 {
                     listener.Flush();
-                    listener.Close();
+                    listener.Dispose();
                 }
             }
             storedTraceSourceState.Clear ();
