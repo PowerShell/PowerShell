@@ -65,7 +65,7 @@ on_finish:
   - ps: |
       $ErrorActionPreference = 'Stop'
       try {
-        # Build package
+        # Build packages
         $packages = Start-PSPackage
 
         # Creating project artifact
@@ -77,12 +77,12 @@ on_finish:
         [System.IO.Compression.ZipFile]::CreateFromDirectory($env:FullOutput, $zipFileFullPath)
         
         $artifacts = New-Object System.Collections.ArrayList
-	foreach ($package in $packages) {
-		$artifacts.Add($package)
-	}
+        foreach ($package in $packages) {
+        $artifacts.Add($package)
+        }
 	
-	$artifacts.Add($zipFilePath)
-	$artifacts.Add($zipFileFullPath)
+        $artifacts.Add($zipFilePath)
+        $artifacts.Add($zipFileFullPath)
 
         )
 
