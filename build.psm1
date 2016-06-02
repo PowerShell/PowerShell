@@ -441,7 +441,12 @@ Built upon .NET Core, it is also a C# REPL.
     Write-Verbose "Packaging $Source"
 
     if ($IsWindows) {
-        return Create-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -Verbose
+        $msiPackagePath = Create-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -Verbose
+        $appxPackagePath = New-AppxPackage -PackageVersion $Version -SourcePath $Source -AssetsPath "$PSScriptRoot\Assets" -Verbose
+
+        $packages = @($msiPackagePath, $appxPackagePath)
+        
+        return $packages
     }
 
     if (-not (Get-Command "fpm" -ErrorAction SilentlyContinue)) {
@@ -1021,3 +1026,114 @@ function Create-MSIPackage
     return $msiLocationPath
 }
 
+# Function to create an Appx package compatible with Windows 8.1 and above
+function New-AppxPackage
+{
+    [CmdletBinding()]
+    param (
+    
+        # Name of the Package
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageName = 'OpenPowerShell', 
+
+        # Version of the Package
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageVersion,        
+
+        # Source Path to the Binplaced Files
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $SourcePath,
+
+        # Path to Assets folder containing Appx specific artifacts
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $AssetsPath        
+    )
+    
+    Write-Verbose "Extract the version in the form of a.b.c.d for $PackageVersion"
+    $PackageVersionTokens = $PackageVersion.Split('-')
+    $PackageVersion = ([regex]::matches($PackageVersion, "\d+(\.\d+)+"))[0].value
+
+    # Need to add the last version field for makeappx
+    $PackageVersion = $PackageVersion + '.' + $PackageVersionTokens[1]
+    Write-Verbose "Package Version is $PackageVersion"
+
+    $win10sdkBinPath = "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64"
+
+    Write-Verbose "Ensure Win10 SDK is present on the machine @ $win10sdkBinPath"
+    if (-not (Test-Path $win10sdkBinPath))
+    {
+        throw "Install Win10 SDK prior to running this script - https://go.microsoft.com/fwlink/p/?LinkID=698771"
+    }
+
+    Write-Verbose "Ensure Source Path is valid - $SourcePath"
+    if (-not (Test-Path $SourcePath))
+    {
+        throw "Invalid SourcePath - $SourcePath"
+    }
+
+    Write-Verbose "Ensure Assets Path is valid - $AssetsPath"
+    if (-not (Test-Path $AssetsPath))
+    {
+        throw "Invalid AssetsPath - $AssetsPath"
+    }
+    
+    Write-Verbose "Initialize MakeAppx executable path"
+    $makeappxExePath = Join-Path $win10sdkBinPath "MakeAppx.exe"
+
+    $appxManifest = @"
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">
+  <Identity Name="Microsoft.OpenPowerShell" ProcessorArchitecture="x64" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="#VERSION#" />
+  <Properties>
+    <DisplayName>OpenPowerShell</DisplayName>
+    <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
+    <Logo>#LOGO#</Logo>
+  </Properties>
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14257.0" MaxVersionTested="12.0.0.0" />
+    <TargetDeviceFamily Name="Windows.Server" MinVersion="10.0.14257.0" MaxVersionTested="12.0.0.0" />
+  </Dependencies>
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+  <Applications>
+    <Application Id="OpenPowerShell" Executable="powershell.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements DisplayName="OpenPowerShell" Description="OpenPowerShell Package" BackgroundColor="transparent" Square150x150Logo="#SQUARE150x150LOGO#" Square44x44Logo="#SQUARE44x44LOGO#">
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+</Package>
+"@
+
+    $appxManifest = $appxManifest.Replace('#VERSION#', $PackageVersion)
+    $appxManifest = $appxManifest.Replace('#LOGO#', 'Assets\Powershell_256.png')
+    $appxManifest = $appxManifest.Replace('#SQUARE150x150LOGO#', 'Assets\Powershell_256.png')
+    $appxManifest = $appxManifest.Replace('#SQUARE44x44LOGO#', 'Assets\Powershell_48.png')
+
+    Write-Verbose "Place Appx Manifest in $SourcePath"
+    $appxManifest | Out-File "$SourcePath\AppxManifest.xml" -Force
+    
+    $assetsInSourcePath = "$SourcePath" + '\Assets'
+    New-Item $assetsInSourcePath -type directory -Force | Out-Null
+
+    $assetsInSourcePath = Join-Path $SourcePath 'Assets'
+
+    Write-Verbose "Place AppxManifest dependencies such as images to $assetsInSourcePath" 
+    Copy-Item "$AssetsPath\*.png" $assetsInSourcePath -Force
+    
+    $appxPackageName = $PackageName + "_" + $PackageVersion
+    $appxPackagePath = "$pwd\$appxPackageName.appx"
+    Write-Verbose "Calling MakeAppx from $makeappxExePath to create the package @ $appxPackagePath"
+    & $makeappxExePath pack /o /v /d $SourcePath  /p $appxPackagePath | Write-Verbose
+
+    Write-Verbose "Clean-up Appx artifacts and Assets from $SourcePath"    
+    Remove-Item $assetsInSourcePath -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item "$SourcePath\AppxManifest.xml" -Force -ErrorAction SilentlyContinue
+
+    return $appxPackagePath
+}

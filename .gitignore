@@ -16,6 +16,7 @@ dotnet-install.ps1
 # Ignore executables
 *.exe
 *.msi
+*.appx
 
 # Ignore packages
 *.deb
