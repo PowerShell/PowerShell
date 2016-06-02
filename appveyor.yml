@@ -83,8 +83,6 @@ on_finish:
         
         $artifacts.Add($zipFilePath)
         $artifacts.Add($zipFileFullPath)
-        
-        )
 
         Publish-NuGetFeed -OutputPath .\nuget-artifacts -VersionSuffix "b$($env:APPVEYOR_BUILD_NUMBER)"
 
