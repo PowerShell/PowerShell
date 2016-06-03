@@ -50,25 +50,33 @@ namespace System.Management.Automation
             ExecutionContext context,
             Collection<string> acceptableCommandNames)
         {
+            string[] commandPatterns;
             if (acceptableCommandNames != null)
             {
                 // The name passed in is not a pattern. To minimize enumerating the file system, we
                 // turn the command name into a pattern and then match against extensions in PATHEXT.
                 // The old code would enumerate the file system many more times, once per possible extension.
-                // Porting note: this is wrong on Linux, where we don't depend on extensions
                 if (Platform.IsWindows)
                 {
-                    commandName = commandName + ".*";
+                    commandPatterns = new [] { commandName + ".*" };
+                }
+                else
+                {
+                    // Porting note: on non-Windows platforms, we want to always allow just 'commandName'
+                    // as an acceptable command name. However, we also want to allow commands to be
+                    // called with the .ps1 extension, so that 'script.ps1' can be called by 'script'.
+                    commandPatterns = new [] { commandName + ".ps1", commandName };
                 }
                 this.postProcessEnumeratedFiles = CheckAgainstAcceptableCommandNames;
                 this.acceptableCommandNames = acceptableCommandNames;
             }
             else
             {
+                commandPatterns = new [] { commandName };
                 postProcessEnumeratedFiles = JustCheckExtensions;
             }
-            
-            Init(new [] { commandName }, lookupPaths, context);
+
+            Init(commandPatterns, lookupPaths, context);
             this.orderedPathExt = CommandDiscovery.PathExtensionsWithPs1Prepended;
         }
 
