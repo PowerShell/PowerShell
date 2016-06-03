@@ -33,6 +33,7 @@ function Start-PSBuild {
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("ubuntu.14.04-x64",
+                     "debian.8-x64",
                      "centos.7.1-x64",
                      "win7-x64",
                      "win81-x64",
@@ -211,6 +212,7 @@ function New-PSOptions {
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("",
                      "ubuntu.14.04-x64",
+                     "debian.8-x64",
                      "centos.7.1-x64",
                      "win7-x64",
                      "win81-x64",
