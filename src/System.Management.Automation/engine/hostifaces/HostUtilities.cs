@@ -188,11 +188,6 @@ namespace System.Management.Automation
                 basePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
                 basePath = IO.Path.Combine(basePath, Utils.ProductNameForDirectory);
                 
-                //If the profile path doesn't exist, create it.
-                if (!System.IO.Directory.Exists(basePath))
-                {
-                    System.IO.Directory.CreateDirectory(basePath);
-                }
             }
         
             else

@@ -48,7 +48,7 @@ namespace System.Management.Automation
         {
             PROFILE,
             MODULES,
-            HISTORY, 
+            CACHE, 
             DEFAULT
         
         }
@@ -115,7 +115,8 @@ namespace System.Management.Automation
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
             string xdgConfigHomeDefault =  Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".config/powershell");
-            string moduleDefault = Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".local/share/powershell/modules");
+            string xdgModuleDefault = Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".local/share/powershell/modules");
+            string xdgCacheDefault = Path.Combine (System.Environment.GetEnvironmentVariable("HOME"), ".cache/powershell"); 
             
             switch (dirpath){
                 case Platform.XDG_Type.PROFILE: 
@@ -134,40 +135,54 @@ namespace System.Management.Automation
                 case Platform.XDG_Type.MODULES: 
                     //the user has set XDG_DATA_HOME corresponding to module path 
                     if (String.IsNullOrEmpty(xdgdatahome)){
-                        //xdg values have not been set 
-                        if (!Directory.Exists(moduleDefault)) //module folder not always guaranteed to exist
-                        {   
-                            Directory.CreateDirectory(moduleDefault);                           
-                        }
-
-                        return xdgConfigHomeDefault; 
+         
+                    //xdg values have not been set 
+                    if (!Directory.Exists(xdgModuleDefault)) //module folder not always guaranteed to exist
+                    {   
+                        Directory.CreateDirectory(xdgModuleDefault);                           
                     }
-
+                       return xdgConfigHomeDefault; 
+                    }
                     else
                     {
                         return Path.Combine(xdgdatahome, "powershell"); 
                     }                                        
-                   
-                case Platform.XDG_Type.HISTORY: 
+                                    
+                case Platform.XDG_Type.CACHE:
                     //the user has set XDG_CACHE_HOME
-                    if (String.IsNullOrEmpty(xdgcachehome)){
-                        return xdgConfigHomeDefault; 
+                    if (String.IsNullOrEmpty(xdgcachehome))
+                    {
+                       //xdg values have not been set 
+                        if (!Directory.Exists(xdgCacheDefault)) //module folder not always guaranteed to exist
+                        {   
+                            Directory.CreateDirectory(xdgCacheDefault);                           
+                        }
+         
+                        return xdgCacheDefault; 
                     }
                     else
                     {
                         return Path.Combine(xdgcachehome, "powershell"); 
-
-                    }
-
+                    }                 
+                                    
                 case Platform.XDG_Type.DEFAULT:     
                     //default for profile location
                     return xdgConfigHomeDefault;
 
                 default:                    
+                    //xdgConfigHomeDefault needs to be created in the edge case that we do not have the folder or it was deleted
+                    //This folder is the default in the event of all other failures for data storage
                     if (!Directory.Exists(xdgConfigHomeDefault)) 
                     {   
-                        Directory.CreateDirectory(xdgConfigHomeDefault);                        
+                        try {                            
+                            Directory.CreateDirectory(xdgConfigHomeDefault);
+                        }   
+                        catch{
+                            
+                            Console.Error.WriteLine("Failed to create default data directory: " + xdgConfigHomeDefault);
+                        }                     
                     }
+                    
                     return xdgConfigHomeDefault; 
             }
       
