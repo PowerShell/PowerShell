@@ -1,3 +1,25 @@
+Describe "Write-Output DRT Unit Tests" -Tags DRT{
+    It "Simple Write Object Test" {
+        $objectWritten = 1, 2.2, @("John", "Smith", 10), "abc"
+        $results = Write-Output $objectWritten
+        $results.Length | Should Be $objectWritten.Length
+
+        $results[0] | Should Be $objectWritten[0]
+        $results[1] | Should Be $objectWritten[1]
+
+        $results[2] | Should Be $objectWritten[2]
+        $results[2] -is [System.Array] | Should Be $true
+
+        $results[3] | Should Be $objectWritten[3]       
+        $results[3] -is [System.String] | Should Be $true
+    }
+
+    It "Works with NoEnumerate switch" {
+        $objectWritten = 1, 2.2, @("John", "Smith", 10), "abc"
+        Write-Output $objectWritten -NoEnumerate 6>&1 | Should be  '1 2.2 System.Object[] abc'      
+    }
+}
+
 Describe "Write-Output" {
     $testString = $testString
     Context "Input Tests" {
