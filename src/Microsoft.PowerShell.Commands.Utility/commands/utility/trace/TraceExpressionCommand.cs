@@ -1,4 +1,3 @@
-#if !CORECLR
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -334,7 +333,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (FileStream fileStream in this.FileStreams)
                     {
                         fileStream.Flush();
-                        fileStream.Close();
+                        fileStream.Dispose();
                     }
                 }
                 GC.SuppressFinalize(this);
@@ -573,6 +572,3 @@ namespace Microsoft.PowerShell.Commands
         private Collection<PSTraceSource> matchingSources = new Collection<PSTraceSource>();
     }
 }
-
-
-#endif

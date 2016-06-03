@@ -1,14 +1,18 @@
-#if !CORECLR
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 using System;
 using System.IO;
-using System.Security.Permissions;
 using System.Text;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal.Host;
+
+#if CORECLR
+using Microsoft.PowerShell.CoreClr.Stubs;
+#else
+using System.Security.Permissions;
+#endif
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -64,6 +68,9 @@ namespace Microsoft.PowerShell.Commands
         [SecurityPermission(SecurityAction.LinkDemand)]
         protected override void Dispose(bool disposing)
         {
+#if CORECLR
+            base.Dispose(disposing);
+#else
             try
             {
                 if (disposing) 
@@ -75,8 +82,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 base.Dispose(disposing);
             }
+#endif
         }                
 
+#if !CORECLR
         /// <summary>
         /// Closes the dialog and then calls the base class Close
         /// </summary>
@@ -87,6 +96,7 @@ namespace Microsoft.PowerShell.Commands
 
             base.Close();
         }
+#endif
 
         #endregion TraceListener constructors and disposer
 
@@ -144,6 +154,3 @@ namespace Microsoft.PowerShell.Commands
 
     } // class PSHostTraceListener
 } // namespace System.Management.Automation
-
-
-#endif
