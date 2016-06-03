@@ -109,66 +109,66 @@ namespace System.Management.Automation
         public static string SelectProductNameForDirectory (Platform.XDG_Type dirpath)
         {
 
+            //TODO: XDG_DATA_DIRS implementation as per GitHub issue #1060
+
             string xdgconfighome = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
-            string profileDefault =  Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".config/powershell");
-            string moduleDefault = Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".config/powershell/modules");
+            string xdgConfigHomeDefault =  Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".config/powershell");
+            string moduleDefault = Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".local/share/powershell/modules");
             
             switch (dirpath){
                 case Platform.XDG_Type.PROFILE: 
                     //the user has set XDG_CONFIG_HOME corrresponding to profile path
-                    if (!String.IsNullOrEmpty(xdgconfighome))
+                    if (String.IsNullOrEmpty(xdgconfighome))
                     {
-                        xdgconfighome = Path.Combine(xdgconfighome, "powershell"); 
-                        return xdgconfighome; 
+                        //xdg values have not been set
+                        return xdgConfigHomeDefault;                         
                     }
 
                     else
                     {
-                        //xdg values have not been set
-                        return profileDefault;                         
+                        return Path.Combine(xdgconfighome, "powershell"); 
                     }
                     
                 case Platform.XDG_Type.MODULES: 
                     //the user has set XDG_DATA_HOME corresponding to module path 
-                    if (!String.IsNullOrEmpty(xdgdatahome)){
-                        xdgdatahome = Path.Combine(xdgdatahome, "powershell"); 
-                        return xdgdatahome; 
-                    }
-
-                    else
-                    {
+                    if (String.IsNullOrEmpty(xdgdatahome)){
                         //xdg values have not been set 
-                        if (!Directory.Exists(profileDefault)) //module folder not always guaranteed to exist
+                        if (!Directory.Exists(moduleDefault)) //module folder not always guaranteed to exist
                         {   
                             Directory.CreateDirectory(moduleDefault);                           
                         }
 
-                        return profileDefault; 
+                        return xdgConfigHomeDefault; 
+                    }
+
+                    else
+                    {
+                        return Path.Combine(xdgdatahome, "powershell"); 
                     }                                        
                    
                 case Platform.XDG_Type.HISTORY: 
                     //the user has set XDG_CACHE_HOME
-                    if (!String.IsNullOrEmpty(xdgcachehome)){
-                        xdgcachehome = Path.Combine(xdgcachehome, "powershell"); 
-                        return xdgcachehome; 
+                    if (String.IsNullOrEmpty(xdgcachehome)){
+                        return xdgConfigHomeDefault; 
                     }
                     else
                     {
-                        return profileDefault; 
+                        return Path.Combine(xdgcachehome, "powershell"); 
+
                     }
 
                 case Platform.XDG_Type.DEFAULT:     
                     //default for profile location
-                    return profileDefault;
+                    return xdgConfigHomeDefault;
 
                 default:                    
-                    if (!Directory.Exists(profileDefault)) 
+                    if (!Directory.Exists(xdgConfigHomeDefault)) 
                     {   
-                        Directory.CreateDirectory(profileDefault);                        
+                        Directory.CreateDirectory(xdgConfigHomeDefault);                        
                     }
-                    return profileDefault; 
+                    return xdgConfigHomeDefault; 
             }
       
         }

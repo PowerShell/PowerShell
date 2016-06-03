@@ -26,9 +26,9 @@ Describe "XDG Base Directory Specification" {
         }
 
         It "Should start with the default profile" -Skip:$IsWindows {
-            $expected = [IO.Path]::Combine($env:HOME, ".config/powershell", $profileName)
+            $expected = [IO.Path]::Combine($env:HOME, "Documents", "WindowsPowerShell", $PROFILE)
             # Escape variable with backtick so new process interpolates it
-             & $powershell -noprofile `$PROFILE | Should Be $expected
+            & $powershell -noprofile `$PROFILE | Should Be $expected
         }
 
         It "Should respect XDG_CONFIG_HOME" -Skip:$IsWindows {
@@ -41,11 +41,11 @@ Describe "XDG Base Directory Specification" {
 
     Context "Modules" {
 
-        It "Should start with the default module path" -Skip:$IsWindows {
-            $expected = [IO.Path]::Combine($env:HOME, ".config", "powershell")
+        It "Should respect XDG_DATA_HOME" -Skip:$IsWindows {
+            $env:XDG_DATA_HOME = [IO.Path]::Combine($env:HOME, ".local", "share", "powershell", "Modules")
             $modulepath = & $powershell -noprofile `$env:PSMODULEPATH
             $modulepath = $modulepath.split(';')[0]
-            $modulepath | Should Be $expected
+            $modulepath | Should Be $env:XDG_DATA_HOME
         }
 
 	It "Should respect XDG_CACHE_HOME" -Skip:$IsWindows {
@@ -54,11 +54,9 @@ Describe "XDG Base Directory Specification" {
             & $powershell -noprofile `$env:XDG_CACHE_HOME | Should Be $expected
 	}
 	
-	It "Should respect XDG_DATA_HOME" -Skip:$IsWindows {
-            $env:XDG_DATA_HOME = [IO.Path]::Combine($pwd, "test", "path")
-            $datahomeDir = [IO.Path]::Combine($env:XDG_DATA_HOME, "ConsoleHost_history.txt")
-            $expected = [IO.Path]::Combine($HOME, "Powershell", "test", "path", "ConsoleHost_history.txt")
-            $datahomeDir | Should Be $expected
+	It "Should respect PSReadLine history" -Skip:$IsWindows {
+            $env:XDG_DATA_HOME = [IO.Path]::Combine($env:HOME, ".local", "share", "powershell", "PSReadLine", "ConsoleHost_history.txt")            
+            "a" | Should Be $expected
 	}
     }
 }
