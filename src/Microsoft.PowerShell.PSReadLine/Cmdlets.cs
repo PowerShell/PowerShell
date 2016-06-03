@@ -180,23 +180,23 @@ namespace Microsoft.PowerShell
             else
             {
                 //PSReadline does not have access to Utils.CorePSPlatform. Must set PSReadline path seperately                
-                string modulepath = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
+                string historypath = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
                     
-                if (!String.IsNullOrEmpty(modulepath))
+                if (!String.IsNullOrEmpty(historypath))
                 {
-                    modulepath = System.IO.Path.Combine(modulepath, "powershell");
-                    HistorySavePath = modulepath; 
+                    historypath = System.IO.Path.Combine(historypath, "powershell");
+                    HistorySavePath = historypath; 
                 }
 
                 else
                 {
-                    modulepath = System.IO.Path.Combine(
+                    historypath = System.IO.Path.Combine(
                                                         Environment.GetEnvironmentVariable("HOME"), 
-                                                        ".config/powershell/modules");
+                                                        ".local/share/powershell/modules");
                         
                     HistorySavePath = System.IO.Path.Combine(
                                                              Environment.GetEnvironmentVariable("HOME"), 
-                                                             modulepath,
+                                                             historypath,
                                                              "PSReadLine",
                                                              hostName + "_history.txt");
                 }
