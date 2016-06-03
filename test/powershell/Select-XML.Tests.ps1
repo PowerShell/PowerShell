@@ -18,9 +18,6 @@ Describe "Select-XML DRT Unit Tests" -Tags DRT{
 "@
 		$xmlContent >$testfile
 	}
-	AfterAll {
-		rm $testfile
-	}
 	
 	It "Select-XML should work"{
 		$results = Select-XML -Path $testfile -XPath "/bookstore/book/title"
