@@ -31,6 +31,11 @@ v0.4.0
 
 <!-- If running you own build, please fill in the results of the following commands: -->
 
+```powershell
+> $PSVersionTable
+
+```
+
 ```sh
 $ dotnet --info
 
