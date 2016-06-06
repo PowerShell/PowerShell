@@ -8,7 +8,7 @@
     },
 
     "frameworks": {
-        "netstandard1.5": {
+        "netstandard1.3": {
             "imports": [ "net40" ],
             "dependencies": {
                 "Microsoft.NETCore": "5.0.1-rc2-24103",

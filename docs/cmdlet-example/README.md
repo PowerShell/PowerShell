@@ -2,7 +2,9 @@ Building a C# Cmdlet
 ====================
 
 This example project demonstrates how to build your own C# cmdlet for
-PowerShell.
+PowerShell. When built in the following manner, the resulting DLL can be
+imported everywhere: Windows PowerShell with Desktop .NET (FullCLR) and Open
+PowerShell on Windows, Linux, and OS X with .NET Core (CoreCLR).
 
 Setup
 -----
@@ -24,7 +26,7 @@ least `1.0.0-rc2`.
     },
 
     "frameworks": {
-        "netstandard1.5": {
+        "netstandard1.3": {
             "imports": [ "net40" ],
             "dependencies": {
                 "Microsoft.NETCore": "5.0.1-*",
@@ -49,8 +51,10 @@ Going through this step-by-step:
 - [Microsoft.PowerShell.5.ReferenceAssemblies][powershell]: Contains the SDK
   reference assemblies for PowerShell version 5. Targets the `net40` framework.
 
-- [netstandard1.5][]: The target framework for .NET Core portable libraries.
+- [netstandard1.3][]: The target framework for .NET Core portable libraries.
   This is an abstract framework that will work anywhere its dependencies work.
+  Specifically, the 1.3 version allows this assembly to work even on Windows
+  PowerShell with Desktop .NET.
 
 - `"imports": [ "net4" ]`: Since the PowerShell reference assemblies target the
   older `net40` framework, we `import` it here to tell `dotnet restore` that we
@@ -83,7 +87,7 @@ this `NuGet.config` file to setup the [.NET Core MyGet feed][myget]:
 
 [dotnet-cli]: https://github.com/dotnet/cli#new-to-net-cli
 [powershell]: https://www.nuget.org/packages/Microsoft.PowerShell.5.ReferenceAssemblies
-[netstandard1.5]: https://github.com/dotnet/corefx/blob/master/Documentation/architecture/net-standard-applications.md
+[netstandard1.3]: https://github.com/dotnet/corefx/blob/master/Documentation/architecture/net-standard-applications.md
 [netcore]: https://dotnet.myget.org/feed/dotnet-core/package/nuget/Microsoft.NETCore
 [portable]: https://dotnet.myget.org/feed/dotnet-core/package/nuget/Microsoft.NETCore.Portable.Compatibility
 [myget]: https://dotnet.myget.org/gallery/dotnet-core
@@ -108,7 +112,7 @@ Once packages are restored, building is simple:
 dotnet build
 ```
 
-This will produce the assembly `./bin/Debug/netstandard1.5/SendGreeting.dll`.
+This will produce the assembly `./bin/Debug/netstandard1.3/SendGreeting.dll`.
 
 This build/restore process should work anywhere .NET Core works, including
 Windows, Linux, and OS X.
@@ -126,4 +130,10 @@ Then import and use the module:
 > Import-Module SendGreeting # Module names are case-sensitive on Linux
 > Send-Greeting -Name World
 Hello World!
+```
+
+You can also import by the path:
+
+```powershell
+> Import-Module ./bin/Debug/netstandard1.3/SendGreeting.dll
 ```
