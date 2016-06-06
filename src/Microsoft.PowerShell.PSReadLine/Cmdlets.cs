@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell
             else
             {
                 //PSReadline does not have access to Utils.CorePSPlatform. Must set PSReadline path seperately                
-                string historypath = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
+                string historypath = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
                     
                 if (!String.IsNullOrEmpty(historypath))
                 {
@@ -195,7 +195,8 @@ namespace Microsoft.PowerShell
                                                              Environment.GetEnvironmentVariable("HOME"), 
                                                              ".local",
                                                              "share",
-                                                             "powershell",                                                             
+                                                             "powershell",  
+                                                             "PSReadLine",
                                                              hostName + "_history.txt");
                 }
             }

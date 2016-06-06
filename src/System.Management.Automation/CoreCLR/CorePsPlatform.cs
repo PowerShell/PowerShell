@@ -115,7 +115,7 @@ namespace System.Management.Automation
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
             string xdgConfigHomeDefault =  Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".config", "powershell");
-            string xdgModuleDefault = Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".local", "share", "powershell", "modules");
+            string xdgModuleDefault = Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".local", "share", "powershell", "Modules");
             string xdgCacheDefault = Path.Combine (System.Environment.GetEnvironmentVariable("HOME"), ".cache", "powershell"); 
             
             switch (dirpath){
@@ -141,11 +141,11 @@ namespace System.Management.Automation
                     {   
                         Directory.CreateDirectory(xdgModuleDefault);                           
                     }
-                       return xdgConfigHomeDefault; 
+                       return xdgModuleDefault; 
                     }
                     else
                     {
-                        return Path.Combine(xdgdatahome, "powershell"); 
+                        return Path.Combine(xdgdatahome, "powershell", "Modules"); 
                     }                                        
                                     
                 case Platform.XDG_Type.CACHE:
@@ -160,6 +160,7 @@ namespace System.Management.Automation
          
                         return xdgCacheDefault; 
                     }
+
                     else
                     {
                         return Path.Combine(xdgcachehome, "powershell"); 
