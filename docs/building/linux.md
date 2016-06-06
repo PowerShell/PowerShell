@@ -46,7 +46,7 @@ package cannot be downloaded as simply as with `wget`. We have a
 script that wraps the GitHub API and uses a personal access token to
 authorize in order to obtain the package.
 
-The `./download.sh` script will also install the PowerShell package.
+The `./tools/download.sh` script will also install the PowerShell package.
 
 > You can alternativelly download via a browser, upload it to your
 > box via some other method, and manually install it.
@@ -54,7 +54,7 @@ The `./download.sh` script will also install the PowerShell package.
 In Bash:
 
 ```sh
-GITHUB_TOKEN=<replace with your token> ./download.sh
+GITHUB_TOKEN=<replace with your token> ./tools/download.sh
 powershell
 ```
 
