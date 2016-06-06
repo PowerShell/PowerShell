@@ -169,40 +169,39 @@ namespace Microsoft.PowerShell
             WordDelimiters = DefaultWordDelimiters;
             HistorySearchCaseSensitive = DefaultHistorySearchCaseSensitive;
             HistorySaveStyle = DefaultHistorySaveStyle;
+
+            string historyFileName = hostName + "_history.txt";
 #if CORECLR
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))   // MS Windows
             {
                 HistorySavePath = System.IO.Path.Combine(Environment.GetEnvironmentVariable("APPDATA"),
                                                          @"Microsoft\Windows\PowerShell\PSReadline\",
-                                                         hostName + "_history.txt");
+                                                         historyFileName);
             }
-
             else
             {
-                //PSReadline does not have access to Utils.CorePSPlatform. Must set PSReadline path seperately                
-                string historypath = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
-                    
-                if (!String.IsNullOrEmpty(historypath))
-                {
-                    historypath = System.IO.Path.Combine(historypath, "powershell", "PSReadLine", hostName + "_history.txt");
-                    HistorySavePath = historypath; 
-                }
+                // PSReadline does not have access to Utils.CorePSPlatform. Must set PSReadline path separately
+                string historyPath = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
 
+                if (!String.IsNullOrEmpty(historyPath))
+                {
+                    historyPath = System.IO.Path.Combine(historyPath, "powershell", "PSReadLine", historyFileName);
+                    HistorySavePath = historyPath;
+                }
                 else
                 {
-                    //While a module, history save path goes into the larger .local/share/powershell folder
-                    HistorySavePath = System.IO.Path.Combine(
-                                                             Environment.GetEnvironmentVariable("HOME"), 
+                    // History is data, so it goes into .local/share/powershell folder
+                    HistorySavePath = System.IO.Path.Combine(Environment.GetEnvironmentVariable("HOME"),
                                                              ".local",
                                                              "share",
-                                                             "powershell",  
+                                                             "powershell",
                                                              "PSReadLine",
-                                                             hostName + "_history.txt");
+                                                             historyFileName);
                 }
             }
 #else
-                HistorySavePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-                + @"\Microsoft\Windows\PowerShell\PSReadline\" + hostName + "_history.txt";
+            HistorySavePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                + @"\Microsoft\Windows\PowerShell\PSReadline\" + historyFileName;
 #endif
             CommandValidationHandler = null;
             CommandsToValidateScriptBlockArguments = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -221,7 +220,7 @@ namespace Microsoft.PowerShell
                 "Where-Object", "?", "where",
             };
         }
-        
+
         public EditMode EditMode { get; set; }
 
         public string ContinuationPrompt { get; set; }

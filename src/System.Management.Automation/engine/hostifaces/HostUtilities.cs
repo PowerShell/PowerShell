@@ -152,7 +152,6 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
-
                 command = new PSCommand();
                 command.AddCommand(profilePath, false);
                 commands.Add(command);
@@ -187,9 +186,7 @@ namespace System.Management.Automation
             {
                 basePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
                 basePath = IO.Path.Combine(basePath, Utils.ProductNameForDirectory);
-                
             }
-        
             else
             {
                 basePath = GetAllUsersFolderPath(shellId);

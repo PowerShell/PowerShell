@@ -21,6 +21,7 @@ using SpecialFolder = System.Management.Automation.Environment.SpecialFolder;
 
 namespace System.Management.Automation
 {
+
     /// <summary>
     /// These are platform abstractions and platform specific implementations
     ///
@@ -42,15 +43,14 @@ namespace System.Management.Automation
                 #endif
             }
         }
-        
+
         //enum for selecting the xdgpaths
         public enum XDG_Type
         {
             PROFILE,
             MODULES,
-            CACHE, 
+            CACHE,
             DEFAULT
-        
         }
 
         public static bool IsOSX
@@ -105,7 +105,7 @@ namespace System.Management.Automation
                 "WSMan.format.ps1xml"
             };
 
-        // function for choosing directory location of PowerShell for profile loading 
+        // function for choosing directory location of PowerShell for profile loading
         public static string SelectProductNameForDirectory (Platform.XDG_Type dirpath)
         {
 
@@ -116,49 +116,49 @@ namespace System.Management.Automation
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
             string xdgConfigHomeDefault =  Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".config", "powershell");
             string xdgModuleDefault = Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".local", "share", "powershell", "Modules");
-            string xdgCacheDefault = Path.Combine (System.Environment.GetEnvironmentVariable("HOME"), ".cache", "powershell"); 
-            
+            string xdgCacheDefault = Path.Combine (System.Environment.GetEnvironmentVariable("HOME"), ".cache", "powershell");
+
             switch (dirpath){
-                case Platform.XDG_Type.PROFILE: 
+                case Platform.XDG_Type.PROFILE:
                     //the user has set XDG_CONFIG_HOME corrresponding to profile path
                     if (String.IsNullOrEmpty(xdgconfighome))
                     {
                         //xdg values have not been set
-                        return xdgConfigHomeDefault;                         
+                        return xdgConfigHomeDefault;
                     }
 
                     else
                     {
-                        return Path.Combine(xdgconfighome, "powershell"); 
+                        return Path.Combine(xdgconfighome, "powershell");
                     }
-                    
-                case Platform.XDG_Type.MODULES: 
-                    //the user has set XDG_DATA_HOME corresponding to module path 
+
+                case Platform.XDG_Type.MODULES:
+                    //the user has set XDG_DATA_HOME corresponding to module path
                     if (String.IsNullOrEmpty(xdgdatahome)){
-         
-                    //xdg values have not been set 
+
+                    //xdg values have not been set
                     if (!Directory.Exists(xdgModuleDefault)) //module folder not always guaranteed to exist
-                    {   
-                        Directory.CreateDirectory(xdgModuleDefault);                           
+                    {
+                        Directory.CreateDirectory(xdgModuleDefault);
                     }
-                       return xdgModuleDefault; 
+                       return xdgModuleDefault;
                     }
                     else
                     {
-                        return Path.Combine(xdgdatahome, "powershell", "Modules"); 
-                    }                                        
-                                    
+                        return Path.Combine(xdgdatahome, "powershell", "Modules");
+                    }
+
                 case Platform.XDG_Type.CACHE:
                     //the user has set XDG_CACHE_HOME
                     if (String.IsNullOrEmpty(xdgcachehome))
                     {
-                       //xdg values have not been set 
+                       //xdg values have not been set
                         if (!Directory.Exists(xdgCacheDefault)) //module folder not always guaranteed to exist
-                        {   
-                            Directory.CreateDirectory(xdgCacheDefault);                           
+                        {
+                            Directory.CreateDirectory(xdgCacheDefault);
                         }
-         
-                        return xdgCacheDefault; 
+
+                        return xdgCacheDefault;
                     }
 
                     else
@@ -168,30 +168,30 @@ namespace System.Management.Automation
                             Directory.CreateDirectory(Path.Combine(xdgcachehome, "powershell"));
                         }
 
-                        return Path.Combine(xdgcachehome, "powershell"); 
-                    }                 
-                                    
-                case Platform.XDG_Type.DEFAULT:     
+                        return Path.Combine(xdgcachehome, "powershell");
+                    }
+
+                case Platform.XDG_Type.DEFAULT:
                     //default for profile location
                     return xdgConfigHomeDefault;
 
-                default:                    
+                default:
                     //xdgConfigHomeDefault needs to be created in the edge case that we do not have the folder or it was deleted
                     //This folder is the default in the event of all other failures for data storage
-                    if (!Directory.Exists(xdgConfigHomeDefault)) 
-                    {   
-                        try {                            
+                    if (!Directory.Exists(xdgConfigHomeDefault))
+                    {
+                        try {
                             Directory.CreateDirectory(xdgConfigHomeDefault);
-                        }   
+                        }
                         catch{
-                            
+
                             Console.Error.WriteLine("Failed to create default data directory: " + xdgConfigHomeDefault);
-                        }                     
+                        }
                     }
-                    
-                    return xdgConfigHomeDefault; 
+
+                    return xdgConfigHomeDefault;
             }
-      
+
         }
 
         // ComObjectType is null on CoreCLR for Linux since there is
@@ -458,7 +458,7 @@ namespace System.Management.Automation
                     throw new InvalidOperationException("LinuxPlatform.NonWindowsHostName error: " + lastError);
                 }
                 return hostName;
-                
+
             }
             else
             {
@@ -481,7 +481,7 @@ namespace System.Management.Automation
             // TODO:PSL clean this up
             return 0;
         }
-        
+
         /// <summary>
         /// This exception is meant to be thrown if a code path is not supported due
         /// to platform restrictions
@@ -665,7 +665,7 @@ namespace System.Management.Automation
             int ret = Native.IsSymLink(filePath);
             switch(ret)
             {
-                case 1: 
+                case 1:
                   return true;
                 case 0:
                   return false;
@@ -685,7 +685,7 @@ namespace System.Management.Automation
             int ret = Native.IsExecutable(filePath);
             switch(ret)
             {
-                case 1: 
+                case 1:
                   return true;
                 case 0:
                   return false;
@@ -780,11 +780,11 @@ namespace System.Management.Automation
             internal static extern int SetDate(SetDateInfoInternal info);
 
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            internal static extern int CreateSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath, 
+            internal static extern int CreateSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
                                                      [MarshalAs(UnmanagedType.LPStr)]string target);
 
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            internal static extern int CreateHardLink([MarshalAs(UnmanagedType.LPStr)]string filePath, 
+            internal static extern int CreateHardLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
                                                       [MarshalAs(UnmanagedType.LPStr)]string target);
 
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
