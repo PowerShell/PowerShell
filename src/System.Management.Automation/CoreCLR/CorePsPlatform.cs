@@ -163,6 +163,11 @@ namespace System.Management.Automation
 
                     else
                     {
+                        if (!Directory.Exists(Path.Combine(xdgcachehome, "powershell")))
+                        {
+                            Directory.CreateDirectory(Path.Combine(xdgcachehome, "powershell"));
+                        }
+
                         return Path.Combine(xdgcachehome, "powershell"); 
                     }                 
                                     
