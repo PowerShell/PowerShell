@@ -56,6 +56,48 @@ and the C# extension.
 [C# extension]: https://github.com/OmniSharp/omnisharp-vscode/releases
 [documentation]: https://github.com/OmniSharp/omnisharp-vscode/pull/157
 
+PowerShell
+==========
+
+The `Trace-Command` cmdlet can be used to enable tracing of certain PowerShell
+subsystems. Use `Get-TraceSource` for a list of tracers:
+
+* CmdletProviderClasses
+* CommandDiscovery
+* CommandSearch
+* ConsoleHost
+* ConsoleHostRunspaceInit
+* ConsoleHostUserInterface
+* ConsoleLineOutput
+* DisplayDataQuery
+* ETS
+* FileSystemProvider
+* FormatFileLoading
+* FormatViewBinding
+* LocationGlobber
+* MemberResolution
+* Modules
+* MshSnapinLoadUnload
+* ParameterBinderBase
+* ParameterBinderController
+* ParameterBinding
+* PathResolution
+* PSDriveInfo
+* PSSnapInLoadUnload
+* RunspaceInit
+* SessionState
+* TypeConversion
+* TypeMatch
+
+Then trace it like this:
+
+```powershell
+Trace-Command -Expression { Get-ChildItem . } -Name PathResolution -PSHost
+```
+
+The `-PSHost` specifies the sink, in this case the console host, so we can see
+the tracing messages.
+
 corehost
 ========
 
