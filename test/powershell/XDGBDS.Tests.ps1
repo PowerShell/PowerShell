@@ -21,7 +21,7 @@ Describe "XDG Base Directory Specification" {
     Context "Profile" {
 
         It "Should not change Windows behavior" -Skip:($IsLinux -or $IsOSX) {
-            $expected = [IO.Path]::Combine($env:HOME, "Documents", "WindowsPowerShell", $profileName)
+            $expected = [IO.Path]::Combine($env:USERPROFILE, "Documents", "WindowsPowerShell", $profileName)
             & $powershell -noprofile `$PROFILE | Should Be $expected
         }
 
@@ -40,7 +40,7 @@ Describe "XDG Base Directory Specification" {
     Context "Modules" {
 
         It "Should not change Windows behavior" -Skip:($IsLinux -or $IsOSX) {
-            $expected = [IO.Path]::Combine($env:HOME, "Documents", "WindowsPowerShell", "Modules")
+            $expected = [IO.Path]::Combine($env:USERPROFILE, "Documents", "WindowsPowerShell", "Modules")
             $actual = & $powershell -noprofile `$env:PSMODULEPATH
             # Windows prepends the system path, so the user path is second
             $actual.split(';')[1] | Should Be $expected
@@ -85,7 +85,7 @@ Describe "XDG Base Directory Specification" {
     Context "Cache" {
 
         It "Should not change Windows behavior" -Skip:($IsLinux -or $IsOSX) {
-            $expected = [IO.Path]::Combine($env:HOME, "Documents", "WindowsPowerShell", "StartupProfileData-NonInteractive")
+            $expected = [IO.Path]::Combine($env:LOCALAPPDATA, "Microsoft", "Windows", "PowerShell", "StartupProfileData-NonInteractive")
             Remove-Item -ErrorAction SilentlyContinue $expected
             & $powershell -noprofile { exit }
             $expected | Should Exist
