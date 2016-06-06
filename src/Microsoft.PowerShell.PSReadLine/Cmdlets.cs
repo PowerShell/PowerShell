@@ -172,8 +172,8 @@ namespace Microsoft.PowerShell
 #if CORECLR
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))   // MS Windows
             {
-                HistorySavePath = System.IO.Path.Combine(Environment.ExpandEnvironmentVariables("%AppData%"),
-                                                         @"\Microsoft\Windows\PowerShell\PSReadline\",
+                HistorySavePath = System.IO.Path.Combine(Environment.GetEnvironmentVariable("APPDATA"),
+                                                         @"Microsoft\Windows\PowerShell\PSReadline\",
                                                          hostName + "_history.txt");
             }
 
