@@ -114,9 +114,9 @@ namespace System.Management.Automation
             string xdgconfighome = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
-            string xdgConfigHomeDefault =  Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".config/powershell");
-            string xdgModuleDefault = Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".local/share/powershell/modules");
-            string xdgCacheDefault = Path.Combine (System.Environment.GetEnvironmentVariable("HOME"), ".cache/powershell"); 
+            string xdgConfigHomeDefault =  Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".config", "powershell");
+            string xdgModuleDefault = Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".local", "share", "powershell", "modules");
+            string xdgCacheDefault = Path.Combine (System.Environment.GetEnvironmentVariable("HOME"), ".cache", "powershell"); 
             
             switch (dirpath){
                 case Platform.XDG_Type.PROFILE: 

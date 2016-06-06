@@ -190,11 +190,12 @@ namespace Microsoft.PowerShell
 
                 else
                 {
+                    //While a module, history save path goes into the larger .local/share/powershell folder
                     HistorySavePath = System.IO.Path.Combine(
                                                              Environment.GetEnvironmentVariable("HOME"), 
-                                                             ".cache",
-                                                             "powershell",
-                                                             "PSReadLine",
+                                                             ".local",
+                                                             "share",
+                                                             "powershell",                                                             
                                                              hostName + "_history.txt");
                 }
             }
