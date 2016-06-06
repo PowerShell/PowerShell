@@ -443,7 +443,7 @@ Built upon .NET Core, it is also a C# REPL.
     Write-Verbose "Packaging $Source"
 
     if ($IsWindows) {
-        $msiPackagePath = Create-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -Verbose
+        $msiPackagePath = New-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -Verbose
         $appxPackagePath = New-AppxPackage -PackageVersion $Version -SourcePath $Source -AssetsPath "$PSScriptRoot\Assets" -Verbose
 
         $packages = @($msiPackagePath, $appxPackagePath)
@@ -957,7 +957,7 @@ internal class {0} {{
     $body -f $ClassName,$ModuleName,$entries
 }
 
-function Create-MSIPackage
+function New-MSIPackage
 {
     [CmdletBinding()]
     param (
@@ -982,7 +982,7 @@ function Create-MSIPackage
 
         # File describing the MSI Package creation semantics
         [ValidateNotNullOrEmpty()]
-        [string] $ProductWxsPath = (Join-Path $pwd 'Product.wxs')
+        [string] $ProductWxsPath = (Join-Path $pwd '\assets\Product.wxs')
 
     )    
 
