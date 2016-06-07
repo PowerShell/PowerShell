@@ -12,7 +12,7 @@ git:
 before_install:
   - git config --global url.git@github.com:.insteadOf https://github.com/
   - git submodule update --init -- src/windows-build src/Modules/Pester src/libpsl-native/test/googletest
-  - ./download.sh
+  - ./tools/download.sh
 script:
   - ulimit -n 4096; powershell -c "Import-Module ./build.psm1; Start-PSBootstrap; Start-PSBuild; Start-PSPester"
 notifications:

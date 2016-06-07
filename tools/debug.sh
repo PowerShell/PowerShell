@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 hash lldb-3.6 2>/dev/null || { echo >&2 "No lldb-3.6, please run 'sudo apt-get install lldb-3.6'"; exit 1; }
-test -x bin/powershell || { echo >&2 "No bin/powershell, please run './build.sh'"; exit 1; }
+test -x debug/powershell || { echo >&2 "No debug/powershell, please run 'Start-PSBuild -Publish -Output debug'"; exit 1; }
+test -x debug/libsosplugin.so || { echo >&2 "No debug/libsosplugin.so, please run 'Start-PSBuild -Publish -Output debug'"; exit 1; }
 
 cat << EOF
 
@@ -16,6 +17,6 @@ Most useful commands are 'clrstack', 'clrthreads', and 'pe'.
 
 EOF
 
-pushd bin
+pushd debug
 lldb-3.6 -o "plugin load libsosplugin.so" -- ./powershell $@
 popd

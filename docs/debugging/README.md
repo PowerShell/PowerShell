@@ -98,6 +98,19 @@ Trace-Command -Expression { Get-ChildItem . } -Name PathResolution -PSHost
 The `-PSHost` specifies the sink, in this case the console host, so we can see
 the tracing messages.
 
+LLDB with SOS plugin
+====================
+
+The `./tools/debug.sh` script can be used to launch PowerShell inside of LLDB
+with the SOS plugin provided by .NET Core. This provides an additional way to
+debug PowerShell on Linux, but VS Code is recommended for a better user
+experience (and its single-stepping capabilities).
+
+The script is self-documented and contains a link to the
+[CoreCLR debugging help][clr-debug] .
+
+[clr-debug]: https://github.com/dotnet/coreclr/blob/master/Documentation/building/debugging-instructions.md#debugging-coreclr-on-linux
+
 corehost
 ========
 
