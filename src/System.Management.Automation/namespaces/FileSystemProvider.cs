@@ -951,7 +951,7 @@ namespace Microsoft.PowerShell.Commands
                         // add the filesystem with the root "/" to the initial drive list,
                         // otherwise path handling will not work correctly because there
                         // is no : available to separate the filesystems from each other
-                        if (Platform.HasSingleRootFilesystem() && root != "/")
+                        if (Platform.HasSingleRootFilesystem() && root != StringLiterals.DefaultPathSeparatorString)
                             continue;
 
                         // Porting notes: On non-windows platforms .net can report two
@@ -4765,12 +4765,13 @@ namespace Microsoft.PowerShell.Commands
             return parentPath;
         } // GetParentPath
 
+        // Note: we don't use IO.Path.IsPathRooted as this deals with "invalid" i.e. unnormalized paths
         private static bool IsAbsolutePath(string path)
         {
             bool result = false;
 
-            // this needs to be done differently on single root filesystems
-            if (Platform.HasSingleRootFilesystem() && path.StartsWith("/"))
+            // check if we're on a single root filesystem and it's an absolute path
+            if (LocationGlobber.IsSingleFileSystemAbsolutePath(path))
             {
                 return true;
             }

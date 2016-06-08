@@ -1571,6 +1571,30 @@ namespace System.Management.Automation
         } // IsProviderQualifiedPath
 
         /// <summary>
+        /// Determines if the given path is absolute while on a single root filesystem.
+        /// </summary>
+        ///
+        /// <remarks>
+        /// Porting notes: absolute paths on non-Windows filesystems start with a '/' (no "C:" drive
+        /// prefix, the slash is the prefix). We compare against both '/' and '\' (default and
+        /// alternate path separator) in order for PowerShell to be slash agnostic.
+        /// </remarks>
+        ///
+        /// <param name="path">
+        /// The path used in the determination
+        /// </param>
+        ///
+        /// <returns>
+        /// Returns true if we're on a single root filesystem and the path is absolute.
+        /// </returns>
+        internal static bool IsSingleFileSystemAbsolutePath(string path)
+        {
+            return Platform.HasSingleRootFilesystem() &&
+                (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal) ||
+                 path.StartsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal));
+        } // IsSingleFileSystemAbsolutePath
+
+        /// <summary>
         /// Determines if the given path is relative or absolute
         /// </summary>
         /// 
@@ -1619,11 +1643,8 @@ namespace System.Management.Automation
                     break;
                 }
 
-                // non-windows porting notes:
-                // this needs to be handled differently on non-windows, paths starting with / are always absolute
-                // -> still continue with other isAbsolute processing, colons can still happen in drives
-                //    of other providers 
-                if (Platform.HasSingleRootFilesystem() && path.StartsWith("/",StringComparison.Ordinal))
+                // check if we're on a single root filesystem and it's an absolute path
+                if (IsSingleFileSystemAbsolutePath(path))
                 {
                     result = true;
                     break;
@@ -1716,13 +1737,10 @@ namespace System.Management.Automation
                     break;
                 }
 
-                // non-windows porting notes:
-                // this needs to be handled differently on non-windows, paths starting with / are always absolute
-                // -> still continue with other isAbsolute processing, colons can still happen in drives
-                //    of other providers 
-                if (Platform.HasSingleRootFilesystem() && path.StartsWith("/",StringComparison.Ordinal))
+                // check if we're on a single root filesystem and it's an absolute path
+                if (IsSingleFileSystemAbsolutePath(path))
                 {
-                    driveName = "/";
+                    driveName = StringLiterals.DefaultPathSeparatorString;
                     result = true;
                     break;
                 }
