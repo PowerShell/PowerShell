@@ -3148,49 +3148,42 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    // Platform note:
-                    // this needs to be done differently on non-windows platforms
-
                     string unescapedPath = context.SuppressWildcardExpansion ? path : RemoveGlobEscaping(path);
 
-                    // this is the output of the platform specific code right below
-                    string resolvedPath;
+                    string formatString = "{0}:" + StringLiterals.DefaultPathSeparator + "{1}";
 
-                    if (drive.VolumeSeparatedByColon)
+                    // Check to see if its a hidden provider drive.
+                    if (drive.Hidden)
                     {
-                        string formatString = "{0}:" + StringLiterals.DefaultPathSeparator + "{1}";
-
-                        // Check to see if its a hidden provider drive.
-                        if (drive.Hidden)
+                        if (IsProviderDirectPath(unescapedPath))
                         {
-                            if (IsProviderDirectPath(unescapedPath))
-                            {
-                                formatString = "{1}";
-                            }
-                            else
-                            {
-                                formatString = "{0}::{1}";
-                            }
+                            formatString = "{1}";
                         }
                         else
                         {
-                            if (path.StartsWith(StringLiterals.DefaultPathSeparator.ToString(), StringComparison.Ordinal))
-                            {
-                                formatString = "{0}:{1}";
-                            }
+                            formatString = "{0}::{1}";
                         }
+                    }
+                    else
+                    {
+                        if (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                        {
+                            formatString = "{0}:{1}";
+                        }
+                    }
 
-                        resolvedPath =
+                    // Porting note: if the volume is not separated by a colon (non-Windows filesystems), don't add it.
+                    if (!drive.VolumeSeparatedByColon)
+                    {
+                        formatString = "{0}{1}";
+                    }
+
+                    string resolvedPath =
                             String.Format(
                                 System.Globalization.CultureInfo.InvariantCulture,
                                 formatString,
                                 drive.Name,
                                 unescapedPath);
-                    }
-                    else
-                    {
-                        resolvedPath = drive.Name + unescapedPath;
-                    }
 
                     // Since we didn't do globbing, be sure the path exists
                     if (allowNonexistingPaths || 
