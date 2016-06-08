@@ -39,3 +39,240 @@ Describe "Get-Member" {
 	Get-Member -InputObject $o | Should Not BeNullOrEmpty
     }
 }
+
+Describe "Get-Member DRT Unit Tests" -Tags DRT {
+    Context "Verify Get-Member with Class" {
+        BeforeAll {
+            Add-Type -TypeDefinition @"
+            public class Employee
+            {
+                private string firstName;
+                private string lastName;
+                private int    yearsInMS;
+
+                public string FirstName
+                {
+                    get
+                    {
+                        return firstName;
+                    }
+                    set
+                    {
+                        firstName = value;
+                    }
+                }
+
+
+                public string LastName
+                {
+                    get
+                    {
+                        return lastName;
+                    }
+                    set
+                    {
+                        lastName = value;
+                    }
+                }
+
+
+                public int YearsInMS
+                {
+                    get
+                    {
+                        return yearsInMS;
+                    }
+                    set
+                    {
+                        yearsInMS = value;
+                    }
+                }
+
+                public void GetEmployee() {}
+
+                public void SetEmployee() {}
+ 
+                public Employee(string firstName, string lastName, int yearsInMS)
+                {
+                    this.firstName = firstName;
+                    this.lastName  = lastName;
+                    this.yearsInMS = yearsInMS;
+                }
+            }
+"@
+    
+
+            $fileToDeleteName = Join-Path $TestDrive -ChildPath "getMemberTest.ps1xml"
+            $XMLFile= @"
+<Types>
+    <Type>
+    <Name>Employee</Name>
+    <Members>
+        <PropertySet>
+            <Name>PropertySetName</Name>
+            <ReferencedProperties>
+                <Name>FirstName</Name> 
+                <Name>LastName</Name> 
+            </ReferencedProperties>
+        </PropertySet>
+        <PropertySet>
+            <Name>FullSet</Name>
+            <ReferencedProperties>
+                <Name>FirstName</Name> 
+                <Name>LastName</Name> 
+                <Name>YearsInMS</Name> 
+            </ReferencedProperties>
+        </PropertySet>
+    </Members>
+    </Type>
+    <Type>
+    <Name>EmployeePartTime</Name>
+    <Members>
+        <PropertySet>
+            <Name>PropertySetName</Name>
+            <ReferencedProperties>
+                <Name>FirstName</Name> 
+                <Name>HoursPerWeek</Name> 
+            </ReferencedProperties>
+        </PropertySet>
+        <PropertySet>
+            <Name>FullSet</Name>
+            <ReferencedProperties>
+                <Name>FirstName</Name> 
+                <Name>LastName</Name> 
+                <Name>HoursPerWeek</Name> 
+            </ReferencedProperties>
+        </PropertySet>
+    </Members>
+    </Type>
+</Types>
+"@
+
+            $XMLFile > $fileToDeleteName
+            Update-TypeData -AppendPath $fileToDeleteName
+        }
+
+        It "Fail to get member without any input" {
+            try 
+            {
+                Get-Member -MemberType All -ErrorAction Stop 
+                Throw "Execution OK"
+            }
+            catch
+            {
+                $_.FullyQualifiedErrorId | Should Be 'NoObjectInGetMember,Microsoft.PowerShell.Commands.GetMemberCommand'
+            }
+        }
+
+        It 'Get the expected Properties of "Employee" object' {
+            $emps = [Employee]::New("john", "smith", 5), [Employee]::New("joesph", "smith", 15), [Employee]::New("john", "smyth", 2)
+            $results = $emps | Get-Member -MemberType Property
+            $results.Length | Should Be 3
+            $results[0].Name | Should Be "FirstName"
+            $results[1].Name | Should Be "LastName"
+            $results[2].Name | Should Be "YearsInMS"
+        }
+
+        It 'Get the Public Methods of "Employee" object' {
+            $emps = [Employee]::New("john", "smith", 5), [Employee]::New("joesph", "smith", 15), [Employee]::New("john", "smyth", 2)
+            $methodList = "GetHashCode", "Equals", "ToString", "GetEmployee", "SetEmployee", "GetType"
+            $results = $emps | Get-Member -MemberType Method
+            $results.Length | Should Be $methodList.Length
+            $methodFound = @()
+        
+            for ($i = 0;$i -lt $methodList.Length;$i++)
+            {
+                for ($j = 0;$j -lt $results.Length;$j++)
+                {
+                    if ($results[$j].Name.Equals($methodList[$i]))
+                    {
+                        $methodFound += $true
+                    }
+                } 
+            }
+
+            for ($i = 0;$i -lt $methodList.Length;$i++)
+            {
+                $methodFound[$i] | Should Be $true
+            }
+        }
+
+        It 'Get property sets defined in private members' {
+            $emps = [Employee]::New("john", "smith", 5), [Employee]::New("joesph", "smith", 15), [Employee]::New("john", "smyth", 2)
+            $results = $emps | Get-Member -MemberType PropertySet
+            $results.Length | Should Be 2
+            $results[0].Name | Should Be "FullSet"
+            $results[1].Name | Should Be "PropertySetName"
+        }
+    }
+
+    Context "Verify Get-Member with Static Parameter" {
+        It 'Get the static properties and methods of the object' {
+            $obj = New-Object -TypeName System.Int32
+            $results = $obj | Get-Member -Static
+            $members = "MaxValue", "MinValue", "Parse", "TryParse"
+            foreach($member in $members)
+            {
+                if(!($results.Name -contains $member))
+                { 
+                    Throw "Didn't find: $member"
+                }
+            }
+        }
+
+        It "Get the static properties and methods of int instance" {
+            $results = 1 | Get-Member -Static
+            $members = "MaxValue", "MinValue", "Parse", "TryParse"
+            foreach($member in $members)
+            {
+                if(!($results.Name -contains $member))
+                { 
+                    Throw "Didn't find: $member"
+                }
+            }
+        }
+
+        It "Get the static properties and methods of int instance Wrapped" {
+            $results = [pscustomobject]1 | Get-Member -Static
+            $members = "MaxValue", "MinValue", "Parse", "TryParse"
+            foreach($member in $members)
+            {
+                if(!($results.Name -contains $member))
+                { 
+                    Throw "Didn't find: $member"
+                }
+            }
+        }
+    }
+
+    Context "Verify Get-Member with other parameters" {
+        It 'works with View Parameter' {
+            $results = [xml]'<a>some text</a>' | Get-Member -view adapted
+            $results.Length | Should Be 38       
+        }
+
+        It 'Get hidden members'{
+            $results = 'abc' | Get-Member -force
+            $hiddenMembers = "psbase", "psextended", "psadapted", "pstypenames", "psobject"
+            foreach($member in $hiddenMembers)
+            {
+                if(!($results.Name -contains $member))
+                { 
+                    Throw "Didn't find: $member"
+                }
+            }
+        }
+
+        It 'Get Set Property Accessors On PsBase'{
+            $results = ('abc').psbase | Get-Member -force get_*
+            $expectedMembers = "get_Chars", "get_Length"
+            foreach($member in $expectedMembers)
+            {
+                if(!($results.Name -contains $member))
+                { 
+                    Throw "Didn't find: $member"
+                }
+            } 
+        }
+    }
+}
