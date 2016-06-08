@@ -3343,13 +3343,10 @@ namespace System.Management.Automation
             }
 
             string result = path;
+            bool treatAsRelative = true;
 
-            // platform notes:
-            // this needs to be implemented differently depending if the drive uses colon to separate paths
             if (drive.VolumeSeparatedByColon)
             {
-                bool treatAsRelative = true;
-
                 // Ensure the drive name is the same as the portion of the path before
                 // :. If not add the drive name and colon as if it was a relative path
 
@@ -3370,29 +3367,37 @@ namespace System.Management.Automation
                         }
                     }
                 }
-
-                if (treatAsRelative)
-                {
-                    string formatString = "{0}:" + StringLiterals.DefaultPathSeparator + "{1}";
-
-                    if (path.StartsWith(StringLiterals.DefaultPathSeparator.ToString(), StringComparison.Ordinal))
-                    {
-                        formatString = "{0}:{1}";
-                    }
-                    result =
-                        String.Format(
-                            System.Globalization.CultureInfo.InvariantCulture,
-                            formatString,
-                            drive.Name,
-                            path);
-                }
             }
             else
             {
-                if (path.StartsWith(drive.Name))
-                    result = path;
+                if (IsAbsolutePath(path))
+                {
+                    treatAsRelative = false;
+                }
+            }
+
+            if (treatAsRelative)
+            {
+                string formatString;
+                if (drive.VolumeSeparatedByColon)
+                {
+                    formatString = "{0}:" + StringLiterals.DefaultPathSeparator + "{1}";
+                    if (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                    {
+                        formatString = "{0}:{1}";
+                    }
+                }
                 else
-                    result = drive.Name + path;
+                {
+                    formatString = "{0}{1}";
+                }
+
+                result =
+                    String.Format(
+                                  System.Globalization.CultureInfo.InvariantCulture,
+                                  formatString,
+                                  drive.Name,
+                                  path);
             }
 
             tracer.WriteLine("result = {0}", result);
