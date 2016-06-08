@@ -3888,7 +3888,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!String.IsNullOrEmpty(path))
             {
-                result = path.Replace('/', '\\');
+                result = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
 
                 // Remove relative path tokens
                 if (HasRelativePathTokens(path))
