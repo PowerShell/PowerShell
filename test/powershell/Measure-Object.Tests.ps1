@@ -14,8 +14,8 @@ Describe "Measure-Object" {
     }
 
     It "Should be able to count using the Property switch" {
-	$expected = $(Get-ChildItem).Length
-	$actual   = $(Get-ChildItem | Measure-Object -Property Length).Count
+	$expected = $(Get-ChildItem $TestDrive).Length
+	$actual   = $(Get-ChildItem $TestDrive | Measure-Object -Property Length).Count
 
 	$actual | Should Be $expected
     }
@@ -140,4 +140,153 @@ Describe "Measure-Object" {
 	    $actualLength.Lines | Should Be $expectedLength
 	}
     }
+}
+
+Describe "Measure-Object DRT basic functionality" -Tags DRT{
+
+	BeforeAll {
+		if(-not ([System.Management.Automation.PSTypeName]'TestMeasureGeneric').Type)
+		{
+			Add-Type -TypeDefinition @"
+    [System.Flags]
+    public enum TestMeasureGeneric : uint
+    {
+        TestSum = 1,
+        TestAverage = 2,
+        TestMax = 4,
+        TestMin = 8
+    }
+"@
+		}
+		if(-not ([System.Management.Automation.PSTypeName]'TestMeasureText').Type)
+		{
+			Add-Type -TypeDefinition @"
+    [System.Flags]
+    public enum TestMeasureText : uint
+    {
+        TestIgnoreWS = 1,
+        TestCharacter = 2,
+        TestWord = 4,
+        TestLine = 8
+    }
+"@
+	}
+		$employees = [pscustomobject]@{"FirstName"="joseph"; "LastName"="smith"; "YearsInMS"=15},
+                            [pscustomobject]@{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15},
+                            [pscustomobject]@{"FirstName"="mary jo"; "LastName"="soe"; "YearsInMS"=5},
+                            [pscustomobject]@{"FirstName"="edmund`todd `n"; "LastName"="bush"; "YearsInMS"=9}
+	}
+	
+    It "Measure-Object with Generic enum value options combination should work"{
+        $flags = [TestMeasureGeneric]0
+		$property = "FirstName"
+		$testSum = ($flags -band [TestMeasureGeneric]::TestSum) -gt 0
+        $testAverage = ($flags -band [TestMeasureGeneric]::TestAverage) -gt 0
+        $testMax = ($flags -band [TestMeasureGeneric]::TestMax) -gt 0
+        $testMin = ($flags -band [TestMeasureGeneric]::TestMin) -gt 0
+		$result = $employees | Measure-Object -Sum:$testSum -Average:$testAverage -Max:$testMax -Min:$testMin -Prop $property
+		$result.Count | Should Be 4
+		$result.Sum | Should BeNullOrEmpty
+		$result.Average | Should BeNullOrEmpty
+		$result.Max | Should BeNullOrEmpty
+		$result.Min | Should BeNullOrEmpty
+		for ($i = 1; $i -lt 8 * 2; $i++)
+        {
+			$flags = [TestMeasureGeneric]$i
+			$property = "YearsInMS"
+			$testSum = ($flags -band [TestMeasureGeneric]::TestSum) -gt 0
+			$testAverage = ($flags -band [TestMeasureGeneric]::TestAverage) -gt 0
+			$testMax = ($flags -band [TestMeasureGeneric]::TestMax) -gt 0
+			$testMin = ($flags -band [TestMeasureGeneric]::TestMin) -gt 0
+			$result = $employees | Measure-Object -Sum:$testSum -Average:$testAverage -Max:$testMax -Min:$testMin -Prop $property
+			$result.Count | Should Be 4
+			if($testSum)
+			{
+				$result.Sum | Should Be 44
+			}
+			else
+			{
+				$result.Sum | Should BeNullOrEmpty
+			}
+			
+			if($testAverage)
+			{
+				$result.Average | Should Be 11
+			}
+			else
+			{
+				$result.Average | Should BeNullOrEmpty
+			}
+			
+			if($testMax)
+			{
+				$result.Maximum | Should Be 15
+			}
+			else
+			{
+				$result.Maximum | Should BeNullOrEmpty
+			}
+			
+			if($testMin)
+			{
+				$result.Minimum | Should Be 5
+			}
+			else
+			{
+				$result.Minimum | Should BeNullOrEmpty
+			}
+		}
+    }
+	
+	It "Measure-Object with Text combination should work"{
+		for ($i = 1; $i -lt 8 * 2; $i++)
+        {
+			$flags = [TestMeasureText]$i
+			$property = "FirstName"
+			$testIgnoreWS = ($flags -band [TestMeasureText]::TestIgnoreWS) -gt 0
+			$testCharacter = ($flags -band [TestMeasureText]::TestCharacter) -gt 0
+			$testWord = ($flags -band [TestMeasureText]::TestWord) -gt 0
+			$testLine = ($flags -band [TestMeasureText]::TestLine) -gt 0
+			$result = $employees | Measure-Object -IgnoreWhiteSpace:$testIgnoreWS -Character:$testCharacter -Word:$testWord -Line:$testLine -Prop $property
+			
+			if($testCharacter)
+			{
+				if($testIgnoreWS)
+				{
+					$result.Characters | Should Be 25
+				}
+				else
+				{
+					$result.Characters | Should Be 29
+				}
+			}
+			else
+			{
+				$result.Characters | Should BeNullOrEmpty
+			}
+			
+			if($testWord)
+			{
+				$result.Words | Should Be 6
+			}
+			else
+			{
+				$result.Words | Should BeNullOrEmpty
+			}
+			
+			if($testLine)
+			{
+				$result.Lines | Should Be 4
+			}
+			else
+			{
+				$result.Lines | Should BeNullOrEmpty
+			}
+		}
+    }
+	
+	It "Measure-Object with multiple lines should work"{
+		$result = "123`n4"|measure-object -line
+		$result.Lines | Should Be 2
+	}
 }
