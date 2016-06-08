@@ -1,3 +1,13 @@
+Describe "Update-TypeData" {
+
+    Context "Validate Update-Type updates correctly" {
+
+	    It "Should not throw upon reloading previous formatting file" {
+	        { Update-TypeData } | Should Not throw
+	    }
+    }
+}
+
 Describe "Update-TypeData basic functionality" -Tags DRT{
     BeforeAll {
         $testfilename = "testfile.ps1xml"
