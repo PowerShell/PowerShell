@@ -1,23 +1,28 @@
 Describe "Compare-Object" {
-	BeforeAll {
-		$nl            = [Environment]::NewLine
+    $nl            = [Environment]::NewLine
+    $slash         = [System.IO.Path]::DirectorySeparatorChar
+    $testDirectory = $HOME + $slash + "testDirectory"
+    $dir           = $testDirectory
 
-		$content1 = "line 1" + $nl + "line 2"
-		$content2 = "line 1" + $nl + "line 2.1"
-		$content3 = "line 1" + $nl + "line 2" + $nl + "line 3"
-		$content4 = "line 1" + $nl + "line 2.1" + $nl + "Line 3"
+    New-Item $testDirectory -ItemType directory -Force
 
-		$file1 = Join-Path -Path $TestDrive -ChildPath "test1.txt"
-		$file2 = Join-Path -Path $TestDrive -ChildPath "test2.txt"
-		$file3 = Join-Path -Path $TestDrive -ChildPath "test3.txt"
-		$file4 = Join-Path -Path $TestDrive -ChildPath "test4.txt"
+    $content1 = "line 1" + $nl + "line 2"
+    $content2 = "line 1" + $nl + "line 2.1"
+    $content3 = "line 1" + $nl + "line 2" + $nl + "line 3"
+    $content4 = "line 1" + $nl + "line 2.1" + $nl + "Line 3"
 
-		New-Item $file1 -ItemType file -Value $content1 -Force
-		New-Item $file2 -ItemType file -Value $content2 -Force
-		New-Item $file3 -ItemType file -Value $content3 -Force
-		New-Item $file4 -ItemType file -Value $content4 -Force
-	}
-	
+    $file1 = $testDirectory + $slash + "test1.txt"
+    $file2 = $testDirectory + $slash + "test2.txt"
+    $file3 = $testDirectory + $slash + "test3.txt"
+    $file4 = $testDirectory + $slash + "test4.txt"
+
+    New-Item $file1 -ItemType file -Value $content1 -Force
+    New-Item $file2 -ItemType file -Value $content2 -Force
+    New-Item $file3 -ItemType file -Value $content3 -Force
+    New-Item $file4 -ItemType file -Value $content4 -Force
+
+    Test-Path $testDirectory | Should Be $true
+
     It "Should be able to compare the same object using the referenceObject and differenceObject switches" {
 	{ Compare-Object -ReferenceObject $(Get-Content $file1) -DifferenceObject $(Get-Content $file2) } | Should Not Throw
     }
@@ -91,8 +96,9 @@ Describe "Compare-Object" {
     }
 
     It "Should be able to specify the property of two objects to compare" {
-	$actualOutput = Compare-Object -ReferenceObject $file3 -DifferenceObject $TestDrive -Property Length
-	$actualOutput[0].Length | Should BeNullOrEmpty
+	$actualOutput = Compare-Object -ReferenceObject $file3 -DifferenceObject $testDirectory -Property Length
+
+	$actualOutput[0].Length | Should BeGreaterThan 0
 	$actualOutput[1].Length | Should BeGreaterThan 0
 	$actualOutput[0].Length | Should Not Be $actualOutput[1].Length
     }
@@ -118,297 +124,8 @@ Describe "Compare-Object" {
 	$actualOutput[2].SideIndicator | Should be "=>"
 	$actualOutput[3].SideIndicator | Should be "<="
     }
-}
 
-Describe "Compare-Object DRT basic functionality" -Tags DRT{
-	Add-Type -TypeDefinition @"
-    public class Employee
-    {
-        public Employee(){}
-        public Employee(string firstName, string lastName, int yearsInMS)
-        {
-            FirstName = firstName;
-            LastName  = lastName;
-            YearsInMS = yearsInMS;
-        }
-        public string FirstName;
-        public string LastName;
-        public int YearsInMS;
-    }
-    public class EmployeeComparable : Employee, System.IComparable
-    {
-        public EmployeeComparable(
-            string firstName, string lastName, int yearsInMS)
-            : base(firstName, lastName, yearsInMS)
-        {}
-
-        public int CompareTo(object obj)
-        {
-            EmployeeComparable ec = obj as EmployeeComparable;
-            if (null == ec)
-                return -1;
-            if (FirstName != ec.FirstName)
-                return -1;
-            if (LastName != ec.LastName)
-                return -1;
-            if (YearsInMS != ec.YearsInMS)
-                return -1;
-            return 0;
-        }
-    }
-
-    public class EmployeeDefinesSideIndicator : EmployeeComparable
-    {
-        public EmployeeDefinesSideIndicator(
-            string firstName, string lastName, int yearsInMS)
-            : base(firstName, lastName, yearsInMS)
-        {}
-
-        public string SideIndicator
-        {
-            get { throw new System.ArgumentException("get_SideIndicator"); }
-            set { throw new System.ArgumentException("get_SideIndicator"); }
-        }
-    }
-"@
-	It "Compare-Object with 1 referenceObject and 1 differenceObject should work"{
-		$empsReference = @([EmployeeComparable]::New("john","smith",5))
-		$empsDifference = @([EmployeeComparable]::New("mary","jane",5))
-		$boolvalues=@($true,$false)
-		foreach($recordEqual in $boolvalues)
-		{
-			foreach($excludeDifferent in $boolvalues)
-			{
-				foreach($passthru in $boolvalues)
-				{
-					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -Passthru:$passthru -DifferenceObject $empsDifference
-					
-					if(!$excludeDifferent)
-					{
-						$result.Count | Should Be 2
-						if($passthru)
-						{
-							$result[0] | Should Be $empsDifference
-							$result[1] | Should Be $empsReference
-						}
-						else
-						{
-							$result[0].InputObject | Should Be $empsDifference
-							$result[1].InputObject | Should Be $empsReference
-							$result[0].SideIndicator | Should Be "=>"
-							$result[1].SideIndicator | Should Be "<="
-						}
-					}
-					else
-					{
-						$result.Count | Should Be 0
-					}
-				}
-			}
-		}
-	}
-	
-	It "Compare-Object with 2 referenceObjects and 1 differenceObject should work"{
-		$empsReference = @([EmployeeComparable]::New("john","smith",5),[EmployeeComparable]::New("mary","jane",3))
-		$empsDifference = @([EmployeeComparable]::New("john","smith",5))
-		$boolvalues=@($true,$false)
-		foreach($recordEqual in $boolvalues)
-		{
-			foreach($excludeDifferent in $boolvalues)
-			{
-				foreach($passthru in $boolvalues)
-				{
-					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -Passthru:$passthru -DifferenceObject $empsDifference
-					if($recordEqual)
-					{
-						if(!$excludeDifferent)
-						{
-							$result.Count | Should Be 2
-							if($passthru)
-							{
-								$result[0] | Should Be $empsReference[0]
-								$result[1] | Should Be $empsReference[1]
-							}
-							else
-							{
-								$result[0].InputObject | Should Be $empsReference[0]
-								$result[1].InputObject | Should Be $empsReference[1]
-								$result[0].SideIndicator | Should Be "=="
-								$result[1].SideIndicator | Should Be "<="
-							}
-						}
-						else
-						{
-							if($passthru)
-							{
-								$result | Should Be $empsReference[0]
-							}
-							else
-							{
-								$result.InputObject | Should Be $empsReference[0]
-								$result.SideIndicator | Should Be "=="
-							}
-						}
-					}
-					else
-					{
-						if(!$excludeDifferent)
-						{
-							if($passthru)
-							{
-								$result | Should Be $empsReference[1]
-							}
-							else
-							{
-								$result.InputObject | Should Be $empsReference[1]
-								$result.SideIndicator | Should Be "<="
-							}
-						}
-						else
-						{
-							$result.Count | Should Be 0
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	It "Compare-Object with 0 SyncWindow should work"{
-		$empsReference = @([EmployeeComparable]::New("john","smith",5))
-		$empsDifference = @([EmployeeComparable]::New("john","smith",5),[EmployeeComparable]::New("mary","jane",3))
-		$boolvalues=@($true,$false)
-		foreach($recordEqual in $boolvalues)
-		{
-			foreach($excludeDifferent in $boolvalues)
-			{
-				foreach($passthru in $boolvalues)
-				{
-					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -Passthru:$passthru -DifferenceObject $empsDifference -SyncWindow:0
-					if($recordEqual)
-					{
-						if(!$excludeDifferent)
-						{
-							$result.Count | Should Be 2
-							if($passthru)
-							{
-								$result[0] | Should Be $empsReference
-								$result[1] | Should Be $empsDifference[1]
-							}
-							else
-							{
-								$result[0].InputObject | Should Be $empsReference
-								$result[1].InputObject | Should Be $empsDifference[1]
-								$result[0].SideIndicator | Should Be "=="
-								$result[1].SideIndicator | Should Be "=>"
-							}
-						}
-						else
-						{
-							if($passthru)
-							{
-								$result | Should Be $empsReference
-							}
-							else
-							{
-								$result.InputObject | Should Be $empsReference
-								$result.SideIndicator | Should Be "=="
-							}
-						}
-					}
-					else
-					{
-						if(!$excludeDifferent)
-						{
-							if($passthru)
-							{
-								$result | Should Be $empsDifference[1]
-							}
-							else
-							{
-								$result.InputObject | Should Be $empsDifference[1]
-								$result.SideIndicator | Should Be "=>"
-							}
-						}
-						else
-						{
-							$result.Count | Should Be 0
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	It "Compare-Object with SyncWindow should work"{
-		$empsReference = @([EmployeeComparable]::New("mary","jane",3),[EmployeeComparable]::New("john","smith",5),[EmployeeComparable]::New("jack", "black", 15),[EmployeeComparable]::New("jim", "bob", 1))
-		$empsDifference = @([EmployeeComparable]::New("jack", "black", 15),[EmployeeComparable]::New("jim", "bob", 1),[EmployeeComparable]::New("mary","jane",3),[EmployeeComparable]::New("john","smith",5))
-		$boolvalues=@($true,$false)
-		foreach($recordEqual in $boolvalues)
-		{
-			foreach($excludeDifferent in $boolvalues)
-			{
-				foreach($passthru in $boolvalues)
-				{
-					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -Passthru:$passthru -DifferenceObject $empsDifference -SyncWindow:2
-					
-					if($recordEqual)
-					{
-						$result.Count | Should Be 4
-						if($passthru)
-						{
-							$result[0] | Should Be $empsReference[0]
-							$result[1] | Should Be $empsReference[2]
-							$result[2] | Should Be $empsReference[1]
-							$result[3] | Should Be $empsReference[3]
-						}
-						else
-						{
-							$result[0].InputObject | Should Be $empsReference[0]
-							$result[0].SideIndicator | Should Be "=="
-							$result[1].InputObject | Should Be $empsReference[2]
-							$result[1].SideIndicator | Should Be "=="
-							$result[2].InputObject | Should Be $empsReference[1]
-							$result[2].SideIndicator | Should Be "=="
-							$result[3].InputObject | Should Be $empsReference[3]
-							$result[3].SideIndicator | Should Be "=="
-						}
-					}
-					else
-					{
-						$result.Count | Should Be 0
-					}
-				}
-			}
-		}
-	}
-	
-	It "Compare-Object with Script Block Property Parameter should work"{
-		$a = [version]"1.2.3.4"
-		$b = [version]"5.6.7.8"
-		$result = Compare-Object $a $b -IncludeEqual -Property {$_.Major},{$_.Minor}
-		$result[0]|Select -ExpandProperty "*Major" | Should Be 5
-		$result[0]|Select -ExpandProperty "*Minor" | Should Be 6
-		$result[0].SideIndicator | Should Be "=>"
-		$result[1]|Select -ExpandProperty "*Major" | Should Be 1
-		$result[1]|Select -ExpandProperty "*Minor" | Should Be 2
-		$result[1].SideIndicator | Should Be "<="
-	}
-	
-	It "Compare-Object with no ReferenceObject nor DifferenceObject: output nothing, no error and should work"{
-		$result = Compare-Object @() @()
-		$result | Should BeNullOrEmpty
-	}
-	
-	It "Compare-Object with no DifferenceObject should work"{
-		$result = Compare-Object @() @("diffObject")
-		$result.InputObject | Should Be "diffObject"
-		$result.SideIndicator | Should Be "=>"
-	}
-	
-	It "Compare-Object with no ReferenceObject should work"{
-		$result = Compare-Object @("refObject") @()
-		$result.InputObject | Should Be "refObject"
-		$result.SideIndicator | Should Be "<="
-	}
+    # Clean up after yourself
+    Remove-Item $testDirectory -Recurse -Force
+    Test-Path $testDirectory | Should Be $false
 }
