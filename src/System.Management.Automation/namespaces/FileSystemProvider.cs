@@ -5240,18 +5240,15 @@ namespace Microsoft.PowerShell.Commands
 
         private string RemoveRelativeTokens(string path)
         {
-            string sep = System.IO.Path.DirectorySeparatorChar.ToString();
-            string altSep = System.IO.Path.AltDirectorySeparatorChar.ToString();
-
-            string testPath = path.Replace(altSep,sep);
+            string testPath = path.Replace('/', '\\');
             if (
-                (testPath.IndexOf(sep, StringComparison.OrdinalIgnoreCase) < 0) ||
-                testPath.StartsWith("." + sep, StringComparison.OrdinalIgnoreCase) ||
-                testPath.StartsWith(".." + sep, StringComparison.OrdinalIgnoreCase) ||
-                testPath.EndsWith(sep + ".", StringComparison.OrdinalIgnoreCase) ||
-                testPath.EndsWith(sep + "..", StringComparison.OrdinalIgnoreCase) ||
-                (testPath.IndexOf(sep + "." + sep, StringComparison.OrdinalIgnoreCase) > 0) ||
-                (testPath.IndexOf(sep + ".." + sep, StringComparison.OrdinalIgnoreCase) > 0))
+                (testPath.IndexOf("\\", StringComparison.OrdinalIgnoreCase) < 0) ||
+                testPath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
+                testPath.StartsWith("..\\", StringComparison.OrdinalIgnoreCase) ||
+                testPath.EndsWith("\\.", StringComparison.OrdinalIgnoreCase) ||
+                testPath.EndsWith("\\..", StringComparison.OrdinalIgnoreCase) ||
+                (testPath.IndexOf("\\.\\", StringComparison.OrdinalIgnoreCase) > 0) ||
+                (testPath.IndexOf("\\..\\", StringComparison.OrdinalIgnoreCase) > 0))
             {
                 try
                 {

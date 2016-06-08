@@ -2284,7 +2284,8 @@ namespace System.Management.Automation
 
                 driveRootRelativeWorkingPath = String.Empty;
 
-                // Remove the \ or / from the drive relative path
+                // Remove the \ or / from the drive relative
+                // path
 
                 path = path.Substring(1);
 
@@ -2460,41 +2461,18 @@ namespace System.Management.Automation
 
         private bool HasRelativePathTokens(string path)
         {
-            if (System.IO.Path.DirectorySeparatorChar == '/')
-            {
-                string comparePath = path;
+            string comparePath = path.Replace('/', '\\');
 
-                // the next line will only replace something, if the directory separators
-                // are different on the platform
-                if (System.IO.Path.DirectorySeparatorChar != System.IO.Path.AltDirectorySeparatorChar)
-                    comparePath = path.Replace(System.IO.Path.AltDirectorySeparatorChar,System.IO.Path.DirectorySeparatorChar);
-
-                return (
-                        comparePath.Equals(".", StringComparison.OrdinalIgnoreCase) ||
-                        comparePath.Equals("..", StringComparison.OrdinalIgnoreCase) ||
-                        comparePath.Contains("/./") ||
-                        comparePath.Contains("/../") ||
-                        comparePath.EndsWith("/..", StringComparison.OrdinalIgnoreCase) ||
-                        comparePath.EndsWith("/.", StringComparison.OrdinalIgnoreCase) ||
-                        comparePath.StartsWith("../", StringComparison.OrdinalIgnoreCase) ||
-                        comparePath.StartsWith("./", StringComparison.OrdinalIgnoreCase) ||
-                        comparePath.StartsWith("~", StringComparison.OrdinalIgnoreCase));
-            }
-            else
-            {
-                string comparePath = path.Replace('/', '\\');
-
-                return (
-                    comparePath.Equals(".", StringComparison.OrdinalIgnoreCase) ||
-                    comparePath.Equals("..", StringComparison.OrdinalIgnoreCase) ||
-                    comparePath.Contains("\\.\\") ||
-                    comparePath.Contains("\\..\\") ||
-                    comparePath.EndsWith("\\..", StringComparison.OrdinalIgnoreCase) ||
-                    comparePath.EndsWith("\\.", StringComparison.OrdinalIgnoreCase) ||
-                    comparePath.StartsWith("..\\", StringComparison.OrdinalIgnoreCase) ||
-                    comparePath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
-                    comparePath.StartsWith("~", StringComparison.OrdinalIgnoreCase));
-            }
+            return (
+                comparePath.Equals(".", StringComparison.OrdinalIgnoreCase) ||
+                comparePath.Equals("..", StringComparison.OrdinalIgnoreCase) ||
+                comparePath.Contains("\\.\\") ||
+                comparePath.Contains("\\..\\") ||
+                comparePath.EndsWith("\\..", StringComparison.OrdinalIgnoreCase) ||
+                comparePath.EndsWith("\\.", StringComparison.OrdinalIgnoreCase) ||
+                comparePath.StartsWith("..\\", StringComparison.OrdinalIgnoreCase) ||
+                comparePath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
+                comparePath.StartsWith("~", StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -3179,11 +3157,11 @@ namespace System.Management.Automation
                     }
 
                     string resolvedPath =
-                            String.Format(
-                                System.Globalization.CultureInfo.InvariantCulture,
-                                formatString,
-                                drive.Name,
-                                unescapedPath);
+                        String.Format(
+                            System.Globalization.CultureInfo.InvariantCulture,
+                            formatString,
+                            drive.Name,
+                            unescapedPath);
 
                     // Since we didn't do globbing, be sure the path exists
                     if (allowNonexistingPaths || 
@@ -3394,13 +3372,12 @@ namespace System.Management.Automation
 
                 result =
                     String.Format(
-                                  System.Globalization.CultureInfo.InvariantCulture,
-                                  formatString,
-                                  drive.Name,
-                                  path);
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        formatString,
+                        drive.Name,
+                        path);
             }
 
-            tracer.WriteLine("result = {0}", result);
             return result;
         } // GetDriveQualifiedPath
 
