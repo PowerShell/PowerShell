@@ -1408,7 +1408,7 @@ namespace System.Management.Automation
                         {
                             defaultMshSnapins = new List<DefaultPSSnapInInformation>()
                             {
-#if !LINUX // Microsoft.PowerShell.Commands.Diagnostics.dll needs to be ported
+#if !PORTABLE // Microsoft.PowerShell.Commands.Diagnostics.dll needs to be ported
                                 new DefaultPSSnapInInformation("Microsoft.PowerShell.Diagnostics", "Microsoft.PowerShell.Commands.Diagnostics", null,
                                     "GetEventResources,Description", "GetEventResources,Vendor"),
 #endif
@@ -1427,7 +1427,7 @@ namespace System.Management.Automation
                                     "SecurityMshSnapInResources,Description","SecurityMshSnapInResources,Vendor")
                             };
 
-#if !LINUX
+#if !CORECLR //TODO:CORECLR - The 'Microsoft.WSMan.Management' module will be available on OneCore soon
                             if (!Utils.IsWinPEHost())
                             {
                                 defaultMshSnapins.Add(new DefaultPSSnapInInformation("Microsoft.WSMan.Management", "Microsoft.WSMan.Management", null,
