@@ -185,15 +185,17 @@ namespace Microsoft.PowerShell
                 {
                     profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +
                         @"\Microsoft\Windows\PowerShell";
-                } else
+
+                    if (!Directory.Exists(profileDir))
+                    {
+                        Directory.CreateDirectory(profileDir);
+                    }
+                }
+                else
                 {
-                    profileDir = System.IO.Path.Combine(Environment.GetEnvironmentVariable("HOME"), ".powershell");
+                    profileDir = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
                 }
 
-                if (!Directory.Exists(profileDir))
-                {
-                    Directory.CreateDirectory(profileDir);
-                }
                 ClrFacade.SetProfileOptimizationRoot(profileDir);
             }
             catch
@@ -268,7 +270,6 @@ namespace Microsoft.PowerShell
                             : "StartupProfileData-NonInteractive");
                     exitCode = theConsoleHost.Run(cpp, !string.IsNullOrEmpty(preStartWarning));
                 }
-
             }
             finally
             {

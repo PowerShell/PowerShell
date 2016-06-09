@@ -198,7 +198,6 @@ namespace System.Management.Automation
 
             string profileName = useTestProfile ? "profile_test.ps1" : "profile.ps1";
 
-
             if (!string.IsNullOrEmpty(shellId))
             {
                 profileName = shellId + "_" + profileName;

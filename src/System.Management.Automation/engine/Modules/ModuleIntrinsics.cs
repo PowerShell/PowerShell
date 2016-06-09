@@ -548,13 +548,20 @@ namespace System.Management.Automation
         /// <returns>personal module path</returns>
         internal static string GetPersonalModulePath()
         {
-            string personalModuleRoot = Path.Combine(
-                    Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                            Utils.ProductNameForDirectory),
-                    Utils.ModuleDirectory);
-
-            return personalModuleRoot;
+            if (Platform.IsWindows)
+            {
+                string personalModuleRoot = Path.Combine(
+                                                         Path.Combine(
+                                                                      Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                                                                      Utils.ProductNameForDirectory),
+                                                         Utils.ModuleDirectory);
+                return personalModuleRoot;
+            }
+            else
+            {
+                string personalModuleRoot = Platform.SelectProductNameForDirectory(Platform.XDG_Type.MODULES);
+                return personalModuleRoot;
+            }
         }
 
         /// <summary>
