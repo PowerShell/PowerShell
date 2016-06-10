@@ -394,6 +394,7 @@ function Start-PSBootstrap {
 
             # Install ours and .NET's dependencies
             brew install cmake wget openssl
+            brew link --force openssl
         }
 
         $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain"
