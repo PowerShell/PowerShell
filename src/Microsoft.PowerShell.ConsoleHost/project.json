@@ -6,7 +6,8 @@
 
     "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true
+        "allowUnsafe": true,
+        "compile": [ "../windows-build/gen/Microsoft.PowerShell.ConsoleHost/*.cs" ]
     },
 
     "dependencies": {
@@ -36,9 +37,5 @@
         },
         "net451": {
         }
-    },
-
-    "compile": [
-        "../windows-build/gen/Microsoft.PowerShell.ConsoleHost/*.cs"
-    ]
+    }
 }

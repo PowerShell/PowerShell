@@ -5,7 +5,8 @@
 
     "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true
+        "allowUnsafe": true,
+        "compile": [ "../windows-build/gen/System.Management.Automation/*.cs" ]
     },
 
     "configurations": {
@@ -78,9 +79,5 @@
                 "System.Configuration.Install": ""
             }
         }
-    },
-
-    "compile": [
-        "../windows-build/gen/System.Management.Automation/*.cs"
-    ]
+    }
 }

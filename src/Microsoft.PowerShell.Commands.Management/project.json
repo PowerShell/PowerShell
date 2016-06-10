@@ -5,7 +5,8 @@
 
     "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true
+        "allowUnsafe": true,
+        "compile": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Management/*.cs" ]
     },
 
     "dependencies": {
@@ -34,7 +35,5 @@
                  "Microsoft.WSMan.Management": "1.0.0"
             }
         }
-    },
-
-    "compile": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Management/*.cs" ]
+    }
 }

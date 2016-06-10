@@ -5,7 +5,8 @@
 
     "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true
+        "allowUnsafe": true,
+        "compile": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Utility/*.cs" ]
     },
 
     "configurations": {
@@ -43,7 +44,5 @@
                 "Microsoft.mshtml": "1.0.0"
             }
         }
-    },
-
-    "compile": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Utility/*.cs" ]
+    }
 }
