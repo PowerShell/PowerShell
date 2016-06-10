@@ -7,8 +7,9 @@ start by showing how to set up your environment from scratch.
 Environment
 ===========
 
-These instructions are written assuming the Ubuntu 14.04 LTS, since
-that's the distro the team uses.
+These instructions are written assuming the Ubuntu 14.04 LTS, since that's the
+distro the team uses. The build module works on a best-effort basis for other
+distributions.
 
 Git Setup
 ---------
@@ -74,8 +75,11 @@ The `Start-PSBootstrap` function does the following:
 - Adds the LLVM package feed
 - Installs our dependencies combined with the dependencies of the .NET
   CLI toolchain via `apt-get`
-- Installs the .NET CLI host, shared framework, and SDK by downloading
-  the three `.deb` packages and using `dpkg -i`
+- Uninstalls any prior versions of .NET CLI
+- Downloads and installs the latest .NET CLI 1.0.0-preview2 SDK to `~/.dotnet`
+
+If you want to use `dotnet` outside of `Start-PSBuild`, add `~/.dotnet` to your
+`PATH` environment variable.
 
 [dotnet-cli]: https://github.com/dotnet/cli#new-to-net-cli
 [CMake]: https://cmake.org/cmake/help/v2.8.12/cmake.html

@@ -4,9 +4,27 @@
     "description": "PowerShell Host",
     "authors": [ "sevoroby", "andschwa" ],
 
-    "compilationOptions": {
+    "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true
+        "allowUnsafe": true,
+        "compile": [ "../windows-build/gen/Microsoft.PowerShell.ConsoleHost/*.cs" ],
+        "copyToOutput": {
+            "include": [
+                "Modules",
+                "../Modules",
+                "powershell.exe",
+                "../../powershell.version"
+            ]
+        }
+    },
+
+    "publishOptions": {
+        "include": [
+            "Modules",
+            "../Modules",
+            "powershell.exe",
+            "../../powershell.version"
+        ]
     },
 
     "dependencies": {
@@ -15,17 +33,10 @@
         "Microsoft.PowerShell.Commands.Utility": "1.0.0-*"
     },
 
-    "content": [
-        "Modules",
-        "../Modules",
-        "powershell.exe",
-        "../../powershell.version"
-    ],
-
     "frameworks": {
         "netstandard1.5": {
             "imports": [ "dnxcore50", "portable-net45+win8" ],
-            "compilationOptions": {
+            "buildOptions": {
                 "define": [ "CORECLR", "PORTABLE" ]
             },
             "dependencies": {
@@ -36,9 +47,5 @@
         },
         "net451": {
         }
-    },
-
-    "compile": [
-        "../windows-build/gen/Microsoft.PowerShell.ConsoleHost/*.cs"
-    ]
+    }
 }

@@ -1,4 +1,4 @@
-#if !NOETW
+#if !LINUX
 //-----------------------------------------------------------------------
 // <copyright file="EtwActivityReverterMethodInvoker.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.

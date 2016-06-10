@@ -4,29 +4,39 @@
     "description": ".NET CLI PowerShell app",
     "authors": [ "andschwa" ],
 
-    "compilationOptions": {
+    "buildOptions": {
         "warningsAsErrors": true,
         "allowUnsafe": true,
-        "emitEntryPoint": true
+        "emitEntryPoint": true,
+        "copyToOutput": {
+            "include": [
+                "Modules",
+                "../Modules",
+                "*.so",
+                "*.dylib",
+                "../../powershell.version"
+            ]
+        }
+    },
+
+    "publishOptions": {
+        "include": [
+            "Modules",
+            "../Modules",
+            "*.so",
+            "*.dylib",
+            "../../powershell.version"
+        ]
     },
 
     "dependencies": {
         "Microsoft.PowerShell.ConsoleHost": "1.0.0-*"
     },
 
-    "content": [
-        "Modules",
-        "../Modules",
-        "*_profile.ps1",
-        "*.so",
-        "*.dylib",
-        "../../powershell.version"
-    ],
-
     "frameworks": {
         "netcoreapp1.0": {
             "imports": [ "dnxcore50", "portable-net45+win8" ],
-            "compilationOptions": {
+            "buildOptions": {
                 "define": [ "CORECLR" ]
             },
             "dependencies": {

@@ -20,12 +20,12 @@ install a self-hosted copy of PowerShell on your OS X machine, and use
 The `Start-PSBootstrap` function does the following:
 
 - Uses `brew` to install CMake, OpenSSL, and GNU WGet
-- Downloads and installs the latest .NET CLI package
-- Adds `/usr/local/share/dotnet` to the process path
+- Links OpenSSL
+- Uninstalls any prior versions of .NET CLI
+- Downloads and installs the latest .NET CLI 1.0.0-preview2 SDK to `~/.dotnet`
 
-Please heed that last step. You may want to add the .NET CLI tool
-location to your path more permanently by adding it to your shell's
-profile.
+If you want to use `dotnet` outside of `Start-PSBuild`, add `~/.dotnet` to your
+`PATH` environment variable.
 
 error: Too many open files
 --------------------------

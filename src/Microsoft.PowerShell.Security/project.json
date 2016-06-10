@@ -3,9 +3,10 @@
     "version": "1.0.0-*",
     "authors": [ "garretts", "andschwa" ],
 
-    "compilationOptions": {
+    "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true
+        "allowUnsafe": true,
+        "compile": [ "../windows-build/gen/Microsoft.PowerShell.Security/*.cs" ]
     },
 
     "dependencies": {
@@ -15,13 +16,11 @@
     "frameworks": {
         "netstandard1.5": {
             "imports": [ "dnxcore50" ],
-            "compilationOptions": {
+            "buildOptions": {
                 "define": [ "CORECLR" ]
             }
         },
         "net451": {
         }
-    },
-
-    "compile": [ "../windows-build/gen/Microsoft.PowerShell.Security/*.cs" ]
+    }
 }

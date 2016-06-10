@@ -3,7 +3,7 @@
     "version": "1.0.0-*",
     "description": "PSReadLine basic tests",
 
-    "compilationOptions": {
+    "buildOptions": {
         "warningsAsErrors": true,
         "emitEntryPoint": true
     },

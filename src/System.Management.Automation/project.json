@@ -3,15 +3,16 @@
     "version": "1.0.0-*",
     "authors": [ "garretts", "andschwa" ],
 
-    "compilationOptions": {
+    "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true
+        "allowUnsafe": true,
+        "compile": [ "../windows-build/gen/System.Management.Automation/*.cs" ]
     },
 
     "configurations": {
         "Linux": {
-            "compilationOptions": {
-                "define": [ "LINUX", "NOETW" ]
+            "buildOptions": {
+                "define": [ "LINUX" ]
             }
         }
     },
@@ -23,7 +24,7 @@
     "frameworks": {
         "netstandard1.5": {
             "imports": [ "dnxcore50" ],
-            "compilationOptions": {
+            "buildOptions": {
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
@@ -78,9 +79,5 @@
                 "System.Configuration.Install": ""
             }
         }
-    },
-
-    "compile": [
-        "../windows-build/gen/System.Management.Automation/*.cs"
-    ]
+    }
 }

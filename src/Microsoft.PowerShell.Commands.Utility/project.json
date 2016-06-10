@@ -3,17 +3,10 @@
     "version": "1.0.0-*",
     "authors": [ "garretts", "andschwa" ],
 
-    "compilationOptions": {
+    "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true
-    },
-
-    "configurations": {
-        "Linux": {
-            "compilationOptions": {
-                "define": [ "LINUX" ]
-            }
-        }
+        "allowUnsafe": true,
+        "compile": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Utility/*.cs" ]
     },
 
     "dependencies": {
@@ -22,7 +15,7 @@
 
     "frameworks": {
         "netstandard1.5": {
-            "compilationOptions": {
+            "buildOptions": {
                 "define": [ "CORECLR" ]
             },
             "imports": [ "dnxcore50", "portable-net45+win8" ],
@@ -43,7 +36,5 @@
                 "Microsoft.mshtml": "1.0.0"
             }
         }
-    },
-
-    "compile": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Utility/*.cs" ]
+    }
 }

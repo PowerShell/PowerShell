@@ -3,23 +3,16 @@
     "version": "1.0.0-*",
     "authors": [ "sevoroby" ],
 
-    "compilationOptions": {
+    "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true
-    },
-
-    "configurations": {
-        "Linux": {
-            "compilationOptions": {
-                "define": [ "NOETW" ]
-            }
-        }
+        "allowUnsafe": true,
+        "compile": [ "../windows-build/gen/Microsoft.PowerShell.CoreCLR.Eventing/*.cs" ]
     },
 
     "frameworks": {
         "netstandard1.5": {
             "imports": [ "dnxcore50" ],
-            "compilationOptions": {
+            "buildOptions": {
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
@@ -29,7 +22,5 @@
                 "System.Security.SecureString": "4.0.0-*"
             }
         }
-    },
-
-    "compile": [ "../windows-build/gen/Microsoft.PowerShell.CoreCLR.Eventing/*.cs" ]
+    }
 }
