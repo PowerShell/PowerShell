@@ -66,8 +66,8 @@ function Start-PSBuild {
         Write-Verbose "Appending probable .NET CLI tool path"
         if ($IsWindows) {
             $env:Path += ";$env:LocalAppData\Microsoft\dotnet"
-        } elseif ($IsOSX) {
-            $env:PATH += ":/usr/local/share/dotnet"
+        } else {
+            $env:PATH += ":$env:HOME/.dotnet"
         }
     }
 
@@ -371,48 +371,68 @@ function Start-PSBootstrap {
 
     Write-Host "Installing Open PowerShell build dependencies"
 
-    if ($IsLinux) {
-        precheck 'curl' "Bootstrap dependency 'curl' not found in PATH, please install!" > $null
-        precheck 'apt-get' "Bootstrap dependency 'apt-get' not found in PATH, this only supports Ubuntu 14.04!" > $null
+    Push-Location $PSScriptRoot/tools
 
-        # Setup LLVM feed
-        curl -s http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
-        echo "deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.6 main" | sudo tee /etc/apt/sources.list.d/llvm.list
-        sudo apt-get update -qq
+    try {
+        # Install dependencies for Linux and OS X
+        if ($IsLinux) {
+            $IsUbuntu = Select-String "Ubuntu 14.04" /etc/os-release -Quiet
+            precheck 'curl' "Bootstrap dependency 'curl' not found in PATH, please install!" > $null
+            if ($IsUbuntu) {
+                # Setup LLVM feed
+                curl -s http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
+                echo "deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.6 main" | sudo tee /etc/apt/sources.list.d/llvm.list
+                sudo apt-get update -qq
 
-        # Install ours and .NET's dependencies
-        sudo apt-get install -y make g++ cmake libc6 libgcc1 libstdc++6 libcurl3 libgssapi-krb5-2 libicu52 liblldb-3.6 liblttng-ust0 libssl1.0.0 libunwind8 libuuid1 zlib1g clang-3.5
+                # Install ours and .NET's dependencies
+                sudo apt-get install -y -qq make g++ cmake libc6 libgcc1 libstdc++6 libcurl3 libgssapi-krb5-2 libicu52 liblldb-3.6 liblttng-ust0 libssl1.0.0 libunwind8 libuuid1 zlib1g clang-3.5
+            } else {
+                Write-Warning "This script only supports Ubuntu 14.04, you must install dependencies manually!"
+            }
+        } elseif ($IsOSX) {
+            precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
 
-        # Install .NET CLI packages
-        Remove-Item dotnet*.deb
+            # Install ours and .NET's dependencies
+            brew install cmake wget openssl
+        }
 
-        wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-host-ubuntu-x64.latest.deb
-        sudo dpkg -i dotnet-host-ubuntu-x64.latest.deb
+        $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain"
 
-        wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-sharedframework-ubuntu-x64.latest.deb
-        sudo dpkg -i dotnet-sharedframework-ubuntu-x64.latest.deb
+        # Install for Linux and OS X
+        if ($IsLinux -or $IsOSX) {
+            # Uninstall all previous dotnet packages
+            $uninstallScript = if ($IsUbuntu) {
+                "dotnet-uninstall-debian-packages.sh"
+            } elseif ($IsOSX) {
+                "dotnet-uninstall-pkgs.sh"
+            }
 
-        wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-sdk-ubuntu-x64.latest.deb
-        sudo dpkg -i dotnet-sdk-ubuntu-x64.latest.deb
+            if ($uninstallScript) {
+                curl -s $obtainUrl/uninstall/$uninstallScript -o $uninstallScript
+                chmod +x $uninstallScript
+                sudo ./$uninstallScript
+            } else {
+                Write-Warning "This script only removes prior versions of dotnet for Ubuntu 14.04 and OS X"
+            }
 
-    } elseif ($IsOSX) {
-        precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
+            # Install new dotnet 1.0.0 preview packages
+            $installScript = "dotnet-install.sh"
+            curl -s $obtainUrl/$installScript -o $installScript
+            chmod +x $installScript
+            bash ./$installScript -c preview
+        }
 
-        # Install ours and .NET's dependencies
-        brew install cmake wget openssl
-
-        # Install .NET CLI packages
-        Remove-Item dotnet*.pkg
-        wget https://dotnetcli.blob.core.windows.net/dotnet/beta/Installers/Latest/dotnet-dev-osx-x64.latest.pkg
-        sudo installer -pkg dotnet-dev-osx-x64.latest.pkg -target /
-
-    } elseif ($IsWindows -And -Not $IsCore) {
-        Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
-        Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/dotnet-install.ps1 -OutFile dotnet-install.ps1
-        ./dotnet-install.ps1
-
-    } else {
-        Write-Warning "Start-PSBootstrap cannot be run in Core PowerShell on Windows (need Invoke-WebRequest!)"
+        # Install for Windows
+        if ($IsWindows -and -not $IsCore) {
+            Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
+            $installScript = "dotnet-install.ps1"
+            Invoke-WebRequest -Uri $obtainUrl/$installScript -OutFile $installScript
+            & ./$installScript
+        } elseif ($IsWindows) {
+            Write-Warning "Start-PSBootstrap cannot be run in Core PowerShell on Windows (need Invoke-WebRequest!)"
+        }
+    } finally {
+        Pop-Location
     }
 }
 
