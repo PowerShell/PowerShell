@@ -1427,7 +1427,7 @@ namespace System.Management.Automation
                                     "SecurityMshSnapInResources,Description","SecurityMshSnapInResources,Vendor")
                             };
 
-#if !CORECLR //TODO:CORECLR - The 'Microsoft.WSMan.Management' module will be available on OneCore soon
+#if !LINUX
                             if (!Utils.IsWinPEHost())
                             {
                                 defaultMshSnapins.Add(new DefaultPSSnapInInformation("Microsoft.WSMan.Management", "Microsoft.WSMan.Management", null,
