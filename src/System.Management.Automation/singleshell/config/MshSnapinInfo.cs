@@ -1408,9 +1408,10 @@ namespace System.Management.Automation
                         {
                             defaultMshSnapins = new List<DefaultPSSnapInInformation>()
                             {
+#if !LINUX // Microsoft.PowerShell.Commands.Diagnostics.dll needs to be ported
                                 new DefaultPSSnapInInformation("Microsoft.PowerShell.Diagnostics", "Microsoft.PowerShell.Commands.Diagnostics", null,
                                     "GetEventResources,Description", "GetEventResources,Vendor"),
-
+#endif
                                 new DefaultPSSnapInInformation("Microsoft.PowerShell.Host", "Microsoft.PowerShell.ConsoleHost", null,
                                     "HostMshSnapInResources,Description","HostMshSnapInResources,Vendor"),
 
