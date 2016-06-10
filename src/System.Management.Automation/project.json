@@ -12,7 +12,7 @@
     "configurations": {
         "Linux": {
             "buildOptions": {
-                "define": [ "LINUX", "NOETW" ]
+                "define": [ "LINUX" ]
             }
         }
     },

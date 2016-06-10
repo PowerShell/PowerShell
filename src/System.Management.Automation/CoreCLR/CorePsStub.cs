@@ -1409,7 +1409,7 @@ namespace System.Management.Automation.Security
 }
 
 
-#if NOETW || LINUX
+#if LINUX
 
 // Porting note: Tracing is absolutely not available on Linux
 namespace System.Management.Automation.Tracing

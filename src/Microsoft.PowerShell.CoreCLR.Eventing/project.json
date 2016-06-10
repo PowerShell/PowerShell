@@ -9,14 +9,6 @@
         "compile": [ "../windows-build/gen/Microsoft.PowerShell.CoreCLR.Eventing/*.cs" ]
     },
 
-    "configurations": {
-        "Linux": {
-            "buildOptions": {
-                "define": [ "NOETW" ]
-            }
-        }
-    },
-
     "frameworks": {
         "netstandard1.5": {
             "imports": [ "dnxcore50" ],
