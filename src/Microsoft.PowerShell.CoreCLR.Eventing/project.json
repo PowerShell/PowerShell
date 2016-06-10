@@ -3,14 +3,14 @@
     "version": "1.0.0-*",
     "authors": [ "sevoroby" ],
 
-    "compilationOptions": {
+    "buildOptions": {
         "warningsAsErrors": true,
         "allowUnsafe": true
     },
 
     "configurations": {
         "Linux": {
-            "compilationOptions": {
+            "buildOptions": {
                 "define": [ "NOETW" ]
             }
         }
@@ -19,7 +19,7 @@
     "frameworks": {
         "netstandard1.5": {
             "imports": [ "dnxcore50" ],
-            "compilationOptions": {
+            "buildOptions": {
                 "define": [ "CORECLR" ]
             },
             "dependencies": {

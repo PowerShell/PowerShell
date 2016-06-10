@@ -4,7 +4,7 @@
     "description": "PowerShell Host",
     "authors": [ "sevoroby", "andschwa" ],
 
-    "compilationOptions": {
+    "buildOptions": {
         "warningsAsErrors": true,
         "allowUnsafe": true
     },
@@ -25,7 +25,7 @@
     "frameworks": {
         "netstandard1.5": {
             "imports": [ "dnxcore50", "portable-net45+win8" ],
-            "compilationOptions": {
+            "buildOptions": {
                 "define": [ "CORECLR", "PORTABLE" ]
             },
             "dependencies": {

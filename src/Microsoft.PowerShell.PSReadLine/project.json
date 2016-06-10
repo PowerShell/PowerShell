@@ -3,7 +3,7 @@
     "version": "1.0.0-*",
     "authors": [ "andschwa" ],
 
-    "compilationOptions": {
+    "buildOptions": {
         "warningsAsErrors": true
     },
 
@@ -13,7 +13,7 @@
 
     "frameworks": {
         "netstandard1.5": {
-            "compilationOptions": {
+            "buildOptions": {
                 "define": [ "CORECLR" ]
             },
             "imports": [ "dnxcore50", "portable-net45+win8" ]

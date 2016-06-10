@@ -4,7 +4,7 @@
     "description": ".NET CLI PowerShell app",
     "authors": [ "andschwa" ],
 
-    "compilationOptions": {
+    "buildOptions": {
         "warningsAsErrors": true,
         "allowUnsafe": true,
         "emitEntryPoint": true
@@ -26,7 +26,7 @@
     "frameworks": {
         "netcoreapp1.0": {
             "imports": [ "dnxcore50", "portable-net45+win8" ],
-            "compilationOptions": {
+            "buildOptions": {
                 "define": [ "CORECLR" ]
             },
             "dependencies": {

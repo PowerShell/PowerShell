@@ -3,14 +3,14 @@
     "version": "1.0.0-*",
     "authors": [ "garretts", "andschwa" ],
 
-    "compilationOptions": {
+    "buildOptions": {
         "warningsAsErrors": true,
         "allowUnsafe": true
     },
 
     "configurations": {
         "Linux": {
-            "compilationOptions": {
+            "buildOptions": {
                 "define": [ "LINUX", "NOETW" ]
             }
         }
@@ -23,7 +23,7 @@
     "frameworks": {
         "netstandard1.5": {
             "imports": [ "dnxcore50" ],
-            "compilationOptions": {
+            "buildOptions": {
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
