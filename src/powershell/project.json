@@ -8,7 +8,19 @@
         "warningsAsErrors": true,
         "allowUnsafe": true,
         "emitEntryPoint": true,
-        "copyToOutput": [
+        "copyToOutput": {
+            "include": [
+                "Modules",
+                "../Modules",
+                "*.so",
+                "*.dylib",
+                "../../powershell.version"
+            ]
+        }
+    },
+
+    "publishOptions": {
+        "include": [
             "Modules",
             "../Modules",
             "*.so",
@@ -16,14 +28,6 @@
             "../../powershell.version"
         ]
     },
-
-    "publishOptions": [
-        "Modules",
-        "../Modules",
-        "*.so",
-        "*.dylib",
-        "../../powershell.version"
-    ],
 
     "dependencies": {
         "Microsoft.PowerShell.ConsoleHost": "1.0.0-*"

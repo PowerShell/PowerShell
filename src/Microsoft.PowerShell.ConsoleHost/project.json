@@ -8,20 +8,24 @@
         "warningsAsErrors": true,
         "allowUnsafe": true,
         "compile": [ "../windows-build/gen/Microsoft.PowerShell.ConsoleHost/*.cs" ],
-        "copyToOutput": [
+        "copyToOutput": {
+            "include": [
+                "Modules",
+                "../Modules",
+                "powershell.exe",
+                "../../powershell.version"
+            ]
+        }
+    },
+
+    "publishOptions": {
+        "include": [
             "Modules",
             "../Modules",
             "powershell.exe",
             "../../powershell.version"
         ]
     },
-
-    "publishOptions": [
-        "Modules",
-        "../Modules",
-        "powershell.exe",
-        "../../powershell.version"
-    ],
 
     "dependencies": {
         "Microsoft.PowerShell.PSReadLine": "1.0.0-*",
