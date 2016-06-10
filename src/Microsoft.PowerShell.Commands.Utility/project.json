@@ -9,14 +9,6 @@
         "compile": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Utility/*.cs" ]
     },
 
-    "configurations": {
-        "Linux": {
-            "buildOptions": {
-                "define": [ "LINUX" ]
-            }
-        }
-    },
-
     "dependencies": {
         "System.Management.Automation": "1.0.0-*"
     },
