@@ -374,7 +374,7 @@ namespace System.Management.Automation
 
         private static bool IsWildcardChar(char ch)
         {
-            return (ch == '*') || (ch == '?') || (ch == '[') || (ch == ']');
+            return (ch == '*') || (ch == '?') || (ch == '[') || (ch == ']') || (!Platform.IsWindows && (ch == StringLiterals.AlternatePathSeparator));
         }
 
         /// <summary>

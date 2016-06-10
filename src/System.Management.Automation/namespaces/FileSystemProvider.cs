@@ -87,24 +87,6 @@ namespace Microsoft.PowerShell.Commands
         private Collection<WildcardPattern> excludeMatcher = null;
 
         /// <summary>
-        /// Converts all / in the path to \
-        /// </summary>
-        /// 
-        /// <param name="path">
-        /// The path to normalize.
-        /// </param>
-        /// 
-        /// <returns>
-        /// The path with all / normalized to \
-        /// </returns>
-        /// 
-        private static string NormalizePath(string path)
-        {
-            return path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
-        } // NormalizePath
-
-
-        /// <summary>
         ///  Checks if the item exist at the specified path. if it exists then creates
         /// appropriate directoryinfo or fileinfo object.
         /// </summary>
@@ -1052,8 +1034,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
 
-            //Normalize the path
-            path = NormalizePath(path);
             path = EnsureDriveIsRooted(path);
 
             // Remove alternate data stream references
@@ -1226,8 +1206,6 @@ namespace Microsoft.PowerShell.Commands
 
         private FileSystemInfo GetFileSystemItem(string path, ref bool isContainer, bool showHidden)
         {
-            path = NormalizePath(path);
-
             FileSystemInfo result = null;
 
             // First see if the path is to a file by
@@ -1322,8 +1300,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
-
-            path = NormalizePath(path);
 
             string action = FileSystemProviderStrings.InvokeItemAction;
 
@@ -1486,8 +1462,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
-
-            path = NormalizePath(path);
 
             // Get the directory object
             bool isDirectory;
@@ -1867,8 +1841,6 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            path = NormalizePath(path);
-
             if (String.IsNullOrEmpty(newName))
             
             {
@@ -2028,8 +2000,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 type = "file";
             }
-
-            path = NormalizePath(path);
 
             if (Force)
             {
@@ -2695,8 +2665,6 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                path = NormalizePath(path);
-
                 bool removeStreams = false;
                 FileSystemProviderRemoveItemDynamicParameters dynamicParameters = null;
 
@@ -3203,8 +3171,6 @@ namespace Microsoft.PowerShell.Commands
 
             bool result = false;
 
-            path = NormalizePath(path);
-
             try
             {
                 bool notUsed;
@@ -3319,8 +3285,6 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            path = NormalizePath(path);
-
             // First check to see if it is a directory
 
             try
@@ -3433,9 +3397,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentException("destinationPath");
             }
-
-            path = NormalizePath(path);
-            destinationPath = NormalizePath(destinationPath);
 
             PSSession fromSession = null;
             PSSession toSession = null;
@@ -4916,13 +4877,11 @@ namespace Microsoft.PowerShell.Commands
 
             do // false loop
             {
-                path = NormalizePath(path);
                 path = EnsureDriveIsRooted(path);
 
                 // If it's not fully normalized, normalize it.
                 path = NormalizeRelativePathHelper(path, basePath);
 
-                basePath = NormalizePath(basePath);
                 basePath = EnsureDriveIsRooted(basePath);
 
                 result = path;
@@ -5112,15 +5071,14 @@ namespace Microsoft.PowerShell.Commands
 
             do // false loop
             {
-                // Convert to the correct path separators and trim trailing separators
-                path = path.Replace (StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
                 string originalPath = path;
 
                 path = path.TrimEnd (StringLiterals.DefaultPathSeparator);
-                basePath = basePath.Replace (StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
                 basePath = basePath.TrimEnd (StringLiterals.DefaultPathSeparator);
 
+                tracer.WriteLine($"Cleaned {path}");
                 path = RemoveRelativeTokens(path);
+                tracer.WriteLine($"Relative tokens removed from {path}");
 
                 // See if the base and the path are already the same. We resolve this to
                 // ..\Leaf, since resolving "." to "." doesn't offer much information.
@@ -5521,10 +5479,6 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            // Normalize the path
-
-            path = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
-
             // Trim trailing back slashes
 
             path = path.TrimEnd(StringLiterals.DefaultPathSeparator);
@@ -5609,8 +5563,6 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            path = NormalizePath(path);
-
             return Utils.NativeDirectoryExists(path);
         }
 
@@ -5651,9 +5603,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentException("destination");
             }
-
-            path = NormalizePath(path);
-            destination = NormalizePath(destination);
 
             // Verify that the target doesn't represent a device name
             if (PathIsReservedDeviceName(destination, "MoveError"))
@@ -6026,8 +5975,6 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            path = NormalizePath(path);
-
             PSObject result = null;
 
             try
@@ -6193,8 +6140,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("propertyToSet");
             }
-
-            path = NormalizePath(path);
 
             PSObject results = new PSObject();
             PSObject fileSystemInfoShell = null;
@@ -6393,8 +6338,6 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            path = NormalizePath(path);
-
             if (propertiesToClear == null ||
                 propertiesToClear.Count == 0)
             {
@@ -6522,8 +6465,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
-
-            path = NormalizePath(path);
 
             // Defaults for the file read operation
             string delimiter = "\n";
@@ -6686,8 +6627,6 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            path = NormalizePath(path);
-
             // If this is true, then the content will be read as bytes
             bool usingByteEncoding = false;
             bool streamTypeSpecified = false;
@@ -6802,8 +6741,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
-
-            path = NormalizePath(path);
 
             try
             {
