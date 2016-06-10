@@ -7,14 +7,18 @@
     "buildOptions": {
         "warningsAsErrors": true,
         "allowUnsafe": true,
-        "emitEntryPoint": true
+        "emitEntryPoint": true,
+        "copyToOutput": [
+            "Modules",
+            "../Modules",
+            "*_profile.ps1",
+            "*.so",
+            "*.dylib",
+            "../../powershell.version"
+        ]
     },
 
-    "dependencies": {
-        "Microsoft.PowerShell.ConsoleHost": "1.0.0-*"
-    },
-
-    "content": [
+    "publishOptions": [
         "Modules",
         "../Modules",
         "*_profile.ps1",
@@ -22,6 +26,10 @@
         "*.dylib",
         "../../powershell.version"
     ],
+
+    "dependencies": {
+        "Microsoft.PowerShell.ConsoleHost": "1.0.0-*"
+    },
 
     "frameworks": {
         "netcoreapp1.0": {
