@@ -94,4 +94,20 @@ Describe "Format-Wide DRT basic functionality" -Tags DRT{
 		$result | Should Match "enumerable"
 		$result | Should Match "enumerableTestObject"
 	}
+	
+	It "Format-Wide with multiple same class object with grouping should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx"){
+		Add-Type -TypeDefinition "public class TestGroupingClass{public TestGroupingClass(string name,int length){Name = name;Length = length;}public string Name;public int Length;public string GroupingKey;}"
+		$testobject1 = [TestGroupingClass]::New('name1',1)
+		$testobject1.GroupingKey = "foo"
+		$testobject2 = [TestGroupingClass]::New('name2',2)
+		$testobject1.GroupingKey = "bar"
+		$testobject3 = [TestGroupingClass]::New('name3',3)
+		$testobject1.GroupingKey = "bar"
+		$testobjects = @($testobject1,$testobject2,$testobject3)
+		$result = $testobjects|Format-Wide -GroupBy GroupingKey|Out-String
+		$result | Should Match "GroupingKey: bar"
+		$result | Should Match "name1"
+		$result | Should Match " GroupingKey:"
+		$result | Should Match "name2\s+name3"
+	}
 }
