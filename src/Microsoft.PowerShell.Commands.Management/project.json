@@ -5,10 +5,7 @@
 
     "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true,
-        "compile": {
-            "include": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Management/*.cs" ]
-        }
+        "allowUnsafe": true
     },
 
     "dependencies": {
@@ -21,6 +18,7 @@
             "buildOptions": {
                 "define": [ "CORECLR" ],
                 "compile": {
+                    "include": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Management/*.cs" ],
                     "exclude": [
                         "commands/management/ClearRecycleBinCommand.cs",
                         "commands/management/CommitTransactionCommand.cs",
@@ -50,6 +48,11 @@
             }
         },
         "net451": {
+            "buildOptions": {
+                "compile": {
+                    "include": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Management/*.cs" ]
+                }
+            },
             "frameworkAssemblies": {
                 "System.ServiceProcess": "",
                 "System.Windows.Forms": "",
@@ -57,7 +60,7 @@
                 "System.Web.Services": ""
             },
             "dependencies": {
-                 "Microsoft.WSMan.Management": "1.0.0"
+                "Microsoft.WSMan.Management": "1.0.0"
             }
         }
     }

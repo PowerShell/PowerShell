@@ -5,10 +5,7 @@
 
     "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true,
-        "compile": {
-            "include": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Utility/*.cs" ]
-        }
+        "allowUnsafe": true
     },
 
     "dependencies": {
@@ -20,6 +17,7 @@
             "buildOptions": {
                 "define": [ "CORECLR" ],
                 "compile": {
+                    "include": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Utility/*.cs" ],
                     "exclude": [
                         "commands/utility/FormatAndOutput/OutGridView/ColumnInfo.cs",
                         "commands/utility/FormatAndOutput/OutGridView/ExpressionColumnInfo.cs",
@@ -67,6 +65,11 @@
             }
         },
         "net451": {
+            "buildOptions": {
+                "compile": {
+                    "include": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Utility/*.cs" ]
+                }
+            },
             "frameworkAssemblies": {
                 "System.Drawing": "",
                 "System.Web": "",
