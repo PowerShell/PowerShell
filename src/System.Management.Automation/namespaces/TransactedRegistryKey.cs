@@ -191,14 +191,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 {
                     SafeRegistryHandle nonTxKey = null;
                     SafeRegistryHandle txKey = null;
-                    if (!Platform.HasRegistrySupport())
-                    {
-                        error = 1;
-                    }
-                    else
-                    {
-                        error = Win32Native.RegOpenKeyEx(hkey, lpSubKey, ulOptions, samDesired, out nonTxKey);
-                    }
+                    error = Win32Native.RegOpenKeyEx(hkey, lpSubKey, ulOptions, samDesired, out nonTxKey);
                     // If we got some error on this open, just ignore it and continue on with the handle
                     // we got on the original RegOpenKeyTransacted.
                     if (Win32Native.ERROR_SUCCESS == error)
