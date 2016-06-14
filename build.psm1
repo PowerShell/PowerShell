@@ -657,17 +657,70 @@ function Copy-MappedFiles {
         [Parameter(ValueFromPipeline=$true)]
         [string[]]$Path = "$PSScriptRoot",
         [Parameter(Mandatory=$true)]
-        [string]$PslMonadRoot
+        [string]$PslMonadRoot,
+        [switch]$Force
     )
 
     begin 
     {
+        function MaybeTerminatingWarning
+        {
+            param([string]$Message)
+
+            if ($Force)
+            {
+                Write-Warning "$Message : ignoring (-Force)"
+            }
+            else
+            {
+                throw "$Message : use -Force to ignore"
+            }
+        }
+
         if (-not (Test-Path -PathType Container $PslMonadRoot))
         {
             throw "$pslMonadRoot is not a valid folder"
         }
 
-        $map = @()
+        # Do some intelligens to prevent shouting us in the foot with CL management
+
+        # finding base-line CL
+        $cl = git tag | % {if ($_ -match 'SD.(\d+)$') {[int]$Matches[1]} } | sort -Descending | select -First 1
+        if ($cl)
+        {
+            Write-Host -ForegroundColor Green "Current base-line CL is SD:$cl (based on tags)"
+        }
+        else 
+        {
+            MaybeTerminatingWarning "Could not determine base-line CL based on tags"
+        }
+
+        try
+        {
+            Push-Location $PslMonadRoot
+            if (git status --porcelain)
+            {
+                MaybeTerminatingWarning "$pslMonadRoot has changes"
+            }
+
+            if (git log --grep="SD:$cl" HEAD^..HEAD)
+            {
+                Write-Host -ForegroundColor Green "$pslMonadRoot HEAD matches [SD:$cl]"
+            }
+            else 
+            {
+                Write-Host -ForegroundColor Yellow "Try to checkout this commit in $pslMonadRoot :" 
+                git log --grep="SD:$cl"
+
+                MaybeTerminatingWarning "$pslMonadRoot HEAD doesn't match [SD:$cl]"
+            }
+        }
+        finally
+        {
+            Pop-Location
+        }
+
+        $map = @{}
     }
 
     process
