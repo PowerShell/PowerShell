@@ -1,0 +1,28 @@
+{
+    "name": "Microsoft.PowerShell.LocalAccounts",
+    "version": "1.0.0-*",
+    "authors": [ "OPS" ],
+
+    "buildOptions": {
+        "warningsAsErrors": true,
+        "compile": [ "../windows-build/gen/Microsoft.PowerShell.LocalAccounts/*.cs" ]
+    },
+
+    "dependencies": {
+        "System.Management.Automation": "1.0.0-*"
+    },
+
+    "frameworks": {
+        "netstandard1.5": {
+            "imports": [ "dnxcore50" ],
+            "buildOptions": {
+                "define": [ "CORECLR" ]
+            },
+            "dependencies": {
+                "System.Net.NameResolution": "4.0.0-rc2-24103"
+            }
+        },
+        "net451": {
+        }
+    }
+}
