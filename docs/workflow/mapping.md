@@ -65,7 +65,7 @@ If you are creating new folder for that, create `map.json` with all mapped files
 
 ```
 > git tag
-SD-692351    <--- the last changelist
+SD-692351
 SD-693793
 SD/688741
 SD/692351
@@ -74,7 +74,7 @@ SD/695331
 SD/700586
 SD/704605
 SD/706766
-SD/709766
+SD/709766  <--- the last changelist
 v0.1.0
 v0.2.0
 v0.3.0
