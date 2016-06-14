@@ -1052,7 +1052,8 @@ internal class {0} {{
             $entry -f $name,$val
         }
     } | Out-String
-    $body -f $ClassName,$ModuleName,$entries
+    $resultCode = $body -f $ClassName,$ModuleName,$entries
+    return $resultCode -replace "`r`n?|`n","`r`n"
 }
 
 function New-MSIPackage
