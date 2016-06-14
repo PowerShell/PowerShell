@@ -1,4 +1,3 @@
-#if !CORECLR
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -132,5 +131,3 @@ namespace System.Management.Automation.ComInterop {
 
 #endif
 
-
-#endif
