@@ -1,0 +1,14 @@
+{
+    "monad/nttargets/assemblies/nativemsh/pwrshexe/OutputWriter.h":  "nativemsh/pwrshexe/OutputWriter.h",
+    "monad/nttargets/assemblies/nativemsh/pwrshcommon/ConfigFileReader.cpp":  "nativemsh/pwrshcommon/ConfigFileReader.cpp",
+    "monad/nttargets/assemblies/nativemsh/pwrshcommon/NativeMsh.h":  "nativemsh/pwrshcommon/NativeMsh.h",
+    "monad/nttargets/assemblies/nativemsh/pwrshcommon/ConfigFileReader.h":  "nativemsh/pwrshcommon/ConfigFileReader.h",
+    "monad/nttargets/assemblies/nativemsh/pwrshcommon/pwrshcommon.cpp":  "nativemsh/pwrshcommon/pwrshcommon.cpp",
+    "monad/nttargets/assemblies/nativemsh/pwrshcommon/SystemCallFacade.h":  "nativemsh/pwrshcommon/SystemCallFacade.h",
+    "monad/nttargets/assemblies/nativemsh/pwrshcommon/WinSystemCallFacade.cpp":  "nativemsh/pwrshcommon/WinSystemCallFacade.cpp",
+    "monad/nttargets/assemblies/nativemsh/pwrshcommon/NativeMshConstants.h":  "nativemsh/pwrshcommon/NativeMshConstants.h",
+    "monad/nttargets/assemblies/nativemsh/pwrshcommon/WinSystemCallFacade.h":  "nativemsh/pwrshcommon/WinSystemCallFacade.h",
+    "monad/nttargets/assemblies/nativemsh/pwrshcommon/IPwrshCommonOutput.h":  "nativemsh/pwrshcommon/IPwrshCommonOutput.h",
+    "monad/nttargets/assemblies/nativemsh/pwrshexe/MainEntry.cpp":  "nativemsh/pwrshexe/MainEntry.cpp",
+    "monad/nttargets/assemblies/nativemsh/pwrshcommon/ClrHostWrapper.h":  "nativemsh/pwrshcommon/ClrHostWrapper.h"
+}

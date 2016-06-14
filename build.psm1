@@ -645,105 +645,119 @@ function Start-DevPSGitHub {
 
 
 <#
-.EXAMPLE Copy-SubmoduleFiles                # copy files FROM submodule TO src/<project> folders
-.EXAMPLE Copy-SubmoduleFiles -ToSubmodule   # copy files FROM src/<project> folders TO submodule
+.EXAMPLE 
+PS C:> Copy-MappedFiles -PslMonadRoot .\src\monad
+
+copy files FROM .\src\monad (old location of submodule) TO src/<project> folders
 #>
-function Copy-SubmoduleFiles {
+function Copy-MappedFiles {
 
     [CmdletBinding()]
     param(
-        [string]$mappingFilePath = "$PSScriptRoot/mapping.json",
-        [switch]$ToSubmodule
+        [Parameter(ValueFromPipeline=$true)]
+        [string[]]$Path = "$PSScriptRoot",
+        [Parameter(Mandatory=$true)]
+        [string]$PslMonadRoot
     )
 
+    begin 
+    {
+        if (-not (Test-Path -PathType Container $PslMonadRoot))
+        {
+            throw "$pslMonadRoot is not a valid folder"
+        }
 
-    if (-not (Test-Path $mappingFilePath)) {
-        throw "Mapping file not found in $mappingFilePath"
+        $map = @()
     }
 
-    $m = cat -Raw $mappingFilePath | ConvertFrom-Json | Convert-PSObjectToHashtable
+    process
+    {
+        $map += Get-Mappings $Path -Root $PslMonadRoot
+    }
 
-    # mapping.json assumes the root folder
-    Push-Location $PSScriptRoot
-    try {
-        $m.GetEnumerator() | % {
+    end
+    {
+        $map.GetEnumerator() | % {
+            mkdir (Split-Path $_.Value) -ErrorAction SilentlyContinue > $null
 
-            if ($ToSubmodule) {
-                cp $_.Value $_.Key -Verbose:$Verbose
-            } else {
-                mkdir (Split-Path $_.Value) -ErrorAction SilentlyContinue > $null
-                cp $_.Key $_.Value -Verbose:$Verbose
+            if ($PSBoundParameters['Verbose'])
+            {
+                cp $_.Key $_.Value -Verbose
+            }
+            else
+            {
+                cp $_.Key $_.Value
             }
         }
-    } finally {
-        Pop-Location
     }
 }
 
-
-<#
-.EXAMPLE Create-MappingFile # create mapping.json in the root folder from project.json files
-#>
-function New-MappingFile {
+function Get-Mappings
+{
+    [CmdletBinding()]
     param(
-        [string]$mappingFilePath = "$PSScriptRoot/mapping.json",
-        [switch]$IgnoreCompileFiles,
-        [switch]$Ignoreresource
+        [Parameter(ValueFromPipeline=$true)]
+        [string[]]$Path = "$PSScriptRoot",
+        [string]$Root,
+        [switch]$KeepRelativePaths
     )
 
-    function Get-MappingPath([string]$project, [string]$path) {
-        if ($project -match 'TypeCatalogGen') {
-            return Split-Path $path -Leaf
-        }
-
-        if ($project -match 'Microsoft.Management.Infrastructure') {
-            return Split-Path $path -Leaf
-        }
-
-        return ($path -replace '../monad/monad/src/', '')
+    begin 
+    {
+        $mapFiles = @()
     }
 
-    $mapping = [ordered]@{}
+    process
+    {
+        Write-Verbose "Discovering map files in $Path"
+        $count = $mapFiles.Count
 
-    # assumes the root folder
-    Push-Location $PSScriptRoot
-    try {
-        $projects = ls .\src\ -Recurse -Depth 2 -Filter 'project.json'
-        $projects | % {
-            $project = Split-Path $_.FullName
-            $json = cat -Raw -Path $_.FullName | ConvertFrom-Json
-            if (-not $IgnoreCompileFiles) {
-                $json.compileFiles | % {
-                    if ($_) {
-                        if (-not $_.EndsWith('AssemblyInfo.cs')) {
-                            $fullPath = Join-Path $project (Get-MappingPath -project $project -path $_)
-                            $mapping[$_.Replace('../', 'src/')] = ($fullPath.Replace("$($pwd.Path)\",'')).Replace('\', '/')
-                        }
-                    }
-                }
-            }
-
-            if ((-not $Ignoreresource) -and ($json.resource)) {
-                $json.resource | % {
-                    if ($_) {
-                        ls $_.Replace('../', 'src/') | % {
-                            $fullPath = Join-Path $project (Join-Path 'resources' $_.Name)
-                            $mapping[$_.FullName.Replace("$($pwd.Path)\", '').Replace('\', '/')] = ($fullPath.Replace("$($pwd.Path)\",'')).Replace('\', '/')
-                        }
-                    }
-                }
-            }
+        if (-not (Test-Path $Path)) 
+        {
+            throw "Mapping file not found in $mappingFilePath"
         }
-    } finally {
-        Pop-Location
+
+        if (Test-Path -PathType Container $Path)
+        {
+            $mapFiles += Get-ChildItem -Recurse $Path -Filter 'map.json' -File
+        }
+        else 
+        {
+            # it exists and it's a file, don't check the name pattern
+            $mapFiles += Get-ChildItem $Path
+        }
+
+        Write-Verbose "Found $($mapFiles.Count - $count) map files in $Path"
     }
 
-    Set-Content -Value ($mapping | ConvertTo-Json) -Path $mappingFilePath -Encoding Ascii
+    end
+    {
+        $map = @{}
+        $mapFiles | % {
+            $rawHashtable = $_ | cat -Raw | ConvertFrom-Json | Convert-PSObjectToHashtable
+            $mapRoot = Split-Path $_.FullName
+            if ($KeepRelativePaths) 
+            {
+                # not very elegant way to find relative for the current directory path
+                $mapRoot = $mapRoot.Substring($PSScriptRoot.Length + 1)
+                # keep original unix-style paths for git
+                $mapRoot = $mapRoot.Replace('\', '/')
+            }
+
+            $rawHashtable.GetEnumerator() | % {
+                $newKey = if ($Root) { Join-Path $Root $_.Key } else { $_.Key }
+                $newValue = if ($KeepRelativePaths) { ($mapRoot + '/' + $_.Value) } else { Join-Path $mapRoot $_.Value } 
+                $map[$newKey] = $newValue
+            }
+        }
+
+        return $map
+    }
 }
 
 
 <#
-.EXAMPLE Send-GitDiffToSd -diffArg1 45555786714d656bd31cbce67dbccb89c433b9cb -diffArg2 45555786714d656bd31cbce67dbccb89c433b9cb~1 -pathToAdmin d:\e\ps_dev\admin
+.EXAMPLE Send-GitDiffToSd -diffArg1 32b90c048aa0c5bc8e67f96a98ea01c728c4a5be~1 -diffArg2 32b90c048aa0c5bc8e67f96a98ea01c728c4a5be -AdminRoot d:\e\ps_dev\admin
 Apply a signle commit to admin folder
 #>
 function Send-GitDiffToSd {
@@ -753,18 +767,28 @@ function Send-GitDiffToSd {
         [Parameter(Mandatory)]
         [string]$diffArg2,
         [Parameter(Mandatory)]
-        [string]$pathToAdmin,
-        [string]$mappingFilePath = "$PSScriptRoot/mapping.json",
+        [string]$AdminRoot,
         [switch]$WhatIf
     )
 
-    $patchPath = Join-Path (get-command git).Source ..\..\bin\patch
-    $m = cat -Raw $mappingFilePath | ConvertFrom-Json | Convert-PSObjectToHashtable
+    # this is only for windows, because you cannot have SD enlistment on Linux
+    $patchPath = (ls (Join-Path (get-command git).Source '..\..') -Recurse -Filter 'patch.exe').FullName
+    $m = Get-Mappings -KeepRelativePaths -Root $AdminRoot
     $affectedFiles = git diff --name-only $diffArg1 $diffArg2
+    $affectedFiles | % {
+        Write-Host -Foreground Green "Changes in file $_"
+    }
+
     $rev = Get-InvertedOrderedMap $m
     foreach ($file in $affectedFiles) {
         if ($rev.Contains) {
-            $sdFilePath = Join-Path $pathToAdmin $rev[$file].Substring('src/monad/'.Length)
+            $sdFilePath = $rev[$file]
+            if (-not $sdFilePath)
+            {
+                Write-Warning "Cannot find mapped file for $file, skipping"
+                continue
+            }
+
             $diff = git diff $diffArg1 $diffArg2 -- $file
             if ($diff) {
                 Write-Host -Foreground Green "Apply patch to $sdFilePath"
