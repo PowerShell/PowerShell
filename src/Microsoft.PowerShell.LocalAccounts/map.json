@@ -10,8 +10,6 @@
     "monad/src/LocalAccounts/Sam.cs": "LocalAccounts/Sam.cs",
     "monad/src/LocalAccounts/SamApi.cs": "LocalAccounts/SamApi.cs",
     "monad/src/LocalAccounts/StringUtil.cs": "LocalAccounts/StringUtil.cs",
-    "monad/src/LocalAccounts/Microsoft.PowerShell.LocalAccounts.psd1": "../powershell/Modules/Microsoft.PowerShell.LocalAccounts/Microsoft.PowerShell.LocalAccounts.psd1",
-    "monad/src/LocalAccounts/LocalAccounts.format.ps1xml": "../powershell/Modules/Microsoft.PowerShell.LocalAccounts/LocalAccounts.format.ps1xml",
     "monad/src/LocalAccounts/Commands/AddLocalGroupMemberCommand.cs": "LocalAccounts/Commands/AddLocalGroupMemberCommand.cs",
     "monad/src/LocalAccounts/Commands/DisableLocalUserCommand.cs": "LocalAccounts/Commands/DisableLocalUserCommand.cs",
     "monad/src/LocalAccounts/Commands/EnableLocalUserCommand.cs": "LocalAccounts/Commands/EnableLocalUserCommand.cs",
