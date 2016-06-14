@@ -367,7 +367,11 @@ function Start-PSxUnit {
 
 
 function Start-PSBootstrap {
-    [CmdletBinding()]param()
+    [CmdletBinding()]param(
+        [ValidateSet("dev", "beta", "preview")]
+        [string]$Channel = "preview",
+        [string]$Version = "1.0.0-preview2-003067"
+    )
 
     Write-Host "Installing Open PowerShell build dependencies"
 
@@ -420,7 +424,7 @@ function Start-PSBootstrap {
             $installScript = "dotnet-install.sh"
             curl -s $obtainUrl/$installScript -o $installScript
             chmod +x $installScript
-            bash ./$installScript -c preview
+            bash ./$installScript -c $Channel -v $Version
         }
 
         # Install for Windows
@@ -428,7 +432,7 @@ function Start-PSBootstrap {
             Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
             $installScript = "dotnet-install.ps1"
             Invoke-WebRequest -Uri $obtainUrl/$installScript -OutFile $installScript
-            & ./$installScript
+            & ./$installScript -c $Channel -v $Version
         } elseif ($IsWindows) {
             Write-Warning "Start-PSBootstrap cannot be run in Core PowerShell on Windows (need Invoke-WebRequest!)"
         }
