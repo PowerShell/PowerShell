@@ -7,7 +7,6 @@
     "buildOptions": {
         "warningsAsErrors": true,
         "allowUnsafe": true,
-        "compile": [ "../windows-build/gen/Microsoft.PowerShell.ConsoleHost/*.cs" ],
         "copyToOutput": {
             "include": [
                 "Modules",

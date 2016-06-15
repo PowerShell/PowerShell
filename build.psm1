@@ -26,6 +26,7 @@ function Start-PSBuild {
         [switch]$NoPath,
         [switch]$Restore,
         [string]$Output,
+        [switch]$ResGen,
 
         [Parameter(ParameterSetName='CoreCLR')]
         [switch]$Publish,
@@ -141,6 +142,13 @@ function Start-PSBuild {
         $RestoreArguments += "$PSScriptRoot"
 
         Start-NativeExecution { dotnet restore $RestoreArguments }
+    }
+
+    # handle ResGen
+    if ($ResGen -or -not (Test-Path "$($Options.Top)/gen"))
+    {
+        log "Run ResGen (generating C# bindings for resx files)"
+        Start-ResGen
     }
 
     # Build native components
@@ -867,6 +875,9 @@ function Send-GitDiffToSd {
 
 function Start-ResGen
 {
+    [CmdletBinding()]
+    param()
+
     @("Microsoft.PowerShell.Commands.Management",
 "Microsoft.PowerShell.Commands.Utility",
 "Microsoft.PowerShell.ConsoleHost",
@@ -875,9 +886,9 @@ function Start-ResGen
 "Microsoft.PowerShell.Security",
 "System.Management.Automation") | % {
         $module = $_
-        ls "$PSScriptRoot/src/$module/resources" | % {
+        Get-ChildItem "$PSScriptRoot/src/$module/resources" | % {
             $className = $_.Name.Replace('.resx', '')
-            $xml = [xml](cat -raw $_.FullName)
+            $xml = [xml](Get-Content -raw $_.FullName)
 
             $fileName = $className
             $namespace = ''
@@ -890,9 +901,9 @@ function Start-ResGen
             }
 
             $genSource = Get-StronglyTypeCsFileForResx -xml $xml -ModuleName $module -ClassName $className -NamespaceName $namespace
-            $outPath = "$PSScriptRoot/src/windows-build/gen/$module/$fileName.cs"
-            log "ResGen for $outPath"
-            mkdir -ErrorAction SilentlyContinue (Split-Path $outPath) > $null
+            $outPath = "$PSScriptRoot/src/$module/gen/$fileName.cs"
+            Write-Verbose "ResGen for $outPath"
+            New-Item -Type Directory -ErrorAction SilentlyContinue (Split-Path $outPath) > $null
             Set-Content -Encoding Ascii -Path $outPath -Value $genSource
         }
     }

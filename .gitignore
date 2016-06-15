@@ -30,3 +30,6 @@ powershell.version
 
 # default location for produced nuget packages
 /nuget-artifacts
+
+# resgen output
+gen
