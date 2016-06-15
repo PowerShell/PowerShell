@@ -18,7 +18,6 @@
             "buildOptions": {
                 "define": [ "CORECLR" ],
                 "compile": {
-                    "include": [ "../windows-build/gen/Microsoft.PowerShell.Security/*.cs" ],
                     "exclude": [
                         "security/CertificateCommands.cs",
                         "security/CmsCommands.cs",
@@ -28,11 +27,6 @@
             }
         },
         "net451": {
-            "buildOptions": {
-                "compile": {
-                    "include": [ "../windows-build/gen/Microsoft.PowerShell.Security/*.cs" ]
-                }
-            }
         }
     }
 }

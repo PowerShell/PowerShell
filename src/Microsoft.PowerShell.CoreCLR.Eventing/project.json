@@ -5,8 +5,7 @@
 
     "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true,
-        "compile": [ "../windows-build/gen/Microsoft.PowerShell.CoreCLR.Eventing/*.cs" ]
+        "allowUnsafe": true
     },
 
     "frameworks": {

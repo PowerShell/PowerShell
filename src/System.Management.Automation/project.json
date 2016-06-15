@@ -26,7 +26,6 @@
             "buildOptions": {
                 "define": [ "CORECLR" ],
                 "compile": {
-                    "include": [ "../windows-build/gen/System.Management.Automation/*.cs" ],
                     "exclude": [
                         "cimSupport/cmdletization/xml/cmdlets-over-objects.objectModel.autogen.cs",
                         "cimSupport/cmdletization/xml/cmdlets-over-objects.xmlSerializer.autogen.cs",
@@ -163,12 +162,6 @@
             }
         },
         "net451": {
-            "buildOptions": {
-                "compile": {
-                    "include": [ "../windows-build/gen/System.Management.Automation/*.cs" ]
-
-                }
-            },
             "frameworkAssemblies": {
                 "System.Runtime": "",
                 "System.Xml": "",

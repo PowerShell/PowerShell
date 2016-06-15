@@ -4,8 +4,7 @@
     "authors": [ "OPS" ],
 
     "buildOptions": {
-        "warningsAsErrors": true,
-        "compile": [ "../windows-build/gen/Microsoft.PowerShell.LocalAccounts/*.cs" ]
+        "warningsAsErrors": true
     },
 
     "dependencies": {
