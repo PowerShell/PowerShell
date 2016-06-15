@@ -886,9 +886,9 @@ function Start-ResGen
 "Microsoft.PowerShell.Security",
 "System.Management.Automation") | % {
         $module = $_
-        ls "$PSScriptRoot/src/$module/resources" | % {
+        Get-ChildItem "$PSScriptRoot/src/$module/resources" | % {
             $className = $_.Name.Replace('.resx', '')
-            $xml = [xml](cat -raw $_.FullName)
+            $xml = [xml](Get-Content -raw $_.FullName)
 
             $fileName = $className
             $namespace = ''
