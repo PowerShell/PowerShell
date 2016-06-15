@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccessDenied" xml:space="preserve">
+    <value>Access denied.</value>
+  </data>
+  <data name="AccountNotFound" xml:space="preserve">
+    <value>Account {0} was not found.</value>
+  </data>
+  <data name="ActionAddGroupMember" xml:space="preserve">
+    <value>Add member {0}</value>
+  </data>
+  <data name="ActionDisableUser" xml:space="preserve">
+    <value>Disable local user</value>
+  </data>
+  <data name="ActionEnableUser" xml:space="preserve">
+    <value>Enable local user</value>
+  </data>
+  <data name="ActionNewGroup" xml:space="preserve">
+    <value>Create new local group</value>
+  </data>
+  <data name="ActionNewUser" xml:space="preserve">
+    <value>Create new local user</value>
+  </data>
+  <data name="ActionRemoveGroup" xml:space="preserve">
+    <value>Remove local group</value>
+  </data>
+  <data name="ActionRemoveGroupMember" xml:space="preserve">
+    <value>Remove member {0}</value>
+  </data>
+  <data name="ActionRemoveUser" xml:space="preserve">
+    <value>Remove local user</value>
+  </data>
+  <data name="ActionRenameGroup" xml:space="preserve">
+    <value>Rename local group to {0}</value>
+  </data>
+  <data name="ActionRenameUser" xml:space="preserve">
+    <value>Rename local user to {0}</value>
+  </data>
+  <data name="ActionSetGroup" xml:space="preserve">
+    <value>Modify local group</value>
+  </data>
+  <data name="ActionSetUser" xml:space="preserve">
+    <value>Modify local user</value>
+  </data>
+  <data name="GroupExists" xml:space="preserve">
+    <value>Group {0} already exists.</value>
+  </data>
+  <data name="GroupHasMembers" xml:space="preserve">
+    <value>The group {0} still has members.</value>
+  </data>
+  <data name="GroupNotFound" xml:space="preserve">
+    <value>Group {0} was not found.</value>
+  </data>
+  <data name="InvalidForGroup" xml:space="preserve">
+    <value>The operation is not allowed for group {0}.</value>
+  </data>
+  <data name="InvalidForUser" xml:space="preserve">
+    <value>The operation is not allowed for user {0}.</value>
+  </data>
+  <data name="InvalidName" xml:space="preserve">
+    <value>The name {0} is invalid.</value>
+  </data>
+  <data name="InvalidParameterPair" xml:space="preserve">
+    <value>Parameter {0} and parameter {1} may not be used together.</value>
+  </data>
+  <data name="InvalidPassword" xml:space="preserve">
+    <value>Invalid password.</value>
+  </data>
+  <data name="LastAdmin" xml:space="preserve">
+    <value>Cannot remove the last Administrator</value>
+  </data>
+  <data name="MemberExists" xml:space="preserve">
+    <value>{0} is already a member of group {1}.</value>
+  </data>
+  <data name="MemberNotFound" xml:space="preserve">
+    <value>Member {0} was not found in group {1}.</value>
+  </data>
+  <data name="MembersPrimaryGroup" xml:space="preserve">
+    <value>User {0} may not be removed from its primary group.</value>
+  </data>
+  <data name="NameInUse" xml:space="preserve">
+    <value>The name {0} is already in use.</value>
+  </data>
+  <data name="ObjectClassGroup" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="ObjectClassOther" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="ObjectClassUser" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="PasswordRestriction" xml:space="preserve">
+    <value>The password cannot be set because a password restriction is in place.</value>
+  </data>
+  <data name="PrincipalNotFound" xml:space="preserve">
+    <value>Principal {0} was not found.</value>
+  </data>
+  <data name="RidToSidFailed" xml:space="preserve">
+    <value>RID {0} was not found.</value>
+  </data>
+  <data name="UnspecifiedError" xml:space="preserve">
+    <value>An unspecified error occurred.</value>
+  </data>
+  <data name="UnspecifiedErrorNtStatus" xml:space="preserve">
+    <value>An unspecified error occurred: status = {0}</value>
+  </data>
+  <data name="UnspecifiedErrorWin32Error" xml:space="preserve">
+    <value>An unspecified error occurred: error code = {0}</value>
+  </data>
+  <data name="UserExists" xml:space="preserve">
+    <value>User {0} already exists.</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User {0} was not found.</value>
+  </data>
+</root>
