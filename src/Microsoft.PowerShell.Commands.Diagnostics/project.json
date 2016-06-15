@@ -1,0 +1,35 @@
+{
+    "name": "Microsoft.PowerShell.Commands.Diagnostics",
+    "version": "1.0.0-*",
+    "authors": [ "garretts", "andschwa" ],
+
+    "compilationOptions": {
+        "warningsAsErrors": true,
+        "allowUnsafe": true
+    },
+
+  "dependencies": {
+    "System.Management.Automation": "1.0.0-*"
+  },
+
+    "frameworks": {
+        "netstandard1.5": {
+            "imports": [ "dnxcore50" ],
+          "compilationOptions": {
+            "define": [ "CORECLR" ]
+          },
+          "buildOptions": {
+            "compile": {
+                "excludeFiles": [ "GetEventCommand.cs","PdhSafeHandle.cs","GetEventSnapin.cs","CounterSample.cs","CounterSet.cs","PdhHelper.cs" ,"ExportCounterCommand.cs","GetCounterCommand.cs","ImportCounterCommand.cs","NewWinEventCommand.cs"] 
+            }
+        }
+        },
+      "net451": {
+        "frameworkAssemblies": {
+          "System": ""
+            }
+      }
+    },
+
+    "compile": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Diagnostics/*.cs" ]
+}
