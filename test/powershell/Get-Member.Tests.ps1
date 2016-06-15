@@ -88,10 +88,6 @@ Describe "Get-Member DRT Unit Tests" -Tags DRT {
                     yearsInMS = value;
                 }
             }
-
-            public void GetEmployee() {}
-
-            public void SetEmployee() {}
  
             public Employee(string firstName, string lastName, int yearsInMS)
             {
@@ -175,7 +171,7 @@ Describe "Get-Member DRT Unit Tests" -Tags DRT {
 
         It 'Get the Public Methods of "Employee" object' {
             $emps = [Employee]::New("john", "smith", 5), [Employee]::New("joesph", "smith", 15), [Employee]::New("john", "smyth", 2)
-            $methodList = "GetHashCode", "Equals", "ToString", "GetEmployee", "SetEmployee", "GetType"
+            $methodList = "GetHashCode", "Equals", "ToString", "GetType"
             $results = $emps | Get-Member -MemberType Method
             $results.Length | Should Be $methodList.Length
             $methodFound = @()
