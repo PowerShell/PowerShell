@@ -87,3 +87,38 @@ following cmdlets that exist in the FullCLR version:
 - Send-MailMessage
 - Show-Command
 - Update-List
+
+## File paths with literal backward slashes
+
+On some filesystems (Linux, OS X), file paths are allowed to contain literal
+backward slashes, '\', as valid filename characters. These slashes, when
+escaped, are not directory separators. In Bash, the backward slash is the escape
+character, so a `path/with/a\\slash` is two directories, `path` and `with`, and
+one file, `a\slash`. In PowerShell, we *will* support this using the normal
+backtick escape character, so a `path\with\a``\slash` or a
+`path/with/a``\slash`, but this edge case is *currently unsupported*.
+
+That being said, native commands will work as expected. Thus this is the current
+scenario:
+
+```powershell
+PS > Get-Content a`\slash
+Get-Content : Cannot find path '/home/andrew/src/PowerShell/a/slash' because it does not exist.
+At line:1 char:1
++ Get-Content a`\slash
++ ~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (/home/andrew/src/PowerShell/a/slash:String) [Get-Co
+   ntent], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetContentCommand
+
+PS > /bin/cat a\slash
+hi
+
+```
+
+The PowerShell cmdlet `Get-Content` cannot yet understand the escaped backward
+slash, but the path is passed literally to the native command `/bin/cat`. Most
+file operations are thus implicitly supported by the native commands. The
+notable exception is `cd` since it is not a command, but a shell built-in,
+`Set-Location`. So until this issue is resolved, PowerShell cannot change to a
+directory whose name contains a literal backward slash.
