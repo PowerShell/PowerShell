@@ -1,4 +1,3 @@
-#if !CORECLR
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -206,5 +205,3 @@ namespace Microsoft.PowerShell.Commands.Management
     }
 } // namespace Microsoft.Test.Management.Automation
 
-
-#endif

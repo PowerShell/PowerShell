@@ -5,8 +5,7 @@
 
     "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true,
-        "compile": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Management/*.cs" ]
+        "allowUnsafe": true
     },
 
     "dependencies": {
@@ -17,7 +16,31 @@
         "netstandard1.5": {
             "imports": [ "dnxcore50" ],
             "buildOptions": {
-                "define": [ "CORECLR" ]
+                "define": [ "CORECLR" ],
+                "compile": {
+                    "include": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Management/*.cs" ],
+                    "exclude": [
+                        "commands/management/ClearRecycleBinCommand.cs",
+                        "commands/management/CommitTransactionCommand.cs",
+                        "commands/management/Computer.cs",
+                        "commands/management/Eventlog.cs",
+                        "commands/management/GetClipboardCommand.cs",
+                        "commands/management/GetTransactionCommand.cs",
+                        "commands/management/GetWMIObjectCommand.cs",
+                        "commands/management/Hotfix.cs",
+                        "commands/management/InvokeWMIMethodCommand.cs",
+                        "commands/management/RegisterWMIEventCommand.cs",
+                        "commands/management/RemoveWMIObjectCommand.cs",
+                        "commands/management/RollbackTransactionCommand.cs",
+                        "commands/management/SetClipboardCommand.cs",
+                        "commands/management/SetWMIInstanceCommand.cs",
+                        "commands/management/StartTransactionCommand.cs",
+                        "commands/management/UseTransactionCommand.cs",
+                        "commands/management/WMIHelper.cs",
+                        "commands/management/WebServiceProxy.cs",
+                        "singleshell/installer/MshManagementMshSnapin.cs"
+                    ]
+                }
             },
             "dependencies": {
                 "System.ServiceProcess.ServiceController": "4.1.0-rc2-24103",
@@ -25,6 +48,11 @@
             }
         },
         "net451": {
+            "buildOptions": {
+                "compile": {
+                    "include": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Management/*.cs" ]
+                }
+            },
             "frameworkAssemblies": {
                 "System.ServiceProcess": "",
                 "System.Windows.Forms": "",
@@ -32,7 +60,7 @@
                 "System.Web.Services": ""
             },
             "dependencies": {
-                 "Microsoft.WSMan.Management": "1.0.0"
+                "Microsoft.WSMan.Management": "1.0.0"
             }
         }
     }

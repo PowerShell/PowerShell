@@ -5,8 +5,7 @@
 
     "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true,
-        "compile": [ "../windows-build/gen/Microsoft.PowerShell.Security/*.cs" ]
+        "allowUnsafe": true
     },
 
     "dependencies": {
@@ -17,10 +16,23 @@
         "netstandard1.5": {
             "imports": [ "dnxcore50" ],
             "buildOptions": {
-                "define": [ "CORECLR" ]
+                "define": [ "CORECLR" ],
+                "compile": {
+                    "include": [ "../windows-build/gen/Microsoft.PowerShell.Security/*.cs" ],
+                    "exclude": [
+                        "security/CertificateCommands.cs",
+                        "security/CmsCommands.cs",
+                        "singleshell/installer/MshSecurityMshSnapin.cs"
+                    ]
+                }
             }
         },
         "net451": {
+            "buildOptions": {
+                "compile": {
+                    "include": [ "../windows-build/gen/Microsoft.PowerShell.Security/*.cs" ]
+                }
+            }
         }
     }
 }

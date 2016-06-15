@@ -5,8 +5,7 @@
 
     "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true,
-        "compile": [ "../windows-build/gen/System.Management.Automation/*.cs" ]
+        "allowUnsafe": true
     },
 
     "configurations": {
@@ -25,7 +24,107 @@
         "netstandard1.5": {
             "imports": [ "dnxcore50" ],
             "buildOptions": {
-                "define": [ "CORECLR" ]
+                "define": [ "CORECLR" ],
+                "compile": {
+                    "include": [ "../windows-build/gen/System.Management.Automation/*.cs" ],
+                    "exclude": [
+                        "cimSupport/cmdletization/xml/cmdlets-over-objects.objectModel.autogen.cs",
+                        "cimSupport/cmdletization/xml/cmdlets-over-objects.xmlSerializer.autogen.cs",
+                        "engine/CodeMethods.cs",
+                        "engine/ComInterop/ArgBuilder.cs",
+                        "engine/ComInterop/BoolArgBuilder.cs",
+                        "engine/ComInterop/BoundDispEvent.cs",
+                        "engine/ComInterop/CollectionExtensions.cs",
+                        "engine/ComInterop/ComBinder.cs",
+                        "engine/ComInterop/ComBinderHelpers.cs",
+                        "engine/ComInterop/ComClassMetaObject.cs",
+                        "engine/ComInterop/ComDispIds.cs",
+                        "engine/ComInterop/ComEventDesc.cs",
+                        "engine/ComInterop/ComEventSink.cs",
+                        "engine/ComInterop/ComEventSinkProxy.cs",
+                        "engine/ComInterop/ComEventSinksContainer.cs",
+                        "engine/ComInterop/ComFallbackMetaObject.cs",
+                        "engine/ComInterop/ComHresults.cs",
+                        "engine/ComInterop/ComInterop.cs",
+                        "engine/ComInterop/ComInvokeAction.cs",
+                        "engine/ComInterop/ComInvokeBinder.cs",
+                        "engine/ComInterop/ComMetaObject.cs",
+                        "engine/ComInterop/ComMethodDesc.cs",
+                        "engine/ComInterop/ComObject.cs",
+                        "engine/ComInterop/ComParamDesc.cs",
+                        "engine/ComInterop/ComRuntimeHelpers.cs",
+                        "engine/ComInterop/ComType.cs",
+                        "engine/ComInterop/ComTypeClassDesc.cs",
+                        "engine/ComInterop/ComTypeDesc.cs",
+                        "engine/ComInterop/ComTypeEnumDesc.cs",
+                        "engine/ComInterop/ComTypeLibDesc.cs",
+                        "engine/ComInterop/ComTypeLibInfo.cs",
+                        "engine/ComInterop/ComTypeLibMemberDesc.cs",
+                        "engine/ComInterop/ConversionArgBuilder.cs",
+                        "engine/ComInterop/ConvertArgBuilder.cs",
+                        "engine/ComInterop/ConvertibleArgBuilder.cs",
+                        "engine/ComInterop/CurrencyArgBuilder.cs",
+                        "engine/ComInterop/DateTimeArgBuilder.cs",
+                        "engine/ComInterop/DispCallable.cs",
+                        "engine/ComInterop/DispCallableMetaObject.cs",
+                        "engine/ComInterop/DispatchArgBuilder.cs",
+                        "engine/ComInterop/ErrorArgBuilder.cs",
+                        "engine/ComInterop/Errors.cs",
+                        "engine/ComInterop/ExcepInfo.cs",
+                        "engine/ComInterop/Helpers.cs",
+                        "engine/ComInterop/IDispatchComObject.cs",
+                        "engine/ComInterop/IDispatchMetaObject.cs",
+                        "engine/ComInterop/IPseudoComObject.cs",
+                        "engine/ComInterop/NullArgBuilder.cs",
+                        "engine/ComInterop/SimpleArgBuilder.cs",
+                        "engine/ComInterop/SplatCallSite.cs",
+                        "engine/ComInterop/StringArgBuilder.cs",
+                        "engine/ComInterop/TypeEnumMetaObject.cs",
+                        "engine/ComInterop/TypeLibInfoMetaObject.cs",
+                        "engine/ComInterop/TypeLibMetaObject.cs",
+                        "engine/ComInterop/TypeUtils.cs",
+                        "engine/ComInterop/UnknownArgBuilder.cs",
+                        "engine/ComInterop/VarEnumSelector.cs",
+                        "engine/ComInterop/Variant.cs",
+                        "engine/ComInterop/VariantArgBuilder.cs",
+                        "engine/ComInterop/VariantArray.cs",
+                        "engine/ComInterop/VariantBuilder.cs",
+                        "engine/ExtraAdapter.cs",
+                        "engine/ManagementObjectAdapter.cs",
+                        "engine/MshObjectTypeDescriptor.cs",
+                        "engine/PSMI/PSNegotiationData.cs",
+                        "engine/PSMI/PSPowerShellPipeline.cs",
+                        "engine/PSMI/Serialization/InternalMISerializer.cs",
+                        "engine/PSMI/Serialization/KnownMITypes.cs",
+                        "engine/PSMI/Serialization/MISerializer.cs",
+                        "engine/PSMI/Serialization/MITypeSerializationInfo.cs",
+                        "engine/PSMI/Serialization/PSMISerializer.cs",
+                        "engine/TransactedString.cs",
+                        "engine/TransactionManager.cs",
+                        "engine/hostifaces/NativeCultureResolver.cs",
+                        "engine/hostifaces/RunspaceInvoke.cs",
+                        "logging/eventlog/EventLogLogProvider.cs",
+                        "namespaces/SafeTransactionHandle.cs",
+                        "namespaces/TransactedRegistry.cs",
+                        "namespaces/TransactedRegistryKey.cs",
+                        "namespaces/TransactedRegistrySecurity.cs",
+                        "security/wldpNativeMethods.cs",
+                        "singleshell/Commands/ConsoleCommands.cs",
+                        "singleshell/Commands/MshSnapinCommands.cs",
+                        "singleshell/config/RegistryStringResourceIndirect.cs",
+                        "singleshell/installer/CustomMshSnapin.cs",
+                        "singleshell/installer/MshCoreMshSnapin.cs",
+                        "singleshell/installer/MshInstaller.cs",
+                        "singleshell/installer/MshSnapin.cs",
+                        "singleshell/installer/MshSnapinInstaller.cs",
+                        "utils/BackgroundDispatcher.cs",
+                        "utils/GraphicalHostReflectionWrapper.cs",
+                        "utils/WindowsErrorReporting.cs",
+                        "utils/perfCounters/CounterSetInstanceBase.cs",
+                        "utils/perfCounters/CounterSetRegistrarBase.cs",
+                        "utils/perfCounters/PSPerfCountersMgr.cs"
+                    ]
+                }
             },
             "dependencies": {
                 "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext": "1.0.0-*",
@@ -64,6 +163,12 @@
             }
         },
         "net451": {
+            "buildOptions": {
+                "compile": {
+                    "include": [ "../windows-build/gen/System.Management.Automation/*.cs" ]
+
+                }
+            },
             "frameworkAssemblies": {
                 "System.Runtime": "",
                 "System.Xml": "",

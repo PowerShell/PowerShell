@@ -5,8 +5,7 @@
 
     "buildOptions": {
         "warningsAsErrors": true,
-        "allowUnsafe": true,
-        "compile": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Utility/*.cs" ]
+        "allowUnsafe": true
     },
 
     "dependencies": {
@@ -16,7 +15,47 @@
     "frameworks": {
         "netstandard1.5": {
             "buildOptions": {
-                "define": [ "CORECLR" ]
+                "define": [ "CORECLR" ],
+                "compile": {
+                    "include": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Utility/*.cs" ],
+                    "exclude": [
+                        "commands/utility/FormatAndOutput/OutGridView/ColumnInfo.cs",
+                        "commands/utility/FormatAndOutput/OutGridView/ExpressionColumnInfo.cs",
+                        "commands/utility/FormatAndOutput/OutGridView/HeaderInfo.cs",
+                        "commands/utility/FormatAndOutput/OutGridView/OriginalColumnInfo.cs",
+                        "commands/utility/FormatAndOutput/OutGridView/OutGridViewCommand.cs",
+                        "commands/utility/FormatAndOutput/OutGridView/OutWindowProxy.cs",
+                        "commands/utility/FormatAndOutput/OutGridView/ScalarTypeColumnInfo.cs",
+                        "commands/utility/FormatAndOutput/OutGridView/TableView.cs",
+                        "commands/utility/FormatAndOutput/out-printer/PrinterLineOutput.cs",
+                        "commands/utility/FormatAndOutput/out-printer/out-printer.cs",
+                        "commands/utility/ImplicitRemotingCommands.cs",
+                        "commands/utility/Send-MailMessage.cs",
+                        "commands/utility/ShowCommand/ShowCommand.cs",
+                        "commands/utility/ShowCommand/ShowCommandCommandInfo.cs",
+                        "commands/utility/ShowCommand/ShowCommandModuleInfo.cs",
+                        "commands/utility/ShowCommand/ShowCommandParameterInfo.cs",
+                        "commands/utility/ShowCommand/ShowCommandParameterSetInfo.cs",
+                        "commands/utility/ShowCommand/ShowCommandParameterType.cs",
+                        "commands/utility/ShowCommand/ShowCommandProxy.cs",
+                        "commands/utility/WebCmdlet/BasicHtmlWebResponseObject.cs",
+                        "commands/utility/WebCmdlet/ContentHelper.cs",
+                        "commands/utility/WebCmdlet/HtmlWebResponseObject.cs",
+                        "commands/utility/WebCmdlet/InvokeRestMethodCommand.cs",
+                        "commands/utility/WebCmdlet/InvokeWebRequestCommand.cs",
+                        "commands/utility/WebCmdlet/JsonObjectTypeResolver.cs",
+                        "commands/utility/WebCmdlet/PSUserAgent.cs",
+                        "commands/utility/WebCmdlet/StreamHelper.cs",
+                        "commands/utility/WebCmdlet/WebRequestPSCmdlet.cs",
+                        "commands/utility/WebCmdlet/WebRequestSession.cs",
+                        "commands/utility/WebCmdlet/WebResponseHelper.cs",
+                        "commands/utility/WebCmdlet/WebResponseObject.cs",
+                        "commands/utility/WebCmdlet/WebResponseObjectFactory.cs",
+                        "commands/utility/convert-HTML.cs",
+                        "commands/utility/update-list.cs",
+                        "singleshell/installer/MshUtilityMshSnapin.cs"
+                    ]
+                }
             },
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "dependencies": {
@@ -26,6 +65,11 @@
             }
         },
         "net451": {
+            "buildOptions": {
+                "compile": {
+                    "include": [ "../windows-build/gen/Microsoft.PowerShell.Commands.Utility/*.cs" ]
+                }
+            },
             "frameworkAssemblies": {
                 "System.Drawing": "",
                 "System.Web": "",

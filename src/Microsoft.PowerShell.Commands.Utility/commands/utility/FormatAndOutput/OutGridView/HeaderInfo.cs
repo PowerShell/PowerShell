@@ -1,4 +1,3 @@
-#if !CORECLR
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
@@ -61,4 +60,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-#endif

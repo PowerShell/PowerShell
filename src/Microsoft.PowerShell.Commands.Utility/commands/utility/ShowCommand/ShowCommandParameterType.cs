@@ -1,7 +1,6 @@
-#if !CORECLR
-//-----------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------
 // <copyright file="ShowCommandParameterInfo.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
+//     Copyright © Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 namespace Microsoft.PowerShell.Commands.ShowCommandExtension
@@ -163,4 +162,3 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         public ArrayList EnumValues { get; private set; }
     }
 }
-#endif
