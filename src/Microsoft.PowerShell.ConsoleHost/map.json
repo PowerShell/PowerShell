@@ -10,7 +10,7 @@
     "monad/src/host/msh/resources/ProgressNodeStrings.resx":  "resources/ProgressNodeStrings.resx",
     "monad/src/host/msh/resources/ConsoleHostRawUserInterfaceStrings.resx":  "resources/ConsoleHostRawUserInterfaceStrings.resx",
     "monad/src/host/msh/PendingProgress.cs":  "host/msh/PendingProgress.cs",
-    "monad/src/host/msh/Consoletextwriter.cs":  "host/msh/ConsoleTextWriter.cs",
+    "monad/src/host/msh/ConsoletextWriter.cs":  "host/msh/ConsoleTextWriter.cs",
     "monad/src/host/msh/resources/ConsoleControlStrings.resx":  "resources/ConsoleControlStrings.resx",
     "monad/src/host/msh/ConsoleHostUserInterfacePromptForChoice.cs":  "host/msh/ConsoleHostUserInterfacePromptForChoice.cs",
     "monad/src/host/msh/ConsoleShell.cs":  "host/msh/ConsoleShell.cs",
