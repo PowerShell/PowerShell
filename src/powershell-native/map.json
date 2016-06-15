@@ -1,8 +1,6 @@
 {
     "monad/nttargets/assemblies/nativemsh/pwrshexe/OutputWriter.h":  "nativemsh/pwrshexe/OutputWriter.h",
-    "monad/nttargets/assemblies/nativemsh/pwrshcommon/ConfigFileReader.cpp":  "nativemsh/pwrshcommon/ConfigFileReader.cpp",
     "monad/nttargets/assemblies/nativemsh/pwrshcommon/NativeMsh.h":  "nativemsh/pwrshcommon/NativeMsh.h",
-    "monad/nttargets/assemblies/nativemsh/pwrshcommon/ConfigFileReader.h":  "nativemsh/pwrshcommon/ConfigFileReader.h",
     "monad/nttargets/assemblies/nativemsh/pwrshcommon/pwrshcommon.cpp":  "nativemsh/pwrshcommon/pwrshcommon.cpp",
     "monad/nttargets/assemblies/nativemsh/pwrshcommon/SystemCallFacade.h":  "nativemsh/pwrshcommon/SystemCallFacade.h",
     "monad/nttargets/assemblies/nativemsh/pwrshcommon/WinSystemCallFacade.cpp":  "nativemsh/pwrshcommon/WinSystemCallFacade.cpp",

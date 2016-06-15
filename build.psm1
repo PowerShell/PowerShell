@@ -697,7 +697,7 @@ function Copy-MappedFiles {
         # Do some intelligens to prevent shouting us in the foot with CL management
 
         # finding base-line CL
-        $cl = git tag | % {if ($_ -match 'SD.(\d+)$') {[int]$Matches[1]} } | sort -Descending | select -First 1
+        $cl = git --git-dir="$PSScriptRoot/.git" tag | % {if ($_ -match 'SD.(\d+)$') {[int]$Matches[1]} } | Sort-Object -Descending | Select-Object -First 1
         if ($cl)
         {
             Write-Host -ForegroundColor Green "Current base-line CL is SD:$cl (based on tags)"
@@ -743,15 +743,15 @@ function Copy-MappedFiles {
     end
     {
         $map.GetEnumerator() | % {
-            mkdir (Split-Path $_.Value) -ErrorAction SilentlyContinue > $null
+            New-Item -ItemType Directory (Split-Path $_.Value) -ErrorAction SilentlyContinue > $null
 
             if ($PSBoundParameters['Verbose'])
             {
-                cp $_.Key $_.Value -Verbose
+                Copy-Item $_.Key $_.Value -Verbose
             }
             else
             {
-                cp $_.Key $_.Value
+                Copy-Item $_.Key $_.Value
             }
         }
     }
@@ -799,7 +799,7 @@ function Get-Mappings
     {
         $map = @{}
         $mapFiles | % {
-            $rawHashtable = $_ | cat -Raw | ConvertFrom-Json | Convert-PSObjectToHashtable
+            $rawHashtable = $_ | Get-Content -Raw | ConvertFrom-Json | Convert-PSObjectToHashtable
             $mapRoot = Split-Path $_.FullName
             if ($KeepRelativePaths) 
             {
@@ -860,7 +860,7 @@ function Send-GitDiffToSd {
                 Set-Content -Value $diff -Path $env:TEMP\diff -Encoding Ascii
                 if ($WhatIf) {
                     Write-Host -Foreground Green "Patch content"
-                    cat $env:TEMP\diff
+                    Get-Content $env:TEMP\diff
                 } else {
                     & $patchPath --binary -p1 $sdFilePath $env:TEMP\diff
                 }
