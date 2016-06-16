@@ -472,6 +472,7 @@
     "monad/src/engine/resources/Authenticode.resx":  "resources/Authenticode.resx",
     "monad/src/engine/COM/ComUtil.cs":  "engine/COM/ComUtil.cs",
     "monad/src/engine/hostifaces/MshHostUserInterface.cs":  "engine/hostifaces/MshHostUserInterface.cs",
+    "monad/src/utils/ArchitectureSensitiveAttribute.cs":  "utils/ArchitectureSensitiveAttribute.cs",
     "monad/src/engine/DriveInterfaces.cs":  "engine/DriveInterfaces.cs",
     "monad/src/engine/ComInterop/Errors.cs":  "engine/ComInterop/Errors.cs",
     "monad/src/singleshell/config/MshConsoleInfo.cs":  "singleshell/config/MshConsoleInfo.cs",
