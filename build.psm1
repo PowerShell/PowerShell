@@ -670,7 +670,8 @@ function Copy-MappedFiles {
         [string[]]$Path = "$PSScriptRoot",
         [Parameter(Mandatory=$true)]
         [string]$PslMonadRoot,
-        [switch]$Force
+        [switch]$Force,
+        [switch]$WhatIf
     )
 
     begin 
@@ -682,6 +683,10 @@ function Copy-MappedFiles {
             if ($Force)
             {
                 Write-Warning "$Message : ignoring (-Force)"
+            }
+            elseif ($WhatIf)
+            {
+                Write-Warning "$Message : ignoring (-WhatIf)"   
             }
             else
             {
@@ -745,14 +750,7 @@ function Copy-MappedFiles {
         $map.GetEnumerator() | % {
             New-Item -ItemType Directory (Split-Path $_.Value) -ErrorAction SilentlyContinue > $null
 
-            if ($PSBoundParameters['Verbose'])
-            {
-                Copy-Item $_.Key $_.Value -Verbose
-            }
-            else
-            {
-                Copy-Item $_.Key $_.Value
-            }
+            Copy-Item $_.Key $_.Value -Verbose:([bool]$PSBoundParameters['Verbose']) -WhatIf:$WhatIf
         }
     }
 }
