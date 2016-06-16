@@ -30,3 +30,46 @@ Describe 'build.psm1 and powershell.exe' {
         }
     }
 }
+
+Describe 'Modules for the packge' {
+    Context '$env:DEVPATH Modules loading' {
+
+        $originalPSModulePath = $env:PSModulePath 
+        try 
+        {
+            # load all modules only from $env:DEVPATH !!!
+            $env:PSModulePath = "$($env:DEVPATH)\Modules"
+
+            It 'loads Microsoft.PowerShell.LocalAccounts' {
+                try
+                {
+                    Import-Module Microsoft.PowerShell.LocalAccounts
+                    Get-LocalUser | Should Not Be $null
+                }
+                finally
+                {
+                    Remove-Module -ErrorAction SilentlyContinue Microsoft.PowerShell.LocalAccounts
+                }
+            }
+
+            It 'loads Microsoft.PowerShell.Archive' {
+                try
+                {
+                    Import-Module Microsoft.PowerShell.LocalAccounts
+                    Set-Content -Path TestDrive:\1.txt -Value ''
+                    Compress-Archive -Path TestDrive:\1.txt -DestinationPath TestDrive:\1.zip
+                    Get-ChildItem -Path TestDrive:\1.zip | Should Not Be $null
+                }
+                finally
+                {
+                    Remove-Module -ErrorAction SilentlyContinue Microsoft.PowerShell.Archive
+                }
+            }
+        }
+        finally
+        {
+            $env:PSModulePath = $originalPSModulePath
+        }
+    }
+}
+
