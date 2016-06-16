@@ -12,6 +12,8 @@ dotnet-install.ps1
 # VS auto-generated solution files for project.json solutions
 *.xproj
 *.xproj.user
+*.suo
+
 
 # Ignore executables
 *.exe

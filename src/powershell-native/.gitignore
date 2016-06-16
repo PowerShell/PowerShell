@@ -4,6 +4,7 @@ CMakeCache.txt
 CMakeFiles/
 PowerShell.sln
 Win32/
+x64/
 ZERO_CHECK.vcxproj
 ZERO_CHECK.vcxproj.filters
 cmake_install.cmake
