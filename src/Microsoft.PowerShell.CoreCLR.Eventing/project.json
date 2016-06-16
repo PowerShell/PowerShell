@@ -20,7 +20,7 @@
                 "System.Security.Principal": "4.0.1",
                 "System.Security.Principal.Windows": "4.0.0",
                 "System.Diagnostics.TraceSource": "4.0.0",
-                "System.Security.SecureString": "4.0.0-*"
+                "System.Security.SecureString": "4.0.0"
             }
         }
     }
