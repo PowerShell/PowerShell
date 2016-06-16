@@ -4,6 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Threading;
+using System.Reflection;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
@@ -34,6 +35,13 @@ namespace Microsoft.PowerShell
         public int Start(string consoleFilePath, string[] args)
 #endif
         {
+#if !CORECLR
+            // For long-path support, Full .NET requires some AppContext switches;
+            // (for CoreCLR this is Not needed, because CoreCLR supports long paths by default)
+            // internally in .NET they are cached once retrieved and are typically hit very early during an application run;
+            // so per .NET team's recommendation, we are setting them as soon as we enter managed code.
+            EnableLongPathsInDotNetIfAvailable();
+#endif
             System.Management.Automation.Runspaces.EarlyStartup.Init();
 
             // Set ETW activity Id
@@ -152,6 +160,27 @@ namespace Microsoft.PowerShell
 #endif
             }
         }
+
+#if !CORECLR
+        private static void EnableLongPathsInDotNetIfAvailable()
+        {
+            // We build against CLR4.5 so we can run on Win7/Win8, but we want to use apis added to CLR 4.6, so we use reflection
+            try
+            {
+                Type appContextType = Type.GetType("System.AppContext"); // type is in mscorlib, so it is sufficient to supply the type name qualified by its namespace
+
+                object[] blockLongPathsSwitch = new object[] { "Switch.System.IO.BlockLongPaths", false };
+                object[] useLegacyPathHandlingSwitch = new object[] { "Switch.System.IO.UseLegacyPathHandling", false };
+
+                appContextType.InvokeMember("SetSwitch", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, blockLongPathsSwitch);
+                appContextType.InvokeMember("SetSwitch", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, useLegacyPathHandlingSwitch);
+            }
+            catch
+            {
+                // If there are any exceptions (e.g. we are running on CLR prior to 4.6.2), we won't be able to use long paths
+            }
+        }
+#endif
     }
 }
 

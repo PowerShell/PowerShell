@@ -30,7 +30,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
                                                   bool allowSidConstants = false)
         {
             if (!allowSidConstants)
-                if (!(s.Length > 2 && s.StartsWith("S-") && Char.IsDigit(s[2])))
+                if (!(s.Length > 2 && s.StartsWith("S-", StringComparison.Ordinal) && Char.IsDigit(s[2])))
                     return null;
 
             SecurityIdentifier sid = null;
@@ -144,21 +144,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
     }
 
     internal static class SecureStringExtensions
-    {
-        private static Regex pwRegex = new Regex(@"^[^\x00-\x1F""/\\\[\]:;\|=,+\*?<>@]{0,127}$",
-                                                 RegexOptions.Compiled | RegexOptions.CultureInvariant);
-
-        internal static bool IsValidPassword(this SecureString str)
-        {
-            return str.Length == 0 ||  pwRegex.IsMatch(str.AsString());
-        }
-
-        internal static void ValidatePassword(this SecureString str)
-        {
-            if (!str.IsValidPassword())
-                throw new InvalidPasswordException();
-        }
-
+    { 
         /// <summary>
         /// Extension method to extract clear text from a
         /// <see cref="System.Security.SecureString"/> object.

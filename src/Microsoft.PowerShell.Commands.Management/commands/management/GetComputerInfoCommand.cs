@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Linq.Expressions;
 using System.Management.Automation;
+using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.Management.Infrastructure;
 using Microsoft.Win32;
@@ -22,7 +23,8 @@ namespace Microsoft.PowerShell.Commands
     /// The Get=ComputerInfo cmdlet gathers and reports information
     /// about a computer.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ComputerInfo")]
+    [Cmdlet(VerbsCommon.Get, "ComputerInfo",
+        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=799466")]
     [Alias("gin")]
     public class GetComputerInfoCommand : PSCmdlet
     {
@@ -114,6 +116,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0,
                    ValueFromPipeline = true,
                    ValueFromPipelineByPropertyName = true)]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Property { get; set; }
         #endregion Parameters
 
@@ -1290,6 +1293,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 #pragma warning disable 649 // fields and properties in these class are assigned dynamically
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiBaseBoard
     {
         public string       Caption;
@@ -1322,6 +1326,7 @@ namespace Microsoft.PowerShell.Commands
         public float?       Width;
     }
 
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiBios : WmiClassBase
     {
         public UInt16[]     BiosCharacteristics;
@@ -1356,6 +1361,7 @@ namespace Microsoft.PowerShell.Commands
         public string       Version;
     }
 
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiComputerSystem
     {
         public UInt16?      AdminPasswordStatus;
@@ -1438,6 +1444,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiDeviceGuard
     {
         public UInt32[] AvailableSecurityProperties;
@@ -1511,6 +1518,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiKeyboard
     {
         public UInt16?     Availability;
@@ -1537,12 +1545,14 @@ namespace Microsoft.PowerShell.Commands
         public string      SystemName;
     }
 
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WMiLogicalMemory
     {
         //TODO: fill this in!!!
         public UInt32? TotalPhysicalMemory;
     }
 
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiMsftNetAdapter
     {
         public string       Caption;
@@ -1630,6 +1640,7 @@ namespace Microsoft.PowerShell.Commands
         public bool?        AdminLocked;
     }
 
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiNetworkAdapter
     {
         public string       AdapterType;
@@ -1673,6 +1684,7 @@ namespace Microsoft.PowerShell.Commands
         public DateTime?    TimeOfLastReset;
     }
 
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiNetworkAdapterConfiguration
     {
         public bool?        ArpAlwaysSourceRoute;
@@ -1738,6 +1750,7 @@ namespace Microsoft.PowerShell.Commands
         public string       WINSSecondaryServer;
     }
 
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiOperatingSystem : WmiClassBase
     {
         #region Fields
@@ -1849,6 +1862,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Private Methods
     }
 
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiPageFileUsage
     {
         public UInt32?     AllocatedBaseSize;
@@ -1862,6 +1876,7 @@ namespace Microsoft.PowerShell.Commands
         public bool?       TempPageFile;
     }
 
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated directly from a CIM instance")]
     internal class WmiProcessor
     {
         public UInt16?      AddressWidth;
@@ -1950,27 +1965,32 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Array of required security properties
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardHardwareSecure[] RequiredSecurityProperties { get; internal set; }
         /// <summary>
         /// Array of available security properties
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardHardwareSecure[] AvailableSecurityProperties { get; internal set; }
         /// <summary>
         /// Indicates which security services have been configured
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardSoftwareSecure[]  SecurityServicesConfigured { get; internal set; }
         /// <summary>
         /// Indicates which security services are running
         /// </summary>
-        public DeviceGuardSoftwareSecure[]  SecurityServicesRunning;
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public DeviceGuardSoftwareSecure[]  SecurityServicesRunning { get; internal set; }
         /// <summary>
         /// Indicates the status of the Device Guard Code Integrity policy
         /// </summary>
-        public DeviceGuardConfigCodeIntegrityStatus? CodeIntegrityPolicyEnforcementStatus;
+        public DeviceGuardConfigCodeIntegrityStatus? CodeIntegrityPolicyEnforcementStatus { get; internal set; }
+
         /// <summary>
         /// Indicates the status of the Device Guard user mode Code Integrity policy
         /// </summary>
-        public DeviceGuardConfigCodeIntegrityStatus? UserModeCodeIntegrityPolicyEnforcementStatus;
+        public DeviceGuardConfigCodeIntegrityStatus? UserModeCodeIntegrityPolicyEnforcementStatus { get; internal set; }
     }
 
     /// <summary>
@@ -1981,19 +2001,42 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Unique identifier associated with a particular update.
         /// </summary>
-        public string HotFixID { get; internal set; }
+        public string HotFixID
+        {
+            get;
+            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Class is instantiated directly from a CIM instance")]
+            internal set;
+        }
+
         /// <summary>
         /// Description of the update
         /// </summary>
-        public string Description { get; internal set; }
+        public string Description
+        {
+            get;
+            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Class is instantiated directly from a CIM instance")]
+            internal set;
+        }
+
         /// <summary>
         /// String containing the date that the update was installed
         /// </summary>
-        public string InstalledOn { get; internal set; }
+        public string InstalledOn
+        {
+            get;
+            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Class is instantiated directly from a CIM instance")]
+            internal set;
+        }
+
         /// <summary>
         /// Additional comments that relate to the update
         /// </summary>
-        public string FixComments { get; internal set; }
+        public string FixComments
+        {
+            get;
+            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Class is instantiated directly from a CIM instance")]
+            internal set;
+        }
     }
 
     /// <summary>
@@ -2026,6 +2069,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Array of all of the IP addresses associated with the current network adapter.
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] IPAddresses { get; internal set; }
     }
 
@@ -2185,6 +2229,7 @@ namespace Microsoft.PowerShell.Commands
         /// Array of BIOS characteristics supported by the system as defined by
         /// the System Management BIOS Reference Specification
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public UInt16[] BiosCharacteristics { get; internal set; }
 
         /// <summary>
@@ -2192,6 +2237,7 @@ namespace Microsoft.PowerShell.Commands
         /// there can be several version strings that are stored in the registry
         /// and represent the system BIOS information
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] BiosBIOSVersion { get; internal set; }
         
         /// <summary>
@@ -2266,6 +2312,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Array of names of available BIOS-installable languages
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] BiosListOfLanguages { get; internal set; }
         
         /// <summary>
@@ -2395,6 +2442,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Status and Additional Data fields that identify the boot status
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public UInt16[] CsBootStatus { get; internal set; }
         
         /// <summary>
@@ -2520,6 +2568,7 @@ namespace Microsoft.PowerShell.Commands
         /// An array of <see cref="NetworkAdapter"/> objects describing any
         /// network adapters on the system.
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public NetworkAdapter[] CsNetworkAdapters { get; internal set; }
         
         /// <summary>
@@ -2547,6 +2596,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Array of <see cref="Processor"/> objects describing each processor on the system.
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Processor[] CsProcessors { get; internal set; }
         
         /// <summary>
@@ -2554,6 +2604,7 @@ namespace Microsoft.PowerShell.Commands
         /// For example, an OEM defines the part numbers for system reference
         /// documents, manufacturer contact information, and so on
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] CsOEMStringArray { get; internal set; }
         
         /// <summary>
@@ -2583,6 +2634,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Array of the specific power-related capabilities of a logical device
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public PowerManagementCapabilities[] CsPowerManagementCapabilities { get; internal set; }
         
         /// <summary>
@@ -2645,6 +2697,7 @@ namespace Microsoft.PowerShell.Commands
         /// Array that specifies the roles of a system in the information
         /// technology environment
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] CsRoles { get; internal set; }
         
         /// <summary>
@@ -2655,6 +2708,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Array of the support contact information for the Windows operating system
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] CsSupportContactDescription { get; internal set; }
         
         /// <summary>
@@ -2755,6 +2809,7 @@ namespace Microsoft.PowerShell.Commands
         /// any Quick-Fix Enginnering patches (Hot Fixes) applied to the operating
         /// system
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public HotFix[] OsHotFixes { get; internal set; }
 
         /// <summary>
@@ -2946,6 +3001,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Array of fiel paths to the operating system's paging files
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] OsPagingFiles { get; internal set; }
         
         /// <summary>
@@ -2978,6 +3034,7 @@ namespace Microsoft.PowerShell.Commands
         /// Array of Multilingual User Interface Pack (MUI Pack) languages installed
         /// on the computer
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] OsMuiLanguages { get; internal set; }
         
         /// <summary>
@@ -3015,6 +3072,7 @@ namespace Microsoft.PowerShell.Commands
         /// Array of <see cref="OSProductSuite"/> objects indicating installed
         /// and licensed product additions to the operating system
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public OSProductSuite[] OsProductSuites { get; internal set; }
         
         /// <summary>
@@ -3073,6 +3131,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Product suites available on the operating system
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public OSProductSuite[] OsSuites { get; internal set; }
         
         /// <summary>
@@ -3142,21 +3201,25 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Required Device Guard security properties
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardHardwareSecure[] DeviceGuardRequiredSecurityProperties { get; internal set; }
         
         /// <summary>
         /// Available Device Guard security properties
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardHardwareSecure[] DeviceGuardAvailableSecurityProperties { get; internal set; }
         
         /// <summary>
         /// Configured Device Guard security services
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardSoftwareSecure[] DeviceGuardSecurityServicesConfigured { get; internal set; }
         
         /// <summary>
         /// Running Device Guard security services
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardSoftwareSecure[] DeviceGuardSecurityServicesRunning { get; internal set; }
 
         /// <summary>
@@ -3203,12 +3266,13 @@ namespace Microsoft.PowerShell.Commands
     /// Actions related to the BootOptionOn* properties of the Win32_ComputerSystem
     /// CIM class
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum BootOptionAction
     {
-        /// <summary>
-        /// This value is reserved
-        /// </summary>
-        Reserved = 0,
+        //  <summary>
+        //  This value is reserved
+        //  </summary>
+        //Reserved = 0,
 
         /// <summary>
         /// Boot into operating system
@@ -3229,6 +3293,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Indicates the state of a system element
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum SystemElementState
     {
         /// <summary>
@@ -3306,6 +3371,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Specifies a CPU's availability and status
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum CpuAvailability
     {
         /// <summary>
@@ -3418,6 +3484,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Specifies that current status of the processor
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags", Justification = "The underlying MOF definition is not a bit field.")]
     public enum CpuStatus
     {
         /// <summary>
@@ -3445,15 +3512,15 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         Idle = 4,
 
-        /// <summary>
-        /// This value is reserved
-        /// </summary>
-        Reserved_5 = 5,
+        // <summary>
+        // This value is reserved
+        // </summary>
+        //Reserved_5 = 5,
 
-        /// <summary>
-        /// This value is reserved
-        /// </summary>
-        Reserved_6 = 6,
+        // <summary>
+        // This value is reserved
+        // </summary>
+        //Reserved_6 = 6,
 
         /// <summary>
         /// CPU is in another state
@@ -3540,6 +3607,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Device Guard hardware security properties
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum DeviceGuardHardwareSecure
     {
         /// <summary>
@@ -3566,6 +3634,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Device Guard software security properties
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum DeviceGuardSoftwareSecure
     {
         /// <summary>
@@ -3814,6 +3883,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Indicates installed and licensed system product additions to the operating system
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
+    [FlagsAttribute]
     public enum OSProductSuite
     {
         /// <summary>
@@ -4696,6 +4767,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Specifies the primary function of a processor
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum ProcessorType
     {
         /// <summary>
@@ -4732,6 +4804,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Specifies a computer's reset capability
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum ResetCapability
     {
         /// <summary>
@@ -4763,12 +4836,13 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Specifies the kind of event that causes a computer to power up
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum WakeUpType
     {
-        /// <summary>
-        /// This value is reserved
-        /// </summary>
-        Reserved = 0,
+        // <summary>
+        // This value is reserved
+        // </summary>
+        //Reserved = 0,
 
         /// <summary>
         /// An event other than specified in this enumeration
@@ -4927,7 +5001,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// State of a software element
     /// </summary>
-    public enum SoftwareElementState : UInt16
+    public enum SoftwareElementState
     {
         /// <summary>
         /// Software element is deployable

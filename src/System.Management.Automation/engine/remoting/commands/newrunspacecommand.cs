@@ -184,8 +184,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = NewPSSessionCommand.ContainerIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = NewPSSessionCommand.ContainerNameParameterSet)]
-        [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = NewPSSessionCommand.VMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = NewPSSessionCommand.VMNameParameterSet)]
@@ -273,7 +271,6 @@ namespace Microsoft.PowerShell.Commands
                     break;
                     
                 case NewPSSessionCommand.ContainerIdParameterSet:
-                case NewPSSessionCommand.ContainerNameParameterSet:                    
                     {
                         remoteRunspaces = CreateRunspacesWhenContainerParameterSpecified();
                     }
@@ -1023,31 +1020,18 @@ namespace Microsoft.PowerShell.Commands
         }// CreateRunspacesWhenVMParameterSpecified
 
         /// <summary>
-        /// Creates the remote runspace objects when the ContainerId or ContainerName parameter
-        /// is specified
+        /// Creates the remote runspace objects when the ContainerId parameter is specified
         /// </summary>
         private List<RemoteRunspace> CreateRunspacesWhenContainerParameterSpecified()
         {
-            string[] inputArray;
-            bool isContainerIdSet = false;
             int index = 0;
             List<string> resolvedNameList = new List<string>();
             List<RemoteRunspace> remoteRunspaces = new List<RemoteRunspace>();
+
+            Dbg.Assert((ParameterSetName == PSExecutionCmdlet.ContainerIdParameterSet),
+                       "Expected ParameterSetName == ContainerId");
             
-            if (ParameterSetName == PSExecutionCmdlet.ContainerIdParameterSet)
-            {
-                inputArray = ContainerId;
-                isContainerIdSet = true;
-            }
-            else
-            {
-                Dbg.Assert((ParameterSetName == PSExecutionCmdlet.ContainerNameParameterSet),
-                           "Expected ParameterSetName == ContainerId or ContainerName");
-                
-                inputArray = ContainerName;
-            }
-                
-            foreach (var input in inputArray)
+            foreach (var input in ContainerId)
             {
                 //
                 // Create helper objects for container ID or name.
@@ -1064,14 +1048,7 @@ namespace Microsoft.PowerShell.Commands
                     // Hyper-V container uses Hype-V socket as transport.
                     // Windows Server container uses named pipe as transport.
                     //
-                    if (isContainerIdSet)
-                    {
-                        connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoById(input, RunAsAdministrator.IsPresent, this.ConfigurationName);
-                    }
-                    else
-                    {
-                        connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoByName(input, RunAsAdministrator.IsPresent, this.ConfigurationName);
-                    }
+                    connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfo(input, RunAsAdministrator.IsPresent, this.ConfigurationName);
                   
                     resolvedNameList.Add(connectionInfo.ComputerName);
                     

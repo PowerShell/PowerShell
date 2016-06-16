@@ -138,10 +138,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true,
                            ParameterSetName = GetPSSessionCommand.ContainerIdInstanceIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
-                           ParameterSetName = GetPSSessionCommand.ContainerNameParameterSet)]
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                           ParameterSetName = GetPSSessionCommand.ContainerNameInstanceIdParameterSet)]
-        [Parameter(ValueFromPipelineByPropertyName = true,
                            ParameterSetName = GetPSSessionCommand.VMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                            ParameterSetName = GetPSSessionCommand.VMIdInstanceIdParameterSet)]
@@ -176,7 +172,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRunspaceCmdlet.NameParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.ContainerIdParameterSet)]
-        [Parameter(ParameterSetName = GetPSSessionCommand.ContainerNameParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.VMIdParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.VMNameParameterSet)]
         [ValidateNotNullOrEmpty()]
@@ -196,8 +191,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRunspaceCmdlet.InstanceIdParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.ContainerIdInstanceIdParameterSet,
-                   Mandatory = true)]
-        [Parameter(ParameterSetName = GetPSSessionCommand.ContainerNameInstanceIdParameterSet,
                    Mandatory = true)]
         [Parameter(ParameterSetName = GetPSSessionCommand.VMIdInstanceIdParameterSet,
                    Mandatory = true)]
@@ -352,8 +345,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = GetPSSessionCommand.ConnectionUriInstanceIdParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.ContainerIdParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.ContainerIdInstanceIdParameterSet)]
-        [Parameter(ParameterSetName = GetPSSessionCommand.ContainerNameParameterSet)]
-        [Parameter(ParameterSetName = GetPSSessionCommand.ContainerNameInstanceIdParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.VMIdParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.VMIdInstanceIdParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.VMNameParameterSet)]

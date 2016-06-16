@@ -1131,18 +1131,35 @@ namespace System.Management.Automation.Language
             if (!PostParseChecksPerformed)
             {
                 Parser parser = new Parser();
-                PerformPostParseChecks(parser);
+                // we call PerformPostParseChecks on root ScriptBlockAst, to obey contract of SymbolResolver.
+                // It needs to be run from the top of the tree.
+                // It's ok to report an error from a different part of AST in this case.
+                var root = GetRootScriptBlockAst();
+                root.PerformPostParseChecks(parser);
                 if (parser.ErrorList.Any())
                 {
                     throw new ParseException(parser.ErrorList.ToArray());
                 }
             }
+
             if (HadErrors)
             {
                 throw new PSInvalidOperationException();
             }
 
             return new ScriptBlock(this, isFilter: false);
+        }
+
+        private ScriptBlockAst GetRootScriptBlockAst()
+        {
+            ScriptBlockAst rootScriptBlockAst = this;
+            ScriptBlockAst parent;
+            while ((parent = Ast.GetAncestorAst<ScriptBlockAst>(rootScriptBlockAst.Parent)) != null)
+            {
+                rootScriptBlockAst = parent;
+            }
+
+            return rootScriptBlockAst;
         }
 
         /// <summary>

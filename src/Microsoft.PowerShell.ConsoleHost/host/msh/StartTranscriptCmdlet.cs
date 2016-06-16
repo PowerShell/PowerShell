@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
 
                 System.Management.Automation.Remoting.PSSenderInfo psSenderInfo = 
                     this.SessionState.PSVariable.GetValue("PSSenderInfo") as System.Management.Automation.Remoting.PSSenderInfo;
-                Host.UI.StartTranscribing(effectiveFilePath, psSenderInfo, IncludeInvocationHeader.ToBool());
+                Host.UI.StartTranscribing(effectiveFilePath, psSenderInfo, IncludeInvocationHeader.ToBool(), this.Context.CurrentRunspace.InstanceId);
                 
                 // ch.StartTranscribing(effectiveFilePath, Append);
 
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    Host.UI.StopTranscribing();
+                    Host.UI.StopTranscribing(this.Context.CurrentRunspace.InstanceId);
                 }
                 catch
                 {

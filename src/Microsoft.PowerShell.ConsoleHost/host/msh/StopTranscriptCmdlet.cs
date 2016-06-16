@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
         {
             try 
             {
-                string outFilename = Host.UI.StopTranscribing();
+                string outFilename = Host.UI.StopTranscribing(this.Context.CurrentRunspace.InstanceId);
                 if (outFilename != null)
                 {
                     PSObject outputObject = new PSObject(

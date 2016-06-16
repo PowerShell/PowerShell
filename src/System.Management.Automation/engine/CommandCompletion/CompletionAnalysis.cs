@@ -1068,7 +1068,7 @@ namespace System.Management.Automation
                                     var configAst = Ast.GetAncestorAst<ConfigurationDefinitionAst>(keywordAst);
                                     if (configAst != null)
                                     {
-                                        var namedBlockAst = keywordAst.Parent as NamedBlockAst;
+                                        var namedBlockAst = Ast.GetAncestorAst<NamedBlockAst>(keywordAst);
                                         if (namedBlockAst != null)
                                         {
                                             List<string> allResources = new List<string>();

@@ -1190,9 +1190,14 @@ namespace Microsoft.PowerShell.Commands
 
                     if (module != null)
                     {
+                        Version directoryVersion;
+                        if (!ModuleUtils.IsModuleInVersionSubdirectory(file, out directoryVersion)
+                            || directoryVersion == module.Version)
+                        {
                         availableModules.Add(module);
                     }
                 }
+            }
             }
 
             ClearAnalysisCaches();
@@ -4982,7 +4987,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal string GetAbsolutePath(string moduleBase, string path)
         {
-            if (!IsRooted(path) && (path.Contains('/') || path.Contains('\\')) && !path.Contains('$'))
+            if (!IsRooted(path) && (path.Contains('/') || path.Contains('\\')))
             {
                 return Path.Combine(moduleBase, path);
             }

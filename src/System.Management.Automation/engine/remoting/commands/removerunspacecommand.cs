@@ -79,22 +79,6 @@ namespace Microsoft.PowerShell.Commands
         private string[] containerId;
 
         /// <summary>
-        /// Name of target container.
-        /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
-            Justification = "This is by spec.")]
-        [Parameter(Mandatory = true,
-                   ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = PSRunspaceCmdlet.ContainerNameParameterSet)]
-        [ValidateNotNullOrEmpty]
-        public override string[] ContainerName
-        {
-            get { return containerName; }
-            set { containerName = value; }
-        }
-        private string[] containerName;
-
-        /// <summary>
         /// Guid of target virtual machine.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
@@ -149,7 +133,6 @@ namespace Microsoft.PowerShell.Commands
                 case RemovePSSessionCommand.InstanceIdParameterSet:
                 case RemovePSSessionCommand.IdParameterSet:
                 case RemovePSSessionCommand.ContainerIdParameterSet:
-                case RemovePSSessionCommand.ContainerNameParameterSet:
                 case RemovePSSessionCommand.VMIdParameterSet:
                 case RemovePSSessionCommand.VMNameParameterSet:
                     {

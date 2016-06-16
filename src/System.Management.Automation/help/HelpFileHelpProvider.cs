@@ -250,22 +250,22 @@ namespace System.Management.Automation
 
         private void GetModuleNameAndVersion(string psmodulePathRoot, string filePath, out string moduleName, out Version moduleVersion)
         {
-            Version returnVersion = null;
-            string returnModuleName = null;
+            moduleVersion = null;
+            moduleName = null;
 
-            if (filePath.StartsWith(psmodulePathRoot))
+            if (filePath.StartsWith(psmodulePathRoot, StringComparison.OrdinalIgnoreCase))
             {
                 var moduleRootSubPath = filePath.Remove(0, psmodulePathRoot.Length).TrimStart(Utils.Separators.Directory);
                 var pathParts = moduleRootSubPath.Split(Utils.Separators.Directory, StringSplitOptions.RemoveEmptyEntries);
 
-                //returnModuleRootPath = Path.Combine(psmodulePathRoot, pathParts[0]);
-                returnModuleName = pathParts[0];
+                moduleName = pathParts[0];
                 var potentialVersion = pathParts[1];
-                Version.TryParse(potentialVersion, out returnVersion);
+                Version result;
+                if (Version.TryParse(potentialVersion, out result))
+                {
+                    moduleVersion = result;
+                }
             }
-
-            moduleVersion = returnVersion;
-            moduleName = returnModuleName;
         }
 
         /// <summary>

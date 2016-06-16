@@ -408,58 +408,14 @@ namespace System.Management.Automation.SecurityAccountsManager.Native.NtSam
                                                           byte[] memberId);     // PSID
 
         [DllImport("samlib.dll")]
-        internal static extern UInt32 SamAddMultipleMembersToAlias(IntPtr aliasHandle,
-                                                                   IntPtr memberIds,    // PSID
-                                                                   UInt32 memberCount);
-
-        [DllImport("samlib.dll")]
         internal static extern UInt32 SamRemoveMemberFromAlias(IntPtr aliasHandle,
                                                                byte[] memberId);    // PSID
-
-        [DllImport("samlib.dll")]        
-        internal static extern UInt32 SamRemoveMultipleMembersFromAlias(IntPtr aliasHandle,
-                                                                        IntPtr memberIds,       // PSID
-                                                                        UInt32 memberCount);
 
         [DllImport("samlib.dll")]
         internal static extern UInt32 SamGetMembersInAlias(IntPtr aliasHandle,
                                                            out IntPtr memberIds,    // PSID **
                                                            out UInt32 memberCount);
         #endregion Alias Functions
-
-        #region Group Functions
-        [DllImport("samlib.dll")]
-        internal static extern UInt32 SamEnumerateGroupsInDomain(IntPtr domainHandle,
-                                                                 ref UInt32 enumerationContext,
-                                                                 out IntPtr buffer,
-                                                                 UInt32 preferredMaximumLength,
-                                                                 out UInt32 countReturned);
-
-        [DllImport("samlib.dll")]
-        internal static extern UInt32 SamCreateGroupInDomain(IntPtr domainHandle,
-                                                             ref UNICODE_STRING accountName,
-                                                             UInt32 desiredAccess,
-                                                             out IntPtr groupHandle,
-                                                             out UInt32 relativeId);
-
-
-        [DllImport("samlib.dll")]
-        internal static extern UInt32 SamOpenGroup(IntPtr domainHandle,
-                                                   UInt32 desiredAccess,
-                                                   UInt32 groupId,
-                                                   out IntPtr groupHandle);
-
-        [DllImport("samlib.dll")]
-        internal static extern UInt32 SamQueryInformationGroup(IntPtr groupHandle,
-                                                               GROUP_INFORMATION_CLASS groupInformationClass,
-                                                               out IntPtr buffer);
-
-
-        [DllImport("samlib.dll")]
-        internal static extern UInt32 SamSetInformationGroup(IntPtr groupHandle,
-                                                             GROUP_INFORMATION_CLASS groupInformationClass,
-                                                             IntPtr buffer);
-        #endregion Group Functions
 
         #region User Functions
         [DllImport("samlib.dll")]
@@ -478,22 +434,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native.NtSam
                                                                 out IntPtr buffer,
                                                                 UInt32 preferredMaximumLength,
                                                                 out UInt32 countReturned);
-
-        [DllImport("samlib.dll")]
-        internal static extern UInt32 SamEnumerateUsersInDomain2(IntPtr domainHandle,
-                                                                 ref UInt32 enumerationContext,
-                                                                 UInt32 userAccountControl,
-                                                                 UInt32 filter,
-                                                                 out IntPtr buffer,
-                                                                 UInt32 preferredMaximumLength,
-                                                                 out UInt32 countReturned);
-
-        [DllImport("samlib.dll")]
-        internal static extern UInt32 SamCreateUserInDomain(IntPtr domainHandle,
-                                                            ref UNICODE_STRING accountName,
-                                                            UInt32 desiredAccess,
-                                                            out IntPtr userHandle,
-                                                            out UInt32 relativeId);
 
         [DllImport("samlib.dll")]
         internal static extern UInt32 SamCreateUser2InDomain(IntPtr domainHandle,

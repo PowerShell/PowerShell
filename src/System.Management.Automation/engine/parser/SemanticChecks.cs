@@ -11,9 +11,8 @@ using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Text;
 using Microsoft.PowerShell;
-#if !CORECLR // Configuration Keyword Not Supported On CSS
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
-#endif
+
 
 namespace System.Management.Automation.Language
 {
@@ -1091,8 +1090,6 @@ namespace System.Management.Automation.Language
             return AstVisitAction.Continue;
         }
 
-#if !CORECLR // Configuration Keyword Not Supported On CSS
-
         public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst)
         {
             ConfigurationDefinitionAst configAst = Ast.GetAncestorAst<ConfigurationDefinitionAst>(scriptBlockExpressionAst);
@@ -1172,7 +1169,7 @@ namespace System.Management.Automation.Language
             }
 
             return AstVisitAction.Continue;
-        }
+        }        
 
         public override AstVisitAction VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst)
         {
@@ -1196,7 +1193,6 @@ namespace System.Management.Automation.Language
 
             return AstVisitAction.Continue;
         }
-
 
         public override AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordStatementAst)
         {
@@ -1269,7 +1265,7 @@ namespace System.Management.Automation.Language
 
             return AstVisitAction.Continue;
         }
-#endif //!CORECLR
+
 
         public override AstVisitAction VisitPropertyMember(PropertyMemberAst propertyMemberAst)
         {
@@ -1299,7 +1295,10 @@ namespace System.Management.Automation.Language
                 }
                 _scopeStack.Pop();
                 scriptBlockAst.PostParseChecksPerformed = true;
-                scriptBlockAst.HadErrors = _parser.ErrorList.Count > 0;
+                // at this moment, we could use different parser for the initial syntax check
+                // and this _parser for semantic check.
+                // that's why '|=' instead of just '='.
+                scriptBlockAst.HadErrors |= _parser.ErrorList.Count > 0;
             }
             else if (ast is MemberAst)
             {

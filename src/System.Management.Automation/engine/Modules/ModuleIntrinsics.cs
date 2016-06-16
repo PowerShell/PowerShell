@@ -797,6 +797,15 @@ namespace System.Management.Automation
                             int psHomePosition = PathContainsSubstring(currentProcessModulePath, psHomeModulePath); // index of $PSHome\Modules in currentProcessModulePath
                             if (psHomePosition >= 0) // if $PSHome\Modules IS found - insert <Program Files> location before $PSHome\Modules
                             {
+#if !CORECLR
+                                // for bug 6678623, if we are running wow64 process (x86 32-bit process on 64-bit (amd64) OS), then ensure that <SpecialFolder.MyDocuments> exists in currentProcessModulePath / return value                             
+                                if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
+                                {
+                                    string userModulePath = GetPersonalModulePath();
+                                    currentProcessModulePath = AddToPath(currentProcessModulePath, userModulePath, psHomePosition);
+                                    psHomePosition = PathContainsSubstring(currentProcessModulePath, psHomeModulePath);
+                                }
+#endif
                                 return AddToPath(currentProcessModulePath, programFilesModulePath, psHomePosition);
                             } // if $PSHome\Modules NOT found = <scenario 4> = 'PSModulePath has been constrained by a user to create a sand boxed environment without including System Modules'
 
@@ -905,30 +914,38 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get the current module path setting.
-        /// 
-        /// 'preferSystemModulePath' should only be used for internal functions - by default,
-        /// user modules should be able to override system modules.
         /// </summary>
+        /// <param name="includeSystemModulePath">
+        /// Include The system wide module path ($PSHOME\Modules) even if it's not in PSModulePath.
+        /// In V3-V5, we prepended this path during module auto-discovery which incorrectly preferred
+        /// $PSHOME\Modules over user installed modules that might have a command that overrides
+        /// a product-supplied command.
+        /// For 5.1, we append $PSHOME\Modules in this case to avoid the rare case where PSModulePath
+        /// does not contain the path, but a script depends on previous behavior.
+        /// Note that appending is still a potential breaking change, but necessary to update in-box
+        /// modules long term - e.g. when open sourcing a module and installing from the gallery.
+        /// </param>
+        /// <param name="context"></param>
         /// <returns>The module path as an array of strings</returns>
-        internal static IEnumerable<string> GetModulePath(bool preferSystemModulePath, ExecutionContext context)
+        internal static IEnumerable<string> GetModulePath(bool includeSystemModulePath, ExecutionContext context)
         {
             string modulePathString = Environment.GetEnvironmentVariable("PSMODULEPATH") ?? SetModulePath();
 
             HashSet<string> processedPathSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            // If we should prefer the system-wide module path, prepend that to what gets returned.
-            if (preferSystemModulePath)
+            if (!string.IsNullOrWhiteSpace(modulePathString))
             {
-                yield return ProcessOneModulePath(context, GetSystemwideModulePath(), processedPathSet);
-            }
-
-            // If the path is just whitespace, return an empty collection.
-            if (string.IsNullOrWhiteSpace(modulePathString))
-                yield break;
-
             foreach (string envPath in modulePathString.Split(Utils.Separators.Semicolon, StringSplitOptions.RemoveEmptyEntries))
             {
                 var processedPath = ProcessOneModulePath(context, envPath, processedPathSet);
+                if (processedPath != null)
+                    yield return processedPath;
+            }
+        }
+
+            if (includeSystemModulePath)
+            {
+                var processedPath = ProcessOneModulePath(context, GetSystemwideModulePath(), processedPathSet);
                 if (processedPath != null)
                     yield return processedPath;
             }

@@ -282,15 +282,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = InvokeCommandCommand.ContainerNameParameterSet)]
-        [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.VMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.VMNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = InvokeCommandCommand.FilePathContainerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -343,11 +339,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.VMIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.VMNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
-        [Parameter(ParameterSetName = InvokeCommandCommand.ContainerNameParameterSet)]        
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
-        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerNameParameterSet)]        
         public override Int32 ThrottleLimit
         {
             set
@@ -394,11 +388,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.VMIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.VMNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
-        [Parameter(ParameterSetName = InvokeCommandCommand.ContainerNameParameterSet)]        
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
-        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerNameParameterSet)]        
         public SwitchParameter AsJob
         {
             get
@@ -453,11 +445,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.VMIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.VMNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
-        [Parameter(ParameterSetName = InvokeCommandCommand.ContainerNameParameterSet)]        
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
-        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerNameParameterSet)]        
         [Alias("HCN")]
         public SwitchParameter HideComputerName
         {
@@ -476,9 +466,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSessionParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathUriParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
-        [Parameter(ParameterSetName = InvokeCommandCommand.ContainerNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
-        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerNameParameterSet)]
         public String JobName
         {
             get
@@ -522,9 +510,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1,
                    Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
-        [Parameter(Position = 1,
-                   Mandatory = true,
-                   ParameterSetName = InvokeCommandCommand.ContainerNameParameterSet)]
         [ValidateNotNull]
         [Alias("Command")]
         public override ScriptBlock ScriptBlock
@@ -568,9 +553,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1,
                    Mandatory = true,
                    ParameterSetName = FilePathContainerIdParameterSet)]
-        [Parameter(Position = 1,
-                   Mandatory = true,
-                   ParameterSetName = FilePathContainerNameParameterSet)]
         [ValidateNotNull]
         [Alias("PSPath")]
         public override string FilePath
@@ -666,8 +648,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
-        [Parameter(ParameterSetName = InvokeCommandCommand.ContainerNameParameterSet)]
-        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerNameParameterSet)]
         public override SwitchParameter RunAsAdministrator
         {
             get { return base.RunAsAdministrator; }
@@ -938,11 +918,9 @@ namespace Microsoft.PowerShell.Commands
                             case InvokeCommandCommand.VMIdParameterSet:
                             case InvokeCommandCommand.VMNameParameterSet:
                             case InvokeCommandCommand.ContainerIdParameterSet:
-                            case InvokeCommandCommand.ContainerNameParameterSet:
                             case InvokeCommandCommand.FilePathVMIdParameterSet:
                             case InvokeCommandCommand.FilePathVMNameParameterSet:
                             case InvokeCommandCommand.FilePathContainerIdParameterSet:
-                            case InvokeCommandCommand.FilePathContainerNameParameterSet:
                                 {
                                     if (ResolvedComputerNames.Length != 0 && Operations.Count > 0)
                                     {

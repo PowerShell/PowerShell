@@ -2249,7 +2249,7 @@ namespace Microsoft.PowerShell.Commands
                                 // Wait for the job object to finish
                                 jobObject.WaitOne(waithandle);
                             }
-                            else
+                        else if (!process.HasExited)
                             {
                                 // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
                                 process.Exited += new EventHandler(myProcess_Exited);

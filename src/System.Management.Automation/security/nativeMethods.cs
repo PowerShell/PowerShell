@@ -587,6 +587,7 @@ namespace System.Management.Automation.Security
             internal IntPtr psUnauthenticatedNotUsed;    // PCRYPT_ATTRIBUTES
         };
 
+        [ArchitectureSensitive]
         internal static CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO
             InitSignInfoExtendedStruct(string description,
                                        string moreInfoUrl,
@@ -692,6 +693,7 @@ namespace System.Management.Automation.Security
             uint dwGroupId);
 
 
+        [ArchitectureSensitive]
         internal static DWORD GetCertChoiceFromSigningOption(
             SigningOption option)
         {
@@ -719,6 +721,7 @@ namespace System.Management.Automation.Security
             return cc;
         }
 
+        [ArchitectureSensitive]
         internal static CRYPTUI_WIZ_DIGITAL_SIGN_INFO
             InitSignInfoStruct(string fileName,
                                X509Certificate2 signingCert,
@@ -815,6 +818,7 @@ namespace System.Management.Automation.Security
             internal byte[] Data4;
         }
 
+        [ArchitectureSensitive]
         internal static WINTRUST_FILE_INFO InitWintrustFileInfoStruct(string fileName)
         {
             WINTRUST_FILE_INFO fi = new WINTRUST_FILE_INFO();
@@ -827,6 +831,7 @@ namespace System.Management.Automation.Security
             return fi;
         }
 
+        [ArchitectureSensitive]
         internal static WINTRUST_BLOB_INFO InitWintrustBlobInfoStruct(string fileName, string content)
         {
             WINTRUST_BLOB_INFO bi = new WINTRUST_BLOB_INFO();
@@ -959,6 +964,7 @@ namespace System.Management.Automation.Security
             internal uint dwUIContext;
         }
 
+        [ArchitectureSensitive]
         internal static WINTRUST_DATA InitWintrustDataStructFromFile(WINTRUST_FILE_INFO wfi)
         {
             WINTRUST_DATA wtd = new WINTRUST_DATA();
@@ -982,6 +988,7 @@ namespace System.Management.Automation.Security
             return wtd;
         }
 
+        [ArchitectureSensitive]
         internal static WINTRUST_DATA InitWintrustDataStructFromBlob(WINTRUST_BLOB_INFO wbi)
         {
             WINTRUST_DATA wtd = new WINTRUST_DATA();
@@ -1005,6 +1012,7 @@ namespace System.Management.Automation.Security
             return wtd;
         }
 
+        [ArchitectureSensitive]
         internal static DWORD DestroyWintrustDataStruct(WINTRUST_DATA wtd)
         {
             DWORD dwResult = Win32Errors.E_FAIL;

@@ -207,19 +207,6 @@ namespace Microsoft.PowerShell.Commands
         private string containerId;
 
         /// <summary>
-        /// The name of the target container.
-        /// </summary>
-        [ValidateNotNullOrEmpty]
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, 
-            ValueFromPipelineByPropertyName = true, ParameterSetName = ContainerNameParameterSet)]
-        public new string ContainerName
-        {
-            get { return containerName; }
-            set { containerName = value; }
-        }
-        private string containerName;
-
-        /// <summary>
         /// For WSMan sessions:
         /// If this parameter is not specified then the value specified in
         /// the environment variable DEFAULTREMOTESHELLNAME will be used. If 
@@ -234,8 +221,6 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = EnterPSSessionCommand.UriParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = EnterPSSessionCommand.ContainerIdParameterSet)]
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = EnterPSSessionCommand.ContainerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = EnterPSSessionCommand.VMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -377,7 +362,6 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 case ContainerIdParameterSet:
-                case ContainerNameParameterSet:
                     remoteRunspace = GetRunspaceForContainerSession();
                     break;
             }
@@ -923,8 +907,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsParameterSetForContainer()
         {
-            return ((ParameterSetName == ContainerIdParameterSet) ||
-                    (ParameterSetName == ContainerNameParameterSet));
+            return (ParameterSetName == ContainerIdParameterSet);
         }
 
         /// <summary>
@@ -1196,8 +1179,8 @@ namespace Microsoft.PowerShell.Commands
                         break;
 
                     case ContainerIdParameterSet:
-                    case ContainerNameParameterSet:
-                        targetName = this.ContainerName;
+                        targetName = (this.ContainerId.Length <= 15) ? this.ContainerId
+                                                                     : this.ContainerId.Remove(12) + "...";
                         break;
 
                     case SessionParameterSet:
@@ -1254,24 +1237,16 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
+                Dbg.Assert(!String.IsNullOrEmpty(ContainerId), "ContainerId has to be set.");
+
                 ContainerConnectionInfo connectionInfo = null;
 
                 //
                 // Hyper-V container uses Hype-V socket as transport.
                 // Windows Server container uses named pipe as transport.
                 //
-                if (!String.IsNullOrEmpty(ContainerId))
-                {
-                    connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoById(ContainerId, RunAsAdministrator.IsPresent, this.ConfigurationName);
-                }
-                else
-                {
-                    Dbg.Assert(!String.IsNullOrEmpty(ContainerName), "Either ContainerId or ContainerName has to be set.");
+                connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfo(ContainerId, RunAsAdministrator.IsPresent, this.ConfigurationName);
 
-                    connectionInfo = ContainerConnectionInfo.CreateContainerConnectionInfoByName(ContainerName, RunAsAdministrator.IsPresent, this.ConfigurationName);
-                }
-
-                this.ContainerName = connectionInfo.ComputerName;
                 connectionInfo.CreateContainerProcess();
                 remoteRunspace = CreateTemporaryRemoteRunspaceForPowerShellDirect(this.Host, connectionInfo);
             }

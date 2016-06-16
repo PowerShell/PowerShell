@@ -596,9 +596,11 @@ namespace System.Management.Automation.Language
                 // function wouldn't work properly.  Instead, we'll fix things up after the binding decisions are made, see
                 // EnumerableOps.NonEnumerableObjectEnumerator for more comments on how this works.
 
+                var bindingRestrictions = BindingRestrictions.GetExpressionRestriction(
+                    Expression.Call(typeof(PSEnumerableBinder).GetMethod("IsComObject", BindingFlags.Static | BindingFlags.NonPublic),
+                                    target.Expression));
                 return new DynamicMetaObject(
-                    Expression.Call(CachedReflectionInfo.EnumerableOps_GetCOMEnumerator, target.Expression),
-                    GetRestrictions(target)).WriteToDebugLog(this);
+                    Expression.Call(CachedReflectionInfo.EnumerableOps_GetCOMEnumerator, target.Expression), bindingRestrictions).WriteToDebugLog(this);
             }
 
             var enumerable = targetValue as IEnumerable;
@@ -687,8 +689,8 @@ namespace System.Management.Automation.Language
 
         internal static bool IsComObject(object obj)
         {
-            // Platform notes: We can't use System.Runtime.InteropServices.Marshal.IsComObject(obj)
-            // since it doesn't work in partial trust
+            // we can't use System.Runtime.InteropServices.Marshal.IsComObject(obj) since it doesn't work in partial trust
+            obj = PSObject.Base(obj);
             return obj != null && ComObjectTypeInfo != null && ComObjectTypeInfo.IsAssignableFrom(obj.GetType().GetTypeInfo());
         }
 
@@ -701,7 +703,7 @@ namespace System.Management.Automation.Language
 
         private static IEnumerator NotEnumerableRule(CallSite site, object obj)
         {
-            if (!(obj is PSObject) && !(obj is IEnumerable) && !(obj is IEnumerator) && !(obj is DataTable))
+            if (!(obj is PSObject) && !(obj is IEnumerable) && !(obj is IEnumerator) && !(obj is DataTable) && !IsComObject(obj))
             {
                 return null;
             }

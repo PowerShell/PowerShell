@@ -3843,6 +3843,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// get a list of store names at the specified location
         /// </summary>        
+        [ArchitectureSensitive]
         internal static List<string> GetStoreNamesAtLocation(StoreLocation location)
         {
             Security.NativeMethods.CertStoreFlags locationFlag =

@@ -103,7 +103,7 @@ namespace System.Management.Automation.ComInterop {
                                 i.ToString(CultureInfo.InvariantCulture),
                                 method.Name,
                                 temps,
-                                initTemps), curArgument.Restrictions, curArgument.Value);
+                                initTemps), curArgument.Restrictions);
                         }
                         else
                         {

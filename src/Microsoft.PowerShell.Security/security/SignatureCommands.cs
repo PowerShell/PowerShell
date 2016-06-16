@@ -83,6 +83,7 @@ namespace Microsoft.PowerShell.Commands
         /// digital signature.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByContent")]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] SourcePathOrExtension
         {
             get

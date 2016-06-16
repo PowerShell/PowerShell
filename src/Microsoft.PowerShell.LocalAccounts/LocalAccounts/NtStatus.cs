@@ -1,4 +1,6 @@
 ﻿
+using System.Diagnostics.CodeAnalysis;
+
 namespace System.Management.Automation.SecurityAccountsManager.Native
 {
     internal static class NtStatus
@@ -451,6 +453,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
             return Severity(ntstatus) == STATUS_SEVERITY_ERROR;
         }
 
+        
         /// <summary>
         /// Determine if an NTSTATUS value indicates a Warning
         /// </summary>
@@ -458,6 +461,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         /// <returns>
         /// True if the NTSTATUS value indicates a warning, false otherwise.
         /// </returns>
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         public static bool IsWarning(UInt32 ntstatus)
         {
             return Severity(ntstatus) == STATUS_SEVERITY_WARNING;
@@ -470,11 +474,12 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         /// <returns>
         /// True if the NTSTATUS value indicates that it is informational, false otherwise.
         /// </returns>
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         public static bool IsInformational(UInt32 ntstatus)
         {
             return Severity(ntstatus) == STATUS_SEVERITY_INFORMATIONAL;
         }
-
+        
 
         /// <summary>
         /// Return the Severity part of an NTSTATUS value
@@ -488,6 +493,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
             return ntstatus >> 30;
         }
 
+
         /// <summary>
         /// Return the Facility part of an NSTATUS value
         /// </summary>
@@ -495,10 +501,13 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         /// <returns>
         /// The value of the Facility portion of an NTSTATUS value.
         /// </returns>
+
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         public static uint Facility(UInt32 ntstatus)
         {
             return (ntstatus >> 16) & 0x0FFF;
         }
+
 
         /// <summary>
         /// Return the Code part of an NTSTATUS value
@@ -507,10 +516,12 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         /// <returns>
         /// The value of the Code portion of an NTSTATUS value.
         /// </returns>
+        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         public static uint Code(UInt32 ntstatus)
         {
             return ntstatus & 0xFFFF;
         }
+        
         #endregion Public Methods
     }
 }
