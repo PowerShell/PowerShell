@@ -4,6 +4,9 @@
     "authors": [ "andschwa" ],
 
     "buildOptions": {
+        "keyFile": "../signing/visualstudiopublic.snk",
+        "delaySign": true,
+        "publicSign": false,
         "warningsAsErrors": true
     },
 
