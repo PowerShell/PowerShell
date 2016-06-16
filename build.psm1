@@ -378,7 +378,7 @@ function Start-PSBootstrap {
     [CmdletBinding()]param(
         [ValidateSet("dev", "beta", "preview")]
         [string]$Channel = "preview",
-        [string]$Version = "1.0.0-preview2-003067"
+        [string]$Version = "latest"
     )
 
     Write-Host "Installing Open PowerShell build dependencies"
