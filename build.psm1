@@ -391,12 +391,8 @@ function Start-PSBootstrap {
             $IsUbuntu = Select-String "Ubuntu 14.04" /etc/os-release -Quiet
             precheck 'curl' "Bootstrap dependency 'curl' not found in PATH, please install!" > $null
             if ($IsUbuntu) {
-                # Setup LLVM feed
-                curl -s http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
-                echo "deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.6 main" | sudo tee /etc/apt/sources.list.d/llvm.list
-                sudo apt-get update -qq
-
                 # Install ours and .NET's dependencies
+                sudo apt-get update -qq
                 sudo apt-get install -y -qq make g++ cmake libc6 libgcc1 libstdc++6 libcurl3 libgssapi-krb5-2 libicu52 liblldb-3.6 liblttng-ust0 libssl1.0.0 libunwind8 libuuid1 zlib1g clang-3.5
             } else {
                 Write-Warning "This script only supports Ubuntu 14.04, you must install dependencies manually!"
