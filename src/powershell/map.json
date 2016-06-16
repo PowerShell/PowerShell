@@ -1,6 +1,4 @@
 {
     "monad/miscfiles/modules/Microsoft.PowerShell.Diagnostics/CoreClr/Microsoft.PowerShell.Diagnostics.psd1":  "Modules/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1",
-    "monad/miscfiles/modules/Microsoft.PowerShell.Utility/CoreClr/Microsoft.PowerShell.Utility.psd1":  "Modules/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1",
-    "monad/src/LocalAccounts/Microsoft.PowerShell.LocalAccounts.psd1": "Modules/Microsoft.PowerShell.LocalAccounts/Microsoft.PowerShell.LocalAccounts.psd1",
-    "monad/src/LocalAccounts/LocalAccounts.format.ps1xml": "Modules/Microsoft.PowerShell.LocalAccounts/LocalAccounts.format.ps1xml"
+    "monad/miscfiles/modules/Microsoft.PowerShell.Utility/CoreClr/Microsoft.PowerShell.Utility.psd1":  "Modules/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1"
 }
