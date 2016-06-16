@@ -21,7 +21,7 @@
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
-                "System.Net.NameResolution": "4.0.0-rc2-24103"
+                "System.Net.NameResolution": "4.0.0-rc2-24027"
             }
         },
         "net451": {

@@ -40,7 +40,7 @@
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
-                "Microsoft.NETCore.App": "1.0.0-rc2-3002668"
+                "Microsoft.NETCore.App": "1.0.0-rc2-3002526"
             }
         }
     },
