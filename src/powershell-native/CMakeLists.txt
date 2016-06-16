@@ -16,7 +16,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 
 include_directories(
-    nativemsh/pwrshcommon)
+    nativemsh/pwrshcommon
+    nativemsh/pwrshplugin)
 
 link_directories(
     nativemsh/pwrshcommon)
@@ -27,8 +28,13 @@ add_definitions(-D_UNICODE)
 add_executable(powershell WIN32
     nativemsh/pwrshcommon/pwrshcommon.cpp
     nativemsh/pwrshcommon/WinSystemCallFacade.cpp
-
     nativemsh/pwrshexe/MainEntry.cpp)
+
+add_library(pwrshmsg
+    nativemsh/pwrshplugin/entrypoints.cpp
+    nativemsh/pwrshplugin/pwrshclrhost.cpp
+    nativemsh/pwrshplugin/pwrshpluginerrorcodes.mc
+    nativemsh/pwrshplugin/pwrshpluginerrorcodes.rc)
 
 # This subsystem definition is using old policy. TODO: figure out for release and the rest
 set_target_properties(powershell PROPERTIES COMPILE_DEFINITIONS "_CONSOLE")
@@ -44,3 +50,11 @@ target_link_libraries(powershell
     kernel32.lib
     msxml6.lib
     legacy_stdio_definitions.lib)
+
+target_link_libraries(pwrshmsg
+    mscoree.lib
+    MUILoad.lib
+    kernel32.lib
+    msxml6.lib
+    legacy_stdio_definitions.lib)
+

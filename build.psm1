@@ -93,6 +93,13 @@ function Start-PSBuild {
         }
 
         $precheck = $precheck -and (precheck 'msbuild' 'msbuild not found. Install Visual Studio 2015.')
+
+        #mc.exe is Message Compiler for native resources
+        $mcexe = Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\" -Recurse -Filter 'mc.exe' | ? {$_.FullName -match 'x64'} | select -First 1 | % {$_.FullName}
+        if (-not $mcexe) {
+            throw 'mc.exe not found. Install Microsoft Windows SDK.'
+        }
+
     } elseif ($IsLinux -or $IsOSX) {
         $InstallCommand = if ($IsLinux) {
             'apt-get'
@@ -182,6 +189,14 @@ function Start-PSBuild {
         try {
             Push-Location "$PSScriptRoot\src\powershell-native"
 
+            # Compile native resources
+            @("nativemsh/pwrshplugin") | % {
+                $nativeResourcesFolder = $_
+                Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | % {
+                    & $mcexe -c -U $_.FullName -h $nativeResourcesFolder -r $nativeResourcesFolder
+                }
+            }
+            
             if ($cmakeGenerator) {
                 cmake -G $cmakeGenerator .
             } else {
@@ -189,6 +204,7 @@ function Start-PSBuild {
             }
 
             Start-NativeExecution { msbuild powershell.vcxproj /p:Configuration=$msbuildConfiguration }
+            Start-NativeExecution { msbuild pwrshmsg.vcxproj /p:Configuration=$msbuildConfiguration }
 
         } finally {
             Pop-Location
