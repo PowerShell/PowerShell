@@ -884,21 +884,12 @@ function Start-ResGen
 "Microsoft.PowerShell.Security",
 "System.Management.Automation") | % {
         $module = $_
-        Get-ChildItem "$PSScriptRoot/src/$module/resources" | % {
+        Get-ChildItem "$PSScriptRoot/src/$module/resources" -Filter '*.resx' | % {
             $className = $_.Name.Replace('.resx', '')
             $xml = [xml](Get-Content -raw $_.FullName)
 
             $fileName = $className
-            $namespace = ''
-
-            $lastIndexOfDot = $className.LastIndexOf(".")
-            if ($lastIndexOfDot -ne -1)
-            {
-                $namespace = $className.Substring(0, $lastIndexOfDot)
-                $className = $className.Substring($lastIndexOfDot + 1)
-            }
-
-            $genSource = Get-StronglyTypeCsFileForResx -xml $xml -ModuleName $module -ClassName $className -NamespaceName $namespace
+            $genSource = Get-StronglyTypeCsFileForResx -xml $xml -ModuleName $module -ClassName $className
             $outPath = "$PSScriptRoot/src/$module/gen/$fileName.cs"
             Write-Verbose "ResGen for $outPath"
             New-Item -Type Directory -ErrorAction SilentlyContinue (Split-Path $outPath) > $null
@@ -996,7 +987,23 @@ function script:Start-NativeExecution([scriptblock]$sb)
 
 function script:Get-StronglyTypeCsFileForResx
 {
-    param($xml, $ModuleName, $ClassName, $NamespaceName = '')
+    param($xml, $ModuleName, $ClassName)
+
+    # Example
+    #
+    # $ClassName = Full.Name.Of.The.ClassFoo
+    # $shortClassName = ClassFoo
+    # $namespaceName = Full.Name.Of.The
+
+    $shortClassName = $ClassName
+    $namespaceName = $null
+
+    $lastIndexOfDot = $className.LastIndexOf(".")
+    if ($lastIndexOfDot -ne -1)
+    {
+        $namespaceName = $className.Substring(0, $lastIndexOfDot)
+        $shortClassName = $className.Substring($lastIndexOfDot + 1)
+    }
 
 $banner = @'
 //------------------------------------------------------------------------------
@@ -1046,7 +1053,7 @@ internal class {0} {{
     internal static global::System.Resources.ResourceManager ResourceManager {{
         get {{
             if (object.ReferenceEquals(resourceMan, null)) {{
-                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("{1}.resources.{0}", typeof({0}).GetTypeInfo().Assembly);
+                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("{1}.resources.{3}", typeof({0}).GetTypeInfo().Assembly);
                 resourceMan = temp;
             }}
             return resourceMan;
@@ -1089,9 +1096,9 @@ internal class {0} {{
         }
     } | Out-String
     
-    $bodyCode = $body -f $ClassName,$ModuleName,$entries
+    $bodyCode = $body -f $shortClassName,$ModuleName,$entries,$ClassName
 
-    if ($NamespaceName -ne '')
+    if ($NamespaceName)
     {
         $bodyCode = $namespace -f $NamespaceName, $bodyCode
     }
