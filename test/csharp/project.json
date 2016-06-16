@@ -4,6 +4,12 @@
     "description": "PowerShell On Linux xUnit Tests",
     "authors": [ "andschwa" ],
 
+    "buildOptions": {
+        "keyFile": "../../src/signing/visualstudiopublic.snk",
+        "delaySign": true,
+        "publicSign": false
+    },
+
     "dependencies": {
         "powershell": "1.0.0-*"
     },

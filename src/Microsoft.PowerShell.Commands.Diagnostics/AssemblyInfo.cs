@@ -7,7 +7,3 @@ using System.Resources;
 [assembly:AssemblyCulture("")]
 [assembly:NeutralResourcesLanguage("en-US")]
 
-#if !CORECLR
-[assembly:AssemblyKeyFileAttribute(@"..\signing\visualstudiopublic.snk")]
-[assembly:AssemblyDelaySignAttribute(true)]
-#endif

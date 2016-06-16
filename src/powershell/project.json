@@ -40,7 +40,7 @@
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
-                "Microsoft.NETCore.App": "1.0.0-rc2-3002668"
+                "Microsoft.NETCore.App": "1.0.0-rc2-3002526"
             }
         }
     },
@@ -48,7 +48,7 @@
     "runtimes": {
         "ubuntu.14.04-x64": { },
         "debian.8-x64": { },
-        "centos.7.1-x64": { },
+        "centos.7-x64": { },
         "win7-x64": { },
         "win81-x64": { },
         "win10-x64": { },

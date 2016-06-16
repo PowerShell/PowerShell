@@ -4,6 +4,9 @@
     "authors": [ "garretts", "andschwa" ],
 
     "buildOptions": {
+        "keyFile": "../signing/visualstudiopublic.snk",
+        "delaySign": true,
+        "publicSign": false,
         "warningsAsErrors": true,
         "allowUnsafe": true
     },
@@ -60,7 +63,7 @@
             "dependencies": {
                 "Microsoft.CodeAnalysis.CSharp": "1.1.1",
                 "Newtonsoft.Json": "8.0.2",
-                "System.Diagnostics.TextWriterTraceListener": "4.0.0-rc2-24103"
+                "System.Diagnostics.TextWriterTraceListener": "4.0.0-rc2-24027"
             }
         },
         "net451": {
