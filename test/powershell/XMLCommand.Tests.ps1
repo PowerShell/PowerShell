@@ -1,7 +1,7 @@
 Describe "XmlCommand DRT basic functionality Tests" -Tags DRT{
 
 	BeforeAll {
-		if(-not ([System.Management.Automation.PSTypeName]'IsHiddenTestType').Type)
+		if(-not ('IsHiddenTestType' -as "type"))
 		{
 			Add-Type -TypeDefinition @"
 		public class IsHiddenTestType
@@ -30,14 +30,14 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags DRT{
 	}
 	
     AfterEach {
-		rm $testfile
+		remove-item $testfile
     }
 
     It "Import with CliXml directive should work" -Skip:$IsOSX{
 		Get-Process | Export-Clixml $testfile
-		$results = Import-clixml $testfile
+		$results = Import-Clixml $testfile
 		$results.Count | Should BeGreaterThan 0
-		$results[0].ToString().Contains("System.Diagnostics.Process") | Should Be $true
+		$results[0].ToString() | Should Match "System.Diagnostics.Process"
     }
 	
 	It "Import with Rehydration should work" -Skip:$IsOSX{
@@ -45,7 +45,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags DRT{
 		$property2 = "abcdef"
 		$isHiddenTestType = [IsHiddenTestType]::New($property1,$property2)
 		$isHiddenTestType | Export-Clixml $testfile
-		$results = Import-clixml $testfile
+		$results = Import-Clixml $testfile
 		$results.Property1 | Should Be $property1
 		$results.Property2 | Should Be $property2
     }
