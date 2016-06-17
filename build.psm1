@@ -711,7 +711,7 @@ function Copy-MappedFiles {
         try
         {
             Push-Location $PslMonadRoot
-            if (git status --porcelain)
+            if (git status --porcelain -uno)
             {
                 MaybeTerminatingWarning "$pslMonadRoot has changes"
             }
