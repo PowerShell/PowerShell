@@ -1,7 +1,6 @@
 {
     "name": "Microsoft.PowerShell.LocalAccounts",
     "version": "1.0.0-*",
-    "authors": [ "OPS" ],
 
     "buildOptions": {
         "keyFile": "../signing/visualstudiopublic.snk",

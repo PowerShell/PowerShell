@@ -1,7 +1,6 @@
 {
     "name": "Microsoft.PowerShell.Commands.Utility",
     "version": "1.0.0-*",
-    "authors": [ "garretts", "andschwa" ],
 
     "buildOptions": {
         "keyFile": "../signing/visualstudiopublic.snk",
