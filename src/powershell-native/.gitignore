@@ -11,6 +11,7 @@ cmake_install.cmake
 *.dir/
 *.vcxproj
 *.vcxproj.filters
+Release/
 
 # Resources
 MSG*.bin
