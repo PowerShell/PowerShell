@@ -29,7 +29,6 @@
     },
 
     "dependencies": {
-        // Dummy dependencies for all flavours
         "Microsoft.PowerShell.PSReadLine": "1.0.0-*",
         "Microsoft.PowerShell.Commands.Diagnostics": "1.0.0-*",
         "Microsoft.PowerShell.Commands.Management": "1.0.0-*",
@@ -50,7 +49,6 @@
             }
         },
         "net451": {
-            // Dummy dependencies for windows FullCLR build
             "dependencies" : {
                 "Microsoft.PowerShell.ScheduledJob": "1.0.0-*"
             }
