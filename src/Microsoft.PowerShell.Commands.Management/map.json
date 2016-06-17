@@ -17,6 +17,7 @@
     "monad/src/commands/management/ClearContentCommand.cs":  "commands/management/ClearContentCommand.cs",
     "monad/src/commands/management/resources/ProcessCommandHelpResources.resx":  "resources/ProcessCommandHelpResources.resx",
     "monad/src/commands/management/resources/ComputerResources.resx":  "resources/ComputerResources.resx",
+    "monad/src/commands/management/resources/ComputerInfoResources.resx":  "resources/ComputerInfoResources.resx",
     "monad/src/commands/management/SetClipboardCommand.cs":  "commands/management/SetClipboardCommand.cs",
     "monad/src/commands/management/ResolvePathCommand.cs":  "commands/management/ResolvePathCommand.cs",
     "monad/src/commands/management/resources/ProcessResources.resx":  "resources/ProcessResources.resx",
