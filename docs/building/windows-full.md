@@ -55,7 +55,7 @@ framework `netstandard1.5`, *not* `netcoreapp1.0`, and the build
 output will *not* have a runtime identifier in the path.
 
 Thus the output location of `powershell.exe` will be
-`./src/Microsoft.PowerShell.ConsoleHost/bin/Debug/netcoreapp1.0/powershell.exe`
+`./src/Microsoft.PowerShell.ConsoleHost/bin/Debug/net451/powershell.exe`
 
 While building is easy, running FullCLR version is not as simple as
 CoreCLR version.
