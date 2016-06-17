@@ -145,7 +145,8 @@ function Start-PSBuild {
     }
 
     # handle ResGen
-    if ($ResGen -or -not (Test-Path "$($Options.Top)/gen"))
+    # Heuristic to run ResGen on the fresh machine
+    if ($ResGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost/gen"))
     {
         log "Run ResGen (generating C# bindings for resx files)"
         Start-ResGen
