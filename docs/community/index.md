@@ -1,13 +1,12 @@
 ---
-title:  Coding Guidelines
+title:  Governance
 ms.date:  2016-06-11
 keywords:  powershell,cmdlet
 description:  
 ms.topic:  article
-author:  Jason
+author:  Joey
 manager:  dongill
 ms.prod:  powershell
 
 ---
-# Coding Guidelines
->Cmdlet example was already in this section. Please fix
+# Governance
