@@ -35,7 +35,7 @@ function Start-PSBuild {
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("ubuntu.14.04-x64",
                      "debian.8-x64",
-                     "centos.7.1-x64",
+                     "centos.7-x64",
                      "win7-x64",
                      "win81-x64",
                      "win10-x64",
@@ -221,7 +221,7 @@ function New-PSOptions {
         [ValidateSet("",
                      "ubuntu.14.04-x64",
                      "debian.8-x64",
-                     "centos.7.1-x64",
+                     "centos.7-x64",
                      "win7-x64",
                      "win81-x64",
                      "win10-x64",
