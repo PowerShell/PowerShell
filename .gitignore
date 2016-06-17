@@ -8,7 +8,9 @@ project.lock.json
 
 # dotnet cli install/uninstall scripts
 dotnet-install.ps1
+dotnet-install.sh
 dotnet-uninstall-pkgs.sh
+dotnet-uninstall-debian-packages.sh
 
 # VS auto-generated solution files for project.json solutions
 *.xproj
