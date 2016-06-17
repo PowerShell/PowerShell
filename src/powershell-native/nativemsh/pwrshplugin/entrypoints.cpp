@@ -8,9 +8,10 @@
 // ----------------------------------------------------------------------
 
 #include "pwrshplugin.h"
-#include <winsqm.h>
-#include "common/WindowsSqmDataID.h"
-#include "common/winrmsqm.h"
+// [Porting note] SQM is for Telemetry in Windows. Temporarily disabled.
+//#include <winsqm.h>
+//#include "common/WindowsSqmDataID.h"
+//#include "common/winrmsqm.h"
 
 #if !CORECLR
 #include <muiload.h>
@@ -19,11 +20,12 @@
 HINSTANCE g_hResourceInstance = 0; // TODO: Where is this freed? FreeMUILibrary for nonCoreClr and FreeLibrary for CoreCLR
 LPCWSTR g_MAIN_BINARY_NAME = L"pwrshplugin.dll";
 
-typedef VOID (NTAPI *PFN_WinSqmSetDWORD)(
-                __in_opt                HSESSION                    hSession,
-                __in                    DWORD                       dwDatapointId,
-                __in                    DWORD                       dwDatapointValue
-                );
+// [Porting note] SQM is for Telemetry in Windows. Temporarily disabled.
+// typedef VOID (NTAPI *PFN_WinSqmSetDWORD)(
+//                 __in_opt                HSESSION                    hSession,
+//                 __in                    DWORD                       dwDatapointId,
+//                 __in                    DWORD                       dwDatapointValue
+//                 );
 
 // gets the error message from the resources section of the current module.
 // the caller should free pwszErrorMessage using LocalFree().
@@ -351,22 +353,24 @@ DWORD WINAPI WSManPluginStartup(
 
         // Using global SQM session
         // WinSQMSetDWORD is not available on Vista
-        HMODULE hModule;
-        PFN_WinSqmSetDWORD pfnWinSqmSetDWORD;
 
-        hModule = GetModuleHandleW(L"ntdll");
-        if (hModule)
-        {
-            pfnWinSqmSetDWORD = (PFN_WinSqmSetDWORD) GetProcAddress(hModule, "WinSqmSetDWORD");
-            if (pfnWinSqmSetDWORD)
-            {
-                pfnWinSqmSetDWORD(
-                    NULL,
-                    DATAID_WINRMREMOTEENABLED, 
-                    WINRM_SQM_DATA_REMOTEENABLED
-                    );
-            }
-        }
+        // [Porting note] SQM is for Telemetry in Windows. Temporarily disabled.
+        // HMODULE hModule;
+        // PFN_WinSqmSetDWORD pfnWinSqmSetDWORD;
+
+        // hModule = GetModuleHandleW(L"ntdll");
+        // if (hModule)
+        // {
+        //     pfnWinSqmSetDWORD = (PFN_WinSqmSetDWORD) GetProcAddress(hModule, "WinSqmSetDWORD");
+        //     if (pfnWinSqmSetDWORD)
+        //     {
+        //         pfnWinSqmSetDWORD(
+        //             NULL,
+        //             DATAID_WINRMREMOTEENABLED, 
+        //             WINRM_SQM_DATA_REMOTEENABLED
+        //             );
+        //     }
+        // }
 
         return NO_ERROR;
     }
