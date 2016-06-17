@@ -25,5 +25,6 @@
     "monad/src/ScheduledJob/commands/UnregisterJobDefinition.cs": "commands/UnregisterJobDefinition.cs",         
     "monad/src/ScheduledJob/commands/DisableJobDefinitionBase.cs": "commands/DisableJobDefinitionBase.cs",        
     "monad/src/ScheduledJob/commands/DisableJobDefinition.cs": "commands/DisableJobDefinition.cs",            
-    "monad/src/ScheduledJob/commands/EnableJobDefinition.cs": "commands/EnableJobDefinition.cs"       
+    "monad/src/ScheduledJob/commands/EnableJobDefinition.cs": "commands/EnableJobDefinition.cs",
+    "monad/src/ScheduledJob/resources/ScheduledJobErrorStrings.resx": "resources/ScheduledJobErrorStrings.resx"
 }
