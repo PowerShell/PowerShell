@@ -28,17 +28,16 @@ Get PowerShell
 |                       | Linux | Windows .NET Core | Windows .NET Full | OS X | PSRP |
 |-----------------------|-------|-------------------|-------------------|------|------|
 | Build from **Source** | [Instructions](docs/building/linux.md) | [Instructions](docs/building/windows-core.md) | [Instructions](docs/building/windows-full.md) | [Instructions](docs/building/osx.md) | [Instructions][psrp] |
-| Get **Binaries**      | [Releases][] | [Artifacts][] | [Artifacts][] | [Releases][] | TBD |
+| Get **Binaries**      | [Releases][] | [Releases][] | [Artifacts][] | [Releases][] | TBD |
 
 Building summary: `Start-PSBuild` from the module
 `./build.psm1` (self-host on Linux / OS X)
 
-See [Linux releases](docs/installation/linux.md) and
-[Windows artifacts](docs/installation/windows.md) installation
-instructions.
+See [Linux](docs/installation/linux.md) and
+[Windows](docs/installation/windows.md) installation instructions.
 
 [releases]: https://github.com/PowerShell/PowerShell/releases
-[artifacts]: https://ci.appveyor.com/project/PowerShell/powershell-linux/build/artifacts
+[artifacts]: https://ci.appveyor.com/project/PowerShell/powershell/build/artifacts
 [psrp]: https://github.com/PowerShell/psl-omi-provider
 
 Team coordination
