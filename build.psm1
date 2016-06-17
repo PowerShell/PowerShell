@@ -875,6 +875,7 @@ function Start-ResGen
     @("Microsoft.PowerShell.Commands.Management",
 "Microsoft.PowerShell.Commands.Utility",
 "Microsoft.PowerShell.ConsoleHost",
+"Microsoft.PowerShell.ScheduledJob",
 "Microsoft.PowerShell.CoreCLR.Eventing",
 "Microsoft.PowerShell.LocalAccounts",
 "Microsoft.PowerShell.Security",
