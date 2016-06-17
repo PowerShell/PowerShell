@@ -1,10 +1,24 @@
+Package installation instructions
+=================================
+
+To install Open PowerShell from a package, download either the MSI from
+[AppVeyor][] for a nightly build, or a released package from our GitHub
+[Releases][] page. Once downloaded, double-click the installer and follow the
+prompts.
+
+Additionally, we provide APPX packages, but these must be self-signed. See the
+[`Sign-Package.ps1`][signing] script.
+
+[releases]: https://github.com/PowerShell/PowerShell/releases
+[signing]: ../../tools/Sign-Package.ps1
+
 Artifact installation instructions
 ==================================
 
 We publish an archive with CoreCLR and FullCLR bits on every CI build
 with [AppVeyor][].
 
-[appveyor]: https://ci.appveyor.com/project/PowerShell/powershell-linux
+[appveyor]: https://ci.appveyor.com/project/PowerShell/powershell
 
 CoreCLR artifacts
 =================
