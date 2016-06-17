@@ -1,0 +1,31 @@
+# [OpenPowerShell](readme.md)
+
+## [Coding Guidelines](coding-guidelines/coding.md)
+
+## [Testing Requirements](testing-requirements/testing.md)
+
+## [Documentation Requirements](doc-requirements/docs.md)
+
+## [Development Process](dev-process/index.md)
+### [CLA Automation](dev-process/cla-automation.md)
+### [Branch Structure](dev-process/branch-structure.md)
+### [Issue Triage Guidelines](dev-process/issue-triage-guidelines.md)
+#### [Issue Label Management](dev-process/issue-label-management.md)
+#### [Assignees](dev-process/assignees.md)
+#### [Attendees](dev-process/attendees.md)
+#### [Appeals Process](dev-process/appeals-process.md)
+#### [Resolving, Verifying and Closing Issues](dev-process/resolving-verifying-closing-issues.md)
+### [Breaking Change Contract](dev-process/breaking-change-contract.md)
+### [Build a PowerShell Repo](dev-process/build-a-powershell-repo.md)
+### [Setup Your Development Environment](dev-process/dev-environment-setup.md)
+### [Pull Request Rules](dev-process/pull-request-rules.md)
+### [Code Review Guidelines](dev-process/code-review-guidelines.md)
+### [Reporting Issues](dev-process/reporting-issues.md)
+### [Using GIT](dev-process/using-git.md)
+#### [Issue Template](dev-process/issue-template.md)
+#### [Pull Request Template](dev-process/pull-request-template.md)
+
+## [Governance](governance.md)
+## [PowerShell community](powershell-community.md)
+## [Learn PowerShell](https://msdn.microsoft.com/en-us/powershell/scripting/getting-started/getting-started-with-windows-powershell)
+## [FAQ](faq.md)

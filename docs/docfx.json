@@ -1,0 +1,25 @@
+{
+    "build": {
+        "content": [
+            {
+                "files": [
+                    "**/**.md"
+                ],
+                "exclude": ["**/obj/**"]
+            }
+        ],
+        "globalMetadata": {
+            "ROBOTS": "INDEX, FOLLOW"
+        },
+        "resource": [
+            {
+                "files": [
+                    "**/images/**"
+                ],
+                "exclude": ["**/obj/**"]
+            }
+        ],
+        "template": "op.html",
+        "dest": "wmf"
+    }
+}
