@@ -203,8 +203,7 @@ function Start-PSBuild {
                 cmake .
             }
 
-            Start-NativeExecution { msbuild powershell.vcxproj /p:Configuration=$msbuildConfiguration }
-            Start-NativeExecution { msbuild pwrshmsg.vcxproj /p:Configuration=$msbuildConfiguration }
+            Start-NativeExecution { msbuild ALL_BUILD.vcxproj /p:Configuration=$msbuildConfiguration }
 
         } finally {
             Pop-Location

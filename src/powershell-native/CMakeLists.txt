@@ -30,7 +30,7 @@ add_executable(powershell WIN32
     nativemsh/pwrshcommon/WinSystemCallFacade.cpp
     nativemsh/pwrshexe/MainEntry.cpp)
 
-add_library(pwrshmsg
+add_library(pwrshplugin
     nativemsh/pwrshplugin/entrypoints.cpp
     nativemsh/pwrshplugin/pwrshclrhost.cpp
     nativemsh/pwrshplugin/pwrshpluginerrorcodes.mc
