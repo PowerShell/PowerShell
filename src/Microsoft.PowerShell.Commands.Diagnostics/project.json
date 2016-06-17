@@ -1,10 +1,6 @@
 {
   "name": "Microsoft.PowerShell.Commands.Diagnostics",
   "version": "1.0.0-*",
-  "authors": [
-    "cchen",
-    "sevoroby"
-  ],
   "buildOptions": {
     "keyFile": "../signing/visualstudiopublic.snk",
     "delaySign": true,

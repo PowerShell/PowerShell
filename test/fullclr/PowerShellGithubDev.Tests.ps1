@@ -43,7 +43,7 @@ Describe 'Modules for the packge' {
             It 'loads Microsoft.PowerShell.LocalAccounts' {
                 try
                 {
-                    Import-Module Microsoft.PowerShell.LocalAccounts
+                    Import-Module Microsoft.PowerShell.LocalAccounts -ErrorAction Stop
                     Get-LocalUser | Should Not Be $null
                 }
                 finally
@@ -55,7 +55,7 @@ Describe 'Modules for the packge' {
             It 'loads Microsoft.PowerShell.Archive' {
                 try
                 {
-                    Import-Module Microsoft.PowerShell.LocalAccounts
+                    Import-Module Microsoft.PowerShell.LocalAccounts -ErrorAction Stop
                     Set-Content -Path TestDrive:\1.txt -Value ''
                     Compress-Archive -Path TestDrive:\1.txt -DestinationPath TestDrive:\1.zip
                     Get-ChildItem -Path TestDrive:\1.zip | Should Not Be $null
@@ -65,6 +65,18 @@ Describe 'Modules for the packge' {
                     Remove-Module -ErrorAction SilentlyContinue Microsoft.PowerShell.Archive
                 }
             }
+
+            It 'loads PsScheduledJob' {
+                try
+                {
+                    Import-Module PsScheduledJob -ErrorAction Stop
+                    New-ScheduledJobOption | Should Not Be $null
+                }
+                finally
+                {
+                    Remove-Module -ErrorAction SilentlyContinue PsScheduledJob
+                }
+            }            
         }
         finally
         {

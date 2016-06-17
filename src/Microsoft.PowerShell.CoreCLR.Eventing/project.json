@@ -1,7 +1,6 @@
 {
     "name": "Microsoft.PowerShell.CoreCLR.Eventing",
     "version": "1.0.0-*",
-    "authors": [ "sevoroby" ],
 
     "buildOptions": {
         "keyFile": "../signing/visualstudiopublic.snk",

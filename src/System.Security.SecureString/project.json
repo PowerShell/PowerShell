@@ -2,7 +2,6 @@
     "name": "System.Security.SecureString",
     "version": "4.0.0-*",
     "description": "SecureString Stub borrowed from Mono",
-    "authors": [ "garretts" ],
 
     "buildOptions": {
         "keyFile": "key.snk",

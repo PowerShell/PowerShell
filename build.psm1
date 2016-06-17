@@ -873,25 +873,22 @@ function Start-ResGen
     [CmdletBinding()]
     param()
 
-    @("Microsoft.PowerShell.Commands.Management",
-"Microsoft.PowerShell.Commands.Utility",
-"Microsoft.PowerShell.ConsoleHost",
-"Microsoft.PowerShell.CoreCLR.Eventing",
-"Microsoft.PowerShell.LocalAccounts",
-"Microsoft.PowerShell.Security",
-"System.Management.Automation") | % {
-        $module = $_
-        Get-ChildItem "$PSScriptRoot/src/$module/resources" -Filter '*.resx' | % {
-            $className = $_.Name.Replace('.resx', '')
-            $xml = [xml](Get-Content -raw $_.FullName)
+    Get-ChildItem $PSScriptRoot/src -Directory | ? {
+        Get-ChildItem (Join-Path $_.FullName 'resources') -ErrorAction SilentlyContinue} | % {
+            $_. Name} | % {
 
-            $fileName = $className
-            $genSource = Get-StronglyTypeCsFileForResx -xml $xml -ModuleName $module -ClassName $className
-            $outPath = "$PSScriptRoot/src/$module/gen/$fileName.cs"
-            Write-Verbose "ResGen for $outPath"
-            New-Item -Type Directory -ErrorAction SilentlyContinue (Split-Path $outPath) > $null
-            Set-Content -Encoding Ascii -Path $outPath -Value $genSource
-        }
+                $module = $_
+                Get-ChildItem "$PSScriptRoot/src/$module/resources" -Filter '*.resx' | % {
+                    $className = $_.Name.Replace('.resx', '')
+                    $xml = [xml](Get-Content -raw $_.FullName)
+
+                    $fileName = $className
+                    $genSource = Get-StronglyTypeCsFileForResx -xml $xml -ModuleName $module -ClassName $className
+                    $outPath = "$PSScriptRoot/src/$module/gen/$fileName.cs"
+                    Write-Verbose "ResGen for $outPath"
+                    New-Item -Type Directory -ErrorAction SilentlyContinue (Split-Path $outPath) > $null
+                    Set-Content -Encoding Ascii -Path $outPath -Value $genSource
+                }
     }
 }
 
