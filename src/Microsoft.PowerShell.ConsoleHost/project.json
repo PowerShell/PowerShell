@@ -2,7 +2,6 @@
     "name": "Microsoft.PowerShell.ConsoleHost",
     "version": "1.0.0-*",
     "description": "PowerShell Host",
-    "authors": [ "sevoroby", "andschwa" ],
 
     "buildOptions": {
         "keyFile": "../signing/visualstudiopublic.snk",
@@ -50,6 +49,10 @@
             }
         },
         "net451": {
+            "dependencies": {
+                "Microsoft.PowerShell.ScheduledJob": "1.0.0-*",
+                "Microsoft.PowerShell.Workflow.ServiceCore": "1.0.0-*"
+            }
         }
     }
 }

@@ -28,6 +28,12 @@ Describe 'build.psm1 and powershell.exe' {
             [Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase].Assembly.Location | Should Be (
                 Join-Path $env:DEVPATH Microsoft.PowerShell.Security.dll)
         }
+
+        It 'loads Microsoft.PowerShell.Workflow.ServiceCore.dll' {
+            workflow wfTest {}; wfTest ## Trigger the loading of ServiceCore.dll
+            [Microsoft.PowerShell.Workflow.PSWorkflowJob].Assembly.Location | Should Be (
+                Join-Path $env:DEVPATH Microsoft.PowerShell.Workflow.ServiceCore.dll)
+        }
     }
 }
 
@@ -43,7 +49,7 @@ Describe 'Modules for the packge' {
             It 'loads Microsoft.PowerShell.LocalAccounts' {
                 try
                 {
-                    Import-Module Microsoft.PowerShell.LocalAccounts
+                    Import-Module Microsoft.PowerShell.LocalAccounts -ErrorAction Stop
                     Get-LocalUser | Should Not Be $null
                 }
                 finally
@@ -55,7 +61,7 @@ Describe 'Modules for the packge' {
             It 'loads Microsoft.PowerShell.Archive' {
                 try
                 {
-                    Import-Module Microsoft.PowerShell.LocalAccounts
+                    Import-Module Microsoft.PowerShell.LocalAccounts -ErrorAction Stop
                     Set-Content -Path TestDrive:\1.txt -Value ''
                     Compress-Archive -Path TestDrive:\1.txt -DestinationPath TestDrive:\1.zip
                     Get-ChildItem -Path TestDrive:\1.zip | Should Not Be $null
@@ -65,6 +71,18 @@ Describe 'Modules for the packge' {
                     Remove-Module -ErrorAction SilentlyContinue Microsoft.PowerShell.Archive
                 }
             }
+
+            It 'loads PsScheduledJob' {
+                try
+                {
+                    Import-Module PsScheduledJob -ErrorAction Stop
+                    New-ScheduledJobOption | Should Not Be $null
+                }
+                finally
+                {
+                    Remove-Module -ErrorAction SilentlyContinue PsScheduledJob
+                }
+            }            
         }
         finally
         {

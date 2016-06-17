@@ -1,7 +1,6 @@
 {
     "name": "Microsoft.PowerShell.PSReadLine",
     "version": "1.0.0-*",
-    "authors": [ "andschwa" ],
 
     "buildOptions": {
         "keyFile": "../signing/visualstudiopublic.snk",

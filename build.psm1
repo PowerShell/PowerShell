@@ -27,6 +27,7 @@ function Start-PSBuild {
         [switch]$Restore,
         [string]$Output,
         [switch]$ResGen,
+        [switch]$TypeGen,
 
         [Parameter(ParameterSetName='CoreCLR')]
         [switch]$Publish,
@@ -193,6 +194,13 @@ function Start-PSBuild {
         } finally {
             Pop-Location
         }
+    }
+
+    # handle TypeGen
+    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CorePsTypeCatalog.cs"))
+    {
+        log "Run TypeGen (generating CorePsTypeCatalog.cs)"
+        Start-TypeGen
     }
 
     try {
@@ -868,30 +876,60 @@ function Send-GitDiffToSd {
     }
 }
 
+function Start-TypeGen
+{
+    [CmdletBinding()]
+    param()
+
+    if (!$IsWindows)
+    {
+        throw "Start-TypeGen is not supported on non-windows. Use src/TypeCatalogGen/build.sh instead"
+    }
+
+    Push-Location "$PSScriptRoot/src/TypeCatalogParser"
+    try
+    {
+        dotnet restore -v Warning
+        dotnet run
+    }
+    finally
+    {
+        Pop-Location
+    }
+
+    Push-Location "$PSScriptRoot/src/TypeCatalogGen"
+    try
+    {
+        dotnet restore -v Warning
+        dotnet run ../Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CorePsTypeCatalog.cs powershell.inc
+    }
+    finally
+    {
+        Pop-Location
+    }
+}
+
 function Start-ResGen
 {
     [CmdletBinding()]
     param()
 
-    @("Microsoft.PowerShell.Commands.Management",
-"Microsoft.PowerShell.Commands.Utility",
-"Microsoft.PowerShell.ConsoleHost",
-"Microsoft.PowerShell.CoreCLR.Eventing",
-"Microsoft.PowerShell.LocalAccounts",
-"Microsoft.PowerShell.Security",
-"System.Management.Automation") | % {
-        $module = $_
-        Get-ChildItem "$PSScriptRoot/src/$module/resources" -Filter '*.resx' | % {
-            $className = $_.Name.Replace('.resx', '')
-            $xml = [xml](Get-Content -raw $_.FullName)
+    Get-ChildItem $PSScriptRoot/src -Directory | ? {
+        Get-ChildItem (Join-Path $_.FullName 'resources') -ErrorAction SilentlyContinue} | % {
+            $_. Name} | % {
 
-            $fileName = $className
-            $genSource = Get-StronglyTypeCsFileForResx -xml $xml -ModuleName $module -ClassName $className
-            $outPath = "$PSScriptRoot/src/$module/gen/$fileName.cs"
-            Write-Verbose "ResGen for $outPath"
-            New-Item -Type Directory -ErrorAction SilentlyContinue (Split-Path $outPath) > $null
-            Set-Content -Encoding Ascii -Path $outPath -Value $genSource
-        }
+                $module = $_
+                Get-ChildItem "$PSScriptRoot/src/$module/resources" -Filter '*.resx' | % {
+                    $className = $_.Name.Replace('.resx', '')
+                    $xml = [xml](Get-Content -raw $_.FullName)
+
+                    $fileName = $className
+                    $genSource = Get-StronglyTypeCsFileForResx -xml $xml -ModuleName $module -ClassName $className
+                    $outPath = "$PSScriptRoot/src/$module/gen/$fileName.cs"
+                    Write-Verbose "ResGen for $outPath"
+                    New-Item -Type Directory -ErrorAction SilentlyContinue (Split-Path $outPath) > $null
+                    Set-Content -Encoding Ascii -Path $outPath -Value $genSource
+                }
     }
 }
 
