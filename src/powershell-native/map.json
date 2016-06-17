@@ -19,5 +19,6 @@
     "monad/nttargets/assemblies/nativemsh/pwrshplugin/pwrshclrhost.h": "nativemsh/pwrshplugin/pwrshclrhost.h",
     "monad/nttargets/assemblies/nativemsh/pwrshplugin/pwrshheaders.h": "nativemsh/pwrshplugin/pwrshheaders.h",
     "monad/nttargets/assemblies/nativemsh/pwrshplugin/pwrshplugin.h": "nativemsh/pwrshplugin/pwrshplugin.h",
-    "monad/nttargets/assemblies/nativemsh/pwrshplugin/pwrshplugindefs.h": "nativemsh/pwrshplugin/pwrshplugindefs.h"
+    "monad/nttargets/assemblies/nativemsh/pwrshplugin/pwrshplugindefs.h": "nativemsh/pwrshplugin/pwrshplugindefs.h",
+    "monad/nttargets/assemblies/nativemsh/pwrshplugin/pwrshplugin.def": "nativemsh/pwrshplugin/pwrshplugin.def"
 }
