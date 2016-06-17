@@ -28,6 +28,12 @@ Describe 'build.psm1 and powershell.exe' {
             [Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase].Assembly.Location | Should Be (
                 Join-Path $env:DEVPATH Microsoft.PowerShell.Security.dll)
         }
+
+        It 'loads Microsoft.PowerShell.Workflow.ServiceCore.dll' {
+            workflow wfTest {}; wfTest ## Trigger the loading of ServiceCore.dll
+            [Microsoft.PowerShell.Workflow.PSWorkflowJob].Assembly.Location | Should Be (
+                Join-Path $env:DEVPATH Microsoft.PowerShell.Workflow.ServiceCore.dll)
+        }
     }
 }
 
