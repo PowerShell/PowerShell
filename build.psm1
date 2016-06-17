@@ -27,6 +27,7 @@ function Start-PSBuild {
         [switch]$Restore,
         [string]$Output,
         [switch]$ResGen,
+        [switch]$TypeGen,
 
         [Parameter(ParameterSetName='CoreCLR')]
         [switch]$Publish,
@@ -193,6 +194,13 @@ function Start-PSBuild {
         } finally {
             Pop-Location
         }
+    }
+
+    # handle TypeGen
+    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CorePsTypeCatalog.cs"))
+    {
+        log "Run TypeGen (generating CorePsTypeCatalog.cs)"
+        Start-TypeGen
     }
 
     try {
@@ -865,6 +873,39 @@ function Send-GitDiffToSd {
         } else {
             Write-Host -Foreground Green "Ignore changes in $file, because there is no mapping for it"
         }
+    }
+}
+
+function Start-TypeGen
+{
+    [CmdletBinding()]
+    param()
+
+    if (!$IsWindows)
+    {
+        throw "Start-TypeGen is not supported on non-windows. Use src/TypeCatalogGen/build.sh instead"
+    }
+
+    Push-Location "$PSScriptRoot/src/TypeCatalogParser"
+    try
+    {
+        dotnet restore -v Warning
+        dotnet run
+    }
+    finally
+    {
+        Pop-Location
+    }
+
+    Push-Location "$PSScriptRoot/src/TypeCatalogGen"
+    try
+    {
+        dotnet restore -v Warning
+        dotnet run ../Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CorePsTypeCatalog.cs powershell.inc
+    }
+    finally
+    {
+        Pop-Location
     }
 }
 
