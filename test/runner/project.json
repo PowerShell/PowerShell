@@ -38,7 +38,6 @@
                 "System.Collections.NonGeneric": "4.0.0-beta-*",
                 "System.Collections.Specialized": "4.0.1-rc2-24103",
                 "Xunit.Runner.Utility": "*"
-
             }
         },
     },

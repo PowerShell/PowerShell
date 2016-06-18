@@ -4,6 +4,7 @@ using Codeblast;
 using PSxUnit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
+using Xunit;
 using Xunit.Runners;
 
 public enum TestType {
@@ -46,6 +47,7 @@ namespace PSxUnit
     public class Program 
     {
         protected Options opt;
+        protected XunitFrontController controller;
         public static void Main(string[] args)
         {
             Program p = new Program();
@@ -53,20 +55,30 @@ namespace PSxUnit
             Environment.Exit(0);
         }
 
-        public AssemblyRunner GetRunner(Options o)
+        public void GetTests(Options o)
         {
             // JWT - 
-            Console.WriteLine(typeof(AssemblyRunner).GetTypeInfo().FullName);
-            foreach(object obj in typeof(AssemblyRunner).GetTypeInfo().GetMembers())
+            // Console.WriteLine(typeof(AssemblyRunner).GetTypeInfo().FullName);
+            // Console.WriteLine(typeof(XunitFrontController).GetTypeInfo().FullName);
+            var nullMessage = new Xunit.NullMessageSink();
+            var discoveryOptions = TestFrameworkOptions.ForDiscovery();
+            using(var c = new XunitFrontController(AppDomainSupport.Denied, o.Assembly, null, false))
             {
-                Console.WriteLine(obj.ToString());
+               //  foreach(var t in 
+                c.Find(true, nullMessage, discoveryOptions);
+                foreach(var t in c.GetType().GetTypeInfo().GetMembers()) {
+                    Console.WriteLine(t);
+                }
+                foreach(var p in c.GetType().GetTypeInfo().GetFields(BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic))
+                {
+                    Console.WriteLine("{0}:{1}", p.Name,p.GetValue(c));
+                }
             }
-            return null;
         }
         public void Go(string[] args)
         {
             opt = new Options(args);
-            runner = GetRunner(opt);
+            GetTests(opt);
             if (opt.help)
             {
                 opt.Help();
