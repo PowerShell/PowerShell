@@ -46,13 +46,6 @@ more information.
 I just pulled master, why did my build fail?
 ============================================
 
-There are two likely reasons:
-
-If the `src/windows-build` submodule was changed, you need to manually run `git
-submodule update` to check your sources out to the correct commits. Pulling does
-not automatically do this. When a submodule is out-of-date, you will likely be
-missing required build files.
-
 If package dependencies were changed in any `project.json`, you need to manually
 run `dotnet restore` to update your local dependency graphs. `Start-PSBuild
 -Restore` can automatically do this.
@@ -105,7 +98,6 @@ If they're initialized, it will look like this:
 ```
  f23641488f8d7bf8630ca3496e61562aa3a64009 src/Modules/Pester (f23641488)
  c99458533a9b4c743ed51537e25989ea55944908 src/libpsl-native/test/googletest (release-1.7.0)
- e6bf85694ae8352d77175c4c7d304946e018808c src/windows-build (monad/cc6afbeb-3/31)
 ```
 
 If they're not, there will be minuses in front (and the folders will
@@ -114,7 +106,6 @@ be empty):
 ```
 -f23641488f8d7bf8630ca3496e61562aa3a64009 src/Modules/Pester (f23641488)
 -c99458533a9b4c743ed51537e25989ea55944908 src/libpsl-native/test/googletest (release-1.7.0)
--e6bf85694ae8352d77175c4c7d304946e018808c src/windows-build (monad/cc6afbeb-3/31)
 ```
 
 Please note that the commit hashes for the submodules have likely changed since
@@ -148,13 +139,6 @@ This means you're not signed into AppVeyor. Follow these steps carefully:
 6. Go back to the original link you followed to AppVeyor and click it again
 
 You should now be signed into AppVeyor and able to access our builds.
-
-Why did `dotnet restore` say `error: Failed to retrieve information from remote source './src/windows-build/nuget-feed'`?
-=========================================================================================================================
-
-Your `src/windows-build` submodule is probably empty. See "Why is my submodule
-empty?" above. This submodule contains a local NuGet feed with packages
-necessary for the build. The quick fix is `git submodule update --init`.
 
 Why did my Travis CI build fail with `GITHUB_TOKEN variable is undefined, please provide token`?
 ================================================================================================
