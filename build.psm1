@@ -19,6 +19,10 @@ try {
     catch { }
 }
 
+if ($IsLinux) {
+    $LinuxInfo = Get-Content /etc/os-release | ConvertFrom-StringData
+}
+
 
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName='CoreCLR')]
@@ -64,14 +68,8 @@ function Start-PSBuild {
         $FullCLR = $true
     }
 
-    if (-not $NoPath) {
-        Write-Verbose "Appending probable .NET CLI tool path"
-        if ($IsWindows) {
-            $env:Path += ";$env:LocalAppData\Microsoft\dotnet"
-        } else {
-            $env:PATH += ":$env:HOME/.dotnet"
-        }
-    }
+    # Add .NET CLI tools to PATH
+    Find-Dotnet
 
     if ($IsWindows) {
         # use custom package store - this value is also defined in nuget.config under config/repositoryPath
@@ -81,7 +79,7 @@ function Start-PSBuild {
     }
 
     # verify we have all tools in place to do the build
-    $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH! See: https://dotnet.github.io/getting-started/"
+    $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
     if ($FullCLR) {
         # cmake is needed to build powershell.exe
         $precheck = $precheck -and (precheck 'cmake' 'cmake not found. You can install it from https://chocolatey.org/packages/cmake.portable')
@@ -95,14 +93,8 @@ function Start-PSBuild {
 
         $precheck = $precheck -and (precheck 'msbuild' 'msbuild not found. Install Visual Studio 2015.')
     } elseif ($IsLinux -or $IsOSX) {
-        $InstallCommand = if ($IsLinux) {
-            'apt-get'
-        } elseif ($IsOSX) {
-            'brew'
-        }
-
         foreach ($Dependency in 'cmake', 'make', 'g++') {
-            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run '$InstallCommand install $Dependency'")
+            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run Start-PSBootstrap.")
         }
     }
 
@@ -243,6 +235,9 @@ function New-PSOptions {
         [switch]$FullCLR
     )
 
+    # Add .NET CLI tools to PATH
+    Find-Dotnet
+
     if ($FullCLR) {
         $Top = "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost"
     } else {
@@ -346,6 +341,7 @@ function Start-PSPester {
 
 function Start-PSxUnit {
     [CmdletBinding()]param()
+
     if ($IsWindows) {
         throw "xUnit tests are only currently supported on Linux / OS X"
     }
@@ -354,6 +350,9 @@ function Start-PSxUnit {
         log "Not yet supported on OS X, pretending they passed..."
         return
     }
+
+    # Add .NET CLI tools to PATH
+    Find-Dotnet
 
     $Arguments = "--configuration", "Linux", "-parallel", "none"
     if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
@@ -397,20 +396,19 @@ function Start-PSBootstrap {
     try {
         # Install dependencies for Linux and OS X
         if ($IsLinux) {
-            $IsUbuntu = Select-String "Ubuntu 14.04" /etc/os-release -Quiet
-            precheck 'curl' "Bootstrap dependency 'curl' not found in PATH, please install!" > $null
-            if ($IsUbuntu) {
+            if ($LinuxInfo.ID -match 'ubuntu' -and $LinuxInfo.VERSION_ID -match '14.04') {
                 # Install ours and .NET's dependencies
-                sudo apt-get update -qq
-                sudo apt-get install -y -qq make g++ cmake libc6 libgcc1 libstdc++6 libcurl3 libgssapi-krb5-2 libicu52 liblldb-3.6 liblttng-ust0 libssl1.0.0 libunwind8 libuuid1 zlib1g clang-3.5
+                sudo apt-get install -y -qq curl make g++ cmake libc6 libgcc1 libstdc++6 libcurl3 libgssapi-krb5-2 libicu52 liblldb-3.6 liblttng-ust0 libssl1.0.0 libunwind8 libuuid1 zlib1g clang-3.5
+            } elseif ($LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7') {
+                sudo yum install -y -q curl make gcc-c++ cmake glibc libgcc libstdc++ libcurl krb5-libs libicu lldb openssl-libs libunwind libuuid zlib clang
             } else {
-                Write-Warning "This script only supports Ubuntu 14.04, you must install dependencies manually!"
+                Write-Warning "This script only supports Ubuntu 14.04 and CentOS 7, you must install dependencies manually!"
             }
         } elseif ($IsOSX) {
             precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
 
             # Install ours and .NET's dependencies
-            brew install cmake wget openssl
+            brew install curl cmake openssl
             brew link --force openssl
         }
 
@@ -485,7 +483,7 @@ Built upon .NET Core, it is also a C# REPL.
         $appxPackagePath = New-AppxPackage -PackageVersion $Version -SourcePath $Source -AssetsPath "$PSScriptRoot\Assets" -Verbose
 
         $packages = @($msiPackagePath, $appxPackagePath)
-        
+
         return $packages
     }
 
@@ -495,7 +493,17 @@ Built upon .NET Core, it is also a C# REPL.
 
     # Decide package output type
     if (-not $Type) {
-        $Type = if ($IsLinux) { "deb" } elseif ($IsOSX) { "osxpkg" }
+        $Type = if ($IsLinux) {
+            if ($LinuxInfo.ID -match 'ubuntu') {
+                "deb"
+            } elseif ($LinuxInfo.ID -match 'centos') {
+                "rpm"
+            } else {
+                throw "Building packages for $($LinuxInfo.PRETTY_NAME) is unsupported!"
+            }
+        } elseif ($IsOSX) {
+            'osxpkg'
+        }
         Write-Warning "-Type was not specified, continuing with $Type"
     }
 
@@ -588,6 +596,9 @@ function Publish-NuGetFeed
         [Parameter(Mandatory=$true)]
         [string]$VersionSuffix
     )
+
+    # Add .NET CLI tools to PATH
+    Find-Dotnet
 
     @(
 'Microsoft.PowerShell.Commands.Management',
@@ -886,6 +897,9 @@ function Start-TypeGen
         throw "Start-TypeGen is not supported on non-windows. Use src/TypeCatalogGen/build.sh instead"
     }
 
+    # Add .NET CLI tools to PATH
+    Find-Dotnet
+
     Push-Location "$PSScriptRoot/src/TypeCatalogParser"
     try
     {
@@ -930,6 +944,24 @@ function Start-ResGen
                     New-Item -Type Directory -ErrorAction SilentlyContinue (Split-Path $outPath) > $null
                     Set-Content -Encoding Ascii -Path $outPath -Value $genSource
                 }
+    }
+}
+
+
+function Find-Dotnet() {
+    $originalPath = $env:PATH
+    $dotnetPath = if ($IsWindows) {
+        "$env:LocalAppData\Microsoft\dotnet"
+    } else {
+        "$env:HOME/.dotnet"
+    }
+
+    if (-not (precheck 'dotnet' "Could not find 'dotnet', appending $dotnetPath to PATH.")) {
+        $env:PATH += [IO.Path]::PathSeparator + $dotnetPath
+    }
+
+    if (-not (precheck 'dotnet' "Still could not find 'dotnet', restoring PATH.")) {
+        $env:PATH = $originalPath
     }
 }
 
