@@ -19,6 +19,10 @@ try {
     catch { }
 }
 
+if ($IsLinux) {
+    $LinuxInfo = Get-Content /etc/os-release | ConvertFrom-StringData
+}
+
 
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName='CoreCLR')]
@@ -81,7 +85,7 @@ function Start-PSBuild {
     }
 
     # verify we have all tools in place to do the build
-    $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH! See: https://dotnet.github.io/getting-started/"
+    $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
     if ($FullCLR) {
         # cmake is needed to build powershell.exe
         $precheck = $precheck -and (precheck 'cmake' 'cmake not found. You can install it from https://chocolatey.org/packages/cmake.portable')
@@ -95,14 +99,8 @@ function Start-PSBuild {
 
         $precheck = $precheck -and (precheck 'msbuild' 'msbuild not found. Install Visual Studio 2015.')
     } elseif ($IsLinux -or $IsOSX) {
-        $InstallCommand = if ($IsLinux) {
-            'apt-get'
-        } elseif ($IsOSX) {
-            'brew'
-        }
-
         foreach ($Dependency in 'cmake', 'make', 'g++') {
-            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run '$InstallCommand install $Dependency'")
+            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run Start-PSBootstrap.")
         }
     }
 
@@ -397,14 +395,15 @@ function Start-PSBootstrap {
     try {
         # Install dependencies for Linux and OS X
         if ($IsLinux) {
-            $IsUbuntu = Select-String "Ubuntu 14.04" /etc/os-release -Quiet
             precheck 'curl' "Bootstrap dependency 'curl' not found in PATH, please install!" > $null
-            if ($IsUbuntu) {
+            if ($LinuxInfo.ID -eq 'ubuntu' -and $LinuxInfo.Version -eq '"14.04"') {
                 # Install ours and .NET's dependencies
                 sudo apt-get update -qq
                 sudo apt-get install -y -qq make g++ cmake libc6 libgcc1 libstdc++6 libcurl3 libgssapi-krb5-2 libicu52 liblldb-3.6 liblttng-ust0 libssl1.0.0 libunwind8 libuuid1 zlib1g clang-3.5
+            } elseif ($LinuxInfo.ID -eq 'centos' -and $LinuxInfo.Version -eq '"7"') {
+                sudo apt-get install -y -q make gcc cmake glibc libgcc libstdc++ libcurl krb5-libs libicu lldb openssl-libs libunwind libuuid zlib clang
             } else {
-                Write-Warning "This script only supports Ubuntu 14.04, you must install dependencies manually!"
+                Write-Warning "This script only supports Ubuntu 14.04 and CentOS 7, you must install dependencies manually!"
             }
         } elseif ($IsOSX) {
             precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
