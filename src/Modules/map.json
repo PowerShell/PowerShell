@@ -17,5 +17,8 @@
     "monad/miscfiles/modules/AppxProvider/AppxProvider.psd1":  "AppxProvider/AppxProvider.psd1",
     "monad/miscfiles/modules/PSGet/PSGet.Resource.psd1":  "PSGet/PSGet.Resource.psd1",
     "monad/src/LocalAccounts/Microsoft.PowerShell.LocalAccounts.psd1": "Microsoft.PowerShell.LocalAccounts/Microsoft.PowerShell.LocalAccounts.psd1",
-    "monad/src/LocalAccounts/LocalAccounts.format.ps1xml": "Microsoft.PowerShell.LocalAccounts/LocalAccounts.format.ps1xml"
+    "monad/src/LocalAccounts/LocalAccounts.format.ps1xml": "Microsoft.PowerShell.LocalAccounts/LocalAccounts.format.ps1xml",
+    "monad/src/oneget/PowerShell.Module/PackageManagement.psd1": "PackageManagement/PackageManagement.psd1",
+    "monad/src/oneget/PowerShell.Module/PackageManagement.format.ps1xml": "PackageManagement/PackageManagement.format.ps1xml",
+    "monad/src/oneget/providers/inbox/powershell.metaprovider/PackageProviderFunctions.psm1": "PackageManagement/PackageProviderFunctions.psm1"
 }
