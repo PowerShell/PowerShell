@@ -33,6 +33,7 @@
     "monad/src/commands/management/GetComputerInfoCommand.cs":  "commands/management/GetComputerInfoCommand.cs",
     "monad/src/singleshell/installer/MshManagementMshSnapin.cs":  "singleshell/installer/MshManagementMshSnapin.cs",
     "monad/src/commands/management/CommandsCommon.cs":  "commands/management/CommandsCommon.cs",
+    "monad/src/commands/management/ControlPanelItemCommand.cs": "commands/management/ControlPanelItemCommand.cs",
     "monad/src/commands/management/PassThroughContentCommandBase.cs":  "commands/management/PassThroughContentCommandBase.cs",
     "monad/src/commands/management/PassThroughPropertyCommandBase.cs":  "commands/management/PassThroughPropertyCommandBase.cs",
     "monad/src/commands/management/resources/ClearRecycleBinResources.resx":  "resources/ClearRecycleBinResources.resx",
