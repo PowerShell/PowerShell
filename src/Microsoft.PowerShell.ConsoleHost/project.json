@@ -33,7 +33,8 @@
         "Microsoft.PowerShell.Commands.Diagnostics": "1.0.0-*",
         "Microsoft.PowerShell.Commands.Management": "1.0.0-*",
         "Microsoft.PowerShell.Commands.Utility": "1.0.0-*",
-        "Microsoft.PowerShell.LocalAccounts": "1.0.0-*"
+        "Microsoft.PowerShell.LocalAccounts": "1.0.0-*",
+        "Microsoft.PowerShell.PackageManagement": "1.0.0-*"
     },
 
     "frameworks": {

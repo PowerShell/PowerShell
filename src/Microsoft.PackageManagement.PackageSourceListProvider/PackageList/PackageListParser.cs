@@ -136,7 +136,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                     }
                     else
                     {
-                        throw new FileFormatException(string.Format("'{0}' is not referencd but not defined in the file '{1}'", dep.Name, package.FilePath));
+                        throw new ArgumentException(string.Format("'{0}' is not referencd but not defined in the file '{1}'", dep.Name, package.FilePath));
                     }
 
                 }
