@@ -68,14 +68,8 @@ function Start-PSBuild {
         $FullCLR = $true
     }
 
-    if (-not $NoPath) {
-        Write-Verbose "Appending probable .NET CLI tool path"
-        if ($IsWindows) {
-            $env:Path += ";$env:LocalAppData\Microsoft\dotnet"
-        } else {
-            $env:PATH += ":$env:HOME/.dotnet"
-        }
-    }
+    # Add .NET CLI tools to PATH
+    Find-Dotnet
 
     if ($IsWindows) {
         # use custom package store - this value is also defined in nuget.config under config/repositoryPath
@@ -241,6 +235,9 @@ function New-PSOptions {
         [switch]$FullCLR
     )
 
+    # Add .NET CLI tools to PATH
+    Find-Dotnet
+
     if ($FullCLR) {
         $Top = "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost"
     } else {
@@ -344,6 +341,7 @@ function Start-PSPester {
 
 function Start-PSxUnit {
     [CmdletBinding()]param()
+
     if ($IsWindows) {
         throw "xUnit tests are only currently supported on Linux / OS X"
     }
@@ -352,6 +350,9 @@ function Start-PSxUnit {
         log "Not yet supported on OS X, pretending they passed..."
         return
     }
+
+    # Add .NET CLI tools to PATH
+    Find-Dotnet
 
     $Arguments = "--configuration", "Linux", "-parallel", "none"
     if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
@@ -587,6 +588,9 @@ function Publish-NuGetFeed
         [Parameter(Mandatory=$true)]
         [string]$VersionSuffix
     )
+
+    # Add .NET CLI tools to PATH
+    Find-Dotnet
 
     @(
 'Microsoft.PowerShell.Commands.Management',
@@ -885,6 +889,9 @@ function Start-TypeGen
         throw "Start-TypeGen is not supported on non-windows. Use src/TypeCatalogGen/build.sh instead"
     }
 
+    # Add .NET CLI tools to PATH
+    Find-Dotnet
+
     Push-Location "$PSScriptRoot/src/TypeCatalogParser"
     try
     {
@@ -929,6 +936,24 @@ function Start-ResGen
                     New-Item -Type Directory -ErrorAction SilentlyContinue (Split-Path $outPath) > $null
                     Set-Content -Encoding Ascii -Path $outPath -Value $genSource
                 }
+    }
+}
+
+
+function Find-Dotnet() {
+    $originalPath = $env:PATH
+    $dotnetPath = if ($IsWindows) {
+        "$env:LocalAppData\Microsoft\dotnet"
+    } else {
+        "$env:HOME/.dotnet"
+    }
+
+    if (-not (precheck 'dotnet' "Could not find 'dotnet', appending $dotnetPath to PATH.")) {
+        $env:PATH += [IO.Path]::PathSeparator + $dotnetPath
+    }
+
+    if (-not (precheck 'dotnet' "Still could not find 'dotnet', restoring PATH.")) {
+        $env:PATH = $originalPath
     }
 }
 
