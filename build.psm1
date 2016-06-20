@@ -396,13 +396,11 @@ function Start-PSBootstrap {
     try {
         # Install dependencies for Linux and OS X
         if ($IsLinux) {
-            precheck 'curl' "Bootstrap dependency 'curl' not found in PATH, please install!" > $null
             if ($LinuxInfo.ID -match 'ubuntu' -and $LinuxInfo.Version -match '14.04') {
                 # Install ours and .NET's dependencies
-                sudo apt-get update -qq
-                sudo apt-get install -y -qq make g++ cmake libc6 libgcc1 libstdc++6 libcurl3 libgssapi-krb5-2 libicu52 liblldb-3.6 liblttng-ust0 libssl1.0.0 libunwind8 libuuid1 zlib1g clang-3.5
-                sudo apt-get install -y -q make gcc cmake glibc libgcc libstdc++ libcurl krb5-libs libicu lldb openssl-libs libunwind libuuid zlib clang
+                sudo apt-get install -y -qq curl make g++ cmake libc6 libgcc1 libstdc++6 libcurl3 libgssapi-krb5-2 libicu52 liblldb-3.6 liblttng-ust0 libssl1.0.0 libunwind8 libuuid1 zlib1g clang-3.5
             } elseif ($LinuxInfo.ID -match 'centos' -and $LinuxInfo.Version -match '7') {
+                sudo apt-get install -y -q curl make gcc cmake glibc libgcc libstdc++ libcurl krb5-libs libicu lldb openssl-libs libunwind libuuid zlib clang
             } else {
                 Write-Warning "This script only supports Ubuntu 14.04 and CentOS 7, you must install dependencies manually!"
             }
@@ -410,7 +408,7 @@ function Start-PSBootstrap {
             precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
 
             # Install ours and .NET's dependencies
-            brew install cmake wget openssl
+            brew install curl cmake openssl
             brew link --force openssl
         }
 
