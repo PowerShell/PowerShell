@@ -8,6 +8,12 @@ x64/
 ZERO_CHECK.vcxproj
 ZERO_CHECK.vcxproj.filters
 cmake_install.cmake
-powershell.dir/
-powershell.vcxproj
-powershell.vcxproj.filters
+*.dir/
+*.vcxproj
+*.vcxproj.filters
+Release/
+
+# Resources
+MSG*.bin
+pwrshpluginerrorcodes.h
+pwrshpluginerrorcodes.rc

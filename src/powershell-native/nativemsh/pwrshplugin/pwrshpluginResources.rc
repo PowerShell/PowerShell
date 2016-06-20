@@ -1,0 +1,13 @@
+// Copyright (C) 2005 Microsoft Corporation
+//
+// resource script for msh.exe
+//
+
+#include <windows.h>
+
+#define MANIFEST_RESOURCE_ID 1
+
+MANIFEST_RESOURCE_ID RT_MANIFEST "pwrshplugin.dll.manifest"
+
+#include "pwrshpluginerrorcodes.rc"
+#include "version.rc"
