@@ -483,7 +483,7 @@ Built upon .NET Core, it is also a C# REPL.
         $appxPackagePath = New-AppxPackage -PackageVersion $Version -SourcePath $Source -AssetsPath "$PSScriptRoot\Assets" -Verbose
 
         $packages = @($msiPackagePath, $appxPackagePath)
-        
+
         return $packages
     }
 
@@ -493,7 +493,17 @@ Built upon .NET Core, it is also a C# REPL.
 
     # Decide package output type
     if (-not $Type) {
-        $Type = if ($IsLinux) { "deb" } elseif ($IsOSX) { "osxpkg" }
+        $Type = if ($IsLinux) {
+            if ($LinuxInfo.ID -match 'ubuntu') {
+                "deb"
+            } elseif ($LinuxInfo.ID -match 'centos') {
+                "rpm"
+            } else {
+                throw "Building packages for $($LinuxInfo.PRETTY_NAME) is unsupported!"
+            }
+        } elseif ($IsOSX) {
+            'osxpkg'
+        }
         Write-Warning "-Type was not specified, continuing with $Type"
     }
 
