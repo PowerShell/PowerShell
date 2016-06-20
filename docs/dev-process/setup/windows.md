@@ -1,5 +1,16 @@
-Package installation instructions
-=================================
+---
+title:  Package Installation Instructions
+ms.date:  2016-06-11
+keywords:  powershell,cmdlet
+description:  
+ms.topic:  article
+author:  sergei, andy
+manager:  dongill
+ms.prod:  powershell
+
+---
+# Package Installation Instructions
+
 
 To install Open PowerShell from a package, download either the MSI from
 [AppVeyor][] for a nightly build, or a released package from our GitHub

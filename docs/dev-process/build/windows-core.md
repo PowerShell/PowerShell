@@ -1,5 +1,15 @@
-Build PowerShell on Windows for .NET Core
-=========================================
+---
+title:  Build PowerShell on Windows for .NET Core
+ms.date:  2016-06-11
+keywords:  powershell, cmdlet
+description:  
+ms.topic:  article
+author:  sergei
+manager:  dongill
+ms.prod:  powershell
+
+---
+# Build PowerShell on Windows for .NET Core
 
 This guide will walk you through building PowerShell on Windows,
 targetting .NET Core. We'll start by showing how to set up your

@@ -1,5 +1,16 @@
-Build PowerShell on OS X
-========================
+---
+title:  Build PowerShell on OS X
+ms.date:  2016-06-11
+keywords:  powershell,cmdlet
+description:  
+ms.topic:  article
+author:  sergei
+manager:  dongill
+ms.prod:  powershell
+
+---
+# Build PowerShell on OS X
+
 
 This guide supplements the [Linux instructions](./linux.md), as
 building on OS X is almost identical.

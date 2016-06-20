@@ -1,5 +1,15 @@
-Build PowerShell on Windows for .NET Full
-=========================================
+---
+title:  Build PowerShell on Windows for .NET Full
+ms.date:  2016-06-11
+keywords:  powershell, cmdlet
+description:  
+ms.topic:  article
+author:  sergei
+manager:  dongill
+ms.prod:  powershell
+
+---
+# Build PowerShell on Windows for .NET Full
 
 This guide supplements the
 [Windows .NET Core instructions](./windows-core.md), as building the

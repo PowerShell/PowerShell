@@ -1,5 +1,16 @@
-Build PowerShell on Linux
-=========================
+---
+title:  Build PowerShell on Linux
+ms.date:  2016-06-11
+keywords:  powershell,cmdlet
+description:  
+ms.topic:  article
+author:  sergei
+manager:  dongill
+ms.prod:  powershell
+
+---
+# Build PowerShell on Linux
+
 
 This guide will walk you through building PowerShell on Linux. We'll
 start by showing how to set up your environment from scratch.
@@ -28,7 +39,7 @@ We use the [.NET Command Line Interface][dotnet-cli] (`dotnet`) to
 build the managed components, and [CMake][] to build the native
 components. Install the following packages for the toolchain:
 
-- `dotnet`: Must be installed from the `Start-PSBootstrap` module as described below. 
+- `dotnet`: Must be installed from the `Start-PSBootstrap` module as described below.
 - `cmake`
 - `make`
 - `g++`

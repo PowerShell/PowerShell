@@ -1,10 +1,22 @@
+---
+title:  Writing Pester Tests
+ms.date:  2016-06-11
+keywords:  powershell,cmdlet
+description:  
+ms.topic:  article
+author:  Jim
+manager:  dongill
+ms.prod:  powershell
+
+---
+
 Because we are planning to continue to extend Pester to support remote/parallel execution, it's important to keep in mind the following when create tests:
 * Tests should not be overly complicated and test too many things
 	* boil down your tests to their essence, test only what you need
 * Tests should be as simple as they can
 * Tests should generally not rely on any other test
 
-	
+
 Examples:
 Here's the simplest of tests
 
@@ -14,7 +26,7 @@ Describe "A variable can be assigned and retrieved" {
        $a = 1
        $a | Should be 1
    }
-} 
+}
 ```
 
 If you need to do type checking, that can be done as well
@@ -29,7 +41,7 @@ Describe "One is really one" {
        $i = 1
        $i.GetType().FullName | Should Be System.Int32
     }
-} 
+}
 ```
 If you are checking for proper errors, do that in a try catch, and then check fully qualified error id
 ```
@@ -42,7 +54,7 @@ it "Error should be PathNotFound" {
     }
     catch
     {
-        $_.FullyQualifiedErrorId | 
+        $_.FullyQualifiedErrorId |
         should be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
     }
 }
@@ -52,7 +64,7 @@ Note that if get-item were to succeed, a different FullyQualifiedErrorId would b
 
 ### Describe/Context/It
 
-From an organizational standpoint, a Describe block roughly compares to a LITE3 Test Suite and an It block roughly compares to a LITE3 testcase. Unlike LITE3, individual tests are not prioritized (remember that a test name in Pester is really a descriptive sentence, rather than a name), but a Describe block (TestSuite) may be tagged with a string. 
+From an organizational standpoint, a Describe block roughly compares to a LITE3 Test Suite and an It block roughly compares to a LITE3 testcase. Unlike LITE3, individual tests are not prioritized (remember that a test name in Pester is really a descriptive sentence, rather than a name), but a Describe block (TestSuite) may be tagged with a string.
 For creation of PowerShell tests, the Describe block is the level of granularity suggested and one of two tags should be used: "Inner" or "Outer". If the tag is not provided, tests in that describe block will be run any time tests are executed.
 
 #### Describe
@@ -153,10 +165,10 @@ Describe it {
         Write-Host -for DarkRed "After It"
     }
     Write-Host -for DarkRed "After Context"
-    Write-Host -for DarkGreen "Before Describe BeforeAll" 
+    Write-Host -for DarkGreen "Before Describe BeforeAll"
     BeforeAll { Write-Host -for DarkGreen "In Describe BeforeAll" }
     AfterAll { Write-Host -for DarkGreen "In Describe AfterAll" }
-} 
+}
 ```
 
 Now, when run, you can see the execution schedule
@@ -182,10 +194,8 @@ After Context
 Before Describe BeforeAll
 In Describe AfterAll
 Tests completed in 79ms
-Passed: 1 Failed: 0 Skipped: 0 Pending: 0 
+Passed: 1 Failed: 0 Skipped: 0 Pending: 0
 ```
 
 The DESCRIBE BeforeAll block is executed before any other code even though it was at the bottom of the Describe block, so if state is set elsewhere in the describe BLOCK, that state will not be visible (as the code will not yet been run). Notice, too, that the BEFOREALL block in Context is executed before any other code in that block.
 Generally, you should have code reside in one of the code block elements of `[Before|After][All|Each]`, especially if those block rely on state set by free code elsewhere in the block.
-
-

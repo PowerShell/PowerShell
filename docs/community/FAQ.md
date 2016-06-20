@@ -1,3 +1,19 @@
+---
+title:  FAQ
+ms.date:  2016-06-11
+keywords:  powershell,cmdlet
+description:  
+ms.topic:  article
+author:  Joey
+manager:  dongill
+ms.prod:  powershell
+
+---
+
+# FAQ
+
+> This needs to be cleaned up, yo!
+
 Where can I learn PowerShell's syntax?
 ======================================
 

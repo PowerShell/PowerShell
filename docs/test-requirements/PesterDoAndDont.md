@@ -1,3 +1,16 @@
+---
+title:  Pester Do and Don't
+ms.date:  2016-06-11
+keywords:  powershell,cmdlet
+description:  
+ms.topic:  article
+author:  Jim
+manager:  dongill
+ms.prod:  powershell
+
+---
+# Pester do and don't
+
 ## Do
 1. Name your files <description>.tests.ps1
 2. Keep tests simple
@@ -20,4 +33,3 @@
 1. Have too many evaluations in a single It block
 	1. The first "Should" failure will stop that block
 2. Don't use "Should" anywhere but within an "It" Block
-
