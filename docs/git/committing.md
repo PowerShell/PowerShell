@@ -1,10 +1,8 @@
 Commit Dance
 ============
 
-**Update:** commit dance became much simpler after
-[removing psl-monad submodule](https://github.com/PowerShell/PowerShell/issues/656).
-Thus, this really only applies to `src/windows-build` and
-`src/Modules/Pester`. If you need to touch their content, this doc
+This process only applies to `src/Modules/Pester`. 
+If you need to touch their content, this doc
 provides the overview of the process. Remember that it's written
 against `src/monad` submodule, which doesn't exist anymore.
 

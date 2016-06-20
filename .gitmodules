@@ -1,6 +1,3 @@
-[submodule "src/windows-build"]
-	path = src/windows-build
-	url = https://github.com/PowerShell/psl-windows-build.git
 [submodule "src/Modules/Pester"]
 	path = src/Modules/Pester
 	url = https://github.com/PowerShell/psl-pester.git

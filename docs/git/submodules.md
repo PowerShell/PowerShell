@@ -10,16 +10,6 @@ submodules currently in this project are:
 - `src/libpsl-native/test/googletest`: The GoogleTest framework for
   Linux native code
 
-- `src/windows-build`: Collection of pre-generated artifacts required
-  until .NET CLI deprecates them (C# resource bindings) and NuGet
-  packages that will soon be moved to a MyGet feed
-
-- `src/omi`: The Open Management Infrastructure project for PSRP on
-  Linux (to be removed)
-
-- `src/omi-provider`: The OMI provider for PSRP on Linux (to be
-  removed)
-
 [submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
 
 Rebase and Fast-Forward Merge Pull Requests in Submodules
