@@ -57,7 +57,7 @@
                 "System.Web.Services": ""
             },
             "dependencies": {
-                "Microsoft.WSMan.Management": "1.0.0"
+                "Microsoft.WSMan.Management": "1.0.0-*"
             },
             "buildOptions": {
                 "compile": {

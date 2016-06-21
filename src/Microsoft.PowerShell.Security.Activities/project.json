@@ -1,0 +1,20 @@
+{
+    "name": "Microsoft.PowerShell.Security.Activities",
+    "version": "1.0.0-*",
+
+    "buildOptions": {
+        "keyFile": "../signing/visualstudiopublic.snk",
+        "delaySign": true,
+        "publicSign": false,
+        "warningsAsErrors": true
+    },
+
+    "dependencies": {
+        "Microsoft.PowerShell.Activities": "1.0.0-*"
+    },
+
+    "frameworks": {
+        "net451": {
+        }
+    }
+}
