@@ -75,12 +75,12 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// OK Button's content.
         /// </summary>
-        private static readonly string OKButtonContent = Microsoft.Management.UI.Internal.XamlLocalizableResources.OutGridView_Button_OK;
+        private static readonly string OKButtonContent = XamlLocalizableResources.OutGridView_Button_OK;
         
         /// <summary>
         /// Cancel Button's content.
         /// </summary>
-        private static readonly string CancelButtonContent = Microsoft.Management.UI.Internal.XamlLocalizableResources.OutGridView_Button_Cancel;
+        private static readonly string CancelButtonContent = XamlLocalizableResources.OutGridView_Button_Cancel;
         
         /// <summary>
         /// Used to store selected items in the ok processing

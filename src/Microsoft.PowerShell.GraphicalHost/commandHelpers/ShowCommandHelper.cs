@@ -1303,7 +1303,7 @@ Function PSGetSerializedShowCommandInfo
                 MessageBox.Show(
                     String.Format(
                         CultureInfo.CurrentUICulture,
-                        Microsoft.Management.UI.Internal.ShowCommandResources.EndProcessingErrorMessage,
+                        ShowCommandResources.EndProcessingErrorMessage,
                         errorString),
                      "Show-Command",
                      MessageBoxButton.OK,
