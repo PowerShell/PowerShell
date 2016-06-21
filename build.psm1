@@ -89,9 +89,8 @@ function Start-PSBuild {
 
         # msbuild is needed to build powershell.exe
         # msbuild is part of .NET Framework, we can try to get it from well-known location.
-        if (-not $NoPath -and -not (Get-Command -Name msbuild -ErrorAction Ignore)) {
-            Write-Verbose "Appending probable Visual C++ tools path"
-            $env:path += ";${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319"
+        if (-not $NoPath) {
+            Use-MSBuild
         }
 
         $precheck = $precheck -and (precheck 'msbuild' 'msbuild not found. Install Visual Studio 2015.')
@@ -1000,10 +999,9 @@ function Resolve-Xaml
         $MSBuildConfiguration = "Release"
     )
 
-    $MSBuildExe = Join-Path -Path ${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319 -ChildPath MSBuild.exe
-    if (-not (Test-Path -Path $MSBuildExe -PathType Leaf))
-    {
-        Write-Warning -Message 'msbuild not found. Install Visual Studio 2015.'
+    Use-MSBuild
+    $precheck = precheck 'msbuild' 'msbuild not found. Install Visual Studio 2015.'
+    if (-not $precheck) {
         return
     }
 
@@ -1017,7 +1015,7 @@ function Resolve-Xaml
             Remove-Item -Path $OutputDir -Recurse -Force -ErrorAction SilentlyContinue
             mkdir -Path $OutputDir -Force > $null
 
-            $SourceDir = ConvertFrom-Xaml -Configuration $MSBuildConfiguration -OutputDir $OutputDir -XamlDir $XamlDir -MSBuildExe $MSBuildExe
+            $SourceDir = ConvertFrom-Xaml -Configuration $MSBuildConfiguration -OutputDir $OutputDir -XamlDir $XamlDir
             $DestinationDir = Join-Path -Path $_.FullName -ChildPath gen
             
             if (-not (Test-Path $DestinationDir -PathType Container))
@@ -1074,10 +1072,7 @@ function script:ConvertFrom-Xaml {
         [string] $OutputDir,
 
         [Parameter(Mandatory=$true)]
-        [string] $XamlDir,
-
-        [Parameter(Mandatory=$true)]
-        [string] $MSBuildExe
+        [string] $XamlDir
     )
 
     $Pages = ""
@@ -1090,15 +1085,24 @@ function script:ConvertFrom-Xaml {
     $XamlProjPath = Join-Path -Path $OutputDir -ChildPath xaml.proj
     Set-Content -Path $XamlProjPath -Value $XamlProjContent -Encoding Ascii -NoNewline -Force
 
-    & $MSBuildExe $XamlProjPath > $null
+    msbuild $XamlProjPath > $null
 
     if ($LASTEXITCODE -ne 0)
     {
-        throw "'& $MSBuildExe $XamlProjPath > `$null' failed with exit code $LASTEXITCODE"
+        throw "'msbuild $XamlProjPath > `$null' failed with exit code $LASTEXITCODE"
     }
 
     return (Join-Path -Path $OutputDir -ChildPath "obj\Any CPU\$Configuration")
 }
+
+
+function script:Use-MSBuild {
+    if (-not (Get-Command -Name msbuild -ErrorAction Ignore)) {
+        Write-Verbose "Appending probable Visual C++ tools path"
+        $env:path += ";${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319"
+    }
+}
+
 
 function script:log([string]$message) {
     Write-Host -Foreground Green $message
