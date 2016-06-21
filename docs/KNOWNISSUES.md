@@ -15,10 +15,8 @@ with `PlatformNotSupportedException`.
 
 ## `ControlPanelItemCommand.cs`
 
-The file `monad/src/commands/management/ControlPanelItemCommand.cs` has been removed
-temporarily from `Microsoft.PowerShell.Commands.Management` because we
-cannot resolve `[Shell32.ShellFolderItem]` for FullCLR builds. This must be
-fixed ASAP.
+The file `ControlPanelItemCommand.cs` is excluded from all frameworks in `Microsoft.PowerShell.Commands.Management` 
+because it has dependency on `[Shell32.ShellFolderItem]` for FullCLR builds.
 
 ## `GetComputerInfoCommand.cs`
 
