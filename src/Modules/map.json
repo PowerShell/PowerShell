@@ -20,5 +20,11 @@
     "monad/src/LocalAccounts/LocalAccounts.format.ps1xml": "Microsoft.PowerShell.LocalAccounts/LocalAccounts.format.ps1xml",
     "monad/src/oneget/PowerShell.Module/PackageManagement.psd1": "PackageManagement/PackageManagement.psd1",
     "monad/src/oneget/PowerShell.Module/PackageManagement.format.ps1xml": "PackageManagement/PackageManagement.format.ps1xml",
-    "monad/src/oneget/providers/inbox/powershell.metaprovider/PackageProviderFunctions.psm1": "PackageManagement/PackageProviderFunctions.psm1"
+    "monad/src/oneget/providers/inbox/powershell.metaprovider/PackageProviderFunctions.psm1": "PackageManagement/PackageProviderFunctions.psm1",
+    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataAdapter.ps1": "Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataAdapter.ps1",
+    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtils.psd1": "Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtils.psd1",
+    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtils.psm1": "Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtils.psm1",
+    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsHelper.ps1": "Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsHelper.ps1",
+    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataV4Adapter.ps1": "Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataV4Adapter.ps1",
+    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsStrings.psd1": "Microsoft.PowerShell.ODataUtils/en-US/Microsoft.PowerShell.ODataUtilsStrings.psd1"
 }
