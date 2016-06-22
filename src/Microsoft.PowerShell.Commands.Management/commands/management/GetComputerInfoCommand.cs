@@ -1,6 +1,4 @@
-﻿#if false // TODO: make this build
-
-/********************************************************************++
+﻿/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 using System;
@@ -2308,7 +2306,7 @@ namespace Microsoft.PowerShell.Commands
         /// version of a product, the string "multilingual" should be used
         /// </summary>
         public string BiosLanguageEdition { get; internal set; }
-        
+
         /// <summary>
         /// Array of names of available BIOS-installable languages
         /// </summary>
@@ -2438,7 +2436,7 @@ namespace Microsoft.PowerShell.Commands
         /// If true, indicates whether a boot ROM is supported
         /// </summary>
         public bool? CsBootROMSupported { get; internal set; }
-        
+
         /// <summary>
         /// Status and Additional Data fields that identify the boot status
         /// </summary>
@@ -2563,7 +2561,7 @@ namespace Microsoft.PowerShell.Commands
         /// Key of a CIM_System instance in an enterprise environment
         /// </summary>
         public string CsName { get; internal set; } //TODO: get rid of this? Is this about CIM rather than about the computer?
-        
+
         /// <summary>
         /// An array of <see cref="NetworkAdapter"/> objects describing any
         /// network adapters on the system.
@@ -2592,13 +2590,13 @@ namespace Microsoft.PowerShell.Commands
         /// is 4. The processors may be multicore or they may be hyperthreading processors
         /// </remarks>
         public UInt32? CsNumberOfProcessors { get; internal set; }
-        
+
         /// <summary>
         /// Array of <see cref="Processor"/> objects describing each processor on the system.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Processor[] CsProcessors { get; internal set; }
-        
+
         /// <summary>
         /// Array of free-form strings that an OEM defines.
         /// For example, an OEM defines the part numbers for system reference
@@ -2630,7 +2628,7 @@ namespace Microsoft.PowerShell.Commands
         /// Type of the computer in use, such as laptop, desktop, or tablet.
         /// </summary>
         public PCSystemTypeEx? CsPCSystemTypeEx { get; internal set; }
-        
+
         /// <summary>
         /// Array of the specific power-related capabilities of a logical device
         /// </summary>
@@ -2692,7 +2690,7 @@ namespace Microsoft.PowerShell.Commands
         /// A value of –1 (minus one) indicates that the limit is unknown
         /// </summary>
         public Int16? CsResetLimit { get; internal set; }
-        
+
         /// <summary>
         /// Array that specifies the roles of a system in the information
         /// technology environment
@@ -2704,7 +2702,7 @@ namespace Microsoft.PowerShell.Commands
         /// Statis pf the computer system
         /// </summary>
         public string CsStatus { get; internal set; }
-        
+
         /// <summary>
         /// Array of the support contact information for the Windows operating system
         /// </summary>
@@ -2803,7 +2801,7 @@ namespace Microsoft.PowerShell.Commands
         /// Build number of the operating system
         /// </summary>
         public string OsBuildNumber { get; internal set; }
-        
+
         /// <summary>
         /// Array of <see cref="HotFix"/> objects containing information about
         /// any Quick-Fix Enginnering patches (Hot Fixes) applied to the operating
@@ -2997,7 +2995,7 @@ namespace Microsoft.PowerShell.Commands
         /// paging files without causing any other pages to be swapped out
         /// </summary>
         public UInt64? OsFreeSpaceInPagingFiles { get; internal set; }
-        
+
         /// <summary>
         /// Array of fiel paths to the operating system's paging files
         /// </summary>
@@ -3029,7 +3027,7 @@ namespace Microsoft.PowerShell.Commands
         /// Maximum number, in kilobytes, of memory that can be allocated to a process
         /// </summary>
         public UInt64? OsMaxProcessMemorySize { get; internal set; }
-        
+
         /// <summary>
         /// Array of Multilingual User Interface Pack (MUI Pack) languages installed
         /// on the computer
@@ -3067,7 +3065,7 @@ namespace Microsoft.PowerShell.Commands
         /// Language version of the operating system installed
         /// </summary>
         public string OsLanguage { get; internal set; }
-        
+
         /// <summary>
         /// Array of <see cref="OSProductSuite"/> objects indicating installed
         /// and licensed product additions to the operating system
@@ -3127,7 +3125,7 @@ namespace Microsoft.PowerShell.Commands
         /// Current status
         /// </summary>
         public string OsStatus { get; internal set; }
-        
+
         /// <summary>
         /// Product suites available on the operating system
         /// </summary>
@@ -3197,25 +3195,25 @@ namespace Microsoft.PowerShell.Commands
         /// Indicates the status of the Device Guard features
         /// </summary>
         public DeviceGuardSmartStatus? DeviceGuardSmartStatus { get; internal set; }
-        
+
         /// <summary>
         /// Required Device Guard security properties
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardHardwareSecure[] DeviceGuardRequiredSecurityProperties { get; internal set; }
-        
+
         /// <summary>
         /// Available Device Guard security properties
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardHardwareSecure[] DeviceGuardAvailableSecurityProperties { get; internal set; }
-        
+
         /// <summary>
         /// Configured Device Guard security services
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public DeviceGuardSoftwareSecure[] DeviceGuardSecurityServicesConfigured { get; internal set; }
-        
+
         /// <summary>
         /// Running Device Guard security services
         /// </summary>
@@ -3885,7 +3883,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     [FlagsAttribute]
-    public enum OSProductSuite
+    public enum OSProductSuite 
     {
         /// <summary>
         /// Microsoft Small Business Server was once installed, but may have
@@ -5113,5 +5111,3 @@ namespace Microsoft.PowerShell.Commands
     }
     #endregion Native
 }
-
-#endif
