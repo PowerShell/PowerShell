@@ -430,7 +430,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // Loads formatting data from ExtendedTypeDefinition instance
                 if (file.FormatData != null)
                 {
-                    LoadFormatDataHelper(file.FormatData, expressionFactory, logEntries, ref success, file, db, isTrusted: false, isForHelp: false);
+                    LoadFormatDataHelper(file.FormatData, expressionFactory, logEntries, ref success, file, db, isBuiltInFormatData: false, isForHelp: false);
                     continue;
                 }
 
@@ -474,12 +474,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ExtendedTypeDefinition formatData,
             MshExpressionFactory expressionFactory, List<XmlLoaderLoggerEntry> logEntries, ref bool success,
             PSSnapInTypeAndFormatErrors file, TypeInfoDataBase db,
-            bool isTrusted,
+            bool isBuiltInFormatData,
             bool isForHelp)
         {
             using (TypeInfoDataBaseLoader loader = new TypeInfoDataBaseLoader())
             {
-                if (!loader.LoadFormattingData(formatData, db, expressionFactory, isTrusted, isForHelp))
+                if (!loader.LoadFormattingData(formatData, db, expressionFactory, isBuiltInFormatData, isForHelp))
                     success = false;
 
                 foreach (XmlLoaderLoggerEntry entry in loader.LogEntries)
@@ -552,7 +552,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             foreach (var v in views)
             {
-                LoadFormatDataHelper(v, expressionFactory, logEntries, ref success, file, db, isTrusted: true, isForHelp: isForHelp);
+                LoadFormatDataHelper(v, expressionFactory, logEntries, ref success, file, db, isBuiltInFormatData: true, isForHelp: isForHelp);
             }
         }
 

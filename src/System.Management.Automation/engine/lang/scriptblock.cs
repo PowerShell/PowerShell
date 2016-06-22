@@ -115,9 +115,9 @@ namespace System.Management.Automation
             return Create(new Language.Parser(), null, script);
         }
 
-        internal static ScriptBlock CreateDelayParsedScriptBlock(string script)
+        internal static ScriptBlock CreateDelayParsedScriptBlock(string script, bool isProductCode)
         {
-            return new ScriptBlock(new CompiledScriptBlockData(script));
+            return new ScriptBlock(new CompiledScriptBlockData(script, isProductCode));
         }
 
         /// <summary>

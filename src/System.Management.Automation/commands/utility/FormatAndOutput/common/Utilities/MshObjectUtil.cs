@@ -666,11 +666,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     _expressionCache = new Dictionary<ExpressionToken, MshExpression>();
                 }
 
+                bool isFullyTrusted = false;
+                bool isProductCode = false;
+                if (loadingInfo != null)
+                {
+                    isFullyTrusted = loadingInfo.isFullyTrusted;
+                    isProductCode = loadingInfo.isProductCode;
+                }
+
                 // no hit, we build one and we cache
-                ScriptBlock sb = ScriptBlock.CreateDelayParsedScriptBlock(et.expressionValue);
+                ScriptBlock sb = ScriptBlock.CreateDelayParsedScriptBlock(et.expressionValue, isProductCode: isProductCode);
                 sb.DebuggerStepThrough = true;
 
-                if ((loadingInfo != null) && loadingInfo.isFullyTrusted)
+                if (isFullyTrusted)
                 {
                     sb.LanguageMode = PSLanguageMode.FullLanguage;
                 }

@@ -698,6 +698,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             loadingInfo.isFullyTrusted = isFullyTrusted;
         }
+        protected void SetLoadingInfoIsProductCode(bool isProductCode)
+        {
+            loadingInfo.isProductCode = isProductCode;
+        }
 
         private DatabaseLoadingInfo loadingInfo = new DatabaseLoadingInfo ();
 
@@ -709,6 +713,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 info.filePath = loadingInfo.filePath;
                 info.fileDirectory = loadingInfo.fileDirectory;
                 info.isFullyTrusted = loadingInfo.isFullyTrusted;
+                info.isProductCode = loadingInfo.isProductCode;
                 return info;
             }
         }

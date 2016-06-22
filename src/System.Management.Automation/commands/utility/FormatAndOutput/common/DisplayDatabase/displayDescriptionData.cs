@@ -53,6 +53,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal string fileDirectory = null;
         internal string filePath = null;
         internal bool isFullyTrusted = false;
+        internal bool isProductCode = false;
         internal string xPath = null;
         internal DateTime loadTime = DateTime.Now;
     }
