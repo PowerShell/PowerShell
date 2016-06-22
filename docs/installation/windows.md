@@ -6,8 +6,8 @@ To install Open PowerShell from a package, download either the MSI from
 [Releases][] page. Once downloaded, double-click the installer and follow the
 prompts.
 
-Additionally, we provide APPX packages, but these must be self-signed. See the
-[`Sign-Package.ps1`][signing] script.
+Additionally, we provide APPX/WSA packages (that are compatible on Nano also), but 
+these must be self-signed prior to install. See the [`Sign-Package.ps1`][signing] script for details.
 
 [releases]: https://github.com/PowerShell/PowerShell/releases
 [signing]: ../../tools/Sign-Package.ps1
