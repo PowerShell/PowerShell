@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Codeblast;
 using PSxUnit;
@@ -16,6 +17,19 @@ public enum TestType {
 
 namespace PSxUnit
 {
+    public class TestDiscoveryVisitor : Xunit.TestMessageVisitor<IDiscoveryCompleteMessage>
+    {
+        public TestDiscoveryVisitor() {
+            TestCases = new List<ITestCase>();
+        }
+        public List<ITestCase> TestCases { get; set; }
+
+        protected override bool Visit(ITestCaseDiscoveryMessage testCaseDiscovered)
+        {
+            TestCases.Add(testCaseDiscovered.TestCase);
+            return true;
+        }
+    }
     public class Options : CommandLineOptions 
     {
         public Options(string[]args) : base(args) { }
@@ -64,15 +78,46 @@ namespace PSxUnit
             var discoveryOptions = TestFrameworkOptions.ForDiscovery();
             using(var c = new XunitFrontController(AppDomainSupport.Denied, o.Assembly, null, false))
             {
-               //  foreach(var t in 
-                c.Find(true, nullMessage, discoveryOptions);
-                foreach(var t in c.GetType().GetTypeInfo().GetMembers()) {
-                    Console.WriteLine(t);
+                var tv = new TestDiscoveryVisitor();
+                c.Find(true, tv, discoveryOptions);
+                tv.Finished.WaitOne();
+                var testCasesDiscovered = tv.TestCases.Count;
+                Console.WriteLine("TEST COUNT: {0}", testCasesDiscovered);
+                foreach(var tc in tv.TestCases) {
+                    var method = tc.TestMethod.Method;
+                    var attributes = method.GetCustomAttributes(typeof(FactAttribute));
+                    foreach(ReflectionAttributeInfo at in attributes) 
+                    { 
+                        var result = at.GetNamedArgument<string>("Skip");
+                        if ( result != null ) 
+                        {
+                            Console.WriteLine("SKIPPY! {0} because {1}",method, result);
+                        }
+                    }
                 }
-                foreach(var p in c.GetType().GetTypeInfo().GetFields(BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic))
-                {
-                    Console.WriteLine("{0}:{1}", p.Name,p.GetValue(c));
-                }
+                //var tt = tv.TestCases[1];
+                //Console.WriteLine("TestCaseType: {0}", tt.GetType().FullName);
+                //var tm = tt.TestMethod;
+                //Console.WriteLine("TestMethodType: {0}", tm.GetType().FullName);
+                //var method = tm.Method;
+                //Console.WriteLine("MethodType: {0}", method.GetType().FullName);
+                //method.GetCustomAttributes(typeof(FactAttribute));
+                //var mn = method.Name;
+                //Console.WriteLine("Method name = {0}", mn);
+                //Console.WriteLine("key count = {0}", tt.Traits.Keys.Count);
+                //Console.WriteLine("file: {0}/{1}", tt.SourceInformation.FileName, tt.SourceInformation.LineNumber);
+                //Console.WriteLine("dn: {0}", tt.DisplayName);
+                //
+                //Console.WriteLine("::: {0}", tm.TestClass.Class.Name);
+                // Attribute[] attributes = (Attribute[])method.GetType().GetTypeInfo().GetCustomAttributes(method, true);
+                // Console.WriteLine(">>> {0} ({1})", attributes.GetType().FullName, attributes.Length);
+                // foreach(var attr in attributes) {
+                    // Console.WriteLine("ATT: {0}", attr.GetType().FullName);
+                // }
+                //foreach(var attr in method.GetCustomAttributes(typeof(FactAttribute)))
+                //{
+                    //Console.WriteLine("ATR: {0}", attr);
+                //}
             }
         }
         public void Go(string[] args)
@@ -82,6 +127,7 @@ namespace PSxUnit
             if (opt.help)
             {
                 opt.Help();
+
             }
             else
             {
