@@ -1,17 +1,13 @@
-PowerShell
-==========
+![PowerShell Logo](assets/Powershell_64.png) PowerShell
+========================
 
-This repository is "Project Magrathea": Open PowerShell on GitHub, for
-Linux, Windows (.NET Core and Full), and OS X. It is built using the
-[.NET Command Line Interface][dotnet-cli] to support targetting every
-flavor of PowerShell. It is a collaborative effort among many teams:
+PowerShell is a task automation and configuration management framework,
+consisting of a command-line shell and associated scripting language built using the [.NET Command Line Interface](https://github.com/dotnet/cli).
+PowerShell provides full access to COM and WMI, enabling administrators to perform administrative tasks on both local and remote Windows, Linux and OSX systems.
 
-- Full PowerShell
-- Core PowerShell
-- Open Source Technology Center
-- .NET Foundation
-
-[dotnet-cli]: https://github.com/dotnet/cli
+## New to PowerShell?
+If you are new to PowerShell and would like to learn more, 
+we recommend reviewing our [getting started documentation](https://msdn.microsoft.com/en-us/powershell/scripting/getting-started/getting-started-with-windows-powershell).
 
 Build Status
 ------------
@@ -30,51 +26,28 @@ Get PowerShell
 | Build from **Source** | [Instructions](docs/building/linux.md) | [Instructions](docs/building/windows-core.md) | [Instructions](docs/building/windows-full.md) | [Instructions](docs/building/osx.md) | [Instructions][psrp] |
 | Get **Binaries**      | [Releases][] | [Releases][] | [Artifacts][] | [Releases][] | TBD |
 
-Building summary: `Start-PSBuild` from the module
-`./build.psm1` (self-host on Linux / OS X)
 
-See [Linux](docs/installation/linux.md) and
-[Windows](docs/installation/windows.md) installation instructions.
+> Not sure what these are intended for...
+[releases](https://github.com/PowerShell/PowerShell/releases)
+[artifacts](https://ci.appveyor.com/project/PowerShell/powershell/build/artifacts)
+[psrp](https://github.com/PowerShell/psl-omi-provider)
 
-[releases]: https://github.com/PowerShell/PowerShell/releases
-[artifacts]: https://ci.appveyor.com/project/PowerShell/powershell/build/artifacts
-[psrp]: https://github.com/PowerShell/psl-omi-provider
 
-Team coordination
------------------
+Developing and Contributing
+--------------------------
+If you are new to GIT, we recommend you start by reviewing our [GIT basics document](docs/git/basics.md) where you will find installation instructions, cheatsheets and links to our favorite GIT tutorials.
+We also recommend, reviewing an example of a [basic GIT commit walkthrough](docs/git/committing.md).
 
-- [PSCore Slack chat](https://pscore.slack.com/)
-- [Waffle.io scrum board](https://waffle.io/PowerShell/PowerShell)
-- [VSO items](https://aka.ms/openps)
-- [PowerShell subsystem maintainers](https://aka.ms/psowners)
-- [Automation Sharepoint](https://aka.ms/pscore)
-- [Internal Open PowerShell Documents](https://github.com/PowerShell/Internal-PowerShellTeam-Tools/tree/master/OpenPowerShellDocs)
+To begin development, you'll need to setup your development environment for either [Linux](docs/building/linux.md), [Windows](docs/building/windows.md) or [OSX]() and are encouraged to review our [coding guidelines and best practices](docs/coding-guidelines/coding.md) for contributors.
 
-If you encounter any problems, see the [known issues](KNOWNISSUES.md),
-search the [issues][], and if all else fails, open a new issue.
+Review our [contribution guidelines](.github/CONTRIBUTING.md) for specific workflow and test requirements.
 
-[issues]: https://github.com/PowerShell/PowerShell/issues
+If you encounter issues, please see our [known issues](docs/KNOWNISSUES.md) and [FAQ](docs/FAQ.md) documents. Alternatively, you can submit a [new issue](https://github.com/PowerShell/PowerShell/issues/new).  
 
-Obtain the source code
-----------------------
+PowerShell Community
+--------------------
+`TODO` Missing community details
 
-### Setup Git
-
-Install [Git][], the version control system.
-
-See the [Contributing Guidelines](.github/CONTRIBUTING.md) for more Git
-information, such as our installation instructions, contributing
-rules, and Git best practices.
-
-[Git]: https://git-scm.com/documentation
-
-### Download source code
-
-Clone this repository. It is a "superproject" and has a number of
-other repositories embedded within it as submodules. *Please* see the
-contributing guidelines and learn about submodules. To make things
-easy, we can just clone recursively.
-
-```sh
-git clone --recursive https://github.com/PowerShell/PowerShell.git
-```
+Legal and Licensing
+-------------------
+`TODO` Missing license details
