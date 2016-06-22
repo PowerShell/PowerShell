@@ -649,29 +649,40 @@ namespace System.Management.Automation
                         (cmdRuntime.LogPipelineExecutionDetail || isTranscribing) &&
                         (cmdRuntime.PipelineProcessor != null))
                     {
-                        // Unroll parameter value
-                        IEnumerable values = LanguagePrimitives.GetEnumerable(parameterValue);
-                        if (values != null)
+                        string stringToPrint = null;
+                        try
                         {
-                            var stringToPrint = string.Join(", ", values.Cast<object>().ToArray());
-                            cmdRuntime.PipelineProcessor.LogExecutionParameterBinding(this.InvocationInfo, parameter.ParameterName,
-                                stringToPrint);
-                        }
-                        else
-                        {
-                            string stringToPrint = "";
-                            if (parameterValue != null)
+                            // Unroll parameter value
+                            IEnumerable values = LanguagePrimitives.GetEnumerable(parameterValue);
+                            if (values != null)
                             {
-                                try
+                                var sb = new Text.StringBuilder(256);
+                                var sep = "";
+                                foreach (var value in values)
                                 {
-                                    stringToPrint = parameterValue.ToString();
+                                    sb.Append(sep);
+                                    sep = ", ";
+                                    sb.Append(value);
+                                    // For better performance, avoid logging too much
+                                    if (sb.Length > 256)
+                                    {
+                                        sb.Append(", ...");
+                                        break;
+                                    }
                                 }
-                                catch (Exception e) // Catch-all OK, 3rd party callout
-                                {
-                                    CommandProcessorBase.CheckForSevereException(e);
-                                }
+                                stringToPrint = sb.ToString();
                             }
-
+                            else if (parameterValue != null)
+                            {
+                                stringToPrint = parameterValue.ToString();
+                            }
+                        }
+                        catch (Exception e) // Catch-all OK, 3rd party callout
+                        {
+                            CommandProcessorBase.CheckForSevereException(e);
+                        }
+                        if (stringToPrint != null)
+                        {
                             cmdRuntime.PipelineProcessor.LogExecutionParameterBinding(this.InvocationInfo, parameter.ParameterName, stringToPrint);
                         }
                     }

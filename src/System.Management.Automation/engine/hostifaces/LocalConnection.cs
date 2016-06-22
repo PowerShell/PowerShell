@@ -878,7 +878,7 @@ namespace System.Management.Automation.Runspaces
                     PSHostUserInterface host = executionContext.EngineHostInterface.UI;
                     if (host != null)
                     {
-                        host.StopAllTranscribing(executionContext.CurrentRunspace.InstanceId);
+                        host.StopAllTranscribing();
                     }
                 }
             }

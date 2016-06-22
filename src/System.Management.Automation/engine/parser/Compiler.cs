@@ -1613,30 +1613,27 @@ namespace System.Management.Automation.Language
                 _sequencePoints.Add(ast.Extent);
             }
 
+            var compileInterpretChoice = (_stmtCount > 300) ? CompileInterpretChoice.NeverCompile : CompileInterpretChoice.CompileOnDemand;
+
             if (optimize)
             {
-                scriptBlock.DynamicParamBlockTree = _dynamicParamBlockLambda;
-                scriptBlock.BeginBlockTree = _beginBlockLambda;
-                scriptBlock.ProcessBlockTree = _processBlockLambda;
-                scriptBlock.EndBlockTree = _endBlockLambda;
+                scriptBlock.DynamicParamBlock = CompileTree(_dynamicParamBlockLambda, compileInterpretChoice);
+                scriptBlock.BeginBlock = CompileTree(_beginBlockLambda, compileInterpretChoice);
+                scriptBlock.ProcessBlock = CompileTree(_processBlockLambda, compileInterpretChoice);
+                scriptBlock.EndBlock = CompileTree(_endBlockLambda, compileInterpretChoice);
                 scriptBlock.LocalsMutableTupleType = LocalVariablesTupleType;
                 scriptBlock.LocalsMutableTupleCreator = MutableTuple.TupleCreator(LocalVariablesTupleType);
                 scriptBlock.NameToIndexMap = nameToIndexMap;
             }
             else
             {
-                scriptBlock.UnoptimizedDynamicParamBlockTree = _dynamicParamBlockLambda;
-                scriptBlock.UnoptimizedBeginBlockTree = _beginBlockLambda;
-                scriptBlock.UnoptimizedProcessBlockTree = _processBlockLambda;
-                scriptBlock.UnoptimizedEndBlockTree = _endBlockLambda;
+                scriptBlock.UnoptimizedDynamicParamBlock = CompileTree(_dynamicParamBlockLambda, compileInterpretChoice);
+                scriptBlock.UnoptimizedBeginBlock = CompileTree(_beginBlockLambda, compileInterpretChoice);
+                scriptBlock.UnoptimizedProcessBlock = CompileTree(_processBlockLambda, compileInterpretChoice);
+                scriptBlock.UnoptimizedEndBlock = CompileTree(_endBlockLambda, compileInterpretChoice);
                 scriptBlock.UnoptimizedLocalsMutableTupleType = LocalVariablesTupleType;
                 scriptBlock.UnoptimizedLocalsMutableTupleCreator = MutableTuple.TupleCreator(LocalVariablesTupleType);
             }
-
-            scriptBlock.CompileInterpretDecision =
-                (_stmtCount > 300)
-                    ? CompileInterpretChoice.NeverCompile
-                    : CompileInterpretChoice.CompileOnDemand;
 
             // The sequence points are identical optimized or not.  Regardless, we want to ensure
             // that the list is unique no matter when the property is accessed, so make sure it is set just once.
@@ -1644,6 +1641,24 @@ namespace System.Management.Automation.Language
             {
                 scriptBlock.SequencePoints = _sequencePoints.ToArray();
             }
+        }
+
+        private Action<FunctionContext> CompileTree(Expression<Action<FunctionContext>> lambda, CompileInterpretChoice compileInterpretChoice)
+        {
+            if (lambda == null)
+                return null;
+
+            if (compileInterpretChoice == CompileInterpretChoice.AlwaysCompile)
+            {
+                return lambda.Compile();
+            }
+
+            // threshold is # of times the script must run before we decide to compile
+            // NeverCompile sets the threshold to int.MaxValue, so theoretically we might compile
+            // at some point, but it's very unlikely.
+            int threshold = (compileInterpretChoice == CompileInterpretChoice.NeverCompile) ? int.MaxValue : -1;
+            var deleg = new LightCompiler(threshold).CompileTop(lambda).CreateDelegate();
+            return (Action<FunctionContext>)deleg;
         }
 
         internal static object GetExpressionValue(ExpressionAst expressionAst, bool isTrustedInput, ExecutionContext context, IDictionary usingValues = null)

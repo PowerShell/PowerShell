@@ -3,13 +3,6 @@ using namespace System.Diagnostics
 Describe "PowerShell Command Debugging" {
 
     BeforeAll {
-        # These tests cannot yet be run on OS X on Travis, or on any Windows, due to redirected stdin problems
-        if ($env:TRAVIS_OS_NAME -eq "osx" -or $IsWindows) {
-            $ItArgs = @{ pending = $true }
-        } else {
-            $ItArgs = @{}
-        }
-
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
     }
 
@@ -43,7 +36,7 @@ Describe "PowerShell Command Debugging" {
         }
     }
 
-    It @ItArgs "Should be able to step into debugging" {
+    It "Should be able to step into debugging" {
         $debugfn = NewProcessStartInfo "-noprofile ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
         $process.StandardInput.Write("Set-PsBreakpoint -command foo`n")
@@ -62,7 +55,7 @@ Describe "PowerShell Command Debugging" {
         $process.ExitCode | Should Be 0
     }
 
-    It @ItArgs "Should be able to continue into debugging" {
+    It "Should be able to continue into debugging" {
         $debugfn = NewProcessStartInfo "-noprofile ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
         $process.StandardInput.Write("Set-PsBreakpoint -command foo`n")
@@ -79,7 +72,7 @@ Describe "PowerShell Command Debugging" {
         $process.ExitCode | Should Be 0
     }
 
-    It @ItArgs "Should be able to list help for debugging" {
+    It -Pending "Should be able to list help for debugging" {
         $debugfn = NewProcessStartInfo "-noprofile ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
         $process.StandardInput.Write("Set-PsBreakpoint -command foo`n")
@@ -102,7 +95,7 @@ Describe "PowerShell Command Debugging" {
     }
 
 
-    It @ItArgs "Should be able to step over debugging" {
+    It "Should be able to step over debugging" {
         $debugfn = NewProcessStartInfo "-noprofile ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
         $process.StandardInput.Write("Set-PsBreakpoint -command foo`n")
@@ -119,7 +112,7 @@ Describe "PowerShell Command Debugging" {
     }
 
 
-    It @ItArgs "Should be able to step out of debugging" {
+    It "Should be able to step out of debugging" {
         $debugfn = NewProcessStartInfo "-noprofile ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
         $process.StandardInput.Write("Set-PsBreakpoint -command foo`n")
@@ -133,7 +126,7 @@ Describe "PowerShell Command Debugging" {
         $process.ExitCode | Should Be 0
     }
 
-    It @ItArgs "Should be able to quit debugging" {
+    It "Should be able to quit debugging" {
         $debugfn = NewProcessStartInfo "-noprofile ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
         $process.StandardInput.Write("Set-PsBreakpoint -command foo`n")
@@ -147,7 +140,7 @@ Describe "PowerShell Command Debugging" {
         $process.ExitCode | Should Be 0
     }
 
-    It @ItArgs "Should be able to list source code in debugging" {
+    It -Pending "Should be able to list source code in debugging" {
         $debugfn = NewProcessStartInfo "-noprofile ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
         $process.StandardInput.Write("Set-PsBreakpoint -command foo`n") | Write-Host
@@ -170,7 +163,7 @@ Describe "PowerShell Command Debugging" {
     }
 
 
-    It @ItArgs "Should be able to get the call stack in debugging" {
+    It -Pending "Should be able to get the call stack in debugging" {
         $debugfn = NewProcessStartInfo "-noprofile ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
         $process.StandardInput.Write("Set-PsBreakpoint -command foo`n") | Write-Host

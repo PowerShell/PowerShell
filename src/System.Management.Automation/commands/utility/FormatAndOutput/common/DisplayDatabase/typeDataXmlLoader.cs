@@ -210,6 +210,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (expressionFactory == null)
                 throw PSTraceSource.NewArgumentNullException ("expressionFactory");
 
+            if (SecuritySupport.IsProductBinary(info.filePath))
+            {
+                this.SetLoadingInfoIsProductCode(true);
+            }
+
             this.displayResourceManagerCache = db.displayResourceManagerCache;
 
             this.expressionFactory = expressionFactory;
@@ -276,14 +281,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="typeDefinition">the ExtendedTypeDefinition instance to load formatting data from</param>
         /// <param name="db">database instance to load the formatting data into</param>
         /// <param name="expressionFactory">expression factory to validate the script block</param>
-        /// <param name="isTrusted">do we implicitly trust the script blocks (so they should run in full langauge mode)?</param>
+        /// <param name="isBuiltInFormatData">do we implicitly trust the script blocks (so they should run in full langauge mode)?</param>
         /// <param name="isForHelp">true when the view is for help output</param>
         /// <returns></returns>
         internal bool LoadFormattingData(
             ExtendedTypeDefinition typeDefinition, 
             TypeInfoDataBase db, 
             MshExpressionFactory expressionFactory,
-            bool isTrusted,
+            bool isBuiltInFormatData,
             bool isForHelp)
         {
             if (typeDefinition == null)
@@ -300,7 +305,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             try
             {
-                this.SetLoadingInfoIsFullyTrusted(isTrusted);
+                this.SetLoadingInfoIsFullyTrusted(isBuiltInFormatData);
+                this.SetLoadingInfoIsProductCode(isBuiltInFormatData);
                 this.LoadData(typeDefinition, db, isForHelp);
             }
             catch (TooManyErrorsException)

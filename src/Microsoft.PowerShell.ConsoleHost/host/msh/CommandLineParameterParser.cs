@@ -463,10 +463,6 @@ namespace Microsoft.PowerShell
                     if (!noexitSeen)
                         showBanner = false;
 
-                    // Exit on script completion unless -noexit was specified...
-                    if (!noexitSeen)
-                        noExit = false;
-
                     // Process interactive input...
                     if (args[i] == "-")
                     {
@@ -477,6 +473,10 @@ namespace Microsoft.PowerShell
                     }
                     else
                     {
+                        // Exit on script completion unless -noexit was specified...
+                        if (!noexitSeen)
+                            noExit = false;
+
                         // We need to get the full path to the script because it will be
                         // executed after the profiles are run and they may change the current
                         // directory.
@@ -877,10 +877,9 @@ namespace Microsoft.PowerShell
                 commandLineCommand = cmdLineCmdSB.ToString();
             }
 
-            if (!noexitSeen)
+            if (!noexitSeen && !explicitReadCommandsFromStdin)
             {
                 // don't reset this if they've already specified -noexit
-
                 noExit = false;
             }
 

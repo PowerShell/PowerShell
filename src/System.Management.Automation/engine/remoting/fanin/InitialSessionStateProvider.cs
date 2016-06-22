@@ -681,11 +681,27 @@ namespace System.Management.Automation.Remoting
                 {
                     return result;
                 }
-
                 tracer.WriteLine("Loading assembly from path {0}", applicationBase);
                 try
                 {
-                    result = ClrFacade.LoadFrom(assemblyName);
+                    String assemblyPath;
+                    if (!Path.IsPathRooted(assemblyName))
+                    {
+                        if (!String.IsNullOrEmpty(applicationBase) && Directory.Exists(applicationBase))
+                        {
+                            assemblyPath = Path.Combine(applicationBase, assemblyName);
+                        }
+                        else
+                        {
+                            assemblyPath = Path.Combine(Directory.GetCurrentDirectory(), assemblyName);
+                        }
+                    }
+                    else
+                    {
+                        //Rooted path of dll is provided.
+                        assemblyPath = assemblyName;
+                    }
+                    result = ClrFacade.LoadFrom(assemblyPath);
                 }
                 catch (FileLoadException e)
                 {
@@ -708,7 +724,6 @@ namespace System.Management.Automation.Remoting
                     Directory.SetCurrentDirectory(originalDirectory);
                 }
             }
-
             return result;
         }
 

@@ -56,16 +56,15 @@ namespace System.Management.Automation
             this.Id = Guid.NewGuid();
         }
 
-        internal CompiledScriptBlockData(string scriptText)
+        internal CompiledScriptBlockData(string scriptText, bool isProductCode)
         {
+            this.IsProductCode = isProductCode;
             this._scriptText = scriptText;
             this.Id = Guid.NewGuid();
         }
 
         internal bool Compile(bool optimized)
         {
-            var sw = new Stopwatch();
-            sw.Start();
             if (_attributes == null)
             {
                 InitializeMetadata();
@@ -89,9 +88,6 @@ namespace System.Management.Automation
                 CompileOptimized();
             }
 
-            sw.Stop();
-            TelemetryAPI.ReportScriptTelemetry((Ast)_ast, !optimized, sw.ElapsedMilliseconds);
-
             return optimized;
         }
 
@@ -105,29 +101,34 @@ namespace System.Management.Automation
                     return;
                 }
 
+                Attribute[] attributes;
                 CmdletBindingAttribute cmdletBindingAttribute = null;
-                var attributes = Ast.GetScriptBlockAttributes().ToArray();
-                foreach (var attribute in attributes)
+                if (!Ast.HasAnyScriptBlockAttributes())
                 {
-                    if (attribute is CmdletBindingAttribute)
-                    {
-                        cmdletBindingAttribute = cmdletBindingAttribute ?? (CmdletBindingAttribute)attribute;
-                    }
-                    else if (attribute is DebuggerHiddenAttribute)
-                    {
-                        DebuggerHidden = true;
-                    }
-                    else if (attribute is DebuggerStepThroughAttribute || attribute is DebuggerNonUserCodeAttribute)
-                    {
-                        DebuggerStepThrough = true;
-                    }
+                    attributes = Utils.EmptyArray<Attribute>();
                 }
-                _usesCmdletBinding = cmdletBindingAttribute != null;
-                bool automaticPosition = cmdletBindingAttribute != null
-                                             ? cmdletBindingAttribute.PositionalBinding
-                                             : true;
-                var runtimeDefinedParameterDictionary = Ast.GetParameterMetadata(automaticPosition,
-                                                                                 ref _usesCmdletBinding);
+                else
+                {
+                    attributes = Ast.GetScriptBlockAttributes().ToArray();
+                    foreach (var attribute in attributes)
+                    {
+                        if (attribute is CmdletBindingAttribute)
+                        {
+                            cmdletBindingAttribute = cmdletBindingAttribute ?? (CmdletBindingAttribute) attribute;
+                        }
+                        else if (attribute is DebuggerHiddenAttribute)
+                        {
+                            DebuggerHidden = true;
+                        }
+                        else if (attribute is DebuggerStepThroughAttribute || attribute is DebuggerNonUserCodeAttribute)
+                        {
+                            DebuggerStepThrough = true;
+                        }
+                    }
+                    _usesCmdletBinding = cmdletBindingAttribute != null;
+                }
+                bool automaticPosition = cmdletBindingAttribute == null || cmdletBindingAttribute.PositionalBinding;
+                var runtimeDefinedParameterDictionary = Ast.GetParameterMetadata(automaticPosition, ref _usesCmdletBinding);
 
                 // Initialize these fields last - if there were any exceptions, we don't want the partial results cached.
                 _attributes = attributes;
@@ -145,38 +146,8 @@ namespace System.Management.Automation
                     return;
                 }
 
-                bool etwEnabled = ParserEventSource.Log.IsEnabled();
-                if (etwEnabled)
-                {
-                    var extent = _ast.Body.Extent;
-                    var text = extent.Text;
-                    ParserEventSource.Log.CompileStart(ParserEventSource.GetFileOrScript(extent.File, text), text.Length, Optimized: false);
-                }
-
-                PerformSecurityChecks();
-
-                Compiler compiler = new Compiler();
-                compiler.Compile(this, optimize: false);
-
-                if (UnoptimizedDynamicParamBlockTree != null)
-                {
-                    UnoptimizedDynamicParamBlock = CompileTree(UnoptimizedDynamicParamBlockTree);
-                }
-                if (UnoptimizedBeginBlockTree != null)
-                {
-                    UnoptimizedBeginBlock = CompileTree(UnoptimizedBeginBlockTree);
-                }
-                if (UnoptimizedProcessBlockTree != null)
-                {
-                    UnoptimizedProcessBlock = CompileTree(UnoptimizedProcessBlockTree);
-                }
-                if (UnoptimizedEndBlockTree != null)
-                {
-                    UnoptimizedEndBlock = CompileTree(UnoptimizedEndBlockTree);
-                }
+                ReallyCompile(false);
                 _compiledUnoptimized = true;
-
-                if (etwEnabled) ParserEventSource.Log.CompileStop();
             }
         }
 
@@ -190,56 +161,40 @@ namespace System.Management.Automation
                     return;
                 }
 
-                bool etwEnabled = ParserEventSource.Log.IsEnabled();
-                if (etwEnabled)
-                {
-                    var extent = _ast.Body.Extent;
-                    var text = extent.Text;
-                    ParserEventSource.Log.CompileStart(ParserEventSource.GetFileOrScript(extent.File, text), text.Length, Optimized: true);
-                }
-
-                PerformSecurityChecks();
-
-                Compiler compiler = new Compiler();
-                compiler.Compile(this, optimize: true);
-                if (DynamicParamBlockTree != null)
-                {
-                    DynamicParamBlock = CompileTree(DynamicParamBlockTree);
-                }
-                if (BeginBlockTree != null)
-                {
-                    BeginBlock = CompileTree(BeginBlockTree);
-                }
-                if (ProcessBlockTree != null)
-                {
-                    ProcessBlock = CompileTree(ProcessBlockTree);
-                }
-                if (EndBlockTree != null)
-                {
-                    EndBlock = CompileTree(EndBlockTree);
-                }
+                ReallyCompile(true);
                 _compiledOptimized = true;
-
-                if (etwEnabled) ParserEventSource.Log.CompileStop();
             }
         }
 
-        private Action<FunctionContext> CompileTree(Expression<Action<FunctionContext>> lambda)
+        private void ReallyCompile(bool optimize)
         {
-            if (this.CompileInterpretDecision == CompileInterpretChoice.AlwaysCompile)
+            var sw = new Stopwatch();
+            sw.Start();
+
+            if (!IsProductCode && SecuritySupport.IsProductBinary(((Ast)_ast).Extent.File))
             {
-                return lambda.Compile();
+                this.IsProductCode = true;
             }
 
-            // threshold is # of times the script must run before we decide to compile
-            // NeverCompile sets the threshold to int.MaxValue, so theoretically we might compile
-            // at some point, but it's very unlikely.
-            int threshold =
-                (this.CompileInterpretDecision == CompileInterpretChoice.NeverCompile)
-                    ? int.MaxValue
-                    : -1;
-            var deleg = new LightCompiler(threshold).CompileTop(lambda).CreateDelegate();
-            return (Action<FunctionContext>)deleg;
+            bool etwEnabled = ParserEventSource.Log.IsEnabled();
+            if (etwEnabled)
+            {
+                var extent = _ast.Body.Extent;
+                var text = extent.Text;
+                ParserEventSource.Log.CompileStart(ParserEventSource.GetFileOrScript(extent.File, text), text.Length, optimize);
+            }
+
+            PerformSecurityChecks();
+
+            Compiler compiler = new Compiler();
+            compiler.Compile(this, optimize);
+
+            if (!IsProductCode)
+            {
+                TelemetryAPI.ReportScriptTelemetry((Ast)_ast, !optimize, sw.ElapsedMilliseconds);
+            }
+
+            if (etwEnabled) ParserEventSource.Log.CompileStop();
         }
 
         private void PerformSecurityChecks()
@@ -289,30 +244,21 @@ namespace System.Management.Automation
             }
         }
 
-        internal Expression<Action<FunctionContext>> UnoptimizedDynamicParamBlockTree { get; set; }
-        internal Expression<Action<FunctionContext>> DynamicParamBlockTree { get; set; }
-        internal Expression<Action<FunctionContext>> BeginBlockTree { get; set; }
-        internal Expression<Action<FunctionContext>> UnoptimizedBeginBlockTree { get; set; }
-        internal Expression<Action<FunctionContext>> ProcessBlockTree { get; set; }
-        internal Expression<Action<FunctionContext>> UnoptimizedProcessBlockTree { get; set; }
-        internal Expression<Action<FunctionContext>> EndBlockTree { get; set; }
-        internal Expression<Action<FunctionContext>> UnoptimizedEndBlockTree { get; set; }
-
-        internal CompileInterpretChoice CompileInterpretDecision { get; set; }
         internal Type LocalsMutableTupleType { get; set; }
         internal Type UnoptimizedLocalsMutableTupleType { get; set; }
         internal Func<MutableTuple> LocalsMutableTupleCreator { get; set; }
         internal Func<MutableTuple> UnoptimizedLocalsMutableTupleCreator { get; set; }
         internal Dictionary<string, int> NameToIndexMap { get; set; }
 
-        internal Action<FunctionContext> DynamicParamBlock { get; private set; }
-        internal Action<FunctionContext> UnoptimizedDynamicParamBlock { get; private set; }
-        internal Action<FunctionContext> BeginBlock { get; private set; }
-        internal Action<FunctionContext> UnoptimizedBeginBlock { get; private set; }
-        internal Action<FunctionContext> ProcessBlock { get; private set; }
-        internal Action<FunctionContext> UnoptimizedProcessBlock { get; private set; }
-        internal Action<FunctionContext> EndBlock { get; private set; }
-        internal Action<FunctionContext> UnoptimizedEndBlock { get; private set; }
+        internal Action<FunctionContext> DynamicParamBlock { get; set; }
+        internal Action<FunctionContext> UnoptimizedDynamicParamBlock { get; set; }
+        internal Action<FunctionContext> BeginBlock { get; set; }
+        internal Action<FunctionContext> UnoptimizedBeginBlock { get; set; }
+        internal Action<FunctionContext> ProcessBlock { get; set; }
+        internal Action<FunctionContext> UnoptimizedProcessBlock { get; set; }
+        internal Action<FunctionContext> EndBlock { get; set; }
+        internal Action<FunctionContext> UnoptimizedEndBlock { get; set; }
+
         internal IScriptExtent[] SequencePoints { get; set; }
         private RuntimeDefinedParameterDictionary _runtimeDefinedParameterDictionary;
         private Attribute[] _attributes;
@@ -325,6 +271,7 @@ namespace System.Management.Automation
         internal Guid Id { get; private set; }
         internal bool HasLogged { get; set; }
         internal bool IsFilter { get; private set; }
+        internal bool IsProductCode { get; private set; }
 
         internal bool GetIsConfiguration()
         {
@@ -563,7 +510,7 @@ namespace System.Management.Automation
             _cachedScripts.Clear();
         }
 
-        internal static ScriptBlock EmptyScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock("");
+        internal static ScriptBlock EmptyScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock("", isProductCode: true);
 
         internal static ScriptBlock Create(Parser parser, string fileName, string fileContents)
         {
@@ -1298,9 +1245,9 @@ namespace System.Management.Automation
                 if (!scriptBlock.HasLogged || InternalTestHooks.ForceScriptBlockLogging)
                 {
                     // If script block logging is explicitly disabled, or it's from a trusted
-                    // file, skip logging.
+                    // file or internal, skip logging.
                     if (ScriptBlockLoggingExplicitlyDisabled() ||
-                        SecuritySupport.IsProductBinary(scriptBlock.File))
+                        scriptBlock.ScriptBlockData.IsProductCode)
                     {
                         return;
                     }
@@ -1787,15 +1734,6 @@ namespace System.Management.Automation
         internal Action<FunctionContext> UnoptimizedProcessBlock { get { return _scriptBlockData.UnoptimizedProcessBlock; } }
         internal Action<FunctionContext> EndBlock { get { return _scriptBlockData.EndBlock; } }
         internal Action<FunctionContext> UnoptimizedEndBlock { get { return _scriptBlockData.UnoptimizedEndBlock; } }
-
-        internal Expression<Action<FunctionContext>> UnoptimizedDynamicParamBlockTree { get { return _scriptBlockData.UnoptimizedDynamicParamBlockTree; } }
-        internal Expression<Action<FunctionContext>> DynamicParamBlockTree { get { return _scriptBlockData.DynamicParamBlockTree; } }
-        internal Expression<Action<FunctionContext>> BeginBlockTree { get { return _scriptBlockData.BeginBlockTree; } }
-        internal Expression<Action<FunctionContext>> UnoptimizedBeginBlockTree { get { return _scriptBlockData.UnoptimizedBeginBlockTree; } }
-        internal Expression<Action<FunctionContext>> ProcessBlockTree { get { return _scriptBlockData.ProcessBlockTree; } }
-        internal Expression<Action<FunctionContext>> UnoptimizedProcessBlockTree { get { return _scriptBlockData.UnoptimizedProcessBlockTree; } }
-        internal Expression<Action<FunctionContext>> EndBlockTree { get { return _scriptBlockData.EndBlockTree; } }
-        internal Expression<Action<FunctionContext>> UnoptimizedEndBlockTree { get { return _scriptBlockData.UnoptimizedEndBlockTree; } }
 
         internal bool HasBeginBlock { get { return AstInternal.Body.BeginBlock != null; } }
         internal bool HasProcessBlock { get { return AstInternal.Body.ProcessBlock != null; } }

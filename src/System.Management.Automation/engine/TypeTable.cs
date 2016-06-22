@@ -165,7 +165,9 @@ namespace System.Management.Automation.Runspaces
             ScriptBlock scriptBlock;
             try
             {
-                scriptBlock = ScriptBlock.Create(text);
+                scriptBlock = _context.IsProductCode
+                    ? ScriptBlock.CreateDelayParsedScriptBlock(text, isProductCode: true)
+                    : ScriptBlock.Create(text);
             }
             catch (ParseException pe)
             {
@@ -1482,6 +1484,8 @@ namespace System.Management.Automation.Runspaces
             get { return isFullyTrusted; }
             set { isFullyTrusted = value; }
         }
+
+        internal bool IsProductCode { get; set; }
 
         internal void AddError(string resourceString, params object[] formatArguments)
         {
@@ -4072,14 +4076,15 @@ namespace System.Management.Automation.Runspaces
                 return;
 
             bool isFullyTrusted;
-            string fileContents = GetModuleContents(snapinName, fileToLoad, errors, authorizationManager, host, out isFullyTrusted, out failToLoadFile);
+            bool isProductCode;
+            string fileContents = GetModuleContents(snapinName, fileToLoad, errors, authorizationManager, host, out isFullyTrusted, out failToLoadFile, out isProductCode);
 
             if (fileContents == null)
             {
                 return;
             }
 
-            UpdateWithModuleContents(fileContents, snapinName, fileToLoad, isFullyTrusted, errors);
+            UpdateWithModuleContents(fileContents, snapinName, fileToLoad, isFullyTrusted, isProductCode, errors);
         }
 
         /// <summary>
@@ -4092,13 +4097,15 @@ namespace System.Management.Automation.Runspaces
             AuthorizationManager authorizationManager,
             PSHost host,
             out bool isFullyTrusted,
-            out bool failToLoadFile)
+            out bool failToLoadFile,
+            out bool isProductCode)
         {
             Dbg.Assert(Path.IsPathRooted(fileToLoad), "fileToLoad should be a fully-qualified path.");
 
             ExternalScriptInfo ps1xmlInfo;
             string fileContents;
             isFullyTrusted = false;
+            isProductCode = false;
 
             try
             {
@@ -4108,6 +4115,11 @@ namespace System.Management.Automation.Runspaces
                 if (ps1xmlInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage)
                 {
                     isFullyTrusted = true;
+                }
+
+                if (SecuritySupport.IsProductBinary(fileToLoad))
+                {
+                    isProductCode = true;
                 }
             }
             catch (SecurityException e)
@@ -4148,18 +4160,21 @@ namespace System.Management.Automation.Runspaces
         /// <param name="moduleName">Module name</param>
         /// <param name="fileToLoad">Module file path</param>
         /// <param name="isFullyTrusted">Whether the module contents are fully trusted</param>
+        /// <param name="isProductCode">Whether the module contents are considered part of Windows (e.g. catalog signed)</param>
         /// <param name="errors">Errors</param>
         private void UpdateWithModuleContents(
             string fileContents,
             string moduleName,
             string fileToLoad,
             bool isFullyTrusted,
+            bool isProductCode,
             ConcurrentBag<string> errors)
         {
             typesInfo.Add(new SessionStateTypeEntry(fileToLoad));
             LoadContext loadContext = new LoadContext(moduleName, fileToLoad, errors)
             {
                 IsFullyTrusted = isFullyTrusted,
+                IsProductCode = isProductCode,
             };
 
             using (StringReader xmlStream = new StringReader(fileContents))
@@ -4361,12 +4376,13 @@ namespace System.Management.Automation.Runspaces
                 // Get file contents and perform authorization check
                 // (including possible user prompt) outside of the lock.
                 bool isFullyTrusted;
+                bool isProductCode;
 
-                var fileContents = GetModuleContents(moduleName, filePath, errors, authorizationManager, host, out isFullyTrusted, out failToLoadFile);
+                var fileContents = GetModuleContents(moduleName, filePath, errors, authorizationManager, host, out isFullyTrusted, out failToLoadFile, out isProductCode);
 
                 if (fileContents != null)
                 {
-                    UpdateWithModuleContents(fileContents, moduleName, filePath, isFullyTrusted, errors);
+                    UpdateWithModuleContents(fileContents, moduleName, filePath, isFullyTrusted, isProductCode, errors);
                 }
             }
             if (etwEnabled) RunspaceEventSource.Log.ProcessTypeFileStop(filePath);

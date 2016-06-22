@@ -28,7 +28,7 @@ namespace System.Management.Automation.Runspaces
 
         static ScriptBlock GetScriptBlock(string s)
         {
-            var sb = ScriptBlock.CreateDelayParsedScriptBlock(s);
+            var sb = ScriptBlock.CreateDelayParsedScriptBlock(s, isProductCode: true);
             sb.LanguageMode = PSLanguageMode.FullLanguage;
             return sb;
         }

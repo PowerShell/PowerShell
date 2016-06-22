@@ -855,9 +855,9 @@ namespace System.Management.Automation.Runspaces
             _helpFile = helpFile;
         }
 
-        internal static SessionStateFunctionEntry GetDelayParsedFunctionEntry(string name, string definition)
+        internal static SessionStateFunctionEntry GetDelayParsedFunctionEntry(string name, string definition, bool isProductCode)
         {
-            var sb = ScriptBlock.CreateDelayParsedScriptBlock(definition);
+            var sb = ScriptBlock.CreateDelayParsedScriptBlock(definition, isProductCode);
             return new SessionStateFunctionEntry(name, definition, ScopedItemOptions.None,
                 SessionStateEntryVisibility.Public, sb, null);
         }
@@ -5498,23 +5498,23 @@ if($paths) {
 ";
 
         internal const string DefaultSetDriveFunctionText = "Set-Location $MyInvocation.MyCommand.Name";
-        internal static ScriptBlock SetDriveScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock(DefaultSetDriveFunctionText);
+        internal static ScriptBlock SetDriveScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock(DefaultSetDriveFunctionText, isProductCode: true);
 
         internal static SessionStateFunctionEntry[] BuiltInFunctions = new SessionStateFunctionEntry[]
         {
             // Functions.  Only the name and definitions are used
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("prompt", DefaultPromptFunctionText), 
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("TabExpansion2", TabExpansionFunctionText),
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Clear-Host", GetClearHostFunctionText()),
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("prompt", DefaultPromptFunctionText, isProductCode: true), 
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("TabExpansion2", TabExpansionFunctionText, isProductCode: true),
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Clear-Host", GetClearHostFunctionText(), isProductCode: true),
             // Porting note: we keep more because the function acts correctly on Linux
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("more", DefaultMoreFunctionText),
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText()),
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("more", DefaultMoreFunctionText, isProductCode: true),
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText(), isProductCode: true),
             // Porting note: we remove mkdir on Linux because it is a conflict
             #if !LINUX
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("mkdir", GetMkdirFunctionText()),
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("mkdir", GetMkdirFunctionText(), isProductCode: true),
             #endif
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Get-Verb", GetGetVerbText()),
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("oss", GetOSTFunctionText()),
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Get-Verb", GetGetVerbText(), isProductCode: true),
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("oss", GetOSTFunctionText(), isProductCode: true),
 
             // Porting note: we remove the drive functions from Linux because they make no sense
             #if !LINUX
@@ -5547,12 +5547,12 @@ if($paths) {
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Z:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
             #endif
 
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location .."),
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\"),
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location ..", isProductCode: true),
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\", isProductCode: true),
             // Win8: 320909. Retaining the original definition to ensure backward compatability.
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("ImportSystemModules", ImportSystemModulesText),
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("ImportSystemModules", ImportSystemModulesText, isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Pause",
-                string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString),"'"))
+                string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString),"'"), isProductCode: true)
         };
 
         static internal void RemoveAllDrivesForProvider(ProviderInfo pi, SessionStateInternal ssi)

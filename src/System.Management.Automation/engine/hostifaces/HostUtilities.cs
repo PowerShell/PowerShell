@@ -68,8 +68,8 @@ namespace System.Management.Automation
                 NewSuggestion(2, "Transactions", SuggestionMatchType.Command, "^Use-Transaction",
                     SuggestionStrings.Suggestion_UseTransaction, true),
                 NewSuggestion(3, "General", SuggestionMatchType.Dynamic,
-                    ScriptBlock.Create(checkForCommandInCurrentDirectoryScript),
-                    ScriptBlock.Create(createCommandExistsInCurrentDirectoryScript),
+                    ScriptBlock.CreateDelayParsedScriptBlock(checkForCommandInCurrentDirectoryScript, isProductCode: true),
+                    ScriptBlock.CreateDelayParsedScriptBlock(createCommandExistsInCurrentDirectoryScript, isProductCode: true),
                     new object[] { CodeGeneration.EscapeSingleQuotedStringContent(SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory) },
                     true)
             }
