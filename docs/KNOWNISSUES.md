@@ -13,16 +13,24 @@ no encryption.**
 Additionally `ReadLineSafe` is not implemented, meaning `Get-Credential` fails
 with `PlatformNotSupportedException`.
 
-## `ControlPanelItemCommand.cs`
+## Files excluded from the build
 
-The file `ControlPanelItemCommand.cs` is excluded from all frameworks in `Microsoft.PowerShell.Commands.Management` 
+#### Microsoft.PowerShell.Commands.Management
+
+- The file `ControlPanelItemCommand.cs` is excluded from all frameworks in `Microsoft.PowerShell.Commands.Management` 
 because it has dependency on `[Shell32.ShellFolderItem]` for FullCLR builds.
 
-## `GetComputerInfoCommand.cs`
+#### Microsoft.PowerShell.GraphicalHost
 
-The file
-`src\Microsoft.PowerShell.Commands.Management\commands\management\GetComputerInfoCommand.cs`
-is not currently compiled because it needs resources.
+```
+"ManagementList/CommonControls/ExpanderButtonAutomationPeer.cs",
+"ManagementList/CommonControls/ExpanderButton.cs",
+"ManagementList/CommonControls/ExpanderButton.Generated.cs",
+"ManagementList/Common/PopupControlButton.cs",
+"ManagementList/Common/PopupControlButton.Generated.cs"
+```
+
+Excluded because they requires `UIAutomationTypes.dll`
 
 ## Jobs
 
