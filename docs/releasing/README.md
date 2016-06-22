@@ -53,7 +53,7 @@ file layout).
 Windows
 -------
 
-The `Start-PSBuild` function delegates to `Create-MSIPackage` which creates a
+The `Start-PSBuild` function delegates to `New-MSIPackage` which creates a
 Windows Installer Package of Open PowerShell. It uses the Windows Installer XML
 Toolset (WiX) to generate a `OpenPowerShell_<version>.msi`, which installs a
 self-contained copy of the current version (commit) of Open PowerShell. It
