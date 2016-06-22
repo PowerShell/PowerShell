@@ -1015,7 +1015,12 @@ function Resolve-Xaml
             Remove-Item -Path $OutputDir -Recurse -Force -ErrorAction SilentlyContinue
             mkdir -Path $OutputDir -Force > $null
 
-            $SourceDir = ConvertFrom-Xaml -Configuration $MSBuildConfiguration -OutputDir $OutputDir -XamlDir $XamlDir
+            # For GraphicalHost we will get failures, but it's ok: we only need to copy *.g.cs files in the dotnet cli project.
+            # For over projects we leave the check just in case.
+            # We can revisit it on case-by-case basis.
+            $IgnoreFailure = [bool]($XamlDir -match 'GraphicalHost')
+
+            $SourceDir = ConvertFrom-Xaml -Configuration $MSBuildConfiguration -OutputDir $OutputDir -XamlDir $XamlDir -IgnoreMsbuildFailure:$IgnoreFailure
             $DestinationDir = Join-Path -Path $_.FullName -ChildPath gen
             
             if (-not (Test-Path $DestinationDir -PathType Container))
@@ -1072,8 +1077,12 @@ function script:ConvertFrom-Xaml {
         [string] $OutputDir,
 
         [Parameter(Mandatory=$true)]
-        [string] $XamlDir
+        [string] $XamlDir,
+
+        [switch] $IgnoreMsbuildFailure
     )
+
+    Write-Verbose "ConvertFrom-Xaml for $XamlDir"
 
     $Pages = ""
     Get-ChildItem -Path "$XamlDir\*.xaml" | % {
@@ -1089,7 +1098,15 @@ function script:ConvertFrom-Xaml {
 
     if ($LASTEXITCODE -ne 0)
     {
-        throw "'msbuild $XamlProjPath > `$null' failed with exit code $LASTEXITCODE"
+        $message = "When processing $XamlDir 'msbuild $XamlProjPath > `$null' failed with exit code $LASTEXITCODE"
+        if ($IgnoreMsbuildFailure)
+        {
+            Write-Warning $message
+        }
+        else
+        {
+            throw $message
+        }
     }
 
     return (Join-Path -Path $OutputDir -ChildPath "obj\Any CPU\$Configuration")

@@ -1,0 +1,24 @@
+﻿<controls:ImageButtonBase x:Class="Microsoft.PowerShell.Commands.ShowCommandInternal.ImageToggleButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Microsoft.PowerShell.Commands.ShowCommandInternal">
+    <Grid HorizontalAlignment="Left" VerticalAlignment="Top">
+        <Grid.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <ResourceDictionary Source="/Microsoft.PowerShell.GraphicalHost;component/ImageButtonCommon.xaml"/>
+                </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
+        </Grid.Resources>
+        <Grid>
+            <ToggleButton  
+                x:Name="toggleInnerButton"
+                Command="{Binding Path=Command, RelativeSource={RelativeSource AncestorType={x:Type controls:ImageButtonBase}}}"  
+                IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource AncestorType={x:Type controls:ImageButtonBase}}}"  
+                ToolTip="{Binding Converter={StaticResource imageButtonToolTipConverter}, RelativeSource={RelativeSource AncestorType={x:Type controls:ImageButtonBase}}}"
+                ToolTipService.ShowOnDisabled="True" Template="{StaticResource imageButtonTemplate}">
+            </ToggleButton>
+        </Grid>
+    </Grid>
+
+</controls:ImageButtonBase>

@@ -52,7 +52,8 @@
         "net451": {
             "dependencies": {
                 "Microsoft.PowerShell.ScheduledJob": "1.0.0-*",
-                "Microsoft.PowerShell.Workflow.ServiceCore": "1.0.0-*"
+                "Microsoft.PowerShell.Workflow.ServiceCore": "1.0.0-*",
+                "Microsoft.PowerShell.GraphicalHost": "1.0.0-*"
             }
         }
     }
