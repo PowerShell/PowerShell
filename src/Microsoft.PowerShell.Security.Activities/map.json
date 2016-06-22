@@ -1,0 +1,14 @@
+{
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Security_Activities/ConvertFromSecureStringActivity.cs":  "Generated/ConvertFromSecureStringActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Security_Activities/ConvertToSecureStringActivity.cs":  "Generated/ConvertToSecureStringActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Security_Activities/GetAclActivity.cs":  "Generated/GetAclActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Security_Activities/GetAuthenticodeSignatureActivity.cs":  "Generated/GetAuthenticodeSignatureActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Security_Activities/GetExecutionPolicyActivity.cs":  "Generated/GetExecutionPolicyActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Security_Activities/GetPfxCertificateActivity.cs":  "Generated/GetPfxCertificateActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Security_Activities/SetAclActivity.cs":  "Generated/SetAclActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Security_Activities/SetAuthenticodeSignatureActivity.cs":  "Generated/SetAuthenticodeSignatureActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Security_Activities/SetExecutionPolicyActivity.cs":  "Generated/SetExecutionPolicyActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Security_Activities/UnprotectCmsMessageActivity.cs":  "Generated/UnprotectCmsMessageActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Security_Activities/GetCmsMessageActivity.cs":  "Generated/GetCmsMessageActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Security_Activities/ProtectCmsMessageActivity.cs":  "Generated/ProtectCmsMessageActivity.cs"
+}

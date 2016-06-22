@@ -1,0 +1,15 @@
+{
+    "monad/src/Activities/Generated/Microsoft_WSMan_Management_Activities/ConnectWSManActivity.cs":  "Generated/ConnectWSManActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_WSMan_Management_Activities/DisableWSManCredSSPActivity.cs":  "Generated/DisableWSManCredSSPActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_WSMan_Management_Activities/DisconnectWSManActivity.cs":  "Generated/DisconnectWSManActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_WSMan_Management_Activities/EnableWSManCredSSPActivity.cs":  "Generated/EnableWSManCredSSPActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_WSMan_Management_Activities/GetWSManCredSSPActivity.cs":  "Generated/GetWSManCredSSPActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_WSMan_Management_Activities/GetWSManInstanceActivity.cs":  "Generated/GetWSManInstanceActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_WSMan_Management_Activities/InvokeWSManActionActivity.cs":  "Generated/InvokeWSManActionActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_WSMan_Management_Activities/NewWSManInstanceActivity.cs":  "Generated/NewWSManInstanceActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_WSMan_Management_Activities/NewWSManSessionOptionActivity.cs":  "Generated/NewWSManSessionOptionActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_WSMan_Management_Activities/RemoveWSManInstanceActivity.cs":  "Generated/RemoveWSManInstanceActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_WSMan_Management_Activities/SetWSManInstanceActivity.cs":  "Generated/SetWSManInstanceActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_WSMan_Management_Activities/SetWSManQuickConfigActivity.cs":  "Generated/SetWSManQuickConfigActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_WSMan_Management_Activities/TestWSManActivity.cs":  "Generated/TestWSManActivity.cs"
+}

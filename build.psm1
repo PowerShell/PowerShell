@@ -52,6 +52,9 @@ function Start-PSBuild {
         [switch]$FullCLR,
 
         [Parameter(ParameterSetName='FullCLR')]
+        [switch]$ResolveXaml,
+
+        [Parameter(ParameterSetName='FullCLR')]
         [string]$cmakeGenerator = "Visual Studio 14 2015 Win64",
 
         [Parameter(ParameterSetName='FullCLR')]
@@ -86,9 +89,8 @@ function Start-PSBuild {
 
         # msbuild is needed to build powershell.exe
         # msbuild is part of .NET Framework, we can try to get it from well-known location.
-        if (-not $NoPath -and -not (Get-Command -Name msbuild -ErrorAction Ignore)) {
-            Write-Verbose "Appending probable Visual C++ tools path"
-            $env:path += ";${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319"
+        if (-not $NoPath) {
+            Use-MSBuild
         }
 
         $precheck = $precheck -and (precheck 'msbuild' 'msbuild not found. Install Visual Studio 2015.')
@@ -150,6 +152,13 @@ function Start-PSBuild {
     {
         log "Run ResGen (generating C# bindings for resx files)"
         Start-ResGen
+    }
+
+    # handle xaml files
+    # Heuristic to resolve xaml on the fresh machine
+    if ($FullCLR -and ($ResolveXaml -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.Activities/gen/*.g.resources")))
+    {
+        Resolve-Xaml -MSBuildConfiguration $msbuildConfiguration
     }
 
     # Build native components
@@ -977,6 +986,120 @@ function Find-Dotnet() {
 
     if (-not (precheck 'dotnet' "Still could not find 'dotnet', restoring PATH.")) {
         $env:PATH = $originalPath
+    }
+}
+
+function Resolve-Xaml
+{
+    [CmdletBinding()]
+    param(
+        [Parameter()]
+        [ValidateSet("Debug", "Release")]
+        [string]
+        $MSBuildConfiguration = "Release"
+    )
+
+    Use-MSBuild
+    $precheck = precheck 'msbuild' 'msbuild not found. Install Visual Studio 2015.'
+    if (-not $precheck) {
+        return
+    }
+
+    Get-ChildItem -Path "$PSScriptRoot/src" -Directory | % {
+        
+        $XamlDir = Join-Path -Path $_.FullName -ChildPath Xamls
+        if ((Test-Path -Path $XamlDir -PathType Container) -and
+            (@(Get-ChildItem -Path "$XamlDir\*.xaml").Count -gt 0))
+        {
+            $OutputDir = Join-Path -Path $env:TEMP -ChildPath "_Resolve_Xaml_"
+            Remove-Item -Path $OutputDir -Recurse -Force -ErrorAction SilentlyContinue
+            mkdir -Path $OutputDir -Force > $null
+
+            $SourceDir = ConvertFrom-Xaml -Configuration $MSBuildConfiguration -OutputDir $OutputDir -XamlDir $XamlDir
+            $DestinationDir = Join-Path -Path $_.FullName -ChildPath gen
+            
+            if (-not (Test-Path $DestinationDir -PathType Container))
+            {
+                mkdir -Path $DestinationDir -Force > $null
+            }
+            Copy-Item -Path $SourceDir\*.cs, $SourceDir\*.g.resources -Destination $DestinationDir -Force
+        }
+    }
+}
+
+$Script:XamlProj = @"
+<Project DefaultTargets="ResolveAssemblyReferences;MarkupCompilePass1;PrepareResources" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <Language>C#</Language>
+        <AssemblyName>Microsoft.PowerShell.Activities</AssemblyName>
+        <OutputType>library</OutputType>
+        <Configuration>{0}</Configuration>
+        <Platform>Any CPU</Platform>
+        <OutputPath>{1}</OutputPath>
+        <Do_CodeGenFromXaml>true</Do_CodeGenFromXaml>
+    </PropertyGroup>
+
+    <Import Project="`$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+    <Import Project="`$(MSBuildBinPath)\Microsoft.WinFX.targets" Condition="'`$(TargetFrameworkVersion)' == 'v2.0' OR '`$(TargetFrameworkVersion)' == 'v3.0' OR '`$(TargetFrameworkVersion)' == 'v3.5'" />
+
+    <ItemGroup>
+{2}
+        <Reference Include="${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319\WPF\WindowsBase.dll">
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319\WPF\PresentationCore.dll">
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319\WPF\PresentationFramework.dll">
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+</Project>
+"@
+
+$Script:XamlProjPage = @'
+        <Page Include="{0}" />
+
+'@
+
+function script:ConvertFrom-Xaml {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string] $Configuration,
+
+        [Parameter(Mandatory=$true)]
+        [string] $OutputDir,
+
+        [Parameter(Mandatory=$true)]
+        [string] $XamlDir
+    )
+
+    $Pages = ""
+    Get-ChildItem -Path "$XamlDir\*.xaml" | % {
+        $Page = $Script:XamlProjPage -f $_.FullName
+        $Pages += $Page
+    }
+
+    $XamlProjContent = $Script:XamlProj -f $Configuration, $OutputDir, $Pages
+    $XamlProjPath = Join-Path -Path $OutputDir -ChildPath xaml.proj
+    Set-Content -Path $XamlProjPath -Value $XamlProjContent -Encoding Ascii -NoNewline -Force
+
+    msbuild $XamlProjPath > $null
+
+    if ($LASTEXITCODE -ne 0)
+    {
+        throw "'msbuild $XamlProjPath > `$null' failed with exit code $LASTEXITCODE"
+    }
+
+    return (Join-Path -Path $OutputDir -ChildPath "obj\Any CPU\$Configuration")
+}
+
+
+function script:Use-MSBuild {
+    if (-not (Get-Command -Name msbuild -ErrorAction Ignore)) {
+        Write-Verbose "Appending probable Visual C++ tools path"
+        $env:path += ";${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319"
     }
 }
 
