@@ -25,6 +25,9 @@
             "../Modules",
             "powershell.exe",
             "../../powershell.version"
+        ],
+        "exclude": [
+            "../Modules/Pester/.git"
         ]
     },
 

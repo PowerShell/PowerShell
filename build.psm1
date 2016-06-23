@@ -32,6 +32,7 @@ function Start-PSBuild {
         [string]$Output,
         [switch]$ResGen,
         [switch]$TypeGen,
+        [switch]$Clean,
 
         [Parameter(ParameterSetName='CoreCLR')]
         [switch]$Publish,
@@ -48,11 +49,11 @@ function Start-PSBuild {
         [Parameter(ParameterSetName='CoreCLR')]
         [string]$Runtime,
 
-        [Parameter(ParameterSetName='FullCLR')]
+        [Parameter(ParameterSetName='FullCLR', Mandatory=$true)]
         [switch]$FullCLR,
 
         [Parameter(ParameterSetName='FullCLR')]
-        [switch]$ResolveXaml,
+        [switch]$XamlGen,
 
         [Parameter(ParameterSetName='FullCLR')]
         [string]$cmakeGenerator = "Visual Studio 14 2015 Win64",
@@ -62,6 +63,12 @@ function Start-PSBuild {
                      "Release")]
         [string]$msbuildConfiguration = "Release"
     )
+
+    if ($Clean)
+    {
+        log "Cleaning your working directory. You can also do it with 'git clean -fdX'"
+        git clean -fdX
+    }
 
     # save Git description to file for PowerShell to include in PSVersionTable
     git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60 > "$psscriptroot/powershell.version"
@@ -87,14 +94,7 @@ function Start-PSBuild {
         # cmake is needed to build powershell.exe
         $precheck = $precheck -and (precheck 'cmake' 'cmake not found. You can install it from https://chocolatey.org/packages/cmake.portable')
 
-        # msbuild is needed to build powershell.exe
-        # msbuild is part of .NET Framework, we can try to get it from well-known location.
-        if (-not $NoPath) {
-            Use-MSBuild
-        }
-
-        $precheck = $precheck -and (precheck 'msbuild' 'msbuild not found. Install Visual Studio 2015.')
-
+        Use-MSBuild
         #mc.exe is Message Compiler for native resources
         $mcexe = Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\" -Recurse -Filter 'mc.exe' | ? {$_.FullName -match 'x64'} | select -First 1 | % {$_.FullName}
         if (-not $mcexe) {
@@ -156,9 +156,10 @@ function Start-PSBuild {
 
     # handle xaml files
     # Heuristic to resolve xaml on the fresh machine
-    if ($FullCLR -and ($ResolveXaml -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.Activities/gen/*.g.resources")))
+    if ($FullCLR -and ($XamlGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.Activities/gen/*.g.resources")))
     {
-        Resolve-Xaml -MSBuildConfiguration $msbuildConfiguration
+        log "Run XamlGen (generating .g.cs and .resources for .xaml files)"
+        Start-XamlGen -MSBuildConfiguration $msbuildConfiguration
     }
 
     # Build native components
@@ -195,17 +196,17 @@ function Start-PSBuild {
             @("nativemsh/pwrshplugin") | % {
                 $nativeResourcesFolder = $_
                 Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | % {
-                    & $mcexe -c -U $_.FullName -h $nativeResourcesFolder -r $nativeResourcesFolder
+                #    & $mcexe -c -U $_.FullName -h $nativeResourcesFolder -r $nativeResourcesFolder
                 }
             }
             
             if ($cmakeGenerator) {
-                cmake -G $cmakeGenerator .
+                Start-NativeExecution { cmake -G $cmakeGenerator . }
             } else {
-                cmake .
+                Start-NativeExecution { cmake . }
             }
 
-            Start-NativeExecution { msbuild ALL_BUILD.vcxproj /p:Configuration=$msbuildConfiguration }
+            Start-NativeExecution { msbuild powershell.vcxproj /p:Configuration=$msbuildConfiguration }
 
         } finally {
             Pop-Location
@@ -413,7 +414,7 @@ function Start-PSBootstrap {
         [string]$Version = "latest"
     )
 
-    Write-Host "Installing Open PowerShell build dependencies"
+    log "Installing Open PowerShell build dependencies"
 
     Push-Location $PSScriptRoot/tools
 
@@ -745,7 +746,7 @@ function Copy-MappedFiles {
         $cl = git --git-dir="$PSScriptRoot/.git" tag | % {if ($_ -match 'SD.(\d+)$') {[int]$Matches[1]} } | Sort-Object -Descending | Select-Object -First 1
         if ($cl)
         {
-            Write-Host -ForegroundColor Green "Current base-line CL is SD:$cl (based on tags)"
+            log "Current base-line CL is SD:$cl (based on tags)"
         }
         else 
         {
@@ -762,13 +763,12 @@ function Copy-MappedFiles {
 
             if (git log --grep="SD:$cl" HEAD^..HEAD)
             {
-                Write-Host -ForegroundColor Green "$pslMonadRoot HEAD matches [SD:$cl]"
+                log Green "$pslMonadRoot HEAD matches [SD:$cl]"
             }
             else 
             {
-                Write-Host -ForegroundColor Yellow "Try to checkout this commit in $pslMonadRoot :" 
-                git log --grep="SD:$cl"
-
+                Write-Warning "Try to checkout this commit in $pslMonadRoot :" 
+                git log --grep="SD:$cl" | Write-Warning
                 MaybeTerminatingWarning "$pslMonadRoot HEAD doesn't match [SD:$cl]"
             }
         }
@@ -879,7 +879,7 @@ function Send-GitDiffToSd {
     $m = Get-Mappings -KeepRelativePaths -Root $AdminRoot
     $affectedFiles = git diff --name-only $diffArg1 $diffArg2
     $affectedFiles | % {
-        Write-Host -Foreground Green "Changes in file $_"
+        log "Changes in file $_"
     }
 
     $rev = Get-InvertedOrderedMap $m
@@ -894,19 +894,19 @@ function Send-GitDiffToSd {
 
             $diff = git diff $diffArg1 $diffArg2 -- $file
             if ($diff) {
-                Write-Host -Foreground Green "Apply patch to $sdFilePath"
+                log "Apply patch to $sdFilePath"
                 Set-Content -Value $diff -Path $env:TEMP\diff -Encoding Ascii
                 if ($WhatIf) {
-                    Write-Host -Foreground Green "Patch content"
+                    log "Patch content"
                     Get-Content $env:TEMP\diff
                 } else {
                     & $patchPath --binary -p1 $sdFilePath $env:TEMP\diff
                 }
             } else {
-                Write-Host -Foreground Green "No changes in $file"
+                log "No changes in $file"
             }
         } else {
-            Write-Host -Foreground Green "Ignore changes in $file, because there is no mapping for it"
+            log "Ignore changes in $file, because there is no mapping for it"
         }
     }
 }
@@ -989,7 +989,7 @@ function Find-Dotnet() {
     }
 }
 
-function Resolve-Xaml
+function Start-XamlGen
 {
     [CmdletBinding()]
     param(
@@ -1000,11 +1000,6 @@ function Resolve-Xaml
     )
 
     Use-MSBuild
-    $precheck = precheck 'msbuild' 'msbuild not found. Install Visual Studio 2015.'
-    if (-not $precheck) {
-        return
-    }
-
     Get-ChildItem -Path "$PSScriptRoot/src" -Directory | % {
         
         $XamlDir = Join-Path -Path $_.FullName -ChildPath Xamls
@@ -1023,11 +1018,12 @@ function Resolve-Xaml
             $SourceDir = ConvertFrom-Xaml -Configuration $MSBuildConfiguration -OutputDir $OutputDir -XamlDir $XamlDir -IgnoreMsbuildFailure:$IgnoreFailure
             $DestinationDir = Join-Path -Path $_.FullName -ChildPath gen
             
-            if (-not (Test-Path $DestinationDir -PathType Container))
-            {
-                mkdir -Path $DestinationDir -Force > $null
+            New-Item -ItemType Directory $DestinationDir -ErrorAction SilentlyContinue > $null
+            Get-Item "$SourceDir\*.cs", "$SourceDir\*.g.resources" | % {
+                $sourcePath = $_.FullName
+                Write-Verbose "Copy generated xaml artifact: $sourcePath -> $DestinationDir"
+                Copy-Item -Path $sourcePath -Destination $DestinationDir
             }
-            Copy-Item -Path $SourceDir\*.cs, $SourceDir\*.g.resources -Destination $DestinationDir -Force
         }
     }
 }
@@ -1082,7 +1078,7 @@ function script:ConvertFrom-Xaml {
         [switch] $IgnoreMsbuildFailure
     )
 
-    Write-Verbose "ConvertFrom-Xaml for $XamlDir"
+    log "ConvertFrom-Xaml for $XamlDir"
 
     $Pages = ""
     Get-ChildItem -Path "$XamlDir\*.xaml" | % {
@@ -1114,10 +1110,27 @@ function script:ConvertFrom-Xaml {
 
 
 function script:Use-MSBuild {
-    if (-not (Get-Command -Name msbuild -ErrorAction Ignore)) {
-        Write-Verbose "Appending probable Visual C++ tools path"
-        $env:path += ";${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319"
+    # we should ALWAYS use msbuild from Microsoft.Net\Framework folder\v4.0.30319
+    # other versions may have differences in their behavior
+    # (i.e. 14.0.25123.0 has a difference in behavior about generating .cs files from XAML)
+    $canonicalMsBuildLocation = "${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319\msbuild"
+
+    $msbuild = get-command msbuild -Type Alias -ErrorAction SilentlyContinue
+    if ($msbuild)
+    {
+        if ($msbuild.Definition -eq $canonicalMsBuildLocation)
+        {
+            # all good, nothing to do
+            return
+        }
     }
+
+    if (-not (Test-Path $canonicalMsBuildLocation))
+    {
+        throw "msbuild not found in '$canonicalMsBuildLocation'. Install Visual Studio 2015."
+    }
+
+    Set-Alias msbuild $canonicalMsBuildLocation -Scope Script
 }
 
 

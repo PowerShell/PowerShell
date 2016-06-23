@@ -25,6 +25,9 @@
             "*.so",
             "*.dylib",
             "../../powershell.version"
+        ],
+        "exclude": [
+            "../Modules/Pester/.git"
         ]
     },
 
