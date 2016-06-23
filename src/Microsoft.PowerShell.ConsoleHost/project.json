@@ -53,7 +53,14 @@
             "dependencies": {
                 "Microsoft.PowerShell.ScheduledJob": "1.0.0-*",
                 "Microsoft.PowerShell.Workflow.ServiceCore": "1.0.0-*",
-                "Microsoft.PowerShell.GraphicalHost": "1.0.0-*"
+                "Microsoft.PowerShell.GraphicalHost": "1.0.0-*",
+                "Microsoft.PowerShell.Activities": "1.0.0-*",
+                "Microsoft.PowerShell.Core.Activities": "1.0.0-*",
+                "Microsoft.PowerShell.Diagnostics.Activities": "1.0.0-*",
+                "Microsoft.PowerShell.Management.Activities": "1.0.0-*",
+                "Microsoft.PowerShell.Security.Activities": "1.0.0-*",
+                "Microsoft.PowerShell.Utility.Activities": "1.0.0-*",
+                "Microsoft.WSMan.Management.Activities": "1.0.0-*"
             }
         }
     }
