@@ -409,7 +409,7 @@ function Start-PSxUnit {
 function Start-PSBootstrap {
     [CmdletBinding()]param(
         [ValidateSet("dev", "beta", "preview")]
-        [string]$Channel = "preview",
+        [string]$Channel = "rel-1.0.0",
         [string]$Version = "latest"
     )
 
