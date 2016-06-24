@@ -1010,16 +1010,18 @@ function Start-XamlGen
             Remove-Item -Path $OutputDir -Recurse -Force -ErrorAction SilentlyContinue
             mkdir -Path $OutputDir -Force > $null
 
-            # For GraphicalHost we will get failures, but it's ok: we only need to copy *.g.cs files in the dotnet cli project.
-            # For over projects we leave the check just in case.
-            # We can revisit it on case-by-case basis.
-            $IgnoreFailure = [bool]($XamlDir -match 'GraphicalHost')
-
-            $SourceDir = ConvertFrom-Xaml -Configuration $MSBuildConfiguration -OutputDir $OutputDir -XamlDir $XamlDir -IgnoreMsbuildFailure:$IgnoreFailure
+            # we will get failures, but it's ok: we only need to copy *.g.cs files in the dotnet cli project.
+            $SourceDir = ConvertFrom-Xaml -Configuration $MSBuildConfiguration -OutputDir $OutputDir -XamlDir $XamlDir -IgnoreMsbuildFailure:$true
             $DestinationDir = Join-Path -Path $_.FullName -ChildPath gen
             
             New-Item -ItemType Directory $DestinationDir -ErrorAction SilentlyContinue > $null
-            Get-Item "$SourceDir\*.cs", "$SourceDir\*.g.resources" | % {
+            $filesToCopy = Get-Item "$SourceDir\*.cs", "$SourceDir\*.g.resources"
+            if (-not $filesToCopy)
+            {
+                throw "No .cs or .g.resources files are generated for $XamlDir, something went wrong. Run 'Start-XamlGen -Verbose' for details."
+            }
+
+            $filesToCopy | % {
                 $sourcePath = $_.FullName
                 Write-Verbose "Copy generated xaml artifact: $sourcePath -> $DestinationDir"
                 Copy-Item -Path $sourcePath -Destination $DestinationDir
@@ -1097,7 +1099,7 @@ function script:ConvertFrom-Xaml {
         $message = "When processing $XamlDir 'msbuild $XamlProjPath > `$null' failed with exit code $LASTEXITCODE"
         if ($IgnoreMsbuildFailure)
         {
-            Write-Warning $message
+            Write-Verbose $message
         }
         else
         {
