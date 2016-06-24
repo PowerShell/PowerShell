@@ -58,7 +58,7 @@ that are silenced in the formatting subsystem. See issue [#984][].
 
 ## Sessions
 
-PowerShell sessions do not work because of remoting requirements, so
+On Linux, PowerShell sessions do not work because of remoting requirements, so
 `New-PSSession` etc. crash.
 
 ## Aliases
