@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell
                 result = ReadLineSafe(true, printToken);
             }
             SecureString secureResult = result as SecureString;
-            Diagnostics.Assert(secureResult != null, "ReadLineSafe did not return a SecureString");
+            System.Management.Automation.Diagnostics.Assert(secureResult != null, "ReadLineSafe did not return a SecureString");
 
             return secureResult;
         }

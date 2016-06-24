@@ -30,8 +30,8 @@ add_executable(powershell WIN32
 add_library(pwrshplugin
     nativemsh/pwrshplugin/entrypoints.cpp
     nativemsh/pwrshplugin/pwrshclrhost.cpp
-    nativemsh/pwrshplugin/pwrshpluginerrorcodes.mc
-    nativemsh/pwrshplugin/pwrshpluginerrorcodes.rc
+    #nativemsh/pwrshplugin/pwrshpluginerrorcodes.mc
+    #nativemsh/pwrshplugin/pwrshpluginerrorcodes.rc
     nativemsh/pwrshplugin/pwrshplugin.def)
 
 
