@@ -64,7 +64,7 @@ Common Engineering Practices
 ----
 Other than the guidelines ([coding](../docs/coding-guidelines/coding-guidelines.md), [RFC process](https://github.com/PowerShell/PowerShell-RFC) for design, [documentation]()
 and [testing](../docs/testing-requirements/test-guidelines.md)) discussed above, following are common engineering practices we would like everyone to follow:
-- Do not commit code changes to the master branch! You should [fork a branch](#Contributing-to-Code)
+- Do not commit code changes to the master branch! Read GitHub's guides on [Forking Project](https://guides.github.com/activities/forking/) and [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/)
 - Format commit messages as follows based on [the Tim Pope's guidelines]("http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html"):
 
 ```
