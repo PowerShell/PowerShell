@@ -1,7 +1,7 @@
 ﻿<swd:ActivityDesigner x:Class="Microsoft.PowerShell.Activities.PipelineDesigner"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:swd="clr-namespace:System.Activities.Presentation;assembly=System.Activities.Presentation">
+    xmlns:swd="clr-namespace:System.Activities.Presentation">
 
     <Grid>
         <Grid.RowDefinitions>
