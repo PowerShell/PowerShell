@@ -1,124 +1,99 @@
-Contributing to Project Magrathea
+ Contribute to PowerShell
 =================================
 
-Rules
------
+We love to have contributions from you! There are several ways to contribute such as filing issues, joining in design conversations,
+documentation, contributing to code. To keep this process smooth, there are a few guidelines mentioned below for contributors to follow.
+PowerShell team will be happy to explain the guidelines via Github Issue if you have questions.
 
-**Do not commit code changes to the master branch!**
-
-Don't forget to commit early and often!
-
-All pull requests **must** pass both CI systems before they will be approved.
-
-Write *good* commit messages. Follow Tim Pope's [guidelines][]:
-
-* The first line *must* be a short, capitalized summary
-* The second line *must* be blank
-* The rest should be a wrapped, detailed explanation of the what and why
-* The tone should be imperative
-
-[guidelines]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
-
-New to Git?
------------
-
+##New to Git?##
+- Make sure you have a [GitHub account](https://github.com/signup/free)
 - [Git Basics](../docs/git/basics.md): install and getting started.
+- [Commit process](../docs/git/committing.md): sstep-by-step instructions how to commit your changes
 - [Git for sd users](../docs/git/source-depot.md): a handy reference
-  document for people familiar with `sd`.
-- [Commit process](../docs/git/committing.md): step-by-step commit guide
-  with all gory details.
+  document for people familiar with `sd`
 
-Authentication
---------------
+  
+##Quick Start Check-list##
 
-If you do not have a preferred method of authentication, enable the storage
-credential helper, which will cache your credentials in plaintext on your
-system, so use a [token][].
+-	Read [the Community Governance] (community/governance.md) 
+-	Make sure you have signed [PowerShell Contribution License Agreement (CLA)]("Contributor License Agreement") before pull request
+- Get familar with the [PowerShell repository structure](dev-process/build/branch-structure.md)
+- Setup your [development environment] (dev-process/setup/setup-dev-environment.md)
+-	Build the [PowerShell repository] (../readme.md)
+-	[Try it out with the binaries you just built] (try-out.md)
 
-```sh
-git config --global credential.helper store
+
+##Contributing to Issues##
+
+-	Review the [Github Issue Management process](dev-process/issue-management-process.md). It covers the definition of Label, Assignee 
+and the guidance like verifying and closing issues
+- Check if the issue you are going to file already exists in [GitHub Issue query](https://github.com/PowerShell/PowerShell/issues)
+-	Submit an issue, assuming it does not exist yet, via [GitHub Issue track](https://github.com/PowerShell/PowerShell/issues) by following the [Issue template] (issue-template.md). 
+
+##Contributing to Documentation##
+- TODO: Don will fill in the details
+
+##Contributing to Code##
+
+-	[Pick something to work on] (https://github.com/PowerShell/PowerShell/issues)
+-	If what you want to work on does not exist in the query, create an issue for your work
+  - Get agreement from the PowerShell team and the community regarding your proposed change via the [Issue Triage Process](dev-process/issue-management-process.md).
+  - If you will be adding a new cmdlet or other design changes, follow [Making Design Changes guidelines]("Making Design Changes")
+  - For breaking changes, see [Make Breaking Changes guidelines]("Making Breaking Changes")
+  -	The issue filer and the implementer don't have to be the same person. So clearly state when you create an issue that you will be the implementer, so the issue can be assigned to you
+- Create a [personal fork of the repository](https://help.github.com/articles/fork-a-repo/) or a [branch](https://guides.github.com/activities/hello-world/) to start your work 
+-	Follow the [coding guidelines] (coding-guidelines/coding-guidelines.md)
+-	Ensure pass the [checkin tests] (testing-requirements/test-guidelines.md) for code changes
+-	Create a [GitHub pull request (PR)] (https://guides.github.com/activities/hello-world/)) against the upstream repository
+-	Perform a [code review] (dev-precess/code-review-guidelines.md) with the PowerShell Committee (TODO) on the pull request.
+
+
+##Making Breaking Changes##
+
+When you make code changes, please pay attention to these that can affect the [Public Contract](dev-process/breaking-change-contract.md),
+for example, PowerShell parameter, API or protocols changes.  Before starting making changes to the code, first review the [Breaking Changes guidelines] (dev-process/breaking-change-contract.md) 
+and follow the guidelines to keep PowerShell backward compatible.
+
+##Making Design Changes##
+To add new features such as cmdlets or making design changes, please follow the [PowerShell Request for Comments (RFC)](https://github.com/PowerShell/PowerShell-RFC) process.
+
+##Common Engineering Practices##
+Other than the guidelines ([coding](coding-guidelines/coding-guidelines.md), [RFC process](https://github.com/PowerShell/PowerShell-RFC) for design, [documetnation]() and [testing](testing-requirements/test-guidelines.md)) discussed above, following are common engineering practices we would like everyone to follow:
+-	Do not commit code changes to the master branch! You should [fork or checkout a branch]("Contributing to Code")
+- Format commit messages as follows based on [the Tim Pope's guidelines](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html):
 ```
+Summarize change in 50 characters or less
 
-Alternatively, on Windows, you can try the
-[Git Credential Manager for Windows][manager].
+Provide more detail after the first line. Leave one blank line below the
+summary and wrap all lines at 72 characters or less.
 
-[token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
-[manager]: https://github.com/Microsoft/Git-Credential-Manager-for-Windows
+If the change fixes an issue, leave another blank line after the final
+paragraph and indicate which issue is fixed in the specific format
+below.
 
-Microsoft employees
--------------------
-
-Microsoft employees should follow Microsoft open source [guidelinces][MS-OSS-Hub].
-
-Particularly:
-
-* [Join][MS-OSS-Hub] Microsoft GitHub organization.
-* Use your `alias@microsoft.com` for commit messages email. 
-* Enable [2 factor authentication][].
-
-[MS-OSS-Hub]: https://opensourcehub.microsoft.com/articles/how-to-join-microsoft-github-org-self-service
-[2 factor authentication]: https://github.com/blog/1614-two-factor-authentication
-
-[Branches](../docs/workflow/branches.md)
--------------------------------------
-
-* Checkout a new local branch for every change you want to make (bugfix, feature).
-* Use `alias/feature-name` pattern.
-* Use lowercase-with-dashes for naming.
-* Use same branch name in superproject and all [submodules][].
-
-[submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
-
-Permissions
------------
-
-If you have difficulty in pushing your changes, there is a high probability that
-you actually don't have permissions.
-
-Be sure that you have write access to corresponding repo (remember that
-submodules have their own privilege).
-
-Your should push to this repository instead of a fork so that the CI system can
-provide credentials to your pull request. If you make a pull request from a
-fork, the CI *will* fail.
-
-Recommended Git configurations
-------------------------------
-
-We highly recommend these configurations to help deal with whitespace,
-rebasing, and general use of Git.
-
-> Auto-corrects your command when it's sure (`stats` to `status`)
-```sh
-git config --global help.autoCorrect -1
+Fix #42
 ```
+-	Don’t commit code that you didn't write. If you find code that you think is a good fit to add to PowerShell, file an issue and start a discussion before proceeding.
+-	Create and/or update tests when making code changes
+- Run tests and ensure they are passing before pull request
+- All pull requests **must** pass CI systems before they can be approved
+-	Avoid making a big pull requests. Instead, file an issue and start a discussion with the community before you invest a large amount of time.
+-	Blog and tweet about your contributions, frequently!
 
-> Refuses to merge when pulling, and only pushes to branch with same name.
-```sh
-git config --global pull.ff only
-git config --global push.default current
+##File Headers##
+The following file header is the used for PowerShell. Please use it for new files. For more information, see [coding guidelines](coding-guidelines/coding-guidelines.md).
+```C#
+// …  TODO TODO
+// Licensed to the PowerShell …. under one or more agreements.
+// See the LICENSE file in the project root for more information.
+
 ```
+##Licensing & Copyright##
+You can find [here]() for the PowerShell sources license and copyright information.
 
-> Shows shorter commit hashes and always shows reference names in the log.
-```sh
-git config --global log.abbrevCommit true
-git config --global log.decorate short
-```
+##Contributor License Agreement##
+You must sign a PowerShell Contribution License Agreement (CLA) before your Pull Request will be merged. 
+This a one-time requirement for the PowerShell project. Signing the CLA process is simple and can be done in less than a minute. 
+You can read more about [Contribution License Agreements (CLA)](http://en.wikipedia.org/wiki/Contributor_License_Agreement) on wikipedia.
 
-> Ignores whitespace changes and uses more information when merging.
-```sh
-git config --global apply.ignoreWhitespace change
-git config --global rerere.enabled true
-git config --global rerere.autoUpdate true
-git config --global am.threeWay true
-```
-
-[Mapping](../docs/workflow/mapping.md)
------------------------------------
-
-Learn about new files locations in PowerShell/PowerShell.
-
-[Resources](../docs/workflow/resources.md)
----------------------------------------
-
-Learn how to work with string resources in `.resx` files.
+You don't have to do this up-front. You can simply clone, fork, and submit your pull-request as usual. When your pull-request is created, it is classified by a CLA bot. If the change is trivial (e.g. you just fixed a typo), then the PR is labelled with cla-not-required. Otherwise it's classified as cla-required. Once you signed a CLA, the current and all future pull-requests will be labelled as cla-signed.
