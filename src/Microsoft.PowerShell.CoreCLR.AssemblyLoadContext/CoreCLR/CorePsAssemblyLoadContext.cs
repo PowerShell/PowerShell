@@ -201,23 +201,9 @@ namespace System.Management.Automation
                         assemblyName.FullName);
                 }
 
-                try
-                {
-                    asmLoaded = asmFilePath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
-                        ? base.LoadFromNativeImagePath(asmFilePath, null)
-                        : base.LoadFromAssemblyPath(asmFilePath);
-                }
-                // Since .NET CLI built versions of PowerShell have all the
-                // built-in assemblies in the TPA list, the above will throw,
-                // and we have to use Assembly.Load. However, we must try the
-                // above first, otherwise assemblies that exist outside the TPA
-                // list will go into a recursive loop.
-                catch (System.IO.FileLoadException)
-                {
-                    asmLoaded = System.Reflection.Assembly.Load(assemblyName);
-                }
-
-                // If it loaded, add it to the cache
+                asmLoaded = asmFilePath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase) 
+                                ? base.LoadFromNativeImagePath(asmFilePath, null) 
+                                : base.LoadFromAssemblyPath(asmFilePath);
                 if (asmLoaded != null)
                 {
                     // Add the loaded assembly to the cache
@@ -251,22 +237,10 @@ namespace System.Management.Automation
                 if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
                     return asmLoaded;
 
-                try
-                {
-                    // Load the assembly through 'LoadFromNativeImagePath' or 'LoadFromAssemblyPath'
-                    asmLoaded = assemblyPath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
-                        ? base.LoadFromNativeImagePath(assemblyPath, null)
-                        : base.LoadFromAssemblyPath(assemblyPath);
-                }
-                // Since .NET CLI built versions of PowerShell have all the
-                // built-in assemblies in the TPA list, the above will throw,
-                // and we have to use Assembly.Load. However, we must try the
-                // above first, otherwise assemblies that exist outside the TPA
-                // list will go into a recursive loop.
-                catch (System.IO.FileLoadException)
-                {
-                    asmLoaded = System.Reflection.Assembly.Load(assemblyName);
-                }
+                // Load the assembly through 'LoadFromNativeImagePath' or 'LoadFromAssemblyPath'
+                asmLoaded = assemblyPath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
+                    ? base.LoadFromNativeImagePath(assemblyPath, null)
+                    : base.LoadFromAssemblyPath(assemblyPath);
 
                 if (asmLoaded != null)
                 {
