@@ -41,7 +41,7 @@
     },
 
     "frameworks": {
-        "netstandard1.5": {
+        "netstandard1.6": {
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "buildOptions": {
                 "define": [ "CORECLR", "PORTABLE" ]

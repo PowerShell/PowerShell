@@ -15,7 +15,7 @@
     },
 
     "frameworks": {
-        "netstandard1.5": {
+        "netstandard1.6": {
             "buildOptions": {
                 "define": [ "CORECLR" ],
                 "compile": {

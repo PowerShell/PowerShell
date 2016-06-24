@@ -50,7 +50,7 @@
       }
 		},
 
-		"netstandard1.5": {
+		"netstandard1.6": {
 			"imports": ["dnxcore50"],
 			"buildOptions": {
 				"define": ["CORECLR"],
