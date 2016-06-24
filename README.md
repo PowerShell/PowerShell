@@ -66,7 +66,7 @@ the appropriate issue tag.
 
 [git-basics]: docs/git/basics.md
 [git-commit]: docs/git/committing.md
-[contribution]: .github/CONTRIBUTING.md)
+[contribution]: .github/CONTRIBUTING.md
 [known-issues]: docs/KNOWNISSUES.md
 [faq]: docs/FAQ.md
 [new-issue]:https://github.com/PowerShell/PowerShell/issues/new
