@@ -1045,13 +1045,13 @@ $Script:XamlProj = @"
 
     <ItemGroup>
 {2}
-        <Reference Include="${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319\WPF\WindowsBase.dll">
+        <Reference Include="WindowsBase.dll">
             <Private>False</Private>
         </Reference>
-        <Reference Include="${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319\WPF\PresentationCore.dll">
+        <Reference Include="PresentationCore.dll">
             <Private>False</Private>
         </Reference>
-        <Reference Include="${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319\WPF\PresentationFramework.dll">
+        <Reference Include="PresentationFramework.dll">
             <Private>False</Private>
         </Reference>
     </ItemGroup>
