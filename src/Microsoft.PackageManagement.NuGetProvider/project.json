@@ -63,7 +63,7 @@
 				}
 			},
       "dependencies": {
-        "System.Linq.Parallel": "4.0.1-rc2-24027"
+        "System.Linq.Parallel": "4.0.1"
       }
 		}
 	}
