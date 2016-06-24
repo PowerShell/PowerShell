@@ -7,10 +7,11 @@
 // catalog based on the reference assemblies of .NET Core.
 //
 using System.Collections.Generic;
+using System.Runtime.Loader;
 
 namespace System.Management.Automation
 {
-    internal partial class PowerShellAssemblyLoader
+    public partial class PowerShellAssemblyLoadContext : AssemblyLoadContext
     {
         private Dictionary<string, string> InitializeTypeCatalog()
         {
