@@ -86,3 +86,75 @@ Then switch to your branch and do rebase
 ```
 git rebase master
 ```
+
+[Branches](../docs/workflow/branches.md)
+-------------------------------------
+
+* Checkout a new local branch for every change you want to make (bugfix, feature).
+* Use `alias/feature-name` pattern.
+* Use lowercase-with-dashes for naming.
+* Use same branch name in superproject and all [submodules][].
+
+[submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
+
+Authentication
+--------------
+
+If you do not have a preferred method of authentication, enable the storage
+credential helper, which will cache your credentials in plaintext on your
+system, so use a [token][].
+
+```sh
+git config --global credential.helper store
+```
+
+Alternatively, on Windows, you can try the
+[Git Credential Manager for Windows][manager].
+
+[token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
+[manager]: https://github.com/Microsoft/Git-Credential-Manager-for-Windows
+
+
+Permissions
+-----------
+
+If you have difficulty in pushing your changes, there is a high probability that
+you actually don't have permissions.
+
+Be sure that you have write access to corresponding repo (remember that
+submodules have their own privilege).
+
+Your should push to this repository instead of a fork so that the CI system can
+provide credentials to your pull request. If you make a pull request from a
+fork, the CI *will* fail.
+
+Recommended Git configurations
+------------------------------
+
+We highly recommend these configurations to help deal with whitespace,
+rebasing, and general use of Git.
+
+> Auto-corrects your command when it's sure (`stats` to `status`)
+```sh
+git config --global help.autoCorrect -1
+```
+
+> Refuses to merge when pulling, and only pushes to branch with same name.
+```sh
+git config --global pull.ff only
+git config --global push.default current
+```
+
+> Shows shorter commit hashes and always shows reference names in the log.
+```sh
+git config --global log.abbrevCommit true
+git config --global log.decorate short
+```
+
+> Ignores whitespace changes and uses more information when merging.
+```sh
+git config --global apply.ignoreWhitespace change
+git config --global rerere.enabled true
+git config --global rerere.autoUpdate true
+git config --global am.threeWay true
+```
