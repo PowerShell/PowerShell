@@ -26,7 +26,7 @@ Quick Start Check-list
 Contributing to Issue
 ----
 
-- Review the [Github Issue Management process](../docs/dev-process/issue-management-process.md). It covers our triage process and the definition of Label, Assignee and the guidance like verifying and closing issues
+- Review the [GitHub Issue Management process](../docs/dev-process/issue-management-process.md). It covers the triage process and the definition of Label, Assignee and the guidance like verifying and closing issues
 - Check if the issue you are going to file already exists in [GitHub Issue query](https://github.com/PowerShell/PowerShell/issues)
 - Submit an issue, assuming it does not exist yet, via [GitHub Issue track](https://github.com/PowerShell/PowerShell/issues) by following the issue template.
 
@@ -58,13 +58,13 @@ and follow the guidelines to keep PowerShell backward compatible.
 
 Making Design Changes
 ----
-To add new features such as cmdlets or making design changes, please follow the [PowerShell Request for Comments (RFC)]("https://github.com/PowerShell/PowerShell-RFC") process.
+To add new features such as cmdlets or making design changes, please follow the [PowerShell Request for Comments (RFC)](https://github.com/PowerShell/PowerShell-RFC) process.
 
 Common Engineering Practices
 ----
 Other than the guidelines ([coding](../docs/coding-guidelines/coding-guidelines.md), [RFC process](https://github.com/PowerShell/PowerShell-RFC) for design, [documentation]()
 and [testing](../docs/testing-requirements/test-guidelines.md)) discussed above, following are common engineering practices we would like everyone to follow:
-- Do not commit code changes to the master branch! You should [fork or checkout a branch](#Contributing-to-Code)
+- Do not commit code changes to the master branch! You should [fork a branch](#Contributing-to-Code)
 - Format commit messages as follows based on [the Tim Pope's guidelines]("http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html"):
 
 ```
@@ -80,11 +80,11 @@ below.
 Fix #42
 ```
 
-- Don't commit code that you didn't write. If you find code that you think is a good fit to add to PowerShell, file an issue and start a discussion before proceeding.
+- Don't commit code that you didn't write. If you find code that you think is a good fit to add to PowerShell, file an issue and start a discussion before proceeding
 - Create and/or update tests when making code changes
 - Run tests and ensure they are passing before pull request
 - All pull requests **must** pass CI systems before they can be approved
-- Avoid making a big pull requests. Instead, file an issue and start a discussion with the community before you invest a large amount of time.
+- Avoid making a big pull requests. Instead, file an issue and start a discussion with the community before you invest a large amount of time
 - Blog and tweet about your contributions frequently!
 
 File Headers
