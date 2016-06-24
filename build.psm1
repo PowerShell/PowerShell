@@ -1090,7 +1090,7 @@ function script:ConvertFrom-Xaml {
     $XamlProjPath = Join-Path -Path $OutputDir -ChildPath xaml.proj
     Set-Content -Path $XamlProjPath -Value $XamlProjContent -Encoding Ascii -NoNewline -Force
 
-    msbuild $XamlProjPath > $null
+    msbuild $XamlProjPath | Write-Verbose
 
     if ($LASTEXITCODE -ne 0)
     {
