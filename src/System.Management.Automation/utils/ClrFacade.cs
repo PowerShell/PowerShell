@@ -280,32 +280,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Porting note: Load assembly by name through the AssemblyLoadContext.
-        /// This is to ensure that the types get cached.
-        /// </summary>
-        internal static Assembly Load(AssemblyName assembly)
-        {
-#if CORECLR
-            return PSAssemblyLoadContext.LoadFromAssemblyName(assembly);
-#else
-            return Assembly.Load(assembly);
-#endif
-        }
-
-        /// <summary>
-        /// Same as the above, but overloaded for a name in a string.
-        /// </summary>
-        internal static Assembly Load(string assembly)
-        {
-#if CORECLR
-            return PSAssemblyLoadContext.LoadFromAssemblyName(new AssemblyName(assembly));
-#else
-            return Assembly.Load(assembly);
-#endif
-        }
-
-
-        /// <summary>
         /// Facade for EnumBuilder.CreateTypeInfo
         /// </summary>
         /// <remarks>
