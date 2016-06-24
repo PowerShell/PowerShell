@@ -10,19 +10,21 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
 using System.Runtime.Loader;
 
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The powershell custom assembly loader implementation
+    /// The powershell custom AssemblyLoadContext implementation
     /// </summary>
-    internal partial class PowerShellAssemblyLoader
+    public partial class PowerShellAssemblyLoadContext : AssemblyLoadContext
     {
         #region Resource_Strings
 
         // We cannot use a satellite resources.dll to store resource strings for Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll. This is because when retrieving resource strings, ResourceManager 
-        // tries to load the satellite resources.dll using a probing approach, which will cause an infinite loop to PowerShellAssemblyLoader.Load(AssemblyName).
+        // tries to load the satellite resources.dll using a probing approach, which will cause an infinite loop to PowerShellAssemblyLoadContext.Load(AssemblyName).
         // Take the 'en-US' culture as an example. When retrieving resource string to construct an exception, ResourceManager calls Assembly.Load(..) in the following order to load the resource dll:
         //     1. Load assembly with culture 'en-US' (Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.resources, Version=3.0.0.0, Culture=en-US, PublicKeyToken=31bf3856ad364e35)
         //     2. Load assembly with culture 'en'    (Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.resources, Version=3.0.0.0, Culture=en, PublicKeyToken=31bf3856ad364e35) 
@@ -32,10 +34,18 @@ namespace System.Management.Automation
         private const string ManifestDefinitionDoesNotMatch = "Could not load file or assembly '{0}' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference.";
         private const string AssemblyPathDoesNotExist = "Could not load file or assembly '{0}' or one of its dependencies. The system cannot find the file specified.";
         private const string InvalidAssemblyExtensionName = "Could not load file or assembly '{0}' or one of its dependencies. The file specified is not a DLL file.";
+        private const string AbsolutePathRequired = "Absolute path information is required.";
 
         #endregion Resource_Strings
 
         #region Constructor
+
+        /// <summary>
+        /// This constructor is for testability purpose only
+        /// </summary>
+        protected PowerShellAssemblyLoadContext()
+        {
+        }
 
         /// <summary>
         /// Constructor
@@ -44,7 +54,7 @@ namespace System.Management.Automation
         /// Base directory paths that are separated by semicolon ';'.
         /// They will be the default paths to probe assemblies.
         /// </param>
-        internal PowerShellAssemblyLoader(string basePaths)
+        internal PowerShellAssemblyLoadContext(string basePaths)
         {
             #region Validation
             this.basePaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
@@ -70,17 +80,11 @@ namespace System.Management.Automation
             //  - Key: namespace qualified type name (FullName)
             //  - Value: strong name of the TPA that contains the type represented by Key.
             coreClrTypeCatalog = InitializeTypeCatalog();
-
-            this.loadContext = AssemblyLoadContext.Default;
-            loadContext.Resolving += Resolve;
         }
 
         #endregion Constructor
 
         #region Fields
-
-        // AssemblyLoadContext used by this loader
-        private readonly AssemblyLoadContext loadContext;
 
         // Serialized type catalog file
         private readonly object syncObj = new object();
@@ -114,18 +118,22 @@ namespace System.Management.Automation
 
         #endregion Fields
 
+        #region Events
+
+        /// <summary>
+        /// Assembly load event
+        /// </summary>
+        internal event Action<Assembly> AssemblyLoad;
+
+        #endregion Events
+
         #region Protected_Internal_Methods
 
         /// <summary>
-        /// The global instance of PowerShellAssemblyLoader
-        /// </summary>
-        internal static PowerShellAssemblyLoader Instance { get; set; }
-
-        /// <summary>
-        /// Implement the AssemblyLoadContext.Resolving event handler. Search the requested assembly in probing paths.
+        /// Implement the AssemblyLoadContext.Load(AssemblyName). Search the requested assembly in probing paths.
         /// Search the file "[assemblyName.Name][.ni].dll" in probing paths. If the file is found and it matches the requested AssemblyName, load it with LoadFromAssemblyPath.
         /// </summary>
-        internal Assembly Resolve(AssemblyLoadContext sender, AssemblyName assemblyName)
+        protected override Assembly Load(AssemblyName assemblyName)
         {
             // Probe the assembly cache
             Assembly asmLoaded;
@@ -157,7 +165,7 @@ namespace System.Management.Automation
                         if (File.Exists(asmFilePath))
                         {
                             isAssemblyFileFound = true;
-                            AssemblyName asmNameFound = AssemblyLoadContext.GetAssemblyName(asmFilePath);
+                            AssemblyName asmNameFound = GetAssemblyName(asmFilePath);
                             if (IsAssemblyMatching(assemblyName, asmNameFound))
                             {
                                 isAssemblyFileMatching = true;
@@ -191,8 +199,8 @@ namespace System.Management.Automation
                 try
                 {
                     asmLoaded = asmFilePath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
-                        ? loadContext.LoadFromNativeImagePath(asmFilePath, null)
-                        : loadContext.LoadFromAssemblyPath(asmFilePath);
+                        ? base.LoadFromNativeImagePath(asmFilePath, null)
+                        : base.LoadFromAssemblyPath(asmFilePath);
                 }
                 // Since .NET CLI built versions of PowerShell have all the
                 // built-in assemblies in the TPA list, the above will throw,
@@ -212,46 +220,20 @@ namespace System.Management.Automation
                 }
             }
 
+            // Raise AssemblyLoad event
+            OnAssemblyLoaded(asmLoaded);
             return asmLoaded;
         }
 
         /// <summary>
-        /// Load an assembly from its name.
-        /// </summary>
-        internal Assembly LoadFromAssemblyName(AssemblyName assemblyName)
-        {
-            return loadContext.LoadFromAssemblyName(assemblyName);
-        }
-
-        /// <summary>
-        /// Load an assembly from its file path.
+        /// Load an IL or NI assembly from its file path.
         /// </summary>
         internal Assembly LoadFrom(string assemblyPath)
         {
-            #region Validation
-            if (string.IsNullOrEmpty(assemblyPath))
-            {
-                throw new ArgumentNullException("assemblyPath");
-            }
-
-            assemblyPath = Path.GetFullPath(assemblyPath);
-            if (!File.Exists(assemblyPath))
-            {
-                ThrowFileNotFoundException(
-                    AssemblyPathDoesNotExist, 
-                    assemblyPath);
-            }
-
-            if (!string.Equals(Path.GetExtension(assemblyPath), ".DLL", StringComparison.OrdinalIgnoreCase))
-            {
-                ThrowFileLoadException(
-                    InvalidAssemblyExtensionName, 
-                    assemblyPath);
-            }
-            #endregion Validation
+            ValidateAssemblyPath(assemblyPath, "assemblyPath");
 
             Assembly asmLoaded;
-            AssemblyName assemblyName = AssemblyLoadContext.GetAssemblyName(assemblyPath);
+            AssemblyName assemblyName = GetAssemblyName(assemblyPath);
 
             // Probe the assembly cache
             if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
@@ -268,8 +250,8 @@ namespace System.Management.Automation
                 {
                     // Load the assembly through 'LoadFromNativeImagePath' or 'LoadFromAssemblyPath'
                     asmLoaded = assemblyPath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
-                        ? loadContext.LoadFromNativeImagePath(assemblyPath, null)
-                        : loadContext.LoadFromAssemblyPath(assemblyPath);
+                        ? base.LoadFromNativeImagePath(assemblyPath, null)
+                        : base.LoadFromAssemblyPath(assemblyPath);
                 }
                 // Since .NET CLI built versions of PowerShell have all the
                 // built-in assemblies in the TPA list, the above will throw,
@@ -294,6 +276,8 @@ namespace System.Management.Automation
                 }
             }
 
+            // Raise AssemblyLoad event
+            OnAssemblyLoaded(asmLoaded);
             return asmLoaded;
         }
 
@@ -302,9 +286,35 @@ namespace System.Management.Automation
         /// </summary>
         internal Assembly LoadFrom(Stream assembly)
         {
-            var asm = loadContext.LoadFromStream(assembly);
-            TryAddAssemblyToCache(asm);
-            return asm;
+            if (assembly == null)
+                throw new ArgumentNullException("assembly");
+
+            Assembly asmLoaded;
+            AssemblyName assemblyName = GetAssemblyName(assembly);
+
+            // Probe the assembly cache
+            if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
+                return asmLoaded;
+
+            // Prepare to load the assembly
+            lock (syncObj)
+            {
+                // Probe the cache again in case it's already loaded
+                if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
+                    return asmLoaded;
+
+                // Load the assembly through 'base.LoadFromStream'
+                asmLoaded = base.LoadFromStream(assembly);
+                if (asmLoaded != null)
+                {
+                    // Add the loaded assembly to the cache
+                    AssemblyCache.TryAdd(assemblyName.Name, asmLoaded);
+                }
+            }
+
+            // Raise AssemblyLoad event
+            OnAssemblyLoaded(asmLoaded);
+            return asmLoaded;
         }
 
         /// <summary>
@@ -330,10 +340,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Try adding a new assembly to the cache
         /// </summary>
+        /// <remarks>
+        /// This is for adding a dynamic assembly to the cache.
+        /// PowerShell generates dynamic assemblies by directly emitting IL, and this API
+        /// is to add such assemblies to the cache so that types in them are discoverable.
+        /// </remarks>
         internal bool TryAddAssemblyToCache(Assembly assembly)
         {
             AssemblyName asmName = assembly.GetName();
-            return AssemblyCache.TryAdd(asmName.Name, assembly);
+            bool success = AssemblyCache.TryAdd(asmName.Name, assembly);
+            // Raise AssemblyLoad event
+            if (success) { OnAssemblyLoaded(assembly); }
+            return success;
         }
 
         /// <summary>
@@ -341,12 +359,17 @@ namespace System.Management.Automation
         /// </summary>
         internal string ProbeAssemblyFileForMetadataAnalysis(string assemblyShortName, string additionalSearchPath)
         {
+            if (string.IsNullOrEmpty(assemblyShortName))
+            {
+                throw new ArgumentNullException("assemblyShortName");
+            }
+
             bool useAdditionalSearchPath = false;
-            if (!string.IsNullOrWhiteSpace(additionalSearchPath))
+            if (!string.IsNullOrEmpty(additionalSearchPath))
             {
                 if (!Path.IsPathRooted(additionalSearchPath))
                 {
-                    additionalSearchPath = Path.GetFullPath(additionalSearchPath);
+                    throw new ArgumentException(AbsolutePathRequired, "additionalSearchPath");
                 }
                 useAdditionalSearchPath = Directory.Exists(additionalSearchPath);
             }
@@ -387,8 +410,74 @@ namespace System.Management.Automation
         }
 
         #endregion Protected_Internal_Methods
-
+        
         #region Private_Methods
+        
+        /// <summary>
+        /// Handle the AssemblyLoad event
+        /// </summary>
+        private void OnAssemblyLoaded(Assembly assemblyLoaded)
+        {
+            Action<Assembly> assemblyLoadHandler = AssemblyLoad;
+            if (assemblyLoaded != null && assemblyLoadHandler != null)
+            {
+                try {
+                    assemblyLoadHandler(assemblyLoaded);
+                }
+                catch {
+                    // Catch all exceptions, same behavior as AppDomain.AssemblyLoad
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validate assembly path value for the specified parameter
+        /// </summary>
+        private void ValidateAssemblyPath(string assemblyPath, string parameterName)
+        {
+            if (string.IsNullOrEmpty(assemblyPath))
+            {
+                throw new ArgumentNullException(parameterName);
+            }
+
+            if (!Path.IsPathRooted(assemblyPath))
+            {
+                throw new ArgumentException(AbsolutePathRequired, parameterName);
+            }
+            
+            if (!File.Exists(assemblyPath))
+            {
+                ThrowFileNotFoundException(
+                    AssemblyPathDoesNotExist,
+                    assemblyPath);
+            }
+
+            if (!string.Equals(Path.GetExtension(assemblyPath), ".DLL", StringComparison.OrdinalIgnoreCase))
+            {
+                ThrowFileLoadException(
+                    InvalidAssemblyExtensionName,
+                    assemblyPath);
+            }
+        }
+        
+        /// <summary>
+        /// Get AssemblyName of an assembly stream
+        /// </summary>
+        private AssemblyName GetAssemblyName(Stream assembly)
+        {
+            if (assembly == null)
+                throw new ArgumentNullException("assembly");
+
+            string strongAssemblyName = null;
+            using (PEReader peReader = new PEReader(assembly, PEStreamOptions.LeaveOpen | PEStreamOptions.PrefetchMetadata))
+            {
+                MetadataReader metadataReader = peReader.GetMetadataReader();
+                strongAssemblyName = AssemblyMetadataHelper.GetAssemblyStrongName(metadataReader);
+            }
+            
+            assembly.Seek(0, SeekOrigin.Begin);
+            return new AssemblyName(strongAssemblyName);
+        }
 
         /// <summary>
         /// Try to get the specified assembly from cache
@@ -466,25 +555,11 @@ namespace System.Management.Automation
         /// </param>
         private Assembly GetTrustedPlatformAssembly(string tpaStrongName)
         {
+            // Load the specified TPA. If the TPA is already loaded, it will be somehow
+            // cached in CoreCLR runtime, and thus calling 'Assembly.Load' again won't
+            // cause any overhead.
             AssemblyName assemblyName = new AssemblyName(tpaStrongName);
-
-            // Probe the assembly cache
-            Assembly asmLoaded;
-            if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
-                return asmLoaded;
-
-            // Prepare to load the TPA
-            lock (syncObj)
-            {
-                // Probe the cache again in case it's already loaded
-                if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
-                    return asmLoaded;
-
-                // Load the specified TPA
-                asmLoaded = Assembly.Load(assemblyName);
-                AssemblyCache.TryAdd(assemblyName.Name, asmLoaded);
-            }
-
+            Assembly asmLoaded = Assembly.Load(assemblyName);
             return asmLoaded;
         }
 
@@ -510,10 +585,10 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Set an instance of PowerShellAssemblyLoader to be the default Assembly Load Context.
+    /// Set an instance of PowerShellAssemblyLoadContext to be the default Assembly Load Context.
     /// This is the managed entry point for Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll.
     /// </summary>
-    public class PowerShellAssemblyLoadContextInitializer
+    public static class PowerShellAssemblyLoadContextInitializer
     {
         // Porting note: it's much easier to send an LPStr on Linux
         private const UnmanagedType stringType = 
@@ -524,14 +599,16 @@ namespace System.Management.Automation
             #endif
             ;
 
+        public static PowerShellAssemblyLoadContext PSAsmLoadContext;
+
         /// <summary>
         /// Set the default Assembly Load Context
         /// </summary>
         public static void SetPowerShellAssemblyLoadContext([MarshalAs(stringType)]string basePaths)
         {
-            if (PowerShellAssemblyLoader.Instance == null)
+            if (PSAsmLoadContext == null)
             {
-                PowerShellAssemblyLoader.Instance = new PowerShellAssemblyLoader(basePaths);
+                PSAsmLoadContext = new PowerShellAssemblyLoadContext(basePaths);
             }
         }
     }

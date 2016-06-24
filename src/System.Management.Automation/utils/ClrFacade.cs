@@ -97,7 +97,7 @@ namespace System.Management.Automation
 #if CORECLR
             try
             {
-            return process.SafeHandle.DangerousGetHandle();
+                return process.SafeHandle.DangerousGetHandle();
             }
             catch (InvalidOperationException)
             {
@@ -361,17 +361,25 @@ namespace System.Management.Automation
         /// <summary>
         /// Add the AssemblyLoad handler
         /// </summary>
-        // Porting note: disabled until full solution comes
-        // internal static void AddAssemblyLoadHandler(Action<Assembly> handler)
-        // {
-        //     PSAssemblyLoadContext.AssemblyLoad += handler;
-        // }
+        internal static void AddAssemblyLoadHandler(Action<Assembly> handler)
+        {
+            PSAssemblyLoadContext.AssemblyLoad += handler;
+        }
 
-        private static PowerShellAssemblyLoader PSAssemblyLoadContext
+        private static volatile PowerShellAssemblyLoadContext _psLoadContext;
+        private static PowerShellAssemblyLoadContext PSAssemblyLoadContext
         {
             get
             {
-                return PowerShellAssemblyLoader.Instance;
+                if (_psLoadContext == null)
+                {
+                    _psLoadContext = PowerShellAssemblyLoadContextInitializer.PSAsmLoadContext;
+                    if (_psLoadContext == null)
+                    {
+                        throw new InvalidOperationException(ParserStrings.InvalidAssemblyLoadContextInUse);
+                    }
+                }
+                return _psLoadContext;
             }
         }
 #endif
