@@ -1110,27 +1110,23 @@ function script:ConvertFrom-Xaml {
 
 
 function script:Use-MSBuild {
-    # we should ALWAYS use msbuild from Microsoft.Net\Framework folder\v4.0.30319
-    # other versions may have differences in their behavior
-    # (i.e. 14.0.25123.0 has a difference in behavior about generating .cs files from XAML)
-    $canonicalMsBuildLocation = "${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319\msbuild"
+    # TODO: we probably should require a particular version of msbuild, if we are taking this dependency
+    # msbuild v14 and msbuild v4 behaviors are different for XAML generation
+    $frameworkMsBuildLocation = "${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319\msbuild"
 
-    $msbuild = get-command msbuild -Type Alias -ErrorAction SilentlyContinue
+    $msbuild = get-command msbuild -ErrorAction SilentlyContinue
     if ($msbuild)
     {
-        if ($msbuild.Definition -eq $canonicalMsBuildLocation)
-        {
-            # all good, nothing to do
-            return
-        }
+        # all good, nothing to do
+        return
     }
 
-    if (-not (Test-Path $canonicalMsBuildLocation))
+    if (-not (Test-Path $frameworkMsBuildLocation))
     {
-        throw "msbuild not found in '$canonicalMsBuildLocation'. Install Visual Studio 2015."
+        throw "msbuild not found in '$frameworkMsBuildLocation'. Install Visual Studio 2015."
     }
 
-    Set-Alias msbuild $canonicalMsBuildLocation -Scope Script
+    Set-Alias msbuild $frameworkMsBuildLocation -Scope Script
 }
 
 
