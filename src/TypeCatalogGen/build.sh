@@ -1,6 +1,3 @@
-. mono-snapshot mono
-export DOTNET_REFERENCE_ASSEMBLIES_PATH=$MONO_PREFIX/lib/mono/xbuild-frameworks/
-
 pushd ../TypeCatalogParser
 dotnet restore -v Warning
 dotnet run
