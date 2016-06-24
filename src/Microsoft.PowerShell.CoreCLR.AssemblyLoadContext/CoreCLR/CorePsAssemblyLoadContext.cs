@@ -57,6 +57,11 @@ namespace System.Management.Automation
         internal PowerShellAssemblyLoadContext(string basePaths)
         {
             #region Validation
+            if (string.IsNullOrEmpty(basePaths))
+            {
+                throw new ArgumentNullException("basePaths");
+            }
+
             this.basePaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < this.basePaths.Length; i++)
             {
@@ -606,6 +611,11 @@ namespace System.Management.Automation
         /// </summary>
         public static void SetPowerShellAssemblyLoadContext([MarshalAs(stringType)]string basePaths)
         {
+            if (string.IsNullOrEmpty(basePaths))
+            {
+                throw new ArgumentNullException("basePaths");
+            }
+
             if (PSAsmLoadContext == null)
             {
                 PSAsmLoadContext = new PowerShellAssemblyLoadContext(basePaths);
