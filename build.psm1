@@ -631,7 +631,9 @@ function Publish-NuGetFeed
 'Microsoft.PowerShell.ConsoleHost',
 'Microsoft.PowerShell.PSReadLine',
 'Microsoft.PowerShell.Security',
-'System.Management.Automation'
+'System.Management.Automation',
+'Microsoft.PowerShell.CoreCLR.AssemblyLoadContext',
+'Microsoft.PowerShell.CoreCLR.Eventing'
     ) | % {
         if ($VersionSuffix)
         {
