@@ -140,6 +140,7 @@ namespace System.Management.Automation
         /// </summary>
         protected override Assembly Load(AssemblyName assemblyName)
         {
+            Console.WriteLine($"Attempting to Load {assemblyName}");
             // Probe the assembly cache
             Assembly asmLoaded;
             if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
@@ -221,6 +222,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Assembly LoadFrom(string assemblyPath)
         {
+            Console.WriteLine($"Attempting to LoadFrom {assemblyPath}");
             ValidateAssemblyPath(assemblyPath, "assemblyPath");
 
             Assembly asmLoaded;
@@ -265,6 +267,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Assembly LoadFrom(Stream assembly)
         {
+            Console.WriteLine($"Attempting to LoadFrom stream");
             if (assembly == null)
                 throw new ArgumentNullException("assembly");
 

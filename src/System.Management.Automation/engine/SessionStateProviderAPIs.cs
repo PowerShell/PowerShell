@@ -1187,8 +1187,10 @@ namespace System.Management.Automation
                 {
                     throw;
                 }
-                catch (Exception e) // Catch-all OK, 3rd party callout
+                catch (Exception) // Catch-all OK, 3rd party callout
                 {
+                    throw;
+                    #if false
                     CommandProcessorBase.CheckForSevereException(e);
                     ProviderInvocationException providerException =
                         NewProviderInvocationException(
@@ -1204,6 +1206,7 @@ namespace System.Management.Automation
                             "InitializeDefaultDrivesException",
                             ErrorCategory.InvalidOperation, 
                             provider));
+                    #endif
                 }
             }
 
