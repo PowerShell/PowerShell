@@ -1,8 +1,8 @@
  Contribute to PowerShell
 =================================
 
-We love to have contributions from you! There are several ways to contribute such as filing issues, joining in design conversations,
-documentation, contributing to code. To keep this process smooth, there are a few guidelines mentioned below for contributors to follow.
+We welcome and appreciate contributions from the community. There are many ways to become involved with PowerShell, including filing issues, joining in design conversations,
+writing and improving documentation, contributing to code. Please read the rest of this document to ensure a smooth contribution process.
 
 New to Git?
 ----
@@ -38,11 +38,11 @@ Contributing to Code
 ----
 
 - [Pick something to work on](https://github.com/PowerShell/PowerShell/issues)
-- If what you want to work on does not exist in the query, create an issue for your work
+- If you cannot find an existing issue for your desired work, open a new issue for your work
   - Get agreement from the PowerShell team and the community regarding your proposed change via the [Issue Triage Process](../docs/dev-process/issue-management-process.md).
   - If you will be adding a new cmdlet or other design changes, follow [Making Design Changes guidelines](#Making-Design-Changes)
   - For breaking changes, see [Make Breaking Changes guidelines](#Making-Breaking-Changes)
-  - The issue filer and the implementer don't have to be the same person. So clearly state when you create an issue that you will be the implementer, so the issue can be assigned to you
+  - If you would like to be assigned to the issue, please ask @powershell/powershell (TODO) for an assignment
 - Create a [personal fork of the repository](https://help.github.com/articles/fork-a-repo/) to start your work
 - Follow the [coding guidelines](../docs/coding-guidelines/coding-guidelines.md) and [testing guidelines](../docs/testing-requirements/test-guidelines.md)
 - Create a [GitHub pull request (PR)](https://guides.github.com/activities/hello-world/) against the upstream repository
