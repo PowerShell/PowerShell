@@ -21,7 +21,7 @@ namespace TypeCatalogParser
 
             System.IO.File.WriteAllLines(outputPath,
                                          // Get the target for the current runtime
-                                         from t in context.LockFile.Targets where t.RuntimeIdentifier == Constants.RuntimeIdentifier
+                                         from t in context.LockFile.Targets where t.RuntimeIdentifier == context.RuntimeIdentifier
                                          // Get the packages (not projects)
                                          from x in t.Libraries where x.Type == "package"
                                          // Get the real reference assemblies
