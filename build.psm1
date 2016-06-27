@@ -504,7 +504,7 @@ Built upon .NET Core, it is also a C# REPL.
     Write-Verbose "Packaging $Source"
 
     if ($IsWindows) {
-        $msiPackagePath = New-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -Verbose
+        $msiPackagePath = New-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -AssetsPath "$PSScriptRoot\Assets" -Verbose
         $appxPackagePath = New-AppxPackage -PackageVersion $Version -SourcePath $Source -AssetsPath "$PSScriptRoot\Assets" -Verbose
 
         $packages = @($msiPackagePath, $appxPackagePath)
