@@ -1348,7 +1348,7 @@ function New-MSIPackage
     
         # Name of the Product
         [ValidateNotNullOrEmpty()]
-        [string] $ProductName = 'OpenPowerShell', 
+        [string] $ProductName = 'PowerShell', 
 
         # Version of the Product
         [Parameter(Mandatory = $true)]
@@ -1366,7 +1366,12 @@ function New-MSIPackage
 
         # File describing the MSI Package creation semantics
         [ValidateNotNullOrEmpty()]
-        [string] $ProductWxsPath = (Join-Path $pwd '\assets\Product.wxs')
+        [string] $ProductWxsPath = (Join-Path $pwd '\assets\Product.wxs'),
+
+        # Path to Assets folder containing artifacts such as icons, images
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $AssetsPath  
 
     )    
 
@@ -1382,9 +1387,21 @@ function New-MSIPackage
     $wixHeatExePath = Join-Path $wixToolsetBinPath "Heat.exe"
     $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
     $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
+
+    Write-Verbose "Extract the version in the form of a.b.c.d for $ProductVersion"
+    $ProductVersionTokens = $ProductVersion.Split('-')
+    $ProductVersion = ([regex]::matches($ProductVersion, "\d+(\.\d+)+"))[0].value
+
+    # Need to add the last version field for makeappx
+    $ProductVersion = $ProductVersion + '.' + $ProductVersionTokens[1]
     
-    # Wix tooling does not like hyphen in the foldername
-    $ProductVersion = $ProductVersion.Replace('-', '_')
+    $assetsInSourcePath = "$ProductSourcePath" + '\assets'
+    New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
+
+    $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
+
+    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath" 
+    Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
 
     $productVersionWithName = $ProductName + "_" + $ProductVersion
     Write-Verbose "Create MSI for Product $productVersionWithName"
@@ -1420,7 +1437,7 @@ function New-AppxPackage
     
         # Name of the Package
         [ValidateNotNullOrEmpty()]
-        [string] $PackageName = 'OpenPowerShell', 
+        [string] $PackageName = 'PowerShell', 
 
         # Version of the Package
         [Parameter(Mandatory = $true)]
@@ -1471,9 +1488,9 @@ function New-AppxPackage
 
     $appxManifest = @"
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">
-  <Identity Name="Microsoft.OpenPowerShell" ProcessorArchitecture="x64" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="#VERSION#" />
+  <Identity Name="Microsoft.PowerShell" ProcessorArchitecture="x64" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="#VERSION#" />
   <Properties>
-    <DisplayName>OpenPowerShell</DisplayName>
+    <DisplayName>PowerShell</DisplayName>
     <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
     <Logo>#LOGO#</Logo>
   </Properties>
@@ -1488,8 +1505,8 @@ function New-AppxPackage
     <rescap:Capability Name="runFullTrust" />
   </Capabilities>
   <Applications>
-    <Application Id="OpenPowerShell" Executable="powershell.exe" EntryPoint="Windows.FullTrustApplication">
-      <uap:VisualElements DisplayName="OpenPowerShell" Description="OpenPowerShell Package" BackgroundColor="transparent" Square150x150Logo="#SQUARE150x150LOGO#" Square44x44Logo="#SQUARE44x44LOGO#">
+    <Application Id="PowerShell" Executable="powershell.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements DisplayName="PowerShell" Description="PowerShell for every system" BackgroundColor="transparent" Square150x150Logo="#SQUARE150x150LOGO#" Square44x44Logo="#SQUARE44x44LOGO#">
       </uap:VisualElements>
     </Application>
   </Applications>
