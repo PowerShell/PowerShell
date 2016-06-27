@@ -28,12 +28,6 @@ namespace PSTests
         }
 
         [Fact]
-        public static void TestUsesCodeSignedAssemblies()
-        {
-            Assert.False(Platform.UsesCodeSignedAssemblies());
-        }
-
-        [Fact]
         public static void TestHasDriveAutoMounting()
         {
             Assert.False(Platform.HasDriveAutoMounting());
