@@ -13,6 +13,14 @@ namespace TypeCatalogParser
     {
         public static void Main(string[] args)
         {
+            // These are packages that are not part of .NET Core and must be excluded
+            string[] excludedPackages = {
+                "Microsoft.Management.Infrastructure",
+                "Microsoft.Management.Infrastructure.Native"
+                // We need to exclude Newtonsoft.Json once the ALC story is figured out
+                // "Newtonsoft.Json"
+            };
+
             // The TypeCatalogGen project takes this as input
             var outputPath = "../TypeCatalogGen/powershell.inc";
 
@@ -23,7 +31,7 @@ namespace TypeCatalogParser
                                          // Get the target for the current runtime
                                          from t in context.LockFile.Targets where t.RuntimeIdentifier == context.RuntimeIdentifier
                                          // Get the packages (not projects)
-                                         from x in t.Libraries where x.Type == "package"
+                                         from x in t.Libraries where (x.Type == "package" && !excludedPackages.Contains(x.Name))
                                          // Get the real reference assemblies
                                          from y in x.CompileTimeAssemblies where y.Path.EndsWith(".dll")
                                          // Construct the path to the assemblies
