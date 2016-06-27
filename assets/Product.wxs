@@ -36,11 +36,8 @@
     <!-- Embed Cabinet Files in Product-->
     <MediaTemplate EmbedCab="yes" />
     
-    <!-- In Your Wix Setup Project, Add A Reference To WixUIExtension.dll -->
-    <!-- This is a minimal User Interface.  In fact, it only displays a license -->
-    <!-- acceptance dialog.  It doesn’t do anything else except provide -->
-    <!-- basic status during installation. -->
-    <UIRef Id="WixUI_Minimal" />
+    <!-- In Your Wix Setup Project, Add A Reference To WixUIExtension.dll -->    
+    <UIRef Id="WixUI_InstallDir" />
 
     <!-- Features are mandatory.  Need At Least One. -->
     <Feature Id="ProductFeature" Title="PowerShell" Level="1">
@@ -49,8 +46,8 @@
       <ComponentRef Id="ApplicationProgramsMenuShortcut"/>
     </Feature>
 
-    <!--We need to show EULA, but not provide option to customize download location-->    
-    <Property Id="WixUI_Minimal" Value="$(var.ProductVersionWithName)" />
+    <!--We need to show EULA, and provide option to customize download location-->        
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFiles64Folder">
