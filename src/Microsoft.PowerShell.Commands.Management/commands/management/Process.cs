@@ -2574,7 +2574,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (password != IntPtr.Zero)
                         {
-                            ClrFacade.ZeroFreeCoTaskMemUnicode(password);
+                            Marshal.ZeroFreeCoTaskMemUnicode(password);
                         }
                     }
                 }//end of if

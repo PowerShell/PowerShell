@@ -1023,7 +1023,7 @@ namespace System.Management.Automation.Internal
                     {
                         data[i] = Marshal.ReadByte(ptr, i);
                     }
-                    ClrFacade.ZeroFreeCoTaskMemUnicode(ptr);
+                    Marshal.ZeroFreeCoTaskMemUnicode(ptr);
 
                     try
                     {

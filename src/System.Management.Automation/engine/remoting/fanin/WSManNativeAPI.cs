@@ -379,7 +379,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 if (cred.password != IntPtr.Zero)
                 {
-                    ClrFacade.ZeroFreeCoTaskMemUnicode(cred.password);
+                    Marshal.ZeroFreeCoTaskMemUnicode(cred.password);
                     cred.password = IntPtr.Zero;
                 }
 
