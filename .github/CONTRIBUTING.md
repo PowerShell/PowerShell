@@ -9,8 +9,7 @@ New to Git?
 - Make sure you have a [GitHub account](https://github.com/signup/free)
 - [Git Basics](../docs/git/basics.md): install and getting started.
 - [Commit process](../docs/git/committing.md): step-by-step instructions how to commit your changes
-- [Git for sd users](../docs/git/source-depot.md): a handy reference document for
-people familiar with `sd`
+- [Git for sd users](../docs/git/source-depot.md): a handy reference document for people familiar with `sd`
 
 
 Quick Start Check-list
@@ -19,7 +18,7 @@ Quick Start Check-list
 - Make sure you have signed [PowerShell Contribution License Agreement (CLA)](#contributor-license-agreement) before pull request
 - Get familiar with the [PowerShell repository](../docs/git/powershell-repository-101.md)
 - Setup your [development environment](../docs/dev-process/setup-dev-environment.md)
-- Build the [PowerShell repository](../readme.md)
+- Build the [PowerShell repository](https://github.com/PowerShell/PowerShell)
 - [Try it out with the binaries you just built](../docs/dev-process/tryit.md)
 
 
@@ -45,7 +44,7 @@ Contributing to Code
   - If you would like to be assigned to the issue, please ask @powershell/powershell (TODO) for an assignment
 - Create a [personal fork of the repository](https://help.github.com/articles/fork-a-repo/) to start your work
 - Follow the [coding guidelines](../docs/coding-guidelines/coding-guidelines.md) and [testing guidelines](../docs/testing-guidelines/testing-guidelines.md)
-- Read the [Pull Request (PR) Guidelines](docs/dev-process/pull-request-rules.md) and create a [PR](https://guides.github.com/activities/hello-world/) against the upstream repository
+- Read the [Pull Request (PR) Guidelines](../docs/dev-process/pull-request-rules.md) and create a [PR](https://guides.github.com/activities/hello-world/) against the upstream repository
 - Perform a [code review](../docs/dev-process/code-review-guidelines.md) with the PowerShell Committee (TODO) on the pull request.
 
 
@@ -62,7 +61,7 @@ To add new features such as cmdlets or making design changes, please follow the 
 
 Common Engineering Practices
 ----
-Other than the guidelines ([coding](../docs/coding-guidelines/coding-guidelines.md), [RFC process](https://github.com/PowerShell/PowerShell-RFC) for design, [documentation]()
+Other than the guidelines ([coding](../docs/coding-guidelines/coding-guidelines.md), [RFC process](https://github.com/PowerShell/PowerShell-RFC) for design, [documentation](#contributing-to-documentation)
 and [testing](../docs/testing-guidelines/testing-guidelines.md)) discussed above, following are common engineering practices we would like everyone to follow:
 - Do not commit code changes to the master branch! Read GitHub's guides on [Forking Project](https://guides.github.com/activities/forking/) and [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/)
 - Format commit messages as follows based on [the Tim Pope's guidelines]("http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html"):
@@ -89,7 +88,7 @@ Fix #42
 
 File Headers
 ----
-The following file header is the used for PowerShell. Please use it for new files. For more information, see [coding guidelines](coding-guidelines/coding-guidelines.md).
+The following file header is the used for PowerShell. Please use it for new files. For more information, see [coding guidelines](../docs/coding-guidelines/coding-guidelines.md).
 ```C#
 // …  TODO TODO
 // Licensed to the PowerShell …. under one or more agreements.
