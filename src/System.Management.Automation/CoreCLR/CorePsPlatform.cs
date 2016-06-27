@@ -208,11 +208,6 @@ namespace System.Management.Automation
             return IsWindows;
         }
 
-        internal static bool UsesCodeSignedAssemblies()
-        {
-            return !Platform.IsCore;
-        }
-
         // This is mainly with respect to the auto-mounting of
         // disconnected network drives on Windows
         internal static bool HasDriveAutoMounting()

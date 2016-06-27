@@ -22,7 +22,7 @@ namespace PSTests
         public void TestReadCoreEngineSnapIn()
         {
             PSSnapInInfo pSSnapInInfo = PSSnapInReader.ReadCoreEngineSnapIn();
-            Assert.Contains("PublicKeyToken=null", pSSnapInInfo.AssemblyName);
+            Assert.Contains("PublicKeyToken=31bf3856ad364e35", pSSnapInInfo.AssemblyName);
         }
     }
 }

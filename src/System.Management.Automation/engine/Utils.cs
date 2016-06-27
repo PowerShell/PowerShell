@@ -1263,25 +1263,8 @@ namespace System.Management.Automation
             public static extern bool FindClose(IntPtr hFindFile);
         }
 
-        // Porting note: PublicKeyToken must be null if code signed
-        // assemblies aren't supported
-        private static string strongNamePublicKeyToken
-        {
-            get
-            {
-                if (Platform.UsesCodeSignedAssemblies())
-                {
-                    return "31bf3856ad364e35";
-                }
-                else
-                {
-                    return "null";
-                }
-            }
-        }
-
         internal static readonly string PowerShellAssemblyStrongNameFormat =
-            "{0}, Version=3.0.0.0, Culture=neutral, PublicKeyToken={1}";
+            "{0}, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
 
         internal static readonly HashSet<string> PowerShellAssemblies =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -1338,8 +1321,7 @@ namespace System.Management.Automation
 
                 if ((fixedName != null) && PowerShellAssemblies.Contains(fixedName))
                 {
-                    return string.Format(CultureInfo.InvariantCulture, PowerShellAssemblyStrongNameFormat,
-                                         fixedName, strongNamePublicKeyToken);
+                    return string.Format(CultureInfo.InvariantCulture, PowerShellAssemblyStrongNameFormat, fixedName);
                 }
             }
 
