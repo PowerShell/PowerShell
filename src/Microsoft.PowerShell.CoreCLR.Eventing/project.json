@@ -17,6 +17,7 @@
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
+                "NETStandard.Library": "1.6.0",
                 "System.Security.Principal": "4.0.1",
                 "System.Security.Principal.Windows": "4.0.0",
                 "System.Diagnostics.TraceSource": "4.0.0",
