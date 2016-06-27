@@ -1,4 +1,4 @@
- Contribute to PowerShell
+Contribute to PowerShell
 =================================
 
 We welcome and appreciate contributions from the community. There are many ways to become involved with PowerShell, including filing issues, joining in design conversations,
@@ -16,11 +16,11 @@ people familiar with `sd`
 Quick Start Check-list
 ----
 - Read [the Community Governance](../docs/community/governance.md)
-- Make sure you have signed [PowerShell Contribution License Agreement (CLA)](#Contributor-License-Agreement) before pull request
-- Get familiar with the [PowerShell repository structure](../docs/dev-process/build/branch-structure.md)
-- Setup your [development environment](../docs/dev-process/setup/setup-dev-environment.md)
+- Make sure you have signed [PowerShell Contribution License Agreement (CLA)](#contributor-license-agreement) before pull request
+- Get familiar with the [PowerShell repository](../docs/git/powershell-repository-101.md)
+- Setup your [development environment](../docs/dev-process/setup-dev-environment.md)
 - Build the [PowerShell repository](../readme.md)
-- [Try it out with the binaries you just built](../docs/try-out.md)
+- [Try it out with the binaries you just built](../docs/dev-process/tryit.md)
 
 
 Contributing to Issue
@@ -40,12 +40,12 @@ Contributing to Code
 - [Pick something to work on](https://github.com/PowerShell/PowerShell/issues)
 - If you cannot find an existing issue for your desired work, open a new issue for your work
   - Get agreement from the PowerShell team and the community regarding your proposed change via the [Issue Triage Process](../docs/dev-process/issue-management-process.md).
-  - If you will be adding a new cmdlet or other design changes, follow [Making Design Changes guidelines](#Making-Design-Changes)
-  - For breaking changes, see [Make Breaking Changes guidelines](#Making-Breaking-Changes)
+  - If you will be adding a new cmdlet or other design changes, follow [Making Design Changes guidelines](#making-design-changes)
+  - For breaking changes, see [Make Breaking Changes guidelines](#making-breaking-changes)
   - If you would like to be assigned to the issue, please ask @powershell/powershell (TODO) for an assignment
 - Create a [personal fork of the repository](https://help.github.com/articles/fork-a-repo/) to start your work
-- Follow the [coding guidelines](../docs/coding-guidelines/coding-guidelines.md) and [testing guidelines](../docs/testing-requirements/test-guidelines.md)
-- Create a [GitHub pull request (PR)](https://guides.github.com/activities/hello-world/) against the upstream repository
+- Follow the [coding guidelines](../docs/coding-guidelines/coding-guidelines.md) and [testing guidelines](../docs/testing-guidelines/testing-guidelines.md)
+- Read the [Pull Request (PR) Guidelines](docs/dev-process/pull-request-rules.md) and create a [PR](https://guides.github.com/activities/hello-world/) against the upstream repository
 - Perform a [code review](../docs/dev-process/code-review-guidelines.md) with the PowerShell Committee (TODO) on the pull request.
 
 
@@ -63,7 +63,7 @@ To add new features such as cmdlets or making design changes, please follow the 
 Common Engineering Practices
 ----
 Other than the guidelines ([coding](../docs/coding-guidelines/coding-guidelines.md), [RFC process](https://github.com/PowerShell/PowerShell-RFC) for design, [documentation]()
-and [testing](../docs/testing-requirements/test-guidelines.md)) discussed above, following are common engineering practices we would like everyone to follow:
+and [testing](../docs/testing-guidelines/testing-guidelines.md)) discussed above, following are common engineering practices we would like everyone to follow:
 - Do not commit code changes to the master branch! Read GitHub's guides on [Forking Project](https://guides.github.com/activities/forking/) and [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/)
 - Format commit messages as follows based on [the Tim Pope's guidelines]("http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html"):
 
@@ -98,7 +98,7 @@ The following file header is the used for PowerShell. Please use it for new file
 
 Licensing & Copyright
 ----
-You can find [here]() for the PowerShell sources license and copyright information.
+You can find [here](../docs/community/legal-licensing.md) for the PowerShell sources license and copyright information.
 
 Contributor License Agreement
 ----
