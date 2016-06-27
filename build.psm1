@@ -1341,6 +1341,36 @@ internal class {0} {{
     return $resultCode -replace "`r`n?|`n","`r`n"
 }
 
+# Builds coming out of this project can have version number as 'a.b.c' OR 'a.b.c-d-f'
+# This function converts the above version into major.minor[.build[.revision]] format
+function Get-PackageVersionAsMajorMinorBuildRevision
+{
+    [CmdletBinding()]
+    param (
+        # Version of the Package
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $Version
+        )
+
+    Write-Verbose "Extract the version in the form of major.minor[.build[.revision]] for $Version"
+    $packageVersionTokens = $Version.Split('-')
+    $packageVersion = ([regex]::matches($Version, "\d+(\.\d+)+"))[0].value
+
+    if (1 -eq $packageVersionTokens.Count)
+    {           
+        # In case the input is of the form a.b.c, add a '0' at the end for revision field
+       $packageVersion = $packageVersion + '.0'
+    }
+    elseif (1 -lt $packageVersionTokens.Count)
+    {
+        # We have all the four fields
+       $packageVersion = $packageVersion + '.' + $packageVersionTokens[1]
+    }
+
+    return $packageVersion
+}
+
 function New-MSIPackage
 {
     [CmdletBinding()]
@@ -1388,12 +1418,7 @@ function New-MSIPackage
     $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
     $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
 
-    Write-Verbose "Extract the version in the form of a.b.c.d for $ProductVersion"
-    $ProductVersionTokens = $ProductVersion.Split('-')
-    $ProductVersion = ([regex]::matches($ProductVersion, "\d+(\.\d+)+"))[0].value
-
-    # Need to add the last version field for makeappx
-    $ProductVersion = $ProductVersion + '.' + $ProductVersionTokens[1]
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion -Verbose
     
     $assetsInSourcePath = "$ProductSourcePath" + '\assets'
     New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
@@ -1454,13 +1479,8 @@ function New-AppxPackage
         [ValidateNotNullOrEmpty()]
         [string] $AssetsPath        
     )
-    
-    Write-Verbose "Extract the version in the form of a.b.c.d for $PackageVersion"
-    $PackageVersionTokens = $PackageVersion.Split('-')
-    $PackageVersion = ([regex]::matches($PackageVersion, "\d+(\.\d+)+"))[0].value
-
-    # Need to add the last version field for makeappx
-    $PackageVersion = $PackageVersion + '.' + $PackageVersionTokens[1]
+        
+    $PackageVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $PackageVersion -Verbose
     Write-Verbose "Package Version is $PackageVersion"
 
     $win10sdkBinPath = "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64"
