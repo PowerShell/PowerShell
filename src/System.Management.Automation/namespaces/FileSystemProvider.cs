@@ -7799,7 +7799,7 @@ namespace Microsoft.PowerShell.Commands
         private bool wait;
 
         /// <summary>
-        /// When the �Raw switch is present, we don�t do any breaks on newlines,
+        /// When the Raw switch is present, we don't do any breaks on newlines,
         /// and only emit one object to the pipeline: all of the content.
         /// </summary>
         [Parameter]
