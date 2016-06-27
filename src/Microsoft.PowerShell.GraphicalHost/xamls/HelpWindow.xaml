@@ -45,7 +45,7 @@
         </Grid>
 
         <ScrollViewer x:Name="Scroll" HorizontalAlignment="Stretch" Grid.Row="1" AutomationProperties.Name="{Binding HelpTitle}">
-            <RichTextBox x:Name="HelpText" FontFamily="Consolas" VerticalScrollBarVisibility="Disabled" BorderThickness="0" IsReadOnly="True" IsReadOnlyCaretVisible="True" AutomationProperties.Name="{Binding HelpTitle}">
+            <RichTextBox x:Name="HelpText" FontFamily="Consolas" VerticalScrollBarVisibility="Disabled" BorderThickness="0" IsReadOnly="True" AutomationProperties.Name="{Binding HelpTitle}">
                 <RichTextBox.LayoutTransform>
                     <ScaleTransform ScaleX="{Binding Path=ZoomLevel}" ScaleY="{Binding Path=ZoomLevel}"/>
                 </RichTextBox.LayoutTransform>
