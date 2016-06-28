@@ -110,6 +110,18 @@ try
                     Remove-Module -ErrorAction SilentlyContinue PSWorkflow
                 }
             }
+
+            It 'loads CimCmdlets' {
+                try
+                {
+                    Import-Module CimCmdlets -ErrorAction Stop
+                    Get-CimClass | Should Not Be $null
+                }
+                finally
+                {
+                    Remove-Module -ErrorAction SilentlyContinue CimCmdlets
+                }
+            }
         }
     }    
 
