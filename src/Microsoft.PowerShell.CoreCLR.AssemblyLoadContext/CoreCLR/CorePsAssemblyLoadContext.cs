@@ -89,6 +89,8 @@ namespace System.Management.Automation
                 throw new ArgumentNullException("basePaths");
             }
 
+            trace = System.Environment.GetEnvironmentVariable("ALC_TRACE") == "1";
+
             this.basePaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < this.basePaths.Length; i++)
             {
@@ -137,6 +139,8 @@ namespace System.Management.Automation
         //  - Value: strong name of the TPA that contains the type represented by Key.
         private readonly Dictionary<string, string> coreClrTypeCatalog;
         private readonly string[] extensions = new string[] { ".ni.dll", ".dll" };
+        private readonly bool trace;
+        private HashSet<string> filterSet;
 
         /// <summary>
         /// Assembly cache accross the AppDomain
@@ -189,7 +193,20 @@ namespace System.Management.Automation
             if (useResolvingHandlerOnly)
                 throw new NotSupportedException(UseResolvingEventHandlerOnly);
 
-            System.Console.WriteLine("== LC1 == Requesting: {0}", assemblyName.FullName);
+            if (trace)
+                System.Console.WriteLine("== LC1 == Requesting: {0}", assemblyName.FullName);
+            if (filterSet == null)
+            {
+                filterSet = new HashSet<string>(coreClrTypeCatalog.Values);
+            }
+            
+            if (filterSet.Contains(assemblyName.FullName))
+            {
+                if (trace)
+                    System.Console.WriteLine("  ++ Return null from Load override");
+                return null;
+            }
+
             return Resolve(this, assemblyName);
         }
 
@@ -247,7 +264,8 @@ namespace System.Management.Automation
                 // In this case, return null so that other Resolving event handlers can kick in to resolve the request.
                 if (!isAssemblyFileFound || !isAssemblyFileMatching)
                 {
-                    System.Console.WriteLine("  -- Return null");
+                    if (trace)
+                        System.Console.WriteLine("  -- Return null");
                     return null;
                 }
 
@@ -258,7 +276,8 @@ namespace System.Management.Automation
                 {
                     // Add the loaded assembly to the cache
                     AssemblyCache.TryAdd(assemblyName.Name, asmLoaded);
-                    System.Console.WriteLine("  ++ Load succeed: {0}", asmLoaded.FullName);
+                    if (trace)
+                        System.Console.WriteLine("  ++ Load succeed: {0}", asmLoaded.FullName);
                 }
             }
 
@@ -273,7 +292,8 @@ namespace System.Management.Automation
         internal Assembly LoadFrom(string assemblyPath)
         {
             ValidateAssemblyPath(assemblyPath, "assemblyPath");
-            System.Console.WriteLine("*** LC1 *** LoadFrom {0}", assemblyPath);
+            if (trace)
+                System.Console.WriteLine("*** LC1 *** LoadFrom {0}", assemblyPath);
 
             Assembly asmLoaded;
             AssemblyName assemblyName = GetAssemblyName(assemblyPath);
@@ -304,7 +324,8 @@ namespace System.Management.Automation
                     {
                         probingPaths.Add(parentPath);
                     }
-                    System.Console.WriteLine("  ++ LoadFrom succeed: {0}", asmLoaded.FullName);
+                    if (trace)
+                        System.Console.WriteLine("  ++ LoadFrom succeed: {0}", asmLoaded.FullName);
                 }
             }
 
