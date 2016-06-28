@@ -6,7 +6,6 @@
     "monad/src/host/msh/Serialization.cs":  "host/msh/Serialization.cs",
     "monad/src/host/msh/ConsoleHostUserInterface.cs":  "host/msh/ConsoleHostUserInterface.cs",
     "monad/src/host/msh/StartTranscriptCmdlet.cs":  "host/msh/StartTranscriptCmdlet.cs",
-    "monad/miscfiles/modules/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1":  "Modules/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1",
     "monad/src/host/msh/resources/ProgressNodeStrings.resx":  "resources/ProgressNodeStrings.resx",
     "monad/src/host/msh/resources/ConsoleHostRawUserInterfaceStrings.resx":  "resources/ConsoleHostRawUserInterfaceStrings.resx",
     "monad/src/host/msh/PendingProgress.cs":  "host/msh/PendingProgress.cs",
@@ -29,11 +28,7 @@
     "monad/src/singleshell/installer/MshHostMshSnapin.cs":  "singleshell/installer/MshHostMshSnapin.cs",
     "monad/src/host/msh/resources/CommandLineParameterParserStrings.resx":  "resources/CommandLineParameterParserStrings.resx",
     "monad/src/host/msh/resources/ManagedEntranceStrings.resx":  "resources/ManagedEntranceStrings.resx",
-    "monad/miscfiles/modules/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1":  "Modules/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1",
     "monad/src/singleshell/installer/EngineInstaller.cs":  "singleshell/installer/EngineInstaller.cs",
     "monad/src/host/msh/ConsoleHostRawUserInterface.cs":  "host/msh/ConsoleHostRawUserInterface.cs",
     "monad/src/host/msh/ConsoleHost.cs":  "host/msh/ConsoleHost.cs",
-    "monad/src/ScheduledJob/PSScheduledJob.Format.ps1xml": "Modules/PSScheduledJob/PSScheduledJob.Format.ps1xml",
-    "monad/src/ScheduledJob/PSScheduledJob.psd1": "Modules/PSScheduledJob/PSScheduledJob.psd1",
-    "monad/src/ScheduledJob/PSScheduledJob.types.ps1xml": "Modules/PSScheduledJob/PSScheduledJob.types.ps1xml"
 }

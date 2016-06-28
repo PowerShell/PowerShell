@@ -1,0 +1,7 @@
+{
+    "monad/miscfiles/modules/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1":  "Modules/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1",
+    "monad/miscfiles/modules/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1":  "Modules/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1",
+    "monad/src/ScheduledJob/PSScheduledJob.Format.ps1xml": "Modules/PSScheduledJob/PSScheduledJob.Format.ps1xml",
+    "monad/src/ScheduledJob/PSScheduledJob.psd1": "Modules/PSScheduledJob/PSScheduledJob.psd1",
+    "monad/src/ScheduledJob/PSScheduledJob.types.ps1xml": "Modules/PSScheduledJob/PSScheduledJob.types.ps1xml"
+}
