@@ -763,7 +763,7 @@ function Copy-MappedFiles {
 
             if (git log --grep="SD:$cl" HEAD^..HEAD)
             {
-                log Green "$pslMonadRoot HEAD matches [SD:$cl]"
+                log "$pslMonadRoot HEAD matches [SD:$cl]"
             }
             else 
             {
