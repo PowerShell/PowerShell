@@ -288,7 +288,7 @@ using System.Runtime.Loader;
 
 namespace System.Management.Automation
 {{
-    public partial class PowerShellAssemblyLoadContext : AssemblyLoadContext
+    internal partial class PowerShellAssemblyLoadContext : AssemblyLoadContext
     {{
         private Dictionary<string, string> InitializeTypeCatalog()
         {{
