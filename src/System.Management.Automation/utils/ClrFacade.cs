@@ -661,7 +661,7 @@ namespace System.Management.Automation
         internal static void SetProfileOptimizationRoot(string directoryPath)
         {
 #if CORECLR
-            System.Runtime.Loader.AssemblyLoadContext.Default.SetProfileOptimizationRoot(directoryPath);
+            PSAssemblyLoadContext.SetProfileOptimizationRootImpl(directoryPath); 
 #else
             System.Runtime.ProfileOptimization.SetProfileRoot(directoryPath);
 #endif
@@ -674,7 +674,7 @@ namespace System.Management.Automation
         internal static void StartProfileOptimization(string profile)
         {
 #if CORECLR
-            System.Runtime.Loader.AssemblyLoadContext.Default.StartProfileOptimization(profile);
+            PSAssemblyLoadContext.StartProfileOptimizationImpl(profile); 
 #else
             System.Runtime.ProfileOptimization.StartProfile(profile);
 #endif
