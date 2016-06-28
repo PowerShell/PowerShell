@@ -97,7 +97,7 @@ namespace System.Management.Automation
 #if CORECLR
             try
             {
-            return process.SafeHandle.DangerousGetHandle();
+                return process.SafeHandle.DangerousGetHandle();
             }
             catch (InvalidOperationException)
             {
@@ -280,32 +280,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Porting note: Load assembly by name through the AssemblyLoadContext.
-        /// This is to ensure that the types get cached.
-        /// </summary>
-        internal static Assembly Load(AssemblyName assembly)
-        {
-#if CORECLR
-            return PSAssemblyLoadContext.LoadFromAssemblyName(assembly);
-#else
-            return Assembly.Load(assembly);
-#endif
-        }
-
-        /// <summary>
-        /// Same as the above, but overloaded for a name in a string.
-        /// </summary>
-        internal static Assembly Load(string assembly)
-        {
-#if CORECLR
-            return PSAssemblyLoadContext.LoadFromAssemblyName(new AssemblyName(assembly));
-#else
-            return Assembly.Load(assembly);
-#endif
-        }
-
-
-        /// <summary>
         /// Facade for EnumBuilder.CreateTypeInfo
         /// </summary>
         /// <remarks>
@@ -361,17 +335,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Add the AssemblyLoad handler
         /// </summary>
-        // Porting note: disabled until full solution comes
-        // internal static void AddAssemblyLoadHandler(Action<Assembly> handler)
-        // {
-        //     PSAssemblyLoadContext.AssemblyLoad += handler;
-        // }
+        internal static void AddAssemblyLoadHandler(Action<Assembly> handler)
+        {
+            PSAssemblyLoadContext.AssemblyLoad += handler;
+        }
 
-        private static PowerShellAssemblyLoader PSAssemblyLoadContext
+        private static PowerShellAssemblyLoadContext PSAssemblyLoadContext
         {
             get
             {
-                return PowerShellAssemblyLoader.Instance;
+                return PowerShellAssemblyLoadContext.Instance;
             }
         }
 #endif
@@ -688,7 +661,7 @@ namespace System.Management.Automation
         internal static void SetProfileOptimizationRoot(string directoryPath)
         {
 #if CORECLR
-            System.Runtime.Loader.AssemblyLoadContext.Default.SetProfileOptimizationRoot(directoryPath);
+            PSAssemblyLoadContext.SetProfileOptimizationRootImpl(directoryPath); 
 #else
             System.Runtime.ProfileOptimization.SetProfileRoot(directoryPath);
 #endif
@@ -701,7 +674,7 @@ namespace System.Management.Automation
         internal static void StartProfileOptimization(string profile)
         {
 #if CORECLR
-            System.Runtime.Loader.AssemblyLoadContext.Default.StartProfileOptimization(profile);
+            PSAssemblyLoadContext.StartProfileOptimizationImpl(profile); 
 #else
             System.Runtime.ProfileOptimization.StartProfile(profile);
 #endif

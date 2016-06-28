@@ -30,7 +30,8 @@ Describe 'build.psm1 and powershell.exe' {
         }
 
         It 'loads Microsoft.PowerShell.Workflow.ServiceCore.dll' {
-            workflow wfTest {}; wfTest ## Trigger the loading of ServiceCore.dll
+            workflow wfTest { Split-Path $pwd }
+            wfTest | Should Not Be $null ## Also trigger the loading of ServiceCore.dll
             [Microsoft.PowerShell.Workflow.PSWorkflowJob].Assembly.Location | Should Be (
                 Join-Path $env:DEVPATH Microsoft.PowerShell.Workflow.ServiceCore.dll)
         }

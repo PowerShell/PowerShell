@@ -618,7 +618,7 @@ namespace System.Management.Automation.Runspaces
             try
             {
                 // WARNING: DUPLICATE CODE see InitialSessionState
-                assembly = ClrFacade.Load(new AssemblyName(mshsnapinInfo.AssemblyName));
+                assembly = Assembly.Load(new AssemblyName(mshsnapinInfo.AssemblyName));
             }
             catch (FileLoadException e)
             {

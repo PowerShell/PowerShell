@@ -1559,7 +1559,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    loadedAssembly = ClrFacade.Load(new AssemblyName(assemblyString));
+                    loadedAssembly = Assembly.Load(new AssemblyName(assemblyString));
                 }
                 catch (FileNotFoundException fileNotFound)
                 {
