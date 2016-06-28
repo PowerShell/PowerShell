@@ -1409,7 +1409,7 @@ namespace System.Management.Automation
                                     "SecurityMshSnapInResources,Description","SecurityMshSnapInResources,Vendor")
                             };
 
-#if !LINUX
+#if !PORTABLE
                             if (!Utils.IsWinPEHost())
                             {
                                 defaultMshSnapins.Add(new DefaultPSSnapInInformation("Microsoft.WSMan.Management", "Microsoft.WSMan.Management", null,
