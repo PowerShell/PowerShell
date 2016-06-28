@@ -189,6 +189,7 @@ namespace System.Management.Automation
             if (useResolvingHandlerOnly)
                 throw new NotSupportedException(UseResolvingEventHandlerOnly);
 
+            System.Console.WriteLine("== LC1 == Requesting: {0}", assemblyName.FullName);
             return Resolve(this, assemblyName);
         }
 
@@ -246,6 +247,7 @@ namespace System.Management.Automation
                 // In this case, return null so that other Resolving event handlers can kick in to resolve the request.
                 if (!isAssemblyFileFound || !isAssemblyFileMatching)
                 {
+                    System.Console.WriteLine("  -- Return null");
                     return null;
                 }
 
@@ -256,6 +258,7 @@ namespace System.Management.Automation
                 {
                     // Add the loaded assembly to the cache
                     AssemblyCache.TryAdd(assemblyName.Name, asmLoaded);
+                    System.Console.WriteLine("  ++ Load succeed: {0}", asmLoaded.FullName);
                 }
             }
 
@@ -270,6 +273,7 @@ namespace System.Management.Automation
         internal Assembly LoadFrom(string assemblyPath)
         {
             ValidateAssemblyPath(assemblyPath, "assemblyPath");
+            System.Console.WriteLine("*** LC1 *** LoadFrom {0}", assemblyPath);
 
             Assembly asmLoaded;
             AssemblyName assemblyName = GetAssemblyName(assemblyPath);
@@ -300,6 +304,7 @@ namespace System.Management.Automation
                     {
                         probingPaths.Add(parentPath);
                     }
+                    System.Console.WriteLine("  ++ LoadFrom succeed: {0}", asmLoaded.FullName);
                 }
             }
 
@@ -436,10 +441,28 @@ namespace System.Management.Automation
             return coreClrTypeCatalog.Keys;
         }
 
+        /// <summary>
+        /// Set the profile optimization root on the approprite load context
+        /// </summary>
+        internal void SetProfileOptimizationRootImpl(string directoryPath)
+        {
+            if (this.useResolvingHandlerOnly)
+                activeLoadContext.SetProfileOptimizationRoot(directoryPath);
+        }
+
+        /// <summary>
+        /// Start the profile optimization on the approprite load context
+        /// </summary>
+        internal void StartProfileOptimizationImpl(string profile)
+        {
+            if (this.useResolvingHandlerOnly)
+                activeLoadContext.StartProfileOptimization(profile);
+        }
+
         #endregion Protected_Internal_Methods
-        
+
         #region Private_Methods
-        
+
         /// <summary>
         /// Handle the AssemblyLoad event
         /// </summary>
