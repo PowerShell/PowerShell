@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/powershell/provider/2008/09" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:provider="http://schemas.microsoft.com/powershell/provider/2008/09" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <import schemaLocation="developerCommand.xsd" namespace="http://schemas.microsoft.com/maml/dev/command/2004/10" />
+  <element name="ProviderHelp">
+    <complexType>
+      <sequence>
+        <element name="Name" type="string" minOccurs="1" maxOccurs="1" />
+        <element name="Drives" minOccurs="0" maxOccurs="1">
+          <complexType>
+            <sequence>
+              <element name="Para" type="string" minOccurs="1" maxOccurs="unbounded" />
+            </sequence>
+          </complexType>
+        </element>
+        <element name="Synopsis" type="string" minOccurs="0" maxOccurs="1" />
+        <element name="DetailedDescription" minOccurs="0" maxOccurs="1">
+          <complexType>
+            <sequence>
+              <element name="Para" type="string" minOccurs="1" maxOccurs="unbounded" />
+            </sequence>
+          </complexType>
+        </element>
+        <element name="Capabilities" minOccurs="0" maxOccurs="1">
+          <complexType>
+            <sequence>
+              <element name="Para" type="string" minOccurs="1" maxOccurs="unbounded" />
+            </sequence>
+          </complexType>
+        </element>
+        <element name="Filters" minOccurs="0" maxOccurs="1">
+          <complexType>
+            <sequence>
+              <element name="Para" type="string" minOccurs="1" maxOccurs="unbounded" />
+            </sequence>
+          </complexType>
+        </element>
+        <element name="Notes" type="string" minOccurs="0" maxOccurs="1" />
+        <element name="Tasks" minOccurs="0" maxOccurs="1">
+          <complexType>
+            <sequence>
+              <element name="Task" minOccurs="1" maxOccurs="unbounded">
+                <complexType>
+                  <sequence>
+                    <element name="Title" type="string" />
+                    <element name="Description">
+                      <complexType>
+                        <sequence>
+                          <element name="Para" type="string" minOccurs="1" maxOccurs="unbounded" />
+                        </sequence>
+                      </complexType>
+                    </element>
+                    <element name="Examples">
+                      <complexType>
+                        <sequence>
+                          <element name="Example" minOccurs="1" maxOccurs="unbounded">
+                            <complexType>
+                              <sequence>
+                                <element name="Title" type="string" />
+                                <element name="Introduction">
+                                  <complexType>
+                                    <sequence>
+                                      <element name="Para" type="string" minOccurs="1" maxOccurs="unbounded" />
+                                    </sequence>
+                                  </complexType>
+                                </element>
+                                <element name="Code" type="string" />
+                                <element name="Remarks">
+                                  <complexType>
+                                    <sequence>
+                                      <element name="Para" type="string" minOccurs="1" maxOccurs="unbounded" />
+                                    </sequence>
+                                  </complexType>
+                                </element>
+                              </sequence>
+                            </complexType>
+                          </element>
+                        </sequence>
+                      </complexType>
+                    </element>
+                  </sequence>
+                </complexType>
+              </element>
+            </sequence>
+          </complexType>
+        </element>
+        <element name="DynamicParameters" minOccurs="0" maxOccurs="1">
+          <complexType>
+            <sequence>
+              <element name="DynamicParameter" minOccurs="1" maxOccurs="unbounded">
+                <complexType>
+                  <sequence>
+                    <element name="Name" type="string" />
+                    <element name="CmdletSupported" type="string" />
+                    <element name="Type">
+                      <complexType>
+                        <sequence>
+                          <element name="Name" type="string" />
+                        </sequence>
+                      </complexType>
+                    </element>
+                    <element name="Description" type="string" />
+                    <element name="PossibleValues">
+                      <complexType>
+                        <sequence>
+                          <element name="PossibleValue" minOccurs="1" maxOccurs="unbounded">
+                            <complexType>
+                              <sequence>
+                                <element name="Value" type="string" />
+                                <element name="Description">
+                                  <complexType>
+                                    <sequence>
+                                      <element name="Para" type="string" minOccurs="1" maxOccurs="unbounded" />
+                                    </sequence>
+                                  </complexType>
+                                </element>
+                              </sequence>
+                            </complexType>
+                          </element>
+                        </sequence>
+                      </complexType>
+                    </element>
+                  </sequence>
+                </complexType>
+              </element>
+            </sequence>
+          </complexType>
+        </element>
+        <element name="RelatedLinks" type="string" minOccurs="0" maxOccurs="1" />
+        <element name="CmdletHelpPaths" minOccurs="0" maxOccurs="1">
+          <complexType>
+            <sequence>
+              <element name="CmdletHelpPath" minOccurs="1" maxOccurs="unbounded">
+                <complexType>
+                  <sequence>
+                    <element ref="command:command" />
+                  </sequence>
+                  <attribute name="ID" type="string" />
+                </complexType>
+              </element>
+            </sequence>
+          </complexType>
+        </element>
+      </sequence>
+    </complexType>
+  </element>
+</schema>

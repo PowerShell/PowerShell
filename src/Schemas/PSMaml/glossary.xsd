@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10"
+    xmlns:doc="http://schemas.microsoft.com/maml/internal"
+    xmlns:maml="http://schemas.microsoft.com/maml/2004/10"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    blockDefault="#all"
+    xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema definition defines the glossary content type for the Content Studio Schema. This schema is part of the base layer.</documentation>
+  </annotation>
+  <include schemaLocation="structure.xsd"/>
+  <!-- element declarations -->
+  <element name="glossary">
+    <annotation>
+      <documentation>Describes the content model for the glossary content type. Glossary topics contain a set of terms and associated definitions.</documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element ref="maml:title"/>
+        <element ref="maml:subTitle" minOccurs="0"/>
+        <choice>
+          <element ref="maml:glossaryDiv" maxOccurs="unbounded"/>
+          <element ref="maml:glossaryEntry" maxOccurs="unbounded"/>
+        </choice>
+      </sequence>
+      <attribute name="contentType" type="token">
+	  	<annotation>
+			<documentation>Specifies the type of content for the document.</documentation>
+		</annotation>
+	  </attribute>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    </complexType>
+  </element>
+  <element name="glossaryDiv">
+    <annotation>
+      <documentation>Describes a titled section within a glossary. Each glossaryDiv element can contain one or more glossaryEntry elements. </documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element ref="maml:title"/>
+        <element ref="maml:glossaryEntry" maxOccurs="unbounded"/>
+      </sequence>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+      <attribute name="class" type="string">
+	  	<annotation>
+			<documentation>Specifies the class of the element.</documentation>
+		</annotation>
+	   </attribute>
+    </complexType>
+  </element>
+</schema>

@@ -1,52 +1,53 @@
-Describe 'build.psm1 and powershell.exe' {
-    Context '$env:DEVPATH assemblies loading' {
-        It 'has $env:DEVPATH set' {
-            $env:DEVPATH | Should Not Be $null
-        }
+$originalPSModulePath = $env:PSModulePath 
+try 
+{
+    # load all modules only from $env:DEVPATH !!!
+    $env:PSModulePath = "$($env:DEVPATH)\Modules"
 
-        It 'loads System.Management.Automation.dll' {
-            [psobject].Assembly.Location | Should Be (
-                Join-Path $env:DEVPATH System.Management.Automation.dll)
-        }
+    # this Describe makes sure we build all the dlls we want and load them from the right place
+    Describe 'build.psm1 and powershell.exe' {
+        Context '$env:DEVPATH assemblies loading' {
+            It 'has $env:DEVPATH set' {
+                $env:DEVPATH | Should Not Be $null
+            }
 
-        It 'loads Microsoft.PowerShell.Commands.Management.dll' {
-            [Microsoft.PowerShell.Commands.GetChildItemCommand].Assembly.Location | Should Be (
-                Join-Path $env:DEVPATH Microsoft.PowerShell.Commands.Management.dll)
-        }
+            It 'loads System.Management.Automation.dll' {
+                [psobject].Assembly.Location | Should Be (
+                    Join-Path $env:DEVPATH System.Management.Automation.dll)
+            }
 
-        It 'loads Microsoft.PowerShell.Commands.Utility.dll' {
-            [Microsoft.PowerShell.Commands.UtilityResources].Assembly.Location | Should Be (
-                Join-Path $env:DEVPATH Microsoft.PowerShell.Commands.Utility.dll)
-        }
+            It 'loads Microsoft.PowerShell.Commands.Management.dll' {
+                [Microsoft.PowerShell.Commands.GetChildItemCommand].Assembly.Location | Should Be (
+                    Join-Path $env:DEVPATH Microsoft.PowerShell.Commands.Management.dll)
+            }
 
-        It 'loads Microsoft.PowerShell.ConsoleHost.dll' {
-            [Microsoft.PowerShell.ConsoleShell].Assembly.Location | Should Be (
-                Join-Path $env:DEVPATH Microsoft.PowerShell.ConsoleHost.dll)
-        }
+            It 'loads Microsoft.PowerShell.Commands.Utility.dll' {
+                [Microsoft.PowerShell.Commands.UtilityResources].Assembly.Location | Should Be (
+                    Join-Path $env:DEVPATH Microsoft.PowerShell.Commands.Utility.dll)
+            }
 
-        It 'loads Microsoft.PowerShell.Security.dll' {
-            [Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase].Assembly.Location | Should Be (
-                Join-Path $env:DEVPATH Microsoft.PowerShell.Security.dll)
-        }
+            It 'loads Microsoft.PowerShell.ConsoleHost.dll' {
+                [Microsoft.PowerShell.ConsoleShell].Assembly.Location | Should Be (
+                    Join-Path $env:DEVPATH Microsoft.PowerShell.ConsoleHost.dll)
+            }
 
-        It 'loads Microsoft.PowerShell.Workflow.ServiceCore.dll' {
-            workflow wfTest { Split-Path $pwd }
-            wfTest | Should Not Be $null ## Also trigger the loading of ServiceCore.dll
-            [Microsoft.PowerShell.Workflow.PSWorkflowJob].Assembly.Location | Should Be (
-                Join-Path $env:DEVPATH Microsoft.PowerShell.Workflow.ServiceCore.dll)
+            It 'loads Microsoft.PowerShell.Security.dll' {
+                [Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase].Assembly.Location | Should Be (
+                    Join-Path $env:DEVPATH Microsoft.PowerShell.Security.dll)
+            }
+
+            It 'loads Microsoft.PowerShell.Workflow.ServiceCore.dll' {
+                workflow wfTest { Split-Path $pwd }
+                wfTest | Should Not Be $null ## Also trigger the loading of ServiceCore.dll
+                [Microsoft.PowerShell.Workflow.PSWorkflowJob].Assembly.Location | Should Be (
+                    Join-Path $env:DEVPATH Microsoft.PowerShell.Workflow.ServiceCore.dll)
+            }
         }
     }
-}
 
-Describe 'Modules for the packge' {
-    Context '$env:DEVPATH Modules loading' {
-
-        $originalPSModulePath = $env:PSModulePath 
-        try 
-        {
-            # load all modules only from $env:DEVPATH !!!
-            $env:PSModulePath = "$($env:DEVPATH)\Modules"
-
+    # this Describe makes sure we binplace all the files, like psd1, psm1, ps1xml and load usable modules from them
+    Describe 'Modules for the packge' {
+        Context '$env:DEVPATH Modules loading' {
             It 'loads Microsoft.PowerShell.LocalAccounts' {
                 try
                 {
@@ -84,11 +85,48 @@ Describe 'Modules for the packge' {
                     Remove-Module -ErrorAction SilentlyContinue PsScheduledJob
                 }
             }            
-        }
-        finally
-        {
-            $env:PSModulePath = $originalPSModulePath
-        }
-    }
-}
 
+
+            It 'loads PSWorkflowUtility' {
+                try
+                {
+                    Import-Module PSWorkflowUtility -ErrorAction Stop
+                    Invoke-AsWorkflow -Expression { 'foo' } | Should Be 'foo'
+                }
+                finally
+                {
+                    Remove-Module -ErrorAction SilentlyContinue PSWorkflowUtility
+                }
+            }
+
+            It 'loads PSWorkflow' {
+                try
+                {
+                    Import-Module PSWorkflow -ErrorAction Stop
+                    New-PSWorkflowExecutionOption | Should Not Be $null
+                }
+                finally
+                {
+                    Remove-Module -ErrorAction SilentlyContinue PSWorkflow
+                }
+            }
+
+            It 'loads CimCmdlets' {
+                try
+                {
+                    Import-Module CimCmdlets -ErrorAction Stop
+                    Get-CimClass | Should Not Be $null
+                }
+                finally
+                {
+                    Remove-Module -ErrorAction SilentlyContinue CimCmdlets
+                }
+            }
+        }
+    }    
+
+}
+finally
+{
+    $env:PSModulePath = $originalPSModulePath
+}     

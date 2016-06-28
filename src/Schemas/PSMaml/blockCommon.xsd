@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10"
+    xmlns:doc="http://schemas.microsoft.com/maml/internal"
+    xmlns:maml="http://schemas.microsoft.com/maml/2004/10"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    blockDefault="#all"
+    xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>Defines block inline types for the Content Studio Schema. This schema is part of the base layer.</documentation>
+  </annotation>
+  <!-- include and import declarations -->
+  <include schemaLocation="inline.xsd"/>
+  <!-- Element declarations -->
+  <element name="leadInPhrase">
+    <annotation>
+      <documentation>Describes a span of introductory text within a para element.</documentation>
+    </annotation>
+    <complexType mixed="true">
+      <attribute name="class" default="summary">
+        <annotation>
+          <documentation>Specifies a class for the leadInPhrase element.</documentation>
+        </annotation>
+        <simpleType>
+          <restriction base="string">
+            <enumeration value="summary"/>
+            <enumeration value="other"/>
+          </restriction>
+        </simpleType>
+      </attribute>
+    </complexType>
+  </element>
+  <element name="para">
+    <annotation>
+      <documentation>Describes a paragraph, the most basic documentation unit. In addition to text, it can contain child elements to indicate various inline text types, or to add functionality such as a task or a shortcut.</documentation>
+    </annotation>
+    <complexType mixed="true">
+      <sequence>
+        <element ref="maml:leadInPhrase" minOccurs="0"/>
+        <group ref="maml:inlineGroup" minOccurs="0" maxOccurs="unbounded"/>
+      </sequence>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    </complexType>
+  </element>
+  <complexType name="titleType" mixed="true">
+    <sequence minOccurs="0" maxOccurs="unbounded">
+      <choice>
+        <element ref="maml:conditionalInline"/>
+        <element ref="maml:acronym"/>
+        <element ref="maml:notLocalizable"/>
+      </choice>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="title" type="maml:titleType">
+    <annotation>
+      <documentation>Specifies the title of a document, or part of a document.</documentation>
+    </annotation>
+  </element>
+  <element name="subTitle" type="maml:titleType">
+    <annotation>
+      <documentation>Specifies a secondary title for a document, or part of a document.</documentation>
+    </annotation>
+  </element>
+  <element name="quote" type="maml:inlineType">
+    <annotation>
+      <documentation>Describes a quotation. The quote element can contain text and child elements, which can be used to indicate various inline text types.</documentation>
+    </annotation>
+  </element>
+  <element name="parameterizedBlock" type="maml:parameterizedContentType">
+    <annotation>
+      <documentation>Replaced at build time by the shared content to which it refers using the parameters provided by the user. The parameters can consist of text, and XML markup. In most cases the parameter values will not be localizable content.</documentation>
+    </annotation>
+  </element>
+  <element name="crossReference" type="maml:textType"/>
+  <annotation>
+    <documentation>Specifies a link to another entry within a document.</documentation>
+  </annotation>
+  <!-- group declarations -->
+  <group name="blockCommonGroup">
+    <choice>
+      <element ref="maml:para"/>
+      <element ref="maml:alertSet"/>
+      <element ref="maml:quote"/>
+      <element ref="maml:parameterizedBlock"/>
+    </choice>
+  </group>
+</schema>

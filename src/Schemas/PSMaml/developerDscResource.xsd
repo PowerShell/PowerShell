@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/dev/dscResource/2004/10" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dscResource="http://schemas.microsoft.com/maml/dev/dscResource/2004/10" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema describes MAML (Microsoft Assistance Markup Language). MAML is intended for software documentation. In particular, MAML is intended to accommodate the needs of Microsoft documentation.</documentation>
+    <documentation>The schema is broken into three main areas: end user, developer and IT Pro. These areas represent the main categories of Microsoft documentation.</documentation>
+    <documentation>The namespace uri for this version of MAML is: http://schemas.microsoft.com/maml/2004/10.</documentation>
+    <documentation>Each backwards-incompatible revision to MAML will require that the date fields be appropriately incremented in uri of the updated version of the MAML schema.</documentation>
+  </annotation>
+  <import schemaLocation="maml.xsd" namespace="http://schemas.microsoft.com/maml/2004/10"/>
+  <import schemaLocation="developer.xsd" namespace="http://schemas.microsoft.com/maml/dev/2004/10"/>
+  <import schemaLocation="developerCommand.xsd" namespace="http://schemas.microsoft.com/maml/dev/command/2004/10"/>
+  <!-- ROOT ELEMENT DEFINITION -->
+  <element name="dscResource" type="dscResource:dscResourceType">
+    <annotation>
+      <documentation>Root element of DscResource type.</documentation>
+    </annotation>
+  </element>
+  <complexType name="dscResourceType">
+    <sequence>
+      <element ref="dscResource:details"/>
+      <element ref="maml:description"/>
+      <element ref="dscResource:properties"/>
+      <element ref="dev:examples" minOccurs="0"/>
+      <element ref="maml:alertSet" minOccurs="0" maxOccurs="unbounded"/>
+      <element ref="maml:relatedLinks" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <!-- END ROOT ELEMENT DEFINITION -->  
+  <element name="properties" type="dscResource:propertyGroupType"/>
+  <complexType name="propertyGroupType">
+    <complexContent>
+      <extension base="command:parametersType">
+        <sequence/>
+      </extension>
+    </complexContent>
+  </complexType>  
+  <element name ="details" type="dscResource:details"/>
+  <complexType name="details">
+    <sequence>
+      <element ref="maml:name"/>
+      <element ref="maml:description"/>            
+    </sequence>
+  </complexType>  
+</schema>

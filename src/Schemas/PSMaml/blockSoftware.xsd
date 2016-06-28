@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema definition defines block inline types for the CS Schema. This schema is part of the base layer.</documentation>
+  </annotation>
+  <!-- include and import declarations -->
+  <import  schemaLocation="developer.xsd" namespace="http://schemas.microsoft.com/maml/dev/2004/10"/>
+  <include schemaLocation="inline.xsd"/>
+  <!-- Element declarations -->
+  <element name="computerOutput" type="maml:inlineType">
+    <annotation>
+      <documentation>Identifies a span of text that relates to a user interface, or console output text.</documentation>
+    </annotation>
+  </element>
+  <!-- group declarations -->
+  <group name="blockSoftwareGroup">
+    <choice>
+      <group ref="dev:codeGroup"/>
+      <element ref="maml:computerOutput"/>
+    </choice>
+  </group>
+</schema>

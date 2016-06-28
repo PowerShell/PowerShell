@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/dev/managed/xaml/2004/10" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:managed="http://schemas.microsoft.com/maml/dev/managed/2004/10" xmlns:xaml="http://schemas.microsoft.com/maml/dev/managed/xaml/2004/10" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema describes MAML (Microsoft Assistance Markup Language). MAML is intended for software documentation. In particular, MAML is intended to accommodate the needs of Microsoft documentation.</documentation>
+    <documentation>The schema is broken into three main areas: end user, developer and IT Pro. These areas represent the main categories of Microsoft documentation.</documentation>
+    <documentation>The namespace uri for this version of MAML is: http://schemas.microsoft.com/maml/2004/10.</documentation>
+    <documentation>Each backwards-incompatible revision to MAML will require that the date fields be appropriately incremented in uri of the updated version of the MAML schema.</documentation>
+  </annotation>
+  <annotation>
+    <documentation>This portion of the schema was created by chains in Dec 2004.</documentation>
+  </annotation>
+  <import schemaLocation="maml.xsd" namespace="http://schemas.microsoft.com/maml/2004/10"/>
+  <import schemaLocation="developer.xsd" namespace="http://schemas.microsoft.com/maml/dev/2004/10"/>
+  <import schemaLocation="developerManaged.xsd" namespace="http://schemas.microsoft.com/maml/dev/managed/2004/10"/>
+  <!-- ***************************************************************** -->
+  <element name="class" type="xaml:classType"/>
+  <complexType name="classType">
+    <complexContent>
+      <extension base="managed:classType">
+        <sequence>
+          <element ref="xaml:attributeUsage"/>
+          <element ref="xaml:elementUsage"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="struct" type="xaml:structureType"/>
+  <complexType name="structureType">
+    <complexContent>
+      <extension base="managed:structureType">
+        <sequence>
+          <element ref="xaml:attributeUsage"/>
+          <element ref="xaml:elementUsage"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="enumeration" type="xaml:enumerationType"/>
+  <complexType name="enumerationType">
+    <complexContent>
+      <extension base="managed:enumerationType">
+        <sequence>
+          <element ref="xaml:attributeUsage"/>
+          <element ref="xaml:elementUsage"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="interface" type="xaml:interfaceType"/>
+  <complexType name="interfaceType">
+    <complexContent>
+      <extension base="managed:interfaceType">
+        <sequence>
+          <element ref="xaml:attributeUsage"/>
+          <element ref="xaml:elementUsage"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="property" type="xaml:propertyType"/>
+  <complexType name="propertyType">
+    <complexContent>
+      <extension base="managed:propertyType">
+        <sequence>
+          <element ref="xaml:attributeValue"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="attributeUsage" type="xaml:attributeUsageType"/>
+  <complexType name="attributeUsageType">
+    <sequence>
+      <element name="simpleNotation" minOccurs="0"/>
+      <element name="compoundNotation"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="simpleNotation" type="xaml:notationType"/>
+  <element name="compoundNotation" type="xaml:notationType"/>
+  <complexType name="notationType">
+    <sequence>
+      <element ref="maml:description" minOccurs="0"/>
+      <element ref="xaml:syntaxExamples"/>
+      <element ref="dev:remarks" minOccurs="0"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="syntaxExamples" type="xaml:syntaxExamplesType"/>
+  <complexType name="syntaxExamplesType">
+    <sequence>
+      <element ref="xaml:syntaxExample" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="syntaxExample" type="xaml:syntaxExampleType"/>
+  <complexType name="syntaxExampleType">
+    <sequence>
+      <element ref="maml:description" minOccurs="0"/>
+      <element ref="xaml:syntax"/>
+      <element ref="dev:possibleValues" minOccurs="0"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    <attribute name="devlang" type="maml:devLanguagesType"/>
+  </complexType>
+  <element name="syntax" type="xaml:syntaxType"/>
+  <complexType name="syntaxType">
+    <sequence>
+      <choice maxOccurs="unbounded">
+        <element ref="maml:lineBreak"/>
+        <element ref="maml:replaceable"/>
+        <element ref="dev:type"/>
+      </choice>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="elementUsage" type="xaml:elementUsageType"/>
+  <complexType name="elementUsageType">
+    <sequence>
+      <element ref="maml:introduction"/>
+      <element ref="xaml:syntaxExample"/>
+      <element ref="dev:remarks" minOccurs="0"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="attributeValues" type="xaml:attributeValuesType"/>
+  <complexType name="attributeValuesType">
+    <sequence>
+      <element ref="xaml:attributeValue" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="attributeValue" type="xaml:attributeValueType"/>
+  <complexType name="attributeValueType">
+    <sequence>
+      <element ref="maml:name"/>
+      <element ref="dev:type"/>
+      <element ref="maml:description"/>
+      <element ref="dev:possibleValues"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    <attribute name="simple" type="boolean"/>
+    <attribute name="compound" type="boolean"/>
+  </complexType>
+</schema>

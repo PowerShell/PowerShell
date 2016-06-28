@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10"
+    xmlns:doc="http://schemas.microsoft.com/maml/internal"
+    xmlns:maml="http://schemas.microsoft.com/maml/2004/10"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    blockDefault="#all"
+    xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema definition defines the inline UI elements for the Content Studio Schema. This schema is part of the base layer.</documentation>
+  </annotation>
+  <!-- include and import declarations -->
+  <include schemaLocation="base.xsd"/>
+  <!-- element declarations -->
+  <element name="menuSelection">
+    <annotation>
+      <documentation>Identifies one or more selections from a menu.</documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element ref="maml:shortcut" minOccurs="0"/>
+        <choice maxOccurs="unbounded">
+          <group ref="maml:userActionsGroup"/>
+          <element ref="maml:icon"/>
+          <element ref="maml:label"/>
+          <element ref="maml:menu"/>
+        </choice>
+      </sequence>
+    </complexType>
+  </element>
+  <element name="shortcut">
+    <annotation>
+      <documentation>Identifies a computer keyboard key combination for an action that is also available through the menu.</documentation>
+    </annotation>
+    <complexType>
+      <choice maxOccurs="unbounded">
+        <group ref="maml:userActionsGroup"/>
+      </choice>
+      <attributeGroup ref="maml:userInstructionAttributeGroup"/>
+    </complexType>
+  </element>
+  <element name="button">
+    <annotation>
+      <documentation>Specifies which mouse button to click, as part of a UI automation sequence.</documentation>
+    </annotation>
+    <complexType>
+      <simpleContent>
+        <extension base="token">
+          <attribute name="type" use="required">
+            <simpleType>
+              <restriction base="token">
+                <enumeration value="leftMouseButton"/>
+                <enumeration value="middleMouseButton"/>
+                <enumeration value="rightMouseButton"/>
+                <enumeration value="macMouseButton"/>
+                <enumeration value="toolbarButton"/>
+                <enumeration value="dialogButton"/>
+                <enumeration value="genericButton"/>
+              </restriction>
+            </simpleType>
+          </attribute>
+        </extension>
+      </simpleContent>
+    </complexType>
+  </element>
+  <element name="label" type="token">
+    <annotation>
+      <documentation>Describes the identifying text on a user interface element, within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="icon" type="token">
+    <annotation>
+      <documentation>Identifies descriptive text for an icon or graphic that appears in a user interface element, within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="menu">
+    <annotation>
+      <documentation>Identifies the name of a menu, within a body of text.</documentation>
+    </annotation>
+    <complexType>
+      <choice>
+        <element ref="maml:menuItem"/>
+        <element ref="maml:menu"/>
+      </choice>
+    </complexType>
+  </element>
+  <element name="menuItem" type="token">
+    <annotation>
+      <documentation>Identifies the name of a menu item, within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="key" type="token">
+    <annotation>
+      <documentation>Identifies the name of a key on the computer keyboard, within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="symbolicName" type="token">
+    <annotation>
+      <documentation>Identifies the symbolic name of a key on the computer keyboard, within a body of text.</documentation>
+    </annotation>
+  </element>
+  <element name="keyCombinationInline">
+    <annotation>
+      <documentation>Describes a computer keyboard key combination for an action that is also available through a menu. When the userAction element is a child of an executionMethod element, it indicates a point in a task where the user is required to perform a specific action.</documentation>
+    </annotation>
+    <complexType>
+      <choice maxOccurs="unbounded">
+        <group ref="maml:userActionsGroup"/>
+      </choice>
+      <attributeGroup ref="maml:userInstructionAttributeGroup"/>
+    </complexType>
+  </element>
+  <element name="userInput">
+    <annotation>
+      <documentation>Identifies a text string representing data that the user enters, within a body of text.</documentation>
+    </annotation>
+    <complexType mixed="true">
+      <sequence>
+        <element ref="maml:commandInline" minOccurs="0"/>
+        <element ref="maml:replaceable" minOccurs="0"/>
+      </sequence>
+    </complexType>
+  </element>
+  <!-- attribute declarations -->
+  <attributeGroup name="userInstructionAttributeGroup">
+    <annotation>
+      <documentation>This type is used for describing user actions.</documentation>
+    </annotation>
+    <attribute name="instruction">
+      <annotation>
+        <documentation>Identifies a user action, using either the keyboard or the mouse.</documentation>
+      </annotation>
+      <simpleType>
+        <restriction base="token">
+          <enumeration value="click"/>
+          <enumeration value="double-click"/>
+          <enumeration value="other"/>
+          <enumeration value="press"/>
+          <enumeration value="inSequence"/>
+          <enumeration value="simultaneously"/>
+        </restriction>
+      </simpleType>
+    </attribute>
+  </attributeGroup>
+  <!-- group declarations -->
+  <group name="inlineUiGroup">
+    <annotation>
+      <documentation>This group is used for referencing all base UI elements.</documentation>
+    </annotation>
+    <choice>
+      <element ref="maml:menuSelection"/>
+      <element ref="maml:shortcut"/>
+      <element ref="maml:keyCombinationInline"/>
+      <element ref="maml:userInput"/>
+    </choice>
+  </group>
+  <group name="userActionsGroup">
+    <choice>
+      <element ref="maml:key"/>
+      <element ref="maml:symbolicName"/>
+      <element ref="maml:button"/>
+    </choice>
+  </group>
+</schema>

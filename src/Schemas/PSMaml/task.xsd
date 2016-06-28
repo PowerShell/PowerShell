@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema file defines the schema for an automated procedural file.</documentation>
+  </annotation>
+  <!-- include and import declarations -->
+  <include schemaLocation="hierarchy.xsd"/>
+  <include schemaLocation="shellExecute.xsd"/>
+  <!-- Type declarations -->
+  <complexType name="actionReferenceType">
+    <annotation>
+      <documentation>Refers to a UI element that is stored in a different schema.</documentation>
+    </annotation>
+    <complexContent>
+      <extension base="maml:textBlockType">
+        <attribute name="actionIdref" type="Name">
+          <annotation>
+            <documentation>Refers to a uiAction element inside the taskExecutionBlock element.</documentation>
+          </annotation>
+        </attribute>
+        <attribute name="waitFactor" type="float" default="1.0">
+          <annotation>
+            <documentation>Not yet implemented.</documentation>
+          </annotation>
+        </attribute>
+        <attribute name="modeOverride" type="maml:playbackModeEnumType">
+          <annotation>
+            <documentation>Not yet implemented.</documentation>
+          </annotation>
+        </attribute>
+        <attribute name="onlyShowInMode" type="maml:playbackModeEnumType">
+          <annotation>
+            <documentation>Instructs ACW to show the action only in the specified playback mode (do it or show me).</documentation>
+          </annotation>
+        </attribute>
+        <attribute name="actOnSelection" type="boolean">
+          <annotation>
+            <documentation>Instructs ACW to act on the user's current selection (for example, a list item). Use actOnSelection in cases where a user is required to make a selection from a set of options that are not known at authoring time.</documentation>
+          </annotation>
+        </attribute>
+        <attribute name="autoSelectIfOneOption" type="boolean">
+          <annotation>
+            <documentation>Instructs ACW to select the sole option in cases where only one option is available. Use caution when applying this attribute, as it may not be appropriate in some situations.</documentation>
+          </annotation>
+        </attribute>
+        <attribute name="commitsChange" type="boolean" use="optional">
+          <annotation>
+            <documentation>Set to true to indicate that this step commits a change (for example, this is a "Click OK" step).  Set to false to indicate that this step doesn't actually perform any action (e.g. clicks a button that opens a dialog, or sets a checkbox but doesn't commit it).  Helps the ACW runtime understand, when it ends, if it needs to try to show undo steps, or if no actions have actually happened.</documentation>
+          </annotation>
+        </attribute>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="automatedTask">
+    <annotation>
+      <documentation>The root element for the automated task content type. Use the automated task content type to create topics that host Active Content Wizard (ACW) tasks. ACW tasks can either guide users through a task incrementally, or perform the task automatically.</documentation>
+    </annotation>
+    <complexType>
+      <complexContent>
+        <extension base="maml:taskType">
+          <attribute name="contentType" type="token" fixed="ACWProcedure">
+            <annotation>
+              <documentation>Specifies the type of content for the document.</documentation>
+            </annotation>
+          </attribute>
+          <attribute name="showWelcome" type="boolean">
+            <annotation>
+              <documentation>Specifies whether a welcome message should be displayed upon launching an Active Content Wizard (ACW) task. The welcome message contains a short description of the task, and prompts the user to select a playback mode (do it or show me). The default value is true.</documentation>
+            </annotation>
+          </attribute>
+          <attribute name="showFinished" type="boolean">
+            <annotation>
+              <documentation>Specifies whether a summary should be displayed upon completing an Active Content Wizard (ACW) task. The default value is true.</documentation>
+            </annotation>
+          </attribute>
+          <attribute name="version" type="string" fixed="M8">
+            <annotation>
+              <documentation>Not yet implemented. Specifies the version of the Active Content Wizard (ACW) script code for the current task. Used for troubleshooting.</documentation>
+            </annotation>
+          </attribute>
+          <attribute name="undoPossible" type="boolean">
+            <annotation>
+              <documentation>Setting this to False means that the runtime should not show any generated undo steps when the task ends.  Setting this to True means that the runtime should show undo steps when the task ends.</documentation>
+            </annotation>
+          </attribute>
+        </extension>
+      </complexContent>
+    </complexType>
+  </element>
+  <element name="taskProcedure" type="maml:taskProcedureType">
+    <annotation>
+      <documentation>Describes a list of steps the user needs to perform in order to complete the task.</documentation>
+    </annotation>
+  </element>
+  <element name="author">
+    <annotation>
+      <documentation>Provides information about the author of the document.</documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element name="authorName" type="string" minOccurs="0">
+          <annotation>
+            <documentation>Specifies the name of the author.</documentation>
+          </annotation>
+        </element>
+        <element name="authorURI" type="anyURI" minOccurs="0">
+          <annotation>
+            <documentation>Specifies a URI that can be used to link to further information or resources related to the author.</documentation>
+          </annotation>
+        </element>
+        <element name="authorMessage" type="string" minOccurs="0">
+          <annotation>
+            <documentation>Contains descriptive text about the author.</documentation>
+          </annotation>
+        </element>
+        <element name="authorImageURI" type="anyURI" minOccurs="0">
+          <annotation>
+            <documentation>Specifies a URI that can be used to link to a graphic image of the author.</documentation>
+          </annotation>
+        </element>
+      </sequence>
+    </complexType>
+  </element>
+  <complexType name="taskType">
+    <annotation>
+      <documentation>Describes a set of steps that can be executed as an automated task (ACW), or displayed as a help topic.</documentation>
+    </annotation>
+    <sequence minOccurs="0">
+      <element ref="maml:title"/>
+      <element ref="maml:introduction" minOccurs="0">
+        <annotation>
+          <documentation>Introduction text for the task.</documentation>
+        </annotation>
+      </element>
+      <element ref="maml:taskProcedure">
+        <annotation>
+          <documentation>A procedure is a list of steps to take that should complete the task.</documentation>
+        </annotation>
+      </element>
+      <element ref="maml:content" minOccurs="0"/>
+      <element ref="maml:sections" minOccurs="0"/>
+      <element ref="maml:alertSet" minOccurs="0"/>
+      <element ref="maml:relatedLinks" minOccurs="0"/>
+      <element ref="maml:author" minOccurs="0">
+        <annotation>
+          <documentation>Allows  creator of the content file to provide information about themselves</documentation>
+        </annotation>
+      </element>
+      <element name="taskExecutionBlock" minOccurs="0">
+        <annotation>
+          <documentation>Contains computer-generated automation markup. Do not manually edit the contents of this element.</documentation>
+        </annotation>
+        <complexType>
+          <sequence minOccurs="0" maxOccurs="unbounded">
+            <any namespace="##any" processContents="skip"/>
+          </sequence>
+        </complexType>
+      </element>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <complexType name="taskProcedureType">
+    <choice minOccurs="0" maxOccurs="unbounded">
+      <element ref="maml:textStep">
+        <annotation>
+          <documentation>This step consists of nothing but text. In show-me, it's a step by itself. In Do-it, it's either ignored, or we stop to show, depending on attribute value</documentation>
+        </annotation>
+      </element>
+      <element ref="maml:uiActionsStep">
+        <annotation>
+          <documentation>The step consists of one or more clicks on UI elements. </documentation>
+        </annotation>
+      </element>
+      <element ref="maml:stopStep">
+        <annotation>
+          <documentation>If the "condition" attribute in the step tag returns true then print the text inside here and stop the procedure</documentation>
+        </annotation>
+      </element>
+      <element ref="maml:userChoiceStep">
+        <annotation>
+          <documentation>Present the user with a list of radio-button options, and invite him to choose one.</documentation>
+        </annotation>
+      </element>
+      <element ref="maml:gotoStep">
+        <annotation>
+          <documentation>Instead of executing the next step in this task, execute the one with the same ID as the ID specified here</documentation>
+        </annotation>
+      </element>
+      <element ref="maml:commandStep">
+        <annotation>
+          <documentation>A step that launches a shell execute command line</documentation>
+        </annotation>
+      </element>
+      <element ref="maml:subTask">
+        <annotation>
+          <documentation>Can mingle subTasks with a step. To call a subTask in another file, use the replaceWith attribute</documentation>
+        </annotation>
+      </element>
+      <element ref="maml:stepGroup">
+        <annotation>
+          <documentation>A way of grouping steps together, for purposes of applying a state condition or runtime condition to several steps</documentation>
+        </annotation>
+      </element>
+    </choice>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="textStep">
+    <annotation>
+      <documentation>Describes a step that consists solely of text. If the task is being run in Show Me mode, it functions as a step in the procedure. In Do It mode, it is either ignored, or automation pauses to display the text, depending on the value set in the showDuringDoIt attribute.</documentation>
+    </annotation>
+    <complexType>
+      <complexContent>
+        <extension base="maml:textBlockType">
+          <attribute name="messageType" type="maml:messageTypeEnumType"/>
+          <attribute name="showDuringDoIt" type="boolean"/>
+          <attributeGroup ref="maml:stepAttGrp"/>
+          <attribute name="timeoutInSeconds" type="int"/>
+          <attribute name="textStepDisplay" type="maml:textStepDisplayType"/>
+        </extension>
+      </complexContent>
+    </complexType>
+  </element>
+  <element name="uiActionsStep">
+    <annotation>
+      <documentation>Describes one or more actions to perform on UI elements.</documentation>
+    </annotation>
+    <complexType>
+      <complexContent>
+        <extension base="maml:uiActionsStepType">
+          <attributeGroup ref="maml:stepAttGrp"/>
+        </extension>
+      </complexContent>
+    </complexType>
+  </element>
+  <element name="stopStep">
+    <annotation>
+      <documentation>Indicates whether a procedure should stop at the current point, based on the condition attribute. If the value in the condition attribute evaluates to true, the procedure stops, and any remaining text is displayed.</documentation>
+    </annotation>
+    <complexType>
+      <complexContent>
+        <extension base="maml:textBlockType">
+          <attributeGroup ref="maml:stepAttGrp"/>
+          <attribute name="stopReason" type="maml:stopReasonEnumType"/>
+        </extension>
+      </complexContent>
+    </complexType>
+  </element>
+  <element name="userChoiceStep">
+    <annotation>
+      <documentation>Displays a list of choices for the user. The script specifies steps to run for each choice.</documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element name="userChoiceIntro" type="maml:textBlockType" minOccurs="0">
+          <annotation>
+            <documentation>Provides information about user choices. Contains introductory text for a userChoiceStep element.</documentation>
+          </annotation>
+        </element>
+        <element ref="maml:option" maxOccurs="unbounded">
+          <annotation>
+            <documentation>Each radio button option is in an Option tag. The option's text is in the Para tag, and if the user chooses this option, goto the associated target.</documentation>
+          </annotation>
+        </element>
+        <element name="userChoicePrompt" type="maml:textBlockType" minOccurs="0">
+          <annotation>
+            <documentation>Contains text that prompts the user to choose from options defined in the userChoiceStep element.</documentation>
+          </annotation>
+        </element>
+      </sequence>
+      <attribute name="default" type="IDREF" use="optional">
+        <annotation>
+          <documentation>Indicates which user option should be the default.</documentation>
+        </annotation>
+      </attribute>
+      <attributeGroup ref="maml:stepAttGrp"/>
+    </complexType>
+  </element>
+  <element name="gotoStep">
+    <annotation>
+      <documentation>Skips forward or backward in the current sequence, to the step with the specified ID.</documentation>
+    </annotation>
+    <complexType>
+      <attribute name="idref" type="Name" use="required">
+        <annotation>
+          <documentation>Specifies the IDREF for a step within a sequence. This value must match the id of another step in the document.</documentation>
+        </annotation>
+      </attribute>
+      <attributeGroup ref="maml:stepAttGrp"/>
+    </complexType>
+  </element>
+  <element name="commandStep">
+    <annotation>
+      <documentation>Runs a Windows shell command. This element is the programmatic equivalent of clicking Start, clicking Run, and then entering a command.</documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element ref="maml:description"/>
+        <element ref="maml:command"/>
+      </sequence>
+      <attributeGroup ref="maml:stepAttGrp"/>
+    </complexType>
+  </element>
+  <element name="subTask" type="maml:subTaskType">
+    <annotation>
+      <documentation>Adds a subTask to a step. Use the reusableContentEntry attribute to include a subTask element that has been defined in a different file.</documentation>
+    </annotation>
+  </element>
+  <element name="stepGroup">
+    <annotation>
+      <documentation>Groups steps together so that standard MAML conditions, and the ifPresent attribute, can be applied to several steps at once. </documentation>
+    </annotation>
+    <complexType>
+      <complexContent>
+        <extension base="maml:taskProcedureType">
+          <attribute name="ifPresent" type="boolean">
+            <annotation>
+              <documentation>Describes actions to perform only if a particular UI element, such as an error message dialog, is present. Otherwise the actions are skipped. Set the ifPresent attribute to true in cases where a UI element does not appear consistently, or may appear unexpectedly.</documentation>
+            </annotation>
+          </attribute>
+        </extension>
+      </complexContent>
+    </complexType>
+  </element>
+  <complexType name="subTaskType">
+    <complexContent>
+      <extension base="maml:taskType">
+        <attribute name="ifPresent" type="boolean" default="false">
+          <annotation>
+            <documentation>Describes actions to perform only if a particular UI element, such as an error message dialog, is present. Otherwise the actions are skipped. Set the ifPresent attribute to true in cases where a UI element does not appear consistently, or may appear unexpectedly. The default value is false.</documentation>
+          </annotation>
+        </attribute>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="option">
+    <annotation>
+      <documentation>Specifies a single option in a list of single-choice options. Use a para element to specify the text for the option. Alternatively, specifies a branch condition, which can either be explicitly chosen by the user, or by a state condition check.</documentation>
+    </annotation>
+    <complexType>
+      <complexContent>
+        <extension base="maml:optionType">
+          <attributeGroup ref="maml:expandCollapseGroup"/>
+        </extension>
+      </complexContent>
+    </complexType>
+  </element>
+  <complexType name="optionType">
+    <annotation>
+      <documentation>This is to represent a branch condition (either explicitly chosen by the user or by a state condition check.)</documentation>
+    </annotation>
+    <sequence>
+      <element name="optionLabel" type="normalizedString">
+        <annotation>
+          <documentation>Specifies the label text to display for an option.</documentation>
+        </annotation>
+      </element>
+      <element name="branch" type="maml:taskProcedureType">
+        <annotation>
+          <documentation>Contains the steps to run if the user chooses the associated option.</documentation>
+        </annotation>
+      </element>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <complexType name="uiActionsStepType">
+    <annotation>
+      <documentation>Encodes some sequence of UI actions.</documentation>
+    </annotation>
+    <sequence>
+      <element name="actionRef" type="maml:actionReferenceType" maxOccurs="unbounded">
+        <annotation>
+          <documentation>Each action has an ID that refers to the action's complete structure, stored elsewhere.</documentation>
+        </annotation>
+      </element>
+      <element ref="maml:description">
+        <annotation>
+          <documentation>Full text description of the entire step. May encompass more than one click action.</documentation>
+        </annotation>
+      </element>
+      <element name="undoDescription" type="maml:undoDescriptionType" minOccurs="0" maxOccurs="unbounded">
+        <annotation>
+          <documentation>Text description of how to undo this step.  To be displayed when task finishes.</documentation>
+        </annotation>
+      </element>
+      <element ref="maml:onFailure" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="ifPresent" type="boolean"/>
+  </complexType>
+  <complexType name="undoDescriptionType">
+    <complexContent>
+      <extension base="maml:textBlockType">
+        <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+        <attribute name="actionIdref" type="Name"/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <attributeGroup name="runtimeConditionAttGrp">
+    <attribute name="runtimeConditionID" type="string"/>
+  </attributeGroup>
+  <attributeGroup name="stepAttGrp">
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    <attribute name="runtimeCondition" type="string"/>
+    <attribute name="id" type="Name">
+      <annotation>
+        <documentation>Unique identifier for the step. (Note: This attribute is not of type ID because the 'address' attribute already uses ID, and XSD forbids two attributes of type ID on a single element).</documentation>
+      </annotation>
+    </attribute>
+  </attributeGroup>
+  <simpleType name="failureReasonEnumType">
+    <restriction base="string">
+      <enumeration value="disabled"/>
+      <enumeration value="notFound"/>
+      <enumeration value="noElements"/>
+      <enumeration value="defaultReason"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="playbackModeEnumType">
+    <restriction base="string">
+      <enumeration value="DoIt"/>
+      <enumeration value="ShowMe"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="messageTypeEnumType">
+    <restriction base="string">
+      <enumeration value="information"/>
+      <enumeration value="warning"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="stopReasonEnumType">
+    <restriction base="string">
+      <enumeration value="success"/>
+      <enumeration value="failure"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="textStepDisplayType">
+    <restriction base="string">
+      <enumeration value="showInHelpPaneAndPointingWindow"/>
+      <enumeration value="showInHelpPaneOnly"/>
+      <enumeration value="showInPointingWindowOnly"/>
+    </restriction>
+  </simpleType>
+  <element name="onFailure" type="maml:onFailureTaskProcedureType">
+    <annotation>
+      <documentation>Contains steps to run if an actionRef fails to execute.</documentation>
+    </annotation>
+  </element>
+  <complexType name="onFailureTaskProcedureType">
+    <complexContent>
+      <extension base="maml:taskProcedureType">
+        <attribute name="actionIdref" type="Name">
+          <annotation>
+            <documentation>Refers to a uiAction element inside the taskExecutionBlock.</documentation>
+          </annotation>
+        </attribute>
+        <attribute name="reason" type="maml:failureReasonEnumType">
+          <annotation>
+            <documentation>Specifies the reason for failure using an enumeration value of type failureReasonEnumType.</documentation>
+          </annotation>
+        </attribute>
+      </extension>
+    </complexContent>
+  </complexType>
+</schema>

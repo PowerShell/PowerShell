@@ -1,0 +1,12 @@
+{
+    "monad/miscfiles/modules/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1":  "Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1",
+    "monad/miscfiles/modules/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1":  "Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1",
+    "monad/src/ScheduledJob/PSScheduledJob.Format.ps1xml": "PSScheduledJob/PSScheduledJob.Format.ps1xml",
+    "monad/src/ScheduledJob/PSScheduledJob.psd1": "PSScheduledJob/PSScheduledJob.psd1",
+    "monad/src/ScheduledJob/PSScheduledJob.types.ps1xml": "PSScheduledJob/PSScheduledJob.types.ps1xml",
+    "monad/src/m3p/product/PSWorkflow.psd1" : "PSWorkflow/PSWorkflow.psd1",
+    "monad/src/m3p/product/PSWorkflow.psm1" : "PSWorkflow/PSWorkflow.psm1",
+    "monad/src/m3p/product/PSWorkflow.types.ps1xml" : "PSWorkflow/PSWorkflow.types.ps1xml",
+    "monad/src/m3p/product/PSWorkflowUtility.psd1" : "PSWorkflowUtility/PSWorkflowUtility.psd1",
+    "monad/src/m3p/product/PSWorkflowUtility.psm1" : "PSWorkflowUtility/PSWorkflowUtility.psm1"
+}

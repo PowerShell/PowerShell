@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10"
+    xmlns:doc="http://schemas.microsoft.com/maml/internal"
+    xmlns:maml="http://schemas.microsoft.com/maml/2004/10"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    blockDefault="#all"
+    xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema definition defines block inline types for the CS Schema. This schema is part of the base layer.</documentation>
+  </annotation>
+  <!-- include and import declarations -->
+  <include schemaLocation="blockCommon.xsd"/>
+  <include schemaLocation="blockSoftware.xsd"/>
+  <group name="blockGroup">
+    <choice>
+      <group ref="maml:blockCommonGroup"/>
+      <group ref="maml:blockSoftwareGroup"/>
+    </choice>
+  </group>
+</schema>
