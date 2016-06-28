@@ -26,5 +26,6 @@
     "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtils.psm1": "Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtils.psm1",
     "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsHelper.ps1": "Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsHelper.ps1",
     "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataV4Adapter.ps1": "Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataV4Adapter.ps1",
-    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsStrings.psd1": "Microsoft.PowerShell.ODataUtils/en-US/Microsoft.PowerShell.ODataUtilsStrings.psd1"
+    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsStrings.psd1": "Microsoft.PowerShell.ODataUtils/en-US/Microsoft.PowerShell.ODataUtilsStrings.psd1",
+    "wmi/WMIv2/Client/CIMCmdlets/CimCmdlets.psd1" : "CimCmdlets/CimCmdlets.psd1"
 }
