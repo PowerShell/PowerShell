@@ -19,7 +19,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The powershell custom AssemblyLoadContext implementation
     /// </summary>
-    public partial class PowerShellAssemblyLoadContext : AssemblyLoadContext
+    internal partial class PowerShellAssemblyLoadContext : AssemblyLoadContext
     {
         #region Resource_Strings
 
@@ -30,21 +30,30 @@ namespace System.Management.Automation
         //     2. Load assembly with culture 'en'    (Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.resources, Version=3.0.0.0, Culture=en, PublicKeyToken=31bf3856ad364e35) 
         // When the first attempt fails, we again need to retrieve the resouce string to construct another exception, which ends up with an infinite loop.
         private const string BaseFolderDoesNotExist = "The base directory '{0}' does not exist.";
-        private const string CannotFindFileBasedOnAssemblyName = "Could not load file or assembly '{0}' or one of its dependencies. The system cannot find the file specified under any probing paths.";
         private const string ManifestDefinitionDoesNotMatch = "Could not load file or assembly '{0}' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference.";
         private const string AssemblyPathDoesNotExist = "Could not load file or assembly '{0}' or one of its dependencies. The system cannot find the file specified.";
         private const string InvalidAssemblyExtensionName = "Could not load file or assembly '{0}' or one of its dependencies. The file specified is not a DLL file.";
         private const string AbsolutePathRequired = "Absolute path information is required.";
+        private const string SingletonAlreadyInitialized = "The singleton of PowerShellAssemblyLoadContext has already been initialized.";
+        private const string UseResolvingEventHandlerOnly = "PowerShellAssemblyLoadContext was initialized to use its 'Resolving' event handler only.";
 
         #endregion Resource_Strings
 
         #region Constructor
 
         /// <summary>
-        /// This constructor is for testability purpose only
+        /// Initialize a singleton of PowerShellAssemblyLoadContext
         /// </summary>
-        protected PowerShellAssemblyLoadContext()
+        internal static PowerShellAssemblyLoadContext InitializeSingleton(string basePaths, bool useResolvingHandlerOnly)
         {
+            lock (syncObj)
+            {
+                if (Instance != null)
+                    throw new InvalidOperationException(SingletonAlreadyInitialized);
+
+                Instance = new PowerShellAssemblyLoadContext(basePaths, useResolvingHandlerOnly);
+                return Instance;
+            }
         }
 
         /// <summary>
@@ -54,7 +63,25 @@ namespace System.Management.Automation
         /// Base directory paths that are separated by semicolon ';'.
         /// They will be the default paths to probe assemblies.
         /// </param>
-        internal PowerShellAssemblyLoadContext(string basePaths)
+        /// <param name="useResolvingHandlerOnly">
+        /// Indicate whether this instance is going to be used as a 
+        /// full fledged ALC, or only its 'Resolve' handler is going
+        /// to be used.
+        /// </param>
+        /// <remarks>
+        /// When <paramref name="useResolvingHandlerOnly"/> is true, we will register to the 'Resolving' event of the default 
+        /// load context with our 'Resolve' method, and depend on the default load context to resolve/load assemblies for PS.
+        /// This mode is used when TPA list of the native host only contains .NET Core libraries.
+        /// In this case, TPA binder will be consulted before hitting our resolving logic. The binding order of Assembly.Load is:
+        ///     TPA binder --> Resolving event
+        /// 
+        /// When <paramref name="useResolvingHandlerOnly"/> is false, we will use this instance as a full fledged load context
+        /// to resolve/load assemblies for PS. This mode is used when TPA list of the native host contains both .NET Core libraries
+        /// and PS assemblies.
+        /// In this case, our Load override will kick in before consulting the TPA binder. The binding order of Assembly.Load is:
+        ///     Load override --> TPA binder --> Resolving event
+        /// </remarks>
+        private PowerShellAssemblyLoadContext(string basePaths, bool useResolvingHandlerOnly)
         {
             #region Validation
             if (string.IsNullOrEmpty(basePaths))
@@ -82,17 +109,22 @@ namespace System.Management.Automation
             this.probingPaths = new List<string>(this.basePaths);
 
             // NEXT: Initialize the CoreCLR type catalog dictionary [OrdinalIgnoreCase]
-            //  - Key: namespace qualified type name (FullName)
-            //  - Value: strong name of the TPA that contains the type represented by Key.
             coreClrTypeCatalog = InitializeTypeCatalog();
+
+            // LAST: Handle useResolvingHandlerOnly flag
+            this.useResolvingHandlerOnly = useResolvingHandlerOnly;
+            this.activeLoadContext = useResolvingHandlerOnly ? AssemblyLoadContext.Default : this;
+            if (useResolvingHandlerOnly)
+                AssemblyLoadContext.Default.Resolving += Resolve;
         }
 
         #endregion Constructor
 
         #region Fields
-
-        // Serialized type catalog file
-        private readonly object syncObj = new object();
+        
+        private readonly bool useResolvingHandlerOnly;
+        private readonly AssemblyLoadContext activeLoadContext;
+        private readonly static object syncObj = new object();
         private readonly string[] basePaths;
         // Initially, 'probingPaths' only contains psbase path. But every time we load an assembly through 'LoadFrom(string AssemblyPath)', we
         // add its parent path to 'probingPaths', so that we are able to support implicit loading of an assembly from the same place where the
@@ -100,7 +132,9 @@ namespace System.Management.Automation
         // We don't need to worry about removing any paths from 'probingPaths', because once an assembly is loaded, it won't be unloaded until
         // the current process exits, and thus the assembly itself and its parent folder cannot be deleted or renamed.
         private readonly List<string> probingPaths;
-        // We use dictionary because the generated binary file by DataContractSerializer is about 39% smaller in size than using Hashtable.
+        // CoreCLR type catalog dictionary
+        //  - Key: namespace qualified type name (FullName)
+        //  - Value: strong name of the TPA that contains the type represented by Key.
         private readonly Dictionary<string, string> coreClrTypeCatalog;
         private readonly string[] extensions = new string[] { ".ni.dll", ".dll" };
 
@@ -123,6 +157,18 @@ namespace System.Management.Automation
 
         #endregion Fields
 
+        #region Properties
+
+        /// <summary>
+        /// Singleton instance of PowerShellAssemblyLoadContext
+        /// </summary>
+        public static PowerShellAssemblyLoadContext Instance
+        {
+            get; private set;
+        }
+
+        #endregion Properties
+
         #region Events
 
         /// <summary>
@@ -139,6 +185,17 @@ namespace System.Management.Automation
         /// Search the file "[assemblyName.Name][.ni].dll" in probing paths. If the file is found and it matches the requested AssemblyName, load it with LoadFromAssemblyPath.
         /// </summary>
         protected override Assembly Load(AssemblyName assemblyName)
+        {
+            if (useResolvingHandlerOnly)
+                throw new NotSupportedException(UseResolvingEventHandlerOnly);
+
+            return Resolve(this, assemblyName);
+        }
+
+        /// <summary>
+        /// The handler for the Resolving event
+        /// </summary>
+        private Assembly Resolve(AssemblyLoadContext loadContext, AssemblyName assemblyName)
         {
             // Probe the assembly cache
             Assembly asmLoaded;
@@ -185,25 +242,16 @@ namespace System.Management.Automation
                     }
                 }
 
-                // We failed to find the file specified
-                if (!isAssemblyFileFound)
+                // We failed to find the assembly file; or we found the file, but the assembly file doesn't match the request.
+                // In this case, return null so that other Resolving event handlers can kick in to resolve the request.
+                if (!isAssemblyFileFound || !isAssemblyFileMatching)
                 {
-                    ThrowFileNotFoundException(
-                        CannotFindFileBasedOnAssemblyName,
-                        assemblyName.FullName);
-                }
-
-                // We found the file specified, but the found assembly doesn't match the request
-                if (!isAssemblyFileMatching)
-                {
-                    ThrowFileLoadException(
-                        ManifestDefinitionDoesNotMatch,
-                        assemblyName.FullName);
+                    return null;
                 }
 
                 asmLoaded = asmFilePath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase) 
-                                ? base.LoadFromNativeImagePath(asmFilePath, null) 
-                                : base.LoadFromAssemblyPath(asmFilePath);
+                                ? loadContext.LoadFromNativeImagePath(asmFilePath, null) 
+                                : loadContext.LoadFromAssemblyPath(asmFilePath);
                 if (asmLoaded != null)
                 {
                     // Add the loaded assembly to the cache
@@ -239,14 +287,14 @@ namespace System.Management.Automation
 
                 // Load the assembly through 'LoadFromNativeImagePath' or 'LoadFromAssemblyPath'
                 asmLoaded = assemblyPath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
-                    ? base.LoadFromNativeImagePath(assemblyPath, null)
-                    : base.LoadFromAssemblyPath(assemblyPath);
+                    ? activeLoadContext.LoadFromNativeImagePath(assemblyPath, null)
+                    : activeLoadContext.LoadFromAssemblyPath(assemblyPath);
 
                 if (asmLoaded != null)
                 {
                     // Add the loaded assembly to the cache
                     AssemblyCache.TryAdd(assemblyName.Name, asmLoaded);
-                    // Add the its parent path to our probing paths
+                    // Add its parent path to our probing paths
                     string parentPath = Path.GetDirectoryName(assemblyPath);
                     if (!probingPaths.Contains(parentPath))
                     {
@@ -282,8 +330,8 @@ namespace System.Management.Automation
                 if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
                     return asmLoaded;
 
-                // Load the assembly through 'base.LoadFromStream'
-                asmLoaded = base.LoadFromStream(assembly);
+                // Load the assembly through 'LoadFromStream'
+                asmLoaded = activeLoadContext.LoadFromStream(assembly);
                 if (asmLoaded != null)
                 {
                     // Add the loaded assembly to the cache
@@ -534,12 +582,38 @@ namespace System.Management.Automation
         /// </param>
         private Assembly GetTrustedPlatformAssembly(string tpaStrongName)
         {
-            // Load the specified TPA. If the TPA is already loaded, it will be somehow
-            // cached in CoreCLR runtime, and thus calling 'Assembly.Load' again won't
-            // cause any overhead.
+            Assembly asmLoaded;
             AssemblyName assemblyName = new AssemblyName(tpaStrongName);
-            Assembly asmLoaded = Assembly.Load(assemblyName);
-            return asmLoaded;
+
+            // With the current standalone-app model of OPS, .NET Core libraries and PS assemblies are mixed together in one folder. 
+            // So when using PSALC as a full fledged ALC in OPS, some TPAs might be loaded by our Load override. In that case, if we
+            // alwasy call Assembly.Load here to get a TPA, we might end up with a different Assembly instance of the the same TPA 
+            // loaded in the default load context. We want to use the same assembly instance for type resolution in PS to avoid creating
+            // types and running .NET code from different assembly instances of the same DLL. Therefore, we try our cache first to see
+            // if the requested TPA is already loaded. If so, we use that one. If not, we load it in default context using Assembly.Load.
+            // Once a TPA is loaded in the default context, the same Assembly instance will always be used by custom ALC's when they attempt
+            // to resolve an "Assembly.Load" request for the same TPA.
+            //
+            // For in-box PS of NanoServer/IoT and the share-framework host model of OPS, we don't have the mixed libraries/assemblies
+            // problem, and TPAs are always resolved/loaded by the default context. In those cases, checking our cache would be unnecessary,
+            // but it won't cause any problems.
+
+            // Probe the assembly cache
+            if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
+                return asmLoaded;
+
+            // Prepare to load the assembly
+            lock (syncObj)
+            {
+                // Probe the cache again in case it's already loaded
+                if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
+                    return asmLoaded;
+                
+                // The requested TPA is not loaded by PS ALC, so load it in the default load context using Assembly.Load.
+                // There is no need to add it to our cache. It's cached in the default context.
+                asmLoaded = Assembly.Load(assemblyName);
+                return asmLoaded;
+            }
         }
 
         /// <summary>
@@ -564,36 +638,103 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Set an instance of PowerShellAssemblyLoadContext to be the default Assembly Load Context.
     /// This is the managed entry point for Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll.
     /// </summary>
-    public static class PowerShellAssemblyLoadContextInitializer
+    public class PowerShellAssemblyLoadContextInitializer
     {
-        // Porting note: it's much easier to send an LPStr on Linux
-        private const UnmanagedType stringType = 
-            #if LINUX
-            UnmanagedType.LPStr
-            #else
-            UnmanagedType.LPWStr
-            #endif
-            ;
-
-        public static PowerShellAssemblyLoadContext PSAsmLoadContext;
+        private static object[] EmptyArray = new object[0];
 
         /// <summary>
-        /// Set the default Assembly Load Context
+        /// Create a singleton of PowerShellAssemblyLoadContext.
+        /// Then register to the Resolving event of the load context that loads this assembly.
         /// </summary>
-        public static void SetPowerShellAssemblyLoadContext([MarshalAs(stringType)]string basePaths)
+        /// <remarks>
+        /// This method is to be used by native host whose TPA list doesn't include PS assemblies, such as the
+        /// in-box Nano powershell.exe, the PS remote WinRM plugin, in-box Nano DSC and in-box Nano SCOM agent.
+        /// </remarks>
+        /// <param name="basePaths">
+        /// Base directory paths that are separated by semicolon ';'.
+        /// They will be the default paths to probe assemblies.
+        /// </param>
+        public static void SetPowerShellAssemblyLoadContext([MarshalAs(UnmanagedType.LPWStr)]string basePaths)
         {
             if (string.IsNullOrEmpty(basePaths))
-            {
                 throw new ArgumentNullException("basePaths");
-            }
 
-            if (PSAsmLoadContext == null)
-            {
-                PSAsmLoadContext = new PowerShellAssemblyLoadContext(basePaths);
-            }
+            PowerShellAssemblyLoadContext.InitializeSingleton(basePaths, useResolvingHandlerOnly: true);
+        }
+        
+        /// <summary>
+        /// Create a singleton of PowerShellAssemblyLoadContext.
+        /// Then load the assembly containing the actual entry point using it.
+        /// </summary>
+        /// <param name="basePaths">
+        /// Base directory paths that are separated by semicolon ';'.
+        /// They will be the default paths to probe assemblies.
+        /// </param>
+        /// <param name="entryAssemblyName">
+        /// Name of the assembly that contains the actual entry point.
+        /// </param>
+        /// <returns>
+        /// The assembly that contains the actual entry point.
+        /// </returns>
+        public static Assembly InitializeAndLoadEntryAssembly(string basePaths, AssemblyName entryAssemblyName)
+        {
+            if (string.IsNullOrEmpty(basePaths))
+                throw new ArgumentNullException("basePaths");
+
+            if (entryAssemblyName == null)
+                throw new ArgumentNullException("entryAssemblyName");
+
+            var psLoadContext = PowerShellAssemblyLoadContext.InitializeSingleton(basePaths, useResolvingHandlerOnly: false);
+            return psLoadContext.LoadFromAssemblyName(entryAssemblyName);
+        }
+
+        /// <summary>
+        /// Create a singleton of PowerShellAssemblyLoadContext.
+        /// Then call into the actual entry point based on the given assembly name, type name, method name and arguments.
+        /// </summary>
+        /// <param name="basePaths">
+        /// Base directory paths that are separated by semicolon ';'.
+        /// They will be the default paths to probe assemblies.
+        /// </param>
+        /// <param name="entryAssemblyName">
+        /// Name of the assembly that contains the actual entry point.
+        /// </param>
+        /// <param name="entryTypeName">
+        /// Name of the type that contains the actual entry point.
+        /// </param>
+        /// <param name="entryMethodName">
+        /// Name of the actual entry point method.
+        /// </param>
+        /// <param name="args">
+        /// An array of arguments passed to the entry point method.
+        /// </param>
+        /// <returns>
+        /// The return value of running the entry point method.
+        /// </returns>
+        public static object InitializeAndCallEntryMethod(string basePaths, AssemblyName entryAssemblyName, string entryTypeName, string entryMethodName, object[] args)
+        {
+            if (string.IsNullOrEmpty(basePaths))
+                throw new ArgumentNullException("basePaths");
+
+            if (entryAssemblyName == null)
+                throw new ArgumentNullException("entryAssemblyName");
+
+            if (string.IsNullOrEmpty(entryTypeName))
+                throw new ArgumentNullException("entryTypeName");
+
+            if (string.IsNullOrEmpty(entryMethodName))
+                throw new ArgumentNullException("entryMethodName");
+
+            args = args ?? EmptyArray;
+
+            var psLoadContext = PowerShellAssemblyLoadContext.InitializeSingleton(basePaths, useResolvingHandlerOnly: false);
+            var entryAssembly = psLoadContext.LoadFromAssemblyName(entryAssemblyName);
+            var entryType = entryAssembly.GetType(entryTypeName, throwOnError: true, ignoreCase: true);
+            var methodInfo = entryType.GetMethod(entryMethodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase);
+
+            return methodInfo.Invoke(null, args);
         }
     }
 }

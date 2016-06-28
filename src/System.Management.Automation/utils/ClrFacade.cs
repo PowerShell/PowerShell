@@ -340,20 +340,11 @@ namespace System.Management.Automation
             PSAssemblyLoadContext.AssemblyLoad += handler;
         }
 
-        private static volatile PowerShellAssemblyLoadContext _psLoadContext;
         private static PowerShellAssemblyLoadContext PSAssemblyLoadContext
         {
             get
             {
-                if (_psLoadContext == null)
-                {
-                    _psLoadContext = PowerShellAssemblyLoadContextInitializer.PSAsmLoadContext;
-                    if (_psLoadContext == null)
-                    {
-                        throw new InvalidOperationException(ParserStrings.InvalidAssemblyLoadContextInUse);
-                    }
-                }
-                return _psLoadContext;
+                return PowerShellAssemblyLoadContext.Instance;
             }
         }
 #endif
