@@ -156,7 +156,7 @@ function Start-PSBuild {
 
     # handle xaml files
     # Heuristic to resolve xaml on the fresh machine
-    if ($FullCLR -and ($XamlGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.Activities/gen/*.g.resources")))
+    if ($FullCLR -and ($XamlGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.Activities/gen/*.g.cs")))
     {
         log "Run XamlGen (generating .g.cs and .resources for .xaml files)"
         Start-XamlGen -MSBuildConfiguration $msbuildConfiguration
