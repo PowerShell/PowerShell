@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema defines attributes and simpleTypes that can be referenced from any other part of MAML.</documentation>
+  </annotation>
+  <!-- include and import declarations -->
+  <include schemaLocation="inline.xsd"/>
+  <!-- simpleType declarations -->
+  <simpleType name="mediaFileFormatsEnumType">
+    <annotation>
+      <documentation>Describes the type of media file format.</documentation>
+    </annotation>
+    <restriction base="token">
+      <enumeration value="asx"/>
+      <enumeration value="bmp"/>
+      <enumeration value="eps"/>
+      <enumeration value="flash"/>
+      <enumeration value="gif"/>
+      <enumeration value="png"/>
+      <enumeration value="jpeg"/>
+      <enumeration value="shockwave"/>
+      <enumeration value="quicktime"/>
+      <enumeration value="wma"/>
+      <enumeration value="wmf"/>
+      <enumeration value="mpeg"/>
+      <enumeration value="mp3"/>
+      <enumeration value="other"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="alertTypesEnumType">
+    <annotation>
+      <documentation>Describes the type of alert.</documentation>
+    </annotation>
+    <restriction base="string">
+      <enumeration value="tip"/>
+      <enumeration value="note"/>
+      <enumeration value="caution"/>
+      <enumeration value="important"/>
+      <enumeration value="warning"/>
+      <enumeration value="bestpractice"/>
+      <enumeration value="other"/>
+      <enumeration value="security"/>
+      <enumeration value="performance"/>
+      <enumeration value="configuration"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="devLanguagesType">
+    <annotation>
+      <documentation>Describes the development language for a specific part of a document.</documentation>
+    </annotation>
+    <restriction base="token">
+      <enumeration value="cpp"/>
+      <enumeration value="vb"/>
+      <enumeration value="vbs"/>
+      <enumeration value="js"/>
+      <enumeration value="c#"/>
+      <enumeration value="j#"/>
+      <enumeration value="jscript#"/>
+      <enumeration value="cpp#"/>
+      <enumeration value="vb#"/>
+      <enumeration value="xml"/>
+      <enumeration value="html"/>
+      <enumeration value="other"/>
+      <enumeration value="other#"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="conditionStringType">
+    <restriction base="anyURI"/>
+  </simpleType>
+  <attributeGroup name="addressAttributeGroup">
+    <attribute name="address" type="ID">
+      <annotation>
+        <documentation>Describes the attached content with a unique ID/GUID/URI to reference for purposes such as sharing and hyperlinking.</documentation>
+      </annotation>
+    </attribute>
+  </attributeGroup>
+  <attributeGroup name="contentIdentificationSharingAndConditionGroup">
+    <annotation>
+      <documentation>Provides a set of attributes for identifying and marking content for sharing and conditional filtering.</documentation>
+    </annotation>
+    <attributeGroup ref="maml:addressAttributeGroup"/>
+    <attribute name="condition" type="token">
+      <annotation>
+        <documentation>Describes one or more conditions for a particular part of a document. Use conditions to filter the parts of a document that appear in the final output. Each condition can be based on user state or computer state. For example, a step in a procedure does not appear if the user is not logged on as an administrator; a link appears only if a particular peripheral device is installed. Specify conditions in URI notation.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="replaceWith" type="anyURI">
+      <annotation>
+        <documentation>Specifies the content fragment that replaces the parent element at presentation time. An empty reference cannot be defined for a content fragment. Actual content is always used as a placeholder, the required content fragment replaces the placeholder at presentation time.</documentation>
+      </annotation>
+    </attribute>
+    <attribute name="conditionalDelete" type="anyURI">
+      <annotation>
+        <documentation>Specifies one or more subsequent elements to replace when the parent element consists of multiple root elements. The first element always uses the value of the replaceWith attribute; subsequent elements use the value of the conditionalDelete attribute.</documentation>
+      </annotation>
+    </attribute>
+  </attributeGroup>
+  <attributeGroup name="linkingAttributeGroup">
+    <attribute name="href" type="anyURI"/>
+    <attribute name="uri" type="anyURI"/>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </attributeGroup>
+  <!-- complexType declarations -->
+   <complexType name="textType" mixed="true">
+    <annotation>
+      <documentation>Includes the common attributes, allows character data and the notLocalizable element.</documentation>
+    </annotation>
+    <sequence minOccurs="0" maxOccurs="unbounded">
+      <choice>
+        <element ref="maml:notLocalizable"/>
+      </choice>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <complexType name="integerType">
+    <annotation>
+      <documentation>This type includes the common attributes and allows integer data.</documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="integer">
+        <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+  <complexType name="emptyType">
+    <annotation>
+      <documentation>Intended for creating empty elements without attributes. There is no schema type for empty.</documentation>
+    </annotation>
+  </complexType>
+  <!-- element declarations -->
+  <element name="notLocalizable" type="maml:inlineType">
+    <annotation>
+      <documentation>Identifies a span of text that should not be localized.</documentation>
+    </annotation>
+  </element>
+</schema>

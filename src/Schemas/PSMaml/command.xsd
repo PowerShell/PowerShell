@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/4" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/4" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!-- Schema documentation -->
+	<annotation>
+		<documentation>
+			This schema describes the command page type of MAML.
+		</documentation>
+	</annotation>
+	<!-- INCLUDE AND IMPORT DECLARATIONS -->
+	<include schemaLocation="hierarchy.xsd"/>
+	<include schemaLocation="base.xsd"/>
+	<include schemaLocation="developerStructure.xsd"/>
+	<!-- END INCLUDE AND IMPORT DECLARATIONS -->
+	<!-- ROOT ELEMENT DEFINITION -->
+	<element name="commandHelp">
+		<annotation>
+			<documentation>
+				The commandHelp element describes the content model for the command help content type.
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<!-- [gxie] items missing:
+					defaultverbs
+					class
+					shortdescription
+				-->
+				<!-- [gxie] items moved:
+					name : moved to commandDetails
+					verb : moved to commandDetails
+					noun : moved to commandDetails
+					? Synposis : mapped to commandDetails.CommandDescription
+				-->
+				<!-- [gxie] items added:
+					keywords
+					commandDetails
+					commandSyntax
+					commandParameters
+					configuration
+				-->
+				<!-- [gxie] items updated:
+					description => DetailedDescription
+					? alertSet => Notes
+					commandExamples => Examples
+					? relatedLinks => SeeAlsoItems
+					commandExceptions => Exceptions
+					commandErrors => Errors
+				-->
+
+				<element ref="maml:keywords"/>
+				<element ref="maml:commandDetails"/>
+				<element ref="maml:description"/>
+				<!-- [gxie] ? will commandSyntax be generated from command Parameters or provided in help content itself-->
+				<element ref="maml:commandSyntax"/>
+				<element ref="maml:commandParameters" minOccurs="0"/>
+				<element ref="maml:inputTypes"/>
+				<element ref="maml:returnTypes"/>
+				<element ref="maml:commandExceptions"/>
+				<element ref="maml:commandErrors"/>
+				<element ref="maml:alertSet" maxOccurs="unbounded"/>
+				<element ref="maml:commandExamples" minOccurs="0"/>
+				<element ref="maml:configuration"/>
+				<element ref="maml:relatedLinks" maxOccurs="unbounded"/>
+			</sequence>
+			<attribute name="contentType" type="token"/>
+		</complexType>
+	</element>
+	<!-- END ROOT ELEMENT DEFINITION -->
+	<!-- ELEMENT AND TYPE DECLARATIONS -->
+	<!-- keywords definition -->
+	<!-- [gxie] ! keywords are not defined yet-->
+	<element name="keywords"/>
+	<!-- commandDetails definition -->
+	<element name="commandDetails">
+		<annotation>
+			<documentation>
+				The commandDetails element ...
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element name="name">
+					<complexType>
+						<complexContent>							
+							<extension base="maml:textType">
+								<!-- [gxie] ? what's the meaning of commandType="provider"-->
+								<attribute name="commandType">
+									<simpleType>
+										<restriction base="token">
+											<enumeration value="provider"/>
+										</restriction>
+									</simpleType>
+								</attribute>
+							</extension>
+						</complexContent>
+					</complexType>
+				</element>
+				<!-- [gxie] ? Is this the same thing as synopsis or shot description-->
+				<element name="commandDescription" type="maml:textType"/>
+				<element name="synonyms" minOccurs="0">
+					<complexType>
+						<sequence>
+							<element name="synonym" type="maml:textType" maxOccurs="unbounded"/>
+						</sequence>
+						<!-- [gxie] ? what is usage of contentIdentficationsSharingAndConditionGroup-->
+						<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+					</complexType>
+				</element>
+				<element name="commandCopyright" type="maml:textType"/>
+				<element name="verb" type="maml:textType"/>
+				<element name="noun" type="maml:textType"/>
+				<element name="version" type="maml:textType"/>
+				<element name="vendor" minOccurs="0">
+					<complexType>
+						<sequence>
+							<element ref="maml:name"/>
+							<element ref="maml:products"/>
+						</sequence>
+					</complexType>
+				</element>
+			</sequence>
+			<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+		</complexType>
+	</element>
+	<!-- end commandDetails definition -->
+	<!-- commandSyntax definition -->
+	<element name="commandSyntax">
+		<annotation>
+			<documentation>
+				The commandSyntax element ...
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element name="commandSyntaxItem">
+					<complexType>
+						<sequence>
+							<element ref="maml:name"/>
+							<element ref="maml:commandSyntaxParameter" minOccurs="0" maxOccurs="unbounded"/>
+							<element name="commmandSyntaxParameterGroup" minOccurs="0" maxOccurs="unbounded">
+								<complexType>
+									<sequence>
+										<element ref="maml:commandSyntaxParameter" maxOccurs="unbounded"/>
+									</sequence>
+								</complexType>
+							</element>
+						</sequence>
+						<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+					</complexType>
+				</element>
+			</sequence>
+			<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+		</complexType>
+	</element>
+	<!-- end commandSyntax definition -->
+	<!-- commandParameters definition -->
+	<element name="commandParameters">
+		<annotation>
+			<documentation>
+				The commandParameters element ...
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element name="commandParameter" minOccurs="1" maxOccurs="unbounded">
+					<complexType>
+						<sequence>
+							<element ref="maml:name"/>
+							<element ref="maml:commandParameterValue"/>
+							<element ref="maml:type"/>
+							<!-- [gxie] ? should we reduce this to simple text -->
+							<element ref="maml:description"/>
+							<!-- [gxie] ? what is the difference of this from commandParameterValue-->
+							<element ref="maml:possibleValues"/>
+							<element name="defaultValue" type="maml:textType"/>
+							<element name="validation">
+								<complexType>
+									<sequence>
+										<!-- [gxie] ? what is the difference between minCount/minLength/minRange -->
+										<element name="minCount" type="maml:integerType"/>
+										<element name="maxCount" type="maml:integerType"/>
+										<element name="minLength" type="maml:integerType"/>
+										<element name="maxLength" type="maml:integerType"/>
+										<element name="minRange" type="maml:textType"/>
+										<element name="maxRange" type="maml:textType"/>
+										<element name="pattern" type="maml:textType"/>
+									</sequence>
+									<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+								</complexType>
+							</element>
+						</sequence>
+						<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+						<attribute name="required" type="boolean" use="required"/>
+						<attribute name="variableLength" type="boolean" use="required"/>
+						<attribute name="globbing" type="boolean" use="required"/>
+						<attribute name="pipelineInput" type="boolean" use="required"/>
+						<attribute name="position" type="integer" use="required"/>
+					</complexType>
+				</element>
+			</sequence>
+			<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+		</complexType>
+	</element>
+	<!-- end commandParameters definition -->
+	<!-- inputTypes definition -->
+	<element name="inputTypes">
+		<annotation>
+			<documentation>
+				The inputTypes element ...
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element name="inputType" maxOccurs="unbounded">
+					<complexType>
+						<sequence>
+							<element ref="maml:type"/>
+							<!-- [gxie] should we reduce this to simple text -->
+							<element ref="maml:description"/>
+						</sequence>
+					</complexType>
+				</element>
+			</sequence>
+			<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+		</complexType>
+	</element>
+	<!-- end inputTypes definition -->
+	<!-- returnTypes definition -->
+	<element name="returnTypes">
+		<annotation>
+			<documentation>
+				The returnTypes element ...
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element name="returnType">
+					<complexType>
+						<sequence>
+							<element ref="maml:type"/>
+							<!-- [gxie] should we reduce this to simple text -->
+							<element ref="maml:description"/>
+						</sequence>
+					</complexType>
+				</element>
+			</sequence>
+			<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+		</complexType>
+	</element>
+	<!-- end returnTypes definition -->
+	<!-- commandExceptions definition -->
+	<element name="commandExceptions">
+		<annotation>
+			<documentation>
+				The commandExceptions element ...
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element name="commandException" type="maml:commandExceptionType" minOccurs="0" maxOccurs="unbounded"/>
+			</sequence>
+			<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+		</complexType>
+	</element>
+	<!-- end commandExceptions definition -->
+	<!-- commandErrors definition -->
+	<element name="commandErrors">
+		<annotation>
+			<documentation>
+				The commandErrors element ...
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element name="commandError" minOccurs="0" maxOccurs="unbounded">
+					<complexType>
+						<complexContent>
+							<extension base="maml:commandExceptionType"/>
+						</complexContent>
+					</complexType>
+				</element>
+			</sequence>
+			<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+		</complexType>
+	</element>
+	<!-- end commandErrors definition -->
+	<!-- commandExamples definition -->
+	<element name="commandExamples">
+		<annotation>
+			<documentation>
+				The commandExamples element ...
+			</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element name="commandExample" maxOccurs="unbounded">
+					<complexType>
+						<complexContent>
+							<extension base="maml:codeExampleType"/>
+						</complexContent>
+					</complexType>
+				</element>
+			</sequence>
+			<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+		</complexType>
+	</element>
+	<!-- end commandExamples definition -->
+	<!-- configuration definition -->
+	<element name="configuration">
+		<annotation>
+			<documentation>
+				The configuration element ...
+			</documentation>
+		</annotation>
+		<complexType>
+			<!-- [gxie] ! this is not defined yet -->
+			<sequence/>
+			<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+		</complexType>
+	</element>
+	<!-- end configuration definition -->
+	<!-- END ELEMENT AND TYPE DECLARATIONS -->
+	<!-- GLOBALS -->
+	<element name="commandSyntaxParameter">
+		<complexType>
+			<sequence>
+				<element name="commandSyntaxParameterName">
+					<complexType>
+						<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+						<attribute name="required" type="boolean"/>
+					</complexType>
+				</element>
+				<choice>
+					<element ref="maml:commandParameterValue"/>
+					<element name="commandSyntaxParameterValueGroup">
+						<complexType>
+							<sequence minOccurs="2" maxOccurs="unbounded">
+								<element ref="maml:commandParameterValue"/>
+							</sequence>
+							<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+							<!-- [gxie] ? what is the meaning of required here -->
+							<attribute name="required" type="boolean" use="required"/>
+						</complexType>
+					</element>
+				</choice>
+			</sequence>
+			<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+		</complexType>
+	</element>
+	<element name="commandParameterValue">
+		<complexType>
+			<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+			<!-- [gxie] ? what is the meaning of required here -->
+			<attribute name="required" type="boolean" use="required"/>
+			<attribute name="variableLength" type="boolean" use="required"/>
+			<attribute name="type" use="optional" default="literal">
+				<simpleType>
+					<restriction base="token">
+						<enumeration value="literal"/>
+						<!-- [gxie] what is the meaning of placeHolder here -->
+						<enumeration value="placeHolder"/>
+					</restriction>
+				</simpleType>
+			</attribute>
+		</complexType>
+	</element>
+	<complexType name="commandExceptionType">
+		<sequence>
+			<element ref="maml:type"/>
+			<!-- [gxie] ? should we reduce this to a simple block of text -->
+			<element ref="maml:description"/>
+			<element name="message"/>
+			<element name="category" minOccurs="0"/>
+		</sequence>
+	</complexType>
+	<!-- END GLOBALS -->
+</schema>

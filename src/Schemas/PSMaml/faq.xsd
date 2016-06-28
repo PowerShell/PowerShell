@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10"
+    xmlns:doc="http://schemas.microsoft.com/maml/internal"
+    xmlns:maml="http://schemas.microsoft.com/maml/2004/10"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    blockDefault="#all"
+    xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema definition defines the FAQ content model for the Content Studio schema. This schema is part of the base layer.</documentation>
+  </annotation>
+  <!-- include and import declarations -->
+  <include schemaLocation="hierarchy.xsd"/>
+  <element name="faq" type="maml:faqType">
+    <annotation>
+      <documentation>Describes the content model for the FAQ content type. The FAQ content type is used to create frequently asked question (FAQ) documents. A document that uses the FAQ content type can consist of one or more sets of questions and answers.</documentation>
+    </annotation>
+  </element>
+  <element name="faqDiv">
+    <annotation>
+      <documentation>Describes a titled division within a frequently asked question (FAQ) document. Each faqDiv element can contain one or more faqEntry elements.</documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element ref="maml:title"/>
+        <element ref="maml:subTitle" minOccurs="0"/>
+        <element ref="maml:introduction" minOccurs="0"/>
+        <element ref="maml:faqEntry" minOccurs="1" maxOccurs="unbounded"/>
+        <element ref="maml:transition" minOccurs="0"/>
+      </sequence>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+      <attribute name="class" type="string"/>
+    </complexType>
+  </element>
+  <element name="faqEntry">
+    <annotation>
+      <documentation>Describes a question-answer pair within a frequently asked question (FAQ) document.</documentation>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element ref="maml:title" minOccurs="0" maxOccurs="1"/>
+        <element ref="maml:question" minOccurs="1" maxOccurs="1"/>
+        <element ref="maml:answer" minOccurs="1" maxOccurs="1"/>
+        <element ref="maml:crossReference" minOccurs="0" maxOccurs="unbounded"/>
+      </sequence>
+      <attributeGroup ref="maml:expandCollapseGroup"/>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    </complexType>
+  </element>
+  <element name="question" type="maml:structureSimpleType">
+    <annotation>
+      <documentation>Describes the question text for a frequently asked question (FAQ) entry.</documentation>
+    </annotation>
+  </element>
+  <element name="answer" type="maml:structureType">
+    <annotation>
+      <documentation>Describes an answer to a frequently asked question (FAQ) entry.</documentation>
+    </annotation>
+  </element>
+  <complexType name="faqType">
+    <sequence>
+      <element ref="maml:title"/>
+      <element ref="maml:subTitle" minOccurs="0"/>
+      <element ref="maml:introduction" minOccurs="0"/>
+      <element name="byLine" type="maml:structureSimpleType" minOccurs="0">
+	  	<annotation>
+			<documentation>Specifies the name of the document author.</documentation>
+		</annotation>
+	  </element>
+      <element ref="maml:crossReference" minOccurs="0" maxOccurs="unbounded"/>
+      <choice>
+        <element ref="maml:faqDiv" maxOccurs="unbounded"/>
+        <element ref="maml:faqEntry" maxOccurs="unbounded"/>
+      </choice>
+      <element ref="maml:transition" minOccurs="0"/>
+      <element ref="maml:alertSet" minOccurs="0"/>
+      <element ref="maml:relatedLinks" minOccurs="0"/>
+      <element ref="maml:reusableContent" minOccurs="0"/>
+      <element ref="maml:copyright" minOccurs="0"/>
+    </sequence>
+    <attribute name="contentType" type="token">
+		<annotation>
+			<documentation>Specifies the type of content for the document.</documentation>
+		</annotation>
+	</attribute>
+  </complexType>
+</schema>

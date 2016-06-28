@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>
+      This schema describes the command page type of MAML.
+    </documentation>
+  </annotation>
+  <import schemaLocation="maml.xsd" namespace="http://schemas.microsoft.com/maml/2004/10"/>
+  <import schemaLocation="developer.xsd" namespace="http://schemas.microsoft.com/maml/dev/2004/10"/>
+  <!-- ROOT ELEMENT DEFINITION -->
+  <element name="command" type="command:commandType">
+    <annotation>
+      <documentation>
+        The command element describes the content model for the command help content type.
+      </documentation>
+    </annotation>
+  </element>
+  <complexType name="commandType">
+    <sequence>
+      <element ref="command:details"/>
+      <element ref="maml:description"/>
+      <element ref="command:syntax"/>
+      <element ref="command:parameters" minOccurs="0"/>
+      <element ref="command:inputTypes"/>
+      <element ref="command:returnValues"/>
+      <element ref="command:terminatingErrors"/>
+      <element ref="command:nonTerminatingErrors"/>
+      <element ref="maml:alertSet" minOccurs="0" maxOccurs="unbounded"/>
+      <element ref="command:examples" minOccurs="0"/>
+      <element ref="maml:relatedLinks" maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="contentType" type="token"/>
+  </complexType>
+  <!-- END ROOT ELEMENT DEFINITION -->
+  <!-- details definition -->
+  <element name="details" type="command:detailsType"/>
+  <complexType name="detailsType">
+    <sequence>
+      <element ref="command:name"/>
+      <element ref="maml:description"/>
+      <element ref="command:synonyms" minOccurs="0"/>
+      <element ref="maml:copyright"/>
+      <element ref="command:verb"/>
+      <element ref="command:noun"/>
+      <element ref="dev:version"/>
+      <element ref="command:vendor" minOccurs="0"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <!-- end details definition -->
+  <element name="verb" type="maml:textType"/>
+  <element name="noun" type="maml:textType"/>
+  <!-- vendor definition -->
+  <element name="vendor" type="command:vendorType"/>
+  <complexType name="vendorType">
+    <sequence>
+      <element ref="maml:name"/>
+      <element ref="dev:products"/>
+    </sequence>
+  </complexType>
+  <!-- end vendor definition -->
+  <!-- name definition -->
+  <element name="name" type="command:nameType"/>
+  <complexType name="nameType" mixed="true">
+    <complexContent>
+      <extension base="maml:nameType">
+        <attribute name="commandType">
+          <simpleType>
+            <restriction base="token">
+              <enumeration value="provider"/>
+            </restriction>
+          </simpleType>
+        </attribute>
+      </extension>
+    </complexContent>
+  </complexType>
+  <!-- end name definition -->
+  <!-- synonyms definition -->
+  <element name="synonyms" type="command:synonymsType"/>
+  <complexType name="synonymsType">
+    <sequence>
+      <element ref="command:synonym" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <!-- end synonyms definition -->
+  <!-- end synonym definition -->
+  <element name="synonym" type="maml:textType"/>
+  <!-- end synonym definition -->
+  <!-- syntax definition -->
+  <element name="syntax" type="command:syntaxType"/>
+  <complexType name="syntaxType">
+    <sequence>
+      <element ref="command:syntaxItem" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <!-- end syntax definition -->
+  <!-- syntaxItem definition -->
+  <element name="syntaxItem" type="command:syntaxItemType"/>
+  <complexType name="syntaxItemType">
+    <sequence>
+      <element ref="maml:name"/>
+      <element ref="command:parameter" minOccurs="0" maxOccurs="unbounded"/>
+      <element ref="command:parameterGroup" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <!-- end syntaxItem definition -->
+  <!-- parameterGroup definition -->
+  <element name="parameterGroup" type="command:parameterGroupType"/>
+  <complexType name="parameterGroupType">
+    <sequence>
+      <element ref="command:parameter" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <!-- end parameterGroup definition -->
+  <!-- parameters definition -->
+  <element name="parameters" type="command:parametersType"/>
+  <complexType name="parametersType">
+    <sequence>
+      <element ref="command:parameter" minOccurs="1" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <!-- end parameters definition -->
+  <!-- parameter definition -->
+  <element name="parameter" type="command:parameterType"/>
+  <complexType name="parameterType">
+    <sequence>
+      <element ref="maml:name"/>
+      <element ref="maml:description"/>
+      <choice minOccurs="0">
+        <element ref="command:parameterValue"/>
+        <element ref="command:parameterValueGroup"/>
+      </choice>
+      <element ref="dev:type" minOccurs="0"/>
+      <element ref="dev:defaultValue" minOccurs="0"/>
+      <element ref="dev:possibleValues" minOccurs="0"/>
+      <element ref="command:validation" minOccurs="0"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    <attribute name="required" type="boolean" use="required"/>
+    <attribute name="variableLength" type="boolean" use="required"/>
+    <attribute name="globbing" type="boolean" use="required"/>
+    <attribute name="pipelineInput" type="string" use="required"/>
+    <attribute name="position" type="string" use="required"/>
+    <attribute ref="command:requiresTrustedData" use="optional"/>
+  </complexType>
+  <!-- end parameter definition -->
+  <!-- validation definition -->
+  <element name="validation" type="command:validationType"/>
+  <complexType name="validationType">
+    <sequence>
+      <element name="minCount" type="maml:integerType"/>
+      <element name="maxCount" type="maml:integerType"/>
+      <element name="minLength" type="maml:integerType"/>
+      <element name="maxLength" type="maml:integerType"/>
+      <element name="minRange" type="maml:textType"/>
+      <element name="maxRange" type="maml:textType"/>
+      <element name="pattern" type="maml:textType"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <!-- end validation definition -->
+  <!-- inputTypes definition -->
+  <element name="inputTypes" type="command:inputTypesType"/>
+  <complexType name="inputTypesType">
+    <sequence>
+      <element ref="command:inputType" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <!-- end inputTypes definition -->
+  <!-- inputType definition -->
+  <element name="inputType" type="command:inputTypeType"/>
+  <complexType name="inputTypeType">
+    <sequence>
+      <element ref="dev:type"/>
+      <element ref="maml:description"/>
+    </sequence>
+    <attribute ref="command:requiresTrustedData" use="optional"/>
+  </complexType>
+  <!-- end inputTypedefinition -->
+  <!-- returnValues definition -->
+  <element name="returnValues" type="command:returnValuesType"/>
+  <complexType name="returnValuesType">
+    <sequence>
+      <element ref="command:returnValue" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <!-- end returnValues definition -->
+  <!-- returnValue definition -->
+  <element name="returnValue" type="command:returnValueType"/>
+  <complexType name="returnValueType">
+    <complexContent>
+      <extension base="dev:returnValueType">
+        <attribute ref="command:isTrustedData" use="optional"/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <!-- end returnValue definition -->
+  <!-- terminatingErrors definition -->
+  <element name="terminatingErrors" type="command:terminatingErrorsType"/>
+  <complexType name="terminatingErrorsType">
+    <sequence>
+      <element ref="command:terminatingError" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <!-- end terminatingErrors definition -->
+  <!-- end terminatingError definition -->
+  <element name="terminatingError" type="command:errorType"/>
+  <!-- end terminatingError definition -->
+  <!-- nonTerminatingErrors definition -->
+  <element name="nonTerminatingErrors" type="command:nonTerminatingErrorsType"/>
+  <complexType name="nonTerminatingErrorsType">
+    <sequence>
+      <element ref="command:nonTerminatingError" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <!-- end nonTerminatingErrors definition -->
+  <!-- end nonTerminatingError definition -->
+  <element name="nonTerminatingError" type="command:errorType"/>
+  <!-- end nonTerminatingError definition -->
+  <!-- examples definition -->
+  <element name="examples" type="command:examplesType"/>
+  <complexType name="examplesType">
+    <sequence>
+      <element ref="command:example" maxOccurs="unbounded"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <!-- end examples definition -->
+  <!-- example definition -->
+  <element name="example" type="command:exampleType"/>
+  <complexType name="exampleType">
+    <complexContent>
+      <extension base="command:exampleTypeRestricted">
+        <sequence>
+          <element ref="command:commandLines" minOccurs="0"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <complexType name="exampleTypeRestricted">
+    <complexContent>
+      <restriction base="dev:exampleType">
+        <sequence>
+          <element ref="maml:title" minOccurs="0"/>
+          <element ref="maml:introduction" minOccurs="0"/>
+          <group ref="dev:codeGroup"/>
+          <element ref="dev:buildInstructions" minOccurs="0" maxOccurs="0"/>
+          <element ref="dev:robustProgramming" minOccurs="0" maxOccurs="0"/>
+          <element ref="dev:security" minOccurs="0"/>
+          <element ref="dev:results" minOccurs="0" maxOccurs="0"/>
+          <element ref="dev:remarks" minOccurs="0"/>
+        </sequence>
+      </restriction>
+    </complexContent>
+  </complexType>
+  <!-- end example definition -->
+  <!-- commandLines definition -->
+  <element name="commandLines" type="command:commandLinesType"/>
+  <complexType name="commandLinesType">
+    <sequence>
+      <element ref="command:commandLine" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <!-- end commandLines definition -->
+  <!-- commandLine definition -->
+  <element name="commandLine" type="command:commandLineType"/>
+  <complexType name="commandLineType">
+    <sequence>
+      <element ref="command:commandText" minOccurs="1" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <!-- end commandLine definition -->
+  <!-- commandText definition -->
+  <element name="commandText" type="command:commandTextType"/>
+  <complexType name="commandTextType" mixed="true">
+    <sequence>
+      <element ref="maml:notLocalizable" minOccurs="0"/>
+    </sequence>
+    <attribute name="input" type="boolean" use="optional"/>
+  </complexType>
+  <!-- end commandText definition -->
+  <!-- parameterValue definition -->
+  <element name="parameterValue" type="command:parameterValueType"/>
+  <complexType name="parameterValueType" mixed="true">
+    <complexContent>
+      <extension base="maml:textType">
+        <attribute name="required" type="boolean" use="required"/>
+        <attribute name="variableLength" type="boolean" use="required"/>
+        <attribute name="type" use="optional" default="literal">
+          <simpleType>
+            <restriction base="token">
+              <enumeration value="literal"/>
+              <enumeration value="placeHolder"/>
+            </restriction>
+          </simpleType>
+        </attribute>
+      </extension>
+    </complexContent>
+  </complexType>
+  <!-- end parameterValue definition -->
+  <!-- parameterValueGroup definition -->
+  <element name="parameterValueGroup" type="command:parameterValueGroupType"/>
+  <complexType name="parameterValueGroupType">
+    <sequence>
+      <element ref="command:parameterValue" minOccurs="1" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <!-- end parameterValueGroup definition -->
+  <!-- miscellaneous -->
+  <attribute name="requiresTrustedData" type="command:trustedDataType"/>
+  <attribute name="isTrustedData" type="command:trustedDataType"/>
+  <simpleType name="trustedDataType">
+    <restriction base="token">
+      <enumeration value="always"/>
+      <enumeration value="never"/>
+      <enumeration value="sometimes"/>
+    </restriction>
+  </simpleType>
+  <complexType name="errorType">
+    <sequence>
+      <element ref="dev:type"/>
+      <element ref="maml:description"/>
+      <element name="category"/>
+      <element name="errorID"/>
+      <element name="recommendedAction" type="maml:textBlockType" minOccurs="0"/>
+      <element name="targetObjectType" type="dev:typeType"/>
+    </sequence>
+  </complexType>
+  <complexType name="parameterNameType" mixed="true">
+    <complexContent>
+      <extension base="maml:textType">
+        <attribute name="required" type="boolean"/>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="parameterNameInline" type="string"/>
+  <element name="parameterValueInline" type="string"/>
+  <!-- end miscellaneous -->
+</schema>

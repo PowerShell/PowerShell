@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10"
+    xmlns:doc="http://schemas.microsoft.com/maml/internal"
+    xmlns:maml="http://schemas.microsoft.com/maml/2004/10"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    blockDefault="#all"
+    xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema defines a way to specify a command line that will be executed as a shell execute. This schema is part of the base layer.</documentation>
+  </annotation>
+  <!-- include and import declarations -->
+  <include schemaLocation="hierarchy.xsd"/>
+  <complexType name="shellExecuteType">
+    <sequence>
+      <element ref="maml:title" minOccurs="0"/>
+      <element ref="maml:description" minOccurs="0"/>
+      <element name="command">
+        <complexType>
+          <simpleContent>
+            <extension base="string">
+              <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+            </extension>
+          </simpleContent>
+        </complexType>
+      </element>
+    </sequence>
+    <attribute name="contentType" type="token"/>
+  </complexType>
+  <element name="shellExecute" type="maml:shellExecuteType"/>
+  <element name="command">
+  	<annotation>
+		<documentation>Contains a string with the command to execute. This typically consists of the name of a program or other executable, followed by and commands or parameters. For example: "notepad myFile.txt".</documentation>
+	</annotation>
+    <complexType>
+      <simpleContent>
+        <extension base="string">
+          <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+        </extension>
+      </simpleContent>
+    </complexType>
+  </element>
+  <complexType name="shellExecuteLinkType">
+    <sequence>
+      <element ref="maml:linkText"/>
+      <element ref="maml:command"/>
+      <element ref="maml:summary" minOccurs="0"/>
+    </sequence>
+    <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+  </complexType>
+  <element name="shellExecuteLink" type="maml:shellExecuteLinkType"/>
+</schema>

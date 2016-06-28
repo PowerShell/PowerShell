@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+    <!-- Schema documentation -->
+    <annotation>
+        <documentation>This schema describes MAML (Microsoft Assistance Markup Language). MAML is intended for software documentation. In particular, MAML is intended to accommodate the needs of Microsoft documentation.</documentation>
+        <documentation>The schema is broken into three main areas: end user, developer and IT Pro. These areas represent the main categories of Microsoft documentation.</documentation>
+        <documentation>The namespace uri for this version of MAML is: http://schemas.microsoft.com/maml/2004/10.</documentation>
+        <documentation>Each backwards-incompatible revision to MAML will require that the date fields be appropriately incremented in uri of the updated version of the MAML schema.</documentation>
+    </annotation>
+    <!-- include and import declarations -->
+    <include schemaLocation="endUser.xsd" />
+    <import schemaLocation="developer.xsd" namespace="http://schemas.microsoft.com/maml/dev/2004/10" />
+    <include schemaLocation="ITPro.xsd" />
+    <include schemaLocation="base.xsd" />
+    <include schemaLocation="glossary.xsd" />
+    <include schemaLocation="conditionSet.xsd" />
+    <include schemaLocation="task.xsd" />
+</schema>

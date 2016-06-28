@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10"
+    xmlns:doc="http://schemas.microsoft.com/maml/internal"
+    xmlns:maml="http://schemas.microsoft.com/maml/2004/10"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    blockDefault="#all"
+    xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema describes MAML (Microsoft Assistance Markup Language). MAML is intended for software documentation. In particular, MAML is intended to accommodate the needs of Microsoft documentation.</documentation>
+    <documentation>The schema is broken into three main areas: end user, developer and IT Pro. These areas represent the main categories of Microsoft documentation.</documentation>
+    <documentation>The namespace uri for this version of MAML is: http://schemas.microsoft.com/maml/2004/10.</documentation>
+    <documentation>Each backwards-incompatible revision to MAML will require that the date fields be appropriately incremented in uri of the updated version of the MAML schema.</documentation>
+  </annotation>
+  <include schemaLocation="baseConditional.xsd"/>
+  <!-- *************************************************************************** -->
+  <complexType name="conditionAxisType">
+    <simpleContent>
+      <extension base="token"/>
+    </simpleContent>
+  </complexType>
+  <element name="conditionAxis" type="maml:conditionAxisType">
+    <annotation>
+      <documentation>Describes the axis of a condition. In conditional markup, the axis refers to a category of conditions, such as installed hardware or user privilege.</documentation>
+      <appinfo>
+        <doc:localizable>false</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="conditionValueType" mixed="true">
+    <sequence>
+      <any namespace="##any" processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <element name="conditionValue" type="maml:conditionValueType">
+    <annotation>
+      <documentation>Describes the value of a condition.</documentation>
+      <appinfo>
+        <doc:localizable>false</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="conditionType">
+    <sequence>
+      <element ref="maml:conditionAxis"/>
+      <element ref="maml:conditionValue" minOccurs="1" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <element name="condition" type="maml:conditionType">
+    <annotation>
+      <documentation>Describes a condition to evaluate, that is part of a conditionSet element.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="conditionSetType">
+    <sequence>
+      <element ref="maml:platform" minOccurs="0" maxOccurs="unbounded"/>
+      <element ref="maml:programmingLanguage" minOccurs="0" maxOccurs="unbounded"/>
+      <element ref="maml:condition" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="address" type="ID" use="required">
+	<annotation>
+        <documentation>Describes the attached content with a unique ID/GUID/URI to reference for purposes such as sharing and hyperlinking.</documentation>
+      </annotation>
+    </attribute>
+  </complexType>
+  <element name="conditionSet" type="maml:conditionSetType">
+    <annotation>
+      <documentation>Describes a set of conditions to evaluate. Each condition relates to a particular predefined condition, and can evaluate to true or false.</documentation>
+      <appinfo>
+        <doc:localizable>false</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+  <complexType name="conditionSetsType">
+    <sequence>
+      <element ref="maml:conditionSet" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <element name="conditionSets" type="maml:conditionSetsType">
+    <annotation>
+      <documentation>Describes a collection of condition sets.</documentation>
+      <appinfo>
+        <doc:localizable>false</doc:localizable>
+      </appinfo>
+    </annotation>
+  </element>
+</schema>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/dev/managed/2004/10" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:managed="http://schemas.microsoft.com/maml/dev/managed/2004/10" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema describes MAML (Microsoft Assistance Markup Language). MAML is intended for software documentation. In particular, MAML is intended to accommodate the needs of Microsoft documentation.</documentation>
+    <documentation>The schema is broken into three main areas: end user, developer and IT Pro. These areas represent the main categories of Microsoft documentation.</documentation>
+    <documentation>The namespace uri for this version of MAML is: http://schemas.microsoft.com/maml/2004/10.</documentation>
+    <documentation>Each backwards-incompatible revision to MAML will require that the date fields be appropriately incremented in uri of the updated version of the MAML schema.</documentation>
+  </annotation>
+  <annotation>
+    <documentation>This portion of the schema was created by chains in Dec 2004.</documentation>
+  </annotation>
+  <import schemaLocation="maml.xsd" namespace="http://schemas.microsoft.com/maml/2004/10"/>
+  <import schemaLocation="developer.xsd" namespace="http://schemas.microsoft.com/maml/dev/2004/10"/>
+  <!-- Managed Developer Page Types -->
+  <!-- Managed Class -->
+  <complexType name="methodType">
+    <sequence>
+      <element ref="maml:title"/>
+      <element ref="maml:introduction"/>
+      <element ref="dev:parameters"/>
+      <element ref="dev:returnValue"/>
+      <element ref="dev:exceptions" minOccurs="0"/>
+      <element ref="managed:security" minOccurs="0"/>
+      <element ref="dev:remarks" minOccurs="0"/>
+      <element ref="dev:examples" minOccurs="0"/>
+      <element ref="dev:threadSafety" minOccurs="0"/>
+      <element ref="dev:appliesTo"/>
+      <element ref="dev:requirements" minOccurs="0"/>
+      <element ref="maml:relatedLinks" minOccurs="0"/>
+    </sequence>
+  </complexType>
+  <element name="method" type="managed:methodType">
+    <annotation>
+      <documentation>Root element of managedMethod page type.</documentation>
+    </annotation>
+  </element>
+</schema>

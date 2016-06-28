@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/10"
+    xmlns:doc="http://schemas.microsoft.com/maml/internal"
+    xmlns:maml="http://schemas.microsoft.com/maml/2004/10"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    blockDefault="#all"
+    xml:lang="en">
+  <!-- Schema documentation -->
+  <annotation>
+    <documentation>This schema definition defines common structure types for the Content Studio Schema. This schema is part of the common layer.</documentation>
+  </annotation>
+  <!-- include and import declarations -->
+  <include schemaLocation="block.xsd"/>
+  <element name="step">
+    <annotation>
+      <documentation>Contains a single step in a task. A step can consist of text, one or more UI actions, or a branch point.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+    <complexType>
+      <choice minOccurs="0" maxOccurs="unbounded">
+        <group ref="maml:structureGroup"/>
+        <element ref="maml:step"/>
+      </choice>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    </complexType>
+  </element>
+  <element name="procedure">
+    <annotation>
+      <documentation>Describes a list of sequenced steps required to complete a task.</documentation>
+      <appinfo>
+        <doc:localizable>n/a</doc:localizable>
+      </appinfo>
+    </annotation>
+    <complexType>
+      <sequence>
+        <element ref="maml:title" minOccurs="0"/>
+        <element ref="maml:introduction" minOccurs="0"/>
+        <element ref="maml:step" maxOccurs="unbounded"/>
+        <element ref="maml:alertSet" minOccurs="0"/>
+      </sequence>
+      <attributeGroup ref="maml:expandCollapseGroup"/>
+      <attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
+    </complexType>
+  </element>
+</schema>

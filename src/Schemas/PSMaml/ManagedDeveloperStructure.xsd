@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema targetNamespace="http://schemas.microsoft.com/maml/2004/4" xmlns:doc="http://schemas.microsoft.com/maml/internal" xmlns:maml="http://schemas.microsoft.com/maml/2004/4" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" xml:lang="en">
+	<!-- Schema documentation -->
+	<annotation>
+		<documentation>
+            This schema describes MAML, the Microsoft Assistance Markup Language.
+            MAML is intended for software documentation. In particular, it is 
+            intended to accomodate the needs of Microsoft documentation.
+        </documentation>
+		<documentation>
+            The schema is broken into three main areas: end user, developer and
+            IT Pro. These areas adequaltely categorize Microsoft
+            documentation.
+        </documentation>
+		<documentation>
+         The namespace uri for this version of MAML is: http://schemas.microsoft.com/maml/2004/4.
+         Each backwards-incompatible revision to MAML will require that the date fields be appropriately
+         incremented in uri of the updated version of the MAML schema.
+        </documentation>
+	</annotation>
+	<annotation>
+		<documentation>
+            This portion of the schema was created by chains in July 2004.
+        </documentation>
+		<documentation>
+            This portion of the schema provides the definitions for developer-specific structural elements that make up developer document page types.
+        </documentation>
+	</annotation>
+	<include schemaLocation="hierarchy.xsd"/>
+	<include schemaLocation="baseConditional.xsd"/>
+	<include schemaLocation="inline.xsd"/>
+	<include schemaLocation="block.xsd"/>
+	<include schemaLocation="structure.xsd"/>
+	<!-- ***************************************************************** -->
+	<element name="remarks" type="maml:structureType">
+		<annotation>
+			<documentation>
+            This element contains a detailed discussion of the current item.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<element name="security" type="maml:sectionType">
+		<annotation>
+			<documentation>
+            This element holds a discussion of security issues.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<element name="examples" type="maml:examplesType">
+		<annotation>
+			<documentation>
+            This element holds a discussion of a code example.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<complexType name="examplesType" mixed="false">
+		<sequence>
+			<element ref="maml:example" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<element name="example" type="maml:exampleType">
+		<annotation>
+			<documentation>
+            This element is a collection of codeExample elements.
+            </documentation>
+			<appinfo>
+				<doc:localizable>n/a</doc:localizable>
+			</appinfo>
+		</annotation>
+	</element>
+	<complexType name="exampleType" mixed="false">
+		<sequence>
+			<element ref="maml:example" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+</schema>
