@@ -16,14 +16,14 @@
         "netcoreapp1.0": {
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "dependencies": {
-                "Microsoft.NETCore.App": "1.0.0-rc2-3002485"
+                "Microsoft.NETCore.App": "1.0.0"
             }
         }
     },
 
     "runtimes": {
         "ubuntu.14.04-x64": { },
-        "centos.7.1-x64": { },
+        "centos.7-x64": { },
         "win7-x64": { },
         "win10-x64": { },
         "osx.10.10-x64": { },

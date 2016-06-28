@@ -128,19 +128,19 @@ Usage: TypeCatalogGen.exe <{0}> <{1}>
             switch (hashAlgorithm)
             {
                 case AssemblyHashAlgorithm.Sha1:
-                    hashImpl = HashAlgorithm.Create("SHA1");
+                    hashImpl = SHA1.Create();
                     break;
                 case AssemblyHashAlgorithm.MD5:
-                    hashImpl = HashAlgorithm.Create("MD5");
+                    hashImpl = MD5.Create();
                     break;
                 case AssemblyHashAlgorithm.Sha256:
-                    hashImpl = HashAlgorithm.Create("SHA256");
+                    hashImpl = SHA256.Create();
                     break;
                 case AssemblyHashAlgorithm.Sha384:
-                    hashImpl = HashAlgorithm.Create("SHA384");
+                    hashImpl = SHA384.Create();
                     break;
                 case AssemblyHashAlgorithm.Sha512:
-                    hashImpl = HashAlgorithm.Create("SHA512");
+                    hashImpl = SHA512.Create();
                     break;
                 default:
                     throw new NotSupportedException();

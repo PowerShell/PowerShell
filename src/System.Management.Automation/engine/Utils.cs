@@ -179,7 +179,7 @@ namespace System.Management.Automation
             {
                 if (p != IntPtr.Zero)
                 {
-                    ClrFacade.ZeroFreeCoTaskMemUnicode(p);
+                    Marshal.ZeroFreeCoTaskMemUnicode(p);
                 }
             }
 

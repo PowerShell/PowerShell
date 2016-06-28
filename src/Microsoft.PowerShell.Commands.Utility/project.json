@@ -15,7 +15,7 @@
     },
 
     "frameworks": {
-        "netstandard1.5": {
+        "netstandard1.6": {
             "buildOptions": {
                 "define": [ "CORECLR" ],
                 "compile": {
@@ -62,7 +62,7 @@
             "dependencies": {
                 "Microsoft.CodeAnalysis.CSharp": "1.1.1",
                 "Newtonsoft.Json": "8.0.2",
-                "System.Diagnostics.TextWriterTraceListener": "4.0.0-rc2-24027"
+                "System.Diagnostics.TextWriterTraceListener": "4.0.0"
             }
         },
         "net451": {

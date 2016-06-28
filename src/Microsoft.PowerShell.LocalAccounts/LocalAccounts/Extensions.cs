@@ -160,7 +160,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
 #if CORECLR
             IntPtr buffer = SecureStringMarshal.SecureStringToCoTaskMemUnicode(str);
             string clear = Marshal.PtrToStringUni(buffer);
-            SecureStringMarshal.ZeroFreeCoTaskMemUnicode(buffer);
+            Marshal.ZeroFreeCoTaskMemUnicode(buffer);
 #else
             var bstr = Marshal.SecureStringToBSTR(str);
             string clear = Marshal.PtrToStringAuto(bstr);

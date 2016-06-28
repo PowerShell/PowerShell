@@ -14,13 +14,13 @@
     },
 
     "frameworks": {
-        "netstandard1.5": {
+        "netstandard1.6": {
             "imports": [ "dnxcore50" ],
             "buildOptions": {
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
-                "System.Net.NameResolution": "4.0.0-rc2-24027"
+                "System.Net.NameResolution": "4.0.0"
             }
         },
         "net451": {

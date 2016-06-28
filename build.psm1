@@ -916,18 +916,12 @@ function Start-TypeGen
     [CmdletBinding()]
     param()
 
-    if (!$IsWindows)
-    {
-        throw "Start-TypeGen is not supported on non-windows. Use src/TypeCatalogGen/build.sh instead"
-    }
-
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
     Push-Location "$PSScriptRoot/src/TypeCatalogParser"
     try
     {
-        dotnet restore -v Warning
         dotnet run
     }
     finally
@@ -938,7 +932,6 @@ function Start-TypeGen
     Push-Location "$PSScriptRoot/src/TypeCatalogGen"
     try
     {
-        dotnet restore -v Warning
         dotnet run ../Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CorePsTypeCatalog.cs powershell.inc
     }
     finally

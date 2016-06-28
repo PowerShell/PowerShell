@@ -192,7 +192,7 @@ namespace Microsoft.PackageManagement.Provider.Utility
 #if !CORECLR
                 Marshal.ZeroFreeGlobalAllocUnicode(value);
 #else
-                SecureStringMarshal.ZeroFreeCoTaskMemUnicode(value);
+                Marshal.ZeroFreeCoTaskMemUnicode(value);
 #endif
             }
         }

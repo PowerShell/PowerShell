@@ -11,16 +11,17 @@
     },
 
     "frameworks": {
-        "netstandard1.5": {
+        "netstandard1.6": {
             "imports": [ "dnxcore50" ],
             "buildOptions": {
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
-                "System.Security.Principal": "4.0.1-rc2-24027",
-                "System.Security.Principal.Windows": "4.0.0-rc2-24027",
-                "System.Diagnostics.TraceSource": "4.0.0-rc2-24027",
-                "System.Security.SecureString": "4.0.0-*"
+                "NETStandard.Library": "1.6.0",
+                "System.Security.Principal": "4.0.1",
+                "System.Security.Principal.Windows": "4.0.0",
+                "System.Diagnostics.TraceSource": "4.0.0",
+                "System.Security.SecureString": "4.0.0"
             }
         }
     }

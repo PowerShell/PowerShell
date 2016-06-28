@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell
                 }
                 finally
                 {
-                    ClrFacade.ZeroFreeCoTaskMemUnicode(ptr);
+                    Marshal.ZeroFreeCoTaskMemUnicode(ptr);
                 }
             }
 

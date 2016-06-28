@@ -41,15 +41,15 @@
     },
 
     "frameworks": {
-        "netstandard1.5": {
+        "netstandard1.6": {
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "buildOptions": {
                 "define": [ "CORECLR", "PORTABLE" ]
             },
             "dependencies": {
                 "Newtonsoft.Json": "8.0.2",
-                "System.Xml.XDocument": "4.0.11-rc2-24027",
-                "System.IO.MemoryMappedFiles": "4.0.0-rc2-24027"
+                "System.Xml.XDocument": "4.0.11",
+                "System.IO.MemoryMappedFiles": "4.0.0"
             }
         },
         "net451": {

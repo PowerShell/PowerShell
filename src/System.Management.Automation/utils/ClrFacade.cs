@@ -148,7 +148,7 @@ namespace System.Management.Automation
             {
                 if (unmanagedMemory != IntPtr.Zero)
                 {
-                    ZeroFreeCoTaskMemUnicode(unmanagedMemory);
+                    Marshal.ZeroFreeCoTaskMemUnicode(unmanagedMemory);
                 }
             }
             return passwordInClearText;
@@ -210,19 +210,6 @@ namespace System.Management.Automation
             Marshal.StructureToPtr<T>( structure, ptr, deleteOld );
 #else
             Marshal.StructureToPtr(structure, ptr, deleteOld);
-#endif
-        }
-
-        /// <summary>
-        /// Needed to pair with the  SecureStringToCoTaskMemUnicode method which is member of 
-        /// 'SecureStringMarshal' on CORE CLR, and member of 'Marshal' on Full CLR.
-        /// </summary>
-        internal static void ZeroFreeCoTaskMemUnicode(IntPtr unmanagedStr)
-        {
-#if CORECLR
-            SecureStringMarshal.ZeroFreeCoTaskMemUnicode(unmanagedStr);
-#else
-            Marshal.ZeroFreeCoTaskMemUnicode(unmanagedStr);
 #endif
         }
 
