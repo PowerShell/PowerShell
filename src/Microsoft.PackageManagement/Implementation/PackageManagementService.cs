@@ -857,9 +857,9 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
             Version maximumVersion,
             ProviderOption providerOption = ProviderOption.LatestVersion) {
 
+#if PORTABLE
             return Enumerable.Empty<string>();
-
-#if !PORTABLE
+#else
             //We don't need to scan provider assemblies on corepowershell.
 
             //if provider is installed in providername\version format
@@ -988,7 +988,6 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
         //return the providers with latest version under the providerAssemblies folder
         //This method only gets called during the initialization, i.e. LoadProviders().
         private IEnumerable<string> ProvidersWithLatestVersionFromProviderAssembliesLocation(IHostApi request) {
-            return Enumerable.Empty<string>();
 #if !PORTABLE
             // don't need this for core powershell
             try {
@@ -1023,8 +1022,9 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
             {
                 request.Debug(ex.Message);
             }
-            return Enumerable.Empty<string>();
 #endif
+
+            return Enumerable.Empty<string>();
         }
 
         /// <summary>
