@@ -1,13 +1,14 @@
 <!--
 
-If you are running a released version of powershell, but not the latest one, install the latest from https://github.com/PowerShell/PowerShell/releases and try to repro it again
+If it is a bug report:
+- make sure you are able to repro it on the latest released version. 
+You can install the latest version from https://github.com/PowerShell/PowerShell/releases
+- Search the existing issues.
+- Refer to the [FAQ](../docs/FAQ.md).
+- Refer to the [known issues](../docs/KNOWNISSUES.md).
+- Fill out the following repro template
 
-Before submitting this issue, please first:
-
-- [ ] Search the existing issues.
-- [ ] Refer to the [FAQ](../docs/FAQ.md).
-- [ ] Refer to the [known issues](../docs/KNOWNISSUES.md).
-- [ ] If it is a bug, fill out this form:
+If it's not a bug, please remove the template and elaborate the issue in your own words.
 -->
 
 Steps to reproduce
@@ -25,20 +26,9 @@ Actual behavior
 Environment data
 ----------------
 
-<!-- If running the latest released version, specify the version, i.e. v0.5.0 -->
-
-<!-- If running you own build, please fill in the results of the following commands: -->
+<!-- provide the output of $PSVersionTable -->
 
 ```powershell
 > $PSVersionTable
-
-```
-
-```sh
-$ dotnet --info
-
-
-$ git rev-parse HEAD; git status
-
 
 ```
