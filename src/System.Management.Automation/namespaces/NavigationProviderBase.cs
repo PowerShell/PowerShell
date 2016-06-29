@@ -385,7 +385,7 @@ namespace System.Management.Automation.Provider
                     // If the parent is empty but the child is not, return the
                     // child
 
-                    result = child.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+                    result = child;
                 }
                 else if (!String.IsNullOrEmpty(parent) &&
                          String.IsNullOrEmpty(child))
@@ -407,23 +407,6 @@ namespace System.Management.Automation.Provider
                 else
                 {
                     // Both parts are not empty so join them
-
-                    // 'childIsLeaf == true' indicates that 'child' is actually the name of a child item and 
-                    // guaranteed to exist. In this case, we don't normalize the child path.
-                    if (childIsLeaf)
-                    {
-                        parent = NormalizePath(parent);
-                    }
-                    else
-                    {
-                        // Normalize the path so that only the default path separator is used as a
-                        // separator even if the user types the alternate slash.
-
-                        parent = parent.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
-                        child = child.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
-                    }
-
-                    // Joins the paths
 
                     StringBuilder builder = new StringBuilder(parent, parent.Length + child.Length + 1);
 
@@ -517,13 +500,12 @@ namespace System.Management.Automation.Provider
 
                 // Normalize the path
 
-                path = NormalizePath(path);
                 path = path.TrimEnd(StringLiterals.DefaultPathSeparator);
                 string rootPath = String.Empty;
                 
                 if (root != null)
                 {
-                    rootPath = NormalizePath(root);
+                    rootPath = root;
                 }
 
                 // Check to see if the path is equal to the root
@@ -628,27 +610,6 @@ namespace System.Management.Automation.Provider
 
             string normalizedPath = path;
             string normalizedBasePath = basePath;
-
-            // NTRAID#Windows 7-697922-2009/06/29-leeholm
-            // WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND 
-            //
-            // This path normalization got moved here from the MakePath override in V2 to prevent
-            // over-normalization of paths. This was a net-improvement for providers that use the default
-            // implementations, but now incorrectly replaces forward slashes with back slashes during the call to 
-            // GetParentPath and GetChildName. This breaks providers that are sensitive to slash direction, the only
-            // one we are aware of being the Active Directory provider. This change prevents this over-normalization
-            // from being done on AD paths.
-            //
-            // For more information, see Win7:695292. Do not change this code without closely working with the
-            // Active Directory team.
-            //
-            // WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND 
-            if (! String.Equals(context.ProviderInstance.ProviderInfo.FullName,
-                @"Microsoft.ActiveDirectory.Management\ActiveDirectory", StringComparison.OrdinalIgnoreCase))
-            {
-                normalizedPath = NormalizePath(path);
-                normalizedBasePath = NormalizePath(basePath);
-            }
 
             do // false loop
             {
@@ -812,8 +773,6 @@ namespace System.Management.Automation.Provider
                     throw PSTraceSource.NewArgumentException("path");
                 }
 
-                // Normalize the path
-                path = NormalizePath(path);
                 // Trim trailing back slashes
                 path = path.TrimEnd(StringLiterals.DefaultPathSeparator);
                 string result = null;
@@ -970,48 +929,6 @@ namespace System.Management.Automation.Provider
         #endregion Protected methods
 
         #region private members
-
-        /// <summary>
-        /// When a path contains both forward slash and backslash, we may introduce some errors by 
-        /// normalizing the path. This method does some smart checks to reduce the chances of making
-        /// those errors.
-        /// </summary>
-        /// 
-        /// <param name="path">
-        /// The path to normalize
-        /// </param>
-        /// 
-        /// <returns>
-        /// Normalized path or the original path
-        /// </returns>
-        private string NormalizePath(string path)
-        {
-            // If we have a mix of slashes, then we may introduce an error by normalizing the path.
-            // For example: path HKCU:\Test\/ is pointing to a subkey '/' of 'HKCU:\Test', if we
-            // normalize it, then we will get a wrong path.
-            bool pathHasForwardSlash = path.IndexOf(StringLiterals.AlternatePathSeparator) != -1;
-            bool pathHasBackSlash = path.IndexOf(StringLiterals.DefaultPathSeparator) != -1;
-            bool pathHasMixedSlashes = pathHasForwardSlash && pathHasBackSlash;
-            bool shouldNormalizePath = true;
-
-            string normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
-
-            // There is a mix of slashes & the path is rooted & the path exists without normalization.
-            // In this case, we might want to skip the normalization to the path.
-            if (pathHasMixedSlashes && IsAbsolutePath(path) && ItemExists(path))
-            {
-                // 1. The path exists and ends with a forward slash, in this case, it's very possible the ending forward slash
-                //    make sense to the underlying provider, so we skip normalization
-                // 2. The path exists, but not anymore after normalization, then we skip normalization
-                bool parentEndsWithForwardSlash = path.EndsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal);
-                if (parentEndsWithForwardSlash || !ItemExists(normalizedPath))
-                {
-                    shouldNormalizePath = false;
-                }
-            }
-
-            return shouldNormalizePath ? normalizedPath : path;
-        }
 
         /// <summary>
         /// Test if the path is an absolute path

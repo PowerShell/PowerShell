@@ -829,7 +829,6 @@ namespace Microsoft.PowerShell.Commands
                                 string path,
                                 bool recurse)
         {            
-            path = NormalizePath(path);
             bool isContainer = false;
             bool fDeleteKey = false;
 
@@ -944,10 +943,6 @@ namespace Microsoft.PowerShell.Commands
                                 string path,
                                 string destination)
         {    
-            //normalize path
-            path = NormalizePath(path);
-            destination = NormalizePath(destination);
-
             //get elements from the path
             string[] pathElements = GetPathElements(path);
             string[] destElements = GetPathElements(destination); 
@@ -1095,8 +1090,6 @@ namespace Microsoft.PowerShell.Commands
                 AttemptToImportPkiModule();
             }
 
-            path = NormalizePath(path);
-
             //get the elements from the path
             string[] pathElements = GetPathElements(path);
 
@@ -1207,8 +1200,6 @@ namespace Microsoft.PowerShell.Commands
 
             Utils.CheckArgForNull(path, "path");
 
-            path = NormalizePath(path);
-
             if (path.Length == 0)
             {
                 return true;
@@ -1259,7 +1250,6 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected override bool IsValidPath(string path)
         {
-            path = NormalizePath(path);
             path = EnsureDriveIsRooted(path);
 
             bool isCertPath = CertPathRegex.Match(path).Success;
@@ -1323,7 +1313,6 @@ namespace Microsoft.PowerShell.Commands
             bool isContainer = false;
             object item = null;
 
-            path = NormalizePath(path); 
 
             if (path.Length == 0)
             {
@@ -1389,8 +1378,6 @@ namespace Microsoft.PowerShell.Commands
         protected override void GetItem(string path) 
         { 
             bool isContainer = false;
-            
-            path = NormalizePath(path);
             object item = GetItemAtPath(path, false, out isContainer);
             CertificateFilterInfo filter = GetFilter();
 
@@ -1555,9 +1542,6 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            // Normalize the path
-            path = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
-
             // Trim trailing back slashes
             path = path.TrimEnd(StringLiterals.DefaultPathSeparator);
             string result = null;
@@ -1587,7 +1571,6 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected override void InvokeDefaultAction(string path)
         {
-            path = NormalizePath(path);
             string action = CertificateProviderStrings.Action_Invoke;
             string certmgr = "certmgr.msc";
             string certPath = System.IO.Path.Combine(
@@ -1734,25 +1717,6 @@ namespace Microsoft.PowerShell.Commands
             ErrorRecord er = CreateErrorRecord(path, itemType);
        
             ThrowTerminatingError(er);
-        }
-
-        static private string NormalizePath(string path)
-        {
-            if (path.Length > 0)
-            {
-                char lastChar = path[path.Length-1];
-
-                if ((lastChar == '/') || (lastChar == '\\'))
-                {
-                    path = path.Substring(0, path.Length-1);
-                }
-
-                string[] elts = GetPathElements(path);
-
-                path = String.Join("\\", elts);
-            }
-
-            return path;
         }
 
         static private string[] GetPathElements(string path)
@@ -2388,8 +2352,6 @@ namespace Microsoft.PowerShell.Commands
         /// 
         protected override void GetChildItems(string path, bool recurse) 
         { 
-            path = NormalizePath(path);
-
             GetChildItemsOrNames(path, recurse, ReturnContainers.ReturnAllContainers, false, GetFilter());
         }
 
@@ -2425,7 +2387,6 @@ namespace Microsoft.PowerShell.Commands
             string path,
             ReturnContainers returnContainers) 
         {
-            path = NormalizePath(path);
             GetChildItemsOrNames(path, false, returnContainers, true, GetFilter());
         } // GetChildNames
 
@@ -2457,7 +2418,6 @@ namespace Microsoft.PowerShell.Commands
         /// 
         protected override bool IsItemContainer(string path) 
         {
-            path = NormalizePath(path);
             Utils.CheckArgForNull(path, "path");
             bool isContainer = false;
 

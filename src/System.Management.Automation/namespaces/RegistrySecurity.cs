@@ -63,9 +63,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException("sections");
             }
 
-            path = NormalizePath(path);                
-
-            key = GetRegkeyForPathWriteIfError(path, false);               
+            key = GetRegkeyForPathWriteIfError(path, false);
 
             if (key != null)
             {
@@ -108,8 +106,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("securityDescriptor");
             }
-
-            path = NormalizePath(path);
 
             ObjectSecurity sd;
             if (TransactionAvailable())

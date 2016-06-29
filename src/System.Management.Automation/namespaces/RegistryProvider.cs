@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
                 // There really aren't any illegal characters or syntactical patterns
                 // to validate, so just ensure that the path starts with one of the hive roots.
 
-                string root = NormalizePath(path);
+                string root = path;
                 root = root.TrimStart (StringLiterals.DefaultPathSeparator);
                 root = root.TrimEnd (StringLiterals.DefaultPathSeparator);
 
@@ -3870,35 +3870,6 @@ namespace Microsoft.PowerShell.Commands
             }
         } // MoveProperty
 
-        /// <summary>
-        /// Converts all / in the path to \
-        /// </summary>
-        /// 
-        /// <param name="path">
-        /// The path to normalize.
-        /// </param>
-        /// 
-        /// <returns>
-        /// The path with all / normalized to \
-        /// </returns>
-        /// 
-        private string NormalizePath(string path)
-        {
-            string result = path;
-
-            if (!String.IsNullOrEmpty(path))
-            {
-                result = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
-
-                // Remove relative path tokens
-                if (HasRelativePathTokens(path))
-                {
-                    result = NormalizeRelativePath(result, null);
-                }
-            }
-
-            return result;
-        } // NormalizePath
 
         private bool HasRelativePathTokens(string path)
         {
@@ -4269,11 +4240,8 @@ namespace Microsoft.PowerShell.Commands
             try
             {
 
-                // 1. Normalize path ( for "//","." etc )
                 // 2. Open the root
                 // 3. Create subkey
-
-                path = NormalizePath(path);
 
                 int index = path.IndexOf("\\", StringComparison.Ordinal);
                 if (index == 0)
@@ -4529,7 +4497,7 @@ namespace Microsoft.PowerShell.Commands
                                 !remainingPath.StartsWith(subKey + StringLiterals.DefaultPathSeparator, StringComparison.OrdinalIgnoreCase))
                             {
                                 // Actually normalize the subkey and then check again
-                                normalizedSubkey = NormalizePath(subKey);
+                                normalizedSubkey = subKey;
 
                                 if (!remainingPath.Equals(normalizedSubkey, StringComparison.OrdinalIgnoreCase) &&
                                     !remainingPath.StartsWith(normalizedSubkey + StringLiterals.DefaultPathSeparator, StringComparison.OrdinalIgnoreCase))

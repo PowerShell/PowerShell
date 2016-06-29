@@ -24,6 +24,14 @@ Describe "Hierarchical paths" {
         Get-Content $testPath | Should Be $data
     }
 
+    It "Should allow escaped `\ on Linux" -Skip:$IsWindows {
+        $name = "a`\weird`\file"
+        $data = "Hello World"
+        Setup -File $name -Content $data
+        $testPath = Join-Path $TestDrive $name
+        $testPath | write-host
+    }
+
     It "should work with backward slashes for each separator" {
         $testPath = "$TestDrive\testFile.txt".Replace("/","\")
         Get-Content $testPath | should be $data

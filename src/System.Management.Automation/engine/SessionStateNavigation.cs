@@ -1281,7 +1281,7 @@ namespace System.Management.Automation
                     // the default provider is FileSystem
                     provider = PublicSessionState.Internal.GetSingleProvider(Microsoft.PowerShell.Commands.FileSystemProvider.ProviderName);
 
-                    workingPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+                    workingPath = LocationGlobber.NormalizePath(path);
                     workingPath = workingPath.TrimEnd(StringLiterals.DefaultPathSeparator);
                 }
                 else

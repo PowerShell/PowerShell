@@ -9,6 +9,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
 using System.Text;
+using System.Text.RegularExpressions;
 using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
@@ -73,6 +74,20 @@ namespace System.Management.Automation
         #endregion Constructor
 
         #region Public methods
+
+        /// <summary>
+        /// Converts a path containing alternate slashes with default slashes, ignoring escaped slashes.
+        /// </summary>
+        public static string NormalizePath(string path)
+        {
+            // pathResolutionTracer.WriteLine($"Input {path}");
+            // var regex = new Regex($"([^`])?{Regex.Escape(StringLiterals.AlternatePathSeparatorString)}", RegexOptions.Compiled | RegexOptions.ExplicitCapture);
+            // var normalizedPath = regex.Replace(path, StringLiterals.DefaultPathSeparatorString);
+            // // var normalizedPath = path.Replace("\\", "/");
+            // pathResolutionTracer.WriteLine($"Output {normalizedPath}");
+            // return normalizedPath;
+            return path;
+        }
 
         #region PowerShell paths from PowerShell path globbing
         /// <summary>
@@ -462,7 +477,7 @@ namespace System.Management.Automation
 
             Collection<PathInfo> result = new Collection<PathInfo>();
 
-            pathResolutionTracer.WriteLine("Path is DRIVE-QUALIFIED");
+            pathResolutionTracer.WriteLine($"Path {path} is DRIVE-QUALIFIED");
 
             string relativePath = GetDriveRootRelativePathFromPSPath(path, context, true, out drive, out providerInstance);
 
@@ -836,6 +851,7 @@ namespace System.Management.Automation
                         context,
                         out providerInstance))
                 {
+                    pathResolutionTracer.WriteLine($"Globbed path {currentPath.ProviderPath}");
                     paths.Add(currentPath.ProviderPath);
                 }
 
@@ -1355,6 +1371,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("context");
             }
 
+            pathResolutionTracer.WriteLine($"GetProviderPath for {path}");
+
             string result = null;
             provider = null;
             drive = null;
@@ -1367,6 +1385,7 @@ namespace System.Management.Automation
                     path = GetHomeRelativePath(path);
                 }
             }
+            pathResolutionTracer.WriteLine($"Checking directness for {path}");
 
             // Now check to see if it is a provider-direct path (starts with // or \\)
             if (IsProviderDirectPath(path))
@@ -1398,7 +1417,7 @@ namespace System.Management.Automation
             }
             else
             {
-                pathResolutionTracer.WriteLine("Path is DRIVE-QUALIFIED");
+                pathResolutionTracer.WriteLine("Path {path} is DRIVE-QUALIFIED");
 
                 CmdletProvider providerInstance = null;
                 string relativePath = GetDriveRootRelativePathFromPSPath(path, context, false, out drive, out providerInstance);
@@ -1800,7 +1819,7 @@ namespace System.Management.Automation
         private SessionState sessionState;
 
         /// <summary>
-        /// Removs the back tick "`" from any of the glob characters in the path.
+        /// Removes the back tick "`" from any of the glob characters in the path.
         /// </summary>
         /// 
         /// <param name="path">
@@ -1814,15 +1833,22 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path" /> is null.
         /// </exception>
-        /// 
-        private static string RemoveGlobEscaping(string path)
+        ///
+        private static Regex regexNormalizer = new Regex($"(?<!`){Regex.Escape(StringLiterals.AlternatePathSeparatorString)}",
+                                                         RegexOptions.Compiled);
+        internal static string RemoveGlobEscaping(string path)
         {
                 if (path == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("path");
                 }
 
-                string result = WildcardPattern.Unescape(path);
+                pathResolutionTracer.WriteLine($"Input {path}");
+                var normalizedPath = regexNormalizer.Replace(path, StringLiterals.DefaultPathSeparatorString);
+                pathResolutionTracer.WriteLine($"Output {normalizedPath}");
+
+                string result = WildcardPattern.Unescape(normalizedPath);
+                pathResolutionTracer.WriteLine($"Unescaped {result}");
 
                 return result;
         } // RemoveGlobEscaping
@@ -2037,7 +2063,7 @@ namespace System.Management.Automation
 
                     if (normalizedRoot.IndexOf(":", StringComparison.CurrentCulture) >= 0)
                     {
-                        string normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+                        string normalizedPath = path;
                         if (normalizedPath.StartsWith(normalizedRoot, StringComparison.OrdinalIgnoreCase))
                         {
                             isPathForCurrentDrive = true;
@@ -2135,7 +2161,6 @@ namespace System.Management.Automation
             NavigationCmdletProvider navigationProvider = providerInstance as NavigationCmdletProvider;
 
             // Normalize the paths
-            providerPath = providerPath.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
             providerPath = providerPath.TrimEnd(StringLiterals.DefaultPathSeparator);
             string driveRoot = drive.Root.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
             driveRoot = driveRoot.TrimEnd(StringLiterals.DefaultPathSeparator);
@@ -2440,6 +2465,7 @@ namespace System.Management.Automation
             {
                 string rootedPath = sessionState.Internal.MakePath(context.Drive.Root, driveRootRelativeWorkingPath, context);
                 string normalizedRelativePath = navigationProvider.ContractRelativePath(rootedPath, context.Drive.Root, false, context);
+                tracer.WriteLine($"NavigationCmdletProvider {normalizedRelativePath} from {rootedPath}");
 
                 if (!String.IsNullOrEmpty(normalizedRelativePath))
                 {
