@@ -41,7 +41,7 @@ Usage: TypeCatalogGen.exe <{0}> <{1}>
 
         /*
          * Go through all reference assemblies of .NET Core and generate the type catalog -> Dictionary<NamespaceQualifiedTypeName, TPAStrongName>
-         * Then auto-generate the partial class 'PowerShellAssemblyLoader' that has the code to initialize the type catalog cache.
+         * Then auto-generate the partial class 'PowerShellAssemblyLoadContext' that has the code to initialize the type catalog cache.
          *
          * In CoreCLR, there is no way to get all loaded TPA assemblies (.NET Framework Assemblies). In order to get type based on type name, powershell needs to know what .NET
          * types are available and in which TPA assemblies. So we have to generate the type catalog based on the reference assemblies of .NET Core.
@@ -105,7 +105,7 @@ Usage: TypeCatalogGen.exe <{0}> <{1}>
                 }
             }
 
-            WritePowerShellAssemblyLoaderPartialClass(targetFilePath, typeNameToAssemblyMap);
+            WritePowerShellAssemblyLoadContextPartialClass(targetFilePath, typeNameToAssemblyMap);
         }
 
         /// <summary>
@@ -272,7 +272,7 @@ Usage: TypeCatalogGen.exe <{0}> <{1}>
         /// <summary>
         /// Generate the CSharp source code that initialize the type catalog.
         /// </summary>
-        private static void WritePowerShellAssemblyLoaderPartialClass(string targetFilePath, Dictionary<string, string> typeNameToAssemblyMap)
+        private static void WritePowerShellAssemblyLoadContextPartialClass(string targetFilePath, Dictionary<string, string> typeNameToAssemblyMap)
         {
             const string SourceFormat = "            typeCatalog[\"{0}\"] = \"{1}\";";
             const string SourceHead = @"//
@@ -284,10 +284,11 @@ Usage: TypeCatalogGen.exe <{0}> <{1}>
 // catalog based on the reference assemblies of .NET Core.
 //
 using System.Collections.Generic;
+using System.Runtime.Loader;
 
 namespace System.Management.Automation
 {{
-    internal partial class PowerShellAssemblyLoader
+    internal partial class PowerShellAssemblyLoadContext : AssemblyLoadContext
     {{
         private Dictionary<string, string> InitializeTypeCatalog()
         {{

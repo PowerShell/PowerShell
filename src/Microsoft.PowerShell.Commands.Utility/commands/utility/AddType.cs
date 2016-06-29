@@ -1148,7 +1148,7 @@ namespace Microsoft.PowerShell.Commands
             // First try by strong name
             try
             {
-                loadedAssembly = ClrFacade.Load(new AssemblyName(assemblyName));
+                loadedAssembly = Assembly.Load(new AssemblyName(assemblyName));
             }
             // Generates a FileNotFoundException if you can't load the strong type.
             // So we'll try from the short name.
@@ -2050,7 +2050,7 @@ namespace Microsoft.PowerShell.Commands
             // First try by strong name
             try
             {
-                loadedAssembly = ClrFacade.Load(assemblyName);
+                loadedAssembly = Assembly.Load(assemblyName);
             }
             // Generates a FileNotFoundException if you can't load the strong type.
             // So we'll try from the short name.
@@ -2062,7 +2062,7 @@ namespace Microsoft.PowerShell.Commands
             // Next, try an exact match
             if (StrongNames.Value.ContainsKey(assemblyName))
             {
-                return ClrFacade.Load(StrongNames.Value[assemblyName]);
+                return Assembly.Load(StrongNames.Value[assemblyName]);
             }
 
             // If the assembly name doesn't contain wildcards, return null. The caller generates an error here.
@@ -2105,7 +2105,7 @@ namespace Microsoft.PowerShell.Commands
                 return null;
 
             // Otherwise, load the assembly.
-            return ClrFacade.Load(matchedStrongName);
+            return Assembly.Load(matchedStrongName);
         }
 
         private static ConcurrentDictionary<string, string> InitializeStrongNameDictionary()
