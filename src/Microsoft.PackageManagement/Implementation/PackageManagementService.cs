@@ -859,7 +859,8 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
 
             return Enumerable.Empty<string>();
 
-            /* We don't need to scan provider assemblies on corepowershell.
+#if !PORTABLE
+            //We don't need to scan provider assemblies on corepowershell.
 
             //if provider is installed in providername\version format
             var providerFolder = ProviderAssembliesLocation.Distinct(new PathEqualityComparer(PathCompareOption.Full)).SelectMany(Directory.EnumerateDirectories);
@@ -966,20 +967,20 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
                     }
                 }
             }
-            */
+#endif
         }
 
         //Return all providers under the providerAssemblies folder
         internal IEnumerable<string> AllProvidersFromProviderAssembliesLocation(IHostApi request) {
-            /*
-            don't need this for core powershell
+#if !PORTABLE
+            // don't need this for core powershell
             try {
 
                 return ScanAllProvidersFromProviderAssembliesLocation(request, null, null, null, null, ProviderOption.AllProvider).WhereNotNull().ToArray();
             } catch (Exception ex) {
                 request.Debug(ex.Message);
             }
-            */
+#endif
             return Enumerable.Empty<string>();
         }
 
@@ -988,8 +989,8 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
         //This method only gets called during the initialization, i.e. LoadProviders().
         private IEnumerable<string> ProvidersWithLatestVersionFromProviderAssembliesLocation(IHostApi request) {
             return Enumerable.Empty<string>();
-            /*
-            don't need this for core powershell
+#if !PORTABLE
+            // don't need this for core powershell
             try {
                 var providerPaths = ScanAllProvidersFromProviderAssembliesLocation(request, null, null, null, null, ProviderOption.LatestVersion).WhereNotNull().ToArray();
 
@@ -1023,7 +1024,7 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
                 request.Debug(ex.Message);
             }
             return Enumerable.Empty<string>();
-            */
+#endif
         }
 
         /// <summary>
