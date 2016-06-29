@@ -61,7 +61,7 @@
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "dependencies": {
                 "Microsoft.CodeAnalysis.CSharp": "1.1.1",
-                "Newtonsoft.Json": "8.0.2",
+                "Newtonsoft.Json": "7.0.1",
                 "System.Diagnostics.TextWriterTraceListener": "4.0.0"
             }
         },
