@@ -50,7 +50,8 @@ Describe "Configuration file locations" {
             & $powershell -noprofile { (Get-PSReadlineOption).HistorySavePath } | Should Be $expectedReadline
         }
 
-        It @ItArgs "JIT cache should be created correctly" {
+        # This feature (and thus test) has been disabled because of the AssemblyLoadContext scenario
+        It "JIT cache should be created correctly" -Skip {
             Remove-Item -ErrorAction SilentlyContinue $expectedCache
             & $powershell -noprofile { exit }
             $expectedCache | Should Exist
@@ -105,7 +106,8 @@ Describe "Configuration file locations" {
             & $powershell -noprofile { (Get-PSReadlineOption).HistorySavePath } | Should Be $expected
         }
 
-        It @ItArgs "JIT cache should respect XDG_CACHE_HOME" {
+        # This feature (and thus test) has been disabled because of the AssemblyLoadContext scenario
+        It -Skip "JIT cache should respect XDG_CACHE_HOME" {
             $env:XDG_CACHE_HOME = $TestDrive
             $expected = [IO.Path]::Combine($TestDrive, "powershell", "StartupProfileData-NonInteractive")
             Remove-Item -ErrorAction SilentlyContinue $expected

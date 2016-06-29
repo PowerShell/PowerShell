@@ -667,7 +667,7 @@ namespace System.Management.Automation
             }
             else
             {
-                providerAssembly = ClrFacade.Load(providerInfo.AssemblyName);
+                providerAssembly = Assembly.Load(providerInfo.AssemblyName);
             }
 
             try

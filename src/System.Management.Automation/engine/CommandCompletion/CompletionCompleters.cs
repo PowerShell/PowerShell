@@ -36,8 +36,7 @@ namespace System.Management.Automation
         static CompletionCompleters()
         {
 #if CORECLR
-            // Porting note: removed until we have full assembly loading solution
-            // ClrFacade.AddAssemblyLoadHandler(UpdateTypeCacheOnAssemblyLoad);
+            ClrFacade.AddAssemblyLoadHandler(UpdateTypeCacheOnAssemblyLoad);
 #else
             AppDomain.CurrentDomain.AssemblyLoad += UpdateTypeCacheOnAssemblyLoad;
 #endif

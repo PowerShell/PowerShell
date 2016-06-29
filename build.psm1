@@ -367,6 +367,9 @@ function Start-PSPester {
 function Start-PSxUnit {
     [CmdletBinding()]param()
 
+    log "xUnit tests are currently disabled pending fixes due to API and AssemblyLoadContext changes - @andschwa"
+    return
+
     if ($IsWindows) {
         throw "xUnit tests are only currently supported on Linux / OS X"
     }

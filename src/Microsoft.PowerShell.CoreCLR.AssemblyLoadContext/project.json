@@ -27,6 +27,7 @@
                 "NETStandard.Library": "1.6.0",
                 "System.Runtime.Loader": "4.0.0",
                 "System.Reflection.Metadata": "1.1.0",
+                "System.Reflection.TypeExtensions": "4.1.0",
                 "System.Security.Cryptography.Algorithms": "4.2.0"
             }
         }
