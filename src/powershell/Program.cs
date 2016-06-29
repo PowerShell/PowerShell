@@ -24,8 +24,6 @@ namespace Microsoft.PowerShell
 #if CORECLR
             // Open PowerShell has to set the ALC here, since we don't own the native host
             string appBase = System.IO.Path.GetDirectoryName(typeof(ManagedPSEntry).GetTypeInfo().Assembly.Location);
-            Console.WriteLine(" == APPBASE == {0}", appBase);
-            //Console.Read();
             return (int)PowerShellAssemblyLoadContextInitializer.
                            InitializeAndCallEntryMethod(
                                appBase,

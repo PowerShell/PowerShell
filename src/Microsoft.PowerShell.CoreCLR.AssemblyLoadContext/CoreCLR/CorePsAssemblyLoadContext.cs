@@ -8,6 +8,7 @@ using System.IO;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Reflection.Metadata;
@@ -90,6 +91,9 @@ namespace System.Management.Automation
             }
 
             trace = System.Environment.GetEnvironmentVariable("ALC_TRACE") == "1";
+
+            if (trace)
+                Console.WriteLine(" == APPBASE == {0}", basePaths);
 
             this.basePaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < this.basePaths.Length; i++)
@@ -195,12 +199,17 @@ namespace System.Management.Automation
 
             if (trace)
                 System.Console.WriteLine("== LC1 == Requesting: {0}", assemblyName.FullName);
+
             if (filterSet == null)
             {
-                filterSet = new HashSet<string>(coreClrTypeCatalog.Values);
+                // We exclude the assemblies included in the type catalog as there appears to be a
+                // bug in .NET with method resolution with system libraries are loaded by our
+                // context and not the default. We use the short name because some packages have
+                // inconsistent verions between reference and runtime assemblies.
+                filterSet = new HashSet<string>(from x in coreClrTypeCatalog.Values select x.Substring(0, x.IndexOf(",")));
             }
-            
-            if (filterSet.Contains(assemblyName.FullName))
+
+            if (filterSet.Contains(assemblyName.Name))
             {
                 if (trace)
                     System.Console.WriteLine("  ++ Return null from Load override");
@@ -463,7 +472,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Set the profile optimization root on the approprite load context
+        /// Set the profile optimization root on the appropriate load context
         /// </summary>
         internal void SetProfileOptimizationRootImpl(string directoryPath)
         {
@@ -472,7 +481,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Start the profile optimization on the approprite load context
+        /// Start the profile optimization on the appropriate load context
         /// </summary>
         internal void StartProfileOptimizationImpl(string profile)
         {
