@@ -1699,11 +1699,14 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// This API resets the input buffer. In this example this
-        /// functionality is not needed so the method returns nothing.
+        /// This API resets the input buffer.
         /// </summary>
         public override void FlushInputBuffer()
         {
+            if (!Console.IsInputRedirected)
+            {
+                Console.OpenStandardInput().Flush();
+            }
         }
 
         /// <summary>
