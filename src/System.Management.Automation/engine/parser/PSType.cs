@@ -1124,7 +1124,10 @@ namespace System.Management.Automation.Language
             // Two replaces at the end are for not-allowed characters. They are replaced by similar-looking chars.
             string assemblyName = ClrFacade.FIRST_CHAR_PSASSEMBLY_MARK + (string.IsNullOrWhiteSpace(rootAst.Extent.File)
                                       ? "powershell"
-                                      : rootAst.Extent.File.Replace('\\', (char)0x29f9).Replace(':', (char)0x0589));
+                                      : rootAst.Extent.File
+                                      .Replace('\\', (char)0x29f9)
+                                      .Replace('/', (char)0x29f9)
+                                      .Replace(':', (char)0x0589));
                                       
             var assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName),
                                                                  AssemblyBuilderAccess.RunAndCollect, GetAssemblyAttributeBuilders());
