@@ -8,7 +8,6 @@ using System.IO;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Reflection.Metadata;
@@ -90,11 +89,6 @@ namespace System.Management.Automation
                 throw new ArgumentNullException("basePaths");
             }
 
-            trace = System.Environment.GetEnvironmentVariable("ALC_TRACE") == "1";
-
-            if (trace)
-                Console.WriteLine(" == APPBASE == {0}", basePaths);
-
             this.basePaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < this.basePaths.Length; i++)
             {
@@ -119,9 +113,21 @@ namespace System.Management.Automation
 
             // LAST: Handle useResolvingHandlerOnly flag
             this.useResolvingHandlerOnly = useResolvingHandlerOnly;
-            this.activeLoadContext = useResolvingHandlerOnly ? AssemblyLoadContext.Default : this;
+            this.activeLoadContext = useResolvingHandlerOnly ? Default : this;
             if (useResolvingHandlerOnly)
-                AssemblyLoadContext.Default.Resolving += Resolve;
+            {
+                Default.Resolving += Resolve;
+            }
+            else
+            {
+                var tempSet = new HashSet<string>(coreClrTypeCatalog.Values, StringComparer.OrdinalIgnoreCase);
+                tpaSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (string tpa in tempSet)
+                {
+                    string shortName = tpa.Substring(0, tpa.IndexOf(','));
+                    tpaSet.Add(shortName);
+                }
+            }
         }
 
         #endregion Constructor
@@ -142,9 +148,8 @@ namespace System.Management.Automation
         //  - Key: namespace qualified type name (FullName)
         //  - Value: strong name of the TPA that contains the type represented by Key.
         private readonly Dictionary<string, string> coreClrTypeCatalog;
+        private readonly HashSet<string> tpaSet;
         private readonly string[] extensions = new string[] { ".ni.dll", ".dll" };
-        private readonly bool trace;
-        private HashSet<string> filterSet;
 
         /// <summary>
         /// Assembly cache accross the AppDomain
@@ -197,24 +202,12 @@ namespace System.Management.Automation
             if (useResolvingHandlerOnly)
                 throw new NotSupportedException(UseResolvingEventHandlerOnly);
 
-            if (trace)
-                System.Console.WriteLine("== LC1 == Requesting: {0}", assemblyName.FullName);
-
-            if (filterSet == null)
-            {
-                // We exclude the assemblies included in the type catalog as there appears to be a
-                // bug in .NET with method resolution with system libraries are loaded by our
-                // context and not the default. We use the short name because some packages have
-                // inconsistent verions between reference and runtime assemblies.
-                filterSet = new HashSet<string>(from x in coreClrTypeCatalog.Values select x.Substring(0, x.IndexOf(",")));
-            }
-
-            if (filterSet.Contains(assemblyName.Name))
-            {
-                if (trace)
-                    System.Console.WriteLine("  ++ Return null from Load override");
+            // We let the default context load the assemblies included in the type catalog as there
+            // appears to be a bug in .NET with method resolution with system libraries loaded by our
+            // context and not the default. We use the short name because some packages have inconsistent
+            // verions between reference and runtime assemblies.
+            if (tpaSet.Contains(assemblyName.Name))
                 return null;
-            }
 
             return Resolve(this, assemblyName);
         }
@@ -273,8 +266,6 @@ namespace System.Management.Automation
                 // In this case, return null so that other Resolving event handlers can kick in to resolve the request.
                 if (!isAssemblyFileFound || !isAssemblyFileMatching)
                 {
-                    if (trace)
-                        System.Console.WriteLine("  -- Return null");
                     return null;
                 }
 
@@ -285,8 +276,6 @@ namespace System.Management.Automation
                 {
                     // Add the loaded assembly to the cache
                     AssemblyCache.TryAdd(assemblyName.Name, asmLoaded);
-                    if (trace)
-                        System.Console.WriteLine("  ++ Load succeed: {0}", asmLoaded.FullName);
                 }
             }
 
@@ -301,8 +290,6 @@ namespace System.Management.Automation
         internal Assembly LoadFrom(string assemblyPath)
         {
             ValidateAssemblyPath(assemblyPath, "assemblyPath");
-            if (trace)
-                System.Console.WriteLine("*** LC1 *** LoadFrom {0}", assemblyPath);
 
             Assembly asmLoaded;
             AssemblyName assemblyName = GetAssemblyName(assemblyPath);
@@ -333,8 +320,6 @@ namespace System.Management.Automation
                     {
                         probingPaths.Add(parentPath);
                     }
-                    if (trace)
-                        System.Console.WriteLine("  ++ LoadFrom succeed: {0}", asmLoaded.FullName);
                 }
             }
 
