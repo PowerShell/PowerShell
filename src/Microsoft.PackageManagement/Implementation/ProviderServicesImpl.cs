@@ -176,9 +176,13 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
 
                 Debug(request, "Calling 'ProviderService::IsSignedAndTrusted, '{0}'", filename);
 
+                // we are not using this function anywhere
+#if !LINUX
                 var wtd = new WinTrustData(filename);
+
                 var result = NativeMethods.WinVerifyTrust(new IntPtr(-1), new Guid("{00AAC56B-CD44-11d0-8CC2-00C04FC295EE}"), wtd);
                 return result == WinVerifyTrustResult.Success;
+#endif
             }
             return false;
         }
