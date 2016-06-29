@@ -1,6 +1,6 @@
 Describe "Out-String DRT Unit Tests" -Tags DRT{
 
-    It "check display of properties with names containing wildcard characters" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+    It "check display of properties with names containing wildcard characters" {
         $results = new-object psobject | add-member -passthru noteproperty 'name with square brackets: [0]' 'myvalue' | out-string
         $results.Length | Should BeGreaterThan 1
         $results.GetType() | Should Be string

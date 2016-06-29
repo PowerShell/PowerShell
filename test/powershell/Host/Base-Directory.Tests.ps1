@@ -21,11 +21,7 @@ Describe "Configuration file locations" {
                 $expectedReadline = [IO.Path]::Combine($env:HOME, ".local", "share", "powershell", "PSReadLine", "ConsoleHost_history.txt")
             }
 
-            if ($env:TRAVIS_OS_NAME -eq "osx") {
-                $ItArgs = @{ pending = $true }
-            } else {
-                $ItArgs = @{}
-            }
+            $ItArgs = @{}
         }
 
         BeforeEach {
@@ -65,8 +61,6 @@ Describe "Configuration file locations" {
             # Using It @ItArgs, we automatically skip on Windows for all these tests
             if ($IsWindows) {
                 $ItArgs = @{ skip = $true }
-            } elseif ($env:TRAVIS_OS_NAME -eq "osx") {
-                $ItArgs = @{ pending = $true }
             } else {
                 $ItArgs = @{}
             }

@@ -52,7 +52,7 @@ Describe "Out-File" {
 	{ Out-File -FilePath $testfile -InputObject $inObject } | Should Not Throw
     }
 
-    It "Should not overwrite when the noclobber switch is used" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+    It "Should not overwrite when the noclobber switch is used" {
 
 	Out-File -FilePath $testfile -InputObject $inObject
 
@@ -67,7 +67,7 @@ Describe "Out-File" {
 	$actual[3] | Should Match "some test text"
     }
 
-    It "Should Append a new line when the append switch is used" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+    It "Should Append a new line when the append switch is used" {
 	{ Out-File -FilePath $testfile -InputObject $inObject }         | Should Not Throw
 	{ Out-File -FilePath $testfile -InputObject $inObject -Append } | Should Not Throw
 
@@ -101,7 +101,7 @@ Describe "Out-File" {
 
     }
 
-    It "Should allow the cmdlet to overwrite an existing read-only file" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+    It "Should allow the cmdlet to overwrite an existing read-only file" {
 	# create a read-only text file
 	{ Out-File -FilePath $testfile -InputObject $inObject }                | Should Not Throw
 	Set-ItemProperty -Path $testfile -Name IsReadOnly -Value $true

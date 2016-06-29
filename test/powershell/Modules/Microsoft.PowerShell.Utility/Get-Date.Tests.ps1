@@ -12,7 +12,7 @@ Describe "Get-Date DRT Unit Tests"  -Tags DRT {
         $result.Millisecond | Should be 200
     }
 
-    It "using -displayhint produces the correct output" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+    It "using -displayhint produces the correct output" {
         $d = Get-date -Date:"Jan 1, 2020"  -DisplayHint Date | Out-String 
         $d.Trim() | Should be "Wednesday, January 1, 2020"
     }

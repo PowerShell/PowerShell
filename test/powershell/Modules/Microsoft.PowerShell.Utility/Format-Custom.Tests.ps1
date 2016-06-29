@@ -58,7 +58,7 @@ Describe "Format-Custom DRT basic functionality" -Tags DRT{
     }
 "@
 
-    It "Format-Custom with subobject should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+    It "Format-Custom with subobject should work" {
         $expectResult1 = "this is the name"
         $expectResult2 = "this is the name of the sub object"
         $testObject = @{}
@@ -74,7 +74,7 @@ Describe "Format-Custom DRT basic functionality" -Tags DRT{
         $result | Should Match "two"
     }
 	
-	It "Format-Custom with Tree Object should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+	It "Format-Custom with Tree Object should work" {
 		$expectedResult=@"
 class MyContainer1
 {
@@ -203,7 +203,7 @@ class MyContainer1
 		$result | Should Be $expectedResult
 	}
 	
-	It "Format-Custom with Empty Data Tree Object should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+	It "Format-Custom with Empty Data Tree Object should work" {
 		$expectedResult=@"
 class MyContainer1
 {
@@ -225,7 +225,7 @@ class MyContainer1
 		$result | Should Be $expectedResult
 	}
 	
-	It "Format-Custom with Back Pointers Tree Object should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+	It "Format-Custom with Back Pointers Tree Object should work" {
 		$expectedResult=@"
 class MyContainer1
 {
@@ -268,7 +268,7 @@ class MyContainer1
 		$result | Should Be $expectedResult
 	}
 	
-	It "Format-Custom with Leaf Only Data should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+	It "Format-Custom with Leaf Only Data should work" {
 		$expectedResult=@"
 class MyLeaf1
 {

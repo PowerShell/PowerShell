@@ -5,11 +5,11 @@ Describe "ConsoleHost unit tests" -Tag 'Slow' {
     $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
 
     Context "CommandLine" {
-        It "simple -args" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+        It "simple -args" {
             & $powershell -noprofile { $args[0] } -args "hello world" | Should Be "hello world"
         }
 
-        It "array -args" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+        It "array -args" {
             & $powershell -noprofile { $args[0] } -args 1,(2,3) | Should Be 1
             (& $powershell -noprofile { $args[1] } -args 1,(2,3))[1]  | Should Be 3
         }
@@ -38,7 +38,7 @@ Describe "ConsoleHost unit tests" -Tag 'Slow' {
             $p | & $powershell -noprofile -inputFormat xml { $input | Foreach-Object {$a = 0} { $a += $_.X + $_.Y } { $a } } | Should Be 30
         }
 
-        It "text input" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+        It "text input" {
             # Join (multiple lines) and remove whitespace (we don't care about spacing) to verify we converted to string (by generating a table)
             $p | & $powershell -noprofile -inputFormat text { -join ($input -replace "\s","") } | Should Be "XY--1020"
         }
@@ -48,7 +48,7 @@ Describe "ConsoleHost unit tests" -Tag 'Slow' {
             & $powershell -noprofile -outputFormat xml { [PSCustomObject]@{X=10;Y=20} } | Foreach-Object {$a = 0} { $a += $_.X + $_.Y } { $a } | Should Be 30
         }
 
-        It "text output" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+        It "text output" {
             # Join (multiple lines) and remove whitespace (we don't care about spacing) to verify we converted to string (by generating a table)
             -join (& $powershell -noprofile -outputFormat text { [PSCustomObject]@{X=10;Y=20} }) -replace "\s","" | Should Be "XY--1020"
         }
@@ -85,7 +85,7 @@ Describe "ConsoleHost unit tests" -Tag 'Slow' {
             }
         }
 
-        It "Simple redirected output" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+        It "Simple redirected output" {
             $si = NewProcessStartInfo "-noprofile 1+1"
             $process = RunPowerShell $si
             $process.StandardOutput.ReadToEnd() | Should Be 2
