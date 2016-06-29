@@ -1,0 +1,11 @@
+{
+    "monad/tests/ci/powershell/tests/Commands/Cmdlets/pester.commands.cmdlets.process.tests.ps1": "NOTAVAILABLE/pester.commands.cmdlets.process.tests.ps1",
+    "monad/tests/ci/powershell/tests/Commands/Cmdlets/Pester.Commands.Cmdlets.StartProcessWaitPassThru.Tests.ps1": "NOTAVAILABLE/Pester.Commands.Cmdlets.StartProcessWaitPassThru.Tests.ps1",
+    "monad/tests/ci/powershell/tests/Commands/Cmdlets/Pester.DelimitedText.Tests.ps1": "NOTAVAILABLE/Pester.DelimitedText.Tests.ps1",
+    "monad/tests/ci/powershell/tests/Commands/Cmdlets/pester.diagnostics.counter.tests.ps1": "NOTAVAILABLE/pester.diagnostics.counter.tests.ps1",
+    "monad/tests/ci/powershell/tests/Commands/Cmdlets/pester.management.computersecurechannel.tests.ps1": "NOTAVAILABLE/pester.management.computersecurechannel.tests.ps1",
+    "monad/tests/ci/powershell/tests/Commands/Cmdlets/Pester.Management.WMIEvent.Tests.ps1": "NOTAVAILABLE/Pester.Management.WMIEvent.Tests.ps1",
+    "monad/tests/ci/powershell/tests/Commands/Cmdlets/Pester.OVF.Tests.ps1": "NOTAVAILABLE/Pester.OVF.Tests.ps1",
+    "monad/tests/ci/powershell/tests/Commands/Cmdlets/pester.utility.webrequest.tests.ps1": "NOTAVAILABLE/pester.utility.webrequest.tests.ps1",
+    "monad/tests/ci/powershell/tests/Commands/Cmdlets/PSOdataUtilsV4Tests.ps1": "NOTAVAILABLE/PSOdataUtilsV4Tests.ps1",
+}
