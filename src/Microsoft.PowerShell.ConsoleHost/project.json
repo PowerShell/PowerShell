@@ -47,7 +47,7 @@
                 "define": [ "CORECLR", "PORTABLE" ]
             },
             "dependencies": {
-                "Newtonsoft.Json": "8.0.2",
+                "Newtonsoft.Json": "7.0.1",
                 "System.Xml.XDocument": "4.0.11",
                 "System.IO.MemoryMappedFiles": "4.0.0"
             }
