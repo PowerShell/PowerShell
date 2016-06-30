@@ -15,6 +15,11 @@
                 "../Modules",
                 "powershell.exe",
                 "../../powershell.version"
+            ],
+            "exclude": [
+                "../Modules/Pester/.git",
+                "../Modules/map.json",
+                "Modules/map.json"
             ]
         }
     },
@@ -27,7 +32,9 @@
             "../../powershell.version"
         ],
         "exclude": [
-            "../Modules/Pester/.git"
+            "../Modules/Pester/.git",
+            "../Modules/map.json",
+            "Modules/map.json"
         ]
     },
 
