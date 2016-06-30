@@ -21,6 +21,9 @@ try {
 
 if ($IsLinux) {
     $LinuxInfo = Get-Content /etc/os-release | ConvertFrom-StringData
+
+    $IsUbuntu = $LinuxInfo.ID -match 'ubuntu' -and $LinuxInfo.VERSION_ID -match '14.04'
+    $IsCentOS = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'
 }
 
 
@@ -422,22 +425,18 @@ function Start-PSBootstrap {
     Push-Location $PSScriptRoot/tools
 
     try {
-        # Install dependencies for Linux and OS X
-        if ($IsLinux) {
-            if ($LinuxInfo.ID -match 'ubuntu' -and $LinuxInfo.VERSION_ID -match '14.04') {
-                # Install ours and .NET's dependencies
-                sudo apt-get install -y -qq curl make g++ cmake libc6 libgcc1 libstdc++6 libcurl3 libgssapi-krb5-2 libicu52 liblldb-3.6 liblttng-ust0 libssl1.0.0 libunwind8 libuuid1 zlib1g clang-3.5
-            } elseif ($LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7') {
-                sudo yum install -y -q curl make gcc-c++ cmake glibc libgcc libstdc++ libcurl krb5-libs libicu lldb openssl-libs libunwind libuuid zlib clang
-            } else {
-                Write-Warning "This script only supports Ubuntu 14.04 and CentOS 7, you must install dependencies manually!"
-            }
+        # Install ours and .NET's dependencies
+        if ($IsUbuntu) {
+            sudo apt-get install -y -qq curl make g++ cmake libc6 libgcc1 libstdc++6 libcurl3 libgssapi-krb5-2 libicu52 liblldb-3.6 liblttng-ust0 libssl1.0.0 libunwind8 libuuid1 zlib1g clang-3.5
+        } elseif ($IsCentos) {
+            sudo yum install -y -q curl make gcc-c++ cmake glibc libgcc libstdc++ libcurl krb5-libs libicu lldb openssl-libs libunwind libuuid zlib clang
         } elseif ($IsOSX) {
             precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
 
-            # Install ours and .NET's dependencies
             brew install curl cmake openssl
             brew link --force openssl
+        } else {
+            Write-Warning "This script only supports Ubuntu 14.04, CentOS 7, and OS X, you must install dependencies manually!"
         }
 
         $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain"
