@@ -76,6 +76,8 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                         return Enumerable.Empty<Feed>();
                     }
 
+#if !PORTABLE
+                    // we don't do bootstrap on core powershell
                     if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable()) {
                         Warning(Constants.Messages.NetworkNotAvailable);
                         Warning(string.Format(CultureInfo.CurrentCulture, Resources.Messages.ProviderBootstrapFailed));
@@ -91,6 +93,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                         Warning(Constants.Messages.ProviderSwidtagUnavailable);
                         return Enumerable.Empty<Feed>();
                     }
+#endif
                 }
                 return _feeds;
             }
@@ -441,6 +444,10 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
         /// <returns></returns>
         internal Package GetProviderFromFile(string filePath, bool copyFileToTemp = false, bool suppressErrorsAndWarnings = false) {
             
+#if PORTABLE
+            // not supported on core powershell
+            return null;
+#else
             if (string.IsNullOrWhiteSpace(filePath) && !System.IO.File.Exists(filePath)) {
                 Warning(Constants.Messages.FileNotFound, filePath);              
                 return null;
@@ -501,6 +508,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
             }
 
             return null;
+#endif
         }
 
         /// <summary>

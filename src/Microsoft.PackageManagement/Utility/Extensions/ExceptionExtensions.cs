@@ -19,9 +19,11 @@ namespace Microsoft.PackageManagement.Internal.Utility.Extensions {
 
     internal static class ExceptionExtensions {
         public static void Dump(this Exception e) {
+#if !LINUX
             var text = string.Format(CultureInfo.CurrentCulture, "{0}/{1}\r\n{2}", e.GetType().Name, e.Message, e.StackTrace);
             // for now, this is the only way we'll see exceptions in the wild.
             NativeMethods.OutputDebugString(text);
+#endif
         }
 
 #if DETAILED_DEBUG
