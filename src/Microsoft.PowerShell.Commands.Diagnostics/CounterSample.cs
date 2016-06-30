@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
     {
         internal PerformanceCounterSampleSet()
         {
-            _resourceMgr = new ResourceManager("GetEventResources", Assembly.GetExecutingAssembly());
+            _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
         }
 
         internal  PerformanceCounterSampleSet (DateTime timeStamp,

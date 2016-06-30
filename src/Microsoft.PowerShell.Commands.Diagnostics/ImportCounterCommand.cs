@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
     //
     protected override void BeginProcessing()
     {
-        _resourceMgr = new ResourceManager("GetEventResources", Assembly.GetExecutingAssembly());
+        _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
         _pdhHelper = new PdhHelper(System.Environment.OSVersion.Version.Major < 6);
     }    
 
