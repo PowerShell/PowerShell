@@ -122,6 +122,20 @@ try
                     Remove-Module -ErrorAction SilentlyContinue CimCmdlets
                 }
             }
+
+            It 'loads Microsoft.PowerShell.Diagnostics' {
+                try
+                {
+                    Import-Module Microsoft.PowerShell.Diagnostics -ErrorAction Stop
+                    Get-WinEvent -LogName System -MaxEvents 1 | Should Not Be $null
+                    [Microsoft.PowerShell.Commands.GetWinEventCommand].Assembly.Location | Should Be (
+                        Join-Path $env:DEVPATH Microsoft.PowerShell.Commands.Diagnostics.dll)
+                }
+                finally
+                {
+                    Remove-Module -ErrorAction SilentlyContinue Microsoft.PowerShell.Diagnostics
+                }
+            }
         }
     }    
 
