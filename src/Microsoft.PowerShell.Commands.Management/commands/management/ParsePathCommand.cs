@@ -553,9 +553,12 @@ namespace Microsoft.PowerShell.Commands
 
                 if (SessionState.Path.IsPSAbsolute(path, out driveName))
                 {
-                    // Remove the drive name and colon
-
-                    result = path.Substring(driveName.Length + 1);
+                    var driveNameLength = driveName.Length;
+                    if (path.Length > (driveNameLength + 1) && path[driveNameLength] == ':')
+                    {
+                        // Remove the drive name and colon
+                        result = path.Substring(driveNameLength + 1);
+                    }
                 }
             }
 
