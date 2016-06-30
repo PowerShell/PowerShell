@@ -841,7 +841,16 @@ function Get-Mappings
     {
         $map = @{}
         $mapFiles | % {
-            $rawHashtable = $_ | Get-Content -Raw | ConvertFrom-Json | Convert-PSObjectToHashtable
+            $file = $_
+            try
+            {
+                $rawHashtable = $_ | Get-Content -Raw | ConvertFrom-Json | Convert-PSObjectToHashtable
+            }
+            catch
+            {
+                Write-Error "Exception, when processing $($file.FullName): $_"
+            }
+
             $mapRoot = Split-Path $_.FullName
             if ($KeepRelativePaths) 
             {
