@@ -45,10 +45,10 @@ char* FollowSymLink(const char* fileName)
         return NULL;
     }
 
-    char buffer[PATH_MAX];
-    ssize_t sz = readlink(fileName, buffer, PATH_MAX);
+    char actualpath [PATH_MAX + 1];
+    char* realPath = realpath(fileName, actualpath);
 
-    if  (sz == -1)
+    if  (sizeof(realPath) == -1)
     {
         switch(errno)
         {
@@ -85,6 +85,6 @@ char* FollowSymLink(const char* fileName)
         return NULL;
     }
 
-    buffer[sz] = '\0';
-    return strndup(buffer, sz + 1);
-}
+   return strndup(realPath, strlen(realPath) + 1 );
+   
+   }
