@@ -10,5 +10,6 @@ AliasesToExport = @()
 FunctionsToExport = @()
 CmdletsToExport="Disable-WSManCredSSP", "Enable-WSManCredSSP", "Get-WSManCredSSP", "Set-WSManQuickConfig", "Test-WSMan", "Invoke-WSManAction", "Connect-WSMan", "Disconnect-WSMan", "Get-WSManInstance", "Set-WSManInstance", "Remove-WSManInstance", "New-WSManInstance", "New-WSManSessionOption"
 NestedModules="Microsoft.WSMan.Management.dll"
+FormatsToProcess="WSMan.format.ps1xml"
 HelpInfoURI = 'http://go.microsoft.com/fwlink/?linkid=390788'
 }

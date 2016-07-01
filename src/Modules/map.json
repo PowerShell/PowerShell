@@ -29,6 +29,7 @@
     "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataV4Adapter.ps1": "Shared/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataV4Adapter.ps1",
     "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsStrings.psd1": "Shared/Microsoft.PowerShell.ODataUtils/en-US/Microsoft.PowerShell.ODataUtilsStrings.psd1",
     "wmi/WMIv2/Client/CIMCmdlets/CimCmdlets.psd1": "Shared/CimCmdlets/CimCmdlets.psd1",
+
     "monad/miscfiles/modules/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1": "Full/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1",
     "monad/miscfiles/types/getevent.types.ps1xml": "Full/Microsoft.PowerShell.Diagnostics/GetEvent.types.ps1xml",
     "monad/miscfiles/display/Event.format.ps1xml": "Full/Microsoft.PowerShell.Diagnostics/Event.format.ps1xml",
@@ -42,6 +43,7 @@
     "monad/src/m3p/product/PSWorkflow.types.ps1xml": "Full/PSWorkflow/PSWorkflow.types.ps1xml",
     "monad/src/m3p/product/PSWorkflowUtility.psd1": "Full/PSWorkflowUtility/PSWorkflowUtility.psd1",
     "monad/src/m3p/product/PSWorkflowUtility.psm1": "Full/PSWorkflowUtility/PSWorkflowUtility.psm1",
+    
     "monad/miscfiles/modules/Microsoft.PowerShell.Diagnostics/CoreClr/Microsoft.PowerShell.Diagnostics.psd1":  "Core/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1",
     "monad/miscfiles/modules/Microsoft.PowerShell.Utility/CoreClr/Microsoft.PowerShell.Utility.psd1":  "Core/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1"
 }
