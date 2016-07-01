@@ -17,7 +17,7 @@
                         "../Modules/Shared"
                     ],
                     "exclude": [
-                        "../Modules/Shared/Pester/.git"
+                        "../Modules/Shared/Pester/.git*"
                     ]
                 }
             },
@@ -36,7 +36,7 @@
                     "../Modules/Shared"
                 ],
                 "exclude": [
-                    "../Modules/Shared/Pester/.git"
+                    "../Modules/Shared/Pester/.git*"
                 ]
             }
         },
