@@ -833,7 +833,7 @@ namespace System.Management.Automation
                 switch (variable)
                 {
                     case "OS":
-                        return "Linux";
+                        return System.Environment.GetEnvironmentVariable("OSTYPE");
 
                     case "COMPUTERNAME":
                         return System.Environment.GetEnvironmentVariable("HOSTNAME");
