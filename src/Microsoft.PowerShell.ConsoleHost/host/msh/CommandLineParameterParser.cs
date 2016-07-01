@@ -483,7 +483,10 @@ namespace Microsoft.PowerShell
                         string exceptionMessage = null;
                         try
                         {
-                            file = Path.GetFullPath(args[i]);
+                            // Normalize slashes
+                            file = args[i].Replace(StringLiterals.AlternatePathSeparator,
+                                                   StringLiterals.DefaultPathSeparator);
+                            file = Path.GetFullPath(file);
                         }
                         catch (Exception e)
                         {
