@@ -20,6 +20,22 @@ Describe "Measure-Object" {
 	$actual | Should Be $expected
     }
 
+    It "Should be able to use wildcards for the Property argument" {
+        $data = [pscustomobject]@{ A1 = 1; A2 = 2; C3 = 3 },
+                [pscustomobject]@{ A1 = 1; A2 = 2; A3 = 3 }
+        $actual = $data | Measure-Object -Property A* -Sum
+        $actual.Count | Should Be 3
+        $actual[0].Property | Should Be A1
+        $actual[0].Sum | Should Be 2
+        $actual[0].Count | Should Be 2
+        $actual[1].Property | Should Be A2
+        $actual[1].Sum | Should Be 4
+        $actual[1].Count | Should Be 2
+        $actual[2].Property | Should Be A3
+        $actual[2].Sum | Should Be 3
+        $actual[2].Count | Should Be 1
+    }
+
     Context "Numeric tests" {
 	It "Should be able to sum" {
 	    $actual   = $testObject | Measure-Object -Sum
