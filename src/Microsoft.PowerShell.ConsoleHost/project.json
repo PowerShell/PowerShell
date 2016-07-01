@@ -10,31 +10,39 @@
         "warningsAsErrors": true,
         "allowUnsafe": true,
         "copyToOutput": {
-            "include": [
-                "Modules",
-                "../Modules",
+            "mappings": {
+                "Modules/" : {
+                    "include": [
+                        "../Modules/Full",
+                        "../Modules/Shared"
+                    ],
+                    "exclude": [
+                        "../Modules/Shared/Pester/.git"
+                    ]
+                }
+            },
+            "include" : [
                 "powershell.exe",
                 "../../powershell.version"
-            ],
-            "exclude": [
-                "../Modules/Pester/.git",
-                "../Modules/map.json",
-                "Modules/map.json"
             ]
         }
     },
 
     "publishOptions": {
-        "include": [
-            "Modules",
-            "../Modules",
+        "mappings": {
+            "Modules/" : {
+                "include": [
+                    "../Modules/Full",
+                    "../Modules/Shared"
+                ],
+                "exclude": [
+                    "../Modules/Shared/Pester/.git"
+                ]
+            }
+        },
+        "include" : [
             "powershell.exe",
             "../../powershell.version"
-        ],
-        "exclude": [
-            "../Modules/Pester/.git",
-            "../Modules/map.json",
-            "Modules/map.json"
         ]
     },
 
