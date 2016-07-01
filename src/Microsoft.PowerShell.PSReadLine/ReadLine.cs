@@ -258,6 +258,14 @@ namespace Microsoft.PowerShell
         public static string ReadLine(Runspace runspace, EngineIntrinsics engineIntrinsics)
         {
             var console = _singleton._console;
+
+            // If either stdin or stdout is redirected, PSReadline doesn't really work, so throw
+            // and let PowerShell call Console.ReadLine or do whatever else it decides to do.
+            if (Console.IsInputRedirected || Console.IsOutputRedirected)
+            {
+                throw new NotSupportedException();
+            }
+
 #if CORECLR
             _singleton._prePSReadlineControlCMode = Console.TreatControlCAsInput;
 #else
