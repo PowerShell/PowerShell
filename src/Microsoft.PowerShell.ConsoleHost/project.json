@@ -31,6 +31,15 @@
         ]
     },
 
+    "configurations": {
+        "Linux": {
+            "buildOptions": {
+                "define": [ "LINUX" ]
+            }
+        }
+    },
+
+
     "dependencies": {
         "Microsoft.PowerShell.PSReadLine": "1.0.0-*",
         "Microsoft.PowerShell.Commands.Diagnostics": "1.0.0-*",

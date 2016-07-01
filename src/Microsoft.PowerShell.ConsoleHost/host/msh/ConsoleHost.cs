@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="signal"></param>
         /// <returns></returns>
-#if PORTABLE
+#if LINUX
         private static void MyBreakHandler(object sender, ConsoleCancelEventArgs args)
         {
             // Set the Cancel property to true to prevent the process from terminating.
@@ -461,7 +461,7 @@ namespace Microsoft.PowerShell
             // call the console APIs directly, instead of ui.rawui.FlushInputHandle, as ui may be finalized
             // already if this thread is lagging behind the main thread.
 
-#if !PORTABLE
+#if !LINUX
             ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             ConsoleControl.FlushConsoleInputBuffer(handle);
 #endif
@@ -1059,7 +1059,7 @@ namespace Microsoft.PowerShell
 
         private void BindBreakHandler()
         {
-#if PORTABLE
+#if LINUX
             Console.CancelKeyPress += new ConsoleCancelEventHandler(MyBreakHandler);
 #else
             breakHandlerGcHandle = GCHandle.Alloc(new ConsoleControl.BreakHandler(MyBreakHandler));
@@ -1118,7 +1118,7 @@ namespace Microsoft.PowerShell
         {
             if (!isDisposed)
             {
-#if !PORTABLE
+#if !LINUX
                 Dbg.Assert(breakHandlerGcHandle != null, "break handler should be set");
                 ConsoleControl.RemoveBreakHandler();
                 breakHandlerGcHandle.Free();
@@ -2867,7 +2867,7 @@ namespace Microsoft.PowerShell
             /// </summary>
             private RunspaceRef runspaceRef;
 
-#if !PORTABLE
+#if !LINUX
         private GCHandle breakHandlerGcHandle;
 #endif
         private System.Threading.Thread breakHandlerThread;
