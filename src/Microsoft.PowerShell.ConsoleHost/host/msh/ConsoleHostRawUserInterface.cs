@@ -1586,6 +1586,8 @@ namespace Microsoft.PowerShell
         /// </summary>
         public override int CursorSize
         {
+            // Future porting note: this API throws on Windows when output is
+            // redirected, but never throws on Unix because it's fake.
             get { return Console.CursorSize; }
             set { Console.CursorSize = value; }
         }
