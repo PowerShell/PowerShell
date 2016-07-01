@@ -9,7 +9,7 @@ Content files includes:
 - psd1
 - ps1
 
-These files are copyied as-is by `dotnet`
+These files are copied as-is by `dotnet`
 
 - **Shared** is shared between all flavours
 - **Full** for FullCLR (Windows)
