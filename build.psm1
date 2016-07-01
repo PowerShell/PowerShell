@@ -59,12 +59,11 @@ function Start-PSBuild {
         [switch]$XamlGen,
 
         [Parameter(ParameterSetName='FullCLR')]
-        [string]$cmakeGenerator = "Visual Studio 14 2015 Win64",
+        [ValidateSet('x86', 'x64')]
+        [string]$NativeHostArch = "x64",
 
-        [Parameter(ParameterSetName='FullCLR')]
-        [ValidateSet("Debug",
-                     "Release")]
-        [string]$msbuildConfiguration = "Release"
+        [ValidateSet('Linux', 'Debug', 'Release', '')]
+        [string]$Configuration
     )
 
     if ($Clean)
@@ -104,6 +103,26 @@ function Start-PSBuild {
             throw 'mc.exe not found. Install Microsoft Windows SDK.'
         }
 
+        # setup msbuild configuration
+        if ($Configuration -eq 'Debug' -or $Configuration -eq 'Release')
+        {
+            $msbuildConfiguration = $Configuration
+        }
+        else 
+        {
+            $msbuildConfiguration = 'Release'
+        }
+
+        # setup cmakeGenerator
+        if ($NativeHostArch -eq 'x86')
+        {
+            $cmakeGenerator = 'Visual Studio 14 2015'    
+        }
+        else 
+        {
+            $cmakeGenerator = 'Visual Studio 14 2015 Win64'    
+        }
+
     } elseif ($IsLinux -or $IsOSX) {
         foreach ($Dependency in 'cmake', 'make', 'g++') {
             $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run Start-PSBootstrap.")
@@ -116,7 +135,7 @@ function Start-PSBuild {
     }
 
     # set output options
-    $OptionsArguments = @{Publish=$Publish; Output=$Output; FullCLR=$FullCLR; Runtime=$Runtime}
+    $OptionsArguments = @{Publish=$Publish; Output=$Output; FullCLR=$FullCLR; Runtime=$Runtime; Configuration=$Configuration; Verbose=$true}
     $script:Options = New-PSOptions @OptionsArguments
 
     # setup arguments
@@ -239,7 +258,7 @@ function Start-PSBuild {
 function New-PSOptions {
     [CmdletBinding()]
     param(
-        [ValidateSet("Linux", "Debug", "Release")]
+        [ValidateSet("Linux", "Debug", "Release", "")]
         [string]$Configuration,
 
         [ValidateSet("netcoreapp1.0", "net451")]
@@ -279,7 +298,7 @@ function New-PSOptions {
         } elseif ($IsWindows) {
             "Debug"
         }
-        log "Using configuration '$Configuration'"
+        Write-Verbose "Using configuration '$Configuration'"
     }
 
     if (-not $Framework) {
@@ -288,7 +307,7 @@ function New-PSOptions {
         } else {
             "netcoreapp1.0"
         }
-        log "Using framework '$Framework'"
+        Write-Verbose "Using framework '$Framework'"
     }
 
     if (-not $Runtime) {
@@ -301,7 +320,7 @@ function New-PSOptions {
         if (-not $Runtime) {
             Throw "Could not determine Runtime Identifier, please update dotnet"
         } else {
-            log "Using runtime '$Runtime'"
+            Write-Verbose "Using runtime '$Runtime'"
         }
     }
 
@@ -649,18 +668,35 @@ function Publish-NuGetFeed
 }
 
 
-function Start-DevPSGitHub {
+function Start-DevPowerShell {
     param(
         [switch]$ZapDisable,
         [string[]]$ArgumentList = '',
         [switch]$LoadProfile,
-        [string]$binDir = "$PSScriptRoot\src\Microsoft.PowerShell.ConsoleHost\bin\Debug\net451",
-        [switch]$NoNewWindow
+        [string]$binDir = (Split-Path (New-PSOptions -FullCLR).Output),
+        [switch]$NoNewWindow,
+        [string]$Command,
+        [switch]$KeepPSModulePath
     )
 
     try {
-        if ($LoadProfile -eq $false) {
+        if (-not $LoadProfile) {
             $ArgumentList = @('-noprofile') + $ArgumentList
+        }
+
+        if (-not $KeepPSModulePath)
+        {
+            if (-not $Command)
+            {
+                $ArgumentList = @('-NoExit') + $ArgumentList
+            }
+
+            $Command = '$env:PSModulePath = Join-Path $env:DEVPATH Modules; ' + $Command   
+        }   
+
+        if ($Command)
+        {
+            $ArgumentList = $ArgumentList + @("-command $Command")
         }
 
         $env:DEVPATH = $binDir
