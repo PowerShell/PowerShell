@@ -34,4 +34,21 @@ Describe "Environment-Variables" {
         $ENV:TESTENVIRONMENTVARIABLE | Should Be $expected
 
     }
+
+    It "Should have the correct OS" {
+        $expected = if ($IsWindows) {
+            "Windows"
+        } elseif ($IsLinux) {
+            "linux-gnu"
+        } elseif ($IsOSX) {
+            "darwin"
+        }
+
+        # Use match because there are version suffixes
+        $env:OS | Should Match $expected
+    }
+
+    It "Should map OS to OSTYPE when not on Windows" -skip:$IsWindows {
+        $env:OS | Should Be $env:OSTYPE
+    }
 }
