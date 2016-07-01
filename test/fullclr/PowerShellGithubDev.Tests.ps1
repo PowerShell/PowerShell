@@ -115,7 +115,7 @@ try
                 try
                 {
                     Import-Module CimCmdlets -ErrorAction Stop
-                    Get-CimClass | Should Not Be $null
+                    Get-CimClass -ClassName CIM_Error | Should Not Be $null
                 }
                 finally
                 {
