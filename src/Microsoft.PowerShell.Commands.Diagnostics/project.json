@@ -29,8 +29,7 @@
             "ExportCounterCommand.cs",
             "GetCounterCommand.cs",
             "ImportCounterCommand.cs",
-            "CounterFileInfo.cs",
-            "CommonUtils.cs"
+            "CounterFileInfo.cs"
           ]
         }
       }

@@ -30,5 +30,5 @@
     "monad/src/host/msh/resources/ManagedEntranceStrings.resx":  "resources/ManagedEntranceStrings.resx",
     "monad/src/singleshell/installer/EngineInstaller.cs":  "singleshell/installer/EngineInstaller.cs",
     "monad/src/host/msh/ConsoleHostRawUserInterface.cs":  "host/msh/ConsoleHostRawUserInterface.cs",
-    "monad/src/host/msh/ConsoleHost.cs":  "host/msh/ConsoleHost.cs",
+    "monad/src/host/msh/ConsoleHost.cs":  "host/msh/ConsoleHost.cs"
 }

@@ -3,19 +3,14 @@ using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-
+using System.Resources;
+using System.Reflection;
 
 namespace Microsoft.PowerShell.Commands.Diagnostics.Common
 {
 
-    internal class CommonUtilities
+    internal static class CommonUtilities
     {
-        //
-        // No-op private ctor to prevent the default ctor from getting generated.
-        // This class is intended to only have static members.
-        //
-        private CommonUtilities() {}
-
         //
         // StringArrayToString helper converts a string array into a comma-separated string.
         // Note this has only limited use, individual strings cannot have commas.
@@ -115,6 +110,12 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
                 FreeLibrary(moduleHandle);
             }
             return formatError;
+        }
+
+        public static ResourceManager GetResourceManager()
+        {
+            // this naming pattern is dictated by the dotnet cli
+            return new ResourceManager("Microsoft.PowerShell.Commands.Diagnostics.resources.GetEventResources", typeof(CommonUtilities).GetTypeInfo().Assembly);
         }
 
     }

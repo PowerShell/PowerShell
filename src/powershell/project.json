@@ -8,9 +8,18 @@
         "allowUnsafe": true,
         "emitEntryPoint": true,
         "copyToOutput": {
+            "mappings": {
+                "Modules/" : {
+                    "include": [
+                        "../Modules/Core",
+                        "../Modules/Shared"
+                    ],
+                    "exclude": [
+                        "../Modules/Shared/Pester/.git*"
+                    ]
+                }
+            },
             "include": [
-                "Modules",
-                "../Modules",
                 "*.so",
                 "*.dylib",
                 "../../powershell.version"
@@ -19,16 +28,22 @@
     },
 
     "publishOptions": {
+        "mappings": {
+            "Modules/" : {
+                "include": [
+                    "../Modules/Core",
+                    "../Modules/Shared"
+                ],
+                "exclude": [
+                    "../Modules/Shared/Pester/.git*"
+                ]
+            }
+        },
         "include": [
-            "Modules",
-            "../Modules",
             "*.so",
             "*.dylib",
             "../../powershell.version"
         ],
-        "exclude": [
-            "../Modules/Pester/.git"
-        ]
     },
 
     "dependencies": {

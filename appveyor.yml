@@ -18,7 +18,7 @@ install:
   - ps: $fileContent += "`n-----END RSA PRIVATE KEY-----`n"
   - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
   - git config --global url.git@github.com:.insteadOf https://github.com/
-  - git submodule update --init -- src/Modules/Pester
+  - git submodule update --init
   - ps: Import-Module .\build.psm1; Start-PSBootstrap
 
 build_script:
@@ -43,7 +43,7 @@ test_script:
       $env:FullOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -FullCLR))
       Write-Host -Foreground Green 'Run FullCLR tests'
       $testResultsFileFullCLR = "$pwd\TestsResults.FullCLR.xml"
-      Start-DevPSGitHub -binDir $env:FullOutput -NoNewWindow -ArgumentList '-noprofile', '-noninteractive', '-command', "Import-Module .\src\Modules\Pester; Invoke-Pester test/fullCLR -OutputFormat NUnitXml -OutputFile $testResultsFileFullCLR"
+      Start-DevPowerShell -NoNewWindow -ArgumentList '-noprofile', '-noninteractive' -Command "Invoke-Pester test/fullCLR -OutputFormat NUnitXml -OutputFile $testResultsFileFullCLR"
       (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFileFullCLR))
       #
       # Fail the build, if tests failed

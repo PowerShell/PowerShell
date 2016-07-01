@@ -13,7 +13,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.Xml;
 using System.IO;
-
+    
 namespace Microsoft.PowerShell.Commands
 {
     /// 
@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
 
         private const string TemplateTag = "template";
         private const string DataTag = "data";
-        private ResourceManager _resourceMgr = new ResourceManager("GetEventResources", typeof(NewWinEventCommand).GetTypeInfo().Assembly);
+        private ResourceManager _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 
 
         /// <summary>

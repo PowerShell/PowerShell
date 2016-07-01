@@ -396,7 +396,7 @@ namespace Microsoft.PowerShell.Commands
     //
     protected override void BeginProcessing()
     {
-        _resourceMgr = new ResourceManager("GetEventResources", typeof(GetWinEventCommand).GetTypeInfo().Assembly);
+        _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
     }
 
         

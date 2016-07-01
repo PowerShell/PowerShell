@@ -51,7 +51,7 @@ module.
 Because the `ConsoleHost` project (*not* the `Host` project) is a
 library and not an application (in the sense that .NET CLI does not
 emit a native executable using .NET Core's `corehost`), it targets the
-framework `netstandard1.5`, *not* `netcoreapp1.0`, and the build
+framework `netstandard1.6`, *not* `netcoreapp1.0`, and the build
 output will *not* have a runtime identifier in the path.
 
 Thus the output location of `powershell.exe` will be
@@ -69,34 +69,24 @@ Assembly Cache (GAC), not your output directory.
 and run side-by-side.
 
 ```powershell
-Start-DevPSGithub
+Start-DevPowerShell
 ```
 
 This command has a reasonable default to run `powershell.exe` from the build output folder.
 If you are building an unusual configuration (i.e. not `Debug`), you can explicitly specify path to the bin directory
 
 ```powershell
-Start-DevPSGithub -binDir .\src\Microsoft.PowerShell.ConsoleHost\bin\Debug\net451
+Start-DevPowerShell -binDir .\src\Microsoft.PowerShell.ConsoleHost\bin\Debug\net451
 ```
 
 Or more programmatically:
 
 ```powershell
-Start-DevPSGithub -binDir (Split-Path -Parent (Get-PSOutput))
+Start-DevPowerShell -binDir (Split-Path -Parent (Get-PSOutput))
 ```
 
-The default for `powershell.exe` that **we build** is x86. See
-[issue #683][].
-
-There is a separate execution policy registry key for x86, and it's
-likely that you didn't ~~bypass~~ enable it. From **powershell.exe
-(x86)** run:
-
-```
-Set-ExecutionPolicy Bypass
-```
-
-[issue #683]: https://github.com/PowerShell/PowerShell/issues/683
+The default for produced `powershell.exe` is x64.
+You can contorl it with `Start-PSBuild -FullCLR -NativeHostArch x86`
 
 Build manually
 ==============
@@ -104,7 +94,7 @@ Build manually
 The build logic is relatively simple and contains the following steps:
 
 - building managed DLLs: `dotnet publish --runtime net451`
-- generating Visual Studio project: `cmake -G "$cmakeGenerator"`
+- generating Visual Studio project: `cmake`
 - building `powershell.exe` from generated solution: `msbuild
   powershell.sln`
 

@@ -11,7 +11,7 @@ git:
   submodules: false
 before_install:
   - git config --global url.git@github.com:.insteadOf https://github.com/
-  - git submodule update --init -- src/Modules/Pester src/libpsl-native/test/googletest
+  - git submodule update --init
   - ./tools/download.sh
 script:
   - ulimit -n 4096; powershell -c "Import-Module ./build.psm1; Start-PSBootstrap; Start-PSBuild -Publish; Start-PSPester; Start-PSxUnit"
