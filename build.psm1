@@ -1032,7 +1032,7 @@ function Find-Dotnet() {
 }
 
 <#
-    This is one-time convertion. We use it for to turn GetEventResources.txt into GetEventResources.resx
+    This is one-time conversion. We use it for to turn GetEventResources.txt into GetEventResources.resx
 
     .EXAMPLE Convert-TxtResourceToXml -Path Microsoft.PowerShell.Commands.Diagnostics\resources
 #>
