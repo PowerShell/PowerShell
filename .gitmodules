@@ -1,5 +1,5 @@
 [submodule "src/Modules/Pester"]
-	path = src/Modules/Pester
+	path = src/Modules/Shared/Pester
 	url = https://github.com/PowerShell/psl-pester.git
 	branch = develop
 	ignore = dirty
