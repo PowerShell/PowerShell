@@ -18,7 +18,7 @@ install:
   - ps: $fileContent += "`n-----END RSA PRIVATE KEY-----`n"
   - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
   - git config --global url.git@github.com:.insteadOf https://github.com/
-  - git submodule update --init -- src/Modules/Pester
+  - git submodule update --init
   - ps: Import-Module .\build.psm1; Start-PSBootstrap
 
 build_script:
