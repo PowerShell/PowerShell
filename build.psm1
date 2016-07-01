@@ -221,7 +221,7 @@ function Start-PSBuild {
             @("nativemsh/pwrshplugin") | % {
                 $nativeResourcesFolder = $_
                 Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | % {
-                #    & $mcexe -c -U $_.FullName -h $nativeResourcesFolder -r $nativeResourcesFolder
+                    & $mcexe -o -d -c -U $_.FullName -h $nativeResourcesFolder -r $nativeResourcesFolder
                 }
             }
             
@@ -231,7 +231,7 @@ function Start-PSBuild {
                 Start-NativeExecution { cmake . }
             }
 
-            Start-NativeExecution { msbuild powershell.vcxproj /p:Configuration=$msbuildConfiguration }
+            Start-NativeExecution { msbuild ALL_BUILD.vcxproj /p:Configuration=$msbuildConfiguration }
 
         } finally {
             Pop-Location

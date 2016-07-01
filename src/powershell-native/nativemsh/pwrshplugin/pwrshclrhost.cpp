@@ -40,9 +40,10 @@ typedef void (STDMETHODCALLTYPE *LoaderRunHelperFp)(LPCWSTR appPath);
 
 unsigned int PowerShellCoreClrWorker::LaunchClr(
     _In_ LPCWSTR wszMonadVersion,
-    _In_ LPCWSTR wszRuntimeVersion)
+    _In_ LPCWSTR wszRuntimeVersion,
+    _In_ LPCSTR friendlyName)
 {
-    return commonLib->LaunchCoreCLR(hostWrapper, hostEnvironment);
+    return commonLib->LaunchCoreCLR(hostWrapper, hostEnvironment, friendlyName);
 }
 
 unsigned int PowerShellCoreClrWorker::LoadWorkerCallbackPtrs(
@@ -50,23 +51,15 @@ unsigned int PowerShellCoreClrWorker::LoadWorkerCallbackPtrs(
     _In_z_ wchar_t* wszMgdPlugInFileName,
     _Outptr_result_maybenull_ PlugInException** pPluginException)
 {
-    unsigned int  exitCode = EXIT_CODE_SUCCESS;
 
     *pPluginException = NULL;
-
-    exitCode = commonLib->CreateAppDomain(hostWrapper, L"PwrshPlugin", hostEnvironment);
-    if (EXIT_CODE_SUCCESS != exitCode)
-    {
-        return exitCode;
-    }
 
     // Set the powershell custom assembly loader to be the default
     LoaderRunHelperFp initDelegate = NULL;
     HRESULT hr = hostWrapper->CreateDelegate(
-        hostWrapper->GetAppDomainId(),
-        L"Microsoft.PowerShell.CoreCLR.AssemblyLoadContext, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
-        L"System.Management.Automation.PowerShellAssemblyLoadContextInitializer",
-        L"SetPowerShellAssemblyLoadContext",
+        "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
+        "System.Management.Automation.PowerShellAssemblyLoadContextInitializer",
+        "SetPowerShellAssemblyLoadContext",
         (INT_PTR*)&initDelegate);
 
     if (FAILED(hr))
@@ -75,7 +68,7 @@ unsigned int PowerShellCoreClrWorker::LoadWorkerCallbackPtrs(
     }
     else
     {
-        initDelegate(hostEnvironment.GetHostDirectoryPath());
+        initDelegate(hostEnvironment.GetHostDirectoryPathW());
     }
 
     // Call into powershell entry point
@@ -84,14 +77,12 @@ unsigned int PowerShellCoreClrWorker::LoadWorkerCallbackPtrs(
     // Create the function pointer for the managed entry point
     // It must be targeted at a static method in the managed code.
     hr = hostWrapper->CreateDelegate(
-        hostWrapper->GetAppDomainId(),
-        L"System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
-        L"System.Management.Automation.Remoting.WSManPluginManagedEntryWrapper",
-        L"InitPlugin",
+        "System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
+        "System.Management.Automation.Remoting.WSManPluginManagedEntryWrapper",
+        "InitPlugin",
         (INT_PTR*)&entryPointDelegate);
     if (FAILED(hr))
     {
-        //LONG systemErrorCode = GetLastError();
         output->DisplayMessage(false, g_CREATING_MSH_ENTRANCE_FAILED, hr);
 
         return EXIT_CODE_INIT_FAILURE;
@@ -103,7 +94,7 @@ unsigned int PowerShellCoreClrWorker::LoadWorkerCallbackPtrs(
 
 PowerShellCoreClrWorker::PowerShellCoreClrWorker()
     : systemCalls(new WinSystemCallFacade()), 
-      hostWrapper(new ICLRRuntimeHost2Wrapper()), 
+      hostWrapper(new CoreClrHostingApiWrapper()), 
       output(new PwrshPluginOutputDefault()), 
       commonLib(new PwrshCommon())
 {
@@ -133,7 +124,7 @@ PowerShellCoreClrWorker::PowerShellCoreClrWorker(
     {
         // Instantiate it even if one is not provided to guarantee that it will 
         // always be non-NULL during execution.
-        hostWrapper = new ICLRRuntimeHost2Wrapper();
+        hostWrapper = new CoreClrHostingApiWrapper();
     }
 
     if (NULL == commonLib)
@@ -240,7 +231,8 @@ PowerShellClrWorker::~PowerShellClrWorker()
 
 unsigned int PowerShellClrWorker::LaunchClr(
     _In_ LPCWSTR wszMonadVersion,
-    _In_ LPCWSTR wszRuntimeVersion)
+    _In_ LPCWSTR wszRuntimeVersion,
+    _In_ LPCWSTR friendlyName)
 {
     return commonLib.LaunchCLR(wszMonadVersion, wszRuntimeVersion, &pHost);
 }
@@ -310,7 +302,8 @@ unsigned int PowerShellClrWorker::LoadWorkerCallbackPtrs(
 
 unsigned int PowerShellClrManagedWorker::LaunchClr(
     _In_ LPCWSTR wszMonadVersion,
-    _In_ LPCWSTR wszRuntimeVersion)
+    _In_ LPCWSTR wszRuntimeVersion,
+    _In_ LPCWSTR friendlyName)
 {
     return commonLib.LaunchCLR(wszMonadVersion, wszRuntimeVersion, &pHost);
 }

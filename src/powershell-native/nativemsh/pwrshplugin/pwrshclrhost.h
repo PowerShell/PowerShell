@@ -46,7 +46,8 @@ public:
 
     virtual unsigned int LaunchClr(
         _In_ LPCWSTR wszMonadVersion, 
-        _In_ LPCWSTR wszRuntimeVersion) = 0;
+        _In_ LPCWSTR wszRuntimeVersion,
+        _In_ LPCWSTR friendlyName) = 0;
 
     virtual unsigned int LoadWorkerCallbackPtrs(
         _In_ PwrshPluginWkr_Ptrs* workerCallbackPtrs,
@@ -88,7 +89,8 @@ public:
     //
     virtual unsigned int LaunchClr(
         _In_ LPCWSTR wszMonadVersion,
-        _In_ LPCWSTR wszRuntimeVersion);
+        _In_ LPCWSTR wszRuntimeVersion,
+        _In_ LPCWSTR friendlyName);
 
     virtual unsigned int LoadWorkerCallbackPtrs(
         _In_ PwrshPluginWkr_Ptrs* workerCallbackPtrs,
@@ -114,7 +116,8 @@ public:
     //
     virtual unsigned int LaunchClr(
         _In_ LPCWSTR wszMonadVersion,
-        _In_ LPCWSTR wszRuntimeVersion);
+        _In_ LPCWSTR wszRuntimeVersion,
+        _In_ LPCWSTR friendlyName);
 
     virtual unsigned int LoadWorkerCallbackPtrs(
         _In_ PwrshPluginWkr_Ptrs* workerCallbackPtrs,

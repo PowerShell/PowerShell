@@ -10,54 +10,29 @@ foreach(OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
+#
+# TODO: Will this interfere with OneCore compilations?
+#
 # set these flags, so build does static linking for msvcr120.dll
 # otherwise this dll need to be present on the system
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 
-include_directories(
-    nativemsh/pwrshcommon
-    nativemsh/pwrshplugin)
+# Compiler flags that are universal to all powershell native binaries
+SET(common_pwrsh_definitions 
+    UNICODE
+    _UNICODE)
 
-link_directories(
-    nativemsh/pwrshcommon)
+# Default of BUILD_ONECORE should be ON once it is supported 
+option(BUILD_ONECORE "Compile the OneCore version of the binaries" OFF)
+option(BUILD_DOWNLEVEL "Compile the downlevel version of the binaries" OFF)
 
-add_executable(powershell WIN32
-    nativemsh/pwrshcommon/pwrshcommon.cpp
-    nativemsh/pwrshcommon/WinSystemCallFacade.cpp
-    nativemsh/pwrshexe/MainEntry.cpp)
+# Build the common library that powershell.exe and pwrshplugin.dll depend on
+add_subdirectory(nativemsh/pwrshcommon)
 
-add_library(pwrshplugin
-    nativemsh/pwrshplugin/entrypoints.cpp
-    nativemsh/pwrshplugin/pwrshclrhost.cpp
-    #nativemsh/pwrshplugin/pwrshpluginerrorcodes.mc
-    #nativemsh/pwrshplugin/pwrshpluginerrorcodes.rc
-    nativemsh/pwrshplugin/pwrshplugin.def)
+# Build pwrshplugin.dll
+add_subdirectory(nativemsh/pwrshplugin)
 
-
-SET(powershell_definitions 
-        _CONSOLE
-        UNICODE
-        _UNICODE)
-
-set_target_properties(powershell PROPERTIES COMPILE_DEFINITIONS "${powershell_definitions}")
-set_target_properties(powershell PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE")
-set_target_properties(powershell PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:CONSOLE")
-set_target_properties(powershell PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:CONSOLE")
-set_target_properties(powershell PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:CONSOLE")
-
-SET(pwrshplugin_definitions 
-        UNICODE
-        _UNICODE)
-
-set_target_properties(pwrshplugin PROPERTIES COMPILE_DEFINITIONS "${pwrshplugin_definitions}")
-
-target_link_libraries(powershell
-    mscoree.lib
-    MUILoad.lib
-    kernel32.lib
-    msxml6.lib
-    legacy_stdio_definitions.lib)
-
-target_link_libraries(pwrshplugin)
+# Build powershell.exe
+add_subdirectory(nativemsh/pwrshexe)
 
