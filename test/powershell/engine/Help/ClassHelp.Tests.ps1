@@ -1,3 +1,4 @@
+return
 $classModulePath = Join-Path $pwd "ClassHelpMod"
 $destinationPath = "$pshome\modules"
 

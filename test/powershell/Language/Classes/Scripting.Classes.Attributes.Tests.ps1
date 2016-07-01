@@ -45,7 +45,7 @@ namespace Dummy
     }
 }
 '@    
-        Add-Type -TypeDefinition $dummyAttributesSource -ReferencedAssemblies "System.Management.Automation"
+        Add-Type -TypeDefinition $dummyAttributesSource -ReferencedAssemblies "System.Management.Automation","mscorlib"
     }
 
     

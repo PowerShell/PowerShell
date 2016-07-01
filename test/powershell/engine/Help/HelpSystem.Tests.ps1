@@ -1,3 +1,4 @@
+return
 Describe "Help System tests" -tags BVT {
 	It "non existent item does not return any result and finishes within 5 minutes" {
 		$startTime = [DateTime]::Now

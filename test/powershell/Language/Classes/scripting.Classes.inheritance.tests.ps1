@@ -27,27 +27,27 @@ Describe 'Classes inheritance syntax' -Tags "DRT" {
         class C7 : C6 { C7() : base() {} }
     }
 
-    It 'inheritance syntax allows newlines in varius places' {
+    It -skip 'inheritance syntax allows newlines in various places' {
         class C {}
-        class C2a:C,system.ICloneable{ [object] Clone() {return $null}}
-        class C2b 
-            : 
-            C
-            , 
-            system.ICloneable 
-            { 
-                [object] Clone() {return $null}
-                C2b()
-                :   # there are extra spaces here
-                base
-                (
-                )
-                {
-                }
-            }
+        # class C2a:C,system.ICloneable{ [object] Clone() {return $null}}
+        #class C2b 
+        #    : 
+        #    C
+        #    , 
+        #    system.ICloneable 
+        #    { 
+        #        [object] Clone() {return $null}
+        #        C2b()
+        #        :   # there are extra spaces here
+        #        base
+        #        (
+        #        )
+        #        {
+        #        }
+        #    }
 
-        [C2a].GetInterface("System.ICloneable") | Should Not Be $null
-        [C2b].GetInterface("System.ICloneable") | Should Not Be $null
+        #[C2a].GetInterface("System.ICloneable") | Should Not Be $null
+        #[C2b].GetInterface("System.ICloneable") | Should Not Be $null
     }
 
     It 'can subclass .NET type' {
@@ -90,7 +90,10 @@ Describe 'Classes inheritance syntax errors' -Tags "DRT" {
 
     ShouldBeParseError "class A {}; class B : A, NonExistingInterface {}" TypeNotFound 25
     ShouldBeParseError "class A {} ; class B {}; class C : A, B {}" InterfaceNameExpected 38 -SkipAndCheckRuntimeError
-    ShouldBeParseError "class A{} ; class B : A, System.ICloneable[] {}" SubtypeArray 25 -SkipAndCheckRuntimeError
+    if ( ! $IsCore ) {
+        # no System.ICloneable on Core
+        ShouldBeParseError "class A{} ; class B : A, System.ICloneable[] {}" SubtypeArray 25 -SkipAndCheckRuntimeError
+    }
     ShouldBeParseError "class A {}; class B : A, NonExistingInterface {}" TypeNotFound 25
 
     # base should be accepted only on instance ctors

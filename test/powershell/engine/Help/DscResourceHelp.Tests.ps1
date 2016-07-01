@@ -1,4 +1,4 @@
-
+return
 ## Disabling tests due to Bug # 3141590.
 
 <#

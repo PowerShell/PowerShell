@@ -190,6 +190,7 @@
             [ParameterData]::new('LiteralPath', $true, $false)
         )
                 
+        # need to use a portable provider
         $testData = @(
             @{command = (Get-Command Get-ChildItem cert: -recurse); name = 'Implicit'; params = $parameterData}
             @{command = (Get-Command -Verb Get -Noun ChildItem cert: -recurse);name = 'Implicit-VerbNoun'; params = $parameterData}                                           
@@ -199,7 +200,7 @@
             @{command = (Get-Command -Verb Get -Noun ChildItem -ArgumentList '-path','cert:', '-recurse');name = 'ArgsExplicit-VerbNoun'; params = $parameterData}                                           
         )       
 
-        It "GetDynamicParameters for provider specific parameters <name>" -TestCases $testData {
+        It -pending "GetDynamicParameters for provider specific parameters <name>" -TestCases $testData {
             param($command, $params)
 
             $command.GetType() | Should Be 'System.Management.Automation.CmdletInfo'

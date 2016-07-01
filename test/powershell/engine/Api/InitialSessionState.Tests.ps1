@@ -1,8 +1,8 @@
 Describe "InitialSessionState" -Tags "DRT" {
 
     # MSFT:5885218
-    It 'allows to use ImportPSModulesFromPath with version-based module from C#' {
-        Add-Type -OutputAssembly TestDrive:\app.exe -OutputType ConsoleApplication -TypeDefinition @'
+    It -pending 'allows to use ImportPSModulesFromPath with version-based module from C#' {
+        Add-Type -OutputAssembly TestDrive:\app.exe -OutputType ConsoleApplication -reference mscorlib,System.Management.Automation -TypeDefinition @'
 using System;
 using System.Management.Automation.Runspaces;
 
@@ -14,12 +14,12 @@ namespace ConsoleApplication1
         {
             var initialSessionState = InitialSessionState.CreateDefault();
             initialSessionState.ImportPSModulesFromPath(args[0]);
-            Console.WriteLine(initialSessionState.Modules.Count);
+            Console.WriteLine(initialSessionState.Modules.Count.ToString());
         }
     }
 }
 '@
-        mkdir TestDrive:\root\AAA\1.2.3
+        new-item -type directory TestDrive:\root\AAA\1.2.3
         New-ModuleManifest -Path TestDrive:\root\AAA\1.2.3\AAA.psd1 -ModuleVersion 1.2.3
         $output = TestDrive:\app.exe ((ls TestDrive:\root\).FullName)
         $output | Should Be 1

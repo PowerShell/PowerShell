@@ -39,7 +39,7 @@ Describe "Validation for Information stream in PowerShell" -Tags "DRT" {
         $result.Tags[1] | Should be Tag2
     }
 
-    it "Verifies Information stream on jobs" {
+    it -pending "Verifies Information stream on jobs" {
         $j = Start-Job { Write-Information "FromJob" -Tags "Tag1","Tag2" }
         Wait-Job $j
         
@@ -50,9 +50,9 @@ Describe "Validation for Information stream in PowerShell" -Tags "DRT" {
         $result.Tags[1] | Should be Tag2
     }
 
-    it "Verifies Information stream on workflow" {
+    it -pending "Verifies Information stream on workflow" {
         ## Test regular invocation
-        workflow foo { Write-Information Bar }
+        # workflow foo { Write-Information Bar }
         foo -InformationVariable bar
         $bar.MessageData | Should be "Bar"
 
@@ -66,18 +66,18 @@ Describe "Validation for Information stream in PowerShell" -Tags "DRT" {
         $result | Should be $null
     }
     
-    it "Verifies InformationVariable in workflow compilation" {
-        workflow IVWorkflowTest { Write-Information Test -InformationVariable Test; $test }
+    it -pending "Verifies InformationVariable in workflow compilation" {
+        # workflow IVWorkflowTest { Write-Information Test -InformationVariable Test; $test }
         $result = IVWorkflowTest
         $result.MessageData | Should be "Test"   
     }
     
-    it "Verifies Information stream works over remoting" {
+    it -pending "Verifies Information stream works over remoting" {
         icm localhost { Write-Information Test } -InformationVariable Test
         $test.MessageData | Should be "Test"
     }
     
-    it "Verifies client-side stream redirection works over remoting" {
+    it -pending "Verifies client-side stream redirection works over remoting" {
 
         $result = icm localhost { Write-Information Test 6>&1 }
         $result.MessageData | Should be "Test"

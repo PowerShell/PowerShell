@@ -1,42 +1,52 @@
 # Check if History string on the PowerShell class can be publicly set.
-Describe -tags 'Innerloop', 'DRT' "bug530585" {
+$powershellexe = [system.diagnostics.process]::GetProcessById($PID).mainmodule.filename 
+Describe "bug530585" -Tags 'CI' {
     BeforeAll {
-        $s = new-pssession
+        $rs = [RunspaceFactory]::CreateRunspace()
+        $rs.Open()
         $ps = [powershell]::Create()
-        $null = $ps.AddCommand("Get-Process")
-        $ps.Runspace = $s.Runspace
-        $settings=New-Object System.Management.Automation.PSInvocationSettings
-        $settings.AddToHistory=$true
+        $ps.Runspace = $rs
+        $setting1 = [System.Management.Automation.PSInvocationSettings]::new()
+        $setting1.AddToHistory=$true
+        $setting2 = [System.Management.Automation.PSInvocationSettings]::new()
+        $setting2.AddToHistory=$false
         $sampleHistoryString = "This is a sample history string"
     }
+    AfterEach {
+        $ps.Commands.Clear()
+    }
     AfterAll {
-        $s | Remove-PSSession
+        $rs.Close()
     }
 
     It "update History correctly" {
-        $results = $ps.Invoke($null,$settings)
-        $history = invoke-command $s { Get-History }
+        $null = $ps.AddCommand("Get-Process")
+        $results = $ps.Invoke($null,$setting1) 
+        $ps.Commands.Clear()
+        $history = $ps.AddCommand("Get-History").Invoke() | Select-Object -First 1
         $history.ToString() |Should be "Get-Process"
     }
 
     It "Set the History String" {
-        $history = invoke-command $s { Clear-History }
+
         $ps.HistoryString = $sampleHistoryString
-        $results = $ps.Invoke($null,$settings)
-        $history = invoke-command $s { Get-History }
-        $history[1].ToString() | should be $sampleHistoryString
+        $null = $ps.AddCommand("Get-History").Invoke($null, $setting1)
+        $history = $ps.Invoke($null, $setting1) |select-object -last 1
+        $history.ToString() | should be $sampleHistoryString
     }
 
+    # Order dependent test - it must come after the test above
     It "retain the updated History String" {
-        $results = $ps.Invoke($null,$settings)
-        $history = invoke-command $s { Get-History }
+        $null = $ps.AddCommand("Get-History").Invoke($null, $setting1)
+        $ps.Commands.Clear()
+        $history = $ps.AddCommand("Get-History").Invoke($null,$setting1)
         $history[3].ToString() | should be $sampleHistoryString
     }
 
 }
 
 # Tests Restricted Language Mode check is applied when API is used.
-Describe -tags 'Innerloop', 'DRT' "bug536735" {
+Describe "bug536735" -Tags 'CI' {
     BeforeAll {
         # create a dummy script file with some function
         $func = 'function test-bug536735 { }'
@@ -66,7 +76,7 @@ Describe -tags 'Innerloop', 'DRT' "bug536735" {
 }
 
 # Switch parameters are not listed in CommandInfo.ParameterSets[i].Parameters
-Describe -tags 'Innerloop', 'DRT' "bug594908-switches-vs-parametersets" {
+Describe "bug594908-switches-vs-parametersets" -Tags 'CI' {
     BeforeAll {
         function foo { param([switch]$x, $y) "x = $x; y = $y" }
         $c = Get-Command foo -Type function
@@ -81,14 +91,16 @@ Describe -tags 'Innerloop', 'DRT' "bug594908-switches-vs-parametersets" {
 
 # If UserName is supplied to Get-Credential Cmdlet, then check if the exception is thrown
 # if the length of the user name is greater than maximum allowed ( currently 513 ).
-Describe -tags 'Innerloop', 'DRT' "bug607794" {
+Describe "bug607794" -Tags 'CI' {
     AfterAll {
+        if ( $IsCore ) { return }
         if ( $currentValue )
         {
             set-itemproperty $key $name $currentValue
         }
     }
     BeforeAll {
+        if ( $IsCore ) { return }
         $key = "hklm:\SOFTWARE\Microsoft\PowerShell\1\ShellIds"
         $name = "ConsolePrompting"
         $currentValue = Get-itemproperty $key -Name $name -ea silentlycontinue
@@ -97,8 +109,8 @@ Describe -tags 'Innerloop', 'DRT' "bug607794" {
             set-itemproperty $key $name False
         }
     }
-	It "Failed to identify invalid UserName" {
-        $result = PowerShell -command { 
+	It -skip:($IsCore) "Failed to identify invalid UserName" {
+        $result = & $powershellexe -command { 
             try { 
                 Get-Credential -Message Foo -UserName ('a' * 514) -ea stop 
             } catch { 
@@ -113,7 +125,7 @@ Describe -tags 'Innerloop', 'DRT' "bug607794" {
 # makes sure that error formatting works with set-strictmode -version 2
 # The ErrorRecord exception does not have a PSMessageDetails property but should not raise an
 # error when running with Set-StrictMode -version 2.0
-Describe -tags 'Innerloop', 'DRT' "bug615684" {
+Describe  "bug615684" -Tags 'CI' {
     BeforeAll {
         Set-StrictMode -Version 2
     }
@@ -139,7 +151,7 @@ Describe -tags 'Innerloop', 'DRT' "bug615684" {
 
 # Win8:665097 - Tab completion is broken over psremoting
 # Test the new CompletionInput APIs and the new TabExpansion2 function
-Describe -tags 'Innerloop', 'DRT' "bug665097-NewTabCompletionAPI" {
+Describe  "bug665097-NewTabCompletionAPI" -Tags 'CI' {
     BeforeAll {
         $script = "Get-Command"
         $tuple = [System.Management.Automation.CommandCompletion]::MapStringInputToParsedInput($script, $script.Length)
@@ -177,7 +189,7 @@ Describe -tags 'Innerloop', 'DRT' "bug665097-NewTabCompletionAPI" {
 # If a COM object implements both IEnumerable IEnumerator, then
 # IEnumerable is checked prior to IEnumerator.
 # This is in sync with Powershell V2.
-Describe -tags 'Innerloop', 'DRT' "bug744151" {
+Describe  "bug744151" -Tags 'CI' {
     BeforeAll {
         $skip = $false
         try
@@ -210,7 +222,7 @@ Describe -tags 'Innerloop', 'DRT' "bug744151" {
 }
 
 # Verify that serialization works on IEnumerables that don't support Reset() method.
-Describe -tags 'Innerloop', 'DRT' "bug948569" {
+Describe  "bug948569" -Tags 'CI' {
     BeforeAll {
         $skip = $false
         if ( -not (get-command Add-Type))
@@ -262,7 +274,7 @@ Describe -tags 'Innerloop', 'DRT' "bug948569" {
 	}
 }
 
-Describe -tags 'Innerloop', 'P1' "OutputRedirectTests" {
+Describe "OutputRedirectTests" -Tags 'CI' {
     BeforeAll {
         $CurrentVerbosePreference = $VerbosePreference 
         $CurrentDebugPreference = $DebugPreference
@@ -571,7 +583,7 @@ Describe -tags 'Innerloop', 'P1' "OutputRedirectTests" {
 }
 
 # Tests "Paging Support" feature
-Describe -tags 'Innerloop', 'DRT' "PagingSupport" {
+Describe  "PagingSupport" -Tags 'CI' {
     BeforeAll {
         function Get-PageOfNumbers
         {
@@ -873,10 +885,10 @@ Describe -tags 'Innerloop', 'DRT' "PagingSupport" {
 }
 
 # Exit should occur cleanly with the LastExitCode showing no error.
-Describe -tags 'Innerloop', 'P1' "PowerShellCrashOnExit" {
-    It "PowerShell should not crash during exit. (Bug 68814)" {
+Describe "PowerShellCrashOnExit" -Tags 'CI' {
+    It -pending "PowerShell should not crash during exit. (Bug 68814)" {
         ## Start a new powershell process and start two local sessions and two jobs, then exit.
-        powershell -noprofile -command {
+        & $powershellexe -noprofile -command {
             ## Remove current AppDomain unhandled exception handler so that any 
             ## unhandled excpetion will propagate and set the shell LastExitCode.
             $psUE = [AppDomain].GetEvent("UnhandledException")
@@ -898,7 +910,7 @@ Describe -tags 'Innerloop', 'P1' "PowerShellCrashOnExit" {
 
 # Verifies that all objects in the pipeline are processed when the -OutBuffer parameter is used
 # (regression test for Win7:452714)
-Describe -tags 'Innerloop', 'DRT' "ScriptProcessorTests" {
+Describe  "ScriptProcessorTests" {
     foreach($buffersize in 0..5)
     {
         It "outBuffersize set to '$buffersize' emits proper number of objects in foreach-object process block" {
@@ -912,7 +924,7 @@ Describe -tags 'Innerloop', 'DRT' "ScriptProcessorTests" {
     }
 }
 
-Describe -tags 'Innerloop', 'DRT' "SessionStatePublicConstructorTest" {
+Describe  "SessionStatePublicConstructorTest" -Tags 'CI' {
     BeforeAll {
         $sessionState = new-object System.Management.Automation.SessionState
         $providerInfo = $null;
@@ -933,7 +945,7 @@ Describe -tags 'Innerloop', 'DRT' "SessionStatePublicConstructorTest" {
 }
 
 # Verifies parameter binding by pipeline object
-Describe -tags 'Innerloop', 'DRT' "Test-MultiPipelineParameterBinding" {
+Describe  "Test-MultiPipelineParameterBinding" -Tags 'CI' {
     BeforeAll {
         function Test-Binding-Three-Parameters
         {
@@ -1027,7 +1039,7 @@ Describe -tags 'Innerloop', 'DRT' "Test-MultiPipelineParameterBinding" {
 
 }
 # Tests PowerShell batch execution in both local and remote sessions
-Describe -tags 'Innerloop', 'P1' "TestBatchExecution" {
+Describe "TestBatchExecution" -Tags 'CI' {
     Context "Local Execution" {
         BeforeEach {
             $localRunspace = [System.Management.Automation.Runspaces.RunspaceFactory]::CreateRunspace()
@@ -1094,19 +1106,19 @@ Describe -tags 'Innerloop', 'P1' "TestBatchExecution" {
             $ps.Dispose()
             $remoteRunspace.Dispose()
         }
-        It "Should execute 2 statements and the result should be correct" {
+        It -Pending "Should execute 2 statements and the result should be correct" {
             $result = $ps.AddCommand("Get-Process").AddArgument("idle").AddStatement().AddCommand("Get-Date").Invoke()
             $result.Count | Should Be 2
             $result[0].ProcessName | Should Be "Idle"
         }
-        It "Should execute 2 statements async and the result should be correct" {
+        It -Pending "Should execute 2 statements async and the result should be correct" {
             $ps.Commands.Clear()
             $async = $ps.AddCommand("Get-Process").AddArgument("idle").AddStatement().AddCommand("Get-Date").BeginInvoke()
             $result = $ps.EndInvoke($async)
             $result.Count | Should Be 2
             $result[0].ProcessName | Should Be "Idle"
         }
-        It "Should stop async operations correctly" {
+        It -Pending "Should stop async operations correctly" {
             $ps.Commands.Clear()
             $async = $ps.AddCommand("Start-Sleep").AddArgument("10000").AddStatement().AddCommand("Get-Date").BeginInvoke()
             $ps.Stop()
@@ -1147,7 +1159,7 @@ Describe -tags 'Innerloop', 'P1' "TestBatchExecution" {
     }
 }
 
-Describe "PSDefaultParameters settings are effective" -Tags "P1", "RI" {
+Describe "PSDefaultParameters settings are effective" -Tags 'CI' {
     BeforeAll {
         $currentSettings = $PSDefaultParameterValues
         $PSDefaultParameterValues["Disabled"] = $true
@@ -1319,7 +1331,7 @@ Describe "PSDefaultParameters settings are effective" -Tags "P1", "RI" {
 
 }
 
-Describe "PSDefaultPArameterValues settings are respected" -Tags "P1", "RI" {
+Describe "PSDefaultPArameterValues settings are respected" -Tags 'CI' {
     BeforeAll {
         $currentSettings = $PSDefaultParameterValues
         $PSDefaultParameterValues["Disabled"] = $true
@@ -1576,50 +1588,51 @@ Describe "PSDefaultPArameterValues settings are respected" -Tags "P1", "RI" {
 }
 
 # Tests Restricted Language Mode check is applied when API is used.
-Describe -tags 'Innerloop', 'DRT' "TestHadErrorsProperty" {
+Describe "TestHadErrorsProperty" -Tags 'CI' {
     BeforeAll {
-        $s = New-PSSession
+        $s = New-PSSession -ea silentlycontinue
         $remoteRunspace = $s.Runspace
         $localRunspace = [runspacefactory]::CreateRunspace()
         $localRunspace.Open()
     }
     AfterAll {
-        Remove-PsSession $s
+        if ( $s ) { Remove-PsSession $s }
         $localRunspace.Dispose()
     }
 
     foreach ($r in $localRunspace,$remoteRunspace)
     {
         $case = if ($r -eq $localRunspace) { "Local case" } else { "Remote case" }
+        $pendingTest = ($r -eq $null -and $true) -or $false
         $p = [powershell]::Create().AddScript({write-output 'no error'});
         $p.Runspace = $r
         $result = $p.Invoke()
-        It "${case}: Invoke() should have returned 'no error'" {
+        It -pending:$pendingTest "${case}: Invoke() should have returned 'no error'" {
             $result |should be 'no error'
         }
-        It "${case}: no error case - HadErrors should be false" {
+        It -pending:$pendingTest "${case}: no error case - HadErrors should be false" {
             $p.HadErrors | Should be $false
         }
 
         $p = [powershell]::Create().AddScript({write-output 'wrote error'; write-error 'an error'});
         $p.Runspace = $r
         $result = $p.Invoke()
-        It "${case}: Invoke() should have returned 'wrote error'" {
+        It -pending:$pendingTest "${case}: Invoke() should have returned 'wrote error'" {
             $result |should be 'wrote error'
         }
-        It "${case}: wrote error case - HadErrors should be true" {
+        It -pending:$pendingTest "${case}: wrote error case - HadErrors should be true" {
             $p.HadErrors | Should Be $true
         }
 
         $p = [powershell]::Create().AddScript({write-output 'exception';  1/$null});
         $p.Runspace = $r
         $result = $p.Invoke()
-        It "${case}: Invoke() should have returned 'exception'" {
+        It -pending:$pendingTest "${case}: Invoke() should have returned 'exception'" {
             $result |should be 'exception'
         }
         if ($case -notmatch "Local case")
         {
-            It "${case}: exception case - HadErrors should be true" {
+            It -pending:$pendingTest "${case}: exception case - HadErrors should be true" {
                 $p.HadErrors | Should Be $true
             }
         }
@@ -1627,27 +1640,27 @@ Describe -tags 'Innerloop', 'DRT' "TestHadErrorsProperty" {
         $p = [powershell]::Create().AddScript({write-output 'caught exception' ; try { 1/$null } catch { } });
         $p.Runspace = $r
         $result = $p.Invoke()
-        It "${case}: Invoke() should have returned 'caught exception'" {
+        It -pending:$pendingTest "${case}: Invoke() should have returned 'caught exception'" {
             $result |should be 'caught exception'
         }
-        It "${case}: caught exception case - HadErrors should be false" {
+        It -pending:$pendingTest "${case}: caught exception case - HadErrors should be false" {
             $p.HadErrors | Should Be $false
         }
 
         $p = [powershell]::Create().AddScript({write-output 'redirected error' ; write-error foo > $null; 'hi'});
         $p.Runspace = $r
         $result = $p.Invoke()
-        It "${case}: Invoke() should have returned 'redirected error'" {
+        It -pending:$pendingTest "${case}: Invoke() should have returned 'redirected error'" {
             $result[0] |should be 'redirected error'
         }
-        It "${case}: redirected error case - HadErrors should be true" {
+        It -pending:$pendingTest "${case}: redirected error case - HadErrors should be true" {
             $p.HadErrors | Should Be $true
         }
     }
 }
 
 # Includes tests related to Win7:527516 Regression:  Can't redirect native stderr to $null in PowerShell 2.0
-Describe -tags 'Innerloop', 'DRT' "TestNativeCommandRedirection" {
+Describe  "TestNativeCommandRedirection" -Tags 'CI' {
     BeforeAll {
         $script = "${TestDrive}\script.cmd"
         "@echo off","echo Hello","Remove-Item TESTDRIVE:\doesnotexist" | Set-content $script
@@ -1713,16 +1726,16 @@ Describe -tags 'Innerloop', 'DRT' "TestNativeCommandRedirection" {
 }
 
 # Verifies parameter binding handles non-resettable enumerators
-Describe -tags 'Innerloop', 'DRT' "TestNonResettableEnumeratorBinding" {
+Describe  "TestNonResettableEnumeratorBinding" -Tags 'CI' {
 	It "Should not have generated parameter binding error" {
-        $result = "blah" | powershell.exe -noprofile { try { write-warning -message $input 3>$null } catch { "Caught" } }
+        $result = "blah" | & $powershellexe -noprofile { try { write-warning -message $input 3>$null } catch { "Caught" } }
 		$result |should not be "Caught"
 	}
 }
 
 
 # Verifies that redirection is detected properly when you've defined an Out-Default function
-Describe -tags 'Innerloop', 'DRT' "TestOutDefaultRedirection" {
+Describe  "TestOutDefaultRedirection" -Tags 'CI' {
     BeforeAll {
         $outputExe = "${TestDrive}\RedirectionTester.exe"
     }
@@ -1730,13 +1743,18 @@ Describe -tags 'Innerloop', 'DRT' "TestOutDefaultRedirection" {
     # this context is for isolation to be sure that the executable that is created may be removed
     Context "Custom Out-Default function does not impact redirection" {
         BeforeAll {
+            $pending = $false
+            if ( $IsCore ) { 
+                $pending = $true
+                return 
+                }
             $skip = $false
             if ( -not (get-command Add-Type -ea silentlycontinue ))
             {
                 $Skip = $true
                 return
             }
-            Add-Type -OutputAssembly $outputExe -typedefinition '
+            Add-Type -OutputAssembly $outputExe -typedefinition -referenceassemblies mscorlib '
             public class RedirectionTester {
                 public static int Main(string[] args) {
                     try { bool visible = System.Console.CursorVisible; }
@@ -1791,8 +1809,10 @@ Describe -tags 'Innerloop', 'DRT' "TestOutDefaultRedirection" {
         # be sure that you remove the executable before TESTDRIVE
         # is deleted
         AfterAll {
-            if ( $powershell ) { $powershell.Dispose() }
-            remove-item variable:powershell
+            if ( $powershell -ne $null) { 
+                $powershell.Dispose() 
+                remove-item variable:powershell
+                }
             $loop = 0
             while ( test-path $outputExe )
             {
@@ -1803,7 +1823,7 @@ Describe -tags 'Innerloop', 'DRT' "TestOutDefaultRedirection" {
             }
         }
 
-        It -skip:$skip "Should not have been redirected" {
+        It -pending:$pending "Should not have been redirected" {
             [void]$powerShell.AddScript("& '$outputExe'")
             [void]$powerShell.AddCommand('Out-Default')
             $result = $powerShell.Invoke()
@@ -1813,7 +1833,7 @@ Describe -tags 'Innerloop', 'DRT' "TestOutDefaultRedirection" {
             "$lastExitCode" | Should be "0"
         }
 
-        It -skip:$skip "Should have been redirected" {
+        It -pending:$pending "Should have been redirected" {
             [void]$powerShell.Commands.Clear()
             [void]$powerShell.AddScript("`$foo = & '$outputExe'")
             [void]$powerShell.AddCommand('Out-Default')
@@ -1827,7 +1847,7 @@ Describe -tags 'Innerloop', 'DRT' "TestOutDefaultRedirection" {
 }
 
 # Verifies that parameter binder is aware of PSTypeName attribute
-Describe -tags 'Innerloop', 'DRT' "TestParameterBindingForEtsType" {
+Describe  "TestParameterBindingForEtsType" -Tags 'CI' {
     BeforeAll {
         $skip = $false
         if ( -not (get-command add-type -ea silentlycontinue ) )
@@ -2060,7 +2080,7 @@ Describe -tags 'Innerloop', 'DRT' "TestParameterBindingForEtsType" {
 
 # Test the public CmdletInfo constructor and using it with the PowerShell API
 # Test error scenarios
-Describe -tags 'Innerloop', 'DRT' "TestPowerShellAPIwithCmdletInfo" {
+Describe  "TestPowerShellAPIwithCmdletInfo" -Tags 'CI' {
 	It "Expected fully-qualified error id to be 'ArgumentNull'" {
         try 
         {
@@ -2138,7 +2158,7 @@ Describe -tags 'Innerloop', 'DRT' "TestPowerShellAPIwithCmdletInfo" {
 }
 # Verifies that you get an appropriate error message if you try to access the events
 # queue after disposing the runspace.
-Describe -tags 'Innerloop', 'DRT' "TestRunspaceCloseEvents" {
+Describe  "TestRunspaceCloseEvents" -Tags 'CI' {
     BeforeAll {
         $skip = $false
         if ( -not (get-command add-type -ea silentlycontinue ) )
@@ -2163,6 +2183,7 @@ Describe -tags 'Innerloop', 'DRT' "TestRunspaceCloseEvents" {
             MemberDefinition = $member
             Using = "System.Management.Automation.Runspaces"
             PassThru = $true
+            ReferencedAssemblies = "mscorlib","System.Management.Automation"
             }
         $type = "TestRunspaceCrash.RunspaceTester" -as "type"
         if ( ! $type )
@@ -2178,7 +2199,7 @@ Describe -tags 'Innerloop', 'DRT' "TestRunspaceCloseEvents" {
 
 # Verifies that error redirection to success output works corrrectly with
 # the steppable pipeline.
-Describe -tags 'Innerloop', 'DRT' "TestStepPipeErrorRedirect" {
+Describe  "TestStepPipeErrorRedirect" -Tags 'CI' {
     BeforeAll {
         $t = (Get-Command Write-Error).ImplementingType
         $m = New-Object System.Management.Automation.CommandMetadata($t)
@@ -2194,7 +2215,7 @@ Describe -tags 'Innerloop', 'DRT' "TestStepPipeErrorRedirect" {
 
 # Verifies that the steppable pipeline will collect output from
 # all statements executed in the pipeline.
-Describe -tags 'Innerloop', 'DRT' "TestStepPipelineOutput" {
+Describe  "TestStepPipelineOutput" -Tags 'CI' {
 	It "Should output at least four items." {
         ## Create filter with four statements
         filter a {$_*2; $_*4; 5*5; gps -id $pid}
@@ -2208,7 +2229,7 @@ Describe -tags 'Innerloop', 'DRT' "TestStepPipelineOutput" {
 }
 
 # Win8: 110913 Parameter binding fails for named arguments when positional binding works in functions and scripts.
-Describe -tags 'Innerloop', 'DRT' "win8_110913" {
+Describe  "win8_110913" -Tags 'CI' {
     BeforeAll {
         $stringListFromArray = [System.Collections.Generic.List[string]] @("abc", "edf")
         $stringListFromScalar = [System.Collections.Generic.List[string]] "abc"
@@ -2243,7 +2264,7 @@ Describe -tags 'Innerloop', 'DRT' "win8_110913" {
 }
 
 # Win8: 169492 RunspacePool can report that there are negative runspaces available.
-Describe -tags 'Innerloop', 'P1' "win8_169492" {
+Describe "win8_169492" -Tags 'CI' {
 	It "GetAvailableRunspaces should always return greater than or equal to 0" {
         $rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspacePool(1, 3)
         $rs.Open();
@@ -2265,7 +2286,7 @@ Describe -tags 'Innerloop', 'P1' "win8_169492" {
 }
 
 # Win8: 169518 When using cleanup intervals less than around 20seconds, RunspacePool
-Describe -tags 'Innerloop', 'P1' "win8_169518" {
+Describe "win8_169518" -Tags 'CI' {
     BeforeAll {
         remove-item $env:Temp\engineexit.txt -ea SilentlyContinue
         #Create a runspace pool with min 1, max 3
@@ -2294,14 +2315,14 @@ Describe -tags 'Innerloop', 'P1' "win8_169518" {
 
     # Wait until they all finish.
     #Now it should show 3 available runspaces since they all finished executing.
-	It "Expected 3 avaliable runspaces since all the commands are completed now." {
+	It -pending "Expected 3 avaliable runspaces since all the commands are completed now." {
         foreach($i in 0..2) { $shells[$i].EndInvoke($async[$i]) }
         start-sleep -sec 10
 		$rs.GetAvailableRunspaces() | Should Be 3
 	}
 
     # After 30 seconds, 2 of the runspaces should be cleaned up because they are not in use and we should see a file called engineexit.txt with messages saying that they exited.
-	It "There should be 2 lines written to engineexit.txt" {
+	It -pending "There should be 2 lines written to engineexit.txt" {
         start-sleep -sec 40
         $countExiting = (Get-content $env:temp\engineexit.txt | measure-object).Count
 		$countExiting | Should Be 2
@@ -2310,7 +2331,7 @@ Describe -tags 'Innerloop', 'P1' "win8_169518" {
 }
 
 # Win8: 178063 Flow-control-exceptions in scripts executed via PowerShell API, will affect the script that is calling into the PowerShell API
-Describe -tags 'Innerloop', 'P1' "win8_178063" {
+Describe "win8_178063" -Tags 'CI' {
 	It "There should one pipelinestopped exception" {
         $ps = [powershell]::create().addscript("start-sleep -sec 100")
         $ar = $ps.BeginInvoke()
@@ -2326,16 +2347,21 @@ Describe -tags 'Innerloop', 'P1' "win8_178063" {
 }
 
 # 182409: PowerShell 3.0 should run in STA mode by default
-Describe -tags 'Innerloop', 'DRT' "win8_182409" {
-	It "Default apartment state of PowerShell should be STA" {
-        $expected = [System.Threading.ApartmentState]::STA.tostring().trim() 
-        $actual = powershell -noprofile -command '[system.threading.thread]::currentthread.ApartmentState.tostring().trim()'
+Describe  "win8_182409" -Tags 'CI' {
+    BeforeAll {
+        $skip = $false
+        $AptStateType = "System.Threading.ApartmentState" -as "Type"
+        if ( ! $AptStateType ) { $skip = $true }
+    }
+	It -skip:$skip "Default apartment state of PowerShell should be STA" {
+        $expected = ${AptStateType}::STA.tostring().trim() 
+        $actual = & $powershellexe -noprofile -command '[system.threading.thread]::currentthread.ApartmentState.tostring().trim()'
         $actual | Should Be $expected
 	}
 }
 
 # Win8: 228176 PSTypeName attribute doesn't prevent binding like a type declaration would.
-Describe -tags 'Innerloop', 'DRT' "win8_228176" {
+Describe  "win8_228176" -Tags 'CI' {
     BeforeAll {
         function foo_withPSTypeName
         {
@@ -2366,7 +2392,7 @@ Describe -tags 'Innerloop', 'DRT' "win8_228176" {
 }
 
 # Win8: 246310 Regression [win7]: powershell no longer sets  exitcode to 1  if the command throws a terminating error
-Describe -tags 'Innerloop', 'DRT' "win8_246310" {
+Describe  "win8_246310" -Tags 'CI' {
 	It '$global:? should be false when there is a terminating error' {
         try {
             new-object blah 
@@ -2378,7 +2404,7 @@ Describe -tags 'Innerloop', 'DRT' "win8_246310" {
 	}
 
 	It '$? should be false when there is a terminating error' {
-        powershell -command "new-object blah" 2>$null
+        & $powershellexe -command "new-object blah" 2>$null
 		$? | Should Be $false
 	}
 }
@@ -2395,7 +2421,7 @@ Describe -tags 'Innerloop', 'DRT' "win8_246310" {
 
 ## Originally, the mandatory checking will resolve the parameter set to be B, which will fail in the pipeline binding later.
 ## After the change, the parameter set A in the scenario 1 and the set A, Default in the scenario 2 will be preserved, and the pipeline binding later will succeed.
-Describe -tags 'Innerloop', 'DRT' "win8_277635_MandatoryCheckingFix" {
+Describe  "win8_277635_MandatoryCheckingFix" -Tags 'CI' {
 	It "Should bound to the parameter set 'computer'" {
         Function Test-Win8Bug277635
         {
@@ -2580,17 +2606,17 @@ Describe -tags 'Innerloop', 'DRT' "win8_277635_MandatoryCheckingFix" {
 }
 
 # Win8: 329209 - Module auto-loading eats first error when run through the pipeline APIs
-Describe -tags 'Innerloop', 'DRT' "win8_329209" {
+Describe  "win8_329209" -Tags 'CI' {
 	It "There should be 2 error messages written out" {
         $ps = [PowerShell]::Create()
-        $ps.AddScript('$a = 1,2; $a | powershell.exe -noprofile -command {$input|foreach {write-error foo}}').Invoke()
+        $ps.AddScript('$a = 1,2; $a | ' + $powershellexe + ' -noprofile -command {$input|foreach {write-error foo}}').Invoke()
 		$ps.Streams.Error.Count | Should Be 2
 	}
 }
 
 # Win8: 393501 - FunctionInfo should have VERB and NOUN properties
 # WinBlue: 3243 - The Noun and Verb properties of a FunctionInfo object returned by Get-Command are null when a function implements dynamic parameters
-Describe -tags 'Innerloop', 'DRT' "win8_392501_FunctionInfo_Verb_Noun" {
+Describe  "win8_392501_FunctionInfo_Verb_Noun" -Tags 'CI' {
 	It "FunctionInfo should have VERB and NOUN properties" {
         function Get-Win8_393501 { "In Get-Win8_393501" }
         $func = Get-Command -Name Get-Win8_393501
@@ -2637,7 +2663,7 @@ Describe -tags 'Innerloop', 'DRT' "win8_392501_FunctionInfo_Verb_Noun" {
 }
 
 # Win8: 399659 Default $MaximumHistoryCount too low
-Describe -tags 'Innerloop', 'P1' "win8_399659" {
+Describe "win8_399659" -Tags 'CI' {
 	It '$MaximumHistoryCount should be 4096.' {
 		(powershell.exe -noprofile -command { $MaximumHistoryCount }) | Should Be 4096
 	}
@@ -2645,7 +2671,7 @@ Describe -tags 'Innerloop', 'P1' "win8_399659" {
 }
 
 # Win8: 456634 Parameter binder should not call the setter of a parameter multiple times
-Describe -tags 'Innerloop', 'P1' "win8_456634_BinderCallSetterTwice" {
+Describe "win8_456634_BinderCallSetterTwice" -Tags 'CI' {
     BeforeAll {
         $skip = $false
         if ( -not (get-command add-type -ea silentlycontinue ) )
@@ -2686,7 +2712,12 @@ Describe -tags 'Innerloop', 'P1' "win8_456634_BinderCallSetterTwice" {
 '@
         $myType = "Win8Bug456634.ParameterBinderInvokeSetterTest" -as "Type"
         if ( ! $myType ) {
+            try {
             Add-Type -TypeDefinition $classText -OutputAssembly $filePath -ErrorAction SilentlyContinue
+            }
+            catch {
+                $skip = $true
+            }
         }
         else {
             $filePath = $myType.Assembly.Location 
@@ -2694,11 +2725,8 @@ Describe -tags 'Innerloop', 'P1' "win8_456634_BinderCallSetterTwice" {
     }
 
     Context "Isolate test in new process for cleanup" {
-        BeforeAll {
-            $result = powershell -noprofile -c "import-module -force ${filePath};Set-Win8Bug456634 ([datetime]::Now) 'Computer'"
-        }
-
-        It 'Parameter binder should call the setter the right number of times' {
+        It -skip:$skip 'Parameter binder should call the setter the right number of times' {
+            $result = & $powershellexe -noprofile -c "import-module -force ${filePath};Set-Win8Bug456634 ([datetime]::Now) 'Computer'"
             $result | should be 1
         }
     }
@@ -2707,8 +2735,11 @@ Describe -tags 'Innerloop', 'P1' "win8_456634_BinderCallSetterTwice" {
 # Win8: 504444 Recent fix to TabCompletion Infrastructure causes crash on ISE and 
 # might cause crash on other scenarios
 ## The CSharp repro code. Compile it to be a console application and run the executable.
-Describe -tags 'Innerloop', 'P1' "win8_504444_WaitAllOnSTAThread" {
+Describe "win8_504444_WaitAllOnSTAThread" -Tags 'CI' {
         BeforeAll {
+            $executableFile = "TestDrive:\win8_504444_WaitAllOnSTAThread.exe"
+            if ( $IsCore ) { $skip=$true; return }
+
             $skip = $false
             if ( -not (get-command add-type -ea silentlycontinue ) )
             {
@@ -2751,8 +2782,7 @@ Describe -tags 'Innerloop', 'P1' "win8_504444_WaitAllOnSTAThread" {
             }
 '@
 
-            $executableFile = "TestDrive:\win8_504444_WaitAllOnSTAThread.exe"
-            Add-Type -TypeDefinition $csharp -OutputType ConsoleApplication -OutputAssembly $executableFile
+            Add-Type -TypeDefinition $csharp -OutputType ConsoleApplication -OutputAssembly $executableFile -referencedasse mscorlib,System.management.automation
 
             ## If we are still using WaitAll for multiple pipelines on a STA thread, this call will 
             # throw a NotSupportedException "WaitAll for multiple handles on a STA thread is not supported."
@@ -2775,14 +2805,16 @@ Describe -tags 'Innerloop', 'P1' "win8_504444_WaitAllOnSTAThread" {
 
 # Win8: 619951 [Exchange PS3 Integration] "set-ThrottlingPolicy def* -PowerShellMaxDestructiveCmdlets $null" is failed in PS3 which works well in PS2
 # ScriptBlockToPowerShellWithNullParameterValue
-Describe -tags 'Innerloop', 'DRT' "win8_619951_ScriptBlockToPowerShellWithNullParameterValue" {
+Describe "win8_619951_ScriptBlockToPowerShellWithNullParameterValue" -Tags 'CI' {
     BeforeAll {
-        $s = New-PSSession
+        $pending = $false
+        $s = New-PSSession -ea silentlycontinue
+        if ( ! $s ) { $pending = $true }
     }
     AfterAll {
-        Remove-PSSession $s
+        if ( $s ) { Remove-PSSession $s }
     }
-	It "should output the result_1" {
+	It -pending:$pending "should output the result_1" {
         Invoke-Command -Session $s -ScriptBlock { function bar { param($parameter) "Parameter is $parameter" } }
         $params = @{InputObject = $null}
         $result = Invoke-Command -Session $s -ArgumentList $params -ScriptBlock { param($cc) bar @cc }
@@ -2795,7 +2827,7 @@ Describe -tags 'Innerloop', 'DRT' "win8_619951_ScriptBlockToPowerShellWithNullPa
 # The function Test-Bug789598 has no default parameter set so running the command "Test-Bug789598"
 # will cause a parameter binding exception about "cannot resolve parameter set". The GetMergedCommandParameterMetdata
 # method should ignore this parameter binding exception when the Arguments is empty.
-Describe -tags 'Innerloop', 'DRT' "win8_789598_IgnoreParameterBindingExceptionWhenArgumentsIsEmpty" {
+Describe "win8_789598_IgnoreParameterBindingExceptionWhenArgumentsIsEmpty" -Tags 'CI' {
 	It "The output of get-help should not be null." {
         Function Test-Bug789598
         {
@@ -2819,7 +2851,7 @@ Describe -tags 'Innerloop', 'DRT' "win8_789598_IgnoreParameterBindingExceptionWh
 }
 
 # Win8 965086 - PowerShell Storage Module - cmdlets have no verbs/nouns via Get-Command
-Describe -tags 'Innerloop', 'DRT' "win8_965086" {
+Describe "win8_965086" -Tags 'CI' {
     BeforeAll {
         # Create an advanced function with dynamic parameters.
         function Have-DynamicParameter {
@@ -2873,7 +2905,7 @@ Describe -tags 'Innerloop', 'DRT' "win8_965086" {
 # The problem is because of TypeRestrictions on the Enumerable Binder. The type restrictions are wrongly checking
 # for "PSObject'.
 # The test mimicks calling get-member on an object derived from PSObject and checks the call succeed (without hang)
-Describe -tags 'Innerloop', 'P1' "WinBlue_17593" {
+Describe "WinBlue_17593" -Tags 'CI' {
     BeforeAll {
         $skip = $false
         if ( -not (get-command add-type -ea silentlycontinue))
@@ -2889,7 +2921,7 @@ Describe -tags 'Innerloop', 'P1' "WinBlue_17593" {
         $type = "MyDerivedPsObject" -as "type"
         if ( ! ( $type )) 
         {
-            add-type -warningaction silentlycontinue $Definition
+            add-type -warningaction silentlycontinue $Definition -reference mscorlib,system.management.automation
         }
     }
     It -skip:$skip "Get-Member should not hang on a object derived from PSObject" {
@@ -2908,7 +2940,7 @@ Describe -tags 'Innerloop', 'P1' "WinBlue_17593" {
 # mandatory parameter, it behaves like one.
 # The parameter "Credential" has an attribute "CredentialAttribute", when binding the default parameter values for
 # script function/cmdlet, if the default value is a powershell default value and it's $null, then we skip the ArgumentTranformationAttribute processing
-Describe -tags 'Innerloop', 'DRT' "WinBlue_19691_ArgumentTransformationAttributeForDefaultParameterValueBinding" {
+Describe "WinBlue_19691_ArgumentTransformationAttributeForDefaultParameterValueBinding" -Tags 'CI' {
 	It "The CredentialAttribute is skipped, so Test-Credential should return true" {
         function Test-Credential {
             [cmdletbinding()]
@@ -2922,7 +2954,7 @@ Describe -tags 'Innerloop', 'DRT' "WinBlue_19691_ArgumentTransformationAttribute
 
 # WinBlue: 2032 - Cmdlet that throws CmdletProviderInvocationException causes NullRef in ParserUtils.UpdateExceptionErrorRecordPosition
 # WinBlue: 84485 - Regression: Creating a PSSnapinException and getting its ErrorRecord property crashes PowerShell.
-Describe -tags 'Innerloop', 'DRT' "WinBlue_2032" {
+Describe "WinBlue_2032" -Tags 'CI' {
     BeforeAll {
         $CmdletProviderInvocationException = New-Object System.Management.Automation.CmdletProviderInvocationException "CmdletInvocationException"
         $PsSnapinException = New-Object System.Management.Automation.Runspaces.PSSnapInException "PSSnapinException"
@@ -2979,7 +3011,7 @@ Describe -tags 'Innerloop', 'DRT' "WinBlue_2032" {
 
 #       WinBlue:209579 - powershell.exe -file should set the errorlevel variable if the .ps1 file cannot be executed due to execution policy
 #       We check AuthorizationManager.ShouldRun() for the script file before actually running it. So if the execution policy prevents it from running, we skip the file and set the ExitCode to be 1.
-Describe -tags 'Innerloop', 'P1' "WinBlue_209579" {
+Describe "WinBlue_209579" -Tags 'CI' {
     BeforeAll {
         # we have to use ${TESTDRIVE} because TESTDRIVE: isn't available in the new process
         $baseTestFile = "${TESTDRIVE}\Base.ps1"
@@ -2992,13 +3024,13 @@ Describe -tags 'Innerloop', 'P1' "WinBlue_209579" {
     }
 
     ## Setup the test file content
-	It "The ExitCode should be set to be 1 when the execution policy prevents the script file to run" {
-        powershell.exe -noprofile -executionpolicy AllSigned -file $baseTestFile 2>&1 | Out-Null
+	It -skip "The ExitCode should be set to be 1 when the execution policy prevents the script file to run" {
+        & $powershellexe -noprofile -executionpolicy AllSigned -file $baseTestFile 2>&1 | Out-Null
 		$LASTEXITCODE | Should Be 1
 	}
 
-	It "The ExitCode should be 1, since the PSSecurityException happens during the execution of the -file script" {
-        powershell.exe -noprofile -executionpolicy Unrestricted -file $baseTestFile 2>&1 | Out-Null
+	It -skip "The ExitCode should be 1, since the PSSecurityException happens during the execution of the -file script" {
+        & $powershellexe -noprofile -executionpolicy Unrestricted -file $baseTestFile 2>&1 | Out-Null
 		$LASTEXITCODE | Should Be 1
 	}
 }
@@ -3006,7 +3038,7 @@ Describe -tags 'Innerloop', 'P1' "WinBlue_209579" {
 # WinBlue: 39058 - Use of remoting proxies causes a hang in PowerShell V3
 # Pretty much any use of a remoting proxy will cause a hang in PowerShell V3.
 # The test mimicks calling a proxy and ensures the call succeed (without hang)
-Describe -tags 'Innerloop', 'P1' "WinBlue_39058" {
+Describe "WinBlue_39058" -Tags 'CI' {
     BeforeAll {
         $skip = $false
         if ( -not (get-command add-type -ea silentlycontinue ) )
@@ -3051,7 +3083,15 @@ Describe -tags 'Innerloop', 'P1' "WinBlue_39058" {
         $type = 'ProxyTest.MyProxy``1' -as "type"
         if ( ! $type )
         {
-            $type = add-type -ReferencedAssemblies Microsoft.CSharp $Definition
+            try {
+                $type = add-type -ReferencedAssemblies Microsoft.CSharp $Definition -ea silentlyContinue
+            }
+            catch {
+                $skip = $true
+            }
+        }
+        if ( ! $type ) {
+            $skip = $true
         }
 
     }
@@ -3079,7 +3119,7 @@ Describe -tags 'Innerloop', 'P1' "WinBlue_39058" {
 #     This is because we didn't call PSObject.Base() on the member expression in the generated binding restriction. This causes
 #     the string comparison in the binding restriction always fail, and thus the execution endlessly falls back to the Bind method
 #     of PSGetDynamicMemberBinder.
-Describe -tags 'Innerloop', 'DRT' "WinBlue_397730_DynamicMemberAccess" {
+Describe "WinBlue_397730_DynamicMemberAccess" -Tags 'CI' {
         It 'The expression $xml.$xml should return $null' {
             $xml = New-Object Xml
             $result =  $xml.$xml
@@ -3170,7 +3210,7 @@ Describe -tags 'Innerloop', 'DRT' "WinBlue_397730_DynamicMemberAccess" {
 #       For a local variable, if its type constraint cannot be resolved, powershell will just use the default type 'Object'. But the local variable
 #       analysis happens at compile time, and it's possible the type will be loaded at runtime, and then it becomes resolvable. The fix is to make the
 #       variable a PSVariable and force the dynamic lookup if the type constraint of the variable cannot be resolved.
-Describe -tags 'Innerloop', 'DRT' "WinBlue_445735_UnresolvableTypeConstraintForLocalVariables" {
+Describe "WinBlue_445735_UnresolvableTypeConstraintForLocalVariables" -Tags 'CI' {
     BeforeAll {
         function WinBlue445735_ParamTest
         {
@@ -3246,7 +3286,7 @@ Describe -tags 'Innerloop', 'DRT' "WinBlue_445735_UnresolvableTypeConstraintForL
 # WinBlue:540698 - Pipeline.Invoke() doesn't collect output of native commands when it's running a script with error redirection.
 # This bug happens because when using the Pipeline API, if error redirection happens in the outer scope of a native command, the native
 # command will be incorrectly treated as running standalone.
-Describe -tags 'Innerloop', 'P1' "WinBlue_540698_NativeCommandRedirection" {
+Describe "WinBlue_540698_NativeCommandRedirection" -Tags 'CI' {
     BeforeAll {
         $rs = [runspacefactory]::CreateRunspace([initialsessionstate]::CreateDefault2())
         $rs.Open()
@@ -3292,7 +3332,7 @@ Describe -tags 'Innerloop', 'P1' "WinBlue_540698_NativeCommandRedirection" {
 }
 
 #      WinBlue: 5911 - [Connect Critical] Remove-Item -recurse 'does not work properly.' and 'is faulty'
-Describe -tags 'Innerloop', 'DRT' "WinBlue_5911" {
+Describe "WinBlue_5911" -Tags 'CI' {
     Context "Remove-Item -Recurse with Include" {
         BeforeAll {
             new-item -itemtype directory $TestDrive\Test | Out-Null
@@ -3417,7 +3457,7 @@ Describe -tags 'Innerloop', 'DRT' "WinBlue_5911" {
     }
 }
 
-Describe -Tags 'DRT' "CommandInfo.Parameters race condition" {
+Describe "CommandInfo.Parameters race condition" -Tags 'CI' {
     try
     {
         # Conditions necessry to trigger the race condition:

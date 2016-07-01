@@ -9,16 +9,24 @@ using namespace System.Management.Automation.Runspaces
 #
 # It then runs the script DumpTypeData.ps1 to get all the type data as strings - this makes comparisons easy.
 Describe "Generated TypeData" {
+    if ( $IsCore ) {
+        $typecount = 2
+        $Types = "$PSHOME\types.ps1xml","$PSHOME\typesv3.ps1xml"
+    }
+    else {
+        $typecount = 3
+        $Types = "$PSHOME\GetEvent.types.ps1xml","$PSHOME\types.ps1xml","$PSHOME\typesv3.ps1xml"
+    }
 
     It "Compare PS1XML w/ generated typedata - ISS" {
         [InternalTestHooks]::SetTestHook("ReadEngineTypesXmlFiles", $true)
 
         $iss = [initialsessionstate]::CreateDefault()
         $iss.Formats.Clear()
-        $iss.Types.Count | Should Be 3
-        $iss.Types[0].FileName | Should Be "$PSHOME\GetEvent.types.ps1xml"
-        $iss.Types[1].FileName | Should Be "$PSHOME\types.ps1xml"
-        $iss.Types[2].FileName | Should Be "$PSHOME\typesv3.ps1xml"
+        $iss.Types.Count | Should Be $typecount
+        for($i = 0; $i -lt $typecount; $i++ ) {
+            $iss.Types[$i].FileName | should be $types[$i]
+        }
 
         $ps = [PowerShell]::Create($iss)
         $null = $ps.AddCommand("$PSScriptRoot\DumpTypeData.ps1")
@@ -28,7 +36,7 @@ Describe "Generated TypeData" {
 
         $iss = [initialsessionstate]::CreateDefault()
         $iss.Formats.Clear()
-        $iss.Types.Count | Should Be 3
+        $iss.Types.Count | Should Be $typecount
 
         $ps = [PowerShell]::Create($iss)
         $null = $ps.AddCommand("$PSScriptRoot\DumpTypeData.ps1")
@@ -37,7 +45,7 @@ Describe "Generated TypeData" {
         $fromTypeData | Should Be $fromPS1XML
     }
 
-    It "Compare PS1XML w/ generated typedata - RunspaceConfig" {
+    It -skip "Compare PS1XML w/ generated typedata - RunspaceConfig" {
         [InternalTestHooks]::SetTestHook("ReadEngineTypesXmlFiles", $true)
 
         $rsc = [RunspaceConfiguration]::Create()
@@ -86,6 +94,7 @@ Describe "Dynamic Site Caching" {
 
     # Use ProviderPath instead of TestDrive b/c we need the path for other runspaces which won't have the TestDrive.
     $removePs1XmlFileName = "$((Get-PSDrive TestDrive).Root)\$([Guid]::NewGuid()).types.ps1xml"
+
     Set-Content -Path $removePs1XmlFileName -Value @"
 <Types>
   <Type>
