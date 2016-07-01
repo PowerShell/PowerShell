@@ -32,6 +32,16 @@ because it has dependency on `[Shell32.ShellFolderItem]` for FullCLR builds.
 
 Excluded because they requires `UIAutomationTypes.dll`
 
+#### Microsoft.PowerShell.ConsoleHost
+
+These are excluded from all builds with `#if !PORTABLE`.
+They require .NET types that are currently missing.
+
+```
+singleshell/installer/EngineInstaller.cs
+singleshell/installer/MshHostMshSnapin.cs
+```
+
 ## Jobs
 
 The PowerShell jobs fail, see [#1010][].
