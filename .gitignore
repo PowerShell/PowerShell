@@ -17,6 +17,8 @@ dotnet-uninstall-debian-packages.sh
 *.xproj.user
 *.suo
 
+# VS auto-generated files for csproj files
+*.csproj.user
 
 # Ignore executables
 *.exe
