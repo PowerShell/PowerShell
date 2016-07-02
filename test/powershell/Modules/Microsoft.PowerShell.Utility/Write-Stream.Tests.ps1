@@ -28,13 +28,13 @@ Describe "Stream writer tests" {
         # These tests validate that a stream is actually being written to by redirecting the output of that stream
 
         AfterEach { Remove-Item $targetfile }
-        It "Should write warnings to the warning stream" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+        It "Should write warnings to the warning stream" {
             Write-Warning "Test Warning" 3>&1 > $targetfile
 
             Get-Content $targetfile | Should Be "Test Warning"
         }
 
-        It "Should write error messages to the error stream" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+        It "Should write error messages to the error stream" {
             Write-Error "Testing Error" 2>&1 > $targetfile
 
             $result = Get-OutputResults $targetfile
@@ -42,7 +42,7 @@ Describe "Stream writer tests" {
             $result -match ": Testing Error" | Should Be $true
         }
 
-        It "Should write debug messages to the debug stream" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+        It "Should write debug messages to the debug stream" {
             Write-Messages -Debug -EA SilentlyContinue 5>&1 > $targetfile
 
             $result = Get-OutputResults $targetfile
@@ -51,7 +51,7 @@ Describe "Stream writer tests" {
             $result -match "Debug Message" | Should Be $true
         }
 
-        It "Should write messages to the verbose stream" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+        It "Should write messages to the verbose stream" {
             Write-Messages -Verbose 4>&1 > $targetfile
 
             $result = Get-OutputResults $targetfile

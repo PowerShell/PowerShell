@@ -1,4 +1,4 @@
-#if !PORTABLE
+#if !LINUX
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -1541,7 +1541,14 @@ namespace Microsoft.PowerShell
         /// </summary>
         public override ConsoleColor BackgroundColor
         {
-            get { return Console.BackgroundColor; }
+            get
+            {
+                // Console can return UnknownColor, a private enum, equivalent
+                // to -1. When this is a case, map it instead to our default.
+                return Console.BackgroundColor == (ConsoleColor)(-1)
+                    ? defaultBackground
+                    : Console.BackgroundColor;
+            }
             set { Console.BackgroundColor = value; }
         }
 
@@ -1549,32 +1556,23 @@ namespace Microsoft.PowerShell
         private static Size WrapSize = new Size(80, 40);
 
         /// <summary>
-        /// Gets or sets the size of the host buffer. In this example the
-        /// buffer size is adapted from the Console buffer size members.
+        /// Gets or sets the size of the host buffer.
         /// </summary>
         public override Size BufferSize
         {
             get
             {
-                // When stdout is redirected, the buffer size is (0, 0);
-                // however, this is still queried for use in formatting, so we
-                // provide the WrapSize.
-                if (Console.IsOutputRedirected)
-                {
-                    return WrapSize;
-                }
-                else
-                {
-                    return new Size(Console.BufferWidth, Console.BufferHeight);
-                }
+                // Console can return zero when a pseduo-TTY is allocated, which
+                // is useless for us. Instead, map to the wrap size.
+                return Console.BufferWidth == 0 || Console.BufferHeight == 0
+                    ? WrapSize
+                    : new Size(Console.BufferWidth, Console.BufferHeight);
             }
             set { Console.SetBufferSize(value.Width, value.Height); }
         }
 
         /// <summary>
-        /// Gets or sets the cursor position. In this example this
-        /// functionality is not needed so the property throws a
-        /// NotImplementException exception.
+        /// Gets or sets the cursor position.
         /// </summary>
         public override Coordinates CursorPosition
         {
@@ -1583,23 +1581,31 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Gets or sets the size of the displayed cursor. In this example
-        /// the cursor size is taken directly from the Console.CursorSize
-        /// property.
+        /// Gets or sets the size of the displayed cursor.
+        /// This maps to the corresponding Console.CursorSize property.
         /// </summary>
         public override int CursorSize
         {
+            // Future porting note: this API throws on Windows when output is
+            // redirected, but never throws on Unix because it's fake.
             get { return Console.CursorSize; }
             set { Console.CursorSize = value; }
         }
 
         /// <summary>
         /// Gets or sets the foreground color of the displayed text.
-        /// This maps to the corresponding Console.ForgroundColor property.
+        /// This maps to the corresponding Console.ForegroundColor property.
         /// </summary>
         public override ConsoleColor ForegroundColor
         {
-            get { return Console.ForegroundColor; }
+            get
+            {
+                // Console can return UnknownColor, a private enum, equivalent
+                // to -1. When this is a case, map it instead to our default.
+                return Console.ForegroundColor == (ConsoleColor)(-1)
+                    ? defaultForeground
+                    : Console.ForegroundColor;
+            }
             set { Console.ForegroundColor = value; }
         }
 
@@ -1613,32 +1619,37 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Gets the dimensions of the largest window that could be
-        /// rendered in the current display, if the buffer was at the least
-        /// that large. This example uses the Console.LargestWindowWidth and
-        /// Console.LargestWindowHeight properties to determine the returned
-        /// value of this property.
+        /// Gets the dimensions of the largest window that could be rendered in
+        /// the current display, if the buffer was at the least that large.
+        /// This maps to the MaxWindowSize.
         /// </summary>
         public override Size MaxPhysicalWindowSize
         {
-            get { return new Size(Console.LargestWindowWidth, Console.LargestWindowHeight); }
+            get { return MaxWindowSize; }
         }
 
         /// <summary>
-        /// Gets the dimentions of the largest window size that can be
-        /// displayed. This example uses the Console.LargestWindowWidth and
-        /// console.LargestWindowHeight properties to determine the returned
+        /// Gets the dimensions of the largest window size that can be
+        /// displayed. This maps to the Console.LargestWindowWidth and
+        /// Console.LargestWindowHeight properties to determine the returned
         /// value of this property.
         /// </summary>
         public override Size MaxWindowSize
         {
-            get { return new Size(Console.LargestWindowWidth, Console.LargestWindowHeight); }
+            get
+            {
+                // Console can return zero when a pseduo-TTY is allocated, which
+                // is useless for us. Instead, map to the wrap size.
+                return Console.LargestWindowWidth == 0 || Console.LargestWindowHeight == 0
+                    ? WrapSize
+                    : new Size(Console.LargestWindowWidth, Console.LargestWindowHeight);
+            }
         }
 
         /// <summary>
-        /// Gets or sets the position of the displayed window. This example
-        /// uses the Console window position APIs to determine the returned
-        /// value of this property.
+        /// Gets or sets the position of the displayed window. This maps to the
+        /// Console window position APIs to determine the returned value of this
+        /// property.
         /// </summary>
         public override Coordinates WindowPosition
         {
@@ -1655,14 +1666,11 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (Console.IsOutputRedirected)
-                {
-                    return WrapSize;
-                }
-                else
-                {
-                    return new Size(Console.WindowWidth, Console.WindowHeight);
-                }
+                // Console can return zero when a pseduo-TTY is allocated, which
+                // is useless for us. Instead, map to the wrap size.
+                return Console.WindowWidth == 0 || Console.WindowHeight == 0
+                    ? WrapSize
+                    : new Size(Console.WindowWidth, Console.WindowHeight);
             }
             set { Console.SetWindowSize(value.Width, value.Height); }
         }
@@ -1680,20 +1688,9 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                // In Unix/Linux systems, Console.Title current results in a not-implemented
-                // exception.  In that case, we return a cached copy of title that was set earlier.
-                // Obviously, this will not work if: 1) Title was never set in PowerShell, or 2)
-                // one sets the windows's title outside of PowerShell.
-                string result;
-                try
-                {
-                    result = Console.Title;
-                }
-                catch (PlatformNotSupportedException)
-                {
-                    return title;
-                }
-                return result;
+                // Console throws an exception on Unix platforms, so we handle
+                // caching and returning the Window title ourselves.
+                return Platform.IsWindows ? Console.Title : title;
             }
 
             set
@@ -1704,11 +1701,14 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// This API resets the input buffer. In this example this
-        /// functionality is not needed so the method returns nothing.
+        /// This API resets the input buffer.
         /// </summary>
         public override void FlushInputBuffer()
         {
+            if (!Console.IsInputRedirected)
+            {
+                Console.OpenStandardInput().Flush();
+            }
         }
 
         /// <summary>

@@ -208,7 +208,7 @@ Describe "Set-Variable" {
 	$testVar | Should Be $testValue
     }
 
-    It "Should be able to pipe object properties to output using the PassThru switch" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+    It "Should be able to pipe object properties to output using the PassThru switch" {
 	$in = Set-Variable -Name testVar -Value "test" -Description "test description" -PassThru
 
 	$output = $in | Format-List -Property Description | Out-String

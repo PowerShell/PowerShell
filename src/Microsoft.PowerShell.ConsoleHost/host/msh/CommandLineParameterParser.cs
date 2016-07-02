@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell
                 switchKey = switchKey.Substring(1);
 
                 // chop off the second dash so we're agnostic wrt specifying - or --
-                if (SpecialCharacters.IsDash(switchKey[0]))
+                if (!String.IsNullOrEmpty(switchKey) && SpecialCharacters.IsDash(switchKey[0]))
                 {
                     switchKey = switchKey.Substring(1);
                 }
@@ -483,7 +483,10 @@ namespace Microsoft.PowerShell
                         string exceptionMessage = null;
                         try
                         {
-                            file = Path.GetFullPath(args[i]);
+                            // Normalize slashes
+                            file = args[i].Replace(StringLiterals.AlternatePathSeparator,
+                                                   StringLiterals.DefaultPathSeparator);
+                            file = Path.GetFullPath(file);
                         }
                         catch (Exception e)
                         {

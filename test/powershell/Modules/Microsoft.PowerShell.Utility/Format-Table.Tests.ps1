@@ -43,7 +43,7 @@ Describe "Format-Table DRT Unit Tests" -Tags DRT{
 				}
 		}
 
-		It "Format-Table with array should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+		It "Format-Table with array should work" {
 				$al = (0..255)
 				$info = @{}
 				$info.array = $al
@@ -51,7 +51,7 @@ Describe "Format-Table DRT Unit Tests" -Tags DRT{
 				$result | Should Match "array\s+{0, 1, 2, 3...}"
 		}
 
-		It "Format-Table with Negative Count should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+		It "Format-Table with Negative Count should work" {
 				$FormatEnumerationLimit = -1
 				$result = Format-Table -inputobject @{'test'= 1, 2}
 				$resultStr = $result|Out-String
@@ -66,21 +66,21 @@ Describe "Format-Table DRT Unit Tests" -Tags DRT{
 				$resultStr | Should Match "test\s+{...}"
 		}
 
-		It "Format-Table with Less Count should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+		It "Format-Table with Less Count should work" {
 				$FormatEnumerationLimit = 1
 				$result = Format-Table -inputobject @{'test'= 1, 2}
 				$resultStr = $result|Out-String
 				$resultStr | Should Match "test\s+{1...}"
 		}
 
-		It "Format-Table with More Count should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+		It "Format-Table with More Count should work" {
 				$FormatEnumerationLimit = 10
 				$result = Format-Table -inputobject @{'test'= 1, 2}
 				$resultStr = $result|Out-String
 				$resultStr | Should Match "test\s+{1, 2}"
 		}
 
-		It "Format-Table with Equal Count should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+		It "Format-Table with Equal Count should work" {
 				$FormatEnumerationLimit = 2
 				$result = Format-Table -inputobject @{'test'= 1, 2}
 				$resultStr = $result|Out-String
@@ -104,14 +104,14 @@ Describe "Format-Table DRT Unit Tests" -Tags DRT{
 				$resultStr | Should Match "test\s+{1, 2}"
 		}
 
-		It "Format-Table with new line should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+		It "Format-Table with new line should work" {
 				$info = @{}
 				$info.name = "1\n2"
 				$result = $info|Format-Table|Out-String
 				$result | Should Match "name\s+1.+2"
 		}
 
-		It "Format-Table with ExposeBug920454 should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+		It "Format-Table with ExposeBug920454 should work" {
 				$IP1 = [System.Net.IPAddress]::Parse("1.1.1.1")
 				$IP2 = [System.Net.IPAddress]::Parse("4fde:0000:0000:0002:0022:f376:255.59.171.63")
 				$IPs = New-Object System.Collections.ArrayList
@@ -123,7 +123,7 @@ Describe "Format-Table DRT Unit Tests" -Tags DRT{
 				$result | Should Match "test\s+{1.1.1.1, 4fde::2:22:f376:ff3b:ab3f}"
 		}
 
-		It "Format-Table with Autosize should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+		It "Format-Table with Autosize should work" {
 				$IP1 = [PSCustomObject]@{'name'='Bob';'size'=1234;'booleanValue'=$true;}
 				$IP2 = [PSCustomObject]@{'name'='Jim';'size'=5678;'booleanValue'=$false;}
 				$IPs = New-Object System.Collections.ArrayList
@@ -176,7 +176,7 @@ Describe "Format-Table DRT Unit Tests" -Tags DRT{
 				$result | Should BeNullOrEmpty
 		}
 
-		It "Format-Table with complex object for End-To-End should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+		It "Format-Table with complex object for End-To-End should work" {
 				Add-Type -TypeDefinition "public enum MyDayOfWeek{Sun,Mon,Tue,Wed,Thr,Fri,Sat}"
 				$eto = New-Object MyDayOfWeek
 				$info = @{}
@@ -191,7 +191,7 @@ Describe "Format-Table DRT Unit Tests" -Tags DRT{
 				$result | Should Match "enumerableTestObject\s+Sun"
 		}
 
-		It "Format-Table with Expand Enumerable should work" -Pending:($env:TRAVIS_OS_NAME -eq "osx") {
+		It "Format-Table with Expand Enumerable should work" {
 				$obj1 = "x 0","y 0"
 				$obj2 = "x 1","y 1"
 				$objs = New-Object System.Collections.ArrayList
