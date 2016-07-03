@@ -10,6 +10,14 @@
         "allowUnsafe": true
     },
 
+    "configurations": {
+        "Linux": {
+            "buildOptions": {
+                "define": [ "LINUX" ]
+            }
+        }
+    },
+
     "dependencies": {
         "Microsoft.PowerShell.Security": "1.0.0-*"
     },
@@ -24,7 +32,6 @@
                         "commands/management/ClearRecycleBinCommand.cs",
                         "commands/management/ControlPanelItemCommand.cs",
                         "commands/management/CommitTransactionCommand.cs",
-                        "commands/management/Computer.cs",
                         "commands/management/Eventlog.cs",
                         "commands/management/GetClipboardCommand.cs",
                         "commands/management/GetTransactionCommand.cs",

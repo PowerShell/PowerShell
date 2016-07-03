@@ -85,6 +85,8 @@
     "monad/src/cimSupport/cmdletization/cim/cimCmdletInvocationContext.cs":  "cimSupport/cmdletization/cim/cimCmdletInvocationContext.cs",
     "monad/src/commands/management/ParsePathCommand.cs":  "commands/management/ParsePathCommand.cs",
     "monad/src/commands/management/CopyPropertyCommand.cs":  "commands/management/CopyPropertyCommand.cs",
+    "monad/src/commands/management/TimeZoneCommands.cs":  "commands/management/TimeZoneCommands.cs",
+    "monad/src/commands/management/resources/TimeZoneResources.resx":  "resources/TimeZoneResources.resx",
     "monad/src/cimSupport/cmdletization/cim/TerminatingErrorTracker.cs":  "cimSupport/cmdletization/cim/TerminatingErrorTracker.cs",
     "monad/src/cimSupport/cmdletization/cim/cimChildJobBase.cs":  "cimSupport/cmdletization/cim/cimChildJobBase.cs"
 }
