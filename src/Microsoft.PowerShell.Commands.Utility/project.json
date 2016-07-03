@@ -60,6 +60,21 @@
                         "commands/utility/update-list.cs",
                         "singleshell/installer/MshUtilityMshSnapin.cs"
                     ]
+                },
+                "embed": {
+                    "exclude": [
+                        "resources/FormatAndOut_out_gridview.resx",
+                        "resources/ImplicitRemotingStrings.resx",
+                        "resources/UtilityMshSnapinResources.resx",
+                        "resources/OutPrinterDisplayStrings.resx",
+                        "resources/TraceCommandStrings.resx",
+                        "resources/UpdateListStrings.resx",
+                        "resources/SendMailMessageStrings.resx",
+                        "resources/ConvertFromStringResources.resx",
+                        "resources/ConvertStringResources.resx",
+                        "resources/FlashExtractStrings.resx",
+                        "resources/ImmutableStrings.resx"
+                    ]
                 }
             },
             "imports": [ "dnxcore50", "portable-net45+win8" ],

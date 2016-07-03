@@ -25,6 +25,13 @@
                         "security/CmsCommands.cs",
                         "singleshell/installer/MshSecurityMshSnapin.cs"
                     ]
+                },
+                "embed": {
+                    "exclude": [
+                        "resources/CertificateCommands.resx",
+                        "resources/CmsCommands.resx",
+                        "resources/SecurityMshSnapinResources.resx"
+                    ]
                 }
             }
         },

@@ -74,6 +74,11 @@
                         "singleshell/installer/EngineInstaller.cs",
                         "singleshell/installer/MshHostMshSnapin.cs"
                     ]
+                },
+                "embed": {
+                    "exclude": [
+                        "resources/HostMshSnapinResources.resx"
+                    ]
                 }
             },
             "dependencies": {

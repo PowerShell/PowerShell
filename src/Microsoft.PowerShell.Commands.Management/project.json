@@ -49,11 +49,25 @@
                         "commands/management/WebServiceProxy.cs",
                         "singleshell/installer/MshManagementMshSnapin.cs"
                     ]
+                },
+                "embed": {
+                    "exclude": [
+                        "resources/EventlogResources.resx",
+                        "resources/TransactionResources.resx",
+                        "resources/WebServiceResources.resx",
+                        "resources/HotFixResources.resx",
+                        "resources/ControlPanelResources.resx",
+                        "resources/WmiResources.resx",
+                        "resources/ManagementMshSnapInResources.resx",
+                        "resources/ClearRecycleBinResources.resx",
+                        "resources/ClipboardResources.resx"
+                    ]
                 }
             },
             "dependencies": {
                 "System.ServiceProcess.ServiceController": "4.1.0",
-                "System.Net.NameResolution": "4.0.0"
+                "System.Net.NameResolution": "4.0.0",
+                "System.Net.Ping": "4.0.0"
             }
         },
         "net451": {
@@ -70,6 +84,11 @@
                 "compile": {
                     "exclude": [
                         "commands/management/ControlPanelItemCommand.cs"
+                    ]
+                },
+                "embed": {
+                    "exclude": [
+                        "resources/ControlPanelResources.resx"
                     ]
                 }
             }
