@@ -17,6 +17,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 using System.Runtime.Serialization;
 using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
+using System.Collections.Concurrent;
 
 #if CORECLR
 // Use stubs for SerializableAttribute and ISerializable related types.
@@ -244,7 +245,7 @@ namespace System.Management.Automation
         /// Parameter Binder should only be created after Prepare method is called
         /// </summary>
         bool isPreparedCalled = false;
-
+        
         /// <summary>
         /// Parameter binder used by this command processor
         /// </summary>
@@ -326,6 +327,7 @@ namespace System.Management.Automation
                 // Accumulate everything from the pipe and execute at the end.
                 inputWriter.Add(Command.CurrentPipelineObject);
             }
+            TryInitNativeProcess();
         }
         
         /// <summary>
@@ -350,6 +352,24 @@ namespace System.Management.Automation
         private bool _runStandAlone;
 
         /// <summary>
+        /// Indicate whether we need to consider redirecting the output/error of the current native command.
+        /// Usually a windows program which is the last command in a pipeline can be executed as 'background' -- we don't need to capture its output/error streams.
+        /// </summary>        
+        private bool _background;
+
+        private bool _isNativeProcessInitialized = false;
+        
+        private bool _scrapeHostOutput;
+
+        private Host.Coordinates _startPosition;
+
+        /// <summary>
+        /// If a problem occurred in running the program, this exception will
+        /// be set and should be rethrown at the end of the try/catch block...
+        /// </summary> 
+        private Exception _exceptionToRethrow = null;
+
+        /// <summary>
         /// object used for synchronization between StopProcessing thread and 
         /// Pipeline thread.
         /// </summary>
@@ -364,12 +384,15 @@ namespace System.Management.Automation
         /// <exception cref="ApplicationFailedException">
         /// The native command could not be run
         /// </exception>
-        internal override void Complete()
+        private void TryInitNativeProcess()
         {
-            // Indicate whether we need to consider redirecting the output/error of the current native command.
-            // Usually a windows program which is the last command in a pipeline can be executed as 'background' -- we don't need to capture its output/error streams.
-            bool background;
+            if (_isNativeProcessInitialized)
+            {
+                return;
+            } 
 
+            _isNativeProcessInitialized = true;
+            
             // Figure out if we're going to run this process "standalone" i.e. without
             // redirecting anything. This is a bit tricky as we always run redirected so
             // we have to see if the redirection is actually being done at the topmost level or not.
@@ -392,11 +415,8 @@ namespace System.Management.Automation
                 throw new PipelineStoppedException();
             }
 
-            // If a problem occurred in running the program, this exception will
-            // be set and should be rethrown at the end of the try/catch block...
-            Exception exceptionToRethrow = null;
-            Host.Coordinates startPosition = new Host.Coordinates();
-            bool scrapeHostOutput = false;
+            _startPosition = new Host.Coordinates();
+            _scrapeHostOutput = false;
 
             try
             {
@@ -413,15 +433,15 @@ namespace System.Management.Automation
                     {
                         if (this.Command.Context.EngineHostInterface.UI.IsTranscribing)
                         {
-                            scrapeHostOutput = true;
-                            startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
-                            startPosition.X = 0;
+                            _scrapeHostOutput = true;
+                            _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
+                            _startPosition.X = 0;
                         }
                     }
                     catch (Host.HostException)
                     {
                         // The host doesn't support scraping via its RawUI interface
-                        scrapeHostOutput = false;
+                        _scrapeHostOutput = false;
                     }
                 }
 
@@ -507,14 +527,14 @@ namespace System.Management.Automation
                     // Something like
                     //    ls | notepad | sort.exe
                     // should block until the notepad process is terminated.
-                    background = false;
+                    _background = false;
                 }
                 else
                 {
-                    background = true;
+                    _background = true;
                     if (startInfo.UseShellExecute == false)
                     {
-                        background = IsWindowsApplication(nativeProcess.StartInfo.FileName);
+                        _background = IsWindowsApplication(nativeProcess.StartInfo.FileName);
                     }
                 }
 
@@ -537,7 +557,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (background == false)
+                    if (_background == false)
                     {
                         //if output is redirected, start reading output of process.
                         if (startInfo.RedirectStandardOutput || startInfo.RedirectStandardError)
@@ -562,69 +582,11 @@ namespace System.Management.Automation
                     StopProcessing();
                     throw;
                 }
-                finally
-                {
-                    if (background == false)
-                    {
-                        //Wait for process to exit
-                        nativeProcess.WaitForExit();
-
-                        //Wait for input writer to finish.
-                        inputWriter.Done();
-
-                        //Wait for outputReader to finish
-                        if (outputReader != null)
-                        {
-                            outputReader.Done();
-                        }
-
-                        // Capture screen output if we are transcribing
-                        if (this.Command.Context.EngineHostInterface.UI.IsTranscribing &&
-                            scrapeHostOutput)
-                        {
-                            Host.Coordinates endPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
-                            endPosition.X = this.Command.Context.EngineHostInterface.UI.RawUI.BufferSize.Width - 1;
-
-                            // If the end position is before the start position, then capture the entire buffer.
-                            if (endPosition.Y < startPosition.Y)
-                            {
-                                startPosition.Y = 0;
-                            }
-
-                            Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
-                                new Host.Rectangle(startPosition, endPosition));
-
-                            StringBuilder lineContents = new StringBuilder();
-                            StringBuilder bufferText = new StringBuilder();
-
-                            for (int row = 0; row < bufferContents.GetLength(0); row++)
-                            {
-                                if (row > 0)
-                                {
-                                    bufferText.Append(Environment.NewLine);
-                                }
-
-                                lineContents.Clear();
-                                for (int column = 0; column < bufferContents.GetLength(1); column++)
-                                {
-                                    lineContents.Append(bufferContents[row, column].Character);
-                                }
-
-                                bufferText.Append(lineContents.ToString().TrimEnd(Utils.Separators.SpaceOrTab));
-                            }
-
-                            this.Command.Context.InternalHost.UI.TranscribeResult(bufferText.ToString());
-                        }
-
-                        this.Command.Context.SetVariable(SpecialVariables.LastExitCodeVarPath, nativeProcess.ExitCode);
-                        if (nativeProcess.ExitCode != 0)
-                            this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
-                    }
-                } 
+                
             }
             catch (Win32Exception e)
             {
-                exceptionToRethrow = e;
+                _exceptionToRethrow = e;
 
             } // try
             catch (PipelineStoppedException)
@@ -636,11 +598,110 @@ namespace System.Management.Automation
             {
                 CommandProcessorBase.CheckForSevereException(e);
 
-                exceptionToRethrow = e;
+                _exceptionToRethrow = e;
+            }
+
+            // An exception was thrown while attempting to run the program
+            // so wrap and rethrow it here...
+            if (_exceptionToRethrow != null)
+            {
+                // It's a system exception so wrap it in one of ours and re-throw.
+                string message = StringUtil.Format(ParserStrings.ProgramFailedToExecute,
+                    this.NativeCommandName, _exceptionToRethrow.Message,
+                    this.Command.MyInvocation.PositionMessage);
+                ApplicationFailedException appFailedException = new ApplicationFailedException(message, _exceptionToRethrow);
+
+                // There is no need to set this exception here since this exception will eventually be caught by pipeline processor.
+                // this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
+
+                throw appFailedException;
+            }
+        }
+
+        internal override void Complete()
+        {
+            inputWriter.SetNoNewInputExpected();
+            TryInitNativeProcess();
+            try
+            {
+                if (_background == false)
+                {
+                    
+                    //Wait for process to exit
+                    nativeProcess.WaitForExit();
+
+                    //Wait for input writer to finish.
+                    inputWriter.Done();
+
+                    //Wait for outputReader to finish
+                    if (outputReader != null)
+                    {
+                        outputReader.Done();
+                    }
+
+                    // // Capture screen output if we are transcribing
+                    if (this.Command.Context.EngineHostInterface.UI.IsTranscribing &&
+                        _scrapeHostOutput)
+                    {
+                        Host.Coordinates endPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
+                        endPosition.X = this.Command.Context.EngineHostInterface.UI.RawUI.BufferSize.Width - 1;
+
+                        // If the end position is before the start position, then capture the entire buffer.
+                        if (endPosition.Y < _startPosition.Y)
+                        {
+                            _startPosition.Y = 0;
+                        }
+
+                        Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
+                            new Host.Rectangle(_startPosition, endPosition));
+
+                        StringBuilder lineContents = new StringBuilder();
+                        StringBuilder bufferText = new StringBuilder();
+
+                        for (int row = 0; row < bufferContents.GetLength(0); row++)
+                        {
+                            if (row > 0)
+                            {
+                                bufferText.Append(Environment.NewLine);
+                            }
+
+                            lineContents.Clear();
+                            for (int column = 0; column < bufferContents.GetLength(1); column++)
+                            {
+                                lineContents.Append(bufferContents[row, column].Character);
+                            }
+
+                            bufferText.Append(lineContents.ToString().TrimEnd(Utils.Separators.SpaceOrTab));
+                        }
+
+                        this.Command.Context.InternalHost.UI.TranscribeResult(bufferText.ToString());
+                    }
+
+                    this.Command.Context.SetVariable(SpecialVariables.LastExitCodeVarPath, nativeProcess.ExitCode);
+                    if (nativeProcess.ExitCode != 0)
+                        this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
+                }
+            }
+            catch (Win32Exception e)
+            {
+                _exceptionToRethrow = e;
+
+            } // try
+            catch (PipelineStoppedException)
+            {
+                // If we're stopping the process, just rethrow this exception...
+                throw;
+            }
+            catch (Exception e)
+            {
+                CommandProcessorBase.CheckForSevereException(e);
+
+                _exceptionToRethrow = e;
             }
             finally
             {
-                if (!redirectOutput)
+                // TODO(vors): need new algorithm for redirectOutput
+                //if (!redirectOutput)
                 {
                     this.Command.Context.EngineHostInterface.NotifyEndApplication();
                 }
@@ -650,13 +711,13 @@ namespace System.Management.Automation
 
             // An exception was thrown while attempting to run the program
             // so wrap and rethrow it here...
-            if (exceptionToRethrow != null)
+            if (_exceptionToRethrow != null)
             {
                 // It's a system exception so wrap it in one of ours and re-throw.
                 string message = StringUtil.Format(ParserStrings.ProgramFailedToExecute,
-                    this.NativeCommandName, exceptionToRethrow.Message,
+                    this.NativeCommandName, _exceptionToRethrow.Message,
                     this.Command.MyInvocation.PositionMessage);
-                ApplicationFailedException appFailedException = new ApplicationFailedException(message, exceptionToRethrow);
+                ApplicationFailedException appFailedException = new ApplicationFailedException(message, _exceptionToRethrow);
 
                 // There is no need to set this exception here since this exception will eventually be caught by pipeline processor.
                 // this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
@@ -1169,8 +1230,10 @@ namespace System.Management.Automation
                 redirectError = true;
             }
 
-            if (inputWriter.Count == 0 && (!this.Command.MyInvocation.ExpectingInput))
-                redirectInput = false;
+            // TODO(vors): we need a new algorithm to calculate redirectInput
+            // The old one relaied on the fact that all input is available at this moment
+            //if (inputWriter.Count == 0 && (!this.Command.MyInvocation.ExpectingInput))
+            //    redirectInput = false;
 
             // Remoting server consideration.
             // Currently, the WinRM is using std io pipes to communicate with PowerShell server.
@@ -1379,14 +1442,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Input is collected in this list
         /// </summary>
-        ArrayList inputList = new ArrayList();
+        ConcurrentQueue<object> inputList = new ConcurrentQueue<object>();
         /// <summary>
         /// Add an object to write to process
         /// </summary>
         /// <param name="input"></param>
         internal void Add(object input)
         {
-            inputList.Add(input);
+            inputList.Enqueue(input);
         }
 
         /// <summary>
@@ -1440,21 +1503,25 @@ namespace System.Management.Automation
                                             pipeEncoding);
             this.inputFormat = inputFormat;
 
-            if (inputFormat == NativeCommandIOFormat.Text)
-            {
-                ConvertToString();
-            }
             inputThread = new Thread(new ThreadStart(this.WriterThreadProc));
             inputThread.Start();
         }
 
         bool stopping = false;
+
+        private bool _noNewInputExpected = false;
+        
         /// <summary>
         /// Stop writing input to process
         /// </summary>
         internal void Stop()
         {
             stopping = true;
+        }
+
+        internal void SetNoNewInputExpected()
+        {
+            _noNewInputExpected = true;
         }
 
         /// <summary>
@@ -1493,12 +1560,26 @@ namespace System.Management.Automation
         {
             try
             {
-                foreach (object o in inputList)
+                // TODO (vors): currently thread spins, when it waits for new input
+                // need to replace it by a proper async
+                while (!_noNewInputExpected)
                 {
-                    if (stopping) return;
+                    object o;
+                    bool needFlush = false;
+                    while (inputList.TryDequeue(out o))
+                    {
+                        needFlush = true;
+                        if (stopping) return;
 
-                    string line = PSObject.ToStringParser(command.Context, o);
-                    streamWriter.Write(line);
+                        string line = PSObject.ToStringParser(command.Context, o);
+                        streamWriter.Write(line);
+                        streamWriter.Write(Environment.NewLine);
+                    }
+
+                    if (needFlush)
+                    {
+                        streamWriter.Flush();
+                    }
                 }
             }
             finally
@@ -1529,22 +1610,7 @@ namespace System.Management.Automation
                 streamWriter.Dispose();
             }
         }
-
-        /// <summary>
-        /// Formats the input objects using out-string. Output of out-string
-        /// is given as input to native command processor.
-        /// This method is to be called from the pipeline thread and not from the
-        /// thread which writes input in to process.
-        /// </summary>
-        private void ConvertToString()
-        {
-            Dbg.Assert(this.inputFormat == NativeCommandIOFormat.Text, "InputFormat should be Text");
-
-            PipelineProcessor p = new PipelineProcessor();
-            p.Add(command.Context.CreateCommand("out-string", false));
-            object[] result = (object[])p.SynchronousExecuteEnumerate(this.inputList.ToArray());
-            inputList = new ArrayList(result);
-        }
+        
     }
 
     /// <summary>
