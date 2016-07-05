@@ -99,7 +99,7 @@ function Start-PSBuild {
         Use-MSBuild
 
         #mc.exe is Message Compiler for native resources
-        <# This current doesn't work reliably. Removing for now since mc.exe is not being used yet.
+        <# This currently doesn't work reliably and clean systems. Removing for now since mc.exe is not being used yet.
         $mcexe = Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\" -Recurse -Filter 'mc.exe' | ? {$_.FullName -match 'x64'} | select -First 1 | % {$_.FullName}
         if (-not $mcexe) {
             throw 'mc.exe not found. Install Microsoft Windows SDK.'
