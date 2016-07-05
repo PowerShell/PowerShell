@@ -1682,13 +1682,13 @@ namespace Microsoft.PowerShell
 
         private string ReadLineFromConsole(bool endOnTab, string initialContent, bool calledFromPipeline, ref string restOfLine, ref ReadLineResult result)
         {
-#if LINUX
-            return ReadLineFromFile(initialContent);
-#else
+#if !LINUX
             ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
+#endif
             PreRead();
             // Ensure that we're in the proper line-input mode.
 
+#if !LINUX
             ConsoleControl.ConsoleModes m = ConsoleControl.GetMode(handle);
 
             const ConsoleControl.ConsoleModes desiredMode =
@@ -1702,6 +1702,7 @@ namespace Microsoft.PowerShell
                 m |= desiredMode;
                 ConsoleControl.SetMode(handle, m);
             }
+#endif
 
             // If more characters are typed than you asked, then the next call to ReadConsole will return the 
             // additional characters beyond those you requested.
@@ -1718,18 +1719,33 @@ namespace Microsoft.PowerShell
             // If input is terminated with a break key (Ctrl-C, Ctrl-Break, Close, etc.), then the buffer will be 
             // the empty string.
 
-            uint keyState = 0;
-
-            rawui.ClearKeyCache();
-
+#if LINUX
+            ConsoleKeyInfo keyInfo;
             string s = "";
+            int index = 0;
+            int cursorLeft = Console.CursorLeft;
+            int cursorCurrent = cursorLeft;
+#else
+            rawui.ClearKeyCache();
+            uint keyState = 0;
+            string s = "";
+#endif
             do
             {
+#if LINUX
+                keyInfo = Console.ReadKey(true);
+#else
                 s += ConsoleControl.ReadConsole(handle, initialContent, maxInputLineLength, endOnTab, out keyState);
-
                 Dbg.Assert(s != null, "s should never be null");
+#endif
 
+#if LINUX
+                // Handle Ctrl-C and Ctrl-D ending input
+                if ((keyInfo.Key == ConsoleKey.C || keyInfo.Key == ConsoleKey.D)
+                    && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control))
+#else
                 if (s.Length == 0)
+#endif
                 {
                     result = ReadLineResult.endedOnBreak;
                     s = null;
@@ -1743,13 +1759,29 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
+#if LINUX
+                if (keyInfo.Key == ConsoleKey.Enter)
+#else
                 if (s.EndsWith(Crlf, StringComparison.CurrentCulture))
+#endif
                 {
                     result = ReadLineResult.endedOnEnter;
+#if LINUX
+                    // We're intercepting characters, so we need to echo the newline
+                    Console.Out.WriteLine();
+#else
                     s = s.Remove(s.Length - Crlf.Length);
+#endif
                     break;
                 }
 
+#if LINUX
+                if (keyInfo.Key == ConsoleKey.Tab)
+                {
+                    // This is unsupported
+                    continue;
+                }
+#else
                 int i = s.IndexOf(Tab, StringComparison.CurrentCulture);
 
                 if (endOnTab && i != -1)
@@ -1799,6 +1831,66 @@ namespace Microsoft.PowerShell
 
                     break;
                 }
+#endif
+#if LINUX
+                if (keyInfo.Key == ConsoleKey.Backspace)
+                {
+                    if (index > 0)
+                    {
+                        int length = s.Length;
+                        s = s.Remove(index - 1, 1);
+                        index--;
+                        cursorCurrent = Console.CursorLeft;
+                        Console.CursorLeft = cursorLeft;
+                        Console.Out.Write(s.PadRight(length));
+                        Console.CursorLeft = cursorCurrent - 1;
+                    }
+                    continue;
+                }
+
+                if (keyInfo.Key == ConsoleKey.Delete)
+                {
+                    if (index < s.Length)
+                    {
+                        int length = s.Length;
+                        s = s.Remove(index, 1);
+                        cursorCurrent = Console.CursorLeft;
+                        Console.CursorLeft = cursorLeft;
+                        Console.Out.Write(s.PadRight(length));
+                        Console.CursorLeft = cursorCurrent;
+                    }
+                    continue;
+                }
+
+
+                if (keyInfo.Key == ConsoleKey.LeftArrow)
+                {
+                    if (Console.CursorLeft > cursorLeft)
+                    {
+                        Console.CursorLeft--;
+                        index--;
+                    }
+                    continue;
+                }
+
+                if (keyInfo.Key == ConsoleKey.RightArrow)
+                {
+                    if (Console.CursorLeft < cursorLeft + s.Length)
+                    {
+                        Console.CursorLeft++;
+                        index++;
+                    }
+                    continue;
+                }
+
+                // No special key was pressed, so echo and save the key
+                s = s.Insert(index, keyInfo.KeyChar.ToString());
+                index++;
+                cursorCurrent = Console.CursorLeft;
+                Console.CursorLeft = cursorLeft;
+                Console.Out.Write(s);
+                Console.CursorLeft = cursorCurrent + 1;
+#endif
             }
             while (true);
 
@@ -1808,7 +1900,6 @@ namespace Microsoft.PowerShell
                        "s should only be null if input ended with a break");
 
             return s;
-#endif
         }
 
         /// <summary>
