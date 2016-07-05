@@ -7,12 +7,16 @@ matrix:
     - os: osx
       osx_image: xcode7.3
       language: generic
+addons:
+  artifacts:
+    s3_region: "us-west-2"
+    paths: $(ls powershell*{deb,pkg} | tr "\n" ":")
 git:
   submodules: false
-before_install:
+install:
   - git config --global url.git@github.com:.insteadOf https://github.com/
   - git submodule update --init
-  - ./tools/download.sh
+  - (cd tools && ./download.sh)
 script:
   - ulimit -n 4096; powershell -c "Import-Module ./build.psm1; Start-PSBootstrap -Package; Start-PSBuild -Publish; Start-PSPackage; Start-PSPester; Start-PSxUnit"
 notifications:
