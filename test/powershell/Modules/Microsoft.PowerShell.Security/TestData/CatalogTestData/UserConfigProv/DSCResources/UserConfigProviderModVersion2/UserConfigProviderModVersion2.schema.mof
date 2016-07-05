@@ -1,0 +1,8 @@
+
+[ClassVersion("1.0.0")] 
+class UserConfigProviderModVersion2 : OMI_BaseResource
+{
+  [key] string Text;
+};
+
+
