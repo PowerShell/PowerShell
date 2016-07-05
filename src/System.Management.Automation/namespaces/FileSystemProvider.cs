@@ -1331,22 +1331,25 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldProcess(resource, action))
             {
-                System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
-                invokeProcess.StartInfo.UseShellExecute = true;
-
                 if (Platform.IsWindows)
                 {
                     System.Diagnostics.Process.Start(path);
-                } else if (Platform.IsOSX) {
+                } 
+                else if (Platform.IsOSX) {
+                    System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
+                    invokeProcess.StartInfo.UseShellExecute = true;
                     invokeProcess.StartInfo.FileName = "open";
                     invokeProcess.StartInfo.Arguments = path;
-                } else if (Platform.IsLinux) {
+                } 
+                else if (Platform.IsLinux) {
+                    System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
+                    invokeProcess.StartInfo.UseShellExecute = true;
                     invokeProcess.StartInfo.FileName = "xdg-open";
                     invokeProcess.StartInfo.Arguments = path;
                 }
+
                 invokeProcess.Start();
 
-                //System.Diagnostics.Process.Start(path);
             }
         } // InvokeDefaultAction
 
