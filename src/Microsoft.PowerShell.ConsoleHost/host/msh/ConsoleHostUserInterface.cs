@@ -251,6 +251,10 @@ namespace Microsoft.PowerShell
         /// It also manages the cursor as keys are entered and "backspaced". However, it is possible that
         /// while this method is running, the console buffer contents could change. Then, its cursor mgmt
         /// will likely be messed up.
+        ///
+        /// Secondary implementation for Unix based on Console.ReadKey(), where
+        /// the advantage is portability through abstraction. Does not support
+        /// arrow key movement, but supports backspace.
         /// 
         /// </summary>
         ///<param name="isSecureString">
@@ -285,9 +289,6 @@ namespace Microsoft.PowerShell
 
         private object ReadLineSafe(bool isSecureString, char? printToken)
         {
-#if LINUX
-            throw new PlatformNotSupportedException("Cannot read secure strings!");
-#else
             // Don't lock (instanceLock) in here -- the caller needs to do that...
 
             PreRead();
@@ -296,13 +297,21 @@ namespace Microsoft.PowerShell
                 null;
             SecureString secureResult = new SecureString();
             StringBuilder result = new StringBuilder();
+#if LINUX
+            bool treatControlCAsInput = Console.TreatControlCAsInput;
+#endif
             ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             ConsoleControl.ConsoleModes originalMode = ConsoleControl.GetMode(handle);
             bool isModeChanged = true; // assume ConsoleMode is changed so that if ReadLineSetMode
             // fails to return the value correctly, the original mode is
             // restored.
+#endif
+
             try
             {
+#if LINUX
+                Console.TreatControlCAsInput = true;
+#else
                 // Ensure that we're in the proper line-input mode.
 
                 ConsoleControl.ConsoleModes desiredMode =
@@ -329,6 +338,7 @@ namespace Microsoft.PowerShell
                     isModeChanged = false;
                 }
                 rawui.ClearKeyCache();
+#endif
 
                 Coordinates originalCursorPos = rawui.CursorPosition;
 
@@ -339,22 +349,40 @@ namespace Microsoft.PowerShell
                     // end up having a immutable string holding the
                     // secret in memory.
                     //
+#if LINUX
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+#else
                     uint unused = 0;
                     string key = ConsoleControl.ReadConsole(handle, string.Empty, 1, false, out unused);
+#endif
 
+#if LINUX
+                    // Handle Ctrl-C and Ctrl-D ending input
+                    if ((keyInfo.Key == ConsoleKey.C || keyInfo.Key == ConsoleKey.D)
+                        && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control))
+#else
                     if (string.IsNullOrEmpty(key) || (char)3 == key[0])
+#endif
                     {
                         PipelineStoppedException e = new PipelineStoppedException();
                         throw e;
                     }
+#if LINUX
+                    if (keyInfo.Key == ConsoleKey.Enter)
+#else
                     if ((char)13 == key[0])
+#endif
                     {
                         //
                         // we are done if user presses ENTER key
                         //
                         break;
                     }
+#if LINUX
+                    if (keyInfo.Key == ConsoleKey.Backspace)
+#else
                     if ((char)8 == key[0])
+#endif
                     {
                         //
                         // for backspace, remove last char appended
@@ -377,11 +405,19 @@ namespace Microsoft.PowerShell
                         //
                         if (isSecureString)
                         {
+#if LINUX
+                            secureResult.AppendChar(keyInfo.KeyChar);
+#else
                             secureResult.AppendChar(key[0]);
+#endif
                         }
                         else
                         {
+#if LINUX
+                            result.Append(keyInfo.KeyChar);
+#else
                             result.Append(key);
+#endif
                         }
                         if (!string.IsNullOrEmpty(printTokenString))
                         {
@@ -391,12 +427,23 @@ namespace Microsoft.PowerShell
                 }
                 while (true);
             }
+#if LINUX
+            catch (InvalidOperationException)
+            {
+                // ReadKey() failed so we stop
+                throw new PipelineStoppedException();
+            }
+#endif
             finally
             {
+#if LINUX
+                Console.TreatControlCAsInput = treatControlCAsInput;
+#else
                 if (isModeChanged)
                 {
                     ConsoleControl.SetMode(handle, originalMode);
                 }
+#endif
             }
             WriteLineToConsole();
             PostRead(result.ToString());
@@ -408,10 +455,8 @@ namespace Microsoft.PowerShell
             {
                 return result;
             }
-#endif
         }
 
-#if !LINUX
 
         /// <summary>
         ///
@@ -522,7 +567,7 @@ namespace Microsoft.PowerShell
         }
 
 
-
+#if !LINUX
         /// <summary>
         /// 
         /// If <paramref name="m"/> is set on <paramref name="flagToUnset"/>, unset it and return true;
