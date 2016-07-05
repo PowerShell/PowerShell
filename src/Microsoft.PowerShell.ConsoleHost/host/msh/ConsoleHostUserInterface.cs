@@ -299,7 +299,7 @@ namespace Microsoft.PowerShell
             StringBuilder result = new StringBuilder();
 #if LINUX
             bool treatControlCAsInput = Console.TreatControlCAsInput;
-#endif
+#else
             ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             ConsoleControl.ConsoleModes originalMode = ConsoleControl.GetMode(handle);
             bool isModeChanged = true; // assume ConsoleMode is changed so that if ReadLineSetMode
