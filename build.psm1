@@ -97,11 +97,14 @@ function Start-PSBuild {
         $precheck = $precheck -and (precheck 'cmake' 'cmake not found. You can install it from https://chocolatey.org/packages/cmake.portable')
 
         Use-MSBuild
+
         #mc.exe is Message Compiler for native resources
+        <# This currently doesn't work reliably and clean systems. Removing for now since mc.exe is not being used yet.
         $mcexe = Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\" -Recurse -Filter 'mc.exe' | ? {$_.FullName -match 'x64'} | select -First 1 | % {$_.FullName}
         if (-not $mcexe) {
             throw 'mc.exe not found. Install Microsoft Windows SDK.'
         }
+        #>
 
         # setup msbuild configuration
         if ($Configuration -eq 'Debug' -or $Configuration -eq 'Release')
