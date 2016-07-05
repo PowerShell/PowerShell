@@ -4740,7 +4740,7 @@ $RawUI.SetBufferContents(
             else
             {
                 // Porting note: non-Windows platforms use `clear`
-                return "& (Get-Command -CommandType Application clear).Definition | Select-Object -First 1";
+                return "& (Get-Command -CommandType Application clear | Select-Object -First 1).Definition";
             }
         }
 
@@ -5483,11 +5483,11 @@ $OutputEncoding = if ($IsWindows -and $IsCore) {
 
 # Respect PAGER, use more on Windows, and use less on Linux
 if (Test-Path env:PAGER) {
-    $moreCommand = (Get-Command -CommandType Application $env:PAGER).Definition | Select-Object -First 1
+    $moreCommand = (Get-Command -CommandType Application $env:PAGER | Select-Object -First 1).Definition
 } elseif ($IsWindows) {
-    $moreCommand = (Get-Command -CommandType Application more).Definition | Select-Object -First 1
+    $moreCommand = (Get-Command -CommandType Application more | Select-Object -First 1).Definition
 } else {
-    $moreCommand = (Get-Command -CommandType Application less).Definition | Select-Object -First 1
+    $moreCommand = (Get-Command -CommandType Application less | Select-Object -First 1).Definition
 }
 
 if($paths) {
