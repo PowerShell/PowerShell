@@ -699,7 +699,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 this.WriteVerbose(string.Format(CultureInfo.InvariantCulture, HelpDisplayStrings.OnlineHelpUri, uriToLaunch.OriginalString));
                 System.Diagnostics.Process browserProcess = new System.Diagnostics.Process();
-                browserProcess.StartInfo.UseShellExecute = true;
+                browserProcess.StartInfo.UseShellExecute = false;
                 if (Platform.IsWindows)
                 {
                     browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
