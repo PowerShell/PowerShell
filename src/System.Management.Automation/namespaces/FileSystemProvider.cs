@@ -1331,7 +1331,22 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldProcess(resource, action))
             {
-                System.Diagnostics.Process.Start(path);
+                System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
+
+                if (Platform.IsWindows)
+                {
+                    System.Diagnostics.Process.Start(path);
+                } 
+                else if (Platform.IsOSX) {
+                    invokeProcess.StartInfo.FileName = "open";
+                    invokeProcess.StartInfo.Arguments = path;
+                } 
+                else if (Platform.IsLinux) {
+                    invokeProcess.StartInfo.FileName = "xdg-open";
+                    invokeProcess.StartInfo.Arguments = path;
+                }
+
+                invokeProcess.Start();
             }
         } // InvokeDefaultAction
 
@@ -7784,7 +7799,7 @@ namespace Microsoft.PowerShell.Commands
         private bool wait;
 
         /// <summary>
-        /// When the –Raw switch is present, we don’t do any breaks on newlines,
+        /// When the Raw switch is present, we don't do any breaks on newlines,
         /// and only emit one object to the pipeline: all of the content.
         /// </summary>
         [Parameter]
