@@ -221,7 +221,7 @@
             {
 #if CORECLR
 #if LINUX
-                return Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.POWERSHELL), "PackageManagement", "NuGet", "Packages");
+                return Path.Combine(Path.GetDirectoryName(Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA)), "PackageManagement", "NuGet", "Packages");
 #else
                 return Path.Combine(Environment.GetEnvironmentVariable("LocalAppData"), "PackageManagement", "NuGet", "Packages"); 
 #endif
@@ -238,7 +238,7 @@
             {
 #if CORECLR
 #if LINUX
-                return Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.POWERSHELL), "PackageManagement", "NuGet", "Packages");
+                return Path.Combine(Path.GetDirectoryName(Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA)), "PackageManagement", "NuGet", "Packages");
 #else
                 return Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles"), "NuGet", "Packages"); 
 #endif
@@ -1303,7 +1303,7 @@
 
                     } else {
 #if LINUX
-                        var appdataFolder = Platform.SelectProductNameForDirectory(Platform.XDG_Type.PROFILE);
+                        var appdataFolder = Path.GetDirectoryName(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG));
 #else
                         var appdataFolder = Environment.GetEnvironmentVariable("appdata");
 #endif
