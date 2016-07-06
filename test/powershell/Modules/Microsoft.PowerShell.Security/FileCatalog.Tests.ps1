@@ -126,7 +126,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "Innerlo
             CompareHashTables $result.CatalogItems $expectedPathsAndHashes   
         }
 
-        It "NewFileCatalogWithMutipleFoldersAndFiles" {
+        It "NewFileCatalogWithMutipleFoldersAndFiles" -Skip:$true {
          
             $expectedPathsAndHashes = @{
                 "UserConfigProv.psd1" = "748E5486814051DA3DFB79FE8964152727213248" ;
@@ -164,7 +164,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "Innerlo
             CompareHashTables $result.CatalogItems $expectedPathsAndHashes
         }
 
-        It "NewFileCatalogVersion2WithMutipleFoldersAndFiles" {
+        It "NewFileCatalogVersion2WithMutipleFoldersAndFiles" -Skip:$true {
 
             $expectedPathsAndHashes = @{
                 "UserConfigProv.psd1" = "9FFE4CA2873CD91CDC9D71362526446ECACDA64D26DEA768E6CE489B84D888E4" ;
@@ -221,7 +221,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "Innerlo
             $result | Should Be "Valid"            
         }
 
-        It "NewFileCatalogWithUnicodeCharactersInFileNames" {
+        It "NewFileCatalogWithUnicodeCharactersInFileNames" -Skip:$true {
             
             $expectedPathsAndHashes = @{
                 "UserConfigProv.psd1" = "9FFE4CA2873CD91CDC9D71362526446ECACDA64D26DEA768E6CE489B84D888E4" ;
