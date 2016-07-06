@@ -607,7 +607,7 @@ namespace System.Management.Automation
         /// Profile uses this to control profile loading.
         /// </remarks>
         internal static string ProductNameForDirectory =
-            Platform.IsWindows ? "WindowsPowerShell" : Platform.SelectProductNameForDirectory(Platform.XDG_Type.PROFILE);
+            Platform.IsWindows ? "WindowsPowerShell" : Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
 
         /// <summary>
         /// The name of the subdirectory that contains packages.

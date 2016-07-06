@@ -28,7 +28,7 @@ namespace System.Management.Automation
     /// All these properties are calling into platform specific static classes, to make
     /// sure the platform implementations are switched at runtime (including pinvokes).
     /// </summary>
-    internal static class Platform
+    public static class Platform
     {
 
         // Platform variables used to defined corresponding PowerShell built-in variables
@@ -47,9 +47,15 @@ namespace System.Management.Automation
         //enum for selecting the xdgpaths
         public enum XDG_Type
         {
-            PROFILE,
+            // location to store configuration file
+            CONFIG,
+            // location for powershell modules
             MODULES,
+            // location to store temporary files
             CACHE,
+            // location to store data that application needs
+            DATA,
+            // default location
             DEFAULT
         }
 
@@ -115,11 +121,12 @@ namespace System.Management.Automation
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
             string xdgConfigHomeDefault =  Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".config", "powershell");
-            string xdgModuleDefault = Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".local", "share", "powershell", "Modules");
+            string xdgDataHomeDefault = Path.Combine( System.Environment.GetEnvironmentVariable("HOME"), ".local", "share", "powershell");
+            string xdgModuleDefault = Path.Combine ( xdgDataHomeDefault, "Modules");
             string xdgCacheDefault = Path.Combine (System.Environment.GetEnvironmentVariable("HOME"), ".cache", "powershell");
 
             switch (dirpath){
-                case Platform.XDG_Type.PROFILE:
+                case Platform.XDG_Type.CONFIG:
                     //the user has set XDG_CONFIG_HOME corrresponding to profile path
                     if (String.IsNullOrEmpty(xdgconfighome))
                     {
@@ -130,6 +137,22 @@ namespace System.Management.Automation
                     else
                     {
                         return Path.Combine(xdgconfighome, "powershell");
+                    }
+
+                case Platform.XDG_Type.DATA:
+                    //the user has set XDG_DATA_HOME corresponding to module path
+                    if (String.IsNullOrEmpty(xdgdatahome)){
+
+                    // create the xdg folder if needed
+                    if (!Directory.Exists(xdgDataHomeDefault))
+                    {
+                        Directory.CreateDirectory(xdgDataHomeDefault);
+                    }
+                       return xdgDataHomeDefault;
+                    }
+                    else
+                    {
+                        return Path.Combine(xdgdatahome, "powershell");
                     }
 
                 case Platform.XDG_Type.MODULES:
