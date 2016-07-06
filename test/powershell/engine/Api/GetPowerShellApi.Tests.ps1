@@ -1,5 +1,13 @@
 # Pester Module for testing GetPowerShell API fixes
 Describe "Validation for GetPowerShell API Changes" -Tags "DRT" {
+    BeforeAll {
+        If ( $IsWindows ) {
+            $base = "C:\"
+        }
+        else {
+            $base = "/"
+        }
+    }
 
     it "001 - Baseline1 - constant pipeline executes correctly" {
         $sb = { Write-Output 'Hello World' }
@@ -9,28 +17,28 @@ Describe "Validation for GetPowerShell API Changes" -Tags "DRT" {
     }
 
     it "002 - Baseline2 - constant pipeline executes correctly" {
-        $sb = { get-item c:\ }
+        $sb = [scriptblock]::Create("get-item $base")
         $result = $sb.GetPowerShell().Invoke() | select-object -First 1
-        $result.Name | should be "C:\"
+        $result.Name | should be "$base"
         $result.GetType().FullName | Should Be "System.IO.DirectoryInfo"
     }
 
     it "003 - pipeline with a single argument to format-table" {
-        $sb = { Get-Item c:\|format-table Name }
+        $sb = [scriptblock]::Create("Get-Item $base|format-table Name")
         $result = $sb.GetPowerShell().Invoke() 
         $resultLines = $result | out-string -stream | %{$_.trim()} | select-object -First 1 -Skip 1
         $resultLines | should be "Name"
     }
 
     it "004 - pipeline with two unadorned string arguments to format-table" {
-        $sb = {Get-Item c:\|format-table Length,Name}
+        $sb = [scriptblock]::Create("Get-Item $base|format-table Length,Name")
         $result = $sb.GetPowerShell().Invoke() 
         $resultLine = $result | out-string -stream | %{$_.trim()} | select-object -First 1 -Skip 1
         $resultLine | should Match "Length *Name"
     }
 
     it "005 - pipeline with one quoted string as an argument to format-table" {
-        $sb = { Get-Item c:\|format-table Length,'name' }
+        $sb = [scriptblock]::Create(" Get-Item $base|format-table Length,'name'")
         $result = $sb.GetPowerShell().Invoke() 
         $resultLine = $result | out-string -stream | %{$_.trim()} | select-object -First 1 -Skip 1
         $resultLine | should Match "Length *Name"
@@ -125,7 +133,7 @@ Describe "Validation for GetPowerShell API Changes" -Tags "DRT" {
     }
 
     it "014 - pipeline with two arguments, one being passed to format-table" {
-        $sb = {param ($p) Get-Item c:\|format-table Length,$p}
+        $sb = [scriptblock]::Create("param (`$p) Get-Item $base|format-table Length,`$p")
         $result = $sb.GetPowerShell("Name").Invoke() 
         $resultLine = $result | out-string -stream | %{$_.trim()} | select-object -First 1 -Skip 1
         $resultLine | should Match "Length *Name"

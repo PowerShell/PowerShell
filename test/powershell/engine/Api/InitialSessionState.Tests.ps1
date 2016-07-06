@@ -49,10 +49,15 @@ namespace ConsoleApplication1
     }
 
     It 'can use native command (Application) with AddCommand' {
-        $pingInfo = get-command -Name ping -CommandType Application
-        $pingInfo | Should Not Be $null
+        if ( $IsWindows ) {
+        $cmdInfo = get-command -Name ping -CommandType Application
+        }
+        else {
+            $cmdInfo = get-command -Name ifconfig -CommandType Application
+        }
+        $cmdInfo | Should Not Be $null
         $ps = [powershell]::Create()
-        $ps.AddCommand($pingInfo) > $null
+        $ps.AddCommand($cmdInfo) > $null
         $ps.Invoke() | Should Not Be $null
     }
 
@@ -64,6 +69,9 @@ namespace ConsoleApplication1
     }
 
     It 'can use alias with AddCommand' {
+        if ( !( get-alias ps -ea silentlycontinue )) {
+            set-alias -Name ps -Value get-process -scope local
+        }
         $psInfo = get-command -Name ps -CommandType Alias
         $ps = [powershell]::Create()
         $ps.AddCommand($psInfo) > $null

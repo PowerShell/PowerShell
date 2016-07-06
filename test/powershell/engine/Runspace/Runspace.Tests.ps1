@@ -1,17 +1,23 @@
-Describe "Runspace operations which" -Tags "DRT" {
+Describe "Runspace operations which" -Tags "CI" {
     # determine whether you're elevated and skip the remote test in that case
     BeforeAll { 
-        $windowsIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
-        $windowsPrincipal = new-object Security.Principal.WindowsPrincipal $windowsIdentity
-        if ($windowsPrincipal.IsInRole("Administrators") -eq 1) 
-        { 
-            $skip = $false
-            $skipReason = ""
-        } 
-        else 
-        { 
+        if ( $IsWindows ) {
+            $windowsIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
+            $windowsPrincipal = new-object Security.Principal.WindowsPrincipal $windowsIdentity
+            if ($windowsPrincipal.IsInRole("Administrators") -eq 1) 
+            { 
+                $skip = $false
+                $skipReason = ""
+            } 
+            else 
+            { 
+                $skip = $true
+                $skipReason = " (skipping because we're not an admin)"
+            }
+        }
+        else {
             $skip = $true
-            $skipReason = " (skipping because we're not an admin)"
+            $skipReason = " (skipping because we're not on windows)"
         }
     }
     Context "Assign values to DefaultRunspace" {

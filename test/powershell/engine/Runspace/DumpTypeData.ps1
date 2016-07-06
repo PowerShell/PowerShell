@@ -124,7 +124,7 @@ function Print-TypeData([TypeData]$typeData)
 "$([Environment]::NewLine)}"
 }
 
-foreach ($t in Get-TypeData | Sort -Property TypeName)
+foreach ($t in Get-TypeData | Sort-Object -Property TypeName)
 {
     Print-TypeData $t
 }

@@ -9,13 +9,14 @@ using namespace System.Management.Automation.Runspaces
 #
 # It then runs the script DumpTypeData.ps1 to get all the type data as strings - this makes comparisons easy.
 Describe "Generated TypeData" {
+    $sep = [io.path]::DirectorySeparatorChar
     if ( $IsCore ) {
         $typecount = 2
-        $Types = "$PSHOME\types.ps1xml","$PSHOME\typesv3.ps1xml"
+        $Types = "$PSHOME${sep}types.ps1xml","$PSHOME${sep}typesv3.ps1xml"
     }
     else {
         $typecount = 3
-        $Types = "$PSHOME\GetEvent.types.ps1xml","$PSHOME\types.ps1xml","$PSHOME\typesv3.ps1xml"
+        $Types = "$PSHOME${sep}GetEvent.types.ps1xml","$PSHOME${sep}types.ps1xml","$PSHOME${sep}typesv3.ps1xml"
     }
 
     It "Compare PS1XML w/ generated typedata - ISS" {
@@ -29,7 +30,7 @@ Describe "Generated TypeData" {
         }
 
         $ps = [PowerShell]::Create($iss)
-        $null = $ps.AddCommand("$PSScriptRoot\DumpTypeData.ps1")
+        $null = $ps.AddCommand("$PSScriptRoot/DumpTypeData.ps1")
         $fromPS1XML = $ps.Invoke()
 
         [InternalTestHooks]::SetTestHook("ReadEngineTypesXmlFiles", $false)
@@ -39,7 +40,7 @@ Describe "Generated TypeData" {
         $iss.Types.Count | Should Be $typecount
 
         $ps = [PowerShell]::Create($iss)
-        $null = $ps.AddCommand("$PSScriptRoot\DumpTypeData.ps1")
+        $null = $ps.AddCommand("$PSScriptRoot/DumpTypeData.ps1")
         $fromTypeData = $ps.Invoke()
 
         $fromTypeData | Should Be $fromPS1XML
@@ -51,32 +52,32 @@ Describe "Generated TypeData" {
         $rsc = [RunspaceConfiguration]::Create()
         $rsc.Formats.Reset()
         $rsc.Types.Count | Should Be 3
-        $rsc.Types[0].FileName | Should Be "$PSHOME\GetEvent.types.ps1xml"
-        $rsc.Types[1].FileName | Should Be "$PSHOME\types.ps1xml"
-        $rsc.Types[2].FileName | Should Be "$PSHOME\typesv3.ps1xml"
+        $rsc.Types[0].FileName | Should Be "$PSHOME${sep}GetEvent.types.ps1xml"
+        $rsc.Types[1].FileName | Should Be "$PSHOME${sep}types.ps1xml"
+        $rsc.Types[2].FileName | Should Be "$PSHOME${sep}typesv3.ps1xml"
 
         $rs = [runspacefactory]::CreateRunspace($rsc)
         $ps = [powershell]::Create()
         $ps.Runspace = $rs
         $rs.Open()
 
-        $null = $ps.AddCommand("$PSScriptRoot\DumpTypeData.ps1")
+        $null = $ps.AddCommand("$PSScriptRoot${sep}DumpTypeData.ps1")
         $fromPS1XML = $ps.Invoke()
 
         [InternalTestHooks]::SetTestHook("ReadEngineTypesXmlFiles", $false)
         $rsc = [RunspaceConfiguration]::Create()
         $rsc.Formats.Reset()
         $rsc.Types.Count | Should Be 3
-        $rsc.Types[0].FileName | Should Be "$PSHOME\GetEvent.types.ps1xml"
-        $rsc.Types[1].FileName | Should Be "$PSHOME\types.ps1xml"
-        $rsc.Types[2].FileName | Should Be "$PSHOME\typesv3.ps1xml"
+        $rsc.Types[0].FileName | Should Be "$PSHOME${sep}GetEvent.types.ps1xml"
+        $rsc.Types[1].FileName | Should Be "$PSHOME${sep}types.ps1xml"
+        $rsc.Types[2].FileName | Should Be "$PSHOME${sep}typesv3.ps1xml"
 
         $rs = [runspacefactory]::CreateRunspace($rsc)
         $ps = [powershell]::Create()
         $ps.Runspace = $rs
         $rs.Open()
 
-        $null = $ps.AddCommand("$PSScriptRoot\DumpTypeData.ps1")
+        $null = $ps.AddCommand("$PSScriptRoot${sep}DumpTypeData.ps1")
         $fromTypeData = $ps.Invoke()
 
         $fromTypeData | Should Be $fromPS1XML
@@ -93,7 +94,7 @@ Describe "Dynamic Site Caching" {
     $instance = [RemoveTypeDataTestClass]::new()
 
     # Use ProviderPath instead of TestDrive b/c we need the path for other runspaces which won't have the TestDrive.
-    $removePs1XmlFileName = "$((Get-PSDrive TestDrive).Root)\$([Guid]::NewGuid()).types.ps1xml"
+    $removePs1XmlFileName = "$((Get-PSDrive TestDrive).Root)${sep}$([Guid]::NewGuid()).types.ps1xml"
 
     Set-Content -Path $removePs1XmlFileName -Value @"
 <Types>

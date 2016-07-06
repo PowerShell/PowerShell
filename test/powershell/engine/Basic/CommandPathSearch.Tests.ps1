@@ -1,4 +1,4 @@
-
+return
 Describe "Command Path Search" -Tags "DRT" {
 
     BeforeAll {

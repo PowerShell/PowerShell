@@ -5,19 +5,6 @@
 #
 
 
-# Define Variables which used in test cases
-#
-$TestPath = Join-Path $env:Temp ([System.Guid]::NewGuid().ToString())
-
-$testModule1 = 'testModule1'
-$testModule2 = 'testModule2'
-
-$TempScriptModuleFile1 = ($testModule1 + ".psm1")
-$TempScriptModuleFile2 = ($testModule2 + ".psm1")
-
-$TestBinaryModulePath1 = Join-Path $TestPath ($testModule1 + ".dll")
-$TestBinaryModulePath2 = Join-Path $TestPath ($testModule2 + ".dll")
-
 function TestCaseSetup()
 {
     # Clear error array
@@ -408,20 +395,35 @@ function InstallUtilPSSnapin($SnapinPath)
   & $installUtilPath $SnapinPath
 }
 
-Describe "Engine Modules Enhancements Test" -Tags "Innerloop", "DRT" {
+Describe "Engine Modules Enhancements Test" -Tags "CI" {
 
 
 BeforeAll{
-    TestCaseSetup
+
+    if ( $IsWindows ) {
+        # Define Variables which used in test cases
+        #
+        $TestPath = Join-Path $env:Temp ([System.Guid]::NewGuid().ToString())
+        $testModule1 = 'testModule1'
+        $testModule2 = 'testModule2'
+        $TempScriptModuleFile1 = ($testModule1 + ".psm1")
+        $TempScriptModuleFile2 = ($testModule2 + ".psm1")
+        $TestBinaryModulePath1 = Join-Path $TestPath ($testModule1 + ".dll")
+        $TestBinaryModulePath2 = Join-Path $TestPath ($testModule2 + ".dll")
+
+        TestCaseSetup
+    }
 }
 
 AfterAll{
-    TestCaseCleanup
+    if ( $IsWindows ) {
+        TestCaseCleanup
+    }
 }
 
 # Verify Get-Command <command name> -all will return all module list if different modules have same commands. 
 #
-It VerifyGetCommandWithAllParameter {
+It -pending:(!$IsWindows) VerifyGetCommandWithAllParameter {
    
     $ExpectedModuleArray = ($testModule1, $testModule2)
     $isSuccess = $true
@@ -459,7 +461,7 @@ It VerifyGetCommandWithAllParameter {
 
 # Verify Import Script Module with -NoClobber parameter
 #
-It VerfiyNoClobberParameterWithScriptModule {
+It -pending:(!$IsWindows) VerfiyNoClobberParameterWithScriptModule {
 
     createTempScriptModule($TestPath)
 
@@ -475,7 +477,7 @@ It VerfiyNoClobberParameterWithScriptModule {
 #Verify when the logger sees that the value passed to a parameter is an array, 
 #it needs to unfold the array and provide the actual values for each item in the array
 #
-It LoggerUnfoldArray {
+It -pending:(!$IsWindows) LoggerUnfoldArray {
 
   $testScript = @"
    `$CSVfilePath = Join-Path `$env:temp "LoggerUnfoldArray.csv"
@@ -523,9 +525,9 @@ It LoggerUnfoldArray {
 
 #Verify error is displayed with two parameters ?RootModule? and ?ModuleToProcess?
 #
-It NewModuleManifestWithModuleProcessRootModule {
+It -pending:(!$IsWindows) NewModuleManifestWithModuleProcessRootModule {
 
-  $error.Clear
+  $error.Clear()
 
   $moduleManifestPath = Join-Path $env:Temp "NewModuleManifestWithModuleProcessRootModule.psd1"
   $rootModulePath = Join-Path $env:Temp "testRootModule.dll"
@@ -547,9 +549,9 @@ It NewModuleManifestWithModuleProcessRootModule {
 
 #Verify error message throws if importing the module manifest with both ModuleToProcess and RootModule fields.
 #
-It ImportModuleWithModuleProcessRootModule {
+It -pending:(!$IsWindows) ImportModuleWithModuleProcessRootModule {
 
-  $error.Clear
+  $error.Clear()
   
   $ModuleFileName = "ImportModuleWithModuleProcessRootModule"
   $moduleManifestPath = Join-Path $env:Temp($ModuleFileName + ".psd1")
@@ -570,8 +572,8 @@ It ImportModuleWithModuleProcessRootModule {
 
 #Verify the module manifest with ModuleToProcess field can be imported normally.
 #
-It ImportModuleWithModuleToProcess {
-  $error.Clear
+It -pending:(!$IsWindows) ImportModuleWithModuleToProcess {
+  $error.Clear()
   try
   {
    $ModuleFileName = "ImportModuleWithModuleToProcess"
@@ -597,8 +599,8 @@ It ImportModuleWithModuleToProcess {
 
 #Verify Test-ModuleManifest cmdlet throws error if the module manifest has both ModuleToProcess and RootModule fields defined.
 #
-It TestModuleManifestWithModuleProcessRootModule {
-  $error.Clear
+It -pending:(!$IsWindows) TestModuleManifestWithModuleProcessRootModule {
+  $error.Clear()
 
   $ModuleFileName = "ModuleManifestWithModuleProcessRootModule"
   $moduleManifestPath = Join-Path $env:Temp($ModuleFileName + ".psd1")
@@ -632,7 +634,7 @@ function GenerateModuleManifestWithPrefix($moduleManifestPath, $rootModulePath, 
 #Win8 122268
 #Verify the DefaultCommandPrefix value is added as the default Prefix value for commands
 #
-It ImportModuleWithDefaultCommandPrefixKey {
+It -pending:(!$IsWindows) ImportModuleWithDefaultCommandPrefixKey {
    $moduleName = 'ImportModuleWithDefaultCommandPrefixKey'
    $scriptModulePath = Join-Path $env:Temp($moduleName + '.psm1')
    $moduleManifestPath = Join-Path $env:Temp($moduleName + '.psd1')
@@ -670,7 +672,7 @@ function OperateCoreSnapin($CoreSnapin)
 
 #Verify the core module Microsoft.Powershell.Core is constant module and cannot be removed.
 #
-It ModuleEnhancementForOperateCoreModule {
+It -pending:(!$IsWindows) ModuleEnhancementForOperateCoreModule {
 
    $SnapinName = 'Microsoft.PowerShell.Core'
    OperateCoreSnapin($SnapinName) 
@@ -721,7 +723,7 @@ function OperateCoreModule($CoreModule)
 
 #Verify the core snapin Microsoft.WSMan.Management has been converted to modules and can be operated as module normally.
 #
-It ModuleEnhancementForOperateWSManModule {
+It -pending:(!$IsWindows) ModuleEnhancementForOperateWSManModule {
 
    $ModuleName = 'Microsoft.WSMan.Management'
    OperateCoreModule($ModuleName)
@@ -743,7 +745,7 @@ function CreateScriptModuleInSpecifiedPath($modulePath, $moduleName)
 #Verify that if it finds a cdxml file in a given directory, 
 #The nested modules are not visible using Get-Module ?ListAvailable unless people do Get-Module ?ListAvailable -All
 #
-It GetModuleListRecurseForCdxmlFile {
+It -pending:(!$IsWindows) GetModuleListRecurseForCdxmlFile {
 
    $moduleName = 'GetModuleListRecurseForCdxmlModule'
    $oldPSModulePath = $env:PSModulePath
@@ -783,7 +785,7 @@ It GetModuleListRecurseForCdxmlFile {
 #Win8 259048
 #Verify the script with #Requires -Module can be executed
 # Updating the module name since Mcirosoft.PowerShell.Core module is not available
-It InvokeScriptWithRequiresModule{
+It -pending:(!$IsWindows) InvokeScriptWithRequiresModule{
 
   $error.Clear()
   $ScriptFilePath = Join-Path $env:Temp 'TestScript.ps1'
@@ -811,7 +813,7 @@ New-Variable -Name isExecuted -Value 100 -Scope Global
 
 #Verify the script with #Requires ?Module will attempt to load the specified modules before executing the script
 #
-It InvokeScriptAttemptLoadRequiresModule {
+It -pending:(!$IsWindows) InvokeScriptAttemptLoadRequiresModule {
   $error.Clear()
   try
   {
@@ -854,7 +856,7 @@ New-Variable -Name isExecuted03 -Value 100 -Scope Global
 
 #Verify if the required module cannot be loaded, an error is returned and the script will not be executed.
 #
-It InvokeScriptNoRequiresModule {
+It -pending:(!$IsWindows) InvokeScriptNoRequiresModule {
 
   $error.Clear()
   try
@@ -894,7 +896,7 @@ New-Variable -Name isExecuted06 -Value 100 -Scope Global
 #Win8 122372
 #Verify that the ModuleType of the imported module reflects the type of the module in ?RootModule? filed of the manifest
 #
-It GetModuleListEnhancementForModuleType {
+It -pending:(!$IsWindows) GetModuleListEnhancementForModuleType {
   $error.Clear()
   $ModuleName = 'PSDiagnostics'
   try
@@ -964,7 +966,7 @@ namespace TestBinaryModuleScope
 #Win8 122329
 #Verify the Get-Module -ListAvailable can retrieve all the information for PSModuleInfo object
 #
-It GetPSModuleInfoPropertiesForNonImportedModule {
+It -pending:(!$IsWindows) GetPSModuleInfoPropertiesForNonImportedModule {
 
   $oldPSModulePath = $env:PSModulePath
   $tempdir = $TestPath
@@ -1172,7 +1174,7 @@ function ImportModuleWithDefaultScope($Module1, $Module2)
 
 #Verify Import-Module with Scope parameter can work properly for script module
 #
-It ImportScriptModuleWithScopeParameter {
+It -pending:(!$IsWindows) ImportScriptModuleWithScopeParameter {
   $error.Clear()
   try
   {
@@ -1201,7 +1203,7 @@ It ImportScriptModuleWithScopeParameter {
 
 #Verify an error is displayed if given both Scope and Global parameter 
 #
-It ImportModuleWithBothScopeAndGlobalParameter {
+It -pending:(!$IsWindows) ImportModuleWithBothScopeAndGlobalParameter {
   $error.Clear()
   try
   {
@@ -1217,7 +1219,7 @@ It ImportModuleWithBothScopeAndGlobalParameter {
 
 # Verify that Alias attribute is working properly for Binary cmdlets, Adv. functions and Workflows
 #
-It AliasAttributeTestForCmdletAdvFnAndWorkflow {
+It -pending:(!$IsWindows) AliasAttributeTestForCmdletAdvFnAndWorkflow {
     if ($env:PROCESSOR_ARCHITECTURE -eq "arm")
     {
         write-host "skipping this test on arm machine"

@@ -3,6 +3,9 @@
 # Copyright (c) Microsoft Corporation, 2015
 #
 #
+if ( ! $IsWindows ) {
+    return
+}
 
 $UserModulesPath = Join-path $env:userprofile '\Documents\WindowsPowershell\Modules'
 

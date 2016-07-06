@@ -4,24 +4,23 @@
 #
 #
 
-
-$CurrentDir = Split-Path $MyInvocation.MyCommand.Path
-$TestModulesFolder= 'TestModulesForFollowUp'
-$TestModulesFolder1= 'Test.module'
-$TestModulesFolder2= 'TestModuleRelativePath'
-$TestModulesPath = Join-path $CurrentDir $TestModulesFolder
-$TestModulesPath1 = Join-path $CurrentDir $TestModulesFolder1
-$TestModulesPath2 = Join-path $CurrentDir $TestModulesFolder2
-$script:UserModulesPath = Join-path $env:userprofile '\Documents\WindowsPowershell\Modules'
+Describe "TestFollowupForBugs" -Tags "Feature" {
 
 
-# Install the Test Module
-Copy-Item $TestModulesPath $UserModulesPath -Recurse -Force
-Copy-Item $TestModulesPath1 $UserModulesPath -Recurse -Force
-Copy-Item $TestModulesPath2 $UserModulesPath -Recurse -Force
-
-Describe "TestFollowupForBugs" -Tags "P1", "RI" {
-
+BeforeAll {
+    if ( ! $IsWindows ) { return }
+    $CurrentDir = Split-Path $MyInvocation.MyCommand.Path
+    $TestModulesFolder= 'TestModulesForFollowUp'
+    $TestModulesFolder1= 'Test.module'
+    $TestModulesFolder2= 'TestModuleRelativePath'
+    $TestModulesPath = Join-path $CurrentDir $TestModulesFolder
+    $TestModulesPath1 = Join-path $CurrentDir $TestModulesFolder1
+    $TestModulesPath2 = Join-path $CurrentDir $TestModulesFolder2
+    $script:UserModulesPath = Join-path $env:userprofile '\Documents\WindowsPowershell\Modules'
+    # Install the Test Module
+    Copy-Item $TestModulesPath $UserModulesPath -Recurse -Force
+    Copy-Item $TestModulesPath1 $UserModulesPath -Recurse -Force
+    Copy-Item $TestModulesPath2 $UserModulesPath -Recurse -Force
 #Generate Binary Module
 #
 function GenerateBinaryModule($ModulePath)
@@ -69,6 +68,7 @@ namespace TestBinaryModuleScope
         Add-Type -TypeDefinition $BinaryModule -OutputAssembly $ModulePath   
     }  
 }
+}
 
     <#
     Purpose:
@@ -84,14 +84,14 @@ namespace TestBinaryModuleScope
     Expected Result: 
         Only the psd1 file under version folder will be discovered.
     #>
-    It "Bug 2173155" {
+    It -pending:(!$IsWindows) "Bug 2173155" {
         $moduleName="TestModVer_$(Get-Random)"
         $modulePath = "$pshome\Modules\$modulename"
-        md $modulePath
+        new-item -type directory $modulePath
 
         $version = "1.0.3.1"
         $version2 = "1.0"
-        md $modulePath\$version
+        new-item -type directory $modulePath\$version
 
         $manifestPath = "$modulePath\$version\$moduleName.psd1"
 
@@ -100,7 +100,7 @@ namespace TestBinaryModuleScope
 
         $nestedModule = "$modulePath\$version\$moduleName"
 
-        md $nestedModule
+        new-item -type directory $nestedModule
 
         $nestedManifestPath = "$nestedModule\$moduleName.psd1"
 
@@ -135,14 +135,14 @@ namespace TestBinaryModuleScope
     Expected Result: 
         The module should not be loaded.
     #>
-    It "Bug 1169495" {
+    It -pending:(!$IsWindows) "Bug 1169495" {
         $moduleName="ModuleA"
         $modulePath = "$pshome\Modules\$modulename"
         if (test-path $modulePath)
         {
             Remove-Item $modulePath -Recurse -Force
         }
-        md $modulePath
+        new-item -type directory $modulePath
 
         # Create ModuleA manifest
         New-ModuleManifest -path $modulesPath\ModuleA.psd1 -RootModule ModuleA.psm1 -ModuleVersion 1.0.0.1 -ScriptsToProcess ScriptA.ps1 -FileList @('ModuleA.psm1','ModuleA.psd1','ScriptA.ps1')
@@ -190,14 +190,14 @@ throw 'Something bad happened, so the module shouldn''t load.'
         No error pointing the finger at the module author should be displayed in this use case.
 
     #>
-    It "Bug 1169509" {
+    It -pending:(!$IsWindows) "Bug 1169509" {
         $moduleName="ModuleB"
         $modulePath = "$pshome\Modules\$modulename"
         if (test-path $modulePath)
         {
             Remove-Item $modulePath -Recurse -Force
         }
-        md $modulePath
+        new-item -type directory $modulePath
 
         # Create ModuleB manifest
         New-ModuleManifest -path $modulesPath\ModuleB.psd1 -RootModule ModuleB.psm1 -ModuleVersion 1.0.0.1 -FileList @('ModuleB.psm1','ModuleB.psd1')
@@ -242,7 +242,7 @@ throw 'Prequisite requirements are not met. Correct them and then try loading th
     Expected Result: 
         Grace exception should be thrown
     #>
-        It "Bug 2320366" {
+        It -pending:(!$IsWindows) "Bug 2320366" {
             try
             {
                 Get-Module -Name $null -ListAvailable
@@ -275,9 +275,9 @@ throw 'Prequisite requirements are not met. Correct them and then try loading th
         root module should be imported without exception.
 
     #>
-    It "Bug 1987318" {
+    It -pending:(!$IsWindows) "Bug 1987318" {
         $ModulePath = Join-Path $env:USERPROFILE "Documents\WindowsPowerShell\Modules"
-        "m1","m2","m3","m4","m5","m6" | %{ mkdir (Join-Path $ModulePath $_ ) -ea 0 }
+        "m1","m2","m3","m4","m5","m6" | %{ new-item -type directory (Join-Path $ModulePath $_ ) -ea 0 }
  
         New-ModuleManifest -Path (Join-Path $ModulePath "m1\m1.psd1") -RequiredModules "m5","m2"
         New-ModuleManifest -Path (Join-Path $ModulePath "m2\m2.psd1") -RequiredModules "m3","m4"
@@ -317,7 +317,7 @@ throw 'Prequisite requirements are not met. Correct them and then try loading th
         module object should be returned
 
     #>
-    It "Bug 2737519" {
+    It -pending:(!$IsWindows) "Bug 2737519" {
         $nsName = "MyUnitTest"
         $className = "MyClass_" + (Get-Random)
         $source = @"
@@ -348,7 +348,7 @@ public sealed class $className : PSCmdlet {
         the module should be imported and the cmdlets from the module should be valid
 
     #>
-    It "Bug 2737859" {
+    It -pending:(!$IsWindows) "Bug 2737859" {
     function GenerateCmdlet {
         $nsName = "MyUnitTest"
         $className = "MyClass_" + (Get-Random)
@@ -409,7 +409,7 @@ namespace $nsName {
         Module should be imported
 
     #>
-    It "Bug 3584195" {
+    It -pending:(!$IsWindows) "Bug 3584195" {
 
     $m = get-module -list microsoft.* | select -first 1
     $m | Should Not Be $null
@@ -445,10 +445,9 @@ namespace $nsName {
 
     #>
     It "Bug 4800438" {
-
-    $moduleObject = New-Object Microsoft.PowerShell.Commands.ModuleSpecification @{ModuleName='Foo';MaximumVersion='2.0'}
-    $moduleObject.ToString() | Should be "@{ ModuleName = 'Foo'; MaximumVersion = '2.0' }"
-}
+        $moduleObject = New-Object Microsoft.PowerShell.Commands.ModuleSpecification @{ModuleName='Foo';MaximumVersion='2.0'}
+        $moduleObject.ToString() | Should be "@{ ModuleName = 'Foo'; MaximumVersion = '2.0' }"
+    }
 
     <#
     Purpose:
@@ -480,14 +479,14 @@ namespace $nsName {
          test\Write-HelloWorld should always call the latest module being imported.
 
     #>
-    It "Bug 4980967" {
-    Import-Module TestModulesForFollowUp -RequiredVersion 1.0.0.0
-    Import-Module TestModulesForFollowUp -RequiredVersion 1.0.2.0 
-    Import-Module TestModulesForFollowUp -RequiredVersion 1.0.1.0
+    It -pending:(!$IsWindows) "Bug 4980967" {
+        Import-Module TestModulesForFollowUp -RequiredVersion 1.0.0.0
+        Import-Module TestModulesForFollowUp -RequiredVersion 1.0.2.0 
+        Import-Module TestModulesForFollowUp -RequiredVersion 1.0.1.0
 
-    TestModulesForFollowUp\Write-HelloWorld | should Be "Hello World 1.0.1.0"
-    Write-HelloWorld | should Be "Hello World 1.0.1.0"
-}
+        TestModulesForFollowUp\Write-HelloWorld | should Be "Hello World 1.0.1.0"
+        Write-HelloWorld | should Be "Hello World 1.0.1.0"
+    }
 
     <#
     Purpose:
@@ -501,12 +500,12 @@ namespace $nsName {
          Function withe specified module should return
 
     #>
-    It "Bug 4761030" {
-    Remove-Module TestModulesForFollowUp -Force -ErrorAction Ignore
-    $result = get-command -FullyQualifiedModule @{ModuleName="TestModulesForFollowup";RequiredVersion="1.0.0.0";Guid='2414b58b-b954-4fff-b577-a901265f5690'}
-    $result.count | should be 1
-    $result.Source | should be "TestModulesForFollowUp"
-}
+    It -pending:(!$IsWindows) "Bug 4761030" {
+        Remove-Module TestModulesForFollowUp -Force -ErrorAction Ignore
+        $result = get-command -FullyQualifiedModule @{ModuleName="TestModulesForFollowup";RequiredVersion="1.0.0.0";Guid='2414b58b-b954-4fff-b577-a901265f5690'}
+        $result.count | should be 1
+        $result.Source | should be "TestModulesForFollowUp"
+    }
 
     <#
     Purpose:
@@ -520,11 +519,11 @@ namespace $nsName {
          Module should be found just as Get-Module -Name C:\windows\System32\WindowsPowerShell\v1.0\Modules\PSWorkflow -ListAvailable
 
     #>
-    It "Bug 5051137" {
-    $moduleA = Get-Module -Name C:\windows\System32\WindowsPowerShell\v1.0\Modules\PSWorkflow\ -ListAvailable
-    $moduleB = Get-Module -Name C:\windows\System32\WindowsPowerShell\v1.0\Modules\PSWorkflow -ListAvailable
-    $moduleA.count | should Be $moduleB.count
-}
+    It -pending:(!$IsWindows) "Bug 5051137" {
+        $moduleA = Get-Module -Name C:\windows\System32\WindowsPowerShell\v1.0\Modules\PSWorkflow\ -ListAvailable
+        $moduleB = Get-Module -Name C:\windows\System32\WindowsPowerShell\v1.0\Modules\PSWorkflow -ListAvailable
+        $moduleA.count | should Be $moduleB.count
+    }
 
     <#
     Purpose:
@@ -566,7 +565,7 @@ namespace $nsName {
          Module with all the versions should get exposed.
 
     #>
-    It "Bug 5101884" {
+    It -pending:(!$IsWindows) "Bug 5101884" {
         $result = get-module -ListAvailable Test.module
         $result.count | should be 3
 }
@@ -583,7 +582,7 @@ namespace $nsName {
          Module should be found
 
     #>
-    It "Bug 6335613" {
+    It -pending:(!$IsWindows) "Bug 6335613" {
         $result = get-module -ListAvailable C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Archive
         $result.count | should be 1
 }
@@ -601,7 +600,7 @@ namespace $nsName {
          Module should be found
 
     #>
-    It "Bug 5101923" {
+    It -pending:(!$IsWindows) "Bug 5101923" {
         pushd
         cd $env:SystemRoot\system32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Archive
         $result = get-module -ListAvailable .\
@@ -621,7 +620,7 @@ namespace $nsName {
          Module should be found
 
     #>
-    It "Bug 5101900" {
+    It -pending:(!$IsWindows) "Bug 5101900" {
         $enviromentPsmodule = $env:PSModulePath
 
         $UserModulesPath = Join-path $env:userprofile '\Documents\WindowsPowershell\Modules'
@@ -643,7 +642,7 @@ namespace $nsName {
          The module should be removed.
 
     #>
-    It "Bug 5899273" {
+    It -skip:(!$IsWindows) "Bug 5899273" {
         pushd $HOME
         cd hkcu:\
 
@@ -678,7 +677,7 @@ public class $name : PSCmdlet { protected override void ProcessRecord() { this.W
          Function from that specific version should be executed
 
     #>
-    It "Bug 4761531" {
+    It -pending:(!$IsWindows) "Bug 4761531" {
         $result = test.module\1.0.0.5\foo 
         $result | should be "1.0.0.5"
         $result = test.module\1.0.0.3\foo 
@@ -701,7 +700,7 @@ public class $name : PSCmdlet { protected override void ProcessRecord() { this.W
          No duplicated modules should be found.
 
     #>
-    It "Bug 6679218" {
+    It -pending:(!$IsWindows) "Bug 6679218" {
         $enviromentPsmodule = $env:PSModulePath
 
         $UserModulesPath = Join-path $env:userprofile '\Documents\WindowsPowershell\Modules'
@@ -733,7 +732,7 @@ public class $name : PSCmdlet { protected override void ProcessRecord() { this.W
          Matched modules should be return
 
     #>
-    It "Bug 6794059 - 1" {
+    It -pending:(!$IsWindows) "Bug 6794059 - 1" {
 
         $UserModulesPath = Join-path $env:userprofile '\Documents\WindowsPowershell\Modules'
         
@@ -753,7 +752,7 @@ public class $name : PSCmdlet { protected override void ProcessRecord() { this.W
          Matched modules should be return
 
     #>
-    It "Bug 6794059 - 2" {
+    It -pending:(!$IsWindows) "Bug 6794059 - 2" {
 
         $UserModulesPath = Join-path $env:userprofile '\Documents\WindowsPower*ell\Modules'
         
@@ -773,7 +772,7 @@ public class $name : PSCmdlet { protected override void ProcessRecord() { this.W
          Matched modules should be return
 
     #>
-    It "Bug 6794059 - 3" {
+    It -pending:(!$IsWindows) "Bug 6794059 - 3" {
 
         Push-Location
         Set-Location $env:userprofile     
@@ -795,7 +794,7 @@ public class $name : PSCmdlet { protected override void ProcessRecord() { this.W
          Matched modules should be return
 
     #>
-    It "Bug 6794059 - 4" {
+    It -pending:(!$IsWindows) "Bug 6794059 - 4" {
 
         $UserModulesPath = Join-path $env:userprofile '\Documents\WindowsPowershell\Modules'
         
@@ -815,10 +814,10 @@ public class $name : PSCmdlet { protected override void ProcessRecord() { this.W
          Module should be imported
 
     #>
-    It "Bug 6964776 - 1" {
+    It -pending:(!$IsWindows) "Bug 6964776 - 1" {
 
         $UserModulesPath = Join-path $env:userprofile '\Documents\WindowsPowershell\Modules\testModule'
-        mkdir $UserModulesPath -ErrorAction Ignore
+        new-item -type directory $UserModulesPath -ErrorAction Ignore
         GenerateBinaryModule -ModulePath $UserModulesPath\testModule.ni.dll
 
         try 
@@ -852,10 +851,10 @@ public class $name : PSCmdlet { protected override void ProcessRecord() { this.W
          Module should be imported
 
     #>
-    It "Bug 6964776 - 2" {
+    It -pending:(!$IsWindows) "Bug 6964776 - 2" {
 
         $UserModulesPath = Join-path $env:userprofile '\Documents\WindowsPowershell\Modules\testModule'
-        mkdir $UserModulesPath -ErrorAction Ignore
+        new-item -type directory $UserModulesPath -ErrorAction Ignore
         GenerateBinaryModule -ModulePath $UserModulesPath\testModule.ni.dll
         New-ModuleManifest -Path $UserModulesPath\testModule.psd1 -RootModule testModule
 
@@ -888,10 +887,10 @@ public class $name : PSCmdlet { protected override void ProcessRecord() { this.W
          Module should be returned
 
     #>
-    It "Bug 6964776 - 3" {
+    It -pending:(!$IsWindows) "Bug 6964776 - 3" {
 
         $UserModulesPath = Join-path $env:userprofile '\Documents\WindowsPowershell\Modules\testModule'
-        mkdir $UserModulesPath -ErrorAction Ignore
+        new-item -type directory $UserModulesPath -ErrorAction Ignore
         GenerateBinaryModule -ModulePath $UserModulesPath\testModule.ni.dll
 
         try 
@@ -923,10 +922,10 @@ public class $name : PSCmdlet { protected override void ProcessRecord() { this.W
          testmodule.ni.dll should be imported
 
     #>
-    It "Bug 6964776 - 4" {
+    It -pending:(!$IsWindows) "Bug 6964776 - 4" {
 
         $UserModulesPath = Join-path $env:userprofile '\Documents\WindowsPowershell\Modules\testModule'
-        mkdir $UserModulesPath -ErrorAction Ignore
+        new-item -type directory $UserModulesPath -ErrorAction Ignore
         remove-item $UserModulesPath\testModule.ni.dll -Force -ErrorAction Ignore
         remove-item $UserModulesPath\testModule.dll -Force -ErrorAction Ignore
         GenerateBinaryModule -ModulePath $UserModulesPath\testModule.ni.dll
@@ -964,10 +963,10 @@ public class $name : PSCmdlet { protected override void ProcessRecord() { this.W
          the assembly locates on c: should be imported.
 
     #>
-    It "Bug 7305422 - 1" {
+    It -pending:(!$IsWindows) "Bug 7305422 - 1" {
 
         $UserModulesPath = Join-path $env:userprofile '\Documents\WindowsPowershell\Modules\TestModuleRelativePath'
-        mkdir $UserModulesPath\assembly -ErrorAction Ignore
+        new-item -type directory $UserModulesPath\assembly -ErrorAction Ignore
         remove-item $UserModulesPath\assembly\TestModuleRelativePath.dll -Force -ErrorAction Ignore
         GenerateBinaryModule -ModulePath $UserModulesPath\assembly\TestModuleRelativePath.dll
 
@@ -1005,7 +1004,7 @@ public class $name : PSCmdlet { protected override void ProcessRecord() { this.W
          the nested module locates on c: should be imported.
 
     #>
-    It "Bug 7305422 - 2" {
+    It -pending:(!$IsWindows) "Bug 7305422 - 2" {
 
         $UserModulesPath = Join-path $env:userprofile '\Documents\WindowsPowershell\Modules\TestModuleRelativePath'
 
@@ -1043,7 +1042,7 @@ public class $name : PSCmdlet { protected override void ProcessRecord() { this.W
          the format.ps1xml locates on c: should be imported.
 
     #>
-    It "Bug 7305422 - 3" {
+    It -pending:(!$IsWindows) "Bug 7305422 - 3" {
 
         $UserModulesPath = Join-path $env:userprofile '\Documents\WindowsPowershell\Modules\TestModuleRelativePath'
 
@@ -1068,11 +1067,25 @@ public class $name : PSCmdlet { protected override void ProcessRecord() { this.W
 
 }
 
-Describe "Test-ModuleManifest verification tests" -Tags "P1"{
+Describe "Test-ModuleManifest verification tests" -Tags "Feature" {
 
-    mkdir $UserModulesPath\ModuleManifestVerification -ErrorAction SilentlyContinue
+    BeforeAll {
+        if ( ! $IsWindows ) { return }
+        new-item -type directory $UserModulesPath\ModuleManifestVerification -ErrorAction SilentlyContinue
+    }
 
-    It "NestedModuleVerification" {
+    AfterAll {
+        if ( ! $IsWindows ) { return }
+        $UserTestModulesPath = Join-path $UserModulesPath $TestModulesFolder
+        $UserTestModulesPath1 = Join-path $UserModulesPath $TestModulesFolder1
+        $UserTestModulesPath2 = Join-path $UserModulesPath $TestModulesFolder2
+        Remove-Item $UserTestModulesPath -Recurse -Force -ErrorAction Ignore
+        Remove-Item $UserTestModulesPath1 -Recurse -Force -ErrorAction Ignore
+        Remove-Item $UserTestModulesPath2 -Recurse -Force -ErrorAction Ignore
+        Remove-Item $UserModulesPath\ModuleManifestVerification -Force -ErrorAction SilentlyContinue
+    }
+
+    It -pending:(!$IsWindows) "NestedModuleVerification" {
         $manifestPath = Join-Path $UserModulesPath '\ModuleManifestVerification\ModuleManifestVerification.psd1'
         try
         {
@@ -1090,7 +1103,7 @@ Describe "Test-ModuleManifest verification tests" -Tags "P1"{
         }
     }
 
-    It "RequiredAssembliesVerification" {
+    It -pending:(!$IsWindows) "RequiredAssembliesVerification" {
         $manifestPath = Join-Path $UserModulesPath '\ModuleManifestVerification\ModuleManifestVerification.psd1'
         try
         {
@@ -1108,7 +1121,7 @@ Describe "Test-ModuleManifest verification tests" -Tags "P1"{
         }
     }
 
-    It "GacRequiredAssembliesVerification" {
+    It -pending:(!$IsWindows) "GacRequiredAssembliesVerification" {
         $manifestPath = Join-Path $UserModulesPath '\ModuleManifestVerification\ModuleManifestVerification.psd1'
         try
         {
@@ -1125,7 +1138,7 @@ Describe "Test-ModuleManifest verification tests" -Tags "P1"{
         }
     }
 
-        It "RequiredModuleVerification" {
+    It -pending:(!$IsWindows) "RequiredModuleVerification" {
         $manifestPath = Join-Path $UserModulesPath '\ModuleManifestVerification\ModuleManifestVerification.psd1'
         try
         {
@@ -1141,9 +1154,9 @@ Describe "Test-ModuleManifest verification tests" -Tags "P1"{
         {
             Remove-Item $manifestPath -Force -ErrorAction Ignore
         }
-        }
+    }
 
-        It "ModuleListVerification" {
+    It -pending:(!$IsWindows) "ModuleListVerification" {
         $manifestPath = Join-Path $UserModulesPath '\ModuleManifestVerification\ModuleManifestVerification.psd1'
         try
         {
@@ -1159,9 +1172,9 @@ Describe "Test-ModuleManifest verification tests" -Tags "P1"{
         {
             Remove-Item $manifestPath -Force -ErrorAction Ignore
         }
-        }
+    }
 
-        It "FileListVerification" {
+    It -pending:(!$IsWindows) "FileListVerification" {
         $manifestPath = Join-Path $UserModulesPath '\ModuleManifestVerification\ModuleManifestVerification.psd1'
         try
         {
@@ -1177,11 +1190,11 @@ Describe "Test-ModuleManifest verification tests" -Tags "P1"{
         {
             Remove-Item $manifestPath -Force -ErrorAction Ignore
         }
-        }
+    }
 
-        It "FileOUtScopeModuleFolderVerification" {
+    It -pending:(!$IsWindows) "FileOUtScopeModuleFolderVerification" {
         $manifestPath = Join-Path $UserModulesPath '\ModuleManifestVerification\ModuleManifestVerification.psd1'
-        md $UserModulesPath\outScopeFile.txt -ErrorAction SilentlyContinue
+        new-item -type directory $UserModulesPath\outScopeFile.txt -ErrorAction SilentlyContinue
         try
         {
             New-ModuleManifest -Path $manifestPath -FileList "..\outScopeFile.txt"
@@ -1196,20 +1209,12 @@ Describe "Test-ModuleManifest verification tests" -Tags "P1"{
         {
             Remove-Item $manifestPath -Force -ErrorAction Ignore
         }
-        }
-        Remove-Item $UserModulesPath\ModuleManifestVerification -Force -ErrorAction SilentlyContinue
+    }
 }
 
-$UserTestModulesPath = Join-path $UserModulesPath $TestModulesFolder
-$UserTestModulesPath1 = Join-path $UserModulesPath $TestModulesFolder1
-$UserTestModulesPath2 = Join-path $UserModulesPath $TestModulesFolder2
-Remove-Item $UserTestModulesPath -Recurse -Force -ErrorAction Ignore
-Remove-Item $UserTestModulesPath1 -Recurse -Force -ErrorAction Ignore
-Remove-Item $UserTestModulesPath2 -Recurse -Force -ErrorAction Ignore
 
 
-
-Describe "Win8TestFollowupForBugs" -Tags "P1", "RI"{
+Describe "Win8TestFollowupForBugs" -Tags "Feature" {
 
     It "bug284599-GetModuleFormat" {
         # Do a Get-Module after Get-Module -List
@@ -1223,20 +1228,21 @@ Describe "Win8TestFollowupForBugs" -Tags "P1", "RI"{
     }
 }
 
-Describe "Command analysis parsing tests" -Tags "P1" {
+Describe "Command analysis parsing tests" -Tags "Feature" {
 
     BeforeAll {
         $originalPSModulePath = $env:PSModulePath
-
         $env:PSModulePath = $TestDrive
+        $powershell = (Get-Process -id $PID).MainModule.Filename
     }
 
     BeforeEach {
-        # If the bug is present, it will be most reliable in a new-process with no analysis cache
-        Remove-Item -ea Ignore $env:USERPROFILE\AppData\Local\Microsoft\Windows\PowerShell\ModuleAnalysisCache
-
+        if ( $IsWindows ) {
+            # If the bug is present, it will be most reliable in a new-process with no analysis cache
+            Remove-Item -ea Ignore $env:USERPROFILE\AppData\Local\Microsoft\Windows\PowerShell\ModuleAnalysisCache
+        }
         $newModuleName = "mod_$(Get-Random)"
-        mkdir TestDrive:\$newModuleName
+        New-Item -Type Directory TestDrive:\$newModuleName
     }
 
     AfterEach {
@@ -1249,20 +1255,24 @@ Describe "Command analysis parsing tests" -Tags "P1" {
 
     It "module w/ parse errors doesn't cause problems" {
         'function foo' > TestDrive:\$newModuleName\$newModuleName.psm1
-        powershell -nop -command "Get-Command *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
+        & $powershell -nop -command "Get-Command *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
         $LASTEXITCODE | Should Be 0
 
-        powershell -nop -command "Get-Help *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
-        $LASTEXITCODE | Should Be 0
+        if ( $IsWindows ) {
+            & $powershell -nop -command "Get-Help *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
+            $LASTEXITCODE | Should Be 0
+        }
     }
 
     It "module w/ invalid manifest doesn't cause problems" {
         '' > TestDrive:\$newModuleName\$newModuleName.psd1
-        powershell -nop -command "Get-Command *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
+        & $powershell -nop -command "Get-Command *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
         $LASTEXITCODE | Should Be 0
 
-        powershell -nop -command "Get-Help *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
-        $LASTEXITCODE | Should Be 0
+        if ( $IsWindows ) {
+            & $powershell -nop -command "Get-Help *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
+            $LASTEXITCODE | Should Be 0
+        }
     }
 
     It "module w/ funny quotes doesn't cause problems" {
@@ -1271,16 +1281,24 @@ Describe "Command analysis parsing tests" -Tags "P1" {
 
         $fs = [System.IO.File]::Create("$TestDrive\$newModuleName\$newModuleName.psm1")
         $script = "function Invoke-Hello { $([char]0x201d)hello$([char]0x201c) }"
-        $bytes = [System.Text.Encoding]::Default.GetBytes($script)
+        if ( $IsWindows ) {
+            $bytes = [System.Text.Encoding]::Default.GetBytes($script)
+        }
+        else {
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes($script)
+        }
         $fs.Write($bytes, 0, $bytes.Count)
         $fs.Close()
         $fs.Dispose()
 
-        powershell -nop -command "Get-Command *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
+        & $powershell -nop -command "Get-Command *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
         $LASTEXITCODE | Should Be 0
 
-        powershell -nop -command "Get-Help *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
-        $LASTEXITCODE | Should Be 0
+
+        if ( $IsWindows ) {
+            & $powershell -nop -command "Get-Help *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
+            $LASTEXITCODE | Should Be 0
+        }
     }
 
     It "module manifest w/ funny quotes doesn't cause problems" {
@@ -1289,60 +1307,49 @@ Describe "Command analysis parsing tests" -Tags "P1" {
 
         $fs = [System.IO.File]::Create("$TestDrive\$newModuleName\$newModuleName.psm1")
         $script = "@{ RootModule = $([char]0x201d)Foo$([char]0x201c ) }"
-        $bytes = [System.Text.Encoding]::Default.GetBytes($script)
+        if ( $IsWindows ) {
+            $bytes = [System.Text.Encoding]::Default.GetBytes($script)
+        }
+        else {
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes($script)
+        }
         $fs.Write($bytes, 0, $bytes.Count)
         $fs.Close()
         $fs.Dispose()
 
-        powershell -nop -command "Get-Command *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
+        & $powershell -nop -command "Get-Command *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
         $LASTEXITCODE | Should Be 0
 
-        powershell -nop -command "Get-Help *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
+        if ( $IsWindows ) {
+        & $powershell -nop -command "Get-Help *zzzzzzzzzzzzzzzzzzzzzzzzzzzzz*" | Should BeNullOrEmpty
         $LASTEXITCODE | Should Be 0
+        }
     }
 }
 
 
-Describe '$PSEdition is allowed in module manifest' -Tags "Innerloop", "DRT" {
+Describe '$PSEdition is allowed in module manifest' -Tags "CI" {
     
     BeforeAll {
-        $PSEditionTestModule = Join-Path -Path $env:TEMP -ChildPath "PSEditionTestModule"
-        if (Test-Path -Path $PSEditionTestModule)
-        {
-            Remove-Item -Path $PSEditionTestModule -Force -Recurse
-        }
-        $null = mkdir -Path $PSEditionTestModule -Force
-
-        $TestManifestFile = Join-Path -Path $PSEditionTestModule -ChildPath "PSEditionTest.psd1"
-        $TestModuleFile = Join-Path -Path $PSEditionTestModule -ChildPath "module.psm1"
-
-        Set-Content -Path $TestModuleFile -Force -Encoding Ascii -Value @'
-function Get-PSEdition
-{
-    "Get PSEdition"
-}
-'@
-        Set-Content -Path $TestManifestFile -Force -Encoding Ascii -Value @'
+        
+        $PSEditionTestModule = Setup -f PSEditionTestModule -Pass
+        $TestModuleFile = Setup -f module.psm1 -Content 'function Get-PSEdition { "Get PSEdition" }' -Pass
+        $TestManifestFile = Setup -f PSEditionTest.psd1 -Pass -Content @'
 @{
 RootModule = 'module.psm1'
 ModuleVersion = '1.0.0.0'
-FunctionsToExport = if ($PSEdition -eq 'Desktop') { @('Get-PSEdition') } else { @('Get-Bar', 'Get-Foo') }
+FunctionsToExport = if ($PSEdition -eq 'Desktop' -or $PSEdition -eq "Linux" ) { @('Get-PSEdition') } else { @('Get-Bar', 'Get-Foo') }
 }
 '@
-        
-        $ManifestWithInvalidVariable = Join-Path -Path $PSEditionTestModule -ChildPath "WithInvalidVars.psd1"
-        Set-Content -Path $ManifestWithInvalidVariable -Force -Encoding Ascii -Value @'
+
+
+        $ManifestWithInvalidVariable = Setup -f "WithInvalidVars.psd1" -Pass -Content @'
 @{
 RootModule = 'module.psm1'
 ModuleVersion = '1.0.0.0'
 FunctionsToExport = if ($PID -eq 1234) { @('Get-PSEdition') } else { @('Get-Bar', 'Get-Foo') }
 }
 '@
-    }
-
-    AfterAll {
-        Remove-Module -Name PSEditionTest -Force -ErrorAction SilentlyContinue
-        Remove-Item -Path $PSEditionTestModule -Force -Recurse -ErrorAction SilentlyContinue
     }
 
     It 'Test $PSEdition can be used in .psd1 file' {
