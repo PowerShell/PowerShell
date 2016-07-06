@@ -1720,11 +1720,17 @@ namespace Microsoft.PowerShell
             // the empty string.
 
 #if LINUX
+            bool treatControlCAsInput = Console.TreatControlCAsInput;
+
+            try
+            {
+
             ConsoleKeyInfo keyInfo;
             string s = "";
             int index = 0;
             int cursorLeft = Console.CursorLeft;
             int cursorCurrent = cursorLeft;
+            Console.TreatControlCAsInput = true;
 #else
             rawui.ClearKeyCache();
             uint keyState = 0;
@@ -1900,6 +1906,13 @@ namespace Microsoft.PowerShell
                        "s should only be null if input ended with a break");
 
             return s;
+#if LINUX
+            }
+            finally
+            {
+                Console.TreatControlCAsInput = treatControlCAsInput;
+            }
+#endif
         }
 
         /// <summary>
