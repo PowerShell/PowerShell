@@ -439,7 +439,8 @@ function Start-PSBootstrap {
     [CmdletBinding()]param(
         [ValidateSet("dev", "beta", "preview")]
         [string]$Channel = "rel-1.0.0",
-        [string]$Version = "latest"
+        [string]$Version = "latest",
+        [switch]$Package
     )
 
     log "Installing Open PowerShell build dependencies"
@@ -448,17 +449,44 @@ function Start-PSBootstrap {
 
     try {
         # Install ours and .NET's dependencies
+        $Deps = @()
         if ($IsUbuntu) {
-            sudo apt-get install -y -qq curl make g++ cmake libc6 libgcc1 libstdc++6 libcurl3 libgssapi-krb5-2 libicu52 liblldb-3.6 liblttng-ust0 libssl1.0.0 libunwind8 libuuid1 zlib1g clang-3.5
+            # Build tools
+            $Deps += "curl", "g++", "cmake", "make"
+            # .NET Core required runtime libraries
+            $Deps += "libicu52", "libunwind8"
+            # Packaging tools
+            if ($Package) { $Deps += "ruby-dev" }
+            # Install dependencies
+            sudo apt-get install -y -qq $Deps
         } elseif ($IsCentos) {
-            sudo yum install -y -q curl make gcc-c++ cmake glibc libgcc libstdc++ libcurl krb5-libs libicu lldb openssl-libs libunwind libuuid zlib clang
+            # Build tools
+            $Deps += "curl", "gcc-c++", "cmake", "make"
+            # .NET Core required runtime libraries
+            $Deps += "libicu", "libunwind"
+            # Packaging tools
+            if ($Package) { $Deps += "ruby-devel", "rpmbuild" }
+            # Install dependencies
+            sudo yum install -y -q $Deps
         } elseif ($IsOSX) {
             precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
-
-            brew install curl cmake openssl
+            # Build tools
+            $Deps += "curl", "cmake"
+            # .NET Core required runtime libraries
+            $Deps += "openssl"
+            # Packaging tools
+            if ($Package) { $Deps += "ruby" }
+            # Install dependencies
+            brew install $Deps
+            # OpenSSL libraries must be updated
             brew link --force openssl
         } else {
             Write-Warning "This script only supports Ubuntu 14.04, CentOS 7, and OS X, you must install dependencies manually!"
+        }
+
+        # Install [fpm](https://github.com/jordansissel/fpm)
+        if ($Package) {
+            gem install fpm
         }
 
         $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain"
