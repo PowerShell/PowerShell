@@ -31,7 +31,10 @@ Contributing to Issue
 
 Contributing to Documentation
 ----
-- TODO: Don will fill in the details
+- [Pick something to work on](https://github.com/PowerShell/PowerShell-Docs/issues).
+- Follow the guidelines at [Contributing to PowerShell Documentation](https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md).
+- If you contribute to the PowerShell project in a way that changes the user or developer experience, you are expected to document those changes. For example, if you
+    add a parameter to an existing core cmdlet, you should document the new parameter.
 
 Contributing to Code
 ----
