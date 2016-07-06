@@ -9,6 +9,8 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: ReliabilityContractAttribute(Consistency.MayCorruptAppDomain, Cer.MayFail)]
 [assembly: AssemblyTitle("Microsoft.PowerShell.Workflow.ServiceCore")]
 [assembly: AssemblyDescription("Microsoft.PowerShell.Workflow.ServiceCore")]
+[assembly:AssemblyFileVersionAttribute("3.0.0.0")]
+[assembly:AssemblyVersion("3.0.0.0")]
 
 [module: SuppressMessage("Microsoft.Design", "CA1014:MarkAssembliesWithClsCompliant")]
 [module: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly", Scope="resource", Target="Resources.resources", MessageId="InlineScript")]
