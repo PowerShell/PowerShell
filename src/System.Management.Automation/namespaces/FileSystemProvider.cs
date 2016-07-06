@@ -1333,14 +1333,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
 
+                invokeProcess.StartInfo.UseShellExecute = false;
+
                 if (Platform.IsWindows)
                 {
-                    System.Diagnostics.Process.Start(path);
-                } 
+                    invokeProcess.StartInfo.FileName = "cmd.exe";
+                    // start is very picky: the "optional" TITLE as the first argument should always be included, otherwise it can silently fail
+                    invokeProcess.StartInfo.Arguments = string.Format(@"/c ""start /b """" ""{0}""""", path);
+                }
                 else if (Platform.IsOSX) {
                     invokeProcess.StartInfo.FileName = "open";
                     invokeProcess.StartInfo.Arguments = path;
-                } 
+                }
                 else if (Platform.IsLinux) {
                     invokeProcess.StartInfo.FileName = "xdg-open";
                     invokeProcess.StartInfo.Arguments = path;
