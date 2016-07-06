@@ -31,7 +31,8 @@ Contributing to Issue
 
 Contributing to Documentation
 ----
-- [Pick something to work on](https://github.com/PowerShell/PowerShell-Docs/issues).
+- Choose what to work on. Check the list of [documentation issues](https://github.com/PowerShell/PowerShell-Docs/issues) to see if someone is already working on it.
+- If you cannot find an existing issue for your desired work, open a new issue for your work.
 - Follow the guidelines at [Contributing to PowerShell Documentation](https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md).
 - If you contribute to the PowerShell project in a way that changes the user or developer experience, you are expected to document those changes. For example, if you
     add a parameter to an existing core cmdlet, you should document the new parameter.
