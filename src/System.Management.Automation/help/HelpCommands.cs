@@ -699,17 +699,25 @@ namespace Microsoft.PowerShell.Commands
             {
                 this.WriteVerbose(string.Format(CultureInfo.InvariantCulture, HelpDisplayStrings.OnlineHelpUri, uriToLaunch.OriginalString));
                 System.Diagnostics.Process browserProcess = new System.Diagnostics.Process();
+
                 browserProcess.StartInfo.UseShellExecute = false;
+
                 if (Platform.IsWindows)
                 {
-                    browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
-                } else if (Platform.IsOSX) {
+                    browserProcess.StartInfo.FileName = "cmd.exe";
+                    browserProcess.StartInfo.Arguments = string.Format(@"/c ""start /b """" {0}""", uriToLaunch.OriginalString);
+                }
+                else if (Platform.IsOSX)
+                {
                     browserProcess.StartInfo.FileName = "open";
                     browserProcess.StartInfo.Arguments = uriToLaunch.OriginalString;
-                } else if (Platform.IsLinux) {
+                }
+                else if (Platform.IsLinux)
+                {
                     browserProcess.StartInfo.FileName = "xdg-open";
                     browserProcess.StartInfo.Arguments = uriToLaunch.OriginalString;
                 }
+
                 browserProcess.Start();
             }
             catch (InvalidOperationException ioe)
