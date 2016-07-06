@@ -27,9 +27,7 @@ namespace Microsoft.PowerShell
         private static string DirectorySeparatorString = System.IO.Path.DirectorySeparatorChar.ToString();
 
         // Stub helper method so completion can be mocked
-#if !CORECLR
         [ExcludeFromCodeCoverage]
-#endif
         CommandCompletion IPSConsoleReadLineMockableMethods.CompleteInput(string input, int cursorIndex, Hashtable options, System.Management.Automation.PowerShell powershell)
         {
             return CalloutUsingDefaultConsoleMode(
@@ -308,7 +306,7 @@ namespace Microsoft.PowerShell
             for (int i = 0; i < menuColumnWidth; i++)
             {
                 int j = i + start;
-#if CORECLR                
+#if LINUX // TODO: use real inverse
                 ConsoleColor tempColor = (int)buffer[j].ForegroundColor == -1 
                     ? ConsoleColor.White : buffer[j].ForegroundColor;
                 buffer[j].ForegroundColor = (int)buffer[j].BackgroundColor == -1 

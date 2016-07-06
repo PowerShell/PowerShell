@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell
         private IConsole _console;
 
         private EngineIntrinsics _engineIntrinsics;
-#if !CORECLR
+#if !LINUX
         private static GCHandle _breakHandlerGcHandle;
 #endif
         private Thread _readKeyThread;
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell
         private ManualResetEvent _closingWaitHandle;
         private WaitHandle[] _threadProcWaitHandles;
         private WaitHandle[] _requestKeyWaitHandles;
-#if CORECLR
+#if LINUX // TODO: move to IConsole when there is a Linux IConsole implementation
         private bool _prePSReadlineControlCMode;
 #else
         private uint _prePSReadlineConsoleMode;
@@ -266,7 +266,7 @@ namespace Microsoft.PowerShell
                 throw new NotSupportedException();
             }
 
-#if CORECLR
+#if LINUX // TODO: move to IConsole when there is a Linux IConsole implementation
             _singleton._prePSReadlineControlCMode = Console.TreatControlCAsInput;
 #else
             _singleton._prePSReadlineConsoleMode = console.GetConsoleInputMode();
@@ -276,7 +276,7 @@ namespace Microsoft.PowerShell
             {
                 try
                 {
-#if CORECLR
+#if LINUX // TODO: move to IConsole when there is a Linux IConsole implementation
                     Console.TreatControlCAsInput = true;
 #else
                     // Clear a couple flags so we can actually receive certain keys:
@@ -362,7 +362,7 @@ namespace Microsoft.PowerShell
                 }
                 finally
                 {
-#if CORECLR
+#if LINUX // TODO: move to IConsole when there is a Linux IConsole implementation
                     Console.TreatControlCAsInput = _singleton._prePSReadlineControlCMode;
 #else
                     console.SetConsoleInputMode(_singleton._prePSReadlineConsoleMode);
@@ -454,7 +454,7 @@ namespace Microsoft.PowerShell
 
         T CalloutUsingDefaultConsoleMode<T>(Func<T> func)
         {
-#if CORECLR
+#if LINUX // TODO: move to IConsole when there is a Linux IConsole implementation
             bool psReadlineControlCMode = Console.TreatControlCAsInput;
             try
             {
@@ -590,7 +590,7 @@ namespace Microsoft.PowerShell
             _statusIsErrorMessage = false;
 
             _consoleBuffer = ReadBufferLines(_initialY, 1 + Options.ExtraPromptLineCount);
-#if CORECLR
+#if LINUX // TODO: not necessary if ReadBufferLines worked, or if rendering worked on spans instead of complete lines
             string newPrompt = GetPrompt();
             for (int i=0; i<newPrompt.Length; ++i)
             {
@@ -644,7 +644,7 @@ namespace Microsoft.PowerShell
                 }
             }
 
-#if CORECLR
+#if LINUX
             _historyFileMutex = new Mutex(false);
 #else
             _historyFileMutex = new Mutex(false, GetHistorySaveFileMutexName());
@@ -681,7 +681,7 @@ namespace Microsoft.PowerShell
             _killIndex = -1; // So first add indexes 0.
             _killRing = new List<string>(Options.MaximumKillRingCount);
 
-#if !CORECLR
+#if !LINUX
             _breakHandlerGcHandle = GCHandle.Alloc(new BreakHandler(_singleton.BreakHandler));
             NativeMethods.SetConsoleCtrlHandler((BreakHandler)_breakHandlerGcHandle.Target, true);
 #endif
@@ -691,11 +691,11 @@ namespace Microsoft.PowerShell
             _singleton._requestKeyWaitHandles = new WaitHandle[] {_singleton._keyReadWaitHandle, _singleton._closingWaitHandle};
             _singleton._threadProcWaitHandles = new WaitHandle[] {_singleton._readKeyWaitHandle, _singleton._closingWaitHandle};
 
+#if !CORECLR
             // This is for a "being hosted in an alternate appdomain scenario" (the
             // DomainUnload event is not raised for the default appdomain). It allows us
             // to exit cleanly when the appdomain is unloaded but the process is not going
             // away.
-#if !CORECLR
             if (!AppDomain.CurrentDomain.IsDefaultAppDomain())
             {
                 AppDomain.CurrentDomain.DomainUnload += (x, y) =>
@@ -733,13 +733,14 @@ namespace Microsoft.PowerShell
 
         private static void ExecuteOnSTAThread(Action action)
         {
-#if !CORECLR
+#if CORECLR
+            action();
+#else
             if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
             {
                 action();
                 return;
             }
-#endif
 
             Exception exception = null;
             var thread = new Thread(() =>
@@ -754,9 +755,7 @@ namespace Microsoft.PowerShell
                 }
             });
 
-#if !CORECLR
             thread.SetApartmentState(ApartmentState.STA);
-#endif
             thread.Start();
             thread.Join();
 
@@ -764,6 +763,7 @@ namespace Microsoft.PowerShell
             {
                 throw exception;
             }
+#endif
         }
 
         #region Miscellaneous bindable functions
@@ -899,7 +899,7 @@ namespace Microsoft.PowerShell
 
             _singleton._initialX = _singleton._console.CursorLeft;
             _singleton._consoleBuffer = ReadBufferLines(_singleton._initialY, 1 + _singleton.Options.ExtraPromptLineCount);
-#if CORECLR
+#if LINUX // TODO: ReadBufferLines only needed for extra line, but doesn't work on Linux
             for (int i=0; i<newPrompt.Length; ++i)
             {
                 _singleton._consoleBuffer[i].UnicodeChar = newPrompt[i];

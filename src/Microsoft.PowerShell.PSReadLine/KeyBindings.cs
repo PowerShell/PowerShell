@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell
                 { Keys.CtrlSpace,              MakeKeyHandler(MenuComplete,              "MenuComplete") },
                 { Keys.Tab,                    MakeKeyHandler(TabCompleteNext,           "TabCompleteNext") },
                 { Keys.ShiftTab,               MakeKeyHandler(TabCompletePrevious,       "TabCompletePrevious") },
-#if !CORECLR
+#if !LINUX
                 { Keys.VolumeDown,             MakeKeyHandler(Ignore,                    "Ignore") },
                 { Keys.VolumeUp,               MakeKeyHandler(Ignore,                    "Ignore") },
                 { Keys.VolumeMute,             MakeKeyHandler(Ignore,                    "Ignore") },
@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell
                 { Keys.ShiftF3,                MakeKeyHandler(CharacterSearchBackward,   "CharacterSearchBackward") },
                 { Keys.F8,                     MakeKeyHandler(HistorySearchBackward,     "HistorySearchBackward") },
                 { Keys.ShiftF8,                MakeKeyHandler(HistorySearchForward,      "HistorySearchForward") },
-#if !CORECLR
+#if !LINUX
                 { Keys.PageUp,                 MakeKeyHandler(ScrollDisplayUp,           "ScrollDisplayUp") },
                 { Keys.PageDown,               MakeKeyHandler(ScrollDisplayDown,         "ScrollDisplayDown") },
                 { Keys.CtrlPageUp,             MakeKeyHandler(ScrollDisplayUpLine,       "ScrollDisplayUpLine") },
@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell
                 { Keys.AltPeriod,       MakeKeyHandler(YankLastArg,          "YankLastArg") },
                 { Keys.AltUnderbar,     MakeKeyHandler(YankLastArg,          "YankLastArg") },
                 { Keys.AltCtrlY,        MakeKeyHandler(YankNthArg,           "YankNthArg") },
-#if !CORECLR
+#if !LINUX
                 { Keys.VolumeDown,      MakeKeyHandler(Ignore,               "Ignore") },
                 { Keys.VolumeUp,        MakeKeyHandler(Ignore,               "Ignore") },
                 { Keys.VolumeMute,      MakeKeyHandler(Ignore,               "Ignore") },

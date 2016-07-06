@@ -100,10 +100,7 @@ namespace Microsoft.PowerShell
 
             try
             {
-#if !CORECLR
                 _console.StartRender();
-#endif
-
                 bufferLineCount = ConvertOffsetToCoordinates(text.Length).Y - _initialY + 1 + statusLineCount;
                 if (_consoleBuffer.Length != bufferLineCount * bufferWidth)
                 {
@@ -231,16 +228,12 @@ namespace Microsoft.PowerShell
                         else if (size > 1)
                         {
                             _consoleBuffer[j].UnicodeChar = charToRender;
-#if !CORECLR
                             _consoleBuffer[j].Attributes = (ushort)(_consoleBuffer[j].Attributes |
                                                            (uint)CHAR_INFO_Attributes.COMMON_LVB_LEADING_BYTE);
-#endif
                             MaybeEmphasize(ref _consoleBuffer[j++], i, foregroundColor, backgroundColor);
                             _consoleBuffer[j].UnicodeChar = charToRender;
-#if !CORECLR
                             _consoleBuffer[j].Attributes = (ushort)(_consoleBuffer[j].Attributes |
                                                            (uint)CHAR_INFO_Attributes.COMMON_LVB_TRAILING_BYTE);
-#endif
                             MaybeEmphasize(ref _consoleBuffer[j++], i, foregroundColor, backgroundColor);
                         }
                         else
@@ -253,9 +246,7 @@ namespace Microsoft.PowerShell
             }
             finally
             {
-#if !CORECLR
                 _console.EndRender();
-#endif
             }
 
             for (; j < (_consoleBuffer.Length - (statusLineCount * _bufferWidth)); j++)
@@ -319,7 +310,7 @@ namespace Microsoft.PowerShell
 
             if ((_initialY + bufferLineCount) > (_console.WindowTop + _console.WindowHeight))
             {
-#if !CORECLR               
+#if !LINUX // TODO: verify this isn't necessary for LINUX
                 _console.WindowTop = _initialY + bufferLineCount - _console.WindowHeight;
 #endif
             }
@@ -472,7 +463,7 @@ namespace Microsoft.PowerShell
                 // to invert only the lower 3 bits to change the color is somewhat
                 // but looks best with the 2 default color schemes - starting PowerShell
                 // from it's shortcut or from a cmd shortcut.
-#if CORECLR                
+#if LINUX // TODO: set Inverse attribute and let render choose what to do.
                 ConsoleColor tempColor = ((int)foregroundColor == -1) ? ConsoleColor.White : foregroundColor;
                 foregroundColor = ((int)backgroundColor == -1) ? ConsoleColor.Black : backgroundColor;
                 backgroundColor = tempColor;
@@ -654,12 +645,9 @@ namespace Microsoft.PowerShell
             return (_statusLinePrompt.Length + _statusBuffer.Length) / _console.BufferWidth + 1;
         }
 
-#if !CORECLR
         [ExcludeFromCodeCoverage]
-#endif
         void IPSConsoleReadLineMockableMethods.Ding()
         {
-#if !CORECLR
             switch (Options.BellStyle)
             {
             case BellStyle.None:
@@ -671,7 +659,6 @@ namespace Microsoft.PowerShell
                 // TODO: flash prompt? command line?
                 break;
             }
-#endif
         }
 
         /// <summary>
@@ -696,7 +683,7 @@ namespace Microsoft.PowerShell
 
         #region Screen scrolling
 
-#if !CORECLR
+#if !LINUX
         /// <summary>
         /// Scroll the display up one screen.
         /// </summary>
