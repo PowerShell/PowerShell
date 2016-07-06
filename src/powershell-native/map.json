@@ -20,5 +20,12 @@
     "monad/nttargets/assemblies/nativemsh/pwrshplugin/pwrshheaders.h": "nativemsh/pwrshplugin/pwrshheaders.h",
     "monad/nttargets/assemblies/nativemsh/pwrshplugin/pwrshplugin.h": "nativemsh/pwrshplugin/pwrshplugin.h",
     "monad/nttargets/assemblies/nativemsh/pwrshplugin/pwrshplugindefs.h": "nativemsh/pwrshplugin/pwrshplugindefs.h",
-    "monad/nttargets/assemblies/nativemsh/pwrshplugin/pwrshplugin.def": "nativemsh/pwrshplugin/pwrshplugin.def"
+    "monad/nttargets/assemblies/nativemsh/pwrshplugin/pwrshplugin.def": "nativemsh/pwrshplugin/pwrshplugin.def",
+    "monad/nttargets/assemblies/nativemsh/pwrshexe/CssMainEntry.cpp": "nativemsh/pwrshexe/CssMainEntry.cpp",
+    "monad/nttargets/assemblies/nativemsh/pwrshexe/Monad.ico": "nativemsh/pwrshexe/Monad.ico",
+    "monad/nttargets/assemblies/nativemsh/pwrshexe/MshResources.rc": "nativemsh/pwrshexe/MshResources.rc",
+    "monad/nttargets/assemblies/nativemsh/pwrshexe/nativemsh.mc": "nativemsh/pwrshexe/NativeMsh.mc",
+    "monad/nttargets/assemblies/nativemsh/pwrshexe/PowerShell.exe.manifest": "nativemsh/pwrshexe/PowerShell.exe.manifest",
+    "monad/nttargets/assemblies/nativemsh/pwrshexe/PowerShell_securitybadge.ico": "nativemsh/pwrshexe/PowerShell_securitybadge.ico",
+    "monad/nttargets/assemblies/nativemsh/pwrshexe/version.rc": "nativemsh/pwrshexe/version.rc"
 }
