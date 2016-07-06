@@ -14,6 +14,8 @@
            [snippet] Both StandardName and DaylightName are localized according to the current user default UI language.
 #>
 
+if ($IsWindows) {
+
 function Assert-ListsSame
 {
     param([object[]] $expected, [object[]] $observed )
@@ -130,4 +132,6 @@ Describe "Set-Timezone test cases" -tags 'Innerloop','RI' {
         $observed = Get-TimeZone
         $observed.Id -eq $origTimeZoneID | Should Be $true
     }
+}
+
 }

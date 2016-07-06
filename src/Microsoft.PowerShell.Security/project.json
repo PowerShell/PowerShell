@@ -10,6 +10,14 @@
         "allowUnsafe": true
     },
 
+    "configurations": {
+        "Linux": {
+            "buildOptions": {
+                "define": [ "LINUX" ]
+            }
+        }
+    },
+
     "dependencies": {
         "System.Management.Automation": "1.0.0-*"
     },

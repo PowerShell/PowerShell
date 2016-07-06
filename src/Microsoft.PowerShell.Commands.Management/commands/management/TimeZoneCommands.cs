@@ -1,3 +1,5 @@
+#if !LINUX
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -860,3 +862,5 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
+
+#endif

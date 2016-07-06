@@ -3,6 +3,8 @@
 # Copyright (c) Microsoft Corporation, 2016
 #
 
+if ($IsWindows) {
+
 $script:catalogPath = "" 
  
 Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "Innerloop","BVT" {
@@ -374,4 +376,6 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "Innerlo
             $result | Should Be "Valid"
         }
     }
+}
+
 }
