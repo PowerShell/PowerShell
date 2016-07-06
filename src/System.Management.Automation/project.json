@@ -125,6 +125,12 @@
                         "utils/perfCounters/CounterSetRegistrarBase.cs",
                         "utils/perfCounters/PSPerfCountersMgr.cs"
                     ]
+                },
+                "embed": {
+                    "exclude": [
+                        "resources/CoreMshSnapinResources.resx",
+                        "resources/ErrorPackageRemoting.resx"
+                    ]
                 }
             },
             "dependencies": {
@@ -164,6 +170,11 @@
             }
         },
         "net451": {
+            "buildOptions": {
+                "embed": {
+                    "exclude": [ "resources/CoreClrStubResources.resx" ]
+                }
+            },
             "frameworkAssemblies": {
                 "System.Runtime": "",
                 "System.Xml": "",

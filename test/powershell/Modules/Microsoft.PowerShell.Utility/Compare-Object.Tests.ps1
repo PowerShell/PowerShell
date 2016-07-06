@@ -1,6 +1,6 @@
 Describe "Compare-Object" {
 	BeforeAll {
-		$nl            = [Environment]::NewLine
+		$nl = [Environment]::NewLine
 
 		$content1 = "line 1" + $nl + "line 2"
 		$content2 = "line 1" + $nl + "line 2.1"
@@ -12,10 +12,10 @@ Describe "Compare-Object" {
 		$file3 = Join-Path -Path $TestDrive -ChildPath "test3.txt"
 		$file4 = Join-Path -Path $TestDrive -ChildPath "test4.txt"
 
-		New-Item $file1 -ItemType file -Value $content1 -Force
-		New-Item $file2 -ItemType file -Value $content2 -Force
-		New-Item $file3 -ItemType file -Value $content3 -Force
-		New-Item $file4 -ItemType file -Value $content4 -Force
+		$null = New-Item $file1 -ItemType file -Value $content1 -Force
+		$null = New-Item $file2 -ItemType file -Value $content2 -Force
+		$null = New-Item $file3 -ItemType file -Value $content3 -Force
+		$null = New-Item $file4 -ItemType file -Value $content4 -Force
 	}
 	
     It "Should be able to compare the same object using the referenceObject and differenceObject switches" {

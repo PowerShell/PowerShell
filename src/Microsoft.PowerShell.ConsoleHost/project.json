@@ -68,7 +68,18 @@
         "netstandard1.6": {
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "buildOptions": {
-                "define": [ "CORECLR", "PORTABLE" ]
+                "define": [ "CORECLR" ],
+                "compile": {
+                    "exclude": [
+                        "singleshell/installer/EngineInstaller.cs",
+                        "singleshell/installer/MshHostMshSnapin.cs"
+                    ]
+                },
+                "embed": {
+                    "exclude": [
+                        "resources/HostMshSnapinResources.resx"
+                    ]
+                }
             },
             "dependencies": {
                 "Newtonsoft.Json": "7.0.1",

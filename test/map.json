@@ -1,0 +1,4 @@
+{
+    "monad/tests/MultiMachine/Tests/Commands/Cmdlets/Microsoft.PowerShell.Management/Pester.Commands.Cmdlets.Management.TimeZone.Tests.ps1":  "powershell/Modules/Microsoft.PowerShell.Management/TimeZone.Tests.ps1",
+    "monad/tests/MultiMachine/Tests/Commands/Cmdlets/Microsoft.PowerShell.Security/Pester.Commands.Cmdlets.CatalogTests.ps1":  "powershell/Modules/Microsoft.PowerShell.Security/FileCatalog.Tests.ps1"
+}

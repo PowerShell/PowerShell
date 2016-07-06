@@ -743,6 +743,8 @@
     "monad/src/namespaces/Buffer.cs":  "namespaces/Buffer.cs",
     "monad/src/engine/interpreter/LocalAccess.cs":  "engine/interpreter/LocalAccess.cs",
     "monad/src/security/SecuritySupport.cs":  "security/SecuritySupport.cs",
+    "monad/src/security/CatalogHelper.cs":  "security/CatalogHelper.cs",
+    "monad/src/engine/resources/CatalogStrings.resx": "resources/CatalogStrings.resx",
     "monad/src/engine/remoting/client/remotepipeline.cs":  "engine/remoting/client/remotepipeline.cs",
     "monad/src/engine/remoting/common/remotingexceptions.cs":  "engine/remoting/common/remotingexceptions.cs",
     "monad/src/help/BaseCommandHelpInfo.cs":  "help/BaseCommandHelpInfo.cs",

@@ -1,0 +1,49 @@
+<MachineInventory aliasing="True">
+     <Machine machineRole="Server">
+        <Accounts>
+          <LocalAdmin user="root" password="Bull_dog1" />
+        </Accounts>
+        <BMCMachine>No</BMCMachine>
+        <BranchName>Linux</BranchName>
+        <BuildNumber>CentOS</BuildNumber>
+        <BuildType>Fre</BuildType>
+        <Factory>00000000-0000-0000-0000-000000000000</Factory>
+        <HyperVEnabled>No</HyperVEnabled>
+        <IPV4>Yes</IPV4>
+        <IPV4Address>
+          <ip>$ipAddress</ip>
+        </IPV4Address>
+        <IPV6>Yes</IPV6>
+        <IPV6Address>
+          <ip>2001:4898:28:3:215:5dff:feb8:b9b3</ip>
+        </IPV6Address>
+        <MachineName>Linux1</MachineName>
+        <Membership>Workgroup</Membership>
+        <NetworkLocation>None</NetworkLocation>
+        <OSArchitecture>X64</OSArchitecture>
+        <OSBaseLanguage>en-US</OSBaseLanguage>
+        <Platform>Windows 8 Server</Platform>
+        <ProcessorArchitecture>X64</ProcessorArchitecture>
+        <SKU>Server DataCenter</SKU>
+        <ServicePack>None</ServicePack>
+        <Subnet>Unknown</Subnet>
+        <SystemDrive>C:\</SystemDrive>
+        <VirtualMachine>No</VirtualMachine>
+        <WSManListeners>
+          <WSManListener Port="5985" URLPrefix="wsman" UseSSL="False" DefaultListener="True" ServiceType="OMI">
+            <AuthSchemes>
+              <AuthScheme>Basic</AuthScheme>
+            </AuthSchemes>
+            <Capabilities>
+            </Capabilities>
+          </WSManListener>
+          <WSManListener Port="5986" URLPrefix="wsman" UseSSL="True" ServiceType="OMI">
+            <AuthSchemes>
+              <AuthScheme>Basic</AuthScheme>
+            </AuthSchemes>
+            <Capabilities>
+            </Capabilities>
+          </WSManListener>
+        </WSManListeners>
+      </Machine>
+</MachineInventory>
