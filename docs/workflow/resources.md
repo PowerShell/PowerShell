@@ -20,7 +20,3 @@ It will try to create `.cs` files for you and you will get whole bunch of hard-t
 
 To edit resource file, use any **plain text editor**. 
 Resource file is a simple xml, and it's easy to edit.
-
-## Adding resx files
-
-Add corresponding entries in `Start-ResGen` in `.\build.psm1`.
