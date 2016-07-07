@@ -544,7 +544,12 @@ namespace Microsoft.PowerShell
             _initialY = _console.CursorTop - Options.ExtraPromptLineCount;
             _initialBackgroundColor = _console.BackgroundColor;
             _initialForegroundColor = _console.ForegroundColor;
-            _space = new CHAR_INFO(' ', _initialForegroundColor, _initialBackgroundColor);
+            _space = new BufferChar
+            {
+                UnicodeChar = ' ',
+                BackgroundColor = _initialBackgroundColor,
+                ForegroundColor = _initialForegroundColor
+            };
             _bufferWidth = _console.BufferWidth;
             _killCommandCount = 0;
             _yankCommandCount = 0;

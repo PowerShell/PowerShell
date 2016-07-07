@@ -13,14 +13,16 @@ namespace Microsoft.PowerShell
 {
     public partial class PSConsoleReadLine
     {
+#if LINUX
         private const ConsoleColor UnknownColor = (ConsoleColor) (-1);
-        private CHAR_INFO[] _consoleBuffer;
+#endif
+        private BufferChar[] _consoleBuffer;
         private int _initialX;
         private int _initialY;
         private int _bufferWidth;
         private ConsoleColor _initialBackgroundColor;
         private ConsoleColor _initialForegroundColor;
-        private CHAR_INFO _space;
+        private BufferChar _space;
         private int _current;
         private int _emphasisStart;
         private int _emphasisLength;
@@ -105,7 +107,7 @@ namespace Microsoft.PowerShell
                 bufferLineCount = ConvertOffsetToCoordinates(text.Length).Y - _initialY + 1 + statusLineCount;
                 if (_consoleBuffer.Length != bufferLineCount * bufferWidth)
                 {
-                    var newBuffer = new CHAR_INFO[bufferLineCount * bufferWidth];
+                    var newBuffer = new BufferChar[bufferLineCount * bufferWidth];
                     Array.Copy(_consoleBuffer, newBuffer, _initialX + (Options.ExtraPromptLineCount * _bufferWidth));
                     if (_consoleBuffer.Length > bufferLineCount * bufferWidth)
                     {
@@ -226,17 +228,17 @@ namespace Microsoft.PowerShell
                             MaybeEmphasize(ref _consoleBuffer[j++], i, foregroundColor, backgroundColor);
 
                         }
+#if !LINUX
                         else if (size > 1)
                         {
                             _consoleBuffer[j].UnicodeChar = charToRender;
-                            _consoleBuffer[j].Attributes = (ushort)(_consoleBuffer[j].Attributes |
-                                                           (uint)CHAR_INFO_Attributes.COMMON_LVB_LEADING_BYTE);
+                            _consoleBuffer[j].IsLeadByte = true;
                             MaybeEmphasize(ref _consoleBuffer[j++], i, foregroundColor, backgroundColor);
                             _consoleBuffer[j].UnicodeChar = charToRender;
-                            _consoleBuffer[j].Attributes = (ushort)(_consoleBuffer[j].Attributes |
-                                                           (uint)CHAR_INFO_Attributes.COMMON_LVB_TRAILING_BYTE);
+                            _consoleBuffer[j].IsTrailByte = true;
                             MaybeEmphasize(ref _consoleBuffer[j++], i, foregroundColor, backgroundColor);
                         }
+#endif
                         else
                         {
                             _consoleBuffer[j].UnicodeChar = charToRender;
@@ -286,7 +288,7 @@ namespace Microsoft.PowerShell
 
                 while (promptChar >= 0)
                 {
-                    var c = (char)_consoleBuffer[promptChar].UnicodeChar;
+                    var c = _consoleBuffer[promptChar].UnicodeChar;
                     if (char.IsWhiteSpace(c))
                     {
                         promptChar -= 1;
@@ -332,7 +334,7 @@ namespace Microsoft.PowerShell
         private static void WriteBlankLines(int count, int top)
         {
             var console = _singleton._console;
-            var blanks = new CHAR_INFO[count * console.BufferWidth];
+            var blanks = new BufferChar[count * console.BufferWidth];
             for (int i = 0; i < blanks.Length; i++)
             {
                 blanks[i].BackgroundColor = console.BackgroundColor;
@@ -342,7 +344,7 @@ namespace Microsoft.PowerShell
             console.WriteBufferLines(blanks, ref top);
         }
 
-        private static CHAR_INFO[] ReadBufferLines(int top, int count)
+        private static BufferChar[] ReadBufferLines(int top, int count)
         {
             return _singleton._console.ReadBufferLines(top, count);
         }
@@ -450,7 +452,7 @@ namespace Microsoft.PowerShell
             return i >= start && i < end;
         }
 
-        private void MaybeEmphasize(ref CHAR_INFO charInfo, int i, ConsoleColor foregroundColor, ConsoleColor backgroundColor)
+        private void MaybeEmphasize(ref BufferChar charInfo, int i, ConsoleColor foregroundColor, ConsoleColor backgroundColor)
         {
             if (i >= _emphasisStart && i < (_emphasisStart + _emphasisLength))
             {
@@ -682,7 +684,7 @@ namespace Microsoft.PowerShell
             return key.Key == ConsoleKey.Y;
         }
 
-        #region Screen scrolling
+#region Screen scrolling
 
 #if !LINUX
         /// <summary>
@@ -804,6 +806,6 @@ namespace Microsoft.PowerShell
         }
 
 #endif
-        #endregion Screen scrolling
+#endregion Screen scrolling
     }
 }

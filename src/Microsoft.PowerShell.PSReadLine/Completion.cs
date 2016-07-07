@@ -298,24 +298,14 @@ namespace Microsoft.PowerShell
             return replacementText;
         }
 
-        private static void InvertSelectedCompletion(CHAR_INFO[] buffer, int selectedItem, int menuColumnWidth, int menuRows)
+        private static void InvertSelectedCompletion(BufferChar[] buffer, int selectedItem, int menuColumnWidth, int menuRows)
         {
             var selectedX = selectedItem / menuRows;
             var selectedY = selectedItem - (selectedX * menuRows);
             var start = selectedY * _singleton._console.BufferWidth + selectedX * menuColumnWidth;
             for (int i = 0; i < menuColumnWidth; i++)
             {
-                int j = i + start;
-#if LINUX // TODO: use real inverse
-                ConsoleColor tempColor = buffer[j].ForegroundColor == UnknownColor
-                    ? ConsoleColor.White : buffer[j].ForegroundColor;
-                buffer[j].ForegroundColor = buffer[j].BackgroundColor == UnknownColor
-                    ? ConsoleColor.Black : buffer[j].BackgroundColor;
-                buffer[j].BackgroundColor = tempColor;
-#else
-                buffer[j].ForegroundColor = (ConsoleColor)((int)buffer[j].ForegroundColor ^ 7);
-                buffer[j].BackgroundColor = (ConsoleColor)((int)buffer[j].BackgroundColor ^ 7);
-#endif
+                buffer[i + start].Inverse = true;
             }
         }
 
