@@ -47,7 +47,17 @@
                         "commands/management/UseTransactionCommand.cs",
                         "commands/management/WMIHelper.cs",
                         "commands/management/WebServiceProxy.cs",
-                        "singleshell/installer/MshManagementMshSnapin.cs"
+                        "singleshell/installer/MshManagementMshSnapin.cs",
+
+                        "gen/EventlogResources.cs",
+                        "gen/TransactionResources.cs",
+                        "gen/WebServiceResources.cs",
+                        "gen/HotFixResources.cs",
+                        "gen/ControlPanelResources.cs",
+                        "gen/WmiResources.cs",
+                        "gen/ManagementMshSnapInResources.cs",
+                        "gen/ClearRecycleBinResources.cs",
+                        "gen/ClipboardResources.cs"
                     ]
                 },
                 "embed": {
@@ -83,7 +93,9 @@
             "buildOptions": {
                 "compile": {
                     "exclude": [
-                        "commands/management/ControlPanelItemCommand.cs"
+                        "commands/management/ControlPanelItemCommand.cs",
+
+                        "gen/ControlPanelResources.cs"
                     ]
                 },
                 "embed": {

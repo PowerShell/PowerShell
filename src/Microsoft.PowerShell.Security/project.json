@@ -31,7 +31,11 @@
                     "exclude": [
                         "security/CertificateCommands.cs",
                         "security/CmsCommands.cs",
-                        "singleshell/installer/MshSecurityMshSnapin.cs"
+                        "singleshell/installer/MshSecurityMshSnapin.cs",
+
+                        "gen/CertificateCommands.cs",
+                        "gen/CmsCommands.cs",
+                        "gen/SecurityMshSnapinResources.cs"
                     ]
                 },
                 "embed": {

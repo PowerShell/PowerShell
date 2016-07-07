@@ -58,7 +58,18 @@
                         "commands/utility/WebCmdlet/WebResponseObjectFactory.cs",
                         "commands/utility/convert-HTML.cs",
                         "commands/utility/update-list.cs",
-                        "singleshell/installer/MshUtilityMshSnapin.cs"
+                        "singleshell/installer/MshUtilityMshSnapin.cs",
+
+                        "gen/FormatAndOut_out_gridview.cs",
+                        "gen/ImplicitRemotingStrings.cs",
+                        "gen/UtilityMshSnapinResources.cs",
+                        "gen/OutPrinterDisplayStrings.cs",
+                        "gen/UpdateListStrings.cs",
+                        "gen/SendMailMessageStrings.cs",
+                        "gen/ConvertFromStringResources.cs",
+                        "gen/ConvertStringResources.cs",
+                        "gen/FlashExtractStrings.cs",
+                        "gen/ImmutableStrings.cs"
                     ]
                 },
                 "embed": {
@@ -67,7 +78,6 @@
                         "resources/ImplicitRemotingStrings.resx",
                         "resources/UtilityMshSnapinResources.resx",
                         "resources/OutPrinterDisplayStrings.resx",
-                        "resources/TraceCommandStrings.resx",
                         "resources/UpdateListStrings.resx",
                         "resources/SendMailMessageStrings.resx",
                         "resources/ConvertFromStringResources.resx",
