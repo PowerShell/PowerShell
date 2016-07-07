@@ -60,7 +60,8 @@ unsigned int PowerShellCoreClrWorker::LoadWorkerCallbackPtrs(
         "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
         "System.Management.Automation.PowerShellAssemblyLoadContextInitializer",
         "SetPowerShellAssemblyLoadContext",
-        (INT_PTR*)&initDelegate);
+        //(INT_PTR*)&initDelegate);
+        (void**)&initDelegate);
 
     if (FAILED(hr))
     {
@@ -80,7 +81,7 @@ unsigned int PowerShellCoreClrWorker::LoadWorkerCallbackPtrs(
         "System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
         "System.Management.Automation.Remoting.WSManPluginManagedEntryWrapper",
         "InitPlugin",
-        (INT_PTR*)&entryPointDelegate);
+        (void**)&entryPointDelegate);
     if (FAILED(hr))
     {
         output->DisplayMessage(false, g_CREATING_MSH_ENTRANCE_FAILED, hr);
@@ -232,7 +233,7 @@ PowerShellClrWorker::~PowerShellClrWorker()
 unsigned int PowerShellClrWorker::LaunchClr(
     _In_ LPCWSTR wszMonadVersion,
     _In_ LPCWSTR wszRuntimeVersion,
-    _In_ LPCWSTR friendlyName)
+    _In_ LPCSTR friendlyName)
 {
     return commonLib.LaunchCLR(wszMonadVersion, wszRuntimeVersion, &pHost);
 }
@@ -303,7 +304,7 @@ unsigned int PowerShellClrWorker::LoadWorkerCallbackPtrs(
 unsigned int PowerShellClrManagedWorker::LaunchClr(
     _In_ LPCWSTR wszMonadVersion,
     _In_ LPCWSTR wszRuntimeVersion,
-    _In_ LPCWSTR friendlyName)
+    _In_ LPCSTR friendlyName)
 {
     return commonLib.LaunchCLR(wszMonadVersion, wszRuntimeVersion, &pHost);
 }

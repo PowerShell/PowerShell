@@ -245,6 +245,7 @@ namespace NativeMsh
 
         // The path to the directory that CoreCLR is in
         char m_coreCLRDirectoryPath[MAX_PATH];
+        wchar_t m_coreCLRDirectoryPathW[MAX_PATH];
 
     public:
 
@@ -333,6 +334,25 @@ namespace NativeMsh
             if (hostClrPath)
             {
                 ::ExpandEnvironmentStringsA(hostClrPath, m_coreCLRDirectoryPath, MAX_PATH);
+
+                // Generate the wide version of the string and save its value;
+                //
+                // This is a two call function. The first call is to get the necessary length.
+                // The second call is to perform the actual operation.
+                int length = MultiByteToWideChar(CP_UTF8, 0, m_coreCLRDirectoryPath, -1, NULL, 0);
+                if (0 < length)
+                {
+                    LPWSTR result = new wchar_t[length];
+                    if (NULL != result)
+                    {
+                        length = ::MultiByteToWideChar(CP_UTF8, 0, m_coreCLRDirectoryPath, -1, result, length);
+                        if (0 < length)
+                        {
+                            wcscpy_s(m_coreCLRDirectoryPathW, MAX_PATH, result);
+                        }
+                        delete[] result; // Free the allocated string to avoid a memory leak
+                    }
+                }
             }
         }
 
@@ -340,6 +360,12 @@ namespace NativeMsh
         PCSTR GetCoreCLRDirectoryPath()
         {
             return m_coreCLRDirectoryPath;
+        }
+
+        // Returns the directory path of the host module
+        PCWSTR GetCoreCLRDirectoryPathW()
+        {
+            return m_coreCLRDirectoryPathW;
         }
     };
 } // namespace NativeMsh

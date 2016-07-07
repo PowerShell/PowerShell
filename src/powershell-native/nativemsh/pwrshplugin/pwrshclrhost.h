@@ -47,7 +47,7 @@ public:
     virtual unsigned int LaunchClr(
         _In_ LPCWSTR wszMonadVersion, 
         _In_ LPCWSTR wszRuntimeVersion,
-        _In_ LPCWSTR friendlyName) = 0;
+        _In_ LPCSTR friendlyName) = 0;
 
     virtual unsigned int LoadWorkerCallbackPtrs(
         _In_ PwrshPluginWkr_Ptrs* workerCallbackPtrs,
@@ -90,7 +90,7 @@ public:
     virtual unsigned int LaunchClr(
         _In_ LPCWSTR wszMonadVersion,
         _In_ LPCWSTR wszRuntimeVersion,
-        _In_ LPCWSTR friendlyName);
+        _In_ LPCSTR friendlyName);
 
     virtual unsigned int LoadWorkerCallbackPtrs(
         _In_ PwrshPluginWkr_Ptrs* workerCallbackPtrs,
@@ -117,7 +117,7 @@ public:
     virtual unsigned int LaunchClr(
         _In_ LPCWSTR wszMonadVersion,
         _In_ LPCWSTR wszRuntimeVersion,
-        _In_ LPCWSTR friendlyName);
+        _In_ LPCSTR friendlyName);
 
     virtual unsigned int LoadWorkerCallbackPtrs(
         _In_ PwrshPluginWkr_Ptrs* workerCallbackPtrs,
@@ -146,15 +146,16 @@ public:
 
     virtual ~PowerShellCoreClrWorker();
 
-    std::wstring GetHostDirectory() { return std::wstring(hostEnvironment.GetHostDirectoryPath()); }
-    std::wstring GetClrDirectory() { return std::wstring(hostEnvironment.GetCoreCLRDirectoryPath()); }
+    std::wstring GetHostDirectory() { return std::wstring(hostEnvironment.GetHostDirectoryPathW()); }
+    std::wstring GetClrDirectory() { return std::wstring(hostEnvironment.GetCoreCLRDirectoryPathW()); }
 
     //
     // IPowerShellClrHost Methods
     //
     virtual unsigned int LaunchClr(
         _In_ LPCWSTR wszMonadVersion,
-        _In_ LPCWSTR wszRuntimeVersion);
+        _In_ LPCWSTR wszRuntimeVersion,
+        _In_ LPCSTR friendlyName);
 
     virtual unsigned int LoadWorkerCallbackPtrs(
         _In_ PwrshPluginWkr_Ptrs* workerCallbackPtrs,

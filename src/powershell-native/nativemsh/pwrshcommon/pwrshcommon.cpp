@@ -868,11 +868,13 @@ namespace NativeMsh
     bool PwrshCommon::DoesAssemblyExist(
         std::string& fileToTest)
     {
-        FILE *file = sysCalls->fopen(fileToTest.c_str(), "r"); // TODO: Use fopen_s?
+        //FILE *file = sysCalls->fopen(fileToTest.c_str(), "r"); // TODO: Use fopen_s?
+        FILE *file = NULL;
+        errno_t status = sysCalls->fopen_s(&file, fileToTest.c_str(), "r");
 
         if (file != NULL) {
             sysCalls->fclose(file);
-            return true;
+            return (status == 0);
         }
         return false;
     }

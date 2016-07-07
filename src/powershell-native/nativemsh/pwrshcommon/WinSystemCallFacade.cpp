@@ -53,11 +53,12 @@ namespace NativeMsh
         return ::FreeLibrary(hModule);
     }
 
-    FILE* WinSystemCallFacade::fopen(
+    errno_t WinSystemCallFacade::fopen_s(
+        FILE** file,
         const char *filename,
         const char *mode)
     {
-        return ::fopen(filename, mode);
+        return ::fopen_s(file, filename, mode);
     }
 
     int WinSystemCallFacade::fclose(

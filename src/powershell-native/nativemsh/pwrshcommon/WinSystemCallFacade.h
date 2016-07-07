@@ -46,7 +46,8 @@ namespace NativeMsh
             _In_  HMODULE hModule);
 
         // File Manipulation Wrappers
-        virtual FILE* fopen(
+        virtual errno_t fopen_s(
+            FILE** file,
             const char *filename,
             const char *mode);
 

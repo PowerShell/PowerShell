@@ -714,7 +714,7 @@ private:
                     break;
                 }
 
-                exitCode = powerShellClrHost->LaunchClr(wszMonadVersion, wszTempCLRVersion, L"PwrshPlugin");
+                exitCode = powerShellClrHost->LaunchClr(wszMonadVersion, wszTempCLRVersion, "PwrshPlugin");
                 if (EXIT_CODE_SUCCESS != exitCode)
                 {
                     PWSTR msg = NULL;
