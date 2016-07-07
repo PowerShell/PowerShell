@@ -43,11 +43,7 @@ namespace Microsoft.PowerShell
         private ManualResetEvent _closingWaitHandle;
         private WaitHandle[] _threadProcWaitHandles;
         private WaitHandle[] _requestKeyWaitHandles;
-#if LINUX // TODO: move to IConsole when there is a Linux IConsole implementation
-        private bool _prePSReadlineControlCMode;
-#else
-        private uint _prePSReadlineConsoleMode;
-#endif
+        private object _savedConsoleInputMode;
 
         private readonly StringBuilder _buffer;
         private readonly StringBuilder _statusBuffer;
@@ -266,32 +262,13 @@ namespace Microsoft.PowerShell
                 throw new NotSupportedException();
             }
 
-#if LINUX // TODO: move to IConsole when there is a Linux IConsole implementation
-            _singleton._prePSReadlineControlCMode = Console.TreatControlCAsInput;
-#else
-            _singleton._prePSReadlineConsoleMode = console.GetConsoleInputMode();
-#endif
+            _singleton._savedConsoleInputMode = _singleton._console.GetConsoleInputMode();
             bool firstTime = true;
             while (true)
             {
                 try
                 {
-#if LINUX // TODO: move to IConsole when there is a Linux IConsole implementation
-                    Console.TreatControlCAsInput = true;
-#else
-                    // Clear a couple flags so we can actually receive certain keys:
-                    //     ENABLE_PROCESSED_INPUT - enables Ctrl+C
-                    //     ENABLE_LINE_INPUT - enables Ctrl+S
-                    // Also clear a couple flags so we don't mask the input that we ignore:
-                    //     ENABLE_MOUSE_INPUT - mouse events
-                    //     ENABLE_WINDOW_INPUT - window resize events
-                    var mode = _singleton._prePSReadlineConsoleMode &
-                               ~(NativeMethods.ENABLE_PROCESSED_INPUT |
-                                 NativeMethods.ENABLE_LINE_INPUT |
-                                 NativeMethods.ENABLE_WINDOW_INPUT |
-                                 NativeMethods.ENABLE_MOUSE_INPUT);
-                    console.SetConsoleInputMode(mode);
-#endif
+                    _singleton._console.SetConsoleInputMode(_singleton._savedConsoleInputMode);
 
                     if (firstTime)
                     {
@@ -362,11 +339,7 @@ namespace Microsoft.PowerShell
                 }
                 finally
                 {
-#if LINUX // TODO: move to IConsole when there is a Linux IConsole implementation
-                    Console.TreatControlCAsInput = _singleton._prePSReadlineControlCMode;
-#else
-                    console.SetConsoleInputMode(_singleton._prePSReadlineConsoleMode);
-#endif
+                    _singleton._console.RestoreConsoleInputMode(_singleton._savedConsoleInputMode);
                 }
             }
         }
@@ -454,29 +427,16 @@ namespace Microsoft.PowerShell
 
         T CalloutUsingDefaultConsoleMode<T>(Func<T> func)
         {
-#if LINUX // TODO: move to IConsole when there is a Linux IConsole implementation
-            bool psReadlineControlCMode = Console.TreatControlCAsInput;
+            var currentMode = _console.GetConsoleInputMode();
             try
             {
-                Console.TreatControlCAsInput = _prePSReadlineControlCMode;
+                _console.RestoreConsoleInputMode(_savedConsoleInputMode);
                 return func();
             }
             finally
             {
-                Console.TreatControlCAsInput = psReadlineControlCMode;
+                _console.RestoreConsoleInputMode(currentMode);
             }
-#else
-            uint psReadlineConsoleMode = _console.GetConsoleInputMode();
-            try
-            {
-                _console.SetConsoleInputMode(_prePSReadlineConsoleMode);
-                return func();
-            }
-            finally
-            {
-                _console.SetConsoleInputMode(psReadlineConsoleMode);
-            }
-#endif
         }
 
         void CalloutUsingDefaultConsoleMode(Action action)
@@ -519,7 +479,11 @@ namespace Microsoft.PowerShell
         private PSConsoleReadLine()
         {
             _mockableMethods = this;
+#if LINUX
+            _console = new TTYConsole();
+#else
             _console = new ConhostConsole();
+#endif
 
             SetDefaultWindowsBindings();
 
@@ -788,13 +752,11 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            #region VI special case
             if (_singleton._options.EditMode == EditMode.Vi && key.Value.KeyChar == '0')
             {
                 BeginningOfLine();
                 return;
             }
-            #endregion VI special case
 
             bool sawDigit = false;
             _singleton._statusLinePrompt = "digit-argument: ";

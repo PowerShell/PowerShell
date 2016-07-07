@@ -13,6 +13,7 @@ namespace Microsoft.PowerShell
 {
     public partial class PSConsoleReadLine
     {
+        private const ConsoleColor UnknownColor = (ConsoleColor) (-1);
         private CHAR_INFO[] _consoleBuffer;
         private int _initialX;
         private int _initialY;
@@ -464,8 +465,8 @@ namespace Microsoft.PowerShell
                 // but looks best with the 2 default color schemes - starting PowerShell
                 // from it's shortcut or from a cmd shortcut.
 #if LINUX // TODO: set Inverse attribute and let render choose what to do.
-                ConsoleColor tempColor = ((int)foregroundColor == -1) ? ConsoleColor.White : foregroundColor;
-                foregroundColor = ((int)backgroundColor == -1) ? ConsoleColor.Black : backgroundColor;
+                ConsoleColor tempColor = (foregroundColor == UnknownColor) ? ConsoleColor.White : foregroundColor;
+                foregroundColor = (backgroundColor == UnknownColor) ? ConsoleColor.Black : backgroundColor;
                 backgroundColor = tempColor;
 #else
                 foregroundColor = (ConsoleColor)((int)foregroundColor ^ 7);

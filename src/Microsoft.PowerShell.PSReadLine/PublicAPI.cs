@@ -28,8 +28,9 @@ namespace Microsoft.PowerShell
         [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
         public interface IConsole
         {
-            uint GetConsoleInputMode();
-            void SetConsoleInputMode(uint mode);
+            object GetConsoleInputMode();
+            void SetConsoleInputMode(object mode);
+            void RestoreConsoleInputMode(object mode);
             ConsoleKeyInfo ReadKey();
             bool KeyAvailable { get; }
             int CursorLeft { get; set; }

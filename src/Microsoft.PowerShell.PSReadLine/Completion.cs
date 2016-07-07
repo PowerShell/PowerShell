@@ -307,9 +307,9 @@ namespace Microsoft.PowerShell
             {
                 int j = i + start;
 #if LINUX // TODO: use real inverse
-                ConsoleColor tempColor = (int)buffer[j].ForegroundColor == -1 
+                ConsoleColor tempColor = buffer[j].ForegroundColor == UnknownColor
                     ? ConsoleColor.White : buffer[j].ForegroundColor;
-                buffer[j].ForegroundColor = (int)buffer[j].BackgroundColor == -1 
+                buffer[j].ForegroundColor = buffer[j].BackgroundColor == UnknownColor
                     ? ConsoleColor.Black : buffer[j].BackgroundColor;
                 buffer[j].BackgroundColor = tempColor;
 #else
