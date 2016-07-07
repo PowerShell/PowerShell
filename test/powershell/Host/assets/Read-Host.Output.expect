@@ -1,0 +1,27 @@
+#!/usr/bin/expect -f
+
+exp_internal 1
+
+# Expects path to PowerShell as first argument
+set powershell [lindex $argv 0]
+
+set timeout 5
+
+spawn $powershell -nologo -noprofile Read-Host prompt
+
+expect "prompt: $" {
+    send "input\r"
+}
+
+# This is the old, incorrect behavior
+expect "input\r\ninput\r" {
+    exit 2
+}
+
+# This is the expected behavior
+expect "input\r\n" {
+    exit 0
+}
+
+# Anything else is wrong
+exit 1
