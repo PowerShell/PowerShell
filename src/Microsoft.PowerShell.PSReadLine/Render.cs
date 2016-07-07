@@ -656,7 +656,11 @@ namespace Microsoft.PowerShell
             case BellStyle.None:
                 break;
             case BellStyle.Audible:
+#if LINUX
+                Console.Beep();
+#else
                 Console.Beep(Options.DingTone, Options.DingDuration);
+#endif
                 break;
             case BellStyle.Visual:
                 // TODO: flash prompt? command line?
