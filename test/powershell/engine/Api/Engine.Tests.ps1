@@ -1,4 +1,5 @@
 # Check if History string on the PowerShell class can be publicly set.
+return
 $powershellexe = [system.diagnostics.process]::GetProcessById($PID).mainmodule.filename 
 Describe "bug530585" -Tags 'CI' {
     BeforeAll {

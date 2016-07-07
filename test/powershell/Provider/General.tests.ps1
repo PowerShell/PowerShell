@@ -1,64 +1,51 @@
-Describe "FileSystem Provider Tests" -tags 'InnerLoop', 'DRT' {
+Describe "FileSystem Provider Tests" -Tags "CI" {
+    BeforeAll {
+        if ( ! $IsWindows ) 
+        { 
+            $origDefault = $PSDefaultPArameterValues.Clone()
+            $PSDefaultPArameterValues["It:Skip"] = $true
+        }
+    }
+    AfterAll {
+        if ( ! $IsWindows ) 
+        { 
+            $global:PSDefaultPArameterValues = $origDefault
+            return 
+        }
+    }
     Context "FileSystem Regression Test: Win7 bug #213606" {
         BeforeAll {
-            $testBaseDirectory = "TESTDRIVE:\providerScriptTests"
-            if ( test-path $testBaseDirectory )
-            {
-                remove-item -recurse -force $testBaseDirectory
-            }
-            new-item -itemtype Directory $testBaseDirectory | out-null
-            $wildcardTestCases = @('[hello]', 'z]', '[a-l].txt')
+            $testBaseDirectory = setup -Dir providerScriptTests -pass
+            $wildcardTestCases = @{ Dir = '[hello]' }, @{ Dir = 'z]' }, @{ Dir = '[a-l].txt'}
             $testDir = "${testBaseDirectory}\213606"
             new-item -itemType Directory -Path "${testDir}" | out-null
         }
-        AfterAll {
-            Remove-Item -Recurse -Force ${testBaseDirectory}
-        }
         # loop the wildcardtestcases
-        foreach ( $case in $wildcardTestCases )
-        {
-            It "directory named $case" {
-                try
-                {
-                    push-location "${testDir}"
-                    New-Item -Path . -Name $case -itemtype Directory | out-null
-                    push-location -literalpath $case 
-                    123 | out-file testfile
-                    Get-ChildItem | out-null
-                    throw "OK"
-                }
-                catch
-                {
-                        $_.FullyQualifiedErrorId | Should be "OK"
-                }
-                finally
-                {
-                    pop-location # for -literalpath $case
-                    pop-location # for ${testDir}
-                }
-            }
+
+        # -LiteralPath only exists on Windows
+        It -skip:(!$IsWindows) "Directory named <dir>" -testcase $wildcardTestCases {
+            param ( $dir )
+            push-location $testDir
+            new-item -literalpath $dir
+            123 | out-file testfile
+            get-childitem testfile | should match testfile 
         }
     }
 
     Context "FileSystem Regression Test: Win7 bug #220240" {
         BeforeAll {
-            $deviceNames =  'CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM2', 
-                'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 
-                'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 
-                'LPT8', 'LPT9'
-            $testFile = "TESTDRIVE:\file.txt"
-            $testValue = "83294hasfisadfh983rh"
+            $deviceNames =  @{ Name = 'CON' }, @{ Name = 'PRN' }, @{ Name = 'AUX' }, @{ Name = 'NUL' },
+                @{ Name = 'COM1' }, @{ Name = 'COM2' }, @{ Name = 'COM3' }, @{ Name = 'COM4' },
+                @{ Name = 'COM5' }, @{ Name = 'COM6' }, @{ Name = 'COM7' }, @{ Name = 'COM8' }, @{ Name = 'COM9' },
+                @{ Name = 'LPT1' }, @{ Name = 'LPT2' }, @{ Name = 'LPT3' }, @{ Name = 'LPT4' },
+                @{ Name = 'LPT5' }, @{ Name = 'LPT6' }, @{ Name = 'LPT7' }, @{ Name = 'LPT8' }, @{ Name = 'LPT9' }
             $expectedError = "MoveError,Microsoft.PowerShell.Commands.MoveItemCommand"
+            $testValue = "83294hasfisadfh983rh"
+            $testFile = Setup -File file.txt -value $testValue -Pass
         }
 
-        if ( test-path $testFile )
-        {
-            remove-item -force $testFile
-        }
-        Set-Content -Path $testFile -Value $testValue
-
-        Foreach($deviceName in $deviceNames)
-        {
+        it -skip:(!$IsWindows) "Copying a file to <Name> produces an error" -testcases $deviceNames {
+            param ( $Name )
             try
             {
                 Move-Item -Path $testFile -Destination $deviceName -EA Stop
@@ -66,9 +53,7 @@ Describe "FileSystem Provider Tests" -tags 'InnerLoop', 'DRT' {
             }
             catch
             {
-                It $deviceName {
-                    $_.FullyQualifiedErrorId | Should be $expectedError
-                }
+                $_.FullyQualifiedErrorId | Should be $expectedError
             }
         }
     }
@@ -76,26 +61,25 @@ Describe "FileSystem Provider Tests" -tags 'InnerLoop', 'DRT' {
     # P1
     Context "FileSystem Regression Test: Win7 bug 300987" {
         BeforeAll {
-            $testFile = "TESTDRIVE:\Bug300987.txt"
-            if (Test-Path $testFile) { Remove-Item $testFile -Force -Recurse}
-            New-Item -Path $testFile -ItemType file -Value "hello" | out-null
+            $testFile = Setup -File bug300987 -content Hello -pass
             $d = Get-ChildItem $testFile
             $expectedPath = (get-psdrive TESTDRIVE).root
         }
 
-        It "Directory name should not be null." {
+        It -skip:$false "Directory name should not be null." {
             $d.DirectoryName | Should Not BeNullOrEmpty
             }
-        It "DIR displayed full provider directory name, which is not expected." {
+        It -skip:$false "DIR displayed full provider directory name, which is not expected." {
             $d.DirectoryName | Should Not Match "::"
             }
-        It "Reports correct Path" {
+        It -skip:$false "Reports correct Path" {
             $d.DirectoryName | Should be $expectedPath
             }
     }
 
     Context "FileSystem Regression Test: Win7 bug 401207 (Get-PsDrive should return used and free space)" {
         BeforeAll {
+            if ( ! $IsWindows ) { return }
             $BugtestDrive = ($env:SystemDrive).Substring(0,1)
             $BugtestDrive_NA = "Variable"
             # Positive test:
@@ -121,6 +105,7 @@ Describe "FileSystem Provider Tests" -tags 'InnerLoop', 'DRT' {
 
     Context "FileSystem Regression Test: Win7 bug 411596" {
         BeforeAll {
+            if ( ! $IsWindows ) { return }
             # Set up
             $signature = @"
                 [DllImport("kernel32.dll")]
@@ -157,6 +142,7 @@ Describe "FileSystem Provider Tests" -tags 'InnerLoop', 'DRT' {
 
     Context "bug #516430 (Get-ChildItem regression problem: filter does not work properly)" {
         BeforeAll {
+            if ( ! $IsWindows ) { return }
             $testPath = "TESTDRIVE:\Bug516430"
             $item1 = "testFile1"
             $item2 = "testFile2"
@@ -182,6 +168,7 @@ Describe "FileSystem Provider Tests" -tags 'InnerLoop', 'DRT' {
 
     Context "bug #613656 (Get-Item does not work properly with folders that contain square brackets)" {
         BeforeAll {
+            if ( ! $IsWindows ) { return }
             # $initialLocation = Get-Location
             $testFile = "[Bug613656]"
             $testDirectory = "TestDrive:\${testFile}"
@@ -214,40 +201,40 @@ Describe "FileSystem Provider Tests" -tags 'InnerLoop', 'DRT' {
         AfterAll {
             pop-location
         }
-        It "Get-ChildItem . -Include *6x* should return no files" {
+        It -skip:$false "Get-ChildItem . -Include *6x* should return no files" {
             Get-ChildItem . -Include *6x* | Should BeNullOrEmpty
         }
-        It "Get-ChildItem -Include *6x* should return no files" {
+        It -skip:$false "Get-ChildItem -Include *6x* should return no files" {
             Get-ChildItem -Include *6x* | Should BeNullOrEmpty
         }
-        It "Get-ChildItem * -Include *6x* should return 2 files" {
+        It -skip:$false "Get-ChildItem * -Include *6x* should return 2 files" {
             $result = Get-ChildItem * -Include *6x* 
             $result.Count | Should Be 2
         }
-        It "Get-ChildItem -Exclude *6x* should return 2 files and have correct names" {
+        It -skip:$false "Get-ChildItem -Exclude *6x* should return 2 files and have correct names" {
             $result = Get-ChildItem -Exclude *6x*
             $result.Count | should be 2
             $expected = $items[1,2] -join ","
             ($result.Name -join ",") | Should Be $expected
         }
-        It "Get-ChildItem . -Exclude *6x* should return 2 files and have correct names" {
+        It -skip:$false "Get-ChildItem . -Exclude *6x* should return 2 files and have correct names" {
             $result = Get-ChildItem . -Exclude *6x*
             $result.Count | should be 2
             $expected = $items[1,2] -join ","
             ($result.Name -join ",") | Should Be $expected
         }
-        It "Get-ChildItem * -Exclude *6x* should return 2 files and have correct names" {
+        It -skip:$false "Get-ChildItem * -Exclude *6x* should return 2 files and have correct names" {
             $result = Get-ChildItem * -Exclude *6x*
             $result.Count | Should be 2
             $expected = $items[1,2] -join ","
             ($result.Name -join ",") | Should Be $expected
         }
-        It "Get-ChildItem *123* -Include abc* -Exclude *xyz should return one file with correct name" {
+        It -skip:$false "Get-ChildItem *123* -Include abc* -Exclude *xyz should return one file with correct name" {
             $result = Get-ChildItem *123* -Include abc* -Exclude *xyz
             $result.Count |Should Be 1
             $result.Name | Should be $items[1]
         }
-        It "Check for bug 669542" {
+        It -skip:$false "Check for bug 669542" {
             $result = Get-ChildItem abc* -Include *xyz
             $result.Count | Should be 1
             $result.Name | Should be "abc123456xyz"
@@ -267,24 +254,24 @@ Describe "FileSystem Provider Tests" -tags 'InnerLoop', 'DRT' {
         AfterAll {
             $reader.close()
         }
-        It "reader should return the proper count of lines" {
+        It -skip:$false "reader should return the proper count of lines" {
             $reader.Seek(0, "Begin")
             $text1 = $reader.Read(2)
             $text1.Count | Should be 2
         }
-        It "The lines the reader returned should be correct" {
+        It -skip:$false "The lines the reader returned should be correct" {
             $reader.Seek(0, "Begin")
             $text1 = $reader.Read(2)
             $expectedText1 = "12345"
             $text1[0] | Should be $expectedText1
             $text1[1] | Should be $expectedText1
         }
-        It "After seek to last two characters, reader should have 1 line" {
+        It -skip:$false "After seek to last two characters, reader should have 1 line" {
             $reader.Seek(-2, "End")
             $text2 = $reader.Read(2)
             $text2[0].Length | Should be 2
         }
-        It "The lines the reader returned should be correct" {
+        It -skip:$false "The lines the reader returned should be correct" {
             $reader.Seek(-2, "End")
             $text2 = $reader.Read(2)
             $expectedText2 = "45"
@@ -313,6 +300,7 @@ Describe "FileSystem Provider Tests" -tags 'InnerLoop', 'DRT' {
     }
     Context "Set-Location fails to set correct location on ContainerCmdletProviders that define a root path" {
         BeforeAll {
+            if ( ! $IsWindows ) { return }
             $ProviderTestDriveName = "Bug422954Drive"
             $ProviderTestDrive = "${ProviderTestDriveName}:"
             $t = @'
@@ -359,6 +347,7 @@ Describe "FileSystem Provider Tests" -tags 'InnerLoop', 'DRT' {
             $currentlocation = get-location
         }
         AfterAll {
+            if ( ! $IsWindows ) { return }
             Set-Location $currentLocation
         }
         It "'$ProviderTestDrive' should be present" {
@@ -377,7 +366,7 @@ Describe "FileSystem Provider Tests" -tags 'InnerLoop', 'DRT' {
 
 }
 
-Describe "Function provider tests" -tags 'InnerLoop', 'DRT' {
+Describe "Function provider tests" -Tags "CI" {
     Context "bug #489815 (REGRESSION: dir -include x,y needs -recurse in CTP3)" {
         BeforeAll {
             Function Bug489815TestFunctionA01 {}
@@ -391,7 +380,13 @@ Describe "Function provider tests" -tags 'InnerLoop', 'DRT' {
     }
 }
 
-Describe "Registry Provider Tests" -tags 'InnerLoop', 'Registry', 'DRT' {
+Describe "Registry Provider Tests" -tags 'CI', 'Registry' {
+    if ( ! $IsWindows ) { 
+        It -skip:$true "Skipping Registry tests on non-Windows platform" {
+            1 | should be 1
+        }
+        return 
+    }
     Context "bug #659712 PowerShell: dir -exclude working in Registry" {
         BeforeAll {
             $testDirectory = "659712"
@@ -440,11 +435,13 @@ Describe "Registry Provider Tests" -tags 'InnerLoop', 'Registry', 'DRT' {
     }
 
     Context "RegistryRegression133180" {
-        $registryPath = "HKLM:\system\currentcontrolset\control\print\monitors"
-        $skip = $false
-        if ( ! (test-path $registryPath ) )
-        {
-            $skip = $true
+        BeforeAll {
+            $registryPath = "HKLM:\system\currentcontrolset\control\print\monitors"
+            $skip = $false
+            if ( ! (test-path $registryPath ) )
+            {
+                $skip = $true
+            }
         }
 
         It "Should be able to handle provider paths containing a slash character" {
@@ -464,9 +461,10 @@ Describe "Registry Provider Tests" -tags 'InnerLoop', 'Registry', 'DRT' {
         }
 
         BeforeEach {
+            if ( ! $IsWindows ) { return }
             push-location $registryPath
         }
-        It "Should be able to remove registry items in a transaction" -skip:$skip {
+        It "Should be able to remove registry items in a transaction" {
             {
                 $testItem = "Regression177299"
                 New-Item $testItem
@@ -494,6 +492,7 @@ Describe "Registry Provider Tests" -tags 'InnerLoop', 'Registry', 'DRT' {
             $exportSuccess = Reg.exe SAVE HKLM${testPath} $fileName
         }
         AfterEach {
+            if ( ! $IsWindows ) { return }
             Remove-Item -Path $fileName
         }
 
