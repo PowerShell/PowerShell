@@ -69,12 +69,16 @@ Then switch to your branch and do rebase
 git rebase master
 ```
 
-#### Git pretty
+#### More complex scenarios
 
-[So you have a mess on your hands?](http://justinhileman.info/article/git-pretty/)
+Covering all possible git scenarios is behind the scope of the current document.
+Git has excellent documentation and lots of materials available online.
+
+We are leaving few links here:
+
+[Git pretty flowchart](http://justinhileman.info/article/git-pretty/): what to do, when your local repo became a mess.
 
 [Linus]:http://thread.gmane.org/gmane.comp.video.dri.devel/34739/focus=34744
-
 
 
 
