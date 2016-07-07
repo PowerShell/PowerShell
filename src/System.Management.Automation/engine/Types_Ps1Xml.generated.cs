@@ -52,18 +52,30 @@ namespace System.Management.Automation.Runspaces
           if($this.Provider.ImplementingType -eq
           [Microsoft.PowerShell.Commands.FileSystemProvider])
           {
+          if ( ! $IsWindows ) {
+           $filesystem,$size,$used,$available,$UsePerc,$mount = /bin/df -B 1 | ?{ $_.split()[-1] -eq $this.Root } | %{ $_.split(' ',([stringsplitoptions]'RemoveEmptyEntries')) }
+           $used
+          }
+          else {
           $driveRoot = ([System.IO.DirectoryInfo] $this.Root).Name.Replace('\','')
           $drive = Get-CimInstance Win32_LogicalDisk -Filter ""DeviceId='$driveRoot'""
           $drive.Size - $drive.FreeSpace
+          }
           }"), null));
             td4.Members.Add("Free",
                 new ScriptPropertyData(@"Free", GetScriptBlock(@"## Ensure that this is a FileSystem drive
           if($this.Provider.ImplementingType -eq
           [Microsoft.PowerShell.Commands.FileSystemProvider])
           {
+          if ( ! $IsWindows ) {
+           $filesystem,$size,$used,$available,$UsePerc,$mount = /bin/df -B 1 | ?{ $_.split()[-1] -eq $this.Root } | %{ $_.split(' ',([stringsplitoptions]'RemoveEmptyEntries')) }
+           $available
+          }
+          else {
           $driveRoot = ([System.IO.DirectoryInfo] $this.Root).Root.Name.Replace('\','')
           $drive = Get-CimInstance Win32_LogicalDisk -Filter ""DeviceId='$driveRoot'""
           $drive.FreeSpace
+          }
           }"), null));
             yield return td4;
 
