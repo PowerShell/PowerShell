@@ -86,16 +86,14 @@ Start-DevPowerShell -binDir (Split-Path -Parent (Get-PSOutput))
 ```
 
 The default for produced `powershell.exe` is x64.
-You can contorl it with `Start-PSBuild -FullCLR -NativeHostArch x86`
+You can control it with `Start-PSBuild -FullCLR -NativeHostArch x86`
 
 Build manually
 ==============
 
-The build logic is relatively simple and contains the following steps:
+The build contains the following steps:
 
-- building managed DLLs: `dotnet publish --runtime net451`
 - generating Visual Studio project: `cmake`
 - building `powershell.exe` from generated solution: `msbuild
   powershell.sln`
-
-Please don't hesitate to experiment.
+- building managed DLLs: `dotnet publish --runtime net451`
