@@ -72,7 +72,9 @@
                 "compile": {
                     "exclude": [
                         "singleshell/installer/EngineInstaller.cs",
-                        "singleshell/installer/MshHostMshSnapin.cs"
+                        "singleshell/installer/MshHostMshSnapin.cs",
+
+                        "gen/HostMshSnapinResources.cs"
                     ]
                 },
                 "embed": {

@@ -123,7 +123,10 @@
                         "utils/WindowsErrorReporting.cs",
                         "utils/perfCounters/CounterSetInstanceBase.cs",
                         "utils/perfCounters/CounterSetRegistrarBase.cs",
-                        "utils/perfCounters/PSPerfCountersMgr.cs"
+                        "utils/perfCounters/PSPerfCountersMgr.cs",
+
+                        "gen/CoreMshSnapinResources.cs",
+                        "gen/ErrorPackageRemoting.cs"
                     ]
                 },
                 "embed": {
@@ -171,6 +174,9 @@
         },
         "net451": {
             "buildOptions": {
+                "compile": {
+                    "exclude": [ "gen/CoreClrStubResources.cs" ]
+                },
                 "embed": {
                     "exclude": [ "resources/CoreClrStubResources.resx" ]
                 }
