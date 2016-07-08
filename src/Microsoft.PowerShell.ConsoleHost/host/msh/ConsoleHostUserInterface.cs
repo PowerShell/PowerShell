@@ -399,10 +399,9 @@ namespace Microsoft.PowerShell
                         }
                     }
 #if LINUX
-                    else if (!(Char.IsLetterOrDigit(k) || Char.IsPunctuation(k) || Char.IsSymbol(k) || Char.IsWhiteSpace(k)))
+                    else if (Char.IsControl(k))
                     {
-                        // Whitelist valid input characters: letters, digits, punctuation, symbols whitespace
-                        // This is to avoid edge cases like Pause, Print Screen, function keys, and Oem keys, etc.
+                        // blacklist control characters
                         continue;
                     }
 #endif
@@ -1941,10 +1940,9 @@ namespace Microsoft.PowerShell
                 }
 
                 char k = keyInfo.KeyChar;
-                if (!(Char.IsLetterOrDigit(k) || Char.IsPunctuation(k) || Char.IsSymbol(k) || Char.IsWhiteSpace(k)))
+                else if (Char.IsControl(k))
                 {
-                    // Whitelist valid input characters: letters, digits, punctuation, symbols whitespace
-                    // This is to avoid edge cases like Pause, Print Screen, function keys, and Oem keys, etc.
+                    // blacklist control characters
                     continue;
                 }
 
