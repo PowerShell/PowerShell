@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
                 DirectoryInfo parent = null;
                 try
                 {
-                    parent = ClrFacade.GetParent(filePath);
+                    parent = Directory.GetParent(filePath);
                 }
                 catch (IOException) { }
                 catch (UnauthorizedAccessException) { }

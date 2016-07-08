@@ -1351,8 +1351,8 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="CantActivateDocumentInPowerShellCore" xml:space="preserve">
     <value>Cannot run a document in PowerShell Core: {0}.</value>
   </data>
-  <data name="InvalidAssemblyLoadContextInUse" xml:space="preserve">
-    <value>The default AssemblyLoadContext in use is invalid. The default AssemblyLoadContext for PowerShell Core should be of type 'PowerShellAssemblyLoader'.</value>
+  <data name="LoadContextNotInitialized" xml:space="preserve">
+    <value>'PowerShellAssemblyLoadContext' is not initialized.</value>
   </data>
   <data name="MultipleTypeConstraintsOnMethodParam" xml:space="preserve">
     <value>Multiple type constraints are not allowed on a method parameter.</value>

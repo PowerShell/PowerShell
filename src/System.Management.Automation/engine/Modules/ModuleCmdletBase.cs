@@ -1818,7 +1818,7 @@ namespace Microsoft.PowerShell.Commands
                 DirectoryInfo parent = null;
                 try
                 {
-                    parent = ClrFacade.GetParent(moduleManifestPath);
+                    parent = Directory.GetParent(moduleManifestPath);
                 }
                 catch (IOException)
                 {

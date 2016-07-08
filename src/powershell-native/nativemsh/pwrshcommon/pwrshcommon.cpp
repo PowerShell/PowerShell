@@ -1454,14 +1454,14 @@ namespace NativeMsh
         props[nProps] = L"TRUSTED_PLATFORM_ASSEMBLIES";        
         std::wstring tempStr = assemblyList.str();
         vals[nProps] = tempStr.c_str();
-		nProps++;
+        nProps++;
 
         props[nProps] = L"APP_PATHS";
-        vals[nProps] = hostEnvironment.GetHostDirectoryPath();
+        vals[nProps] = L"";
         nProps++;
 
         props[nProps] = L"APP_NI_PATHS";
-        vals[nProps] = hostEnvironment.GetHostDirectoryPath();
+        vals[nProps] = L"";
         nProps++;
 
         // Create the customized AppDomainManager out of the SandboxHelper class
