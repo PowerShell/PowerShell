@@ -5907,21 +5907,32 @@ namespace System.Management.Automation
         /// <param name="namespace">The namespace</param>
         private static void HandleNamespace(Dictionary<string, TypeCompletionMapping> entryCache, string @namespace)
         {
-            if (!string.IsNullOrEmpty(@namespace))
+            if (string.IsNullOrEmpty(@namespace))
             {
+                return;
+            }
+
+            int dotIndex = 0;
+            while (dotIndex != -1)
+            {
+                dotIndex = @namespace.IndexOf('.', dotIndex + 1);
+                string subNamespace = dotIndex != -1
+                                        ? @namespace.Substring(0, dotIndex)
+                                        : @namespace;
+
                 TypeCompletionMapping entry;
-                if (!entryCache.TryGetValue(@namespace, out entry))
+                if (!entryCache.TryGetValue(subNamespace, out entry))
                 {
                     entry = new TypeCompletionMapping
                     {
-                        Key = @namespace,
-                        Completions = { new NamespaceCompletion { Namespace = @namespace } }
+                        Key = subNamespace,
+                        Completions = { new NamespaceCompletion { Namespace = subNamespace } }
                     };
-                    entryCache.Add(@namespace, entry);
+                    entryCache.Add(subNamespace, entry);
                 }
                 else if (!entry.Completions.OfType<NamespaceCompletion>().Any())
                 {
-                    entry.Completions.Add(new NamespaceCompletion { Namespace = @namespace });
+                    entry.Completions.Add(new NamespaceCompletion { Namespace = subNamespace });
                 }
             }
         }
