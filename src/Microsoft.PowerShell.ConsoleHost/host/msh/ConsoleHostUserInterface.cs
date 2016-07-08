@@ -351,15 +351,15 @@ namespace Microsoft.PowerShell
                     //
 #if LINUX
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                    char k = keyInfo.KeyChar;
 #else
                     uint unused = 0;
                     string key = ConsoleControl.ReadConsole(handle, string.Empty, 1, false, out unused);
 #endif
 
 #if LINUX
-                    // Handle Ctrl-C and Ctrl-D ending input
-                    if ((keyInfo.Key == ConsoleKey.C || keyInfo.Key == ConsoleKey.D)
-                        && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control))
+                    // Handle Ctrl-C ending input
+                    if (keyInfo.Key == ConsoleKey.C && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control))
 #else
                     if (string.IsNullOrEmpty(key) || (char)3 == key[0])
 #endif
@@ -398,6 +398,14 @@ namespace Microsoft.PowerShell
                             WriteBackSpace(originalCursorPos);
                         }
                     }
+#if LINUX
+                    else if (!(Char.IsLetterOrDigit(k) || Char.IsPunctuation(k) || Char.IsSymbol(k) || Char.IsWhiteSpace(k)))
+                    {
+                        // Whitelist valid input characters: letters, digits, punctuation, symbols whitespace
+                        // This is to avoid edge cases like Pause, Print Screen, function keys, and Oem keys, etc.
+                        continue;
+                    }
+#endif
                     else
                     {
                         //
@@ -406,7 +414,7 @@ namespace Microsoft.PowerShell
                         if (isSecureString)
                         {
 #if LINUX
-                            secureResult.AppendChar(keyInfo.KeyChar);
+                            secureResult.AppendChar(k);
 #else
                             secureResult.AppendChar(key[0]);
 #endif
@@ -414,7 +422,7 @@ namespace Microsoft.PowerShell
                         else
                         {
 #if LINUX
-                            result.Append(keyInfo.KeyChar);
+                            result.Append(k);
 #else
                             result.Append(key);
 #endif
@@ -1682,13 +1690,11 @@ namespace Microsoft.PowerShell
 
         private string ReadLineFromConsole(bool endOnTab, string initialContent, bool calledFromPipeline, ref string restOfLine, ref ReadLineResult result)
         {
-#if !LINUX
-            ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
-#endif
             PreRead();
             // Ensure that we're in the proper line-input mode.
 
 #if !LINUX
+            ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             ConsoleControl.ConsoleModes m = ConsoleControl.GetMode(handle);
 
             const ConsoleControl.ConsoleModes desiredMode =
@@ -1720,6 +1726,11 @@ namespace Microsoft.PowerShell
             // the empty string.
 
 #if LINUX
+            // For Unix systems, we implement a basic readline loop around Console.ReadKey(), that
+            // supports backspace, arrow keys, Ctrl-C, and Ctrl-D. This readline is only used for
+            // interactive prompts (like Read-Host), otherwise it is assumed that PSReadLine is
+            // available. Therefore this explicitly does not support history or tab completion.
+
             bool treatControlCAsInput = Console.TreatControlCAsInput;
 
             try
@@ -1730,6 +1741,7 @@ namespace Microsoft.PowerShell
             int index = 0;
             int cursorLeft = Console.CursorLeft;
             int cursorCurrent = cursorLeft;
+            bool insertMode = true;
             Console.TreatControlCAsInput = true;
 #else
             rawui.ClearKeyCache();
@@ -1746,9 +1758,8 @@ namespace Microsoft.PowerShell
 #endif
 
 #if LINUX
-                // Handle Ctrl-C and Ctrl-D ending input
-                if ((keyInfo.Key == ConsoleKey.C || keyInfo.Key == ConsoleKey.D)
-                    && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control))
+                // Handle Ctrl-C ending input
+                if (keyInfo.Key == ConsoleKey.C && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control))
 #else
                 if (s.Length == 0)
 #endif
@@ -1868,7 +1879,6 @@ namespace Microsoft.PowerShell
                     continue;
                 }
 
-
                 if (keyInfo.Key == ConsoleKey.LeftArrow)
                 {
                     if (Console.CursorLeft > cursorLeft)
@@ -1889,9 +1899,63 @@ namespace Microsoft.PowerShell
                     continue;
                 }
 
-                // No special key was pressed, so echo and save the key
-                s = s.Insert(index, keyInfo.KeyChar.ToString());
+                if (keyInfo.Key == ConsoleKey.UpArrow
+                    || keyInfo.Key == ConsoleKey.DownArrow
+                    || keyInfo.Key == ConsoleKey.PageUp
+                    || keyInfo.Key == ConsoleKey.PageDown)
+                {
+                    // Arrow/Page Up/down is unimplemented, so fail gracefully
+                    continue;
+                }
+
+                if (keyInfo.Key == ConsoleKey.Home
+                    || (keyInfo.Key == ConsoleKey.A && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
+                {
+                    Console.CursorLeft = cursorLeft;
+                    index = 0;
+                    continue;
+                }
+
+                if (keyInfo.Key == ConsoleKey.End
+                    || (keyInfo.Key == ConsoleKey.E && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
+                {
+                    Console.CursorLeft = cursorLeft + s.Length;
+                    index = s.Length;
+                    continue;
+                }
+
+                if (keyInfo.Key == ConsoleKey.Escape)
+                {
+                    Console.CursorLeft = cursorLeft;
+                    index = s.Length;
+                    s = "";
+                    continue;
+                }
+
+                if (keyInfo.Key == ConsoleKey.Insert)
+                {
+                    // Toggle insert/overwrite mode
+                    insertMode = !insertMode;
+                    continue;
+                }
+
+                char k = keyInfo.KeyChar;
+                if (!(Char.IsLetterOrDigit(k) || Char.IsPunctuation(k) || Char.IsSymbol(k) || Char.IsWhiteSpace(k)))
+                {
+                    // Whitelist valid input characters: letters, digits, punctuation, symbols whitespace
+                    // This is to avoid edge cases like Pause, Print Screen, function keys, and Oem keys, etc.
+                    continue;
+                }
+
+                // Modify string
+                if (!insertMode) // then overwrite mode
+                {
+                    s = s.Remove(index, 1);
+                }
+                s = s.Insert(index, k.ToString());
                 index++;
+
+                // Redisplay string
                 cursorCurrent = Console.CursorLeft;
                 Console.CursorLeft = cursorLeft;
                 Console.Out.Write(s);
