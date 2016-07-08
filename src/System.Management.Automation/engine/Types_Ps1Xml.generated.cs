@@ -53,8 +53,8 @@ namespace System.Management.Automation.Runspaces
           [Microsoft.PowerShell.Commands.FileSystemProvider])
           {
           if ( ! $IsWindows ) {
-           $filesystem,$size,$used,$available,$UsePerc,$mount = /bin/df -B 1 | ?{ $_.split()[-1] -eq $this.Root } | %{ $_.split(' ',([stringsplitoptions]'RemoveEmptyEntries')) }
-           $used
+          $driveInfo = ([System.IO.DriveInfo]::GetDrives()|where-object {$_.Name -eq $this.Root}|Select-Object -first 1)
+          $driveInfo.TotalSize - $driveInfo.AvailableFreeSpace
           }
           else {
           $driveRoot = ([System.IO.DirectoryInfo] $this.Root).Name.Replace('\','')
@@ -68,8 +68,7 @@ namespace System.Management.Automation.Runspaces
           [Microsoft.PowerShell.Commands.FileSystemProvider])
           {
           if ( ! $IsWindows ) {
-           $filesystem,$size,$used,$available,$UsePerc,$mount = /bin/df -B 1 | ?{ $_.split()[-1] -eq $this.Root } | %{ $_.split(' ',([stringsplitoptions]'RemoveEmptyEntries')) }
-           $available
+          ([System.IO.DriveInfo]::GetDrives()|where-object {$_.Name -eq $this.Root}|Select-Object -first 1).AvailableFreeSpace
           }
           else {
           $driveRoot = ([System.IO.DirectoryInfo] $this.Root).Root.Name.Replace('\','')
