@@ -344,6 +344,10 @@ namespace System.Management.Automation
         {
             get
             {
+                if (PowerShellAssemblyLoadContext.Instance == null)
+                {
+                    throw new InvalidOperationException(ParserStrings.LoadContextNotInitialized);
+                }
                 return PowerShellAssemblyLoadContext.Instance;
             }
         }
@@ -510,15 +514,6 @@ namespace System.Management.Automation
 #else
             return System.Runtime.Remoting.RemotingServices.IsTransparentProxy(obj);
 #endif
-        }
-
-        /// <summary>
-        /// Facade for Directory.GetParent(string)
-        /// </summary>
-        internal static DirectoryInfo GetParent(string path)
-        {
-            // Porting note: this is in recent CoreCLR
-            return Directory.GetParent(path);
         }
 
         /// <summary>

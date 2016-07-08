@@ -175,7 +175,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Singleton instance of PowerShellAssemblyLoadContext
         /// </summary>
-        public static PowerShellAssemblyLoadContext Instance
+        internal static PowerShellAssemblyLoadContext Instance
         {
             get; private set;
         }
@@ -376,7 +376,19 @@ namespace System.Management.Automation
                 string tpaStrongName;
                 if (coreClrTypeCatalog.TryGetValue(namespaceQualifiedTypeName, out tpaStrongName))
                 {
-                    return new Assembly[] { GetTrustedPlatformAssembly(tpaStrongName) };
+                    try
+                    {
+                        return new Assembly[] { GetTrustedPlatformAssembly(tpaStrongName) };
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        // It's possible that the type catalog generated in OPS contains more entries than
+                        // the one generated in windows build. This is because in OPS we have more freedom
+                        // to control what packages to depend on, such as Json.NET.
+                        // If we deploy the PSALC.dll generated from OPS to NanoServer, then it's possible
+                        // that 'GetTrustedPlatformAssembly(tpaStrongName)' may fail for such entries. In
+                        // this case, we ignore the exception and return our cached assemblies.
+                    }
                 }
             }
 
@@ -459,6 +471,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Set the profile optimization root on the appropriate load context
         /// </summary>
+        /// <remarks>
+        /// When using PS ALC as a full fledged ALC in OPS, we don't enable profile optimization.
+        /// This is because PS assemblies will be recorded in the profile, and the next time OPS
+        /// starts up, the default context will load the PS assemblies pretty early to ngen them
+        /// in another CPU core, so our Load override won't track the loading of them, and thus
+        /// OPS will fail to work.
+        /// The root cause is that dotnet.exe put all PS assemblies in TPA list. If PS assemblies
+        /// are not in TPA list, then we can enable profile optimization without a problem.
+        /// </remarks>
         internal void SetProfileOptimizationRootImpl(string directoryPath)
         {
             if (this.useResolvingHandlerOnly)
@@ -468,6 +489,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Start the profile optimization on the appropriate load context
         /// </summary>
+        /// <remarks>
+        /// When using PS ALC as a full fledged ALC in OPS, we don't enable profile optimization.
+        /// This is because PS assemblies will be recorded in the profile, and the next time OPS
+        /// starts up, the default context will load the PS assemblies pretty early to ngen them
+        /// in another CPU core, so our Load override won't track the loading of them, and thus
+        /// OPS will fail to work.
+        /// The root cause is that dotnet.exe put all PS assemblies in TPA list. If PS assemblies
+        /// are not in TPA list, then we can enable profile optimization without a problem.
+        /// </remarks>
         internal void StartProfileOptimizationImpl(string profile)
         {
             if (this.useResolvingHandlerOnly)
@@ -620,38 +650,15 @@ namespace System.Management.Automation
         /// </param>
         private Assembly GetTrustedPlatformAssembly(string tpaStrongName)
         {
-            Assembly asmLoaded;
+            // We always depend on the default context to load the TPAs that are recorded in
+            // the type catalog.
+            //   - If the requested TPA is already loaded, then 'Assembly.Load' will just get
+            //     it back from the cache of default context.
+            //   - If the requested TPA is not loaded yet, then 'Assembly.Load' will make the
+            //     default context to load it
             AssemblyName assemblyName = new AssemblyName(tpaStrongName);
-
-            // With the current standalone-app model of OPS, .NET Core libraries and PS assemblies are mixed together in one folder. 
-            // So when using PSALC as a full fledged ALC in OPS, some TPAs might be loaded by our Load override. In that case, if we
-            // alwasy call Assembly.Load here to get a TPA, we might end up with a different Assembly instance of the the same TPA 
-            // loaded in the default load context. We want to use the same assembly instance for type resolution in PS to avoid creating
-            // types and running .NET code from different assembly instances of the same DLL. Therefore, we try our cache first to see
-            // if the requested TPA is already loaded. If so, we use that one. If not, we load it in default context using Assembly.Load.
-            // Once a TPA is loaded in the default context, the same Assembly instance will always be used by custom ALC's when they attempt
-            // to resolve an "Assembly.Load" request for the same TPA.
-            //
-            // For in-box PS of NanoServer/IoT and the share-framework host model of OPS, we don't have the mixed libraries/assemblies
-            // problem, and TPAs are always resolved/loaded by the default context. In those cases, checking our cache would be unnecessary,
-            // but it won't cause any problems.
-
-            // Probe the assembly cache
-            if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
-                return asmLoaded;
-
-            // Prepare to load the assembly
-            lock (syncObj)
-            {
-                // Probe the cache again in case it's already loaded
-                if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
-                    return asmLoaded;
-                
-                // The requested TPA is not loaded by PS ALC, so load it in the default load context using Assembly.Load.
-                // There is no need to add it to our cache. It's cached in the default context.
-                asmLoaded = Assembly.Load(assemblyName);
-                return asmLoaded;
-            }
+            Assembly asmLoaded = Assembly.Load(assemblyName);
+            return asmLoaded;
         }
 
         /// <summary>

@@ -11,6 +11,7 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
 
     internal static class CommonUtilities
     {
+#if !CORECLR
         //
         // StringArrayToString helper converts a string array into a comma-separated string.
         // Note this has only limited use, individual strings cannot have commas.
@@ -111,13 +112,13 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
             }
             return formatError;
         }
+#endif
 
         public static ResourceManager GetResourceManager()
         {
             // this naming pattern is dictated by the dotnet cli
             return new ResourceManager("Microsoft.PowerShell.Commands.Diagnostics.resources.GetEventResources", typeof(CommonUtilities).GetTypeInfo().Assembly);
         }
-
     }
 }
 
