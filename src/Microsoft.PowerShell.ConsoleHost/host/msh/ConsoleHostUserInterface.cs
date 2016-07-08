@@ -351,7 +351,6 @@ namespace Microsoft.PowerShell
                     //
 #if LINUX
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-                    char k = keyInfo.KeyChar;
 #else
                     uint unused = 0;
                     string key = ConsoleControl.ReadConsole(handle, string.Empty, 1, false, out unused);
@@ -399,7 +398,7 @@ namespace Microsoft.PowerShell
                         }
                     }
 #if LINUX
-                    else if (Char.IsControl(k))
+                    else if (Char.IsControl(keyInfo.KeyChar))
                     {
                         // blacklist control characters
                         continue;
@@ -413,7 +412,7 @@ namespace Microsoft.PowerShell
                         if (isSecureString)
                         {
 #if LINUX
-                            secureResult.AppendChar(k);
+                            secureResult.AppendChar(keyInfo.KeyChar);
 #else
                             secureResult.AppendChar(key[0]);
 #endif
@@ -421,7 +420,7 @@ namespace Microsoft.PowerShell
                         else
                         {
 #if LINUX
-                            result.Append(k);
+                            result.Append(keyInfo.KeyChar);
 #else
                             result.Append(key);
 #endif
@@ -1941,8 +1940,7 @@ namespace Microsoft.PowerShell
                     continue;
                 }
 
-                char k = keyInfo.KeyChar;
-                else if (Char.IsControl(k))
+                if (Char.IsControl(keyInfo.KeyChar))
                 {
                     // blacklist control characters
                     continue;
@@ -1953,7 +1951,7 @@ namespace Microsoft.PowerShell
                 {
                     s = s.Remove(index, 1);
                 }
-                s = s.Insert(index, k.ToString());
+                s = s.Insert(index, keyInfo.KeyChar.ToString());
                 index++;
 
                 // Redisplay string
