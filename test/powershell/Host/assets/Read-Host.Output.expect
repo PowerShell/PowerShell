@@ -5,7 +5,7 @@ exp_internal 1
 # Expects path to PowerShell as first argument
 set powershell [lindex $argv 0]
 
-set timeout 5
+set timeout 60
 
 spawn $powershell -nologo -noprofile Read-Host prompt
 
