@@ -113,12 +113,12 @@ namespace System.Management.Automation.Runspaces
                 if (_warning)
                 {
                     _errorRecord = new ErrorRecord(new ParentContainsErrorRecordException(this), "PSSnapInLoadWarning", ErrorCategory.ResourceUnavailable, null);
-                    _errorRecord.ErrorDetails = new ErrorDetails(currentAssembly, "ConsoleInfoErrorStrings", "PSSnapInLoadWarning", _PSSnapin, _reason);
+                    _errorRecord.ErrorDetails = new ErrorDetails(String.Format(ConsoleInfoErrorStrings.PSSnapInLoadWarning, _PSSnapin, _reason));
                 }
                 else
                 {
                     _errorRecord = new ErrorRecord(new ParentContainsErrorRecordException(this), "PSSnapInLoadFailure", ErrorCategory.ResourceUnavailable, null);
-                    _errorRecord.ErrorDetails = new ErrorDetails(currentAssembly, "ConsoleInfoErrorStrings", "PSSnapInLoadFailure", _PSSnapin, _reason);
+                    _errorRecord.ErrorDetails = new ErrorDetails(String.Format(ConsoleInfoErrorStrings.PSSnapInLoadFailure, _PSSnapin, _reason));
                 }
             }
         }

@@ -94,7 +94,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             _errorRecord = new ErrorRecord(new ParentContainsErrorRecordException(this), "ConsoleLoadFailure", ErrorCategory.ResourceUnavailable, null);
-            _errorRecord.ErrorDetails = new ErrorDetails(typeof(PSConsoleLoadException).GetTypeInfo().Assembly, "ConsoleInfoErrorStrings", "ConsoleLoadFailure", _consoleFileName, sb.ToString());
+            _errorRecord.ErrorDetails = new ErrorDetails(String.Format(ConsoleInfoErrorStrings.ConsoleLoadFailure, _consoleFileName, sb.ToString()));
         }
 
         private ErrorRecord _errorRecord;
