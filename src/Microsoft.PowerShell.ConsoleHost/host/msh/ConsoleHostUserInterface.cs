@@ -1865,7 +1865,8 @@ namespace Microsoft.PowerShell
                     continue;
                 }
 
-                if (keyInfo.Key == ConsoleKey.Delete)
+                if (keyInfo.Key == ConsoleKey.Delete
+                    || (keyInfo.Key == ConsoleKey.D && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
                 {
                     if (index < s.Length)
                     {
