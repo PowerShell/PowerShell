@@ -190,9 +190,14 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
         public int StartProcess(string filename, string arguments, bool requiresElevation, out string standardOutput, IRequest requestObject) {
             Process p = new Process();
 
-            if (requiresElevation) {
+#if !CORECLR
+            if (requiresElevation)
+            {
                 p.StartInfo.UseShellExecute = true;
-            } else {
+            }
+            else
+#endif
+            {
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.RedirectStandardOutput = true;
             }

@@ -699,18 +699,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 this.WriteVerbose(string.Format(CultureInfo.InvariantCulture, HelpDisplayStrings.OnlineHelpUri, uriToLaunch.OriginalString));
                 System.Diagnostics.Process browserProcess = new System.Diagnostics.Process();
-                browserProcess.StartInfo.UseShellExecute = true;
-                if (Platform.IsWindows)
-                {
-                    browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
-                } else if (Platform.IsOSX) {
-                    browserProcess.StartInfo.FileName = "open";
-                    browserProcess.StartInfo.Arguments = uriToLaunch.OriginalString;
-                } else if (Platform.IsLinux) {
-                    browserProcess.StartInfo.FileName = "xdg-open";
-                    browserProcess.StartInfo.Arguments = uriToLaunch.OriginalString;
-                }
+
+#if LINUX
+                browserProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
+                browserProcess.StartInfo.Arguments = uriToLaunch.OriginalString;
                 browserProcess.Start();
+#elif CORECLR
+                throw new PlatformNotSupportedException();
+#else
+                browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
+                browserProcess.Start();
+#endif
             }
             catch (InvalidOperationException ioe)
             {

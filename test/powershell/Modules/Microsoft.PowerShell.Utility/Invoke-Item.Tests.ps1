@@ -2,14 +2,6 @@ using namespace System.Diagnostics
 
 Describe "Invoke-Item" {
 
-    $tmpDirectory         = $TestDrive
-    $testfile             = "testfile.txt"
-    $testfolder           = "newDirectory"
-    $testlink             = "testlink"
-    $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
-    $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
-    $FullyQualifiedLink   = Join-Path -Path $tmpDirectory -ChildPath $testlink
- 
     function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
     {
         return [ProcessStartInfo]@{
@@ -39,38 +31,20 @@ Describe "Invoke-Item" {
         }
     }
 
-    function Clean-State
-    {
-        if (Test-Path $FullyQualifiedLink)
-        {
-	        Remove-Item $FullyQualifiedLink -Force
-        }
-
-        if (Test-Path $FullyQualifiedFile)
-        {
-	        Remove-Item $FullyQualifiedFile -Force
-        }
-
-        if (Test-Path $FullyQualifiedFolder)
-        {
-	    Remove-Item $FullyQualifiedFolder -Force
-        }
-    }
-
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+        Setup -File testfile.txt -Content "Hello World"
+        $testfile = Join-Path $TestDrive testfile.txt
     }
 
-#Both tests are pending due to a bug in Invoke-Item on Windows. Fixed for Linux
-
-    It "Should call the function without error" -Pending:$IsWindows { 
-        { New-Item -Name $testfile -Path $tmpDirectory -ItemType file } | Should Not Throw
-    }
-
-    It "Should invoke a text file without error" -Pending:$IsWindows {
-        $debugfn = NewProcessStartInfo "-noprofile ""``Invoke-Item $FullyQualifiedFile`n" -RedirectStdIn
+    It "Should invoke a text file without error" -Skip:($IsWindows -and $IsCore) {
+        $debugfn = NewProcessStartInfo "-noprofile ""``Invoke-Item $testfile`n" -RedirectStdIn
         $process = RunPowerShell $debugfn
         EnsureChildHasExited $process
         $process.ExitCode | Should Be 0
-    }    
+    }
+
+    It "Should throw not supported on Windows with .NET Core" -Skip:($IsLinux -or $IsOSX -or !$IsCore) {
+        { Invoke-Item $testfile }| Should Throw "Operation is not supported on this platform."
+    }
 }

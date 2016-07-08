@@ -1333,20 +1333,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
 
-                if (Platform.IsWindows)
-                {
-                    System.Diagnostics.Process.Start(path);
-                } 
-                else if (Platform.IsOSX) {
-                    invokeProcess.StartInfo.FileName = "open";
-                    invokeProcess.StartInfo.Arguments = path;
-                } 
-                else if (Platform.IsLinux) {
-                    invokeProcess.StartInfo.FileName = "xdg-open";
-                    invokeProcess.StartInfo.Arguments = path;
-                }
-
+#if LINUX
+                invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
+                invokeProcess.StartInfo.Arguments = path;
                 invokeProcess.Start();
+#elif CORECLR
+                throw new PlatformNotSupportedException();
+#else
+                invokeProcess.StartInfo.FileName = path;
+                invokeProcess.Start();
+#endif
             }
         } // InvokeDefaultAction
 
