@@ -14,25 +14,40 @@ Microsoft.PowerShell.Core\Set-StrictMode -Version Latest
 # Check if this is nano server. [System.Runtime.Loader.AssemblyLoadContext] is only available on NanoServer
 $script:isNanoServer = $null -ne ('System.Runtime.Loader.AssemblyLoadContext' -as [Type])
 
-try
+
+if($IsWindows)
 {
-    $script:MyDocumentsFolderPath = [Environment]::GetFolderPath("MyDocuments")
+    $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath "WindowsPowerShell"
 }
-catch
+else
 {
-    $script:MyDocumentsFolderPath = $null
+    $script:ProgramFilesPSPath = $PSHome
 }
 
-$script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath "WindowsPowerShell"
+if($IsWindows)
+{
+    try
+    {
+        $script:MyDocumentsFolderPath = [Environment]::GetFolderPath("MyDocuments")
+    }
+    catch
+    {
+        $script:MyDocumentsFolderPath = $null
+    }
 
-$script:MyDocumentsPSPath = if($script:MyDocumentsFolderPath)
-                            {
-                                Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath "WindowsPowerShell"
-                            } 
-                            else
-                            {
-                                Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath "Documents\WindowsPowerShell"
-                            }
+    $script:MyDocumentsPSPath = if($script:MyDocumentsFolderPath)
+                                {
+                                    Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath "WindowsPowerShell"
+                                } 
+                                else
+                                {
+                                    Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath "Documents\WindowsPowerShell"
+                                }
+}
+else
+{
+    $script:MyDocumentsPSPath = Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath ".local/share/PowerShell"
+}
 
 $script:ProgramFilesModulesPath = Microsoft.PowerShell.Management\Join-Path -Path $script:ProgramFilesPSPath -ChildPath "Modules"
 $script:MyDocumentsModulesPath = Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsPSPath -ChildPath "Modules"
@@ -43,8 +58,18 @@ $script:MyDocumentsScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path
 
 $script:TempPath = ([System.IO.DirectoryInfo]$env:TEMP).FullName
 $script:PSGetItemInfoFileName = "PSGetModuleInfo.xml"
-$script:PSGetProgramDataPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramData -ChildPath 'Microsoft\Windows\PowerShell\PowerShellGet\'
-$script:PSGetAppLocalPath = Microsoft.PowerShell.Management\Join-Path -Path $env:LOCALAPPDATA -ChildPath 'Microsoft\Windows\PowerShell\PowerShellGet\'
+
+if($IsWindows)
+{
+    $script:PSGetProgramDataPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramData -ChildPath 'Microsoft\Windows\PowerShell\PowerShellGet\'
+    $script:PSGetAppLocalPath = Microsoft.PowerShell.Management\Join-Path -Path $env:LOCALAPPDATA -ChildPath 'Microsoft\Windows\PowerShell\PowerShellGet\'
+}
+else
+{
+    $script:PSGetProgramDataPath = "$HOME/.config/powershell/PowerShellGet" #TODO: Get $env:ProgramData equivalent
+    $script:PSGetAppLocalPath = "$HOME/.config/powershell/PowerShellGet"
+}
+
 $script:PSGetModuleSourcesFilePath = Microsoft.PowerShell.Management\Join-Path -Path $script:PSGetAppLocalPath -ChildPath "PSRepositories.xml"
 $script:PSGetModuleSources = $null
 $script:PSGetInstalledModules = $null
@@ -89,8 +114,8 @@ $script:NuGetProviderVersion  = [Version]'2.8.5.201'
 
 $script:SupportsPSModulesFeatureName="supports-powershell-modules"
 $script:FastPackRefHastable = @{}
-$script:NuGetBinaryProgramDataPath="$env:ProgramFiles\PackageManagement\ProviderAssemblies"
-$script:NuGetBinaryLocalAppDataPath="$env:LOCALAPPDATA\PackageManagement\ProviderAssemblies"
+$script:NuGetBinaryProgramDataPath=if($IsWindows) {"$env:ProgramFiles\PackageManagement\ProviderAssemblies"}
+$script:NuGetBinaryLocalAppDataPath=if($IsWindows) {"$env:LOCALAPPDATA\PackageManagement\ProviderAssemblies"}
 # go fwlink for 'https://nuget.org/nuget.exe'
 $script:NuGetClientSourceURL = 'http://go.microsoft.com/fwlink/?LinkID=690216&clcid=0x409'
 $script:NuGetExeName = 'NuGet.exe'
@@ -577,7 +602,7 @@ catch
     # Ignore the error and try adding the type below
 }
 
-if(-not $script:TelemetryEnabled)
+if(-not $script:TelemetryEnabled -and $IsWindows)
 {
     try
     {
@@ -682,7 +707,7 @@ function Publish-Module
 
     Begin
     {
-        if($script:isNanoServer) {
+        if($script:isNanoServer -or $IsCore) {
             $message = $LocalizedData.PublishPSArtifactUnsupportedOnNano -f "Module"
             ThrowError -ExceptionName "System.InvalidOperationException" `
                         -ExceptionMessage $message `
@@ -1809,10 +1834,6 @@ function Update-Module
         $ProxyCredential,
 
         [Parameter()]
-        [switch]
-        $SkipPublisherCheck,
-
-        [Parameter()]
         [Switch]
         $Force
     )
@@ -2485,7 +2506,7 @@ function Publish-Script
 
     Begin
     {
-        if($script:isNanoServer) {
+        if($script:isNanoServer -or $IsCore) {
             $message = $LocalizedData.PublishPSArtifactUnsupportedOnNano -f "Script"
             ThrowError -ExceptionName "System.InvalidOperationException" `
                         -ExceptionMessage $message `
@@ -6129,7 +6150,7 @@ function Ping-Endpoint
     $results = @{}
 
     $WebProxy = $null
-    if($Proxy)
+    if($Proxy -and $IsWindows)
     {
         $ProxyNetworkCredential = $null
         if($ProxyCredential)
@@ -6358,6 +6379,11 @@ function ValidateAndSet-PATHVariableIfUserAccepts
         [Parameter()]
         $Request
     )
+
+    if(-not $IsWindows)
+    {
+        return
+    }
 
     Set-PSGetSettingsVariable
 
@@ -7154,9 +7180,10 @@ function Install-NuGetClientBinaries
         $Force
     )
 
-    if($script:NuGetProvider -and 
-       (-not $BootstrapNuGetExe -or 
-        ($script:NuGetExePath -and (Microsoft.PowerShell.Management\Test-Path -Path $script:NuGetExePath))))
+    if(-not $IsWindows -or
+       ($script:NuGetProvider -and 
+        (-not $BootstrapNuGetExe -or 
+        ($script:NuGetExePath -and (Microsoft.PowerShell.Management\Test-Path -Path $script:NuGetExePath)))))
     {
         return
     }
@@ -7256,7 +7283,7 @@ function Install-NuGetClientBinaries
     }
     
     # On Nano server we don't need NuGet.exe
-    if(-not $bootstrapNuGetProvider -and ($script:isNanoServer -or -not $BootstrapNuGetExe))
+    if(-not $bootstrapNuGetProvider -and ($script:isNanoServer -or $IsCore -or -not $BootstrapNuGetExe))
     {
         return
     }
@@ -7313,7 +7340,7 @@ function Install-NuGetClientBinaries
             }
         }
 
-        if($BootstrapNuGetExe -and -not $script:isNanoServer)
+        if($BootstrapNuGetExe -and -not $script:isNanoServer -and -not $IsCore)
         {
             Write-Verbose -Message $LocalizedData.DownloadingNugetExe
 
@@ -7397,10 +7424,19 @@ function Test-RunningAsElevated
     [OutputType([bool])]
     Param()
 
-    $wid=[System.Security.Principal.WindowsIdentity]::GetCurrent()
-    $prp=new-object System.Security.Principal.WindowsPrincipal($wid)
-    $adm=[System.Security.Principal.WindowsBuiltInRole]::Administrator
-    return $prp.IsInRole($adm)
+    if($IsWindows)
+    {
+        $wid=[System.Security.Principal.WindowsIdentity]::GetCurrent()
+        $prp=new-object System.Security.Principal.WindowsPrincipal($wid)
+        $adm=[System.Security.Principal.WindowsBuiltInRole]::Administrator
+        return $prp.IsInRole($adm)
+    }
+    elseif($IsLinux)
+    {
+        return ($env:SUDO_UID -eq '1000')
+    }
+
+    return $false
 }
 
 function Get-EscapedString
@@ -13640,6 +13676,10 @@ function Validate-ModuleAuthenticodeSignature
 
         [Parameter()]
         [Switch]
+        $IsUpdateOperation,
+
+        [Parameter()]
+        [Switch]
         $SkipPublisherCheck
     )
 
@@ -13652,21 +13692,13 @@ function Validate-ModuleAuthenticodeSignature
     }
 
     # Skip the publisher check when -SkipPublisherCheck is specified and 
-    # previously-installed module is not signed by Microsoft
-    if($SkipPublisherCheck)
+    # it is not an update operation.
+    if(-not $IsUpdateOperation -and $SkipPublisherCheck)
     {
-        if($InstalledModuleDetails -and $InstalledModuleDetails.IsMicrosoftCertificate)
-        {
-            $Message = $LocalizedData.ProceedingWithPublisherCheckForMicrosoftModules -f ($CurrentModuleInfo.Name)
-            Write-Verbose -Message $message            
-        }
-        else
-        {
-            $Message = $LocalizedData.SkippingPublisherCheck -f ($CurrentModuleInfo.Version, $CurrentModuleInfo.Name)
-            Write-Verbose -Message $message
+        $Message = $LocalizedData.SkippingPublisherCheck -f ($CurrentModuleInfo.Version, $CurrentModuleInfo.Name)
+        Write-Verbose -Message $message
 
-            return $true
-        }
+        return $true
     }
 
     # Validate the catalog signature for the current module being installed.
@@ -13744,7 +13776,7 @@ function Validate-ModuleAuthenticodeSignature
                 }
                 else
                 {
-                    $Message = $LocalizedData.PublishersMismatch -f ($CurrentModuleAuthenticodePublisher, $CurrentModuleInfo.Name, $CurrentModuleInfo.Version, $InstalledModuleAuthenticodePublisher, $InstalledModuleInfo.Name, $InstalledModuleVersion)
+                    $Message = $LocalizedData.PublishersMismatch -f ($InstalledModuleInfo.Name, $InstalledModuleVersion, $CurrentModuleInfo.Name, $CurrentModuleAuthenticodePublisher, $CurrentModuleInfo.Version)
                     ThrowError -ExceptionName 'System.InvalidOperationException' `
                                -ExceptionMessage $message `
                                -ErrorId 'PublishersMismatch' `
@@ -14130,10 +14162,11 @@ function Test-ValidManifestModule
                        -CallerPSCmdlet $PSCmdlet `
                        -ErrorCategory InvalidOperation
         }
-        else
+        elseif($IsWindows)
         {
             $ValidationResult = Validate-ModuleAuthenticodeSignature -CurrentModuleInfo $PSModuleInfo `
                                                                      -InstallLocation $InstallLocation `
+                                                                     -IsUpdateOperation:$IsUpdateOperation `
                                                                      -SkipPublisherCheck:$SkipPublisherCheck
 
             if($ValidationResult)
