@@ -1,1 +1,0 @@
-author:  Sergei and Andy
