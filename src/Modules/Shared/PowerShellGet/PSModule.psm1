@@ -56,7 +56,7 @@ $script:ProgramFilesScriptsPath = Microsoft.PowerShell.Management\Join-Path -Pat
 
 $script:MyDocumentsScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsPSPath -ChildPath "Scripts"
 
-$script:TempPath = ([System.IO.DirectoryInfo]$env:TEMP).FullName
+$script:TempPath = if($IsWindows){ ([System.IO.DirectoryInfo]$env:TEMP).FullName } else { '/tmp' }
 $script:PSGetItemInfoFileName = "PSGetModuleInfo.xml"
 
 if($IsWindows)
@@ -4963,7 +4963,7 @@ function New-ScriptFileInfo
         $ScriptMetadataString += $ScriptCommentHelpInfoString        
         $ScriptMetadataString += "Param()`r`n`r`n"
 
-        $tempScriptFilePath = Microsoft.PowerShell.Management\Join-Path -Path $env:TEMP -ChildPath "$(Get-Random).ps1"
+        $tempScriptFilePath = Microsoft.PowerShell.Management\Join-Path -Path $script:TempPath -ChildPath "$(Get-Random).ps1"
         
         try
         {
@@ -5324,7 +5324,7 @@ function Update-ScriptFileInfo
             return
         }
         
-        $tempScriptFilePath = Microsoft.PowerShell.Management\Join-Path -Path $env:TEMP -ChildPath "$(Get-Random).ps1"
+        $tempScriptFilePath = Microsoft.PowerShell.Management\Join-Path -Path $script:TempPath -ChildPath "$(Get-Random).ps1"
         
         try
         {
