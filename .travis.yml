@@ -5,7 +5,7 @@ matrix:
       dist: trusty
       sudo: required
     - os: osx
-      osx_image: xcode7.3
+      osx_image: xcode8
       language: generic
 addons:
   artifacts:
