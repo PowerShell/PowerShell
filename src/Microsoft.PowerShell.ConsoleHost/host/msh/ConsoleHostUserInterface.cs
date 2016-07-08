@@ -1879,7 +1879,8 @@ namespace Microsoft.PowerShell
                     continue;
                 }
 
-                if (keyInfo.Key == ConsoleKey.LeftArrow)
+                if (keyInfo.Key == ConsoleKey.LeftArrow
+                    || (keyInfo.Key == ConsoleKey.B && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
                 {
                     if (Console.CursorLeft > cursorLeft)
                     {
@@ -1889,7 +1890,8 @@ namespace Microsoft.PowerShell
                     continue;
                 }
 
-                if (keyInfo.Key == ConsoleKey.RightArrow)
+                if (keyInfo.Key == ConsoleKey.RightArrow
+                    || (keyInfo.Key == ConsoleKey.F && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
                 {
                     if (Console.CursorLeft < cursorLeft + s.Length)
                     {
