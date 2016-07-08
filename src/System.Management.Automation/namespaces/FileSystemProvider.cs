@@ -1337,9 +1337,20 @@ namespace Microsoft.PowerShell.Commands
 
                 if (Platform.IsWindows)
                 {
+                    // this is a re-implementation of the unavailable (on .NET Core) UseShellExecute,
+                    // where we manually execute a cmd.exe shell, and use its start command to
+                    // launch the default application for the given path
                     invokeProcess.StartInfo.FileName = "cmd.exe";
-                    // start is very picky: the "optional" TITLE as the first argument should always be included, otherwise it can silently fail
-                    invokeProcess.StartInfo.Arguments = string.Format(@"/c ""start /b """" ""{0}""""", path);
+
+                    // start is very picky: the "optional" TITLE as the first argument should always
+                    // be included, otherwise it can silently fail
+                    invokeProcess.StartInfo.Arguments = string.Format(CultureInfo.InvariantCulture,
+                                                                      @"/c ""start /b """" ""{0}""""", path);
+
+                    // please note that there is currently no way to differentiate between running
+                    // on Nano as an OS and having targeted the .NET Core framework, thus this code
+                    // will continue to fail on Nano (as there is no browser), but at least is
+                    // implemented for .NET Core PowerShell on Windows
                 }
                 else if (Platform.IsOSX) {
                     invokeProcess.StartInfo.FileName = "open";
