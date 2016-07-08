@@ -17,5 +17,6 @@
     "monad/src/security/ExecutionPolicyCommands.cs":  "security/ExecutionPolicyCommands.cs",
     "monad/src/security/CmsCommands.cs":  "security/CmsCommands.cs",
     "monad/src/security/AclCommands.cs":  "security/AclCommands.cs",
+    "monad/src/security/CatalogCommands.cs":  "security/CatalogCommands.cs",
     "monad/src/security/resources/SignatureCommands.resx":  "resources/SignatureCommands.resx"
 }

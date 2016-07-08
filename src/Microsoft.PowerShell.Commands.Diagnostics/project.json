@@ -1,40 +1,46 @@
 {
-  "name": "Microsoft.PowerShell.Commands.Diagnostics",
-  "version": "1.0.0-*",
-  "buildOptions": {
-    "keyFile": "../signing/visualstudiopublic.snk",
-    "delaySign": true,
-    "publicSign": false,
-    "warningsAsErrors": true
-  },
-  "dependencies": {
-    "System.Management.Automation": "1.0.0-*"
-  },
-  "frameworks": {
-    "netstandard1.6": {
-      "imports": [
-        "dnxcore50"
-      ],
-      "buildOptions": {
-        "define": [
-          "CORECLR"
-        ],
-        "compile": {
-          "excludeFiles": [
-            "PdhSafeHandle.cs",
-            "GetEventSnapin.cs",
-            "CounterSample.cs",
-            "CounterSet.cs",
-            "PdhHelper.cs",
-            "ExportCounterCommand.cs",
-            "GetCounterCommand.cs",
-            "ImportCounterCommand.cs",
-            "CounterFileInfo.cs"
-          ]
-        }
-      }
+    "name": "Microsoft.PowerShell.Commands.Diagnostics",
+    "version": "1.0.0-*",
+    "buildOptions": {
+        "keyFile": "../signing/visualstudiopublic.snk",
+        "delaySign": true,
+        "publicSign": false,
+        "warningsAsErrors": true
     },
-    "net451": {
+    
+    "dependencies": {
+        "System.Management.Automation": "1.0.0-*"
+    },
+    
+    "frameworks": {
+        "netstandard1.6": {
+            "imports": [ "dnxcore50" ],
+            "buildOptions": {
+                "define": [ "CORECLR" ],
+                "compile": {
+                    "excludeFiles": [
+                        "PdhSafeHandle.cs",
+                        "GetEventSnapin.cs",
+                        "CounterSample.cs",
+                        "CounterSet.cs",
+                        "PdhHelper.cs",
+                        "ExportCounterCommand.cs",
+                        "GetCounterCommand.cs",
+                        "ImportCounterCommand.cs",
+                        "CounterFileInfo.cs",
+
+                        "gen/GetEventResources.cs"
+                    ]
+                }
+            }
+        },
+        
+        "net451": {
+            "buildOptions": {
+                "compile": {
+                    "excludeFiles": [ "gen/GetEventResources.cs" ]
+                }
+            }
+        }
     }
-  }
 }

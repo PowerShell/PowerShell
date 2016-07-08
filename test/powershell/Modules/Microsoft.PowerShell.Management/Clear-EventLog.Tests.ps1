@@ -1,4 +1,4 @@
-if ($IsWindows) {
+if ($IsWindows -and !$IsCore) {
   #check to see whether we're running as admin in Windows...
   $windowsIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
   $windowsPrincipal = new-object 'Security.Principal.WindowsPrincipal' $windowsIdentity

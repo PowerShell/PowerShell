@@ -10,6 +10,14 @@
         "allowUnsafe": true
     },
 
+    "configurations": {
+        "Linux": {
+            "buildOptions": {
+                "define": [ "LINUX" ]
+            }
+        }
+    },
+
     "dependencies": {
         "Microsoft.PowerShell.Security": "1.0.0-*"
     },
@@ -24,7 +32,6 @@
                         "commands/management/ClearRecycleBinCommand.cs",
                         "commands/management/ControlPanelItemCommand.cs",
                         "commands/management/CommitTransactionCommand.cs",
-                        "commands/management/Computer.cs",
                         "commands/management/Eventlog.cs",
                         "commands/management/GetClipboardCommand.cs",
                         "commands/management/GetTransactionCommand.cs",
@@ -40,13 +47,37 @@
                         "commands/management/UseTransactionCommand.cs",
                         "commands/management/WMIHelper.cs",
                         "commands/management/WebServiceProxy.cs",
-                        "singleshell/installer/MshManagementMshSnapin.cs"
+                        "singleshell/installer/MshManagementMshSnapin.cs",
+
+                        "gen/EventlogResources.cs",
+                        "gen/TransactionResources.cs",
+                        "gen/WebServiceResources.cs",
+                        "gen/HotFixResources.cs",
+                        "gen/ControlPanelResources.cs",
+                        "gen/WmiResources.cs",
+                        "gen/ManagementMshSnapInResources.cs",
+                        "gen/ClearRecycleBinResources.cs",
+                        "gen/ClipboardResources.cs"
+                    ]
+                },
+                "embed": {
+                    "exclude": [
+                        "resources/EventlogResources.resx",
+                        "resources/TransactionResources.resx",
+                        "resources/WebServiceResources.resx",
+                        "resources/HotFixResources.resx",
+                        "resources/ControlPanelResources.resx",
+                        "resources/WmiResources.resx",
+                        "resources/ManagementMshSnapInResources.resx",
+                        "resources/ClearRecycleBinResources.resx",
+                        "resources/ClipboardResources.resx"
                     ]
                 }
             },
             "dependencies": {
                 "System.ServiceProcess.ServiceController": "4.1.0",
-                "System.Net.NameResolution": "4.0.0"
+                "System.Net.NameResolution": "4.0.0",
+                "System.Net.Ping": "4.0.0"
             }
         },
         "net451": {
@@ -62,7 +93,14 @@
             "buildOptions": {
                 "compile": {
                     "exclude": [
-                        "commands/management/ControlPanelItemCommand.cs"
+                        "commands/management/ControlPanelItemCommand.cs",
+
+                        "gen/ControlPanelResources.cs"
+                    ]
+                },
+                "embed": {
+                    "exclude": [
+                        "resources/ControlPanelResources.resx"
                     ]
                 }
             }
