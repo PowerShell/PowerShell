@@ -28,8 +28,9 @@ namespace Microsoft.PowerShell
         [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
         public interface IConsole
         {
-            uint GetConsoleInputMode();
-            void SetConsoleInputMode(uint mode);
+            object GetConsoleInputMode();
+            void SetConsoleInputMode(object mode);
+            void RestoreConsoleInputMode(object mode);
             ConsoleKeyInfo ReadKey();
             bool KeyAvailable { get; }
             int CursorLeft { get; set; }
@@ -46,15 +47,15 @@ namespace Microsoft.PowerShell
             void SetCursorPosition(int left, int top);
             void WriteLine(string s);
             void Write(string s);
-            void WriteBufferLines(CHAR_INFO[] buffer, ref int top);
-            void WriteBufferLines(CHAR_INFO[] buffer, ref int top, bool ensureBottomLineVisible);
+            void WriteBufferLines(BufferChar[] buffer, ref int top);
+            void WriteBufferLines(BufferChar[] buffer, ref int top, bool ensureBottomLineVisible);
             void ScrollBuffer(int lines);
-            CHAR_INFO[] ReadBufferLines(int top, int count);
+            BufferChar[] ReadBufferLines(int top, int count);
 
             void StartRender();
             int LengthInBufferCells(char c);
             void EndRender();
-#if CORECLR
+#if LINUX
             void Clear();
 #endif
         }

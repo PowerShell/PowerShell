@@ -227,9 +227,7 @@ namespace Microsoft.PowerShell.Internal
         public short Right;
         public short Bottom;
 
-#if !CORECLR
         [ExcludeFromCodeCoverage]
-#endif
         public override string ToString()
         {
             return String.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", Left, Top, Right, Bottom);
@@ -241,9 +239,7 @@ namespace Microsoft.PowerShell.Internal
         public short X;
         public short Y;
 
-#if !CORECLR
         [ExcludeFromCodeCoverage]
-#endif
         public override string ToString()
         {
             return String.Format(CultureInfo.InvariantCulture, "{0},{1}", X, Y);
@@ -313,73 +309,63 @@ namespace Microsoft.PowerShell.Internal
         internal string FontFace;
     }
 
-    public struct CHAR_INFO
+    public struct BufferChar
     {
-#if CORECLR
         public char UnicodeChar;
         public ConsoleColor ForegroundColor;
         public ConsoleColor BackgroundColor;
+#if !LINUX
+        public bool IsLeadByte;
+        public bool IsTrailByte;
+#endif
+        public bool Inverse;
 
-        public CHAR_INFO(char c, ConsoleColor foreground, ConsoleColor background)
+#if !LINUX
+        public CHAR_INFO ToCharInfo()
         {
-            UnicodeChar = c;
-            ForegroundColor = foreground;
-            BackgroundColor = background;
-        }
-#else
-        public ushort UnicodeChar;
-        public ushort Attributes;
+            int fg = (int) ForegroundColor;
+            int bg = (int) BackgroundColor;
 
-        public CHAR_INFO(char c, ConsoleColor foreground, ConsoleColor background)
-        {
-            UnicodeChar = c;
-            Attributes = (ushort)(((int)background << 4) | (int)foreground);
-        }
+            if (fg < 0 || fg > 0xf || bg < 0 || bg > 0xf)
+                throw new InvalidOperationException();
 
-        [ExcludeFromCodeCoverage]
-        public ConsoleColor ForegroundColor
-        {
-            get { return (ConsoleColor)(Attributes & 0xf); }
-            set { Attributes = (ushort)((Attributes & 0xfff0) | ((int)value & 0xf)); }
-        }
-
-        [ExcludeFromCodeCoverage]
-        public ConsoleColor BackgroundColor
-        {
-            get { return (ConsoleColor)((Attributes & 0xf0) >> 4); }
-            set { Attributes = (ushort)((Attributes & 0xff0f) | (((int)value & 0xf) << 4)); }
-        }
-
-        [ExcludeFromCodeCoverage]
-        public override string ToString()
-        {
-            var sb = new StringBuilder();
-            sb.Append((char)UnicodeChar);
-            if (ForegroundColor != Console.ForegroundColor)
-                sb.AppendFormat(" fg: {0}", ForegroundColor);
-            if (BackgroundColor != Console.BackgroundColor)
-                sb.AppendFormat(" bg: {0}", BackgroundColor);
-            return sb.ToString();
-        }
-
-        [ExcludeFromCodeCoverage]
-        public override bool Equals(object obj)
-        {
-            if (!(obj is CHAR_INFO))
+            if (Inverse)
             {
-                return false;
+                // TODO: check $host.UI.SupportsVirtualTerminal and maybe set Inverse instead (it does look weird)
+                fg = fg ^ 7;
+                bg = bg ^ 7;
             }
+            ushort attrs = (ushort)(fg | (bg << 4));
+            if (IsLeadByte)
+                attrs |= (ushort)CHAR_INFO_Attributes.COMMON_LVB_LEADING_BYTE;
+            if (IsTrailByte)
+                attrs |= (ushort)CHAR_INFO_Attributes.COMMON_LVB_TRAILING_BYTE;
+            CHAR_INFO result = new CHAR_INFO
+            {
+                UnicodeChar = UnicodeChar,
+                Attributes = attrs,
+            };
 
-            var other = (CHAR_INFO)obj;
-            return this.UnicodeChar == other.UnicodeChar && this.Attributes == other.Attributes;
+            return result;
         }
 
-        [ExcludeFromCodeCoverage]
-        public override int GetHashCode()
+        public static BufferChar FromCharInfo(CHAR_INFO charInfo)
         {
-            return UnicodeChar.GetHashCode() + Attributes.GetHashCode();
+            BufferChar result = new BufferChar
+            {
+                UnicodeChar = (char) charInfo.UnicodeChar,
+                ForegroundColor = (ConsoleColor)(charInfo.Attributes & 0xf),
+                BackgroundColor = (ConsoleColor)((charInfo.Attributes & 0x00f0) >> 4),
+            };
+            return result;
         }
 #endif
+    }
+
+    public struct CHAR_INFO
+    {
+        public ushort UnicodeChar;
+        public ushort Attributes;
     }
 
     internal static class ConsoleKeyInfoExtension 
@@ -400,9 +386,10 @@ namespace Microsoft.PowerShell.Internal
                 sb.Append("Alt");
             }
 
-#if CORECLR
+#if LINUX
             if (sb.Length > 0)
                 sb.Append("+");
+            // TODO: find better way to map these characters to something more friendly
             if ((key.Key >= ConsoleKey.D0 && key.Key <= ConsoleKey.D9)
                 || (key.Key >= ConsoleKey.Oem1 && key.Key <= ConsoleKey.Oem8))
             {
@@ -442,6 +429,7 @@ namespace Microsoft.PowerShell.Internal
         }
     }
 
+#if !LINUX
     internal class ConhostConsole : IConsole
     {
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
@@ -498,18 +486,42 @@ namespace Microsoft.PowerShell.Internal
             return new SafeFileHandle(handle, true);
         });
 
-        public uint GetConsoleInputMode()
+        public object GetConsoleInputMode()
         {
+            uint mode;
             var handle = _inputHandle.Value.DangerousGetHandle();
-            uint result;
-            NativeMethods.GetConsoleMode(handle, out result);
-            return result;
+            NativeMethods.GetConsoleMode(handle, out mode);
+            return mode;
         }
 
-        public void SetConsoleInputMode(uint mode)
+        public void SetConsoleInputMode(object modeObj)
         {
-            var handle = _inputHandle.Value.DangerousGetHandle();
-            NativeMethods.SetConsoleMode(handle, mode);
+            if (modeObj is uint)
+            {
+                // Clear a couple flags so we can actually receive certain keys:
+                //     ENABLE_PROCESSED_INPUT - enables Ctrl+C
+                //     ENABLE_LINE_INPUT - enables Ctrl+S
+                // Also clear a couple flags so we don't mask the input that we ignore:
+                //     ENABLE_MOUSE_INPUT - mouse events
+                //     ENABLE_WINDOW_INPUT - window resize events
+                var mode = (uint)modeObj &
+                           ~(NativeMethods.ENABLE_PROCESSED_INPUT |
+                             NativeMethods.ENABLE_LINE_INPUT |
+                             NativeMethods.ENABLE_WINDOW_INPUT |
+                             NativeMethods.ENABLE_MOUSE_INPUT);
+
+                var handle = _inputHandle.Value.DangerousGetHandle();
+                NativeMethods.SetConsoleMode(handle, mode);
+            }
+        }
+
+        public void RestoreConsoleInputMode(object modeObj)
+        {
+            if (modeObj is uint)
+            {
+                var handle = _inputHandle.Value.DangerousGetHandle();
+                NativeMethods.SetConsoleMode(handle, (uint)modeObj);
+            }
         }
 
         public ConsoleKeyInfo ReadKey()
@@ -602,16 +614,13 @@ namespace Microsoft.PowerShell.Internal
             Console.WriteLine(value);
         }
 
-        public void WriteBufferLines(CHAR_INFO[] buffer, ref int top)
+        public void WriteBufferLines(BufferChar[] buffer, ref int top)
         {
             WriteBufferLines(buffer, ref top, true);
         }
 
-        public void WriteBufferLines(CHAR_INFO[] buffer, ref int top, bool ensureBottomLineVisible)
+        public void WriteBufferLines(BufferChar[] buffer, ref int top, bool ensureBottomLineVisible)
         {
-#if !CORECLR
-            var handle = NativeMethods.GetStdHandle((uint) StandardHandleId.Output);
-#endif
             int bufferWidth = Console.BufferWidth;
             int bufferLineCount = buffer.Length / bufferWidth;
             if ((top + bufferLineCount) > Console.BufferHeight)
@@ -620,23 +629,8 @@ namespace Microsoft.PowerShell.Internal
                 ScrollBuffer(scrollCount);
                 top -= scrollCount;
             }
-#if CORECLR
-            ConsoleColor foregroundColor = Console.ForegroundColor;
-            ConsoleColor backgroundColor = Console.BackgroundColor;
 
-            Console.SetCursorPosition(0, (top>=0) ? top : 0);
-
-            for (int i = 0; i < buffer.Length; ++i)
-            {
-                Console.ForegroundColor =  buffer[i].ForegroundColor;
-                Console.BackgroundColor =  buffer[i].BackgroundColor;
-
-                Console.Write((char)buffer[i].UnicodeChar);
-            }
-
-            Console.BackgroundColor = backgroundColor;
-            Console.ForegroundColor = foregroundColor;
-#else
+            var handle = NativeMethods.GetStdHandle((uint) StandardHandleId.Output);
             var bufferSize = new COORD
             {
                 X = (short) bufferWidth,
@@ -651,7 +645,7 @@ namespace Microsoft.PowerShell.Internal
                 Bottom = (short) bottom,
                 Right = (short) (bufferWidth - 1)
             };
-            NativeMethods.WriteConsoleOutput(handle, buffer,
+            NativeMethods.WriteConsoleOutput(handle, ToCharInfoBuffer(buffer),
                                              bufferSize, bufferCoord, ref writeRegion);
 
             // Now make sure the bottom line is visible
@@ -660,18 +654,10 @@ namespace Microsoft.PowerShell.Internal
             {
                 Console.CursorTop = bottom;
             }
-#endif
         }
 
         public void ScrollBuffer(int lines)
         {
-#if CORECLR
-            for (int i=0; i<lines; ++i)
-            {
-                Console.SetCursorPosition(Console.BufferWidth, Console.BufferHeight - 1);
-                Console.WriteLine();
-            }
-#else
             var handle = NativeMethods.GetStdHandle((uint) StandardHandleId.Output);
 
             var scrollRectangle = new SMALL_RECT
@@ -682,22 +668,17 @@ namespace Microsoft.PowerShell.Internal
                 Right = (short)Console.BufferWidth
             };
             var destinationOrigin = new COORD {X = 0, Y = 0};
-            var fillChar = new CHAR_INFO(' ', Console.ForegroundColor, Console.BackgroundColor);
+            var fillChar = new CHAR_INFO
+            {
+                UnicodeChar = ' ',
+                Attributes = (ushort)((int)Console.ForegroundColor | ((int)Console.BackgroundColor << 4))
+            };
             NativeMethods.ScrollConsoleScreenBuffer(handle, ref scrollRectangle, IntPtr.Zero, destinationOrigin, ref fillChar);
-#endif
         }
 
-        public CHAR_INFO[] ReadBufferLines(int top, int count)
+        public BufferChar[] ReadBufferLines(int top, int count)
         {
             var result = new CHAR_INFO[BufferWidth * count];
-#if CORECLR
-            for (int i=0; i<BufferWidth*count; ++i)
-            {
-                result[i].UnicodeChar = ' ';
-                result[i].ForegroundColor = Console.ForegroundColor;
-                result[i].BackgroundColor = Console.BackgroundColor;
-            }
-#else
             var handle = NativeMethods.GetStdHandle((uint) StandardHandleId.Output);
 
             var readBufferSize = new COORD {
@@ -713,8 +694,8 @@ namespace Microsoft.PowerShell.Internal
             };
             NativeMethods.ReadConsoleOutput(handle, result,
                 readBufferSize, readBufferCoord, ref readRegion);
-#endif
-            return result;
+
+            return ToBufferCharBuffer(result);
         }
 
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods",
@@ -909,13 +890,230 @@ namespace Microsoft.PowerShell.Internal
             }
         }
 
-#if CORECLR
+        private CHAR_INFO[] cachedBuffer;
+        private CHAR_INFO[] ToCharInfoBuffer(BufferChar[] buffer)
+        {
+            if (cachedBuffer == null || cachedBuffer.Length != buffer.Length)
+            {
+                cachedBuffer = new CHAR_INFO[buffer.Length];
+            }
+
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                cachedBuffer[i] = buffer[i].ToCharInfo();
+            }
+
+            return cachedBuffer;
+        }
+
+        private BufferChar[] ToBufferCharBuffer(CHAR_INFO[] buffer)
+        {
+            var result = new BufferChar[buffer.Length];
+
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                result[i] = BufferChar.FromCharInfo(buffer[i]);
+            }
+
+            return result;
+        }
+
+    }
+
+#else
+
+    internal class TTYConsole : IConsole
+    {
+        public object GetConsoleInputMode()
+        {
+            return Console.TreatControlCAsInput;
+        }
+
+        public void SetConsoleInputMode(object modeObj)
+        {
+            Console.TreatControlCAsInput = true;
+        }
+
+        public void RestoreConsoleInputMode(object modeObj)
+        {
+            if (modeObj is bool)
+            {
+                Console.TreatControlCAsInput = (bool)modeObj;
+            }
+        }
+
+        public ConsoleKeyInfo ReadKey()
+        {
+            return Console.ReadKey(true);
+        }
+
+        public bool KeyAvailable
+        {
+            get { return Console.KeyAvailable; }
+        }
+
+        public int CursorLeft
+        {
+            get { return Console.CursorLeft; }
+            set { Console.CursorLeft = value; }
+        }
+
+        public int CursorTop
+        {
+            get { return Console.CursorTop; }
+            set { Console.CursorTop = value; }
+        }
+
+        public int CursorSize
+        {
+            get { return Console.CursorSize; }
+            set { Console.CursorSize = value; }
+        }
+
+        public int BufferWidth
+        {
+            get { return Console.BufferWidth; }
+            set { Console.BufferWidth = value; }
+        }
+
+        public int BufferHeight
+        {
+            get { return Console.BufferHeight; }
+            set { Console.BufferHeight = value; }
+        }
+
+        public int WindowWidth
+        {
+            get { return Console.WindowWidth; }
+            set { Console.WindowWidth = value; }
+        }
+
+        public int WindowHeight
+        {
+            get { return Console.WindowHeight; }
+            set { Console.WindowHeight = value; }
+        }
+
+        public int WindowTop
+        {
+            get { return Console.WindowTop; }
+            set { Console.WindowTop = value; }
+        }
+
+        public ConsoleColor BackgroundColor
+        {
+            get { return Console.BackgroundColor; }
+            set { Console.BackgroundColor = value; }
+        }
+
+        public ConsoleColor ForegroundColor
+        {
+            get { return Console.ForegroundColor; }
+            set { Console.ForegroundColor = value; }
+        }
+
+        public void SetWindowPosition(int left, int top)
+        {
+            Console.SetWindowPosition(left, top);
+        }
+
+        public void SetCursorPosition(int left, int top)
+        {
+            Console.SetCursorPosition(left, top);
+        }
+
+        public void Write(string value)
+        {
+            Console.Write(value);
+        }
+
+        public void WriteLine(string value)
+        {
+            Console.WriteLine(value);
+        }
+
+        public void WriteBufferLines(BufferChar[] buffer, ref int top)
+        {
+            WriteBufferLines(buffer, ref top, true);
+        }
+
+        public void WriteBufferLines(BufferChar[] buffer, ref int top, bool ensureBottomLineVisible)
+        {
+            int bufferWidth = Console.BufferWidth;
+            int bufferLineCount = buffer.Length / bufferWidth;
+            if ((top + bufferLineCount) > Console.BufferHeight)
+            {
+                var scrollCount = (top + bufferLineCount) - Console.BufferHeight;
+                ScrollBuffer(scrollCount);
+                top -= scrollCount;
+            }
+
+            ConsoleColor foregroundColor = Console.ForegroundColor;
+            ConsoleColor backgroundColor = Console.BackgroundColor;
+
+            Console.SetCursorPosition(0, (top>=0) ? top : 0);
+
+            for (int i = 0; i < buffer.Length; ++i)
+            {
+                // TODO: use escape sequences for better perf
+                Console.ForegroundColor =  buffer[i].ForegroundColor;
+                Console.BackgroundColor =  buffer[i].BackgroundColor;
+
+                Console.Write(buffer[i].UnicodeChar);
+            }
+
+            Console.BackgroundColor = backgroundColor;
+            Console.ForegroundColor = foregroundColor;
+        }
+
+        public void ScrollBuffer(int lines)
+        {
+            for (int i=0; i<lines; ++i)
+            {
+                Console.SetCursorPosition(Console.BufferWidth, Console.BufferHeight - 1);
+                Console.WriteLine();
+            }
+        }
+
+        public BufferChar[] ReadBufferLines(int top, int count)
+        {
+            var result = new BufferChar[BufferWidth * count];
+            for (int i=0; i<BufferWidth*count; ++i)
+            {
+                result[i].UnicodeChar = ' ';
+                result[i].ForegroundColor = Console.ForegroundColor;
+                result[i].BackgroundColor = Console.BackgroundColor;
+            }
+            return result;
+        }
+
+        public int LengthInBufferCells(char c)
+        {
+            return 1;
+        }
+
+        public void StartRender()
+        {
+        }
+
+        public void EndRender()
+        {
+        }
+
+        // TODO: this is not correct, PSReadline never clears the screen, it should only scroll
         public void Clear()
         {
             Console.Clear();
         }
-#endif
     }
+#endif
+
+#if CORECLR // TODO: remove if CORECLR adds this attribute back
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Event)]
+    sealed class ExcludeFromCodeCoverageAttribute : Attribute
+    {
+    }
+#endif
 
 #pragma warning restore 1591
 }

@@ -2,12 +2,11 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-#if !CORECLR
+#if !LINUX
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Forms;
 using Microsoft.PowerShell.Internal;
 
 namespace Microsoft.PowerShell
@@ -19,16 +18,8 @@ namespace Microsoft.PowerShell
             var buffer = ReadBufferLines(start, count);
             for (int i = 0; i < buffer.Length; i++)
             {
-#if CORECLR                
-                ConsoleColor tempColor = (int)buffer[i].ForegroundColor == -1 
-                    ? ConsoleColor.White : buffer[i].ForegroundColor;
-                buffer[i].ForegroundColor = (int)buffer[i].BackgroundColor == -1 
-                    ? ConsoleColor.Black : buffer[i].BackgroundColor;
-                buffer[i].BackgroundColor = tempColor;
-#else
                 buffer[i].ForegroundColor = (ConsoleColor)((int)buffer[i].ForegroundColor ^ 7);
                 buffer[i].BackgroundColor = (ConsoleColor)((int)buffer[i].BackgroundColor ^ 7);
-#endif
             }
             _singleton._console.WriteBufferLines(buffer, ref start, false);
         }
@@ -237,7 +228,6 @@ namespace Microsoft.PowerShell
             var buffer = ReadBufferLines(top, count);
             var bufferWidth = _singleton._console.BufferWidth;
 
-            var dataObject = new DataObject();
             var textBuffer = new StringBuilder(buffer.Length + count);
 
             var rtfBuffer = new StringBuilder();
@@ -307,9 +297,12 @@ namespace Microsoft.PowerShell
             }
             rtfBuffer.Append("}}");
 
-            dataObject.SetData(DataFormats.Text, textBuffer.ToString());
-            dataObject.SetData(DataFormats.Rtf, rtfBuffer.ToString());
-            ExecuteOnSTAThread(() => Clipboard.SetDataObject(dataObject, copy: true));
+#if !CORECLR // TODO: break dependency on Window.Forms w/ p/invokes to clipboard directly, for now, just silently skip the copy.
+            var dataObject = new System.Windows.Forms.DataObject();
+            dataObject.SetData(System.Windows.Forms.DataFormats.Text, textBuffer.ToString());
+            dataObject.SetData(System.Windows.Forms.DataFormats.Rtf, rtfBuffer.ToString());
+            ExecuteOnSTAThread(() => System.Windows.Forms.Clipboard.SetDataObject(dataObject, copy: true));
+#endif
         }
     }
 }

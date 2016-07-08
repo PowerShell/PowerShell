@@ -13,13 +13,16 @@ namespace Microsoft.PowerShell
 {
     public partial class PSConsoleReadLine
     {
-        private CHAR_INFO[] _consoleBuffer;
+#if LINUX
+        private const ConsoleColor UnknownColor = (ConsoleColor) (-1);
+#endif
+        private BufferChar[] _consoleBuffer;
         private int _initialX;
         private int _initialY;
         private int _bufferWidth;
         private ConsoleColor _initialBackgroundColor;
         private ConsoleColor _initialForegroundColor;
-        private CHAR_INFO _space;
+        private BufferChar _space;
         private int _current;
         private int _emphasisStart;
         private int _emphasisLength;
@@ -100,14 +103,11 @@ namespace Microsoft.PowerShell
 
             try
             {
-#if !CORECLR
                 _console.StartRender();
-#endif
-
                 bufferLineCount = ConvertOffsetToCoordinates(text.Length).Y - _initialY + 1 + statusLineCount;
                 if (_consoleBuffer.Length != bufferLineCount * bufferWidth)
                 {
-                    var newBuffer = new CHAR_INFO[bufferLineCount * bufferWidth];
+                    var newBuffer = new BufferChar[bufferLineCount * bufferWidth];
                     Array.Copy(_consoleBuffer, newBuffer, _initialX + (Options.ExtraPromptLineCount * _bufferWidth));
                     if (_consoleBuffer.Length > bufferLineCount * bufferWidth)
                     {
@@ -228,21 +228,17 @@ namespace Microsoft.PowerShell
                             MaybeEmphasize(ref _consoleBuffer[j++], i, foregroundColor, backgroundColor);
 
                         }
+#if !LINUX
                         else if (size > 1)
                         {
                             _consoleBuffer[j].UnicodeChar = charToRender;
-#if !CORECLR
-                            _consoleBuffer[j].Attributes = (ushort)(_consoleBuffer[j].Attributes |
-                                                           (uint)CHAR_INFO_Attributes.COMMON_LVB_LEADING_BYTE);
-#endif
+                            _consoleBuffer[j].IsLeadByte = true;
                             MaybeEmphasize(ref _consoleBuffer[j++], i, foregroundColor, backgroundColor);
                             _consoleBuffer[j].UnicodeChar = charToRender;
-#if !CORECLR
-                            _consoleBuffer[j].Attributes = (ushort)(_consoleBuffer[j].Attributes |
-                                                           (uint)CHAR_INFO_Attributes.COMMON_LVB_TRAILING_BYTE);
-#endif
+                            _consoleBuffer[j].IsTrailByte = true;
                             MaybeEmphasize(ref _consoleBuffer[j++], i, foregroundColor, backgroundColor);
                         }
+#endif
                         else
                         {
                             _consoleBuffer[j].UnicodeChar = charToRender;
@@ -253,9 +249,7 @@ namespace Microsoft.PowerShell
             }
             finally
             {
-#if !CORECLR
                 _console.EndRender();
-#endif
             }
 
             for (; j < (_consoleBuffer.Length - (statusLineCount * _bufferWidth)); j++)
@@ -294,7 +288,7 @@ namespace Microsoft.PowerShell
 
                 while (promptChar >= 0)
                 {
-                    var c = (char)_consoleBuffer[promptChar].UnicodeChar;
+                    var c = _consoleBuffer[promptChar].UnicodeChar;
                     if (char.IsWhiteSpace(c))
                     {
                         promptChar -= 1;
@@ -319,7 +313,7 @@ namespace Microsoft.PowerShell
 
             if ((_initialY + bufferLineCount) > (_console.WindowTop + _console.WindowHeight))
             {
-#if !CORECLR               
+#if !LINUX // TODO: verify this isn't necessary for LINUX
                 _console.WindowTop = _initialY + bufferLineCount - _console.WindowHeight;
 #endif
             }
@@ -340,7 +334,7 @@ namespace Microsoft.PowerShell
         private static void WriteBlankLines(int count, int top)
         {
             var console = _singleton._console;
-            var blanks = new CHAR_INFO[count * console.BufferWidth];
+            var blanks = new BufferChar[count * console.BufferWidth];
             for (int i = 0; i < blanks.Length; i++)
             {
                 blanks[i].BackgroundColor = console.BackgroundColor;
@@ -350,7 +344,7 @@ namespace Microsoft.PowerShell
             console.WriteBufferLines(blanks, ref top);
         }
 
-        private static CHAR_INFO[] ReadBufferLines(int top, int count)
+        private static BufferChar[] ReadBufferLines(int top, int count)
         {
             return _singleton._console.ReadBufferLines(top, count);
         }
@@ -458,7 +452,7 @@ namespace Microsoft.PowerShell
             return i >= start && i < end;
         }
 
-        private void MaybeEmphasize(ref CHAR_INFO charInfo, int i, ConsoleColor foregroundColor, ConsoleColor backgroundColor)
+        private void MaybeEmphasize(ref BufferChar charInfo, int i, ConsoleColor foregroundColor, ConsoleColor backgroundColor)
         {
             if (i >= _emphasisStart && i < (_emphasisStart + _emphasisLength))
             {
@@ -472,9 +466,9 @@ namespace Microsoft.PowerShell
                 // to invert only the lower 3 bits to change the color is somewhat
                 // but looks best with the 2 default color schemes - starting PowerShell
                 // from it's shortcut or from a cmd shortcut.
-#if CORECLR                
-                ConsoleColor tempColor = ((int)foregroundColor == -1) ? ConsoleColor.White : foregroundColor;
-                foregroundColor = ((int)backgroundColor == -1) ? ConsoleColor.Black : backgroundColor;
+#if LINUX // TODO: set Inverse attribute and let render choose what to do.
+                ConsoleColor tempColor = (foregroundColor == UnknownColor) ? ConsoleColor.White : foregroundColor;
+                foregroundColor = (backgroundColor == UnknownColor) ? ConsoleColor.Black : backgroundColor;
                 backgroundColor = tempColor;
 #else
                 foregroundColor = (ConsoleColor)((int)foregroundColor ^ 7);
@@ -654,24 +648,24 @@ namespace Microsoft.PowerShell
             return (_statusLinePrompt.Length + _statusBuffer.Length) / _console.BufferWidth + 1;
         }
 
-#if !CORECLR
         [ExcludeFromCodeCoverage]
-#endif
         void IPSConsoleReadLineMockableMethods.Ding()
         {
-#if !CORECLR
             switch (Options.BellStyle)
             {
             case BellStyle.None:
                 break;
             case BellStyle.Audible:
+#if LINUX
+                Console.Beep();
+#else
                 Console.Beep(Options.DingTone, Options.DingDuration);
+#endif
                 break;
             case BellStyle.Visual:
                 // TODO: flash prompt? command line?
                 break;
             }
-#endif
         }
 
         /// <summary>
@@ -694,9 +688,9 @@ namespace Microsoft.PowerShell
             return key.Key == ConsoleKey.Y;
         }
 
-        #region Screen scrolling
+#region Screen scrolling
 
-#if !CORECLR
+#if !LINUX
         /// <summary>
         /// Scroll the display up one screen.
         /// </summary>
@@ -816,6 +810,6 @@ namespace Microsoft.PowerShell
         }
 
 #endif
-        #endregion Screen scrolling
+#endregion Screen scrolling
     }
 }

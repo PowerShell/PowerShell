@@ -96,7 +96,6 @@ namespace Microsoft.PowerShell
         private static string GetPreferredEditor()
         {
             string[] names = {"VISUAL", "EDITOR"};
-#if CORECLR
             foreach (string name in names)
             {
                 string editor = Environment.GetEnvironmentVariable(name);
@@ -105,24 +104,7 @@ namespace Microsoft.PowerShell
                     return editor;
                 }
             }
-#else
-            EnvironmentVariableTarget[] targets = {
-                                                      EnvironmentVariableTarget.Machine,
-                                                      EnvironmentVariableTarget.Process,
-                                                      EnvironmentVariableTarget.User
-                                                  };
-            foreach (string name in names)
-            {
-                foreach (EnvironmentVariableTarget target in targets)
-                {
-                    string editor = Environment.GetEnvironmentVariable(name, target);
-                    if (!string.IsNullOrWhiteSpace(editor))
-                    {
-                        return editor;
-                    }
-                }
-            }
-#endif
+
             return null;
         }
     }

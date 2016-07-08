@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell
         private IConsole _console;
 
         private EngineIntrinsics _engineIntrinsics;
-#if !CORECLR
+#if !LINUX
         private static GCHandle _breakHandlerGcHandle;
 #endif
         private Thread _readKeyThread;
@@ -43,11 +43,7 @@ namespace Microsoft.PowerShell
         private ManualResetEvent _closingWaitHandle;
         private WaitHandle[] _threadProcWaitHandles;
         private WaitHandle[] _requestKeyWaitHandles;
-#if CORECLR
-        private bool _prePSReadlineControlCMode;
-#else
-        private uint _prePSReadlineConsoleMode;
-#endif
+        private object _savedConsoleInputMode;
 
         private readonly StringBuilder _buffer;
         private readonly StringBuilder _statusBuffer;
@@ -266,32 +262,13 @@ namespace Microsoft.PowerShell
                 throw new NotSupportedException();
             }
 
-#if CORECLR
-            _singleton._prePSReadlineControlCMode = Console.TreatControlCAsInput;
-#else
-            _singleton._prePSReadlineConsoleMode = console.GetConsoleInputMode();
-#endif
+            _singleton._savedConsoleInputMode = _singleton._console.GetConsoleInputMode();
             bool firstTime = true;
             while (true)
             {
                 try
                 {
-#if CORECLR
-                    Console.TreatControlCAsInput = true;
-#else
-                    // Clear a couple flags so we can actually receive certain keys:
-                    //     ENABLE_PROCESSED_INPUT - enables Ctrl+C
-                    //     ENABLE_LINE_INPUT - enables Ctrl+S
-                    // Also clear a couple flags so we don't mask the input that we ignore:
-                    //     ENABLE_MOUSE_INPUT - mouse events
-                    //     ENABLE_WINDOW_INPUT - window resize events
-                    var mode = _singleton._prePSReadlineConsoleMode &
-                               ~(NativeMethods.ENABLE_PROCESSED_INPUT |
-                                 NativeMethods.ENABLE_LINE_INPUT |
-                                 NativeMethods.ENABLE_WINDOW_INPUT |
-                                 NativeMethods.ENABLE_MOUSE_INPUT);
-                    console.SetConsoleInputMode(mode);
-#endif
+                    _singleton._console.SetConsoleInputMode(_singleton._savedConsoleInputMode);
 
                     if (firstTime)
                     {
@@ -362,11 +339,7 @@ namespace Microsoft.PowerShell
                 }
                 finally
                 {
-#if CORECLR
-                    Console.TreatControlCAsInput = _singleton._prePSReadlineControlCMode;
-#else
-                    console.SetConsoleInputMode(_singleton._prePSReadlineConsoleMode);
-#endif
+                    _singleton._console.RestoreConsoleInputMode(_singleton._savedConsoleInputMode);
                 }
             }
         }
@@ -454,29 +427,16 @@ namespace Microsoft.PowerShell
 
         T CalloutUsingDefaultConsoleMode<T>(Func<T> func)
         {
-#if CORECLR
-            bool psReadlineControlCMode = Console.TreatControlCAsInput;
+            var currentMode = _console.GetConsoleInputMode();
             try
             {
-                Console.TreatControlCAsInput = _prePSReadlineControlCMode;
+                _console.RestoreConsoleInputMode(_savedConsoleInputMode);
                 return func();
             }
             finally
             {
-                Console.TreatControlCAsInput = psReadlineControlCMode;
+                _console.RestoreConsoleInputMode(currentMode);
             }
-#else
-            uint psReadlineConsoleMode = _console.GetConsoleInputMode();
-            try
-            {
-                _console.SetConsoleInputMode(_prePSReadlineConsoleMode);
-                return func();
-            }
-            finally
-            {
-                _console.SetConsoleInputMode(psReadlineConsoleMode);
-            }
-#endif
         }
 
         void CalloutUsingDefaultConsoleMode(Action action)
@@ -519,7 +479,11 @@ namespace Microsoft.PowerShell
         private PSConsoleReadLine()
         {
             _mockableMethods = this;
+#if LINUX
+            _console = new TTYConsole();
+#else
             _console = new ConhostConsole();
+#endif
 
             SetDefaultWindowsBindings();
 
@@ -580,7 +544,12 @@ namespace Microsoft.PowerShell
             _initialY = _console.CursorTop - Options.ExtraPromptLineCount;
             _initialBackgroundColor = _console.BackgroundColor;
             _initialForegroundColor = _console.ForegroundColor;
-            _space = new CHAR_INFO(' ', _initialForegroundColor, _initialBackgroundColor);
+            _space = new BufferChar
+            {
+                UnicodeChar = ' ',
+                BackgroundColor = _initialBackgroundColor,
+                ForegroundColor = _initialForegroundColor
+            };
             _bufferWidth = _console.BufferWidth;
             _killCommandCount = 0;
             _yankCommandCount = 0;
@@ -590,7 +559,7 @@ namespace Microsoft.PowerShell
             _statusIsErrorMessage = false;
 
             _consoleBuffer = ReadBufferLines(_initialY, 1 + Options.ExtraPromptLineCount);
-#if CORECLR
+#if LINUX // TODO: not necessary if ReadBufferLines worked, or if rendering worked on spans instead of complete lines
             string newPrompt = GetPrompt();
             for (int i=0; i<newPrompt.Length; ++i)
             {
@@ -644,7 +613,7 @@ namespace Microsoft.PowerShell
                 }
             }
 
-#if CORECLR
+#if LINUX
             _historyFileMutex = new Mutex(false);
 #else
             _historyFileMutex = new Mutex(false, GetHistorySaveFileMutexName());
@@ -681,7 +650,7 @@ namespace Microsoft.PowerShell
             _killIndex = -1; // So first add indexes 0.
             _killRing = new List<string>(Options.MaximumKillRingCount);
 
-#if !CORECLR
+#if !LINUX
             _breakHandlerGcHandle = GCHandle.Alloc(new BreakHandler(_singleton.BreakHandler));
             NativeMethods.SetConsoleCtrlHandler((BreakHandler)_breakHandlerGcHandle.Target, true);
 #endif
@@ -691,11 +660,11 @@ namespace Microsoft.PowerShell
             _singleton._requestKeyWaitHandles = new WaitHandle[] {_singleton._keyReadWaitHandle, _singleton._closingWaitHandle};
             _singleton._threadProcWaitHandles = new WaitHandle[] {_singleton._readKeyWaitHandle, _singleton._closingWaitHandle};
 
+#if !CORECLR
             // This is for a "being hosted in an alternate appdomain scenario" (the
             // DomainUnload event is not raised for the default appdomain). It allows us
             // to exit cleanly when the appdomain is unloaded but the process is not going
             // away.
-#if !CORECLR
             if (!AppDomain.CurrentDomain.IsDefaultAppDomain())
             {
                 AppDomain.CurrentDomain.DomainUnload += (x, y) =>
@@ -733,13 +702,14 @@ namespace Microsoft.PowerShell
 
         private static void ExecuteOnSTAThread(Action action)
         {
-#if !CORECLR
+#if CORECLR
+            action();
+#else
             if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
             {
                 action();
                 return;
             }
-#endif
 
             Exception exception = null;
             var thread = new Thread(() =>
@@ -754,9 +724,7 @@ namespace Microsoft.PowerShell
                 }
             });
 
-#if !CORECLR
             thread.SetApartmentState(ApartmentState.STA);
-#endif
             thread.Start();
             thread.Join();
 
@@ -764,6 +732,7 @@ namespace Microsoft.PowerShell
             {
                 throw exception;
             }
+#endif
         }
 
         #region Miscellaneous bindable functions
@@ -788,13 +757,11 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            #region VI special case
             if (_singleton._options.EditMode == EditMode.Vi && key.Value.KeyChar == '0')
             {
                 BeginningOfLine();
                 return;
             }
-            #endregion VI special case
 
             bool sawDigit = false;
             _singleton._statusLinePrompt = "digit-argument: ";
@@ -899,7 +866,7 @@ namespace Microsoft.PowerShell
 
             _singleton._initialX = _singleton._console.CursorLeft;
             _singleton._consoleBuffer = ReadBufferLines(_singleton._initialY, 1 + _singleton.Options.ExtraPromptLineCount);
-#if CORECLR
+#if LINUX // TODO: ReadBufferLines only needed for extra line, but doesn't work on Linux
             for (int i=0; i<newPrompt.Length; ++i)
             {
                 _singleton._consoleBuffer[i].UnicodeChar = newPrompt[i];

@@ -10,18 +10,18 @@ namespace Microsoft.PowerShell
 {
     internal class ConsoleBufferBuilder
     {
-        private List<CHAR_INFO> buffer;
+        private List<BufferChar> buffer;
         private IConsole _console;
 
         public ConsoleBufferBuilder(int capacity, IConsole console)
         {
-            buffer = new List<CHAR_INFO>(capacity);
+            buffer = new List<BufferChar>(capacity);
             _console = console;
         }
 
-        CHAR_INFO NewCharInfo(char c)
+        BufferChar NewCharInfo(char c)
         {
-            return new CHAR_INFO
+            return new BufferChar
             {
                 UnicodeChar = c,
                 BackgroundColor = _console.BackgroundColor,
@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        public CHAR_INFO[] ToArray()
+        public BufferChar[] ToArray()
         {
             return buffer.ToArray();
         }

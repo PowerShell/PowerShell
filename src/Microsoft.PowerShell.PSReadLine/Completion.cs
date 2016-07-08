@@ -27,9 +27,7 @@ namespace Microsoft.PowerShell
         private static string DirectorySeparatorString = System.IO.Path.DirectorySeparatorChar.ToString();
 
         // Stub helper method so completion can be mocked
-#if !CORECLR
         [ExcludeFromCodeCoverage]
-#endif
         CommandCompletion IPSConsoleReadLineMockableMethods.CompleteInput(string input, int cursorIndex, Hashtable options, System.Management.Automation.PowerShell powershell)
         {
             return CalloutUsingDefaultConsoleMode(
@@ -300,24 +298,14 @@ namespace Microsoft.PowerShell
             return replacementText;
         }
 
-        private static void InvertSelectedCompletion(CHAR_INFO[] buffer, int selectedItem, int menuColumnWidth, int menuRows)
+        private static void InvertSelectedCompletion(BufferChar[] buffer, int selectedItem, int menuColumnWidth, int menuRows)
         {
             var selectedX = selectedItem / menuRows;
             var selectedY = selectedItem - (selectedX * menuRows);
             var start = selectedY * _singleton._console.BufferWidth + selectedX * menuColumnWidth;
             for (int i = 0; i < menuColumnWidth; i++)
             {
-                int j = i + start;
-#if CORECLR                
-                ConsoleColor tempColor = (int)buffer[j].ForegroundColor == -1 
-                    ? ConsoleColor.White : buffer[j].ForegroundColor;
-                buffer[j].ForegroundColor = (int)buffer[j].BackgroundColor == -1 
-                    ? ConsoleColor.Black : buffer[j].BackgroundColor;
-                buffer[j].BackgroundColor = tempColor;
-#else
-                buffer[j].ForegroundColor = (ConsoleColor)((int)buffer[j].ForegroundColor ^ 7);
-                buffer[j].BackgroundColor = (ConsoleColor)((int)buffer[j].BackgroundColor ^ 7);
-#endif
+                buffer[i + start].Inverse = true;
             }
         }
 
