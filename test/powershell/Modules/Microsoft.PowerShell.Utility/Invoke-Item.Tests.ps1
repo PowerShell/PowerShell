@@ -37,10 +37,14 @@ Describe "Invoke-Item" {
         $testfile = Join-Path $TestDrive testfile.txt
     }
 
-    It "Should invoke a text file without error" {
+    It "Should invoke a text file without error" -Skip:($IsWindows -and $IsCore) {
         $debugfn = NewProcessStartInfo "-noprofile ""``Invoke-Item $testfile`n" -RedirectStdIn
         $process = RunPowerShell $debugfn
         EnsureChildHasExited $process
         $process.ExitCode | Should Be 0
+    }
+
+    It "Should throw not supported on Windows with .NET Core" -Skip:($IsLinux -or $IsOSX -or !$IsCore) {
+        { Invoke-Item $testfile }| Should Throw "Operation is not supported on this platform."
     }
 }

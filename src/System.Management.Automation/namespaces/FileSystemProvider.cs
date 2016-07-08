@@ -1333,35 +1333,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
 
-                invokeProcess.StartInfo.UseShellExecute = false;
-
-                if (Platform.IsWindows)
-                {
-                    // this is a re-implementation of the unavailable (on .NET Core) UseShellExecute,
-                    // where we manually execute a cmd.exe shell, and use its start command to
-                    // launch the default application for the given path
-                    invokeProcess.StartInfo.FileName = "cmd.exe";
-
-                    // start is very picky: the "optional" TITLE as the first argument should always
-                    // be included, otherwise it can silently fail
-                    invokeProcess.StartInfo.Arguments = string.Format(CultureInfo.InvariantCulture,
-                                                                      @"/c ""start /b """" ""{0}""""", path);
-
-                    // please note that there is currently no way to differentiate between running
-                    // on Nano as an OS and having targeted the .NET Core framework, thus this code
-                    // will continue to fail on Nano (as there is no browser), but at least is
-                    // implemented for .NET Core PowerShell on Windows
-                }
-                else if (Platform.IsOSX) {
-                    invokeProcess.StartInfo.FileName = "open";
-                    invokeProcess.StartInfo.Arguments = path;
-                }
-                else if (Platform.IsLinux) {
-                    invokeProcess.StartInfo.FileName = "xdg-open";
-                    invokeProcess.StartInfo.Arguments = path;
-                }
-
+#if LINUX
+                invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
+                invokeProcess.StartInfo.Arguments = path;
                 invokeProcess.Start();
+#elif CORECLR
+                throw new PlatformNotSupportedException();
+#else
+                invokeProcess.StartInfo.FileName = path;
+                invokeProcess.Start();
+#endif
             }
         } // InvokeDefaultAction
 
