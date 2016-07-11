@@ -1,8 +1,16 @@
-
 # This is a Pester test suite to validate the Security cmdlets in PowerShell.
 #
 # Copyright (c) Microsoft Corporation, 2015
 #
+if ( ! $IsWindows ) {
+    Describe "ExecutionPolicy cmdlet valiation" {
+        It -skip "ExecutionPolicy cmdlets work" {
+            $true | should be $true
+        }
+    }
+    return
+}
+
 $currentDirectory = Split-Path $MyInvocation.MyCommand.Path
 Describe "Validate ExecutionPolicy cmdlets in PowerShell" -Tags "Innerloop", "BVT" {
 
