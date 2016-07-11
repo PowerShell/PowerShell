@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !LINUX
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -440,3 +442,5 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
         }
     } 
 }
+
+#endif
