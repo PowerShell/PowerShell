@@ -960,21 +960,20 @@ namespace System.Management.Automation
 
         internal static bool IsAdministrator()
         {
-            // Porting note: only Windows supports the
-            // SecurityPrincipal API of .net for now assume Linux
-            // users have no concept of "Administrator" for now and
-            // specifically do not map to a check for root user
-            if (Platform.IsWindows)
-            {
-                System.Security.Principal.WindowsIdentity currentIdentity = System.Security.Principal.WindowsIdentity.GetCurrent();
-                System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(currentIdentity);
+            // Porting note: only Windows supports the SecurityPrincipal API of .NET. Due to
+            // advanced privilege models, the correct approach on Unix is to assume the user has
+            // permissions, attempt the task, and error gracefully if the task fails due to
+            // permissions. To fit into PowerShell's existing model of pre-emptively checking
+            // permissions (which cannot be assumed on Unix), we "assume" the user is an
+            // administrator by returning true, thus nullifying this check on Unix.
+#if LINUX
+            return true;
+#else
+            System.Security.Principal.WindowsIdentity currentIdentity = System.Security.Principal.WindowsIdentity.GetCurrent();
+            System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(currentIdentity);
 
-                return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
-            }
-            else
-            {
-                return false;
-            }
+            return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+#endif
         }
 
         internal static bool NativeItemExists(string path)
