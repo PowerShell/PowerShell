@@ -1,6 +1,6 @@
 <!-- PR checklist -->
 
-- [ ] Resolves #xyz.
+- [ ] Resolves issue #xyz.
 - [ ] Code is up-to-date with `master`.
 - [ ] Add tests that fail without your changes.
 - [ ] Update all relevant [documentation](../docs).

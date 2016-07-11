@@ -9,54 +9,59 @@ New to Git?
 - Make sure you have a [GitHub account](https://github.com/signup/free)
 - [Git Basics](../docs/git/basics.md): install and getting started.
 - [Commit process](../docs/git/committing.md): step-by-step instructions how to commit your changes
-- [Git for sd users](../docs/git/source-depot.md): a handy reference document for people familiar with `sd`
 
 
 Quick Start Check-list
 ----
 - Read [the Community Governance](../docs/community/governance.md)
-- Make sure you have signed [PowerShell Contribution License Agreement (CLA)](#contributor-license-agreement) before pull request
+- Make sure you have signed a [PowerShell Contribution License Agreement (CLA)](#contributor-license-agreement) before submitting a pull request
 - Get familiar with the [PowerShell repository](../docs/git/powershell-repository-101.md)
-- Setup your [development environment](../docs/dev-process/setup-dev-environment.md)
-- Build the [PowerShell repository](https://github.com/PowerShell/PowerShell)
-- [Try it out with the binaries you just built](../docs/dev-process/tryit.md)
 
-
-Contributing to Issue
+Contributing to Issues
 ----
 
-- Review the [GitHub Issue Management process](../docs/dev-process/issue-management-process.md). It covers the triage process and the definition of Label, Assignee and the guidance like verifying and closing issues
-- Check if the issue you are going to file already exists in [GitHub Issue query](https://github.com/PowerShell/PowerShell/issues)
-- Submit an issue, assuming it does not exist yet, via [GitHub Issue track](https://github.com/PowerShell/PowerShell/issues) by following the issue template.
+- Review the [GitHub issue management process](../docs/dev-process/issue-management-process.md). It covers the triage process and the definition of labels and assignees as well as a description of how we will verify and close issues
+- Check if the issue you are going to file already exists in our [GitHub issues](https://github.com/PowerShell/PowerShell/issues)
+- If you can't find your issue already, [open a new issue](https://github.com/PowerShell/PowerShell/issues/new), making sure to follow the directions in the issue template as best you can.  
 
 Contributing to Documentation
 ----
-- Choose what to work on. Check the list of [documentation issues](https://github.com/PowerShell/PowerShell-Docs/issues) to see if someone is already working on it.  
-- If you cannot find an existing issue for your desired work, open a new issue for your work.  
+- First, check the list of [documentation issues](https://github.com/PowerShell/PowerShell-Docs/issues) to make sure your issue doesn't already exist or that someone is already working on it.  
+- If you cannot find an existing issue for your desired work, [open a new issue](https://github.com/PowerShell/PowerShell/issues/new) explaining that you'd like to contribute to fix the problem.  
 - Follow the guidelines at [Contributing to PowerShell Documentation](https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md).  
 - If you contribute to the PowerShell project in a way that changes the user or developer experience, you are expected to document those changes.  
-
 
 Contributing to Code
 ----
 
+- Learn how to setup your development environment and build PowerShell for [Linux][build-linux], [Windows Core][build-wc], [Windows Full][build-wf] or
+[OS X][build-osx]. 
+- Build the [PowerShell repository](https://github.com/PowerShell/PowerShell)
+- Ensure you can [locally execute tests][testing-guidelines] with your build. 
 - [Pick something to work on](https://github.com/PowerShell/PowerShell/issues)
 - If you cannot find an existing issue for your desired work, open a new issue for your work
-  - Get agreement from the PowerShell team and the community regarding your proposed change via the [Issue Triage Process](../docs/dev-process/issue-management-process.md).
-  - If you will be adding a new cmdlet or other design changes, follow [Making Design Changes guidelines](#making-design-changes)
-  - For breaking changes, see [Make Breaking Changes guidelines](#making-breaking-changes)
-  - If you would like to be assigned to the issue, please ask @powershell/powershell (TODO) for an assignment
+  - Get agreement from the PowerShell team and the community regarding your proposed change via the [issue triage process][issue-triage].
+  - If you're changes require a new cmdlet or other design changes, follow the [design change guidelines](#making-design-changes)
+  - Ensure that you've reviewd our [breaking changes guidelines](#making-breaking-changes)
+  - If you would like to be assigned to the issue, please ask `@powershell/powershell` for an assignment
 - Create a [personal fork of the repository](https://help.github.com/articles/fork-a-repo/) to start your work
 - Follow the [coding guidelines](../docs/coding-guidelines/coding-guidelines.md) and [testing guidelines](../docs/testing-guidelines/testing-guidelines.md)
 - Read the [Pull Request (PR) Guidelines](../docs/dev-process/pull-request-rules.md) and create a [PR](https://guides.github.com/activities/hello-world/) against the upstream repository
-- Perform a [code review](../docs/dev-process/code-review-guidelines.md) with the PowerShell Committee (TODO) on the pull request.
+- Perform a [code review](../docs/dev-process/code-review-guidelines.md) with the [PowerShell Committee][governance] on the pull request.
 
+[build-wc]: ../docs/building/windows-core.md
+[build-wf]: ../docs/building/windows-full.md
+[build-osx]: ../docs/building/osx.md
+[build-linux]: ../docs/building/linux.md
+[testing-guidelines]: ../docs/testing-guidelines/testing-guidelines.md
+[issue-triage]: ../docs/dev-process/issue-management-process.md
+[governance]: ../docs/community/governance.md
 
 Making Breaking Changes
 ----
 
 When you make code changes, please pay attention to these that can affect the [Public Contract](../docs/dev-process/breaking-change-contract.md),
-for example, PowerShell parameter, API or protocols changes.  Before starting making changes to the code, first review the [Breaking Changes guidelines](../docs/dev-process/breaking-change-contract.md)
+for example, PowerShell parameter, API or protocols changes. Before making changes to the code, first review the [breaking changes contract](../docs/dev-process/breaking-change-contract.md)
 and follow the guidelines to keep PowerShell backward compatible.
 
 Making Design Changes
@@ -65,10 +70,11 @@ To add new features such as cmdlets or making design changes, please follow the 
 
 Common Engineering Practices
 ----
-Other than the guidelines ([coding](../docs/coding-guidelines/coding-guidelines.md), [RFC process](https://github.com/PowerShell/PowerShell-RFC) for design, [documentation](#contributing-to-documentation)
-and [testing](../docs/testing-guidelines/testing-guidelines.md)) discussed above, following are common engineering practices we would like everyone to follow:
-- Do not commit code changes to the master branch! Read GitHub's guides on [Forking Project](https://guides.github.com/activities/forking/) and [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/)
-- Format commit messages as follows based on [the Tim Pope's guidelines]("http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html"):
+Other than the guidelines for ([coding](../docs/coding-guidelines/coding-guidelines.md), the [RFC process](https://github.com/PowerShell/PowerShell-RFC) for design, [documentation](#contributing-to-documentation)
+and [testing](../docs/testing-guidelines/testing-guidelines.md)) discussed above, we encourage contributors to follow these common engineering practices:
+- Do not commit code changes to the `master` branch! 
+Read GitHub's guides on [forking project](https://guides.github.com/activities/forking/) and [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/)
+- Format commit messages based on [Tim Pope's guidelines]("http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html"):
 
 ```
 Summarize change in 50 characters or less
@@ -87,12 +93,12 @@ Fix #42
 - Create and/or update tests when making code changes
 - Run tests and ensure they are passing before pull request
 - All pull requests **must** pass CI systems before they can be approved
-- Avoid making a big pull requests. Instead, file an issue and start a discussion with the community before you invest a large amount of time
+- Avoid making big pull requests. Instead, file an issue and start a discussion with the community before you invest a large amount of time
 - Blog and tweet about your contributions frequently!
 
 File Headers
 ----
-The following file header is the used for PowerShell. Please use it for new files. For more information, see [coding guidelines](../docs/coding-guidelines/coding-guidelines.md).
+The following file header is used for all PowerShell code. Please use it for new files. For more information, see [coding guidelines](../docs/coding-guidelines/coding-guidelines.md).
 ```C#
 // …  TODO TODO
 // Licensed to the PowerShell …. under one or more agreements.
@@ -101,16 +107,13 @@ The following file header is the used for PowerShell. Please use it for new file
 
 Licensing & Copyright
 ----
-You can find [here](../docs/community/legal-licensing.md) for the PowerShell sources license and copyright information.
+You can find more information about the PowerShell source license and copyright [here](../docs/community/legal-licensing.md).
 
-Contributor License Agreement
+Contributor License Agreement (CLA)
 ----
-You must sign a PowerShell Contribution License Agreement (CLA) before your Pull Request will be merged.
+You must sign a PowerShell Contribution License Agreement (CLA) before your pull request will be merged.
 This a one-time requirement for the PowerShell project. Signing the CLA process is simple and can be done in less than a minute.
-You can read more about [Contribution License Agreements (CLA)](http://en.wikipedia.org/wiki/Contributor_License_Agreement) on wikipedia.
-
-You don't have to do this up-front. You can simply clone, fork, and submit your pull-request as
-usual. When your pull-request is created, it is classified by a CLA bot. If the change is trivial
-(e.g. you just fixed a typo), then the PR is labelled with cla-not-required. Otherwise it's
- classified as cla-required. Once you signed a CLA, the current and all future pull-requests will be
- labelled as cla-signed.
+You don't have to do this up-front. You can simply clone, fork, and submit your pull request as usual.
+When your pull request is created, it is classified by a CLA bot. 
+If the change is trivial, it's classified as `cla-required`. 
+Once you sign a CLA, all your existing and future pull requests will be labeled as cla-signed.
