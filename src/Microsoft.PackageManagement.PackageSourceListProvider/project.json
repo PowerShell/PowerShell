@@ -10,7 +10,8 @@
 	"configurations": {
 		"Linux": {
 			"buildOptions": {
-				"define": ["LINUX"]
+        "define": [ "LINUX" ],
+        "exclude": [ "**/*" ]
 			}
 		}
 	},
