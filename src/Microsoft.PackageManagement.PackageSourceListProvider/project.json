@@ -10,7 +10,7 @@
 	"configurations": {
 		"Linux": {
 			"buildOptions": {
-				"define": ["LINUX"]
+        "define": [ "LINUX" ] 
 			}
 		}
 	},
@@ -60,7 +60,7 @@
             "../Microsoft.PackageManagement/Providers/Inbox/Common/Extensions/*.cs",
             "../Microsoft.PackageManagement/Providers/Inbox/Common/Utility/*.cs",
             "../Microsoft.PackageManagement/Providers/Inbox/Common/Version/*.cs"
-          ]
+          ]     
 				}
 			},
       "dependencies": {

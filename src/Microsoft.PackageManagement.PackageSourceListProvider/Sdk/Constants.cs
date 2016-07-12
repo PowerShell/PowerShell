@@ -1,3 +1,4 @@
+#if !LINUX
 
 namespace Microsoft.PackageManagement.PackageSourceListProvider
 {
@@ -153,3 +154,5 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
         #endregion
     }
 }
+
+#endif
