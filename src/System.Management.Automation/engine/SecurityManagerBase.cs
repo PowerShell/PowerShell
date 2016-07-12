@@ -90,10 +90,12 @@ namespace System.Management.Automation
             // TODO:PSL this is a workaround since the exception below
             // hides the internal issue of what's going on in terms of
             // execution policy.
+#if LINUX            
             if (Platform.IsCore)
             {
                 return;
             }
+#endif
 
 
 #if DEBUG
