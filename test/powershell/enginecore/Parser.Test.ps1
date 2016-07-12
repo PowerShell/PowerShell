@@ -1,60 +1,60 @@
 Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" {
     BeforeAll {
 		$functionDefinitionFile = Join-Path -Path $TestDrive -ChildPath "functionDefinition.ps1"
-		$functionDefinition = @"
+		$functionDefinition = @'
 		function testcmd-parserbvt
 		{
 		[CmdletBinding()]
 			param (
 			[Parameter(Position = 0)]
-			[string] `$Property1 = "unset",
+			[string] $Property1 = "unset",
 			
 			[Parameter(Position = 1)]
-			[string] `$Property2 = "unset",
+			[string] $Property2 = "unset",
 			
 			[Parameter(Position = 2)]
-			[string] `$Property3 = "unset",
+			[string] $Property3 = "unset",
 
 			[Parameter()]
 			[ValidateSet("default","array","object","nestedobject","struct","mshobject","nulltostring")]
-			[string]`$ReturnType = "default"
+			[string]$ReturnType = "default"
 			)
 
 			BEGIN {}
 			
 			PROCESS {
-				if ( ! `$ReturnType ) {
-					`$ReturnType = "default"
+				if ( ! $ReturnType ) {
+					$ReturnType = "default"
 				}
 				
-				switch ( `$ReturnType )
+				switch ( $ReturnType )
 				{
 					"default" { 
-						`$result = "`$Property1;`$Property2;`$Property3"
+						$result = "$Property1;$Property2;$Property3"
 						break
 					}
 					"array" { 
-						`$result = 1,2,3
+						$result = 1,2,3
 						break
 					}
 					"object" { 
-						`$result = new-object psobject
+						$result = new-object psobject
 						break
 					}
 					"nestedobject" { 
-						`$result = [pscustomobject]@{Name="John";Person=[pscustomobject]@{Name="John";Age=30}}
+						$result = [pscustomobject]@{Name="John";Person=[pscustomobject]@{Name="John";Age=30}}
 						break
 					}
 					"struct" { 
-						`$result = [pscustomobject]@{Name="John";Age=30}
+						$result = [pscustomobject]@{Name="John";Age=30}
 						break
 					}
 					"mshobject" { 
-						`$result = new-object psobject
+						$result = new-object psobject
 						break
 					}
 					"nulltostring" { 
-						`$result = $null
+						$result = $null
 						break
 					}
 					default { 
@@ -62,12 +62,12 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 						break 
 					}
 				}
-				return `$result
+				return $result
 			}
 	
 			END {}
 		}
-"@
+'@
 		$functionDefinition>$functionDefinitionFile
 		
         $PowerShell = [powershell]::Create()
@@ -84,7 +84,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
     }
 	BeforeEach {
 		$testfile = Join-Path -Path $TestDrive -ChildPath "testfile.ps1"
-		$winshellfile = Join-Path -Path $TestDrive -ChildPath "testfile.cmd"
+		$shellfile = Join-Path -Path $TestDrive -ChildPath "testfile.cmd"
 		$testfolder1 = Join-Path -Path $TestDrive -ChildPath "dir1"
 		$testfolder2 = Join-Path -Path $testfolder1 -ChildPath "dir2"
 		if(-not(Test-Path $testfolder1))
@@ -106,9 +106,9 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 		{
 			Remove-Item $testfile
 		}
-		if(Test-Path $winshellfile)
+		if(Test-Path $shellfile)
 		{
-			Remove-Item $winshellfile
+			Remove-Item $shellfile
 		}
 		if(Test-Path $testdirfile1)
 		{
@@ -269,16 +269,29 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 		$result | should be "foobar"
     }
 	
-	It "Test that we support all of the C# escape sequences. We use the ` instead of \. (line 613)" -Pending {
-		$sequences = @('"`\\"', '"`0"', '"`a"', '"`b"', '"`f"', '"`n"', '"`r"', '"`t"', '"`v"')
-		$expectedSeq = @('\\', "\0", '\a', '\b', '\f', '\n', '\r', '\t', '\v')
-		$i = 0
-		for(;$i -lt $sequences.Count;$i++)
-		{
-			$result = ExecuteCommand $sequences[$i]
-			$result | should be $expectedSeq[$i]
+	Context "Test that we support all of the C# escape sequences. We use the ` instead of \. (line 613)" {
+		# the first two sequences are tricky, because we need to provide something to
+		# execute without causing an incomplete parse error
+		$tests = @{ sequence = "write-output ""`'"""; expected = ([char]39) },
+			@{ sequence = 'write-output "`""'; expected = ([char]34) },
+			# this is a string, of 2 "\", the initial backtick should essentially be ignored
+			@{ sequence = '"`\\"'; expected = '\\' },
+			# control sequences
+			@{ sequence = '"`0"'; expected = ([char]0) }, # null
+			@{ sequence = '"`a"'; expected = ([char]7) },
+			@{ sequence = '"`b"'; expected = ([char]8) }, # backspace
+			@{ sequence = '"`f"'; expected = ([char]12) }, # form
+			@{ sequence = '"`n"'; expected = ([char]10) }, # newline
+			@{ sequence = '"`r"'; expected = ([char]13) }, # return
+			@{ sequence = '"`t"'; expected = ([char]9) }, # tab
+			@{ sequence = '"`v"'; expected = ([char]11) }
+		It "C# escape sequence <sequence> is supported using `` instead of \. (line 613)" -TestCases $tests {
+			param ( $sequence, $expected )
+			$result = ExecuteCommand $sequence
+			$result | should be $expected
 		}
     }
+
 	
 	It "This test checks that array substitution occurs inside double quotes. (line 646)" {
         $result = ExecuteCommand '$MyArray = "a","b";"Hello $MyArray"'
@@ -483,6 +496,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 	It "Test that typing a number at the command line will return that number. (line 1630)" {
         $result = ExecuteCommand '3'
 		$result | should be "3"
+		$result.gettype() |should be ([int]) 
     }
 	
 	It "This test will check that an msh script can be run without invoking. (line 1641)" {
@@ -501,9 +515,17 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 		$result | should be "3"
     }
 	
-	It "Check that a command that uses shell execute can be run from the command line and that no exception is thrown. (line 1702)" -Skip:($IsLinux -Or $IsOSX){
-        "@echo Hello, I'm a Cmd script!">$winshellfile
-        { ExecuteCommand "$winshellfile" } | Should Not Throw
+	It "Check that a command that uses shell execute can be run from the command line and that no exception is thrown. (line 1702)" {
+		if ( $IsLinux -or $IsOSX ) {
+            # because we execute on *nix based on executable bit, and the file name doesn't matter
+            # so we can use the same filename as for windows, just make sure it's executable with chmod
+            "#!/bin/sh`necho ""Hello World""" | out-file -encoding ASCII $shellfile
+            /bin/chmod +x $shellfile
+        }
+        else {
+            "@echo Hello, I'm a Cmd script!">$shellfile
+        }
+        { ExecuteCommand "$shellfile" } | Should Not Throw
     }
 	
 	Context "Boolean Tests (starting at line 1723 to line 1772)" {
@@ -593,6 +615,135 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
             param ( $Script, $Expected )
             ExecuteCommand $Script | Should be $Expected
         }
+    }
+	
+	Context "Comparison Operators with Arrays Tests (starting at line 2015 to line 2178)" {
+        $testData = @(
+            @{ Script = "@(3) -eq 3"; Expected = "3" }
+            @{ Script = "@(4) -eq 3"; Expected = $null }
+			@{ Script = "@() -eq 3"; Expected = $null }
+			@{ Script = "`$test = 1,2,@(3,4);`$test -eq 3"; Expected = $null }
+			@{ Script = "`$test = 1,2,@(3,4);`$test -eq 2"; Expected = "2" }
+			@{ Script = "`$test = 1,2,@(3,4);`$test -eq 0"; Expected = $null }
+        )
+        It "<Script> should return <Expected>" -TestCases $testData {
+            param ( $Script, $Expected )
+            ExecuteCommand $Script | Should be $Expected
+        }
+    }
+	
+	Context "Comparison Operators with Arrays Tests (starting at line 2015 to line 2178)" {
+        $testData = @(
+            @{ Script = "@(3) -eq 3"; Expected = "3" }
+            @{ Script = "@(4) -eq 3"; Expected = $null }
+			@{ Script = "@() -eq 3"; Expected = $null }
+			@{ Script = "`$test = 1,2,@(3,4);`$test -eq 3"; Expected = $null }
+			@{ Script = "`$test = 1,2,@(3,4);`$test -eq 2"; Expected = "2" }
+			@{ Script = "`$test = 1,2,@(3,4);`$test -eq 0"; Expected = $null }
+        )
+        It "<Script> should return <Expected>" -TestCases $testData {
+            param ( $Script, $Expected )
+            ExecuteCommand $Script | Should be $Expected
+        }
+    }
+	
+	It "A simple test for trapping a specific exception. Expected Result: The exception is caught and ignored. (line 2265)" {
+        { ExecuteCommand "trap [InvalidCastException] { continue;  }; [int] 'abc'" } | Should Not Throw
+    }
+	
+	It "Test that assign to input var and use then execute a script block with piped input. (line 2297)"{
+        $result = ExecuteCommand '$input = 1,2,3;4,-5,6 | & { $input }'
+		$result | should be 4, -5, 6
+    }
+	
+	It "Test that pipe objects into a script and use arguments. (line 2313)"{
+		"`$input; `$args;">$testfile
+        $result = ExecuteCommand "1,2,3 | $testfile"
+		$result | should be 1, 2, 3
+		$result = ExecuteCommand "$testfile 4 -5 6 -blah -- foo -bar"
+		$result | should be "4", "-5", "6", "-blah", "foo", "-bar"
+    }
+	
+	Context "Numerical Notations Tests (starting at line 2374 to line 2452)" {
+        $testData = @(
+			#Test various numbers using the standard notation.
+            @{ Script = "0"; Expected = "0" }
+			@{ Script = "-2"; Expected = "-2" }
+			@{ Script = "2"; Expected = "2" }
+			@{ Script = $([int32]::MaxValue); Expected = $([int32]::MaxValue) }
+			@{ Script = $([int32]::MinValue); Expected = $([int32]::MinValue) }
+			#Tests for hexadecimal notation.
+			@{ Script = "0x0"; Expected = "0" }
+			@{ Script = "0xF"; Expected = "15" }
+			@{ Script = "0x80000000"; Expected = $([int32]::MinValue) }
+			@{ Script = "0xFFFFFFFF"; Expected = "-1" }
+			@{ Script = "0x7fffffff"; Expected = $([int32]::MaxValue) }
+			@{ Script = "0x100000000"; Expected = [int64]0x100000000 }
+			#Tests for exponential notation.
+			@{ Script = "0e0"; Expected = "0" }
+			@{ Script = "0e1"; Expected = "0" }
+			@{ Script = "1e2"; Expected = "100" }
+			@{ Script = $([int32]::MaxValue); Expected = $([int32]::MaxValue) }
+			@{ Script = "0e2"; Expected = "0" }
+			@{ Script = "-2e2"; Expected = "-200" }
+			@{ Script = "-0e2"; Expected = "0" }
+			@{ Script = "3e0"; Expected = "3" }
+			#Tests for floating point notation.
+			@{ Script = ".01"; Expected = "0.01" }
+			@{ Script = "0.0"; Expected = "0" }
+			@{ Script = "-0.1"; Expected = "-0.1" }
+			@{ Script = "9.12"; Expected = "9.12" }
+			@{ Script = $([single]::MinValue); Expected = $([float]::MinValue).ToString() }
+			@{ Script = $([float]::MaxValue); Expected = $([float]::MaxValue).ToString() }
+			#Tests for the K suffix for numbers.
+			@{ Script = "0kb"; Expected = "0" }
+			@{ Script = "1kb"; Expected = "1024" }
+			@{ Script = "-2KB"; Expected = "-2048" }
+        )
+        It "<Script> should return <Expected>" -TestCases $testData {
+            param ( $Script, $Expected )
+            ExecuteCommand $Script | Should be $Expected
+        }
+    }
+	
+	It "This is a simple test of the concatenation of two arrays. (line 2460)"{
+        $result = ExecuteCommand '1,2,3 + 4,5,6'
+		$result | should be 1, 2, 3, 4, 5, 6
+    }
+	
+	It "Test that an incomplete parse exception is thrown if the array is unfinished. (line 2473)"{
+		try {
+            ExecuteCommand '1,2,'
+            throw "Execution OK"
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should be "IncompleteParseException"
+        }
+    }
+	
+	It "Test that the unary comma is not valid in cmdlet parameters. (line 2482)"{
+		try {
+            ExecuteCommand 'write-output 2,,1'
+            throw "Execution OK"
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should be "ParseException"
+        }
+    }
+	
+	It "Test that $ var: will expand to nothing inside a string. (line 2551)"{
+		try {
+            ExecuteCommand '"$var:"'
+            throw "Execution OK"
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should be "ParseException"
+        }
+    }
+	
+	It "Tests the assignment to a read-only property (line 2593)"{
+		$result = ExecuteCommand '$A=$(testcmd-parserBVT -returntype array); $A.rank =5;$A.rank'
+        $result | Should be "1"
     }
 	
 	It "Newlines are allowed after operators (line 3033)" {
