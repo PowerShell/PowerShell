@@ -14,8 +14,11 @@ Microsoft.PowerShell.Core\Set-StrictMode -Version Latest
 # Check if this is nano server. [System.Runtime.Loader.AssemblyLoadContext] is only available on NanoServer
 $script:isNanoServer = $null -ne ('System.Runtime.Loader.AssemblyLoadContext' -as [Type])
 
+function IsWindows { $PSVarable = Get-Variable -Name IsWindows -ErrorAction Ignore; return (-not $PSVarable -or $PSVarable.Value) }
+function IsLinux { $PSVarable = Get-Variable -Name IsLinux -ErrorAction Ignore; return ($PSVarable -and $PSVarable.Value) }
+function IsCore { $PSVarable = Get-Variable -Name IsCore -ErrorAction Ignore; return ($PSVarable -and $PSVarable.Value) }
 
-if($IsWindows)
+if(IsWindows)
 {
     $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath "WindowsPowerShell"
 }
@@ -24,7 +27,7 @@ else
     $script:ProgramFilesPSPath = $PSHome
 }
 
-if($IsWindows)
+if(IsWindows)
 {
     try
     {
@@ -46,7 +49,7 @@ if($IsWindows)
 }
 else
 {
-    $script:MyDocumentsPSPath = Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath ".local/share/PowerShell"
+    $script:MyDocumentsPSPath = Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath ".local/share/powershell"
 }
 
 $script:ProgramFilesModulesPath = Microsoft.PowerShell.Management\Join-Path -Path $script:ProgramFilesPSPath -ChildPath "Modules"
@@ -56,18 +59,18 @@ $script:ProgramFilesScriptsPath = Microsoft.PowerShell.Management\Join-Path -Pat
 
 $script:MyDocumentsScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsPSPath -ChildPath "Scripts"
 
-$script:TempPath = if($IsWindows){ ([System.IO.DirectoryInfo]$env:TEMP).FullName } else { '/tmp' }
+$script:TempPath = if(IsWindows){ ([System.IO.DirectoryInfo]$env:TEMP).FullName } else { '/tmp' }
 $script:PSGetItemInfoFileName = "PSGetModuleInfo.xml"
 
-if($IsWindows)
+if(IsWindows)
 {
     $script:PSGetProgramDataPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramData -ChildPath 'Microsoft\Windows\PowerShell\PowerShellGet\'
     $script:PSGetAppLocalPath = Microsoft.PowerShell.Management\Join-Path -Path $env:LOCALAPPDATA -ChildPath 'Microsoft\Windows\PowerShell\PowerShellGet\'
 }
 else
 {
-    $script:PSGetProgramDataPath = "$HOME/.config/powershell/PowerShellGet" #TODO: Get $env:ProgramData equivalent
-    $script:PSGetAppLocalPath = "$HOME/.config/powershell/PowerShellGet"
+    $script:PSGetProgramDataPath = "$HOME/.config/powershell/powershellget" #TODO: Get $env:ProgramData equivalent
+    $script:PSGetAppLocalPath = "$HOME/.config/powershell/powershellget"
 }
 
 $script:PSGetModuleSourcesFilePath = Microsoft.PowerShell.Management\Join-Path -Path $script:PSGetAppLocalPath -ChildPath "PSRepositories.xml"
@@ -114,8 +117,8 @@ $script:NuGetProviderVersion  = [Version]'2.8.5.201'
 
 $script:SupportsPSModulesFeatureName="supports-powershell-modules"
 $script:FastPackRefHastable = @{}
-$script:NuGetBinaryProgramDataPath=if($IsWindows) {"$env:ProgramFiles\PackageManagement\ProviderAssemblies"}
-$script:NuGetBinaryLocalAppDataPath=if($IsWindows) {"$env:LOCALAPPDATA\PackageManagement\ProviderAssemblies"}
+$script:NuGetBinaryProgramDataPath=if(IsWindows) {"$env:ProgramFiles\PackageManagement\ProviderAssemblies"}
+$script:NuGetBinaryLocalAppDataPath=if(IsWindows) {"$env:LOCALAPPDATA\PackageManagement\ProviderAssemblies"}
 # go fwlink for 'https://nuget.org/nuget.exe'
 $script:NuGetClientSourceURL = 'http://go.microsoft.com/fwlink/?LinkID=690216&clcid=0x409'
 $script:NuGetExeName = 'NuGet.exe'
@@ -602,7 +605,7 @@ catch
     # Ignore the error and try adding the type below
 }
 
-if(-not $script:TelemetryEnabled -and $IsWindows)
+if(-not $script:TelemetryEnabled -and (IsWindows))
 {
     try
     {
@@ -707,7 +710,7 @@ function Publish-Module
 
     Begin
     {
-        if($script:isNanoServer -or $IsCore) {
+        if($script:isNanoServer -or (IsCore)) {
             $message = $LocalizedData.PublishPSArtifactUnsupportedOnNano -f "Module"
             ThrowError -ExceptionName "System.InvalidOperationException" `
                         -ExceptionMessage $message `
@@ -869,7 +872,7 @@ function Publish-Module
         }
         else
         {
-            $resolvedPath = Resolve-PathHelper -Path $Path -CallerPSCmdlet $PSCmdlet | Microsoft.PowerShell.Utility\Select-Object -First 1
+            $resolvedPath = Resolve-PathHelper -Path $Path -CallerPSCmdlet $PSCmdlet | Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
 
             if(-not $resolvedPath -or 
                -not (Microsoft.PowerShell.Management\Test-Path -Path $resolvedPath -PathType Container))
@@ -1059,7 +1062,7 @@ function Publish-Module
             # Use Find-Script to check if that name is already used as scriptname
             $scriptPSGetItemInfo = Find-Script @FindParameters | 
                                         Microsoft.PowerShell.Core\Where-Object {$_.Name -eq $moduleName} | 
-                                            Microsoft.PowerShell.Utility\Select-Object -Last 1
+                                            Microsoft.PowerShell.Utility\Select-Object -Last 1 -ErrorAction Ignore
             if($scriptPSGetItemInfo)
             {
                 $message = $LocalizedData.SpecifiedNameIsAlearyUsed -f ($moduleName, $Repository, 'Find-Script')
@@ -1074,7 +1077,7 @@ function Publish-Module
             $null = $FindParameters.Remove('Tag')
             $currentPSGetItemInfo = Find-Module @FindParameters | 
                                         Microsoft.PowerShell.Core\Where-Object {$_.Name -eq $moduleInfo.Name} | 
-                                            Microsoft.PowerShell.Utility\Select-Object -Last 1
+                                            Microsoft.PowerShell.Utility\Select-Object -Last 1 -ErrorAction Ignore
 
             if($currentPSGetItemInfo)
             {
@@ -1412,7 +1415,7 @@ function Save-Module
         {
             if($Path)
             {
-                $destinationPath = Resolve-PathHelper -Path $Path -CallerPSCmdlet $PSCmdlet | Microsoft.PowerShell.Utility\Select-Object -First 1
+                $destinationPath = Resolve-PathHelper -Path $Path -CallerPSCmdlet $PSCmdlet | Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
 
                 if(-not $destinationPath -or -not (Microsoft.PowerShell.Management\Test-path $destinationPath))
                 {
@@ -1429,7 +1432,7 @@ function Save-Module
             }
             else
             {
-                $destinationPath = Resolve-PathHelper -Path $LiteralPath -IsLiteralPath -CallerPSCmdlet $PSCmdlet | Microsoft.PowerShell.Utility\Select-Object -First 1
+                $destinationPath = Resolve-PathHelper -Path $LiteralPath -IsLiteralPath -CallerPSCmdlet $PSCmdlet | Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
 
                 if(-not $destinationPath -or -not (Microsoft.PowerShell.Management\Test-Path -LiteralPath $destinationPath))
                 {
@@ -1878,7 +1881,7 @@ function Update-Module
                 
                 if(-not $installedPackages -and -not (Test-WildcardPattern -Name $moduleName))
                 {
-                    $availableModules = Get-Module -ListAvailable $moduleName -Verbose:$false | Microsoft.PowerShell.Utility\Select-Object -Unique
+                    $availableModules = Get-Module -ListAvailable $moduleName -Verbose:$false | Microsoft.PowerShell.Utility\Select-Object -Unique -ErrorAction Ignore
 
                     if(-not $availableModules)
                     {                    
@@ -2506,7 +2509,7 @@ function Publish-Script
 
     Begin
     {
-        if($script:isNanoServer -or $IsCore) {
+        if($script:isNanoServer -or (IsCore)) {
             $message = $LocalizedData.PublishPSArtifactUnsupportedOnNano -f "Script"
             ThrowError -ExceptionName "System.InvalidOperationException" `
                         -ExceptionMessage $message `
@@ -2527,7 +2530,7 @@ function Publish-Script
         if($Path)
         {
             $scriptFilePath = Resolve-PathHelper -Path $Path -CallerPSCmdlet $PSCmdlet | 
-                                  Microsoft.PowerShell.Utility\Select-Object -First 1
+                                  Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
             
             if(-not $scriptFilePath -or 
                -not (Microsoft.PowerShell.Management\Test-Path -Path $scriptFilePath -PathType Leaf))
@@ -2544,7 +2547,7 @@ function Publish-Script
         else
         {
             $scriptFilePath = Resolve-PathHelper -Path $LiteralPath -IsLiteralPath -CallerPSCmdlet $PSCmdlet | 
-                                  Microsoft.PowerShell.Utility\Select-Object -First 1
+                                  Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
 
             if(-not $scriptFilePath -or 
                -not (Microsoft.PowerShell.Management\Test-Path -LiteralPath $scriptFilePath -PathType Leaf))
@@ -2698,7 +2701,7 @@ function Publish-Script
             # Use Find-Module to check if that name is already used as module name
             $modulePSGetItemInfo = Find-Module @FindParameters | 
                                         Microsoft.PowerShell.Core\Where-Object {$_.Name -eq $scriptName} | 
-                                            Microsoft.PowerShell.Utility\Select-Object -Last 1
+                                            Microsoft.PowerShell.Utility\Select-Object -Last 1 -ErrorAction Ignore
             if($modulePSGetItemInfo)
             {
                 $message = $LocalizedData.SpecifiedNameIsAlearyUsed -f ($scriptName, $Repository, 'Find-Module')
@@ -2715,7 +2718,7 @@ function Publish-Script
             $currentPSGetItemInfo = $null
             $currentPSGetItemInfo = Find-Script @FindParameters | 
                                         Microsoft.PowerShell.Core\Where-Object {$_.Name -eq $scriptName} | 
-                                            Microsoft.PowerShell.Utility\Select-Object -Last 1
+                                            Microsoft.PowerShell.Utility\Select-Object -Last 1 -ErrorAction Ignore
 
             if($currentPSGetItemInfo)
             {
@@ -3074,7 +3077,7 @@ function Save-Script
             if($Path)
             {
                 $destinationPath = Resolve-PathHelper -Path $Path -CallerPSCmdlet $PSCmdlet | 
-                                       Microsoft.PowerShell.Utility\Select-Object -First 1
+                                       Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
 
                 if(-not $destinationPath -or -not (Microsoft.PowerShell.Management\Test-path $destinationPath))
                 {
@@ -3092,7 +3095,7 @@ function Save-Script
             else
             {
                 $destinationPath = Resolve-PathHelper -Path $LiteralPath -IsLiteralPath -CallerPSCmdlet $PSCmdlet | 
-                                       Microsoft.PowerShell.Utility\Select-Object -First 1
+                                       Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
 
                 if(-not $destinationPath -or -not (Microsoft.PowerShell.Management\Test-Path -LiteralPath $destinationPath))
                 {
@@ -4459,7 +4462,7 @@ function Test-ScriptFileInfo
         $scriptFilePath = $null
         if($Path)
         {
-            $scriptFilePath = Resolve-PathHelper -Path $Path -CallerPSCmdlet $PSCmdlet | Microsoft.PowerShell.Utility\Select-Object -First 1
+            $scriptFilePath = Resolve-PathHelper -Path $Path -CallerPSCmdlet $PSCmdlet | Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
             
             if(-not $scriptFilePath -or -not (Microsoft.PowerShell.Management\Test-Path -Path $scriptFilePath -PathType Leaf))
             {
@@ -4475,7 +4478,7 @@ function Test-ScriptFileInfo
         }
         else
         {
-            $scriptFilePath = Resolve-PathHelper -Path $LiteralPath -IsLiteralPath -CallerPSCmdlet $PSCmdlet | Microsoft.PowerShell.Utility\Select-Object -First 1
+            $scriptFilePath = Resolve-PathHelper -Path $LiteralPath -IsLiteralPath -CallerPSCmdlet $PSCmdlet | Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
 
             if(-not $scriptFilePath -or -not (Microsoft.PowerShell.Management\Test-Path -LiteralPath $scriptFilePath -PathType Leaf))
             {
@@ -4532,7 +4535,7 @@ function Test-ScriptFileInfo
 
             $psscriptInfoComments = $CommentTokens | 
                                         Microsoft.PowerShell.Core\Where-Object { $_.Extent.Text -match "<#PSScriptInfo" } | 
-                                            Microsoft.PowerShell.Utility\Select-Object -First 1
+                                            Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
 
             if(-not $psscriptInfoComments)
             {
@@ -4721,20 +4724,20 @@ function Test-ScriptFileInfo
 
             if($allCommands)
             {
-                $allCommandNames = $allCommands | ForEach-Object {$_.Name} | Select-Object -Unique
+                $allCommandNames = $allCommands | ForEach-Object {$_.Name} | Select-Object -Unique -ErrorAction Ignore
                 ValidateAndAdd-PSScriptInfoEntry -PSScriptInfo $PSScriptInfo `
                                                  -PropertyName $script:DefinedCommands `
                                                  -PropertyValue $allCommandNames `
                                                  -CallerPSCmdlet $PSCmdlet            
 
-                $allFunctionNames = $allCommands | Where-Object {-not $_.IsWorkflow}  | ForEach-Object {$_.Name} | Select-Object -Unique
+                $allFunctionNames = $allCommands | Where-Object {-not $_.IsWorkflow}  | ForEach-Object {$_.Name} | Select-Object -Unique -ErrorAction Ignore
                 ValidateAndAdd-PSScriptInfoEntry -PSScriptInfo $PSScriptInfo `
                                                  -PropertyName $script:DefinedFunctions `
                                                  -PropertyValue $allFunctionNames `
                                                  -CallerPSCmdlet $PSCmdlet
 
 
-                $allWorkflowNames = $allCommands | Where-Object {$_.IsWorkflow} | ForEach-Object {$_.Name} | Select-Object -Unique 
+                $allWorkflowNames = $allCommands | Where-Object {$_.IsWorkflow} | ForEach-Object {$_.Name} | Select-Object -Unique -ErrorAction Ignore
                 ValidateAndAdd-PSScriptInfoEntry -PSScriptInfo $PSScriptInfo `
                                                  -PropertyName $script:DefinedWorkflows `
                                                  -PropertyValue $allWorkflowNames `
@@ -5110,7 +5113,7 @@ function Update-ScriptFileInfo
         if($Path)
         {
             $scriptFilePath = Resolve-PathHelper -Path $Path -CallerPSCmdlet $PSCmdlet | 
-                                  Microsoft.PowerShell.Utility\Select-Object -First 1
+                                  Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
             
             if(-not $scriptFilePath -or 
                -not (Microsoft.PowerShell.Management\Test-Path -Path $scriptFilePath -PathType Leaf))
@@ -5127,7 +5130,7 @@ function Update-ScriptFileInfo
         else
         {
             $scriptFilePath = Resolve-PathHelper -Path $LiteralPath -IsLiteralPath -CallerPSCmdlet $PSCmdlet | 
-                                  Microsoft.PowerShell.Utility\Select-Object -First 1
+                                  Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
 
             if(-not $scriptFilePath -or 
                -not (Microsoft.PowerShell.Management\Test-Path -LiteralPath $scriptFilePath -PathType Leaf))
@@ -5380,7 +5383,7 @@ function Update-ScriptFileInfo
 
                 $psscriptInfoComments = $CommentTokens | 
                                             Microsoft.PowerShell.Core\Where-Object { $_.Extent.Text -match "<#PSScriptInfo" } | 
-                                                Microsoft.PowerShell.Utility\Select-Object -First 1
+                                                Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
 
                 if(-not $psscriptInfoComments)
                 {
@@ -6150,7 +6153,7 @@ function Ping-Endpoint
     $results = @{}
 
     $WebProxy = $null
-    if($Proxy -and $IsWindows)
+    if($Proxy -and (IsWindows))
     {
         $ProxyNetworkCredential = $null
         if($ProxyCredential)
@@ -6380,7 +6383,7 @@ function ValidateAndSet-PATHVariableIfUserAccepts
         $Request
     )
 
-    if(-not $IsWindows)
+    if(-not (IsWindows))
     {
         return
     }
@@ -7180,7 +7183,7 @@ function Install-NuGetClientBinaries
         $Force
     )
 
-    if(-not $IsWindows -or
+    if(-not (IsWindows) -or
        ($script:NuGetProvider -and 
         (-not $BootstrapNuGetExe -or 
         ($script:NuGetExePath -and (Microsoft.PowerShell.Management\Test-Path -Path $script:NuGetExePath)))))
@@ -7267,7 +7270,7 @@ function Install-NuGetClientBinaries
                                 $_.Path -and 
                                 ((Microsoft.PowerShell.Management\Split-Path -Path $_.Path -Leaf) -eq $script:NuGetExeName) -and
                                 (-not $_.Path.StartsWith($env:windir, [System.StringComparison]::OrdinalIgnoreCase)) 
-                            } | Microsoft.PowerShell.Utility\Select-Object -First 1
+                            } | Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
 
             if($nugetCmd -and $nugetCmd.Path)
             {
@@ -7283,7 +7286,7 @@ function Install-NuGetClientBinaries
     }
     
     # On Nano server we don't need NuGet.exe
-    if(-not $bootstrapNuGetProvider -and ($script:isNanoServer -or $IsCore -or -not $BootstrapNuGetExe))
+    if(-not $bootstrapNuGetProvider -and ($script:isNanoServer -or (IsCore) -or -not $BootstrapNuGetExe))
     {
         return
     }
@@ -7340,7 +7343,7 @@ function Install-NuGetClientBinaries
             }
         }
 
-        if($BootstrapNuGetExe -and -not $script:isNanoServer -and -not $IsCore)
+        if($BootstrapNuGetExe -and -not $script:isNanoServer -and -not (IsCore))
         {
             Write-Verbose -Message $LocalizedData.DownloadingNugetExe
 
@@ -7424,14 +7427,14 @@ function Test-RunningAsElevated
     [OutputType([bool])]
     Param()
 
-    if($IsWindows)
+    if(IsWindows)
     {
         $wid=[System.Security.Principal.WindowsIdentity]::GetCurrent()
         $prp=new-object System.Security.Principal.WindowsPrincipal($wid)
         $adm=[System.Security.Principal.WindowsBuiltInRole]::Administrator
         return $prp.IsInRole($adm)
     }
-    elseif($IsLinux)
+    elseif(IsLinux)
     {
         return ($env:SUDO_UID -eq '1000')
     }
@@ -7522,7 +7525,7 @@ function ValidateAndGet-ScriptDependencies
 
             $psgetItemInfo = Find-Module @FindModuleArguments  | 
                                         Microsoft.PowerShell.Core\Where-Object {$_.Name -eq $ModuleName} | 
-                                            Microsoft.PowerShell.Utility\Select-Object -Last 1
+                                            Microsoft.PowerShell.Utility\Select-Object -Last 1 -ErrorAction Ignore
 
             if(-not $psgetItemInfo)
             {
@@ -7565,7 +7568,7 @@ function ValidateAndGet-ScriptDependencies
 
             $psgetItemInfo = Find-Script @FindScriptArguments  | 
                                         Microsoft.PowerShell.Core\Where-Object {$_.Name -eq $requiredScript} | 
-                                            Microsoft.PowerShell.Utility\Select-Object -Last 1
+                                            Microsoft.PowerShell.Utility\Select-Object -Last 1 -ErrorAction Ignore
 
             if(-not $psgetItemInfo)
             {
@@ -7692,7 +7695,7 @@ function ValidateAndGet-RequiredModuleDetails
 
             $psgetItemInfo = Find-Module @FindModuleArguments  | 
                                         Microsoft.PowerShell.Core\Where-Object {$_.Name -eq $ModuleName} | 
-                                            Microsoft.PowerShell.Utility\Select-Object -Last 1
+                                            Microsoft.PowerShell.Utility\Select-Object -Last 1 -ErrorAction Ignore
 
             if(-not $psgetItemInfo)
             {
@@ -7736,7 +7739,7 @@ function ValidateAndGet-RequiredModuleDetails
 
             $psgetItemInfo = Find-Module @FindModuleArguments  | 
                                         Microsoft.PowerShell.Core\Where-Object {$_.Name -eq $ModuleName} | 
-                                            Microsoft.PowerShell.Utility\Select-Object -Last 1
+                                            Microsoft.PowerShell.Utility\Select-Object -Last 1 -ErrorAction Ignore
 
             if(-not $psgetItemInfo)
             {
@@ -9518,7 +9521,7 @@ function Find-Package
 
     if($options.ContainsKey($script:Tag))
     {
-        $userSpecifiedTags = $options[$script:Tag] | Microsoft.PowerShell.Utility\Select-Object -Unique        
+        $userSpecifiedTags = $options[$script:Tag] | Microsoft.PowerShell.Utility\Select-Object -Unique -ErrorAction Ignore
     }
     else
     {
@@ -9529,7 +9532,7 @@ function Find-Package
     if($options.ContainsKey('DscResource'))
     {
         $specifiedDscResources = $options['DscResource'] | 
-                                    Microsoft.PowerShell.Utility\Select-Object -Unique | 
+                                    Microsoft.PowerShell.Utility\Select-Object -Unique -ErrorAction Ignore | 
                                         Microsoft.PowerShell.Core\ForEach-Object {"$($script:DscResource)_$_"}
     }
 
@@ -9537,7 +9540,7 @@ function Find-Package
     if($options.ContainsKey('RoleCapability'))
     {
         $specifiedRoleCapabilities = $options['RoleCapability'] | 
-                                        Microsoft.PowerShell.Utility\Select-Object -Unique | 
+                                        Microsoft.PowerShell.Utility\Select-Object -Unique -ErrorAction Ignore | 
                                             Microsoft.PowerShell.Core\ForEach-Object {"$($script:RoleCapability)_$_"}
     }
 
@@ -9545,7 +9548,7 @@ function Find-Package
     if($options.ContainsKey('Command'))
     {
         $specifiedCommands = $options['Command'] | 
-                                Microsoft.PowerShell.Utility\Select-Object -Unique |
+                                Microsoft.PowerShell.Utility\Select-Object -Unique -ErrorAction Ignore |
                                     Microsoft.PowerShell.Core\ForEach-Object {"$($script:Command)_$_"}
     }
 
@@ -9553,7 +9556,7 @@ function Find-Package
     if($options.ContainsKey('Includes'))
     {
         $includes = $options['Includes'] | 
-                        Microsoft.PowerShell.Utility\Select-Object -Unique | 
+                        Microsoft.PowerShell.Utility\Select-Object -Unique -ErrorAction Ignore | 
                             Microsoft.PowerShell.Core\ForEach-Object {"$($script:Includes)_$_"}
         
         # Add PSIncludes_DscResource to $specifiedIncludes iff -DscResource names are not specified
@@ -10468,7 +10471,7 @@ function Install-PackageUtility
                                                }
                 }
                 
-                $InstalledItemsList | Select-Object -Unique
+                $InstalledItemsList | Select-Object -Unique -ErrorAction Ignore
 
                 if($Debug)
                 {
@@ -10554,11 +10557,11 @@ function Install-PackageUtility
                         $InstalledItemDetails = $null
                         if($packageType -eq $script:PSArtifactTypeModule)
                         {
-                            $InstalledItemDetails = Get-InstalledModuleDetails -Name $pkg.Name | Select-Object -Last 1
+                            $InstalledItemDetails = Get-InstalledModuleDetails -Name $pkg.Name | Select-Object -Last 1 -ErrorAction Ignore
                         }
                         elseif($packageType -eq $script:PSArtifactTypeScript)
                         {
-                            $InstalledItemDetails = Get-InstalledScriptDetails -Name $pkg.Name | Select-Object -Last 1
+                            $InstalledItemDetails = Get-InstalledScriptDetails -Name $pkg.Name | Select-Object -Last 1 -ErrorAction Ignore
                         }
 
                         if($InstalledItemDetails -and 
@@ -10983,7 +10986,7 @@ function Uninstall-Package
 
             if(-not $Force -and $dependentModules)
             {
-                $message = $LocalizedData.UnableToUninstallAsOtherModulesNeedThisModule -f ($moduleName, $version, $moduleBase, $(($dependentModules.Name | Select-Object -Unique) -join ','), $moduleName)
+                $message = $LocalizedData.UnableToUninstallAsOtherModulesNeedThisModule -f ($moduleName, $version, $moduleBase, $(($dependentModules.Name | Select-Object -Unique -ErrorAction Ignore) -join ','), $moduleName)
 
                 ThrowError -ExceptionName "System.InvalidOperationException" `
                            -ExceptionMessage $message `
@@ -11129,7 +11132,7 @@ function Uninstall-Package
                                ($scriptName, 
                                 $version, 
                                 $scriptBase, 
-                                $(($dependentScriptNames | Select-Object -Unique) -join ','), 
+                                $(($dependentScriptNames | Select-Object -Unique -ErrorAction Ignore) -join ','), 
                                 $scriptName)
 
                 ThrowError -ExceptionName 'System.InvalidOperationException' `
@@ -11674,11 +11677,20 @@ function Set-InstalledModulesVariable
     foreach ($location in $modulePaths)
     {
         # find all modules installed using PowerShellGet
-        $moduleBases = Get-ChildItem $location -Recurse `
-                                    -Attributes Hidden -Filter $script:PSGetItemInfoFileName `
-                                    -ErrorAction SilentlyContinue `
-                                    -WarningAction SilentlyContinue `
-                                    | Foreach-Object { $_.Directory }        
+        $GetChildItemParams = @{
+            Path = $location
+            Recurse = $true
+            Filter = $script:PSGetItemInfoFileName
+            ErrorAction = 'SilentlyContinue'
+            WarningAction = 'SilentlyContinue'
+        }
+
+        if(IsWindows)
+        {
+            $GetChildItemParams['Attributes'] = 'Hidden'
+        }
+
+        $moduleBases = Get-ChildItem @GetChildItemParams | Foreach-Object { $_.Directory }
 
         
         foreach ($moduleBase in $moduleBases)
@@ -12206,7 +12218,7 @@ function Test-ModuleInstalled
     # Check if module is already installed
     $availableModule = Microsoft.PowerShell.Core\Get-Module -ListAvailable -Name $Name -Verbose:$false | 
                            Microsoft.PowerShell.Core\Where-Object {-not (Test-ModuleSxSVersionSupport) -or -not $RequiredVersion -or ($RequiredVersion -eq $_.Version)} | 
-                               Microsoft.PowerShell.Utility\Select-Object -Unique
+                               Microsoft.PowerShell.Utility\Select-Object -Unique -ErrorAction Ignore
 
     return $availableModule
 }
@@ -12267,7 +12279,7 @@ function Test-ScriptInstalled
 
     $scriptInfo = $scriptInfos | Microsoft.PowerShell.Core\Where-Object {
                                                                 (-not $RequiredVersion) -or ($RequiredVersion -eq $_.Version)
-                                                            } | Microsoft.PowerShell.Utility\Select-Object -First 1
+                                                            } | Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
 
     return $scriptInfo
 }
@@ -13860,7 +13872,7 @@ function Validate-ModuleCommandAlreadyAvailable
                                                                       -WarningAction SilentlyContinue | 
                                     Microsoft.PowerShell.Core\Where-Object { ($CommandNames -contains $_.Name) -and 
                                                                              ($_.Source -ne $CurrentModuleInfo.Name) } |
-                                        Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction SilentlyContinue
+                                        Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
             if($AvailableCommand)
             {
                 $message = $LocalizedData.ModuleCommandAlreadyAvailable -f ($AvailableCommand.Name, $CurrentModuleInfo.Name)
@@ -14035,11 +14047,11 @@ function Get-InstalledModuleAuthenticodeSignature
 
     $SourceModule = $AvailableModules | Microsoft.PowerShell.Core\Where-Object {
                                             $_.ModuleBase.StartsWith($InstallLocation, [System.StringComparison]::OrdinalIgnoreCase) 
-                                        } | Microsoft.PowerShell.Utility\Select-Object -First 1
+                                        } | Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
 
     if(-not $SourceModule)
     {
-        $SourceModule = $AvailableModules | Microsoft.PowerShell.Utility\Select-Object -First 1
+        $SourceModule = $AvailableModules | Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
     }
     else
     {
@@ -14162,7 +14174,7 @@ function Test-ValidManifestModule
                        -CallerPSCmdlet $PSCmdlet `
                        -ErrorCategory InvalidOperation
         }
-        elseif($IsWindows)
+        elseif(IsWindows)
         {
             $ValidationResult = Validate-ModuleAuthenticodeSignature -CurrentModuleInfo $PSModuleInfo `
                                                                      -InstallLocation $InstallLocation `
