@@ -1,6 +1,7 @@
 add_subdirectory(googletest)
 
 add_executable(psl-native-test
+  test-getfileowner.cpp
   test-locale.cpp
   test-getcurrentprocessid.cpp
   test-getusername.cpp
