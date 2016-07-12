@@ -1,4 +1,5 @@
 add_library(psl-native SHARED
+  getstat.cpp
   getcurrentprocessorid.cpp
   getusername.cpp
   getcomputername.cpp
