@@ -94,7 +94,7 @@ namespace System.Management.Automation
             // On non-Windows platform Set/Get-ExecutionPolicy return  
             // Operation is not supported on this platform.
             return;
-#endif
+#else
 
 
 #if DEBUG
@@ -160,6 +160,7 @@ namespace System.Management.Automation
                     throw new PSSecurityException(AuthorizationManagerBase.AuthorizationManagerDefaultFailureReason);
                 }
             }
+#endif            
         }
 
         /// <summary>
