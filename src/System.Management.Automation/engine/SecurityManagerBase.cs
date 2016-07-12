@@ -87,14 +87,13 @@ namespace System.Management.Automation
                                         CommandOrigin origin,
                                         PSHost host)
         {
+#if LINUX            
             // TODO:PSL this is a workaround since the exception below
             // hides the internal issue of what's going on in terms of
-            // execution policy.
-#if LINUX            
-            if (Platform.IsCore)
-            {
-                return;
-            }
+            // execution policy.  
+            // On non-Windows platform Set/Get-ExecutionPolicy return  
+            // Operation is not supported on this platform.
+            return;
 #endif
 
 
