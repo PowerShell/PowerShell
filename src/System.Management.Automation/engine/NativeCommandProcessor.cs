@@ -17,6 +17,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 using System.Runtime.Serialization;
 using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
+using System.Collections.Concurrent;
 
 #if CORECLR
 // Use stubs for SerializableAttribute and ISerializable related types.
@@ -323,9 +324,11 @@ namespace System.Management.Automation
         {
             while (Read())
             {
+                _hasInputFromPipeline = true;
                 // Accumulate everything from the pipe and execute at the end.
                 inputWriter.Add(Command.CurrentPipelineObject);
             }
+            TryInitNativeProcess();
         }
         
         /// <summary>
@@ -350,6 +353,32 @@ namespace System.Management.Automation
         private bool _runStandAlone;
 
         /// <summary>
+        /// Indicate whether we need to consider redirecting the output/error of the current native command.
+        /// Usually a windows program which is the last command in a pipeline can be executed as 'background' -- we don't need to capture its output/error streams.
+        /// </summary>        
+        private bool _background;
+
+        private bool _isNativeProcessInitialized = false;
+        
+        private bool _scrapeHostOutput;
+
+        private bool _redirectInput;
+
+        private bool _hasInputFromPipeline;
+
+        private bool _redirectOutput;
+
+        private bool _redirectError;
+
+        private Host.Coordinates _startPosition;
+
+        /// <summary>
+        /// If a problem occurred in running the program, this exception will
+        /// be set and should be rethrown at the end of the try/catch block...
+        /// </summary> 
+        private Exception _exceptionToRethrow = null;
+
+        /// <summary>
         /// object used for synchronization between StopProcessing thread and 
         /// Pipeline thread.
         /// </summary>
@@ -364,46 +393,43 @@ namespace System.Management.Automation
         /// <exception cref="ApplicationFailedException">
         /// The native command could not be run
         /// </exception>
-        internal override void Complete()
+        private void TryInitNativeProcess()
         {
-            // Indicate whether we need to consider redirecting the output/error of the current native command.
-            // Usually a windows program which is the last command in a pipeline can be executed as 'background' -- we don't need to capture its output/error streams.
-            bool background;
+            if (_isNativeProcessInitialized)
+            {
+                return;
+            } 
 
+            _isNativeProcessInitialized = true;
+            
             // Figure out if we're going to run this process "standalone" i.e. without
             // redirecting anything. This is a bit tricky as we always run redirected so
             // we have to see if the redirection is actually being done at the topmost level or not.
 
             //Calculate if input and output are redirected.
-            bool redirectOutput;
-            bool redirectError;
-            bool redirectInput;
 
-            CalculateIORedirection(out redirectOutput, out redirectError, out redirectInput);
+            CalculateIORedirection(out _redirectOutput, out _redirectError, out _redirectInput);
 
             // Find out if it's the only command in the pipeline.
             bool soloCommand = this.Command.MyInvocation.PipelineLength == 1;
 
             // Get the start info for the process. 
-            ProcessStartInfo startInfo = GetProcessStartInfo(redirectOutput, redirectError, redirectInput, soloCommand);
+            ProcessStartInfo startInfo = GetProcessStartInfo(_redirectOutput, _redirectError, _redirectInput, soloCommand);
 
             if (this.Command.Context.CurrentPipelineStopping)
             {
                 throw new PipelineStoppedException();
             }
 
-            // If a problem occurred in running the program, this exception will
-            // be set and should be rethrown at the end of the try/catch block...
-            Exception exceptionToRethrow = null;
-            Host.Coordinates startPosition = new Host.Coordinates();
-            bool scrapeHostOutput = false;
+            _startPosition = new Host.Coordinates();
+            _scrapeHostOutput = false;
 
             try
             {
                 // If this process is being run standalone, tell the host, which might want
                 // to save off the window title or other such state as might be tweaked by 
                 // the native process
-                if (!redirectOutput)
+                if (!_redirectOutput)
                 {
                     this.Command.Context.EngineHostInterface.NotifyBeginApplication();
 
@@ -413,15 +439,15 @@ namespace System.Management.Automation
                     {
                         if (this.Command.Context.EngineHostInterface.UI.IsTranscribing)
                         {
-                            scrapeHostOutput = true;
-                            startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
-                            startPosition.X = 0;
+                            _scrapeHostOutput = true;
+                            _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
+                            _startPosition.X = 0;
                         }
                     }
                     catch (Host.HostException)
                     {
                         // The host doesn't support scraping via its RawUI interface
-                        scrapeHostOutput = false;
+                        _scrapeHostOutput = false;
                     }
                 }
 
@@ -507,14 +533,14 @@ namespace System.Management.Automation
                     // Something like
                     //    ls | notepad | sort.exe
                     // should block until the notepad process is terminated.
-                    background = false;
+                    _background = false;
                 }
                 else
                 {
-                    background = true;
+                    _background = true;
                     if (startInfo.UseShellExecute == false)
                     {
-                        background = IsWindowsApplication(nativeProcess.StartInfo.FileName);
+                        _background = IsWindowsApplication(nativeProcess.StartInfo.FileName);
                     }
                 }
 
@@ -537,7 +563,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (background == false)
+                    if (_background == false)
                     {
                         //if output is redirected, start reading output of process.
                         if (startInfo.RedirectStandardOutput || startInfo.RedirectStandardError)
@@ -546,7 +572,7 @@ namespace System.Management.Automation
                             {
                                 if (!stopped)
                                 {
-                                    outputReader = new ProcessOutputReader(nativeProcess, Path, redirectOutput, redirectError);
+                                    outputReader = new ProcessOutputReader(nativeProcess, Path, _redirectOutput, _redirectError);
                                     outputReader.Start();
                                 }
                             }
@@ -562,69 +588,11 @@ namespace System.Management.Automation
                     StopProcessing();
                     throw;
                 }
-                finally
-                {
-                    if (background == false)
-                    {
-                        //Wait for process to exit
-                        nativeProcess.WaitForExit();
-
-                        //Wait for input writer to finish.
-                        inputWriter.Done();
-
-                        //Wait for outputReader to finish
-                        if (outputReader != null)
-                        {
-                            outputReader.Done();
-                        }
-
-                        // Capture screen output if we are transcribing
-                        if (this.Command.Context.EngineHostInterface.UI.IsTranscribing &&
-                            scrapeHostOutput)
-                        {
-                            Host.Coordinates endPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
-                            endPosition.X = this.Command.Context.EngineHostInterface.UI.RawUI.BufferSize.Width - 1;
-
-                            // If the end position is before the start position, then capture the entire buffer.
-                            if (endPosition.Y < startPosition.Y)
-                            {
-                                startPosition.Y = 0;
-                            }
-
-                            Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
-                                new Host.Rectangle(startPosition, endPosition));
-
-                            StringBuilder lineContents = new StringBuilder();
-                            StringBuilder bufferText = new StringBuilder();
-
-                            for (int row = 0; row < bufferContents.GetLength(0); row++)
-                            {
-                                if (row > 0)
-                                {
-                                    bufferText.Append(Environment.NewLine);
-                                }
-
-                                lineContents.Clear();
-                                for (int column = 0; column < bufferContents.GetLength(1); column++)
-                                {
-                                    lineContents.Append(bufferContents[row, column].Character);
-                                }
-
-                                bufferText.Append(lineContents.ToString().TrimEnd(Utils.Separators.SpaceOrTab));
-                            }
-
-                            this.Command.Context.InternalHost.UI.TranscribeResult(bufferText.ToString());
-                        }
-
-                        this.Command.Context.SetVariable(SpecialVariables.LastExitCodeVarPath, nativeProcess.ExitCode);
-                        if (nativeProcess.ExitCode != 0)
-                            this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
-                    }
-                } 
+                
             }
             catch (Win32Exception e)
             {
-                exceptionToRethrow = e;
+                _exceptionToRethrow = e;
 
             } // try
             catch (PipelineStoppedException)
@@ -636,11 +604,108 @@ namespace System.Management.Automation
             {
                 CommandProcessorBase.CheckForSevereException(e);
 
-                exceptionToRethrow = e;
+                _exceptionToRethrow = e;
+            }
+
+            // An exception was thrown while attempting to run the program
+            // so wrap and rethrow it here...
+            if (_exceptionToRethrow != null)
+            {
+                // It's a system exception so wrap it in one of ours and re-throw.
+                string message = StringUtil.Format(ParserStrings.ProgramFailedToExecute,
+                    this.NativeCommandName, _exceptionToRethrow.Message,
+                    this.Command.MyInvocation.PositionMessage);
+                ApplicationFailedException appFailedException = new ApplicationFailedException(message, _exceptionToRethrow);
+
+                // There is no need to set this exception here since this exception will eventually be caught by pipeline processor.
+                // this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
+
+                throw appFailedException;
+            }
+        }
+
+        internal override void Complete()
+        {
+            inputWriter.SetNoNewInputExpected();
+            TryInitNativeProcess();
+            try
+            {
+                if (_background == false)
+                {
+                    //Wait for input writer to finish.
+                    inputWriter.Done();
+
+                    //Wait for process to exit
+                    nativeProcess.WaitForExit();
+
+                    //Wait for outputReader to finish
+                    if (outputReader != null)
+                    {
+                        outputReader.Done();
+                    }
+
+                    // // Capture screen output if we are transcribing
+                    if (this.Command.Context.EngineHostInterface.UI.IsTranscribing &&
+                        _scrapeHostOutput)
+                    {
+                        Host.Coordinates endPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
+                        endPosition.X = this.Command.Context.EngineHostInterface.UI.RawUI.BufferSize.Width - 1;
+
+                        // If the end position is before the start position, then capture the entire buffer.
+                        if (endPosition.Y < _startPosition.Y)
+                        {
+                            _startPosition.Y = 0;
+                        }
+
+                        Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
+                            new Host.Rectangle(_startPosition, endPosition));
+
+                        StringBuilder lineContents = new StringBuilder();
+                        StringBuilder bufferText = new StringBuilder();
+
+                        for (int row = 0; row < bufferContents.GetLength(0); row++)
+                        {
+                            if (row > 0)
+                            {
+                                bufferText.Append(Environment.NewLine);
+                            }
+
+                            lineContents.Clear();
+                            for (int column = 0; column < bufferContents.GetLength(1); column++)
+                            {
+                                lineContents.Append(bufferContents[row, column].Character);
+                            }
+
+                            bufferText.Append(lineContents.ToString().TrimEnd(Utils.Separators.SpaceOrTab));
+                        }
+
+                        this.Command.Context.InternalHost.UI.TranscribeResult(bufferText.ToString());
+                    }
+
+                    this.Command.Context.SetVariable(SpecialVariables.LastExitCodeVarPath, nativeProcess.ExitCode);
+                    if (nativeProcess.ExitCode != 0)
+                        this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
+                }
+            }
+            catch (Win32Exception e)
+            {
+                _exceptionToRethrow = e;
+
+            } // try
+            catch (PipelineStoppedException)
+            {
+                // If we're stopping the process, just rethrow this exception...
+                throw;
+            }
+            catch (Exception e)
+            {
+                CommandProcessorBase.CheckForSevereException(e);
+
+                _exceptionToRethrow = e;
             }
             finally
             {
-                if (!redirectOutput)
+                if (!_redirectOutput)
                 {
                     this.Command.Context.EngineHostInterface.NotifyEndApplication();
                 }
@@ -650,13 +715,13 @@ namespace System.Management.Automation
 
             // An exception was thrown while attempting to run the program
             // so wrap and rethrow it here...
-            if (exceptionToRethrow != null)
+            if (_exceptionToRethrow != null)
             {
                 // It's a system exception so wrap it in one of ours and re-throw.
                 string message = StringUtil.Format(ParserStrings.ProgramFailedToExecute,
-                    this.NativeCommandName, exceptionToRethrow.Message,
+                    this.NativeCommandName, _exceptionToRethrow.Message,
                     this.Command.MyInvocation.PositionMessage);
-                ApplicationFailedException appFailedException = new ApplicationFailedException(message, exceptionToRethrow);
+                ApplicationFailedException appFailedException = new ApplicationFailedException(message, _exceptionToRethrow);
 
                 // There is no need to set this exception here since this exception will eventually be caught by pipeline processor.
                 // this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
@@ -1169,7 +1234,7 @@ namespace System.Management.Automation
                 redirectError = true;
             }
 
-            if (inputWriter.Count == 0 && (!this.Command.MyInvocation.ExpectingInput))
+            if (_hasInputFromPipeline == false && (!this.Command.MyInvocation.ExpectingInput))
                 redirectInput = false;
 
             // Remoting server consideration.
@@ -1372,32 +1437,28 @@ namespace System.Management.Automation
         {
             Dbg.Assert(command != null, "Caller should validate the parameter");
             this.command = command;
+            
+            var runspace = RunspaceFactory.CreateRunspace();
+            runspace.Open();
+            _pipeline = runspace.CreatePipeline();
+            var outCommand = new Command("Out-String");
+            outCommand.Parameters.Add("Stream", true);
+            _pipeline.Commands.Add(outCommand);
+            _pipeline.Output.DataReady += ReadFromOutStringPipeline;
+            _pipeline.InvokeAsync(); 
         }
 
         #endregion constructor
 
-        /// <summary>
-        /// Input is collected in this list
-        /// </summary>
-        ArrayList inputList = new ArrayList();
+        private Pipeline _pipeline;
+
         /// <summary>
         /// Add an object to write to process
         /// </summary>
         /// <param name="input"></param>
         internal void Add(object input)
         {
-            inputList.Add(input);
-        }
-
-        /// <summary>
-        /// Count of object in inputlist
-        /// </summary>
-        internal int Count
-        {
-            get
-            {
-                return inputList.Count;
-            }
+            _pipeline.Input.Write(input);
         }
 
         /// <summary>
@@ -1409,11 +1470,6 @@ namespace System.Management.Automation
         /// Format of input.
         /// </summary>
         NativeCommandIOFormat inputFormat;
-
-        /// <summary>
-        /// Thread which writes the input
-        /// </summary>
-        Thread inputThread;
 
         /// <summary>
         /// Start writing input to process
@@ -1439,16 +1495,10 @@ namespace System.Management.Automation
             streamWriter = new StreamWriter(process.StandardInput.BaseStream,
                                             pipeEncoding);
             this.inputFormat = inputFormat;
-
-            if (inputFormat == NativeCommandIOFormat.Text)
-            {
-                ConvertToString();
-            }
-            inputThread = new Thread(new ThreadStart(this.WriterThreadProc));
-            inputThread.Start();
         }
 
         bool stopping = false;
+
         /// <summary>
         /// Stop writing input to process
         /// </summary>
@@ -1457,94 +1507,83 @@ namespace System.Management.Automation
             stopping = true;
         }
 
+        internal void SetNoNewInputExpected()
+        {
+            _pipeline.Input.Close();
+        }
+
         /// <summary>
         /// This method wait for writer thread to finish.
         /// </summary>
         internal void Done()
         {
-            if (inputThread != null)
+            _pipeline.Output.DataReady -= ReadFromOutStringPipeline;
+            
+            while (_pipeline.Output.Count > 0 || _pipeline.Output.IsOpen)
             {
-                inputThread.Join();
+                ReadFromOutStringPipeline(null, null);
             }
+
+            // streamWriter is present, only if we call Start method
+            if (streamWriter != null)
+            {
+                streamWriter.Dispose();
+            }
+
         }
 
-        /// <summary>
-        /// Thread procedure for writing data to the child process...
-        /// </summary>
-        private void WriterThreadProc()
+        private void ReadFromOutStringPipeline(object sender, EventArgs e)
         {
-            try
-            {
-                if (inputFormat == NativeCommandIOFormat.Text)
-                {
-                    WriteTextInput();
-                }
-                else
-                {
-                    WriteXmlInput();
-                }
-            }
-            catch (System.IO.IOException)
-            {
-            }
-        }
+            bool needFlush = false;
 
-        private void WriteTextInput()
-        {
-            try
+            System.Collections.ObjectModel.Collection<PSObject> collection;
+            while ((collection = _pipeline.Output.NonBlockingRead()) != null) 
             {
-                foreach (object o in inputList)
+                if (collection.Count == 0)
                 {
-                    if (stopping) return;
+                    break;
+                }
 
-                    string line = PSObject.ToStringParser(command.Context, o);
+                needFlush = true;
+                if (stopping) return;
+
+                foreach (var item in collection)
+                {
+                    string line = PSObject.ToStringParser(command.Context, item);
                     streamWriter.Write(line);
+                    streamWriter.Write(Environment.NewLine);   
                 }
             }
-            finally
+
+            if (needFlush)
             {
-                streamWriter.Dispose();
+                streamWriter.Flush();
             }
         }
 
-        private void WriteXmlInput()
-        {
-            try
-            {
-                //Write header
-                streamWriter.WriteLine("#< CLIXML");
+        // private void WriteXmlInput()
+        // {
+        //     try
+        //     {
+        //         //Write header
+        //         streamWriter.WriteLine("#< CLIXML");
 
-                // When (if) switching to XmlTextWriter.Create remember the OmitXmlDeclaration difference
-                XmlWriter writer = XmlWriter.Create(streamWriter);
-                Serializer ser = new Serializer(writer);
-                foreach (object o in inputList)
-                {
-                    if (stopping) return;
-                    ser.Serialize(o);
-                }
-                ser.Done();
-            }
-            finally
-            {
-                streamWriter.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Formats the input objects using out-string. Output of out-string
-        /// is given as input to native command processor.
-        /// This method is to be called from the pipeline thread and not from the
-        /// thread which writes input in to process.
-        /// </summary>
-        private void ConvertToString()
-        {
-            Dbg.Assert(this.inputFormat == NativeCommandIOFormat.Text, "InputFormat should be Text");
-
-            PipelineProcessor p = new PipelineProcessor();
-            p.Add(command.Context.CreateCommand("out-string", false));
-            object[] result = (object[])p.SynchronousExecuteEnumerate(this.inputList.ToArray());
-            inputList = new ArrayList(result);
-        }
+        //         // When (if) switching to XmlTextWriter.Create remember the OmitXmlDeclaration difference
+        //         XmlWriter writer = XmlWriter.Create(streamWriter);
+        //         Serializer ser = new Serializer(writer);
+        //         foreach (object o in inputList)
+        //         {
+        //             if (stopping) return;
+        //             ser.Serialize(o);
+        //         }
+        //         ser.Done();
+        //     }
+        //     finally
+        //     {
+        //         streamWriter.Dispose();
+        //     }
+        // }
+        
     }
 
     /// <summary>
