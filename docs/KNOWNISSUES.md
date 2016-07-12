@@ -91,6 +91,25 @@ following cmdlets that exist in the FullCLR version:
 - Show-Command
 - Update-List
 
+### ExecutionPolicy unavailable on non-Windows platform
+
+ExecutionPolicy is not implemented on non-Windows platforms and the following related CmdLets will return the error below.
+ 
+- Get-ExecutionPolicy
+- Set-ExecutionPolicy
+
+```
+Set-ExecutionPolicy : Operation is not supported on this platform.
+At line:1 char:1
++ Set-ExecutionPolicy AllSigned
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Set-ExecutionPolicy], Platfor
+   mNotSupportedException
+    + FullyQualifiedErrorId : System.PlatformNotSupportedException,Microsoft.P
+   owerShell.Commands.SetExecutionPolicyCommand
+
+```
+
 ## File paths with literal backward slashes
 
 On some filesystems (Linux, OS X), file paths are allowed to contain literal
