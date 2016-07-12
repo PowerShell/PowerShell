@@ -87,12 +87,12 @@ namespace System.Management.Automation
                                         CommandOrigin origin,
                                         PSHost host)
         {
-#if LINUX            
+#if LINUX
             // TODO:PSL this is a workaround since the exception below
             // hides the internal issue of what's going on in terms of
             // execution policy.  
-            // On non-Windows platform Set/Get-ExecutionPolicy return  
-            // Operation is not supported on this platform.
+            // On non-Windows platform Set/Get-ExecutionPolicy throw   
+            // PlatformNotSupportedException
             return;
 #else
 
@@ -160,7 +160,7 @@ namespace System.Management.Automation
                     throw new PSSecurityException(AuthorizationManagerBase.AuthorizationManagerDefaultFailureReason);
                 }
             }
-#endif            
+#endif
         }
 
         /// <summary>
