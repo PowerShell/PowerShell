@@ -27,7 +27,6 @@ Describe "Get-package" -Tags @('BVT', 'DRT'){
 
 Describe "Get-package with version parameter  - valid scenarios" -Tags @('BVT', 'DRT'){
     $destination = Join-Path $TestDrive GetPackageTests
-    $destination > C:\test.txt
 
     It "Get-package supports -AllVersions parameter" -Skip {
         $outputWithAllVersions = (Get-Package -providername Programs,Msi -AllVersions)

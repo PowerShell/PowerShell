@@ -548,7 +548,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
 	it "EXPECTED: Saves 'Zlib' Package To Packages Directory" {
         $version = "1.2.8.8"
         $expectedPackages = @("zlib", "zlib.v120.windesktop.msvcstl.dyn.rt-dyn", "zlib.v140.windesktop.msvcstl.dyn.rt-dyn")
-        $newDestination = "$env:tmp\nugetinstallation"
+        $newDestination = Join-Path $TestDrive "nugetinstallation"
 		
         try {
             $packages = Save-Package -Name "zlib" -ProviderName $nuget -Source $source -RequiredVersion $version -ForceBootstrap -Path $destination

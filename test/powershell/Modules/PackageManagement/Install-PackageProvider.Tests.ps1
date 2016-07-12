@@ -742,38 +742,38 @@ Describe "install-packageprovider Error Cases" -Tags @('BVT', 'DRT') {
 
   It "EXPECTED:  returns an error when asking for a provider that does not exist" {
         $Error.Clear()
-        install-packageprovider -name NOT_EXISTS  -warningaction:silentlycontinue -ea silentlycontinue
+        install-packageprovider -name NOT_EXISTS -Scope CurrentUser -warningaction:silentlycontinue -ea silentlycontinue
         $ERROR[0].FullyQualifiedErrorId | should be "NoMatchFoundForProvider,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     }
  
 
    It "EXPECTED:  returns an error when asking for a provider with RequiredVersoin and MinimumVersion" {
         $Error.Clear()
-        install-packageprovider -name NOT_EXISTS -RequiredVersion 1.0 -MinimumVersion 2.0  -warningaction:silentlycontinue -ea silentlycontinue
+        install-packageprovider -name NOT_EXISTS -Scope CurrentUser -RequiredVersion 1.0 -MinimumVersion 2.0  -warningaction:silentlycontinue -ea silentlycontinue
         $ERROR[0].FullyQualifiedErrorId | should be "VersionRangeAndRequiredVersionCannotBeSpecifiedTogether,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     }
 
    It "EXPECTED:  returns an error when asking for a provider with RequiredVersoin and MaximumVersion" {
         $Error.Clear()
-        install-packageprovider -name NOT_EXISTS -RequiredVersion 1.0 -MaximumVersion 2.0  -warningaction:silentlycontinue -ea silentlycontinue
+        install-packageprovider -name NOT_EXISTS -Scope CurrentUser -RequiredVersion 1.0 -MaximumVersion 2.0  -warningaction:silentlycontinue -ea silentlycontinue
         $ERROR[0].FullyQualifiedErrorId | should be "VersionRangeAndRequiredVersionCannotBeSpecifiedTogether,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     }
 
    It "EXPECTED:  returns an error when asking for a provider with a MinimumVersion greater than MaximumVersion" {
         $Error.Clear()
-        install-packageprovider -name nuget -MaximumVersion 1.0 -MinimumVersion 2.0 -warningaction:silentlycontinue -ea silentlycontinue
+        install-packageprovider -name nuget -Scope CurrentUser -MaximumVersion 1.0 -MinimumVersion 2.0 -warningaction:silentlycontinue -ea silentlycontinue
         $ERROR[0].FullyQualifiedErrorId | should be "NoMatchFoundForProvider,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     }
 
    It "EXPECTED:  returns an error when asking for a provider with MinimumVersion that does not exist" {
         $Error.Clear()
-        install-packageprovider -name gistprovider -MinimumVersion 20.2 -warningaction:silentlycontinue -ea silentlycontinue
+        install-packageprovider -name gistprovider -MinimumVersion 20.2 -warningaction:silentlycontinue -Scope CurrentUser -ea silentlycontinue
         $ERROR[0].FullyQualifiedErrorId | should be "NoMatchFoundForProvider,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     }
 
    It "EXPECTED:  returns an error when asking for a provider with MaximumVersion that does not exist" {
         $Error.Clear()
-        install-packageprovider -name gistprovider -MaximumVersion 0.1 -warningaction:silentlycontinue -ea silentlycontinue
+        install-packageprovider -name gistprovider -Scope CurrentUser -MaximumVersion 0.1 -warningaction:silentlycontinue -ea silentlycontinue
         $ERROR[0].FullyQualifiedErrorId | should be "NoMatchFoundForProvider,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     }        
 }
