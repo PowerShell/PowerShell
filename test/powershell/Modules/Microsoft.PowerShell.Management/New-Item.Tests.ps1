@@ -111,9 +111,8 @@ Describe "New-Item" {
 	    New-Item -ItemType SymbolicLink -Target $FullyQualifiedFile -Name $testlink -Path $tmpDirectory
 	    Test-Path $FullyQualifiedLink | Should Be $true
 
-        $target = $FullyQualifiedFile 
         $fileInfo = Get-ChildItem $FullyQualifiedLink
-        $fileInfo.Target | Should Be $target
+        $fileInfo.Target | Should Match $FullyQualifiedFile
         $fileInfo.LinkType | Should Be "SymbolicLink"
     }
 
@@ -136,7 +135,7 @@ Describe "New-Item" {
 	    Test-Path $FullyQualifiedLink | Should Be $true
 
         $fileInfo = Get-ChildItem $FullyQualifiedLink
-        $fileInfo.Target | Should Be $FullyQualifiedFolder
+        $fileInfo.Target | Should Match $FullyQualifiedFolder
         $fileInfo.LinkType | Should Be "SymbolicLink"
 
 	    # Remove the link explicitly to avoid broken symlink issue
