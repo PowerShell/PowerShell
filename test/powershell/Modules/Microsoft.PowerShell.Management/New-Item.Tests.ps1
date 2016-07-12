@@ -36,7 +36,7 @@ Describe "New-Item" {
     It "Should create a file without error" {
 	New-Item -Name $testfile -Path $tmpDirectory -ItemType file
 
-	Test-Path $FullyQualifiedFile | Should Be $true
+	    Test-Path $FullyQualifiedFile | Should Be $true
 
         $fileInfo = Get-ChildItem $FullyQualifiedFile
         $fileInfo.Target | Should Be $null
@@ -105,14 +105,15 @@ Describe "New-Item" {
     }
 
     It "Should create a symbolic link of a file without error" {
-	New-Item -Name $testfile -Path $tmpDirectory -ItemType file
-	Test-Path $FullyQualifiedFile | Should Be $true
+	    New-Item -Name $testfile -Path $tmpDirectory -ItemType file
+	    Test-Path $FullyQualifiedFile | Should Be $true
 
-	New-Item -ItemType SymbolicLink -Target $FullyQualifiedFile -Name $testlink -Path $tmpDirectory
-	Test-Path $FullyQualifiedLink | Should Be $true
+	    New-Item -ItemType SymbolicLink -Target $FullyQualifiedFile -Name $testlink -Path $tmpDirectory
+	    Test-Path $FullyQualifiedLink | Should Be $true
 
+        $target = $FullyQualifiedFile 
         $fileInfo = Get-ChildItem $FullyQualifiedLink
-        $fileInfo.Target | Should Be $FullyQualifiedFile
+        $fileInfo.Target | Should Be $target
         $fileInfo.LinkType | Should Be "SymbolicLink"
     }
 
@@ -128,18 +129,18 @@ Describe "New-Item" {
     }
 
     It "Should create a symbolic link from directory without error" {
-	New-Item -Name $testFolder -Path $tmpDirectory -ItemType directory
-	Test-Path $FullyQualifiedFolder | Should Be $true
+	    New-Item -Name $testFolder -Path $tmpDirectory -ItemType directory
+	    Test-Path $FullyQualifiedFolder | Should Be $true
 
-	New-Item -ItemType SymbolicLink -Target $FullyQualifiedFolder -Name $testlink -Path $tmpDirectory
-	Test-Path $FullyQualifiedLink | Should Be $true
+	    New-Item -ItemType SymbolicLink -Target $FullyQualifiedFolder -Name $testlink -Path $tmpDirectory
+	    Test-Path $FullyQualifiedLink | Should Be $true
 
         $fileInfo = Get-ChildItem $FullyQualifiedLink
         $fileInfo.Target | Should Be $FullyQualifiedFolder
         $fileInfo.LinkType | Should Be "SymbolicLink"
 
-	# Remove the link explicitly to avoid broken symlink issue
-	Remove-Item $FullyQualifiedLink -Force
+	    # Remove the link explicitly to avoid broken symlink issue
+	    Remove-Item $FullyQualifiedLink -Force
     }
 
     It "Should create a hard link of a file without error" {
@@ -153,7 +154,5 @@ Describe "New-Item" {
         $fileInfo.Target | Should Be $null
         $fileInfo.LinkType | Should Be "HardLink"
     }
-
-
 
 }
