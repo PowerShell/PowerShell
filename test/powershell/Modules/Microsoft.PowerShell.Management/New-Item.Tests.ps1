@@ -112,7 +112,7 @@ Describe "New-Item" {
 	    Test-Path $FullyQualifiedLink | Should Be $true
 
         $fileInfo = Get-ChildItem $FullyQualifiedLink
-        $fileInfo.Target | Should Match $FullyQualifiedFile
+        $fileInfo.Target | Should Match ([regex]::Escape($FullyQualifiedFile))
         $fileInfo.LinkType | Should Be "SymbolicLink"
     }
 
@@ -135,7 +135,7 @@ Describe "New-Item" {
 	    Test-Path $FullyQualifiedLink | Should Be $true
 
         $fileInfo = Get-ChildItem $FullyQualifiedLink
-        $fileInfo.Target | Should Match $FullyQualifiedFolder
+        $fileInfo.Target | Should Match ([regex]::Escape($FullyQualifiedFolder))
         $fileInfo.LinkType | Should Be "SymbolicLink"
 
 	    # Remove the link explicitly to avoid broken symlink issue
