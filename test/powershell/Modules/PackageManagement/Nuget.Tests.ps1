@@ -657,7 +657,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
 		}    
     }
 
-    It "EXPECTED: Saves package with Credential" {
+    It "EXPECTED: Saves package with Credential" -Pending {
         #TODO: Need to fix this. Already opened an issue on GitHub
         Save-Package Contoso -Credential $vstsCredential -Source $vstsFeed -ProviderName $Nuget -Path $destination
         (Test-Path $destination\contoso*) | should be $true
@@ -1083,7 +1083,7 @@ Describe Install-Package -Tags @('BVT', 'DRT'){
 		}
     }
 
-	it "EXPECTED: Installs Various Packages With Various Version Parameters To Packages Directory" {
+	it "EXPECTED: Installs Various Packages With Various Version Parameters To Packages Directory" -Pending {
 		foreach ($x in $packageNames) {
 			foreach ($y in $minimumVersions) {
 				foreach ($z in $maximumVersions) {
@@ -1334,7 +1334,7 @@ Describe Get-PackageSource -Tags @('BVT', 'DRT') {
     }
 
     It "find-install-get-package Expect succeed" {      
-        find-package jquery | install-package -destination $destination -force -ForceBootstrap
+        find-package jquery -source http://www.nuget.org/api/v2/ -provider nuget | install-package -destination $destination -force
         (Test-Path $destination\jquery*) | should be $true
         $a=get-package -Destination $destination -Name jquery
         $a | where { $_.Name -eq 'jQuery'  } | should be $true
