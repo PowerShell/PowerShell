@@ -223,6 +223,7 @@ function Start-PSBuild {
                 throw "Could not find Visual Studio vcvarsall.bat at" + $vcPath
             }
 
+            <#
             # Compile native resources
             @("nativemsh/pwrshplugin") | % {
                 $nativeResourcesFolder = $_
@@ -230,8 +231,11 @@ function Start-PSBuild {
                     & $mcexe -o -d -c -U $_.FullName -h $nativeResourcesFolder -r $nativeResourcesFolder
                 }
             }
-           
-            $overrideFlags = "-DCMAKE_USER_MAKE_RULES_OVERRIDE=$PSScriptRoot\src\powershell-native\windows-compiler-override.txt" 
+            #>
+ 
+# Disabling until I figure out if it is necessary          
+#            $overrideFlags = "-DCMAKE_USER_MAKE_RULES_OVERRIDE=$PSScriptRoot\src\powershell-native\windows-compiler-override.txt" 
+            $overrideFlags = ""
             $vcArch = "Win64"
             $cmakeGenerator = "Visual Studio 14 2015 $vcArch"
 #            $CMakeArguments = "-G $cmakeGenerator ."

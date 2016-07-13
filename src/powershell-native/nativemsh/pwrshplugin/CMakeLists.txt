@@ -14,11 +14,17 @@ if (BUILD_ONECORE)
     message("*")
     # Libraries to use when creating this binary for Windows on OneCore-based SKUs
     set(PWRSHPLUGIN_WINDOWS_LIBS 
-        ${STATIC_MT_CRT_LIB}
-        ${STATIC_MT_VCRT_LIB}
-        ${STATIC_UCRT_LIB}
+###        ${STATIC_MT_CRT_LIB}
+###        ${STATIC_MT_VCRT_LIB}
+###        ${STATIC_UCRT_LIB}
+        onecore.lib
+        vcruntime.lib
+        ucrtd.lib
+        msvcrt.lib
         wsmsvc.lib)
-    set(pwrshplugin_definitions ${common_pwrsh_definitions} CORECLR)
+    #set(pwrshplugin_definitions ${common_pwrsh_definitions} CORECLR)
+    set(pwrshplugin_definitions CORECLR)
+    set_target_properties(pwrshplugin PROPERTIES COMPILE_DEFINITIONS "${pwrshplugin_definitions}")
 else ()
     message("*")
     message("* Setting up NOT BUILD_ONECORE version of pwrshplugin.dll")
@@ -34,7 +40,7 @@ else ()
 #        oleaut32.lib
 #        uuid.lib
         wsmsvc.lib
-        # CoreCLR libs
+        # CoreCLR lib
         ${STATIC_MT_CRT_LIB}
         ${STATIC_MT_VCRT_LIB}
         ${STATIC_UCRT_LIB}
@@ -43,7 +49,7 @@ else ()
     set(pwrshplugin_definitions ${common_pwrsh_definitions})
 endif (BUILD_ONECORE)
 
-set_target_properties(pwrshplugin PROPERTIES COMPILE_DEFINITIONS "${pwrshplugin_definitions}")
+#set_target_properties(pwrshplugin PROPERTIES COMPILE_DEFINITIONS "${pwrshplugin_definitions}")
 #set_target_properties(pwrshplugin PROPERTIES COMPILE_DEFINITIONS "_DLL")
 
 target_link_libraries(pwrshplugin

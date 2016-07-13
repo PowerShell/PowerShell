@@ -12,7 +12,9 @@
 #include <windows.h>  
 #include <string>  
 #include <stdio.h>
-#include "mscoree.h"
+#if !CORECLR
+  #include "mscoree.h"
+#endif
 #include "NativeMsh.h"
 #include "ClrHostWrapper.h"
 #include "OutputWriter.h"
@@ -34,9 +36,9 @@ namespace NativeMsh
         // All these objects will be destroyed when commonFuncs goes out of scope.
         PwrshExeOutput* output = new PwrshExeOutput();
         PwrshCommon commonFuncs(output, new WinSystemCallFacade());
-        ICLRRuntimeHost2Wrapper hostWrapper;
+        CoreClrHostingApiWrapper hostWrapper;
 
-        exitCode = commonFuncs.LaunchCoreCLR(&hostWrapper, hostEnvironment);
+        exitCode = commonFuncs.LaunchCoreCLR(&hostWrapper, hostEnvironment, "powershell");
         if (EXIT_CODE_SUCCESS != exitCode)
         {
             if (verbose)
@@ -51,23 +53,14 @@ namespace NativeMsh
             return false;
         }
 
-        exitCode = commonFuncs.CreateAppDomain(&hostWrapper, hostEnvironment.GetHostBinaryName(), hostEnvironment);
-        if (EXIT_CODE_SUCCESS != exitCode)
-        {
-            if (verbose)
-                ::wprintf(L"Unable to create app domain\n");
-            return false;
-        }
-
         //-------------------------------------------------------------
         // Set the powershell custom assembly loader to be the default
         LoaderRunHelperFp initDelegate = NULL;
         HRESULT hr = hostWrapper.CreateDelegate(
-            hostWrapper.GetAppDomainId(),
-            L"Microsoft.PowerShell.CoreCLR.AssemblyLoadContext, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
-            L"System.Management.Automation.PowerShellAssemblyLoadContextInitializer",
-            L"SetPowerShellAssemblyLoadContext",
-            (INT_PTR*)&initDelegate);
+            "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
+            "System.Management.Automation.PowerShellAssemblyLoadContextInitializer",
+            "SetPowerShellAssemblyLoadContext",
+            (void**)&initDelegate);
 
         if (FAILED(hr))
         {
@@ -75,18 +68,17 @@ namespace NativeMsh
         }
         else
         {
-            initDelegate(hostEnvironment.GetHostDirectoryPath());
+            initDelegate(hostEnvironment.GetHostDirectoryPathW());
         }
 
         //-------------------------------------------------------------
         // Start the assembly
         MonadRunHelperFp pfnDelegate = NULL;
         hr = hostWrapper.CreateDelegate(
-            hostWrapper.GetAppDomainId(),
-            L"Microsoft.PowerShell.ConsoleHost, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
-            L"Microsoft.PowerShell.UnmanagedPSEntry",
-            L"Start",
-            (INT_PTR*)&pfnDelegate);
+            "Microsoft.PowerShell.ConsoleHost, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
+            "Microsoft.PowerShell.UnmanagedPSEntry",
+            "Start",
+            (void**)&pfnDelegate);
 
         if (FAILED(hr))
         {

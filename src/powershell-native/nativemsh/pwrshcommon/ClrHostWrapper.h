@@ -148,6 +148,17 @@ namespace NativeMsh
                 return NULL;
             }
 
+            initPtr = (coreclr_initialize_ptr)GetProcAddress(result, "coreclr_initialize");
+            shutdownPtr = (coreclr_shutdown_ptr)GetProcAddress(result, "coreclr_shutdown");
+            createDelegatePtr = (coreclr_create_delegate_ptr)GetProcAddress(result, "coreclr_create_delegate");
+
+            if (NULL == initPtr ||
+                NULL == shutdownPtr ||
+                NULL == createDelegatePtr)
+            {
+                return NULL;
+            }
+
             // Initialization succeeded. Save the handle and return success;
             coreClrHandle = result;
             return result;

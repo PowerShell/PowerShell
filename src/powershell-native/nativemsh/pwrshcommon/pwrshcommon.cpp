@@ -1349,12 +1349,12 @@ namespace NativeMsh
         vals[nProps] = tempStr.c_str();
         nProps++;
 
-        props[nProps] = L"APP_PATHS";
-        vals[nProps] = L"";  // Used to be hostEnvironment.GetHostDirectoryPath()
+        props[nProps] = "APP_PATHS";
+        vals[nProps] = "";  // Used to be hostEnvironment.GetHostDirectoryPath()
         nProps++;
 
-        props[nProps] = L"APP_NI_PATHS";
-        vals[nProps] = L"";  // Used to be hostEnvironment.GetHostDirectoryPath()
+        props[nProps] = "APP_NI_PATHS";
+        vals[nProps] = "";  // Used to be hostEnvironment.GetHostDirectoryPath()
         nProps++;
 
         int hr = hostWrapper->InitializeClr(

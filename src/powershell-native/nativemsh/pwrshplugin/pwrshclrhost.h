@@ -10,7 +10,9 @@
 #pragma once
 
 #include "pwrshplugindefs.h" // PwrshPluginWkr_Ptrs and PlugInException
+#if !CORECLR
 #include <mscoree.h>
+#endif
 #include <atlbase.h>
 #include <string>
 #include "SystemCallFacade.h"
