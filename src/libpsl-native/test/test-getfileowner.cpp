@@ -7,25 +7,18 @@
 #include <unistd.h>
 #include "getfileowner.h"
 
-using namespace std;
-
-//! Test fixture for GetFileOwner
-class GetFileOwnerTest : public ::testing::Test
+TEST(GetFileOwnerTest, CanGetOwnerOfRoot)
 {
-};
-
-TEST_F(GetFileOwnerTest, CanGetOwnerOfRoot)
-{
-    ASSERT_STREQ(GetFileOwner("/"), "root");
+    EXPECT_STREQ(GetFileOwner("/"), "root");
 }
 
-TEST_F(GetFileOwnerTest, CannotGetOwnerOfFakeFile)
+TEST(GetFileOwnerTest, CannotGetOwnerOfFakeFile)
 {
     EXPECT_STREQ(GetFileOwner("SomeMadeUpFileNameThatDoesNotExist"), NULL);
     EXPECT_EQ(errno, ERROR_FILE_NOT_FOUND);
 }
 
-TEST_F(GetFileOwnerTest, ReturnsNullForNullInput)
+TEST(GetFileOwnerTest, ReturnsNullForNullInput)
 {
     EXPECT_STREQ(GetFileOwner(NULL), NULL);
     EXPECT_EQ(errno, ERROR_INVALID_PARAMETER);
