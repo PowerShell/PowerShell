@@ -7,6 +7,10 @@ matrix:
     - os: osx
       osx_image: xcode8
       language: generic
+cache:
+  directories:
+    - $HOME/.dotnet
+    - $HOME/.nuget
 addons:
   artifacts:
     s3_region: "us-west-2"
