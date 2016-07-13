@@ -5,7 +5,7 @@ If you are working on Linux and OS X, you cannot use ISE because it is not suppo
 
 You can use VS Code on Windows with PowerShell V5 by using Windows 10 or by installing [Windows Management Framework 5.0 RTM](https://www.microsoft.com/en-us/download/details.aspx?id=50395) for down-level Windows OSs.
 
-Before starting it, please make sure PowerShell exists on your system. Follow the [Installing PowerShell](./learning-powershell.md "Installing PowerShell") instruction you can install the PowerShell and launch the PowerShell session.
+Before starting it, please make sure PowerShell exists on your system. Follow the [Installing PowerShell](./learning-powershell.md#installing-powershell) instruction you can install the PowerShell and launch the PowerShell session.
 
 Editing with VS Code
 ----
@@ -35,7 +35,8 @@ Editing with VS Code
 
 -	After the install, you will see the **Install** button turns to **Enable**.
 -	Click on Enable and OK
--	Now you are ready for editing.
+-	Now you are ready for editing. for example, to create a new file, click File->New; to save it, click File->Save and then provide
+ a file name, let's say "helloworld.ps1"; to close the file, click on "x"; to exit the VS Code, File->Exit.
 
 
 Debugging with VS Code
@@ -72,9 +73,9 @@ Debugging with VS Code
     ]
 }
 ```
--	Once the debug configuration is established, now go to your helloworld.ps1 and set a breakpoint by pressing **F9**.
+-	Once the debug configuration is established, now go to your helloworld.ps1 and set a breakpoint by pressing **F9** on a line you wish to debug break into.
+-	To disable the breakpoint, press **F9** again.
 -	Press **F5** to let the run.
-
 
 There are a few blogs that may be helpful to get you started using PowerShell extension for VS Code
 

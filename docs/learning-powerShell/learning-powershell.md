@@ -47,11 +47,14 @@ PowerShell Debugger
 Assuming you have written a PowerShell script which may contains a software bug, you would like to fix the issue via debugging. As an example, we use VS Code. Click on the link below to start debugging:
 
 - [Using Visual Studio Code (VS Code)][use-vscode-debugger]
+- [PowerShell Command-line Debugging][cli-debugging]
 
 On Windows, you can also use  [ISE][use-ise-debugger] to debug PowerShell scripts.
 
 [use-vscode-debugger]:./using-vscode.md#debugging-with-vs-code
 [use-ise-debugger]:./using-ise.md#debugging-with-ise
+[cli-debugging]:./debugging-from-commandline.md
+
 
 PowerShell Testing
 ----
@@ -82,7 +85,7 @@ More Reading
 - [Introduction to PowerShell][powershell-intro] from Pluralsight
 - PowerShell Web Docs: [Basic cookbooks][basic-cookbooks]
 - [PowerShell eBooks][ebooks-from-powershell.com] from PowerShell.com
-- [PowerShell Training and tutorials][lynda-training] from Lynda.com
+- [PowerShell Training and Tutorials][lynda-training] from Lynda.com
 - [Learn PowerShell][channel9-learn-powershell] from channel9
 - [Learn PowerShell Video Library][powershell.com-learn-powershell] from PowerShell.com
 - [PowerShell Quick Reference][quick-reference] by PowerShellMagazine.com
