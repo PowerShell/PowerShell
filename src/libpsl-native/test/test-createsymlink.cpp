@@ -97,7 +97,9 @@ TEST_F(CreateSymLinkTest, SymLinkToFile)
     EXPECT_EQ(1, retVal);
 
     std::string target = FollowSymLink(fileSymLink.c_str());
-    EXPECT_EQ(target, file);
+    char buffer[PATH_MAX];
+    std::string expected = realpath(file, buffer);
+    EXPECT_EQ(target, expected);
 }
 
 TEST_F(CreateSymLinkTest, SymLinkToDirectory)
@@ -106,7 +108,9 @@ TEST_F(CreateSymLinkTest, SymLinkToDirectory)
     EXPECT_EQ(1, retVal);
 
     std::string target = FollowSymLink(dirSymLink.c_str());
-    EXPECT_EQ(target, dir);
+    char buffer[PATH_MAX];
+    std::string expected = realpath(dir, buffer);
+    EXPECT_EQ(target, expected);
 }
 
 TEST_F(CreateSymLinkTest, SymLinkAgain)
