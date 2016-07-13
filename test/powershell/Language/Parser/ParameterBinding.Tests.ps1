@@ -1,6 +1,6 @@
 
-Describe 'Argument transformation attribute on optional argument with explicit $null' -Tags "P1", "RI" {
-    $mod = Add-Type -PassThru -TypeDefinition @'
+Describe 'Argument transformation attribute on optional argument with explicit $null' -Tags "Feature" {
+    $definition = @'
     using System;
     using System.Management.Automation;
     using System.Reflection;
@@ -46,6 +46,12 @@ Describe 'Argument transformation attribute on optional argument with explicit $
     }
 '@
 
+    if ( $IsCore ) {
+        $mod = Add-Type -PassThru -TypeDefinition $definition -ref mscorlib,System.Management.Automation
+    }
+    else {
+        $mod = Add-Type -PassThru -TypeDefinition $definition
+    }
     Import-Module $mod[0].Assembly
 
     function Invoke-ScriptFunctionTakesObject
@@ -67,13 +73,19 @@ Describe 'Argument transformation attribute on optional argument with explicit $
     }
 
 
-    Invoke-ScriptFunctionTakesObject | Should Be 42
-    Invoke-ScriptFunctionTakesUInt64 | Should Be 42
-    Invoke-CSharpCmdletTakesObject | Should Be "passed in null"
-    Invoke-CSharpCmdletTakesUInt64 | Should Be 0
+    $testcases = 
+        @{ Command = "Invoke-ScriptFunctionTakesObject"; myargs = @{};                 Result = 42 },
+        @{ Command = "Invoke-ScriptFunctionTakesUInt64"; myargs = @{};                 Result = 42 },
+        @{ Command = "Invoke-CSharpCmdletTakesObject"  ; myargs = @{};                 Result = "passed in null" },
+        @{ Command = "Invoke-CSharpCmdletTakesUInt64"  ; myargs = @{};                 Result = 0 },
+        @{ Command = "Invoke-ScriptFunctionTakesObject"; myargs = @{ Address = $null }; Result = 42},
+        @{ Command = "Invoke-ScriptFunctionTakesUInt64"; myargs = @{ Address = $null }; Result = 42},
+        @{ Command = "Invoke-CSharpCmdletTakesObject"  ; myargs = @{ Address = $null }; Result = 42},
+        @{ Command = "Invoke-CSharpCmdletTakesUInt64";   myargs = @{ Address = $null }; Result = 42}
 
-    Invoke-ScriptFunctionTakesObject -Address $null | Should Be 42
-    Invoke-ScriptFunctionTakesUInt64 -Address $null | Should Be 42
-    Invoke-CSharpCmdletTakesObject -Address $null | Should Be 42
-    Invoke-CSharpCmdletTakesUInt64 -Address $null | Should Be 42
+    It "<command> should return '<result>'" -testcases $testcases {
+        param ( $command, $result,$myargs )
+        & $command @myargs | Should be $result
+    }
+
 }

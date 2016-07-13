@@ -734,7 +734,7 @@ It -pending:(!$IsWindows) ModuleEnhancementForOperateWSManModule {
 #Create module in specified path
 function CreateScriptModuleInSpecifiedPath($modulePath, $moduleName)
 {
-  mkdir $modulePath -Force | Out-Null
+  new-item -type directory $modulePath -Force | Out-Null
   $moduleFilePath = Join-Path $modulePath $moduleName
   GenerateScriptModule -ScriptModulePath $moduleFilePath
 }
@@ -753,8 +753,8 @@ It -pending:(!$IsWindows) GetModuleListRecurseForCdxmlFile {
    $env:PSModulePath = $tempdir
    try
    {
-     mkdir $tempdir\TopModule\NestedModule1 -Force | Out-Null
-     mkdir $tempdir\TopModule\NestedModule2 -Force | Out-Null
+     new-item -type directory $tempdir\TopModule\NestedModule1 -Force | Out-Null
+     new-item -type directory $tempdir\TopModule\NestedModule2 -Force | Out-Null
 
      # Create top module
      CreateScriptModuleInSpecifiedPath -modulePath $tempdir\TopModule -moduleName TopModule.cdxml
@@ -980,9 +980,9 @@ It -pending:(!$IsWindows) GetPSModuleInfoPropertiesForNonImportedModule {
    $MyModulePath1 = Join-Path $tempdir 'GetPSModuleInfoPropertiesForNonImportedModule'
    $MyModulePath2 = Join-Path $tempdir 'GetPSModuleInfoPropertiesForNonImportedModule2'
    $MyModulePath3 = Join-Path $tempdir 'GetPSModuleInfoPropertiesForNonImportedModule3'
-   mkdir $MyModulePath1 -Force | Out-Null
-   mkdir $MyModulePath2 -Force | Out-Null
-   mkdir $MyModulePath3 -Force | Out-Null
+   new-item -type directory $MyModulePath1 -Force | Out-Null
+   new-item -type directory $MyModulePath2 -Force | Out-Null
+   new-item -type directory $MyModulePath3 -Force | Out-Null
 
  @"
 @{

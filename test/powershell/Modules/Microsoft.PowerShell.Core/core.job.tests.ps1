@@ -1,12 +1,12 @@
 Describe "Job cmdlets" -Tags 'innerloop', 'DRT' {
     Context "Start-Job" {
-        It "should be able to load by definitionName and type" {            
+        It "should be able to load by definitionName and type" -pending:($IsLinux -or $IsOSX) {
             $jobname = "StartJobShouldBeAbleLoadByDefinitionNameAndType"
             try
             {
                 $scheduledjob = Get-ScheduledJob -Name $jobname -ErrorAction SilentlyContinue
 
-                if (!$scheduledjob) 
+                if (!$scheduledjob)
                 {
                     $scheduledjob = Register-ScheduledJob -Name $jobname -ScriptBlock {echo $args[0]} -ArgumentList ($jobname)
                 }
@@ -22,7 +22,7 @@ Describe "Job cmdlets" -Tags 'innerloop', 'DRT' {
             }
         }
 
-        It "no recurse should not return result from child jobs" {
+        It "no recurse should not return result from child jobs" -pending:($IsLinux -or $IsOSX) {
             $message = "StartJobNoRecurseShouldNotReturnTheResultsFromAnyChildJobs"
             try
             {

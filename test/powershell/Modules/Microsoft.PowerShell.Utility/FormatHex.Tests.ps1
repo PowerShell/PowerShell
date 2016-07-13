@@ -16,13 +16,18 @@
 
 Describe "FormatHex" -tags 'DRT' {
     
-    New-Item TestDrive:\FormatHexDataDir -Type Directory  -Force | Out-Null
-    $inputFile = "TestDrive:\FormatHexDataDir\SourceFile-1.txt"
+    setup -d FormatHexDataDir
     $inputText = 'Hello World'
-    Set-Content -Value $inputText -Path $inputFile
-    $inputFile2 = "TestDrive:\FormatHexDataDir\SourceFile-2.txt"
+    $inputFile  = setup -f FormatHexDataDir\SourceFile-1.txt -content $inputText -pass
     $inputText2 = 'This is a bit more text'
-    Set-Content -Value $inputText2 -Path $inputFile2
+    $inputFile2 = setup -f FormatHexDataDir\SourceFile-2.txt -content $inputText2 -pass
+    #New-Item TestDrive:\FormatHexDataDir -Type Directory  -Force | Out-Null
+    #$inputFile = "TestDrive:\FormatHexDataDir\SourceFile-1.txt"
+    #$inputText = 'Hello World'
+    #Set-Content -Value $inputText -Path $inputFile
+    #$inputFile2 = "TestDrive:\FormatHexDataDir\SourceFile-2.txt"
+    #$inputText2 = 'This is a bit more text'
+    #Set-Content -Value $inputText2 -Path $inputFile2
 
     # This test is to validate to pipeline support in Format-Hex cmdlet.  
     It "ValidatePipelineSupport" {
@@ -190,7 +195,7 @@ Describe "FormatHex" -tags 'DRT' {
         $result | Should Not BeNullOrEmpty
         $result.Count | should be 2
         $result[0].ToString() | Should be "00000000   54 68 69 73 20 69 73 20 61 20 62 69 74 20 6D 6F  This is a bit mo"
-        $result[1].ToString() | Should be "00000010   72 65 20 74 65 78 74 0D 0A                       re text..       "
+        $result[1].ToString() | Should be "00000010   72 65 20 74 65 78 74                             re text         "
     }
 
     # This test ensures that if we stream bytes from a file, the output is correct
@@ -198,7 +203,7 @@ Describe "FormatHex" -tags 'DRT' {
         $result = Get-Content $InputFile -Encoding Byte | Format-Hex
         $result | Should Not BeNullOrEmpty
         $result.GetType().Name | Should Be "ByteCollection"
-        $result.ToString() | Should be    "00000000   48 65 6C 6C 6F 20 57 6F 72 6C 64 0D 0A           Hello World..   "
+        $result.ToString() | Should be    "00000000   48 65 6C 6C 6F 20 57 6F 72 6C 64                 Hello World     "
     }
 
     # This test is to validate the alias for Format-Hex cmdlet.

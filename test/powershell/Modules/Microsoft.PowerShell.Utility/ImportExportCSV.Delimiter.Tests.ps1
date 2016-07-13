@@ -6,6 +6,7 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
               '"', "~", "!", "%", "^", "*", "_", "+", ":",
               "?", "-", "=", "[", "]", "."
         $defaultDelimiter = [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator
+        $enCulture = [System.Globalization.CultureInfo]::new("en-us")
         $d = get-date
         $testCases = @(
             foreach($del in $delimiters)
@@ -15,8 +16,14 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
             )
     }
     AfterEach {
-        [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator = $defaultDelimiter 
-        remove-item -force -ea silentlycontinue TESTDRIVE:/file.csv
+        if ( $IsWindows ) {
+            [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator = $defaultDelimiter 
+        }
+        elseif ( $IsCore ) {
+            $enCulture.TextInfo.ListSeparator = $defaultDelimiter
+            [System.Globalization.CultureInfo]::CurrentCulture = $enCulture
+        }
+        remove-item -force -ea silentlycontinue "$TESTDRIVE/file.csv"
     }
 
     It "Disallow use of null delimiter" {
@@ -42,7 +49,13 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
     # parameter generated tests
     It 'Delimiter <Delimiter> with CSV import will fail correctly when culture does not match' -testCases $testCases {
         param ($delimiter, $Data, $ExpectedResult)
-        [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator = $delimiter
+        if ( $IsWindows ) {
+            [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator = $delimiter
+        }
+        elseif ( $IsCore ) {
+            $enCulture.TextInfo.ListSeparator = $delimiter
+            [System.Globalization.CultureInfo]::CurrentCulture = $enCulture
+        }
         $Data | export-CSV TESTDRIVE:\File.csv -useCulture
         $i = Import-CSV TESTDRIVE:\File.csv
         $i.Ticks | Should Not Be $ExpectedResult
@@ -50,7 +63,13 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
 
     It 'Delimiter <Delimiter> with CSV import will succeed when culture matches export' -testCases $testCases {
         param ($delimiter, $Data, $ExpectedResult)
-        [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator = $delimiter
+        if ( $IsWindows ) {        
+            [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator = $delimiter 
+        }
+        elseif ( $IsCore ) {
+            $enCulture.TextInfo.ListSeparator = $delimiter
+            [System.Globalization.CultureInfo]::CurrentCulture = $enCulture
+        }
         $Data | export-CSV TESTDRIVE:\File.csv -useCulture
         $i = Import-CSV TESTDRIVE:\File.csv -useCulture
         $i.Ticks | Should Be $ExpectedResult

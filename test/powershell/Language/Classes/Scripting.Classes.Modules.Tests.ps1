@@ -12,25 +12,25 @@ Describe 'use of a module from two runspaces' {
             [string]$Content
         )
         
-        mkdir -Force "TestDrive:\$Name" > $null    
+        new-item -type directory -Force "${TestDrive}\$Name" > $null    
         $manifestParams = @{
-            Path = "TestDrive:\$Name\$Name.psd1"
+            Path = "${TestDrive}\$Name\$Name.psd1"
         }
         
         if ($Content) {
-            Set-Content -Path TestDrive:\$Name\$Name.psm1 -Value $Content
+            Set-Content -Path ${TestDrive}\$Name\$Name.psm1 -Value $Content
             $manifestParams['RootModule'] = "$Name.psm1"
         }
         
         New-ModuleManifest @manifestParams
 
-        $resolvedTestDrivePath = Split-Path ((ls TestDrive:\)[0].FullName)
-        if (-not ($env:PSModulePath -like "*$resolvedTestDrivePath*")) {
-            $env:PSModulePath += ";$resolvedTestDrivePath"
+        $resolvedTestDrivePath = Split-Path ((get-childitem ${TestDrive}\)[0].FullName)
+        if (-not ($env:PSMODULEPATH -like "*$resolvedTestDrivePath*")) {
+            $env:PSMODULEPATH += ";$resolvedTestDrivePath"
         }
     }
 
-    $originalPSModulePath = $env:PSModulePath
+    $originalPSMODULEPATH = $env:PSMODULEPATH
     try {
         
         New-TestModule -Name 'Random' -Content @'
@@ -45,10 +45,9 @@ class RandomWrapper
 '@
 
         It 'use different sessionStates for different modules' {
-            $ps = 1..2 | % { $p = [powershell]::Create().AddScript(@'
-Import-Module Random
-'@)
-                $p.Invoke() > $null
+            $ps = 1..2 | % { 
+                $p = [powershell]::Create()
+                $p.AddScript('Import-Module Random').Invoke() > $null
                 $p
             }
             $res = 1..2 | % {
@@ -68,7 +67,7 @@ Import-Module Random
         }
 
     } finally {
-        $env:PSModulePath = $originalPSModulePath
+        $env:PSMODULEPATH = $originalPSMODULEPATH
     }
 
 }

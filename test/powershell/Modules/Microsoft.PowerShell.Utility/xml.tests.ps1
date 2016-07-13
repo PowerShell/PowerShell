@@ -1,62 +1,43 @@
-Describe "XML cmdlets" -Tags 'P1', 'RI' {
+Describe "XML cmdlets" -Tags 'Feature' {
     Context "Select-XML" {
         BeforeAll {
-            $fileName = New-Item -Path 'TestDrive:\testSelectXml.xml'
-	        Push-Location "$fileName\.."
-	        "<Root>" | out-file -LiteralPath $fileName
-	        "   <Node Attribute='blah' />" | out-file -LiteralPath $fileName -Append
-	        "</Root>" | out-file -LiteralPath $fileName -Append
+            $filenamepath = Setup -F testSelectXml.xml -pass -content "<Root><Node Attribute='blah' /></Root>"
+            $filename = get-item $filenamepath
+            $fileNameWithDots = $fileName.FullName.Replace([io.path]::DirectorySeparatorChar, ".")
 
-            $fileNameWithDots = $fileName.FullName.Replace("\", "\.\")
+            $testcases =
+                @{ Name = "literalpath with relative paths"; params = @{LiteralPath = $fileName.Name; XPath = 'Root'}},
+                @{ Name = 'literalpath with absolute paths'; params = @{LiteralPath = $fileName.FullName; XPath = 'Root'}},
+                @{ Name = 'path with relative paths';        params = @{Path = $fileName.Name; XPath = 'Root'}},
+                @{ Name = 'path with absolute paths';        params = @{Path = $fileName.FullName; XPath = 'Root'}}
 
-            $driveLetter = [string]($fileName.FullName)[0]
-	        $fileNameAsNetworkPath = "\\localhost\$driveLetter`$" + $fileName.FullName.SubString(2)
-
-            class TestData
+            if ( $IsWindows )
             {
-                [string] $testName 
-                [hashtable] $parameters
-
-                TestData($name, $parameters)
-                {
-                    $this.testName = $name
-                    $this.parameters = $parameters
-                }
+                $testcases += @{ Name = 'literalpath with path with dots'; params =  @{LiteralPath = $fileNameWithDots; XPath = 'Root'}}
+                $testcases += @{ Name = 'path with path with dots';        params =  @{Path = $fileNameWithDots; XPath = 'Root'}}
+                $testcases += @{ Name = 'literalpath with network path';   params =  @{LiteralPath = $fileNameAsNetworkPath; XPath = 'Root'}}
+                $testcases += @{ Name = 'path with network path';          params =  @{Path = $fileNameAsNetworkPath; XPath = 'Root'}}
             }
-
-            $testcases = @()
-            $testcases += [TestData]::new('literalpath with relative paths', @{LiteralPath = $fileName.Name; XPath = 'Root'})
-            $testcases += [TestData]::new('literalpath with absolute paths', @{LiteralPath = $fileName.FullName; XPath = 'Root'})
-            $testcases += [TestData]::new('literalpath with path with dots', @{LiteralPath = $fileNameWithDots; XPath = 'Root'})
-            $testcases += [TestData]::new('literalpath with network path', @{LiteralPath = $fileNameAsNetworkPath; XPath = 'Root'})                                            
-            $testcases += [TestData]::new('path with relative paths', @{Path = $fileName.Name; XPath = 'Root'})
-            $testcases += [TestData]::new('path with absolute paths', @{Path = $fileName.FullName; XPath = 'Root'})
-            $testcases += [TestData]::new('path with path with dots', @{Path = $fileNameWithDots; XPath = 'Root'})
-            $testcases += [TestData]::new('path with network path', @{Path = $fileNameAsNetworkPath; XPath = 'Root'}) 
+            push-location TESTDRIVE:
         }
 
         AfterAll {
-            Remove-Item -LiteralPath $fileName -Force -ErrorAction SilentlyContinue
             Pop-Location
         }
-        
-        $testcases | % {
-            
-            $params = $_.parameters
 
-            It $_.testName {
-                @(Select-XML @params).Count | Should Be 1
-            }
+        It "<Name>" -testcase $testcases {
+            param ( $name, $params )
+            @(Select-XML @params).Count | should be 1
         }
 
-        It "literalpath with non filesystem path" {
+        It -skip:(!$IsWindows) "literalpath with non filesystem path" {
             Select-XML -literalPath cert:\currentuser\my "Root" -ErrorVariable selectXmlError -ErrorAction SilentlyContinue
             $selectXmlError.FullyQualifiedErrorId | Should Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'
-        }       
-        
-        It "path with non filesystem path" {
+        }
+
+        It -skip:(!$IsWindows) "path with non filesystem path" {
             Select-XML -Path cert:\currentuser\my "Root" -ErrorVariable selectXmlError -ErrorAction SilentlyContinue
             $selectXmlError.FullyQualifiedErrorId | Should Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'
-        } 
+        }
     }
 }

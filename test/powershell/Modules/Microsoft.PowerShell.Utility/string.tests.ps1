@@ -35,7 +35,7 @@ Describe "String cmdlets" -Tags 'innerloop', 'P1', 'RI' {
             (select-string -LiteralPath $fileNameWithDots "b").count | Should Be 2	    
         }
 
-        It "Network path" {
+        It -skip:(!$IsWindows) "Network path" {
             (select-string -LiteralPath $fileNameAsNetworkPath "b").count | Should Be 2
         }
 
@@ -49,7 +49,8 @@ Describe "String cmdlets" -Tags 'innerloop', 'P1', 'RI' {
         }
 
         It "match object supports RelativePath method" {
-            $file = "Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1"
+            $file = [io.path]::Combine("Modules","Microsoft.PowerShell.Utility","Microsoft.PowerShell.Utility.psd1")
+
             
             $match = Select-String CmdletsToExport $pshome/$file
             

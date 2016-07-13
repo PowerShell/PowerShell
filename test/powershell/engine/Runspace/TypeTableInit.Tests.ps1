@@ -157,7 +157,7 @@ Describe "Dynamic Site Caching" {
         }
     }
 
-    It "Dynamic sites don't cache after Remove-TypeData - TypeData+RunspaceConfiguration" {
+    It "Dynamic sites don't cache after Remove-TypeData - TypeData+RunspaceConfiguration" -pending {
         [InternalTestHooks]::SetTestHook("ReadEngineTypesXmlFiles", $false)
 
         $instance.Data | Should Be 'from class'
@@ -209,7 +209,7 @@ Describe "Dynamic Site Caching" {
         }
     }
 
-    It "Dynamic sites don't cache after Remove-TypeData - ps1xml+RunspaceConfiguration" {
+    It "Dynamic sites don't cache after Remove-TypeData - ps1xml+RunspaceConfiguration" -skip {
         [InternalTestHooks]::SetTestHook("ReadEngineTypesXmlFiles", $false)
 
         $instance.Data | Should Be 'from class'

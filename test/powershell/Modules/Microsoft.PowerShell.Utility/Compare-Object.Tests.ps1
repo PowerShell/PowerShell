@@ -120,100 +120,35 @@ Describe "Compare-Object" {
     }
 }
 
-Describe "Compare-Object DRT basic functionality" -Tags DRT{
-		if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
-		{
-			Add-Type -TypeDefinition @"
-    public class Employee
-    {
-        public Employee(){}
-        public Employee(string firstName, string lastName, int yearsInMS)
-        {
-            FirstName = firstName;
-            LastName  = lastName;
-            YearsInMS = yearsInMS;
-        }
-        public string FirstName;
-        public string LastName;
-        public int YearsInMS;
-    }
-    public class EmployeeComparable : Employee, System.IComparable
-    {
-        public EmployeeComparable(
-            string firstName, string lastName, int yearsInMS)
-            : base(firstName, lastName, yearsInMS)
-        {}
+Describe "Compare-Object DRT basic functionality" -Tags DRT {
 
-        public int CompareTo(object obj)
+    class Employee {
+        [string]$FirstName
+        [string]$LastName
+        [int]$YearsInMS
+        Employee([string]$first, [string]$last, [int]$years)
         {
-            EmployeeComparable ec = obj as EmployeeComparable;
-            if (null == ec)
-                return -1;
-            if (FirstName != ec.FirstName)
-                return -1;
-            if (LastName != ec.LastName)
-                return -1;
-            if (YearsInMS != ec.YearsInMS)
-                return -1;
-            return 0;
+            $this.FirstName = $first
+            $this.LastName = $Last
+            $this.YearsInMS = $years
         }
     }
-
-    public class EmployeeDefinesSideIndicator : EmployeeComparable
-    {
-        public EmployeeDefinesSideIndicator(
-            string firstName, string lastName, int yearsInMS)
-            : base(firstName, lastName, yearsInMS)
-        {}
-
-        public string SideIndicator
-        {
-            get { throw new System.ArgumentException("get_SideIndicator"); }
-            set { throw new System.ArgumentException("get_SideIndicator"); }
+    class EmployeeComparable : Employee, System.IComparable {
+        EmployeeComparable([string]$first, [string]$last, [int]$years) : base($first, $last, $years) { }
+        [int] CompareTo ( [object]$obj ) {
+            $ec = $obj -as "EmployeeComparable"
+            if ( ! $ec ) { return -1 }
+            if ( $this.firstname -ne $ec.FirstName ) { return -1 }
+            if ( $this.lastname -ne $ec.lastname ) { return -1 }
+            if ( $this.yearsinms -ne $ec.yearsinms ) { return -1 }
+            return 0
         }
     }
-"@
-		}
-		else
-		{
-			Add-Type -TypeDefinition @"
-    public class EmployeeComparable : Employee, System.IComparable
-    {
-        public EmployeeComparable(
-            string firstName, string lastName, int yearsInMS)
-            : base(firstName, lastName, yearsInMS)
-        {}
-
-        public int CompareTo(object obj)
-        {
-            EmployeeComparable ec = obj as EmployeeComparable;
-            if (null == ec)
-                return -1;
-            if (FirstName != ec.FirstName)
-                return -1;
-            if (LastName != ec.LastName)
-                return -1;
-            if (YearsInMS != ec.YearsInMS)
-                return -1;
-            return 0;
-        }
+    class EmployeeDefinesSideIndicator : EmployeeComparable {
+        EmployeeDefinesSideIndicator( [string]$first, [string]$last, [int]$years) : base($first, $last, $years) {}
+        [string]$SideIndicator
     }
 
-    public class EmployeeDefinesSideIndicator : EmployeeComparable
-    {
-        public EmployeeDefinesSideIndicator(
-            string firstName, string lastName, int yearsInMS)
-            : base(firstName, lastName, yearsInMS)
-        {}
-
-        public string SideIndicator
-        {
-            get { throw new System.ArgumentException("get_SideIndicator"); }
-            set { throw new System.ArgumentException("get_SideIndicator"); }
-        }
-    }
-"@
-	}
 	It "Compare-Object with 1 referenceObject and 1 differenceObject should work"{
 		$empsReference = @([EmployeeComparable]::New("john","smith",5))
 		$empsDifference = @([EmployeeComparable]::New("mary","jane",5))

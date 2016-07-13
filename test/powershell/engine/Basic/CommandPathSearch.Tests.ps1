@@ -2,9 +2,9 @@ return
 Describe "Command Path Search" -Tags "DRT" {
 
     BeforeAll {
-        $null = mkdir TestDrive:\bin
-        $null = mkdir TestDrive:\bin\d1
-        $null = mkdir TestDrive:\bin\d2
+        $null = new-item -type directory TestDrive:\bin
+        $null = new-item -type directory TestDrive:\bin\d1
+        $null = new-item -type directory TestDrive:\bin\d2
 
         $testDriveRoot = (Get-PSDrive TestDrive).Root
         

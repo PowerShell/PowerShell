@@ -1,5 +1,13 @@
+if ( $IsCore ) {
+    Describe "Skipping ServiceModel tests" -Tags "Feature" {
+        It -pending "Requires ServiceModel.dll" {
+            $true | should be $true
+        }
+    }
+    return
+}
 
-Describe "Interface inheritance with remoting proxies" -Tags "P1", "RI" {
+Describe "Interface inheritance with remoting proxies" -Tags "Feature" {
     $src = @"
 using System;
 using System.ServiceModel;

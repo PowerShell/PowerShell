@@ -42,112 +42,71 @@ Describe "Get-Member" {
 
 Describe "Get-Member DRT Unit Tests" -Tags DRT {
     Context "Verify Get-Member with Class" {
-		if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
-		{
-			Add-Type -TypeDefinition @"
-        public class Employee
-        {
-            private string firstName;
-            private string lastName;
-            private int    yearsInMS;
-
-            public string FirstName
-            {
-                get
+        BeforeAll {
+            class Employee {
+                [string]$FirstName
+                [string]$LastName;
+                [int]$YearsInMS
+     
+                Employee([string]$first, [string]$last, [int]$years)
                 {
-                    return firstName;
-                }
-                set
-                {
-                    firstName = value;
+                   $this.firstName = $first
+                   $this.lastName  = $last
+                   $this.yearsInMS = $years
                 }
             }
 
+            $XMLFile= @"
+    <Types>
+        <Type>
+        <Name>Employee</Name>
+        <Members>
+            <PropertySet>
+                <Name>PropertySetName</Name>
+                <ReferencedProperties>
+                    <Name>FirstName</Name> 
+                    <Name>LastName</Name> 
+                </ReferencedProperties>
+            </PropertySet>
+            <PropertySet>
+                <Name>FullSet</Name>
+                <ReferencedProperties>
+                    <Name>FirstName</Name> 
+                    <Name>LastName</Name> 
+                    <Name>YearsInMS</Name> 
+                </ReferencedProperties>
+            </PropertySet>
+        </Members>
+        </Type>
+        <Type>
+        <Name>EmployeePartTime</Name>
+        <Members>
+            <PropertySet>
+                <Name>PropertySetName</Name>
+                <ReferencedProperties>
+                    <Name>FirstName</Name> 
+                    <Name>HoursPerWeek</Name> 
+                </ReferencedProperties>
+            </PropertySet>
+            <PropertySet>
+                <Name>FullSet</Name>
+                <ReferencedProperties>
+                    <Name>FirstName</Name> 
+                    <Name>LastName</Name> 
+                    <Name>HoursPerWeek</Name> 
+                </ReferencedProperties>
+            </PropertySet>
+        </Members>
+        </Type>
+    </Types>
+"@
 
-            public string LastName
-            {
-                get
-                {
-                    return lastName;
-                }
-                set
-                {
-                    lastName = value;
-                }
-            }
-
-
-            public int YearsInMS
-            {
-                get
-                {
-                    return yearsInMS;
-                }
-                set
-                {
-                    yearsInMS = value;
-                }
-            }
- 
-            public Employee(string firstName, string lastName, int yearsInMS)
-            {
-                this.firstName = firstName;
-                this.lastName  = lastName;
-                this.yearsInMS = yearsInMS;
-            }
+            $fileToDeleteName = setup -f getMemberTest.ps1xml -pass -content $XMLFile
+            Update-TypeData -AppendPath $fileToDeleteName
         }
-"@
-		}
-
-        $fileToDeleteName = Join-Path $TestDrive -ChildPath "getMemberTest.ps1xml"
-        $XMLFile= @"
-<Types>
-    <Type>
-    <Name>Employee</Name>
-    <Members>
-        <PropertySet>
-            <Name>PropertySetName</Name>
-            <ReferencedProperties>
-                <Name>FirstName</Name> 
-                <Name>LastName</Name> 
-            </ReferencedProperties>
-        </PropertySet>
-        <PropertySet>
-            <Name>FullSet</Name>
-            <ReferencedProperties>
-                <Name>FirstName</Name> 
-                <Name>LastName</Name> 
-                <Name>YearsInMS</Name> 
-            </ReferencedProperties>
-        </PropertySet>
-    </Members>
-    </Type>
-    <Type>
-    <Name>EmployeePartTime</Name>
-    <Members>
-        <PropertySet>
-            <Name>PropertySetName</Name>
-            <ReferencedProperties>
-                <Name>FirstName</Name> 
-                <Name>HoursPerWeek</Name> 
-            </ReferencedProperties>
-        </PropertySet>
-        <PropertySet>
-            <Name>FullSet</Name>
-            <ReferencedProperties>
-                <Name>FirstName</Name> 
-                <Name>LastName</Name> 
-                <Name>HoursPerWeek</Name> 
-            </ReferencedProperties>
-        </PropertySet>
-    </Members>
-    </Type>
-</Types>
-"@
-
-        $XMLFile > $fileToDeleteName
-        Update-TypeData -AppendPath $fileToDeleteName
-
+        AfterAll {
+            remove-typedata -path $fileToDeleteName
+        }
         It "Fail to get member without any input" {
             try 
             {

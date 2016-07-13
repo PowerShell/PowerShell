@@ -33,11 +33,10 @@ Describe "Invoke-Item" {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
-        Setup -File testfile.txt -Content "Hello World"
-        $testfile = Join-Path $TestDrive testfile.txt
+        $testfile =  Setup -File testfile.txt -Content '"Hello World"' -pass
     }
 
-    It "Should invoke a text file without error" -Skip:($IsWindows -and $IsCore) {
+    It "Should invoke a text file without error" -Skip:(!$IsWindows) {
         $debugfn = NewProcessStartInfo "-noprofile ""``Invoke-Item $testfile`n" -RedirectStdIn
         $process = RunPowerShell $debugfn
         EnsureChildHasExited $process

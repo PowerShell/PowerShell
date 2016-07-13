@@ -1,11 +1,17 @@
 Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags 'P1', 'RI' {
 
     It "Validates error on a missing path" {
+        if ( $IsWindows ) {
+            $path = "C:\SomeMissingDirectory"
+        }
+        else {
+            $path = "SomeMissingDirectory"
+        }
 
         $foundError = ""
         try
         {
-            Import-PowerShellDataFile -Path c:\SomeMissingDirectory -ErrorAction Stop
+            Import-PowerShellDataFile -Path $path -ErrorAction Stop
         }
         catch
         {

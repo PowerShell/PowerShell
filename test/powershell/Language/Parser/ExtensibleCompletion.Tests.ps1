@@ -171,7 +171,7 @@ function TestFunction
     )
 }
 
-Describe "Script block based extensible completion" -Tags "Innerloop", "BVT" {
+Describe "Script block based extensible completion" -Tags "CI" {
     @{
         ExpectedResults = @(
             @{CompletionText = "beta: 11  gamma: 22  command: TestFunction  parameterName: Alpha  wordToComplete: aa"
@@ -180,7 +180,7 @@ Describe "Script block based extensible completion" -Tags "Innerloop", "BVT" {
     } | Get-CompletionTestCaseData | Test-Completions
 }
 
-Describe "Test class based extensible completion" -Tags "Innerloop", "BVT" {
+Describe "Test class based extensible completion" -Tags "CI" {
     @{
         ExpectedResults = @(
             @{CompletionText = "alpha: 42  gamma: 44  command: TestFunction  parameterName: Beta  wordToComplete: zz"
@@ -189,7 +189,7 @@ Describe "Test class based extensible completion" -Tags "Innerloop", "BVT" {
     } | Get-CompletionTestCaseData | Test-Completions
 }
 
-Describe "Test registration based exensible completion" -Tags "Innerloop", "BVT" {
+Describe "Test registration based exensible completion" -Tags "CI" {
     Register-ArgumentCompleter -Command TestFunction -Parameter Gamma -ScriptBlock {
         param(
             [string] $CommandName,
@@ -212,7 +212,7 @@ Describe "Test registration based exensible completion" -Tags "Innerloop", "BVT"
     } | Get-CompletionTestCaseData | Test-Completions
 }
 
-Describe "Test extensible completion of native commands" -Tags "Innerloop", "BVT" {
+Describe "Test extensible completion of native commands" -Tags "CI" {
     Register-ArgumentCompleter -Command netsh -Native -ScriptBlock {
         [CompletionResult]::new('advfirewall', 'advfirewall', "ParameterValue", 'advfirewall')
         [CompletionResult]::new('bridge', 'bridge', "ParameterValue", 'bridge')
@@ -227,7 +227,7 @@ Describe "Test extensible completion of native commands" -Tags "Innerloop", "BVT
     } | Get-CompletionTestCaseData | Test-Completions
 }
 
-Describe "Test extensible completion of using namespace" -Tags "Innerloop", "BVT" {
+Describe "Test extensible completion of using namespace" -Tags "CI" {
     @{
         ExpectedResults = @(
             @{CompletionText = "System"; ResultType = "Namespace"}
@@ -254,17 +254,21 @@ Describe "Test extensible completion of using namespace" -Tags "Innerloop", "BVT
             @{CompletionText = "System.Management.Automation.Host"; ResultType = "Namespace"}
             @{CompletionText = "System.Management.Automation.Internal"; ResultType = "Namespace"}
             @{CompletionText = "System.Management.Automation.Language"; ResultType = "Namespace"}
+if ( ! $IsCore ) {
             @{CompletionText = "System.Management.Automation.PerformanceData"; ResultType = "Namespace"}
+}
             @{CompletionText = "System.Management.Automation.Provider"; ResultType = "Namespace"}
             @{CompletionText = "System.Management.Automation.Remoting"; ResultType = "Namespace"}
             @{CompletionText = "System.Management.Automation.Runspaces"; ResultType = "Namespace"}
+if ( ! $IsCore ) {
             @{CompletionText = "System.Management.Automation.Security"; ResultType = "Namespace"}
+}
             )
         TestInput = 'using namespace System.Management.Automation.'
     } | Get-CompletionTestCaseData | Test-Completions
 }
 
-Describe "Type extensible completion of type after using namespace" -Tags "Innerloop", "BVT" {
+Describe "Type extensible completion of type after using namespace" -Tags "CI" {
     @{
         ExpectedResults = @(
             @{CompletionText = "IO.TextReader"; ResultType = "Type"}
@@ -291,7 +295,7 @@ Describe "Type extensible completion of type after using namespace" -Tags "Inner
     } | Get-CompletionTestCaseData | Test-Completions
 }
 
-Describe "Additional type name completion tests" -Tags "Innerloop", "BVT" {
+Describe "Additional type name completion tests" -Tags "CI" {
     @{
         ExpectedResults = @(
             @{CompletionText = "System"; ResultType = "Namespace"}
@@ -308,15 +312,15 @@ Describe "Additional type name completion tests" -Tags "Innerloop", "BVT" {
     },
     @{
         ExpectedResults = @(
-            @{CompletionText = "System.Collections.Generic.LinkedList"; ResultType = "Type"; ListItemText = "LinkedList<>"; ToolTip = "Class System.Collections.Generic.LinkedList[T]"}
-            @{CompletionText = "System.Collections.Generic.LinkedListNode"; ResultType = "Type"; ListItemText = "LinkedListNode<>"; ToolTip = "Class System.Collections.Generic.LinkedListNode[T]"}
-            @{CompletionText = "System.Collections.Generic.List"; ResultType = "Type"; ListItemText = "List<>"; ToolTip = "Class System.Collections.Generic.List[T]"}
+            @{CompletionText = "System.Collections.Generic.LinkedList"; ResultType = "Type"; ListItemText = "LinkedList<>"; ToolTip = "System.Collections.Generic.LinkedList[T]"}
+            @{CompletionText = "System.Collections.Generic.LinkedListNode"; ResultType = "Type"; ListItemText = "LinkedListNode<>"; ToolTip = "System.Collections.Generic.LinkedListNode[T]"}
+            @{CompletionText = "System.Collections.Generic.List"; ResultType = "Type"; ListItemText = "List<>"; ToolTip = "System.Collections.Generic.List[T]"}
             )
         TestInput = 'Get-Command -ParameterType System.Collections.Generic.Li'
     },
     @{
         ExpectedResults = @(
-            @{CompletionText = "System.Collections.Generic.Dictionary"; ResultType = "Type"; ListItemText = "Dictionary<>"; ToolTip = "Class System.Collections.Generic.Dictionary[TKey, TValue]"}
+            @{CompletionText = "System.Collections.Generic.Dictionary"; ResultType = "Type"; ListItemText = "Dictionary<>"; ToolTip = "System.Collections.Generic.Dictionary[T1, T2]"}
             )
         TestInput = 'Get-Command -ParameterType System.Collections.Generic.Dic'
     } | Get-CompletionTestCaseData | Test-Completions

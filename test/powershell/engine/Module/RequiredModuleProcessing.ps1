@@ -32,7 +32,7 @@ Describe "Tests successfully creating a restricted endpoint with required module
         {
             # Copy test module to $PSHome\Modules path.
             $destPath = Join-Path $PSHOME\Modules $testModuleName
-            mkdir $destPath
+            new-item -type directory $destPath
             copy-item -Path (Join-Path -Path $path -ChildPath ($testModuleName + '.psd1')) -Destination $destPath
             copy-item -Path (Join-Path -Path $path -ChildPath ($testModuleName + '.psm1')) -Destination $destPath
 

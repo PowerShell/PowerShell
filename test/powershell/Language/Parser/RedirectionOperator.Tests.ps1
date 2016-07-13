@@ -1,7 +1,12 @@
-Describe "Redirection operator now supports encoding changes" {
+Describe "Redirection operator now supports encoding changes" -Tags "CI" {
     BeforeAll {
         $asciiString = "abc"
-        $asciiCR = "`r`n"
+        if ( $IsWindows ) {
+            $asciiCR = "`r`n"
+        }
+        else {
+            $asciiCR = [string][char]10
+        }
 
         # If out-file -encoding happens to have a default, be sure to 
         # save it away
@@ -22,7 +27,8 @@ Describe "Redirection operator now supports encoding changes" {
         $psdefaultParameterValues.Remove("out-file:encoding")
     }
 
-    It "If encoding is unset, redirection should be Unicode" {
+    # TODO: default encoding on non-Windows platforms is not unicode
+    It "If encoding is unset, redirection should be Unicode" -pending {
         $asciiString > TESTDRIVE:\file.txt
         $bytes = get-content -encoding byte TESTDRIVE:\file.txt
         # create the expected
