@@ -818,24 +818,6 @@ Describe "install-package with Whatif" -Tags @('BVT', 'DRT'){
 }
 
 Describe "install-package with Scope" -Tags @('BVT', 'DRT'){
-    BeforeAll {
-        if ($isWindows)
-        {
-            $userName = "smartguy"
-            $password = "password%1"
-            net user $userName $password /add
-            $secesurestring = ConvertTo-SecureString $password -AsPlainText -Force
-            $credential = new-object -typename System.Management.Automation.PSCredential -argumentlist $userName, $secesurestring
-        }
-    }
-
-    AfterAll {
-        if ($isWindows)
-        {
-             # Delete the user profile
-             net user $userName /delete | Out-Null        
-        }
-    }
 
      it "EXPECTED Success: Get and Install-Package without Scope without destination" {
             
@@ -947,8 +929,7 @@ Describe "install-package with Scope" -Tags @('BVT', 'DRT'){
 
         Receive-Job -Wait -Job $job -ErrorVariable theError2 2>&1
         $theError2.FullyQualifiedErrorId | should be "InstallRequiresCurrentUserScopeParameterForNonAdminUser,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackage"
-
-    } 
+    }
 }
 
 Describe Install-Package -Tags @('BVT', 'DRT'){
