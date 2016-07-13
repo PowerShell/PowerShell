@@ -1334,8 +1334,8 @@ Describe Get-PackageSource -Tags @('BVT', 'DRT') {
     }
 
     It "find-install-get-package Expect succeed" {      
-        find-package jquery -source http://www.nuget.org/api/v2/ -provider nuget | install-package -destination $destination -force
-        (Test-Path $destination\jquery*) | should be $true
+        find-package jquery -source NugetTemp2 -provider nuget | install-package -destination $destination -force
+        (Test-Path $destination\jQuery*) | should be $true
         $a=get-package -Destination $destination -Name jquery
         $a | where { $_.Name -eq 'jQuery'  } | should be $true
     }
