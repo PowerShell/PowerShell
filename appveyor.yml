@@ -1,5 +1,8 @@
 version: 0.5.0.{build}
 
+cache:
+  - '%LocalAppData%\Microsoft\dotnet'
+
 nuget:
   project_feed: true
 
