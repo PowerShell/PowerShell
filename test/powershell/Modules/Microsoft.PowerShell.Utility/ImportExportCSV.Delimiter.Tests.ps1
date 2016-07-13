@@ -23,7 +23,9 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
             $enCulture.TextInfo.ListSeparator = $defaultDelimiter
             [System.Globalization.CultureInfo]::CurrentCulture = $enCulture
         }
-        remove-item -force -ea silentlycontinue "$TESTDRIVE/file.csv"
+        if ( test-path "$TESTDRIVE/file.csv") {
+            remove-item -force -ea silentlycontinue "$TESTDRIVE/file.csv"
+        }
     }
 
     It "Disallow use of null delimiter" {
@@ -47,7 +49,7 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
     }
 
     # parameter generated tests
-    It 'Delimiter <Delimiter> with CSV import will fail correctly when culture does not match' -testCases $testCases {
+    It 'Delimiter <Delimiter> with CSV import will fail correctly when culture does not match' -testCases $testCases -pending:($IsOSX) {
         param ($delimiter, $Data, $ExpectedResult)
         if ( $IsWindows ) {
             [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator = $delimiter
@@ -61,7 +63,7 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
         $i.Ticks | Should Not Be $ExpectedResult
     }
 
-    It 'Delimiter <Delimiter> with CSV import will succeed when culture matches export' -testCases $testCases {
+    It 'Delimiter <Delimiter> with CSV import will succeed when culture matches export' -testCases $testCases -pending:($IsOSX) {
         param ($delimiter, $Data, $ExpectedResult)
         if ( $IsWindows ) {        
             [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator = $delimiter 
@@ -75,7 +77,7 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
         $i.Ticks | Should Be $ExpectedResult
     }
 
-    It 'Delimiter <Delimiter> with CSV import will succeed when delimiter is used explicitly' -testCases $testCases {
+    It 'Delimiter <Delimiter> with CSV import will succeed when delimiter is used explicitly' -testCases $testCases -pending:($IsOSX) {
         param ($delimiter, $Data, $ExpectedResult)
         $Data | export-CSV TESTDRIVE:\File.csv -delimiter $delimiter
         $i = Import-CSV TESTDRIVE:\File.csv -delimiter $delimiter
