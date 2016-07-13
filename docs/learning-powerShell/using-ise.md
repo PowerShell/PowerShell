@@ -14,9 +14,9 @@ Editing with ISE
 # Convert Fahrenheit to Celsius
 function ConvertFahrenheitToCelsius([double] $fahrenheit)
 {
-$celcius = $fahrenheit - 32
-$celcius = $celcius / 1.8
-$celcius
+$celsius = $fahrenheit - 32
+$celsius = $celsius / 1.8
+$celsius
 }
 
 $fahrenheit = Read-Host 'Input a temperature in Fahrenheit'
@@ -52,10 +52,10 @@ Hit Line breakpoint on 'C:\test\helloword.ps1:17'
 
 ```
 
-- From the output pane, you can type $celcius and $fahrenheit to exam these variables to see if they are correct.
+- From the output pane, you can type $celsius and $fahrenheit to exam the values of these variables to see if they are correct.
 
 ```PowerShell
-[DBG]: PS C:\Test>> $celcius
+[DBG]: PS C:\Test>> $celsius
 26.6666666666667
 
 [DBG]: PS C:\Tset>> $fahrenheit

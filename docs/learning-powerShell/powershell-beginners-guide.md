@@ -6,7 +6,7 @@ If you are new to PowerShell, this document will walk you through a few examples
 
 Launch PowerShell Console/Session
 ---
-Follow the [Installing PowerShell](./learning-powershell.md "Installing PowerShell") instruction you can install the PowerShell and launch the PowerShell session.
+First you need to launch a PowerShell session by following the [Installing PowerShell Guide](./learning-powershell.md#installing-powershell).
 
 
 Getting Familiar with PowerShell Commands
