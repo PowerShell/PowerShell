@@ -4,11 +4,13 @@
 Get-PackageProvider #(should show 2 providers - NuGet,PowerShellGet)
    
 ## Using PowerShellGet find and install other demos
+# Value: equivalent of pypi
+# Look for all the modules we'll be demoing today
+Find-Module -Tag 'Open PowerShell','Demos'
+# Pipe this to Install-Module to install them
 Find-Module -Tag 'Open PowerShell','Demos' | Install-Module -Verbose
 Get-Module
-
-# Find and Download node.js from nuget.org
-Find-Package -Name node.js -ProviderName NuGet -Verbose -Source http://nuget.org/api/v2
+# Note that ScriptAnalyzer gets installed because the VSCode demo is dependent upon it
 
 # Register trusted endpoints
 Register-PackageSource -Name NuGet -Location http://nuget.org/api/v2 -Trusted -ProviderName NuGet
