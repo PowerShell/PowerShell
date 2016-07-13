@@ -545,7 +545,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         $wildcardError.FullyQualifiedErrorId | should be "WildCardCharsAreNotSupported,Microsoft.PowerShell.PackageManagement.Cmdlets.SavePackage"
     }
 
-	it "EXPECTED: Saves 'Zlib' Package To Packages Directory" {
+	it "EXPECTED: Saves 'Zlib' Package To Packages Directory" -Pending {
         $version = "1.2.8.8"
         $expectedPackages = @("zlib", "zlib.v120.windesktop.msvcstl.dyn.rt-dyn", "zlib.v140.windesktop.msvcstl.dyn.rt-dyn")
         $newDestination = Join-Path $TestDrive "nugetinstallation"
@@ -598,7 +598,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         }
     }
 
-    it "EXPECTED: Saves 'Zlib' Package to Packages Directory and install it without dependencies" {
+    it "EXPECTED: Saves 'Zlib' Package to Packages Directory and install it without dependencies" -Pending {
         $version = "1.2.8.8"
         $newDestination = "$TestDrive\newdestination\nugetinstallation"
 
@@ -649,7 +649,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         }
     }
 
-    It "EXPECTED: Saves 'awssdk' package which has more than 200 versions" {
+    It "EXPECTED: Saves 'awssdk' package which has more than 200 versions" -Pending {
 		(save-package -name "awssdk" -provider $nuget -source $source -Path $destination)
 		(test-path $destination\awssdk*) | should be $true
 		if (Test-Path $destination\awssdk*) {
@@ -657,7 +657,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
 		}    
     }
 
-    It "EXPECTED: Saves package with Credential" -Pending {
+    It "EXPECTED: Saves package with Credential" {
         #TODO: Need to fix this. Already opened an issue on GitHub
         Save-Package Contoso -Credential $vstsCredential -Source $vstsFeed -ProviderName $Nuget -Path $destination
         (Test-Path $destination\contoso*) | should be $true
@@ -667,7 +667,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         }
     }
 
-	it "EXPECTED: Saves Various Packages With Various Version Parameters To Packages Directory" {
+	it "EXPECTED: Saves Various Packages With Various Version Parameters To Packages Directory" -Pending {
 		foreach ($x in $packageNames) {
 			foreach ($y in $minimumVersions) {
 				foreach ($z in $maximumVersions) {
@@ -681,7 +681,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
 		}
 	}
 
-	It "EXPECTED: Saves 'Zlib' Package After Having The Provider Piped" {
+	It "EXPECTED: Saves 'Zlib' Package After Having The Provider Piped" -Pending {
 	    (find-package -name "zlib" -provider $nuget -source $source | save-package -Path $destination)
 	    (Test-Path -Path $destination\zlib*) | should be $true
 	    if (Test-Path -Path $destination\zlib*) {
@@ -955,7 +955,7 @@ Describe Install-Package -Tags @('BVT', 'DRT'){
     $destination = Join-Path $TestDrive "NugetPackages"
     $relativetestpath = Join-Path $TestDrive "RelativeTestPath"
  
-	it "EXPECTED: Installs 'Zlib' Package To Packages Directory" {
+	it "EXPECTED: Installs 'Zlib' Package To Packages Directory" -Pending {
         $version = "1.2.8.8"
 		(install-package -name "zlib" -provider $nuget -source $source -destination $destination -force -RequiredVersion $version)
 		(test-path $destination\zlib.1.2*) | should be $true
@@ -967,7 +967,7 @@ Describe Install-Package -Tags @('BVT', 'DRT'){
 		}
     }
 
-    It "EXPECTED: Install package with credential" -Pending {
+    It "EXPECTED: Install package with credential" {
         try {
             Install-Package -Name Contoso -Provider $nuget -Source $vstsFeed -Credential $vstsCredential -Destination $destination -Force
             Test-Path $destination\Contoso* | should be $true
@@ -1075,7 +1075,7 @@ Describe Install-Package -Tags @('BVT', 'DRT'){
         }
     }
 
-	it "EXPECTED: Installs 'awssdk' Package which has more than 200 versions To Packages Directory" {
+	it "EXPECTED: Installs 'awssdk' Package which has more than 200 versions To Packages Directory" -Pending {
 		(install-package -name "awssdk" -provider $nuget -source $source -destination $destination -maximumversion 2.3 -force)
 		(test-path $destination\awssdk*) | should be $true
 		if (Test-Path $destination\awssdk*) {
@@ -1097,7 +1097,7 @@ Describe Install-Package -Tags @('BVT', 'DRT'){
 		}
     }
 
-	It "EXPECTED: Installs 'Zlib' Package After Having The Provider Piped" {
+	It "EXPECTED: Installs 'Zlib' Package After Having The Provider Piped" -Pending {
 	    (find-package -name "zlib" -provider $nuget -source $source | install-package -destination $destination -force)
 	    (Test-Path -Path $destination\zlib*) | should be $true
 	    if (Test-Path -Path $destination\zlib*) {
