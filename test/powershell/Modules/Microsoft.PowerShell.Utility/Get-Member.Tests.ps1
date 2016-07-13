@@ -152,7 +152,7 @@ Describe "Get-Member DRT Unit Tests" -Tags DRT {
             }
         }
 
-        It 'Get property sets defined in private members' {
+        It 'Get property sets defined in private members' -pending:(!$IsWindows) {
             $emps = [Employee]::New("john", "smith", 5), [Employee]::New("joesph", "smith", 15), [Employee]::New("john", "smyth", 2)
             $results = $emps | Get-Member -MemberType PropertySet
             $results.Length | Should Be 2
