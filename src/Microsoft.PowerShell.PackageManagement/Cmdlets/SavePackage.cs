@@ -254,8 +254,10 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                             }
 
                             WriteObject(AddPropertyToSoftwareIdentity(downloadedPkg));
+#if !LINUX
                             LogEvent(EventTask.Download, EventId.Save, Resources.Messages.PackageSaved, downloadedPkg.Name, downloadedPkg.Version, downloadedPkg.ProviderName, downloadedPkg.Source ?? string.Empty, downloadedPkg.Status ?? string.Empty, downloadedPkg.InstallationPath ?? string.Empty);
                             TraceMessage(Constants.SavePackageTrace, downloadedPkg);
+#endif
                         }
 
                     }

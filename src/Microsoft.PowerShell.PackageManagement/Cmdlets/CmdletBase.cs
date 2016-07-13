@@ -506,6 +506,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             Save = 4103
         }
 
+#if !LINUX
         protected void LogEvent(EventTask task, EventId id, string context, string name, string version, string providerName, string source, string status, string destinationPath)
         {
             var iis = InitialSessionState.CreateDefault2();
@@ -536,6 +537,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                 }
             }           
         }
+#endif
 
         #endregion
     }
