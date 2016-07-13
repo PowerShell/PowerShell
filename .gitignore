@@ -26,7 +26,6 @@ dotnet-uninstall-debian-packages.sh
 
 # Ignore packages
 *.deb
-*.msi
 *.zip
 *.rpm
 *.pkg
@@ -39,3 +38,6 @@ powershell.version
 
 # resgen output
 gen
+
+# Per repo profile
+.profile.ps1

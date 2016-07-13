@@ -431,13 +431,11 @@ namespace System.Management.Automation
                 return false;
             }
 
+#if LINUX
             // There is no signature support on non-Windows platforms (yet), when
             // execution reaches here, we are sure the file is under product folder
-            if (Platform.IsCore)
-            {
-                return true;
-            }
-
+            return true;
+#else
             // Check the file signature
             Signature fileSignature = SignatureHelper.GetSignature(file, null);
             if ((fileSignature != null) && (fileSignature.IsOSBinary))
@@ -457,6 +455,7 @@ namespace System.Management.Automation
             }
 
             return false;
+#endif
         }
 
 #if !CORECLR

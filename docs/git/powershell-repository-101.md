@@ -7,10 +7,9 @@ Working with PowerShell repository
 git clone --recursive https://github.com/PowerShell/PowerShell
 ```
 
-PowerShell repository has **submodules**.
-They are required to build and test powershell.
-That's why you need `--recursive`, when you `clone`.
-
+The PowerShell repository has **submodules**.
+They are required to build and test PowerShell.
+That's why you need `--recursive`, when you `git clone`.
 
 If you already cloned the repo without `--recursive`, update submodules manually
 
@@ -22,32 +21,28 @@ git submodule update
 See [FAQ](../FAQ.md#why-is-my-submodule-empty) for details.
 
 
-
 Branches
 ---------
 
 * Don't commit your changes directly to master.
-  It would make workflow messy.
-* Checkout a new local branch from master for every change you want to make (bugfix, feature).
-* Use `alias/feature-name` pattern.
+  It will make the collaborative workflow messy.
+* Checkout a new local branch from `master` for every change you want to make (bugfix, feature).
+* Use the `username/feature-name` pattern for naming branches.
 * Use lowercase-with-dashes for naming.
 * Follow [Linus' recommendations][Linus] about history.
-  - People can (and probably should) rebase their _private_ trees (their own 
-    work). That's a _cleanup_. But never other peoples code. That's a "destroy 
-    history"
-  - You must never EVER destroy other peoples history. You must not rebase 
-    commits other people did. Basically, if it doesn't have your sign-off 
-    on it, it's off limits: you can't rebase it, because it's not yours.
+    - "People can (and probably should) rebase their _private_ trees (their own work). That's a _cleanup_. But never other peoples code. That's a 'destroy history'...
+    You must never EVER destroy other peoples history. You must not rebase commits other people did.
+    Basically, if it doesn't have your sign-off on it, it's off limits: you can't rebase it, because it's not yours."
 
 #### Understand branches
 
-* **master** is the branch with the latest and gratest changes.
+* **master** is the branch with the latest and greatest changes.
   It could be unstable.
-* Send your Pull Requests to **master**.
+* Send your pull requests to **master**.
 
 #### Sync your local repo
 
-Use **git rebase** instead of **git merge** and **git pull**, when you updating your feature-branch.
+Use **git rebase** instead of **git merge** and **git pull**, when you're updating your feature-branch.
 
 ```sh
 # switch to master branch
@@ -63,7 +58,7 @@ git pull origin master
 
 ```
 
-Then switch to your branch and do rebase
+Then switch to your branch and do a rebase
 
 ```
 git rebase master
@@ -81,7 +76,6 @@ We are leaving few links here:
 [Linus]:http://thread.gmane.org/gmane.comp.video.dri.devel/34739/focus=34744
 
 
-
 Tags
 ------
 
@@ -92,7 +86,7 @@ you will find it via **tags**.
 * Find the tag that corresponds to the release.
 * Use `git checkout <tag-name>` to get this version.
 
-**Note:** [checking out tag][] will move the repo in [DETACHED HEAD][] state.
+**Note:** [checking out a tag][] will move the repo to a [DETACHED HEAD][] state.
 
 [checking out tag]:https://git-scm.com/book/en/v2/Git-Basics-Tagging#Checking-out-Tags
 [DETACHED HEAD]:https://www.git-tower.com/learn/git/faq/detached-head-when-checkout-commit
@@ -103,7 +97,6 @@ checkout a new branch from this DETACHED HEAD state.
 ```sh
 git checkout -b vors/hotfix
 ```
-
 
 
 Recommended Git configurations
