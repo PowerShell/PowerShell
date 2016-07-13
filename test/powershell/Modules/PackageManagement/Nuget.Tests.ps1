@@ -948,7 +948,7 @@ Describe Install-Package -Tags @('BVT', 'DRT'){
 		}
     }
 
-    It "EXPECTED: Install package with credential" {
+    It "EXPECTED: Install package with credential" -Pending {
         try {
             Install-Package -Name Contoso -Provider $nuget -Source $vstsFeed -Credential $vstsCredential -Destination $destination -Force
             Test-Path $destination\Contoso* | should be $true
