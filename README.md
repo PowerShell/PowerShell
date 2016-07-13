@@ -48,8 +48,9 @@ Developing and Contributing
 --------------------------
 If you are new to Git, we recommend you start by reviewing our
 [Git basics document][git-basics] where you will find Git installation
-instructions, cheat sheets and links to our favorite Git tutorials. We also
-recommend, reviewing an example of a [basic Git commit walkthrough][git-commit]. 
+instructions, cheat sheets and links to our favorite Git tutorials. 
+
+Please, follow the git workflow for [powershell repo][git-commit].
 
 To begin development, you'll need to setup your development environment for [Linux][build-linux], [Windows Core][build-wc], [Windows Full][build-wf] or
 [OS X][build-osx] and are encouraged to review the
