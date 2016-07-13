@@ -867,7 +867,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string userName = null;
 #if LINUX
-            userName = Platform.NonWindowsGetFileOwner("/proc/" + process.Id);
+            userName = Platform.NonWindowsGetUserFromPid(process.Id);
 #else
             IntPtr tokenUserInfo = IntPtr.Zero;
             IntPtr processTokenHandler = IntPtr.Zero;

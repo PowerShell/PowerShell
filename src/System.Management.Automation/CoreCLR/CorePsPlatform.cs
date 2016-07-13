@@ -354,11 +354,11 @@ namespace System.Management.Automation
             }
         }
 
-        internal static string NonWindowsGetFileOwner(string path)
+        internal static string NonWindowsGetUserFromPid(int path)
         {
             if (!IsWindows)
             {
-                return LinuxPlatform.GetFileOwner(path);
+                return LinuxPlatform.GetUserFromPid(path);
             }
             else
             {
@@ -752,9 +752,9 @@ namespace System.Management.Automation
             return Native.FollowSymLink(path);
         }
 
-        public static string GetFileOwner(string path)
+        public static string GetUserFromPid(int pid)
         {
-            return Native.GetFileOwner(path);
+            return Native.GetUserFromPid(pid);
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -828,7 +828,7 @@ namespace System.Management.Automation
 
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.LPStr)]
-            internal static extern string GetFileOwner([MarshalAs(UnmanagedType.LPStr)]string filePath);
+            internal static extern string GetUserFromPid(int pid);
         }
     }
 
