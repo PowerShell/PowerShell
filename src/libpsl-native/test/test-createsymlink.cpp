@@ -32,19 +32,19 @@ protected:
         // First create a temp file
         int fd = mkstemp(fileTemplateBuf);
         EXPECT_TRUE(fd != -1);
-	file = fileTemplateBuf;
+        file = fileTemplateBuf;
 
-	// Create a temp directory
-	dir = mkdtemp(dirTemplateBuf);
+        // Create a temp directory
+        dir = mkdtemp(dirTemplateBuf);
         EXPECT_TRUE(dir != NULL);
 
         // Create symbolic link to file
-	int ret1 = CreateSymLink(fileSymLink.c_str(), file);
-	EXPECT_EQ(ret1, 1);
-        
+        int ret1 = CreateSymLink(fileSymLink.c_str(), file);
+        EXPECT_EQ(ret1, 1);
+
         // Create symbolic link to directory
-	int ret2 = CreateSymLink(dirSymLink.c_str(), dir);
-	EXPECT_EQ(ret2, 1);
+        int ret2 = CreateSymLink(dirSymLink.c_str(), dir);
+        EXPECT_EQ(ret2, 1);
     }
 
     ~CreateSymLinkTest()
@@ -52,16 +52,16 @@ protected:
         int ret;
 
         ret = unlink(fileSymLink.c_str());
-	EXPECT_EQ(0, ret);
+        EXPECT_EQ(0, ret);
 
         ret = unlink(dirSymLink.c_str());
-	EXPECT_EQ(0, ret);
+        EXPECT_EQ(0, ret);
 
         ret = unlink(file);
-	EXPECT_EQ(0, ret);
+        EXPECT_EQ(0, ret);
 
-	ret = rmdir(dir);
-	EXPECT_EQ(0, ret);       
+        ret = rmdir(dir);
+        EXPECT_EQ(0, ret);
     }
 };
 
@@ -77,7 +77,7 @@ TEST_F(CreateSymLinkTest, FilePathNameDoesNotExist)
     std::string invalidFile = "/tmp/symlinktest_invalidFile";
     std::string invalidLink = "/tmp/symlinktest_invalidLink";
 
-    // make sure neither exists    
+    // make sure neither exists
     unlink(invalidFile.c_str());
     unlink(invalidLink.c_str());
 
