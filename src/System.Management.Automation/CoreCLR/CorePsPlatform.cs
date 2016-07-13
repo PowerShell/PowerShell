@@ -354,6 +354,18 @@ namespace System.Management.Automation
             }
         }
 
+        internal static string NonWindowsGetFileOwner(string path)
+        {
+            if (!IsWindows)
+            {
+                return LinuxPlatform.GetFileOwner(path);
+            }
+            else
+            {
+                throw new PlatformNotSupportedException();
+            }
+        }
+
 #if CORECLR
         internal static string NonWindowsGetFolderPath(SpecialFolder folder)
         {
@@ -740,6 +752,11 @@ namespace System.Management.Automation
             return Native.FollowSymLink(path);
         }
 
+        public static string GetFileOwner(string path)
+        {
+            return Native.GetFileOwner(path);
+        }
+
         [StructLayout(LayoutKind.Sequential)]
         internal class SetDateInfoInternal
         {
@@ -809,6 +826,9 @@ namespace System.Management.Automation
             [return: MarshalAs(UnmanagedType.LPStr)]
             internal static extern string FollowSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath);
 
+            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.LPStr)]
+            internal static extern string GetFileOwner([MarshalAs(UnmanagedType.LPStr)]string filePath);
         }
     }
 
