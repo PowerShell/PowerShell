@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include "followsymlink.h"
+#include "issymlink.h"
 
 //! @brief Followsymlink determines target path of a sym link
 //!
@@ -38,53 +39,122 @@ char* FollowSymLink(const char* fileName)
 {
     errno = 0;  
 
-    // Check parameters
+    // if filename is null, return null value
     if (!fileName)
     {
         errno = ERROR_INVALID_PARAMETER;
         return NULL;
     }
 
-    char buffer[PATH_MAX];
-    ssize_t sz = readlink(fileName, buffer, PATH_MAX);
-
-    if  (sz == -1)
+    //if lstat in IsSymLink returns -1, path does not exist
+    if (IsSymLink(fileName) == -1)
     {
-        switch(errno)
-        {
-        case EACCES:
-            errno = ERROR_ACCESS_DENIED;
-            break;
-        case EFAULT:
-            errno = ERROR_INVALID_ADDRESS;
-            break;
-        case EINVAL:
-            errno = ERROR_INVALID_NAME;
-            break;
-        case EIO:
-            errno = ERROR_GEN_FAILURE;
-            break;
-        case ELOOP:
-            errno = ERROR_STOPPED_ON_SYMLINK;
-            break;
-        case ENAMETOOLONG:
-            errno = ERROR_BAD_PATH_NAME;
-            break;
-        case ENOENT:
-            errno = ERROR_FILE_NOT_FOUND;
-            break;
-        case ENOMEM:
-            errno = ERROR_OUTOFMEMORY;
-            break;
-        case ENOTDIR:
-            errno = ERROR_BAD_PATH_NAME;
-            break;
-        default:
-            errno = ERROR_INVALID_FUNCTION;
-        }
         return NULL;
     }
 
-    buffer[sz] = '\0';
-    return strndup(buffer, sz + 1);
+    /*If the path is a symlink, the function return the absolute filepath if valid. if not valid, return null*/     
+    if (IsSymLink(fileName))
+    {
+        //Attempt to resolve with the absolute filepath
+        char actualpath[PATH_MAX+1];
+        char* realPath = realpath(fileName, actualpath);
+    
+        //if realPath is null, go onto the readlink implementation
+        if (realPath == NULL)
+        {       
+            char buffer[PATH_MAX];
+            ssize_t sz = readlink(fileName, buffer, PATH_MAX);
+    
+            if  (sz == -1)
+            {
+                switch(errno)
+                {
+                    case EACCES:
+                        errno = ERROR_ACCESS_DENIED;
+                        break;
+                    case EFAULT:
+                        errno = ERROR_INVALID_ADDRESS;   /*If the path is a symlink, the function return the absolute filepath if valid. if not valid, return null*/     
+                        break;
+                    case EINVAL:
+                        errno = ERROR_INVALID_NAME;
+                    case EIO:
+                        errno = ERROR_GEN_FAILURE;
+                        break;
+                    case ELOOP:
+                        errno = ERROR_STOPPED_ON_SYMLINK;
+                        break;
+                    case ENAMETOOLONG:
+                        errno = ERROR_BAD_PATH_NAME;
+                        break;
+                    case ENOENT:
+                        errno = ERROR_FILE_NOT_FOUND;
+                        break;
+                    case ENOMEM:
+                        errno = ERROR_OUTOFMEMORY;
+                        break;
+                    case ENOTDIR:
+                        errno = ERROR_BAD_PATH_NAME;
+                        break;
+                    default:
+                        errno = ERROR_INVALID_FUNCTION;
+                }
+
+                return NULL;
+           }
+
+            buffer[sz] = '\0';
+            return strndup(buffer, sz + 1);
+        }
+        else
+        {
+            return strndup(realPath, strlen(realPath) + 1 );
+        }
+    }
+    
+    else
+    {
+          char buffer[PATH_MAX];
+            ssize_t sz = readlink(fileName, buffer, PATH_MAX);
+    
+            if  (sz == -1)
+            {
+                switch(errno)
+                {
+                    case EACCES:
+                        errno = ERROR_ACCESS_DENIED;
+                        break;
+                    case EFAULT:
+                        errno = ERROR_INVALID_ADDRESS;   /*If the path is a symlink, the function return the absolute filepath if valid. if not valid, return null*/     
+                        break;
+                    case EINVAL:
+                        errno = ERROR_INVALID_NAME;
+                    case EIO:
+                        errno = ERROR_GEN_FAILURE;
+                        break;
+                    case ELOOP:
+                        errno = ERROR_STOPPED_ON_SYMLINK;
+                        break;
+                    case ENAMETOOLONG:
+                        errno = ERROR_BAD_PATH_NAME;
+                        break;
+                    case ENOENT:
+                        errno = ERROR_FILE_NOT_FOUND;
+                        break;
+                    case ENOMEM:
+                        errno = ERROR_OUTOFMEMORY;
+                        break;
+                    case ENOTDIR:
+                        errno = ERROR_BAD_PATH_NAME;
+                        break;
+                    default:
+                        errno = ERROR_INVALID_FUNCTION;
+                }
+
+                return NULL;
+           }
+
+            buffer[sz] = '\0';
+            return strndup(buffer, sz + 1);
+
+    }
 }
