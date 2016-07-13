@@ -14,9 +14,9 @@ Microsoft.PowerShell.Core\Set-StrictMode -Version Latest
 # Check if this is nano server. [System.Runtime.Loader.AssemblyLoadContext] is only available on NanoServer
 $script:isNanoServer = $null -ne ('System.Runtime.Loader.AssemblyLoadContext' -as [Type])
 
-function IsWindows { $PSVarable = Get-Variable -Name IsWindows -ErrorAction Ignore; return (-not $PSVarable -or $PSVarable.Value) }
-function IsLinux { $PSVarable = Get-Variable -Name IsLinux -ErrorAction Ignore; return ($PSVarable -and $PSVarable.Value) }
-function IsCore { $PSVarable = Get-Variable -Name IsCore -ErrorAction Ignore; return ($PSVarable -and $PSVarable.Value) }
+function IsWindows { $PSVariable = Get-Variable -Name IsWindows -ErrorAction Ignore; return (-not $PSVariable -or $PSVariable.Value) }
+function IsLinux { $PSVariable = Get-Variable -Name IsLinux -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
+function IsCore { $PSVariable = Get-Variable -Name IsCore -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
 
 if(IsWindows)
 {
