@@ -23,7 +23,7 @@ Write-Host "$result Celsius"
 
  **1. Set a Breakpoint on a Line**
 
-- Open a [PowerShell editor](learning-powershell#powershell-editor)
+- Open a [PowerShell editor](learning-powershell.md#powershell-editor)
 - Save the above code snippet to a file, let's say "test.ps1"
 - Clear existing breakpoints if any
 
