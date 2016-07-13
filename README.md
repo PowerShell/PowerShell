@@ -12,7 +12,7 @@ New to PowerShell?
 If you are new to PowerShell and would like to learn more, we recommend
 reviewing the [getting started documentation][getting-started].
 
-[getting-started]: https://msdn.microsoft.com/en-us/powershell/scripting/getting-started/getting-started-with-windows-powershell
+[getting-started]: docs/learning-powerShell/learning-powershell.md
 
 Build Status
 ------------
