@@ -60,7 +60,7 @@ Thus the output location of `powershell.exe` will be
 While building is easy, running FullCLR version is not as simple as
 CoreCLR version.
 
-If you just run ~~`./powershell.exe`~~, you will get a `powershell`
+If you just run `./powershell.exe`, you will get a `powershell`
 process, but all the interesting DLLs (such as
 `System.Management.Automation.dll`) would be loaded from the Global
 Assembly Cache (GAC), not your output directory.
