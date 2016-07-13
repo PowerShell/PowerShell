@@ -201,9 +201,9 @@ function Start-PSBuild {
 
         try {
             Push-Location $Native
-            cmake -DCMAKE_BUILD_TYPE=Debug .
-            make -j
-            make test
+            Start-NativeExecution { cmake -DCMAKE_BUILD_TYPE=Debug . }
+            Start-NativeExecution { make -j }
+            Start-NativeExecution { ctest --verbose }
         } finally {
             Pop-Location
         }
