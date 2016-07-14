@@ -4464,12 +4464,9 @@ namespace System.Management.Automation
 
         internal static List<string> GetFileShares(string machine, bool ignoreHidden)
         {
-            // Platform notes: don't throw an exception since this is being used in auto-completion
-            if (!Platform.HasFileShares())
-            {
-                return new List<string>();
-            }
-
+#if LINUX
+            return new List<string>();
+#else
             IntPtr shBuf;
             uint numEntries;
             uint totalEntries;
@@ -4495,6 +4492,7 @@ namespace System.Management.Automation
                 }
             }
             return shares;
+#endif
         }
 
         private static bool CheckFileExtension(string path, HashSet<string> extension)

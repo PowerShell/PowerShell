@@ -217,14 +217,6 @@ namespace System.Management.Automation
 
         }
 
-        // Linux has no notion of file shares. It has mount points
-        // instead, which are subdirectories of its single-root
-        // filesystem.
-        internal static bool HasFileShares()
-        {
-            return IsWindows();
-        }
-
         // Linux has no support for UNC, just mounts in a single rooted hierarchy
         // the UNC equivalent of a "network drive" aka mount would be the mount itself
         internal static bool HasUNCSupport()
