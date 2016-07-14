@@ -496,7 +496,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                throw new Platform.PlatformNotSupportedException();
+                throw new PlatformNotSupportedException();
             }
         }
 
@@ -753,7 +753,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                throw new Platform.PlatformNotSupportedException();
+                throw new PlatformNotSupportedException();
             }
         }
 
@@ -8202,7 +8202,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!Platform.IsWindows)
             {
-                throw new Platform.PlatformNotSupportedException();
+                throw new PlatformNotSupportedException();
             }
 
             using (SafeFileHandle handle = OpenReparsePoint(filePath, FileDesiredAccess.GenericRead))
@@ -8601,7 +8601,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                throw new Platform.PlatformNotSupportedException();
+                throw new PlatformNotSupportedException();
             }
         }
 
