@@ -65,7 +65,7 @@ process, but all the interesting DLLs (such as
 `System.Management.Automation.dll`) would be loaded from the Global
 Assembly Cache (GAC), not your output directory.
 
-[@lzybkr](https://github.com/lzybkr) wrote a module to deal with it
+[@lzybkr](https://github.com/lzybkr) wrote a [powershellDev.psm1](https://github.com/PowerShell/Internal-PowerShellTeam-Tools/tree/master/PowerShellDev) module to deal with it
 and run side-by-side.
 
 ```powershell
