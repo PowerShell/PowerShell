@@ -313,17 +313,17 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsIsHardLink(ref IntPtr handle)
         {
-            return LinuxPlatform.IsHardLink(ref handle);
+            return Unix.IsHardLink(ref handle);
         }
 
         internal static bool NonWindowsIsHardLink(FileSystemInfo fileInfo)
         {
-            return LinuxPlatform.IsHardLink(fileInfo);
+            return Unix.IsHardLink(fileInfo);
         }
 
         internal static bool NonWindowsIsSymLink(FileSystemInfo fileInfo)
         {
-            return LinuxPlatform.IsSymLink(fileInfo);
+            return Unix.IsSymLink(fileInfo);
         }
 
         internal static string NonWindowsInternalGetTarget(SafeFileHandle handle)
@@ -334,18 +334,18 @@ namespace System.Management.Automation
 
         internal static string NonWindowsInternalGetTarget(string path)
         {
-            return LinuxPlatform.FollowSymLink(path);
+            return Unix.FollowSymLink(path);
         }
 
         internal static string NonWindowsGetUserFromPid(int path)
         {
-            return LinuxPlatform.GetUserFromPid(path);
+            return Unix.GetUserFromPid(path);
         }
 
         #if CORECLR
         internal static string NonWindowsGetFolderPath(SpecialFolder folder)
         {
-            return LinuxPlatform.GetFolderPath(folder);
+            return Unix.GetFolderPath(folder);
         }
         #endif
 
@@ -367,27 +367,27 @@ namespace System.Management.Automation
         internal static bool NonWindowsCreateSymbolicLink(string path, string strTargetPath, bool isDirectory)
         {
             // Linux doesn't care if target is a directory or not
-            return LinuxPlatform.CreateSymbolicLink(path, strTargetPath);
+            return Unix.CreateSymbolicLink(path, strTargetPath);
         }
 
         internal static bool NonWindowsCreateHardLink(string path, string strTargetPath)
         {
-            return LinuxPlatform.CreateHardLink(path, strTargetPath);
+            return Unix.CreateHardLink(path, strTargetPath);
         }
 
         internal static void NonWindowsSetDate(DateTime dateToUse)
         {
-            LinuxPlatform.SetDateInfoInternal date = new LinuxPlatform.SetDateInfoInternal(dateToUse);
-            LinuxPlatform.SetDate(date);
+            Unix.SetDateInfoInternal date = new Unix.SetDateInfoInternal(dateToUse);
+            Unix.SetDate(date);
         }
 
         internal static string NonWindowsGetDomainName()
         {
-            string fullyQualifiedName = LinuxPlatform.Native.GetFullyQualifiedName();
+            string fullyQualifiedName = Unix.Native.GetFullyQualifiedName();
             if (string.IsNullOrEmpty(fullyQualifiedName))
             {
                 int lastError = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException("LinuxPlatform.NonWindowsGetDomainName error: " + lastError);
+                throw new InvalidOperationException("Unix.NonWindowsGetDomainName error: " + lastError);
             }
 
             int index = fullyQualifiedName.IndexOf('.');
@@ -401,24 +401,24 @@ namespace System.Management.Automation
 
         internal static string NonWindowsGetUserName()
         {
-            return LinuxPlatform.UserName;
+            return Unix.UserName;
         }
 
         // Hostname in this context seems to be the FQDN
         internal static string NonWindowsGetHostName()
         {
-            string hostName = LinuxPlatform.Native.GetFullyQualifiedName();
+            string hostName = Unix.Native.GetFullyQualifiedName();
             if (string.IsNullOrEmpty(hostName))
             {
                 int lastError = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException("LinuxPlatform.NonWindowsHostName error: " + lastError);
+                throw new InvalidOperationException("Unix.NonWindowsHostName error: " + lastError);
             }
             return hostName;
         }
 
         internal static bool NonWindowsIsExecutable(string path)
         {
-            return LinuxPlatform.IsExecutable(path);
+            return Unix.IsExecutable(path);
         }
 
         internal static uint NonWindowsGetThreadId()
@@ -487,7 +487,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal static class LinuxPlatform
+    internal static class Unix
     {
         private static string _userName;
         public static string UserName
@@ -500,7 +500,7 @@ namespace System.Management.Automation
                     if (string.IsNullOrEmpty(_userName))
                     {
                         int lastError = Marshal.GetLastWin32Error();
-                        throw new InvalidOperationException("LinuxPlatform.UserName error: " + lastError);
+                        throw new InvalidOperationException("Unix.UserName error: " + lastError);
                     }
                 }
                 return _userName;
@@ -585,7 +585,7 @@ namespace System.Management.Automation
             else
             {
                 int lastError = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException("LinuxPlatform.IsHardLink error: " + lastError);
+                throw new InvalidOperationException("Unix.IsHardLink error: " + lastError);
             }
 
         }
@@ -607,7 +607,7 @@ namespace System.Management.Automation
                     return false;
                 default:
                     int lastError = Marshal.GetLastWin32Error();
-                    throw new InvalidOperationException("LinuxPlatform.IsSymLink error: " + lastError);
+                    throw new InvalidOperationException("Unix.IsSymLink error: " + lastError);
             }
         }
 
@@ -627,7 +627,7 @@ namespace System.Management.Automation
                     return false;
                 default:
                     int lastError = Marshal.GetLastWin32Error();
-                    throw new InvalidOperationException("LinuxPlatform.IsExecutable error: " + lastError);
+                    throw new InvalidOperationException("Unix.IsExecutable error: " + lastError);
             }
         }
 
@@ -637,7 +637,7 @@ namespace System.Management.Automation
             if (ret == -1)
             {
                 int lastError = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException("LinuxPlatform.NonWindowsSetDate error: " + lastError);
+                throw new InvalidOperationException("Unix.NonWindowsSetDate error: " + lastError);
             }
         }
 
