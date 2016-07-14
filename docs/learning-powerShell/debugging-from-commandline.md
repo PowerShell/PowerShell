@@ -25,45 +25,46 @@ Write-Host "$result Celsius"
 
 - Open a [PowerShell editor](learning-powershell.md#powershell-editor)
 - Save the above code snippet to a file, let's say "test.ps1"
+- Go to your command-line PowerShell
 - Clear existing breakpoints if any
 
 ```PowerShell
- Get-PSBreakpoint | Remove-PSBreakpoint
+ PS /home/jen/debug>Get-PSBreakpoint | Remove-PSBreakpoint
  ```
 - Use **Set-PSBreakpoint** cmdlet to set a debug breakpoint, say set it to line 5
 
 ```PowerShell
-PS C:\Test>Set-PSBreakpoint -Line 5 -Script .\test.ps1
+PS /home/jen/debug>Set-PSBreakpoint -Line 5 -Script ./test.ps1
 
 ID Script             Line       Command          Variable          Action
 -- ------             ----       -------          --------          ------
- 5 test.ps1              5
+ 0 test.ps1              5
 ```
 - Run the script, test.ps1. As we have set a breakpoint, it is expected the program will break into the debugger at the line 5.
 
 ```PowerShell
 
-PS C:\Test> .\test.ps1
+PS /home/jen/debug> ./test.ps1
 Input a temperature in Fahrenheit: 80
-Hit Line breakpoint on 'C:\Test\test.ps1:5'
+Hit Line breakpoint on '/home/jen/debug/test.ps1:5'
 
-At C:\Test\test.ps1:5 char:1
+At /home/jen/debug/test.ps1:5 char:1
 + $celsius = $celsius / 1.8
 + ~~~~~~~~~~~~~~~~~~~~~~~~~
-[DBG]: PS C:\Test>>
+[DBG]: PS /home/jen/debug>>
 ```
 
-- The PowerShell prompt has been changed to **[DBG]: PS C:\Test>>** as you may noticed. This means
+- The PowerShell prompt has been changed to **[DBG]: PS /home/jen/debug>>** as you may noticed. This means
  we have entered into the debug mode. To watch the variables like $celsius, simply type $celsius as below.
 - To exit from the debugging, type **"q"**
 - To get help for the debugging commands, simple type **"?"**
 
 ```PowerShell
-[DBG]: PS C:\Test>> $celsius
+[DBG]: PS /home/jen/debug>> $celsius
 48
-[DBG]: PS C:\Test>> $fahrenheit
+[DBG]: PS /home/jen/debug>> $fahrenheit
 80
-[DBG]: PS PS C:\Test>> ?
+[DBG]: PS /home/jen/debug>> ?
 
  s, stepInto         Single step (step into functions, scripts, etc.)
  v, stepOver         Step to next statement (step over functions, scripts, etc.)
@@ -87,17 +88,17 @@ At C:\Test\test.ps1:5 char:1
 
 For instructions about how to customize your debugger prompt, type "help about_prompt".
 
-[DBG]: PS C:\Test>> s
-At C:\Test\test.ps1:6 char:1
+[DBG]: PS /home/jen/debug>> s
+At PS /home/jen/debug/test.ps1:6 char:1
 + $celsius
 + ~~~~~~~~
-[DBG]: PS C:\Test>> $celsius
+[DBG]: PS /home/jen/debug>> $celsius
 26.6666666666667
-[DBG]: PS C:\Test>> $fahrenheit
+[DBG]: PS /home/jen/debug>> $fahrenheit
 80
 
-[DBG]: PS C:\Test>> q
-PS C:\Test>
+[DBG]: PS /home/jen/debug>> q
+PS /home/jen/debug>
 
 ```
 
@@ -106,13 +107,13 @@ PS C:\Test>
 - Clear existing breakpoints if any
 
 ```PowerShell
- PS C:\Test>Get-PSBreakpoint | Remove-PSBreakpoint
+ PS /home/jen/debug>Get-PSBreakpoint | Remove-PSBreakpoint
  ```
 - Use **Set-PSBreakpoint** cmdlet to set a debug breakpoint, say set it to line 5
 
 ```PowerShell
 
- PS C:\Test>Set-PSBreakpoint -Variable "celsius" -Mode write -Script .\test.ps1
+ PS /home/jen/debug>Set-PSBreakpoint -Variable "celsius" -Mode write -Script ./test.ps1
 
 ```
 
@@ -123,14 +124,14 @@ PS C:\Test>
 
 ```PowerShell
 
-PS C:\Test> .\test.ps1
+PS /home/jen/debug> ./test.ps1
 Input a temperature in Fahrenheit: 80
-Hit Variable breakpoint on 'C:\Test\test.ps1:$celsius' (Write access)
+Hit Variable breakpoint on '/home/jen/debug/test.ps1:$celsius' (Write access)
 
-At C:\Test\test.ps1:3 char:1
+At /home/jen/debug/test.ps1:3 char:1
 + $celsius = $fahrenheit - 32
 + ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-[DBG]: PS C:\Test>> l
+[DBG]: PS /home/jen/debug>> l
 
 
     1:  function ConvertFahrenheitToCelsius([double] $fahrenheit)
@@ -145,22 +146,22 @@ At C:\Test\test.ps1:3 char:1
    10:  Write-Host "$result Celsius"
 
 
-[DBG]: PS C:\Test>> $celsius
+[DBG]: PS /home/jen/debug>> $celsius
 48
-[DBG]: PS C:\Test>> v
-At C:\Test\test.ps1:4 char:1
+[DBG]: PS /home/jen/debug>> v
+At /home/jen/debug/test.ps1:4 char:1
 + $celsius = $celsius / 1.8
 + ~~~~~~~~~~~~~~~~~~~~~~~~~
-[DBG]: PS C:\Test>> v
-Hit Variable breakpoint on 'C:\Test\test.ps1:$celsius' (Write access)
+[DBG]: PS /home/jen/debug>> v
+Hit Variable breakpoint on '/home/jen/debug/test.ps1:$celsius' (Write access)
 
-At C:\Test\test.ps1:4 char:1
+At /home/jen/debug/test.ps1:4 char:1
 + $celsius = $celsius / 1.8
 + ~~~~~~~~~~~~~~~~~~~~~~~~~
-[DBG]: PS C:\Test>> $celsius
+[DBG]: PS /home/jen/debug>> $celsius
 26.6666666666667
-[DBG]: PS C:\Test>> q
-PS C:\Test>
+[DBG]: PS /home/jen/debug>> q
+PS /home/jen/debug>
 
 ```
 

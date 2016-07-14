@@ -42,7 +42,7 @@ Editing with VS Code
 Debugging with VS Code
 ----
 
--	Open a file folder (**File->Open Folder**) where contains the PowerShell modules or scripts you have written already and want to debug. In this example, we saved helloworld.ps1 under c:\test\debug. Thus we select the "debug" folder and open it in VS Code.
+-	Open a file folder (**File->Open Folder**) where contains the PowerShell modules or scripts you have written already and want to debug. In this example, we saved helloworld.ps1 under home/jen/debug. Thus we select the "debug" folder and open it in VS Code.
 
 -	Creating the Debug Configuration (launch.json)
 
