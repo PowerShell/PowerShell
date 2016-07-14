@@ -63,15 +63,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsWinPEHost indicates if the machine on which PowerShell is hosted is WinPE or not.
-        /// This is a helper variable used to kep track if the IsWinPE() helper method has 
-        /// already checked for the WinPE specific registry key or not.
-        /// If the WinPE specific registry key has not yet been checked even 
-        /// once then this variable will point to null.
-        /// </summary>
-        internal static bool? isWinPEHost = null;
-
-        /// <summary>
         /// The existence of the following registry confirms that the host machine is a WinPE
         /// HKLM\System\CurrentControlSet\Control\MiniNT
         /// </summary>
@@ -368,55 +359,30 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsWinPEHost()
         {
-#if LINUX
-            return false;
-#else
-            return WinIsWinPEHost();
-#endif
-        }
-
-        internal static bool WinIsWinPEHost()
-        {
             RegistryKey winPEKey = null;
 
-            if (!isWinPEHost.HasValue)
+            try
             {
-                try
-                {
-                    // The existence of the following registry confirms that the host machine is a WinPE
-                    // HKLM\System\CurrentControlSet\Control\MiniNT
-                    winPEKey = Registry.LocalMachine.OpenSubKey(WinPEIdentificationRegKey);
+                // The existence of the following registry confirms that the host machine is a WinPE
+                // HKLM\System\CurrentControlSet\Control\MiniNT
+                winPEKey = Registry.LocalMachine.OpenSubKey(WinPEIdentificationRegKey);
 
-                    if (null != winPEKey)
-                    {
-                        isWinPEHost = true;
-                    }
-                    else
-                    {
-                        isWinPEHost = false;
-                    }
-                }
-                catch (ArgumentException) { }
-                catch (SecurityException) { }
-                catch (ObjectDisposedException) { }
-                finally
+                return winPEKey != null;
+            }
+            catch (ArgumentException) { }
+            catch (SecurityException) { }
+            catch (ObjectDisposedException) { }
+            finally
+            {
+                if (winPEKey != null)
                 {
-                    if (winPEKey != null)
-                    {
-                        winPEKey.Dispose();
-                    }
+                    winPEKey.Dispose();
                 }
             }
 
-            if (isWinPEHost.HasValue)
-            {
-                return (bool)isWinPEHost;
-            }
-            else
-            {
-                return false;
-            }
-        }
+            return false;
+        }  
+
 
         #region Versioning related methods
 
