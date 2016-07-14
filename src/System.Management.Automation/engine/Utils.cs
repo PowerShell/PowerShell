@@ -984,38 +984,9 @@ namespace System.Management.Automation
             return NativeItemExists(path, out unusedIsDirectory, out unusedException);
         }
 
+        // This is done through P/Invoke since File.Exists and Directory.Exists pay 13% performance degradation
+        // through the CAS checks, and are terribly slow for network paths.
         internal static bool NativeItemExists(string path, out bool isDirectory, out Exception exception)
-        {
-            if (Platform.UseDotNetToQueryFileAttributes())
-            {
-                // TODO:PSL replace by System.IO.File.GetAttributes
-                exception = null;
-                if (NativeDirectoryExists(path))
-                {
-                    isDirectory = true;
-                    return true;
-                }
-                else if (NativeFileExists(path))
-                {
-                    isDirectory = false;
-                    return true;
-                }
-                else
-                {
-                    isDirectory = false;
-                    return false;
-                }
-            }
-            else
-            {
-                // This is done through P/Invoke since File.Exists and Directory.Exists
-                // pay 13% performance degradation through the CAS checks, and are
-                // terribly slow for network paths.
-                return WinNativeItemExists(path,out isDirectory,out exception);
-            }
-        }
-
-        internal static bool WinNativeItemExists(string path, out bool isDirectory, out Exception exception)
         {
             exception = null;
 
@@ -1059,21 +1030,9 @@ namespace System.Management.Automation
             return true;
         }
 
+        // This is done through P/Invoke since we pay 13% performance degradation
+        // through the CAS checks required by File.Exists and Directory.Exists
         internal static bool NativeFileExists(string path)
-        {
-            if (Platform.UseDotNetToQueryFileAttributes())
-            {
-                return System.IO.File.Exists(path);
-            }
-            else
-            {
-                // This is done through P/Invoke since we pay 13% performance degradation
-                // through the CAS checks required by File.Exists and Directory.Exists
-                return WinNativeFileExists(path);
-            }
-        }
-
-        internal static bool WinNativeFileExists(string path)
         {
             bool isDirectory;
             Exception ioException;
@@ -1091,18 +1050,6 @@ namespace System.Management.Automation
         // through the CAS checks required by File.Exists and Directory.Exists
         internal static bool NativeDirectoryExists(string path)
         {
-            if (Platform.UseDotNetToQueryFileAttributes())
-            {
-                return System.IO.Directory.Exists(path);
-            }
-            else
-            {
-                return WinNativeDirectoryExists(path);
-            }
-        }
-
-        internal static bool WinNativeDirectoryExists(string path)
-        {
             bool isDirectory;
             Exception ioException;
 
@@ -1116,31 +1063,6 @@ namespace System.Management.Automation
         }
 
         internal static void NativeEnumerateDirectory(string directory, out List<string> directories, out List<string> files)
-        {
-            if (Platform.UseDotNetToQueryFileAttributes())
-            {
-                IEnumerable<string> fileEnum = System.IO.Directory.EnumerateFiles(directory);
-                IEnumerable<string> dirEnum = System.IO.Directory.EnumerateDirectories(directory);
- 
-                files = new List<string>();
-                directories = new List<string>();
-
-                foreach (string entry in fileEnum)
-                {
-                    files.Add(directory + "/" + entry);
-                }
-                foreach (string entry in dirEnum)
-                {
-                    directories.Add(directory + "/" + entry);
-                }
-            }
-            else
-            {
-                WinNativeEnumerateDirectory(directory, out directories, out files);
-            }
-        }
-
-        internal static void WinNativeEnumerateDirectory(string directory, out List<string> directories, out List<string> files)
         {
             IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
             NativeMethods.WIN32_FIND_DATA findData;
