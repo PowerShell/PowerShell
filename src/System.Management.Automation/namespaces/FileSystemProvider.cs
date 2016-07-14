@@ -947,12 +947,14 @@ namespace Microsoft.PowerShell.Commands
                             root = newDrive.RootDirectory.FullName;
                         }
 
+#if LINUX
                         // Porting notes: On platforms with single root filesystems, only
                         // add the filesystem with the root "/" to the initial drive list,
                         // otherwise path handling will not work correctly because there
                         // is no : available to separate the filesystems from each other
-                        if (Platform.HasSingleRootFilesystem() && root != StringLiterals.DefaultPathSeparatorString)
+                        if (root != StringLiterals.DefaultPathSeparatorString)
                             continue;
+#endif
 
                         // Porting notes: On non-windows platforms .net can report two
                         // drives with the same root, make sure to only add one of those

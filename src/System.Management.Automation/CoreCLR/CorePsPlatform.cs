@@ -217,18 +217,12 @@ namespace System.Management.Automation
 
         }
 
-        // Linux has a single rooted file system
-        internal static bool HasSingleRootFilesystem()
-        {
-            return !IsWindows;
-        }
-
         // Linux has no notion of file shares. It has mount points
         // instead, which are subdirectories of its single-root
         // filesystem.
         internal static bool HasFileShares()
         {
-            return !HasSingleRootFilesystem();
+            return IsWindows();
         }
 
         // Linux has no support for UNC, just mounts in a single rooted hierarchy
