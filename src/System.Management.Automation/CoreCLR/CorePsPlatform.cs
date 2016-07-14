@@ -217,12 +217,6 @@ namespace System.Management.Automation
 
         }
 
-        // non-windows does not have reparse points
-        internal static bool SupportsReparsePoints()
-        {
-            return IsWindows;
-        }
-
         // non-windows does not support removing drives
         internal static bool SupportsRemoveDrive()
         {

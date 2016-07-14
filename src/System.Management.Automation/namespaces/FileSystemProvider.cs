@@ -8589,14 +8589,11 @@ namespace Microsoft.PowerShell.Commands
 
         private static SafeFileHandle OpenReparsePoint(string reparsePoint, FileDesiredAccess accessMode)
         {
-            if (Platform.SupportsReparsePoints())
-            {
-                return WinOpenReparsePoint(reparsePoint,accessMode);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+#if LINUX
+            throw new PlatformNotSupportedException();
+#else
+            return WinOpenReparsePoint(reparsePoint,accessMode);
+#endif
         }
 
         private static SafeFileHandle WinOpenReparsePoint(string reparsePoint, FileDesiredAccess accessMode)
