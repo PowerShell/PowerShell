@@ -416,6 +416,16 @@ namespace System.Management.Automation
             return hostName;
         }
 
+        internal static bool NonWindowsIsFile(string path)
+        {
+            return Unix.NativeMethods.IsFile(path);
+        }
+
+        internal static bool NonWindowsIsDirectory(string path)
+        {
+            return Unix.NativeMethods.IsDirectory(path);
+        }
+
         internal static bool NonWindowsIsExecutable(string path)
         {
             return Unix.IsExecutable(path);
@@ -592,43 +602,12 @@ namespace System.Management.Automation
 
         public static bool IsSymLink(FileSystemInfo fs)
         {
-            if (!fs.Exists)
-            {
-                return false;
-            }
-
-            string filePath = fs.FullName;
-            int ret = NativeMethods.IsSymLink(filePath);
-            switch(ret)
-            {
-                case 1:
-                    return true;
-                case 0:
-                    return false;
-                default:
-                    int lastError = Marshal.GetLastWin32Error();
-                    throw new InvalidOperationException("Unix.IsSymLink error: " + lastError);
-            }
+            return NativeMethods.IsSymLink(fs.FullName);
         }
 
         public static bool IsExecutable(string filePath)
         {
-            if (!File.Exists(filePath))
-            {
-                return false;
-            }
-
-            int ret = NativeMethods.IsExecutable(filePath);
-            switch(ret)
-            {
-                case 1:
-                    return true;
-                case 0:
-                    return false;
-                default:
-                    int lastError = Marshal.GetLastWin32Error();
-                    throw new InvalidOperationException("Unix.IsExecutable error: " + lastError);
-            }
+            return NativeMethods.IsExecutable(filePath);
         }
 
         public static void SetDate(SetDateInfoInternal info)
@@ -739,6 +718,15 @@ namespace System.Management.Automation
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.LPStr)]
             internal static extern string GetUserFromPid(int pid);
+
+            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.I1)]
+            internal static extern bool IsFile([MarshalAs(UnmanagedType.LPStr)]string filePath);
+
+            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.I1)]
+            internal static extern bool IsDirectory([MarshalAs(UnmanagedType.LPStr)]string filePath);
+
         }
     }
 

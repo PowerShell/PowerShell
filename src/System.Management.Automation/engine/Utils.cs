@@ -995,6 +995,10 @@ namespace System.Management.Automation
                 isDirectory = false;
                 return false;
             }
+#if LINUX
+            isDirectory = Platform.NonWindowsIsDirectory(path);
+            return Platform.NonWindowsIsFile(path);
+#else
 
             if (IsReservedDeviceName(path))
             {
@@ -1028,6 +1032,7 @@ namespace System.Management.Automation
                 ((int)NativeMethods.FileAttributes.Directory);
 
             return true;
+#endif
         }
 
         // This is done through P/Invoke since we pay 13% performance degradation
