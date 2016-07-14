@@ -1,23 +1,30 @@
-//! @file followSymLink.cpp
-//! @author George FLeming <v-geflem@microsoft.com>
-//! @brief returns whether a path is a symbolic link
+//! @file getstat.cpp
+//! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
+//! @brief returns the stat of a file
 
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <pwd.h>
+#include <string.h>
 #include <unistd.h>
-#include <string>
-#include <iostream>
-#include "followsymlink.h"
-#include "issymlink.h"
+#include "getstat.h"
 
-//! @brief Followsymlink determines target path of a sym link
+//! @brief GetStat returns the stat of a file. This simply delegates to the
+//! stat() system call and maps errno to the expected values for GetLastError.
 //!
-//! Followsymlink
+//! GetStat
 //!
-//! @param[in] fileName
+//! @param[in] path
 //! @parblock
 //! A pointer to the buffer that contains the file name
 //!
 //! char* is marshaled as an LPStr, which on Linux is UTF-8.
+//! @endparblock
+//!
+//! @param[in] stat
+//! @parblock
+//! A pointer to the buffer in which to place the stat information
 //! @endparblock
 //!
 //! @exception errno Passes these errors via errno to GetLastError:
@@ -30,75 +37,60 @@
 //! - ERROR_INVALID_NAME: file provided is not a symbolic link
 //! - ERROR_INVALID_FUNCTION: incorrect function
 //! - ERROR_BAD_PATH_NAME: pathname is too long
-//! - ERROR_OUTOFMEMORY insufficient kernal memory
+//! - ERROR_OUTOFMEMORY insufficient kernel memory
 //!
-//! @retval target path, or NULL if unsuccessful
+//! @retval 0 if successful
+//! @retval -1 if failed
 //!
 
-char* FollowSymLink(const char* fileName)
+int32_t GetStat(const char* path, struct stat* buf)
 {
     errno = 0;
 
-    if (!fileName)
+    if (!path)
     {
         errno = ERROR_INVALID_PARAMETER;
-        return NULL;
+        return -1;
     }
 
-    // return null for non symlinks
-    if (!IsSymLink(fileName))
-    {
-        return NULL;
-    }
+    int32_t ret = stat(path, buf);
 
-    // attempt to resolve with the absolute file path
-    char buffer[PATH_MAX];
-    char* realPath = realpath(fileName, buffer);
-
-    if (realPath)
-    {
-        return strndup(realPath, strlen(realPath) + 1);
-    }
-
-    // if the path wasn't resolved, use readlink
-    ssize_t sz = readlink(fileName, buffer, PATH_MAX);
-    if  (sz == -1)
+    if (ret != 0)
     {
         switch(errno)
         {
         case EACCES:
             errno = ERROR_ACCESS_DENIED;
             break;
+        case EBADF:
+            errno = ERROR_FILE_NOT_FOUND;
+            break;
         case EFAULT:
             errno = ERROR_INVALID_ADDRESS;
-            break;
-        case EINVAL:
-            errno = ERROR_INVALID_NAME;
-        case EIO:
-            errno = ERROR_GEN_FAILURE;
             break;
         case ELOOP:
             errno = ERROR_STOPPED_ON_SYMLINK;
             break;
         case ENAMETOOLONG:
-            errno = ERROR_BAD_PATH_NAME;
+            errno = ERROR_GEN_FAILURE;
             break;
         case ENOENT:
             errno = ERROR_FILE_NOT_FOUND;
             break;
         case ENOMEM:
-            errno = ERROR_OUTOFMEMORY;
+            errno = ERROR_NO_SUCH_USER;
             break;
         case ENOTDIR:
-            errno = ERROR_BAD_PATH_NAME;
+            errno = ERROR_INVALID_NAME;
+            break;
+        case EOVERFLOW:
+            errno = ERROR_BUFFER_OVERFLOW;
             break;
         default:
             errno = ERROR_INVALID_FUNCTION;
         }
-
-        return NULL;
+        return -1;
     }
 
-    buffer[sz] = '\0';
-    return strndup(buffer, sz + 1);
+    return 0;
 }

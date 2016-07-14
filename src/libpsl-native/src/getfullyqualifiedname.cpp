@@ -27,12 +27,12 @@ char *GetFullyQualifiedName()
     char *computerName = GetComputerName();
     if (computerName == NULL)
     {
-	return NULL;
+        return NULL;
     }
 
     if (strchr(computerName, '.') != NULL)
     {
-	return computerName;
+        return computerName;
     }
 
     struct addrinfo hints, *info;
@@ -51,7 +51,7 @@ char *GetFullyQualifiedName()
     if (getaddrinfo(computerName, "http", &hints, &info) != 0)
     {
         errno = ERROR_BAD_NET_NAME;
-	return NULL;
+        return NULL;
     }
 
     // info is actually a link-list.  We'll just return the first full name

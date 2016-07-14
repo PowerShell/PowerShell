@@ -354,6 +354,18 @@ namespace System.Management.Automation
             }
         }
 
+        internal static string NonWindowsGetUserFromPid(int path)
+        {
+            if (!IsWindows)
+            {
+                return LinuxPlatform.GetUserFromPid(path);
+            }
+            else
+            {
+                throw new PlatformNotSupportedException();
+            }
+        }
+
 #if CORECLR
         internal static string NonWindowsGetFolderPath(SpecialFolder folder)
         {
@@ -740,6 +752,11 @@ namespace System.Management.Automation
             return Native.FollowSymLink(path);
         }
 
+        public static string GetUserFromPid(int pid)
+        {
+            return Native.GetUserFromPid(pid);
+        }
+
         [StructLayout(LayoutKind.Sequential)]
         internal class SetDateInfoInternal
         {
@@ -809,6 +826,9 @@ namespace System.Management.Automation
             [return: MarshalAs(UnmanagedType.LPStr)]
             internal static extern string FollowSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath);
 
+            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.LPStr)]
+            internal static extern string GetUserFromPid(int pid);
         }
     }
 
