@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands
                 string qualifiedPath = Path.Combine(path, fileBaseName);
 
                 // Load the latest valid version if it is a multi-version module directory
-                module = LoadUsingMultiVersionModuleBase(qualifiedPath, options, out found);
+                module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
 
                 if (!found)
                 {
@@ -432,10 +432,11 @@ namespace Microsoft.PowerShell.Commands
         /// Loads the latest valid version if moduleBase is a multi-versioned module directory
         /// </summary>
         /// <param name="moduleBase">module directory path</param>
+        /// <param name="manifestProcessingFlags">The flag that indicate manifest processing option</param>
         /// <param name="importModuleOptions">The set of options that are used while importing a module</param>
         /// <param name="found">True if a module was found</param>
         /// <returns></returns>
-        internal PSModuleInfo LoadUsingMultiVersionModuleBase(string moduleBase, ImportModuleOptions importModuleOptions, out bool found)
+        internal PSModuleInfo LoadUsingMultiVersionModuleBase(string moduleBase, ManifestProcessingFlags manifestProcessingFlags, ImportModuleOptions importModuleOptions, out bool found)
         {
             PSModuleInfo foundModule = null;
             found = false;
@@ -465,9 +466,7 @@ namespace Microsoft.PowerShell.Commands
                                                             null,
                                                             this.BasePrefix, /*SessionState*/ null,
                                                             importModuleOptions,
-                                                            ManifestProcessingFlags.LoadElements |
-                                                            ManifestProcessingFlags.WriteErrors |
-                                                            ManifestProcessingFlags.NullOnFirstError,
+                                                            manifestProcessingFlags,
                                                             out found);
                         if (found)
                         {
