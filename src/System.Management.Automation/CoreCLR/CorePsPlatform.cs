@@ -217,12 +217,6 @@ namespace System.Management.Automation
 
         }
 
-        // non-windows does not support removing drives
-        internal static bool SupportsRemoveDrive()
-        {
-            return IsWindows;
-        }
-
         // Platform methods prefixed NonWindows are:
         // - non-windows by the definition of the IsWindows method above
         // - here, because porting to Linux and other operating systems

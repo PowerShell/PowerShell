@@ -607,15 +607,11 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected override PSDriveInfo RemoveDrive(PSDriveInfo drive)
         {
-            // if removing the drive is not supported, just return the drive
-            if (Platform.SupportsRemoveDrive())
-            {
-                return WinRemoveDrive(drive);
-            }
-            else
-            {
-                return drive;
-            }
+#if LINUX
+            return drive;
+#else
+            return WinRemoveDrive(drive);
+#endif
         }
 
         private PSDriveInfo WinRemoveDrive(PSDriveInfo drive)
