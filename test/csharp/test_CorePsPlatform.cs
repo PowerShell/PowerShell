@@ -16,12 +16,6 @@ namespace PSTests
         }
 
         [Fact]
-        public static void TestHasDriveAutoMounting()
-        {
-            Assert.False(Platform.HasDriveAutoMounting());
-        }
-
-        [Fact]
         public static void TestHasRegistrySupport()
         {
             Assert.False(Platform.HasRegistrySupport());

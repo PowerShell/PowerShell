@@ -217,13 +217,6 @@ namespace System.Management.Automation
 
         }
 
-        // This is mainly with respect to the auto-mounting of
-        // disconnected network drives on Windows
-        internal static bool HasDriveAutoMounting()
-        {
-            return IsWindows;
-        }
-
         // Linux does not have a registry
         internal static bool HasRegistrySupport()
         {
