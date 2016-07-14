@@ -168,10 +168,8 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                                 return false;
                             }
                             WriteObject(installedPkg);
-#if !LINUX
                             LogEvent(EventTask.Uninstall, EventId.Uninstall, Resources.Messages.PackageUnInstalled, installedPkg.Name, installedPkg.Version, installedPkg.ProviderName, installedPkg.Source ?? string.Empty, installedPkg.Status ?? string.Empty, installedPkg.InstallationPath ?? string.Empty);
                             TraceMessage(Constants.UnInstallPackageTrace, installedPkg);
-#endif
                         }
                     }
                 } catch (Exception e) {

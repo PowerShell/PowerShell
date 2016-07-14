@@ -477,6 +477,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
         #region Event and telemetry stuff
         //Calling PowerShell Telemetry APIs
         protected void TraceMessage(string message, SoftwareIdentity swidObject) {
+#if !LINUX
             TelemetryAPI.TraceMessage(message,
                 new {
                     PackageName = swidObject.Name,
@@ -486,6 +487,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                     ExuectionStatus = swidObject.Status,
                     ExecutionTime = DateTime.Today
                 });
+#endif
         }
 
         protected enum EventTask {
@@ -506,9 +508,9 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             Save = 4103
         }
 
-#if !LINUX
         protected void LogEvent(EventTask task, EventId id, string context, string name, string version, string providerName, string source, string status, string destinationPath)
         {
+#if !LINUX
             var iis = InitialSessionState.CreateDefault2();
 
             using (Runspace rs = RunspaceFactory.CreateRunspace(iis))
@@ -535,9 +537,9 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                         Verbose(ex.Message);
                     }
                 }
-            }           
-        }
+            }
 #endif
+        }
 
         #endregion
     }

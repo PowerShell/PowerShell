@@ -685,7 +685,6 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                             }
 
                             WriteObject(AddPropertyToSoftwareIdentity(installedPkg));
-#if !LINUX
                             LogEvent(EventTask.Install, EventId.Install,
                                 Resources.Messages.PackageInstalled,
                                 installedPkg.Name,
@@ -695,7 +694,6 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                                 installedPkg.Status ?? string.Empty,
                                 installedPkg.InstallationPath ?? string.Empty);
                             TraceMessage(Constants.InstallPackageTrace, installedPkg);
-#endif
                             triedInstallCount++;
                         }
                     }
