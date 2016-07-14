@@ -8,7 +8,7 @@ New to Git?
 ----
 - Make sure you have a [GitHub account](https://github.com/signup/free)
 - [Git Basics](../docs/git/basics.md): install and getting started.
-- [Commit process](../docs/git/committing.md): step-by-step instructions how to commit your changes
+- [GitHub Flow Guide](https://guides.github.com/introduction/flow/): step-by-step instructions of GitHub flow.
 
 
 Quick Start Check-list
