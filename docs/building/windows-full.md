@@ -57,16 +57,38 @@ output will *not* have a runtime identifier in the path.
 Thus the output location of `powershell.exe` will be
 `./src/Microsoft.PowerShell.ConsoleHost/bin/Debug/net451/powershell.exe`
 
-While building is easy, running FullCLR version is not as simple as
-CoreCLR version.
+Build manually
+==============
+
+The build contains the following steps:
+
+- generating Visual Studio project: `cmake`
+- building `powershell.exe` from generated solution: `msbuild
+  powershell.sln`
+- building managed DLLs: `dotnet publish --runtime net451`
+
+
+What I can do with the produced binaries?
+=========================================
+
+Creating a deployable package out of them is **not a supported scenario**.
+
+The reason why we are building these binaries is
+we have components (i.e. workflows) that are not currently available in the CoreClr version.
+We want to make sure that CoreClr PowerShell changes don't introduce regressions in FullClr PowerShelll.
+
+It's possible to run (for test purposes) the dev version of these binaries as follows.
+
+Running Dev version of FullClr PowerShell
+-----------------------------------------
+
+Running FullCLR version is not as simple as CoreCLR version.
 
 If you just run `./powershell.exe`, you will get a `powershell`
 process, but all the interesting DLLs (such as
 `System.Management.Automation.dll`) would be loaded from the Global
 Assembly Cache (GAC), not your output directory.
 
-[@lzybkr](https://github.com/lzybkr) wrote a module to deal with it
-and run side-by-side.
 
 ```powershell
 Start-DevPowerShell
@@ -88,12 +110,3 @@ Start-DevPowerShell -binDir (Split-Path -Parent (Get-PSOutput))
 The default for produced `powershell.exe` is x64.
 You can control it with `Start-PSBuild -FullCLR -NativeHostArch x86`
 
-Build manually
-==============
-
-The build contains the following steps:
-
-- generating Visual Studio project: `cmake`
-- building `powershell.exe` from generated solution: `msbuild
-  powershell.sln`
-- building managed DLLs: `dotnet publish --runtime net451`
