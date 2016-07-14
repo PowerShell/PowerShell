@@ -57,6 +57,12 @@ Git.
 Authentication
 --------------
 
+#### Windows
+On Windows, the best way to use git securely is [Git Credential Manager for Windows][manager].
+It's included in the official git installer for windows.
+
+#### Linux and OS X
+
 If you do not have a preferred method of authentication, enable the storage
 credential helper, which will cache your credentials in plaintext on your
 system, so use a [token][].
@@ -65,9 +71,16 @@ system, so use a [token][].
 git config --global credential.helper store
 ```
 
-Alternatively, on Windows, you can try the
-[Git Credential Manager for Windows][manager].
+Alternatively, you can use [ssh key][].
+In this case, you may want to use git-ssh even for https git urls.
+It will help you to use submodules transparently.
 
+```
+git config --global url.git@github.com:.insteadOf https://github.com/
+```
+
+
+[ssh key]: https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#generating-a-new-ssh-key
 [token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
 [manager]: https://github.com/Microsoft/Git-Credential-Manager-for-Windows
 
