@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             foreach (ModuleSpecification requiredModule in requiredModules)
                             {
-                                var modules = GetModule(new[] { requiredModule.Name }, true, true);
+                                var modules = GetModule(new[] { requiredModule.Name }, false, true);
                                 if (modules.Count == 0)
                                 {
                                     string errorMsg = StringUtil.Format(Modules.InvalidRequiredModulesinModuleManifest, requiredModule.Name, filePath);
