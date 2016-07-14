@@ -30,6 +30,8 @@ Contributing to Documentation
 - If you cannot find an existing issue for your desired work, [open a new issue](https://github.com/PowerShell/PowerShell/issues/new) explaining that you'd like to contribute to fix the problem.  
 - Follow the guidelines at [Contributing to PowerShell Documentation](https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md).  
 - If you contribute to the PowerShell project in a way that changes the user or developer experience, you are expected to document those changes.  
+- When you are writting markdown docs, use [semantic linefeeds](http://rhodesmill.org/brandon/2012/one-sentence-per-line/).
+  In most cases, it means "once sentance per line".
 
 Contributing to Code
 ----
