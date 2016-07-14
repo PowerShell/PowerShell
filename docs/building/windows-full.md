@@ -89,6 +89,7 @@ process, but all the interesting DLLs (such as
 `System.Management.Automation.dll`) would be loaded from the Global
 Assembly Cache (GAC), not your output directory.
 
+Use `Start-DevPowerShell` helper funciton, to workaround it with `$env:DEVPATH`
 
 ```powershell
 Start-DevPowerShell
