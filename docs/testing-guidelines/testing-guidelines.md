@@ -29,7 +29,8 @@ For those tests which are not easily run via Pester, we have decided to use [xUn
 Currently, we have a very small number of tests which are run via xUnit, 
 
 ## Running Tests outside of CI
-There are two helper functions that are part of the build.psm1 module which is in the root of the repository, 
+When working on new features or fixes, it is natural to want to run those tests locally before
+making a PR.  There are two helper functions that are part of the build.psm1 module to help with that:
 * `Start-PSPester` will execute all Pester tests which are run by the CI system
 * `Start-PSxUnit` will execute the available xUnit tests run by the CI system
 Our CI system runs these as well, there should be no difference between running these on your dev system, versus in CI.
@@ -42,7 +43,14 @@ for example, to run all the Pester tests for CI (assuming you are at the root th
 import-module ./build.psm1
 Start-PSPester
 ```
-if you wish to run only new tests
+if you wish to run specific tests, that is possible as well:
+```
+Start-PSPester -Directory test/powershell/engine/Api
+```
+or a specific Pester test file:
+```
+Start-PSPester -Directory test/powershell/engine/Api -Test XmlAdapter.Tests.Api
+```
 
 ### What happens after your PR?
 When your PR has successfully passed the CI test gates, your changes will be used to create PowerShell binaries which can be run
