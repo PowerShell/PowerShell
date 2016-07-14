@@ -359,6 +359,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsWinPEHost()
         {
+#if !LINUX
             RegistryKey winPEKey = null;
 
             try
@@ -379,7 +380,7 @@ namespace System.Management.Automation
                     winPEKey.Dispose();
                 }
             }
-
+#endif
             return false;
         }  
 
