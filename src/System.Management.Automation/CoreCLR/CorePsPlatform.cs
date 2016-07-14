@@ -700,6 +700,8 @@ namespace System.Management.Automation
 
             // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and OS X
 
+            // C bools are 1 byte and so must be marshaled as I1
+
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.LPStr)]
             internal static extern string GetUserName();
@@ -708,10 +710,12 @@ namespace System.Management.Automation
             internal static extern int GetLinkCount([MarshalAs(UnmanagedType.LPStr)]string filePath, out int linkCount);
 
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            internal static extern int IsSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath);
+            [return: MarshalAs(UnmanagedType.I1)]
+            internal static extern bool IsSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath);
 
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            internal static extern int IsExecutable([MarshalAs(UnmanagedType.LPStr)]string filePath);
+            [return: MarshalAs(UnmanagedType.I1)]
+            internal static extern bool IsExecutable([MarshalAs(UnmanagedType.LPStr)]string filePath);
 
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.LPStr)]

@@ -9,11 +9,11 @@
 #include <string>
 #include "issymlink.h"
 
-//! @brief IsSymLink determines if path is a symbolic link 
+//! @brief IsSymlink determines if path is a symbolic link
 //!
-//! IsSymLink
+//! IsSymlink
 //!
-//! @param[in] fileName
+//! @param[in] path
 //! @parblock
 //! A pointer to the buffer that contains the file name
 //!
@@ -34,28 +34,25 @@
 //! - ERROR_INVALID_FUNCTION: incorrect function
 //! - ERROR_BAD_PATH_NAME: pathname is too long, or contains invalid characters
 //!
-//! @retval 1 if path is a symbolic link
-//! @retval 0 if path is not a symbolic link
-//! @retval -1 If the function fails.. To get extended error information, call GetLastError.
+//! @retval true if path is a symbolic link, false otherwise
 //!
 
-int32_t IsSymLink(const char* fileName)
+bool IsSymLink(const char* path)
 {
-
-    errno = 0;  
+    errno = 0;
 
     // Check parameters
-    if (!fileName)
+    if (!path)
     {
         errno = ERROR_INVALID_PARAMETER;
-        return -1;
+        return false;
     }
 
     struct stat statBuf;
 
-    int returnCode = lstat(fileName, &statBuf);
+    int ret = lstat(path, &statBuf);
 
-    if  (returnCode != 0)
+    if (ret != 0)
     {
         switch(errno)
         {
@@ -89,8 +86,8 @@ int32_t IsSymLink(const char* fileName)
         default:
             errno = ERROR_INVALID_FUNCTION;
         }
-        return -1;
+        return false;
     }
 
-    return S_ISLNK(statBuf.st_mode) ? 1 : 0;
+    return S_ISLNK(statBuf.st_mode);
 }
