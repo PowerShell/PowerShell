@@ -2,17 +2,17 @@ function Clean-State
 {
     if (Test-Path $FullyQualifiedLink)
     {
-	Remove-Item $FullyQualifiedLink -Force
+        Remove-Item $FullyQualifiedLink -Force
     }
 
     if (Test-Path $FullyQualifiedFile)
     {
-	Remove-Item $FullyQualifiedFile -Force
+        Remove-Item $FullyQualifiedFile -Force
     }
 
     if (Test-Path $FullyQualifiedFolder)
     {
-	Remove-Item $FullyQualifiedFolder -Force
+        Remove-Item $FullyQualifiedFolder -Force
     }
 }
 
@@ -26,17 +26,17 @@ Describe "New-Item" {
     $FullyQualifiedLink   = Join-Path -Path $tmpDirectory -ChildPath $testlink
 
     BeforeEach {
-	Clean-State
+        Clean-State
     }
 
     It "should call the function without error" {
-	{ New-Item -Name $testfile -Path $tmpDirectory -ItemType file } | Should Not Throw
+        { New-Item -Name $testfile -Path $tmpDirectory -ItemType file } | Should Not Throw
     }
 
     It "Should create a file without error" {
-	New-Item -Name $testfile -Path $tmpDirectory -ItemType file
+        New-Item -Name $testfile -Path $tmpDirectory -ItemType file
 
-	    Test-Path $FullyQualifiedFile | Should Be $true
+        Test-Path $FullyQualifiedFile | Should Be $true
 
         $fileInfo = Get-ChildItem $FullyQualifiedFile
         $fileInfo.Target | Should Be $null
@@ -44,72 +44,72 @@ Describe "New-Item" {
     }
 
     It "Should create a folder without an error" {
-	New-Item -Name newDirectory -Path $tmpDirectory -ItemType directory
+        New-Item -Name newDirectory -Path $tmpDirectory -ItemType directory
 
-	Test-Path $FullyQualifiedFolder | Should Be $true
+        Test-Path $FullyQualifiedFolder | Should Be $true
     }
 
     It "Should create a file using the ni alias" {
-	ni -Name $testfile -Path $tmpDirectory -ItemType file
+        ni -Name $testfile -Path $tmpDirectory -ItemType file
 
-	Test-Path $FullyQualifiedFile | Should Be $true
+        Test-Path $FullyQualifiedFile | Should Be $true
     }
 
     It "Should create a file using the Type alias instead of ItemType" {
-	New-Item -Name $testfile -Path $tmpDirectory -Type file
+        New-Item -Name $testfile -Path $tmpDirectory -Type file
 
-	Test-Path $FullyQualifiedFile | Should Be $true
+        Test-Path $FullyQualifiedFile | Should Be $true
     }
 
     It "Should create a file with sample text inside the file using the Value switch" {
-	$expected = "This is test string"
-	New-Item -Name $testfile -Path $tmpDirectory -ItemType file -Value $expected
+        $expected = "This is test string"
+        New-Item -Name $testfile -Path $tmpDirectory -ItemType file -Value $expected
 
-	Test-Path $FullyQualifiedFile | Should Be $true
+        Test-Path $FullyQualifiedFile | Should Be $true
 
-	Get-Content $FullyQualifiedFile | Should Be $expected
+        Get-Content $FullyQualifiedFile | Should Be $expected
     }
 
     It "Should not create a file when the Name switch is not used and only a directory specified" {
-	#errorAction used because permissions issue in Windows
-	New-Item -Path $tmpDirectory -ItemType file -ErrorAction SilentlyContinue
+        #errorAction used because permissions issue in Windows
+        New-Item -Path $tmpDirectory -ItemType file -ErrorAction SilentlyContinue
 
-	Test-Path $FullyQualifiedFile | Should Be $false
+        Test-Path $FullyQualifiedFile | Should Be $false
 
     }
 
     It "Should create a file when the Name switch is not used but a fully qualified path is specified" {
-	New-Item -Path $FullyQualifiedFile -ItemType file
+        New-Item -Path $FullyQualifiedFile -ItemType file
 
-	Test-Path $FullyQualifiedFile | Should Be $true
+        Test-Path $FullyQualifiedFile | Should Be $true
     }
 
     It "Should be able to create a multiple items in different directories" {
-	$FullyQualifiedFile2 = Join-Path -Path $tmpDirectory -ChildPath test2.txt
-	New-Item -ItemType file -Path $FullyQualifiedFile, $FullyQualifiedFile2
+        $FullyQualifiedFile2 = Join-Path -Path $tmpDirectory -ChildPath test2.txt
+        New-Item -ItemType file -Path $FullyQualifiedFile, $FullyQualifiedFile2
 
-	Test-Path $FullyQualifiedFile  | Should Be $true
-	Test-Path $FullyQualifiedFile2 | Should Be $true
+        Test-Path $FullyQualifiedFile  | Should Be $true
+        Test-Path $FullyQualifiedFile2 | Should Be $true
 
-	Remove-Item $FullyQualifiedFile2
+        Remove-Item $FullyQualifiedFile2
     }
 
     It "Should be able to call the whatif switch without error" {
-	{ New-Item -Name testfile.txt -Path $tmpDirectory -ItemType file -WhatIf } | Should Not Throw
+        { New-Item -Name testfile.txt -Path $tmpDirectory -ItemType file -WhatIf } | Should Not Throw
     }
 
     It "Should not create a new file when the whatif switch is used" {
-	New-Item -Name $testfile -Path $tmpDirectory -ItemType file -WhatIf
+        New-Item -Name $testfile -Path $tmpDirectory -ItemType file -WhatIf
 
-	Test-Path $FullyQualifiedFile | Should Be $false
+        Test-Path $FullyQualifiedFile | Should Be $false
     }
 
     It "Should create a symbolic link of a file without error" {
-	    New-Item -Name $testfile -Path $tmpDirectory -ItemType file
-	    Test-Path $FullyQualifiedFile | Should Be $true
+        New-Item -Name $testfile -Path $tmpDirectory -ItemType file
+        Test-Path $FullyQualifiedFile | Should Be $true
 
-	    New-Item -ItemType SymbolicLink -Target $FullyQualifiedFile -Name $testlink -Path $tmpDirectory
-	    Test-Path $FullyQualifiedLink | Should Be $true
+        New-Item -ItemType SymbolicLink -Target $FullyQualifiedFile -Name $testlink -Path $tmpDirectory
+        Test-Path $FullyQualifiedLink | Should Be $true
 
         $fileInfo = Get-ChildItem $FullyQualifiedLink
         $fileInfo.Target | Should Match ([regex]::Escape($FullyQualifiedFile))
@@ -128,18 +128,18 @@ Describe "New-Item" {
     }
 
     It "Should create a symbolic link from directory without error" {
-	    New-Item -Name $testFolder -Path $tmpDirectory -ItemType directory
-	    Test-Path $FullyQualifiedFolder | Should Be $true
+        New-Item -Name $testFolder -Path $tmpDirectory -ItemType directory
+        Test-Path $FullyQualifiedFolder | Should Be $true
 
-	    New-Item -ItemType SymbolicLink -Target $FullyQualifiedFolder -Name $testlink -Path $tmpDirectory
-	    Test-Path $FullyQualifiedLink | Should Be $true
+        New-Item -ItemType SymbolicLink -Target $FullyQualifiedFolder -Name $testlink -Path $tmpDirectory
+        Test-Path $FullyQualifiedLink | Should Be $true
 
         $fileInfo = Get-ChildItem $FullyQualifiedLink
         $fileInfo.Target | Should Match ([regex]::Escape($FullyQualifiedFolder))
         $fileInfo.LinkType | Should Be "SymbolicLink"
 
-	    # Remove the link explicitly to avoid broken symlink issue
-	    Remove-Item $FullyQualifiedLink -Force
+        # Remove the link explicitly to avoid broken symlink issue
+        Remove-Item $FullyQualifiedLink -Force
     }
 
     It "Should create a hard link of a file without error" {
