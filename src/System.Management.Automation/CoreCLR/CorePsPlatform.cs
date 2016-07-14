@@ -217,13 +217,6 @@ namespace System.Management.Automation
 
         }
 
-        // Linux has no support for UNC, just mounts in a single rooted hierarchy
-        // the UNC equivalent of a "network drive" aka mount would be the mount itself
-        internal static bool HasUNCSupport()
-        {
-            return IsWindows;
-        }
-
         // Linux uses .net to query file attributes
         internal static bool UseDotNetToQueryFileAttributes()
         {

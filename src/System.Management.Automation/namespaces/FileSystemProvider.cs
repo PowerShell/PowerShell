@@ -685,15 +685,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal static string GetUNCForNetworkDrive(string driveName)
         {
-            // Porting note: on systems that do not support UNC paths, the UNC equivalent is the path itself
-            if (Platform.HasUNCSupport())
-            {
-                return WinGetUNCForNetworkDrive(driveName);
-            }
-            else
-            {
-                return driveName;
-            }
+#if LINUX
+            return driveName;
+#else
+            return WinGetUNCForNetworkDrive(driveName);
+#endif
         }
 
         private static string WinGetUNCForNetworkDrive(string driveName)

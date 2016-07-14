@@ -1129,12 +1129,12 @@ namespace System.Management.Automation
 
         internal static bool PathIsUnc(string path)
         {
-            if (!Platform.HasUNCSupport())
-            {
-                return false;
-            }
+#if LINUX
+            return false;
+#else
             Uri uri;
             return !string.IsNullOrEmpty(path) && Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
+#endif
         }
 
         internal class NativeMethods
