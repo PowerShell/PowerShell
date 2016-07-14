@@ -217,12 +217,6 @@ namespace System.Management.Automation
 
         }
 
-        // Linux does not have group policy support
-        internal static bool HasGroupPolicySupport()
-        {
-            return IsWindows;
-        }
-
         // non-windows does not have network drive support
         internal static bool HasNetworkDriveSupport()
         {

@@ -649,13 +649,9 @@ namespace System.Management.Automation
 
         internal static Dictionary<string, object> GetGroupPolicySetting(string groupPolicyBase, string settingName, RegistryKey[] preferenceOrder)
         {
-            if (!Platform.HasGroupPolicySupport())
-            {
-                // Porting note: No group policy support means we have an empty set of
-                // policies.
-                return _emptyDictionary;
-            }
-
+#if LINUX
+            return _emptyDictionary;
+#else
             lock (cachedGroupPolicySettings)
             {
                 // Return cached information, if we have it
@@ -730,6 +726,7 @@ namespace System.Management.Automation
 
                 return settings;
             }
+#endif
         }
         static ConcurrentDictionary<string, Dictionary<string, object>> cachedGroupPolicySettings =
             new ConcurrentDictionary<string, Dictionary<string, object>>();
