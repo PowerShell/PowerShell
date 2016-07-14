@@ -201,9 +201,9 @@ function Start-PSBuild {
 
         try {
             Push-Location $Native
-            cmake -DCMAKE_BUILD_TYPE=Debug .
-            make -j
-            make test
+            Start-NativeExecution { cmake -DCMAKE_BUILD_TYPE=Debug . }
+            Start-NativeExecution { make -j }
+            Start-NativeExecution { ctest --verbose }
         } finally {
             Pop-Location
         }
@@ -556,7 +556,10 @@ Built upon .NET Core, it is also a C# REPL.
     Write-Verbose "Packaging $Source"
 
     if ($IsWindows) {
-        $msiPackagePath = New-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -AssetsPath "$PSScriptRoot\Assets"
+        
+        # Product Guid needs to be unique for every PowerShell version to allow SxS install
+        $productGuid = [guid]::NewGuid()
+        $msiPackagePath = New-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -AssetsPath "$PSScriptRoot\Assets" -ProductGuid $productGuid
         $appxPackagePath = New-AppxPackage -PackageVersion $Version -SourcePath $Source -AssetsPath "$PSScriptRoot\Assets"
 
         $packages = @($msiPackagePath, $appxPackagePath)

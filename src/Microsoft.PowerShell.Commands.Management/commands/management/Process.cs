@@ -866,6 +866,9 @@ namespace Microsoft.PowerShell.Commands
         private static string RetrieveProcessUserName(Process process, Cmdlet cmdlet)
         {
             string userName = null;
+#if LINUX
+            userName = Platform.NonWindowsGetUserFromPid(process.Id);
+#else
             IntPtr tokenUserInfo = IntPtr.Zero;
             IntPtr processTokenHandler = IntPtr.Zero;
 
@@ -955,6 +958,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+#endif
             return userName;
         }
 

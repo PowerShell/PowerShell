@@ -3,38 +3,35 @@
 //! @brief Unit tests for GetFullyQualifiedName
 
 #include <gtest/gtest.h>
+#include "getcomputername.h"
 #include "getfullyqualifiedname.h"
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <string>
 
-//! Test fixture for GetComputerNameTest
-class GetFullyQualifiedNameTest : public ::testing::Test
-{
-};
-
-TEST_F(GetFullyQualifiedNameTest, ValidateLinuxGetFullyQualifiedDomainName)
+TEST(GetFullyQualifiedNameTest, ValidateLinuxGetFullyQualifiedDomainName)
 {
     std::string actual(GetFullyQualifiedName());
 
-    std::string hostname(_POSIX_HOST_NAME_MAX, 0);
-    ASSERT_FALSE(gethostname(&hostname[0], hostname.length()));
-    // trim null characters from string
-    hostname = std::string(hostname.c_str());
+    std::string hostname(GetComputerName());
 
-    struct addrinfo hints, *info;
-    memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = AI_CANONNAME;
-    ASSERT_FALSE(getaddrinfo(hostname.c_str(), "http", &hints, &info));
+    // FQDN starts with hostname (which may be fully qualified)
+    EXPECT_LE(hostname, actual);
 
-    // Compare hostname part of FQDN
-    ASSERT_EQ(hostname, actual.substr(0, hostname.length()));
+    // hostname did not include domain name, so test it separately
+    if (hostname < actual)
+    {
+        struct addrinfo hints, *info;
+        memset(&hints, 0, sizeof(hints));
+        hints.ai_family = AF_UNSPEC;
+        hints.ai_socktype = SOCK_STREAM;
+        hints.ai_flags = AI_CANONNAME;
+        EXPECT_FALSE(getaddrinfo(hostname.c_str(), "http", &hints, &info));
 
-    // Compare canonical name to FQDN
-    ASSERT_EQ(info->ai_canonname, actual);
+        // Compare canonical name to FQDN
+        EXPECT_STREQ(info->ai_canonname, actual.c_str());
 
-    freeaddrinfo(info);
+        freeaddrinfo(info);
+    }
 }
