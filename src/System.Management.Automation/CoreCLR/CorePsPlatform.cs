@@ -143,12 +143,12 @@ namespace System.Management.Automation
                     //the user has set XDG_DATA_HOME corresponding to module path
                     if (String.IsNullOrEmpty(xdgdatahome)){
 
-                    // create the xdg folder if needed
-                    if (!Directory.Exists(xdgDataHomeDefault))
-                    {
-                        Directory.CreateDirectory(xdgDataHomeDefault);
-                    }
-                       return xdgDataHomeDefault;
+                        // create the xdg folder if needed
+                        if (!Directory.Exists(xdgDataHomeDefault))
+                        {
+                            Directory.CreateDirectory(xdgDataHomeDefault);
+                        }
+                        return xdgDataHomeDefault;
                     }
                     else
                     {
@@ -159,12 +159,12 @@ namespace System.Management.Automation
                     //the user has set XDG_DATA_HOME corresponding to module path
                     if (String.IsNullOrEmpty(xdgdatahome)){
 
-                    //xdg values have not been set
-                    if (!Directory.Exists(xdgModuleDefault)) //module folder not always guaranteed to exist
-                    {
-                        Directory.CreateDirectory(xdgModuleDefault);
-                    }
-                       return xdgModuleDefault;
+                        //xdg values have not been set
+                        if (!Directory.Exists(xdgModuleDefault)) //module folder not always guaranteed to exist
+                        {
+                            Directory.CreateDirectory(xdgModuleDefault);
+                        }
+                        return xdgModuleDefault;
                     }
                     else
                     {
@@ -175,7 +175,7 @@ namespace System.Management.Automation
                     //the user has set XDG_CACHE_HOME
                     if (String.IsNullOrEmpty(xdgcachehome))
                     {
-                       //xdg values have not been set
+                        //xdg values have not been set
                         if (!Directory.Exists(xdgCacheDefault)) //module folder not always guaranteed to exist
                         {
                             Directory.CreateDirectory(xdgCacheDefault);
@@ -342,12 +342,12 @@ namespace System.Management.Automation
             return LinuxPlatform.GetUserFromPid(path);
         }
 
-#if CORECLR
+        #if CORECLR
         internal static string NonWindowsGetFolderPath(SpecialFolder folder)
         {
             return LinuxPlatform.GetFolderPath(folder);
         }
-#endif
+        #endif
 
         internal static string NonWindowsInternalGetLinkType(FileSystemInfo fileInfo)
         {
@@ -526,40 +526,40 @@ namespace System.Management.Automation
             }
         }
 
-#if CORECLR
+        #if CORECLR
         public static string GetFolderPath(SpecialFolder folder)
         {
             string s = null;
             switch (folder)
             {
-            case SpecialFolder.ProgramFiles:
-                s = "/bin";
-                break;
-            case SpecialFolder.ProgramFilesX86:
-                s = "/usr/bin";
-                break;
-            case SpecialFolder.System:
-                s = "/sbin";
-                break;
-            case SpecialFolder.SystemX86:
-                s = "/sbin";
-                break;
-            case SpecialFolder.Personal:
-                s = System.Environment.GetEnvironmentVariable("HOME");
-                break;
-            case SpecialFolder.LocalApplicationData:
-                s = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".config");
-                if (!System.IO.Directory.Exists(s))
-                {
-                    System.IO.Directory.CreateDirectory(s);
-                }
-                break;
-            default:
-                throw new NotSupportedException();
+                case SpecialFolder.ProgramFiles:
+                    s = "/bin";
+                    break;
+                case SpecialFolder.ProgramFilesX86:
+                    s = "/usr/bin";
+                    break;
+                case SpecialFolder.System:
+                    s = "/sbin";
+                    break;
+                case SpecialFolder.SystemX86:
+                    s = "/sbin";
+                    break;
+                case SpecialFolder.Personal:
+                    s = System.Environment.GetEnvironmentVariable("HOME");
+                    break;
+                case SpecialFolder.LocalApplicationData:
+                    s = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".config");
+                    if (!System.IO.Directory.Exists(s))
+                    {
+                        System.IO.Directory.CreateDirectory(s);
+                    }
+                    break;
+                default:
+                    throw new NotSupportedException();
             }
             return s;
         }
-#endif
+        #endif
 
         public static bool IsHardLink(ref IntPtr handle)
         {
@@ -602,12 +602,12 @@ namespace System.Management.Automation
             switch(ret)
             {
                 case 1:
-                  return true;
+                    return true;
                 case 0:
-                  return false;
+                    return false;
                 default:
-                  int lastError = Marshal.GetLastWin32Error();
-                  throw new InvalidOperationException("LinuxPlatform.IsSymLink error: " + lastError);
+                    int lastError = Marshal.GetLastWin32Error();
+                    throw new InvalidOperationException("LinuxPlatform.IsSymLink error: " + lastError);
             }
         }
 
@@ -622,12 +622,12 @@ namespace System.Management.Automation
             switch(ret)
             {
                 case 1:
-                  return true;
+                    return true;
                 case 0:
-                  return false;
+                    return false;
                 default:
-                  int lastError = Marshal.GetLastWin32Error();
-                  throw new InvalidOperationException("LinuxPlatform.IsExecutable error: " + lastError);
+                    int lastError = Marshal.GetLastWin32Error();
+                    throw new InvalidOperationException("LinuxPlatform.IsExecutable error: " + lastError);
             }
         }
 
