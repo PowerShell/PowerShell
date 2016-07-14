@@ -1,4 +1,4 @@
-Describe "Validation for Information stream in PowerShell" -Tags "DRT" {
+Describe "Validation for Information stream in PowerShell" -Tags "CI" {
     it "Supports Write-Information cmdlet and InformationVariable" {
         $process = Get-Process -id $pid
         Write-Information $process -Tags "Tag1","Tag2" -InformationVariable infoVar
@@ -52,6 +52,7 @@ Describe "Validation for Information stream in PowerShell" -Tags "DRT" {
 
     it -pending "Verifies Information stream on workflow" {
         ## Test regular invocation
+        # NOTE THE FOLLOWING LINE MUST BE UNCOMMENTED WHEN WORKFLOW IS SUPPORTED ON LINUX
         # workflow foo { Write-Information Bar }
         foo -InformationVariable bar
         $bar.MessageData | Should be "Bar"
@@ -67,6 +68,7 @@ Describe "Validation for Information stream in PowerShell" -Tags "DRT" {
     }
     
     it -pending "Verifies InformationVariable in workflow compilation" {
+        # NOTE THE FOLLOWING LINE MUST BE UNCOMMENTED WHEN WORKFLOW IS SUPPORTED ON LINUX
         # workflow IVWorkflowTest { Write-Information Test -InformationVariable Test; $test }
         $result = IVWorkflowTest
         $result.MessageData | Should be "Test"   

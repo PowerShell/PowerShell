@@ -1,26 +1,35 @@
-return
-Describe "Command Path Search" -Tags "DRT" {
+Describe "Command Path Search" -Tags "CI" {
 
     BeforeAll {
-        $null = new-item -type directory TestDrive:\bin
-        $null = new-item -type directory TestDrive:\bin\d1
-        $null = new-item -type directory TestDrive:\bin\d2
-
-        $testDriveRoot = (Get-PSDrive TestDrive).Root
+        setup -d bin
+        setup -d bin/d1
+        setup -d bid/d2
         
-        "@echo d1-t2-cmd" | Out-File -Encoding Ascii TestDrive:bin\d1\t2.cmd
-        "@echo d2-t2-cmd" | Out-File -Encoding Ascii TestDrive:bin\d2\t2.cmd
-        "@echo t1-cmd" | Out-File -Encoding Ascii TestDrive:bin\d1\t1.cmd
-        "@echo t1-bat" | Out-File -Encoding Ascii TestDrive:bin\d2\t1.bat
-        "@echo d1-t3-oops" | Out-File -Encoding Ascii TestDrive:bin\d1\t3.oops.cmd
-        "@echo d2-t3" | Out-File -Encoding Ascii TestDrive:bin\d2\t3.cmd
-        "@echo d2-t4-cmd" | Out-File -Encoding Ascii TestDrive:bin\d2\t4.cmd
-        "'d2-t4-ps1'" | Out-File -Encoding Ascii TestDrive:bin\d2\t4.ps1
+        setup -f bin/d1/t2.cmd -content "@echo d1-t2-cmd"
+        setup -f bin/d2/t2.cmd -content "@echo d2-t2-cmd"
+
+        setup -f bin/d1/t2.cmd -content "@echo d1-t2-cmd"
+        setup -f bin/d1/t2.cmd -content "@echo d1-t2-cmd"
+
+        
+        setup -f bin/d2/t2.cmd -content "@echo d2-t2-cmd" 
+        setup -f bin/d1/t1.cmd -content "@echo t1-cmd" 
+        setup -f bin/d2/t1.bat -content "@echo t1-bat" 
+        setup -f bin/d1/t3.oops.cmd -content "@echo d1-t3-oops" 
+        setup -f bin/d2/t3.cmd -content "@echo d2-t3" 
+        setup -f bin/d2/t4.cmd -content "@echo d2-t4-cmd" 
+
+        setup -f bin/d2/t4.ps1 -content "'d2-t4-ps1'" 
 
         $origPATHEXT = $env:PATHEXT
         $origPATH = $env:PATH
 
-        $env:PATH = "${testDriveRoot}\bin\d1;${testDriveRoot}\bin\d2"
+        if ( $IsWindows ) {
+            $env:PATH = "${testDriveRoot}\bin\d1;${testDriveRoot}\bin\d2"
+        }
+        else {
+            $env:PATH = "${testdrive}/bin/d1:${testdrive}/bin/d2"
+        }
         $env:PATHEXT = ".BAT;.CMD"
     }
 
@@ -37,7 +46,7 @@ Describe "Command Path Search" -Tags "DRT" {
         popd
     }
 
-    It "relative path works correctly" {
+    It "relative path works correctly" -skip:(!$IsWindows) {
         .\bin\d1\t2 | Should Be 'd1-t2-cmd'
         .\bin\d1\t2.cmd | Should Be 'd1-t2-cmd'
         .\bin\d2\t2 | Should Be 'd2-t2-cmd'
@@ -51,25 +60,25 @@ Describe "Command Path Search" -Tags "DRT" {
         .\d2\t2.cmd | Should Be 'd2-t2-cmd'
     }
 
-    It "ps1 wins over PATHEXT" {
+    It "ps1 wins over PATHEXT" -skip:(!$IsWindows) {
         t4 | Should Be "d2-t4-ps1"
     }
 
-    It "PATH searched in correct order" {
+    It "PATH searched in correct order" -skip:(!$IsWindows) {
         t2 | Should Be "d1-t2-cmd"
         t2.cmd | Should Be "d1-t2-cmd"
     }
 
-    It "PATH wins over PATHEXT" {
+    It "PATH wins over PATHEXT" -skip:(!$IsWindows) {
         t1 | Should Be 't1-cmd'
     }
 
-    It "ext wins over path if specified" {
+    It "ext wins over path if specified" -skip:(!$IsWindows) {
         t1.cmd | Should Be 't1-cmd'
         t1.bat | Should Be 't1-bat'
     }
 
-    It "Check full filename" {
+    It "Check full filename" -skip:(!$IsWindows) {
         t3 | Should Be 'd2-t3'
         t3.cmd | Should Be 'd2-t3'
 
@@ -77,7 +86,7 @@ Describe "Command Path Search" -Tags "DRT" {
         t3.oops.cmd | Should Be 'd1-t3-oops'
     }
 
-    It "Extra whitespace around command name" {
+    It "Extra whitespace around command name" -skip:(!$IsWindows) {
         & "t3 " | Should Be 'd2-t3'
         & "t3.cmd " | Should Be 'd2-t3'
         & ".\bin\d2\t3 " | Should Be 'd2-t3'
@@ -85,10 +94,10 @@ Describe "Command Path Search" -Tags "DRT" {
 
         # Leading space only worked with a drive qualified name
         # but trailing space w/ no leading space opens the document
-        & " ${testDriveRoot}\bin\d2\t3" | Should Be 'd2-t3'
-        & " ${testDriveRoot}\bin\d2\t3 " | Should Be 'd2-t3'
-        & " ${testDriveRoot}\bin\d2\t3.cmd" | Should Be 'd2-t3'
-        & " ${testDriveRoot}\bin\d2\t3.cmd " | Should Be 'd2-t3'
+        & " ${testdrive}\bin\d2\t3" | Should Be 'd2-t3'
+        & " ${testdrive}\bin\d2\t3 " | Should Be 'd2-t3'
+        & " ${testdrive}\bin\d2\t3.cmd" | Should Be 'd2-t3'
+        & " ${testdrive}\bin\d2\t3.cmd " | Should Be 'd2-t3'
     }
 }
 
