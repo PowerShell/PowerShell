@@ -6969,48 +6969,47 @@ namespace Microsoft.PowerShell.Commands
 
         internal static int SafeGetFileAttributes(string path)
         {
-            if (Platform.UseDotNetToQueryFileAttributes())
-            {
-                System.IO.FileAttributes attr = System.IO.File.GetAttributes(path);
+#if LINUX
+            System.IO.FileAttributes attr = System.IO.File.GetAttributes(path);
 
-                int result = 0;
-                if ((attr & FileAttributes.Archive) == FileAttributes.Archive)
-                    result |= 0x20;
-                if ((attr & FileAttributes.Compressed) == FileAttributes.Compressed)
-                    result |= 0x800;
-                if ((attr & FileAttributes.Device) == FileAttributes.Device)
-                    result |= 0x40;
-                if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-                    result |= 0x10;
-                if ((attr & FileAttributes.Encrypted) == FileAttributes.Encrypted)
-                    result |= 0x4000;
-                if ((attr & FileAttributes.Hidden) == FileAttributes.Hidden)
-                    result |= 0x2;
-                if ((attr & FileAttributes.IntegrityStream) == FileAttributes.IntegrityStream)
-                    result |= 0x8000;
-                if ((attr & FileAttributes.Normal) == FileAttributes.Normal)
-                    result |= 0x80;
-                if ((attr & FileAttributes.NoScrubData) == FileAttributes.NoScrubData)
-                    result |= 0x20000;
-                if ((attr & FileAttributes.NotContentIndexed) == FileAttributes.NotContentIndexed)
-                    result |= 0x2000;
-                if ((attr & FileAttributes.Offline) == FileAttributes.Offline)
-                    result |= 0x1000;
-                if ((attr & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                    result |= 0x1;
-                if ((attr & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
-                    result |= 0x400;
-                if ((attr & FileAttributes.SparseFile) == FileAttributes.SparseFile)
-                    result |= 0x200;
-                if ((attr & FileAttributes.System) == FileAttributes.System)
-                    result |= 0x4;
-                if ((attr & FileAttributes.Temporary) == FileAttributes.Temporary)
-                    result |= 0x100;
+            int result = 0;
+            if ((attr & FileAttributes.Archive) == FileAttributes.Archive)
+                result |= 0x20;
+            if ((attr & FileAttributes.Compressed) == FileAttributes.Compressed)
+                result |= 0x800;
+            if ((attr & FileAttributes.Device) == FileAttributes.Device)
+                result |= 0x40;
+            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                result |= 0x10;
+            if ((attr & FileAttributes.Encrypted) == FileAttributes.Encrypted)
+                result |= 0x4000;
+            if ((attr & FileAttributes.Hidden) == FileAttributes.Hidden)
+                result |= 0x2;
+            if ((attr & FileAttributes.IntegrityStream) == FileAttributes.IntegrityStream)
+                result |= 0x8000;
+            if ((attr & FileAttributes.Normal) == FileAttributes.Normal)
+                result |= 0x80;
+            if ((attr & FileAttributes.NoScrubData) == FileAttributes.NoScrubData)
+                result |= 0x20000;
+            if ((attr & FileAttributes.NotContentIndexed) == FileAttributes.NotContentIndexed)
+                result |= 0x2000;
+            if ((attr & FileAttributes.Offline) == FileAttributes.Offline)
+                result |= 0x1000;
+            if ((attr & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                result |= 0x1;
+            if ((attr & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
+                result |= 0x400;
+            if ((attr & FileAttributes.SparseFile) == FileAttributes.SparseFile)
+                result |= 0x200;
+            if ((attr & FileAttributes.System) == FileAttributes.System)
+                result |= 0x4;
+            if ((attr & FileAttributes.Temporary) == FileAttributes.Temporary)
+                result |= 0x100;
 
-                return result;
-            }
-            else
-                return WinSafeGetFileAttributes(path);
+            return result;
+#else
+            return WinSafeGetFileAttributes(path);
+#endif
         }
 
         internal static int WinSafeGetFileAttributes(string path)

@@ -217,12 +217,6 @@ namespace System.Management.Automation
 
         }
 
-        // Linux uses .net to query file attributes
-        internal static bool UseDotNetToQueryFileAttributes()
-        {
-            return true;
-        }
-
         // Linux does not have group policy support
         internal static bool HasGroupPolicySupport()
         {
