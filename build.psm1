@@ -382,7 +382,7 @@ function Start-PSPester {
         [string]$Directory = "$PSScriptRoot/test/powershell"
     )
 
-    & (Get-PSOutput) -noprofile -c "Import-Module '$PSScriptRoot/src/Modules/Pester'; Invoke-Pester $Flags $Directory/$Tests"
+    & (Get-PSOutput) -noprofile -c "Import-Module '$PSScriptRoot/src/Modules/Shared/Pester'; Invoke-Pester $Flags $Directory/$Tests"
     if ($LASTEXITCODE -ne 0) {
         throw "$LASTEXITCODE Pester tests failed"
     }
