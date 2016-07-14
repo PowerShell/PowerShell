@@ -368,14 +368,11 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsWinPEHost()
         {
-            if (Platform.HasRegistrySupport())
-            {
-                return WinIsWinPEHost();
-            }
-            else
-            {
-                return false;
-            }
+#if LINUX
+            return false;
+#else
+            return WinIsWinPEHost();
+#endif
         }
 
         internal static bool WinIsWinPEHost()

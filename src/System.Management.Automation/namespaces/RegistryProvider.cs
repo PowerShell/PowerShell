@@ -136,11 +136,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
 
-            if (!Platform.HasRegistrySupport())
-            {
-                return drives;
-            }
-
+#if !LINUX
             drives.Add(
                 new PSDriveInfo(
                     "HKLM",
@@ -156,6 +152,7 @@ namespace Microsoft.PowerShell.Commands
                     "HKEY_CURRENT_USER",
                     RegistryProviderStrings.HKCUDriveDescription,
                     null));
+#endif
 
             return drives;
         } // InitializeDefaultDrives

@@ -16,12 +16,6 @@ namespace PSTests
         }
 
         [Fact]
-        public static void TestHasRegistrySupport()
-        {
-            Assert.False(Platform.HasRegistrySupport());
-        }
-
-        [Fact]
         public static void TestGetUserName()
         {
             var startInfo = new ProcessStartInfo

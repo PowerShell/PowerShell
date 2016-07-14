@@ -217,12 +217,6 @@ namespace System.Management.Automation
 
         }
 
-        // Linux does not have a registry
-        internal static bool HasRegistrySupport()
-        {
-            return IsWindows;
-        }
-
         // Linux does not have PowerShell execution policies
         internal static bool HasExecutionPolicy()
         {
