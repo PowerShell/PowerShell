@@ -1289,11 +1289,11 @@ Describe Uninstall-Package -Tags @('BVT', 'DRT'){
 
 Describe Get-PackageProvider -Tags @('BVT', 'DRT'){
 
-	it "EXPECTED: Gets The 'Nuget' Package Provider" {
+	it "EXPECTED: Gets The 'Nuget' Package Provider" -Skip {
     	(get-packageprovider -name $nuget -force).name | should be $nuget
     }
 
-    it "EXPECTED: Should not raise pending reboot operations" -Skip:(-not $IsWindows) {
+    it "EXPECTED: Should not raise pending reboot operations" -Skip {
         $count = (get-itemproperty "hklm:\system\currentcontrolset\control\session manager").PendingFileRenameOperations.Count
         $providers = powershell "get-packageprovider"
         $countAfter = (get-itemproperty "hklm:\system\currentcontrolset\control\session manager").PendingFileRenameOperations.Count
