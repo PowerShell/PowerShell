@@ -8,6 +8,7 @@ add_library(psl-native SHARED
   getcomputername.cpp
   getlinkcount.cpp
   getfullyqualifiedname.cpp
+  isfile.cpp
   isdirectory.cpp
   issymlink.cpp
   isexecutable.cpp
