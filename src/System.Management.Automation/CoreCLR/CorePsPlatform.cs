@@ -217,12 +217,6 @@ namespace System.Management.Automation
 
         }
 
-        // The Antimalware Scan Interface is not supported on Linux
-        internal static bool HasAmsi()
-        {
-            return IsWindows;
-        }
-
         // This is mainly with respect to the auto-mounting of
         // disconnected network drives on Windows
         internal static bool HasDriveAutoMounting()

@@ -16,12 +16,6 @@ namespace PSTests
         }
 
         [Fact]
-        public static void TestHasAmsi()
-        {
-            Assert.False(Platform.HasAmsi());
-        }
-
-        [Fact]
         public static void TestHasDriveAutoMounting()
         {
             Assert.False(Platform.HasDriveAutoMounting());
