@@ -138,11 +138,9 @@ namespace System.Management.Automation
 
         internal static void SetExecutionPolicy(ExecutionPolicyScope scope, ExecutionPolicy policy, string shellId)
         {
-            if (!Platform.HasExecutionPolicy())
-            {
-                throw new PlatformNotSupportedException();
-            }
-
+#if LINUX
+            throw new PlatformNotSupportedException();
+#else
             string executionPolicy = "Restricted";
             string preferenceKey = Utils.GetRegistryConfigurationPath(shellId);
             const string PolicyKeyValueName = "ExecutionPolicy";
@@ -227,6 +225,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
+#endif
         }
 
         // Clean up the parents of a registry key as long as they
@@ -283,11 +282,9 @@ namespace System.Management.Automation
 
         internal static ExecutionPolicy GetExecutionPolicy(string shellId, ExecutionPolicyScope scope)
         {
-            if (!Platform.HasExecutionPolicy())
-            {
-                throw new PlatformNotSupportedException();
-            }
-
+#if LINUX
+            return ExecutionPolicy.Unrestricted;
+#else
             switch (scope)
             {
                 case ExecutionPolicyScope.Process:
@@ -368,6 +365,7 @@ namespace System.Management.Automation
             }
 
             return ExecutionPolicy.Restricted;
+#endif
         }
 
         internal static ExecutionPolicy ParseExecutionPolicy(string policy)

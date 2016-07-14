@@ -217,12 +217,6 @@ namespace System.Management.Automation
 
         }
 
-        // Linux does not have PowerShell execution policies
-        internal static bool HasExecutionPolicy()
-        {
-            return IsWindows;
-        }
-
         // Linux has a single rooted file system
         internal static bool HasSingleRootFilesystem()
         {
