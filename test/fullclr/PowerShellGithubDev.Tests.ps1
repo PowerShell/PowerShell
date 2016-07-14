@@ -46,7 +46,7 @@ try
     }
 
     # this Describe makes sure we binplace all the files, like psd1, psm1, ps1xml and load usable modules from them
-    Describe 'Modules for the packge' {
+    Describe 'Modules for the package' {
         Context '$env:DEVPATH Modules loading' {
             It 'loads Microsoft.PowerShell.LocalAccounts' {
                 try
@@ -116,10 +116,26 @@ try
                 {
                     Import-Module CimCmdlets -ErrorAction Stop
                     Get-CimClass -ClassName CIM_Error | Should Not Be $null
+                    [Microsoft.Management.Infrastructure.CimCmdlets.AsyncResultType].Assembly.Location | Should Be (
+                        Join-Path $env:DEVPATH Microsoft.Management.Infrastructure.CimCmdlets.dll)
                 }
                 finally
                 {
                     Remove-Module -ErrorAction SilentlyContinue CimCmdlets
+                }
+            }
+
+            It 'loads Microsoft.WSMan.Management' {
+                try
+                {
+                    Import-Module Microsoft.WSMan.Management -ErrorAction Stop
+                    Test-WSMan | Should Not Be $null
+                    [Microsoft.WSMan.Management.TestWSManCommand].Assembly.Location | Should Be (
+                        Join-Path $env:DEVPATH Microsoft.WSMan.Management.dll)
+                }
+                finally
+                {
+                    Remove-Module -ErrorAction SilentlyContinue Microsoft.WSMan.Management
                 }
             }
 

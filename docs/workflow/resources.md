@@ -10,7 +10,13 @@ We are using our own `Start-ResGen` to generate them.
 Usually it's called as part of the regular build with
 
 ```
-Start-PSBuild -ResGen
+PS C:\> Start-PSBuild -ResGen
+```
+
+If you see compilation errors related to resources, try to call `Start-ResGen` explicitly.
+
+```
+PS C:\> Start-ResGen
 ```
 
 ## Editing resx files
@@ -20,3 +26,16 @@ It will try to create `.cs` files for you and you will get whole bunch of hard-t
 
 To edit resource file, use any **plain text editor**. 
 Resource file is a simple xml, and it's easy to edit.
+
+
+## Convert txt resource files into resx
+
+`dotnet cli` doesn't support embeeding old-fashioned txt resource.
+You can do a one-time convertion of `.txt` resources into `.resx` files with a helper function
+
+```
+# example, converting all .txt resources under src\Microsoft.WSMan.Management\resources
+PS C:\> Convert-TxtResourceToXml -Path src\Microsoft.WSMan.Management\resources
+```
+
+`.resx` files would be placed next to `.txt` files.
