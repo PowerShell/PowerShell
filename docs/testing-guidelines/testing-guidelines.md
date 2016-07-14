@@ -12,6 +12,32 @@ For creating new tests, please review the
 [documents](https://github.com/PowerShell/PowerShell/tree/master/docs/testing-guidelines) on how to
 create tests for OpenPowerShell
 
+## CI System
+
+We use [AppVeyor](http://www.appveyor.com/) as a continious integration (CI) system for Windows 
+and [Travis CI](http://www.travis-ci.com) for non-Windows platforms.
+
+### AppVeyor
+
+In the `README.md` at the top of the repo you can see AppVeyor badge.
+It indicates the last build status of master branch.
+Hopefully, it's green
+
+![AppVeyor-Badge-Green.png](Images/AppVeyor-Badge-Green.png)
+
+This badge is **clickable**, you can open corresponding build page with logs, artifacts and tests results.
+From there you can easily navigate to the build history.
+
+AppVeyor builds and runs tests on every pull request and provides quick feedback about it.
+
+![AppVeyor-Github](Images/AppVeyor-Github.png)
+
+These green check boxes and red crosses are **clickable** as well. 
+They will bring you to the corresponding page with details. 
+
+### Travis CI
+
+Travis CI works similarly to AppVeyor
 
 ## Test Frameworks
 ### Pester
