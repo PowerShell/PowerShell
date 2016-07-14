@@ -217,14 +217,6 @@ namespace System.Management.Automation
 
         }
 
-        // ComObjectType is null on CoreCLR for Linux since there is
-        // no COM support on Linux
-        internal static bool HasCom()
-        {
-            // TODO: catch exception from Type.IsComObject
-            return IsWindows;
-        }
-
         // The Antimalware Scan Interface is not supported on Linux
         internal static bool HasAmsi()
         {

@@ -16,12 +16,6 @@ namespace PSTests
         }
 
         [Fact]
-        public static void TestHasCom()
-        {
-            Assert.False(Platform.HasCom());
-        }
-
-        [Fact]
         public static void TestHasAmsi()
         {
             Assert.False(Platform.HasAmsi());
