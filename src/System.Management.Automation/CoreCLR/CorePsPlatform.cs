@@ -383,7 +383,7 @@ namespace System.Management.Automation
 
         internal static string NonWindowsGetDomainName()
         {
-            string fullyQualifiedName = Unix.Native.GetFullyQualifiedName();
+            string fullyQualifiedName = Unix.NativeMethods.GetFullyQualifiedName();
             if (string.IsNullOrEmpty(fullyQualifiedName))
             {
                 int lastError = Marshal.GetLastWin32Error();
@@ -407,7 +407,7 @@ namespace System.Management.Automation
         // Hostname in this context seems to be the FQDN
         internal static string NonWindowsGetHostName()
         {
-            string hostName = Unix.Native.GetFullyQualifiedName();
+            string hostName = Unix.NativeMethods.GetFullyQualifiedName();
             if (string.IsNullOrEmpty(hostName))
             {
                 int lastError = Marshal.GetLastWin32Error();
@@ -496,7 +496,7 @@ namespace System.Management.Automation
             {
                 if (string.IsNullOrEmpty(_userName))
                 {
-                    _userName = Native.GetUserName();
+                    _userName = NativeMethods.GetUserName();
                     if (string.IsNullOrEmpty(_userName))
                     {
                         int lastError = Marshal.GetLastWin32Error();
@@ -577,7 +577,7 @@ namespace System.Management.Automation
 
             int count;
             string filePath = fs.FullName;
-            int ret = Native.GetLinkCount(filePath, out count);
+            int ret = NativeMethods.GetLinkCount(filePath, out count);
             if (ret == 1)
             {
                 return count > 1;
@@ -598,7 +598,7 @@ namespace System.Management.Automation
             }
 
             string filePath = fs.FullName;
-            int ret = Native.IsSymLink(filePath);
+            int ret = NativeMethods.IsSymLink(filePath);
             switch(ret)
             {
                 case 1:
@@ -618,7 +618,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            int ret = Native.IsExecutable(filePath);
+            int ret = NativeMethods.IsExecutable(filePath);
             switch(ret)
             {
                 case 1:
@@ -633,7 +633,7 @@ namespace System.Management.Automation
 
         public static void SetDate(SetDateInfoInternal info)
         {
-            int ret = Native.SetDate(info);
+            int ret = NativeMethods.SetDate(info);
             if (ret == -1)
             {
                 int lastError = Marshal.GetLastWin32Error();
@@ -643,24 +643,24 @@ namespace System.Management.Automation
 
         public static bool CreateSymbolicLink(string path, string strTargetPath)
         {
-            int ret = Native.CreateSymLink(path, strTargetPath);
+            int ret = NativeMethods.CreateSymLink(path, strTargetPath);
             return ret == 1 ? true : false;
         }
 
         public static bool CreateHardLink(string path, string strTargetPath)
         {
-            int ret = Native.CreateHardLink(path, strTargetPath);
+            int ret = NativeMethods.CreateHardLink(path, strTargetPath);
             return ret == 1 ? true : false;
         }
 
         public static string FollowSymLink(string path)
         {
-            return Native.FollowSymLink(path);
+            return NativeMethods.FollowSymLink(path);
         }
 
         public static string GetUserFromPid(int pid)
         {
-            return Native.GetUserFromPid(pid);
+            return NativeMethods.GetUserFromPid(pid);
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -694,7 +694,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal static class Native
+        internal static class NativeMethods
         {
             const string psLib = "libpsl-native";
 
