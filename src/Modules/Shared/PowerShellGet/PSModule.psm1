@@ -10982,7 +10982,7 @@ function Uninstall-Package
                             }
             $dependentModulesJob =  Microsoft.PowerShell.Core\Start-Job -ScriptBlock $dependentModuleScript -ArgumentList $moduleName
             Microsoft.PowerShell.Core\Wait-Job -job $dependentModulesJob
-            $dependentModules = Microsoft.PowerShell.Core\Receive-Job -job $dependentModulesJob
+            $dependentModules = Microsoft.PowerShell.Core\Receive-Job -job $dependentModulesJob -ErrorAction Ignore
 
             if(-not $Force -and $dependentModules)
             {
