@@ -217,12 +217,6 @@ namespace System.Management.Automation
 
         }
 
-        // non-windows does not have network drive support
-        internal static bool HasNetworkDriveSupport()
-        {
-            return IsWindows;
-        }
-
         // non-windows does not have reparse points
         internal static bool SupportsReparsePoints()
         {

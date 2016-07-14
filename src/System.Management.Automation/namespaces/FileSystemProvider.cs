@@ -743,14 +743,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal static string GetSubstitutedPathForNetworkDosDevice(string driveName)
         {
-            if (Platform.HasNetworkDriveSupport())
-            {
-                return WinGetSubstitutedPathForNetworkDosDevice(driveName);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+#if LINUX
+            throw new PlatformNotSupportedException();
+#else
+            return WinGetSubstitutedPathForNetworkDosDevice(driveName);
+#endif
         }
 
         private static string WinGetSubstitutedPathForNetworkDosDevice(string driveName)
@@ -922,15 +919,15 @@ namespace Microsoft.PowerShell.Commands
                         if (newDrive.DriveType == DriveType.Network)
                         {
                             // Platform notes: This is important because certain mount
-                            // points on non-Windows are enumerated as drives by .net, but
+                            // points on non-Windows are enumerated as drives by .NET, but
                             // the platform itself then has no real network drive support
                             // as required by this context. Solution: check for network
                             // drive support before using it.
-                            if (!Platform.HasNetworkDriveSupport())
-                            {
-                                continue;
-                            }
+#if LINUX
+                            continue;
+#else
                             displayRoot = GetRootPathForNetworkDriveOrDosDevice(newDrive);
+#endif
                         }
 
                         if (newDrive.DriveType == DriveType.Fixed)
@@ -7071,11 +7068,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal static bool PathIsNetworkPath(string path)
         {
-            // no other logic possible for now on linux
-            if (Platform.HasNetworkDriveSupport())
-                return WinPathIsNetworkPath(path);
-            else
-                return false;
+#if LINUX
+            return false;
+#else
+            return WinPathIsNetworkPath(path);
+#endif
         }
 
         internal static bool WinPathIsNetworkPath(string path)
