@@ -318,22 +318,12 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsIsHardLink(FileSystemInfo fileInfo)
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.IsHardLink(fileInfo);
-            }
-
-            throw new PlatformNotSupportedException();
+            return LinuxPlatform.IsHardLink(fileInfo);
         }
 
         internal static bool NonWindowsIsSymLink(FileSystemInfo fileInfo)
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.IsSymLink(fileInfo);
-            }
-
-            throw new PlatformNotSupportedException();
+            return LinuxPlatform.IsSymLink(fileInfo);
         }
 
         internal static string NonWindowsInternalGetTarget(SafeFileHandle handle)
@@ -344,181 +334,97 @@ namespace System.Management.Automation
 
         internal static string NonWindowsInternalGetTarget(string path)
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.FollowSymLink(path);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            return LinuxPlatform.FollowSymLink(path);
         }
 
         internal static string NonWindowsGetUserFromPid(int path)
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.GetUserFromPid(path);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            return LinuxPlatform.GetUserFromPid(path);
         }
 
 #if CORECLR
         internal static string NonWindowsGetFolderPath(SpecialFolder folder)
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.GetFolderPath(folder);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            return LinuxPlatform.GetFolderPath(folder);
         }
 #endif
 
         internal static string NonWindowsInternalGetLinkType(FileSystemInfo fileInfo)
         {
-            if (!IsWindows)
+            if (NonWindowsIsSymLink(fileInfo))
             {
-                if (NonWindowsIsSymLink(fileInfo))
-                {
-                    return "SymbolicLink";
-                }
-                if (NonWindowsIsHardLink(fileInfo))
-                {
-                    return "HardLink";
-                }
-                return null;
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
+                return "SymbolicLink";
             }
 
+            if (NonWindowsIsHardLink(fileInfo))
+            {
+                return "HardLink";
+            }
+
+            return null;
         }
 
         internal static bool NonWindowsCreateSymbolicLink(string path, string strTargetPath, bool isDirectory)
         {
-            if (!IsWindows)
-            {
-                // Linux doesn't care if target is a directory or not
-                return LinuxPlatform.CreateSymbolicLink(path, strTargetPath);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            // Linux doesn't care if target is a directory or not
+            return LinuxPlatform.CreateSymbolicLink(path, strTargetPath);
         }
 
         internal static bool NonWindowsCreateHardLink(string path, string strTargetPath)
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.CreateHardLink(path, strTargetPath);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            return LinuxPlatform.CreateHardLink(path, strTargetPath);
         }
 
         internal static void NonWindowsSetDate(DateTime dateToUse)
         {
-            if (!IsWindows)
-            {
-                LinuxPlatform.SetDateInfoInternal date = new LinuxPlatform.SetDateInfoInternal(dateToUse);
-                LinuxPlatform.SetDate(date);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            LinuxPlatform.SetDateInfoInternal date = new LinuxPlatform.SetDateInfoInternal(dateToUse);
+            LinuxPlatform.SetDate(date);
         }
 
         internal static string NonWindowsGetDomainName()
         {
-            if (!IsWindows)
+            string fullyQualifiedName = LinuxPlatform.Native.GetFullyQualifiedName();
+            if (string.IsNullOrEmpty(fullyQualifiedName))
             {
-                string fullyQualifiedName = LinuxPlatform.Native.GetFullyQualifiedName();
-                if (string.IsNullOrEmpty(fullyQualifiedName))
-                {
-                    int lastError = Marshal.GetLastWin32Error();
-                    throw new InvalidOperationException("LinuxPlatform.NonWindowsGetDomainName error: " + lastError);
-                }
-
-                int index = fullyQualifiedName.IndexOf('.');
-                if (index >= 0)
-                {
-                    return fullyQualifiedName.Substring(index + 1);
-                }
-
-                return "";
+                int lastError = Marshal.GetLastWin32Error();
+                throw new InvalidOperationException("LinuxPlatform.NonWindowsGetDomainName error: " + lastError);
             }
-            else
+
+            int index = fullyQualifiedName.IndexOf('.');
+            if (index >= 0)
             {
-                throw new PlatformNotSupportedException();
+                return fullyQualifiedName.Substring(index + 1);
             }
+
+            return "";
         }
 
         internal static string NonWindowsGetUserName()
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.UserName;
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            return LinuxPlatform.UserName;
         }
 
         // Hostname in this context seems to be the FQDN
         internal static string NonWindowsGetHostName()
         {
-            if (!IsWindows)
+            string hostName = LinuxPlatform.Native.GetFullyQualifiedName();
+            if (string.IsNullOrEmpty(hostName))
             {
-                string hostName = LinuxPlatform.Native.GetFullyQualifiedName();
-                if (string.IsNullOrEmpty(hostName))
-                {
-                    int lastError = Marshal.GetLastWin32Error();
-                    throw new InvalidOperationException("LinuxPlatform.NonWindowsHostName error: " + lastError);
-                }
-                return hostName;
-
+                int lastError = Marshal.GetLastWin32Error();
+                throw new InvalidOperationException("LinuxPlatform.NonWindowsHostName error: " + lastError);
             }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            return hostName;
         }
 
         internal static bool NonWindowsIsExecutable(string path)
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.IsExecutable(path);
-            }
-
-            throw new PlatformNotSupportedException();
+            return LinuxPlatform.IsExecutable(path);
         }
 
         internal static uint NonWindowsGetThreadId()
         {
             // TODO:PSL clean this up
             return 0;
-        }
-
-        /// <summary>
-        /// This exception is meant to be thrown if a code path is not supported due
-        /// to platform restrictions
-        /// </summary>
-        internal class PlatformNotSupportedException : System.Exception
-        {
-            public PlatformNotSupportedException() : base() {}
         }
 
         /// <summary>
