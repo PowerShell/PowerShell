@@ -1,7 +1,92 @@
-author:  Jim
+
+# Testing Guidelines
+
+Testing is a very important part of the PowerShell product. 
+
+The PowerShell team created nearly 100,000 tests over the last 12 years which we run as part of the release process for PowerShell in Windows.
+Having all of those tests available for the initial release of OPS was not feasible, and we have targeted those tests which
+we believe will provide us the ability to catch regressions in the areas which have had the largest changes for OPS. It is our
+intent to continue to release more and more of our tests until we have the coverage we need.
+
+For creating new tests, please review the 
+[documents](https://github.com/PowerShell/PowerShell/tree/master/docs/testing-guidelines) on how to
+create tests for OpenPowerShell
 
 
->	Jason/Jim: Testing requirements (code coverage, required for incoming features/enhancements)
-  >	local build/test execution instructions
-  >	tools needed for build/test execution
-  >	our CI explained
+## Test Frameworks
+### Pester
+Our script based test framework is [Pester](https://github.com/Pester/Pester). This is the framework which we are using internally
+at Microsoft for new script based tests, and a large number of the tests which are part of the OPS project have been migrated from 
+that test base. Generally, Pester tests can be used to test a very large percentage of behavior (even some API operations can
+easily be tested in Pester)
+
+In order to get Pester executing on Non-Windows systems, substantial changes were required. These changes have not been incorporated
+into the official Pester code base. Some features of Pester may not be avaiable or may have incorrect behavior. Please make sure
+to create issues in [PowerShell/PowerShell](https://github.com/PowerShell/PowerShell/issues) (not Pester) for anything that you find.
+
+### xUnit
+For those tests which are not easily run via Pester, we have decided to use [xUnit](https://xunit.github.io/) as the test framework. 
+Currently, we have a very small number of tests which are run via xUnit, 
+
+## Running Tests outside of CI
+There are two helper functions that are part of the build.psm1 module which is in the root of the repository, 
+* `Start-PSPester` will execute all Pester tests which are run by the CI system
+* `Start-PSxUnit` will execute the available xUnit tests run by the CI system
+Our CI system runs these as well, there should be no difference between running these on your dev system, versus in CI.
+
+When running tests in this way, be sure that you have started PowerShell with `-noprofile` as a number of tests will fail if the
+environment is not the default or has any customization.
+
+for example, to run all the Pester tests for CI (assuming you are at the root the PowerShell repo):
+```
+import-module ./build.psm1
+Start-PSPester
+```
+if you wish to run only new tests
+
+### What happens after your PR?
+When your PR has successfully passed the CI test gates, your changes will be used to create PowerShell binaries which can be run
+in Microsoft's internal test frameworks. The tests that you created for your change and the library of historical tests will be
+run to determine if any regressions are present. If regressions are found, you'll be notified that your PR is not ready, and provide
+you enough information for you to investigate why the failure happened.
+
+
+
+## Test Layout
+We have taken a functional approach to the layout of our Pester tests. New tests should be placed in their appropriate
+location. If you are making a fix to a cmdlet in a module, the test belongs in the module directory.
+If you are unsure; you can make it part of your PR, or create an issue. The current layout of tests is:
+* test/powershell/engine
+* test/powershell/engine/Api
+* test/powershell/engine/Basic
+* test/powershell/engine/ETS
+* test/powershell/engine/Help
+* test/powershell/engine/Logging
+* test/powershell/engine/Module
+* test/powershell/engine/ParameterBinding
+* test/powershell/engine/Runspace
+* test/powershell/engine/Logging/MessageAnalyzer
+* test/powershell/Host
+* test/powershell/Host/ConsoleHost
+* test/powershell/Host/TabCompletion
+* test/powershell/Language
+* test/powershell/Modules
+* test/powershell/Provider
+* test/powershell/Scripting
+* test/powershell/Scripting/Debugging
+* test/powershell/Scripting/NativeExecution
+* test/powershell/SDK
+* test/powershell/Security
+* test/powershell/Language/Classes
+* test/powershell/Language/Interop
+* test/powershell/Language/Operators
+* test/powershell/Language/Parser
+* test/powershell/Language/Interop/DotNet
+* test/powershell/Modules/Microsoft.PowerShell.Archive
+* test/powershell/Modules/Microsoft.PowerShell.Core
+* test/powershell/Modules/Microsoft.PowerShell.Diagnostics
+* test/powershell/Modules/Microsoft.PowerShell.Management
+* test/powershell/Modules/Microsoft.PowerShell.Security
+* test/powershell/Modules/Microsoft.PowerShell.Utility
+* test/powershell/Modules/Microsoft.PowerShell.Security
+* test/powershell/Modules/PSReadLine
