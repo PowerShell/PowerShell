@@ -14,45 +14,47 @@ Getting Familiar with PowerShell Commands
 
 As mentioned above PowerShell commands is designed to have Verb-Noun structure, for instance Get-Process, Set-Location, Clear-Host, etc. Let’s exercise some of the basic PowerShell commands also known as **cmdlets**.
 
+Please note that we will use the PowerShell prompt sign **PS />** in the following examples as it shows on Linux.
+It looks like **PS C:\>** on  Windows.
+
 **1. Get-Process**: displays the processes running on your system.
 
 By default, you will get data back similar to the following:
 ``` PowerShell
-PS C:\>Get-Process
+PS />Get-Process
 
-Handles   NPM(K)    PM(K)     WS(K)    VM(M)    CPU(s)  Id   ProcessName
--------  ------     -----     -----    -----    ------  --  -----------
-    147      11     2108       9316    ...82     0.02   12    notepad
-    174      12     4276       1460    ...53     3.56   309   cmd
-    121       9     1580       3096    ...85     3.94   8620  svchost
-   2168     374   448940     321504      820   867.39   1209  iexplore
+Handles   NPM(K)    PM(K)     WS(K)     CPU(s)     Id    ProcessName
+-------  ------     -----     -----     ------     --    -----------
+    -      -          -           1      0.012     12    bash
+    -      -          -          21     20.220    449    powershell
+    -      -          -          11     61.630   8620    code
+    -      -          -          74    403.150   1209    firefox
 
 …
 ```
-Only interested in the instance of notepad that are running on your computer? Try this:
+Only interested in the instance of firefox process that are running on your computer? Try this:
 ```PowerShell
-PS C:\> Get-Process -Name notepad
+PS /> Get-Process -Name firefox
 
-Handles   NPM(K)    PM(K)     WS(K)   VM(M)    CPU(s)   Id   ProcessName
--------  ------     -----     -----   -----    ------   --  -----------
-    147      11     2108       9316    ...82     0.02   12    notepad
+Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
+-------  ------     -----     -----    ------     --   -----------
+    -      -          -          74   403.150   1209   firefox
 
 ```
 Want to get back more than one process? Then just specify process names, separating with commas. For example,
 ```PowerShell
-PS C:\> Get-Process -Name notepad, iexplore
-Handles  NPM(K)    PM(K)      WS(K) VM(M)   CPU(s)     Id  ProcessName
--------  ------    -----      ----- -----   ------     --  -----------
-   1753     247   418220     194960   991   385.97   1748   iexplore
-    144      11     2152       9320 ...82     0.08  30004   notepad
-
+PS /> Get-Process -Name firefox, powershell
+Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
+-------  ------     -----     -----    ------     --   -----------
+    -      -          -          74   403.150   1209   firefox
+    -      -          -          21    20.220    449   powershell
 
 ```
 
 **2. Clear-Host**: Clears the display in the command window
 ```PowerShell
-PS C:\> Get-Process
-PS C:\> Clear-Host
+PS /> Get-Process
+PS /> Clear-Host
 ```
 Type too much just for clearing the screen? Here is how the alias can help.
 
@@ -60,108 +62,109 @@ Type too much just for clearing the screen? Here is how the alias can help.
 
 To find the available aliases, you can type below cmdlet:
 ```PowerShell
-PS C:\> Get-Alias
+PS /> Get-Alias
 
 CommandType     Name
 -----------     ----
 …
-Alias           cat -> Get-Content
+
 Alias           cd -> Set-Location
 Alias           cls -> Clear-Host
-Alias           cp -> Copy-Item
-Alias           clv -> Clear-Variable
+Alias           copy -> Copy-Item
+Alias           dir -> Get-ChildItem
+Alias           gc -> Get-Content
 Alias           gmo -> Get-Module
-Alias           man -> help
-Alias           rm -> Remove-Item
-Alias           ls -> Get-ChildItem
+Alias           ri -> Remove-Item
 Alias           type -> Get-Content
 …
 
 As you can see "cls" is an alias of Clear-Host. Now try it:
 
-PS C:\> Get-Process
-PS C:\> cls
+PS /> Get-Process
+PS /> cls
 ```
 **4. cd - Set-Location**: change your current working directory
 ```PowerShell
-PS C:\> Set-Location C:\test
-PS C:\test>
+PS /> Set-Location /home
+PS /home>
 ```
 **5. ls or dir - Get-ChildItem**: list all items in the specified location
 
 ```PowerShell
 Get all files under the current directory:
 
-PS C:\test> Get-ChildItem
+PS /> Get-ChildItem
 
 Get all files under the current directory as well as its subdirectories:
-PS C:\test> dir -Recurse
+PS /> cd $home
+PS /home/jen> dir -Recurse
 
 List all files with file extension "txt".
 
-PS C:\test> ls –Path *.txt -Recurse -Force
+PS /> cd $home
+PS /home/jen> dir –Path *.txt -Recurse
 ```
 
 **6. New-Item**: Create a file
 
 ```PowerShell
 An empty file is created if you type the following:
-PS C:\test> New-Item -Path c:\test\test.txt
+PS /home/jen> New-Item -Path ./test.ps1
 
 
-    Directory: C:\test
+    Directory: /home/jen
 
 
-Mode                LastWriteTime         Length Name
-----                -------------         ------ ----
--a----         7/7/2016   7:17 PM              0 test.txt
+Mode                LastWriteTime         Length  Name
+----                -------------         ------  ----
+-a----         7/7/2016   7:17 PM              0  test.ps1
 ```
-You can use the **-value** parameter to add some data to your file. For example, the following command adds the phrase "Hello World" as a file content to the test.txt. Because the test.txt file exists already, we use **-force** parameter to replace the existing content.
+You can use the **-value** parameter to add some data to your file. For example, the following command adds the phrase "Write-Host 'Hello There'" as a file content to the test.ps1. Because the test.txt file exists already, we use **-force** parameter to replace the existing content.
 
 ```PowerShell
-PS C:\test> New-Item -Path c:\test\test.txt -Value "Hello World!" -force
+PS /home/jen> New-Item -Path ./test.ps1 -Value "Write-Host 'hello there'" -force
 
-    Directory: C:\test
+    Directory: /home/jen
 
 
-Mode                LastWriteTime         Length Name
-----                -------------         ------ ----
--a----         7/7/2016   7:19 PM             12 test.txt
+Mode                LastWriteTime         Length  Name
+----                -------------         ------  ----
+-a----         7/7/2016   7:19 PM             24  test.ps1
 
 ```
 There are other ways to add some data to a file, for example, you can use Set-Content to set the file contents:
 
 ```PowerShell
-PS C:\test>Set-Content -Path c:\test\test.txt -Value "Hello World too!"
+PS /home/jen>Set-Content -Path ./test.ps1 -Value "Write-Host 'hello there again!'"
 ```
-Or simply use ">>" as below:
+Or simply use ">" as below:
 ```
 # create an empty file
 "" > empty.txt  
 
 # set "hello world!!!" as content of text.txt file
-"hello world!!!" > test.txt
+"hello world!!!" > empty.txt
 
 ```
 The pound sign (#) above is used for comments in PowerShell.
 
-**7. type, cat - Get-Content**: get the content of an item
+**7. type - Get-Content**: get the content of an item
 
 ```PowerShell
-PS C:\>Get-Content -Path "C:\Test\test.txt"
-PS C:\>type -Path "C:\Test\test.txt"
+PS /home/jen> Get-Content -Path ./test.ps1
+PS /home/jen> type -Path ./test.ps1
 
-Hello World!
+"Write-Host 'hello there again!'"
 ```
-**8. rm, del - Remove-Item**: delete a file or folder
+**8. del - Remove-Item**: delete a file or folder
 
-This cmdlet will delete the file c:\test\test.txt:
+This cmdlet will delete the file /home/jen/test.ps1:
 ```PowerShell
-PS C:\test> Remove-Item c:\test\test.txt
+PS /home/jen> Remove-Item ./test.ps1
 ```
 **9. Exit**: - to exit the PowerShell session, type "exit"
 ```PowerShell
-PS C:\test> exit
+PS /home/jen> exit
 ```
 
 Need Help?
@@ -169,16 +172,16 @@ Need Help?
 The most important command in PowerShell is possibly the Get-Help, which allows you to quickly learn PowerShell without having to surfing around the Internet. The Get-Help cmdlet also shows you how PowerShell commands work with examples.
 
 
-PS C:\>**Get-Help**
+PS />**Get-Help**
 
 You can use this cmdlet to get help with any PowerShell commands.
 
-PS C:\>**Get-Help -Name Get-Process**
+PS />**Get-Help -Name Get-Process**
 
 It shows the syntax and other technical information of the Get-Process cmdlet.
 
 
-PS C:\>**Get-Help -Name Get-Process -Examples**
+PS />**Get-Help -Name Get-Process -Examples**
 
 It displays the examples how to use the Get-Process cmdlet.
 If you use **-full** parameter, i.e., "Get-Help -Name Get-Process -Full", it will display more technical information.
@@ -190,33 +193,33 @@ Discover All Commands Available on Your System
 
 You want to discover what PowerShell cmdlets available on your system. Simple, just run "Get-Command" as below.
 
-PS C:\> **Get-Command**
+PS /> **Get-Command**
 
 If you want to know whether a particular cmdlet exists on your system, you can do something like below:
 
-PS C:\> **Get-Command Get-Process**
+PS /> **Get-Command Get-Process**
 
 If you want to know the syntax of Get-Process cmdlet, type
 
-PS C:\> **Get-Command Get-Process -Syntax**
+PS /> **Get-Command Get-Process -Syntax**
 
 If you want to know how to sue the get-process, type
 
-PS C:\> **Get-Help Get-Process -example**
+PS /> **Get-Help Get-Process -example**
 
 
 PowerShell Pipeline '|'
 ----
 Sometimes when you run Get-ChildItem or "dir", you want to get a list of files in a descending order. To archive that, type:
 ```PowerShell
-PS C:\> dir | sort -Descending
+PS /home/jen> dir | sort -Descending
 ```
 Say you want to get the largest file in a directory
 ```PowerShell
-PS C:\> dir | sort -Property length -Descending | Select-Object -First 1
+PS /home/jen> dir | Sort-Object -Property Length -Descending | Select-Object -First 1
 
 
-    Directory: C:\
+    Directory: /home/jen
 
 
 Mode                LastWriteTime       Length  Name
@@ -227,7 +230,7 @@ Mode                LastWriteTime       Length  Name
 How to Create and Run PowerShell scripts
 ----
 - You can use ISE, VS Code, or any favorite editor to create a PowerShell script and save the script with a .ps1 file extension (helloworld.ps1 in the example)
-- To run the script, cd to your current folder and type .\helloworld.ps1
+- To run the script, cd to your current folder and type ./helloworld.ps1
 
 See [Running PowerShell Scripts Is as Easy as 1-2-3] [run-ps] for more details.
 
