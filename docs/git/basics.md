@@ -1,8 +1,8 @@
-Getting started with git
+Getting started with Git
 ========================
 
 We are using Git version 2.9.0, but any recent version should be good.
-It's recommended to learn the `git` command line tool for full
+It's recommended to learn the `git` command-line tool for full
 cross-platform experience and a deeper understanding of Git itself.
 
 Install
@@ -12,7 +12,7 @@ Install
 
 Install [Git for Windows][].
 
-During the install process, choose these recommended settings:
+During the installation process, choose these recommended settings:
 
 * Use Git from the Windows Command Prompt
 * Use OpenSSH
@@ -24,7 +24,7 @@ During the install process, choose these recommended settings:
 
 #### Linux
 
-Install via the package manager:
+Install by using the package manager:
 
 ```sh
 sudo apt-get install git
@@ -36,7 +36,7 @@ Interactive tutorials
 There are (too) many Git tutorials on the internet. Here we post
 references to our favorites.
 
-#### Hello world
+#### Hello World
 
 If you're new to Git, learn the following commands: `checkout`, `branch`,
 `pull`, `push`, `merge`.
@@ -44,11 +44,11 @@ If you're new to Git, learn the following commands: `checkout`, `branch`,
 Use GitHub's [Hello World][] to learn how to create a feature branch, commit
 changes, and issue a pull request.
 
-[hello world]: https://guides.github.com/activities/hello-world/
+[Hello World]: https://guides.github.com/activities/hello-world/
 
-#### Katakoda
+#### Katacoda
 
-Learn basic git scenarios in the browser with interactive labs.
+Learn basic Git scenarios in the browser with interactive labs.
 [Git lessons on katacoda](https://www.katacoda.com/courses/git/).
 
 #### Githug
@@ -63,8 +63,8 @@ Authentication
 --------------
 
 #### Windows
-On Windows, the best way to use git securely is [Git Credential Manager for Windows][manager].
-It's included in the official git installer for windows.
+On Windows, the best way to use Git securely is [Git Credential Manager for Windows][manager].
+It's included in the official Git installer for Windows.
 
 #### Linux and OS X
 
@@ -76,8 +76,8 @@ system, so use a [token][].
 git config --global credential.helper store
 ```
 
-Alternatively, you can use [ssh key][].
-In this case, you may want to use git-ssh even for https git urls.
+Alternatively, you can use [SSH key][].
+In this case, you may want to use git-ssh even for HTTPS Git URLs.
 It will help you to use submodules transparently.
 
 ```
@@ -85,7 +85,7 @@ git config --global url.git@github.com:.insteadOf https://github.com/
 ```
 
 
-[ssh key]: https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#generating-a-new-ssh-key
+[SSH key]: https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#generating-a-new-ssh-key
 [token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
 [manager]: https://github.com/Microsoft/Git-Credential-Manager-for-Windows
 
@@ -96,7 +96,7 @@ Permissions
 If you have difficulty in pushing your changes, there is a high probability that
 you actually don't have permissions.
 
-Be sure that you have write access to corresponding repo (remember that
+Be sure that you have write access to corresponding repository (remember that
 submodules have their own privilege).
 
 Your should push to this repository instead of a fork so that the CI system can
