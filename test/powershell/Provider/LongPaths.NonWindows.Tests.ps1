@@ -1,4 +1,4 @@
-If ( $IsWindows -or IsOSX ) { return }
+If ( $IsWindows -or $IsOSX ) { return }
 # ensure that global switch is ON
 # Setup for all tests
 

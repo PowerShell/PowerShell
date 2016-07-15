@@ -225,7 +225,7 @@ Describe "Comment based help preserves the types in Syntax" -Tags 'Feature' {
         }
     }
 
-    It "Comment based help displays syntax properly and has only one 'CommonParameters'" {
+    It "Comment based help displays syntax properly and has only one 'CommonParameters'" -pending {
         $help = Get-Help TestFunction1
         $stringSyntax = $help.Syntax | Out-String -Stream -Width 1000           
         $stringSyntax = ($stringSyntax -join ' ').Trim()

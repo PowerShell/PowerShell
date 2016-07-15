@@ -60,25 +60,25 @@ Describe "Command Path Search" -Tags "CI" {
         .\d2\t2.cmd | Should Be 'd2-t2-cmd'
     }
 
-    It "ps1 wins over PATHEXT" -skip:(!$IsWindows) {
+    It "ps1 wins over PATHEXT" -skip:($IsCore) {
         t4 | Should Be "d2-t4-ps1"
     }
 
-    It "PATH searched in correct order" -skip:(!$IsWindows) {
+    It "PATH searched in correct order" -skip:(!$IsCore) {
         t2 | Should Be "d1-t2-cmd"
         t2.cmd | Should Be "d1-t2-cmd"
     }
 
-    It "PATH wins over PATHEXT" -skip:(!$IsWindows) {
+    It "PATH wins over PATHEXT" -skip:(!$IsCore) {
         t1 | Should Be 't1-cmd'
     }
 
-    It "ext wins over path if specified" -skip:(!$IsWindows) {
+    It "ext wins over path if specified" -skip:(!$IsCore) {
         t1.cmd | Should Be 't1-cmd'
         t1.bat | Should Be 't1-bat'
     }
 
-    It "Check full filename" -skip:(!$IsWindows) {
+    It "Check full filename" -skip:(!$IsCore) {
         t3 | Should Be 'd2-t3'
         t3.cmd | Should Be 'd2-t3'
 
@@ -86,7 +86,7 @@ Describe "Command Path Search" -Tags "CI" {
         t3.oops.cmd | Should Be 'd1-t3-oops'
     }
 
-    It "Extra whitespace around command name" -skip:(!$IsWindows) {
+    It "Extra whitespace around command name" -skip:(!$IsCore) {
         & "t3 " | Should Be 'd2-t3'
         & "t3.cmd " | Should Be 'd2-t3'
         & ".\bin\d2\t3 " | Should Be 'd2-t3'
