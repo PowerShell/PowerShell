@@ -2220,7 +2220,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            success = Platform.NonWindowsCreateSymbolicLink(path,strTargetPath,isDirectory);
+                            success = Platform.NonWindowsCreateSymbolicLink(path,strTargetPath);
                         }
                     }
                     else if(itemType == ItemType.HardLink)

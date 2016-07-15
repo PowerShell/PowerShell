@@ -39,26 +39,25 @@
 //! - ERROR_INVALID_FUNCTION: incorrect function
 //! - ERROR_BAD_PATH_NAME: pathname is too long, or contains invalid characters
 //!
-//! @retval 1 if creation is successful
-//! @retval 0 if createion failed
+//! @retval boolean successful
 //!
 
-int32_t CreateSymLink(const char *link, const char *target)
+bool CreateSymLink(const char *link, const char *target)
 {
-    errno = 0;  
+    errno = 0;
 
     // Check parameters
     if (!link || !target)
     {
         errno = ERROR_INVALID_PARAMETER;
-        return 0;
+        return false;
     }
 
-    int returnCode = symlink(target, link);
+    int ret = symlink(target, link);
 
-    if (returnCode == 0)
+    if (ret == 0)
     {
-        return 1;
+        return true;
     }
 
     switch(errno)
@@ -102,5 +101,6 @@ int32_t CreateSymLink(const char *link, const char *target)
         default:
             errno = ERROR_INVALID_FUNCTION;
     }
-    return 0;
+
+    return false;
 }
