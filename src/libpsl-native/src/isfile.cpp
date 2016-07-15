@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <pwd.h>
 #include <string.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include "isfile.h"
 
@@ -36,5 +37,6 @@ bool IsFile(const char* path)
         return false;
     }
 
-    return access(path, F_OK) != -1;
+    // Resolve relative paths to cwd of process, and do not follow symlinks
+    return faccessat(AT_FDCWD, path, F_OK, AT_SYMLINK_NOFOLLOW) != -1;
 }
