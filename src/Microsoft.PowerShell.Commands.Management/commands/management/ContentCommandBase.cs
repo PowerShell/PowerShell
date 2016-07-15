@@ -815,7 +815,15 @@ namespace Microsoft.PowerShell.Commands
                                 currentCommandContext,
                                 out provider,
                                 out drive);
-
+#if LINUX
+                        PathInfo pathInfo =
+                            new PathInfo(
+                                null,
+                                provider,
+                                unresolvedPath,
+                                SessionState);
+                        results.Add(pathInfo);
+#else
                         PathInfo pathInfo =
                             new PathInfo(
                                 drive,
@@ -823,6 +831,7 @@ namespace Microsoft.PowerShell.Commands
                                 unresolvedPath,
                                 SessionState);
                         results.Add(pathInfo);
+#endif
                     }
                     else
                     {
