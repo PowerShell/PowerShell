@@ -1903,13 +1903,9 @@ namespace System.Management.Automation
         /// 
         internal static string GetShellPathFromRegistry(string shellID)
         {
-            if (!Platform.HasRegistrySupport())
-            {
-                return null;
-            }
-
             string result = null;
 
+#if !LINUX
             try
             {
                 RegistryKey shellKey = Registry.LocalMachine.OpenSubKey(Utils.GetRegistryConfigurationPath(shellID));
@@ -1935,6 +1931,7 @@ namespace System.Management.Automation
             catch (ArgumentException)
             {
             }
+#endif
 
             return result;
         }

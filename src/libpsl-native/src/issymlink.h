@@ -1,9 +1,10 @@
 #pragma once
 
 #include "pal.h"
+#include <stdbool.h>
 
 PAL_BEGIN_EXTERNC
 
-int32_t IsSymLink(const char* fileName);
+bool IsSymLink(const char* path);
 
 PAL_END_EXTERNC

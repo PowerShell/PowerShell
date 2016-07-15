@@ -677,14 +677,11 @@ namespace System.Management.Automation.Language
 
         private static TypeInfo GetComObjectType()
         {
-            if (Platform.HasCom())
-            {
-                return typeof(object).GetTypeInfo().Assembly.GetType("System.__ComObject").GetTypeInfo();
-            }
-            else
-            {
-                return null;
-            }
+#if LINUX
+            return null;
+#else
+            return typeof(object).GetTypeInfo().Assembly.GetType("System.__ComObject").GetTypeInfo();
+#endif
         }
 
         internal static bool IsComObject(object obj)

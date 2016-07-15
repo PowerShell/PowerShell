@@ -9,6 +9,8 @@ add_executable(psl-native-test
   test-getcomputername.cpp
   test-getlinkcount.cpp
   test-getfullyqualifiedname.cpp
+  test-isdirectory.cpp
+  test-isfile.cpp
   test-issymlink.cpp
   test-isexecutable.cpp
   test-createsymlink.cpp

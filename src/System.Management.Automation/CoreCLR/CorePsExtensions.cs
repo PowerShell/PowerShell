@@ -893,13 +893,10 @@ namespace System.Management.Automation
                 return GetEnvironmentVariables();
             }
 
-            if (!Platform.HasRegistrySupport())
-            {
-                // Porting note: Does not throw a PlatformUnsupported because
-                // GetEnvironmentVariable cannot throw, and we want the same interface.
-                return null;
-            }
- 
+#if LINUX
+            return null;
+#else
+
             if( target == EnvironmentVariableTarget.Machine)
             {
                 using (RegistryKey environmentKey =
@@ -916,6 +913,7 @@ namespace System.Management.Automation
                     return GetRegistryKeyNameValuePairs(environmentKey);
                 }
             }
+#endif
         }
 
         /// <summary>
@@ -956,13 +954,9 @@ namespace System.Management.Automation
                 return System.Environment.GetEnvironmentVariable(variable);
             }
 
-            if (!Platform.HasRegistrySupport())
-            {
-                // Porting note: This cannot throw since it would otherwise throw while
-                // creating a runspace. Returning null is appropriate to signal that there
-                // is no value for a registry key with no registry.
-                return null;
-            }
+#if LINUX
+            return null;
+#else
 
             if (target == EnvironmentVariableTarget.Machine)
             {
@@ -985,6 +979,7 @@ namespace System.Management.Automation
                     return value;
                 }
             }
+#endif
         }
 
 #endregion EnvironmentVariable_Extensions

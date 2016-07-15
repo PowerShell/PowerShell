@@ -63,15 +63,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// IsWinPEHost indicates if the machine on which PowerShell is hosted is WinPE or not.
-        /// This is a helper variable used to kep track if the IsWinPE() helper method has 
-        /// already checked for the WinPE specific registry key or not.
-        /// If the WinPE specific registry key has not yet been checked even 
-        /// once then this variable will point to null.
-        /// </summary>
-        internal static bool? isWinPEHost = null;
-
-        /// <summary>
         /// The existence of the following registry confirms that the host machine is a WinPE
         /// HKLM\System\CurrentControlSet\Control\MiniNT
         /// </summary>
@@ -368,58 +359,31 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsWinPEHost()
         {
-            if (Platform.HasRegistrySupport())
-            {
-                return WinIsWinPEHost();
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        internal static bool WinIsWinPEHost()
-        {
+#if !LINUX
             RegistryKey winPEKey = null;
 
-            if (!isWinPEHost.HasValue)
+            try
             {
-                try
-                {
-                    // The existence of the following registry confirms that the host machine is a WinPE
-                    // HKLM\System\CurrentControlSet\Control\MiniNT
-                    winPEKey = Registry.LocalMachine.OpenSubKey(WinPEIdentificationRegKey);
+                // The existence of the following registry confirms that the host machine is a WinPE
+                // HKLM\System\CurrentControlSet\Control\MiniNT
+                winPEKey = Registry.LocalMachine.OpenSubKey(WinPEIdentificationRegKey);
 
-                    if (null != winPEKey)
-                    {
-                        isWinPEHost = true;
-                    }
-                    else
-                    {
-                        isWinPEHost = false;
-                    }
-                }
-                catch (ArgumentException) { }
-                catch (SecurityException) { }
-                catch (ObjectDisposedException) { }
-                finally
+                return winPEKey != null;
+            }
+            catch (ArgumentException) { }
+            catch (SecurityException) { }
+            catch (ObjectDisposedException) { }
+            finally
+            {
+                if (winPEKey != null)
                 {
-                    if (winPEKey != null)
-                    {
-                        winPEKey.Dispose();
-                    }
+                    winPEKey.Dispose();
                 }
             }
+#endif
+            return false;
+        }  
 
-            if (isWinPEHost.HasValue)
-            {
-                return (bool)isWinPEHost;
-            }
-            else
-            {
-                return false;
-            }
-        }
 
         #region Versioning related methods
 
@@ -652,13 +616,9 @@ namespace System.Management.Automation
 
         internal static Dictionary<string, object> GetGroupPolicySetting(string groupPolicyBase, string settingName, RegistryKey[] preferenceOrder)
         {
-            if (!Platform.HasGroupPolicySupport())
-            {
-                // Porting note: No group policy support means we have an empty set of
-                // policies.
-                return _emptyDictionary;
-            }
-
+#if LINUX
+            return _emptyDictionary;
+#else
             lock (cachedGroupPolicySettings)
             {
                 // Return cached information, if we have it
@@ -733,6 +693,7 @@ namespace System.Management.Automation
 
                 return settings;
             }
+#endif
         }
         static ConcurrentDictionary<string, Dictionary<string, object>> cachedGroupPolicySettings =
             new ConcurrentDictionary<string, Dictionary<string, object>>();
@@ -984,38 +945,9 @@ namespace System.Management.Automation
             return NativeItemExists(path, out unusedIsDirectory, out unusedException);
         }
 
+        // This is done through P/Invoke since File.Exists and Directory.Exists pay 13% performance degradation
+        // through the CAS checks, and are terribly slow for network paths.
         internal static bool NativeItemExists(string path, out bool isDirectory, out Exception exception)
-        {
-            if (Platform.UseDotNetToQueryFileAttributes())
-            {
-                // TODO:PSL replace by System.IO.File.GetAttributes
-                exception = null;
-                if (NativeDirectoryExists(path))
-                {
-                    isDirectory = true;
-                    return true;
-                }
-                else if (NativeFileExists(path))
-                {
-                    isDirectory = false;
-                    return true;
-                }
-                else
-                {
-                    isDirectory = false;
-                    return false;
-                }
-            }
-            else
-            {
-                // This is done through P/Invoke since File.Exists and Directory.Exists
-                // pay 13% performance degradation through the CAS checks, and are
-                // terribly slow for network paths.
-                return WinNativeItemExists(path,out isDirectory,out exception);
-            }
-        }
-
-        internal static bool WinNativeItemExists(string path, out bool isDirectory, out Exception exception)
         {
             exception = null;
 
@@ -1024,6 +956,10 @@ namespace System.Management.Automation
                 isDirectory = false;
                 return false;
             }
+#if LINUX
+            isDirectory = Platform.NonWindowsIsDirectory(path);
+            return Platform.NonWindowsIsFile(path);
+#else
 
             if (IsReservedDeviceName(path))
             {
@@ -1057,23 +993,12 @@ namespace System.Management.Automation
                 ((int)NativeMethods.FileAttributes.Directory);
 
             return true;
+#endif
         }
 
+        // This is done through P/Invoke since we pay 13% performance degradation
+        // through the CAS checks required by File.Exists and Directory.Exists
         internal static bool NativeFileExists(string path)
-        {
-            if (Platform.UseDotNetToQueryFileAttributes())
-            {
-                return System.IO.File.Exists(path);
-            }
-            else
-            {
-                // This is done through P/Invoke since we pay 13% performance degradation
-                // through the CAS checks required by File.Exists and Directory.Exists
-                return WinNativeFileExists(path);
-            }
-        }
-
-        internal static bool WinNativeFileExists(string path)
         {
             bool isDirectory;
             Exception ioException;
@@ -1091,18 +1016,6 @@ namespace System.Management.Automation
         // through the CAS checks required by File.Exists and Directory.Exists
         internal static bool NativeDirectoryExists(string path)
         {
-            if (Platform.UseDotNetToQueryFileAttributes())
-            {
-                return System.IO.Directory.Exists(path);
-            }
-            else
-            {
-                return WinNativeDirectoryExists(path);
-            }
-        }
-
-        internal static bool WinNativeDirectoryExists(string path)
-        {
             bool isDirectory;
             Exception ioException;
 
@@ -1116,31 +1029,6 @@ namespace System.Management.Automation
         }
 
         internal static void NativeEnumerateDirectory(string directory, out List<string> directories, out List<string> files)
-        {
-            if (Platform.UseDotNetToQueryFileAttributes())
-            {
-                IEnumerable<string> fileEnum = System.IO.Directory.EnumerateFiles(directory);
-                IEnumerable<string> dirEnum = System.IO.Directory.EnumerateDirectories(directory);
- 
-                files = new List<string>();
-                directories = new List<string>();
-
-                foreach (string entry in fileEnum)
-                {
-                    files.Add(directory + "/" + entry);
-                }
-                foreach (string entry in dirEnum)
-                {
-                    directories.Add(directory + "/" + entry);
-                }
-            }
-            else
-            {
-                WinNativeEnumerateDirectory(directory, out directories, out files);
-            }
-        }
-
-        internal static void WinNativeEnumerateDirectory(string directory, out List<string> directories, out List<string> files)
         {
             IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
             NativeMethods.WIN32_FIND_DATA findData;
@@ -1205,12 +1093,12 @@ namespace System.Management.Automation
 
         internal static bool PathIsUnc(string path)
         {
-            if (!Platform.HasUNCSupport())
-            {
-                return false;
-            }
+#if LINUX
+            return false;
+#else
             Uri uri;
             return !string.IsNullOrEmpty(path) && Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
+#endif
         }
 
         internal class NativeMethods

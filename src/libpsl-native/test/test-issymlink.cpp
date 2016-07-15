@@ -30,75 +30,60 @@ protected:
         // First create a file
         int fd = mkstemp(fileTemplateBuf);
         EXPECT_TRUE(fd != -1);
-	file = fileTemplateBuf;
+        file = fileTemplateBuf;
 
-	// Create a temp directory
-	dir = mkdtemp(dirTemplateBuf);
+        // Create a temp directory
+        dir = mkdtemp(dirTemplateBuf);
         EXPECT_TRUE(dir != NULL);
 
         // Create symbolic link to file
-	int ret1 = symlink(file, fileSymLink.c_str());
-	EXPECT_EQ(ret1, 0);
-        
+        EXPECT_FALSE(symlink(file, fileSymLink.c_str()));
+
         // Create symbolic link to directory
-	int ret2 = symlink(dir, dirSymLink.c_str());
-	EXPECT_EQ(ret2, 0);
+        EXPECT_FALSE(symlink(dir, dirSymLink.c_str()));
     }
 
     ~isSymLinkTest()
     {
-        int ret;
+        EXPECT_FALSE(unlink(fileSymLink.c_str()));
 
-        ret = unlink(fileSymLink.c_str());
-	EXPECT_EQ(0, ret);
+        EXPECT_FALSE(unlink(dirSymLink.c_str()));
 
-        ret = unlink(dirSymLink.c_str());
-	EXPECT_EQ(0, ret);
+        EXPECT_FALSE(unlink(file));
 
-        ret = unlink(file);
-	EXPECT_EQ(0, ret);
-
-	ret = rmdir(dir);
-	EXPECT_EQ(0, ret);       
+        EXPECT_FALSE(rmdir(dir));
     }
 };
 
 TEST_F(isSymLinkTest, FilePathNameIsNull)
 {
-    int retVal = IsSymLink(NULL);
-    EXPECT_EQ(retVal, -1);
+    EXPECT_FALSE(IsSymLink(NULL));
     EXPECT_EQ(ERROR_INVALID_PARAMETER, errno);
 }
 
 TEST_F(isSymLinkTest, FilePathNameDoesNotExist)
 {
     std::string invalidFile = "/tmp/symlinktest_invalidFile";
-    int retVal = IsSymLink(invalidFile.c_str());
-    EXPECT_EQ(retVal, -1);
+    EXPECT_FALSE(IsSymLink(invalidFile.c_str()));
     EXPECT_EQ(ERROR_FILE_NOT_FOUND, errno);
 }
 
 TEST_F(isSymLinkTest, NormalFileIsNotSymLink)
 {
-    int retVal = IsSymLink(file);
-    EXPECT_EQ(0, retVal);
+    EXPECT_FALSE(IsSymLink(file));
 }
 
 TEST_F(isSymLinkTest, SymLinkToFile)
 {
-    int retVal = IsSymLink(fileSymLink.c_str());
-    EXPECT_EQ(1, retVal);
+    EXPECT_TRUE(IsSymLink(fileSymLink.c_str()));
 }
 
 TEST_F(isSymLinkTest, NormalDirectoryIsNotSymbLink)
 {
-    int retVal = IsSymLink(dir);
-    EXPECT_EQ(0, retVal);
+    EXPECT_FALSE(IsSymLink(dir));
 }
 
 TEST_F(isSymLinkTest, SymLinkToDirectory)
 {
-    int retVal = IsSymLink(dirSymLink.c_str());
-    EXPECT_EQ(1, retVal);
+    EXPECT_TRUE(IsSymLink(dirSymLink.c_str()));
 }
-

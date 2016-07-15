@@ -1589,9 +1589,12 @@ namespace System.Management.Automation
         /// </returns>
         internal static bool IsSingleFileSystemAbsolutePath(string path)
         {
-            return Platform.HasSingleRootFilesystem() &&
-                (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal) ||
-                 path.StartsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal));
+#if LINUX
+            return path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal)
+                || path.StartsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal);
+#else
+            return false;
+#endif
         } // IsSingleFileSystemAbsolutePath
 
         /// <summary>

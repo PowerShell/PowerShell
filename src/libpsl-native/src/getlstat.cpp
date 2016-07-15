@@ -1,6 +1,6 @@
-//! @file getstat.cpp
+//! @file getlstat.cpp
 //! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
-//! @brief returns the stat of a file
+//! @brief returns the lstat of a file
 
 #include <errno.h>
 #include <sys/types.h>
@@ -8,12 +8,12 @@
 #include <pwd.h>
 #include <string.h>
 #include <unistd.h>
-#include "getstat.h"
+#include "getlstat.h"
 
-//! @brief GetStat returns the stat of a file. This simply delegates to the
-//! stat() system call and maps errno to the expected values for GetLastError.
+//! @brief GetLStat returns the lstat of a file. This simply delegates to the
+//! lstat() system call and maps errno to the expected values for GetLastError.
 //!
-//! GetStat
+//! GetLstat
 //!
 //! @param[in] path
 //! @parblock
@@ -22,9 +22,9 @@
 //! char* is marshaled as an LPStr, which on Linux is UTF-8.
 //! @endparblock
 //!
-//! @param[in] stat
+//! @param[in] lstat
 //! @parblock
-//! A pointer to the buffer in which to place the stat information
+//! A pointer to the buffer in which to place the lstat information
 //! @endparblock
 //!
 //! @exception errno Passes these errors via errno to GetLastError:
@@ -43,7 +43,7 @@
 //! @retval -1 if failed
 //!
 
-int32_t GetStat(const char* path, struct stat* buf)
+int32_t GetLStat(const char* path, struct stat* buf)
 {
     errno = 0;
 
@@ -53,7 +53,7 @@ int32_t GetStat(const char* path, struct stat* buf)
         return -1;
     }
 
-    int32_t ret = stat(path, buf);
+    int32_t ret = lstat(path, buf);
 
     if (ret != 0)
     {
