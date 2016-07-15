@@ -1314,7 +1314,7 @@ Describe Get-PackageSource -Tags @('BVT', 'DRT') {
         UnRegister-PackageSource -Name 'NugetTemp2' -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
     }
 
-    It "find-install-get-package Expect succeed" {      
+    It "find-install-get-package Expect succeed" -pending {      
         find-package jquery -source NugetTemp2 -provider nuget | install-package -destination $destination -force
         (Test-Path $destination\jQuery*) | should be $true
         $a=get-package -Destination $destination -Name jquery
