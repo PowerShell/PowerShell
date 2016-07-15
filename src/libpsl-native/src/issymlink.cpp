@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string>
+#include "getlstat.h"
 #include "issymlink.h"
 
 //! @brief IsSymlink determines if path is a symbolic link
@@ -48,46 +49,12 @@ bool IsSymLink(const char* path)
         return false;
     }
 
-    struct stat statBuf;
-
-    int ret = lstat(path, &statBuf);
-
+    struct stat buf;
+    int32_t ret = GetLStat(path, &buf);
     if (ret != 0)
     {
-        switch(errno)
-        {
-        case EACCES:
-            errno = ERROR_ACCESS_DENIED;
-            break;
-        case EBADF:
-            errno = ERROR_FILE_NOT_FOUND;
-            break;
-        case EFAULT:
-            errno = ERROR_INVALID_ADDRESS;
-            break;
-        case ELOOP:
-            errno = ERROR_STOPPED_ON_SYMLINK;
-            break;
-        case ENAMETOOLONG:
-            errno = ERROR_GEN_FAILURE;
-            break;
-        case ENOENT:
-            errno = ERROR_FILE_NOT_FOUND;
-            break;
-        case ENOMEM:
-            errno = ERROR_NO_SUCH_USER;
-            break;
-        case ENOTDIR:
-            errno = ERROR_INVALID_NAME;
-            break;
-        case EOVERFLOW:
-            errno = ERROR_BUFFER_OVERFLOW;
-            break;
-        default:
-            errno = ERROR_INVALID_FUNCTION;
-        }
         return false;
     }
 
-    return S_ISLNK(statBuf.st_mode);
+    return S_ISLNK(buf.st_mode);
 }

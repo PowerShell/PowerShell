@@ -31,7 +31,6 @@
 //!
 bool IsDirectory(const char* path)
 {
-    int32_t ret = 0;
     errno = 0;
 
     if (!path)
@@ -41,7 +40,7 @@ bool IsDirectory(const char* path)
     }
 
     struct stat buf;
-    ret = GetStat(path, &buf);
+    int32_t ret = GetStat(path, &buf);
     if (ret != 0)
     {
         return false;

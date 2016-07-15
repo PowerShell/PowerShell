@@ -9,6 +9,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include "getlstat.h"
 #include "isfile.h"
 
 //! @brief returns if the path is a file or directory
@@ -37,6 +38,6 @@ bool IsFile(const char* path)
         return false;
     }
 
-    // Resolve relative paths to cwd of process, and do not follow symlinks
-    return faccessat(AT_FDCWD, path, F_OK, AT_SYMLINK_NOFOLLOW) != -1;
+    struct stat buf;
+    return GetLStat(path, &buf) == 0;
 }

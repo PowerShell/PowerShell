@@ -1,5 +1,6 @@
 add_library(psl-native SHARED
   getstat.cpp
+  getlstat.cpp
   getpwuid.cpp
   getuserfrompid.cpp
   getfileowner.cpp
