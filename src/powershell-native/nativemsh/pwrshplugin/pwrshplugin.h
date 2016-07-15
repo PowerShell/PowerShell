@@ -1091,7 +1091,6 @@ public:
     }
 };
 
-__declspec(dllexport)
 extern "C"
 void WINAPI PerformWSManPluginReportCompletion()
 {

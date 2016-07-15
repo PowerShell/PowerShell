@@ -59,7 +59,7 @@ function Start-PSBuild {
         [switch]$XamlGen,
 
         [Parameter(ParameterSetName='FullCLR')]
-        [ValidateSet('x86', 'x64')]
+        [ValidateSet('x86', 'x64')] # TODO: At some point, we need to add ARM support to match CoreCLR
         [string]$NativeHostArch = "x64",
 
         [ValidateSet('Linux', 'Debug', 'Release', '')] # We might need "Checked" as well
@@ -105,6 +105,12 @@ function Start-PSBuild {
             throw 'mc.exe not found. Install Microsoft Windows SDK.'
         }
         #>
+
+        $vcVarsPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
+        if ((Test-Path -Path $vcVarsPath\vcvarsall.bat) -eq $false)
+        {
+            throw "Could not find Visual Studio vcvarsall.bat at" + $vcVarsPath
+        }
 
         # setup msbuild configuration
         if ($Configuration -eq 'Debug' -or $Configuration -eq 'Release')
@@ -156,36 +162,36 @@ function Start-PSBuild {
     $Arguments += "--runtime", $Options.Runtime
 
     # handle Restore
-#    if ($Restore -or -not (Test-Path "$($Options.Top)/project.lock.json")) {
-#        log "Run dotnet restore"
+    if ($Restore -or -not (Test-Path "$($Options.Top)/project.lock.json")) {
+        log "Run dotnet restore"
 
-#        $RestoreArguments = @("--verbosity")
-#        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-#            $RestoreArguments += "Info"
-#        } else {
-#            $RestoreArguments += "Warning"
-#        }
-#
-#        $RestoreArguments += "$PSScriptRoot"
-#
-#        Start-NativeExecution { dotnet restore $RestoreArguments }
-#    }
+        $RestoreArguments = @("--verbosity")
+        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
+            $RestoreArguments += "Info"
+        } else {
+            $RestoreArguments += "Warning"
+        }
+
+        $RestoreArguments += "$PSScriptRoot"
+
+        Start-NativeExecution { dotnet restore $RestoreArguments }
+    }
 
     # handle ResGen
     # Heuristic to run ResGen on the fresh machine
-#    if ($ResGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost/gen"))
-#    {
-#        log "Run ResGen (generating C# bindings for resx files)"
-#        Start-ResGen
-#    }
+    if ($ResGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost/gen"))
+    {
+        log "Run ResGen (generating C# bindings for resx files)"
+        Start-ResGen
+    }
 
     # handle xaml files
     # Heuristic to resolve xaml on the fresh machine
-#    if ($FullCLR -and ($XamlGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.Activities/gen/*.g.cs")))
-#    {
-#        log "Run XamlGen (generating .g.cs and .resources for .xaml files)"
-#        Start-XamlGen -MSBuildConfiguration $msbuildConfiguration
-#    }
+    if ($FullCLR -and ($XamlGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.Activities/gen/*.g.cs")))
+    {
+        log "Run XamlGen (generating .g.cs and .resources for .xaml files)"
+        Start-XamlGen -MSBuildConfiguration $msbuildConfiguration
+    }
 
     # Build native components
     if ($IsLinux -or $IsOSX) {
@@ -217,12 +223,6 @@ function Start-PSBuild {
         try {
             Push-Location "$PSScriptRoot\src\powershell-native"
 
-            $vcPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
-            if ((Test-Path -Path $vcPath\vcvarsall.bat) -eq $false)
-            {
-                throw "Could not find Visual Studio vcvarsall.bat at" + $vcPath
-            }
-
             <#
             # Compile native resources
             @("nativemsh/pwrshplugin") | % {
@@ -236,44 +236,23 @@ function Start-PSBuild {
 # Disabling until I figure out if it is necessary          
 #            $overrideFlags = "-DCMAKE_USER_MAKE_RULES_OVERRIDE=$PSScriptRoot\src\powershell-native\windows-compiler-override.txt" 
             $overrideFlags = ""
-            $vcArch = "Win64"
-            $cmakeGenerator = "Visual Studio 14 2015 $vcArch"
-#            $CMakeArguments = "-G $cmakeGenerator ."
-            $vcPlatform = "x64"
             $location = Get-Location
-#            $MSBuildArguments = "ALL_BUILD.vcxproj /p:Configuration=$msbuildConfiguration"
-#            if ($cmakeGenerator) {
-#                Start-NativeExecution { cmake $overrideFlags -G $cmakeGenerator . }
-#            } else {
-#                Start-NativeExecution { cmake $overrideFlags . }
-#            }
-#            #
-#            # BUILD_ONECORE
-#            #
-            $command = @"
-cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$vcPlatform" "&" cmake "$overrideFlags" -DBUILD_ONECORE=ON -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$msbuildConfiguration"
-"@
-#cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$vcPlatform" "&" "$cmakeCmd" "&" "msbuild ALL_BUILD.vcxproj /p:Configuration=$msbuildConfiguration"
-# "&" exit
-            log "  Executing command: $command"
-            #Start-NativeExecution { msbuild ALL_BUILD.vcxproj /p:Configuration=$msbuildConfiguration }
-            Start-NativeExecution { Invoke-Expression -Command:$command }
-
             #
-            # NOT BUILD_ONECORE
+            # BUILD_ONECORE
             #
-            $command = @"
-cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$vcPlatform" "&" cmake "$overrideFlags" -DBUILD_ONECORE=OFF -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$msbuildConfiguration"
+            
+            $BuildOneCoreValues = @("ON","OFF")
+            foreach ($oneCoreValue in $BuildOneCoreValues)
+            {
+                $command = @"
+cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=$oneCoreValue -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$msbuildConfiguration"
 "@
-#cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$vcPlatform" "&" "$cmakeCmd" "&" "msbuild ALL_BUILD.vcxproj /p:Configuration=$msbuildConfiguration"
-# "&" exit
-            log "  Executing command: $command"
-            #Start-NativeExecution { msbuild ALL_BUILD.vcxproj /p:Configuration=$msbuildConfiguration }
-            Start-NativeExecution { Invoke-Expression -Command:$command }
+                log "  Executing command: $command"
+                Start-NativeExecution { Invoke-Expression -Command:$command }
+            }
         } finally {
             Pop-Location
         }
-        throw "All done"
     }
 
     # handle TypeGen

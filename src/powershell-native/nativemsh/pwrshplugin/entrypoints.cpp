@@ -186,7 +186,7 @@ static PwrshCommon sPwrshCommon;
 // pwszRuntimeVersion and pRuntimeVersionLength represents the size of pwszRuntimeVersion.
 // returns: 0 on success, non-zero on failure.
 _Success_(return == 0) //EXIT_CODE_SUCCESS
-__declspec(dllexport)
+extern "C"
 unsigned int GetCLRVersionForPSVersion(int iPSMajorVersion, 
                                int iPSMinorVersion,
                                size_t runtimeVersionLength,
@@ -324,7 +324,6 @@ DWORD ReportOperationComplete(WSMAN_PLUGIN_REQUEST *requestDetails, DWORD errorC
 // initialized more than once within the same process, but only once per 
 // applicationIdentification.
 // -----------------------------------------------------------------------------
-__declspec(dllexport)
 extern "C"
 DWORD WINAPI WSManPluginStartup(
     __in DWORD flags,
@@ -409,7 +408,6 @@ DWORD WINAPI WSManPluginStartup(
 // reason: If this is a system shutdown this will be WSMAN_PLUGIN_SHUTDOWN_SYSTEM.  
 // For WSMan service shutdown this will be WSMAN_PLUGIN_SHUTDOWN_SERVICE.  For an IIS host
 //shutdown this will be WSMAN_PLUGIN_SHUTDOWN_IISHOST.
-__declspec(dllexport)
 extern "C"
 DWORD WINAPI WSManPluginShutdown(
     __in PVOID pluginContext,
@@ -458,7 +456,6 @@ DWORD WINAPI WSManPluginShutdown(
 // requestDetails the plug-in needs to call WSManPluginOperationComplete.
 // The shell is active until this time.
 // -----------------------------------------------------------------------------
-__declspec(dllexport)
 extern "C"
 VOID WINAPI WSManPluginShell(
     __in PVOID pluginContext,
@@ -535,7 +532,6 @@ VOID WINAPI WSManPluginShell(
 // corresponding release function has been called. Failure to follow the contract
 // will result in errors being generated.
 // -----------------------------------------------------------------------------
-__declspec(dllexport)
 extern "C"
 VOID WINAPI WSManPluginReleaseShellContext(__in PVOID shellContext)
 {
@@ -569,7 +565,6 @@ VOID WINAPI WSManPluginReleaseShellContext(__in PVOID shellContext)
 // requestDetails the plug-in needs to call WSManPluginOperationComplete.
 // The command is active until this time.
 // -----------------------------------------------------------------------------
-__declspec(dllexport)
 extern "C"
 VOID WINAPI WSManPluginCommand(
     __in WSMAN_PLUGIN_REQUEST *requestDetails,
@@ -604,7 +599,6 @@ VOID WINAPI WSManPluginCommand(
 // corresponding release function has been called. Failure to follow the contract
 // will result in errors being generated.
 // ---------------------------------------------------------------------------------
-__declspec(dllexport)
 extern "C"
 VOID WINAPI WSManPluginReleaseCommandContext(
     __in PVOID shellContext,
@@ -637,7 +631,6 @@ VOID WINAPI WSManPluginReleaseCommandContext(
 // For each piece of data the plug-in calls WSManPluginResultComplete to 
 // acknowledge receipt and to allow the next piece of data to be delivered.
 // -----------------------------------------------------------------------------
-__declspec(dllexport)
 extern "C"
 VOID WINAPI WSManPluginSend(
      __in WSMAN_PLUGIN_REQUEST *requestDetails,
@@ -678,7 +671,6 @@ VOID WINAPI WSManPluginSend(
 // WSManPluginResultComplete.  The operation is marked as active until this 
 // time.
 // -----------------------------------------------------------------------------
-__declspec(dllexport)
 extern "C"
 VOID WINAPI WSManPluginReceive(
     __in WSMAN_PLUGIN_REQUEST *requestDetails,
@@ -715,7 +707,6 @@ VOID WINAPI WSManPluginReceive(
 // of this callback may be many completion calls for the Signal, Receive, Command
 // and Shell operations.
 // -----------------------------------------------------------------------------
-__declspec(dllexport)
 extern "C"
 VOID WINAPI WSManPluginSignal(
                            __in WSMAN_PLUGIN_REQUEST *requestDetails,
@@ -742,7 +733,6 @@ VOID WINAPI WSManPluginSignal(
     }
 }
 
-__declspec(dllexport)
 extern "C"
 VOID WINAPI WSManPluginConnect(
     __in WSMAN_PLUGIN_REQUEST *requestDetails,

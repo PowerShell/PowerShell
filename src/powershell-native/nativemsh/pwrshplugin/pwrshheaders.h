@@ -16,7 +16,6 @@
 // returns: 0 on success, non-zero on failure.
 _Success_(return == 0)  // EXIT_CODE_SUCCESS
 extern "C"
-__declspec(dllexport)
 unsigned int GetCLRVersionForPSVersion(int iPSMajorVersion, 
                       int iPSMinorVersion,
                       size_t runtimeVersionLength,
