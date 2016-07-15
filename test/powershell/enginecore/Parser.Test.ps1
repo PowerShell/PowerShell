@@ -622,24 +622,9 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
             @{ Script = "@(3) -eq 3"; Expected = "3" }
             @{ Script = "@(4) -eq 3"; Expected = $null }
 			@{ Script = "@() -eq 3"; Expected = $null }
-			@{ Script = "`$test = 1,2,@(3,4);`$test -eq 3"; Expected = $null }
-			@{ Script = "`$test = 1,2,@(3,4);`$test -eq 2"; Expected = "2" }
-			@{ Script = "`$test = 1,2,@(3,4);`$test -eq 0"; Expected = $null }
-        )
-        It "<Script> should return <Expected>" -TestCases $testData {
-            param ( $Script, $Expected )
-            ExecuteCommand $Script | Should be $Expected
-        }
-    }
-	
-	Context "Comparison Operators with Arrays Tests (starting at line 2015 to line 2178)" {
-        $testData = @(
-            @{ Script = "@(3) -eq 3"; Expected = "3" }
-            @{ Script = "@(4) -eq 3"; Expected = $null }
-			@{ Script = "@() -eq 3"; Expected = $null }
-			@{ Script = "`$test = 1,2,@(3,4);`$test -eq 3"; Expected = $null }
-			@{ Script = "`$test = 1,2,@(3,4);`$test -eq 2"; Expected = "2" }
-			@{ Script = "`$test = 1,2,@(3,4);`$test -eq 0"; Expected = $null }
+			@{ Script = '$test = 1,2,@(3,4);$test -eq 3'; Expected = $null }
+			@{ Script = '$test = 1,2,@(3,4);$test -eq 2'; Expected = "2" }
+			@{ Script = '$test = 1,2,@(3,4);$test -eq 0'; Expected = $null }
         )
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )
@@ -653,13 +638,13 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 	
 	It "Test that assign to input var and use then execute a script block with piped input. (line 2297)"{
         $result = ExecuteCommand '$input = 1,2,3;4,-5,6 | & { $input }'
-		$result | should be 4, -5, 6
+		 $result -join "" | should be (4,-5,6 -join "") 
     }
 	
 	It "Test that pipe objects into a script and use arguments. (line 2313)"{
 		"`$input; `$args;">$testfile
         $result = ExecuteCommand "1,2,3 | $testfile"
-		$result | should be 1, 2, 3
+		$result -join "" | should be (1, 2, 3 -join "") 
 		$result = ExecuteCommand "$testfile 4 -5 6 -blah -- foo -bar"
 		$result | should be "4", "-5", "6", "-blah", "foo", "-bar"
     }
@@ -708,7 +693,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 	
 	It "This is a simple test of the concatenation of two arrays. (line 2460)"{
         $result = ExecuteCommand '1,2,3 + 4,5,6'
-		$result | should be 1, 2, 3, 4, 5, 6
+		$result -join "" | should be (1, 2, 3, 4, 5, 6 -join "") 
     }
 	
 	It "Test that an incomplete parse exception is thrown if the array is unfinished. (line 2473)"{
@@ -731,7 +716,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         }
     }
 	
-	It "Test that $ var: will expand to nothing inside a string. (line 2551)"{
+	It 'Test that "$var:" will expand to nothing inside a string. (line 2551)'{
 		try {
             ExecuteCommand '"$var:"'
             throw "Execution OK"
