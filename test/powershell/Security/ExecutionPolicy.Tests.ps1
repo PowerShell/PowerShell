@@ -2,7 +2,7 @@
 #
 # Copyright (c) Microsoft Corporation, 2015
 #
-if ( ! $IsWindows ) {
+if ( $IsCore ) {
     Describe "ExecutionPolicy cmdlet valiation" {
         It -skip "ExecutionPolicy cmdlets work" {
             $true | should be $true

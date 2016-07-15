@@ -91,7 +91,7 @@ Describe "PowerShell with -file should preserve exit codes" {
         }
 
 
-        It "Setting execution mode to AllSigned causes unsigned scripts to exit 1" -skip:(!$IsWindows) {
+        It "Setting execution mode to AllSigned causes unsigned scripts to exit 1" -skip:($IsCore) {
             "'hello world'" > $TestScript
             & $powershellexe -noprofile -ExecutionPolicy AllSigned -file $TestScript
             $LASTEXITCODE | Should Be 1

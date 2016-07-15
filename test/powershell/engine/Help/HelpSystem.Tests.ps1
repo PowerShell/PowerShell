@@ -1,5 +1,5 @@
 Describe "Help System tests" -Tags "CI" {
-	It -pending:(!$IsWindows) "non existent item does not return any result and finishes within 5 minutes" {
+	It -pending:($IsCore) "non existent item does not return any result and finishes within 5 minutes" {
 		$startTime = [DateTime]::Now
 		$helpOutput = Get-Help fakecommandforgettinghelp -ErrorAction SilentlyContinue
 		$endTime = [DateTime]::Now
@@ -19,7 +19,7 @@ Describe "Help system tests" -Tags "CI" {
         $env:PSModulePath += ";TestDrive:\"
     }
 
-    It -pending:(!$IsWindows) "can get help content of module with version" {
+    It -pending:($IsCore) "can get help content of module with version" {
         $content = Get-Help about_TestModuleWithVersion
 
         ##We need to add `r`n here as HelpSystem adds it to the end.
@@ -156,7 +156,7 @@ namespace TestModule
         e.g., MyModuleName.ni.dll. This means that the help file name will not have '.ni' in the name,
         so it will look something like this: MyModuleName.dll-Help.xml
     #>
-    It -pending:(!$IsWindows) "Get-Help works for a PSModule with an Ngen assembly" {
+    It -pending:($IsCore) "Get-Help works for a PSModule with an Ngen assembly" {
         
         try
         {
@@ -181,7 +181,7 @@ namespace TestModule
         e.g., MyModuleName.ni.dll. This means that the help file name will contain '.ni' 
         in the name, so it will look something like this: MyModuleName.ni.dll-Help.xml
     #>
-    It -pending:(!$IsWindows) "Get-Help works for a PSModule with an assembly which contains '.NI' in the name" {
+    It -pending:($IsCore) "Get-Help works for a PSModule with an assembly which contains '.NI' in the name" {
         
         try
         {
@@ -269,19 +269,19 @@ Describe "About help for modules with multiple versions shows help for latest ve
         $env:PSModulePath = $oldPSModPath
     }
     
-    It -pending:(!$IsWindows) "shows help content" {
+    It -pending:($IsCore) "shows help content" {
         Get-Help "about_$moduleName" | Should Be $version2Help
     }
 
-    It -pending:(!$IsWindows) "shows help content with wildcard" {
+    It -pending:($IsCore) "shows help content with wildcard" {
         Get-Help "about_$moduleName*" | Should Be $version2Help
     }
 
-    It -pending:(!$IsWindows) "shows help content when filename is not repeated and is in older module" {
+    It -pending:($IsCore) "shows help content when filename is not repeated and is in older module" {
         Get-Help "about_My$moduleName" | Should Be $oldHelp
     }
 
-    It -pending:(!$IsWindows) "shows help when modules are rooted at different locations" {
+    It -pending:($IsCore) "shows help when modules are rooted at different locations" {
         $null = New-Item "$userModuleDirectory\3.0.0.0\en-US" -Force -ItemType Directory
         $null = New-ModuleManifest -Path "$userModuleDirectory\3.0.0.0\$moduleName.psd1" -ModuleVersion "3.0.0.0"
         $null = New-Item "$userModuleDirectory\3.0.0.0\en-US\about_$moduleName.help.txt" -Value $version3Help
@@ -289,7 +289,7 @@ Describe "About help for modules with multiple versions shows help for latest ve
         Get-Help "about_$moduleName" | Should Be $version3Help
     }
 
-    It -pending:(!$IsWindows) "shows help when modules are rooted at different locations with newer version first is modulepath" {
+    It -pending:($IsCore) "shows help when modules are rooted at different locations with newer version first is modulepath" {
         $env:PSModulePath = $oldPSModPath
         $env:PSModulePath += ";$userModuleDirectoryBase;$moduleDirectoryBase"
 

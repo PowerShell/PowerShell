@@ -30,12 +30,12 @@ Describe "XML cmdlets" -Tags 'Feature' {
             @(Select-XML @params).Count | should be 1
         }
 
-        It -skip:(!$IsWindows) "literalpath with non filesystem path" {
+        It -skip:($IsCore) "literalpath with non filesystem path" {
             Select-XML -literalPath cert:\currentuser\my "Root" -ErrorVariable selectXmlError -ErrorAction SilentlyContinue
             $selectXmlError.FullyQualifiedErrorId | Should Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'
         }
 
-        It -skip:(!$IsWindows) "path with non filesystem path" {
+        It -skip:($IsCore) "path with non filesystem path" {
             Select-XML -Path cert:\currentuser\my "Root" -ErrorVariable selectXmlError -ErrorAction SilentlyContinue
             $selectXmlError.FullyQualifiedErrorId | Should Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'
         }

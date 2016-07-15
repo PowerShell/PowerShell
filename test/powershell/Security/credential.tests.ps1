@@ -1,5 +1,5 @@
 Describe "Get-Credential" -Tags "CI" {
-    It "throws error on a long message" -pending:(!$IsWindows) {
+    It "throws error on a long message" -pending:($IsCore) {
         try {
             Get-Credential -Message ('a'*2MB) -ExecutionAction Stop
             throw "Execution OK"

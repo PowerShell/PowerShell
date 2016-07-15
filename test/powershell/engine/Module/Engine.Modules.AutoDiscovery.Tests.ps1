@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation, 2015
 #
 #
-if ( ! $IsWindows ) {
+if ( $IsCore ) {
     return
 }
 

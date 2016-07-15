@@ -2,7 +2,7 @@
 
 Describe "Validation tests for Proxy Command APIs" {
 
-    It -skip:(!$IsWindows) "Validates that ProxyCommands work for cmdlets with dynamic parameters" {
+    It -skip:($IsCore) "Validates that ProxyCommands work for cmdlets with dynamic parameters" {
     
         $command = Get-Command Get-ChildItem
         $md = [System.Management.Automation.CommandMetadata] $command

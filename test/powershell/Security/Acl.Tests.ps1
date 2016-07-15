@@ -1,6 +1,6 @@
 Describe "Tests for Get-Acl and Set-Acl" -Tags "CI" {
 
-    It "Verifies that you can change the ACL of a file that you own, but don't have explicit access to" -pending:(!$IsWindows) {
+    It "Verifies that you can change the ACL of a file that you own, but don't have explicit access to" -pending:($IsCore) {
 
         $caughtError = $false
         
@@ -23,7 +23,7 @@ Describe "Tests for Get-Acl and Set-Acl" -Tags "CI" {
         $caughtError | Should be $false
     }
 
-	It "invalid access policy throws an error" -pending:(!$IsWindows) {
+	It "invalid access policy throws an error" -pending:($IsCore) {
         $fileName = New-Item TestDrive:\newFile.txt -Force
     	Get-Acl $fileName | Set-Acl $fileName -CentralAccessPolicy "SomeInvalidAccessPolicy" -ErrorAction SilentlyContinue -ErrorVariable setAclError
         $setAclError.FullyQualifiedErrorId | Should Be "SetAcl_CentralAccessPolicy,Microsoft.PowerShell.Commands.SetAclCommand"   	    

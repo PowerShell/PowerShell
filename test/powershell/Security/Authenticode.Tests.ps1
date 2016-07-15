@@ -1,6 +1,6 @@
 Describe "Tests for authenticode cmdlets" -Tags "CI" {
 
-    It "Verifies that we can retrieve catalog signatures from OS Binaries" -skip:(!$IsWindows) {
+    It "Verifies that we can retrieve catalog signatures from OS Binaries" -skip:($IsCore) {
     
         ## Only supported on Win8+
         if([Version] (Get-WmiObject Win32_OperatingSystem).Version -lt ([Version] "6.2"))

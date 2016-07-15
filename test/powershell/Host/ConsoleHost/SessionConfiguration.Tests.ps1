@@ -18,13 +18,13 @@ $regValue = "microsoft.powershell"
 
 function ClearConsoleSessionConfigurationGroupPolicy
 {
-    if ( ! $IsWindows ) { return }
+    if ( $IsCore ) { return }
     Remove-Item -Path $regHKLMKey -Force -ErrorAction SilentlyContinue
     Remove-Item -Path $regHKCUKey -Force -ErrorAction SilentlyContinue
 }
 function SetConsoleSessionConfigurationGroupPolicy
 {
-    if ( ! $IsWindows ) { return }
+    if ( $IsCore ) { return }
     if (! (Test-Path $regHKCUKey)) { New-Item -Path $regHKCUKey -Force }
     # Enable Group Policy console session configuration
     Set-ItemProperty -Path $regHKCUKey -Name $regEnable -Value 1
@@ -45,7 +45,7 @@ Describe "Confirms that default powershell.exe runs in non-configured sessions" 
 
 Describe "Tests powershell.exe session configuration switch parameter" -Tags 'CI' {
     # Command will be run in loop-back remote session
-    It "Verifies powershell configured session command results contain expected PSSenderInfo RunAsUser" -skip:(!$IsWindows) {
+    It "Verifies powershell configured session command results contain expected PSSenderInfo RunAsUser" -skip:($IsCore) {
         # Run powershell command in configuration session
         $results = & $powershellexe -config microsoft.powershell -command 'Write-Output $PSSenderInfo'
         $results | Should Not Be $null
@@ -60,7 +60,7 @@ Describe "Tests powershell.exe session configuration with -File switch" -Tags 'C
     }
 
     # Script file will be run in loop-back remote session
-    It "Verifies powershell configured session script file results contain expected PSSenderInfo RunAsUser" -skip:(!$IsWindows) {
+    It "Verifies powershell configured session script file results contain expected PSSenderInfo RunAsUser" -skip:($IsCore) {
     # Run powershell script file in configuration session
     $results = & $powershellexe -config microsoft.powershell -file $filePath
         $results | Should Not Be $null
@@ -77,7 +77,7 @@ Describe "Tests powershell.exe session configuration from HKLM Group Policy sett
     AfterAll {
         ClearConsoleSessionConfigurationGroupPolicy
     }
-    It "Verifies powershell configured session expected PSSenderInfo result contains RunAsUser" -skip:(!$IsWindows) {
+    It "Verifies powershell configured session expected PSSenderInfo result contains RunAsUser" -skip:($IsCore) {
         # Run powershell.exe command
         $results = & $powershellexe -command 'Write-Output $PSSenderInfo'
         # Command should be run in powershell configured endpoint (microsoft.powershell)
@@ -96,7 +96,7 @@ Describe "Tests powershell.exe session configuration from HKCU Group Policy sett
     AfterAll {
         ClearConsoleSessionConfigurationGroupPolicy
     }
-    It "Verifies powershell configured session expected PSSenderInfo result contains RunAsUser" -skip:(!$IsWindows) {
+    It "Verifies powershell configured session expected PSSenderInfo result contains RunAsUser" -skip:($IsCore) {
 
         # Run powershell.exe command
         $results = & $powershellexe -command 'Write-Output $PSSenderInfo'
@@ -117,7 +117,7 @@ Describe "Tests powershell.exe session configuration with restricted custom endp
     AfterAll {
         if ($configuration -ne $null) { $configuration | Unregister-PSSessionConfiguration -Force -ErrorAction SilentlyContinue }
     }
-    It "Verifies the custom configuration was created successfully" -skip:(!$IsWindows) {
+    It "Verifies the custom configuration was created successfully" -skip:($IsCore) {
         New-PSSessionConfigurationFile -Path $filePath -SessionType RestrictedRemoteServer `
             -VisibleCmdlets 'Get-Command','Get-Runspace','Get-Module','Write-Output' `
             -ModulesToImport PSScheduledJob
@@ -126,20 +126,20 @@ Describe "Tests powershell.exe session configuration with restricted custom endp
     }
 
         # Verify running in configured restricted session
-    It "Verifies that the Get-ChildItem command cannot run" -skip:(!$IsWindows) {
+    It "Verifies that the Get-ChildItem command cannot run" -skip:($IsCore) {
         $results = & $powershellexe -config $configName -command 'Get-ChildItem' 2>&1
         $results | Should Not Be $null
         ($results | ? { $_ -match "CommandNotFoundException" }) | Should Not Be $null
     }
 
-    It "Verifies results returned from powershell running in custom test configuration" -skip:(!$IsWindows) {
+    It "Verifies results returned from powershell running in custom test configuration" -skip:($IsCore) {
         # Get Get-Runspace command
         $results = & $powershellexe -config $configName -command 'Get-Command Get-Runspace'
         $results | Should Not Be $null
         $results | ? { $_ -match "Get-Runspace" } | Should Not Be $null
     }
 
-    It "Verifies results returned contain the expected PSScheduledJob module" -skip:(!$IsWindows) {
+    It "Verifies results returned contain the expected PSScheduledJob module" -skip:($IsCore) {
         # Get module list
         $results = & $powershellexe -config $configName -command 'Get-Module'
         $results | Should Not Be $null
@@ -156,7 +156,7 @@ Describe "Tests powershell.exe session configuration with encoded command" -Tags
     }
 
     # Command will be run in loop-back remote session
-    It "Verifies powershell configured session encoded command results contain expected PSSenderInfo RunAsUser" -skip:(!$IsWindows) {
+    It "Verifies powershell configured session encoded command results contain expected PSSenderInfo RunAsUser" -skip:($IsCore) {
         # Run powershell command in configured session (microsoft.powershell)
         $results = & $powershellexe -config microsoft.powershell -EncodedCommand $eCommand
         $results | Should Not Be $null

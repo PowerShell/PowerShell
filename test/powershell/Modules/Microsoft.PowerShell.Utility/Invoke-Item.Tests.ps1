@@ -36,7 +36,7 @@ Describe "Invoke-Item" {
         $testfile =  Setup -File testfile.txt -Content '"Hello World"' -pass
     }
 
-    It "Should invoke a text file without error" -Skip:(!$IsWindows) {
+    It "Should invoke a text file without error" -Skip:($IsCore) {
         $debugfn = NewProcessStartInfo "-noprofile ""``Invoke-Item $testfile`n" -RedirectStdIn
         $process = RunPowerShell $debugfn
         EnsureChildHasExited $process

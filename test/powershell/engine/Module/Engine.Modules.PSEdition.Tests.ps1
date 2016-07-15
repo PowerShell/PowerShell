@@ -101,7 +101,7 @@ Describe 'ModuleManifest and #Requires tests for PSEdition support' -Tags 'BVT',
     #   
     # Expected Result: Script should validate the required PSEdition and execute it without any issues.
     #   
-    It -skip:(!$IsWindows) 'Validate #Requires -PSEdition in script file' {
+    It -skip:($IsCore) 'Validate #Requires -PSEdition in script file' {
         $TestScriptFilePath = Join-Path -Path $TestDrive -ChildPath "ScriptWithRequiredEdition.ps1"
 
         Set-Content -Path $TestScriptFilePath -Value @"
@@ -176,7 +176,7 @@ Get-Process -Id $pid
 Describe 'Get-Module tests for PSEdition support' -Tags 'PriorityOne','RI' {
 
     BeforeAll {
-        if ( ! $IsWindows ) { return }
+        if ( $IsCore ) { return }
         $ModuleNamePrefix="TestModWithEdition_"
         $TestModule_Desktop = "$ModuleNamePrefix" + 'Desktop'
         $TestModule_Core = "$ModuleNamePrefix" + 'Core'
@@ -217,7 +217,7 @@ AliasesToExport = '*'
     }
 
     AfterAll {
-        if ( ! $IsWindows ) { return }
+        if ( $IsCore ) { return }
         RemoveItem "$ProgramFilesModulesPath\$script:ModuleNamePrefix*"
         RemoveItem "$MyDocumentsModulesPath\$script:ModuleNamePrefix*"
     }
@@ -228,7 +228,7 @@ AliasesToExport = '*'
     #   
     # Expected Result: should list the expected module
     #   
-    It -skip:(!$IsWindows) 'Validate Get-Module cmdlet with -ListAvaiable and -PSEdition' {
+    It -skip:($IsCore) 'Validate Get-Module cmdlet with -ListAvaiable and -PSEdition' {
        
         $res = Get-Module -ListAvailable -PSEdition 'Desktop'
         $res.Count -ge 2 | should be true
@@ -242,7 +242,7 @@ AliasesToExport = '*'
         $res.Count -ge 2 | should be true
     }
 
-    It -skip:(!$IsWindows) 'Validate Get-Module -ListAvaiable with -PSEdition NewPSEdition' {        
+    It -skip:($IsCore) 'Validate Get-Module -ListAvaiable with -PSEdition NewPSEdition' {        
         $res = Get-Module -ListAvailable -PSEdition $NewEditionName -Name $TestModule_WithNewEdition
         $res.Name | should be $TestModule_WithNewEdition
         $res.CompatiblePSEditions -contains $NewEditionName | should be $true
@@ -254,7 +254,7 @@ AliasesToExport = '*'
     #   
     # Expected Result: Should get the list of available modules with specified PSEdition value
     #   
-    It -skip:(!$IsWindows) 'Validate Get-Module with ListAvailable, PSSession and PSEditon parameters' {
+    It -skip:($IsCore) 'Validate Get-Module with ListAvailable, PSSession and PSEditon parameters' {
         $session = New-PSSession
         try
         {

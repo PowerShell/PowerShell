@@ -35,7 +35,7 @@ Describe "String cmdlets" -Tags 'innerloop', 'P1', 'RI' {
             (select-string -LiteralPath $fileNameWithDots "b").count | Should Be 2	    
         }
 
-        It -skip:(!$IsWindows) "Network path" {
+        It -skip:($IsCore) "Network path" {
             (select-string -LiteralPath $fileNameAsNetworkPath "b").count | Should Be 2
         }
 
