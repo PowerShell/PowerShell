@@ -13,15 +13,16 @@ Getting Familiar with PowerShell Commands
 ---
 In this section, you will learn how to
 - create a file, delete a file and change file directory
-- find syntax of PowerShell Cmdlets
+- find syntax of PowerShell cmdlets
+- get help if you needed
 - discover what version of PowerShell you are currently using
-- exit PowerShell session
+- exit a PowerShell session
 - and more
 
 As mentioned above, PowerShell commands is designed to have Verb-Noun structure, for instance Get-Process, Set-Location, Clear-Host, etc. Let’s exercise some of the basic PowerShell commands, also known as **cmdlets**.
 
 Please note that we will use the PowerShell prompt sign **PS />** as it appears on Linux in the following examples.
-It is shown as **PS C:\>** on  Windows.
+It is shown as **PS C:\\>** on  Windows.
 
 **1. Get-Process**: displays the processes running on your system.
 
@@ -94,7 +95,7 @@ PS /> cls
 PS /> Set-Location /home
 PS /home>
 ```
-**5. ls or dir - Get-ChildItem**: list all items in the specified location
+**5. dir - Get-ChildItem**: list all items in the specified location
 
 ```PowerShell
 Get all files under the current directory:
@@ -171,7 +172,7 @@ PS /home/jen> Remove-Item ./test.ps1
 
 **9. $PSVersionTable**: displays the version of PowerShell you are currently using
 
-Type **$PSVersionTable** in your PowerShell session, you will see the following. "PSVersion" indicates the
+Type **$PSVersionTable** in your PowerShell session, you will see something like below. "PSVersion" indicates the
 PowerShell version that you are using.
 
 ```PowerShell
