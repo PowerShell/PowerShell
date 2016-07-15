@@ -239,7 +239,7 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsIsSymLink(FileSystemInfo fileInfo)
         {
-            return Unix.IsSymLink(fileInfo);
+            return Unix.NativeMethods.IsSymLink(fileInfo.FullName);
         }
 
         internal static string NonWindowsInternalGetTarget(SafeFileHandle handle)
@@ -250,12 +250,12 @@ namespace System.Management.Automation
 
         internal static string NonWindowsInternalGetTarget(string path)
         {
-            return Unix.FollowSymLink(path);
+            return Unix.NativeMethods.FollowSymLink(path);
         }
 
         internal static string NonWindowsGetUserFromPid(int path)
         {
-            return Unix.GetUserFromPid(path);
+            return Unix.NativeMethods.GetUserFromPid(path);
         }
 
         #if CORECLR
@@ -344,7 +344,7 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsIsExecutable(string path)
         {
-            return Unix.IsExecutable(path);
+            return Unix.NativeMethods.IsExecutable(path);
         }
 
         internal static uint NonWindowsGetThreadId()
@@ -516,16 +516,6 @@ namespace System.Management.Automation
 
         }
 
-        public static bool IsSymLink(FileSystemInfo fs)
-        {
-            return NativeMethods.IsSymLink(fs.FullName);
-        }
-
-        public static bool IsExecutable(string filePath)
-        {
-            return NativeMethods.IsExecutable(filePath);
-        }
-
         public static void SetDate(SetDateInfoInternal info)
         {
             int ret = NativeMethods.SetDate(info);
@@ -540,16 +530,6 @@ namespace System.Management.Automation
         {
             int ret = NativeMethods.CreateHardLink(path, strTargetPath);
             return ret == 1 ? true : false;
-        }
-
-        public static string FollowSymLink(string path)
-        {
-            return NativeMethods.FollowSymLink(path);
-        }
-
-        public static string GetUserFromPid(int pid)
-        {
-            return NativeMethods.GetUserFromPid(pid);
         }
 
         [StructLayout(LayoutKind.Sequential)]
