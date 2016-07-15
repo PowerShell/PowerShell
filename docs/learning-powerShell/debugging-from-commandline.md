@@ -1,7 +1,7 @@
 Debugging in PowerShell Command-line
 =====
 
-As we know we can debug PowerShell code via GUI tools like [VS Code](./using-vscode.md#debugging-with-vs-code) or [ISE](./using-ise.md#debugging-with-ise). In addition we can directly perform debugging within the PowerShell command-line session by using the PowerShell debugger cmdlets. This document demonstrates how to use the cmdlets for the PowerShell command-line debugging. We will cover two topics: set a debug breakpoint on a line of code and on a variable.
+As we know, we can debug PowerShell code via GUI tools like [VS Code](./using-vscode.md#debugging-with-vs-code) or [ISE](./using-ise.md#debugging-with-ise). In addition, we can directly perform debugging within the PowerShell command-line session by using the PowerShell debugger cmdlets. This document demonstrates how to use the cmdlets for the PowerShell command-line debugging. We will cover the following topics: setting a debug breakpoint on a line of code and on a variable.
 
 Let's use the following code snippet as our sample script.
 
@@ -21,17 +21,17 @@ Write-Host "$result Celsius"
 ```
 
 
- **1. Set a Breakpoint on a Line**
+ **1. Setting a Breakpoint on a Line**
 
 - Open a [PowerShell editor](learning-powershell.md#powershell-editor)
-- Save the above code snippet to a file, let's say "test.ps1"
+- Save the above code snippet to a file. For example, "test.ps1"
 - Go to your command-line PowerShell
 - Clear existing breakpoints if any
 
 ```PowerShell
  PS /home/jen/debug>Get-PSBreakpoint | Remove-PSBreakpoint
  ```
-- Use **Set-PSBreakpoint** cmdlet to set a debug breakpoint, say set it to line 5
+- Use **Set-PSBreakpoint** cmdlet to set a debug breakpoint. In this case, we will set it to line 5
 
 ```PowerShell
 PS /home/jen/debug>Set-PSBreakpoint -Line 5 -Script ./test.ps1
@@ -40,7 +40,7 @@ ID Script             Line       Command          Variable          Action
 -- ------             ----       -------          --------          ------
  0 test.ps1              5
 ```
-- Run the script, test.ps1. As we have set a breakpoint, it is expected the program will break into the debugger at the line 5.
+- Run the script "test.ps1". As we have set a breakpoint, it is expected the program will break into the debugger at the line 5.
 
 ```PowerShell
 
@@ -54,10 +54,10 @@ At /home/jen/debug/test.ps1:5 char:1
 [DBG]: PS /home/jen/debug>>
 ```
 
-- The PowerShell prompt has been changed to **[DBG]: PS /home/jen/debug>>** as you may noticed. This means
- we have entered into the debug mode. To watch the variables like $celsius, simply type $celsius as below.
-- To exit from the debugging, type **"q"**
-- To get help for the debugging commands, simple type **"?"**
+- The PowerShell prompt now has the prefix **[DBG]:** as you may noticed. This means
+ we have entered into the debug mode. To watch the variables like $celsius, simply type **$celsius** as below.
+- To exit from the debugging, type **q**
+- To get help for the debugging commands, simply type **?**. The following is an example of debugging output.
 
 ```PowerShell
 [DBG]: PS /home/jen/debug>> $celsius
@@ -103,13 +103,13 @@ PS /home/jen/debug>
 ```
 
 
-**2. Set a Breakpoint on a Variable**
-- Clear existing breakpoints if any
+**2. Setting a Breakpoint on a Variable**
+- Clear existing breakpoints if there are any
 
 ```PowerShell
  PS /home/jen/debug>Get-PSBreakpoint | Remove-PSBreakpoint
  ```
-- Use **Set-PSBreakpoint** cmdlet to set a debug breakpoint, say set it to line 5
+- Use **Set-PSBreakpoint** cmdlet to set a debug breakpoint. In this case, we set it to line 5
 
 ```PowerShell
 
@@ -117,10 +117,10 @@ PS /home/jen/debug>
 
 ```
 
-- Run the script, test.ps1.
+- Run the script "test.ps1"
 
   Once hit the debug breakpoint, we can type **l** to list the source code that debugger is currently executing. As we can see line 3 has an asterisk at the front, meaning that's the line the program is currently executing and broke into the debugger as illustrated below.
-- Type **q** to exit from the debugging mode
+- Type **q** to exit from the debugging mode. The following is an example of debugging output.
 
 ```PowerShell
 
@@ -165,7 +165,7 @@ PS /home/jen/debug>
 
 ```
 
-Now you know the basics of the PowerShell debugging from PowerShell command-line. For further learning read the following articles.
+Now you know the basics of the PowerShell debugging from PowerShell command-line. For further learning, read the following articles.
 
 
 More Reading

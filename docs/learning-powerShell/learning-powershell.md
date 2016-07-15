@@ -25,7 +25,7 @@ TODO: Raghu for setup-dev-environment.md
 
 Getting Started with PowerShell
 ----
-PowerShell command has a Verb-None structure with a set of parameters. It's easy to learn and use PowerShell. For example, "Get-Process" will display all the running processes on your system. Let's walk through with a few examples by clicking on the [PowerShell Beginner's Guide](powershell-beginners-guide.md).
+PowerShell command has a Verb-Noun structure with a set of parameters. It's easy to learn and use PowerShell. For example, "Get-Process" will display all the running processes on your system. Let's walk through with a few examples by clicking on the [PowerShell Beginner's Guide](powershell-beginners-guide.md).
 
 Now you have learned the basics of PowerShell. Please continue reading: Editor, Debugger, and Testing Tool if you want to do some development work in PowerShell.
 
