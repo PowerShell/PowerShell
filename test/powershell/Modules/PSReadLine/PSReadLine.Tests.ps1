@@ -13,6 +13,16 @@ Describe "PSReadLine" {
         $module.Version | Should Be "1.2"
     }
 
+    It "Should use Emacs Bindings on Linux and OS X" -skip:$IsWindows {
+        (Get-PSReadLineOption).EditMode | Should Be Emacs
+        (Get-PSReadlineKeyHandler | where { $_.Key -eq "Ctrl+A" }).Function | Should Be BeginningOfLine
+    }
+
+    It "Should use Windows Bindings on Windows" -skip:(-not $IsWindows) {
+        (Get-PSReadLineOption).EditMode | Should Be Windows
+        (Get-PSReadlineKeyHandler | where { $_.Key -eq "Ctrl+A" }).Function | Should Be SelectAll
+    }
+
     It "Should set the edit mode" {
         Set-PSReadlineOption -EditMode Windows
         (Get-PSReadlineKeyHandler | where { $_.Key -eq "Ctrl+A" }).Function | Should Be SelectAll
