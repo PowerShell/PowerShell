@@ -11,11 +11,18 @@ First you need to launch a PowerShell session by following the [Installing Power
 
 Getting Familiar with PowerShell Commands
 ---
+In this section, you will learn how to
+- create a file, delete a file and change file directory
+- find syntax of PowerShell cmdlets
+- get help if you needed
+- discover what version of PowerShell you are currently using
+- exit a PowerShell session
+- and more
 
-As mentioned above PowerShell commands is designed to have Verb-Noun structure, for instance Get-Process, Set-Location, Clear-Host, etc. Let’s exercise some of the basic PowerShell commands also known as **cmdlets**.
+As mentioned above, PowerShell commands is designed to have Verb-Noun structure, for instance Get-Process, Set-Location, Clear-Host, etc. Let’s exercise some of the basic PowerShell commands, also known as **cmdlets**.
 
-Please note that we will use the PowerShell prompt sign **PS />** in the following examples as it shows on Linux.
-It looks like **PS C:\>** on  Windows.
+Please note that we will use the PowerShell prompt sign **PS />** as it appears on Linux in the following examples.
+It is shown as **PS C:\\>** on  Windows.
 
 **1. Get-Process**: displays the processes running on your system.
 
@@ -88,7 +95,7 @@ PS /> cls
 PS /> Set-Location /home
 PS /home>
 ```
-**5. ls or dir - Get-ChildItem**: list all items in the specified location
+**5. dir - Get-ChildItem**: list all items in the specified location
 
 ```PowerShell
 Get all files under the current directory:
@@ -119,10 +126,10 @@ Mode                LastWriteTime         Length  Name
 ----                -------------         ------  ----
 -a----         7/7/2016   7:17 PM              0  test.ps1
 ```
-You can use the **-value** parameter to add some data to your file. For example, the following command adds the phrase "Write-Host 'Hello There'" as a file content to the test.ps1. Because the test.txt file exists already, we use **-force** parameter to replace the existing content.
+You can use the **-Value** parameter to add some data to your file. For example, the following command adds the phrase "Write-Host 'Hello There'" as a file content to the test.ps1. Because the test.ps1 file exists already, we use **-Force** parameter to replace the existing content.
 
 ```PowerShell
-PS /home/jen> New-Item -Path ./test.ps1 -Value "Write-Host 'hello there'" -force
+PS /home/jen> New-Item -Path ./test.ps1 -Value "Write-Host 'hello there'" -Force
 
     Directory: /home/jen
 
@@ -132,7 +139,7 @@ Mode                LastWriteTime         Length  Name
 -a----         7/7/2016   7:19 PM             24  test.ps1
 
 ```
-There are other ways to add some data to a file, for example, you can use Set-Content to set the file contents:
+There are other ways to add some data to a file. For example, you can use Set-Content to set the file contents:
 
 ```PowerShell
 PS /home/jen>Set-Content -Path ./test.ps1 -Value "Write-Host 'hello there again!'"
@@ -162,19 +169,34 @@ This cmdlet will delete the file /home/jen/test.ps1:
 ```PowerShell
 PS /home/jen> Remove-Item ./test.ps1
 ```
-**9. Exit**: - to exit the PowerShell session, type "exit"
+
+**9. $PSVersionTable**: displays the version of PowerShell you are currently using
+
+Type **$PSVersionTable** in your PowerShell session, you will see something like below. "PSVersion" indicates the
+PowerShell version that you are using.
+
+```PowerShell
+Name                           Value
+----                           -----
+PSVersion                      5.1.10032.0
+PSEdition                      Linux
+PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}
+BuildVersion                   3.0.0.0
+CLRVersion                     
+WSManStackVersion              1.0
+PSRemotingProtocolVersion      2.3
+SerializationVersion           1.1.0.1
+
+```
+
+**10. Exit**: to exit the PowerShell session, type "exit"
 ```PowerShell
 PS /home/jen> exit
 ```
 
 Need Help?
 ----
-The most important command in PowerShell is possibly the Get-Help, which allows you to quickly learn PowerShell without having to surfing around the Internet. The Get-Help cmdlet also shows you how PowerShell commands work with examples.
-
-
-PS />**Get-Help**
-
-You can use this cmdlet to get help with any PowerShell commands.
+The most important command in PowerShell is possibly the Get-Help, which allows you to quickly learn PowerShell without having to surf around the Internet. The Get-Help cmdlet also shows you how PowerShell commands work with examples.
 
 PS />**Get-Help -Name Get-Process**
 
@@ -184,14 +206,14 @@ It shows the syntax and other technical information of the Get-Process cmdlet.
 PS />**Get-Help -Name Get-Process -Examples**
 
 It displays the examples how to use the Get-Process cmdlet.
-If you use **-full** parameter, i.e., "Get-Help -Name Get-Process -Full", it will display more technical information.
+If you use **-Full** parameter, i.e., "Get-Help -Name Get-Process -Full", it will display more technical information.
 
 
 
 Discover All Commands Available on Your System
 ----
 
-You want to discover what PowerShell cmdlets available on your system. Simple, just run "Get-Command" as below.
+You want to discover what PowerShell cmdlets available on your system? Simple, just run "Get-Command" as below.
 
 PS /> **Get-Command**
 
@@ -203,14 +225,14 @@ If you want to know the syntax of Get-Process cmdlet, type
 
 PS /> **Get-Command Get-Process -Syntax**
 
-If you want to know how to sue the get-process, type
+If you want to know how to use the Get-Process, type
 
-PS /> **Get-Help Get-Process -example**
+PS /> **Get-Help Get-Process -Example**
 
 
 PowerShell Pipeline '|'
 ----
-Sometimes when you run Get-ChildItem or "dir", you want to get a list of files in a descending order. To archive that, type:
+Sometimes when you run Get-ChildItem or "dir", you want to get a list of files in a descending order. To achieve that, type:
 ```PowerShell
 PS /home/jen> dir | sort -Descending
 ```
@@ -229,10 +251,10 @@ Mode                LastWriteTime       Length  Name
 ```
 How to Create and Run PowerShell scripts
 ----
-- You can use ISE, VS Code, or any favorite editor to create a PowerShell script and save the script with a .ps1 file extension (helloworld.ps1 in the example)
-- To run the script, cd to your current folder and type ./helloworld.ps1
+- You can use ISE, VS Code or your favorite editor to create a PowerShell script and save the script with a .ps1 file extension (for example, helloworld.ps1)
+- To run the script, cd to your current folder and type ./yourscript.ps1 (for example, ./helloworld.ps1).
 
-See [Running PowerShell Scripts Is as Easy as 1-2-3] [run-ps] for more details.
+Note: if you are using Windows, make sure you set the PowerShell's execution policy to "RemoteSigned" in this case. See [Running PowerShell Scripts Is as Easy as 1-2-3] [run-ps] for more details.
 
 [run-ps]:http://windowsitpro.com/powershell/running-powershell-scripts-easy-1-2-3
 
