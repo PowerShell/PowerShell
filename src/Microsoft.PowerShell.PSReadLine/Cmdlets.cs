@@ -92,7 +92,12 @@ namespace Microsoft.PowerShell
         public const ConsoleColor DefaultEmphasisForegroundColor  = ConsoleColor.Cyan;
         public const ConsoleColor DefaultErrorForegroundColor     = ConsoleColor.Red;
 
-        public const EditMode DefaultEditMode = EditMode.Windows;
+        public const EditMode DefaultEditMode =
+#if LINUX
+            EditMode.Emacs;
+#else
+            EditMode.Windows;
+#endif
 
         public const string DefaultContinuationPrompt = ">> ";
 

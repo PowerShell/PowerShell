@@ -96,18 +96,7 @@ namespace Microsoft.PowerShell
                 // Switching/resetting modes - clear out chord dispatch table
                 _chordDispatchTable.Clear();
 
-                switch (options._editMode)
-                {
-                case EditMode.Emacs:
-                    SetDefaultEmacsBindings();
-                    break;
-                case EditMode.Vi:
-                    SetDefaultViBindings();
-                    break;
-                case EditMode.Windows:
-                    SetDefaultWindowsBindings();
-                    break;
-                }
+                SetDefaultBindings(Options.EditMode);
             }
             if (options._showToolTips.HasValue)
             {

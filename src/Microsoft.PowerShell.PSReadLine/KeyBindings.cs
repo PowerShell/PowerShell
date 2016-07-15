@@ -114,6 +114,25 @@ namespace Microsoft.PowerShell
         private Dictionary<ConsoleKeyInfo, KeyHandler> _dispatchTable;
         private Dictionary<ConsoleKeyInfo, Dictionary<ConsoleKeyInfo, KeyHandler>> _chordDispatchTable; 
 
+        /// <summary>
+        /// Helper to set bindings based on EditMode
+        /// </summary>
+        void SetDefaultBindings(EditMode editMode)
+        {
+            switch (editMode)
+            {
+                case EditMode.Emacs:
+                    SetDefaultEmacsBindings();
+                    break;
+                case EditMode.Vi:
+                    SetDefaultViBindings();
+                    break;
+                case EditMode.Windows:
+                    SetDefaultWindowsBindings();
+                    break;
+            }
+        }
+
         void SetDefaultWindowsBindings()
         {
             _dispatchTable = new Dictionary<ConsoleKeyInfo, KeyHandler>(new ConsoleKeyInfoComparer())
