@@ -15,8 +15,10 @@
 // pwszRuntimeVersion and pRuntimeVersionLength represents the size of pwszRuntimeVersion.
 // returns: 0 on success, non-zero on failure.
 _Success_(return == 0)  // EXIT_CODE_SUCCESS
-extern unsigned int GetCLRVersionForPSVersion(int iPSMajorVersion, 
-				          int iPSMinorVersion,
-					      size_t runtimeVersionLength,
-					      __inout_ecount_part(runtimeVersionLength , *pRuntimeVersionLength) wchar_t* pwszRuntimeVersion,
-					      __out_ecount(1) size_t* pRuntimeVersionLength);
+extern "C"
+__declspec(dllexport)
+unsigned int GetCLRVersionForPSVersion(int iPSMajorVersion, 
+                      int iPSMinorVersion,
+                      size_t runtimeVersionLength,
+                      __inout_ecount_part(runtimeVersionLength , *pRuntimeVersionLength) wchar_t* pwszRuntimeVersion,
+                      __out_ecount(1) size_t* pRuntimeVersionLength);

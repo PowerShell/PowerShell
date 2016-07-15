@@ -26,11 +26,11 @@ SET (LibraryPath)
 list (APPEND LibraryPath "${OneCoreLibBase}")
 list (APPEND LibraryPath "${WindowsSDKLibBase}ucrt/${WindowsSDKPlatform}")
 list (APPEND LibraryPath "${WindowsSDKLibBase}um/${WindowsSDKPlatform}" )
-#list (APPEND LibraryPath "${NETFXSdkDir}lib/um/${WindowsSDKPlatform}")
+###list (APPEND LibraryPath "${NETFXSdkDir}lib/um/${WindowsSDKPlatform}")
 link_directories(${LibraryPath})
 
 #
-# Tell CMake to set the platform toolset. 
+# Tell CMake to set the platform toolset. Nano Server requires the Win10 SDK and updated onecore.lib
 #
 set(CMAKE_VS_PLATFORM_TOOLSET "v140") # Use VS 2015 with Win 10 SDK
 set(CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION "10.0.10586.0") # Targets Windows 10. Alt is ${WindowsSDKVersion}
@@ -60,22 +60,28 @@ add_compile_options(/Zc:wchar_t) # C++ language conformance: wchar_t is NOT the 
 #add_compile_options(/U_WINDOWS)
 
 add_definitions(
-    -DWIN32
-    -DNDEBUG
-    #    -D_DEBUG
+    -D_WIN64
+    -D_AMD64_
+    -DAMD64
+    -D_APISET_WINDOWS_VERSION=0x601
+    -D_APISET_MINWIN_VERSION=0x0101
+    -D_APISET_MINCORE_VERSION=0x0100
+    -DNTDDI_VERSION=0x0A000002
+    #    -DWIN32=100
+    -D_DEBUG
     -D_UNICODE
     -DUNICODE
     -DWIN32_LEAN_AND_MEAN=1
+    #-DNDEBUG
     )
 
+set(CMAKE_ENABLE_EXPORTS ON)
 
-#set(MY_COMMON_LINK_FLAGS "/INCREMENTAL /NOLOGO /MANIFEST:NO /NXCOMPAT /DYNAMICBASE /TLBID:1 /MACHINE:x64 /NODEFAULTLIB")
-set(MY_COMMON_LINK_FLAGS "/INCREMENTAL:NO /NOLOGO /MANIFEST:NO /NXCOMPAT /DYNAMICBASE /TLBID:1 /MACHINE:x64 /guard:cf /OPT:REF /OPT:ICF")
+set(MY_COMMON_LINK_FLAGS "/INCREMENTAL:NO /NOLOGO /MANIFEST:NO /NXCOMPAT /DYNAMICBASE /TLBID:1 /MACHINE:x64 /guard:cf /OPT:REF /OPT:ICF /NODEFAULTLIB")
 set(MY_COMMON_LINK_FLAGS "${MY_COMMON_LINK_FLAGS} /NODEFAULTLIB:kernel32.lib /NODEFAULTLIB:advapi32.lib") # Explicitly exclude kernel32 and advapi32 since CMake is including them and they block execution on Nano Server
 
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${MY_COMMON_LINK_FLAGS}")
-#set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /OPT:REF") #windows subsystem
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}") #windows subsystem
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SUBSYSTEM:WINDOWS,6.00") #windows subsystem
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MY_COMMON_LINK_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE") #windows subsystem

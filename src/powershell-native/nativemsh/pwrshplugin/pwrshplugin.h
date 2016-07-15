@@ -1091,6 +1091,8 @@ public:
     }
 };
 
+__declspec(dllexport)
+extern "C"
 void WINAPI PerformWSManPluginReportCompletion()
 {
     // Now report the plugin completion, to indicate that plugin is ready to shutdown.

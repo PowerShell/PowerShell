@@ -77,7 +77,7 @@ namespace NativeMsh
         //
         // Function Pointer Definitions for the function pointers to load from CoreCLR.dll
         //
-        typedef int (*coreclr_initialize_ptr)(
+        typedef int (STDMETHODCALLTYPE *coreclr_initialize_ptr)(
             const char* exePath,
             const char* appDomainFriendlyName,
             int propertyCount,
@@ -86,11 +86,11 @@ namespace NativeMsh
             void** hostHandle,
             unsigned int* domainId);
 
-        typedef int (*coreclr_shutdown_ptr)(
+        typedef int (STDMETHODCALLTYPE *coreclr_shutdown_ptr)(
             void* hostHandle,
             unsigned int domainId);
 
-        typedef int (*coreclr_create_delegate_ptr)(
+        typedef int (STDMETHODCALLTYPE *coreclr_create_delegate_ptr)(
             void* hostHandle,
             unsigned int domainId,
             const char* entryPointAssemblyName,

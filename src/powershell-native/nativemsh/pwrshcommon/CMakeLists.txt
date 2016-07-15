@@ -14,9 +14,7 @@ if (BUILD_ONECORE)
     set(PWRSHCOMMON_WINDOWS_LIBS 
         #        onecore.lib
         )
-    #set(pwrshcommon_definitions ${common_pwrsh_definitions} CORECLR)
-    set(pwrshcommon_definitions CORECLR)
-    set_target_properties(pwrshcommon PROPERTIES COMPILE_DEFINITIONS "${pwrshcommon_definitions}")
+    set_target_properties(pwrshcommon PROPERTIES COMPILE_DEFINITIONS "CORECLR")
 else () # NOT BUILD_ONECORE
     message("Building Full version of pwrshcommon.lib")
     # Libraries to use when creating this binary for Windows on full SKUs
@@ -35,12 +33,7 @@ else () # NOT BUILD_ONECORE
         #        msxml6.lib
         #        mscoree.lib)
         )
-    #set(pwrshcommon_definitions ${common_pwrsh_definitions})
-    #    target_include_directories(pwrshcommon PUBLIC
-    #        "%ProgramFiles(x86)%/Windows Kits/NETFXSDK/4.6/Include/um")
 endif (BUILD_ONECORE)
-
-#set_target_properties(pwrshcommon PROPERTIES COMPILE_DEFINITIONS "${pwrshcommon_definitions}")
 
 target_link_libraries(pwrshcommon
     ${PWRSHCOMMON_WINDOWS_LIBS})
