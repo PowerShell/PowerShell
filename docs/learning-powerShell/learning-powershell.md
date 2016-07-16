@@ -25,14 +25,14 @@ TODO: Raghu for setup-dev-environment.md
 
 Getting Started with PowerShell
 ----
-PowerShell command has a Verb-None structure with a set of parameters. It's easy to learn and use PowerShell. For example, "Get-Process" will display all the running processes on your system. Let's walk through with a few examples by clicking on the [PowerShell Beginner's Guide](powershell-beginners-guide.md).
+PowerShell command has a Verb-Noun structure with a set of parameters. It's easy to learn and use PowerShell. For example, "Get-Process" will display all the running processes on your system. Let's walk through with a few examples by clicking on the [PowerShell Beginner's Guide](powershell-beginners-guide.md).
 
-Now you have learned the basics of PowerShell. Please continue reading: Editor, Debugger, and Testing Tool if you want to do some development work in PowerShell.
+Now you have learned the basics of PowerShell. Please continue reading if you want to do some development work in PowerShell.
 
 PowerShell Editor
 ----
 
-In this section, you will create a PowerShell script using PowerShell editor. You can certainly use your favorite editor to write scripts. As an example, we use Visual Studio Code (VS Code) which works for Windows, Linux, or OS X. Click on the following link to start create your first PowerShell script, let's say helloworld.ps1.
+In this section, you will create a PowerShell script using PowerShell editor. You can use your favorite editor to write scripts. As an example, we will use Visual Studio Code (VS Code) which works for Windows, Linux, or OS X. Click on the following link to start create your first PowerShell script, let's say helloworld.ps1.
 
 - [Using Visual Studio Code (VS Code)][use-vscode-editor]
 
@@ -44,7 +44,7 @@ On Windows, you can also use [PowerShell Integrated Scripting Environment (ISE)]
 PowerShell Debugger
 ----
 
-Assuming you have written a PowerShell script which may contains a software bug, you would like to fix the issue via debugging. As an example, we use VS Code. Click on the link below to start debugging:
+Assuming you have written a PowerShell script which may contain a software bug, you can fix the issue via debugging. As an example, we will use VS Code. Click on the link below to start debugging:
 
 - [Using Visual Studio Code (VS Code)][use-vscode-debugger]
 - [PowerShell Command-line Debugging][cli-debugging]

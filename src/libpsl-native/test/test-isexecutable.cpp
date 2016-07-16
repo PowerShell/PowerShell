@@ -33,62 +33,52 @@ protected:
         // First create a file
         int fd = mkstemp(fileTemplateBuf);
         EXPECT_TRUE(fd != -1);
-	file = fileTemplateBuf;
+        file = fileTemplateBuf;
     }
 
     ~IsExecutableTest()
     {
-        int ret;
-
-        ret = unlink(file);
-	EXPECT_EQ(0, ret);
+        EXPECT_FALSE(unlink(file));
     }
 
     void ChangeFilePermission(const char* file, mode_t mode)
     {
-        int ret = chmod(file, mode);
-        EXPECT_EQ(ret, 0);
+        EXPECT_FALSE(chmod(file, mode));
     }
 };
 
 TEST_F(IsExecutableTest, FilePathNameIsNull)
 {
-    int32_t retVal = IsExecutable(NULL);
-    EXPECT_EQ(retVal, -1);
+    EXPECT_FALSE(IsExecutable(NULL));
     EXPECT_EQ(ERROR_INVALID_PARAMETER, errno);
 }
 
 TEST_F(IsExecutableTest, FilePathNameDoesNotExist)
 {
     std::string invalidFile = "/tmp/isexecutabletest_invalidFile";
-    int32_t retVal = IsExecutable(invalidFile.c_str());
-    EXPECT_EQ(retVal, -1);
+    EXPECT_FALSE(IsExecutable(invalidFile.c_str()));
     EXPECT_EQ(ERROR_FILE_NOT_FOUND, errno);
 }
 
 TEST_F(IsExecutableTest, NormalFileIsNotIsexecutable)
 {
-    int32_t retVal = IsExecutable(file);
-    EXPECT_EQ(0, retVal);
-    
+    EXPECT_FALSE(IsExecutable(file));
+
     ChangeFilePermission(file, mode_444);
 
-    retVal = IsExecutable(file);
-    EXPECT_EQ(0, retVal);
+    EXPECT_FALSE(IsExecutable(file));
 }
 
 TEST_F(IsExecutableTest, FilePermission_700)
 {
     ChangeFilePermission(file, mode_700);
 
-    int32_t retVal = IsExecutable(file);
-    EXPECT_EQ(1, retVal);
+    EXPECT_TRUE(IsExecutable(file));
 }
 
 TEST_F(IsExecutableTest, FilePermission_777)
 {
     ChangeFilePermission(file, mode_777);
 
-    int32_t retVal = IsExecutable(file);
-    EXPECT_EQ(1, retVal);
+    EXPECT_TRUE(IsExecutable(file));
 }

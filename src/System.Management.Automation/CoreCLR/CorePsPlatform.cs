@@ -143,12 +143,12 @@ namespace System.Management.Automation
                     //the user has set XDG_DATA_HOME corresponding to module path
                     if (String.IsNullOrEmpty(xdgdatahome)){
 
-                    // create the xdg folder if needed
-                    if (!Directory.Exists(xdgDataHomeDefault))
-                    {
-                        Directory.CreateDirectory(xdgDataHomeDefault);
-                    }
-                       return xdgDataHomeDefault;
+                        // create the xdg folder if needed
+                        if (!Directory.Exists(xdgDataHomeDefault))
+                        {
+                            Directory.CreateDirectory(xdgDataHomeDefault);
+                        }
+                        return xdgDataHomeDefault;
                     }
                     else
                     {
@@ -159,12 +159,12 @@ namespace System.Management.Automation
                     //the user has set XDG_DATA_HOME corresponding to module path
                     if (String.IsNullOrEmpty(xdgdatahome)){
 
-                    //xdg values have not been set
-                    if (!Directory.Exists(xdgModuleDefault)) //module folder not always guaranteed to exist
-                    {
-                        Directory.CreateDirectory(xdgModuleDefault);
-                    }
-                       return xdgModuleDefault;
+                        //xdg values have not been set
+                        if (!Directory.Exists(xdgModuleDefault)) //module folder not always guaranteed to exist
+                        {
+                            Directory.CreateDirectory(xdgModuleDefault);
+                        }
+                        return xdgModuleDefault;
                     }
                     else
                     {
@@ -175,7 +175,7 @@ namespace System.Management.Automation
                     //the user has set XDG_CACHE_HOME
                     if (String.IsNullOrEmpty(xdgcachehome))
                     {
-                       //xdg values have not been set
+                        //xdg values have not been set
                         if (!Directory.Exists(xdgCacheDefault)) //module folder not always guaranteed to exist
                         {
                             Directory.CreateDirectory(xdgCacheDefault);
@@ -217,90 +217,6 @@ namespace System.Management.Automation
 
         }
 
-        // ComObjectType is null on CoreCLR for Linux since there is
-        // no COM support on Linux
-        internal static bool HasCom()
-        {
-            // TODO: catch exception from Type.IsComObject
-            return IsWindows;
-        }
-
-        // The Antimalware Scan Interface is not supported on Linux
-        internal static bool HasAmsi()
-        {
-            return IsWindows;
-        }
-
-        // This is mainly with respect to the auto-mounting of
-        // disconnected network drives on Windows
-        internal static bool HasDriveAutoMounting()
-        {
-            return IsWindows;
-        }
-
-        // Linux does not have a registry
-        internal static bool HasRegistrySupport()
-        {
-            return IsWindows;
-        }
-
-        // Linux does not have PowerShell execution policies
-        internal static bool HasExecutionPolicy()
-        {
-            return IsWindows;
-        }
-
-        // Linux has a single rooted file system
-        internal static bool HasSingleRootFilesystem()
-        {
-            return !IsWindows;
-        }
-
-        // Linux has no notion of file shares. It has mount points
-        // instead, which are subdirectories of its single-root
-        // filesystem.
-        internal static bool HasFileShares()
-        {
-            return !HasSingleRootFilesystem();
-        }
-
-        // Linux has no support for UNC, just mounts in a single rooted hierarchy
-        // the UNC equivalent of a "network drive" aka mount would be the mount itself
-        internal static bool HasUNCSupport()
-        {
-            return IsWindows;
-        }
-
-        // Linux uses .net to query file attributes
-        internal static bool UseDotNetToQueryFileAttributes()
-        {
-            return true;
-        }
-
-        // Linux does not have group policy support
-        internal static bool HasGroupPolicySupport()
-        {
-            return IsWindows;
-        }
-
-        // non-windows does not have network drive support
-        internal static bool HasNetworkDriveSupport()
-        {
-            return IsWindows;
-        }
-
-        // non-windows does not have reparse points
-        internal static bool SupportsReparsePoints()
-        {
-            return IsWindows;
-        }
-
-        // non-windows does not support removing drives
-        internal static bool SupportsRemoveDrive()
-        {
-            return IsWindows;
-        }
-
         // Platform methods prefixed NonWindows are:
         // - non-windows by the definition of the IsWindows method above
         // - here, because porting to Linux and other operating systems
@@ -313,27 +229,17 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsIsHardLink(ref IntPtr handle)
         {
-            return LinuxPlatform.IsHardLink(ref handle);
+            return Unix.IsHardLink(ref handle);
         }
 
         internal static bool NonWindowsIsHardLink(FileSystemInfo fileInfo)
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.IsHardLink(fileInfo);
-            }
-
-            throw new PlatformNotSupportedException();
+            return Unix.IsHardLink(fileInfo);
         }
 
         internal static bool NonWindowsIsSymLink(FileSystemInfo fileInfo)
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.IsSymLink(fileInfo);
-            }
-
-            throw new PlatformNotSupportedException();
+            return Unix.NativeMethods.IsSymLink(fileInfo.FullName);
         }
 
         internal static string NonWindowsInternalGetTarget(SafeFileHandle handle)
@@ -344,181 +250,107 @@ namespace System.Management.Automation
 
         internal static string NonWindowsInternalGetTarget(string path)
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.FollowSymLink(path);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            return Unix.NativeMethods.FollowSymLink(path);
         }
 
         internal static string NonWindowsGetUserFromPid(int path)
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.GetUserFromPid(path);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            return Unix.NativeMethods.GetUserFromPid(path);
         }
 
-#if CORECLR
+        #if CORECLR
         internal static string NonWindowsGetFolderPath(SpecialFolder folder)
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.GetFolderPath(folder);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            return Unix.GetFolderPath(folder);
         }
-#endif
+        #endif
 
         internal static string NonWindowsInternalGetLinkType(FileSystemInfo fileInfo)
         {
-            if (!IsWindows)
+            if (NonWindowsIsSymLink(fileInfo))
             {
-                if (NonWindowsIsSymLink(fileInfo))
-                {
-                    return "SymbolicLink";
-                }
-                if (NonWindowsIsHardLink(fileInfo))
-                {
-                    return "HardLink";
-                }
-                return null;
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
+                return "SymbolicLink";
             }
 
+            if (NonWindowsIsHardLink(fileInfo))
+            {
+                return "HardLink";
+            }
+
+            return null;
         }
 
-        internal static bool NonWindowsCreateSymbolicLink(string path, string strTargetPath, bool isDirectory)
+        internal static bool NonWindowsCreateSymbolicLink(string path, string target)
         {
-            if (!IsWindows)
-            {
-                // Linux doesn't care if target is a directory or not
-                return LinuxPlatform.CreateSymbolicLink(path, strTargetPath);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            // Linux doesn't care if target is a directory or not
+            return Unix.NativeMethods.CreateSymLink(path, target);
         }
 
         internal static bool NonWindowsCreateHardLink(string path, string strTargetPath)
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.CreateHardLink(path, strTargetPath);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            return Unix.CreateHardLink(path, strTargetPath);
         }
 
         internal static void NonWindowsSetDate(DateTime dateToUse)
         {
-            if (!IsWindows)
-            {
-                LinuxPlatform.SetDateInfoInternal date = new LinuxPlatform.SetDateInfoInternal(dateToUse);
-                LinuxPlatform.SetDate(date);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            Unix.SetDateInfoInternal date = new Unix.SetDateInfoInternal(dateToUse);
+            Unix.SetDate(date);
         }
 
         internal static string NonWindowsGetDomainName()
         {
-            if (!IsWindows)
+            string fullyQualifiedName = Unix.NativeMethods.GetFullyQualifiedName();
+            if (string.IsNullOrEmpty(fullyQualifiedName))
             {
-                string fullyQualifiedName = LinuxPlatform.Native.GetFullyQualifiedName();
-                if (string.IsNullOrEmpty(fullyQualifiedName))
-                {
-                    int lastError = Marshal.GetLastWin32Error();
-                    throw new InvalidOperationException("LinuxPlatform.NonWindowsGetDomainName error: " + lastError);
-                }
-
-                int index = fullyQualifiedName.IndexOf('.');
-                if (index >= 0)
-                {
-                    return fullyQualifiedName.Substring(index + 1);
-                }
-
-                return "";
+                int lastError = Marshal.GetLastWin32Error();
+                throw new InvalidOperationException("Unix.NonWindowsGetDomainName error: " + lastError);
             }
-            else
+
+            int index = fullyQualifiedName.IndexOf('.');
+            if (index >= 0)
             {
-                throw new PlatformNotSupportedException();
+                return fullyQualifiedName.Substring(index + 1);
             }
+
+            return "";
         }
 
         internal static string NonWindowsGetUserName()
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.UserName;
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            return Unix.UserName;
         }
 
         // Hostname in this context seems to be the FQDN
         internal static string NonWindowsGetHostName()
         {
-            if (!IsWindows)
+            string hostName = Unix.NativeMethods.GetFullyQualifiedName();
+            if (string.IsNullOrEmpty(hostName))
             {
-                string hostName = LinuxPlatform.Native.GetFullyQualifiedName();
-                if (string.IsNullOrEmpty(hostName))
-                {
-                    int lastError = Marshal.GetLastWin32Error();
-                    throw new InvalidOperationException("LinuxPlatform.NonWindowsHostName error: " + lastError);
-                }
-                return hostName;
+                int lastError = Marshal.GetLastWin32Error();
+                throw new InvalidOperationException("Unix.NonWindowsHostName error: " + lastError);
+            }
+            return hostName;
+        }
 
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+        internal static bool NonWindowsIsFile(string path)
+        {
+            return Unix.NativeMethods.IsFile(path);
+        }
+
+        internal static bool NonWindowsIsDirectory(string path)
+        {
+            return Unix.NativeMethods.IsDirectory(path);
         }
 
         internal static bool NonWindowsIsExecutable(string path)
         {
-            if (!IsWindows)
-            {
-                return LinuxPlatform.IsExecutable(path);
-            }
-
-            throw new PlatformNotSupportedException();
+            return Unix.NativeMethods.IsExecutable(path);
         }
 
         internal static uint NonWindowsGetThreadId()
         {
             // TODO:PSL clean this up
             return 0;
-        }
-
-        /// <summary>
-        /// This exception is meant to be thrown if a code path is not supported due
-        /// to platform restrictions
-        /// </summary>
-        internal class PlatformNotSupportedException : System.Exception
-        {
-            public PlatformNotSupportedException() : base() {}
         }
 
         /// <summary>
@@ -581,7 +413,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal static class LinuxPlatform
+    internal static class Unix
     {
         private static string _userName;
         public static string UserName
@@ -590,11 +422,11 @@ namespace System.Management.Automation
             {
                 if (string.IsNullOrEmpty(_userName))
                 {
-                    _userName = Native.GetUserName();
+                    _userName = NativeMethods.GetUserName();
                     if (string.IsNullOrEmpty(_userName))
                     {
                         int lastError = Marshal.GetLastWin32Error();
-                        throw new InvalidOperationException("LinuxPlatform.UserName error: " + lastError);
+                        throw new InvalidOperationException("Unix.UserName error: " + lastError);
                     }
                 }
                 return _userName;
@@ -620,40 +452,40 @@ namespace System.Management.Automation
             }
         }
 
-#if CORECLR
+        #if CORECLR
         public static string GetFolderPath(SpecialFolder folder)
         {
             string s = null;
             switch (folder)
             {
-            case SpecialFolder.ProgramFiles:
-                s = "/bin";
-                break;
-            case SpecialFolder.ProgramFilesX86:
-                s = "/usr/bin";
-                break;
-            case SpecialFolder.System:
-                s = "/sbin";
-                break;
-            case SpecialFolder.SystemX86:
-                s = "/sbin";
-                break;
-            case SpecialFolder.Personal:
-                s = System.Environment.GetEnvironmentVariable("HOME");
-                break;
-            case SpecialFolder.LocalApplicationData:
-                s = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".config");
-                if (!System.IO.Directory.Exists(s))
-                {
-                    System.IO.Directory.CreateDirectory(s);
-                }
-                break;
-            default:
-                throw new NotSupportedException();
+                case SpecialFolder.ProgramFiles:
+                    s = "/bin";
+                    break;
+                case SpecialFolder.ProgramFilesX86:
+                    s = "/usr/bin";
+                    break;
+                case SpecialFolder.System:
+                    s = "/sbin";
+                    break;
+                case SpecialFolder.SystemX86:
+                    s = "/sbin";
+                    break;
+                case SpecialFolder.Personal:
+                    s = System.Environment.GetEnvironmentVariable("HOME");
+                    break;
+                case SpecialFolder.LocalApplicationData:
+                    s = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".config");
+                    if (!System.IO.Directory.Exists(s))
+                    {
+                        System.IO.Directory.CreateDirectory(s);
+                    }
+                    break;
+                default:
+                    throw new NotSupportedException();
             }
             return s;
         }
-#endif
+        #endif
 
         public static bool IsHardLink(ref IntPtr handle)
         {
@@ -671,7 +503,7 @@ namespace System.Management.Automation
 
             int count;
             string filePath = fs.FullName;
-            int ret = Native.GetLinkCount(filePath, out count);
+            int ret = NativeMethods.GetLinkCount(filePath, out count);
             if (ret == 1)
             {
                 return count > 1;
@@ -679,82 +511,25 @@ namespace System.Management.Automation
             else
             {
                 int lastError = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException("LinuxPlatform.IsHardLink error: " + lastError);
+                throw new InvalidOperationException("Unix.IsHardLink error: " + lastError);
             }
 
-        }
-
-        public static bool IsSymLink(FileSystemInfo fs)
-        {
-            if (!fs.Exists)
-            {
-                return false;
-            }
-
-            string filePath = fs.FullName;
-            int ret = Native.IsSymLink(filePath);
-            switch(ret)
-            {
-                case 1:
-                  return true;
-                case 0:
-                  return false;
-                default:
-                  int lastError = Marshal.GetLastWin32Error();
-                  throw new InvalidOperationException("LinuxPlatform.IsSymLink error: " + lastError);
-            }
-        }
-
-        public static bool IsExecutable(string filePath)
-        {
-            if (!File.Exists(filePath))
-            {
-                return false;
-            }
-
-            int ret = Native.IsExecutable(filePath);
-            switch(ret)
-            {
-                case 1:
-                  return true;
-                case 0:
-                  return false;
-                default:
-                  int lastError = Marshal.GetLastWin32Error();
-                  throw new InvalidOperationException("LinuxPlatform.IsExecutable error: " + lastError);
-            }
         }
 
         public static void SetDate(SetDateInfoInternal info)
         {
-            int ret = Native.SetDate(info);
+            int ret = NativeMethods.SetDate(info);
             if (ret == -1)
             {
                 int lastError = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException("LinuxPlatform.NonWindowsSetDate error: " + lastError);
+                throw new InvalidOperationException("Unix.NonWindowsSetDate error: " + lastError);
             }
-        }
-
-        public static bool CreateSymbolicLink(string path, string strTargetPath)
-        {
-            int ret = Native.CreateSymLink(path, strTargetPath);
-            return ret == 1 ? true : false;
         }
 
         public static bool CreateHardLink(string path, string strTargetPath)
         {
-            int ret = Native.CreateHardLink(path, strTargetPath);
+            int ret = NativeMethods.CreateHardLink(path, strTargetPath);
             return ret == 1 ? true : false;
-        }
-
-        public static string FollowSymLink(string path)
-        {
-            return Native.FollowSymLink(path);
-        }
-
-        public static string GetUserFromPid(int pid)
-        {
-            return Native.GetUserFromPid(pid);
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -788,11 +563,13 @@ namespace System.Management.Automation
             }
         }
 
-        internal static class Native
+        internal static class NativeMethods
         {
             const string psLib = "libpsl-native";
 
             // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and OS X
+
+            // C bools are 1 byte and so must be marshaled as I1
 
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.LPStr)]
@@ -802,10 +579,12 @@ namespace System.Management.Automation
             internal static extern int GetLinkCount([MarshalAs(UnmanagedType.LPStr)]string filePath, out int linkCount);
 
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            internal static extern int IsSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath);
+            [return: MarshalAs(UnmanagedType.I1)]
+            internal static extern bool IsSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath);
 
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            internal static extern int IsExecutable([MarshalAs(UnmanagedType.LPStr)]string filePath);
+            [return: MarshalAs(UnmanagedType.I1)]
+            internal static extern bool IsExecutable([MarshalAs(UnmanagedType.LPStr)]string filePath);
 
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.LPStr)]
@@ -815,7 +594,8 @@ namespace System.Management.Automation
             internal static extern int SetDate(SetDateInfoInternal info);
 
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            internal static extern int CreateSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
+            [return: MarshalAs(UnmanagedType.I1)]
+            internal static extern bool CreateSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
                                                      [MarshalAs(UnmanagedType.LPStr)]string target);
 
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
@@ -829,6 +609,15 @@ namespace System.Management.Automation
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.LPStr)]
             internal static extern string GetUserFromPid(int pid);
+
+            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.I1)]
+            internal static extern bool IsFile([MarshalAs(UnmanagedType.LPStr)]string filePath);
+
+            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+            [return: MarshalAs(UnmanagedType.I1)]
+            internal static extern bool IsDirectory([MarshalAs(UnmanagedType.LPStr)]string filePath);
+
         }
     }
 

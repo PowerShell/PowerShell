@@ -96,12 +96,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static void CheckRemotingCmdletPrerequisites()
         {
-            //If the operating system (ie Linux) does not support the registry, simply return to avoid calls to the Windows registry. 
-            if (!Platform.HasRegistrySupport())
-            {
-                return;
-            }
-
+#if LINUX
+            // TODO: check that PSRP requirements are installed
+            return;
+#else
             bool notSupported = true;
             String WSManKeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\WSMAN\\";
 	    
@@ -155,6 +153,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new InvalidOperationException(
                      "Windows PowerShell remoting features are not enabled or not supported on this machine.\nThis may be because you do not have the correct version of WS-Management installed or this version of Windows does not support remoting currently.\n For more information, type 'get-help about_remote_requirements'.");
             }
+#endif
         }
 
         /// <summary>
