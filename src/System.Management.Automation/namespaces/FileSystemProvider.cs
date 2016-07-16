@@ -496,7 +496,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                throw new Platform.PlatformNotSupportedException();
+                throw new PlatformNotSupportedException();
             }
         }
 
@@ -607,15 +607,11 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected override PSDriveInfo RemoveDrive(PSDriveInfo drive)
         {
-            // if removing the drive is not supported, just return the drive
-            if (Platform.SupportsRemoveDrive())
-            {
-                return WinRemoveDrive(drive);
-            }
-            else
-            {
-                return drive;
-            }
+#if LINUX
+            return drive;
+#else
+            return WinRemoveDrive(drive);
+#endif
         }
 
         private PSDriveInfo WinRemoveDrive(PSDriveInfo drive)
@@ -685,15 +681,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal static string GetUNCForNetworkDrive(string driveName)
         {
-            // Porting note: on systems that do not support UNC paths, the UNC equivalent is the path itself
-            if (Platform.HasUNCSupport())
-            {
-                return WinGetUNCForNetworkDrive(driveName);
-            }
-            else
-            {
-                return driveName;
-            }
+#if LINUX
+            return driveName;
+#else
+            return WinGetUNCForNetworkDrive(driveName);
+#endif
         }
 
         private static string WinGetUNCForNetworkDrive(string driveName)
@@ -747,14 +739,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal static string GetSubstitutedPathForNetworkDosDevice(string driveName)
         {
-            if (Platform.HasNetworkDriveSupport())
-            {
-                return WinGetSubstitutedPathForNetworkDosDevice(driveName);
-            }
-            else
-            {
-                throw new Platform.PlatformNotSupportedException();
-            }
+#if LINUX
+            throw new PlatformNotSupportedException();
+#else
+            return WinGetSubstitutedPathForNetworkDosDevice(driveName);
+#endif
         }
 
         private static string WinGetSubstitutedPathForNetworkDosDevice(string driveName)
@@ -926,15 +915,15 @@ namespace Microsoft.PowerShell.Commands
                         if (newDrive.DriveType == DriveType.Network)
                         {
                             // Platform notes: This is important because certain mount
-                            // points on non-Windows are enumerated as drives by .net, but
+                            // points on non-Windows are enumerated as drives by .NET, but
                             // the platform itself then has no real network drive support
                             // as required by this context. Solution: check for network
                             // drive support before using it.
-                            if (!Platform.HasNetworkDriveSupport())
-                            {
-                                continue;
-                            }
+#if LINUX
+                            continue;
+#else
                             displayRoot = GetRootPathForNetworkDriveOrDosDevice(newDrive);
+#endif
                         }
 
                         if (newDrive.DriveType == DriveType.Fixed)
@@ -947,12 +936,14 @@ namespace Microsoft.PowerShell.Commands
                             root = newDrive.RootDirectory.FullName;
                         }
 
+#if LINUX
                         // Porting notes: On platforms with single root filesystems, only
                         // add the filesystem with the root "/" to the initial drive list,
                         // otherwise path handling will not work correctly because there
                         // is no : available to separate the filesystems from each other
-                        if (Platform.HasSingleRootFilesystem() && root != StringLiterals.DefaultPathSeparatorString)
+                        if (root != StringLiterals.DefaultPathSeparatorString)
                             continue;
+#endif
 
                         // Porting notes: On non-windows platforms .net can report two
                         // drives with the same root, make sure to only add one of those
@@ -2229,7 +2220,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            success = Platform.NonWindowsCreateSymbolicLink(path,strTargetPath,isDirectory);
+                            success = Platform.NonWindowsCreateSymbolicLink(path,strTargetPath);
                         }
                     }
                     else if(itemType == ItemType.HardLink)
@@ -6971,48 +6962,47 @@ namespace Microsoft.PowerShell.Commands
 
         internal static int SafeGetFileAttributes(string path)
         {
-            if (Platform.UseDotNetToQueryFileAttributes())
-            {
-                System.IO.FileAttributes attr = System.IO.File.GetAttributes(path);
+#if LINUX
+            System.IO.FileAttributes attr = System.IO.File.GetAttributes(path);
 
-                int result = 0;
-                if ((attr & FileAttributes.Archive) == FileAttributes.Archive)
-                    result |= 0x20;
-                if ((attr & FileAttributes.Compressed) == FileAttributes.Compressed)
-                    result |= 0x800;
-                if ((attr & FileAttributes.Device) == FileAttributes.Device)
-                    result |= 0x40;
-                if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-                    result |= 0x10;
-                if ((attr & FileAttributes.Encrypted) == FileAttributes.Encrypted)
-                    result |= 0x4000;
-                if ((attr & FileAttributes.Hidden) == FileAttributes.Hidden)
-                    result |= 0x2;
-                if ((attr & FileAttributes.IntegrityStream) == FileAttributes.IntegrityStream)
-                    result |= 0x8000;
-                if ((attr & FileAttributes.Normal) == FileAttributes.Normal)
-                    result |= 0x80;
-                if ((attr & FileAttributes.NoScrubData) == FileAttributes.NoScrubData)
-                    result |= 0x20000;
-                if ((attr & FileAttributes.NotContentIndexed) == FileAttributes.NotContentIndexed)
-                    result |= 0x2000;
-                if ((attr & FileAttributes.Offline) == FileAttributes.Offline)
-                    result |= 0x1000;
-                if ((attr & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                    result |= 0x1;
-                if ((attr & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
-                    result |= 0x400;
-                if ((attr & FileAttributes.SparseFile) == FileAttributes.SparseFile)
-                    result |= 0x200;
-                if ((attr & FileAttributes.System) == FileAttributes.System)
-                    result |= 0x4;
-                if ((attr & FileAttributes.Temporary) == FileAttributes.Temporary)
-                    result |= 0x100;
+            int result = 0;
+            if ((attr & FileAttributes.Archive) == FileAttributes.Archive)
+                result |= 0x20;
+            if ((attr & FileAttributes.Compressed) == FileAttributes.Compressed)
+                result |= 0x800;
+            if ((attr & FileAttributes.Device) == FileAttributes.Device)
+                result |= 0x40;
+            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                result |= 0x10;
+            if ((attr & FileAttributes.Encrypted) == FileAttributes.Encrypted)
+                result |= 0x4000;
+            if ((attr & FileAttributes.Hidden) == FileAttributes.Hidden)
+                result |= 0x2;
+            if ((attr & FileAttributes.IntegrityStream) == FileAttributes.IntegrityStream)
+                result |= 0x8000;
+            if ((attr & FileAttributes.Normal) == FileAttributes.Normal)
+                result |= 0x80;
+            if ((attr & FileAttributes.NoScrubData) == FileAttributes.NoScrubData)
+                result |= 0x20000;
+            if ((attr & FileAttributes.NotContentIndexed) == FileAttributes.NotContentIndexed)
+                result |= 0x2000;
+            if ((attr & FileAttributes.Offline) == FileAttributes.Offline)
+                result |= 0x1000;
+            if ((attr & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                result |= 0x1;
+            if ((attr & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
+                result |= 0x400;
+            if ((attr & FileAttributes.SparseFile) == FileAttributes.SparseFile)
+                result |= 0x200;
+            if ((attr & FileAttributes.System) == FileAttributes.System)
+                result |= 0x4;
+            if ((attr & FileAttributes.Temporary) == FileAttributes.Temporary)
+                result |= 0x100;
 
-                return result;
-            }
-            else
-                return WinSafeGetFileAttributes(path);
+            return result;
+#else
+            return WinSafeGetFileAttributes(path);
+#endif
         }
 
         internal static int WinSafeGetFileAttributes(string path)
@@ -7074,11 +7064,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal static bool PathIsNetworkPath(string path)
         {
-            // no other logic possible for now on linux
-            if (Platform.HasNetworkDriveSupport())
-                return WinPathIsNetworkPath(path);
-            else
-                return false;
+#if LINUX
+            return false;
+#else
+            return WinPathIsNetworkPath(path);
+#endif
         }
 
         internal static bool WinPathIsNetworkPath(string path)
@@ -8202,7 +8192,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!Platform.IsWindows)
             {
-                throw new Platform.PlatformNotSupportedException();
+                throw new PlatformNotSupportedException();
             }
 
             using (SafeFileHandle handle = OpenReparsePoint(filePath, FileDesiredAccess.GenericRead))
@@ -8595,14 +8585,11 @@ namespace Microsoft.PowerShell.Commands
 
         private static SafeFileHandle OpenReparsePoint(string reparsePoint, FileDesiredAccess accessMode)
         {
-            if (Platform.SupportsReparsePoints())
-            {
-                return WinOpenReparsePoint(reparsePoint,accessMode);
-            }
-            else
-            {
-                throw new Platform.PlatformNotSupportedException();
-            }
+#if LINUX
+            throw new PlatformNotSupportedException();
+#else
+            return WinOpenReparsePoint(reparsePoint,accessMode);
+#endif
         }
 
         private static SafeFileHandle WinOpenReparsePoint(string reparsePoint, FileDesiredAccess accessMode)

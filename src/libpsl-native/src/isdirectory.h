@@ -5,6 +5,6 @@
 
 PAL_BEGIN_EXTERNC
 
-bool CreateSymLink(const char *link, const char *target);
+bool IsDirectory(const char* path);
 
 PAL_END_EXTERNC
