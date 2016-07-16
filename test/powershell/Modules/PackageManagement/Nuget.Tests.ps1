@@ -52,7 +52,7 @@ function SkipVersion([version]$minVersion,[version]$maxVersion) {
     return $true
 }
 
-Describe "Find, Get, Save, and Install-Package with Culture" -Tags @('BVT', 'DRT'){
+Describe "Find, Get, Save, and Install-Package with Culture" -Tags CI,Slow {
 
     <#
     (get-packageprovider -name "OneGetTest" -list).name | should match "OneGetTest"
@@ -96,7 +96,7 @@ Describe "Find, Get, Save, and Install-Package with Culture" -Tags @('BVT', 'DRT
 	}
 }
 
-Describe "Event Test" -Tags @('BVT', 'DRT') {
+Describe "Event Test" -Tags CI,Slow {
  
     it "EXPECTED: install a package should raise event" -Skip:(-not $IsWindows) {
      
@@ -281,7 +281,7 @@ Describe "Event Test" -Tags @('BVT', 'DRT') {
 	}
 }
 
-Describe "Find-Package" -Tags @('BVT', 'DRT'){
+Describe "Find-Package" -Tags CI,Slow {
     it "EXPECTED: Find a package with a location created via new-psdrive" -Skip:(-not $IsWindows) {
         $Error.Clear()
         New-PSDrive -Name xx -PSProvider FileSystem -Root $TestDrive -warningaction:silentlycontinue -ea silentlycontinue > $null; find-package -name "fooobarrr" -provider nuget -source xx:\  -warningaction:silentlycontinue -ea silentlycontinue
@@ -486,7 +486,7 @@ Describe "Find-Package" -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe Save-Package -Tags @('BVT', 'DRT'){
+Describe Save-Package -Tags CI,Slow {
 	# make sure packagemanagement is loaded
     $destination = $TestDrive
 
@@ -497,10 +497,10 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         $package.Name | should be "TSDProvider"
         (test-path "$dest\TSDProvider*") | should be $true
         if (test-path "$dest\TSDProvider*") {
-            rm $dest\TSDProvider* -force
+            remove-item $dest\TSDProvider* -force
         }
         if (test-path "$dest") {
-            rm $dest -force
+            remove-item $dest -force
         }
     }
 
@@ -511,21 +511,21 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         $package.Name | should be "TSDProvider"
         (test-path "$destination\TSDProvider*") | should be $true
         if (test-path "$destination\TSDProvider*") {
-            rm $destination\TSDProvider* -force
+            remove-item $destination\TSDProvider* -force
         }
     }
 
-    It "EXPECTED success: save-package -LiteralPath" {
+    It "EXPECTED success: save-package -LiteralPath" -pending {
         $dest = "$destination\NeverEverExists"
         $package = save-package -LiteralPath $dest -ProviderName nuget -Source $dtlgallery -name TSDProvider -force
        
         $package.Name | should be "TSDProvider"
         (test-path "$dest\TSDProvider*") | should be $true
         if (test-path "$dest\TSDProvider*") {
-            rm $dest\TSDProvider* -force
+            remove-item $dest\TSDProvider* -force
         }
         if (test-path "$dest") {
-            rm $dest -force
+            remove-item $dest -force
         }
     }
 
@@ -535,7 +535,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         $package.Name | should be "TSDProvider"
         (test-path "$destination\TSDProvider*") | should be $true
         if (test-path "$destination\TSDProvider*") {
-            rm $destination\TSDProvider* -force
+            remove-item $destination\TSDProvider* -force
         }
     }
 
@@ -592,7 +592,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
             }
 
 		    if (Test-Path $destination\zlib*) {
-			    rm $destination\zlib*
+			    remove-item $destination\zlib*
 		    }
 
         }
@@ -618,7 +618,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
             }
 
 		    if (Test-Path $destination\zlib*) {
-			    rm $destination\zlib*
+			    remove-item $destination\zlib*
 		    }
 
         }
@@ -632,7 +632,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         }
         finally {
             if (Test-Path $destination\ModuleWithDependenciesLoop*) {
-                rm $destination\ModuleWithDependenciesLoop*
+                remove-item $destination\ModuleWithDependenciesLoop*
             }
         }
     }
@@ -644,7 +644,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         }
         finally {
             if (Test-Path $destination\TestPackage*) {
-                rm $destination\TestPackage*
+                remove-item $destination\TestPackage*
             }
         }
     }
@@ -653,7 +653,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
 		(save-package -name "awssdk" -provider $nuget -source $source -Path $destination)
 		(test-path $destination\awssdk*) | should be $true
 		if (Test-Path $destination\awssdk*) {
-			rm $destination\awssdk*
+			remove-item $destination\awssdk*
 		}    
     }
 
@@ -663,7 +663,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         (Test-Path $destination\contoso*) | should be $true
 
         if (Test-Path $destination\contoso*) {
-            rm $destination\contoso*
+            remove-item $destination\contoso*
         }
     }
 
@@ -674,7 +674,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
 				save-package -name $x -source $source -provider $nuget -minimumversion $y -maximumversion $z -Path $destination
 				(Test-Path -Path $destination\$x*) | should be $true
 				if (Test-Path -Path $destination\$x*) {
-					rm $destination\$x*
+					remove-item $destination\$x*
 					}
 				}
 			}
@@ -685,7 +685,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
 	    (find-package -name "zlib" -provider $nuget -source $source | save-package -Path $destination)
 	    (Test-Path -Path $destination\zlib*) | should be $true
 	    if (Test-Path -Path $destination\zlib*) {
-		    rm $destination\zlib*
+		    remove-item $destination\zlib*
         }
     }
 
@@ -726,7 +726,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe "save-package with Whatif" -Tags @('BVT', 'DRT'){
+Describe "save-package with Whatif" -Tags CI,Slow {
     # make sure that packagemanagement is loaded
     #import-packagemanagement
     $tempDir = Join-Path $TestDrive "nugettesttempfolder"    
@@ -774,7 +774,7 @@ Describe "save-package with Whatif" -Tags @('BVT', 'DRT'){
 }
 
 
-Describe "install-package with Whatif" -Tags @('BVT', 'DRT'){
+Describe "install-package with Whatif" -Tags CI,Slow {
     # make sure that packagemanagement is loaded
     #import-packagemanagement
     $installationPath = Join-Path $TestDrive "InstallationPath"
@@ -817,7 +817,7 @@ Describe "install-package with Whatif" -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe "install-package with Scope" -Tags @('BVT', 'DRT'){
+Describe "install-package with Scope" -Tags CI,Slow {
 
      it "EXPECTED Success: Get and Install-Package without Scope without destination" {
             
@@ -932,7 +932,7 @@ Describe "install-package with Scope" -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe Install-Package -Tags @('BVT', 'DRT'){
+Describe Install-Package -Tags CI,Slow {
     $destination = Join-Path $TestDrive "NugetPackages"
     $relativetestpath = Join-Path $TestDrive "RelativeTestPath"
  
@@ -1115,7 +1115,7 @@ Describe Install-Package -Tags @('BVT', 'DRT'){
 	}
 }
 
-Describe Get-Package -Tags @('BVT', 'DRT'){
+Describe Get-Package -Tags CI,Slow {
     $destination = Join-Path $TestDrive "NuGetPackages"
 
 	it "EXPECTED: Gets The 'Adept.NugetRunner' Package After Installing" {
@@ -1167,7 +1167,7 @@ Describe Get-Package -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe Uninstall-Package -Tags @('BVT', 'DRT'){
+Describe Uninstall-Package -Tags CI,Slow {
     $destination = Join-Path $TestDrive "NuGetPackages"
 
 	it "EXPECTED: Uninstalls The Right version of 'Jquery'" {
@@ -1287,7 +1287,7 @@ Describe Uninstall-Package -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe Get-PackageProvider -Tags @('BVT', 'DRT'){
+Describe Get-PackageProvider -Tags CI,Slow {
 
 	it "EXPECTED: Gets The 'Nuget' Package Provider" -Skip {
     	(get-packageprovider -name $nuget -force).name | should be $nuget
@@ -1301,7 +1301,7 @@ Describe Get-PackageProvider -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe Get-PackageSource -Tags @('BVT', 'DRT') {
+Describe Get-PackageSource -Tags CI,Slow {
     $destination = Join-Path $TestDrive "NuGetPackages"
 
     BeforeAll{
@@ -1346,7 +1346,7 @@ Describe Get-PackageSource -Tags @('BVT', 'DRT') {
     }
 }
 
-Describe Register-PackageSource -Tags @('BVT', 'DRT'){
+Describe Register-PackageSource -Tags CI,Slow {
     $Destination = Join-Path $TestDrive "NUgettest"
 
 	it "EXPECTED: Register a package source with a location created via new-psdrive" -Skip {
@@ -1454,7 +1454,7 @@ Describe Register-PackageSource -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe Unregister-PackageSource -Tags @('BVT', 'DRT'){
+Describe Unregister-PackageSource -Tags CI,Slow {
 
 	it "EXPECTED: Unregisters The 'NugetTest.org' Package Source" {
 		(register-packagesource -name "nugettest.org" -provider $nuget -location $source)
@@ -1476,7 +1476,7 @@ Describe Unregister-PackageSource -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe Set-PackageSource -Tags @('BVT', 'DRT'){
+Describe Set-PackageSource -Tags CI,Slow {
 
 	it "EXPECTED: Sets The 'NugetTest' Package Source to 'NugetTest2'" {
 		(register-packagesource -name "nugettest" -provider $nuget -location "https://www.nuget.org/api/v2")
@@ -1518,7 +1518,7 @@ Describe Set-PackageSource -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe Check-ForCorrectError -Tags @('BVT', 'DRT'){  
+Describe Check-ForCorrectError -Tags CI,Slow {
 
     it "EXPECTED: returns a correct error for find-package with dynamic parameter when package source is wrong" {
         $Error.Clear()
@@ -1534,7 +1534,7 @@ Describe Check-ForCorrectError -Tags @('BVT', 'DRT'){
 
 }
 
-Describe Test-Proxy -Tags @('BVT', 'DRT') {
+Describe Test-Proxy -Tags CI,Slow {
 
     It "EXPECTED: Register package source using proxy" -Skip {
         try {

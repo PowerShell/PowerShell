@@ -302,7 +302,7 @@ throw 'Prequisite requirements are not met. Correct them and then try loading th
         }
         finally
         {
-            "m1","m2","m3","m4","m5" | %{ rm -Recurse (Join-Path $ModulePath $_ ) }
+            "m1","m2","m3","m4","m5" | %{ remove-item -Recurse (Join-Path $ModulePath $_ ) }
         }
     }
 

@@ -1,6 +1,6 @@
 using namespace System.Diagnostics
 
-Describe "Console host tests" -Tags DRT {
+Describe "Console host tests" -Tags CI,Slow {
     $pathToPS = if ($env:DEVPATH) { $env:DEVPATH } else { $PSHOME }
     $powershell = Join-Path -Path $pathToPS -ChildPath "powershell"
 

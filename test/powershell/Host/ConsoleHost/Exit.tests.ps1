@@ -54,7 +54,7 @@ $TESTS = @{
 }
 
 
-Describe "PowerShell with -file should preserve exit codes" {
+Describe "PowerShell with -file should preserve exit codes" -Tags "Slow" {
     BeforeAll {
         $TestScript = "${TESTDRIVE}\ExitTest.ps1"
         $powershellexe = (get-process -id $PID).MainModule.FileName
