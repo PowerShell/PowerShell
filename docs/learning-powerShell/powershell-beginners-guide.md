@@ -1,7 +1,8 @@
 PowerShell Beginners Guide
 ====
 
-If you are new to PowerShell, this document will walk you through a few examples to give you some basic ideas of PowerShell. We recommend that you open a PowerShell console/session and type along with the instructions in this document to get most out of this exercise.
+If you are new to PowerShell, this document will walk you through a few examples to give you some basic ideas of PowerShell. 
+We recommend that you open a PowerShell console/session and type along with the instructions in this document to get most out of this exercise.
 
 
 Launch PowerShell Console/Session
@@ -19,7 +20,8 @@ In this section, you will learn how to
 - exit a PowerShell session
 - and more
 
-As mentioned above, PowerShell commands is designed to have Verb-Noun structure, for instance Get-Process, Set-Location, Clear-Host, etc. Let’s exercise some of the basic PowerShell commands, also known as **cmdlets**.
+As mentioned above, PowerShell commands is designed to have Verb-Noun structure, for instance Get-Process, Set-Location, Clear-Host, etc. 
+Let’s exercise some of the basic PowerShell commands, also known as **cmdlets**.
 
 Please note that we will use the PowerShell prompt sign **PS />** as it appears on Linux in the following examples.
 It is shown as **PS C:\\>** on  Windows.
@@ -39,7 +41,8 @@ Handles   NPM(K)    PM(K)     WS(K)     CPU(s)     Id    ProcessName
 
 …
 ```
-Only interested in the instance of firefox process that are running on your computer? Try this:
+Only interested in the instance of firefox process that are running on your computer? 
+Try this:
 ```PowerShell
 PS /> Get-Process -Name firefox
 
@@ -48,7 +51,9 @@ Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
     -      -          -          74   403.150   1209   firefox
 
 ```
-Want to get back more than one process? Then just specify process names, separating with commas. For example,
+Want to get back more than one process? 
+Then just specify process names, separating with commas. 
+For example,
 ```PowerShell
 PS /> Get-Process -Name firefox, powershell
 Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
@@ -63,7 +68,8 @@ Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
 PS /> Get-Process
 PS /> Clear-Host
 ```
-Type too much just for clearing the screen? Here is how the alias can help.
+Type too much just for clearing the screen? 
+Here is how the alias can help.
 
 **3. Get-Alias**:  Improves the user experience by using the Cmdlet aliases
 
@@ -85,7 +91,8 @@ Alias           ri -> Remove-Item
 Alias           type -> Get-Content
 …
 
-As you can see "cls" is an alias of Clear-Host. Now try it:
+As you can see "cls" is an alias of Clear-Host. 
+Now try it:
 
 PS /> Get-Process
 PS /> cls
@@ -126,7 +133,9 @@ Mode                LastWriteTime         Length  Name
 ----                -------------         ------  ----
 -a----         7/7/2016   7:17 PM              0  test.ps1
 ```
-You can use the **-Value** parameter to add some data to your file. For example, the following command adds the phrase "Write-Host 'Hello There'" as a file content to the test.ps1. Because the test.ps1 file exists already, we use **-Force** parameter to replace the existing content.
+You can use the **-Value** parameter to add some data to your file. 
+For example, the following command adds the phrase "Write-Host 'Hello There'" as a file content to the test.ps1. 
+Because the test.ps1 file exists already, we use **-Force** parameter to replace the existing content.
 
 ```PowerShell
 PS /home/jen> New-Item -Path ./test.ps1 -Value "Write-Host 'hello there'" -Force
@@ -139,7 +148,8 @@ Mode                LastWriteTime         Length  Name
 -a----         7/7/2016   7:19 PM             24  test.ps1
 
 ```
-There are other ways to add some data to a file. For example, you can use Set-Content to set the file contents:
+There are other ways to add some data to a file. 
+For example, you can use Set-Content to set the file contents:
 
 ```PowerShell
 PS /home/jen>Set-Content -Path ./test.ps1 -Value "Write-Host 'hello there again!'"
@@ -172,8 +182,8 @@ PS /home/jen> Remove-Item ./test.ps1
 
 **9. $PSVersionTable**: displays the version of PowerShell you are currently using
 
-Type **$PSVersionTable** in your PowerShell session, you will see something like below. "PSVersion" indicates the
-PowerShell version that you are using.
+Type **$PSVersionTable** in your PowerShell session, you will see something like below. 
+"PSVersion" indicates the PowerShell version that you are using.
 
 ```PowerShell
 Name                           Value
@@ -196,7 +206,8 @@ PS /home/jen> exit
 
 Need Help?
 ----
-The most important command in PowerShell is possibly the Get-Help, which allows you to quickly learn PowerShell without having to surf around the Internet. The Get-Help cmdlet also shows you how PowerShell commands work with examples.
+The most important command in PowerShell is possibly the Get-Help, which allows you to quickly learn PowerShell without having to surf around the Internet. 
+The Get-Help cmdlet also shows you how PowerShell commands work with examples.
 
 PS />**Get-Help -Name Get-Process**
 
@@ -232,7 +243,8 @@ PS /> **Get-Help Get-Process -Example**
 
 PowerShell Pipeline '|'
 ----
-Sometimes when you run Get-ChildItem or "dir", you want to get a list of files in a descending order. To achieve that, type:
+Sometimes when you run Get-ChildItem or "dir", you want to get a list of files in a descending order. 
+To achieve that, type:
 ```PowerShell
 PS /home/jen> dir | sort -Descending
 ```
@@ -254,7 +266,8 @@ How to Create and Run PowerShell scripts
 - You can use ISE, VS Code or your favorite editor to create a PowerShell script and save the script with a .ps1 file extension (for example, helloworld.ps1)
 - To run the script, cd to your current folder and type ./yourscript.ps1 (for example, ./helloworld.ps1).
 
-Note: if you are using Windows, make sure you set the PowerShell's execution policy to "RemoteSigned" in this case. See [Running PowerShell Scripts Is as Easy as 1-2-3] [run-ps] for more details.
+Note: if you are using Windows, make sure you set the PowerShell's execution policy to "RemoteSigned" in this case. 
+See [Running PowerShell Scripts Is as Easy as 1-2-3] [run-ps] for more details.
 
 [run-ps]:http://windowsitpro.com/powershell/running-powershell-scripts-easy-1-2-3
 
