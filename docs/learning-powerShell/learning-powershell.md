@@ -2,7 +2,8 @@ Learning PowerShell
 ====
 
 Whether you're new to programming or an experienced developer, we'll help you get started with PowerShell.
-In this document we'll cover the following: installing PowerShell, samples walkthrough, PowerShell editor, debugger, testing tools and a map book for experienced bash users to get started with PowerShell faster. 
+In this document we'll cover the following: 
+installing PowerShell, samples walkthrough, PowerShell editor, debugger, testing tools and a map book for experienced bash users to get started with PowerShell faster. 
 The exercises in this document are intended to give you a solid foundation in how to use PowerShell. 
 You won't be a PowerShell guru at the end of reading this material but you will be well on your way with the right set of knowledge to start using PowerShell. 
 If you have 30 minutes now, let’s try it.
