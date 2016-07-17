@@ -820,29 +820,40 @@ namespace NativeMsh
     // The name of the CoreCLR native runtime DLL.
     static PCSTR coreClrDll = "CoreCLR.dll";
 
-    // The location where CoreCLR is expected to be installed. If CoreCLR.dll isn't
+    // The location where CoreCLR is expected to be installed for inbox PowerShell. If CoreCLR.dll isn't
     // found in the same directory as the host, it will be looked for here.
     static PCSTR coreCLRInstallDirectory = "%windir%\\system32\\DotNetCore\\v1.0\\";
 
-    // The location where CoreCLR PowerShell Ext binaries are expected to be installed.     
+    // The location where CoreCLR PowerShell Ext binaries are expected to be installed for inbox PowerShell.
     static PCSTR coreCLRPowerShellExtInstallDirectory = "%windir%\\system32\\CoreClrPowerShellExt\\v1.0\\";
 
-    // The default PowerShell install directory. This location may be overridden through a config file in %windir%\System32.
+    // The default PowerShell install directory for inbox PowerShell. 
+    // This location may be overridden by placing a config file in the same directory as the PowerShell host.
     static PCSTR powerShellInstallPath = "%windir%\\System32\\WindowsPowerShell\\v1.0\\";
 
     unsigned int PwrshCommon::IdentifyHostDirectory(
         HostEnvironment& hostEnvironment)
     {
-        // Discover the path to the exe's module (powershell.exe or wsmprovhost.exe). 
-        // For remoting, this is expected to be %windir%\system32 since that is the location of wsmprovhost.exe.
-        char hostPath[MAX_PATH];
-        DWORD thisModuleLength = sysCalls->GetModuleFileNameA(sysCalls->GetModuleHandleA(NULL), hostPath, MAX_PATH);
+        // Discover the path to the plugin or the executable (pwrshplugin.dll or powershell.exe). 
+        // For PowerShell Core, the plugin no longer resides in %windir%\\system32 (it is in a sub-directory).
+        // If pwrshplugin.dll is not loaded, it means that this is running via powershell.exe.
+        wchar_t hostPath[MAX_PATH];
+        DWORD thisModuleLength;
 
-        if (0 == thisModuleLength)
+        if (GetModuleHandleW(L"pwrshplugin.dll")) 
+        {
+            thisModuleLength = GetModuleFileNameW(GetModuleHandleW(L"pwrshplugin.dll"), hostPath, MAX_PATH);
+        }
+        else
+        {
+            thisModuleLength = GetModuleFileNameW(GetModuleHandleW(NULL), hostPath, MAX_PATH);
+        }
+        if (0 == thisModuleLength) // Greater than zero means it is the length of the fully qualified path (without the NULL character)
         {
             // TODO: Use GetLastError() to find the specific error #
             return EXIT_CODE_INIT_FAILURE;
         }
+        
         // Search for the last backslash in the host path.
         int lastBackslashIndex;
         for (lastBackslashIndex = thisModuleLength - 1; lastBackslashIndex >= 0; lastBackslashIndex--)
@@ -854,14 +865,34 @@ namespace NativeMsh
         }
 
         // The remaining part of the path after the last '\' is the binary name.
-        hostEnvironment.SetHostBinaryName(hostPath + lastBackslashIndex + 1);
+        hostEnvironment.SetHostBinaryNameW(hostPath + lastBackslashIndex + 1);
 
         // Copy the directory path portion of the path
         hostPath[lastBackslashIndex + 1] = '\0';
-        hostEnvironment.SetHostPath(hostPath);
+        hostEnvironment.SetHostPathW(hostPath);
 
-        hostEnvironment.SetHostDirectoryPath(powerShellInstallPath);
-
+        // Read the config file to determine the appropriate host path and CoreCLR path to use.
+        unsigned int result = reader->Read(hostPath);
+        if (EXIT_CODE_SUCCESS == result)
+        {
+            // The config file was successfully parsed. Use those directories.
+            hostEnvironment.SetHostDirectoryPathW(reader->GetPathToPowerShell().c_str());
+            hostEnvironment.SetCoreCLRDirectoryPathW(reader->GetPathToCoreClr().c_str());
+        }
+        else 
+        {
+            // There was an issue accessing or parsing the config file OR
+            // we are working for the EXE.
+            //
+            // TODO: This should not be the fallback for inbox PowerShell.exe. 
+            // It should use coreCLRInstallDirectory and coreCLRPowerShellExtInstallDirectory. 
+            //
+            // Use the directory detected via GetModuleFileName + GetModuleHandle
+            hostEnvironment.SetHostDirectoryPathW(hostPath);
+            // At the moment, CoreCLR is in the same directory as PowerShell Core.
+            // This path must be modified if we decide to use a different directory.
+            hostEnvironment.SetCoreCLRDirectoryPathW(hostPath);
+        }
         return EXIT_CODE_SUCCESS;
     }
 
@@ -959,18 +990,24 @@ namespace NativeMsh
     //
 
     PwrshCommon::PwrshCommon() 
-        : output(new PwrshCommonOutputDefault()), sysCalls(new WinSystemCallFacade())
+        : output(new PwrshCommonOutputDefault()), reader(new ConfigFileReader()), sysCalls(new WinSystemCallFacade())
     {
     }
 
     PwrshCommon::PwrshCommon(
         IPwrshCommonOutput* outObj, 
+        ConfigFileReader* rdr,
         SystemCallFacade* systemCalls) 
-        : output(outObj), sysCalls(systemCalls)
+        : output(outObj), reader(rdr), sysCalls(systemCalls)
     {
         if (NULL == output)
         {
             output = new PwrshCommonOutputDefault();
+        }
+
+        if (NULL == reader)
+        {
+            reader = new ConfigFileReader();
         }
 
         if (NULL == sysCalls)
@@ -985,6 +1022,12 @@ namespace NativeMsh
         {
             delete output;
             output = NULL;
+        }
+
+        if (reader)
+        {
+            delete reader;
+            reader = NULL;
         }
 
         if (sysCalls)
@@ -1299,37 +1342,13 @@ namespace NativeMsh
             return exitCode;
         }
 
-        // Try to load from the well-known location. 
-        char coreCLRInstallPath[MAX_PATH];
-        exitCode = ::ExpandEnvironmentStringsA(coreCLRInstallDirectory, coreCLRInstallPath, MAX_PATH);
-        if (0 == exitCode || _countof(coreCLRInstallPath) <= exitCode)
+        exitCode = hostWrapper->SetupWrapper(hostEnvironment.GetCoreCLRDirectoryPath());
+        if (EXIT_CODE_SUCCESS != exitCode)
         {
             this->output->DisplayMessage(false, g_STARTING_CLR_FAILED, GetLastError());
-            return EXIT_CODE_INIT_FAILURE;
-        }
-
-        HMODULE coreClrModule = hostWrapper->SetupWrapper(coreCLRInstallPath);
-        if (!coreClrModule)
-        {
-            this->output->DisplayMessage(false, g_STARTING_CLR_FAILED, GetLastError());
-            return EXIT_CODE_INIT_FAILURE;
+            return exitCode;
         }
         
-        // Save the directory that CoreCLR was found in
-        char coreCLRDirectoryPath[MAX_PATH];
-        DWORD modulePathLength = sysCalls->GetModuleFileNameA(coreClrModule, coreCLRDirectoryPath, MAX_PATH);
-
-        // Search for the last backslash and terminate it there to keep just the directory path with trailing slash
-        for (int lastBackslashIndex = modulePathLength - 1; lastBackslashIndex >= 0; lastBackslashIndex--)
-        {
-            if (coreCLRDirectoryPath[lastBackslashIndex] == L'\\')
-            {
-                coreCLRDirectoryPath[lastBackslashIndex + 1] = L'\0';
-                break;
-            }
-        }
-        hostEnvironment.SetCoreCLRDirectoryPath(coreCLRDirectoryPath);
-
         const int nMaxProps = 8;
         LPCSTR props[nMaxProps];
         LPCSTR vals[nMaxProps];

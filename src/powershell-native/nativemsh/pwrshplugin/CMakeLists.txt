@@ -5,7 +5,8 @@ add_library(pwrshplugin SHARED
     entrypoints.cpp
     pwrshclrhost.cpp
     pwrshpluginerrorcodes.mc
-    pwrshpluginerrorcodes.rc
+    #pwrshpluginerrorcodes.rc
+    pwrshpluginResources.rc
     pwrshplugin.def
     )
 
@@ -40,7 +41,7 @@ else ()
         # CoreCLR lib
         ${STATIC_MT_CRT_LIB}
         ${STATIC_MT_VCRT_LIB}
-        ${STATIC_UCRT_LIB}
+        #        ${STATIC_UCRT_LIB}
         legacy_stdio_definitions.lib # Resolves: LNK2019: unresolved external symbol _vsnwprintf
         )
     set(pwrshplugin_definitions ${common_pwrsh_definitions})

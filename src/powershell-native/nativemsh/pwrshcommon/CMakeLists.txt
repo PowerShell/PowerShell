@@ -4,7 +4,9 @@
 #
 add_library(pwrshcommon
     pwrshcommon.cpp
-    WinSystemCallFacade.cpp)
+    WinSystemCallFacade.cpp
+    ConfigFileReader.cpp
+    )
 
 target_include_directories(pwrshcommon PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

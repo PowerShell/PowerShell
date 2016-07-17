@@ -37,7 +37,7 @@ namespace NativeMsh
         //
         // The following methods are direct thin wrappers for the host calls.
         //
-        virtual HMODULE SetupWrapper(LPCSTR coreClrPathPtr) = 0;
+        virtual unsigned int SetupWrapper(LPCSTR coreClrPathPtr) = 0;
 
         virtual int InitializeClr(
             const char* exePath,
@@ -123,15 +123,13 @@ namespace NativeMsh
         { 
             return (NULL != coreClrHandle); 
         }
-        
-        //
-        // TODO: This shouldn't return HMODULE because that breaks encapsulation. I need a better way to 
-        // have the caller extract the value. Either Pass as a reference or provide an accessor.
-        //
+       
+        // 
         // Attempts to load CoreCLR.dll from the specified directory.
         // On success pins the dll, sets coreCLRDirectoryPath and returns the HMODULE.
         // On failure returns NULL.
-        virtual HMODULE SetupWrapper(LPCSTR coreClrPathPtr)
+        //
+        virtual unsigned int SetupWrapper(LPCSTR coreClrPathPtr)
         {
             std::string coreClrPath(coreClrPathPtr);
             coreClrPath += coreClrDllName;
@@ -139,13 +137,13 @@ namespace NativeMsh
             HMODULE result = LoadLibraryExA(coreClrPath.c_str(), NULL, 0);
             if (!result)
             {
-                return NULL;
+                return EXIT_CODE_INIT_FAILURE;
             }
 
             // Pin the module - CoreCLR.dll does not support being unloaded.
             if (!GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_PIN, coreClrPath.c_str(), &pinnedModuleHandle))
             {
-                return NULL;
+                return EXIT_CODE_INIT_FAILURE;
             }
 
             initPtr = (coreclr_initialize_ptr)GetProcAddress(result, "coreclr_initialize");
@@ -156,12 +154,12 @@ namespace NativeMsh
                 NULL == shutdownPtr ||
                 NULL == createDelegatePtr)
             {
-                return NULL;
+                return EXIT_CODE_INIT_FAILURE;
             }
 
             // Initialization succeeded. Save the handle and return success;
             coreClrHandle = result;
-            return result;
+            return EXIT_CODE_SUCCESS;
         }
 
         virtual unsigned int CleanUpHostWrapper()
@@ -246,6 +244,7 @@ namespace NativeMsh
     private:
         // The path to this module
         char m_hostPath[MAX_PATH];
+        wchar_t m_hostPathW[MAX_PATH];
 
         // The path to the directory containing this module
         char m_hostDirectoryPath[MAX_PATH];
@@ -253,10 +252,55 @@ namespace NativeMsh
 
         // The name of this module, without the path
         std::string m_hostBinaryName;
+        std::wstring m_hostBinaryNameW;
 
         // The path to the directory that CoreCLR is in
         char m_coreCLRDirectoryPath[MAX_PATH];
         wchar_t m_coreCLRDirectoryPathW[MAX_PATH];
+
+        void convertAnsiToWide(char* ansiArray, wchar_t* wideArray)
+        {
+            // Generate the wide version of the string and save its value;
+            //
+            // This is a two call function. The first call is to get the necessary length.
+            // The second call is to perform the actual operation.
+            int length = ::MultiByteToWideChar(CP_UTF8, 0, ansiArray, -1, NULL, 0);
+            if (0 < length)
+            {
+                LPWSTR result = new wchar_t[length];
+                if (NULL != result)
+                {
+                    length = ::MultiByteToWideChar(CP_UTF8, 0, ansiArray, -1, result, length);
+                    if (0 < length)
+                    {
+                        wcscpy_s(wideArray, MAX_PATH, result);
+                    }
+                    delete[] result; // Free the allocated string to avoid a memory leak
+                }
+            }
+        }
+
+        void convertWideToAnsi(wchar_t* wideArray, char* ansiArray)
+        {
+            // Generate the ansi version of the string and save its value;
+            //
+            // This is a two call function. The first call is to get the necessary length.
+            // The second call is to perform the actual operation.
+            int length = ::WideCharToMultiByte(CP_ACP, 0, wideArray, -1, NULL, 0, NULL, NULL);
+            if (0 < length)
+            {
+                LPSTR result = new char[length];
+                if (NULL != result)
+                {
+                    length = ::WideCharToMultiByte(CP_ACP, 0, wideArray, -1, result, length, NULL, NULL);
+                    if (0 < length)
+                    {
+                        strcpy_s(ansiArray, MAX_PATH, result);
+                    }
+                    delete[] result; // Free the allocated string to avoid a memory leak
+                }
+            }
+        }
 
     public:
 
@@ -275,6 +319,17 @@ namespace NativeMsh
             if (hostPath)
             {
                 ::ExpandEnvironmentStringsA(hostPath, m_hostPath, MAX_PATH);
+
+                convertAnsiToWide(m_hostPath, m_hostPathW);
+            }
+        }
+        void SetHostPathW(PCWSTR hostPath)
+        {
+            if (hostPath)
+            {
+                ::ExpandEnvironmentStringsW(hostPath, m_hostPathW, MAX_PATH);
+
+                convertWideToAnsi(m_hostPathW, m_hostPath);
             }
         }
 
@@ -282,6 +337,11 @@ namespace NativeMsh
         PCSTR GetHostPath()
         {
             return m_hostPath;
+        }
+
+        PCWSTR GetHostPathW()
+        {
+            return m_hostPathW;
         }
 
         // Safely copies in a host binary name
@@ -293,10 +353,23 @@ namespace NativeMsh
             }
         }
 
+        void SetHostBinaryNameW(PCWSTR hostBinaryName)
+        {
+            if (hostBinaryName)
+            {
+                m_hostBinaryNameW = std::wstring(hostBinaryName);
+            }
+        }
+
         // Returns the name of the host module
         PCSTR GetHostBinaryName()
         {
             return m_hostBinaryName.c_str();
+        }
+
+        PCWSTR GetHostBinaryNameW()
+        {
+            return m_hostBinaryNameW.c_str();
         }
 
         // Safely copies in a host directory path
@@ -306,24 +379,17 @@ namespace NativeMsh
             {
                 ::ExpandEnvironmentStringsA(hostDirPath, m_hostDirectoryPath, MAX_PATH);
 
-                // Generate the wide version of the string and save its value;
-                //
-                // This is a two call function. The first call is to get the necessary length.
-                // The second call is to perform the actual operation.
-                int length = MultiByteToWideChar(CP_UTF8, 0, m_hostDirectoryPath, -1, NULL, 0);
-                if (0 < length)
-                {
-                    LPWSTR result = new wchar_t[length];
-                    if (NULL != result)
-                    {
-                        length = ::MultiByteToWideChar(CP_UTF8, 0, m_hostDirectoryPath, -1, result, length);
-                        if (0 < length)
-                        {
-                            wcscpy_s(m_hostDirectoryPathW, MAX_PATH, result);
-                        }
-                        delete[] result; // Free the allocated string to avoid a memory leak
-                    }
-                }
+                convertAnsiToWide(m_hostDirectoryPath, m_hostDirectoryPathW);
+            }
+        }
+
+        void SetHostDirectoryPathW(PCWSTR hostDirPath)
+        {
+            if (hostDirPath)
+            {
+                ::ExpandEnvironmentStringsW(hostDirPath, m_hostDirectoryPathW, MAX_PATH);
+
+                convertWideToAnsi(m_hostDirectoryPathW, m_hostDirectoryPath);
             }
         }
 
@@ -346,24 +412,17 @@ namespace NativeMsh
             {
                 ::ExpandEnvironmentStringsA(hostClrPath, m_coreCLRDirectoryPath, MAX_PATH);
 
-                // Generate the wide version of the string and save its value;
-                //
-                // This is a two call function. The first call is to get the necessary length.
-                // The second call is to perform the actual operation.
-                int length = MultiByteToWideChar(CP_UTF8, 0, m_coreCLRDirectoryPath, -1, NULL, 0);
-                if (0 < length)
-                {
-                    LPWSTR result = new wchar_t[length];
-                    if (NULL != result)
-                    {
-                        length = ::MultiByteToWideChar(CP_UTF8, 0, m_coreCLRDirectoryPath, -1, result, length);
-                        if (0 < length)
-                        {
-                            wcscpy_s(m_coreCLRDirectoryPathW, MAX_PATH, result);
-                        }
-                        delete[] result; // Free the allocated string to avoid a memory leak
-                    }
-                }
+                convertAnsiToWide(m_coreCLRDirectoryPath, m_coreCLRDirectoryPathW);
+            }
+        }
+
+        void SetCoreCLRDirectoryPathW(PCWSTR hostClrPath)
+        {
+            if (hostClrPath)
+            {
+                ::ExpandEnvironmentStringsW(hostClrPath, m_coreCLRDirectoryPathW, MAX_PATH);
+
+                convertWideToAnsi(m_coreCLRDirectoryPathW, m_coreCLRDirectoryPath);
             }
         }
 
@@ -378,5 +437,7 @@ namespace NativeMsh
         {
             return m_coreCLRDirectoryPathW;
         }
+
+
     };
 } // namespace NativeMsh

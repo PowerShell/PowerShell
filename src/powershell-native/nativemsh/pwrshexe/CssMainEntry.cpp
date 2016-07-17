@@ -18,6 +18,7 @@
 #include "NativeMsh.h"
 #include "ClrHostWrapper.h"
 #include "OutputWriter.h"
+#include "ConfigFileReader.h"
 #include "WinSystemCallFacade.h"
 
 namespace NativeMsh
@@ -35,7 +36,7 @@ namespace NativeMsh
 
         // All these objects will be destroyed when commonFuncs goes out of scope.
         PwrshExeOutput* output = new PwrshExeOutput();
-        PwrshCommon commonFuncs(output, new WinSystemCallFacade());
+        PwrshCommon commonFuncs(output, new ConfigFileReader(), new WinSystemCallFacade());
         CoreClrHostingApiWrapper hostWrapper;
 
         exitCode = commonFuncs.LaunchCoreCLR(&hostWrapper, hostEnvironment, "powershell");

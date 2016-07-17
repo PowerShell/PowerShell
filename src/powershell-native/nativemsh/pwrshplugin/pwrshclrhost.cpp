@@ -130,7 +130,7 @@ PowerShellCoreClrWorker::PowerShellCoreClrWorker(
 
     if (NULL == commonLib)
     {
-        commonLib = new PwrshCommon(new PwrshPluginOutputDefault(), new WinSystemCallFacade());
+        commonLib = new PwrshCommon(new PwrshPluginOutputDefault(), new ConfigFileReader(), new WinSystemCallFacade());
     }
 }
 
@@ -344,7 +344,8 @@ unsigned int PowerShellClrManagedWorker::LoadWorkerCallbackPtrs(
 
         // use CreateInstance because we use the assembly strong name (as opposed to CreateInstanceFrom)
         //
-        // wszMgdPlugInFileName is %systemdir%\Windows\System32\WindowsPowerShell\v1.0\system.management.automation.dll.
+        // wszMgdPlugInFileName is system.management.automation.dll within the powershell install path.
+        // For inbox PowerShell, this is %systemdir%\Windows\System32\WindowsPowerShell\v1.0\system.management.automation.dll (Aka $PSHOME\system.management.automation.dll)
         _bstr_t bstrConsoleHostAssemblyName = _bstr_t(L"System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
         _bstr_t bstrUnmanagedMshEntryClass = _bstr_t(L"System.Management.Automation.Remoting.WSManPluginManagedEntryInstanceWrapper");
 

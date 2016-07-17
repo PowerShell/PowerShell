@@ -26,6 +26,7 @@
 #include <msxml6.h>
 #include <VersionHelpers.h>
 #include "OutputWriter.h"
+#include "ConfigFileReader.h"
 #include "WinSystemCallFacade.h"
 
 // include the tlb for mscorlib for access to the default AppDomain through COM Interop
@@ -49,7 +50,7 @@ WCHAR g_IconApp[MAX_PATH+1];
 
 // All these objects will be destroyed when pwrshCommon goes out of scope.
 PwrshExeOutput* pwrshExeOutput = new PwrshExeOutput();
-PwrshCommon pwrshCommon(pwrshExeOutput, new WinSystemCallFacade());
+PwrshCommon pwrshCommon(pwrshExeOutput, new ConfigFileReader(), new WinSystemCallFacade());
 
 bool ConvertArgvToSafeArray(
     IN int argc,

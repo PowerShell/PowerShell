@@ -99,12 +99,11 @@ function Start-PSBuild {
         Use-MSBuild
 
         #mc.exe is Message Compiler for native resources
-        <# This currently doesn't work reliably and clean systems. Removing for now since mc.exe is not being used yet.
+        # This currently doesn't work reliably and clean systems. Removing for now since mc.exe is not being used yet.
         $mcexe = Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\" -Recurse -Filter 'mc.exe' | ? {$_.FullName -match 'x64'} | select -First 1 | % {$_.FullName}
         if (-not $mcexe) {
             throw 'mc.exe not found. Install Microsoft Windows SDK.'
         }
-        #>
 
         $vcVarsPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
         if ((Test-Path -Path $vcVarsPath\vcvarsall.bat) -eq $false)
@@ -223,7 +222,6 @@ function Start-PSBuild {
         try {
             Push-Location "$PSScriptRoot\src\powershell-native"
 
-            <#
             # Compile native resources
             @("nativemsh/pwrshplugin") | % {
                 $nativeResourcesFolder = $_
@@ -231,7 +229,6 @@ function Start-PSBuild {
                     & $mcexe -o -d -c -U $_.FullName -h $nativeResourcesFolder -r $nativeResourcesFolder
                 }
             }
-            #>
  
 # Disabling until I figure out if it is necessary          
 #            $overrideFlags = "-DCMAKE_USER_MAKE_RULES_OVERRIDE=$PSScriptRoot\src\powershell-native\windows-compiler-override.txt" 
