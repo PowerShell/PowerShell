@@ -11,14 +11,16 @@ If you have 30 minutes now, let’s try it.
 Installing PowerShell
 ----
 
-First you need to set up your computer working environment if you have not done so. Choose the platform below and follow the instructions. At the end of this exercise, you should be able to launch the PowerShell session.
+First you need to set up your computer working environment if you have not done so. 
+Choose the platform below and follow the instructions. At the end of this exercise, you should be able to launch the PowerShell session.
 
 
 - [PowerShell on Linux][powershell-on-linux]
 - [PowerShell on OS X][powershell-on-os-x]
 - PowerShell on Windows
 
-  For this tutorial, you do not need to install PowerShell if you are running Windows. You can launch PowerShell command console by pressing Windows Key and typing PowerShell, and clicking on 'Windows PowerShell'.
+  For this tutorial, you do not need to install PowerShell if you are running Windows. 
+  You can launch PowerShell command console by pressing Windows Key and typing PowerShell, and clicking on 'Windows PowerShell'.
 
 [powershell-on-linux]: https://github.com/PowerShell/PowerShell/blob/master/docs/building/linux.md
 [powershell-on-os-x]: https://github.com/PowerShell/PowerShell/blob/master/docs/building/osx.md
@@ -28,14 +30,21 @@ TODO: Raghu for setup-dev-environment.md
 
 Getting Started with PowerShell
 ----
-PowerShell command has a Verb-Noun structure with a set of parameters. It's easy to learn and use PowerShell. For example, `Get-Process` will display all the running processes on your system. Let's walk through with a few examples by clicking on the [PowerShell Beginner's Guide](powershell-beginners-guide.md).
+PowerShell command has a Verb-Noun structure with a set of parameters. 
+It's easy to learn and use PowerShell. 
+For example, `Get-Process` will display all the running processes on your system. 
+Let's walk through with a few examples by clicking on the [PowerShell Beginner's Guide](powershell-beginners-guide.md).
 
-Now you have learned the basics of PowerShell. Please continue reading if you want to do some development work in PowerShell.
+Now you have learned the basics of PowerShell. 
+Please continue reading if you want to do some development work in PowerShell.
 
 PowerShell Editor
 ----
 
-In this section, you will create a PowerShell script using PowerShell editor. You can use your favorite editor to write scripts. As an example, we will use Visual Studio Code (VS Code) which works for Windows, Linux, or OS X. Click on the following link to create your first PowerShell script.
+In this section, you will create a PowerShell script using PowerShell editor. 
+You can use your favorite editor to write scripts. 
+As an example, we will use Visual Studio Code (VS Code) which works for Windows, Linux, or OS X. 
+Click on the following link to create your first PowerShell script.
 
 - [Using Visual Studio Code (VS Code)][use-vscode-editor]
 
@@ -47,7 +56,9 @@ On Windows, you can also use [PowerShell Integrated Scripting Environment (ISE)]
 PowerShell Debugger
 ----
 
-Assuming you have written a PowerShell script which may contain a software bug, you can fix the issue by using debugging. As an example, we will use VS Code. Click on the link below to learn more about debugging:
+Assuming you have written a PowerShell script which may contain a software bug, you can fix the issue by using debugging. 
+As an example, we will use VS Code. 
+Click on the link below to learn more about debugging:
 
 - [Using Visual Studio Code (VS Code)][use-vscode-debugger]
 - [PowerShell Command-line Debugging][cli-debugging]
@@ -62,7 +73,8 @@ On Windows, you can also use [ISE][use-ise-debugger] to debug PowerShell scripts
 PowerShell Testing
 ----
 
-We recommend using Pester testing tool which is initiated by the PowerShell Community for writing test cases. To use the tool please read [Pester Guides](https://github.com/pester/Pester) and [Writing Pester Tests Guidelines](https://github.com/PowerShell/PowerShell/blob/master/docs/testing-guidelines/WritingPesterTests.md).
+We recommend using Pester testing tool which is initiated by the PowerShell Community for writing test cases. 
+To use the tool please read [Pester Guides](https://github.com/pester/Pester) and [Writing Pester Tests Guidelines](https://github.com/PowerShell/PowerShell/blob/master/docs/testing-guidelines/WritingPesterTests.md).
 
 
 Map Book for Experienced Bash users
@@ -76,8 +88,7 @@ TODO: Don & JP to fill in
 | cd             |cd             |Change directory    
 | mkdir          |mkdir          |Create a new folder
 | Clear, Ctrl+L, Reset | cls | Clear screen
-|                |               |                 |   
-|                |               |                 ||
+
 
 
 More Reading
