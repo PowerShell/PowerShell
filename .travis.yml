@@ -7,6 +7,8 @@ matrix:
     - os: osx
       osx_image: xcode8
       language: generic
+env:
+  - GITHUB_TOKEN=a27573e27bea23fb05393ead69511b09e3b224be
 cache:
   directories:
     - $HOME/.dotnet
