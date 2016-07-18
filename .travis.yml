@@ -25,6 +25,3 @@ install:
   - (cd tools && ./download.sh)
 script:
   - ulimit -n 4096; powershell -c "Import-Module ./build.psm1; Start-PSBootstrap -Package; Start-PSBuild -Publish; Start-PSPackage; Start-PSPester; Start-PSxUnit"
-notifications:
-  slack:
-    secure: sKYd4n61+ZFzGZuWGUl8V1kN0NM16wRVOFVlNhlFCwnkrEsKROb++EvXf5uwnKuzxkhEjvPWO+UFgeshQDoR93y4s5YLfhC5JupK4nUzjPzWs208KTrh8u/x9MY8X6Ojxi85EEAiku5GzMoMlkucSStZUYwbIfnelzqdw8uoRwmm2MW4XCPwsuEuDUVghyiva0Mdx1G6MopCrK8T96WywJXT3chhfZQgVt+sQCBt9g+2kjDaObKrzG0P07IVK43ZpDgnu6AoxlyBzIx9mJH2Oa/tki3/kTO72Wcp3ps3qvmiStADamzVKR9p1VlWCLWAd6VOehxuByCGEyujpzk135Wud2DZYO+8LD6inZVhFe3Wt5pCU9BDXZppiATfMCqgXEH7nK54pEn79yHcjthRJ2+Z9ot7As2fu3RSBmTAi8nRP0fxRyX/jctR3S6P0qt0y1ynx9nzBfhmhPQW0PMVazWS/nruQIvK/3iiYXjZxM5bBwIvabmwV00EYeTdbL6ufXWNgQcG1ZWkDsi2I3vst/ytUbHwaFYg83bXWpxg9DCzJeWLVUvE5/3NfBxRAuCTot/fgTEA9IYScvrlL7Q/bT0cOt0vEM98MPf1UO+WP85uxhsRgHtwDEo+jMaL6ZFkPhlV6mmmED4NdY2//a571cLNXdnuMAze5O3TWGBG53g=
