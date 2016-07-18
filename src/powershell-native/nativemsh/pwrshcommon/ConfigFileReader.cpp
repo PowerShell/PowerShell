@@ -33,16 +33,16 @@ namespace NativeMsh
         std::wstring coreClrDirTag(L"CORECLRDIR=");
         while (std::getline(psConfigFile, line))
         {
-            std::wstring::const_iterator iter = line.begin();
+            ;
 
             // Search for the first actionable character in the line to
             // limit the number of passes that are made iterating through the line.
-            while(iter != line.end())
+            for(std::wstring::const_iterator iter = line.begin(); iter != line.end(); iter++)
             {
                 if (*iter == L'#')
                 {
                     // Stop parsing the line because the rest of it is a comment
-                    break;
+                    continue;
                 }
                 else if (*iter == L'p' || *iter == L'P')
                 {
@@ -72,9 +72,7 @@ namespace NativeMsh
                         }
                     }
                 }
-
-                // Do nothing to ignore unmatched characters (whitespace, etc.)
-                iter++;
+                // Else: Do nothing to ignore unmatched characters (whitespace, etc.)
             }
         }
         if (0 == this->pathToPowerShellAssemblies.size() ||
