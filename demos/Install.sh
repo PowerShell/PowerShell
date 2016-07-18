@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-[[ -n $GITHUB_TOKEN ]] || { echo >&2 "GITHUB_TOKEN variable is undefined, please provide token"; exit 1; }
+clear
+echo "Script to download latest release of PowerShell on *nix platforms" 
+
+echo "Verify if GITHUB_TOKEN variable is defined"
+[[ -n $GITHUB_TOKEN ]] || { echo >&2 "GITHUB_TOKEN variable is undefined, Generate one using https://help.github.com/articles/creating-an-access-token-for-command-line-use/"; exit 1; }
 
 # Authorizes with read-only access to GitHub API
 curl_() {
@@ -13,7 +17,7 @@ get_info() {
     curl_ https://api.github.com/repos/PowerShell/PowerShell/releases/latest | grep -B 1 "name.*$1"
 }
 
-# Get OS specific asset ID and package name
+echo "Get OS specific asset ID and package name"
 case "$OSTYPE" in
     linux*)
         source /etc/os-release
@@ -29,7 +33,7 @@ case "$OSTYPE" in
                 info=$(get_info deb)
                 ;;
             *)
-                exit 2 >&2 "$NAME is not supported!"
+                exit 2 >&2 "Package $NAME is not supported on $OSTYPE!"
         esac
         ;;
     darwin*)
@@ -69,4 +73,30 @@ case "$OSTYPE" in
         ;;
 esac
 
-echo "Congratulations! PowerShell is now installed."
+get_smadll_location() {
+    dpkg-query --listfiles PowerShell | grep "System.Management.Automation.dll"
+}
+
+get_powershell_location() {
+    dirname $(get_smadll_location)
+}
+
+get_powershell_symlink() {
+	dir /usr/bin/powershell
+}
+
+install_location=$(get_powershell_location)
+powershell_symlink=$(get_powershell_symlink)
+
+if [ $install_location ]
+then
+	echo "Congratulations! PowerShell \"$package\" is installed @ \"$install_location\""
+fi
+
+if [ $powershell_symlink ]
+then
+	echo "Symlink is available @ \"$powershell_symlink\""
+else
+	echo "PowerShell install failed! Check this script's output for information"
+	exit -1
+fi

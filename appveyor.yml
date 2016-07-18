@@ -10,11 +10,6 @@ environment:
   priv_key:
     secure: <encryped-value>
 
-notifications:
-  - provider: Slack
-    incoming_webhook:
-      secure: bwwXBTeJBtRFea6FSQKzVENLwL0AOeusUSUFIh/TeHA4y0UFk7bC9+OcxgZW+YfIC0VZyTpZClJHlPFFHSgiQs4g9om17RxzJEeq4EjsW5g=
-
 install:
   - ps: $fileContent = "-----BEGIN RSA PRIVATE KEY-----`n"
   - ps: $fileContent += $env:priv_key.Replace(' ', "`n")
