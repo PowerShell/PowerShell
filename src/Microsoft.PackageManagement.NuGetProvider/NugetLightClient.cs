@@ -502,10 +502,10 @@
         /// <param name="dependencyToBeInstalled"></param>
         /// <param name="permanentlyMarked"></param>
         /// <param name="temporarilyMarked"></param>
-        /// <param name="dependenciesProcessed"></param>
+        /// <param name="processedDependencies"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        internal static bool DepthFirstVisit(PackageItem packageItem, HashSet<PackageItem> temporarilyMarked, HashSet<PackageItem> permanentlyMarked, List<PackageItem> dependencyToBeInstalled, HashSet<string> dependenciesProcessed, NuGetRequest request)
+        internal static bool DepthFirstVisit(PackageItem packageItem, HashSet<PackageItem> temporarilyMarked, HashSet<PackageItem> permanentlyMarked, List<PackageItem> dependencyToBeInstalled, HashSet<string> processedDependencies, NuGetRequest request)
         {
             // dependency loop detected because the element is temporarily marked
             if (temporarilyMarked.Contains(packageItem))
@@ -524,9 +524,9 @@
             temporarilyMarked.Add(packageItem);
 
             // Visit the dependency
-            foreach (var dependency in GetPackageDependenciesHelper(packageItem, dependenciesProcessed, request))
+            foreach (var dependency in GetPackageDependenciesHelper(packageItem, processedDependencies, request))
             {
-                if (!DepthFirstVisit(dependency, temporarilyMarked, permanentlyMarked, dependencyToBeInstalled, dependenciesProcessed, request))
+                if (!DepthFirstVisit(dependency, temporarilyMarked, permanentlyMarked, dependencyToBeInstalled, processedDependencies, request))
                 {
                     // if dfs returns false then we have encountered a loop
                     return false;
@@ -550,9 +550,9 @@
         /// Returns the package dependencies of packageItem. We only return the dependencies that are not installed in the destination folder of request
         /// </summary>
         /// <param name="packageItem"></param>
-        /// <param name="depedenciesToProcessed"></param>
+        /// <param name="processedDependencies"></param>
         /// <param name="request"></param>
-        private static IEnumerable<PackageItem> GetPackageDependenciesHelper(PackageItem packageItem, HashSet<string> depedenciesToProcessed, NuGetRequest request)
+        private static IEnumerable<PackageItem> GetPackageDependenciesHelper(PackageItem packageItem, HashSet<string> processedDependencies, NuGetRequest request)
         {
             if (packageItem.Package.DependencySetList == null)
             {
@@ -571,7 +571,7 @@
                 {
                     var depKey = string.Format(CultureInfo.InvariantCulture, "{0}!#!{1}", dep.Id, dep.DependencyVersion.ToStringSafe());
 
-                    if (depedenciesToProcessed.Contains(depKey))
+                    if (processedDependencies.Contains(depKey))
                     {
                         continue;
                     }
@@ -627,7 +627,7 @@
                         if (installed)
                         {
                             // already processed this so don't need to do this next time
-                            depedenciesToProcessed.Add(dep.Id);
+                            processedDependencies.Add(dep.Id);
                             request.Verbose(String.Format(CultureInfo.CurrentCulture, Messages.AlreadyInstalled, dep.Id));
                             // already have a dependency so move on
                             continue;
@@ -647,7 +647,7 @@
                     // Get the package that is the latest version
                     yield return dependentPackageItem.OrderByDescending(each => each.Version).FirstOrDefault();
 
-                    depedenciesToProcessed.Add(depKey);
+                    processedDependencies.Add(depKey);
                 }
             }
         }
