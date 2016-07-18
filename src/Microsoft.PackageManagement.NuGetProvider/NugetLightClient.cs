@@ -480,7 +480,7 @@
             HashSet<PackageItem> temporarilyMarked = new HashSet<PackageItem>(new PackageItemComparer());
 
             // checks that there are no dependency loop 
-            hasDependencyLoop = !DepthFirstVisit(packageItem, temporarilyMarked, permanentlyMarked, dependencyToBeInstalled, request);
+            hasDependencyLoop = !DepthFirstVisit(packageItem, temporarilyMarked, permanentlyMarked, dependencyToBeInstalled, new HashSet<string>(), request);
 
             if (!hasDependencyLoop)
             {
@@ -502,9 +502,10 @@
         /// <param name="dependencyToBeInstalled"></param>
         /// <param name="permanentlyMarked"></param>
         /// <param name="temporarilyMarked"></param>
+        /// <param name="dependenciesProcessed"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        internal static bool DepthFirstVisit(PackageItem packageItem, HashSet<PackageItem> temporarilyMarked, HashSet<PackageItem> permanentlyMarked, List<PackageItem> dependencyToBeInstalled, NuGetRequest request)
+        internal static bool DepthFirstVisit(PackageItem packageItem, HashSet<PackageItem> temporarilyMarked, HashSet<PackageItem> permanentlyMarked, List<PackageItem> dependencyToBeInstalled, HashSet<string> dependenciesProcessed, NuGetRequest request)
         {
             // dependency loop detected because the element is temporarily marked
             if (temporarilyMarked.Contains(packageItem))
@@ -523,9 +524,9 @@
             temporarilyMarked.Add(packageItem);
 
             // Visit the dependency
-            foreach (var dependency in GetPackageDependenciesHelper(packageItem, request))
+            foreach (var dependency in GetPackageDependenciesHelper(packageItem, dependenciesProcessed, request))
             {
-                if (!DepthFirstVisit(dependency, temporarilyMarked, permanentlyMarked, dependencyToBeInstalled, request))
+                if (!DepthFirstVisit(dependency, temporarilyMarked, permanentlyMarked, dependencyToBeInstalled, dependenciesProcessed, request))
                 {
                     // if dfs returns false then we have encountered a loop
                     return false;
@@ -549,8 +550,9 @@
         /// Returns the package dependencies of packageItem. We only return the dependencies that are not installed in the destination folder of request
         /// </summary>
         /// <param name="packageItem"></param>
+        /// <param name="depedenciesToProcessed"></param>
         /// <param name="request"></param>
-        private static IEnumerable<PackageItem> GetPackageDependenciesHelper(PackageItem packageItem, NuGetRequest request)
+        private static IEnumerable<PackageItem> GetPackageDependenciesHelper(PackageItem packageItem, HashSet<string> depedenciesToProcessed, NuGetRequest request)
         {
             if (packageItem.Package.DependencySetList == null)
             {
@@ -567,6 +569,13 @@
 
                 foreach (var dep in depSet.Dependencies)
                 {
+                    var depKey = string.Format(CultureInfo.InvariantCulture, "{0}!#!{1}", dep.Id, dep.DependencyVersion.ToStringSafe());
+
+                    if (depedenciesToProcessed.Contains(depKey))
+                    {
+                        continue;
+                    }
+
                     // Get the min dependencies version
                     string minVersion = dep.DependencyVersion.MinVersion.ToStringSafe();
 
@@ -617,6 +626,8 @@
 
                         if (installed)
                         {
+                            // already processed this so don't need to do this next time
+                            depedenciesToProcessed.Add(dep.Id);
                             request.Verbose(String.Format(CultureInfo.CurrentCulture, Messages.AlreadyInstalled, dep.Id));
                             // already have a dependency so move on
                             continue;
@@ -634,7 +645,9 @@
                     }
 
                     // Get the package that is the latest version
-                   yield return dependentPackageItem.OrderByDescending(each => each.Version).FirstOrDefault();
+                    yield return dependentPackageItem.OrderByDescending(each => each.Version).FirstOrDefault();
+
+                    depedenciesToProcessed.Add(depKey);
                 }
             }
         }
