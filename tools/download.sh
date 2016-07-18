@@ -16,15 +16,27 @@ get_info() {
 # Get OS specific asset ID and package name
 case "$OSTYPE" in
     linux*)
+        source /etc/os-release
+        echo $ID
         # Install curl and wget to download package
-        sudo apt-get install -y curl wget
-        info=$(get_info deb)
+        case "$ID" in
+            centos*)
+                sudo yum install -y curl wget
+                info=$(get_info rpm)
+                ;;
+            ubuntu)
+                sudo apt-get install -y curl wget
+                info=$(get_info deb)
+                ;;
+            *)
+                exit 2 >&2 "$NAME is not supported!"
+        esac
         ;;
     darwin*)
         info=$(get_info pkg)
         ;;
     *)
-        exit 2 >&2 "$OSTYPE not supported!"
+        exit 2 >&2 "$OSTYPE is not supported!"
         ;;
 esac
 
@@ -38,9 +50,19 @@ curl_ -H 'Accept: application/octet-stream' https://api.github.com/repos/PowerSh
 # Installs PowerShell package
 case "$OSTYPE" in
     linux*)
+        source /etc/os-release
         # Install dependencies
-        sudo apt-get install -y libunwind8 libicu52
-        sudo dpkg -i ./$package
+        case "$ID" in
+            centos)
+                sudo yum install -y libicu libunwind
+                sudo yum install "./$package"
+                ;;
+            ubuntu)
+                sudo apt-get install -y libunwind8 libicu52
+                sudo dpkg -i "./$package"
+                ;;
+            *)
+        esac
         ;;
     darwin*)
         sudo installer -pkg ./$package -target /
