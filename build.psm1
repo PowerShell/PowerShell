@@ -247,6 +247,14 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
                 log "  Executing command: $command"
                 Start-NativeExecution { Invoke-Expression -Command:$command }
             }
+
+            # Copy the executable binary from the local build directory to the expected destination to enable Start-DevPowerShell to work
+            #
+            # TODO: This should be updated to handle per-architecture builds gracefully.
+            $srcPath = Join-Path (Join-Path (Join-Path (Get-Location) "bin") $msbuildConfiguration) "FullCLR/powershell.exe"
+            $dstPath = ($script:Options).Top
+            log "  Copying $srcPath to $dstPath"
+            Copy-Item $srcPath $dstPath
         } finally {
             Pop-Location
         }
