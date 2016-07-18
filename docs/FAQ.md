@@ -43,12 +43,30 @@ more information.
 
 [error]: https://blogs.msdn.microsoft.com/kebab/2013/06/09/an-introduction-to-error-handling-in-powershell/
 
-I just pulled master, why did my build fail?
+Why did my build fail?
 ============================================
+
+There are few common issues with the build.
+The easiest way to resolve most issues with the build is to run `Start-PSBuild -Clean`.
+
+### Dependency changed
 
 If package dependencies were changed in any `project.json`, you need to manually
 run `dotnet restore` to update your local dependency graphs. `Start-PSBuild
 -Restore` can automatically do this.
+
+### Resource changed
+
+`Start-PSBuild` automatically calls `Start-ResGen` on the very first run.
+On subsequent runs, you may need to explicitly use `Start-PSBuild -ResGen` command.
+
+Try it, when you see compilation error about *strings.
+
+[More details](workflow/resources.md) about resource.
+
+### TypeGen
+
+Similar to `-ResGen` parameter, there is `-TypeGen` parameter that trigger re-generation of type catalog.
 
 Why did `Start-PSBuild` tell me to update `dotnet`?
 ===================================================

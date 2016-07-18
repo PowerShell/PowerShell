@@ -15,11 +15,12 @@ Git Setup
 ---------
 
 Using Git requires it to be setup correctly; refer to the
+[Working With the PowerShell Repository](../git/powershell-repository-101.md),
 [README](../../README.md) and
 [Contributing Guidelines](../../.github/CONTRIBUTING.md).
 
-This guide assumes that you have recursively cloned the PowerShell
-repository and `cd`ed into it.
+**This guide assumes that you have recursively cloned the PowerShell
+repository and `cd`ed into it.**
 
 Toolchain Setup
 ---------------
@@ -55,13 +56,6 @@ The `./tools/download.sh` script will also install the PowerShell package.
 In Bash:
 
 ```sh
-git clone https://github.com/PowerShell/powerShell.git
-```
-If git prompts you for your password, you need to enter your access token. Click [GitHub Help][help] for how to get access token.
-
-[help]:https://help.github.com/articles/creating-an-access-token-for-command-line-use/
-
-```sh
 GITHUB_TOKEN=<replace with your token>
 ./tools/download.sh
 
@@ -72,10 +66,7 @@ You should now be in a `powershell` console host that is installed
 separately from any development copy you're about to build. Just
 import our module, bootstrap the dependencies, and build!
 
-
 In PowerShell:
-
-Change your directory to the one that you just cloned, for example, ``./src/PowerShell`.
 
 ```powershell
 Import-Module ./build.psm1
@@ -125,17 +116,15 @@ toolchain setup section above, you should have `powershell` installed.
 
 ```powershell
 Import-Module ./build.psm1
-git submodule init
-git submodule update
 Start-PSBuild
 ```
-
 Congratulations! If everything went right, PowerShell is now built.
 The `Start-PSBuild` script will output the location of the executable:
 
 `./src/powershell/bin/Linux/netcoreapp1.0/ubuntu.14.04-x64/powershell`.
 
-You should now be running the `powershell` that is what you just built if your run the above executable. You can run our cross-platform Pester tests with `Start-PSPester`, and
+You should now be running the `powershell` that is what you just built if your run the above executable.
+You can run our cross-platform Pester tests with `Start-PSPester`, and
 our xUnit tests with `Start-PSxUnit`.
 
 Build manually
