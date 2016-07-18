@@ -102,6 +102,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 	}
     AfterEach {
         $PowerShell.Commands.Clear()
+		$PowerShell.Streams.Error.Clear()
 		if(Test-Path $testfile)
 		{
 			Remove-Item $testfile
@@ -731,14 +732,88 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         $result | Should be "1"
     }
 	
-	It "Newlines are allowed after operators (line 3033)" {
-        $result = ExecuteCommand "(20 %
-        6 *
-        4 +
-        2) /
-        2 -
-        3"
-        $result | should be 2
+	It 'Tests accessing using null as index. (line 2648)'{
+		ExecuteCommand '$A=$(testcmd-parserBVT -returntype array); $A[$NONEXISTING_VARIABLE];'
+        $PowerShell.HadErrors | should be $true
+        $PowerShell.Streams.Error.FullyQualifiedErrorId | should be "NullArrayIndex"
+    }
+	
+	It 'Tests the parser response to ArrayName[. (line 2678)'{
+		try {
+            ExecuteCommand '$A=$(testcmd-parserBVT -returntype array); $A[ ;'
+            throw "Execution OK"
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should be "ParseException"
+        }
+    }
+	
+	It 'Tests the parser response to ArrayName[]. (line 2687)'{
+		try {
+            ExecuteCommand '$A=$(testcmd-parserBVT -returntype array); $A[] ;'
+            throw "Execution OK"
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should be "ParseException"
+        }
+    }
+	
+	#Issue#1430
+	It "Tests function scopes in a script. (line 2800)" -Pending{
+		" function global:func { 'global' }; " +
+                " function func { 'default' }; " +
+                " local:func; " +
+                " script:func; " +
+                " global:func; ">$testfile
+        $result = ExecuteCommand "function func { 'notcalled' };. $testfile"
+		$result -join "" | should be ("default", "default", "global" -join "") 
+		$result = ExecuteCommand "func"
+		$result | should be "global"
+    }
+	
+	It 'Test piping arguments to a script block. The objects should be accesible from "$input". (line 2870)'{
+		ExecuteCommand '$script = { $input; };$results = @(0,0),-1 | &$script'
+		$result = ExecuteCommand '$results[0][0]'
+        $result | Should be "0"
+		$result = ExecuteCommand '$results[0][1]'
+        $result | Should be "0"
+		$result = ExecuteCommand '$results[1]'
+        $result | Should be "-1"
+    }
+	
+	It 'Test piping null into a scriptblock. The script block should not be passed anything. (line 2903)'{
+		$result = ExecuteCommand '$() | &{ $count = 0; foreach ($i in $input) { $count++ }; $count }'
+        $result | Should be "1"
+		$result = ExecuteCommand '$() | &{ $input }'
+        $result | Should BeNullOrEmpty
+    }
+	
+	It 'Test that types in System.dll are found automatically. (line 2951)'{
+		$result = ExecuteCommand '[   System.IO.FileInfo]'
+        $result | Should be "System.IO.FileInfo"
+    }
+		
+	Context "Mathematical Operations Tests (starting at line 2975 to line 3036)" {
+        $testData = @(
+            @{ Script = '$a=6; $a -= 2;$a'; Expected = 4 }
+			@{ Script = "20 %
+			6"; Expected = "2" }
+			@{ Script = "(20 % 
+			6 * 
+			4  + 
+			2 ) / 
+			2 - 
+			3"; Expected = "2" }
+        )
+        It "<Script> should return <Expected>" -TestCases $testData {
+            param ( $Script, $Expected )
+            ExecuteCommand $Script | Should be $Expected
+        }
+    }
+	
+	It 'This test will call a cmdlet that returns an array and assigns it to a variable.  Then it will concatenate this array with itself and check that what results is an array of double the size of the original. (line 3148)'{
+		$result = ExecuteCommand '$list=$(testcmd-parserBVT -ReturnType "array"); $list = $list + $list;$list.length'
+        $result | Should be 6
     }
 	
     It "A here string must have one line (line 3266)" {
