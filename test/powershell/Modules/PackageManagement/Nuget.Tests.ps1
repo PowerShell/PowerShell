@@ -497,10 +497,10 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         $package.Name | should be "TSDProvider"
         (test-path "$dest\TSDProvider*") | should be $true
         if (test-path "$dest\TSDProvider*") {
-            rm $dest\TSDProvider* -force
+            Remove-Item $dest\TSDProvider* -force
         }
         if (test-path "$dest") {
-            rm $dest -force
+            Remove-Item $dest -force
         }
     }
 
@@ -511,7 +511,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         $package.Name | should be "TSDProvider"
         (test-path "$destination\TSDProvider*") | should be $true
         if (test-path "$destination\TSDProvider*") {
-            rm $destination\TSDProvider* -force
+            Remove-Item $destination\TSDProvider* -force
         }
     }
 
@@ -522,10 +522,10 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         $package.Name | should be "TSDProvider"
         (test-path "$dest\TSDProvider*") | should be $true
         if (test-path "$dest\TSDProvider*") {
-            rm $dest\TSDProvider* -force
+            Remove-Item $dest\TSDProvider* -force
         }
         if (test-path "$dest") {
-            rm $dest -force
+            Remove-Item $dest -force
         }
     }
 
@@ -535,7 +535,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         $package.Name | should be "TSDProvider"
         (test-path "$destination\TSDProvider*") | should be $true
         if (test-path "$destination\TSDProvider*") {
-            rm $destination\TSDProvider* -force
+            Remove-Item $destination\TSDProvider* -force
         }
     }
 
@@ -592,7 +592,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
             }
 
 		    if (Test-Path $destination\zlib*) {
-			    rm $destination\zlib*
+			    Remove-Item $destination\zlib*
 		    }
 
         }
@@ -618,7 +618,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
             }
 
 		    if (Test-Path $destination\zlib*) {
-			    rm $destination\zlib*
+			    Remove-Item $destination\zlib*
 		    }
 
         }
@@ -632,7 +632,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         }
         finally {
             if (Test-Path $destination\ModuleWithDependenciesLoop*) {
-                rm $destination\ModuleWithDependenciesLoop*
+                Remove-Item $destination\ModuleWithDependenciesLoop*
             }
         }
     }
@@ -644,7 +644,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         }
         finally {
             if (Test-Path $destination\TestPackage*) {
-                rm $destination\TestPackage*
+                Remove-Item $destination\TestPackage*
             }
         }
     }
@@ -663,7 +663,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         (Test-Path $destination\contoso*) | should be $true
 
         if (Test-Path $destination\contoso*) {
-            rm $destination\contoso*
+            Remove-Item $destination\contoso*
         }
     }
 
@@ -685,7 +685,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
 	    (find-package -name "zlib" -provider $nuget -source $source | save-package -Path $destination)
 	    (Test-Path -Path $destination\zlib*) | should be $true
 	    if (Test-Path -Path $destination\zlib*) {
-		    rm $destination\zlib*
+		    Remove-Item $destination\zlib*
         }
     }
 

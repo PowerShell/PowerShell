@@ -273,7 +273,7 @@ Describe "Install-Save-Package with multiple sources" -Tags @('BVT', 'DRT'){
             Register-PackageSource -Name foo -Location $InternalGallery -ProviderName 'PowerShellGet' -Trusted  -ErrorAction SilentlyContinue
             Register-PackageSource -Name bar -Location $InternalGallery -ProviderName 'NuGet'  -ErrorAction SilentlyContinue
             if (test-path "$destination") {
-                rm $destination -force -Recurse
+                Remove-Item $destination -force -Recurse
             }
 
          
@@ -291,7 +291,7 @@ Describe "Install-Save-Package with multiple sources" -Tags @('BVT', 'DRT'){
         
             (test-path "$destination\TSDProvider*") | should be $true
             if (test-path "$destination\TSDProvider*") {
-                rm $destination\TSDProvider* -force -Recurse
+                Remove-Item $destination\TSDProvider* -force -Recurse
             }
         }
         finally
@@ -362,7 +362,7 @@ Describe "Install-Save-Package with multiple sources" -Tags @('BVT', 'DRT'){
             Register-PackageSource -Name foobar -Location http://www.nuget.org/api/v2 -ProviderName 'NuGet'  -ErrorAction SilentlyContinue
 
             if (test-path "$destination") {
-                rm $destination -force -Recurse
+                Remove-Item $destination -force -Recurse
             }
 
          
@@ -379,7 +379,7 @@ Describe "Install-Save-Package with multiple sources" -Tags @('BVT', 'DRT'){
         
             (test-path "$destination\jquery*") | should be $true
             if (test-path "$destination\jquery*") {
-                rm $destination\jquery* -force -Recurse
+                Remove-Item $destination\jquery* -force -Recurse
             }
         }
         finally
@@ -398,7 +398,7 @@ Describe "Install-Save-Package with multiple sources" -Tags @('BVT', 'DRT'){
         
 
         if (test-path "$destination") {
-            rm $destination -force -Recurse
+            Remove-Item $destination -force -Recurse
         }
 
          
@@ -417,14 +417,14 @@ Describe "Install-Save-Package with multiple sources" -Tags @('BVT', 'DRT'){
         
         (test-path "$destination\Contoso*") | should be $true
         if (test-path "$destination\Contoso*") {
-            rm $destination\Contoso* -force -Recurse
+            Remove-Item $destination\Contoso* -force -Recurse
         }
 
     }
 
     It "save-package with array of registered sources, Expect succeed" -Pending {
         if (test-path "$destination") {
-            rm $destination -force -Recurse
+            Remove-Item $destination -force -Recurse
         }
 
         $x= save-package TSDProvider -force -Source @($InternalSource, $InternalSource2) -path $destination  -ProviderName @('PowershellGet', 'NuGet')   
@@ -433,13 +433,13 @@ Describe "Install-Save-Package with multiple sources" -Tags @('BVT', 'DRT'){
 
         (test-path "$destination\TSDProvider*") | should be $true
         if (test-path "$destination\TSDProvider*") {
-            rm $destination\TSDProvider* -force -Recurse
+            Remove-Item $destination\TSDProvider* -force -Recurse
         }
     }
 
     It "save-package with array of sources, Expect succeed" -Skip {
         if (test-path "$destination") {
-            rm $destination -force -Recurse
+            Remove-Item $destination -force -Recurse
         }
 
         $x= save-package jquery -force -Source @('fffffbbbbb', 'https://www.nuget.org/api/v2') -path $destination   -ProviderName @('Nuget', 'Chocolatey')     
@@ -449,7 +449,7 @@ Describe "Install-Save-Package with multiple sources" -Tags @('BVT', 'DRT'){
         
         (test-path "$destination\jquery*") | should be $true
         if (test-path "$destination\jquery*") {
-            rm $destination\jquery* -force -Recurse
+            Remove-Item $destination\jquery* -force -Recurse
         }
     }
 }
