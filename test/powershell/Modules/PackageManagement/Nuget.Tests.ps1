@@ -515,7 +515,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
         }
     }
 
-    It "EXPECTED success: save-package -LiteralPath" {
+    It "EXPECTED success: save-package -LiteralPath" -Pending:(!$IsWindows) {
         $dest = "$destination\NeverEverExists"
         $package = save-package -LiteralPath $dest -ProviderName nuget -Source $dtlgallery -name TSDProvider -force
        
