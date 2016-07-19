@@ -37,6 +37,10 @@ function Start-PSBuild {
         [switch]$TypeGen,
         [switch]$Clean,
 
+        # this switch will re-build only System.Mangement.Automation.dll
+        # it's useful for development, to do a quick changes in the engine
+        [switch]$SMAOnly,
+
         [Parameter(ParameterSetName='CoreCLR')]
         [switch]$Publish,
 
@@ -138,7 +142,15 @@ function Start-PSBuild {
     }
 
     # set output options
-    $OptionsArguments = @{Publish=$Publish; Output=$Output; FullCLR=$FullCLR; Runtime=$Runtime; Configuration=$Configuration; Verbose=$true}
+    $OptionsArguments = @{
+        Publish=$Publish
+        Output=$Output
+        FullCLR=$FullCLR
+        Runtime=$Runtime
+        Configuration=$Configuration
+        Verbose=$true
+        SMAOnly=[bool]$SMAOnly
+    }
     $script:Options = New-PSOptions @OptionsArguments
 
     # setup arguments
@@ -151,6 +163,10 @@ function Start-PSBuild {
     if ($Output) {
         $Arguments += "--output", (Join-Path $PSScriptRoot $Output)
     }
+    elseif ($SMAOnly) {
+        $Arguments += "--output", (Split-Path $script:Options.Output)
+    }
+
     $Arguments += "--configuration", $Options.Configuration
     $Arguments += "--framework", $Options.Framework
     $Arguments += "--runtime", $Options.Runtime
@@ -211,7 +227,7 @@ function Start-PSBuild {
         if (-not (Test-Path $Lib)) {
             throw "Compilation of $Lib failed"
         }
-    } elseif ($FullCLR) {
+    } elseif ($FullCLR -and (-not $SMAOnly)) {
         log "Start building native powershell.exe"
 
         try {
@@ -282,7 +298,9 @@ function New-PSOptions {
         [switch]$Publish,
         [string]$Output,
 
-        [switch]$FullCLR
+        [switch]$FullCLR,
+
+        [switch]$SMAOnly
     )
 
     # Add .NET CLI tools to PATH
@@ -352,9 +370,19 @@ function New-PSOptions {
         $Output = [IO.Path]::Combine($Output, $Executable)
     }
 
+    $RealFramework = $Framework
+    if ($SMAOnly)
+    {
+        $Top = "$PSScriptRoot/src/System.Management.Automation"
+        if ($Framework -match 'netcoreapp')
+        {
+            $RealFramework = 'netstandard1.6'
+        }
+    }
+
     return @{ Top = $Top;
               Configuration = $Configuration;
-              Framework = $Framework;
+              Framework = $RealFramework;
               Runtime = $Runtime;
               Output = $Output }
 }
