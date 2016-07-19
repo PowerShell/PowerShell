@@ -26,10 +26,10 @@ Build Status
 Get PowerShell
 --------------
 
-|                       | Linux | Windows .NET Core | Windows .NET Full | OS X | PSRP |
-|-----------------------|-------|-------------------|-------------------|------|------|
-| Build from **Source** | [Instructions][build-linux] | [Instructions][build-wc] | [Instructions][build-wf] | [Instructions][build-osx] | [Instructions][pls-omi-provider] |
-| Get **Binaries**      | [Releases][releases] | [Releases][releases] | [Artifacts][artifacts] | [Releases][releases] | TBD |
+|                       | Linux | Windows  | OS X |
+|-----------------------|-------|-------------------|------|
+| Build from **Source** | [Instructions][build-linux] | [Instructions][build-wc] | [Instructions][build-osx] |
+| Get **Binaries**      | [Releases][releases] | [Releases][releases] | [Releases][releases] |
 
 If installing PowerShell from a package, please refer to the installation
 documents for [Linux][inst-linux] and [Windows][inst-win].
@@ -48,11 +48,11 @@ Developing and Contributing
 --------------------------
 If you are new to Git, we recommend you start by reviewing our
 [Git basics document][git-basics] where you will find Git installation
-instructions, cheat sheets and links to our favorite Git tutorials. 
+instructions, cheat sheets and links to our favorite Git tutorials.
 
 Please follow the git workflow for [powershell repository][git-commit].
 
-To begin development, you'll need to setup your development environment for [Linux][build-linux], [Windows Core][build-wc], [Windows Full][build-wf] or
+To begin development, you'll need to setup your development environment for [Linux][build-linux], [Windows][build-wc], or
 [OS X][build-osx] and are encouraged to review the
 [contribution guidelines][contribution] for specific workflow, test
 requirements and coding guidelines.
