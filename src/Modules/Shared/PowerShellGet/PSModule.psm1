@@ -6040,10 +6040,15 @@ function Check-PSGalleryApiAvailability
     {        
         $connected = Microsoft.PowerShell.Management\Test-Connection -ComputerName $microsoftDomain -Count 1 -Quiet
     }
-    else
+    elseif(Get-Command NetTCPIP\Test-Connection -ErrorAction Ignore)
     {
         $connected = NetTCPIP\Test-NetConnection -ComputerName $microsoftDomain -InformationLevel Quiet
     }
+    else
+    {
+        $connected = [System.Net.NetworkInformation.NetworkInterface]::GetIsNetworkAvailable()
+    }
+
     if ( -not $connected)
     {
         return
