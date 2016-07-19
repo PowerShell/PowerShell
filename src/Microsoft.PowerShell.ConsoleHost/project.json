@@ -4,6 +4,7 @@
     "description": "PowerShell Host",
 
     "buildOptions": {
+        "nowarn": [ "CS1570" ],
         "xmlDoc": true,
         "keyFile": "../signing/visualstudiopublic.snk",
         "delaySign": true,

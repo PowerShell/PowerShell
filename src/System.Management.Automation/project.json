@@ -3,6 +3,7 @@
     "version": "1.0.0-*",
 
     "buildOptions": {
+        "nowarn": [ "CS1570", "CS1734" ],
         "xmlDoc": true,
         "keyFile": "../signing/visualstudiopublic.snk",
         "delaySign": true,
