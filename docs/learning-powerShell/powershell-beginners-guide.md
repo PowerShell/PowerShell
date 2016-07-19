@@ -120,7 +120,7 @@ PS /home/jen> dir –Path *.txt -Recurse
 
 ```PowerShell
 An empty file is created if you type the following:
-PS /home/jen> New-Item -Path ./test.ps1
+PS /home/jen> New-Item -Path ./test.txt
 
 
     Directory: /home/jen
@@ -128,36 +128,36 @@ PS /home/jen> New-Item -Path ./test.ps1
 
 Mode                LastWriteTime         Length  Name
 ----                -------------         ------  ----
--a----         7/7/2016   7:17 PM              0  test.ps1
+-a----         7/7/2016   7:17 PM              0  test.txt
 ```
 You can use the **-Value** parameter to add some data to your file. 
-For example, the following command adds the phrase "Write-Host 'Hello there!'" as a file content to the test.ps1. 
-Because the test.ps1 file exists already, we use **-Force** parameter to replace the existing content.
+For example, the following command adds the phrase "Hello world!" as a file content to the test.txt. 
+Because the test.txt file exists already, we use **-Force** parameter to replace the existing content.
 
 ```PowerShell
-PS /home/jen> New-Item -Path ./test.ps1 -Value "Write-Host 'Hello there!'" -Force
+PS /home/jen> New-Item -Path ./test.txt -Value "Hello world!" -Force
 
     Directory: /home/jen
 
 
 Mode                LastWriteTime         Length  Name
 ----                -------------         ------  ----
--a----         7/7/2016   7:19 PM             24  test.ps1
+-a----         7/7/2016   7:19 PM             24  test.txt
 
 ```
 There are other ways to add some data to a file. 
 For example, you can use Set-Content to set the file contents:
 
 ```PowerShell
-PS /home/jen>Set-Content -Path ./test.ps1 -Value "Write-Host 'Hello there again!'"
+PS /home/jen>Set-Content -Path ./test.txt -Value "Hello world again!"
 ```
 Or simply use ">" as below:
 ```
 # create an empty file
-"" > empty.txt  
+"" > test.txt  
 
-# set "hello world!!!" as content of empty.txt file
-"hello world!!!" > empty.txt
+# set "Hello world!" as content of test.txt file
+"Hello world!!!" > test.txt
 
 ```
 The pound sign (#) above is used for comments in PowerShell.
@@ -165,16 +165,16 @@ The pound sign (#) above is used for comments in PowerShell.
 **7. type - Get-Content**: Get the content of an item.
 
 ```PowerShell
-PS /home/jen> Get-Content -Path ./test.ps1
-PS /home/jen> type -Path ./test.ps1
+PS /home/jen> Get-Content -Path ./test.txt
+PS /home/jen> type -Path ./test.txt
 
-Write-Host 'Hello there again!'
+Hello world again!
 ```
 **8. del - Remove-Item**: Delete a file or folder.
 
-This cmdlet will delete the file /home/jen/test.ps1:
+This cmdlet will delete the file /home/jen/test.txt:
 ```PowerShell
-PS /home/jen> Remove-Item ./test.ps1
+PS /home/jen> Remove-Item ./test.txt
 ```
 
 **9. $PSVersionTable**: Displays the version of PowerShell you are currently using.
