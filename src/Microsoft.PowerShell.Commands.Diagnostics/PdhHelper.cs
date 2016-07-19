@@ -479,6 +479,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         /// A helper reading in a Unicode string with embedded NULLs and splitting it into a StringCollection.
         /// </summary>
         /// <param name="strNative"></param>
+        /// <param name="strSize"></param>
         /// <param name="strColl"></param>
 
         private void ReadPdhMultiString(ref IntPtr strNative, Int32 strSize, ref StringCollection strColl)

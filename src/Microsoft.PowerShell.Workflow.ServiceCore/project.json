@@ -4,6 +4,8 @@
     "authors": [ "OPS" ],
 
     "buildOptions": {
+        "nowarn": [ "CS1570" ],
+        "xmlDoc": true,
         "keyFile": "../signing/visualstudiopublic.snk",
         "delaySign": true,
         "publicSign": false,

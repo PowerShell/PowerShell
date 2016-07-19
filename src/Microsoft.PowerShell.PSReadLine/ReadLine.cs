@@ -876,6 +876,11 @@ namespace Microsoft.PowerShell
             _singleton.Render();
         }
 
+        /// <summary>
+        /// Gets the current prompt as possibly defined by the user through the
+        /// prompt function, and returns a default prompt if no other is
+        /// available. Also handles remote prompts.
+        /// </summary>
         public static string GetPrompt()
         {
             var runspaceIsRemote = _singleton._mockableMethods.RunspaceIsRemote(_singleton._runspace);
