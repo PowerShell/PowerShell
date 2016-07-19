@@ -21,8 +21,8 @@ Contributing to Issues
 ----
 
 - Review the [Issue Label Descriptions](../docs/dev-process/issue-label-descriptions.md)
-- Check if the issue you are going to file already exists in our [GitHub issues][open-issues]
-- If you can't find your issue already, [open a new issue](https://github.com/PowerShell/PowerShell/issues/new), making sure to follow the directions in the [issue template](./ISSUE_TEMPLATE.md) as best you can.  
+- Check if the issue you are going to file already exists in our [GitHub issues][open-issue].
+- If you can't find your issue already, [open a new issue](https://github.com/PowerShell/PowerShell/issues/new), making sure to follow the directions as best you can.
 - If the issue is marked as [`Help Wanted`][help-wanted-issue], the PowerShell [maintainers][maintainers] are looking for help with the issue.
 
 Contributing to Documentation
