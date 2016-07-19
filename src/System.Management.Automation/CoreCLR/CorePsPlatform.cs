@@ -367,65 +367,6 @@ namespace System.Management.Automation
             // TODO:PSL clean this up
             return 0;
         }
-
-        /// <summary>
-        /// This models the native call CommandLineToArgvW in managed code.
-        /// </summary>
-        internal static string[] CommandLineToArgv(string command)
-        {
-            StringBuilder arguments  = new StringBuilder();
-            int len                  = command.Length;
-            IList<string> returnList = new List<string>();
-            bool inquote             = false;
-            char current             = '\0';
-
-            for (int argIndex = 0; argIndex < len; argIndex++)
-            {
-                current = command[argIndex];
-
-                if (current.Equals('"'))
-                {
-                    // Treat anything in quotes as a single argument
-                    // Because C# treats quotes differently than C++, instead of counting the slashes
-                    // it makes more sense to count the quotes.
-                    inquote = !inquote;
-                    arguments.Append('"');
-                    continue;
-                }
-
-                // If we're inside a quote, add the current character and cycle through
-                if (inquote && !current.Equals('"'))
-                {
-                    arguments.Append(current.ToString());
-                    continue;
-                }
-
-                if (current.Equals("\\"))
-                {
-                    arguments.Append("\\");
-                    continue;
-                }
-
-                if (string.IsNullOrWhiteSpace(current.ToString()))
-                {
-                    if (arguments.Length > 0)
-                    {
-                        returnList.Add(arguments.ToString());
-                        arguments.Clear();
-                    }
-                    continue;
-                }
-
-                // All other exclusion scenarios being exhausted, append the current character.
-                arguments.Append(current.ToString());
-            }
-
-            // add the final object to the arguments list
-            returnList.Add(arguments.ToString());
-            arguments.Clear();
-
-            return returnList.ToArray();
-        }
     }
 
     internal static class Unix
