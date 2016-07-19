@@ -1,14 +1,13 @@
 $crontabcmd = "/usr/bin/crontab"
 
-#TODO fix after https://github.com/PowerShell/PowerShell/issues/932 is fixed
-#class CronJob {
-#    [string] $Minute
-#    [string] $Hour
-#    [string] $DayOfMonth
-#    [string] $Month
-#    [string] $DayOfWeek
-#    [string] $Command
-#}
+class CronJob {
+    [string] $Minute
+    [string] $Hour
+    [string] $DayOfMonth
+    [string] $Month
+    [string] $DayOfWeek
+    [string] $Command
+}
 
 # Internal helper functions
 
@@ -27,8 +26,7 @@ function Get-CronTab ([String] $user) {
 
 function ConvertTo-CronJob ([String] $crontab) {
     $split = $crontab.split(" ", 6)
-    $cronjob = New-Object -TypeName PSObject -Property @{  #TODO: change to CronJob type
-        PSTypeName="CronJob";
+    $cronjob = [CronJob]@{
         Minute = $split[0];
         Hour = $split[1];
         DayOfMonth= $split[2];
@@ -82,7 +80,7 @@ function Remove-CronJob {
     [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact="High")]
     param (
         [Alias("u")][Parameter(Mandatory=$false)][String] $UserName,
-        [Alias("j")][Parameter(Mandatory=$true,ValueFromPipeline=$true)][PSTypeName("CronJob")] $Job  #TODO use CronJob type  
+        [Alias("j")][Parameter(Mandatory=$true,ValueFromPipeline=$true)][CronJob] $Job
     )
     process {
 
@@ -173,7 +171,7 @@ function Get-CronJob {
   Optional parameter to specify a specific user's cron table
 #>   
     [CmdletBinding()]
-    [OutputType([PSObject])]
+    [OutputType([CronJob])]
     param (
         [Alias("u")][Parameter(Mandatory=$false)][String] $UserName
     )
