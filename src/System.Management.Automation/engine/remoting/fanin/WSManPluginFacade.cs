@@ -627,7 +627,7 @@ namespace System.Management.Automation.Remoting
          /// <summary>
         /// Operation shutdown notification that was registered with the native layer for each of the shellCreate operations.
         /// </summary>
-        /// <param name="shellContext">IntPtr</param>
+        /// <param name="shutdownContext">IntPtr</param>
         public static void WSManPSShutdown(         
             IntPtr shutdownContext)
         {   

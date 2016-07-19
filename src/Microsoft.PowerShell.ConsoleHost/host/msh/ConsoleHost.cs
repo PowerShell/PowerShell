@@ -286,14 +286,12 @@ namespace Microsoft.PowerShell
 
 
 
-        /// <summary>
-        /// 
-        /// The break handler for the program.  Dispatches a break event to the current Executor.
-        /// 
-        /// </summary>
-        /// <param name="signal"></param>
-        /// <returns></returns>
 #if LINUX
+        /// <summary>
+        ///
+        /// The break handler for the program.  Dispatches a break event to the current Executor.
+        ///
+        /// </summary>
         private static void MyBreakHandler(object sender, ConsoleCancelEventArgs args)
         {
             // Set the Cancel property to true to prevent the process from terminating.
@@ -310,6 +308,13 @@ namespace Microsoft.PowerShell
             }
         }
 #else
+        /// <summary>
+        ///
+        /// The break handler for the program.  Dispatches a break event to the current Executor.
+        ///
+        /// </summary>
+        /// <param name="signal"></param>
+        /// <returns></returns>
         private static bool MyBreakHandler(ConsoleControl.ConsoleBreakSignal signal)
         {
             switch (signal)

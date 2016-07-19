@@ -27,9 +27,9 @@ namespace Microsoft.PowerShell.Commands
   [Cmdlet(VerbsCommon.Get, "WinEvent" , DefaultParameterSetName = "GetLogSet", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=138336")]
   public sealed class GetWinEventCommand : PSCmdlet
   {
-    //
-    // ListLog parameter
-    //  
+    /// <summary>
+    /// ListLog parameter
+    /// </summary>
     [Parameter(
             Position = 0, 
             Mandatory = true,
@@ -51,9 +51,9 @@ namespace Microsoft.PowerShell.Commands
     }
     private string[] _listLog = {"*"};
 
-    //
-    // GetLog parameter
-    //  
+    /// <summary>
+    /// GetLog parameter
+    /// </summary>
     [Parameter(
             Position = 0,
             ParameterSetName="GetLogSet", 
@@ -73,9 +73,9 @@ namespace Microsoft.PowerShell.Commands
     private string[] _logName = {"*"};
 
 
-    //
-    // ListProvider parameter
-    //  
+    /// <summary>
+    /// ListProvider parameter
+    /// </summary>
     [Parameter(
             Position = 0, 
             Mandatory = true,
@@ -99,9 +99,9 @@ namespace Microsoft.PowerShell.Commands
     private string[] _listProvider = {"*"};
 
 
-    //
-    // ProviderName parameter
-    //  
+    /// <summary>
+    /// ProviderName parameter
+    /// </summary>
     [Parameter(
             Position = 0, 
             Mandatory = true,
@@ -123,9 +123,9 @@ namespace Microsoft.PowerShell.Commands
     private string[] _providerName;
 
 
-    //
-    // Path parameter
-    //  
+    /// <summary>
+    /// Path parameter
+    /// </summary>
     [Parameter(
             Position = 0, 
             Mandatory = true,
@@ -147,9 +147,9 @@ namespace Microsoft.PowerShell.Commands
     private string[] _path;
     
 
-    //
-    // MaxEvents parameter
-    //
+    /// <summary>
+    /// MaxEvents parameter
+    /// </summary>
     [Parameter(
             ParameterSetName="FileSet",
             ValueFromPipeline = false,  
@@ -188,9 +188,9 @@ namespace Microsoft.PowerShell.Commands
     }
     private Int64 _maxEvents = -1;
 
-    //
-    // ComputerName parameter
-    //
+    /// <summary>
+    /// ComputerName parameter
+    /// </summary>
     [Parameter(
             ParameterSetName="ListProviderSet",
             HelpMessageBaseName = "GetEventResources",
@@ -225,9 +225,9 @@ namespace Microsoft.PowerShell.Commands
     }
     private string _computerName = string.Empty;
 
-    //
-    // Credential parameter
-    //    
+    /// <summary>
+    /// Credential parameter
+    /// </summary>
     [Parameter(ParameterSetName="ListProviderSet")]
     [Parameter(ParameterSetName="GetProviderSet")]
     [Parameter(ParameterSetName="ListLogSet")]
@@ -244,9 +244,9 @@ namespace Microsoft.PowerShell.Commands
     private PSCredential _credential = PSCredential.Empty;
 
 
-    //
-    // FilterXPath parameter
-    //
+    /// <summary>
+    /// FilterXPath parameter
+    /// </summary>
     [Parameter(
             ParameterSetName="FileSet",
             ValueFromPipeline = false,  
@@ -270,9 +270,9 @@ namespace Microsoft.PowerShell.Commands
     }
     private string _filter = "*";
     
-    //
-    // FilterXml parameter
-    //
+    /// <summary>
+    /// FilterXml parameter
+    /// </summary>
     [Parameter(
             Position = 0, 
             Mandatory = true,
@@ -294,9 +294,9 @@ namespace Microsoft.PowerShell.Commands
     private XmlDocument _xmlQuery = null;
 
     
-    //
-    // FilterHashtable parameter
-    //
+    /// <summary>
+    /// FilterHashtable parameter
+    /// </summary>
     [Parameter(
             Position = 0, 
             Mandatory = true,
@@ -317,9 +317,9 @@ namespace Microsoft.PowerShell.Commands
     }
     private Hashtable[] _selector;
 
-    //
-    // Force switch
-    //
+    /// <summary>
+    /// Force switch
+    /// </summary>
     [Parameter(ParameterSetName="ListLogSet")]
     [Parameter(ParameterSetName="GetProviderSet")]
     [Parameter(ParameterSetName="GetLogSet")]
@@ -332,9 +332,9 @@ namespace Microsoft.PowerShell.Commands
     }
     private SwitchParameter _force;
 
-    //
-    // Oldest switch
-    //
+    /// <summary>
+    /// Oldest switch
+    /// </summary>
     [Parameter(ParameterSetName="FileSet")]
     [Parameter(ParameterSetName="GetProviderSet")]
     [Parameter(ParameterSetName="GetLogSet")]
@@ -391,18 +391,18 @@ namespace Microsoft.PowerShell.Commands
     private const string hashkey_data_lc="data";   
 
 
-    //
-    // BeginProcessing() is invoked once per pipeline: we will load System.Core.dll here
-    //
+    /// <summary>
+    /// BeginProcessing() is invoked once per pipeline: we will load System.Core.dll here
+    /// </summary>
     protected override void BeginProcessing()
     {
         _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
     }
 
         
-    //
-    // EndProcessing() is invoked once per pipeline
-    //
+    /// <summary>
+    /// EndProcessing() is invoked once per pipeline
+    /// </summary>
     protected override void EndProcessing()
     {
        
@@ -426,10 +426,10 @@ namespace Microsoft.PowerShell.Commands
     }
 
 
-    //
-    // ProcessRecord() override.
-    // This is the main entry point for the cmdlet.
-    //       
+    /// <summary>
+    /// ProcessRecord() override.
+    /// This is the main entry point for the cmdlet.
+    /// </summary>
     protected override void ProcessRecord()
     {
           switch (ParameterSetName)

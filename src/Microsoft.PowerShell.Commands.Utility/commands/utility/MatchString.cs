@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns the base name of the file containing the matching line.
         /// <remarks>
         /// It will be the string "InputStream" if the object came from the input stream.
-        /// This is a readonly propery calculated from <paramref name="Path"/>.
+        /// This is a readonly property calculated from the path. <see cref="Path"/>
         /// </remarks>
         /// </summary>
         /// <value>The file name</value>

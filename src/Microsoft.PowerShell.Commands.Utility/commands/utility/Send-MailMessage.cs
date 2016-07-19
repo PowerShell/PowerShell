@@ -261,7 +261,7 @@ namespace Microsoft.PowerShell.Commands
         private SwitchParameter usessl;
 
         /// <summary>
-        /// Specifies the Port to be used on <paramref name="SmtpServer"/>
+        /// Specifies the Port to be used on the server. <see cref="SmtpServer"/>
         /// </summary>
         /// <remarks>
         /// Value must be greater than zero.

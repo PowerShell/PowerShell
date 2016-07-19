@@ -31,7 +31,9 @@ namespace System.Management.Automation
     public static class Platform
     {
 
-        // Platform variables used to defined corresponding PowerShell built-in variables
+        /// <summary>
+        /// True if the current platform is Linux.
+        /// </summary>
         public static bool IsLinux
         {
             get
@@ -44,21 +46,9 @@ namespace System.Management.Automation
             }
         }
 
-        //enum for selecting the xdgpaths
-        public enum XDG_Type
-        {
-            // location to store configuration file
-            CONFIG,
-            // location for powershell modules
-            MODULES,
-            // location to store temporary files
-            CACHE,
-            // location to store data that application needs
-            DATA,
-            // default location
-            DEFAULT
-        }
-
+        /// <summary>
+        /// True if the current platform is OS X.
+        /// </summary>
         public static bool IsOSX
         {
             get
@@ -71,6 +61,9 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// True if the current platform is Windows.
+        /// </summary>
         public static bool IsWindows
         {
             get
@@ -83,6 +76,9 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// True if PowerShell was built targeting .NET Core.
+        /// </summary>
         public static bool IsCore
         {
             get
@@ -111,7 +107,26 @@ namespace System.Management.Automation
                 "WSMan.format.ps1xml"
             };
 
-        // function for choosing directory location of PowerShell for profile loading
+        /// <summary>
+        /// X Desktop Group configuration type enum.
+        /// </summary>
+        public enum XDG_Type
+        {
+            /// <summary> XDG_CONFIG_HOME/powershell </summary>
+            CONFIG,
+            /// <summary> XDG_CACHE_HOME/powershell </summary>
+            CACHE,
+            /// <summary> XDG_DATA_HOME/powershell </summary>
+            DATA,
+            /// <summary> XDG_DATA_HOME/powershell/Modules </summary>
+            MODULES,
+            /// <summary> XDG_CONFIG_HOME/powershell </summary>
+            DEFAULT
+        }
+
+        /// <summary>
+        /// function for choosing directory location of PowerShell for profile loading
+        /// </summary>
         public static string SelectProductNameForDirectory (Platform.XDG_Type dirpath)
         {
 
@@ -356,7 +371,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This models the native call CommandLineToArgvW in managed code.
         /// </summary>
-        public static string[] CommandLineToArgv(string command)
+        internal static string[] CommandLineToArgv(string command)
         {
             StringBuilder arguments  = new StringBuilder();
             int len                  = command.Length;

@@ -1978,12 +1978,12 @@ namespace Microsoft.PowerShell
 #endif
         }
 
+#if !LINUX
         /// <summary>
         /// Get the character at the cursor when the user types 'tab' in the middle of line.
         /// </summary>
         /// <param name="cursorPosition">the cursor position where 'tab' is hit</param>
         /// <returns></returns>
-#if !LINUX
         private char GetCharacterUnderCursor(Coordinates cursorPosition)
         {
             Rectangle region = new Rectangle(0, cursorPosition.Y, RawUI.BufferSize.Width - 1, cursorPosition.Y);
