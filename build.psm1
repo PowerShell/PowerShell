@@ -99,7 +99,6 @@ function Start-PSBuild {
         Use-MSBuild
 
         #mc.exe is Message Compiler for native resources
-        # This currently doesn't work reliably and clean systems. Removing for now since mc.exe is not being used yet.
         $mcexe = Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\" -Recurse -Filter 'mc.exe' | ? {$_.FullName -match 'x64'} | select -First 1 | % {$_.FullName}
         if (-not $mcexe) {
             throw 'mc.exe not found. Install Microsoft Windows SDK.'
@@ -226,7 +225,7 @@ function Start-PSBuild {
             @("nativemsh/pwrshplugin") | % {
                 $nativeResourcesFolder = $_
                 Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | % {
-                    & $mcexe -o -d -c -U $_.FullName -h $nativeResourcesFolder -r $nativeResourcesFolder
+                    Start-NativeExecution { & $mcexe -o -d -c -U $_.FullName -h "$nativeResourcesFolder" -r "$nativeResourcesFolder" }
                 }
             }
  
@@ -244,7 +243,7 @@ function Start-PSBuild {
                 $command = @"
 cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=$oneCoreValue -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$msbuildConfiguration"
 "@
-                log "  Executing command: $command"
+                log "  Executing Build Command: $command"
                 Start-NativeExecution { Invoke-Expression -Command:$command }
             }
 
