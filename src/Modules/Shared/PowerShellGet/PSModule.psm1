@@ -424,10 +424,7 @@ Microsoft.PowerShell.Utility\Import-LocalizedData  LocalizedData -filename PSGet
 # This code is required to add a .Net type and call the Telemetry APIs 
 # This is required since PowerShell does not support generation of .Net Anonymous types
 #
-$requiredAssembly = @( "system.management.automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
-                       "$([System.Net.IWebProxy].AssemblyQualifiedName)".Substring('System.Net.IWebProxy'.Length+1).Trim(), 
-                       "$([System.Uri].AssemblyQualifiedName)".Substring('System.Uri'.Length+1).Trim()
-                     )
+$requiredAssembly = @( "system.management.automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" )
 
 $source = @" 
 using System; 
@@ -452,47 +449,6 @@ namespace Microsoft.PowerShell.Commands.PowerShellGet
         }         
         
     }
-    
-    /// <summary>
-    /// Used by Ping-Endpoint function to supply webproxy to HttpClient
-    /// We cannot use System.Net.WebProxy because this is not available on CoreClr
-    /// </summary>
-    public class InternalWebProxy : IWebProxy
-    {
-        Uri _proxyUri;
-        ICredentials _credentials;
-
-        public InternalWebProxy(Uri uri, ICredentials credentials)
-        {
-            Credentials = credentials;
-            _proxyUri = uri;
-        }
-
-        /// <summary>
-        /// Credentials used by WebProxy
-        /// </summary>
-        public ICredentials Credentials
-        {
-            get
-            {
-                return _credentials;
-            }
-            set
-            {
-                _credentials = value;
-            }
-        }
-
-        public Uri GetProxy(Uri destination)
-        {
-            return _proxyUri;
-        }
-
-        public bool IsBypassed(Uri host)
-        {
-            return false;
-        }
-    } 
 
     [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
     public struct CERT_CHAIN_POLICY_PARA {
@@ -592,7 +548,7 @@ $script:TelemetryEnabled = $false
 try
 {
     # If the telemetry namespace/methods are not found flow goes to the catch block where telemetry is disabled
-    $telemetryMethods = ([Microsoft.PowerShell.Get.Telemetry] | Get-Member -Static).Name
+    $telemetryMethods = ([Microsoft.PowerShell.Commands.PowerShellGet.Telemetry] | Get-Member -Static).Name
 
     if ($telemetryMethods.Contains("TraceMessageArtifactsNotFound") -and $telemetryMethods.Contains("TraceMessageNonPSGalleryRegistration"))
     {
@@ -612,7 +568,7 @@ if(-not $script:TelemetryEnabled -and (IsWindows))
         Add-Type -ReferencedAssemblies $requiredAssembly -TypeDefinition $source -Language CSharp -ErrorAction SilentlyContinue
     
         # If the telemetry namespace/methods are not found flow goes to the catch block where telemetry is disabled
-        $telemetryMethods = ([Microsoft.PowerShell.Get.Telemetry] | Get-Member -Static).Name
+        $telemetryMethods = ([Microsoft.PowerShell.Commands.PowerShellGet.Telemetry] | Get-Member -Static).Name
 
         if ($telemetryMethods.Contains("TraceMessageArtifactsNotFound") -and $telemetryMethods.Contains("TraceMessageNonPSGalleryRegistration"))
         {
@@ -625,6 +581,66 @@ if(-not $script:TelemetryEnabled -and (IsWindows))
         # Disable Telemetry if there are any issues finding/loading the Telemetry infrastructure
         $script:TelemetryEnabled = $false
     }
+}
+
+$RequiredAssembliesForInternalWebProxy = @( "$([System.Net.IWebProxy].AssemblyQualifiedName)".Substring('System.Net.IWebProxy'.Length+1).Trim(), 
+                                            "$([System.Uri].AssemblyQualifiedName)".Substring('System.Uri'.Length+1).Trim() )
+
+$SourceForInternalWebProxy = @" 
+using System; 
+using System.Net;
+
+namespace Microsoft.PowerShell.Commands.PowerShellGet 
+{ 
+    /// <summary>
+    /// Used by Ping-Endpoint function to supply webproxy to HttpClient
+    /// We cannot use System.Net.WebProxy because this is not available on CoreClr
+    /// </summary>
+    public class InternalWebProxy : IWebProxy
+    {
+        Uri _proxyUri;
+        ICredentials _credentials;
+
+        public InternalWebProxy(Uri uri, ICredentials credentials)
+        {
+            Credentials = credentials;
+            _proxyUri = uri;
+        }
+
+        /// <summary>
+        /// Credentials used by WebProxy
+        /// </summary>
+        public ICredentials Credentials
+        {
+            get
+            {
+                return _credentials;
+            }
+            set
+            {
+                _credentials = value;
+            }
+        }
+
+        public Uri GetProxy(Uri destination)
+        {
+            return _proxyUri;
+        }
+
+        public bool IsBypassed(Uri host)
+        {
+            return false;
+        }
+    }
+} 
+"@ 
+
+if(-not ('Microsoft.PowerShell.Commands.PowerShellGet.InternalWebProxy' -as [Type]))
+{
+    Add-Type -ReferencedAssemblies $RequiredAssembliesForInternalWebProxy `
+             -TypeDefinition $SourceForInternalWebProxy `
+             -Language CSharp `
+             -ErrorAction SilentlyContinue
 }
 
 #endregion
@@ -4909,7 +4925,14 @@ function New-ScriptFileInfo
 
         if(-not $Author)
         {
-            $Author = (Get-EnvironmentVariable -Name 'USERNAME' -Target $script:EnvironmentVariableTarget.Process -ErrorAction SilentlyContinue)
+            if(IsWindows)
+            {
+                $Author = (Get-EnvironmentVariable -Name 'USERNAME' -Target $script:EnvironmentVariableTarget.Process -ErrorAction SilentlyContinue)
+            }
+            else
+            {
+                $Author = $env:USER
+            }
         }
 
         if(-not $Guid)
@@ -5190,7 +5213,14 @@ function Update-ScriptFileInfo
 
             if(-not $Author)
             {
-                $Author = (Get-EnvironmentVariable -Name 'USERNAME' -Target $script:EnvironmentVariableTarget.Process -ErrorAction SilentlyContinue)
+                if(IsWindows)
+                {
+                    $Author = (Get-EnvironmentVariable -Name 'USERNAME' -Target $script:EnvironmentVariableTarget.Process -ErrorAction SilentlyContinue)
+                }
+                else
+                {
+                    $Author = $env:USER
+                }
             }
 
             if(-not $Guid)
@@ -6010,10 +6040,15 @@ function Check-PSGalleryApiAvailability
     {        
         $connected = Microsoft.PowerShell.Management\Test-Connection -ComputerName $microsoftDomain -Count 1 -Quiet
     }
-    else
+    elseif(Get-Command NetTCPIP\Test-Connection -ErrorAction Ignore)
     {
         $connected = NetTCPIP\Test-NetConnection -ComputerName $microsoftDomain -InformationLevel Quiet
     }
+    else
+    {
+        $connected = [System.Net.NetworkInformation.NetworkInterface]::GetIsNetworkAvailable()
+    }
+
     if ( -not $connected)
     {
         return
@@ -6161,7 +6196,7 @@ function Ping-Endpoint
             $ProxyNetworkCredential = $ProxyCredential.GetNetworkCredential()
         }
 
-        $WebProxy = New-Object Microsoft.PowerShell.Get.InternalWebProxy -ArgumentList $Proxy,$ProxyNetworkCredential
+        $WebProxy = New-Object Microsoft.PowerShell.Commands.PowerShellGet.InternalWebProxy -ArgumentList $Proxy,$ProxyNetworkCredential
     }
 
     if(HttpClientApisAvailable)
@@ -12004,7 +12039,7 @@ function Log-ArtifactNotFoundInPSGallery
     # Perform Telemetry only if searched artifacts are not available in specified Gallery
     if ($notFoundArtifacts)
     {
-        [Microsoft.PowerShell.Get.Telemetry]::TraceMessageArtifactsNotFound($notFoundArtifacts, $operationName)
+        [Microsoft.PowerShell.Commands.PowerShellGet.Telemetry]::TraceMessageArtifactsNotFound($notFoundArtifacts, $operationName)
     }   
 }
 
@@ -12064,7 +12099,7 @@ function Log-NonPSGalleryRegistration
     $scriptPublishLocationHash = Get-Hash -locationString $scriptPublishLocation
     
     # Log the telemetry event    
-    [Microsoft.PowerShell.Get.Telemetry]::TraceMessageNonPSGalleryRegistration($sourceLocationType, $sourceLocationHash, $installationPolicy, $packageManagementProvider, $publishLocationHash, $scriptSourceLocationHash, $scriptPublishLocationHash, $operationName)
+    [Microsoft.PowerShell.Commands.PowerShellGet.Telemetry]::TraceMessageNonPSGalleryRegistration($sourceLocationType, $sourceLocationHash, $installationPolicy, $packageManagementProvider, $publishLocationHash, $scriptSourceLocationHash, $scriptPublishLocationHash, $operationName)
 }
 
 # Returns a SHA1 hash of the specified string
