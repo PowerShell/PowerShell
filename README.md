@@ -34,16 +34,6 @@ Get PowerShell
 If installing PowerShell from a package, please refer to the installation
 documents for [Linux][inst-linux] and [Windows][inst-win].
 
-[releases]: https://github.com/PowerShell/PowerShell/releases
-[artifacts]: https://ci.appveyor.com/project/PowerShell/powershell/build/artifacts
-[build-wc]: docs/building/windows-core.md
-[build-wf]: docs/building/windows-full.md
-[build-osx]: docs/building/osx.md
-[build-linux]: docs/building/linux.md
-[pls-omi-provider]: https://github.com/PowerShell/psl-omi-provider
-[inst-linux]: docs/installation/linux.md
-[inst-win]: docs/installation/windows.md
-
 Building PowerShell
 -------------------
 
@@ -61,13 +51,6 @@ captured and if a workaround exists.
 
 If you encounter issues with PowerShell itself, first search for it in our [issues][github-issues]. 
 If you do not see your issue captured, please file a [new issue][new-issue] using the appropriate issue tag.
-
-[contribution]: .github/CONTRIBUTING.md
-[known-issues]: docs/KNOWNISSUES.md
-[faq]: docs/FAQ.md
-[github-issues]:https://github.com/PowerShell/PowerShell/issues
-[new-issue]:https://github.com/PowerShell/PowerShell/issues/new
-
 
 PowerShell Community
 --------------------
@@ -87,6 +70,20 @@ This project has adopted the [Microsoft Open Source Code of Conduct][conduct-cod
 For more information see the [Code of Conduct FAQ][conduct-FAQ] or contact
 [opencode@microsoft.com][conduct-email] with any additional questions or comments.
 
+[artifacts]: https://ci.appveyor.com/project/PowerShell/powershell/build/artifacts
+[build-linux]: docs/building/linux.md
+[build-osx]: docs/building/osx.md
+[build-wc]: docs/building/windows-core.md
+[build-wf]: docs/building/windows-full.md
 [conduct-code]: http://opensource.microsoft.com/codeofconduct/
-[conduct-FAQ]: http://opensource.microsoft.com/codeofconduct/faq/
 [conduct-email]: mailto:opencode@microsoft.com
+[conduct-FAQ]: http://opensource.microsoft.com/codeofconduct/faq/
+[contribution]: .github/CONTRIBUTING.md
+[faq]: docs/FAQ.md
+[github-issues]:https://github.com/PowerShell/PowerShell/issues
+[inst-linux]: docs/installation/linux.md
+[inst-win]: docs/installation/windows.md
+[known-issues]: docs/KNOWNISSUES.md
+[new-issue]:https://github.com/PowerShell/PowerShell/issues/new
+[pls-omi-provider]: https://github.com/PowerShell/psl-omi-provider
+[releases]: https://github.com/PowerShell/PowerShell/releases

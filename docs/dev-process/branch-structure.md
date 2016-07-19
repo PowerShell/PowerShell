@@ -1,3 +1,3 @@
 author:  Bruce
 
->Bruce: breaking changes contract (.NET Core has a great one)
+> TBD: Branch structure of the project

@@ -22,7 +22,7 @@ Contributing to Issues
 
 - Review the [Issue Label Descriptions](../docs/dev-process/issue-label-descriptions.md)
 - Check if the issue you are going to file already exists in our [GitHub issues][open-issues]
-- If you can't find your issue already, [open a new issue](https://github.com/PowerShell/PowerShell/issues/new), making sure to follow the directions in the issue template as best you can.  
+- If you can't find your issue already, [open a new issue](https://github.com/PowerShell/PowerShell/issues/new), making sure to follow the directions in the [issue template](./ISSUE_TEMPLATE.md) as best you can.  
 - If the issue is marked as [`Help Wanted`][help-wanted-issue], the PowerShell [maintainers][maintainers] are looking for help with the issue.
 
 Contributing to Documentation
@@ -31,9 +31,11 @@ Contributing to Documentation
 
 Please see the [Contributor Guide in `PowerShell/PowerShell-Docs`](https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md).
 
-### Contributing to documentation related to Contributing or maintaining the PowerShell Project
+### Contributing to documentation related to contributing or maintaining the PowerShell Project
 
-These issues should be treated like any other issue in this repo.  See [Contribuing to Code](#contributing-to-code).
+- When appropriate in writting markdown docs, use [semantic linefeeds](http://rhodesmill.org/brandon/2012/one-sentence-per-line/).
+  In most cases, it means "once sentence per line".
+- Otherwise, these issues should be treated like any other issue in this repo.  See [Contribuing to Code](#contributing-to-code).
 
 Contributing to Code
 ----
