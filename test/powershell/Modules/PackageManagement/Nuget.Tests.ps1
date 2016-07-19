@@ -357,7 +357,7 @@ Describe "Find-Package" -Tags @('BVT', 'DRT'){
 
     }
 
-    It "EXPECTED: Finds package with Credential" {
+    It "EXPECTED: Finds package with Credential" -Pending {
         $credPackage = Find-Package Contoso -Credential $vstsCredential -Source $vstsFeed -ProviderName $Nuget
         $credPackage.Count | should be 1
         $credPackage.Name | should match "Contoso"
@@ -1368,7 +1368,7 @@ Describe Register-PackageSource -Tags @('BVT', 'DRT'){
         }
 	}
 
-    it "EXPECTED: Registers a package source that requires a credential with skipvalidate" {
+    it "EXPECTED: Registers a package source that requires a credential with skipvalidate" -Pending {
         (register-packagesource -name "psgettestfeed" -provider $nuget -location $vstsFeed -SKipValidate)
         try {
             (Find-Package -Source "psgettestfeed" -Name ContosoClient -Credential $vstsCredential).Name | should be "ContosoClient"
@@ -1382,7 +1382,7 @@ Describe Register-PackageSource -Tags @('BVT', 'DRT'){
     }
 
 
-    it "EXPECTED: Registers a package source that requires a credential" {
+    it "EXPECTED: Registers a package source that requires a credential" -Pending {
         (register-packagesource -name "psgettestfeed" -provider $nuget -location $vstsFeed -Credential $vstsCredential)
         try {
             (Find-Package -Source "psgettestfeed" -Name ContosoClient -Credential $vstsCredential).Name | should be "ContosoClient"
