@@ -166,6 +166,27 @@ namespace Microsoft.PowerShell
         {
             bool valid = false;
 
+#if UNIX
+            bool isShift;
+            bool isCtrl;
+            key = GetKeyFromCharValue(literal, out isShift, out isCtrl);
+
+            // Failure to get a key for the char just means that the key is not
+            // special (in the ConsoleKey enum), so we return a default key.
+            // Thus this never fails.
+            valid = true;
+            failReason = null;
+
+            if (isShift)
+            {
+                modifiers |= ConsoleModifiers.Shift;
+            }
+            if (isCtrl)
+            {
+                modifiers |= ConsoleModifiers.Control;
+            }
+            // alt is not possible to get
+#else
             // shift state will be in MSB
             short virtualKey = NativeMethods.VkKeyScan(literal);
             int hresult = Marshal.GetLastWin32Error();
@@ -208,8 +229,83 @@ namespace Microsoft.PowerShell
                 Exception e = Marshal.GetExceptionForHR(hresult);
                 failReason = e.Message;
             }
+#endif
 
             return valid;
         }
+
+#if UNIX
+        // this is borrowed from the CoreFX internal System.IO.StdInReader class
+        // https://github.com/dotnet/corefx/blob/5b2ae6aa485773cd5569f56f446698633c9ad945/src/System.Console/src/System/IO/StdInReader.cs#L222
+        private static ConsoleKey GetKeyFromCharValue(char x, out bool isShift, out bool isCtrl)
+        {
+            isShift = false;
+            isCtrl = false;
+
+            switch (x)
+            {
+                case '\b':
+                    return ConsoleKey.Backspace;
+
+                case '\t':
+                    return ConsoleKey.Tab;
+
+                case '\n':
+                    return ConsoleKey.Enter;
+
+                case (char)(0x1B):
+                    return ConsoleKey.Escape;
+
+                case '*':
+                    return ConsoleKey.Multiply;
+
+                case '+':
+                    return ConsoleKey.Add;
+
+                case '-':
+                    return ConsoleKey.Subtract;
+
+                case '/':
+                    return ConsoleKey.Divide;
+
+                case (char)(0x7F):
+                    return ConsoleKey.Delete;
+
+                case ' ':
+                    return ConsoleKey.Spacebar;
+
+                default:
+                    // 1. Ctrl A to Ctrl Z.
+                    if (x >= 1 && x <= 26)
+                    {
+                        isCtrl = true;
+                        return ConsoleKey.A + x - 1;
+                    }
+
+                    // 2. Numbers from 0 to 9.
+                    if (x >= '0' && x <= '9')
+                    {
+                        return ConsoleKey.D0 + x - '0';
+                    }
+
+                    //3. A to Z
+                    if (x >= 'A' && x <= 'Z')
+                    {
+                        isShift = true;
+                        return ConsoleKey.A + (x - 'A');
+                    }
+
+                    // 4. a to z.
+                    if (x >= 'a' && x <= 'z')
+                    {
+                        return ConsoleKey.A + (x - 'a');
+                    }
+
+                    break;
+            }
+
+            return default(ConsoleKey);
+        }
+#endif
     }
 }
