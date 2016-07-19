@@ -25,7 +25,7 @@ Describe "Get-package" -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe "Get-package with version parameter  - valid scenarios" -Tags @('BVT', 'DRT'){
+Describe "Get-package with version parameter  - valid scenarios" -Tags CI,Slow {
     $destination = Join-Path $TestDrive GetPackageTests
 
     It "Get-package supports -AllVersions parameter" -Skip {
@@ -64,7 +64,7 @@ Describe "Get-package with version parameter  - valid scenarios" -Tags @('BVT', 
     }    
 }
 
-Describe "Get-package with version parameter - Error scenarios" -Tags @('BVT', 'DRT'){
+Describe "Get-package with version parameter - Error scenarios" -Tags CI,Slow {
 
     It "Get-package -AllVersions -- Cannot be used with other version parameters" {
         $Error.Clear()

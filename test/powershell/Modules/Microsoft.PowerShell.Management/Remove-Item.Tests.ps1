@@ -22,7 +22,7 @@ Describe "Remove-Item" {
 	    Test-Path $testfilepath | Should Be $false
 	}
 
-	It "Should be able to call the rm alias" {
+	It "Should be able to call the rm alias" -pending:($IsCore) {
 	    { rm $testfilepath } | Should Not Throw
 
 	    Test-Path $testfilepath | Should Be $false

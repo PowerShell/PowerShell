@@ -1,6 +1,6 @@
 using namespace System.Diagnostics
 
-Describe "ConsoleHost unit tests" {
+Describe "ConsoleHost unit tests" -Tags "Slow" {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"

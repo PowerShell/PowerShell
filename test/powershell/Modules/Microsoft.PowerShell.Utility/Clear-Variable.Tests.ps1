@@ -238,9 +238,9 @@ Describe "Clear-Variable" {
 	}
 
 	It "Should not be able to clear an item locally using the global switch" {
+            if ( Get-Variable -Name localVar -Scope global -ea silentlycontinue ) { Remove-Variable -Name localVar -Scope Global }
 			New-Variable localVar -Value 2 -Scope local -Force
-
-			{Clear-Variable -Name localVar -Scope global -ErrorAction Stop} | Should Throw
+            { Clear-Variable -Name localVar -Scope global -ErrorAction Stop } | Should Throw
 	}
 
 	It "Should not be able to clear a local variable using the script scope switch" {
