@@ -3,9 +3,9 @@
 
 PowerShell is a task automation and configuration management platform,
 consisting of a command-line shell and associated scripting language built
-using the [.NET Command Line Interface](https://github.com/dotnet/cli).
+using the [.NET Command-Line Interface](https://github.com/dotnet/cli).
 PowerShell provides full access to COM and WMI, enabling administrators to
-automate administrative tasks on both local and remote Windows, Linux and OS X systems.
+automate administrative tasks on both local and remote Windows, Linux, and OS X systems.
 
 New to PowerShell?
 ------------------
@@ -48,21 +48,20 @@ Developing and Contributing
 --------------------------
 If you are new to Git, we recommend you start by reviewing our
 [Git basics document][git-basics] where you will find Git installation
-instructions, cheat sheets and links to our favorite Git tutorials. 
+instructions, cheat sheets, and links to our favorite Git tutorials. 
 
-Please follow the git workflow for [powershell repository][git-commit].
+Please follow the Git workflow for [PowerShell repository][git-commit].
 
-To begin development, you'll need to setup your development environment for [Linux][build-linux], [Windows Core][build-wc], [Windows Full][build-wf] or
-[OS X][build-osx] and are encouraged to review the
-[contribution guidelines][contribution] for specific workflow, test
-requirements and coding guidelines.
+To begin development, you'll need to setup your development environment for [Linux][build-linux], 
+[Windows Core][build-wc], [Windows Full][build-wf] or [OS X][build-osx] and are encouraged to review the
+[contribution guidelines][contribution] for specific workflow, test requirements and coding guidelines.
 
 If you encounter issues in your development, please consult the [known issues][known-issues]
 and [FAQ][faq] documents to see if the issue you are running into is
 captured and if a workaround exists.  
 
-If you encounter issues with PowerShell itself, first search for it in our [issues][github-issues]. If you do not see your issue captured, please file a [new issue][new-issue] using
-the appropriate issue tag.
+If you encounter issues with PowerShell itself, first search for it in our [issues][github-issues]. 
+If you do not see your issue captured, please file a [new issue][new-issue] using the appropriate issue tag.
 
 [git-basics]: docs/git/basics.md
 [git-commit]: docs/git/powershell-repository-101.md
@@ -87,11 +86,9 @@ Legal and Licensing
 Code of Conduct
 ---------------
 
-This project has adopted the
-[Microsoft Open Source Code of Conduct][conduct-code]. For more information see
-the [Code of Conduct FAQ][conduct-faq] or contact
-[opencode@microsoft.com][conduct-email] with any additional questions or
-comments.
+This project has adopted the [Microsoft Open Source Code of Conduct][conduct-code]. 
+For more information see the [Code of Conduct FAQ][conduct-FAQ] or contact
+[opencode@microsoft.com][conduct-email] with any additional questions or comments.
 
 [conduct-code]: http://opensource.microsoft.com/codeofconduct/
 [conduct-FAQ]: http://opensource.microsoft.com/codeofconduct/faq/
