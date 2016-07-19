@@ -10,7 +10,6 @@ New to Git?
 - Learning Git:
     * GitHub Help:  [Good Resources for Learning Git and GitHub][good-git-resources]
     * [Git Basics](../docs/git/basics.md): install and getting started.
-    * PowerShell DSC Resources: [Getting Started With GitHub](https://github.com/PowerShell/DscResources/blob/master/GettingStartedWithGitHub.md)
 - [GitHub Flow Guide](https://guides.github.com/introduction/flow/): step-by-step instructions of GitHub flow.
 
 Quick Start Check-list
@@ -24,7 +23,7 @@ Contributing to Issues
 - Review the [Issue Label Descriptions](../docs/dev-process/issue-label-descriptions.md)
 - Check if the issue you are going to file already exists in our [GitHub issues][open-issues]
 - If you can't find your issue already, [open a new issue](https://github.com/PowerShell/PowerShell/issues/new), making sure to follow the directions in the issue template as best you can.  
-- If the issue is marked as [`Help Wanted`][help-wanted-issue], the issue team is looking for help with the issue.
+- If the issue is marked as [`Help Wanted`][help-wanted-issue], the PowerShell [maintainers][maintainers] are looking for help with the issue.
 
 Contributing to Documentation
 ----
@@ -69,6 +68,8 @@ Additional references:
 For more information, learn about our [branch structure][branch-structure].
 
 ![Github-PR-dev.png](Images/Github-PR-dev.png)
+
+* If your contribution in a way that changes the user or developer experience, you are expected to document those changes.  See [Contributing to documentation related to the PowerShell the product](#contributing-to-documentation-related-to-the-powershell-the-product) 
 
 * Add a meaningful title of the PR describing what change you want to check in. Don't simply put: "Fixes issue #5". A better example is: "Added Ensure parameter to New-Item CmdLet. Fixes #5". 
 
