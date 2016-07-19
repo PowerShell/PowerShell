@@ -4,6 +4,7 @@
     "authors": [ "OPS" ],
 
     "buildOptions": {
+        "xmlDoc": true,
         "keyFile": "../signing/visualstudiopublic.snk",
         "delaySign": true,
         "publicSign": false,

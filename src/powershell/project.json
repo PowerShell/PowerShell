@@ -4,6 +4,7 @@
     "description": ".NET CLI PowerShell app",
 
     "buildOptions": {
+        "xmlDoc": true,
         "warningsAsErrors": true,
         "allowUnsafe": true,
         "emitEntryPoint": true,

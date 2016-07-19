@@ -3,6 +3,7 @@
     "version": "1.0.0-*",
 
     "buildOptions": {
+        "xmlDoc": true,
         "keyFile": "../signing/visualstudiopublic.snk",
         "delaySign": true,
         "publicSign": false,
