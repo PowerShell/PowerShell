@@ -56,6 +56,7 @@ namespace Microsoft.PowerShell
             Stack<string> tokens = null;
             ConsoleModifiers modifiers = 0;
             ConsoleKey key = 0;
+            char keyChar = '\u0000';
 
             bool valid = !String.IsNullOrEmpty(sequence);
 
@@ -81,6 +82,9 @@ namespace Microsoft.PowerShell
                 // key should be first token to be popped
                 if (key == 0)
                 {
+                    // the keyChar is this token
+                    keyChar = token[0];
+
                     // Enum.TryParse accepts arbitrary integers.  We shouldn't,
                     // but single digits need to map to the correct key, e.g.
                     // ConsoleKey.D1
@@ -152,8 +156,6 @@ namespace Microsoft.PowerShell
                 throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, PSReadLineResources.InvalidSequence, sequence));
             }
 
-            char keyChar = GetCharFromConsoleKey(key, modifiers);
-
             return new ConsoleKeyInfo(keyChar, key,
                 shift: ((modifiers & ConsoleModifiers.Shift) != 0),
                 alt: ((modifiers & ConsoleModifiers.Alt) != 0),
@@ -208,52 +210,6 @@ namespace Microsoft.PowerShell
             }
 
             return valid;
-        }
-
-        internal static char GetCharFromConsoleKey(ConsoleKey key, ConsoleModifiers modifiers)
-        {
-            // default for unprintables and unhandled
-            char keyChar = '\u0000';
-#if UNIX
-            Type keyType = typeof (Keys);
-            FieldInfo[] keyFields = keyType.GetFields();
-            
-            foreach (FieldInfo field in keyFields)
-            {
-                if (field.FieldType == typeof(ConsoleKeyInfo))
-                {
-                    ConsoleKeyInfo info = (ConsoleKeyInfo)field.GetValue(null);
-                    if (info.Key == key && info.Modifiers == modifiers)
-                    {
-                        return info.KeyChar;
-                    }
-                }
-            }
-#else
-            // emulate GetKeyboardState bitmap - set high order bit for relevant modifier virtual keys
-            var state = new byte[256];
-            state[NativeMethods.VK_SHIFT] = (byte)(((modifiers & ConsoleModifiers.Shift) != 0) ? 0x80 : 0);
-            state[NativeMethods.VK_CONTROL] = (byte)(((modifiers & ConsoleModifiers.Control) != 0) ? 0x80 : 0);
-            state[NativeMethods.VK_ALT] = (byte)(((modifiers & ConsoleModifiers.Alt) != 0) ? 0x80 : 0);
-
-            // a ConsoleKey enum's value is a virtual key code
-            uint virtualKey = (uint)key;
-
-            // get corresponding scan code
-            uint scanCode = NativeMethods.MapVirtualKey(virtualKey, NativeMethods.MAPVK_VK_TO_VSC);
-
-            // get corresponding character  - maybe be 0, 1 or 2 in length (diacriticals)
-            var chars = new char[2];
-            int charCount = NativeMethods.ToUnicode(
-                virtualKey, scanCode, state, chars, chars.Length, NativeMethods.MENU_IS_INACTIVE);
-
-            // TODO: support diacriticals (charCount == 2)
-            if (charCount == 1)
-            {
-                keyChar = chars[0];
-            }
-#endif
-            return keyChar;
         }
     }
 }

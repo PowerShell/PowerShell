@@ -404,8 +404,7 @@ namespace Microsoft.PowerShell.Internal
                 sb.Append(key.Key);
             }
 #else
-            char c = ConsoleKeyChordConverter.GetCharFromConsoleKey(key.Key,
-                (mods & ConsoleModifiers.Shift) != 0 ? ConsoleModifiers.Shift : 0);
+            char c = key.KeyChar;
             if (char.IsControl(c) || char.IsWhiteSpace(c))
             {
                 if (key.Modifiers.HasFlag(ConsoleModifiers.Shift))
