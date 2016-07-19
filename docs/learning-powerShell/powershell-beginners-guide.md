@@ -26,7 +26,7 @@ Let’s exercise some of the basic PowerShell commands, also known as **cmdlets*
 Please note that we will use the PowerShell prompt sign **PS />** as it appears on Linux in the following examples.
 It is shown as **PS C:\>** on  Windows.
 
-**1. Get-Process**: displays the processes running on your system.
+**1. Get-Process**: Gets the processes that are running on the local computer or a remote computer.
 
 By default, you will get data back similar to the following:
 ``` PowerShell
@@ -94,12 +94,12 @@ Now try it:
 PS /> Get-Process
 PS /> cls
 ```
-**4. cd - Set-Location**: Change your current working directory.
+**4. cd - Set-Location**: Sets the current working location to a specified location.
 ```PowerShell
 PS /> Set-Location /home
 PS /home>
 ```
-**5. dir - Get-ChildItem**: List all items in the specified location.
+**5. dir - Get-ChildItem**: Gets the items and child items in one or more specified locations.
 
 ```PowerShell
 Get all files under the current directory:
@@ -116,7 +116,7 @@ PS /> cd $home
 PS /home/jen> dir –Path *.txt -Recurse
 ```
 
-**6. New-Item**: Create a file
+**6. New-Item**: Creates a new item.
 
 ```PowerShell
 An empty file is created if you type the following:
@@ -162,7 +162,7 @@ Or simply use ">" as below:
 ```
 The pound sign (#) above is used for comments in PowerShell.
 
-**7. type - Get-Content**: Get the content of an item.
+**7. type - Get-Content**: Gets the content of the item at the specified location.
 
 ```PowerShell
 PS /home/jen> Get-Content -Path ./test.txt
@@ -170,7 +170,7 @@ PS /home/jen> type -Path ./test.txt
 
 Hello world again!
 ```
-**8. del - Remove-Item**: Delete a file or folder.
+**8. del - Remove-Item**: Deletes the specified items.
 
 This cmdlet will delete the file /home/jen/test.txt:
 ```PowerShell
