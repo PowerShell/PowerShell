@@ -21,7 +21,6 @@
 	"monad/src/commands/utility/WebCmdlet/CoreCLR/HttpKnownHeaderNames.cs": "CoreCLR/HttpKnownHeaderNames.cs",
 	"monad/src/commands/utility/WebCmdlet/CoreCLR/InvokeRestMethodCommand.CoreClr.cs": "CoreCLR/InvokeRestMethodCommand.CoreClr.cs",
 	"monad/src/commands/utility/WebCmdlet/CoreCLR/InvokeWebRequestCommand.CoreClr.cs": "CoreCLR/InvokeWebRequestCommand.CoreClr.cs",
-	"monad/src/commands/utility/WebCmdlet/CoreCLR/Resources.cs": "CoreCLR/Resources.cs",
 	"monad/src/commands/utility/WebCmdlet/CoreCLR/WebProxy.cs": "CoreCLR/WebProxy.cs",
 	"monad/src/commands/utility/WebCmdlet/CoreCLR/WebRequestPSCmdlet.CoreClr.cs": "CoreCLR/WebRequestPSCmdlet.CoreClr.cs",
 	"monad/src/commands/utility/WebCmdlet/CoreCLR/WebResponseHelper.CoreClr.cs": "CoreCLR/WebResponseHelper.CoreClr.cs",
