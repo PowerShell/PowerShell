@@ -32,3 +32,8 @@ These are for issues that are specific to certain operating systems:
 * `OS-Linux`
 * `OS-OS X`
 * `OS-Windows`
+
+### Process Tags
+ 
+* `help wanted` : We are looking for someone to work on this issue.
+* `need review` : This Pull Request is being reviewed.  Please see [Pull Request - Code Review](../../.github/CONTRIBUTING.md#pull-request-code-review)
