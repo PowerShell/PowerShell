@@ -667,182 +667,193 @@ namespace NativeMsh
     // System.Management.Automation must not be listed here. I should exist on the APP_PATH.
     //
     // NOTE: The names must not include the .dll extension because it will be added programmatically.
-    static PCWSTR trustedAssemblies[] =
+    static PCSTR trustedAssemblies[] =
     {
-        L"Microsoft.CSharp",
-        L"Microsoft.VisualBasic",
-        L"Microsoft.Win32.Primitives",
-        L"Microsoft.Win32.Registry.AccessControl",
-        L"Microsoft.Win32.Registry",
-        L"mscorlib",
-        L"System.AppContext",
-        L"System.Buffers",
-        L"System.Collections.Concurrent",
-        L"System.Collections",
-        L"System.Collections.Immutable",
-        L"System.Collections.NonGeneric",
-        L"System.Collections.Specialized",
-        L"System.ComponentModel.Annotations",
-        L"System.ComponentModel.DataAnnotations",
-        L"System.ComponentModel",
-        L"System.ComponentModel.EventBasedAsync",
-        L"System.ComponentModel.Primitives",
-        L"System.ComponentModel.TypeConverter",
-        L"System.Console",
-        L"System.Core",
-        L"System.Data.Common",
-        L"System.Diagnostics.Contracts",
-        L"System.Diagnostics.Debug",
-        L"System.Diagnostics.DiagnosticSource",
-        L"System.Diagnostics.FileVersionInfo",
-        L"System.Diagnostics.Process",
-        L"System.Diagnostics.StackTrace",
-        L"System.Diagnostics.TextWriterTraceListener",
-        L"System.Diagnostics.Tools",
-        L"System.Diagnostics.TraceSource",
-        L"System.Diagnostics.Tracing",
-        L"System",
-        L"System.Dynamic.Runtime",
-        L"System.Globalization.Calendars",
-        L"System.Globalization",
-        L"System.Globalization.Extensions",
-        L"System.IO.Compression",
-        L"System.IO.Compression.ZipFile",
-        L"System.IO",
-        L"System.IO.FileSystem.AccessControl",
-        L"System.IO.FileSystem",
-        L"System.IO.FileSystem.DriveInfo",
-        L"System.IO.FileSystem.Primitives",
-        L"System.IO.FileSystem.Watcher",
-        L"System.IO.MemoryMappedFiles",
-        L"System.IO.Packaging",
-        L"System.IO.Pipes",
-        L"System.IO.UnmanagedMemoryStream",
-        L"System.Linq",
-        L"System.Linq.Expressions",
-        L"System.Linq.Parallel",
-        L"System.Linq.Queryable",
-        L"System.Net",
-        L"System.Net.Http",
-        L"System.Net.Http.WinHttpHandler",
-        L"System.Net.NameResolution",
-        L"System.Net.NetworkInformation",
-        L"System.Net.Ping",
-        L"System.Net.Primitives",
-        L"System.Net.Requests",
-        L"System.Net.Security",
-        L"System.Net.Sockets",
-        L"System.Net.WebHeaderCollection",
-        L"System.Net.WebSockets.Client",
-        L"System.Net.WebSockets",
-        L"System.Numerics",
-        L"System.Numerics.Vectors",
-        L"System.ObjectModel",
-        L"System.Private.DataContractSerialization",
-        L"System.Private.ServiceModel",
-        L"System.Private.Uri",
-        L"System.Reflection.DispatchProxy",
-        L"System.Reflection",
-        L"System.Reflection.Emit",
-        L"System.Reflection.Emit.ILGeneration",
-        L"System.Reflection.Emit.Lightweight",
-        L"System.Reflection.Extensions",
-        L"System.Reflection.Metadata",
-        L"System.Reflection.Primitives",
-        L"System.Reflection.TypeExtensions",
-        L"System.Resources.ReaderWriter",
-        L"System.Resources.ResourceManager",
-        L"System.Runtime.CompilerServices.VisualC",
-        L"System.Runtime",
-        L"System.Runtime.Extensions",
-        L"System.Runtime.Handles",
-        L"System.Runtime.InteropServices",
-        L"System.Runtime.InteropServices.PInvoke",
-        L"System.Runtime.InteropServices.RuntimeInformation",
-        L"System.Runtime.Loader",
-        L"System.Runtime.Numerics",
-        L"System.Runtime.Serialization",
-        L"System.Runtime.Serialization.Json",
-        L"System.Runtime.Serialization.Primitives",
-        L"System.Runtime.Serialization.Xml",
-        L"System.Security.AccessControl",
-        L"System.Security.Claims",
-        L"System.Security.Cryptography.Algorithms",
-        L"System.Security.Cryptography.Cng",
-        L"System.Security.Cryptography.Csp",
-        L"System.Security.Cryptography.Encoding",
-        L"System.Security.Cryptography.OpenSsl",
-        L"System.Security.Cryptography.Primitives",
-        L"System.Security.Cryptography.X509Certificates",
-        L"System.Security.Principal",
-        L"System.Security.Principal.Windows",
-        L"System.Security.SecureString",
-        L"System.ServiceModel",
-        L"System.ServiceModel.Duplex",
-        L"System.ServiceModel.Http",
-        L"System.ServiceModel.NetTcp",
-        L"System.ServiceModel.Primitives",
-        L"System.ServiceModel.Security",
-        L"System.ServiceModel.Web",
-        L"System.ServiceProcess.ServiceController",
-        L"System.Text.Encoding.CodePages",
-        L"System.Text.Encoding",
-        L"System.Text.Encoding.Extensions",
-        L"System.Text.Encodings.Web",
-        L"System.Text.RegularExpressions",
-        L"System.Threading.AccessControl",
-        L"System.Threading",
-        L"System.Threading.Overlapped",
-        L"System.Threading.Tasks.Dataflow",
-        L"System.Threading.Tasks",
-        L"System.Threading.Tasks.Extensions",
-        L"System.Threading.Tasks.Parallel",
-        L"System.Threading.Thread",
-        L"System.Threading.ThreadPool",
-        L"System.Threading.Timer",
-        L"System.Windows",
-        L"System.Xml",
-        L"System.Xml.Linq",
-        L"System.Xml.ReaderWriter",
-        L"System.Xml.Serialization",
-        L"System.Xml.XDocument",
-        L"System.Xml.XmlDocument",
-        L"System.Xml.XmlSerializer",
-        L"System.Xml.XPath",
-        L"System.Xml.XPath.XDocument",
-        L"System.Xml.XPath.XmlDocument",
-        L"Microsoft.PowerShell.CoreCLR.AssemblyLoadContext"
+        "Microsoft.CSharp",
+        "Microsoft.VisualBasic",
+        "Microsoft.Win32.Primitives",
+        "Microsoft.Win32.Registry.AccessControl",
+        "Microsoft.Win32.Registry",
+        "mscorlib",
+        "System.AppContext",
+        "System.Buffers",
+        "System.Collections.Concurrent",
+        "System.Collections",
+        "System.Collections.Immutable",
+        "System.Collections.NonGeneric",
+        "System.Collections.Specialized",
+        "System.ComponentModel.Annotations",
+        "System.ComponentModel.DataAnnotations",
+        "System.ComponentModel",
+        "System.ComponentModel.EventBasedAsync",
+        "System.ComponentModel.Primitives",
+        "System.ComponentModel.TypeConverter",
+        "System.Console",
+        "System.Core",
+        "System.Data.Common",
+        "System.Diagnostics.Contracts",
+        "System.Diagnostics.Debug",
+        "System.Diagnostics.DiagnosticSource",
+        "System.Diagnostics.FileVersionInfo",
+        "System.Diagnostics.Process",
+        "System.Diagnostics.StackTrace",
+        "System.Diagnostics.TextWriterTraceListener",
+        "System.Diagnostics.Tools",
+        "System.Diagnostics.TraceSource",
+        "System.Diagnostics.Tracing",
+        "System",
+        "System.Dynamic.Runtime",
+        "System.Globalization.Calendars",
+        "System.Globalization",
+        "System.Globalization.Extensions",
+        "System.IO.Compression",
+        "System.IO.Compression.ZipFile",
+        "System.IO",
+        "System.IO.FileSystem.AccessControl",
+        "System.IO.FileSystem",
+        "System.IO.FileSystem.DriveInfo",
+        "System.IO.FileSystem.Primitives",
+        "System.IO.FileSystem.Watcher",
+        "System.IO.MemoryMappedFiles",
+        "System.IO.Packaging",
+        "System.IO.Pipes",
+        "System.IO.UnmanagedMemoryStream",
+        "System.Linq",
+        "System.Linq.Expressions",
+        "System.Linq.Parallel",
+        "System.Linq.Queryable",
+        "System.Net",
+        "System.Net.Http",
+        "System.Net.Http.WinHttpHandler",
+        "System.Net.NameResolution",
+        "System.Net.NetworkInformation",
+        "System.Net.Ping",
+        "System.Net.Primitives",
+        "System.Net.Requests",
+        "System.Net.Security",
+        "System.Net.Sockets",
+        "System.Net.WebHeaderCollection",
+        "System.Net.WebSockets.Client",
+        "System.Net.WebSockets",
+        "System.Numerics",
+        "System.Numerics.Vectors",
+        "System.ObjectModel",
+        "System.Private.DataContractSerialization",
+        "System.Private.ServiceModel",
+        "System.Private.Uri",
+        "System.Reflection.DispatchProxy",
+        "System.Reflection",
+        "System.Reflection.Emit",
+        "System.Reflection.Emit.ILGeneration",
+        "System.Reflection.Emit.Lightweight",
+        "System.Reflection.Extensions",
+        "System.Reflection.Metadata",
+        "System.Reflection.Primitives",
+        "System.Reflection.TypeExtensions",
+        "System.Resources.ReaderWriter",
+        "System.Resources.ResourceManager",
+        "System.Runtime.CompilerServices.VisualC",
+        "System.Runtime",
+        "System.Runtime.Extensions",
+        "System.Runtime.Handles",
+        "System.Runtime.InteropServices",
+        "System.Runtime.InteropServices.PInvoke",
+        "System.Runtime.InteropServices.RuntimeInformation",
+        "System.Runtime.Loader",
+        "System.Runtime.Numerics",
+        "System.Runtime.Serialization",
+        "System.Runtime.Serialization.Json",
+        "System.Runtime.Serialization.Primitives",
+        "System.Runtime.Serialization.Xml",
+        "System.Security.AccessControl",
+        "System.Security.Claims",
+        "System.Security.Cryptography.Algorithms",
+        "System.Security.Cryptography.Cng",
+        "System.Security.Cryptography.Csp",
+        "System.Security.Cryptography.Encoding",
+        "System.Security.Cryptography.OpenSsl",
+        "System.Security.Cryptography.Primitives",
+        "System.Security.Cryptography.X509Certificates",
+        "System.Security.Principal",
+        "System.Security.Principal.Windows",
+        "System.Security.SecureString",
+        "System.ServiceModel",
+        "System.ServiceModel.Duplex",
+        "System.ServiceModel.Http",
+        "System.ServiceModel.NetTcp",
+        "System.ServiceModel.Primitives",
+        "System.ServiceModel.Security",
+        "System.ServiceModel.Web",
+        "System.ServiceProcess.ServiceController",
+        "System.Text.Encoding.CodePages",
+        "System.Text.Encoding",
+        "System.Text.Encoding.Extensions",
+        "System.Text.Encodings.Web",
+        "System.Text.RegularExpressions",
+        "System.Threading.AccessControl",
+        "System.Threading",
+        "System.Threading.Overlapped",
+        "System.Threading.Tasks.Dataflow",
+        "System.Threading.Tasks",
+        "System.Threading.Tasks.Extensions",
+        "System.Threading.Tasks.Parallel",
+        "System.Threading.Thread",
+        "System.Threading.ThreadPool",
+        "System.Threading.Timer",
+        "System.Windows",
+        "System.Xml",
+        "System.Xml.Linq",
+        "System.Xml.ReaderWriter",
+        "System.Xml.Serialization",
+        "System.Xml.XDocument",
+        "System.Xml.XmlDocument",
+        "System.Xml.XmlSerializer",
+        "System.Xml.XPath",
+        "System.Xml.XPath.XDocument",
+        "System.Xml.XPath.XmlDocument",
+        "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext"
     };
 
     // Define the function pointer for the CLR entry point
     typedef HRESULT(STDAPICALLTYPE *GetCLRRuntimeHostFp)(REFIID riid, IUnknown** pUnk);
 
     // The name of the CoreCLR native runtime DLL.
-    static PCWSTR coreClrDll = L"CoreCLR.dll";
+    static PCSTR coreClrDll = "CoreCLR.dll";
 
-    // The location where CoreCLR is expected to be installed. If CoreCLR.dll isn't
+    // The location where CoreCLR is expected to be installed for inbox PowerShell. If CoreCLR.dll isn't
     // found in the same directory as the host, it will be looked for here.
-    static PCWSTR coreCLRInstallDirectory = L"%windir%\\system32\\DotNetCore\\v1.0\\";
+    static PCSTR coreCLRInstallDirectory = "%windir%\\system32\\DotNetCore\\v1.0\\";
 
-    // The location where CoreCLR PowerShell Ext binaries are expected to be installed.     
-    static PCWSTR coreCLRPowerShellExtInstallDirectory = L"%windir%\\system32\\CoreClrPowerShellExt\\v1.0\\";
+    // The location where CoreCLR PowerShell Ext binaries are expected to be installed for inbox PowerShell.
+    static PCSTR coreCLRPowerShellExtInstallDirectory = "%windir%\\system32\\CoreClrPowerShellExt\\v1.0\\";
 
-    // The default PowerShell install directory. This location may be overridden through a config file in %windir%\System32.
-    static PCWSTR powerShellInstallPath = L"%windir%\\System32\\WindowsPowerShell\\v1.0\\";
+    // The default PowerShell install directory for inbox PowerShell. 
+    // This location may be overridden by placing a config file in the same directory as the PowerShell host.
+    static PCSTR powerShellInstallPath = "%windir%\\System32\\WindowsPowerShell\\v1.0\\";
 
     unsigned int PwrshCommon::IdentifyHostDirectory(
         HostEnvironment& hostEnvironment)
     {
-        // Discover the path to the exe's module (powershell.exe or wsmprovhost.exe). 
-        // For remoting, this is expected to be %windir%\system32 since that is the location of wsmprovhost.exe.
+        // Discover the path to the plugin or the executable (pwrshplugin.dll or powershell.exe). 
+        // For PowerShell Core, the plugin no longer resides in %windir%\\system32 (it is in a sub-directory).
+        // If pwrshplugin.dll is not loaded, it means that this is running via powershell.exe.
         wchar_t hostPath[MAX_PATH];
-        DWORD thisModuleLength = sysCalls->GetModuleFileNameW(sysCalls->GetModuleHandleW(NULL), hostPath, MAX_PATH);
+        DWORD thisModuleLength;
 
-        if (0 == thisModuleLength)
+        if (GetModuleHandleW(L"pwrshplugin.dll")) 
+        {
+            thisModuleLength = GetModuleFileNameW(GetModuleHandleW(L"pwrshplugin.dll"), hostPath, MAX_PATH);
+        }
+        else
+        {
+            thisModuleLength = GetModuleFileNameW(GetModuleHandleW(NULL), hostPath, MAX_PATH);
+        }
+        if (0 == thisModuleLength) // Greater than zero means it is the length of the fully qualified path (without the NULL character)
         {
             // TODO: Use GetLastError() to find the specific error #
             return EXIT_CODE_INIT_FAILURE;
         }
+        
         // Search for the last backslash in the host path.
         int lastBackslashIndex;
         for (lastBackslashIndex = thisModuleLength - 1; lastBackslashIndex >= 0; lastBackslashIndex--)
@@ -854,106 +865,62 @@ namespace NativeMsh
         }
 
         // The remaining part of the path after the last '\' is the binary name.
-        hostEnvironment.SetHostBinaryName(hostPath + lastBackslashIndex + 1);
+        hostEnvironment.SetHostBinaryNameW(hostPath + lastBackslashIndex + 1);
 
         // Copy the directory path portion of the path
         hostPath[lastBackslashIndex + 1] = '\0';
-        hostEnvironment.SetHostPath(hostPath);
+        hostEnvironment.SetHostPathW(hostPath);
 
-        hostEnvironment.SetHostDirectoryPath(powerShellInstallPath);
-
-        return EXIT_CODE_SUCCESS;
-    }
-
-    // Attempts to load CoreCLR.dll from the specified directory.
-    // On success pins the dll, sets coreCLRDirectoryPath and returns the HMODULE.
-    // On failure returns NULL.
-    HMODULE PwrshCommon::TryLoadCoreCLR(
-        _In_ PCWSTR directoryPath)
-    {
-        std::wstring coreCLRPath(directoryPath);
-        coreCLRPath += coreClrDll;
-
-        HMODULE result = sysCalls->LoadLibraryExW(coreCLRPath.c_str(), NULL, 0);
-        if (!result)
+        // Read the config file to determine the appropriate host path and CoreCLR path to use.
+        unsigned int result = reader->Read(hostPath);
+        if (EXIT_CODE_SUCCESS == result)
         {
-            return NULL;
+            // The config file was successfully parsed. Use those directories.
+            hostEnvironment.SetHostDirectoryPathW(reader->GetPathToPowerShell().c_str());
+            hostEnvironment.SetCoreCLRDirectoryPathW(reader->GetPathToCoreClr().c_str());
         }
-
-        // Pin the module - CoreCLR.dll does not support being unloaded.
-        HMODULE dummy_coreCLRModule;
-        if (!sysCalls->GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN, coreCLRPath.c_str(), &dummy_coreCLRModule))
+        else 
         {
-            return NULL;
+            // There was an issue accessing or parsing the config file OR
+            // we are working for the EXE.
+            //
+            // TODO: This should not be the fallback for inbox PowerShell.exe. 
+            // It should use coreCLRInstallDirectory and coreCLRPowerShellExtInstallDirectory. 
+            //
+            // Use the directory detected via GetModuleFileName + GetModuleHandle
+            hostEnvironment.SetHostDirectoryPathW(hostPath);
+            // At the moment, CoreCLR is in the same directory as PowerShell Core.
+            // This path must be modified if we decide to use a different directory.
+            hostEnvironment.SetCoreCLRDirectoryPathW(hostPath);
         }
-
-        return result;
-    }
-
-    unsigned int PwrshCommon::InitializeClr(
-        _In_ ClrHostWrapper* hostWrapper,
-        _In_ HMODULE coreClrModule)
-    {
-#if CORECLR
-        // Get the function pointer for "GetCLRRuntimeHost"
-        GetCLRRuntimeHostFp getCLRRuntimeHostfp = (GetCLRRuntimeHostFp)sysCalls->GetProcAddress(coreClrModule, "GetCLRRuntimeHost");
-        if (getCLRRuntimeHostfp == NULL)
-        {
-            return EXIT_CODE_INIT_FAILURE;
-        }
-
-        // Get the CLR runtime host
-        ICLRRuntimeHost2* pHost = NULL;
-        HRESULT hResult = getCLRRuntimeHostfp(IID_ICLRRuntimeHost2, (IUnknown**)&pHost);
-        if (FAILED(hResult))
-        {
-            return EXIT_CODE_INIT_FAILURE;
-        }
-
-        hostWrapper->SetClrHost(pHost);
-        // Authenticate with either
-        //  CORECLR_HOST_AUTHENTICATION_KEY  or
-        //  CORECLR_HOST_AUTHENTICATION_KEY_NONGEN
-        hResult = hostWrapper->Authenticate(CORECLR_HOST_AUTHENTICATION_KEY);
-        if (FAILED(hResult))
-        {
-            return EXIT_CODE_INIT_FAILURE;
-        }
-
-        hostWrapper->SetStartupFlags((STARTUP_FLAGS)(STARTUP_SINGLE_APPDOMAIN | STARTUP_LOADER_OPTIMIZATION_SINGLE_DOMAIN));
-
-        hResult = hostWrapper->Start();
-        if (FAILED(hResult))
-        {
-            return EXIT_CODE_INIT_FAILURE;
-        }
-#endif
         return EXIT_CODE_SUCCESS;
     }
 
     bool PwrshCommon::DoesAssemblyExist(
-        std::wstring& fileToTest)
+        std::string& fileToTest)
     {
-        FILE *file = sysCalls->_wfopen(fileToTest.c_str(), L"r");
+        //FILE *file = sysCalls->fopen(fileToTest.c_str(), "r"); // TODO: Use fopen_s?
+        FILE *file = NULL;
+        errno_t status = sysCalls->fopen_s(&file, fileToTest.c_str(), "r");
 
         if (file != NULL) {
             sysCalls->fclose(file);
-            return true;
+            return (status == 0);
         }
         return false;
     }
 
     // This assumes that directoryPath already includes a trailing "\\"
     void PwrshCommon::ProbeAssembly(
-        _In_z_ PCWSTR directoryPath,
-        _In_z_ PCWSTR assemblyName,
-        std::wstring& result)
+        _In_z_ PCSTR directoryPath,
+        _In_z_ PCSTR assemblyName,
+        std::string& result)
     {
-        PCWSTR niExtension = L".ni.dll";
-        PCWSTR ilExtension = L".dll";
+        PCSTR niExtension = ".ni.dll";
+        PCSTR ilExtension = ".dll";
 
         // Test NI extension first because it is preferable to IL
-        std::wstring fileToTest(directoryPath);
+        std::string fileToTest(directoryPath);
         fileToTest += assemblyName;
         fileToTest += niExtension;
         if (DoesAssemblyExist(fileToTest)) {
@@ -973,13 +940,13 @@ namespace NativeMsh
     // Returns the semicolon-separated list of paths to runtime dlls that are considered trusted.
     // Do not put powershell assemblies in the TPA list as it will cause 'Security Transparent V.S. Security Critical' error.
     void PwrshCommon::GetTrustedAssemblyList(
-        PCWSTR coreCLRDirectoryPath,
-        std::wstringstream& assemblyList,
+        PCSTR coreCLRDirectoryPath,
+        std::stringstream& assemblyList,
         bool& listEmpty)
     {
-        for (const wchar_t * &assembly : trustedAssemblies)
+        for (const char* &assembly : trustedAssemblies)
         {
-            std::wstring assemblyPath;
+            std::string assemblyPath;
             ProbeAssembly(coreCLRDirectoryPath, assembly, assemblyPath);
 
             if (assemblyPath.length() > 0)
@@ -987,7 +954,7 @@ namespace NativeMsh
                 if (listEmpty)
                     listEmpty = false;
                 else
-                    assemblyList << L";";
+                    assemblyList << ";";
                 assemblyList << assemblyPath;
             }
         }
@@ -1023,18 +990,24 @@ namespace NativeMsh
     //
 
     PwrshCommon::PwrshCommon() 
-        : output(new PwrshCommonOutputDefault()), sysCalls(new WinSystemCallFacade())
+        : output(new PwrshCommonOutputDefault()), reader(new ConfigFileReader()), sysCalls(new WinSystemCallFacade())
     {
     }
 
     PwrshCommon::PwrshCommon(
         IPwrshCommonOutput* outObj, 
+        ConfigFileReader* rdr,
         SystemCallFacade* systemCalls) 
-        : output(outObj), sysCalls(systemCalls)
+        : output(outObj), reader(rdr), sysCalls(systemCalls)
     {
         if (NULL == output)
         {
             output = new PwrshCommonOutputDefault();
+        }
+
+        if (NULL == reader)
+        {
+            reader = new ConfigFileReader();
         }
 
         if (NULL == sysCalls)
@@ -1049,6 +1022,12 @@ namespace NativeMsh
         {
             delete output;
             output = NULL;
+        }
+
+        if (reader)
+        {
+            delete reader;
+            reader = NULL;
         }
 
         if (sysCalls)
@@ -1351,10 +1330,10 @@ namespace NativeMsh
             pwszRuntimeVersion, L"ConsoleHostAssemblyName", pwszConsoleHostAssemblyName);
     }
 
-    #if CORECLR
     unsigned int PwrshCommon::LaunchCoreCLR(
         ClrHostWrapper* hostWrapper,
-        HostEnvironment& hostEnvironment)
+        HostEnvironment& hostEnvironment,
+        PCSTR friendlyName)
     {
         unsigned int exitCode = this->IdentifyHostDirectory(hostEnvironment);
         if (EXIT_CODE_SUCCESS != exitCode)
@@ -1363,131 +1342,57 @@ namespace NativeMsh
             return exitCode;
         }
 
-        // Try to load from the well-known location. 
-        wchar_t coreCLRInstallPath[MAX_PATH];
-        exitCode = ::ExpandEnvironmentStringsW(coreCLRInstallDirectory, coreCLRInstallPath, MAX_PATH);
-        if (0 == exitCode || _countof(coreCLRInstallPath) <= exitCode)
-        {
-            this->output->DisplayMessage(false, g_STARTING_CLR_FAILED, GetLastError());
-            return EXIT_CODE_INIT_FAILURE;
-        }
-
-        HMODULE coreClrModule = this->TryLoadCoreCLR(coreCLRInstallPath);
-
-        if (coreClrModule)
-        {
-            // Save the directory that CoreCLR was found in
-            WCHAR coreCLRDirectoryPath[MAX_PATH];
-            DWORD modulePathLength = sysCalls->GetModuleFileNameW(coreClrModule, coreCLRDirectoryPath, MAX_PATH);
-
-            // Search for the last backslash and terminate it there to keep just the directory path with trailing slash
-            for (int lastBackslashIndex = modulePathLength - 1; lastBackslashIndex >= 0; lastBackslashIndex--)
-            {
-                if (coreCLRDirectoryPath[lastBackslashIndex] == L'\\')
-                {
-                    coreCLRDirectoryPath[lastBackslashIndex + 1] = L'\0';
-                    break;
-                }
-            }
-            hostEnvironment.SetCoreCLRDirectoryPath(coreCLRDirectoryPath);
-        }
-        else
-        {
-            this->output->DisplayMessage(false, g_STARTING_CLR_FAILED, GetLastError());
-            return EXIT_CODE_INIT_FAILURE;
-        }
-
-        exitCode = this->InitializeClr(hostWrapper, coreClrModule);
+        exitCode = hostWrapper->SetupWrapper(hostEnvironment.GetCoreCLRDirectoryPath());
         if (EXIT_CODE_SUCCESS != exitCode)
         {
             this->output->DisplayMessage(false, g_STARTING_CLR_FAILED, GetLastError());
             return exitCode;
         }
-
-        hostEnvironment.SetCoreCLRModule(coreClrModule);
-
-        return exitCode;
-    }
-
-    unsigned int PwrshCommon::CreateAppDomain(
-        ClrHostWrapper* hostWrapper,
-        PCWSTR friendlyName,
-        HostEnvironment& hostEnvironment)
-    {
-        const int     nMaxProps = 8;
-        LPCWSTR       props[nMaxProps];
-        LPCWSTR       vals[nMaxProps];
-
-        if (!hostWrapper->IsInitialized())
-        {
-            return EXIT_CODE_INIT_FAILURE;
-        }
-
-        //PAL_LeaveHolder holder;
-        DWORD dwDomainFlags = 0;
-        dwDomainFlags = APPDOMAIN_SECURITY_DEFAULT;
-        dwDomainFlags |= APPDOMAIN_ENABLE_ASSEMBLY_LOADFILE;
-        dwDomainFlags |= APPDOMAIN_DISABLE_TRANSPARENCY_ENFORCEMENT;
-
-        // By default CoreCLR only allows platform neutral assembly to be run. To allow
-        //   assemblies marked as platform specific, include this flag
-        dwDomainFlags |= APPDOMAIN_ENABLE_PLATFORM_SPECIFIC_APPS;
-        // Enable PInvoke
-        dwDomainFlags |= APPDOMAIN_ENABLE_PINVOKE_AND_CLASSIC_COMINTEROP;
-        // This will not tear down an application if a managed exception goes unhandled 
-        dwDomainFlags |= APPDOMAIN_IGNORE_UNHANDLED_EXCEPTIONS;
-
+        
+        const int nMaxProps = 8;
+        LPCSTR props[nMaxProps];
+        LPCSTR vals[nMaxProps];
         int nProps = 0;
-        props[nProps] = L"APPBASE";
-        vals[nProps] = hostEnvironment.GetHostDirectoryPath();
-        nProps++;
 
         // If I do not include my managed enload point dll in this list, I get a security error. 
-        std::wstringstream assemblyList;
+        std::stringstream assemblyList;
         bool listEmpty = true;
         this->GetTrustedAssemblyList(hostEnvironment.GetCoreCLRDirectoryPath(), assemblyList, listEmpty);
 
-        wchar_t coreCLRPowerShellExtInstallPath[MAX_PATH];
-        ::ExpandEnvironmentStringsW(coreCLRPowerShellExtInstallDirectory, coreCLRPowerShellExtInstallPath, MAX_PATH);
+        char coreCLRPowerShellExtInstallPath[MAX_PATH];
+        ::ExpandEnvironmentStringsA(coreCLRPowerShellExtInstallDirectory, coreCLRPowerShellExtInstallPath, MAX_PATH);
         this->GetTrustedAssemblyList(coreCLRPowerShellExtInstallPath, assemblyList, listEmpty);
 
-        props[nProps] = L"TRUSTED_PLATFORM_ASSEMBLIES";        
-        std::wstring tempStr = assemblyList.str();
+        props[nProps] = "TRUSTED_PLATFORM_ASSEMBLIES";        
+        std::string tempStr = assemblyList.str();
         vals[nProps] = tempStr.c_str();
         nProps++;
 
-        props[nProps] = L"APP_PATHS";
-        vals[nProps] = L"";
+        props[nProps] = "APP_PATHS";
+        vals[nProps] = "";  // Used to be hostEnvironment.GetHostDirectoryPath()
         nProps++;
 
-        props[nProps] = L"APP_NI_PATHS";
-        vals[nProps] = L"";
+        props[nProps] = "APP_NI_PATHS";
+        vals[nProps] = "";  // Used to be hostEnvironment.GetHostDirectoryPath()
         nProps++;
 
-        // Create the customized AppDomainManager out of the SandboxHelper class
-        DWORD appDomainId = INVALID_APPDOMAIN_ID;
-        HRESULT hr = hostWrapper->CreateAppDomainWithManager(
-            friendlyName,
-            dwDomainFlags,
-            NULL, // AppDomainManager is no longer required now that we can use AssemblyLoadContext to access arbitrary assemblies from within SMA.dll
-            NULL,
-            nProps,
-            props,
-            vals,
-            &appDomainId);
+        int hr = hostWrapper->InitializeClr(
+                hostEnvironment.GetHostDirectoryPath(), 
+                friendlyName,
+                nProps,
+                props,
+                vals);
+
         if (FAILED(hr))
         {
-            //LONG systemErrorCode = GetLastError();
-            this->output->DisplayMessage(false, g_GETTING_DEFAULT_DOMAIN_FAILED, hr);
-
+            this->output->DisplayMessage(false, g_STARTING_CLR_FAILED, GetLastError());
             return EXIT_CODE_INIT_FAILURE;
         }
-        hostWrapper->SetAppDomainId(appDomainId);
+
         return EXIT_CODE_SUCCESS;
     }
 
-    #else // !CORECLR
-
+#if !CORECLR
     // NOTE:
     // This must be ifdef'd out of the CoreCLR build because it uses .NET 1.0
     // types that have been deprecated and removed from mscoree.h.
@@ -1550,7 +1455,7 @@ namespace NativeMsh
 
         return exitCode;
     }
-    #endif // !CORECLR
+#endif // !CORECLR
 
 #pragma prefast(pop)
 

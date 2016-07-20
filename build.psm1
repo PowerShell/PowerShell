@@ -59,10 +59,10 @@ function Start-PSBuild {
         [switch]$XamlGen,
 
         [Parameter(ParameterSetName='FullCLR')]
-        [ValidateSet('x86', 'x64')]
+        [ValidateSet('x86', 'x64')] # TODO: At some point, we need to add ARM support to match CoreCLR
         [string]$NativeHostArch = "x64",
 
-        [ValidateSet('Linux', 'Debug', 'Release', '')]
+        [ValidateSet('Linux', 'Debug', 'Release', '')] # We might need "Checked" as well
         [string]$Configuration
     )
 
@@ -99,12 +99,16 @@ function Start-PSBuild {
         Use-MSBuild
 
         #mc.exe is Message Compiler for native resources
-        <# This currently doesn't work reliably and clean systems. Removing for now since mc.exe is not being used yet.
         $mcexe = Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\" -Recurse -Filter 'mc.exe' | ? {$_.FullName -match 'x64'} | select -First 1 | % {$_.FullName}
         if (-not $mcexe) {
             throw 'mc.exe not found. Install Microsoft Windows SDK.'
         }
-        #>
+
+        $vcVarsPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
+        if ((Test-Path -Path $vcVarsPath\vcvarsall.bat) -eq $false)
+        {
+            throw "Could not find Visual Studio vcvarsall.bat at" + $vcVarsPath
+        }
 
         # setup msbuild configuration
         if ($Configuration -eq 'Debug' -or $Configuration -eq 'Release')
@@ -221,18 +225,35 @@ function Start-PSBuild {
             @("nativemsh/pwrshplugin") | % {
                 $nativeResourcesFolder = $_
                 Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | % {
-                #    & $mcexe -c -U $_.FullName -h $nativeResourcesFolder -r $nativeResourcesFolder
+                    Start-NativeExecution { & $mcexe -o -d -c -U $_.FullName -h "$nativeResourcesFolder" -r "$nativeResourcesFolder" }
                 }
             }
+ 
+# Disabling until I figure out if it is necessary          
+#            $overrideFlags = "-DCMAKE_USER_MAKE_RULES_OVERRIDE=$PSScriptRoot\src\powershell-native\windows-compiler-override.txt" 
+            $overrideFlags = ""
+            $location = Get-Location
+            #
+            # BUILD_ONECORE
+            #
             
-            if ($cmakeGenerator) {
-                Start-NativeExecution { cmake -G $cmakeGenerator . }
-            } else {
-                Start-NativeExecution { cmake . }
+            $BuildOneCoreValues = @("ON","OFF")
+            foreach ($oneCoreValue in $BuildOneCoreValues)
+            {
+                $command = @"
+cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=$oneCoreValue -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$msbuildConfiguration"
+"@
+                log "  Executing Build Command: $command"
+                Start-NativeExecution { Invoke-Expression -Command:$command }
             }
 
-            Start-NativeExecution { msbuild powershell.vcxproj /p:Configuration=$msbuildConfiguration }
-
+            # Copy the executable binary from the local build directory to the expected destination to enable Start-DevPowerShell to work
+            #
+            # TODO: This should be updated to handle per-architecture builds gracefully.
+            $srcPath = Join-Path (Join-Path (Join-Path (Get-Location) "bin") $msbuildConfiguration) "FullCLR/powershell.exe"
+            $dstPath = ($script:Options).Top
+            log "  Copying $srcPath to $dstPath"
+            Copy-Item $srcPath $dstPath
         } finally {
             Pop-Location
         }
@@ -254,7 +275,6 @@ function Start-PSBuild {
     } finally {
         Pop-Location
     }
-
 }
 
 
@@ -1312,7 +1332,7 @@ function script:Start-NativeExecution([scriptblock]$sb)
     try
     {
         & $sb
-        # note, if $sb doens't have a native invokation, $LASTEXITCODE will
+        # note, if $sb doens't have a native invocation, $LASTEXITCODE will
         # point to the obsolete value
         if ($LASTEXITCODE -ne 0)
         {

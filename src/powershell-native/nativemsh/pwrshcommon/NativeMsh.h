@@ -17,7 +17,12 @@
 #include "NativeMshConstants.h"
 #include "ClrHostWrapper.h"
 #include "SystemCallFacade.h"
+#include "ConfigFileReader.h"
 #include "IPwrshCommonOutput.h"
+
+#if !CORECLR
+#include <mscoree.h>
+#endif
 
 namespace NativeMsh 
 {
@@ -25,6 +30,7 @@ namespace NativeMsh
     {
     private:
         IPwrshCommonOutput* output;
+        ConfigFileReader* reader;
         SystemCallFacade* sysCalls;
 
     public:
@@ -37,6 +43,7 @@ namespace NativeMsh
         // allocate them with "new".
         PwrshCommon(
             IPwrshCommonOutput* outObj,     // Enables clients to specify how error messages are displayed or suppressed
+            ConfigFileReader* rdr,          // Enables specification of how the config file is read.
             SystemCallFacade* systemCalls); // Wraps all calls to Windows APIs to allow for dependency injection via unit test
 
         ~PwrshCommon();
@@ -91,17 +98,12 @@ namespace NativeMsh
             __deref_out_opt PWSTR * pwszRuntimeVersion,
             __deref_out_opt PWSTR * pwszConsoleHostAssemblyName);
 
-#if CORECLR
         unsigned int LaunchCoreCLR(
             ClrHostWrapper* hostWrapper,
-            HostEnvironment& hostEnvironment);
+            HostEnvironment& hostEnvironment,
+            PCSTR friendlyName);
 
-        unsigned int CreateAppDomain(
-            ClrHostWrapper* hostWrapper,
-            PCWSTR friendlyName,
-            HostEnvironment& hostEnvironment);
-
-#else  // !CORECLR
+#if !CORECLR
         // NOTE:
         // This must be ifdef'd out of the CoreCLR build because it uses .NET 1.0
         // types that have been deprecated and removed from mscoree.h.
@@ -113,7 +115,6 @@ namespace NativeMsh
             LPCWSTR wszMonadVersion,
             LPCWSTR wszRuntimeVersion,
             __in_ecount(1) ICorRuntimeHost** pCLR);
-
 #endif // !CORECLR
 
     protected:
@@ -170,27 +171,20 @@ namespace NativeMsh
             __out_ecount(1) int * lpMinorVersion);
 
         virtual bool DoesAssemblyExist(
-            std::wstring& fileToTest);
+            std::string& fileToTest);
 
         virtual void ProbeAssembly(
-            _In_z_ PCWSTR directoryPath,
-            _In_z_ PCWSTR assemblyName,
-            std::wstring& result);
+            _In_z_ PCSTR directoryPath,
+            _In_z_ PCSTR assemblyName,
+            std::string& result);
 
         virtual void GetTrustedAssemblyList(
-            PCWSTR coreCLRDirectoryPath,
-            std::wstringstream& assemblyList,
+            PCSTR coreCLRDirectoryPath,
+            std::stringstream& assemblyList,
             bool& listEmpty);
 
         virtual unsigned int IdentifyHostDirectory(
             HostEnvironment& hostEnvironment);
-
-        virtual HMODULE TryLoadCoreCLR(
-            _In_ PCWSTR directoryPath);
-
-        virtual unsigned int InitializeClr(
-            _In_ ClrHostWrapper* hostWrapper,
-            _In_ HMODULE coreClrModule);
 
     private:
         // Explicitly disallow copy construction and assignment

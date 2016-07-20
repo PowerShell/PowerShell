@@ -10,7 +10,9 @@
 #pragma once
 
 #include "pwrshplugindefs.h" // PwrshPluginWkr_Ptrs and PlugInException
+#if !CORECLR
 #include <mscoree.h>
+#endif
 #include <atlbase.h>
 #include <string>
 #include "SystemCallFacade.h"
@@ -46,7 +48,8 @@ public:
 
     virtual unsigned int LaunchClr(
         _In_ LPCWSTR wszMonadVersion, 
-        _In_ LPCWSTR wszRuntimeVersion) = 0;
+        _In_ LPCWSTR wszRuntimeVersion,
+        _In_ LPCSTR friendlyName) = 0;
 
     virtual unsigned int LoadWorkerCallbackPtrs(
         _In_ PwrshPluginWkr_Ptrs* workerCallbackPtrs,
@@ -88,7 +91,8 @@ public:
     //
     virtual unsigned int LaunchClr(
         _In_ LPCWSTR wszMonadVersion,
-        _In_ LPCWSTR wszRuntimeVersion);
+        _In_ LPCWSTR wszRuntimeVersion,
+        _In_ LPCSTR friendlyName);
 
     virtual unsigned int LoadWorkerCallbackPtrs(
         _In_ PwrshPluginWkr_Ptrs* workerCallbackPtrs,
@@ -114,7 +118,8 @@ public:
     //
     virtual unsigned int LaunchClr(
         _In_ LPCWSTR wszMonadVersion,
-        _In_ LPCWSTR wszRuntimeVersion);
+        _In_ LPCWSTR wszRuntimeVersion,
+        _In_ LPCSTR friendlyName);
 
     virtual unsigned int LoadWorkerCallbackPtrs(
         _In_ PwrshPluginWkr_Ptrs* workerCallbackPtrs,
@@ -143,15 +148,16 @@ public:
 
     virtual ~PowerShellCoreClrWorker();
 
-    std::wstring GetHostDirectory() { return std::wstring(hostEnvironment.GetHostDirectoryPath()); }
-    std::wstring GetClrDirectory() { return std::wstring(hostEnvironment.GetCoreCLRDirectoryPath()); }
+    std::wstring GetHostDirectory() { return std::wstring(hostEnvironment.GetHostDirectoryPathW()); }
+    std::wstring GetClrDirectory() { return std::wstring(hostEnvironment.GetCoreCLRDirectoryPathW()); }
 
     //
     // IPowerShellClrHost Methods
     //
     virtual unsigned int LaunchClr(
         _In_ LPCWSTR wszMonadVersion,
-        _In_ LPCWSTR wszRuntimeVersion);
+        _In_ LPCWSTR wszRuntimeVersion,
+        _In_ LPCSTR friendlyName);
 
     virtual unsigned int LoadWorkerCallbackPtrs(
         _In_ PwrshPluginWkr_Ptrs* workerCallbackPtrs,
