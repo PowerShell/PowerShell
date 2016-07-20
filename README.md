@@ -26,10 +26,9 @@ Build Status
 Get PowerShell
 --------------
 
-See [PowerShell Releases][releases]
-
-If installing PowerShell from a package, please refer to the installation
-documents for [Linux][inst-linux] and [Windows][inst-win].
+1. Download the package for your platform at [PowerShell Releases][releases].
+1. Install the package.
+    * Package installation documents are available for [Linux][inst-linux] and [Windows][inst-win].
 
 Building PowerShell
 -------------------
