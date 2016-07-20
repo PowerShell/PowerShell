@@ -56,6 +56,7 @@ namespace Microsoft.PowerShell
             Stack<string> tokens = null;
             ConsoleModifiers modifiers = 0;
             ConsoleKey key = 0;
+            char keyChar = '\u0000';
 
             bool valid = !String.IsNullOrEmpty(sequence);
 
@@ -81,6 +82,9 @@ namespace Microsoft.PowerShell
                 // key should be first token to be popped
                 if (key == 0)
                 {
+                    // the keyChar is this token
+                    keyChar = token[0];
+
                     // Enum.TryParse accepts arbitrary integers.  We shouldn't,
                     // but single digits need to map to the correct key, e.g.
                     // ConsoleKey.D1
@@ -152,8 +156,6 @@ namespace Microsoft.PowerShell
                 throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, PSReadLineResources.InvalidSequence, sequence));
             }
 
-            char keyChar = GetCharFromConsoleKey(key, modifiers);
-
             return new ConsoleKeyInfo(keyChar, key,
                 shift: ((modifiers & ConsoleModifiers.Shift) != 0),
                 alt: ((modifiers & ConsoleModifiers.Alt) != 0),
@@ -164,6 +166,27 @@ namespace Microsoft.PowerShell
         {
             bool valid = false;
 
+#if LINUX
+            bool isShift;
+            bool isCtrl;
+            key = GetKeyFromCharValue(literal, out isShift, out isCtrl);
+
+            // Failure to get a key for the char just means that the key is not
+            // special (in the ConsoleKey enum), so we return a default key.
+            // Thus this never fails.
+            valid = true;
+            failReason = null;
+
+            if (isShift)
+            {
+                modifiers |= ConsoleModifiers.Shift;
+            }
+            if (isCtrl)
+            {
+                modifiers |= ConsoleModifiers.Control;
+            }
+            // alt is not possible to get
+#else
             // shift state will be in MSB
             short virtualKey = NativeMethods.VkKeyScan(literal);
             int hresult = Marshal.GetLastWin32Error();
@@ -206,54 +229,83 @@ namespace Microsoft.PowerShell
                 Exception e = Marshal.GetExceptionForHR(hresult);
                 failReason = e.Message;
             }
+#endif
 
             return valid;
         }
 
-        internal static char GetCharFromConsoleKey(ConsoleKey key, ConsoleModifiers modifiers)
-        {
-            // default for unprintables and unhandled
-            char keyChar = '\u0000';
 #if LINUX
-            Type keyType = typeof (Keys);
-            FieldInfo[] keyFields = keyType.GetFields();
-            
-            foreach (FieldInfo field in keyFields)
+        // this is borrowed from the CoreFX internal System.IO.StdInReader class
+        // https://github.com/dotnet/corefx/blob/5b2ae6aa485773cd5569f56f446698633c9ad945/src/System.Console/src/System/IO/StdInReader.cs#L222
+        private static ConsoleKey GetKeyFromCharValue(char x, out bool isShift, out bool isCtrl)
+        {
+            isShift = false;
+            isCtrl = false;
+
+            switch (x)
             {
-                if (field.FieldType == typeof(ConsoleKeyInfo))
-                {
-                    ConsoleKeyInfo info = (ConsoleKeyInfo)field.GetValue(null);
-                    if (info.Key == key && info.Modifiers == modifiers)
+                case '\b':
+                    return ConsoleKey.Backspace;
+
+                case '\t':
+                    return ConsoleKey.Tab;
+
+                case '\n':
+                    return ConsoleKey.Enter;
+
+                case (char)(0x1B):
+                    return ConsoleKey.Escape;
+
+                case '*':
+                    return ConsoleKey.Multiply;
+
+                case '+':
+                    return ConsoleKey.Add;
+
+                case '-':
+                    return ConsoleKey.Subtract;
+
+                case '/':
+                    return ConsoleKey.Divide;
+
+                case (char)(0x7F):
+                    return ConsoleKey.Delete;
+
+                case ' ':
+                    return ConsoleKey.Spacebar;
+
+                default:
+                    // 1. Ctrl A to Ctrl Z.
+                    if (x >= 1 && x <= 26)
                     {
-                        return info.KeyChar;
+                        isCtrl = true;
+                        return ConsoleKey.A + x - 1;
                     }
-                }
+
+                    // 2. Numbers from 0 to 9.
+                    if (x >= '0' && x <= '9')
+                    {
+                        return ConsoleKey.D0 + x - '0';
+                    }
+
+                    //3. A to Z
+                    if (x >= 'A' && x <= 'Z')
+                    {
+                        isShift = true;
+                        return ConsoleKey.A + (x - 'A');
+                    }
+
+                    // 4. a to z.
+                    if (x >= 'a' && x <= 'z')
+                    {
+                        return ConsoleKey.A + (x - 'a');
+                    }
+
+                    break;
             }
-#else
-            // emulate GetKeyboardState bitmap - set high order bit for relevant modifier virtual keys
-            var state = new byte[256];
-            state[NativeMethods.VK_SHIFT] = (byte)(((modifiers & ConsoleModifiers.Shift) != 0) ? 0x80 : 0);
-            state[NativeMethods.VK_CONTROL] = (byte)(((modifiers & ConsoleModifiers.Control) != 0) ? 0x80 : 0);
-            state[NativeMethods.VK_ALT] = (byte)(((modifiers & ConsoleModifiers.Alt) != 0) ? 0x80 : 0);
 
-            // a ConsoleKey enum's value is a virtual key code
-            uint virtualKey = (uint)key;
-
-            // get corresponding scan code
-            uint scanCode = NativeMethods.MapVirtualKey(virtualKey, NativeMethods.MAPVK_VK_TO_VSC);
-
-            // get corresponding character  - maybe be 0, 1 or 2 in length (diacriticals)
-            var chars = new char[2];
-            int charCount = NativeMethods.ToUnicode(
-                virtualKey, scanCode, state, chars, chars.Length, NativeMethods.MENU_IS_INACTIVE);
-
-            // TODO: support diacriticals (charCount == 2)
-            if (charCount == 1)
-            {
-                keyChar = chars[0];
-            }
-#endif
-            return keyChar;
+            return default(ConsoleKey);
         }
+#endif
     }
 }

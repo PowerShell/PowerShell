@@ -386,26 +386,7 @@ namespace Microsoft.PowerShell.Internal
                 sb.Append("Alt");
             }
 
-#if LINUX
-            if (sb.Length > 0)
-                sb.Append("+");
-            // TODO: find better way to map these characters to something more friendly
-            if ((key.Key >= ConsoleKey.D0 && key.Key <= ConsoleKey.D9)
-                || (key.Key >= ConsoleKey.Oem1 && key.Key <= ConsoleKey.Oem8))
-            {
-                sb.Append(key.KeyChar);
-            }
-            else
-            {
-                if (key.Modifiers.HasFlag(ConsoleModifiers.Shift))
-                {
-                    sb.Append("Shift+");
-                }
-                sb.Append(key.Key);
-            }
-#else
-            char c = ConsoleKeyChordConverter.GetCharFromConsoleKey(key.Key,
-                (mods & ConsoleModifiers.Shift) != 0 ? ConsoleModifiers.Shift : 0);
+            char c = key.KeyChar;
             if (char.IsControl(c) || char.IsWhiteSpace(c))
             {
                 if (key.Modifiers.HasFlag(ConsoleModifiers.Shift))
@@ -424,7 +405,6 @@ namespace Microsoft.PowerShell.Internal
                     sb.Append("+");
                 sb.Append(c);
             }
-#endif
             return sb.ToString();
         }
     }
