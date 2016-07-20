@@ -37,13 +37,13 @@ For example, `Get-Process` will display all the running processes on your system
 Let's walk through with a few examples by clicking on the [PowerShell Beginner's Guide](powershell-beginners-guide.md).
 
 Now you have learned the basics of PowerShell. 
-Please continue reading if you want to do some development work in PowerShell.
+Please continue reading: Editor, Debugger, and Testing Tool if you want to do some development work in PowerShell.
 
 PowerShell Editor
 ----
 
 In this section, you will create a PowerShell script using PowerShell editor. 
-You can use your favorite editor to write scripts. 
+You can certainly use your favorite editor to write scripts.  
 As an example, we will use Visual Studio Code (VS Code) which works for Windows, Linux, or OS X. 
 Click on the following link to create your first PowerShell script.
 
@@ -57,14 +57,14 @@ On Windows, you can also use [PowerShell Integrated Scripting Environment (ISE)]
 PowerShell Debugger
 ----
 
-Assuming you have written a PowerShell script which may contain a software bug, you can fix the issue by using debugging. 
+Assuming you have written a PowerShell script which may contains a software bug, you would like to fix the issue by using debugging. 
 As an example, we will use VS Code. 
 Click on the link below to learn more about debugging:
 
 - [Using Visual Studio Code (VS Code)][use-vscode-debugger]
 - [PowerShell Command-line Debugging][cli-debugging]
 
-On Windows, you can also use [ISE][use-ise-debugger] to debug PowerShell scripts.
+On Windows, you can also use  [ISE][use-ise-debugger] to debug PowerShell scripts.
 
 [use-vscode-debugger]:./using-vscode.md#debugging-with-vs-code
 [use-ise-debugger]:./using-ise.md#debugging-with-ise
@@ -75,7 +75,7 @@ PowerShell Testing
 ----
 
 We recommend using Pester testing tool which is initiated by the PowerShell Community for writing test cases. 
-To use the tool please read [Pester Guides](https://github.com/pester/Pester) and [Writing Pester Tests Guidelines](https://github.com/PowerShell/PowerShell/blob/master/docs/testing-guidelines/WritingPesterTests.md).
+To use the tool please read [ Pester Guides](https://github.com/pester/Pester) and [Writing Pester Tests Guidelines](https://github.com/PowerShell/PowerShell/blob/master/docs/testing-guidelines/WritingPesterTests.md).
 
 
 Map Book for Experienced Bash users
@@ -89,7 +89,8 @@ TODO: Don & JP to fill in
 | cd             |cd             |Change directory    
 | mkdir          |mkdir          |Create a new folder
 | Clear, Ctrl+L, Reset | cls | Clear screen
-
+|                |               |                 |   
+|                |               |                 ||
 
 
 More Reading
@@ -105,6 +106,7 @@ More Reading
 - [Learn PowerShell Video Library][powershell.com-learn-powershell] from PowerShell.com
 - [PowerShell Quick Reference Guides][quick-reference] by PowerShellMagazine.com
 - [PowerShell 5 How-To Videos][script-guy-how-to] by The Scripting Guys
+
 
 [getstarted-with-powershell]: https://channel9.msdn.com/Series/GetStartedPowerShell3
 [in-action]: https://www.amazon.com/Windows-PowerShell-Action-Second-Payette/dp/1935182137
