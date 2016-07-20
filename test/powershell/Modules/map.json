@@ -9,7 +9,6 @@
     "monad/tests/ci/PowerShell/tests/Commands/Cmdlets/Pester.Commands.Cmdlets.GetCommand.ps1": "Microsoft.PowerShell.Core/Pester.Commands.Cmdlets.GetCommand.ps1",
     "monad/tests/ci/PowerShell/tests/Commands/Cmdlets/Pester.Commands.Cmdlets.JsonTests.ps1": "Microsoft.PowerShell.Utility/Pester.Commands.Cmdlets.JsonTests.ps1",
     "monad/tests/ci/PowerShell/tests/Commands/Cmdlets/Pester.Commands.Cmdlets.NoNewlineParameter.Tests.ps1": "Microsoft.PowerShell.Management/Pester.Commands.Cmdlets.NoNewlineParameter.Tests.ps1",
-    "monad/tests/ci/PowerShell/tests/Commands/Cmdlets/pester.core.job.tests.ps1": "Microsoft.PowerShell.Core/core.job.tests.ps1",
     "monad/tests/ci/PowerShell/tests/Commands/Cmdlets/Pester.History.Tests.ps1": "Microsoft.PowerShell.Core/History.Tests.ps1",
     "monad/tests/ci/PowerShell/tests/Commands/Cmdlets/Pester.Management.Copy.Item.Tests.ps1": "Microsoft.PowerShell.Management/Copy.Item.Tests.ps1",
     "monad/tests/ci/PowerShell/tests/Commands/Cmdlets/pester.utility.alias.tests.ps1": "Microsoft.PowerShell.Utility/alias.tests.ps1",
