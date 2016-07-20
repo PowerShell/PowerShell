@@ -9,15 +9,13 @@ Additionally, we provide APPX/WSA packages (that are compatible with Nano Server
 but these must be self-signed prior to install. 
 See the [`Sign-Package.ps1`][signing] script for details.
 
-[releases]: https://github.com/PowerShell/PowerShell/releases
-[signing]: ../../tools/Sign-Package.ps1
-
 Artifact installation instructions
 ==================================
 
-We publish an archive with CoreCLR and FullCLR bits on every CI build
-with [AppVeyor][].
+We publish an archive with CoreCLR and FullCLR bits on every CI build with [AppVeyor][].
 
+[releases]: https://github.com/PowerShell/PowerShell/releases
+[signing]: ../../tools/Sign-Package.ps1
 [AppVeyor]: https://ci.appveyor.com/project/PowerShell/powershell
 
 CoreCLR artifacts
