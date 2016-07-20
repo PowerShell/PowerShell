@@ -673,7 +673,7 @@ Describe 'Type building' -Tags "DRT" {
 
 Describe 'RuntimeType created for TypeDefinitionAst' {
     
-    It 'can make cast to the right RuntimeType in two different contexts' {
+    It 'can make cast to the right RuntimeType in two different contexts' -pending {
         
         $ssfe = [System.Management.Automation.Runspaces.SessionStateFunctionEntry]::new("foo", @'
 class Base
@@ -689,7 +689,7 @@ class Derived : Base
 [Derived]::new().foo()
 '@)
 
-        $iss = [System.Management.Automation.Runspaces.initialsessionstate]::CreateDefault()
+        $iss = [System.Management.Automation.Runspaces.initialsessionstate]::CreateDefault2()
         $iss.Commands.Add($ssfe)
 
         $ps = [powershell]::Create($iss)
@@ -745,7 +745,7 @@ namespace Foo
 }
 '@
 
-     It 'doesn''t allow protected methods access outside of inheritance chain' {
+     It 'doesn''t allow protected methods access outside of inheritance chain' -pending {
         $a = [scriptblock]::Create(@'
 class A
 { 

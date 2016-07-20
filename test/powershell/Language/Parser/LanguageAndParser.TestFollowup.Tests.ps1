@@ -1,3 +1,4 @@
+$powershellexe = (get-process -id $PID).mainmodule.filename
 
 Describe "Clone array" -Tags "CI" {
     It "Cast in target expr" {
@@ -38,7 +39,7 @@ Describe "MSFT:3309783" -Tags "CI" {
     It "Run in another process" {
         # For a reliable test, we must run this in a new process because an earlier binding in this process
         # could mask the bug/fix.
-        powershell -noprofile -command "[psobject] | % FullName" | Should Be System.Management.Automation.PSObject
+        & $powershellexe -noprofile -command "[psobject] | % FullName" | Should Be System.Management.Automation.PSObject
     }
 
     It "Run in current process" {
@@ -101,7 +102,7 @@ Describe "Hashtable key property syntax" -Tags "CI" {
     It "In different process" {
         # So also run in a fresh process
         $bytes = [System.Text.Encoding]::Unicode.GetBytes($script)
-        powershell -noprofile -encodedCommand ([Convert]::ToBase64String($bytes)) | Should Be Hello
+        & $powershellexe -noprofile -encodedCommand ([Convert]::ToBase64String($bytes)) | Should Be Hello
     }
 }
 
