@@ -190,8 +190,7 @@ namespace System.Management.Automation.Security
                     // Temp path can sometimes be deleted. While many places in PowerShell depend on its existence,
                     // this one can crash PowerShell.
                     // A less sensitive implementation will be possible once AppLocker allows validation of files that
-                    // don't exist:
-                    //     https://microsoft.visualstudio.com/DefaultCollection/WSSC/_workitems#_a=edit&id=1908704
+                    // don't exist.
                     //
 
                     string testPathScript = null;
