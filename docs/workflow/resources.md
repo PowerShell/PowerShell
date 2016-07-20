@@ -19,19 +19,19 @@ If you see compilation errors related to resources, try to call `Start-ResGen` e
 PS C:\> Start-ResGen
 ```
 
-## Editing resx files
+## Editing `.resx` files
 
-**Don't edit** resx files from Visual Studio. 
+**Don't edit** `.resx` files from Visual Studio. 
 It will try to create `.cs` files for you and you will get whole bunch of hard-to-understand errors.
 
-To edit resource file, use any **plain text editor**. 
-Resource file is a simple xml, and it's easy to edit.
+To edit a resource file, use any **plain text editor**. 
+A resource file is a simple XML file, and it's easy to edit.
 
 
-## Convert txt resource files into resx
+## Convert `.txt` resource files into `.resx` files
 
-`dotnet cli` doesn't support embeeding old-fashioned txt resource.
-You can do a one-time convertion of `.txt` resources into `.resx` files with a helper function
+`dotnet cli` doesn't support embedding old-fashioned `.txt` resource.
+You can do a one-time convertion of `.txt` resources into `.resx` files with a helper function:
 
 ```
 # example, converting all .txt resources under src\Microsoft.WSMan.Management\resources
