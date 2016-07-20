@@ -44,7 +44,7 @@ $pesterCommand | Export-Clixml -Path $testResultPath
         Write-Verbose -Message "command: '$command'" -Verbose
         $bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
         $encodedCommand = [Convert]::ToBase64String($bytes)
-        &"$PSHOME/Powershell.exe" -encodedCommand $encodedCommand
+        &"$PSHOME/powershell" -encodedCommand $encodedCommand
         
         it "Should have test results file" {
             $testResultPath | should exist
