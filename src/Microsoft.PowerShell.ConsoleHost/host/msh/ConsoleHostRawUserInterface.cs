@@ -1711,7 +1711,44 @@ namespace Microsoft.PowerShell
             }
         }
 
-        /// <summary>
+          public void ScrollBuffer(int lines)
+        {
+            for (int i=0; i<lines; ++i)
+            {
+                Console.Out.Write('\n');
+
+            }
+        }
+
+        internal struct COORD
+        {
+            internal short X;
+
+            internal short Y;
+
+            public override string ToString()
+            {
+                return string.Format(CultureInfo.InvariantCulture, "{0},{1}", X, Y);
+            }
+        }
+
+          internal struct SMALL_RECT
+        {
+            internal short Left;
+
+            internal short Top;
+
+            internal short Right;
+
+            internal short Bottom;
+
+            public override string ToString()
+            {
+                return String.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", Left, Top, Right, Bottom);
+            }
+        }
+
+        /// <summary>       
         /// This API returns a rectangular region of the screen buffer. In
         /// this example this functionality is not needed so the method throws
         /// a NotImplementException exception.
@@ -1760,7 +1797,54 @@ namespace Microsoft.PowerShell
         public override void SetBufferContents(Coordinates origin,
                                                BufferCell[,] contents)
         {
-            throw new NotImplementedException("The method or operation is not implemented.");
+            //if there are no contents, there is nothing to set the buffer to 
+            if (contents == null)
+            {
+                PSTraceSource.NewArgumentNullException("contents");
+            }
+
+            //variables to traverse through the buffer
+            int cursorX = origin.X; 
+            int cursorY = origin.Y;
+
+            //if the cursor is on the last line, we need to make more space to print the specified buffer
+            if (cursorY == Console.BufferHeight -1 && cursorX >= Console.BufferWidth)
+            {   
+                //for each row in the buffer, create a new line    
+                int rows = contents.GetLength(0);
+                for (int i=0; i < rows; i++)
+                {
+                    ScrollBuffer(1);
+                }
+
+                //for each row in the buffer, move the cursor y up to the beginning of the created blank space
+                cursorY -= rows;
+            }
+
+           //iterate through the buffer to set 
+            foreach (var charitem in contents)
+            {
+                //set the cursor to false to prevent cursor flicker 
+                Console.CursorVisible = false;
+                
+                //if x is exceeding buffer width, reset to the next line                                   
+                if (cursorX >= Console.BufferWidth) 
+                {
+                    cursorX = 1; 
+                }            
+
+                //write the character from contents 
+                Console.Out.Write(charitem.Character);
+
+                //advance the character one position
+                cursorX++;
+            }            
+
+            //reset the cursor to the original position
+            Console.SetCursorPosition(cursorX, cursorY);
+            //reset the cursor to visible                
+            Console.CursorVisible = true;                    
+
         }
 
         /// <summary>
