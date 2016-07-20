@@ -26,13 +26,9 @@ Build Status
 Get PowerShell
 --------------
 
-|                       | Linux | Windows  | OS X |
-|-----------------------|-------|-------------------|------|
-
-| Get **Binaries**      | [Releases][releases] | [Releases][releases] | [Releases][releases] |
-
-If installing PowerShell from a package, please refer to the installation
-documents for [Linux][inst-linux] and [Windows][inst-win].
+1. Download the package for your platform at [PowerShell Releases][releases].
+1. Install the package.
+    * Package installation documents are available for [Linux or OS X][inst-linux] and [Windows][inst-win].
 
 Building PowerShell
 -------------------
@@ -43,14 +39,15 @@ Building PowerShell
 
 Developing and Contributing
 --------------------------
-To begin development, you'll need to setup your development environment for [Linux][build-linux], [Windows Core][build-wc], [Windows Full][build-wf] or
+
+Please see the [Contribution Guide][contribution] for how to develop and contribute.
 
 If you encounter issues in your development, please consult the [known issues][known-issues]
 and [FAQ][faq] documents to see if the issue you are running into is
 captured and if a workaround exists.  
 
 If you encounter issues with PowerShell itself, first search for it in our [issues][github-issues]. 
-If you do not see your issue captured, please file a [new issue][new-issue] using the appropriate issue tag.
+If you do not see your issue captured, please file a [new issue][new-issue].  For more details see [Contributing to issues][contribution-issues].
 
 PowerShell Community
 --------------------
@@ -79,6 +76,7 @@ For more information see the [Code of Conduct FAQ][conduct-FAQ] or contact
 [conduct-email]: mailto:opencode@microsoft.com
 [conduct-FAQ]: http://opensource.microsoft.com/codeofconduct/faq/
 [contribution]: .github/CONTRIBUTING.md
+[contribution-issues]: .github/CONTRIBUTING.md#contributing-to-issues
 [faq]: docs/FAQ.md
 [github-issues]:https://github.com/PowerShell/PowerShell/issues
 [inst-linux]: docs/installation/linux.md
