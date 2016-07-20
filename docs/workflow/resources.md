@@ -24,8 +24,8 @@ PS C:\> Start-ResGen
 **Don't edit** `.resx` files from Visual Studio. 
 It will try to create `.cs` files for you and you will get whole bunch of hard-to-understand errors.
 
-To edit resource file, use any **plain text editor**. 
-Resource file is a simple XML file, and it's easy to edit.
+To edit a resource file, use any **plain text editor**. 
+A resource file is a simple XML file, and it's easy to edit.
 
 
 ## Convert `.txt` resource files into `.resx` files
