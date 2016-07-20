@@ -30,6 +30,10 @@ if ($IsLinux) {
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName='CoreCLR')]
     param(
+        # When specified this switch will stops running dev powershell
+        # to help avoid compilation error, because file are in use.
+        [switch]$StopDevPowerShell,
+
         [switch]$NoPath,
         [switch]$Restore,
         [string]$Output,
@@ -69,6 +73,18 @@ function Start-PSBuild {
         [ValidateSet('Linux', 'Debug', 'Release', '')]
         [string]$Configuration
     )
+
+    function Stop-DevPowerShell
+    {
+        Get-Process powershell* |
+            Where-Object { 
+                $_.Modules | 
+                Where-Object { 
+                    $_.FileName -eq (Resolve-Path $script:Options.Output).Path
+                } 
+            } | 
+        Stop-Process -Verbose
+    }
 
     if ($Clean)
     {
@@ -152,6 +168,11 @@ function Start-PSBuild {
         SMAOnly=[bool]$SMAOnly
     }
     $script:Options = New-PSOptions @OptionsArguments
+
+    if ($StopDevPowerShell)
+    {
+        Stop-DevPowerShell
+    }
 
     # setup arguments
     $Arguments = @()
@@ -272,7 +293,6 @@ function Start-PSBuild {
     }
 
 }
-
 
 function New-PSOptions {
     [CmdletBinding()]
@@ -728,7 +748,6 @@ function Publish-NuGetFeed
         }
     }
 }
-
 
 function Start-DevPowerShell {
     param(
