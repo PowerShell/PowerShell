@@ -1789,11 +1789,10 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// This method copies an array of buffer cells into the screen buffer
-        /// at a specified location. In this example this functionality is
-        /// not needed so the method throws a NotImplementedException exception.
+        /// at a specified location.
         /// </summary>
-        /// <param name="origin">The parameter is not used.</param>
-        /// <param name="contents">The parameter is not used.</param>
+        /// <param name="origin">The parameter used to set the origin where the buffer where begin writing to.</param>
+        /// <param name="contents">The parameter used to contain the contents to be written to the buffer.</param>
         public override void SetBufferContents(Coordinates origin,
                                                BufferCell[,] contents)
         {
