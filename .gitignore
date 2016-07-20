@@ -41,3 +41,6 @@ gen
 
 # Per repo profile
 .profile.ps1
+
+#VS Code files
+/.vscode
