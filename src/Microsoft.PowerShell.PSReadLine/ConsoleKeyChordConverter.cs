@@ -6,9 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-#if UNIX
-using System.Reflection;
-#endif
 using System.Runtime.InteropServices;
 using Microsoft.PowerShell.Internal;
 
@@ -305,6 +302,36 @@ namespace Microsoft.PowerShell
             }
 
             return default(ConsoleKey);
+        }
+#else
+        internal static char GetCharFromConsoleKey(ConsoleKey key, ConsoleModifiers modifiers)
+        {
+            // default for unprintables and unhandled
+            char keyChar = '\u0000';
+
+            // emulate GetKeyboardState bitmap - set high order bit for relevant modifier virtual keys
+            var state = new byte[256];
+            state[NativeMethods.VK_SHIFT] = (byte)(((modifiers & ConsoleModifiers.Shift) != 0) ? 0x80 : 0);
+            state[NativeMethods.VK_CONTROL] = (byte)(((modifiers & ConsoleModifiers.Control) != 0) ? 0x80 : 0);
+            state[NativeMethods.VK_ALT] = (byte)(((modifiers & ConsoleModifiers.Alt) != 0) ? 0x80 : 0);
+
+            // a ConsoleKey enum's value is a virtual key code
+            uint virtualKey = (uint)key;
+
+            // get corresponding scan code
+            uint scanCode = NativeMethods.MapVirtualKey(virtualKey, NativeMethods.MAPVK_VK_TO_VSC);
+
+            // get corresponding character  - maybe be 0, 1 or 2 in length (diacriticals)
+            var chars = new char[2];
+            int charCount = NativeMethods.ToUnicode(
+                virtualKey, scanCode, state, chars, chars.Length, NativeMethods.MENU_IS_INACTIVE);
+
+            // TODO: support diacriticals (charCount == 2)
+            if (charCount == 1)
+            {
+                keyChar = chars[0];
+            }
+            return keyChar;
         }
 #endif
     }
