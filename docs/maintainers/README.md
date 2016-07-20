@@ -1,6 +1,6 @@
-# PowerShell Maintainers
+# Repository Maintainers
 
-Maintainers (a.k.a. coordinators) are trusted people with knowledge in the PowerShell domain.
+Repository maintainers are trusted people with knowledge in the PowerShell domain.
 
 They have [write access](https://help.github.com/articles/permission-levels-for-an-organization-repository/) to the PowerShell repositories which gives them the power to:
 
