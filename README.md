@@ -28,7 +28,7 @@ Get PowerShell
 
 1. Download the package for your platform at [PowerShell Releases][releases].
 1. Install the package.
-    * Package installation documents are available for [Linux][inst-linux] and [Windows][inst-win].
+    * Package installation documents are available for [Linux or OS X][inst-linux] and [Windows][inst-win].
 
 Building PowerShell
 -------------------
