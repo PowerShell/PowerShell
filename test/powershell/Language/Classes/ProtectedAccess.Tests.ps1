@@ -138,7 +138,7 @@ class Derived2 : Base {}
 [Derived2]::new()
 '@
 
-Describe "Protected Member Access - w/ default ctor" -Tags "DRT" {
+Describe "Protected Member Access - w/ default ctor" -Tags "CI" {
     It "Method Access" { $derived1.TestMethodAccess() | Should Be 42 }
     It "Dynamic Method Access" { $derived1.TestDynamicMethodAccess() | Should Be 42 }
     It "Field Access" { $derived1.TestFieldAccess() | Should Be 11 }
@@ -157,7 +157,7 @@ Describe "Protected Member Access - w/ default ctor" -Tags "DRT" {
     It "Implicit ctor calls protected ctor" { $derived3.OverloadedMethod2(42) | Should Be 84 }
 }
 
-Describe "Protected Member Access - w/ non-default ctor" -Tags "DRT" {
+Describe "Protected Member Access - w/ non-default ctor" -Tags "CI" {
     It "Method Access" { $derived2.TestMethodAccess() | Should Be 52 }
     It "Dynamic Method Access" { $derived2.TestDynamicMethodAccess() | Should Be 52 }
     It "Field Access" { $derived2.TestFieldAccess() | Should Be 11 }
@@ -175,7 +175,7 @@ Describe "Protected Member Access - w/ non-default ctor" -Tags "DRT" {
     It "Method Access - overloaded 3b" { $derived2.TestOverloadedMethodAccess3b() | Should Be 21 }
 }
 
-Describe "Protected Member Access - members not visible outside class" -Tags "DRT" {
+Describe "Protected Member Access - members not visible outside class" -Tags "CI" {
     Set-StrictMode -v 3
     It "Invalid protected field Get Access" { { $derived1.Field } | Should Throw }
     It "Invalid protected property Get Access" { { $derived1.Property } | Should Throw }

@@ -1,4 +1,4 @@
-Describe 'Attributes Test' -Tags "innerloop", "DRT" {
+Describe 'Attributes Test' -Tags "CI" {
     
     BeforeAll { 
         $dummyAttributesSource = @'
@@ -45,7 +45,7 @@ namespace Dummy
     }
 }
 '@    
-        Add-Type -TypeDefinition $dummyAttributesSource -ReferencedAssemblies "System.Management.Automation"
+        Add-Type -TypeDefinition $dummyAttributesSource -ReferencedAssemblies "System.Management.Automation","mscorlib"
     }
 
     
@@ -197,7 +197,7 @@ namespace Dummy
     }  
 }
 
-Describe 'Type resolution with attributes' {
+Describe 'Type resolution with attributes' -Tag "CI" {
     # There is kind of a collision between names 
     # System.Diagnostics.Tracing.EventSource
     # System.Diagnostics.Tracing.EventSourceAttribute

@@ -1,5 +1,5 @@
 
-Describe "Using assembly" -Tags "DRT" {
+Describe "Using assembly" -Tags "CI" {
 
     try
     {
@@ -42,7 +42,7 @@ public class ABC {}
             $err[0].ErrorId | Should Be CannotLoadAssemblyWithUriSchema
         }
         
-        It "parse does not load the assembly" {
+        It "parse does not load the assembly" -pending {
             $assemblies = [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
             $assemblies -contains "UsingAssemblyTest$guid" | Should Be $false
 
@@ -78,7 +78,7 @@ public class ABC {}
             $failed | Should be $true
         }
 #>
-        It "Assembly loaded at runtime" {
+        It "Assembly loaded at runtime" -pending {
             $assemblies = powershell -noprofile -command @"
     using assembly .\UsingAssemblyTest$guid.dll
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name

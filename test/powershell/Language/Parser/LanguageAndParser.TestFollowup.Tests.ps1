@@ -1,5 +1,5 @@
 
-Describe "Clone array" -Tags DRT {
+Describe "Clone array" -Tags "CI" {
     It "Cast in target expr" {
         (([int[]](42)).clone()) | Should Be 42
         (([int[]](1..5)).clone()).Length | Should Be 5
@@ -15,7 +15,7 @@ Describe "Clone array" -Tags DRT {
     }
 }
 
-Describe "Set fields through PSMemberInfo" -Tags DRT {
+Describe "Set fields through PSMemberInfo" -Tags "CI" {
     Add-Type @"
     public struct AStruct { public string s; }
 "@
@@ -33,7 +33,7 @@ Describe "Set fields through PSMemberInfo" -Tags DRT {
     }
 }
 
-Describe "MSFT:3309783" -Tags DRT {
+Describe "MSFT:3309783" -Tags "CI" {
 
     It "Run in another process" {
         # For a reliable test, we must run this in a new process because an earlier binding in this process
@@ -62,7 +62,7 @@ Describe "MSFT:3309783" -Tags DRT {
     }
 }
 
-Describe "ScriptBlockAst.GetScriptBlock throws on error" -Tags DRT {
+Describe "ScriptBlockAst.GetScriptBlock throws on error" -Tags "CI" {
 
     $e = $null
 
@@ -80,7 +80,7 @@ Describe "ScriptBlockAst.GetScriptBlock throws on error" -Tags DRT {
     }
 }
 
-Describe "Hashtable key property syntax" -Tags DRT {
+Describe "Hashtable key property syntax" -Tags "CI" {
     $script = @'
     # First create a hashtable wrapped in PSObject
     $hash = New-Object hashtable
@@ -105,7 +105,7 @@ Describe "Hashtable key property syntax" -Tags DRT {
     }
 }
 
-Describe "Assign automatic variables" -Tags DRT {
+Describe "Assign automatic variables" -Tags "CI" {
     
     $autos = '_', 'args', 'this', 'input', 'pscmdlet', 'psboundparameters', 'myinvocation', 'psscriptroot', 'pscommandpath'
 
@@ -141,7 +141,7 @@ Describe "Assign automatic variables" -Tags DRT {
     }
 }
 
-Describe "Attribute error position" -Tags DRT {
+Describe "Attribute error position" -Tags "CI" {
     It "Ambiguous overloads" {
         try
         {
@@ -161,7 +161,7 @@ Describe "Attribute error position" -Tags DRT {
     }
 }
 
-Describe "Multiple alias attributes" -Tags DRT {
+Describe "Multiple alias attributes" -Tags "CI" {
     It "basic test" {
         function foo {
             param(
@@ -178,7 +178,7 @@ Describe "Multiple alias attributes" -Tags DRT {
     }
 }
 
-Describe "Members of System.Type" -Tags DRT {
+Describe "Members of System.Type" -Tags "CI" {
     It "Members in public classes derived from System.Type should be found" {
         class MyType : System.Collections.IEnumerable
         {

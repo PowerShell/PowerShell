@@ -11,7 +11,8 @@ Describe "Type accelerators" -Tags "DRT" {
     }
 
     It "Can query type accelerators" {
-        $TypeAccelerators.Count -gt 82 | Should Be $true
+        if ( $IsCore ) { $count = 80 } else { $count = 82 }
+        $TypeAccelerators.Count -gt $count | Should Be $true
         $TypeAccelerators['xml'] | Should Be ([System.Xml.XmlDocument])
         $TypeAccelerators['AllowNull'] | Should Be ([System.Management.Automation.AllowNullAttribute])
     }

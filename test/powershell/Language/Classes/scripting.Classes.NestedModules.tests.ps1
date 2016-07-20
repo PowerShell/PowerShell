@@ -9,33 +9,33 @@ Describe 'NestedModules' -Tags "DRT" {
             [string[]]$NestedContents
         )
         
-        mkdir -Force "TestDrive:\$Name" > $null    
+        new-item -type directory -Force "TestDrive:\$Name" > $null    
         $manifestParams = @{
             Path = "TestDrive:\$Name\$Name.psd1"
         }
         
         if ($Content) {
-            Set-Content -Path TestDrive:\$Name\$Name.psm1 -Value $Content
+            Set-Content -Path "${TestDrive}\$Name\$Name.psm1" -Value $Content
             $manifestParams['RootModule'] = "$Name.psm1"
         }
 
         if ($NestedContents) {
             $manifestParams['NestedModules'] = 1..$NestedContents.Count | % { 
-                $null = mkdir TestDrive:\$Name\Nested$_
-                $null = Set-Content -Path TestDrive:\$Name\Nested$_\Nested$_.psm1 -Value $NestedContents[$_ - 1]
+                $null = new-item -type directory TestDrive:\$Name\Nested$_
+                $null = Set-Content -Path "${TestDrive}\$Name\Nested$_\Nested$_.psm1" -Value $NestedContents[$_ - 1]
                 "Nested$_"
             }
         }
         
         New-ModuleManifest @manifestParams
 
-        $resolvedTestDrivePath = Split-Path ((ls TestDrive:\)[0].FullName)
-        if (-not ($env:PSModulePath -like "*$resolvedTestDrivePath*")) {
-            $env:PSModulePath += ";$resolvedTestDrivePath"
+        $resolvedTestDrivePath = Split-Path ((get-childitem TestDrive:\)[0].FullName)
+        if (-not ($env:PSMODULEPATH -like "*$resolvedTestDrivePath*")) {
+            $env:PSMODULEPATH += ";$resolvedTestDrivePath"
         }
     }
 
-    $originalPSModulePath = $env:PSModulePath
+    $originalPSMODULEPATH = $env:PSMODULEPATH
 
     try {
         
@@ -104,7 +104,7 @@ using module WithRoot
             # We need to think about it: should it work or not.
             # Currently, types are resolved in compile-time to the 'local' versions
             # So at runtime we don't call the module versions.
-            It 'Can execute type creation in the module context with new()' -Skip {
+            It 'Can execute type creation in the module context with new()' -pending {
                 & (Get-Module ABC) { [C]::new().foo() } | Should Be C
                 & (Get-Module NoRoot) { [A]::new().foo() } | Should Be A2
                 & (Get-Module WithRoot) { [A]::new().foo() } | Should Be A0
@@ -120,7 +120,7 @@ using module WithRoot
         }
 
     } finally {
-        $env:PSModulePath = $originalPSModulePath
+        $env:PSMODULEPATH = $originalPSMODULEPATH
         Get-Module @('ABC', 'NoRoot', 'WithRoot') | Remove-Module
     }
 }

@@ -1,5 +1,8 @@
+if ( $IsCore ) {
+    return
+}
 
-Describe "Interface inheritance with remoting proxies" -Tags "P1", "RI" {
+Describe "Interface inheritance with remoting proxies" -Tags "CI" {
     $src = @"
 using System;
 using System.ServiceModel;

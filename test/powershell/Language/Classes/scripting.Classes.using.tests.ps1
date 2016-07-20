@@ -12,21 +12,21 @@ Describe 'using module' -Tags "DRT" {
         )
         
         if ($manifest) {
-            mkdir -Force "TestDrive:\$ModulePathPrefix\$Name\$Version" > $null    
-            Set-Content -Path TestDrive:\$ModulePathPrefix\$Name\$Version\$Name.psm1 -Value $Content
-            New-ModuleManifest -RootModule "$Name.psm1" -Path TestDrive:\$ModulePathPrefix\$Name\$Version\$Name.psd1 -ModuleVersion $Version
+            new-item -type directory -Force "${TestDrive}\$ModulePathPrefix\$Name\$Version" > $null    
+            Set-Content -Path "${TestDrive}\$ModulePathPrefix\$Name\$Version\$Name.psm1" -Value $Content
+            New-ModuleManifest -RootModule "$Name.psm1" -Path "${TestDrive}\$ModulePathPrefix\$Name\$Version\$Name.psd1" -ModuleVersion $Version
         } else {
-            mkdir -Force "TestDrive:\$ModulePathPrefix\$Name" > $null
-            Set-Content -Path TestDrive:\$ModulePathPrefix\$Name\$Name.psm1 -Value $Content
+            new-item -type directory -Force "${TestDrive}\$ModulePathPrefix\$Name" > $null
+            Set-Content -Path "${TestDrive}\$ModulePathPrefix\$Name\$Name.psm1" -Value $Content
         }
 
-        $resolvedTestDrivePath = Split-Path ((ls TestDrive:\$ModulePathPrefix)[0].FullName)
-        if (-not ($env:PSModulePath -like "*$resolvedTestDrivePath*")) {
-            $env:PSModulePath += ";$resolvedTestDrivePath"
+        $resolvedTestDrivePath = Split-Path ((get-childitem "${TestDrive}\$ModulePathPrefix")[0].FullName)
+        if (-not ($env:PSMODULEPATH -like "*$resolvedTestDrivePath*")) {
+            $env:PSMODULEPATH += ";$resolvedTestDrivePath"
         }
     }
 
-    $originalPSModulePath = $env:PSModulePath
+    $originalPSMODULEPATH = $env:PSMODULEPATH
 
     try {
         
@@ -319,7 +319,7 @@ using module Foo
 
             # 'using module' behavior must be alligned with Import-Module.
             # Import-Module does the following:
-            # 1) find the first directory from $env:PSModulePath that contains the module
+            # 1) find the first directory from $env:PSMODULEPATH that contains the module
             # 2) Import highest available version of the module
             # In out case TestDrive:\Module is before TestDrive:\Modules2 and so 2.3.0 is the right version
             It "uses the last module, if multiple versions are present" {
@@ -376,7 +376,7 @@ using module ModuleWithRuntimeError
     
             It 'can pick the right module' {
                 
-                $scriptToProcessPath = 'TestDrive:\toProcess.ps1'
+                $scriptToProcessPath = "${TestDrive}\toProcess.ps1"
                 Set-Content -Path $scriptToProcessPath -Value @'
 using module Foo
 function foo() 
@@ -385,7 +385,7 @@ function foo()
 }
 '@
                 # resolve name to absolute path
-                $scriptToProcessPath = (ls $scriptToProcessPath).FullName
+                $scriptToProcessPath = (get-childitem $scriptToProcessPath).FullName
                 $iss = [System.Management.Automation.Runspaces.initialsessionstate]::CreateDefault()
                 $iss.StartupScripts.Add($scriptToProcessPath)
 
@@ -409,24 +409,24 @@ function foo()
 
 
     } finally {
-        $env:PSModulePath = $originalPSModulePath
+        $env:PSMODULEPATH = $originalPSMODULEPATH
     }
 
-    # here we are back to normal $env:PSModulePath, but all modules are there
+    # here we are back to normal $env:PSMODULEPATH, but all modules are there
     Context "Module by path" {
 
-        It 'use non-modified PSModulePath' {
-            $env:PSModulePath | Should Be $originalPSModulePath
+        It 'use non-modified PSMODULEPATH' {
+            $env:PSMODULEPATH | Should Be $originalPSMODULEPATH
         }
 
-        mkdir -Force TestDrive:\FooRelativeConsumer
-        Set-Content -Path TestDrive:\FooRelativeConsumer\FooRelativeConsumer.ps1 -Value @'
-using module ..\Modules\FooForPaths 
+        new-item -type directory -Force TestDrive:\FooRelativeConsumer
+        Set-Content -Path "${TestDrive}\FooRelativeConsumer\FooRelativeConsumer.ps1" -Value @'
+using module ..\modules\FooForPaths 
 class Bar : Foo {}
 [Bar]::new()
 '@
         
-        Set-Content -Path TestDrive:\FooRelativeConsumerErr.ps1 -Value @'
+        Set-Content -Path "${TestDrive}\FooRelativeConsumerErr.ps1" -Value @'
 using module FooForPaths 
 class Bar : Foo {}
 [Bar]::new()
@@ -443,7 +443,7 @@ class Bar : Foo {}
         }
 
         It "can be accessed by absolute path" {
-            $resolvedTestDrivePath = Split-Path ((ls TestDrive:\Modules)[0].FullName)
+            $resolvedTestDrivePath = Split-Path ((get-childitem TestDrive:\modules)[0].FullName)
             $s = @"
 using module $resolvedTestDrivePath\FooForPaths
 [Foo]::new()
@@ -455,7 +455,7 @@ using module $resolvedTestDrivePath\FooForPaths
         }
 
         It "can be accessed by absolute path with file extension" {
-            $resolvedTestDrivePath = Split-Path ((ls TestDrive:\Modules)[0].FullName)
+            $resolvedTestDrivePath = Split-Path ((get-childitem TestDrive:\modules)[0].FullName)
             $barObject = [scriptblock]::Create(@"
 using module $resolvedTestDrivePath\FooForPaths\FooForPaths.psm1
 [Foo]::new()
@@ -471,7 +471,7 @@ using module .\FooForPaths
 "@
             $err.FullyQualifiedErrorId | Should Be ModuleNotFoundDuringParse
             
-            Push-Location TestDrive:\Modules
+            Push-Location TestDrive:\modules
             try {
                 $barObject = [scriptblock]::Create(@"
 using module .\FooForPaths
@@ -484,7 +484,7 @@ using module .\FooForPaths
         }
 
         It "cannot be accessed by relative path without .\" {
-            Push-Location TestDrive:\Modules
+            Push-Location TestDrive:\modules
             try {
                 $err = Get-RuntimeError @"
 using module FooForPaths
