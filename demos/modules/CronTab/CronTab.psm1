@@ -1,3 +1,6 @@
+
+using namespace System.Collections.Generic
+
 $crontabcmd = "/usr/bin/crontab"
 
 class CronJob {
@@ -15,7 +18,7 @@ function Get-CronTab ([String] $user) {
     $crontab = Invoke-CronTab -user $user -arguments "-l" -noThrow
     if ($crontab -is [System.Management.Automation.ErrorRecord]) {
         if ($crontab.Exception.Message.StartsWith("no crontab for ")) {
-            $crontab = $null
+            $crontab = @()
         }
         else {
             throw $crontab.Exception
@@ -85,7 +88,7 @@ function Remove-CronJob {
     process {
 
         [string[]] $crontab = Get-CronTab -user $UserName
-        [string[]] $newcrontab = $null
+        $newcrontab = [List[string]]::new()
         $found = $false
         
         foreach ($line in $crontab) {
@@ -93,7 +96,7 @@ function Remove-CronJob {
             if ((Compare-object $cronjob.psobject.properties $Job.psobject.properties) -eq $null) {
                 $found = $true
             } else {
-                $newcrontab += $line
+                $newcrontab.Add($line)
             }
         }
         
