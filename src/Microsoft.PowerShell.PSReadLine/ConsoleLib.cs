@@ -1077,6 +1077,10 @@ namespace Microsoft.PowerShell.Internal
 
         public BufferChar[] ReadBufferLines(int top, int count)
         {
+            if (count == 0)
+            {
+                count =1;
+            }
             var result = new BufferChar[BufferWidth * count];
             for (int i=0; i<BufferWidth*count; ++i)
             {
