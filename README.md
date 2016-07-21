@@ -37,6 +37,16 @@ Building PowerShell
 |-----------------------|-------|-------------------|------|
 | Build from **Source** | [Instructions][build-linux] | [Instructions][build-wc] | [Instructions][build-osx] |
 
+Downloading the Source Code
+----------------------
+The PowerShell repository has a number of other repositories embedded as submodules.
+To make things easy, we can just clone recursively.
+
+```sh
+git clone --recursive https://github.com/PowerShell/PowerShell.git
+```
+See [working with the PowerShell repository][powershell-repo-101] for more information.
+
 Developing and Contributing
 --------------------------
 
@@ -46,7 +56,7 @@ If you encounter issues in your development, please consult the [known issues][k
 and [FAQ][faq] documents to see if the issue you are running into is
 captured and if a workaround exists.  
 
-If you encounter issues with PowerShell itself, first search for it in our [issues][github-issues]. 
+If you encounter issues with PowerShell itself, first search for it in our [issues][github-issues].
 If you do not see your issue captured, please file a [new issue][new-issue].  For more details see [Contributing to issues][contribution-issues].
 
 PowerShell Community
@@ -63,7 +73,7 @@ Legal and Licensing
 Code of Conduct
 ---------------
 
-This project has adopted the [Microsoft Open Source Code of Conduct][conduct-code]. 
+This project has adopted the [Microsoft Open Source Code of Conduct][conduct-code].
 For more information see the [Code of Conduct FAQ][conduct-FAQ] or contact
 [opencode@microsoft.com][conduct-email] with any additional questions or comments.
 
@@ -85,3 +95,4 @@ For more information see the [Code of Conduct FAQ][conduct-FAQ] or contact
 [new-issue]:https://github.com/PowerShell/PowerShell/issues/new
 [pls-omi-provider]: https://github.com/PowerShell/psl-omi-provider
 [releases]: https://github.com/PowerShell/PowerShell/releases
+[powershell-repo-101]: docs/git/powershell-repository-101.md
