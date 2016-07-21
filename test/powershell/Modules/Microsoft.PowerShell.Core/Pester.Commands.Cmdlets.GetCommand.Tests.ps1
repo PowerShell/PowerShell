@@ -7,17 +7,19 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
     BeforeAll {
         # Create temporary EXE command files
         $file1 = Setup -f WildCardCommandA.exe -pass
-        $file2 = Setup -f WildCard
-        $null = New-Item -ItemType File -Path (Join-Path $TestDrive WildCardCommandA.exe) -ErrorAction Ignore
-        $null = New-Item -ItemType File -Path (Join-Path $TestDRive WildCardCommand[B].exe) -ErrorAction Ignore
+        $file2 = Setup -f WildCardCommand[B].exe -pass
+        #$null = New-Item -ItemType File -Path (Join-Path $TestDrive WildCardCommandA.exe) -ErrorAction Ignore
+        #$null = New-Item -ItemType File -Path (Join-Path $TestDRive WildCardCommand[B].exe) -ErrorAction Ignore
         if ( $IsLinux -or $IsOSX ) {
-            /bin/chmod +x
+            /bin/chmod 777 "$file1"
+            /bin/chmod 777 "$file2"
         }
     }
 
     It "Test wildcard with drive relative directory path" {
         $pathName = Join-Path $TestDrive "WildCardCommandA*"
-        $pathName = $pathName.Substring(2, ($pathName.Length - 2))
+        $driveOffset = $pathName.IndexOf(":")
+        $pathName = $pathName.Substring($driveOffset + 1)
         $result = Get-Command -Name $pathName
         $result | Should Not Be $null
         $result.Name | Should Be WildCardCommandA.exe
