@@ -20,15 +20,6 @@ Describe "PSVersionTable" {
     }
 
     It "Should have the correct edition" -Skip:(!$IsCore) {
-	$expected =
-	if ($IsLinux -Or $IsOSX) {
-	    "Linux"
-	} elseif ($IsWindows) {
-	    "Core"
-	} else {
-	    throw [PlatformNotSupportedException]
-	}
-
-	$PSVersionTable["PSEdition"] | Should Be $expected
+	$PSVersionTable["PSEdition"] | Should Be "PowerShellCore"
     }
 }
