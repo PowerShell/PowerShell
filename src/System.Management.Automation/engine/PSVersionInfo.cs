@@ -47,11 +47,9 @@ namespace System.Management.Automation
         /// Linux -- All PS on Linux flavors. This may need to be subdivided based on compatibility between distros.
         /// </remarks>
 #if !CORECLR
-        internal const string PSEditionValue = "Desktop";
-#elif LINUX
-        internal const string PSEditionValue = "Linux";
+        internal const string PSEditionValue = "WindowsPowerShell";
 #else
-        internal const string PSEditionValue = "Core";
+        internal const string PSEditionValue = "PowerShellCore";
 #endif
 
         // Static Constructor.
