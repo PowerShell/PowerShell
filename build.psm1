@@ -589,6 +589,31 @@ function Start-PSBootstrap {
             $installScript = "dotnet-install.ps1"
             Invoke-WebRequest -Uri $obtainUrl/$installScript -OutFile $installScript
             & ./$installScript -c $Channel -v $Version
+
+            # Install chocolatey
+            $machinePath = [Environment]::GetEnvironmentVariable('Path', 'MACHINE')
+            $chocolateyPath = "$env:AllUsersProfile\chocolatey\bin"
+            if(Get-Command "choco" -ErrorAction SilentlyContinue)
+            {
+                log "Chocolatey is already installed. Skipping installation."
+            }
+            else 
+            {
+                log "Chocolatey not present. Installing chocolatey."
+                Invoke-Expression ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+
+                if (-not ($machinePath.ToLower().Contains($chocolateyPath.ToLower())))
+                {
+                    log "Adding $chocolateyPath to Path environment variable"
+                    $env:Path += ";$chocolateyPath"
+                    $machinePath += ";$chocolateyPath"
+                    [Environment]::SetEnvironmentVariable('Path', $machinePath, 'MACHINE')    
+                }
+                else
+                {
+                    log "$chocolateyPath already present in Path environment variable"
+                }
+            }
         } elseif ($IsWindows) {
             Write-Warning "Start-PSBootstrap cannot be run in Core PowerShell on Windows (need Invoke-WebRequest!)"
         }
