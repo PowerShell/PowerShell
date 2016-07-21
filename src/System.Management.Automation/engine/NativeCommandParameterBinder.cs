@@ -16,11 +16,6 @@ namespace System.Management.Automation
     /// 
     internal class NativeCommandParameterBinder : ParameterBinderBase
     {
-        #region tracer
-        [TraceSource("NativeCommandParameterBinder","The parameter binder for native commands")]
-        static private PSTraceSource tracer = PSTraceSource.GetTracer ("NativeCommandParameterBinder", "The parameter binder for native commands");
-        #endregion tracer
-
         #region ctor
 
         /// <summary>
@@ -129,21 +124,7 @@ namespace System.Management.Automation
         {
             get
             {
-                var rawArgs = arguments.ToString();
-
-                if (tracer.IsEnabled && Platform.IsWindows)
-                {
-                    // This tracing really shouldn't be in the property getter...
-                    tracer.WriteLine("Raw argument string: {0}", rawArgs);
-                    string[] parsedArguments = CommandLineParameterBinderNativeMethods.PreParseCommandLine(rawArgs);
-
-                    for (int counter = 0; counter < parsedArguments.Length; counter++)
-                    {
-                        tracer.WriteLine("Argument {0}: {1}", counter, parsedArguments[counter]);
-                    }
-                }
-
-                return rawArgs;
+                return arguments.ToString();
             }
         } // Arguments
         private readonly StringBuilder arguments = new StringBuilder();
@@ -250,39 +231,4 @@ namespace System.Management.Automation
         #endregion private members
     }
 
-    internal static class CommandLineParameterBinderNativeMethods
-    {
-        public static string[] PreParseCommandLine(string commandLine)
-        {
-            int numberOfArguments = 0;
-            IntPtr parsedCommandLine = CommandLineToArgvW(commandLine, out numberOfArguments);
-            
-            if(parsedCommandLine == IntPtr.Zero)
-                return null;
-
-            try
-            {
-                string[] results = new string[numberOfArguments - 1];
-                for (int counter = 1; counter < numberOfArguments; counter++)
-                {
-                    results[counter - 1] = Marshal.PtrToStringUni(
-                        Marshal.ReadIntPtr(parsedCommandLine, counter * IntPtr.Size));
-                }
-
-                return results;
-            }
-            finally
-            {
-                LocalFree(parsedCommandLine);
-            }
-        }
-
-        [DllImport(PinvokeDllNames.CommandLineToArgvDllName, SetLastError = true)]
-        static extern IntPtr CommandLineToArgvW(
-           [MarshalAs(UnmanagedType.LPWStr)] string lpCmdLine,
-           out int pNumArgs);
-
-        [DllImport(PinvokeDllNames.LocalFreeDllName)]
-        static extern IntPtr LocalFree(IntPtr hMem);   
-    }
 } // namespace System.Management.Automation
