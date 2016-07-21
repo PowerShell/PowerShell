@@ -1,4 +1,4 @@
-Describe "CliXml test" -Tags "innerloop", "P1", "RI" {
+Describe "CliXml test" -Tags "CI" {
     
     BeforeAll {
         $testFilePath = Join-Path "testdrive:\" "testCliXml" 

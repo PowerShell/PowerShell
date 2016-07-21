@@ -1,11 +1,11 @@
-Describe "FormatData" -tags "P1", "RI" {
+Describe "FormatData" -tags "Feature" {
 
     Context "Export" {
         It "can export all types" {            
             try
             {                
                 $expectAllFormat = Get-FormatData -typename *
-                $expectAllFormat | Export-FormatData -path $env:temp\allformat.ps1xml -IncludeScriptBlock
+                $expectAllFormat | Export-FormatData -path $TESTDRIVE\allformat.ps1xml -IncludeScriptBlock
 
                 $sessionState = [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault()
                 $sessionState.Formats.Clear()
@@ -14,7 +14,7 @@ Describe "FormatData" -tags "P1", "RI" {
                 $runspace = [System.Management.Automation.Runspaces.RunspaceFactory]::CreateRunspace($sessionState)
                 $runspace.Open()
 
-                $runspace.CreatePipeline("Update-FormatData -AppendPath $env:temp\allformat.ps1xml").Invoke()
+                $runspace.CreatePipeline("Update-FormatData -AppendPath $TESTDRIVE\allformat.ps1xml").Invoke()
                 $actualAllFormat = $runspace.CreatePipeline("Get-FormatData -TypeName *").Invoke()
 
                 $expectAllFormat.Count | Should Be $actualAllFormat.Count
@@ -23,7 +23,7 @@ Describe "FormatData" -tags "P1", "RI" {
             }
             finally 
             {
-                Remove-Item -Path $env:temp\allformat.ps1xml -Force -ErrorAction SilentlyContinue
+                Remove-Item -Path $TESTDRIVE\allformat.ps1xml -Force -ErrorAction SilentlyContinue
             }
         }
 

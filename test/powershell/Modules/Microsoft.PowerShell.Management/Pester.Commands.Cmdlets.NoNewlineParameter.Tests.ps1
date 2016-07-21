@@ -1,7 +1,7 @@
 # Tests related to TFS item 1370133 [PSUpgrade] Need -NoNewline parameter on Out-File, Add-Content and Set-Content
 # Connect request https://connect.microsoft.com/PowerShell/feedback/details/524739/need-nonewline-parameter-on-out-file-add-content-and-set-content
 
-Describe "Tests for -NoNewline parameter of Out-File, Add-Content and Set-Content" -tags 'P1', 'RI' {
+Describe "Tests for -NoNewline parameter of Out-File, Add-Content and Set-Content" -tags "Feature" {
     
     It "NoNewline parameter works on Out-File" {
          $temp = New-TemporaryFile

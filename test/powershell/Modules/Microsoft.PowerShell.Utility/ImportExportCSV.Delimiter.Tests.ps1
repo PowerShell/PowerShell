@@ -1,4 +1,4 @@
-Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tags P1 {
+Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tags "Feature" {
     BeforeAll {
         # note, we will not use "," as that's the default for CSV
         $delimiters = "/", " ", "@", "#", "$", "\", "&", "(", ")", 
@@ -6,6 +6,9 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
               '"', "~", "!", "%", "^", "*", "_", "+", ":",
               "?", "-", "=", "[", "]", "."
         $defaultDelimiter = [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator
+        # With CORECLR the CurrentCulture.TextInfo.ListSeparator is not writable, so
+        # we need to use an entirely new CultureInfo which we can modify
+        $enCulture = [System.Globalization.CultureInfo]::new("en-us")
         $d = get-date
         $testCases = @(
             foreach($del in $delimiters)
@@ -13,9 +16,25 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
                 @{ Delimiter = $del; Data = $d; ExpectedResult = $d.Ticks }
             }
             )
+        function Set-delimiter {
+            param ( $delimiter )
+            if ( $IsCore ) {
+                $enCulture.TextInfo.ListSeparator = $delimiter
+                [System.Globalization.CultureInfo]::CurrentCulture = $enCulture
+            }
+            else {
+                [System.Globalization.cultureInfo]::CurrentCulture.TextInfo.ListSeparator = $delimiter
+            }
+        }
     }
     AfterEach {
-        [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator = $defaultDelimiter 
+        if ( $IsCore ) {
+            $enCulture.TextInfo.ListSeparator = $defaultDelimiter
+            [System.Globalization.CultureInfo]::CurrentCulture = $enCulture
+        }
+        else {
+            [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator = $defaultDelimiter 
+        }
         remove-item -force -ea silentlycontinue TESTDRIVE:/file.csv
     }
 
@@ -42,7 +61,7 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
     # parameter generated tests
     It 'Delimiter <Delimiter> with CSV import will fail correctly when culture does not match' -testCases $testCases {
         param ($delimiter, $Data, $ExpectedResult)
-        [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator = $delimiter
+        set-Delimiter $delimiter
         $Data | export-CSV TESTDRIVE:\File.csv -useCulture
         $i = Import-CSV TESTDRIVE:\File.csv
         $i.Ticks | Should Not Be $ExpectedResult
@@ -50,7 +69,7 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
 
     It 'Delimiter <Delimiter> with CSV import will succeed when culture matches export' -testCases $testCases {
         param ($delimiter, $Data, $ExpectedResult)
-        [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator = $delimiter
+        set-Delimiter $delimiter
         $Data | export-CSV TESTDRIVE:\File.csv -useCulture
         $i = Import-CSV TESTDRIVE:\File.csv -useCulture
         $i.Ticks | Should Be $ExpectedResult

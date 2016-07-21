@@ -2,16 +2,21 @@
 ## Copyright (c) Microsoft Corporation, 2015
 ##
 
-Describe "Tests Get-Command with relative paths and wildcards" {
+Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
 
     BeforeAll {
         # Create temporary EXE command files
-        $null = New-Item -ItemType File -Path (Join-Path $env:Temp WildCardCommandA.exe) -ErrorAction Ignore
-        $null = New-Item -ItemType File -Path (Join-Path $env:Temp WildCardCommand[B].exe) -ErrorAction Ignore
+        $file1 = Setup -f WildCardCommandA.exe -pass
+        $file2 = Setup -f WildCard
+        $null = New-Item -ItemType File -Path (Join-Path $TestDrive WildCardCommandA.exe) -ErrorAction Ignore
+        $null = New-Item -ItemType File -Path (Join-Path $TestDRive WildCardCommand[B].exe) -ErrorAction Ignore
+        if ( $IsLinux -or $IsOSX ) {
+            /bin/chmod +x
+        }
     }
 
     It "Test wildcard with drive relative directory path" {
-        $pathName = Join-Path $env:Temp "WildCardCommandA*"
+        $pathName = Join-Path $TestDrive "WildCardCommandA*"
         $pathName = $pathName.Substring(2, ($pathName.Length - 2))
         $result = Get-Command -Name $pathName
         $result | Should Not Be $null
@@ -19,15 +24,15 @@ Describe "Tests Get-Command with relative paths and wildcards" {
     }
 
     It "Test wildcard with relative directory path" {
-        pushd $env:Temp
+        push-location $TestDrive
         $result = Get-Command -Name .\WildCardCommandA*
-        popd
+        pop-location
         $result | Should Not Be $null
         $result | Should Be WildCardCommandA.exe
     }
     
-    It "Test with PowerShell wildcard and reative path" {
-        pushd $env:Temp
+    It "Test with PowerShell wildcard and relative path" {
+        push-location $TestDrive
 
         # This should use the wildcard to find WildCardCommandA.exe
         $result = Get-Command -Name .\WildCardCommand[A].exe
@@ -39,11 +44,7 @@ Describe "Tests Get-Command with relative paths and wildcards" {
         $result | Should Not Be $null
         $result | Should Be WildCardCommand[B].exe
 
-        popd
+        Pop-Location
     }
 
-    AfterAll {
-        # Remove temporary files
-        Remove-Item -Path (Join-Path $env:Temp WildCardCommand*) -Force -ErrorAction Ignore
-    }
 }

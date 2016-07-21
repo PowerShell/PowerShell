@@ -7,6 +7,7 @@
 # If PS Remoting is not available, do not run the suite.
 function ShouldRun
 {    
+    if ( $IsCore ) { return $false }
     $result = Invoke-Command -ComputerName . -ScriptBlock {1} -ErrorAction SilentlyContinue
     return ($result -eq 1)
 }
@@ -17,7 +18,7 @@ if (-not (ShouldRun))
     return
 }
 
-Describe "Validate Copy-Item Remotely" -Tags "Innerloop", "DRT" {
+Describe "Validate Copy-Item Remotely" -Tags "CI" {
 
     # Validate a copy item operation.
     # $filePath is the source file path
@@ -643,7 +644,7 @@ Describe "Validate Copy-Item Remotely" -Tags "Innerloop", "DRT" {
     }
 }
 
-Describe "Validate Copy-Item error for target sessions not in FullLanguageMode." -Tags "Innerloop", "RI", "P1" {
+Describe "Validate Copy-Item error for target sessions not in FullLanguageMode." -Tags "Feature" {
 
     BeforeAll {
 
@@ -731,7 +732,7 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
     }
 }
 
-Describe "Copy-Item can use Recurse and Exclude together" -Tags "RI", "P1" {
+Describe "Copy-Item can use Recurse and Exclude together" -Tags "Feature" {
 
     Context "Local and Remote Tests" {
     
@@ -776,7 +777,7 @@ Describe "Copy-Item can use Recurse and Exclude together" -Tags "RI", "P1" {
     }
 }
 
-Describe "Copy-Item remotely bug fixes" -Tags "RI", "P1" {
+Describe "Copy-Item remotely bug fixes" -Tags "Feature" {
 
     BeforeAll {
         $s = New-PSSession -ComputerName . -ErrorAction SilentlyContinue

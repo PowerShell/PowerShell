@@ -1,6 +1,7 @@
-Describe "String cmdlets" -Tags 'innerloop', 'P1', 'RI' {
+Describe "String cmdlets" -Tags "CI" {
     Context "Select-String" {
         BeforeAll {
+            $sep = [io.path]::DirectorySeparatorChar
             $fileName = New-Item 'TestDrive:\selectStr[ingLi]teralPath.txt'
             "abc" | Out-File -LiteralPath $fileName.fullname            
 	        "bcd" | Out-File -LiteralPath $fileName.fullname -Append
@@ -35,12 +36,13 @@ Describe "String cmdlets" -Tags 'innerloop', 'P1', 'RI' {
             (select-string -LiteralPath $fileNameWithDots "b").count | Should Be 2	    
         }
 
-        It "Network path" {
+        It "Network path" -skip:($IsCore) {
             (select-string -LiteralPath $fileNameAsNetworkPath "b").count | Should Be 2
         }
 
         It "throws error for non filesystem providers" {
-            select-string -literalPath cert:\currentuser\my "a" -ErrorAction SilentlyContinue -ErrorVariable selectStringError
+            $aaa = "aaaaaaaaaa"
+            select-string -literalPath variable:\aaa "a" -ErrorAction SilentlyContinue -ErrorVariable selectStringError
             $selectStringError.FullyQualifiedErrorId | Should Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectStringCommand'
         }
 
@@ -49,7 +51,7 @@ Describe "String cmdlets" -Tags 'innerloop', 'P1', 'RI' {
         }
 
         It "match object supports RelativePath method" {
-            $file = "Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1"
+            $file = "Modules${sep}Microsoft.PowerShell.Utility${sep}Microsoft.PowerShell.Utility.psd1"
             
             $match = Select-String CmdletsToExport $pshome/$file
             
