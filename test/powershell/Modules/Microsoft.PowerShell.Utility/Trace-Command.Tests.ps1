@@ -13,7 +13,7 @@ Describe "Trace-Command" -tags "P1", "RI" {
         }
         
         # LogicalOperationStack is not in .NET Core
-        It "LogicalOperationStack works" -Skip:$IsCore {
+        It "LogicalOperationStack works" -Skip:$IsCoreCLR {
             $keyword = "Trace_Command_ListenerOption_LogicalOperationStack_Foo"
             $stack = [System.Diagnostics.Trace]::CorrelationManager.LogicalOperationStack
             $stack.Push($keyword)
@@ -25,7 +25,7 @@ Describe "Trace-Command" -tags "P1", "RI" {
         } 
 
         # GetStackTrace is not in .NET Core
-        It "Callstack works" -Skip:$IsCore {
+        It "Callstack works" -Skip:$IsCoreCLR {
             Trace-Command -Name * -Expression {echo Foo} -ListenerOption Callstack -FilePath $logfile
             $log = Get-Content $logfile | Where-Object {$_ -like "*Callstack=   * System.Environment.GetStackTrace(Exception e, Boolean needFileInfo)*"}
             $log.Count | Should BeGreaterThan 0

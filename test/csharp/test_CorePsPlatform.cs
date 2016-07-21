@@ -10,9 +10,9 @@ namespace PSTests
     public static class PlatformTests
     {
         [Fact]
-        public static void TestIsCore()
+        public static void TestIsCoreCLR()
         {
-            Assert.True(Platform.IsCore);
+            Assert.True(Platform.IsCoreCLR);
         }
 
         [Fact]

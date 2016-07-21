@@ -471,7 +471,7 @@ Describe 'PositiveReturnSelfClassTypeFromMemberFunction Test' -Tags "CI" {
     }
 
 Describe 'TestMultipleArguments Test' -Tags "CI" {
-        if ( $IsCore ) { $maxCount = 14 } else { $maxCount = 16 }
+        if ( $IsCoreCLR ) { $maxCount = 14 } else { $maxCount = 16 }
         for ($i = 0; $i -lt $maxCount; $i++)
         {
             $properties = $(for ($j = 0; $j -le $i; $j++) {

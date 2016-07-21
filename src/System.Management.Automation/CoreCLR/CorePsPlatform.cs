@@ -79,7 +79,7 @@ namespace System.Management.Automation
         /// <summary>
         /// True if PowerShell was built targeting .NET Core.
         /// </summary>
-        public static bool IsCore
+        public static bool IsCoreCLR
         {
             get
             {

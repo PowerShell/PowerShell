@@ -5122,8 +5122,8 @@ end
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
             new SessionStateVariableEntry(
-                SpecialVariables.IsCore,
-                Platform.IsCore,
+                SpecialVariables.IsCoreCLR,
+                Platform.IsCoreCLR,
                 String.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
             #endregion
@@ -5475,7 +5475,7 @@ end
         internal const string DefaultMoreFunctionText = @"
 param([string[]]$paths)
 # Nano needs to use Unicode, but Windows and Linux need the default
-$OutputEncoding = if ($IsWindows -and $IsCore) {
+$OutputEncoding = if ($IsWindows -and $IsCoreCLR) {
     [System.Text.Encoding]::Unicode
 } else {
     [System.Console]::OutputEncoding
