@@ -85,6 +85,8 @@ function Remove-CronJob {
   Optional parameter to specify a specific user's cron table
 .PARAMETER Job
   Cron job object returned from Get-CronJob
+.PARAMETER Force
+  Don't prompt when removing the cron job
 #>   
     [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact="High")]
     param (
@@ -97,7 +99,10 @@ function Remove-CronJob {
         [Alias("j")]
         [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
         [CronJob]
-        $Job
+        $Job,
+
+        [Switch]
+        $Force
     )
     process {
 
@@ -118,7 +123,7 @@ function Remove-CronJob {
             $e = New-Object System.Exception -ArgumentList "Job not found"
             throw $e
         }
-        if ($pscmdlet.ShouldProcess($Job.Command,"Remove")) {
+        if ($Force -or $pscmdlet.ShouldProcess($Job.Command,"Remove")) {
             Import-CronTab -user $UserName -crontab $newcrontab
         }
     }        
