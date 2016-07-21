@@ -638,6 +638,20 @@ function Start-PSBootstrap {
                 }
             }
 
+            # Install Windows 10 SDK   
+            $sdkPath = "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\v10.0A"
+            $packageName = "windows-sdk-10.0"
+
+            if (-not (Test-Path -Path $sdkPath -PathType Container))
+            {
+                log "Windows 10 SDK not present. Installing $packageName."
+                choco install windows-sdk-10.0 -y
+            }
+            else
+            {
+                log "Windows 10 SDK present. Skipping installation."
+            }
+            
             # Update machine environment path
             if ($newMachineEnvironmentPath -ne $machinePath)
             {
