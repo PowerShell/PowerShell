@@ -1,55 +1,74 @@
-﻿Get-Command -Module PowerShellGet
+﻿#region cleanup
+Get-InstalledModule PSScriptAnalyzer -AllVersions -ErrorAction SilentlyContinue | Uninstall-Module
+Get-InstalledModule xJea -AllVersions -ErrorAction SilentlyContinue | Uninstall-Module
+Get-InstalledScript Fabrikam-Script -ErrorAction SilentlyContinue |  Uninstall-Script
+Get-InstalledScript Start-Demo -ErrorAction SilentlyContinue |  Uninstall-Script
+Remove-Item /tmp/PSScriptAnalyzer -Force -Recurse -ErrorAction SilentlyContinue
+Remove-Item /tmp/Start-Demot.ps1 -Force -ErrorAction SilentlyContinue
 
-Get-PSRepository
+#endregion
 
+# List of PowerShellGet commands
+Get-Command -Module PowerShellGet
+
+# Discover modules
 Find-Module
-Find-Module ContosoServer
+Find-Module PSScriptAnalyzer
 
-Save-Module ContosoServer -Path /tmp
-Get-ChildItem -Path /tmp/ContosoServer -Recurse
+# Save a module to the local machine
+Save-Module PSScriptAnalyzer -Path /tmp
+Get-ChildItem -Path /tmp/PSScriptAnalyzer/1.6.0/ -Recurse
 
-Install-Module -Name ContosoServer -RequiredVersion 1.5 -Scope CurrentUser
+# Install a module to the common modules location
+Install-Module -Name PSScriptAnalyzer -RequiredVersion 1.0.2 -Scope CurrentUser
+
+# Discover the installed modules
 Get-InstalledModule
-Get-Module -ListAvailable ContosoServer
-Get-InstalledModule ContosoServer | Format-List *
+Get-Module -ListAvailable PSScriptAnalyzer
+Get-InstalledModule PSScriptAnalyzer | Format-List *
 
-Install-Module -Name ContosoClient -RequiredVersion 1.0 -Scope CurrentUser
-Get-InstalledModule ContosoClient
-Get-Module -ListAvailable ContosoClient
+# Install xJea module
+Install-Module -Name xJea -RequiredVersion 0.2 -Scope CurrentUser
+Get-InstalledModule xJea
+Get-Module -ListAvailable xJea
 
-Update-Module ContosoClient -RequiredVersion 1.5
-Get-InstalledModule ContosoClient
-Get-Module -ListAvailable ContosoClient
+# Update a module
+Update-Module xJea -RequiredVersion 0.2.5
+Get-InstalledModule xJea
+Get-Module -ListAvailable xJea
 
+# Update all modules
 Update-Module -WhatIf
 Update-Module
 Get-InstalledModule
 
-Get-InstalledModule ContosoClient -AllVersions
-Uninstall-Module ContosoClient -RequiredVersion 1.0
-Get-InstalledModule ContosoClient -AllVersions
+# Uninstall a module version
+Get-InstalledModule xJea -AllVersions
+Uninstall-Module xJea
+Get-InstalledModule xJea -AllVersions
 
-
+# Discover PowerShell Scripts
 Find-Script
-Find-Script -Name Fabrikam-ServerScript
-Save-Script Fabrikam-ServerScript -Path /tmp
-Get-ChildItem -Path /tmp/Fabrikam-ServerScript.ps1
+Find-Script -Name Start-Demo
 
-'/tmp/Fabrikam-ServerScript.ps1'
+# Save scripts to a specified location
+Save-Script Start-Demo -Path /tmp
+Get-ChildItem -Path /tmp/Start-Demot.ps1
 
-Find-Script -Name Fabrikam-ServerScript -RequiredVersion 2.0 | Install-Script -Scope CurrentUser
+& '/tmp/Start-Demo.ps1'
+
+# Install a script to the common scripts location
+Find-Script -Name Start-Demo | Install-Script -Scope CurrentUser
 Get-InstalledScript
 
-Install-Script Fabrikam-ServerClient -RequiredVersion 1.0 -Scope CurrentUser
+Install-Script Fabrikam-Script -RequiredVersion 1.0 -Scope CurrentUser
 Get-InstalledScript
+Get-InstalledScript Fabrikam-Script | Format-List *
 
-Get-InstalledScript Fabrikam-ServerClient | Format-List *
-
+# Update the installed scripts
 Update-Script -WhatIf
 Update-Script
 Get-InstalledScript
 
-Uninstall-Script Fabrikam-ServerClient -Verbose
-
-
-
+# Uninstall a script file
+Uninstall-Script Fabrikam-Script -Verbose
