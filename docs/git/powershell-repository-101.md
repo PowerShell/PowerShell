@@ -45,23 +45,13 @@ Branches
 Use **git rebase** instead of **git merge** and **git pull**, when you're updating your feature-branch.
 
 ```sh
-# switch to master branch
-
 # fetch updates all remote branch references in the repo and all submodules
 # --all : tells it to do it for all remotes (handy, when you use your fork)
 # -p : tells it to remove obsolete remote branch references (when they are removed from remote)
 git fetch --all -p
 
-# pull updates your local files
-# you should call this command ONLY from master branch
-git pull origin master
-
-```
-
-Then switch to your branch and do a rebase
-
-```
-git rebase master
+# rebase on origin/master will rewrite your branch history
+git rebase origin/master
 ```
 
 #### More complex scenarios
