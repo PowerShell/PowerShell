@@ -662,13 +662,13 @@ function CompressSingleDirHelper
         }
         else
         {
-            $modifiedSourceDirFullName = $sourceDirFullName + "\"
+            $modifiedSourceDirFullName = $sourceDirFullName + ([io.path]::DirectorySeparatorChar)
         }
     }
     else
     {
         $sourceDirFullName = $sourceDirPath
-        $modifiedSourceDirFullName = $sourceDirFullName + "\"
+        $modifiedSourceDirFullName = $sourceDirFullName + ([io.path]::DirectorySeparatorChar)
     }
 
     $dirContents = Get-ChildItem -LiteralPath $sourceDirPath -Recurse
@@ -688,7 +688,7 @@ function CompressSingleDirHelper
             $files = $currentContent.GetFiles()
             if($files.Count -eq 0)
             {
-                $subDirFiles.Add($currentContent.FullName + "\")
+                $subDirFiles.Add($currentContent.FullName + ([io.path]::DirectorySeparatorChar))
             }
         }
     }
@@ -780,7 +780,7 @@ function ZipArchiveHelper
             # If a directory needs to be added to an archive file, 
             # by convention the .Net API's expect the path of the diretcory 
             # to end with '\' to detect the path as an directory.
-            if(!$relativeFilePath.EndsWith("\", [StringComparison]::OrdinalIgnoreCase))
+            if(!$relativeFilePath.EndsWith(([io.path]::DirectorySeparatorChar), [StringComparison]::OrdinalIgnoreCase))
             {
                 try
                 {
@@ -951,7 +951,7 @@ function ExpandArchiveHelper
             # The current archive entry is an empty directory
             # The FullName of the Archive Entry representing a directory would end with a trailing '\'.
             if($extension -eq [string]::Empty -and 
-            $currentArchiveEntryPath.EndsWith("\", [StringComparison]::OrdinalIgnoreCase))
+            $currentArchiveEntryPath.EndsWith(([io.path]::DirectorySeparatorChar), [StringComparison]::OrdinalIgnoreCase))
             {
                 $pathExists = Test-Path -LiteralPath $currentArchiveEntryPath
 
