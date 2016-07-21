@@ -386,7 +386,8 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             }
             finally
             {
-                Remove-Item -LiteralPath $sourcePath -Force
+                get-item -literalPath $sourcePath | remove-Item -force
+                # Remove-Item -LiteralPath $sourcePath -Force
             }
         }
         It "Validate that Compress-Archive cmdlet errors out when DestinationPath resolves to multiple locations" {
@@ -441,7 +442,8 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             }
             finally
             {
-                Remove-Item -LiteralPath $sourcePath -Force -Recurse
+                get-item -LiteralPath $sourcePath | Remove-Item -Force -Recurse
+                # Remove-Item -LiteralPath $sourcePath -Force -Recurse
             }
         }
         It "Validate that Compress-Archive cmdlet can accept DestinationPath parameter with Special Characters" {
@@ -454,7 +456,8 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             }
             finally
             {
-                Remove-Item -LiteralPath $destinationPath -Force
+                Get-Item -LiteralPath $destinationPath | Remove-Item -Force
+                # Remove-Item -LiteralPath $destinationPath -Force
             }
         }
         It "Validate that Source Path can be at SystemDrive location" -skip:($IsCore) {
