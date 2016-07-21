@@ -281,7 +281,7 @@ Describe "Event Test" -Tags @('BVT', 'DRT') {
 	}
 }
 
-Describe "Find-Package" -Tags @('BVT', 'DRT'){
+Describe "Find-Package" -Tags @('CI','SLOW'){
     it "EXPECTED: Find a package with a location created via new-psdrive" -Skip:(-not $IsWindows) {
         $Error.Clear()
         New-PSDrive -Name xx -PSProvider FileSystem -Root $TestDrive -warningaction:silentlycontinue -ea silentlycontinue > $null; find-package -name "fooobarrr" -provider nuget -source xx:\  -warningaction:silentlycontinue -ea silentlycontinue

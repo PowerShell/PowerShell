@@ -13,11 +13,14 @@
         { Get-PSBreakpoint -Script $fullScriptPath } | Should Not Throw
 
         $Id = (Get-PSBreakpoint -Script $fullScriptPath).Id
-        $Id | Should be 0
-
+        # if breakpoints have been set by other tests, the number may or may not be 0
+        # so we can't check against a specific number
+        # however, we can be sure that we're getting an int and that the int is 
+        # greater or equal to 0
+        ([int]$Id) -ge 0 | should be $true
     }
 
-    It "sshould be able to get PSBreakpoint with using Variable switch" {
+    It "should be able to get PSBreakpoint with using Variable switch" {
         Set-PSBreakpoint -Script $fullScriptPath -Variable "$scriptName"
         
         { Get-PSBreakpoint -Variable "$scriptName" -Script $fullScriptPath } | Should Not Throw
