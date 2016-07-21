@@ -1,5 +1,6 @@
 
 using namespace System.Collections.Generic
+using namespace System.Management.Automation
 
 $crontabcmd = "/usr/bin/crontab"
 
@@ -16,7 +17,7 @@ class CronJob {
 
 function Get-CronTab ([String] $user) {
     $crontab = Invoke-CronTab -user $user -arguments "-l" -noThrow
-    if ($crontab -is [System.Management.Automation.ErrorRecord]) {
+    if ($crontab -is [ErrorRecord]) {
         if ($crontab.Exception.Message.StartsWith("no crontab for ")) {
             $crontab = @()
         }
@@ -82,8 +83,16 @@ function Remove-CronJob {
 #>   
     [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact="High")]
     param (
-        [Alias("u")][Parameter(Mandatory=$false)][String] $UserName,
-        [Alias("j")][Parameter(Mandatory=$true,ValueFromPipeline=$true)][CronJob] $Job
+        [ArgumentCompleter( { $wordToComplete = $args[2]; Get-CronTabUser | Where-Object { $_ -like "$wordToComplete*" } | Sort-Object } )]
+        [Alias("u")]
+        [Parameter(Mandatory=$false)]
+        [String]
+        $UserName,
+
+        [Alias("j")]
+        [Parameter(Mandatory=$true,ValueFromPipeline=$true)]
+        [CronJob]
+        $Job
     )
     process {
 
@@ -141,7 +150,12 @@ function New-CronJob {
 #>   
     [CmdletBinding()]
     param (
-        [Alias("u")][Parameter(Mandatory=$false)][String] $UserName,
+        [ArgumentCompleter( { $wordToComplete = $args[2]; Get-CronTabUser | Where-Object { $_ -like "$wordToComplete*" } | Sort-Object } )]
+        [Alias("u")]
+        [Parameter(Mandatory=$false)]
+        [String]
+        $UserName,
+
         [Alias("mi")][Parameter(Position=1)][String[]] $Minute = "*",
         [Alias("h")][Parameter(Position=2)][String[]] $Hour = "*",
         [Alias("dm")][Parameter(Position=3)][String[]] $DayOfMonth = "*",
@@ -185,6 +199,36 @@ function Get-CronJob {
             {
                 ConvertTo-CronJob -crontab $line
             }
+        }
+    }
+}
+
+function Get-CronTabUser {
+<#
+.SYNOPSIS
+  Returns the users allowed to use crontab
+#>
+    [CmdletBinding()]
+    [OutputType([String])]
+    param()
+
+    $allow = '/etc/cron.allow'
+    if (Test-Path $allow)
+    {
+        Get-Content $allow
+    }
+    else
+    {
+        $users = Get-Content /etc/passwd | ForEach-Object { ($_ -split ':')[0] }
+        $deny = '/etc/cron.deny'
+        if (Test-Path $deny)
+        {
+            $denyUsers = Get-Content $deny
+            $users | Where-Object { $denyUsers -notcontains $_ }
+        }
+        else
+        {
+            $users
         }
     }
 }
