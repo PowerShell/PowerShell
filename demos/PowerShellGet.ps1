@@ -2,10 +2,6 @@
 
 Get-PSRepository
 
-Register-PSRepository -Name PSGalleryINT -SourceLocation https://dtlgalleryint.cloudapp.net -InstallationPolicy Trusted
-
-Get-PSRepository
-
 Find-Module
 Find-Module ContosoServer
 
@@ -15,7 +11,7 @@ Get-ChildItem -Path /tmp/ContosoServer -Recurse
 Install-Module -Name ContosoServer -RequiredVersion 1.5 -Scope CurrentUser
 Get-InstalledModule
 Get-Module -ListAvailable ContosoServer
-Get-InstalledScript ContosoServer | Format-List *
+Get-InstalledModule ContosoServer | Format-List *
 
 Install-Module -Name ContosoClient -RequiredVersion 1.0 -Scope CurrentUser
 Get-InstalledModule ContosoClient
