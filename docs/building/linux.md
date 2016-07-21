@@ -50,7 +50,7 @@ The `./tools/download.sh` script will also install the PowerShell package.
 In Bash:
 
 ```sh
-GITHUB_TOKEN=<replace with your token>
+export GITHUB_TOKEN=<replace with your token>
 ./tools/download.sh
 
 powershell
