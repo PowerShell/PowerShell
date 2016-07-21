@@ -4,7 +4,7 @@
     "monad/tests/ci/PowerShell/tests/Commands/Cmdlets/MiscCmdletUpdates.Tests.ps1": "Microsoft.PowerShell.Utility/MiscCmdletUpdates.Tests.ps1",
     "monad/tests/ci/PowerShell/tests/Commands/Cmdlets/NewGuid.Tests.ps1": "Microsoft.PowerShell.Utility/NewGuid.Tests.ps1",
     "monad/tests/ci/PowerShell/tests/Commands/Cmdlets/NewTemporaryFile.Tests.ps1": "Microsoft.PowerShell.Utility/NewTemporaryFile.Tests.ps1",
-    "monad/tests/ci/PowerShell/tests/Commands/Cmdlets/Pester.Commands.Cmdlets.ArchiveTests.ps1": "Microsoft.PowerShell.Archive/Pester.Commands.Cmdlets.ArchiveTests.ps1",
+    "monad/tests/ci/PowerShell/tests/Commands/Cmdlets/Pester.Commands.Cmdlets.ArchiveTests.ps1": "Microsoft.PowerShell.Archive/Pester.Commands.Cmdlets.Archive.Tests.ps1",
     "monad/tests/ci/PowerShell/tests/Commands/Cmdlets/SamplePreCreatedArchive.archive": "Microsoft.PowerShell.Archive/SamplePreCreatedArchive.archive",
     "monad/tests/ci/PowerShell/tests/Commands/Cmdlets/Pester.Commands.Cmdlets.GetCommand.ps1": "Microsoft.PowerShell.Core/Pester.Commands.Cmdlets.GetCommand.ps1",
     "monad/tests/ci/PowerShell/tests/Commands/Cmdlets/Pester.Commands.Cmdlets.JsonTests.ps1": "Microsoft.PowerShell.Utility/Pester.Commands.Cmdlets.JsonTests.ps1",
