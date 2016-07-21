@@ -16,11 +16,11 @@ Find-Module
 Find-Module PSScriptAnalyzer
 
 # Save a module to the local machine
-Save-Module PSScriptAnalyzer -Path /tmp
+Save-Module PSScriptAnalyzer -Repository PSGallery -Path /tmp
 Get-ChildItem -Path /tmp/PSScriptAnalyzer/1.6.0/ -Recurse
 
 # Install a module to the common modules location
-Install-Module -Name PSScriptAnalyzer -RequiredVersion 1.0.2 -Scope CurrentUser
+Install-Module -Name PSScriptAnalyzer -RequiredVersion 1.0.2 -Scope CurrentUser -Repository PSGallery
 
 # Discover the installed modules
 Get-InstalledModule
@@ -52,13 +52,11 @@ Find-Script
 Find-Script -Name Start-Demo
 
 # Save scripts to a specified location
-Save-Script Start-Demo -Path /tmp
-Get-ChildItem -Path /tmp/Start-Demot.ps1
-
-& '/tmp/Start-Demo.ps1'
+Save-Script Start-Demo -Repository PSGallery -Path /tmp
+Get-ChildItem -Path /tmp/Start-Demo.ps1
 
 # Install a script to the common scripts location
-Find-Script -Name Start-Demo | Install-Script -Scope CurrentUser
+Find-Script -Name Start-Demo -Repository PSGallery  | Install-Script -Scope CurrentUser
 Get-InstalledScript
 
 Install-Script Fabrikam-Script -RequiredVersion 1.0 -Scope CurrentUser
