@@ -45,6 +45,12 @@ To make things easy, we can just clone recursively.
 ```sh
 git clone --recursive https://github.com/PowerShell/PowerShell.git
 ```
+
+If you already cloned but forgot to use `--recursive`, you can update submodules manually:
+```sh
+git submodule init
+git submodule update
+```
 See [working with the PowerShell repository][powershell-repo-101] for more information.
 
 Developing and Contributing
