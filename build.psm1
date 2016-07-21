@@ -119,9 +119,9 @@ function Start-PSBuild {
         Use-MSBuild
 
         #mc.exe is Message Compiler for native resources
-        $mcexe = Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\" -Recurse -Filter 'mc.exe' | ? {$_.FullName -match 'x64'} | select -First 1 | % {$_.FullName}
+        $mcexe = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\" -Recurse -Filter 'mc.exe' | ? {$_.FullName -match 'x64'} | select -First 1 | % {$_.FullName}
         if (-not $mcexe) {
-            throw 'mc.exe not found. Install Microsoft Windows SDK.'
+            throw 'mc.exe not found. Install Microsoft Windows 10 SDK from https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk'
         }
 
         $vcVarsPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
