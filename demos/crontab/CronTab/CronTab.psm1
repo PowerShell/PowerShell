@@ -47,14 +47,13 @@ function ConvertTo-CronJob ([String] $crontab) {
     $cronjob
 }
 
-function Invoke-CronTab ([String] $user, [String] $arguments, [Switch] $noThrow) {
+function Invoke-CronTab ([String] $user, [String[]] $arguments, [Switch] $noThrow) {
     If ($user -ne [String]::Empty) {
-        $arguments = "-u $UserName $arguments"
+        $arguments = Write-Output "-u" $UserName $arguments
     }
     
-    $cmd  = "$crontabcmd $arguments 2>&1"
-    Write-Verbose $cmd
-    $output = Invoke-Expression $cmd
+    Write-Verbose "Running: $crontabcmd $arguments"
+    $output = & $crontabcmd @arguments 2>&1
     if ($LastExitCode -ne 0 -and -not $noThrow) {
         $e = New-Object System.InvalidOperationException -ArgumentList $output.Exception.Message
         throw $e
