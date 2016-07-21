@@ -1,29 +1,29 @@
-Describe "Trace-Command" -tags "P1", "RI" {
+Describe "Trace-Command" -tags "Feature" {
     
     Context "Listner options" {
         BeforeAll {
-            $logFile = New-Item "TestDrive:\traceCommandLog.txt" -Force
-            $actualLogFile = New-Item "TestDrive:\actualTraceCommandLog.txt" -Force
+            $logFile = setup -f traceCommandLog.txt -pass
+            $actualLogFile = setup -f actualTraceCommandLog.txt -pass
         }
 
         AfterEach {
-            Remove-Item "TestDrive:\traceCommandLog.txt" -Force -ErrorAction SilentlyContinue
-            Remove-Item "TestDrive:\actualTraceCommandLog.txt" -Force -ErrorAction SilentlyContinue
+            if ( test-path $logfile ) { Remove-Item $logFile }
+            if ( test-path $actualLogFile ) { Remove-Item $actualLogFile }
         }
         
-        It "LogicalOperationStack works" {
+        It "LogicalOperationStack works" -pending:($IsCore) {
             $keyword = "Trace_Command_ListenerOption_LogicalOperationStack_Foo"
             $stack = [System.Diagnostics.Trace]::CorrelationManager.LogicalOperationStack
             $stack.Push($keyword)
 
-            Trace-Command -Name * -Expression {echo Foo} -ListenerOption LogicalOperationStack -FilePath $logfile
+            Trace-Command -Name * -Expression {write-output Foo} -ListenerOption LogicalOperationStack -FilePath $logfile
 
             $log = Get-Content $logfile | Where-Object {$_ -like "*LogicalOperationStack=$keyword*"}            
             $log.Count | Should BeGreaterThan 0
         } 
 
-        It "Callstack works" {
-            Trace-Command -Name * -Expression {echo Foo} -ListenerOption Callstack -FilePath $logfile
+        It "Callstack works" -pending:($IsCore) {
+            Trace-Command -Name * -Expression {write-output Foo} -ListenerOption Callstack -FilePath $logfile
             $log = Get-Content $logfile | Where-Object {$_ -like "*Callstack=   * System.Environment.GetStackTrace(Exception e, Boolean needFileInfo)*"}
             $log.Count | Should BeGreaterThan 0
         }
@@ -47,14 +47,14 @@ Describe "Trace-Command" -tags "P1", "RI" {
         }
 
         It "None options has no effect" {            
-            Trace-Command -Name * -Expression {echo Foo} -ListenerOption None -FilePath $actualLogfile
-            Trace-Command -name * -Expression {echo Foo} -FilePath $logfile
+            Trace-Command -Name * -Expression {write-output Foo} -ListenerOption None -FilePath $actualLogfile
+            Trace-Command -name * -Expression {write-output Foo} -FilePath $logfile
 
             Compare-Object (Get-Content $actualLogfile) (Get-Content $logfile) | Should BeNullOrEmpty
         }
 
         It "ThreadID works" {
-            Trace-Command -Name * -Expression {echo Foo} -ListenerOption ThreadId -FilePath $logfile
+            Trace-Command -Name * -Expression {write-output Foo} -ListenerOption ThreadId -FilePath $logfile
             $log = Get-Content $logfile | Where-Object {$_ -like "*ThreadID=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
 
@@ -62,7 +62,7 @@ Describe "Trace-Command" -tags "P1", "RI" {
         }
 
         It "Timestamp creates logs in ascending order" {
-            Trace-Command -Name * -Expression {echo Foo} -ListenerOption Timestamp -FilePath $logfile
+            Trace-Command -Name * -Expression {write-output Foo} -ListenerOption Timestamp -FilePath $logfile
             $log = Get-Content $logfile | Where-Object {$_ -like "*Timestamp=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
             $sortedResults = $results | Sort-Object
@@ -70,7 +70,7 @@ Describe "Trace-Command" -tags "P1", "RI" {
         }
 
         It "ProcessId logs current process Id" {
-            Trace-Command -Name * -Expression {echo Foo} -ListenerOption ProcessId -FilePath $logfile
+            Trace-Command -Name * -Expression {write-output Foo} -ListenerOption ProcessId -FilePath $logfile
             $log = Get-Content $logfile | Where-Object {$_ -like "*ProcessID=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
 

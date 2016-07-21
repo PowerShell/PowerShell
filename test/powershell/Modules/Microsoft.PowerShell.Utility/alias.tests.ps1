@@ -1,4 +1,4 @@
-Describe "Alias tests" -Tags "innerloop", "P1", "RI" {
+Describe "Alias tests" -Tags "CI" {
 
     BeforeAll {
         $testPath = Join-Path testdrive:\ ("testAlias\[.test")

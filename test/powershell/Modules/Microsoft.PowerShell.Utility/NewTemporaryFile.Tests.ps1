@@ -14,7 +14,7 @@
         A FileInfo object for the temporary file is returned. 
 #>
 
-Describe "NewTemporaryFile" -tags 'DRT' {
+Describe "NewTemporaryFile" -Tags "CI" {
 
     It "creates a new temporary file" {
         $tempFile = New-TemporaryFile 

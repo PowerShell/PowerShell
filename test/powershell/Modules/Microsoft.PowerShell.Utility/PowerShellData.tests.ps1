@@ -1,11 +1,11 @@
-Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags 'P1', 'RI' {
+Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "Feature" {
 
     It "Validates error on a missing path" {
 
         $foundError = ""
         try
         {
-            Import-PowerShellDataFile -Path c:\SomeMissingDirectory -ErrorAction Stop
+            Import-PowerShellDataFile -Path /SomeMissingDirectory -ErrorAction Stop
         }
         catch
         {
@@ -20,7 +20,7 @@ Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags 'P1', 'RI' {
         $foundError = ""
         try
         {
-            Import-PowerShellDataFile ($env:SYSTEMDRIVE + '\') -ErrorAction Stop
+            Import-PowerShellDataFile ${TESTDRIVE} -ErrorAction Stop
         }
         catch
         {

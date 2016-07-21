@@ -14,26 +14,25 @@
         Hexa decimal equivalent of the input data is displayed. 
 #>
 
-Describe "FormatHex" -tags 'DRT' {
+Describe "FormatHex" -tags "CI" {
+    BeforeAll {
+        Setup -d FormatHexDataDir
+        $inputText1 = 'Hello World'
+        $inputText2 = 'This is a bit more text'
+        $inputFile1 = setup -f "FormatHexDataDir/SourceFile-1.txt" -content $inputText1 -pass
+        $inputFile2 = setup -f "FormatHexDataDir/SourceFile-2.txt" -content $inputText2 -pass
+    }
     
-    New-Item TestDrive:\FormatHexDataDir -Type Directory  -Force | Out-Null
-    $inputFile = "TestDrive:\FormatHexDataDir\SourceFile-1.txt"
-    $inputText = 'Hello World'
-    Set-Content -Value $inputText -Path $inputFile
-    $inputFile2 = "TestDrive:\FormatHexDataDir\SourceFile-2.txt"
-    $inputText2 = 'This is a bit more text'
-    Set-Content -Value $inputText2 -Path $inputFile2
-
     # This test is to validate to pipeline support in Format-Hex cmdlet.  
     It "ValidatePipelineSupport" {
 
         # InputObject Parameter set should get invoked and 
         # the input data should be treated as string.
-        $result = $inputText | Format-Hex
+        $result = $inputText1 | Format-Hex
         $result | Should Not Be $null
         $result.GetType().Name | Should Be 'ByteCollection'
         $actualResult = $result.ToString()
-        ($actualResult -match $inputText) | Should Be $true
+        ($actualResult -match $inputText1) | Should Be $true
     }
 
     # This test is to validate to pipeline support in Format-Hex cmdlet.  
@@ -41,63 +40,63 @@ Describe "FormatHex" -tags 'DRT' {
 
         # InputObject Parameter set should get invoked and 
         # the input data should be treated as byte[].
-        $inputBytes = [System.Text.Encoding]::ASCII.GetBytes($inputText)
+        $inputBytes = [System.Text.Encoding]::ASCII.GetBytes($inputText1)
 
         $result =  Format-Hex -InputObject $inputBytes
         $result | Should Not Be $null
         $result.GetType().Name | Should Be 'ByteCollection'
         $actualResult = $result.ToString()
-        ($actualResult -match $inputText) | Should Be $true   
+        ($actualResult -match $inputText1) | Should Be $true   
     }
 
     # This test is to validate to input given through Path paramter set in Format-Hex cmdlet.
     It "ValidatePathParameterSet" {
 
-        $result =  Format-Hex -Path $inputFile
+        $result =  Format-Hex -Path $inputFile1
         $result | Should Not Be $null
         $result.GetType().Name | Should Be 'ByteCollection'
         $actualResult = $result.ToString()
-        ($actualResult -match $inputText) | Should Be $true  
+        ($actualResult -match $inputText1) | Should Be $true  
     }
 
     # This test is to validate to Path paramter set is considered as default in Format-Hex cmdlet.
     It "ValidatePathAsDefaultParameterSet" {
 
-        $result =  Format-Hex $inputFile
+        $result =  Format-Hex $inputFile1
         $result | Should Not BeNullOrEmpty
         $result.GetType().Name | Should Be 'ByteCollection'
         $actualResult = $result.ToString()
-        ($actualResult -match $inputText) | Should Be $true  
+        ($actualResult -match $inputText1) | Should Be $true  
     }
 
     # This test is to validate to input given through LiteralPath paramter set in Format-Hex cmdlet.
     It "ValidateLiteralPathParameterSet" {
         
-        $result =  Format-Hex -LiteralPath $inputFile
+        $result =  Format-Hex -LiteralPath $inputFile1
         $result | Should Not BeNullOrEmpty
         $result.GetType().Name | Should Be 'ByteCollection'
         $actualResult = $result.ToString()
-        ($actualResult -match $inputText) | Should Be $true
+        ($actualResult -match $inputText1) | Should Be $true
     }
 
     # This test is to validate to input given through pipeline. The input being piped from results of Get-hildItem
     It "ValidateFileInfoPipelineInput" {
         
-        $result = Get-ChildItem $inputFile | Format-Hex
+        $result = Get-ChildItem $inputFile1 | Format-Hex
         $result | Should Not BeNullOrEmpty
         $result.GetType().Name | Should Be 'ByteCollection'
         $actualResult = $result.ToString()
-        ($actualResult -match $inputText) | Should Be $true
+        ($actualResult -match $inputText1) | Should Be $true
     }
 
     # This test is to validate Encoding formats functionality of Format-Hex cmdlet.
     It "ValidateEncodingFormats" {
         
-        $result =  Format-Hex -InputObject $inputText -Encoding ASCII
+        $result =  Format-Hex -InputObject $inputText1 -Encoding ASCII
         $result | Should Not BeNullOrEmpty
         $result.GetType().Name | Should Be 'ByteCollection'
         $actualResult = $result.ToString()
-        ($actualResult -match $inputText) | Should Be $true
+        ($actualResult -match $inputText1) | Should Be $true
     }
 
     # This test is to validate that integers can be piped to the format-hex
@@ -190,15 +189,19 @@ Describe "FormatHex" -tags 'DRT' {
         $result | Should Not BeNullOrEmpty
         $result.Count | should be 2
         $result[0].ToString() | Should be "00000000   54 68 69 73 20 69 73 20 61 20 62 69 74 20 6D 6F  This is a bit mo"
-        $result[1].ToString() | Should be "00000010   72 65 20 74 65 78 74 0D 0A                       re text..       "
+        if ( $IsCore ) {
+            $result[1].ToString() | Should be "00000010   72 65 20 74 65 78 74                             re text         "
+        }
     }
 
     # This test ensures that if we stream bytes from a file, the output is correct
     It "ValidateStreamOfBytesFromFileHasProperOutput" {
-        $result = Get-Content $InputFile -Encoding Byte | Format-Hex
+        $result = Get-Content $InputFile1 -Encoding Byte | Format-Hex
         $result | Should Not BeNullOrEmpty
         $result.GetType().Name | Should Be "ByteCollection"
-        $result.ToString() | Should be    "00000000   48 65 6C 6C 6F 20 57 6F 72 6C 64 0D 0A           Hello World..   "
+        if ( $IsCore ) {
+            $result.ToString() | Should be    "00000000   48 65 6C 6C 6F 20 57 6F 72 6C 64                 Hello World     "
+        }
     }
 
     # This test is to validate the alias for Format-Hex cmdlet.
