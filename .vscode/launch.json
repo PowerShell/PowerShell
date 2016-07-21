@@ -8,8 +8,8 @@
             "justMyCode": false,
             "stopAtEntry": true,
             "program": "${workspaceRoot}/debug/powershell",
-            "args": [ "-NonInteractive" ],
             "preLaunchTask": "build",
+            "externalConsole": true,
             "cwd": "${workspaceRoot}"
         },
         {
