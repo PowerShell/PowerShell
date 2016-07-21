@@ -40,7 +40,6 @@ Of course, this requires a self-hosted copy of PowerShell on Linux.
 
 Fortunately, this is as easy as downloading and installing the package. 
 Unfortunately, while the repository is still private, the package cannot be downloaded as simply as with `wget`. 
-We have a script that wraps the GitHub API and uses a personal access token to authorize in order to obtain the package.
 
 The `./tools/download.sh` script will also install the PowerShell package.
 
@@ -50,7 +49,6 @@ The `./tools/download.sh` script will also install the PowerShell package.
 In Bash:
 
 ```sh
-GITHUB_TOKEN=<replace with your token>
 ./tools/download.sh
 
 powershell
