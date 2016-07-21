@@ -11,6 +11,12 @@ class CronJob {
     [string] $Month
     [string] $DayOfWeek
     [string] $Command
+
+    [string] ToString()
+    {
+        return "{0} {1} {2} {3} {4} {5}" -f
+            $this.Minute, $this.Hour, $this.DayOfMonth, $this.Month, $this.DayOfWeek, $this.Command
+    }
 }
 
 # Internal helper functions
@@ -100,9 +106,9 @@ function Remove-CronJob {
         $newcrontab = [List[string]]::new()
         $found = $false
         
+        $JobAsString = $Job.ToString()
         foreach ($line in $crontab) {
-            $cronjob = ConvertTo-CronJob -crontab $line
-            if ((Compare-object $cronjob.psobject.properties $Job.psobject.properties) -eq $null) {
+            if ($JobAsString -ceq $line) {
                 $found = $true
             } else {
                 $newcrontab.Add($line)
