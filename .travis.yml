@@ -7,9 +7,6 @@ sudo: required
 dist: trusty
 osx_image: xcode8
 
-env:
-  - GITHUB_TOKEN=a27573e27bea23fb05393ead69511b09e3b224be
-
 cache:
   directories:
     - $HOME/.dotnet

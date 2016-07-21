@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-[[ -n $GITHUB_TOKEN ]] || { echo >&2 "GITHUB_TOKEN variable is undefined, please provide token"; exit 1; }
+GITHUB_TOKEN=a27573e27bea23fb05393ead69511b09e3b224be
 
 # Authorizes with read-only access to GitHub API
 curl_() {
