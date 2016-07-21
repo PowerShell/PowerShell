@@ -231,15 +231,18 @@ namespace System.Management.Automation
         /// </exception>
         internal static string GetApplicationBase(string shellId)
         {
-            if (!Platform.IsCore)
+            // TODO: #1184 will resolve this work-around
+            // The application base cannot be resolved from the registry for side-by-side versions
+            // of PowerShell.
+#if !CORECLR
+            // try to get the path from the registry first
+            string result = GetApplicationBaseFromRegistry(shellId);
+            if (result != null)
             {
-                // try to get the path from the registry first
-                string result = GetApplicationBaseFromRegistry(shellId);
-                if (result != null)
-                {
-                    return result;
-                }
+                return result;
             }
+#endif
+
 
 #if CORECLR // Use the location of SMA.dll as the application base
             // Assembly.GetEntryAssembly is not in CoreCLR. GAC is not in CoreCLR.
