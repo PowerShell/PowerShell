@@ -548,8 +548,6 @@ function Start-PSBootstrap {
             brew install $Deps
             # OpenSSL libraries must be updated
             brew link --force openssl
-        } else {
-            Write-Warning "This script only supports Ubuntu 14.04, CentOS 7, and OS X, you must install dependencies manually!"
         }
 
         # Install [fpm](https://github.com/jordansissel/fpm)
@@ -595,7 +593,8 @@ function Start-PSBootstrap {
 
             # Install chocolatey
             $chocolateyPath = "$env:AllUsersProfile\chocolatey\bin"
-            if(Get-Command "choco" -ErrorAction SilentlyContinue)
+            
+            if(precheck 'choco' $null)
             {
                 log "Chocolatey is already installed. Skipping installation."
             }
@@ -618,7 +617,7 @@ function Start-PSBootstrap {
 
             # Install cmake
             $cmakePath = "${env:ProgramFiles(x86)}\CMake\bin"
-            if(Get-Command "cmake" -ErrorAction SilentlyContinue)
+            if(precheck 'cmake' $null)
             {
                 log "Cmake is already installed. Skipping installation."
             }
@@ -1370,7 +1369,10 @@ function script:log([string]$message) {
 function script:precheck([string]$command, [string]$missedMessage) {
     $c = Get-Command $command -ErrorAction SilentlyContinue
     if (-not $c) {
-        Write-Warning $missedMessage
+        if ($missedMessage -ne $null)
+        {
+            Write-Warning $missedMessage
+        }
         return $false
     } else {
         return $true
