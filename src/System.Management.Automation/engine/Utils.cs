@@ -296,14 +296,14 @@ namespace System.Management.Automation
 
                 // And built-in modules
                 string progFileDir;
-                if (Platform.IsCore)
-                {
-                    progFileDir = Path.Combine(appBase, "Modules");
-                }
-                else
-                {
-                    progFileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell", "Modules");
-                }
+                // TODO: #1184 will resolve this work-around
+                // Side-by-side versions of PowerShell use modules from their application base, not
+                // the system installation path.
+#if CORECLR
+                progFileDir = Path.Combine(appBase, "Modules");
+#else
+                progFileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell", "Modules");
+#endif
 
                 if (!string.IsNullOrEmpty(progFileDir))
                 {
