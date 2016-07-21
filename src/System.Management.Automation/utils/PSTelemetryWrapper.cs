@@ -56,7 +56,6 @@ namespace System.Management.Automation.Internal
 
                 // Initialize EventSourceOptions for Writing informational messages
                 // WdiContext will ensure Universal Telemetry Client [UTC] will upload telemetry messages to Cosmos/xPert pipeline
-                // https://microsoft.sharepoint.com/teams/osg_core_fun/idt/OSGInstrument/SitePages/How%20to%20upload%20EventSource%20events.aspx
 
                 // MeasuresKeyword is to indicate that event is for understanding measures and reporting scenarios.
                 // This keyword results in the generation of Asimov compatible events for telemetry
@@ -90,8 +89,7 @@ namespace System.Management.Automation.Internal
         /// </summary> 
 
         // EventSource data gets raised on the Client containing OS Environment information and supplied arguments as "data"
-        // Events are queued and uploaded to Cosmos/xPert. Here is a way of accessing the telemetry data:
-        // http://xpert/osg/?view=Search&source=PROD&start=3.06.2015-19.41&end=3.06.2015-21.41
+        // Events are queued and uploaded to Cosmos/xPert.
         // Format of data generated on the Client:
         // {
         //    "ver": "2.1",
