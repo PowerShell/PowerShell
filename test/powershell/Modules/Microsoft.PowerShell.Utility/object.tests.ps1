@@ -1,4 +1,4 @@
-Describe "Object cmdlets" -Tags 'innerloop', 'P1', 'RI' {
+Describe "Object cmdlets" -Tags "CI" {
     Context "Group-Object" {
         It "AsHashtable returns a hashtable" {
             $result = Get-Process | Group-Object -Property ProcessName -AsHashTable
@@ -21,7 +21,7 @@ Describe "Object cmdlets" -Tags 'innerloop', 'P1', 'RI' {
     }
 }
 
-Describe "Object cmdlets" -Tags 'DRT' {
+Describe "Object cmdlets" -Tags "CI" {
     Context "Measure-Object" {
         BeforeAll {
             ## Powershell language prefers , as an array seperator without "". 

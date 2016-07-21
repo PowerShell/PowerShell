@@ -1,4 +1,4 @@
-Describe "GetDateFormatUpdates" -tags 'P1', 'RI' {
+Describe "GetDateFormatUpdates" -Tags "Feature" {
 
     It "Verifies that FileDate format works" {
         $date = Get-Date
@@ -34,7 +34,7 @@ Describe "GetDateFormatUpdates" -tags 'P1', 'RI' {
     
 }
 
-Describe "GetRandomMiscTests" -tags 'P1', 'RI' {
+Describe "GetRandomMiscTests" -Tags "Feature" {
     It "Shouldn't overflow when using max range" {
         
         $hadError = $false
