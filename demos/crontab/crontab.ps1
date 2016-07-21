@@ -1,10 +1,5 @@
 
-if (!($env:PSMODULEPATH -split ';' | Where-Object { $_.StartsWith($PSScriptRoot) }))
-{
-    $env:PSMODULEPATH += ";$PSScriptRoot/modules"
-}
-
-Import-Module CronTab
+Import-Module $PSScriptRoot/CronTab/CronTab.psd1
 
 # Get the existing cron jobs
 Get-CronJob
