@@ -4,9 +4,10 @@ using System.Xml;
 using System.IO;
 using System.Text;
 using System.Reflection;
+using System.Globalization;
+using System.Threading;
 
 using System.Management.Automation;
-using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -66,7 +67,7 @@ namespace System.Management.Automation
         /// Proposed value = Existing value, otherwise 10.
         /// </summary>
         /// <returns>Max stack size in MB. If not set, defaults to 10 MB.</returns>
-        internal abstract int GetPipeLineMaxStackSizeMb();
+        internal abstract int GetPipeLineMaxStackSizeMb(int defaultValue);
 
         internal abstract void SetPipeLineMaxStackSizeMb(int maxStackSize);
 
@@ -75,7 +76,7 @@ namespace System.Management.Automation
         /// Proposed value = existing default. Probably "1"
         /// </summary>
         /// <returns>Whether console prompting should happen.</returns>
-        internal abstract bool GetConsolePrompting();
+        internal abstract bool GetConsolePrompting(ref Exception exception);
         internal abstract void SetConsolePrompting(bool shouldPrompt);
 
         /// <summary>
@@ -91,8 +92,8 @@ namespace System.Management.Automation
         /// Proposed value = blank.This should be supported though
         /// </summary>
         /// <returns></returns>
-        internal abstract string GetDefaultSourcePath(PropertyScope scope);
-        internal abstract void SetDefaultSourcePath(PropertyScope scope, string defaultPath);
+        internal abstract string GetDefaultSourcePath();
+        internal abstract void SetDefaultSourcePath(string defaultPath);
     }
 
     internal class PropertyAccessorFactory
@@ -129,12 +130,12 @@ namespace System.Management.Automation
     {
         private string psHomeConfigDirectory;
         private string appDataConfigDirectory;
-        private static string configDirectoryName = "Configuration";
-        private static string execPolicyFileName = "ExecutionPolicy.json";
-        private static string maxStackSizeFileName = "PipeLineMaxStackSizeMB.json";
-        private static string consolePromptingFileName = "ConsolePrompting.json";
-        private static string updateHelpPromptFileName = "UpdateHelpPrompt.json";
-        private static string updatableHelpSourcePathFileName = "UpdatableHelpDefaultSourcePath.json";
+        private const string configDirectoryName = "Configuration";
+        private const string execPolicyFileName = "ExecutionPolicy.json";
+        private const string maxStackSizeFileName = "PipeLineMaxStackSizeMB.json";
+        private const string consolePromptingFileName = "ConsolePrompting.json";
+        private const string updateHelpPromptFileName = "UpdateHelpPrompt.json";
+        private const string updatableHelpSourcePathFileName = "UpdatableHelpDefaultSourcePath.json";
 
         internal JsonConfigFileAccessor()
         {
@@ -235,11 +236,11 @@ namespace System.Management.Automation
         /// }
         /// </summary>
         /// <returns>Max stack size in MB. If not set, defaults to 10 MB.</returns>
-        internal override int GetPipeLineMaxStackSizeMb()
+        internal override int GetPipeLineMaxStackSizeMb(int defaultValue)
         {
             string fileName = Path.Combine(psHomeConfigDirectory, maxStackSizeFileName);
 
-            int maxStackSize = 10;
+            int maxStackSize = defaultValue;
             int rawMaxStackSize = ReadValueFromFile<int>(fileName, "PipeLineMaxStackSizeMB");
 
             if (0 != rawMaxStackSize)
@@ -265,7 +266,7 @@ namespace System.Management.Automation
         /// }
         /// </summary>
         /// <returns>Whether console prompting should happen.</returns>
-        internal override bool GetConsolePrompting()
+        internal override bool GetConsolePrompting(ref Exception exception)
         {
             string fileName = Path.Combine(psHomeConfigDirectory, consolePromptingFileName);
             return ReadValueFromFile<bool>(fileName, "ConsolePrompting");
@@ -309,17 +310,9 @@ namespace System.Management.Automation
         /// }
         /// </summary>
         /// <returns></returns>
-        internal override string GetDefaultSourcePath(PropertyScope scope)
+        internal override string GetDefaultSourcePath()
         {
-            string scopeDirectory = psHomeConfigDirectory;
-
-            // Defaults to system wide.
-            if (PropertyScope.CurrentUser == scope)
-            {
-                scopeDirectory = appDataConfigDirectory;
-            }
-
-            string fileName = Path.Combine(scopeDirectory, updatableHelpSourcePathFileName);
+            string fileName = Path.Combine(psHomeConfigDirectory, updatableHelpSourcePathFileName);
 
             string rawExecPolicy = ReadValueFromFile<string>(fileName, "DefaultSourcePath");
 
@@ -331,17 +324,9 @@ namespace System.Management.Automation
             return String.Empty;
         }
 
-        internal override void SetDefaultSourcePath(PropertyScope scope, string defaultPath)
+        internal override void SetDefaultSourcePath(string defaultPath)
         {
-            string scopeDirectory = psHomeConfigDirectory;
-
-            // Defaults to system wide.
-            if (PropertyScope.CurrentUser == scope)
-            {
-                scopeDirectory = appDataConfigDirectory;
-            }
-
-            string fileName = Path.Combine(scopeDirectory, updatableHelpSourcePathFileName);
+            string fileName = Path.Combine(psHomeConfigDirectory, updatableHelpSourcePathFileName);
 
             WriteValueToFile<string>(fileName, "DefaultSourcePath", defaultPath);
         }
@@ -613,6 +598,12 @@ namespace System.Management.Automation
 
     internal class RegistryAccessor : PropertyAccessor
     {
+        private const string DisablePromptToUpdateHelpRegPath = "Software\\Microsoft\\PowerShell";
+        private const string DisablePromptToUpdateHelpRegPath32 = "Software\\Wow6432Node\\Microsoft\\PowerShell";
+        private const string DisablePromptToUpdateHelpRegKey = "DisablePromptToUpdateHelp";
+        private const string DefaultSourcePathRegPath = "Software\\Policies\\Microsoft\\Windows\\PowerShell\\UpdatableHelp";
+        private const string DefaultSourcePathRegKey = "DefaultSourcePath";
+
         internal RegistryAccessor()
         {
         }
@@ -638,19 +629,15 @@ namespace System.Management.Automation
         internal override string GetMachineExecutionPolicy(PropertyScope scope, string shellId)
         {
             string regKeyName = Utils.GetRegistryConfigurationPath(shellId);
+            RegistryKey scopedKey = Registry.LocalMachine;
 
-            if (PropertyScope.SystemWide == scope)
+            // Override if set to another value;
+            if (PropertyScope.CurrentUser == scope)
             {
-                return GetHklmString(regKeyName, "ExecutionPolicy");
+                scopedKey = Registry.CurrentUser;
             }
-            else if (PropertyScope.CurrentUser == scope)
-            {
-                return GetHkcuString(regKeyName, "ExecutionPolicy");
-            }
-            else
-            {
-                return null;
-            }
+
+            return GetRegistryString(scopedKey, regKeyName, "ExecutionPolicy");
         }
 
         internal override void SetMachineExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy)
@@ -694,24 +681,48 @@ namespace System.Management.Automation
             }
         }
 
-        internal override int GetPipeLineMaxStackSizeMb()
+        internal override int GetPipeLineMaxStackSizeMb(int defaultValue)
         {
-            return 0;
+            string regKeyName = Utils.GetRegistryConfigurationPrefix();
+
+            int? tempInt = GetRegistryDword(Registry.LocalMachine, regKeyName, "PipelineMaxStackSizeMB");
+
+            return (tempInt.HasValue ? tempInt.Value : defaultValue);
         }
+
         internal override void SetPipeLineMaxStackSizeMb(int maxStackSize)
-        { }
+        {
+            string regKeyName = Utils.GetRegistryConfigurationPrefix();
+            SetRegistryDword(Registry.LocalMachine, regKeyName, "PipelineMaxStackSizeMB", maxStackSize);
+        }
 
         /// <summary>
         /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds
         /// Proposed value = existing default. Probably "1"
         /// </summary>
         /// <returns>Whether console prompting should happen.</returns>
-        internal override bool GetConsolePrompting()
+        internal override bool GetConsolePrompting(ref Exception exception)
         {
-            return true;
+            string policyKeyName = Utils.GetRegistryConfigurationPrefix();
+            string tempPrompt = GetRegistryString(Registry.LocalMachine, policyKeyName, "ConsolePrompting", ref exception);
+
+            if (null != tempPrompt)
+            {
+                // TODO: It is difficult to tell from the original code how this value is actually stored in the registry.
+                // I am inferring that it is a "true" or "false" string based on the original code.
+                return Convert.ToBoolean(tempPrompt, CultureInfo.InvariantCulture); 
+            }
+            else
+            {
+                return false;
+            }
         }
+
         internal override void SetConsolePrompting(bool shouldPrompt)
-        { }
+        {
+            string policyKeyName = Utils.GetRegistryConfigurationPrefix();
+            SetRegistryString(Registry.LocalMachine, policyKeyName, "ConsolePrompting", shouldPrompt.ToString());
+        }
 
         /// <summary>
         /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell
@@ -720,28 +731,146 @@ namespace System.Management.Automation
         /// <returns>Boolean indicating whether Update-Help should prompt</returns>
         internal override bool GetDisablePromptToUpdateHelp()
         {
-            return true;
+            using (RegistryKey hklm = Registry.LocalMachine.OpenSubKey(DisablePromptToUpdateHelpRegPath))
+            {
+                if (hklm != null)
+                {
+                    object disablePromptToUpdateHelp = hklm.GetValue(DisablePromptToUpdateHelpRegKey, null, RegistryValueOptions.None);
+
+                    if (disablePromptToUpdateHelp == null)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        int result;
+
+                        if (LanguagePrimitives.TryConvertTo<int>(disablePromptToUpdateHelp, out result))
+                        {
+                            return (result != 1);
+                        }
+
+                        return true;
+                    }
+                }
+                else
+                {
+                    return true;
+                }
+            }
         }
+
         internal override void SetDisablePromptToUpdateHelp(bool prompt)
-        { }
+        {
+            int valueToSet = prompt ? 1 : 0;
+            try
+            {
+                using (RegistryKey hklm = Registry.LocalMachine.OpenSubKey(DisablePromptToUpdateHelpRegPath, true))
+                {
+                    if (hklm != null)
+                    {
+                        hklm.SetValue(DisablePromptToUpdateHelpRegKey, valueToSet, RegistryValueKind.DWord);
+                    }
+                }
+
+                using (RegistryKey hklm = Registry.LocalMachine.OpenSubKey(DisablePromptToUpdateHelpRegPath32, true))
+                {
+                    if (hklm != null)
+                    {
+                        hklm.SetValue(DisablePromptToUpdateHelpRegKey, valueToSet, RegistryValueKind.DWord);
+                    }
+                }
+            }
+            catch (UnauthorizedAccessException) {}
+            catch (System.Security.SecurityException) {}
+        }
 
         /// <summary>
         /// Existing Key = HKCU and HKLM\Software\Policies\Microsoft\Windows\PowerShell\UpdatableHelp
         /// Proposed value = blank.This should be supported though
         /// </summary>
         /// <returns></returns>
-        internal override string GetDefaultSourcePath(PropertyScope scope)
+        internal override string GetDefaultSourcePath()
         {
-            return string.Empty;
+            return GetRegistryString(Registry.LocalMachine, DefaultSourcePathRegPath, DefaultSourcePathRegKey);
         }
-        internal override void SetDefaultSourcePath(PropertyScope scope, string defaultPath)
-        { }
 
-        private string GetHklmString(string pathToKey, string valueName)
+        internal override void SetDefaultSourcePath(string defaultPath)
+        {
+            SetRegistryString(Registry.LocalMachine, DefaultSourcePathRegPath, DefaultSourcePathRegKey, defaultPath);
+        }
+
+        private int? GetRegistryDword(RegistryKey rootKey, string pathToKey, string valueName)
         {
             try
             {
-                using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(pathToKey))
+                using (RegistryKey regKey = rootKey.OpenSubKey(pathToKey))
+                {
+                    if (null == regKey)
+                    {
+                        // Key not found
+                        return null;
+                    }
+
+                    // verify the value kind as a string
+                    RegistryValueKind kind = regKey.GetValueKind(valueName);
+
+                    if (kind == RegistryValueKind.DWord)
+                    {
+                        return regKey.GetValue(valueName) as int?;
+                    }
+                    else
+                    {
+                        // The function expected a DWORD, but got another type. This is a coding error or a registry key typing error.
+                        return null;
+                    }
+                }
+            }
+            catch (ObjectDisposedException) { }
+            catch (System.Security.SecurityException) { }
+            catch (ArgumentException) { }
+            catch (System.IO.IOException) { }
+            catch (UnauthorizedAccessException) { }
+            catch (FormatException) { }
+            catch (OverflowException) { }
+            catch (InvalidCastException) { }
+
+            return null;
+        }
+
+        private void SetRegistryDword(RegistryKey rootKey, string pathToKey, string valueName, int value)
+        {
+            try
+            {
+                using (RegistryKey regKey = rootKey.OpenSubKey(pathToKey))
+                {
+                    if (null != regKey)
+                    {
+                        regKey.SetValue(valueName, value, RegistryValueKind.DWord);
+                    }
+                }
+            }
+            catch (ObjectDisposedException) { }
+            catch (System.Security.SecurityException) { }
+            catch (ArgumentException) { }
+            catch (System.IO.IOException) { }
+            catch (UnauthorizedAccessException) { }
+            catch (FormatException) { }
+            catch (OverflowException) { }
+            catch (InvalidCastException) { }
+        }
+
+        private string GetRegistryString(RegistryKey rootKey, string pathToKey, string valueName)
+        {
+            Exception e = null;
+            return GetRegistryString(rootKey, pathToKey, valueName, ref e);
+        }
+
+        private string GetRegistryString(RegistryKey rootKey, string pathToKey, string valueName, ref Exception exception)
+        {
+            try
+            {
+                using (RegistryKey regKey = rootKey.OpenSubKey(pathToKey))
                 {
                     if (null == regKey)
                     {
@@ -764,42 +893,27 @@ namespace System.Management.Automation
                     }
                 }
             }
-            catch (ObjectDisposedException) { }
-            catch (System.Security.SecurityException) { }
-            catch (ArgumentException) { }
-            catch (System.IO.IOException) { }
-            catch (UnauthorizedAccessException) { }
-            catch (FormatException) { }
-            catch (OverflowException) { }
-            catch (InvalidCastException) { }
+            catch (ObjectDisposedException e) { exception = e; }
+            catch (System.Security.SecurityException e) { exception = e; }
+            catch (ArgumentException e) { exception = e; }
+            catch (System.IO.IOException e) { exception = e; }
+            catch (UnauthorizedAccessException e) { exception = e; }
+            catch (FormatException e) { exception = e; }
+            catch (OverflowException e) { exception = e; }
+            catch (InvalidCastException e) { exception = e; }
 
             return null;
         }
 
-        private string GetHkcuString(string pathToKey, string valueName)
+        private string SetRegistryString(RegistryKey rootKey, string pathToKey, string valueName, string value)
         {
             try
             {
-                using (RegistryKey regKey = Registry.CurrentUser.OpenSubKey(pathToKey))
+                using (RegistryKey key = rootKey.CreateSubKey(pathToKey))
                 {
-                    if (null == regKey)
+                    if (null != key)
                     {
-                        // Key not found
-                        return null;
-                    }
-
-                    // verify the value kind as a string
-                    RegistryValueKind kind = regKey.GetValueKind(valueName);
-
-                    if (kind == RegistryValueKind.ExpandString ||
-                        kind == RegistryValueKind.String)
-                    {
-                        return regKey.GetValue(valueName) as string;
-                    }
-                    else
-                    {
-                        // The function expected a string, but got another type. This is a coding error or a registry key typing error.
-                        return null;
+                        key.SetValue(valueName, value, RegistryValueKind.String);
                     }
                 }
             }

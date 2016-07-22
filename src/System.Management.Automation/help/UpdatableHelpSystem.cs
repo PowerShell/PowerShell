@@ -238,12 +238,6 @@ namespace System.Management.Automation.Help
     /// </summary>
     internal class UpdatableHelpSystem : IDisposable
     {
-        internal const string DisablePromptToUpdateHelpRegPath = "Software\\Microsoft\\PowerShell";
-        internal const string DisablePromptToUpdateHelpRegPath32 = "Software\\Wow6432Node\\Microsoft\\PowerShell";
-        internal const string DisablePromptToUpdateHelpRegKey = "DisablePromptToUpdateHelp";
-        internal const string DefaultSourcePathRegPath = "Software\\Policies\\Microsoft\\Windows\\PowerShell\\UpdatableHelp";
-        internal const string DefaultSourcePathRegKey = "DefaultSourcePath";
-
 #if CORECLR
         private TimeSpan _defaultTimeout;
 #else
@@ -1599,27 +1593,8 @@ namespace System.Management.Automation.Help
         /// <returns></returns>
         internal string GetDefaultSourcePath()
         {
-            try
-            {
-                using (RegistryKey hklm = Registry.LocalMachine.OpenSubKey(DefaultSourcePathRegPath))
-                {
-                    if (hklm != null)
-                    {
-                        object defaultSourcePath = hklm.GetValue(DefaultSourcePathRegKey, null, RegistryValueOptions.None);
-
-                        if (defaultSourcePath != null)
-                        {
-                            return defaultSourcePath as string;
-                        }
-                    }
-                }
-            }
-            catch (SecurityException)
-            {
-                return null;
-            }
-
-            return null;
+            PropertyAccessor propertyAccessor = PropertyAccessorFactory.GetPropertyAccessor();
+            return propertyAccessor.GetDefaultSourcePath();
         }
 
         /// <summary>
@@ -1627,32 +1602,8 @@ namespace System.Management.Automation.Help
         /// </summary>
         internal static void SetDisablePromptToUpdateHelp()
         {
-            try
-            {
-                using (RegistryKey hklm = Registry.LocalMachine.OpenSubKey(DisablePromptToUpdateHelpRegPath, true))
-                {
-                    if (hklm != null)
-                    {
-                        hklm.SetValue(DisablePromptToUpdateHelpRegKey, 1, RegistryValueKind.DWord);
-                    }
-                }
-
-                using (RegistryKey hklm = Registry.LocalMachine.OpenSubKey(DisablePromptToUpdateHelpRegPath32, true))
-                {
-                    if (hklm != null)
-                    {
-                        hklm.SetValue(DisablePromptToUpdateHelpRegKey, 1, RegistryValueKind.DWord);
-                    }
-                }
-            }
-            catch (UnauthorizedAccessException)
-            {
-                // Ignore AccessDenied related exceptions
-            }
-            catch (SecurityException)
-            {
-                // Ignore AccessDenied related exceptions
-            }
+            PropertyAccessor propertyAccessor = PropertyAccessorFactory.GetPropertyAccessor();
+            propertyAccessor.SetDisablePromptToUpdateHelp(true);
         }
 
         /// <summary>
@@ -1668,33 +1619,8 @@ namespace System.Management.Automation.Help
                     return false;
                 }
 
-                using (RegistryKey hklm = Registry.LocalMachine.OpenSubKey(DisablePromptToUpdateHelpRegPath))
-                {
-                    if (hklm != null)
-                    {
-                        object disablePromptToUpdateHelp = hklm.GetValue(DisablePromptToUpdateHelpRegKey, null, RegistryValueOptions.None);
-
-                        if (disablePromptToUpdateHelp == null)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            int result;
-
-                            if (LanguagePrimitives.TryConvertTo<int>(disablePromptToUpdateHelp, out result))
-                            {
-                                return (result != 1);
-                            }
-
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
+                PropertyAccessor propertyAccessor = PropertyAccessorFactory.GetPropertyAccessor();
+                return propertyAccessor.GetDisablePromptToUpdateHelp();
             }
             catch (SecurityException)
             {
