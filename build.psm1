@@ -262,7 +262,11 @@ function Start-PSBuild {
             @("nativemsh/pwrshplugin") | % {
                 $nativeResourcesFolder = $_
                 Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | % {
-                    Start-NativeExecution { & $mcexe -o -d -c -U $_.FullName -h "$nativeResourcesFolder" -r "$nativeResourcesFolder" }
+                    $command = @"
+cmd.exe /C cd /d "(Get-Location)" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" "$mcexe" -o -d -c -U $($_.FullName) -h "$nativeResourcesFolder" -r "$nativeResourcesFolder"
+"@
+                    log "  Executing mc.exe Command: $command"
+                    Start-NativeExecution { Invoke-Expression -Command:$command }
                 }
             }
  
