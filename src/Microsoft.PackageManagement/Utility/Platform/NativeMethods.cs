@@ -12,7 +12,7 @@
 //  limitations under the License.
 //  
 
-#if !LINUX
+#if !UNIX
 namespace Microsoft.PackageManagement.Internal.Utility.Platform {
     using System;
     using System.Diagnostics.CodeAnalysis;

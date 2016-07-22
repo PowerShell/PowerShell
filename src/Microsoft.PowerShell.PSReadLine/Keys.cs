@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell
         public static ConsoleKeyInfo ShiftF8 = new ConsoleKeyInfo((char)0, ConsoleKey.F8, true, false, false);
 
         // Keys to ignore 
-#if !LINUX
+#if !UNIX
         public static ConsoleKeyInfo VolumeUp   = new ConsoleKeyInfo((char)0, /*ConsoleKey.VolumeUp*/(ConsoleKey)175, false, false, false);
         public static ConsoleKeyInfo VolumeDown = new ConsoleKeyInfo((char)0, /*ConsoleKey.VolumeDown*/(ConsoleKey)174, false, false, false);
         public static ConsoleKeyInfo VolumeMute = new ConsoleKeyInfo((char)0, /*ConsoleKey.VolumeMute*/(ConsoleKey)173, false, false, false);

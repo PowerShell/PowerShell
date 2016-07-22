@@ -1905,7 +1905,7 @@ namespace System.Management.Automation
         {
             string result = null;
 
-#if !LINUX
+#if !UNIX
             try
             {
                 RegistryKey shellKey = Registry.LocalMachine.OpenSubKey(Utils.GetRegistryConfigurationPath(shellID));

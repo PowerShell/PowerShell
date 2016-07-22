@@ -1,4 +1,4 @@
-#if !LINUX
+#if !UNIX
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //

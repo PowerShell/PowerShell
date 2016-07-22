@@ -87,7 +87,7 @@ namespace System.Management.Automation
                                         CommandOrigin origin,
                                         PSHost host)
         {
-#if LINUX
+#if UNIX
             // TODO:PSL this is a workaround since the exception below
             // hides the internal issue of what's going on in terms of
             // execution policy.  

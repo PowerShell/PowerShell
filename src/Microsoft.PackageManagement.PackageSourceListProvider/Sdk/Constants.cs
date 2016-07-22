@@ -1,4 +1,4 @@
-#if !LINUX
+#if !UNIX
 
 namespace Microsoft.PackageManagement.PackageSourceListProvider
 {

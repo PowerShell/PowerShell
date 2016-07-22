@@ -1,4 +1,4 @@
-#if !LINUX
+#if !UNIX
 //-----------------------------------------------------------------------
 // <copyright file="EtwEventCorrelator.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.

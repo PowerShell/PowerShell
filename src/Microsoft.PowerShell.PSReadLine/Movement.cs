@@ -434,7 +434,7 @@ namespace Microsoft.PowerShell
         public static void ClearScreen(ConsoleKeyInfo? key = null, object arg = null)
         {
             var console = _singleton._console;
-#if LINUX // TODO: this is not correct, it should only scroll
+#if UNIX // TODO: this is not correct, it should only scroll
             console.Clear();
             _singleton._initialY = 0; 
             _singleton.Render();

@@ -893,7 +893,7 @@ namespace System.Management.Automation
                 return GetEnvironmentVariables();
             }
 
-#if LINUX
+#if UNIX
             return null;
 #else
 
@@ -954,7 +954,7 @@ namespace System.Management.Automation
                 return System.Environment.GetEnvironmentVariable(variable);
             }
 
-#if LINUX
+#if UNIX
             return null;
 #else
 

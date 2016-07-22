@@ -607,7 +607,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected override PSDriveInfo RemoveDrive(PSDriveInfo drive)
         {
-#if LINUX
+#if UNIX
             return drive;
 #else
             return WinRemoveDrive(drive);
@@ -681,7 +681,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal static string GetUNCForNetworkDrive(string driveName)
         {
-#if LINUX
+#if UNIX
             return driveName;
 #else
             return WinGetUNCForNetworkDrive(driveName);
@@ -739,7 +739,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal static string GetSubstitutedPathForNetworkDosDevice(string driveName)
         {
-#if LINUX
+#if UNIX
             throw new PlatformNotSupportedException();
 #else
             return WinGetSubstitutedPathForNetworkDosDevice(driveName);
@@ -919,7 +919,7 @@ namespace Microsoft.PowerShell.Commands
                             // the platform itself then has no real network drive support
                             // as required by this context. Solution: check for network
                             // drive support before using it.
-#if LINUX
+#if UNIX
                             continue;
 #else
                             displayRoot = GetRootPathForNetworkDriveOrDosDevice(newDrive);
@@ -936,7 +936,7 @@ namespace Microsoft.PowerShell.Commands
                             root = newDrive.RootDirectory.FullName;
                         }
 
-#if LINUX
+#if UNIX
                         // Porting notes: On platforms with single root filesystems, only
                         // add the filesystem with the root "/" to the initial drive list,
                         // otherwise path handling will not work correctly because there
@@ -1324,7 +1324,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
 
-#if LINUX
+#if UNIX
                 invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
                 invokeProcess.StartInfo.Arguments = path;
                 invokeProcess.Start();
@@ -6962,7 +6962,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static int SafeGetFileAttributes(string path)
         {
-#if LINUX
+#if UNIX
             System.IO.FileAttributes attr = System.IO.File.GetAttributes(path);
 
             int result = 0;
@@ -7064,7 +7064,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal static bool PathIsNetworkPath(string path)
         {
-#if LINUX
+#if UNIX
             return false;
 #else
             return WinPathIsNetworkPath(path);
@@ -8585,7 +8585,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static SafeFileHandle OpenReparsePoint(string reparsePoint, FileDesiredAccess accessMode)
         {
-#if LINUX
+#if UNIX
             throw new PlatformNotSupportedException();
 #else
             return WinOpenReparsePoint(reparsePoint,accessMode);

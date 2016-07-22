@@ -677,7 +677,7 @@ namespace System.Management.Automation.Language
 
         private static TypeInfo GetComObjectType()
         {
-#if LINUX
+#if UNIX
             return null;
 #else
             return typeof(object).GetTypeInfo().Assembly.GetType("System.__ComObject").GetTypeInfo();

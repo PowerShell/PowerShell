@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static void CheckRemotingCmdletPrerequisites()
         {
-#if LINUX
+#if UNIX
             // TODO: check that PSRP requirements are installed
             return;
 #else

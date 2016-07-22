@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-#if LINUX
+#if UNIX
 using System.Reflection;
 #endif
 using System.Runtime.InteropServices;
@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell
         {
             // default for unprintables and unhandled
             char keyChar = '\u0000';
-#if LINUX
+#if UNIX
             Type keyType = typeof (Keys);
             FieldInfo[] keyFields = keyType.GetFields();
             

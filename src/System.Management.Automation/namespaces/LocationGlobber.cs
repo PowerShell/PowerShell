@@ -1589,7 +1589,7 @@ namespace System.Management.Automation
         /// </returns>
         internal static bool IsSingleFileSystemAbsolutePath(string path)
         {
-#if LINUX
+#if UNIX
             return path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal)
                 || path.StartsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal);
 #else

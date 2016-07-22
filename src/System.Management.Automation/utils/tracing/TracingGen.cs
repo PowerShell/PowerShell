@@ -1,4 +1,4 @@
-#if !LINUX
+#if !UNIX
 using System;
 using System.Collections;
 using System.Diagnostics.Eventing;

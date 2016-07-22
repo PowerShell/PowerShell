@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell
 {
     public partial class PSConsoleReadLine
     {
-#if LINUX
+#if UNIX
         private const ConsoleColor UnknownColor = (ConsoleColor) (-1);
 #endif
         private BufferChar[] _consoleBuffer;
@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell
                             MaybeEmphasize(ref _consoleBuffer[j++], i, foregroundColor, backgroundColor);
 
                         }
-#if !LINUX
+#if !UNIX
                         else if (size > 1)
                         {
                             _consoleBuffer[j].UnicodeChar = charToRender;
@@ -313,7 +313,7 @@ namespace Microsoft.PowerShell
 
             if ((_initialY + bufferLineCount) > (_console.WindowTop + _console.WindowHeight))
             {
-#if !LINUX // TODO: verify this isn't necessary for LINUX
+#if !UNIX // TODO: verify this isn't necessary for LINUX
                 _console.WindowTop = _initialY + bufferLineCount - _console.WindowHeight;
 #endif
             }
@@ -466,7 +466,7 @@ namespace Microsoft.PowerShell
                 // to invert only the lower 3 bits to change the color is somewhat
                 // but looks best with the 2 default color schemes - starting PowerShell
                 // from it's shortcut or from a cmd shortcut.
-#if LINUX // TODO: set Inverse attribute and let render choose what to do.
+#if UNIX // TODO: set Inverse attribute and let render choose what to do.
                 ConsoleColor tempColor = (foregroundColor == UnknownColor) ? ConsoleColor.White : foregroundColor;
                 foregroundColor = (backgroundColor == UnknownColor) ? ConsoleColor.Black : backgroundColor;
                 backgroundColor = tempColor;
@@ -656,7 +656,7 @@ namespace Microsoft.PowerShell
             case BellStyle.None:
                 break;
             case BellStyle.Audible:
-#if LINUX
+#if UNIX
                 Console.Beep();
 #else
                 Console.Beep(Options.DingTone, Options.DingDuration);
@@ -690,7 +690,7 @@ namespace Microsoft.PowerShell
 
 #region Screen scrolling
 
-#if !LINUX
+#if !UNIX
         /// <summary>
         /// Scroll the display up one screen.
         /// </summary>

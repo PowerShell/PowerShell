@@ -171,7 +171,7 @@
                 // or  $env:programfiles\NuGet\Packages\  if you are an admin.
                 try
                 {
-#if LINUX
+#if UNIX
                     // there is only 1 installation location by default for linux ("HOME/.local/share/powershell/PackageManagement/NuGet/Packages")
                     string basePath = CurrentUserDefaultInstallLocation;
 #else
@@ -220,7 +220,7 @@
             get
             {
 #if CORECLR
-#if LINUX
+#if UNIX
                 return Path.Combine(Path.GetDirectoryName(Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA)), "PackageManagement", "NuGet", "Packages");
 #else
                 return Path.Combine(Environment.GetEnvironmentVariable("LocalAppData"), "PackageManagement", "NuGet", "Packages"); 
@@ -237,7 +237,7 @@
             get
             {
 #if CORECLR
-#if LINUX
+#if UNIX
                 return Path.Combine(Path.GetDirectoryName(Platform.SelectProductNameForDirectory(Platform.XDG_Type.DATA)), "PackageManagement", "NuGet", "Packages");
 #else
                 return Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles"), "NuGet", "Packages"); 
@@ -1302,7 +1302,7 @@
                         }
 
                     } else {
-#if LINUX
+#if UNIX
                         var appdataFolder = Path.GetDirectoryName(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG));
 #else
                         var appdataFolder = Environment.GetEnvironmentVariable("appdata");

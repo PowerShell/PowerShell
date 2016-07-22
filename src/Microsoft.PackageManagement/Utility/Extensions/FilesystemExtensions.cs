@@ -186,7 +186,7 @@ namespace Microsoft.PackageManagement.Internal.Utility.Extensions {
 
                 // is this a unc path?
                 if (string.IsNullOrWhiteSpace(pathUri.Host)) {
-#if !LINUX
+#if !UNIX
                     // no, this is a drive:\path path
                     // use API to resolve out the drive letter to see if it is a remote
                     var drive = pathUri.Segments[1].Replace('/', '\\'); // the zero segment is always just '/'

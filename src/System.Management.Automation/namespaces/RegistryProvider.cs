@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
 
-#if !LINUX
+#if !UNIX
             drives.Add(
                 new PSDriveInfo(
                     "HKLM",
