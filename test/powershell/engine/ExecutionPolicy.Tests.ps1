@@ -437,11 +437,11 @@ ZoneId=$FileType
     Context "Validate that 'Restricted' execution policy works on OneCore powershell" {
 
         BeforeAll {
-            Set-ExecutionPolicy Restricted -Force | Out-Null
+            Set-ExecutionPolicy Restricted -Force -Scope Process | Out-Null
         }
 
         AfterAll {
-            Set-ExecutionPolicy $originalExecutionPolicy -Force | Out-Null
+            Set-ExecutionPolicy $originalExecutionPolicy -Force -Scope Process | Out-Null
         }
 
         function Test-RestrictedExecutionPolicy
@@ -507,11 +507,11 @@ ZoneId=$FileType
     Context "Validate that 'Unrestricted' execution policy works on OneCore powershell" {
 
         BeforeAll {
-            Set-ExecutionPolicy Unrestricted -Force | Out-Null
+            Set-ExecutionPolicy Unrestricted -Force -Scope Process | Out-Null
         }
 
         AfterAll {
-            Set-ExecutionPolicy $originalExecutionPolicy -Force | Out-Null
+            Set-ExecutionPolicy $originalExecutionPolicy -Force -Scope Process | Out-Null
         }
 
         function Test-UnrestrictedExecutionPolicy {
@@ -553,11 +553,11 @@ ZoneId=$FileType
     Context "Validate that 'ByPass' execution policy works on OneCore powershell" {
 
         BeforeAll {
-            Set-ExecutionPolicy Bypass -Force | Out-Null
+            Set-ExecutionPolicy Bypass -Force -Scope Process | Out-Null
         }
 
         AfterAll {
-            Set-ExecutionPolicy $originalExecutionPolicy -Force | Out-Null
+            Set-ExecutionPolicy $originalExecutionPolicy -Force -Scope Process | Out-Null
         }
 
         function Test-ByPassExecutionPolicy {
@@ -605,11 +605,11 @@ ZoneId=$FileType
     Context "'RemoteSigned' execution policy works on OneCore powershell" {
 
         BeforeAll {
-                Set-ExecutionPolicy RemoteSigned -Force | Out-Null
+                Set-ExecutionPolicy RemoteSigned -Force -Scope Process | Out-Null
         }
 
         AfterAll {
-            Set-ExecutionPolicy $originalExecutionPolicy -Force
+            Set-ExecutionPolicy $originalExecutionPolicy -Force -Scope Process
         }
 
         function Test-RemoteSignedExecutionPolicy {
@@ -744,11 +744,11 @@ ZoneId=$FileType
     Context "Validate that 'AllSigned' execution policy works on OneCore powershell" {
 
         BeforeAll {
-            Set-ExecutionPolicy AllSigned -Force
+            Set-ExecutionPolicy AllSigned -Force -Scope Process
         }
 
         AfterAll {
-            Set-ExecutionPolicy $originalExecutionPolicy -Force
+            Set-ExecutionPolicy $originalExecutionPolicy -Force -Scope Process
         }
 
         function Test-AllSignedExecutionPolicy {
