@@ -237,24 +237,21 @@ namespace System.Management.Automation
         /// </exception>
         internal static string GetApplicationBase(string shellId)
         {
-            // TODO: #1184 will resolve this work-around
-            // The application base cannot be resolved from the registry for side-by-side versions
-            // of PowerShell.
-#if !CORECLR
+#if CORECLR // Use the location of SMA.dll as the application base
+            // Assembly.GetEntryAssembly is not in CoreCLR. GAC is not in CoreCLR.
+            Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
+            return Path.GetDirectoryName(assembly.Location);
+#else
+            // This code path applies to Windows FullCLR inbox deployments. All CoreCLR 
+            // implementations should use the location of SMA.dll since it must reside in PSHOME.
+            //
             // try to get the path from the registry first
             string result = GetApplicationBaseFromRegistry(shellId);
             if (result != null)
             {
                 return result;
             }
-#endif
-
-
-#if CORECLR // Use the location of SMA.dll as the application base
-            // Assembly.GetEntryAssembly is not in CoreCLR. GAC is not in CoreCLR.
-            Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
-            return Path.GetDirectoryName(assembly.Location);
-#else
+            
             // The default keys aren't installed, so try and use the entry assembly to
             // get the application base. This works for managed apps like minishells...
             Assembly assem = Assembly.GetEntryAssembly();

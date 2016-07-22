@@ -1,19 +1,24 @@
 using System;
+using System.Collections.Generic;
 using System.Xml;
 using System.IO;
 using System.Text;
 using System.Reflection;
 
 using System.Management.Automation;
+using System.Threading;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 #if CORECLR
 // Some APIs are missing from System.Environment. We use System.Management.Automation.Environment as a proxy type:
 //  - for missing APIs, System.Management.Automation.Environment has extension implementation.
 //  - for existing APIs, System.Management.Automation.Environment redirect the call to System.Environment.
 using Environment = System.Management.Automation.Environment;
+#else
+//using Microsoft.Win32;
 #endif
 
-// TODO: Add non-windows guard here or move to a different file
 using Microsoft.Win32;
 
 namespace System.Management.Automation
@@ -49,11 +54,11 @@ namespace System.Management.Automation
         /// Existing Key = HKCU and HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell
         /// Proposed value = Existing default execution policy if not already specified
         /// </summary>
+        /// <param name="scope">Where it should check for the value.</param>
         /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell"</param>
         /// <returns></returns>
         internal abstract string GetMachineExecutionPolicy(PropertyScope scope, string shellId);
         internal abstract void RemoveMachineExecutionPolicy(PropertyScope scope, string shellId); // TODO: Necessary?
-        internal abstract void AddMachineExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy); // TODO: Necessary?
         internal abstract void SetMachineExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy);
 
         /// <summary>
@@ -70,16 +75,16 @@ namespace System.Management.Automation
         /// Proposed value = existing default. Probably "1"
         /// </summary>
         /// <returns>Whether console prompting should happen.</returns>
-        internal abstract Boolean GetConsolePrompting();
-        internal abstract void SetConsolePrompting(Boolean shouldPrompt);
+        internal abstract bool GetConsolePrompting();
+        internal abstract void SetConsolePrompting(bool shouldPrompt);
 
         /// <summary>
         /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell
         /// Proposed value = Existing default. Probably "0"
         /// </summary>
         /// <returns>Boolean indicating whether Update-Help should prompt</returns>
-        internal abstract Boolean GetDisablePromptToUpdateHelp();
-        internal abstract void SetDisablePromptToUpdateHelp(Boolean prompt);
+        internal abstract bool GetDisablePromptToUpdateHelp();
+        internal abstract void SetDisablePromptToUpdateHelp(bool prompt);
 
         /// <summary>
         /// Existing Key = HKCU and HKLM\Software\Policies\Microsoft\Windows\PowerShell\UpdatableHelp
@@ -101,9 +106,9 @@ namespace System.Management.Automation
         {
             if (null == _activePropertyAccessor)
             {
-#if CORECLR 
+#if CORECLR
                 // TODO: I must differentiate between inbox PS and side-by-side PS here!
-                _activePropertyAccessor = new XmlConfigFileAccessor();
+                _activePropertyAccessor = new JsonConfigFileAccessor();
 #else
                 _activePropertyAccessor = new RegistryAccessor();
 #endif
@@ -123,16 +128,39 @@ namespace System.Management.Automation
     internal class JsonConfigFileAccessor : PropertyAccessor
     {
         private string psHomeConfigDirectory;
+        private string appDataConfigDirectory;
         private static string configDirectoryName = "Configuration";
         private static string execPolicyFileName = "ExecutionPolicy.json";
+        private static string maxStackSizeFileName = "PipeLineMaxStackSizeMB.json";
+        private static string consolePromptingFileName = "ConsolePrompting.json";
+        private static string updateHelpPromptFileName = "UpdateHelpPrompt.json";
+        private static string updatableHelpSourcePathFileName = "UpdatableHelpDefaultSourcePath.json";
 
         internal JsonConfigFileAccessor()
         {
+            //
+            // Initialize (and create if necessary) the system-wide configuration directory
+            //
             // TODO: Use Utils.GetApplicationBase("Microsoft.PowerShell") instead?
             Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
-            psHomeConfigDirectory = Path.Combine(Path.GetDirectoryName(ClrFacade.GetAssemblyLocation(assembly)), configDirectoryName);
+            psHomeConfigDirectory = Path.Combine(Path.GetDirectoryName(assembly.Location), configDirectoryName);
 
+            if (!Directory.Exists(psHomeConfigDirectory))
+            {
+                Directory.CreateDirectory(psHomeConfigDirectory);
+            }
 
+            //
+            // Initialize (and create if necessary) the per-user configuration directory
+            //
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string psConfigPath = Path.Combine("PowerShell", "1.0", configDirectoryName);
+            appDataConfigDirectory = Path.Combine(appDataPath, psConfigPath);
+
+            if (!Directory.Exists(appDataConfigDirectory))
+            {
+                Directory.CreateDirectory(appDataConfigDirectory);
+            }
         }
 
         internal override string GetModulePath()
@@ -143,103 +171,262 @@ namespace System.Management.Automation
         /// <summary>
         /// Existing Key = HKCU and HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell
         /// Proposed value = Existing default execution policy if not already specified
+        /// 
+        /// Schema:
+        /// {
+        ///     "shell ID string" : "execution policy string"
+        /// }
+        /// 
+        /// Note: If we switch to a single config file, then this will need to be nested
         /// </summary>
         /// <param name="scope">Whether this is a system-wide or per-user setting.</param>
         /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell"</param>
         /// <returns></returns>
         internal override string GetMachineExecutionPolicy(PropertyScope scope, string shellId)
         {
-            string execPolicy = "Restricted";
+            string execPolicy = "Undefined";
             string scopeDirectory = psHomeConfigDirectory;
-            string fileToUse;
 
+            // Defaults to system wide.
             if(PropertyScope.CurrentUser == scope)
             {
-                scopeDirectory = getUserConfigLocation();
+                scopeDirectory = appDataConfigDirectory;
             }
 
-            fileToUse = Path.Combine(scopeDirectory, execPolicyFileName);
+            string fileName = Path.Combine(scopeDirectory, execPolicyFileName);
+
+            string rawExecPolicy = ReadValueFromFile<string>(fileName, shellId);
+
+            if (!String.IsNullOrEmpty(rawExecPolicy))
+            {
+                execPolicy = rawExecPolicy;
+            }
+            // TODO: Throw if NullOrEmpty?
             return execPolicy;
         }
 
         internal override void RemoveMachineExecutionPolicy(PropertyScope scope, string shellId) // TODO: Necessary?
         {
-        }
-
-        internal override void AddMachineExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy)
-            // TODO: Necessary?
-        {
+            // TODO: Work to do here if I decide to support it
         }
 
         internal override void SetMachineExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy)
         {
+            string scopeDirectory = psHomeConfigDirectory;
+
+            // Defaults to system wide.
+            if (PropertyScope.CurrentUser == scope)
+            {
+                scopeDirectory = appDataConfigDirectory;
+            }
+
+            string fileName = Path.Combine(scopeDirectory, execPolicyFileName);
+
+            WriteValueToFile<string>(fileName, shellId, executionPolicy);
         }
 
         /// <summary>
         /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds
-        /// Proposed value = Existing value, otherwise 10.
+        /// Proposed value = Existing value, otherwise 10. 
+        /// 
+        /// Schema:
+        /// {
+        ///     "PipeLineMaxStackSizeMB" : int
+        /// }
         /// </summary>
         /// <returns>Max stack size in MB. If not set, defaults to 10 MB.</returns>
         internal override int GetPipeLineMaxStackSizeMb()
         {
-            return 0;
+            string fileName = Path.Combine(psHomeConfigDirectory, maxStackSizeFileName);
+
+            int maxStackSize = 10;
+            int rawMaxStackSize = ReadValueFromFile<int>(fileName, "PipeLineMaxStackSizeMB");
+
+            if (0 != rawMaxStackSize)
+            {
+                maxStackSize = rawMaxStackSize;
+            }
+            return maxStackSize;
         }
 
         internal override void SetPipeLineMaxStackSizeMb(int maxStackSize)
         {
+            string fileName = Path.Combine(psHomeConfigDirectory, maxStackSizeFileName);
+            WriteValueToFile<int>(fileName, "PipeLineMaxStackSizeMB", maxStackSize);
         }
 
         /// <summary>
         /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds
         /// Proposed value = existing default. Probably "1"
+        /// 
+        /// Schema:
+        /// {
+        ///     "ConsolePrompting" : bool
+        /// }
         /// </summary>
         /// <returns>Whether console prompting should happen.</returns>
-        internal override Boolean GetConsolePrompting()
+        internal override bool GetConsolePrompting()
         {
-            return true;
+            string fileName = Path.Combine(psHomeConfigDirectory, consolePromptingFileName);
+            return ReadValueFromFile<bool>(fileName, "ConsolePrompting");
         }
 
-        internal override void SetConsolePrompting(Boolean shouldPrompt)
+        internal override void SetConsolePrompting(bool shouldPrompt)
         {
-            
+            string fileName = Path.Combine(psHomeConfigDirectory, consolePromptingFileName);
+            WriteValueToFile<bool>(fileName, "ConsolePrompting", shouldPrompt);
         }
 
         /// <summary>
         /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell
         /// Proposed value = Existing default. Probably "0"
+        /// 
+        /// Schema:
+        /// {
+        ///     "DisablePromptToUpdateHelp" : bool
+        /// }
         /// </summary>
         /// <returns>Boolean indicating whether Update-Help should prompt</returns>
-        internal override Boolean GetDisablePromptToUpdateHelp()
+        internal override bool GetDisablePromptToUpdateHelp()
         {
-            return true;
+            string fileName = Path.Combine(psHomeConfigDirectory, updateHelpPromptFileName);
+            return ReadValueFromFile<bool>(fileName, "DisablePromptToUpdateHelp");
         }
 
-        internal override void SetDisablePromptToUpdateHelp(Boolean prompt)
+        internal override void SetDisablePromptToUpdateHelp(bool prompt)
         {
+            string fileName = Path.Combine(psHomeConfigDirectory, updateHelpPromptFileName);
+            WriteValueToFile<bool>(fileName, "DisablePromptToUpdateHelp", prompt);
         }
 
         /// <summary>
         /// Existing Key = HKCU and HKLM\Software\Policies\Microsoft\Windows\PowerShell\UpdatableHelp
         /// Proposed value = blank.This should be supported though
+        /// 
+        /// Schema:
+        /// {
+        ///     "DefaultSourcePath" : "path to local updatable help location"
+        /// }
         /// </summary>
         /// <returns></returns>
         internal override string GetDefaultSourcePath(PropertyScope scope)
         {
-            return string.Empty;
+            string scopeDirectory = psHomeConfigDirectory;
+
+            // Defaults to system wide.
+            if (PropertyScope.CurrentUser == scope)
+            {
+                scopeDirectory = appDataConfigDirectory;
+            }
+
+            string fileName = Path.Combine(scopeDirectory, updatableHelpSourcePathFileName);
+
+            string rawExecPolicy = ReadValueFromFile<string>(fileName, "DefaultSourcePath");
+
+            if (!String.IsNullOrEmpty(rawExecPolicy))
+            {
+                return rawExecPolicy;
+            }
+            // TODO: Throw if NullOrEmpty?
+            return String.Empty;
         }
 
         internal override void SetDefaultSourcePath(PropertyScope scope, string defaultPath)
         {
+            string scopeDirectory = psHomeConfigDirectory;
+
+            // Defaults to system wide.
+            if (PropertyScope.CurrentUser == scope)
+            {
+                scopeDirectory = appDataConfigDirectory;
+            }
+
+            string fileName = Path.Combine(scopeDirectory, updatableHelpSourcePathFileName);
+
+            WriteValueToFile<string>(fileName, "DefaultSourcePath", defaultPath);
         }
 
-        private string getUserConfigLocation()
+        private T ReadValueFromFile<T>(string fileName, string key)
         {
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string psConfigPath = Path.Combine("PowerShell", "1.0", configDirectoryName);
-            return Path.Combine(appDataPath, psConfigPath);
+            try
+            {
+                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                using (StreamReader streamRdr = new StreamReader(fs))
+                using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
+                {
+                    JObject jsonObject = (JObject) JToken.ReadFrom(jsonReader);
+                    return jsonObject.GetValue(key).ToObject<T>();
+                }
+            }
+            catch (ArgumentException) { }
+            //catch (ArgumentNullException) { }
+            catch (NotSupportedException) { }
+            catch (FileNotFoundException) { }
+            catch (System.IO.IOException) { }
+            //catch (DirectoryNotFoundException) { }
+            catch (System.Security.SecurityException) { }
+            catch (UnauthorizedAccessException) { }
+            //catch (PathTooLongException) { }
+            //catch (ArgumentOutOfRangeException) { }
+
+            return default(T);
+        }
+
+        /// <summary>
+        /// TODO: Should this return success fail or throw?
+        /// 
+        /// TODO: Catch exceptions
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fileName"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        private void WriteValueToFile<T>(string fileName, string key, T value)
+        {
+            JObject objectToWrite = new JObject();
+
+            if (File.Exists(fileName))
+            {
+                // Since multiple properties can be in a single file, replacement
+                // is required instead of overwrite if a file already exists.
+                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                using (StreamReader streamRdr = new StreamReader(fs))
+                using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
+                {
+                    JObject jsonObject = (JObject) JToken.ReadFrom(jsonReader);
+                    IEnumerable<JProperty> properties = jsonObject.Properties();
+                    foreach (JProperty property in properties)
+                    {
+                        if (String.Equals(property.Name, key, StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Add the updated value to the output object instead
+                            // of the preexisting one
+                            objectToWrite.Add(new JProperty(key, value));
+                        }
+                        else
+                        {
+                            // This preserves existing properties that do not
+                            // match the one to update
+                            objectToWrite.Add(new JProperty(property));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // The file doesn't exist, so create it with the new property
+                objectToWrite.Add(new JProperty(key, value));
+            }
+
+            using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (StreamWriter streamWriter = new StreamWriter(fs))
+            using (JsonTextWriter jsonWriter = new JsonTextWriter(streamWriter))
+            {
+                objectToWrite.WriteTo(jsonWriter);
+            }
         }
     }
-
+    /*
     /// <summary>
     /// TODO: Add caching so for faster access? Would prevent runtime changes from affecting runtime reads though...
     /// </summary>
@@ -280,11 +467,6 @@ namespace System.Management.Automation
             this.ReplaceElementValueInFile("MachineExecutionPolicy", executionPolicy);
         }
 
-        internal override void AddMachineExecutionPolicy(string shellId, string executionPolicy)
-        {
-            this.AddElementToFile("MachineExecutionPolicy", executionPolicy);
-        }
-
         internal override void RemoveMachineExecutionPolicy(string shellId)
         {
             this.RemoveElementFromFile("MachineExecutionPolicy");
@@ -293,19 +475,17 @@ namespace System.Management.Automation
         private string ReadElementContentFromFileAsString(string elementName)
         {
             using (FileStream fs = new FileStream(this.fileName, FileMode.Open, FileAccess.Read))
+            using (StreamReader streamRdr = new StreamReader(fs))
             {
-                using (StreamReader streamRdr = new StreamReader(fs))
-                {
-                    XmlReaderSettings xmlReaderSettings =
-                        InternalDeserializer.XmlReaderSettingsForUntrustedXmlDocument.Clone();
+                XmlReaderSettings xmlReaderSettings =
+                    InternalDeserializer.XmlReaderSettingsForUntrustedXmlDocument.Clone();
 
-                    using (XmlReader reader = XmlReader.Create(streamRdr, xmlReaderSettings))
+                using (XmlReader reader = XmlReader.Create(streamRdr, xmlReaderSettings))
+                {
+                    reader.MoveToContent();
+                    if (reader.ReadToDescendant(elementName))
                     {
-                        reader.MoveToContent();
-                        if (reader.ReadToDescendant(elementName))
-                        {
-                            return reader.ReadElementContentAsString();
-                        }
+                        return reader.ReadElementContentAsString();
                     }
                 }
             }
@@ -317,24 +497,22 @@ namespace System.Management.Automation
             XmlDocument doc = new XmlDocument();
 
             using (FileStream fs = new FileStream(this.fileName, FileMode.Open, FileAccess.Read))
+            using (StreamReader streamRdr = new StreamReader(fs))
             {
-                using (StreamReader streamRdr = new StreamReader(fs))
+                doc.Load(streamRdr);
+
+                XmlNodeList nodeList = doc.GetElementsByTagName(elementName);
+
+                if (nodeList.Count > 0)
                 {
-                    doc.Load(streamRdr);
-
-                    XmlNodeList nodeList = doc.GetElementsByTagName(elementName);
-
-                    if (nodeList.Count > 0)
-                    {
-                        // Element exists. Replace it.
-                        this.ReplaceElementValueInFile(elementName, elementValue);
-                    }
-                    else
-                    {
-                        XmlElement newElem = doc.CreateElement(elementName);
-                        newElem.InnerText = elementValue;
-                        doc.DocumentElement.AppendChild(newElem);
-                    }
+                    // Element exists. Replace it.
+                    this.ReplaceElementValueInFile(elementName, elementValue);
+                }
+                else
+                {
+                    XmlElement newElem = doc.CreateElement(elementName);
+                    newElem.InnerText = elementValue;
+                    doc.DocumentElement.AppendChild(newElem);
                 }
             }
             WriteDocumentToFile(doc);
@@ -345,30 +523,28 @@ namespace System.Management.Automation
             XmlDocument doc = new XmlDocument();
 
             using (FileStream fs = new FileStream(this.fileName, FileMode.Open, FileAccess.Read))
+            using (StreamReader streamRdr = new StreamReader(fs))
             {
-                using (StreamReader streamRdr = new StreamReader(fs))
+                doc.Load(streamRdr);
+
+                XmlNodeList nodeList = doc.GetElementsByTagName(elementName);
+
+                if (0 == nodeList.Count)
                 {
-                    doc.Load(streamRdr);
-
-                    XmlNodeList nodeList = doc.GetElementsByTagName(elementName);
-
-                    if (0 == nodeList.Count)
+                    // There is nothing to do because the specified node does not exist
+                    return;
+                }
+                else if (nodeList.Count > 1)
+                {
+                    // throw docuemnt format exception? Nodes should be unique...
+                    return;
+                }
+                else
+                {
+                    XmlNode first = nodeList.Item(0);
+                    if (null != first)
                     {
-                        // There is nothing to do because the specified node does not exist
-                        return;
-                    }
-                    else if (nodeList.Count > 1)
-                    {
-                        // throw docuemnt format exception? Nodes should be unique...
-                        return;
-                    }
-                    else
-                    {
-                        XmlNode first = nodeList.Item(0);
-                        if (null != first)
-                        {
-                            doc.DocumentElement.RemoveChild(first);
-                        }
+                        doc.DocumentElement.RemoveChild(first);
                     }
                 }
             }
@@ -380,40 +556,38 @@ namespace System.Management.Automation
             XmlDocument doc = new XmlDocument();
 
             using (FileStream fs = new FileStream(this.fileName, FileMode.Open, FileAccess.Read))
+            using (StreamReader streamRdr = new StreamReader(fs))
             {
-                using (StreamReader streamRdr = new StreamReader(fs))
+                doc.Load(streamRdr);
+
+                XmlNodeList nodeList = doc.GetElementsByTagName(elementName);
+
+                if (0 == nodeList.Count)
                 {
-                    doc.Load(streamRdr);
-
-                    XmlNodeList nodeList = doc.GetElementsByTagName(elementName);
-
-                    if (0 == nodeList.Count)
-                    {
-                        // There is nothing to do because the specified node does not exist
-                        return;
-                    }
-                    else if (nodeList.Count > 1)
-                    {
-                        // throw docuemnt format exception? Nodes should be unique...
-                        return;
-                    }
-                    else
-                    {
-                        XmlNode first = nodeList.Item(0);
-                        if (null != first)
-                        {
-                            first.InnerText = elementValue;
-                        }
-                    }
-                    /*  // Alternate technique if the first one doesnt work
-                    // Node is present, so replace it
-                    XmlElement newElem = doc.CreateElement("title");
-                    newElem.InnerText = elementValue;
-
-                    //Replace the title element.
-                    doc.DocumentElement.ReplaceChild(elem, root.FirstChild);
-                    */
+                    // There is nothing to do because the specified node does not exist
+                    return;
                 }
+                else if (nodeList.Count > 1)
+                {
+                    // throw docuemnt format exception? Nodes should be unique...
+                    return;
+                }
+                else
+                {
+                    XmlNode first = nodeList.Item(0);
+                    if (null != first)
+                    {
+                        first.InnerText = elementValue;
+                    }
+                }
+                // Alternate technique if the first one doesnt work
+                // Node is present, so replace it
+                //XmlElement newElem = doc.CreateElement("title");
+                //newElem.InnerText = elementValue;
+
+                //Replace the title element.
+                //doc.DocumentElement.ReplaceChild(elem, root.FirstChild);
+                
             }
             WriteDocumentToFile(doc);
         }
@@ -421,75 +595,96 @@ namespace System.Management.Automation
         private void WriteDocumentToFile(XmlDocument doc)
         {
             using (FileStream fs = new FileStream(this.fileName, FileMode.Create, FileAccess.Write))
+            using (StreamWriter streamWriter = new StreamWriter(fs))
             {
-                using (StreamWriter streamWriter = new StreamWriter(fs))
-                {
-                    XmlWriterSettings xmlSettings = new XmlWriterSettings();
-                    xmlSettings.Encoding = Encoding.UTF8;
-                    xmlSettings.CloseOutput = true;
-                    xmlSettings.Indent = true;
+                XmlWriterSettings xmlSettings = new XmlWriterSettings();
+                xmlSettings.Encoding = Encoding.UTF8;
+                xmlSettings.CloseOutput = true;
+                xmlSettings.Indent = true;
 
-                    using (XmlWriter writer = XmlWriter.Create(streamWriter, xmlSettings))
-                    {
-                        doc.WriteTo(writer);
-                    }
+                using (XmlWriter writer = XmlWriter.Create(streamWriter, xmlSettings))
+                {
+                    doc.WriteTo(writer);
                 }
             }
         }
     }
+    */
 
     internal class RegistryAccessor : PropertyAccessor
     {
         internal RegistryAccessor()
         {
         }
-
+        /*
         internal override string GetApplicationBase(string version)
         {
             string engineKeyPath = RegistryStrings.MonadRootKeyPath + "\\" + version + "\\" + RegistryStrings.MonadEngineKey;
 
             return GetHklmString(engineKeyPath, RegistryStrings.MonadEngine_ApplicationBase);
         }
-
+        */
         internal override string GetModulePath()
         {
             return string.Empty;
         }
 
-        internal override string GetMachineShellPath(string shellId)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scope"></param>
+        /// <param name="shellId"></param>
+        /// <returns>The execution policy string if found, otherwise null.</returns>
+        internal override string GetMachineExecutionPolicy(PropertyScope scope, string shellId)
         {
             string regKeyName = Utils.GetRegistryConfigurationPath(shellId);
-            return GetHklmString(regKeyName, "Path");
-        }
 
-        internal override string GetMachineExecutionPolicy(string shellId)
-        {
-            string regKeyName = Utils.GetRegistryConfigurationPath(shellId);
-            return GetHklmString(regKeyName, "ExecutionPolicy");
-        }
-
-        internal override void SetMachineExecutionPolicy(string shellId, string executionPolicy)
-        {
-            string regKeyName = Utils.GetRegistryConfigurationPath(shellId);
-            using (RegistryKey key = Registry.CurrentUser.CreateSubKey(regKeyName))
+            if (PropertyScope.SystemWide == scope)
             {
-                key.SetValue("ExecutionPolicy", executionPolicy, RegistryValueKind.String);
+                return GetHklmString(regKeyName, "ExecutionPolicy");
+            }
+            else if (PropertyScope.CurrentUser == scope)
+            {
+                return GetHkcuString(regKeyName, "ExecutionPolicy");
+            }
+            else
+            {
+                return null;
             }
         }
 
-        internal override void AddMachineExecutionPolicy(string shellId, string executionPolicy)
+        internal override void SetMachineExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy)
         {
             string regKeyName = Utils.GetRegistryConfigurationPath(shellId);
-            using (RegistryKey key = Registry.LocalMachine.CreateSubKey(regKeyName))
+            RegistryKey scopedKey = Registry.LocalMachine;
+
+            // Override if set to another value;
+            if (PropertyScope.CurrentUser == scope)
             {
-                key.SetValue("ExecutionPolicy", executionPolicy, RegistryValueKind.String);
+                scopedKey = Registry.CurrentUser;
+            }
+
+            using (RegistryKey key = scopedKey.CreateSubKey(regKeyName))
+            {
+                if (null != key)
+                {
+                    key.SetValue("ExecutionPolicy", executionPolicy, RegistryValueKind.String);
+                }
             }
         }
 
-        internal override void RemoveMachineExecutionPolicy(string shellId)
+        internal override void RemoveMachineExecutionPolicy(PropertyScope scope, string shellId)
         {
             string regKeyName = Utils.GetRegistryConfigurationPath(shellId);
-            using (RegistryKey key = Registry.LocalMachine.OpenSubKey(regKeyName, true))
+            RegistryKey scopedKey = Registry.LocalMachine;
+
+            // Override if set to another value;
+            if (PropertyScope.CurrentUser == scope)
+            {
+                scopedKey = Registry.CurrentUser;
+            }
+
+            using (RegistryKey key = scopedKey.OpenSubKey(regKeyName, true))
             {
                 if (key != null)
                 {
@@ -498,6 +693,49 @@ namespace System.Management.Automation
                 }
             }
         }
+
+        internal override int GetPipeLineMaxStackSizeMb()
+        {
+            return 0;
+        }
+        internal override void SetPipeLineMaxStackSizeMb(int maxStackSize)
+        { }
+
+        /// <summary>
+        /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds
+        /// Proposed value = existing default. Probably "1"
+        /// </summary>
+        /// <returns>Whether console prompting should happen.</returns>
+        internal override bool GetConsolePrompting()
+        {
+            return true;
+        }
+        internal override void SetConsolePrompting(bool shouldPrompt)
+        { }
+
+        /// <summary>
+        /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell
+        /// Proposed value = Existing default. Probably "0"
+        /// </summary>
+        /// <returns>Boolean indicating whether Update-Help should prompt</returns>
+        internal override bool GetDisablePromptToUpdateHelp()
+        {
+            return true;
+        }
+        internal override void SetDisablePromptToUpdateHelp(bool prompt)
+        { }
+
+        /// <summary>
+        /// Existing Key = HKCU and HKLM\Software\Policies\Microsoft\Windows\PowerShell\UpdatableHelp
+        /// Proposed value = blank.This should be supported though
+        /// </summary>
+        /// <returns></returns>
+        internal override string GetDefaultSourcePath(PropertyScope scope)
+        {
+            return string.Empty;
+        }
+        internal override void SetDefaultSourcePath(PropertyScope scope, string defaultPath)
+        { }
 
         private string GetHklmString(string pathToKey, string valueName)
         {
