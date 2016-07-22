@@ -26,6 +26,9 @@
             },
             "include" : [
                 "powershell.exe",
+                "powershell.pdb",
+                "pwrshplugin.dll",
+                "pwrshplugin.pdb",
                 "../../powershell.version"
             ]
         }
@@ -46,6 +49,9 @@
         },
         "include" : [
             "powershell.exe",
+            "powershell.pdb",
+            "pwrshplugin.dll",
+            "pwrshplugin.pdb",
             "../../powershell.version"
         ]
     },
