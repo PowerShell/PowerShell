@@ -504,11 +504,15 @@ function Start-PSxUnit {
 
 
 function Start-PSBootstrap {
-    [CmdletBinding()]param(
+    [CmdletBinding(
+        SupportsShouldProcess=$true,
+        ConfirmImpact="High")]
+    param(
         [ValidateSet("dev", "beta", "preview")]
         [string]$Channel = "rel-1.0.0",
         [string]$Version = "latest",
-        [switch]$Package
+        [switch]$Package,
+        [switch]$Force
     )
 
     log "Installing Open PowerShell build dependencies"
@@ -591,6 +595,10 @@ function Start-PSBootstrap {
             $machinePath = [Environment]::GetEnvironmentVariable('Path', 'MACHINE')
             $newMachineEnvironmentPath = $machinePath
 
+            $cmakePresent = precheck 'cmake' $null
+            $sdkPath = "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\v10.0A"
+            $sdkPresent = Test-Path -Path $sdkPath -PathType Container
+
             # Install chocolatey
             $chocolateyPath = "$env:AllUsersProfile\chocolatey\bin"
             
@@ -598,7 +606,7 @@ function Start-PSBootstrap {
             {
                 log "Chocolatey is already installed. Skipping installation."
             }
-            else
+            elseif(($cmakePresent -eq $false) -or ($sdkPresent -eq $false)) 
             {
                 log "Chocolatey not present. Installing chocolatey."
                 Invoke-Expression ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
@@ -614,10 +622,14 @@ function Start-PSBootstrap {
                     log "$chocolateyPath already present in Path environment variable"
                 }
             }
+            else
+            {
+                log "Skipping installation of chocolatey, cause both cmake and Win 10 SDK are present."
+            }
 
             # Install cmake
             $cmakePath = "${env:ProgramFiles(x86)}\CMake\bin"
-            if(precheck 'cmake' $null)
+            if($cmakePresent)
             {
                 log "Cmake is already installed. Skipping installation."
             }
@@ -639,10 +651,9 @@ function Start-PSBootstrap {
             }
 
             # Install Windows 10 SDK   
-            $sdkPath = "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\v10.0A"
             $packageName = "windows-sdk-10.0"
 
-            if (-not (Test-Path -Path $sdkPath -PathType Container))
+            if (-not $sdkPresent)
             {
                 log "Windows 10 SDK not present. Installing $packageName."
                 choco install windows-sdk-10.0 -y
@@ -652,10 +663,14 @@ function Start-PSBootstrap {
                 log "Windows 10 SDK present. Skipping installation."
             }
             
-            # Update machine environment path
+            # Update path machine environment variable
             if ($newMachineEnvironmentPath -ne $machinePath)
             {
-                [Environment]::SetEnvironmentVariable('Path', $newMachineEnvironmentPath, 'MACHINE')        
+                log "Updating Path machine environment variable"
+                if ($Force -or $PSCmdlet.ShouldProcess("Update Path machine environment variable")) 
+                {
+                    [Environment]::SetEnvironmentVariable('Path', $newMachineEnvironmentPath, 'MACHINE')
+                }
             }
 
         } elseif ($IsWindows) {
