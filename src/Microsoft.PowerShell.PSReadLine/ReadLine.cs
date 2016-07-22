@@ -539,6 +539,7 @@ namespace Microsoft.PowerShell
             _tokens = null;
             _parseErrors = null;
             _inputAccepted = false;
+
             _initialX = _console.CursorLeft;
             _initialY = _console.CursorTop - Options.ExtraPromptLineCount;
             _initialBackgroundColor = _console.BackgroundColor;
@@ -556,13 +557,16 @@ namespace Microsoft.PowerShell
             _tabCommandCount = 0;
             _visualSelectionCommandCount = 0;
             _statusIsErrorMessage = false;
-
-            _consoleBuffer = ReadBufferLines(_initialY, 1 + Options.ExtraPromptLineCount);
+              
+           _consoleBuffer = ReadBufferLines(_initialY, Options.ExtraPromptLineCount + 1);
+                      
 #if LINUX // TODO: not necessary if ReadBufferLines worked, or if rendering worked on spans instead of complete lines
             string newPrompt = GetPrompt();
-            for (int i=0; i<newPrompt.Length; ++i)
-            {
-                _consoleBuffer[i].UnicodeChar = newPrompt[i];
+            _consoleBuffer = ReadBufferLines(_initialY, Options.ExtraPromptLineCount + 2);
+           
+            for (int i=0; i<newPrompt.Length; ++i)            
+            {   
+                 _consoleBuffer[i].UnicodeChar = newPrompt[i];
             }
 #endif
             _lastRenderTime = Stopwatch.StartNew();
