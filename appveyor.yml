@@ -68,6 +68,11 @@ on_finish:
         
         # Creating project artifact
         $name = git describe
+
+        # Remove 'v' from version, append 'PowerShell' - to be consistent with other package names
+        $name = $name -replace 'v',''        
+        $name = 'PowerShell_' + $name
+
         $zipFilePath = Join-Path $pwd "$name.zip"
         $zipFileFullPath = Join-Path $pwd "$name.FullCLR.zip"
         Add-Type -assemblyname System.IO.Compression.FileSystem
