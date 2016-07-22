@@ -12,49 +12,39 @@ Please review their [detailed instructions][vscclrdebugger]. In
 addition to being able to build PowerShell, you need:
 
 - C# Extension for VS Code installed
+- .NET Core debugger installed (semi-automatic)
 - `powershell` executable in your path (self-host if not on Windows)
+
+Once the extension is installed, you have to open a C# file to force VS Code to
+install the actual .NET Core debugger (the editor will tell you to do this if
+you attempt to debug and haven't already open a C# file).
 
 The committed `.vscode` folder in the root of this repository contains
 the `launch.json` and `tasks.json` files which provide Core PowerShell
 debugging configurations and a build task.
 
-The "build" task will run `Start-PSBuild`.
+The "build" task will run `Start-PSBuild`, emitting the executable to
+`PowerShell/debug/powershell` so that the debugger always knows where to find it
+(regardless of platform). If you edit this, please do not commit it, as the
+default is meant to "just work" for anyone.
 
-The ".NET Core Launch" configuration will build and start a
-`powershell` process, with `justMyCode` disabled, and `stopAtEntry`
-enabled. The debugger is highly experimental, so if it does not break
-at `Main`, try again.
+The ".NET Core Launch" configuration will build and start a `powershell`
+process, with `justMyCode` disabled, and `stopAtEntry` enabled, thus PowerShell
+will stop right at `Main`, and you need to click the green arrow to continue.
 
-Note that the debugger does not yet provide `stdin` handles, so once
-`ReadKey` is called in the `ReadLine` loop, `System.Console` will
-throw exceptions. The options around this are 1) provide
-`[ "-c", "... ; exit" ]` to the "Launch" configuration's `args` so
-that the `ReadLine` listener is never called, 2) ignore the exceptions
-and only debug code before the listener, or 3) use the "Attach"
-configuration.
+With either Gnome Terminal or XTerm installed, the launch configuration will
+launch an external console with PowerShell running interactively. If neither of
+these installed, the editor will tell you to do so.
 
-The ".NET Core Attach" configuration will start listening for a
-process named `powershell`, and will attach to it. If you need more
-fine grained control, replace `processName` with `processId` and
-provide a PID. (Please be careful not to commit such a change).
-
-Important Note
---------------
-
-Debugging is very sensitive to the versions of our .NET Core packages, VS Code,
-and the C# extension.
-
-- Use the VS Code [Insiders][] build
-- Use the latest pre-release of the [C# extension][]
-- Refer to the pre-release [documentation][]
+Alternatively, the ".NET Core Attach" configuration will start listening for a
+process named `powershell`, and will attach to it. If you need more fine grained
+control, replace `processName` with `processId` and provide a PID. (Please be
+careful not to commit such a change.)
 
 [core-debug]: https://blogs.msdn.microsoft.com/visualstudioalm/2016/03/10/experimental-net-core-debugging-in-vs-code/
 [vscode]: https://code.visualstudio.com/
 [OmniSharp]: https://github.com/OmniSharp/omnisharp-vscode
 [vscclrdebugger]: http://aka.ms/vscclrdebugger
-[insiders]: https://code.visualstudio.com/insiders
-[C# extension]: https://github.com/OmniSharp/omnisharp-vscode/releases
-[documentation]: https://github.com/OmniSharp/omnisharp-vscode/pull/157
 
 PowerShell
 ==========
