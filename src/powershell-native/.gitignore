@@ -2,11 +2,9 @@ ALL_BUILD.vcxproj
 ALL_BUILD.vcxproj.filters
 CMakeCache.txt
 CMakeFiles/
-PowerShell.sln
+*.sln
 Win32/
 x64/
-ZERO_CHECK.vcxproj
-ZERO_CHECK.vcxproj.filters
 cmake_install.cmake
 *.dir/
 *.vcxproj
