@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
                     content = psBody.BaseObject;
                 }
 
-                /*
+                /* TODO: This needs to be enable after the dependency on mshtml is resolved.
                 var html = content as HtmlWebResponseObject;
                 if (html != null)
                 {
@@ -236,8 +236,10 @@ namespace Microsoft.PowerShell.Commands
                         SetRequestContent(request, html.Forms[0].Fields);
                     }
                 }
-                */
                 else if (content is FormObject)
+                */
+
+                if (content is FormObject)
                 {
                     FormObject form = content as FormObject;
                     SetRequestContent(request, form.Fields);
@@ -533,7 +535,7 @@ namespace Microsoft.PowerShell.Commands
 
         }
 
-        #endregion Helper Methods
+#endregion Helper Methods
     }
 }
 #endif

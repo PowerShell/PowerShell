@@ -1,18 +1,17 @@
+#if !CORECLR
 
 /********************************************************************++
-Copyright(c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using mshtml;
 using System.Diagnostics;
 using System.Threading;
 using ExecutionContext = System.Management.Automation.ExecutionContext;
-#if !CORECLR
-using mshtml;
-#endif
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -28,7 +27,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public new string Content { get; private set; }
 
-#if !CORECLR
         // The HTML document
         private IHTMLDocument2 _parsedHtml;
 
@@ -43,10 +41,10 @@ namespace Microsoft.PowerShell.Commands
 
         // The exception thrown during the parsing
         private Exception _parsingException;
-#endif
+
         // The current execution context
         private readonly ExecutionContext _executionContext;
-#if !CORECLR
+
         // The flag that notifies the worker thread to stop loading the document
         private bool _stopWorkerThread;
 
@@ -221,19 +219,19 @@ namespace Microsoft.PowerShell.Commands
                 return _allElements;
             }
         }
-#endif
-        #endregion Properties
 
+        #endregion Properties
+        
         #region Private Fields
-#if !CORECLR
+
         private static Regex _tagRegex;
         private static Regex _attribsRegex;
         private static Regex _attribNameValueRegex;
-#endif
+
         #endregion Private Fields
 
         #region Methods
-#if !CORECLR
+        
         // The "onreadystatechange" event handler
         private void ReadyStateChanged(IHTMLEventObj obj)
         {
@@ -454,7 +452,7 @@ namespace Microsoft.PowerShell.Commands
         {
             return (null == element ? null : element.id);
         }
-#endif
+
         /// <summary>
         /// Reads the response content from the web response.
         /// </summary>
@@ -472,9 +470,8 @@ namespace Microsoft.PowerShell.Commands
                 this.Content = string.Empty;
             }
         }
-
         #endregion Methods
-#if !CORECLR
+
         /// <summary>
         /// Dispose the the instance of the class.
         /// </summary>
@@ -509,6 +506,6 @@ namespace Microsoft.PowerShell.Commands
                 System.Runtime.InteropServices.Marshal.ReleaseComObject(_parsedHtml);
             }
         }
-#endif
     }
 }
+#endif

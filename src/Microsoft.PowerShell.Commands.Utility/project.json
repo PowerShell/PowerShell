@@ -54,6 +54,7 @@
                         "commands/utility/WebCmdlet/FullClr/WebResponseHelper.FullClr.cs",
                         "commands/utility/WebCmdlet/FullClr/WebResponseObject.FullClr.cs",
                         "commands/utility/WebCmdlet/FullClr/WebResponseObjectFactory.FullClr.cs",
+                        "commands/utility/WebCmdlet/CoreCLR/HtmlWebResponseObject.CoreClr.cs",
                         
 			            "gen/FormatAndOut_out_gridview.cs",
                         "gen/ImplicitRemotingStrings.cs",
