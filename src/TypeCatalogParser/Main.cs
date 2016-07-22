@@ -13,6 +13,13 @@ namespace TypeCatalogParser
     {
         public static void Main(string[] args)
         {
+            if (args.Length != 1)
+            {
+                throw new ArgumentException(
+                    "Usage: ./TypeCatalogParser <path-to-top-level-powershell-project>\n" +
+                    "Valid options are '../powershell-unix' and '../powershell-windows'");
+            }
+
             // These are packages that are not part of .NET Core and must be excluded
             string[] excludedPackages = {
                 "Microsoft.Management.Infrastructure",
@@ -25,7 +32,7 @@ namespace TypeCatalogParser
             var outputPath = "../TypeCatalogGen/powershell.inc";
 
             // Get a context for our top level project
-            var context = ProjectContext.Create("../powershell", NuGetFramework.Parse("netcoreapp1.0"));
+            var context = ProjectContext.Create(args[0], NuGetFramework.Parse("netcoreapp1.0"));
 
             System.IO.File.WriteAllLines(outputPath,
                                          // Get the target for the current runtime

@@ -12,7 +12,9 @@
             "mappings": {
                 "Modules/" : {
                     "include": [
-                        "../Modules/Core",
+                        "../Modules/Windows-Core",
+                        "../Modules/Windows+Unix-Core",
+                        "../Modules/Windows-Core+Full",
                         "../Modules/Shared"
                     ],
                     "exclude": [
@@ -21,18 +23,21 @@
                 }
             },
             "include": [
-                "*.so",
-                "*.dylib",
                 "../../powershell.version"
             ]
-        }
+        },
+        "compile": [
+            "../powershell/Program.cs"
+        ]
     },
 
     "publishOptions": {
         "mappings": {
             "Modules/" : {
                 "include": [
-                    "../Modules/Core",
+                    "../Modules/Windows-Core",
+                    "../Modules/Windows+Unix-Core",
+                    "../Modules/Windows-Core+Full",
                     "../Modules/Shared"
                 ],
                 "exclude": [
@@ -41,14 +46,19 @@
             }
         },
         "include": [
-            "*.so",
-            "*.dylib",
             "../../powershell.version"
         ],
     },
 
     "dependencies": {
-        "Microsoft.PowerShell.ConsoleHost": "1.0.0-*"
+        "Microsoft.PowerShell.ConsoleHost": "1.0.0-*",
+        "Microsoft.PowerShell.PSReadLine": "1.0.0-*",
+        "Microsoft.PowerShell.Commands.Diagnostics": "1.0.0-*",
+        "Microsoft.PowerShell.Commands.Management": "1.0.0-*",
+        "Microsoft.PowerShell.Commands.Utility": "1.0.0-*",
+        "Microsoft.PowerShell.LocalAccounts": "1.0.0-*",
+        "Microsoft.PowerShell.PackageManagement": "1.0.0-*",
+        "Microsoft.Management.Infrastructure.CimCmdlets": "1.0.0-*"
     },
 
     "frameworks": {
@@ -64,12 +74,8 @@
     },
 
     "runtimes": {
-        "ubuntu.14.04-x64": { },
-        "debian.8-x64": { },
-        "centos.7-x64": { },
         "win7-x64": { },
         "win81-x64": { },
         "win10-x64": { },
-        "osx.10.11-x64": { }
     }
 }

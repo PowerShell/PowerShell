@@ -2,7 +2,6 @@
     "name": "powershell-tests",
     "version": "1.0.0-*",
     "description": "PowerShell On Linux xUnit Tests",
-    "authors": [ "andschwa" ],
 
     "buildOptions": {
         "keyFile": "../../src/signing/visualstudiopublic.snk",
@@ -11,7 +10,7 @@
     },
 
     "dependencies": {
-        "powershell": "1.0.0-*"
+        "System.Management.Automation": "1.0.0-*"
     },
 
     "frameworks": {

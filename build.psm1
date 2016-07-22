@@ -346,13 +346,6 @@ function New-PSOptions {
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    if ($FullCLR) {
-        $Top = "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost"
-    } else {
-        $Top = "$PSScriptRoot/src/powershell"
-    }
-    Write-Verbose "Top project directory is $Top"
-
     if (-not $Configuration) {
         $Configuration = if ($IsLinux -or $IsOSX) {
             "Linux"
@@ -361,6 +354,21 @@ function New-PSOptions {
         }
         Write-Verbose "Using configuration '$Configuration'"
     }
+
+    if ($FullCLR) {
+        $Top = "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost"
+    } else {
+        if ($Configuration -eq 'Linux')
+        {
+            $Top = "$PSScriptRoot/src/powershell-unix"
+        }
+        else
+        {
+            $Top = "$PSScriptRoot/src/powershell-windows"
+        }
+    }
+    Write-Verbose "Top project directory is $Top"
+
 
     if (-not $Framework) {
         $Framework = if ($FullCLR) {
@@ -1072,7 +1080,8 @@ function Start-TypeGen
     Push-Location "$PSScriptRoot/src/TypeCatalogParser"
     try
     {
-        dotnet run
+        $topPath = if ($IsWindows) {'../powershell-windows'} else {'../powershell-unix'}
+        dotnet run $topPath
     }
     finally
     {

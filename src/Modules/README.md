@@ -11,15 +11,16 @@ Content files includes:
 
 These files are copied as-is by `dotnet`
 
-- **Shared** is shared between all flavours
-- **Full** for FullCLR (Windows)
-- **Core** for CoreCLR (all platforms)
+- Shared (shared between all variations)
+- Windows+Unix-Core
+- Windows-Core
+- Windows-Core+Full
+- Windows-Full
 
 Notes
 -----------
 
-* We have files with the same names in "Full" and "Core" folders.
+We have files with the same names in different folders.
 That means that the contents of these two files are different. 
-I.e. if it's .psd1 file, it could be because `CmdletsToExport` are different for different platforms.
-
-* Also, we should never have files with the same names under "Full" and "Shared" (or "Core" and "Shared").
+I.e. if it's .psd1 file, it could be because `CmdletsToExport`
+are different for different runtimes (platforms) or frameworks.
