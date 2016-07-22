@@ -81,7 +81,7 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
         /// <param name="providerPath"></param>
         public void SetSwidTag(string providerPath)
         {
-#if !LINUX
+#if !UNIX
             if (!string.IsNullOrWhiteSpace(providerPath))
             {
                 // check whether there is swidtag attached to the provider path

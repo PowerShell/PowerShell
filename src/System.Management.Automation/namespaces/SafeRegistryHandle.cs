@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands.Internal
     
         override protected bool ReleaseHandle()
         {
-#if LINUX
+#if UNIX
             return true;
 #else
             // Returns a Win32 error code, 0 for success

@@ -15,7 +15,7 @@
     "configurations": {
         "Linux": {
             "buildOptions": {
-                "define": [ "LINUX" ]
+                "define": [ "UNIX" ]
             }
         }
     },

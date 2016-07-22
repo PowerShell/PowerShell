@@ -1469,7 +1469,7 @@ namespace System.Management.Automation
                         bool driveIsValid = true;
 
                         // If the drive is auto-mounted, ensure that it still exists, or remove the drive.
-#if !LINUX
+#if !UNIX
                         if (drive.IsAutoMounted || IsAStaleVhdMountedDrive(drive))
                         {
                             driveIsValid = ValidateOrRemoveAutoMountedDrive(drive, lookupScope);

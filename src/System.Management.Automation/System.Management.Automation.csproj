@@ -19,7 +19,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UNIX|AnyCPU'">
     <OutputPath>bin\UNIX\</OutputPath>
-    <DefineConstants>DEBUG;CORECLR;LINUX;NOT_SIGNED</DefineConstants>
+    <DefineConstants>DEBUG;CORECLR;UNIX;NOT_SIGNED</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CORECLR|AnyCPU'">
     <OutputPath>bin\CORECLR\</OutputPath>

@@ -4464,7 +4464,7 @@ namespace System.Management.Automation
 
         internal static List<string> GetFileShares(string machine, bool ignoreHidden)
         {
-#if LINUX
+#if UNIX
             return new List<string>();
 #else
             IntPtr shBuf;

@@ -2,7 +2,7 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-#if !LINUX
+#if !UNIX
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;

@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell
             void StartRender();
             int LengthInBufferCells(char c);
             void EndRender();
-#if LINUX
+#if UNIX
             void Clear();
 #endif
         }

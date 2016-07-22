@@ -172,7 +172,7 @@ namespace System.Management.Automation
 #endif
             Collection<LogProvider> providers = new Collection<LogProvider>();
             // Porting note: Linux does not support ETW
-#if !LINUX
+#if !UNIX
             try
             {
 #if !CORECLR    //TODO:CORECLR EventLogLogProvider not handled yet

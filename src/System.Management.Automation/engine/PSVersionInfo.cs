@@ -103,7 +103,7 @@ namespace System.Management.Automation
         {
             Version version = null;
 
-#if !LINUX
+#if !UNIX
             try
             {
                 using (RegistryKey wsManStackVersionKey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\WSMAN"))

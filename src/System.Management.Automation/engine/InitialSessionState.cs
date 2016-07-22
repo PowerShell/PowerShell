@@ -5286,8 +5286,8 @@ end
                         "Stop-Service",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("sv",
                         "Set-Variable",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-// Porting note: #if !LINUX is used to disable alises for cmdlets which conflict with Linux / OS X
-#if !LINUX
+// Porting note: #if !UNIX is used to disable alises for cmdlets which conflict with Linux / OS X
+#if !UNIX
                     // ac is a native command on OS X
                     new SessionStateAliasEntry("ac",
                         "Add-Content",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
@@ -5510,14 +5510,14 @@ if($paths) {
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("more", DefaultMoreFunctionText, isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText(), isProductCode: true),
             // Porting note: we remove mkdir on Linux because it is a conflict
-            #if !LINUX
+            #if !UNIX
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("mkdir", GetMkdirFunctionText(), isProductCode: true),
             #endif
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Get-Verb", GetGetVerbText(), isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("oss", GetOSTFunctionText(), isProductCode: true),
 
             // Porting note: we remove the drive functions from Linux because they make no sense
-            #if !LINUX
+            #if !UNIX
             // Default drives
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("A:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("B:", DefaultSetDriveFunctionText, SetDriveScriptBlock),

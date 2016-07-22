@@ -22,7 +22,7 @@ namespace Microsoft.PackageManagement.Internal.Utility.Platform {
     internal static class Manifest {
         private static readonly byte[] _utf = {0xef, 0xbb, 0xbf};
 
-#if !LINUX
+#if !UNIX
         public static IEnumerable<XElement> LoadFrom(string filename) {
             var manifests = new List<XElement>();
 

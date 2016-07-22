@@ -1,4 +1,4 @@
-#if !LINUX
+#if !UNIX
 
 using System;
 using System.Collections.Generic;

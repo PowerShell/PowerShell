@@ -2303,7 +2303,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region DllImports ClientAPI
 
-#if !LINUX
+#if !UNIX
         internal const string WSManApiDll = @"WsmSvc.dll";
 #else
         internal const string WSManApiDll = @"libpsrpomiprov";
@@ -2971,7 +2971,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr requestDetails,
             int flags,
             IntPtr context);
-#if LINUX
+#if UNIX
         /// <summary>
         /// Registers the shutdown callback.  
         /// </summary>
@@ -3073,7 +3073,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr shutdownCallback,
             IntPtr shutdownContext)
         {
-#if LINUX
+#if UNIX
            WSManNativeApi.WSManPluginRegisterShutdownCallback(requestDetails, shutdownCallback, shutdownContext);
 #endif
         }

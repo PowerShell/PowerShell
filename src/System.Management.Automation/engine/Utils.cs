@@ -359,7 +359,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsWinPEHost()
         {
-#if !LINUX
+#if !UNIX
             RegistryKey winPEKey = null;
 
             try
@@ -616,7 +616,7 @@ namespace System.Management.Automation
 
         internal static Dictionary<string, object> GetGroupPolicySetting(string groupPolicyBase, string settingName, RegistryKey[] preferenceOrder)
         {
-#if LINUX
+#if UNIX
             return _emptyDictionary;
 #else
             lock (cachedGroupPolicySettings)
@@ -927,7 +927,7 @@ namespace System.Management.Automation
             // permissions. To fit into PowerShell's existing model of pre-emptively checking
             // permissions (which cannot be assumed on Unix), we "assume" the user is an
             // administrator by returning true, thus nullifying this check on Unix.
-#if LINUX
+#if UNIX
             return true;
 #else
             System.Security.Principal.WindowsIdentity currentIdentity = System.Security.Principal.WindowsIdentity.GetCurrent();
@@ -956,7 +956,7 @@ namespace System.Management.Automation
                 isDirectory = false;
                 return false;
             }
-#if LINUX
+#if UNIX
             isDirectory = Platform.NonWindowsIsDirectory(path);
             return Platform.NonWindowsIsFile(path);
 #else
@@ -1093,7 +1093,7 @@ namespace System.Management.Automation
 
         internal static bool PathIsUnc(string path)
         {
-#if LINUX
+#if UNIX
             return false;
 #else
             Uri uri;

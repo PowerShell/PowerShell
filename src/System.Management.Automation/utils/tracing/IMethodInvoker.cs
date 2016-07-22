@@ -1,4 +1,4 @@
-#if !LINUX
+#if !UNIX
 //-----------------------------------------------------------------------
 // <copyright file="IMethodInvoker.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.

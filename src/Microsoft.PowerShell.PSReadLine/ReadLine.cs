@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell
         private IConsole _console;
 
         private EngineIntrinsics _engineIntrinsics;
-#if !LINUX
+#if !UNIX
         private static GCHandle _breakHandlerGcHandle;
 #endif
         private Thread _readKeyThread;
@@ -479,7 +479,7 @@ namespace Microsoft.PowerShell
         private PSConsoleReadLine()
         {
             _mockableMethods = this;
-#if LINUX
+#if UNIX
             _console = new TTYConsole();
 #else
             _console = new ConhostConsole();
@@ -558,7 +558,7 @@ namespace Microsoft.PowerShell
             _statusIsErrorMessage = false;
 
             _consoleBuffer = ReadBufferLines(_initialY, 1 + Options.ExtraPromptLineCount);
-#if LINUX // TODO: not necessary if ReadBufferLines worked, or if rendering worked on spans instead of complete lines
+#if UNIX // TODO: not necessary if ReadBufferLines worked, or if rendering worked on spans instead of complete lines
             string newPrompt = GetPrompt();
             for (int i=0; i<newPrompt.Length; ++i)
             {
@@ -612,7 +612,7 @@ namespace Microsoft.PowerShell
                 }
             }
 
-#if LINUX
+#if UNIX
             _historyFileMutex = new Mutex(false);
 #else
             _historyFileMutex = new Mutex(false, GetHistorySaveFileMutexName());
@@ -649,7 +649,7 @@ namespace Microsoft.PowerShell
             _killIndex = -1; // So first add indexes 0.
             _killRing = new List<string>(Options.MaximumKillRingCount);
 
-#if !LINUX
+#if !UNIX
             _breakHandlerGcHandle = GCHandle.Alloc(new BreakHandler(_singleton.BreakHandler));
             NativeMethods.SetConsoleCtrlHandler((BreakHandler)_breakHandlerGcHandle.Target, true);
 #endif
@@ -865,7 +865,7 @@ namespace Microsoft.PowerShell
 
             _singleton._initialX = _singleton._console.CursorLeft;
             _singleton._consoleBuffer = ReadBufferLines(_singleton._initialY, 1 + _singleton.Options.ExtraPromptLineCount);
-#if LINUX // TODO: ReadBufferLines only needed for extra line, but doesn't work on Linux
+#if UNIX // TODO: ReadBufferLines only needed for extra line, but doesn't work on Linux
             for (int i=0; i<newPrompt.Length; ++i)
             {
                 _singleton._consoleBuffer[i].UnicodeChar = newPrompt[i];

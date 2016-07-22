@@ -138,7 +138,7 @@ namespace System.Management.Automation
 
         internal static void SetExecutionPolicy(ExecutionPolicyScope scope, ExecutionPolicy policy, string shellId)
         {
-#if LINUX
+#if UNIX
             throw new PlatformNotSupportedException();
 #else
             string executionPolicy = "Restricted";
@@ -282,7 +282,7 @@ namespace System.Management.Automation
 
         internal static ExecutionPolicy GetExecutionPolicy(string shellId, ExecutionPolicyScope scope)
         {
-#if LINUX
+#if UNIX
             return ExecutionPolicy.Unrestricted;
 #else
             switch (scope)
@@ -429,7 +429,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-#if LINUX
+#if UNIX
             // There is no signature support on non-Windows platforms (yet), when
             // execution reaches here, we are sure the file is under product folder
             return true;
@@ -1631,7 +1631,7 @@ namespace System.Management.Automation
         /// <returns>AMSI_RESULT_DETECTED if malware was detected in the sample.</returns>
         internal static AmsiNativeMethods.AMSI_RESULT ScanContent(string content, string sourceMetadata)
         {
-#if LINUX
+#if UNIX
             return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
 #else
             return WinScanContent(content,sourceMetadata);
@@ -1725,7 +1725,7 @@ namespace System.Management.Automation
 
         internal static void CurrentDomain_ProcessExit(object sender, EventArgs e)
         {
-#if !LINUX
+#if !UNIX
             VerifyAmsiUninitializeCalled();
 #endif
         }
@@ -1743,7 +1743,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static void CloseSession()
         {
-#if !LINUX
+#if !UNIX
             WinCloseSession();
 #endif
         }
@@ -1772,7 +1772,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static void Uninitialize()
         {
-#if !LINUX
+#if !UNIX
             WinUninitialize();
 #endif
         }

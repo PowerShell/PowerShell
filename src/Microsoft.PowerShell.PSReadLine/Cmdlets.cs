@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell
 
     public class PSConsoleReadlineOptions
     {
-#if LINUX // TODO: why different schemes for LINUX?
+#if UNIX // TODO: why different schemes for LINUX?
         public const ConsoleColor DefaultCommentForegroundColor   = ConsoleColor.Magenta;
         public const ConsoleColor DefaultOperatorForegroundColor  = ConsoleColor.Gray;
         public const ConsoleColor DefaultParameterForegroundColor = ConsoleColor.Green;
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell
         public const ConsoleColor DefaultErrorForegroundColor     = ConsoleColor.Red;
 
         public const EditMode DefaultEditMode =
-#if LINUX
+#if UNIX
             EditMode.Emacs;
 #else
             EditMode.Windows;
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell
             HistorySaveStyle = DefaultHistorySaveStyle;
 
             string historyFileName = hostName + "_history.txt";
-#if LINUX
+#if UNIX
             // PSReadline does not have access to Utils.CorePSPlatform. Must set PSReadline path separately
             string historyPath = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
 
