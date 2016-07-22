@@ -16,6 +16,7 @@ $script:isNanoServer = $null -ne ('System.Runtime.Loader.AssemblyLoadContext' -a
 
 function IsWindows { $PSVariable = Get-Variable -Name IsWindows -ErrorAction Ignore; return (-not $PSVariable -or $PSVariable.Value) }
 function IsLinux { $PSVariable = Get-Variable -Name IsLinux -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
+function IsOSX { $PSVariable = Get-Variable -Name IsOSX -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
 function IsCore { $PSVariable = Get-Variable -Name IsCore -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
 
 if(IsWindows)
@@ -7469,9 +7470,11 @@ function Test-RunningAsElevated
         $adm=[System.Security.Principal.WindowsBuiltInRole]::Administrator
         return $prp.IsInRole($adm)
     }
-    elseif(IsLinux)
+    elseif((IsLinux) -or (IsOSX))
     {
-        return ($env:SUDO_UID -eq '1000')
+        # Permission models on *nix can be very complex, to the point that you could never possibly guess without simply trying what you need to try;
+        # This is totally different from Windows where you can know what you can or cannot do with/without admin rights.
+        return $true
     }
 
     return $false
