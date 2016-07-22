@@ -1,7 +1,7 @@
 PowerShell Beginner’s Guide
 ====
 
-If you are new to PowerShell, this document will walk you through a few examples to give you some basic ideas of PowerShell. 
+If you are new to PowerShell, this document will walk you through a few examples to give you some basic ideas of PowerShell.
 We recommend that you open a PowerShell console/session and type along with the instructions in this document to get most out of this exercise.
 
 
@@ -14,17 +14,17 @@ Getting Familiar with PowerShell Commands
 ---
 In this section, you will learn how to
 - create a file, delete a file and change file directory
-- find syntax of PowerShell cmdlets
-- get help if you needed
 - discover what version of PowerShell you are currently using
 - exit a PowerShell session
+- get help if you needed
+- find syntax of PowerShell cmdlets
 - and more
 
 As mentioned above, PowerShell commands are designed to have Verb-Noun structure, for instance Get-Process, Set-Location, Clear-Host, etc. 
 Let’s exercise some of the basic PowerShell commands, also known as **cmdlets**.
 
 Please note that we will use the PowerShell prompt sign **PS />** as it appears on Linux in the following examples.
-It is shown as **PS C:\>** on  Windows.
+It is shown as **PS C:\\>** on  Windows.
 
 **1. Get-Process**: Gets the processes that are running on the local computer or a remote computer.
 
@@ -41,7 +41,7 @@ Handles   NPM(K)    PM(K)     WS(K)     CPU(s)     Id    ProcessName
 
 …
 ```
-Only interested in the instance of firefox process that are running on your computer? 
+Only interested in the instance of firefox process that are running on your computer?
 Try this:
 ```PowerShell
 PS /> Get-Process -Name firefox
@@ -51,8 +51,8 @@ Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
     -      -          -          74   403.150   1209   firefox
 
 ```
-Want to get back more than one process? 
-Then just specify process names and separate them with commas. 
+Want to get back more than one process?
+Then just specify process names and separate them with commas.
 ```PowerShell
 PS /> Get-Process -Name firefox, powershell
 Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
@@ -67,7 +67,7 @@ Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
 PS /> Get-Process
 PS /> Clear-Host
 ```
-Type too much just for clearing the screen? 
+Type too much just for clearing the screen?
 Here is how the alias can help.
 
 **3. Get-Alias**: Gets the aliases for the current session.
@@ -88,7 +88,7 @@ Alias           ri -> Remove-Item
 Alias           type -> Get-Content
 …
 
-As you can see "cls" is an alias of Clear-Host. 
+As you can see "cls" is an alias of Clear-Host.
 Now try it:
 
 PS /> Get-Process
@@ -130,8 +130,8 @@ Mode                LastWriteTime         Length  Name
 ----                -------------         ------  ----
 -a----         7/7/2016   7:17 PM              0  test.txt
 ```
-You can use the **-Value** parameter to add some data to your file. 
-For example, the following command adds the phrase "Hello world!" as a file content to the test.txt. 
+You can use the **-Value** parameter to add some data to your file.
+For example, the following command adds the phrase "Hello world!" as a file content to the test.txt.
 Because the test.txt file exists already, we use **-Force** parameter to replace the existing content.
 
 ```PowerShell
@@ -145,7 +145,7 @@ Mode                LastWriteTime         Length  Name
 -a----         7/7/2016   7:19 PM             24  test.txt
 
 ```
-There are other ways to add some data to a file. 
+There are other ways to add some data to a file.
 For example, you can use Set-Content to set the file contents:
 
 ```PowerShell
@@ -179,7 +179,7 @@ PS /home/jen> Remove-Item ./test.txt
 
 **9. $PSVersionTable**: Displays the version of PowerShell you are currently using.
 
-Type **$PSVersionTable** in your PowerShell session, you will see something like below. 
+Type **$PSVersionTable** in your PowerShell session, you will see something like below.
 "PSVersion" indicates the PowerShell version that you are using.
 
 ```PowerShell
@@ -203,7 +203,7 @@ PS /home/jen> exit
 
 Need Help?
 ----
-The most important command in PowerShell is possibly the Get-Help, which allows you to quickly learn PowerShell without having to search around the internet. 
+The most important command in PowerShell is possibly the Get-Help, which allows you to quickly learn PowerShell without having to search around the internet.
 The Get-Help cmdlet also shows you how PowerShell commands work with examples.
 
 It shows the syntax and other technical information of the Get-Process cmdlet.
@@ -241,7 +241,7 @@ PS /> Get-Help Get-Process -Example
 
 PowerShell Pipeline '|'
 ----
-Sometimes when you run Get-ChildItem or "dir", you want to get a list of files and folders in a descending order. 
+Sometimes when you run Get-ChildItem or "dir", you want to get a list of files and folders in a descending order.
 To achieve that, type:
 ```PowerShell
 PS /home/jen> dir | sort -Descending
@@ -264,24 +264,21 @@ How to Create and Run PowerShell scripts
 - You can use ISE, VS Code or your favorite editor to create a PowerShell script and save the script with a .ps1 file extension (for example, helloworld.ps1)
 - To run the script, cd to your current folder and type ./yourscript.ps1 (for example, ./helloworld.ps1).
 
-Note: If you are using Windows, make sure you set the PowerShell's execution policy to "RemoteSigned" in this case. 
+Note: If you are using Windows, make sure you set the PowerShell's execution policy to "RemoteSigned" in this case.
 See [Running PowerShell Scripts Is as Easy as 1-2-3] [run-ps] for more details.
 
 [run-ps]:http://windowsitpro.com/powershell/running-powershell-scripts-easy-1-2-3
 
-More Reading
+Further Reading
 ----
-Books & eBooks & Blogs & Tutorials
-- [Windows PowerShell in Action][in-action] by Bruce Payette
-- [Windows PowerShell Cookbook][cookbook] by Lee Holmes
+-	Video: [Get Started with PowerShell][remoting] from Channel9
 - [eBooks from PowerShell.org](https://powershell.org/ebooks/)
-- [eBooks List][ebook-list] by Martin Schvartzman
 -	[eBooks from PowerShell.com][ebooks-powershell.com]
+- [eBooks List][ebook-list] by Martin Schvartzman
 - [Tutorial from MVP][tutorial]
 -	Script Guy blog: [The best way to Learn PowerShell][to-learn]
 -	[Understanding PowerShell Module][ps-module]
 -	[How and When to Create PowerShell Module][create-ps-module] by Adam Bertram
--	Video: [Get Started with PowerShell Remoting][remoting] from Channel9
 - Video: [PowerShell Remoting in Depth][in-depth] from Channel9
 -	[PowerShell Basics: Remote Management][remote-mgmt] from ITPro
 - [Running Remote Commands][remote-commands] from PowerShell Web Docs
@@ -290,6 +287,11 @@ Books & eBooks & Blogs & Tutorials
 - [Writing a PowerShell module in C#][writing-ps-module]
 - [Examples of Cmdlets Code][sample-code]
 
+
+Commercial Resources
+----
+- [Windows PowerShell in Action][in-action] by Bruce Payette
+- [Windows PowerShell Cookbook][cookbook] by Lee Holmes
 
 [in-action]: https://www.amazon.com/Windows-PowerShell-Action-Second-Payette/dp/1935182137
 [cookbook]: http://shop.oreilly.com/product/9780596801519.do
