@@ -602,24 +602,32 @@ function Start-PSBootstrap {
             # Install chocolatey
             $chocolateyPath = "$env:AllUsersProfile\chocolatey\bin"
             
-            if(precheck 'choco' $null)
+            if(precheck 'choco' $null) 
             {
                 log "Chocolatey is already installed. Skipping installation."
             }
             elseif(($cmakePresent -eq $false) -or ($sdkPresent -eq $false)) 
             {
                 log "Chocolatey not present. Installing chocolatey."
-                Invoke-Expression ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
-
-                if (-not ($machinePath.ToLower().Contains($chocolateyPath.ToLower())))
+                if ($Force -or $PSCmdlet.ShouldProcess("Install chocolatey via https://chocolatey.org/install.ps1")) 
                 {
-                    log "Adding $chocolateyPath to Path environment variable"
-                    $env:Path += ";$chocolateyPath"
-                    $newMachineEnvironmentPath += ";$chocolateyPath"    
+                    Invoke-Expression ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+                
+                    if (-not ($machinePath.ToLower().Contains($chocolateyPath.ToLower())))
+                    {
+                        log "Adding $chocolateyPath to Path environment variable"
+                        $env:Path += ";$chocolateyPath"
+                        $newMachineEnvironmentPath += ";$chocolateyPath"    
+                    }
+                    else
+                    {
+                        log "$chocolateyPath already present in Path environment variable"
+                    }
                 }
                 else
                 {
-                    log "$chocolateyPath already present in Path environment variable"
+                    Write-Error "Chocolatey is required to install missing dependencies. Please install it from https://chocolatey.org/ manually. Alternatively, install cmake and Windows 10 SDK."
+                    return $null
                 }
             }
             else
@@ -667,7 +675,7 @@ function Start-PSBootstrap {
             if ($newMachineEnvironmentPath -ne $machinePath)
             {
                 log "Updating Path machine environment variable"
-                if ($Force -or $PSCmdlet.ShouldProcess("Update Path machine environment variable")) 
+                if ($Force -or $PSCmdlet.ShouldProcess("Update Path machine environment variable to $newMachineEnvironmentPath")) 
                 {
                     [Environment]::SetEnvironmentVariable('Path', $newMachineEnvironmentPath, 'MACHINE')
                 }
