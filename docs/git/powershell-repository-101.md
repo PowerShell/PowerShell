@@ -76,10 +76,10 @@ you will find it via **tags**.
 * Find the tag that corresponds to the release.
 * Use `git checkout <tag-name>` to get this version.
 
-**Note:** [checking out a tag][] will move the repo to a [DETACHED HEAD][] state.
+**Note:** [checking out a tag][tag] will move the repo to a [DETACHED HEAD][HEAD] state.
 
-[checking out tag]:https://git-scm.com/book/en/v2/Git-Basics-Tagging#Checking-out-Tags
-[DETACHED HEAD]:https://www.git-tower.com/learn/git/faq/detached-head-when-checkout-commit
+[tag]:https://git-scm.com/book/en/v2/Git-Basics-Tagging#Checking-out-Tags
+[HEAD]:https://www.git-tower.com/learn/git/faq/detached-head-when-checkout-commit
 
 If you want to make changes, based on tag's version (i.e. a hotfix), 
 checkout a new branch from this DETACHED HEAD state.
