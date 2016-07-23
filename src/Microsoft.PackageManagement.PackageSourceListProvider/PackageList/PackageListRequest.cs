@@ -34,6 +34,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
     using Microsoft.PackageManagement.Implementation;
     using Microsoft.PackageManagement.Internal.Api;
     using Microsoft.PackageManagement.Provider.Utility;
+    using SemanticVersion = Microsoft.PackageManagement.Provider.Utility.SemanticVersion;
 
     public abstract class PackageSourceListRequest : Request {
        

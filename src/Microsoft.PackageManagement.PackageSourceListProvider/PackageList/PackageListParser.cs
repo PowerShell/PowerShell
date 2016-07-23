@@ -9,6 +9,8 @@ using Microsoft.PackageManagement.Provider.Utility;
 using System.Reflection;
 using System.Globalization;
 
+using SemanticVersion = Microsoft.PackageManagement.Provider.Utility.SemanticVersion;
+
 namespace Microsoft.PackageManagement.PackageSourceListProvider
 {
     internal static class JsonParser

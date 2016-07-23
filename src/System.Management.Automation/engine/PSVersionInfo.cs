@@ -4,6 +4,8 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Diagnostics;
 using System.Reflection;
 using System.Collections;
+using System.Globalization;
+using System.Management.Automation.Internal;
 using Microsoft.Win32;
 
 namespace System.Management.Automation
@@ -288,5 +290,453 @@ namespace System.Management.Automation
 
         #endregion
 
+    }
+
+    /// <summary>
+    /// An implementation of semantic versioning (http://semver.org)
+    /// that can be converted to/from <see cref="System.Version"/>.
+    /// 
+    /// When converting to <see cref="Version"/>, a PSNoteProperty is
+    /// added to the instance to store the semantic version label so
+    /// that it can be recovered when creating a new SemanticVersion.
+    /// </summary>
+    public sealed class SemanticVersion : IComparable, IComparable<SemanticVersion>, IEquatable<SemanticVersion>
+    {
+        /// <summary>
+        /// Construct a SemanticVersion from a string.
+        /// </summary>
+        /// <param name="version">The version to parse</param>
+        /// <exception cref="PSArgumentException"></exception>
+        /// <exception cref="ValidationMetadataException"></exception>
+        /// <exception cref="FormatException"></exception>
+        /// <exception cref="OverflowException"></exception>
+        public SemanticVersion(string version)
+        {
+            var v = SemanticVersion.Parse(version);
+
+            Major = v.Major;
+            Minor = v.Minor;
+            Patch = v.Patch;
+            Label = v.Label;
+        }
+
+        /// <summary>
+        /// Construct a SemanticVersion.
+        /// </summary>
+        /// <param name="major">The major version</param>
+        /// <param name="minor">The minor version</param>
+        /// <param name="patch">The minor version</param>
+        /// <param name="label">The label for the version</param>
+        /// <exception cref="PSArgumentException">
+        /// If <paramref name="major"/>, <paramref name="minor"/>, or <paramref name="patch"/> is less than 0.
+        /// </exception>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="label"/> is null or an empty string.
+        /// </exception>
+        public SemanticVersion(int major, int minor, int patch, string label)
+            : this(major, minor, patch)
+        {
+            if (string.IsNullOrEmpty(label)) throw PSTraceSource.NewArgumentNullException(nameof(label));
+
+            Label = label;
+        }
+
+        /// <summary>
+        /// Construct a SemanticVersion.
+        /// </summary>
+        /// <param name="major">The major version</param>
+        /// <param name="minor">The minor version</param>
+        /// <param name="patch">The minor version</param>
+        /// <exception cref="PSArgumentException">
+        /// If <paramref name="major"/>, <paramref name="minor"/>, or <paramref name="patch"/> is less than 0.
+        /// </exception>
+        public SemanticVersion(int major, int minor, int patch)
+        {
+            if (major < 0) throw PSTraceSource.NewArgumentException(nameof(major));
+            if (minor < 0) throw PSTraceSource.NewArgumentException(nameof(minor));
+            if (patch < 0) throw PSTraceSource.NewArgumentException(nameof(patch));
+
+            Major = major;
+            Minor = minor;
+            Patch = patch;
+            Label = null;
+        }
+        
+        const string LabelPropertyName = "PSSemanticVersionLabel";
+
+        /// <summary>
+        /// Construct a <see cref="SemanticVersion"/> from a <see cref="Version"/>,
+        /// copying the NoteProperty storing the label if the expected property exists.
+        /// </summary>
+        /// <param name="version">The version.</param>
+        public SemanticVersion(Version version)
+        {
+            if (version.Revision > 0 || version.Build < 0) throw PSTraceSource.NewArgumentException(nameof(version));
+
+            Major = version.Major;
+            Minor = version.Minor;
+            Patch = version.Build;
+            var psobj = new PSObject(version);
+            var labelNote = psobj.Properties[LabelPropertyName];
+            if (labelNote != null)
+            {
+                Label = labelNote.Value as string;
+            }
+        }
+
+        /// <summary>
+        /// Convert a <see cref="SemanticVersion"/> to a <see cref="Version"/>.
+        /// If there is a <see cref="Label"/>, it is added as a NoteProperty to the
+        /// result so that you can round trip back to a <see cref="SemanticVersion"/>
+        /// without losing the label.
+        /// </summary>
+        /// <param name="semver"></param>
+        public static implicit operator Version(SemanticVersion semver)
+        {
+            var result = new Version(semver.Major, semver.Minor, semver.Patch);
+
+            if (!string.IsNullOrEmpty(semver.Label))
+            {
+                var psobj = new PSObject(result);
+                psobj.Properties.Add(new PSNoteProperty(LabelPropertyName, semver.Label));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// The major version number, never negative.
+        /// </summary>
+        public int Major { get; }
+
+        /// <summary>
+        /// The minor version number, never negative.
+        /// </summary>
+        public int Minor { get; }
+
+        /// <summary>
+        /// The patch version, -1 if not specified.
+        /// </summary>
+        public int Patch { get; }
+
+        /// <summary>
+        /// The last component in a SemanticVersion - may be null if not specified.
+        /// </summary>
+        public string Label { get; }
+
+        /// <summary>
+        /// Parse <paramref name="version"/> and return the result if it is a valid <see cref="SemanticVersion"/>, otherwise throws an exception.
+        /// </summary>
+        /// <param name="version">The string to parse</param>
+        /// <returns></returns>
+        /// <exception cref="PSArgumentException"></exception>
+        /// <exception cref="ValidationMetadataException"></exception>
+        /// <exception cref="FormatException"></exception>
+        /// <exception cref="OverflowException"></exception>
+        public static SemanticVersion Parse(string version)
+        {
+            if (version == null) throw PSTraceSource.NewArgumentNullException(nameof(version));
+
+            var r = new VersionResult();
+            r.Init(true);
+            TryParseVersion(version, ref r);
+
+            return r._parsedVersion;
+        }
+
+        /// <summary>
+        /// Parse <paramref name="version"/> and return true if it is a valid <see cref="SemanticVersion"/>, otherwise return false.
+        /// No exceptions are raised.
+        /// </summary>
+        /// <param name="version">The string to parse</param>
+        /// <param name="result">The return value when the string is a valid <see cref="SemanticVersion"/></param>
+        public static bool TryParse(string version, out SemanticVersion result)
+        {
+            if (version != null)
+            {
+                var r = new VersionResult();
+                r.Init(false);
+
+                if (TryParseVersion(version, ref r))
+                {
+                    result = r._parsedVersion;
+                    return true;
+                }
+            }
+
+            result = null;
+            return false;
+        }
+
+        private static bool TryParseVersion(string version, ref VersionResult result)
+        {
+            var dashIndex = version.IndexOf('-');
+
+            // Empty label?
+            if (dashIndex == version.Length - 1)
+            {
+                result.SetFailure(ParseFailureKind.ArgumentException);
+                return false;
+            }
+
+            var versionSansLabel = (dashIndex < 0) ? version : version.Substring(0, dashIndex);
+            string[] parsedComponents = versionSansLabel.Split(Utils.Separators.Dot);
+            if (parsedComponents.Length != 3)
+            {
+                result.SetFailure(ParseFailureKind.ArgumentException);
+                return false;
+            }
+
+            int major, minor, patch;
+            if (!TryParseComponent(parsedComponents[0], "major", ref result, out major))
+            {
+                return false;
+            }
+
+            if (!TryParseComponent(parsedComponents[1], "minor", ref result, out minor))
+            {
+                return false;
+            }
+
+            if (!TryParseComponent(parsedComponents[2], "patch", ref result, out patch))
+            {
+                return false;
+            }
+
+            result._parsedVersion = dashIndex < 0
+                ? new SemanticVersion(major, minor, patch)
+                : new SemanticVersion(major, minor, patch, version.Substring(dashIndex + 1));
+            return true;
+        }
+
+        private static bool TryParseComponent(string component, string componentName, ref VersionResult result, out int parsedComponent)
+        {
+            if (!Int32.TryParse(component, NumberStyles.Integer, CultureInfo.InvariantCulture, out parsedComponent))
+            {
+                result.SetFailure(ParseFailureKind.FormatException, component);
+                return false;
+            }
+
+            if (parsedComponent < 0)
+            {
+                result.SetFailure(ParseFailureKind.ArgumentOutOfRangeException, componentName);
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// ToString
+        /// </summary>
+        public override string ToString()
+        {
+            if (Patch < 0)
+            {
+                return string.IsNullOrEmpty(Label)
+                    ? StringUtil.Format("{0}.{1}", Major, Minor)
+                    : StringUtil.Format("{0}.{1}-{2}", Major, Minor, Label);
+            }
+
+            return string.IsNullOrEmpty(Label)
+                ? StringUtil.Format("{0}.{1}.{2}", Major, Minor, Patch)
+                : StringUtil.Format("{0}.{1}.{2}-{3}", Major, Minor, Patch, Label);
+        }
+
+        /// <summary>
+        /// Implement <see cref="IComparable.CompareTo"/>
+        /// </summary>
+        public int CompareTo(object version)
+        {
+            if (version == null)
+            {
+                return 1;
+            }
+
+            var v = version as SemanticVersion;
+            if (v == null)
+            {
+                throw PSTraceSource.NewArgumentException(nameof(version));
+            }
+
+            return CompareTo(v);
+        }
+
+        /// <summary>
+        /// Implement <see cref="IComparable{T}.CompareTo"/>
+        /// </summary>
+        public int CompareTo(SemanticVersion value)
+        {
+            if ((object)value == null)
+                return 1;
+
+            if (Major != value.Major)
+                return Major > value.Major ? 1 : -1;
+
+            if (Minor != value.Minor)
+                return Minor > value.Minor ? 1 : -1;
+
+            if (Patch != value.Patch)
+                return Patch > value.Patch ? 1 : -1;
+
+            if (Label == null)
+                return value.Label == null ? 0 : 1;
+
+            if (value.Label == null)
+                return -1;
+
+            if (!string.Equals(Label, value.Label, StringComparison.Ordinal))
+                return string.Compare(Label, value.Label, StringComparison.Ordinal);
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Override <see cref="object.Equals(object)"/>
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as SemanticVersion);
+        }
+
+        /// <summary>
+        /// Implement <see cref="IEquatable{T}.Equals(T)"/>
+        /// </summary>
+        public bool Equals(SemanticVersion other)
+        {
+            return other != null &&
+                   (Major == other.Major) && (Minor == other.Minor) && (Patch == other.Patch) &&
+                   string.Equals(Label, other.Label, StringComparison.Ordinal);
+        }
+
+        /// <summary>
+        /// Override <see cref="object.GetHashCode()"/>
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return Utils.CombineHashCodes(
+                Major.GetHashCode(),
+                Minor.GetHashCode(),
+                Patch.GetHashCode(),
+                Label == null ? 0 : Label.GetHashCode());
+        }
+
+        /// <summary>
+        /// Overloaded == operator
+        /// </summary>
+        public static bool operator ==(SemanticVersion v1, SemanticVersion v2)
+        {
+            if (object.ReferenceEquals(v1, null)) {
+                return object.ReferenceEquals(v2, null);
+            }
+
+            return v1.Equals(v2);
+        }
+
+        /// <summary>
+        /// Overloaded != operator
+        /// </summary>
+        public static bool operator !=(SemanticVersion v1, SemanticVersion v2)
+        {
+            return !(v1 == v2);
+        }
+
+        /// <summary>
+        /// Overloaded &lt; operator
+        /// </summary>
+        public static bool operator <(SemanticVersion v1, SemanticVersion v2)
+        {
+            if ((object) v1 == null) throw PSTraceSource.NewArgumentException(nameof(v1));
+            return (v1.CompareTo(v2) < 0);
+        }
+
+        /// <summary>
+        /// Overloaded &lt;= operator
+        /// </summary>
+        public static bool operator <=(SemanticVersion v1, SemanticVersion v2)
+        {
+            if ((object) v1 == null) throw PSTraceSource.NewArgumentException(nameof(v1));
+            return (v1.CompareTo(v2) <= 0);
+        }
+
+        /// <summary>
+        /// Overloaded &gt; operator
+        /// </summary>
+        public static bool operator >(SemanticVersion v1, SemanticVersion v2)
+        {
+            return (v2 < v1);
+        }
+
+        /// <summary>
+        /// Overloaded &gt;= operator
+        /// </summary>
+        public static bool operator >=(SemanticVersion v1, SemanticVersion v2)
+        {
+            return (v2 <= v1);
+        }
+
+        internal enum ParseFailureKind
+        { 
+            ArgumentException, 
+            ArgumentOutOfRangeException, 
+            FormatException 
+        }
+
+        internal struct VersionResult
+        {
+            internal SemanticVersion _parsedVersion;
+            internal ParseFailureKind _failure;
+            internal string _exceptionArgument;
+            internal bool _canThrow;
+
+            internal void Init(bool canThrow)
+            {
+                _canThrow = canThrow;
+            }
+
+            internal void SetFailure(ParseFailureKind failure)
+            {
+                SetFailure(failure, String.Empty);
+            }
+
+            internal void SetFailure(ParseFailureKind failure, string argument)
+            {
+                _failure = failure;
+                _exceptionArgument = argument;
+                if (_canThrow)
+                {
+                    throw GetVersionParseException();
+                }
+            }
+
+            internal Exception GetVersionParseException()
+            {
+                switch (_failure)
+                {
+                    case ParseFailureKind.ArgumentException:
+                        return PSTraceSource.NewArgumentException("version");
+                    case ParseFailureKind.ArgumentOutOfRangeException:
+                        throw new ValidationMetadataException("ValidateRangeTooSmall",
+                            null, Metadata.ValidateRangeSmallerThanMinRangeFailure,
+                            _exceptionArgument, "0");
+                    case ParseFailureKind.FormatException:
+                        // Regenerate the FormatException as would be thrown by Int32.Parse()
+                        try
+                        {
+                            Int32.Parse(_exceptionArgument, CultureInfo.InvariantCulture);
+                        }
+                        catch (FormatException e)
+                        {
+                            return e;
+                        }
+                        catch (OverflowException e)
+                        {
+                            return e;
+                        }
+                        break;
+                }
+                return PSTraceSource.NewArgumentException("version");
+            }
+        }
     }
 }

@@ -20,6 +20,8 @@
     using System.Net;
     using Microsoft.PackageManagement.Provider.Utility;
 
+    using SemanticVersion = Microsoft.PackageManagement.Provider.Utility.SemanticVersion;
+
     /// <summary> 
     /// This class drives the Request class that is an interface exposed from the PackageManagement Platform to the provider to use.
     /// </summary>

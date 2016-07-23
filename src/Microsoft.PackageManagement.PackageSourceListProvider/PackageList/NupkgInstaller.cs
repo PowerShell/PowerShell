@@ -27,6 +27,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
     using Microsoft.PackageManagement.Provider.Utility;
     using ErrorCategory = PackageManagement.Internal.ErrorCategory;
     using System.Globalization;
+    using SemanticVersion = Microsoft.PackageManagement.Provider.Utility.SemanticVersion;
 
     internal static class NupkgInstaller {
 
