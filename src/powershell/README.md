@@ -1,8 +1,9 @@
 PowerShell
 ==========
 
-The `powershell[.exe]` executable for Open PowerShell is built by this project,
-as it is the top dependency of the graph, and has `emitEntryPoint: true`,
+The `powershell[.exe]` executable for PowerShell is built by
+**powershell-unix** and **powershell-windows** projects,
+as they are the top dependencies of the graph, and has `emitEntryPoint: true`,
 meaning a native executable is produced automatically by CLI (no need to own a
 separate native host).
 

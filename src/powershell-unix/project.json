@@ -1,0 +1,79 @@
+{
+    "name": "powershell",
+    "version": "1.0.0-*",
+    "description": ".NET CLI PowerShell app",
+
+    "buildOptions": {
+        "xmlDoc": true,
+        "warningsAsErrors": true,
+        "allowUnsafe": true,
+        "emitEntryPoint": true,
+        "copyToOutput": {
+            "mappings": {
+                "Modules/" : {
+                    "include": [
+                        "../Modules/Windows+Unix-Core",
+                        "../Modules/Shared"
+                    ],
+                    "exclude": [
+                        "../Modules/Shared/Pester/.git*"
+                    ]
+                }
+            },
+            "include": [
+                "*.so",
+                "*.dylib",
+                "../../powershell.version"
+            ]
+        },
+        "compile": [
+            "../powershell/Program.cs"
+        ]
+    },
+
+    "publishOptions": {
+        "mappings": {
+            "Modules/" : {
+                "include": [
+                    "../Modules/Windows+Unix-Core",
+                    "../Modules/Shared"
+                ],
+                "exclude": [
+                    "../Modules/Shared/Pester/.git*"
+                ]
+            }
+        },
+        "include": [
+            "*.so",
+            "*.dylib",
+            "../../powershell.version"
+        ],
+    },
+
+    "dependencies": {
+        "Microsoft.PowerShell.ConsoleHost": "1.0.0-*",
+        "Microsoft.PowerShell.PSReadLine": "1.0.0-*",
+        "Microsoft.PowerShell.Commands.Management": "1.0.0-*",
+        "Microsoft.PowerShell.Commands.Utility": "1.0.0-*",
+        "Microsoft.PowerShell.PackageManagement": "1.0.0-*"
+    },
+
+    "frameworks": {
+        "netcoreapp1.0": {
+            "imports": [ "dnxcore50", "portable-net45+win8" ],
+            "buildOptions": {
+                "define": [ "CORECLR" ]
+            },
+            "dependencies": {
+                "Microsoft.NETCore.App": "1.0.0"
+            }
+        }
+    },
+
+    "runtimes": {
+        "ubuntu.14.04-x64": { },
+        "debian.8-x64": { },
+        "centos.7-x64": { },
+        "osx.10.11-x64": { }
+    }
+}

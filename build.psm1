@@ -287,10 +287,18 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
             # Copy the executable binary from the local build directory to the expected destination to enable Start-DevPowerShell to work
             #
             # TODO: This should be updated to handle per-architecture builds gracefully.
-            $srcPath = Join-Path (Join-Path (Join-Path (Get-Location) "bin") $msbuildConfiguration) "FullCLR/powershell.exe"
+
             $dstPath = ($script:Options).Top
-            log "  Copying $srcPath to $dstPath"
-            Copy-Item $srcPath $dstPath
+            @(
+                'powershell.exe',
+                'powershell.pdb',
+                'pwrshplugin.dll',
+                'pwrshplugin.pdb'
+            ) | % {
+                $srcPath = Join-Path (Join-Path (Join-Path (Get-Location) "bin") $msbuildConfiguration) "FullCLR/$_"
+                log "  Copying $srcPath to $dstPath"
+                Copy-Item $srcPath $dstPath
+            }
         } finally {
             Pop-Location
         }
@@ -346,13 +354,6 @@ function New-PSOptions {
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    if ($FullCLR) {
-        $Top = "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost"
-    } else {
-        $Top = "$PSScriptRoot/src/powershell"
-    }
-    Write-Verbose "Top project directory is $Top"
-
     if (-not $Configuration) {
         $Configuration = if ($IsLinux -or $IsOSX) {
             "Linux"
@@ -361,6 +362,21 @@ function New-PSOptions {
         }
         Write-Verbose "Using configuration '$Configuration'"
     }
+
+    if ($FullCLR) {
+        $Top = "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost"
+    } else {
+        if ($Configuration -eq 'Linux')
+        {
+            $Top = "$PSScriptRoot/src/powershell-unix"
+        }
+        else
+        {
+            $Top = "$PSScriptRoot/src/powershell-windows"
+        }
+    }
+    Write-Verbose "Top project directory is $Top"
+
 
     if (-not $Framework) {
         $Framework = if ($FullCLR) {
@@ -1072,7 +1088,8 @@ function Start-TypeGen
     Push-Location "$PSScriptRoot/src/TypeCatalogParser"
     try
     {
-        dotnet run
+        $topPath = if ($IsWindows) {'../powershell-windows'} else {'../powershell-unix'}
+        dotnet run $topPath
     }
     finally
     {
