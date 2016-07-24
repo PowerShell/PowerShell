@@ -1,5 +1,10 @@
 language: cpp
 
+branches:
+  only:
+    - master
+    - /^test.*$/
+
 os:
   - linux
   - osx
