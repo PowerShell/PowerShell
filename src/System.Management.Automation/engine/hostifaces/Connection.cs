@@ -436,7 +436,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Runspace is based on a VM socket transport.
         /// </summary>
-        VMSocketTransport = 0x4
+        VMSocketTransport = 0x4,
+
+        /// <summary>
+        /// Runspace is based on SSH transport.
+        /// </summary>
+        SSHTransport = 0x8
     }
 
     #endregion

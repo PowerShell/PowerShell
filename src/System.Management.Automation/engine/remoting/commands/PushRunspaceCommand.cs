@@ -297,6 +297,10 @@ namespace Microsoft.PowerShell.Commands
                 case ContainerIdParameterSet:
                     remoteRunspace = GetRunspaceForContainerSession();
                     break;
+
+                case SSHHostParameterSet:
+                    remoteRunspace = GetRunspaceForSSHSession();
+                    break;
             }
 
             // If runspace is null then the error record has already been written and we can exit.
@@ -1235,6 +1239,20 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteError(errorRecord);
             }
+
+            return remoteRunspace;
+        }
+
+        /// <summary>
+        /// Create remote runspace for SSH session
+        /// </summary>
+        private RemoteRunspace GetRunspaceForSSHSession()
+        {
+            var sshConnectionInfo = new SSHConnectionInfo(this.UserName, this.HostName, this.KeyPath);
+            var typeTable = TypeTable.LoadDefaultTypeFiles();
+            var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
+            remoteRunspace.Open();
+            remoteRunspace.ShouldCloseOnPop = true;
 
             return remoteRunspace;
         }
