@@ -83,11 +83,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct][conduct-cod
 For more information see the [Code of Conduct FAQ][conduct-FAQ] or contact
 [opencode@microsoft.com][conduct-email] with any additional questions or comments.
 
-[artifacts]: https://ci.appveyor.com/project/PowerShell/powershell/build/artifacts
 [build-linux]: docs/building/linux.md
 [build-osx]: docs/building/osx.md
 [build-wc]: docs/building/windows-core.md
-[build-wf]: docs/building/windows-full.md
 [conduct-code]: http://opensource.microsoft.com/codeofconduct/
 [conduct-email]: mailto:opencode@microsoft.com
 [conduct-FAQ]: http://opensource.microsoft.com/codeofconduct/faq/
@@ -99,6 +97,5 @@ For more information see the [Code of Conduct FAQ][conduct-FAQ] or contact
 [inst-win]: docs/installation/windows.md
 [known-issues]: docs/KNOWNISSUES.md
 [new-issue]:https://github.com/PowerShell/PowerShell/issues/new
-[pls-omi-provider]: https://github.com/PowerShell/psl-omi-provider
 [releases]: https://github.com/PowerShell/PowerShell/releases
 [powershell-repo-101]: docs/git/powershell-repository-101.md

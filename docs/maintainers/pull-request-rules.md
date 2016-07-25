@@ -12,9 +12,7 @@ author:  Hemant
 Our [pull request template][pr-template] includes the bare minimum requirements for a pull request to be accepted into PowerShell. This includes:
 * Writing tests
 * Writing documentation (where does thie one live already? is it where this guidance should exist all up?)
-* Our [code review process][code-review]
 * Repository maintainer sign-off, per our [governance model][governance]
 
-[pr-template]: ../.github/PULL_REQUEST_TEMPLATE.md
-[code-review]: code-review-guidelines.md
+[pr-template]: ../../.github/PULL_REQUEST_TEMPLATE.md
 [governance]: ../community/governance.md
