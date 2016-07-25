@@ -916,7 +916,15 @@ namespace System.Management.Automation.Remoting
                     _runspacePoolDriver.InstanceId);
             }
             
-            bool isAdministrator = _senderInfo.UserInfo.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+            bool isAdministrator;
+            if (Platform.IsWindows)
+            {
+                isAdministrator = _senderInfo.UserInfo.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+            }
+            else
+            {
+                isAdministrator = false;
+            }
 
             ServerRunspacePoolDriver tmpDriver = new ServerRunspacePoolDriver(
                 clientRunspacePoolId,

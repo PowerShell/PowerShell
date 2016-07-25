@@ -255,6 +255,12 @@ namespace Microsoft.PowerShell
                         cpp.ConfigurationName);
                     exitCode = 0;
                 }
+                else if (cpp.SSHServerMode)
+                {
+                    ClrFacade.StartProfileOptimization("StartupProfileData-SSHServerMode");
+                    System.Management.Automation.Remoting.Server.SSHProcessMediator.Run(cpp.InitialCommand);
+                    exitCode = 0;
+                }
                 else if (cpp.SocketServerMode)
                 {
                     ClrFacade.StartProfileOptimization("StartupProfileData-SocketServerMode");

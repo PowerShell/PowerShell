@@ -391,6 +391,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
         public SwitchParameter AsJob
         {
             get
@@ -448,6 +450,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
         [Alias("HCN")]
         public SwitchParameter HideComputerName
         {
@@ -510,6 +514,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1,
                    Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
+        [Parameter(Position = 1,
+                   Mandatory = true,
+                   ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [ValidateNotNull]
         [Alias("Command")]
         public override ScriptBlock ScriptBlock
@@ -553,6 +560,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1,
                    Mandatory = true,
                    ParameterSetName = FilePathContainerIdParameterSet)]
+        [Parameter(Position = 1,
+                   Mandatory = true,
+                   ParameterSetName = FilePathSSHHostParameterSet)]
         [ValidateNotNull]
         [Alias("PSPath")]
         public override string FilePath
@@ -653,6 +663,49 @@ namespace Microsoft.PowerShell.Commands
             get { return base.RunAsAdministrator; }
             set { base.RunAsAdministrator = value; }
         }
+
+        #region SSH Parameters
+
+        /// <summary>
+        /// Host Name
+        /// </summary>
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        public override string HostName
+        {
+            get { return base.HostName; }
+
+            set { base.HostName = value; }
+        }
+
+        /// <summary>
+        /// User Name
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(Mandatory = true, ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        [ValidateNotNullOrEmpty()]
+        public override string UserName
+        {
+            get { return base.UserName; }
+
+            set { base.UserName = value; }
+        }
+
+        /// <summary>
+        /// Key Path
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        [ValidateNotNullOrEmpty()]
+        public override string KeyPath
+        {
+            get { return base.KeyPath; }
+
+            set { base.KeyPath = value; }
+        }
+
+        #endregion
 
         #endregion Parameters
 
@@ -931,6 +984,18 @@ namespace Microsoft.PowerShell.Commands
                                         this.JobRepository.Add(job);
                                         WriteObject(job);
                                     }
+                                }
+                                break;
+
+                            case InvokeCommandCommand.SSHHostParameterSet:
+                            case InvokeCommandCommand.FilePathSSHHostParameterSet:
+                                {
+                                    var job = new PSRemotingJob(new string[] { this.HostName }, Operations,
+                                        ScriptBlock.ToString(), ThrottleLimit, name);
+                                    job.PSJobTypeName = RemoteJobType;
+                                    job.HideComputerName = hideComputerName;
+                                    this.JobRepository.Add(job);
+                                    WriteObject(job);
                                 }
                                 break;
 
