@@ -14,7 +14,7 @@ $headers = @{ Authorization = $basicAuthValue }
 # Changing the status of a Private GitHub repository to Public
 
 # URL to PowerShell Github Repo
-$PowerShellGithubUri = 'https://api.github.com/repos/maertend/opstest'
+$PowerShellGithubUri = '<insert GitHub repo URL>'
 
 # Get the blob from the Github API as a PS object
 $JsonBlock = Invoke-RestMethod -Uri $PowerShellGithubUri -Headers $headers
