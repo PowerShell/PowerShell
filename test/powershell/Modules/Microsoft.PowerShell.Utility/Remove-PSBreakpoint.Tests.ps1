@@ -1,4 +1,4 @@
-Describe "Remove-PSBreakpoint" {
+Describe "Remove-PSBreakpoint" -Tags "CI" {
     # Set up test script
     $testScript = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath psbreakpointtestscript.ps1
 

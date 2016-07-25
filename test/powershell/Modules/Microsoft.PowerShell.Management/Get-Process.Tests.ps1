@@ -1,4 +1,4 @@
-Describe "Get-Process" {
+Describe "Get-Process" -Tags "CI" {
     It "Should support -IncludeUserName" {
         (Get-Process powershell -IncludeUserName | Select-Object -First 1).UserName | Should Match $env:USERNAME
     }

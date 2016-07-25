@@ -1,4 +1,4 @@
-Describe "Get-Random DRT Unit Tests" -Tags DRT{
+Describe "Get-Random DRT Unit Tests" -Tags "CI" {
     $testData = @(
         @{ Name = 'no params'; Maximum = $null; Minimum = $null; GreaterThan = -1; LessThan = ([int32]::MaxValue); Type = 'System.Int32' }
         @{ Name = 'only positive maximum number'; Maximum = 100; Minimum = $null; GreaterThan = -1; LessThan = 100; Type = 'System.Int32' }
@@ -89,7 +89,7 @@ Describe "Get-Random DRT Unit Tests" -Tags DRT{
     }
 }
 
-Describe "Get-Random" {
+Describe "Get-Random" -Tags "CI" {
     It "Should return a random number greater than -1 " {
 	Get-Random | Should BeGreaterThan -1
     }

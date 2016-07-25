@@ -1,5 +1,5 @@
 
-Describe "Set-Variable DRT Unit Tests" -Tags DRT{
+Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 	It "Set-Variable normal variable Name should works"{
 		Set-Variable foo bar
 		$var1=Get-Variable -Name foo
@@ -161,7 +161,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags DRT{
 	}
 }
 
-Describe "Set-Variable" {
+Describe "Set-Variable" -Tags "CI" {
     It "Should create a new variable with no parameters" {
 	{ Set-Variable testVar } | Should Not Throw
     }

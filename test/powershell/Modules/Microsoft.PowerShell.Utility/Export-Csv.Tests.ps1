@@ -1,4 +1,4 @@
-Describe "Export-Csv" {
+Describe "Export-Csv" -Tags "CI" {
     $testObject = @("test","object","array")
     $testCsv = "output.csv"
 
@@ -65,7 +65,7 @@ Describe "Export-Csv" {
     }
 }
 
-Describe "Export-Csv DRT Unit Tests" -Tags DRT{
+Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
     $filePath = Join-Path $TestDrive -ChildPath "test.csv"
     $newLine = [environment]::NewLine
     It "Test basic function works well" {

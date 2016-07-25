@@ -1,4 +1,4 @@
-Describe "Set-PSDebug" {
+Describe "Set-PSDebug" -Tags "CI" {
     Context "Tracing can be used" {
         AfterEach {
             Set-PSDebug -Off

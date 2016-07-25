@@ -1,5 +1,5 @@
 
-Describe "New-Variable DRT Unit Tests" -Tags DRT{
+Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 	It "New-Variable variable with description should works"{
 		New-Variable foo bar -description "my description"
 		$var1=Get-Variable -Name foo
@@ -57,7 +57,7 @@ Describe "New-Variable DRT Unit Tests" -Tags DRT{
 	}
 }
 
-Describe "New-Variable" {
+Describe "New-Variable" -Tags "CI" {
     It "Should create a new variable with no parameters" {
 	{ New-Variable var1 } | Should Not Throw
     }

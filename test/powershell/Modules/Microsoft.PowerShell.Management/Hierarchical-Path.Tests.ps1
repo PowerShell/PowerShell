@@ -1,4 +1,4 @@
-Describe "Hierarchical paths" {
+Describe "Hierarchical paths" -Tags "CI" {
     BeforeAll {
         $data = "Hello World"
         Setup -File testFile.txt -Content $data

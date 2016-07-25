@@ -4,7 +4,7 @@
 ## Script debugging tests
 ##
 
-Describe "Breakpoints set on custom FileSystem provider files should work" -tags 'Innerloop', 'DRT' {
+Describe "Breakpoints set on custom FileSystem provider files should work" -Tags "CI" {
     #
     #  <Test>
     #    <TestType>DRT</TestType>
@@ -54,7 +54,7 @@ Describe "Breakpoints set on custom FileSystem provider files should work" -tags
 }
 
 
-Describe "Tests line breakpoints on dot-sourced files" -tags 'Innerloop', 'DRT' {
+Describe "Tests line breakpoints on dot-sourced files" -Tags "CI" {
     #
     #  <Test>
     #    <TestType>DRT</TestType>
@@ -109,7 +109,7 @@ Describe "Tests line breakpoints on dot-sourced files" -tags 'Innerloop', 'DRT' 
 }
 
 
-Describe "Function calls clear debugger cache too early" -tags 'Innerloop', 'DRT' {
+Describe "Function calls clear debugger cache too early" -Tags "CI" {
     #
     #  <Test>
     #    <TestType>DRT</TestType>
@@ -164,7 +164,7 @@ Describe "Function calls clear debugger cache too early" -tags 'Innerloop', 'DRT
 }
 
 
-Describe "Line breakpoints on commands in multi-line pipelines" -tags 'Innerloop', 'DRT' {
+Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
     #
     #  <Test>
     #    <TestType>DRT</TestType>
@@ -249,7 +249,7 @@ Describe "Line breakpoints on commands in multi-line pipelines" -tags 'Innerloop
 }
 
 
-Describe "Unit tests for various script breakpoints" -tags 'Innerloop', 'DRT' {
+Describe "Unit tests for various script breakpoints" -Tags "CI" {
     #
     #  <Test>
     #    <TestType>DRT</TestType>
@@ -416,7 +416,7 @@ Describe "Unit tests for various script breakpoints" -tags 'Innerloop', 'DRT' {
 }
 
 
-Describe "Unit tests for line breakpoints on dot-sourced files" -tags 'Innerloop', 'P1' {
+Describe "Unit tests for line breakpoints on dot-sourced files" -Tags "CI" {
     #
     #  <Test>
     #    <TestType>PriorityOne</TestType>
@@ -504,7 +504,7 @@ Describe "Unit tests for line breakpoints on dot-sourced files" -tags 'Innerloop
 }
 
 
-Describe "Unit tests for line breakpoints on modules" -tags 'Innerloop', 'DRT' {
+Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
     #
     #  <Test>
     #    <TestType>DRT</TestType>
@@ -609,7 +609,7 @@ Describe "Unit tests for line breakpoints on modules" -tags 'Innerloop', 'DRT' {
 }
 
 
-Describe "Sometimes line breakpoints are ignored" -tags 'Innerloop', 'DRT' {
+Describe "Sometimes line breakpoints are ignored" -Tags "CI" {
     #####################################################################################
     #
     #  <Test>

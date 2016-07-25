@@ -5,7 +5,7 @@
     if ($windowsPrincipal.IsInRole("Administrators") -eq $true) {
         $NonWinAdmin=$false
     } else {$NonWinAdmin=$true}
-  Describe "New-EventLog cmdlet tests" -Tags DRT {
+  Describe "New-EventLog cmdlet tests" -Tags "CI" {
     BeforeEach {
       Remove-EventLog -LogName TestLog -ea Ignore
     }

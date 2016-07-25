@@ -52,7 +52,7 @@ function SkipVersion([version]$minVersion,[version]$maxVersion) {
     return $true
 }
 
-Describe "Find, Get, Save, and Install-Package with Culture" -Tags @('BVT', 'DRT'){
+Describe "Find, Get, Save, and Install-Package with Culture" -Tags "Feature" {
 
     <#
     (get-packageprovider -name "OneGetTest" -list).name | should match "OneGetTest"
@@ -96,7 +96,7 @@ Describe "Find, Get, Save, and Install-Package with Culture" -Tags @('BVT', 'DRT
 	}
 }
 
-Describe "Event Test" -Tags @('BVT', 'DRT') {
+Describe "Event Test" -Tags "Feature" {
  
     it "EXPECTED: install a package should raise event" -Skip:(-not $IsWindows) {
      
@@ -281,7 +281,7 @@ Describe "Event Test" -Tags @('BVT', 'DRT') {
 	}
 }
 
-Describe "Find-Package" -Tags @('CI','SLOW'){
+Describe "Find-Package" -Tags @('Feature','SLOW'){
     it "EXPECTED: Find a package with a location created via new-psdrive" -Skip:(-not $IsWindows) {
         $Error.Clear()
         New-PSDrive -Name xx -PSProvider FileSystem -Root $TestDrive -warningaction:silentlycontinue -ea silentlycontinue > $null; find-package -name "fooobarrr" -provider nuget -source xx:\  -warningaction:silentlycontinue -ea silentlycontinue
@@ -486,7 +486,7 @@ Describe "Find-Package" -Tags @('CI','SLOW'){
     }
 }
 
-Describe Save-Package -Tags @('BVT', 'DRT'){
+Describe Save-Package -Tags "Feature" {
 	# make sure packagemanagement is loaded
     $destination = $TestDrive
 
@@ -726,7 +726,7 @@ Describe Save-Package -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe "save-package with Whatif" -Tags @('BVT', 'DRT'){
+Describe "save-package with Whatif" -Tags "Feature" {
     # make sure that packagemanagement is loaded
     #import-packagemanagement
     $tempDir = Join-Path $TestDrive "nugettesttempfolder"    
@@ -737,7 +737,7 @@ Describe "save-package with Whatif" -Tags @('BVT', 'DRT'){
 
         if (-not (Test-Path $tempDir))
         {
-            md $tempDir | Out-Null
+            new-item -type directory $tempDir | Out-Null
         }
     }
 
@@ -932,7 +932,7 @@ Describe "install-package with Scope" -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe Install-Package -Tags @('BVT', 'DRT'){
+Describe Install-Package -Tags "Feature" {
     $destination = Join-Path $TestDrive "NugetPackages"
     $relativetestpath = Join-Path $TestDrive "RelativeTestPath"
  
@@ -1115,7 +1115,7 @@ Describe Install-Package -Tags @('BVT', 'DRT'){
 	}
 }
 
-Describe Get-Package -Tags @('BVT', 'DRT'){
+Describe Get-Package -Tags "Feature" {
     $destination = Join-Path $TestDrive "NuGetPackages"
 
 	it "EXPECTED: Gets The 'Adept.NugetRunner' Package After Installing" {
@@ -1167,7 +1167,7 @@ Describe Get-Package -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe Uninstall-Package -Tags @('BVT', 'DRT'){
+Describe Uninstall-Package -Tags "Feature" {
     $destination = Join-Path $TestDrive "NuGetPackages"
 
 	it "EXPECTED: Uninstalls The Right version of 'Jquery'" {
@@ -1287,7 +1287,7 @@ Describe Uninstall-Package -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe Get-PackageProvider -Tags @('BVT', 'DRT'){
+Describe Get-PackageProvider -Tags "Feature" {
 
 	it "EXPECTED: Gets The 'Nuget' Package Provider" -Skip {
     	(get-packageprovider -name $nuget -force).name | should be $nuget
@@ -1301,7 +1301,7 @@ Describe Get-PackageProvider -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe Get-PackageSource -Tags @('BVT', 'DRT') {
+Describe Get-PackageSource -Tags "Feature" {
     $destination = Join-Path $TestDrive "NuGetPackages"
 
     BeforeAll{
@@ -1346,7 +1346,7 @@ Describe Get-PackageSource -Tags @('BVT', 'DRT') {
     }
 }
 
-Describe Register-PackageSource -Tags @('BVT', 'DRT'){
+Describe Register-PackageSource -Tags "Feature" {
     $Destination = Join-Path $TestDrive "NUgettest"
 
 	it "EXPECTED: Register a package source with a location created via new-psdrive" -Skip {
@@ -1454,7 +1454,7 @@ Describe Register-PackageSource -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe Unregister-PackageSource -Tags @('BVT', 'DRT'){
+Describe Unregister-PackageSource -Tags "Feature" {
 
 	it "EXPECTED: Unregisters The 'NugetTest.org' Package Source" {
 		(register-packagesource -name "nugettest.org" -provider $nuget -location $source)
@@ -1476,7 +1476,7 @@ Describe Unregister-PackageSource -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe Set-PackageSource -Tags @('BVT', 'DRT'){
+Describe Set-PackageSource -Tags "Feature" {
 
 	it "EXPECTED: Sets The 'NugetTest' Package Source to 'NugetTest2'" {
 		(register-packagesource -name "nugettest" -provider $nuget -location "https://www.nuget.org/api/v2")
@@ -1518,7 +1518,7 @@ Describe Set-PackageSource -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe Check-ForCorrectError -Tags @('BVT', 'DRT'){  
+Describe Check-ForCorrectError -Tags "Feature" {
 
     it "EXPECTED: returns a correct error for find-package with dynamic parameter when package source is wrong" {
         $Error.Clear()
@@ -1534,7 +1534,7 @@ Describe Check-ForCorrectError -Tags @('BVT', 'DRT'){
 
 }
 
-Describe Test-Proxy -Tags @('BVT', 'DRT') {
+Describe Test-Proxy -Tags "Feature" {
 
     It "EXPECTED: Register package source using proxy" -Skip {
         try {

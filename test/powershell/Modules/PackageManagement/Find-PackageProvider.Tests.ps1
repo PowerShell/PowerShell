@@ -17,7 +17,7 @@ $InternalGallery = "https://dtlgalleryint.cloudapp.net/api/v2/"
 # ------------------------------------------------------------------------------
 # Actual Tests:
 
-Describe "find-packageprovider" -Tags @('BVT', 'DRT'){
+Describe "find-packageprovider" -Tags "Feature" {
     #make sure the package repository exists
     $a=Get-PackageSource  -force| select Location, ProviderName
     
@@ -132,7 +132,7 @@ Describe "find-packageprovider" -Tags @('BVT', 'DRT'){
    
  }
     
-Describe "Find-Package With FilterOnTag" -Tags @('BVT', 'DRT'){
+Describe "Find-Package With FilterOnTag" -Tags "Feature" {
 
     it "EXPECTED: Find a package with FilterOnTag" {
 
@@ -160,7 +160,7 @@ Describe "Find-Package With FilterOnTag" -Tags @('BVT', 'DRT'){
 	}
 }
 
-Describe "Find-PackageProvider with Versions" -Tags @('BVT', 'DRT') {
+Describe "Find-PackageProvider with Versions" -Tags "Feature" {
     <# Nuget
     2.8.5.127
     2.8.5.122
@@ -184,7 +184,7 @@ Describe "Find-PackageProvider with Versions" -Tags @('BVT', 'DRT') {
 
 
 
-Describe "find-packageprovider Error Cases" -Tags @('BVT', 'DRT') {
+Describe "find-packageprovider Error Cases" -Tags "Feature" {
 
     AfterAll {
         $x =Get-PackageSource -Name OneGetTestSource -ErrorAction SilentlyContinue -WarningAction SilentlyContinue

@@ -1,4 +1,4 @@
-Describe "Invoke-Expression" {
+Describe "Invoke-Expression" -Tags "CI" {
 
     Context "Should execute the invoked command validly" {
 
@@ -27,7 +27,7 @@ Describe "Invoke-Expression" {
 	}
     }
 }
-Describe "Invoke-Expression DRT Unit Tests" -Tags DRT{
+Describe "Invoke-Expression DRT Unit Tests" -Tags "CI" {
 	It "Invoke-Expression should work"{	
 		$result=invoke-expression -Command 2+2
 		$result|Should Be 4

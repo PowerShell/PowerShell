@@ -1,4 +1,4 @@
-Describe "Import-Csv" {
+Describe "Import-Csv" -Tags "CI" {
     $testCsv = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestCsv.csv
 
     It "Should be able to call without error" {
@@ -50,7 +50,7 @@ Describe "Import-Csv" {
     }
 }
 
-Describe "Import-Csv DRT Unit Tests" -Tags DRT {
+Describe "Import-Csv DRT Unit Tests" -Tags "CI" {
     BeforeAll {
         $fileToGenerate = Join-Path $TestDrive -ChildPath "importCSVTest.csv"
         $psObject = [pscustomobject]@{ "First" = "1"; "Second" = "2" } 

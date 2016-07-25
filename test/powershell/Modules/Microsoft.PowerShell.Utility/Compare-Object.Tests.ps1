@@ -1,4 +1,4 @@
-Describe "Compare-Object" {
+Describe "Compare-Object" -Tags "CI" {
 	BeforeAll {
 		$nl = [Environment]::NewLine
 
@@ -120,7 +120,7 @@ Describe "Compare-Object" {
     }
 }
 
-Describe "Compare-Object DRT basic functionality" -Tags DRT{
+Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 		if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
 		{
 			Add-Type -TypeDefinition @"

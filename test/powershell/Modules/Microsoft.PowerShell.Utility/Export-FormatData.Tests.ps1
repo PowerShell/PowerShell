@@ -1,4 +1,4 @@
-Describe "Export-FormatData DRT Unit Tests" -Tags DRT{
+Describe "Export-FormatData DRT Unit Tests" -Tags "CI" {
     It "Test basic functionality" {
         $fd = Get-FormatData
         $tempFile = Join-Path $TestDrive -ChildPath "exportFormatTest.txt"
@@ -14,7 +14,7 @@ Describe "Export-FormatData DRT Unit Tests" -Tags DRT{
     }
 }
 
-Describe "Export-FormatData" {
+Describe "Export-FormatData" -Tags "CI" {
 
     Context "Check Export-FormatData can be called validly." {
 	It "Should be able to be called without error" {

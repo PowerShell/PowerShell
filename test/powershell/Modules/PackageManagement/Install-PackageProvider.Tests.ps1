@@ -41,7 +41,7 @@ Register-PackageSource -Name $InternalSource2 -Location $InternalGallery2 -Provi
 # ------------------------------------------------------------------------------
 # Actual Tests:
 
-Describe "install-packageprovider" -Tags @('BVT', 'DRT') {
+Describe "install-packageprovider" -Tags "Feature" {
 
     <#
     BeforeEach {
@@ -129,7 +129,7 @@ Describe "install-packageprovider" -Tags @('BVT', 'DRT') {
  }
 
 <# Don't need this test since we are not boostraping
-Describe "install-packageprovider with local source" -Tags @('BVT', 'DRT') {
+Describe "install-packageprovider with local source" -Tags "Feature" {
 
     BeforeAll{
         if( test-path $destination ) {
@@ -242,7 +242,7 @@ Describe "install-packageprovider with local source" -Tags @('BVT', 'DRT') {
  }
 #>
 
-Describe "Install-Save-Package with multiple sources" -Tags @('BVT', 'DRT'){
+Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
     $destination = Join-Path $TestDrive "installpp"
 
     It "install-package with array of registered sources with a single provider, Expect succeed" -Pending {
@@ -453,7 +453,7 @@ Describe "Install-Save-Package with multiple sources" -Tags @('BVT', 'DRT'){
         }
     }
 }
- Describe "install-packageprovider with Whatif" -Tags @('BVT', 'DRT'){
+ Describe "install-packageprovider with Whatif" -Tags "Feature" {
     # make sure that packagemanagement is loaded
     #import-packagemanagement
 
@@ -509,7 +509,7 @@ Describe "Install-Save-Package with multiple sources" -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe "install-packageprovider with Scope" -Tags @('BVT', 'DRT'){
+Describe "install-packageprovider with Scope" -Tags "Feature" {
     # PENDING a lot of these tests because jobs are broken on OPS
 
     BeforeAll {
@@ -608,7 +608,7 @@ Describe "install-packageprovider with Scope" -Tags @('BVT', 'DRT'){
         $a | ?{ $_.name -eq "tsdprovider" } | should not BeNullOrEmpty
     } 
 }
-Describe "install-PackageProvider with Versions" -Tags @('BVT', 'DRT') {
+Describe "install-PackageProvider with Versions" -Tags "Feature" {
     # make sure that packagemanagement is loaded
     <# Nuget
     2.8.5.127
@@ -656,7 +656,7 @@ Describe "install-PackageProvider with Versions" -Tags @('BVT', 'DRT') {
 }    
 
 
-Describe "Get-package with mulitiple providers" -Tags @('BVT', 'DRT'){
+Describe "Get-package with mulitiple providers" -Tags "Feature" {
 
     It "Get-package with multiple providers" -Pending {
 
@@ -677,7 +677,7 @@ Describe "Get-package with mulitiple providers" -Tags @('BVT', 'DRT'){
 
 }
 
-Describe "install-packageprovider Error Cases" -Tags @('BVT', 'DRT') {
+Describe "install-packageprovider Error Cases" -Tags "Feature" {
 
   AfterAll {
         Unregister-PackageSource -Name OneGetTestSource -Verbose -ErrorAction SilentlyContinue

@@ -1,4 +1,4 @@
-Describe "Group-Object DRT Unit Tests" -Tags DRT{
+Describe "Group-Object DRT Unit Tests" -Tags "CI" {
     It "Test for CaseSensitive switch" {
         $testObject = 'aA', 'aA', 'AA', 'AA'
         $results = $testObject | Group-Object -CaseSensitive
@@ -11,7 +11,7 @@ Describe "Group-Object DRT Unit Tests" -Tags DRT{
     }
 }
 
-Describe "Group-Object" {
+Describe "Group-Object" -Tags "CI" {
     $testObject = Get-ChildItem
 
     It "Should be called using an object as piped without error with no switches" {

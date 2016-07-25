@@ -1,4 +1,4 @@
-Describe "Get-Host DRT Unit Tests" -Tags DRT{
+Describe "Get-Host DRT Unit Tests" -Tags "CI" {
     It "Should works proper with get-host" {
         $results = Get-Host 
         $results | Should Be $Host
@@ -6,7 +6,7 @@ Describe "Get-Host DRT Unit Tests" -Tags DRT{
     }
 }
 
-Describe "Get-Host" {
+Describe "Get-Host" -Tags "CI" {
     It "Should return a type of InternalHost for Get-Host cmdlet" {
 
 	(Get-Host).GetType().Name | Should Be InternalHost

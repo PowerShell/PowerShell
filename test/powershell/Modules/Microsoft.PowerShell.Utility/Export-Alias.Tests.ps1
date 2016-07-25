@@ -1,4 +1,4 @@
-Describe "Export-Alias DRT Unit Tests" -Tags DRT{
+Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
     $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ExportAliasTestDirectory
     $testAliases        = "TestAliases"
     $fulltestpath       = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
@@ -124,7 +124,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags DRT{
     }
 }
 
-Describe "Export-Alias" {
+Describe "Export-Alias" -Tags "CI" {
     $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ExportAliasTestDirectory
     $testAliases        = "TestAliases"
     $fulltestpath       = Join-Path -Path $testAliasDirectory -ChildPath $testAliases

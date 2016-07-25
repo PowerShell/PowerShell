@@ -16,7 +16,7 @@ function Clean-State
     }
 }
 
-Describe "New-Item" {
+Describe "New-Item" -Tags "CI" {
     $tmpDirectory         = $TestDrive
     $testfile             = "testfile.txt"
     $testfolder           = "newDirectory"

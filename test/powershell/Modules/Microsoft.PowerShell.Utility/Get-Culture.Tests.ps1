@@ -1,4 +1,4 @@
-Describe "Get-Culture DRT Unit Tests" -Tags DRT{
+Describe "Get-Culture DRT Unit Tests" -Tags "CI" {
     It "Should works proper with get-culture" {
         $results = get-Culture
         $results -is "System.Globalization.CultureInfo" | Should be $true
@@ -6,7 +6,7 @@ Describe "Get-Culture DRT Unit Tests" -Tags DRT{
     }
 }
 
-Describe "Get-Culture" {
+Describe "Get-Culture" -Tags "CI" {
 
     It "Should return a type of CultureInfo for Get-Culture cmdlet" {
 

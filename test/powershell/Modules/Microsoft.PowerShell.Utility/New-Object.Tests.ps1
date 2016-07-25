@@ -1,4 +1,4 @@
-Describe "New-Object" {
+Describe "New-Object" -Tags "CI" {
     It "should create an object with 4 fields" {
         $o = New-Object psobject
 	    $val = $o.GetType()
@@ -33,7 +33,7 @@ Describe "New-Object" {
     }
 }
 
-Describe "New-Object DRT basic functionality" -Tags DRT{
+Describe "New-Object DRT basic functionality" -Tags "CI" {
 	It "New-Object with int array should work"{
 		$result = New-Object -TypeName int[] -Arg 10
 		$result.Count | Should Be 10

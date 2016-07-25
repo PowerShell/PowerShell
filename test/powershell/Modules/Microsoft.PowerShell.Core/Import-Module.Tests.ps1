@@ -1,4 +1,4 @@
-﻿Describe "Import-Module" {
+﻿Describe "Import-Module" -Tags "CI" {
     $moduleName = "Microsoft.PowerShell.Security"
 
     BeforeEach {

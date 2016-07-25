@@ -1,6 +1,6 @@
 $guid = [Guid]::NewGuid().ToString().Replace("-","")
 
-Describe "Add-Type" {
+Describe "Add-Type" -Tags "CI" {
     It "Should not throw given a simple class definition" {
         { Add-Type -TypeDefinition "public static class foo { }" } | Should Not Throw
     }

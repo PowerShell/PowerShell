@@ -1,4 +1,4 @@
-﻿Describe "Sort-Object" {
+﻿Describe "Sort-Object" -Tags "CI" {
 
     It "should be able to sort object in ascending with using Property switch" {
         { Get-ChildItem -Path $PSScriptRoot -Include *.ps1 -Recurse | Sort-Object -Property Length } | Should Not Throw
@@ -20,7 +20,7 @@
     }
 }
 
-Describe "Sort-Object DRT Unit Tests" -Tags DRT{
+Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 	It "Sort-Object with object array should work"{
 		$employee1 = [pscustomobject]@{"FirstName"="Eight"; "LastName"="Eight"; "YearsInMS"=8}
 		$employee2 = [pscustomobject]@{"FirstName"="Eight"; "YearsInMS"=$null}

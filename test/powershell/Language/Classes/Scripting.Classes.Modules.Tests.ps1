@@ -1,11 +1,11 @@
-﻿Describe 'PSModuleInfo.GetExportedTypeDefinitions()' {
+﻿Describe 'PSModuleInfo.GetExportedTypeDefinitions()' -Tags "CI" {
     It "doesn't throw for any module" {
         $discard = Get-Module -ListAvailable | % { $_.GetExportedTypeDefinitions() }
         $true | Should Be $true # we only verify that we didn't throw. This line contains a dummy Should to make pester happy.
     }
 }
 
-Describe 'use of a module from two runspaces' {
+Describe 'use of a module from two runspaces' -Tags "CI" {
     function New-TestModule {
         param(
             [string]$Name, 

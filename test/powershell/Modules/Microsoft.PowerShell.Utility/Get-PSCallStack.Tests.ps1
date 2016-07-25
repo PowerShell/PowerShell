@@ -1,4 +1,4 @@
-﻿Describe "Get-PSCallStack DRT Unit Tests" -Tags DRT {
+﻿Describe "Get-PSCallStack DRT Unit Tests" -Tags "CI" {
     BeforeAll {
         $scriptFileName = "GetTryCatchCallStack.ps1"
         $scriptFilePath = Join-Path $TestDrive -ChildPath $scriptFileName

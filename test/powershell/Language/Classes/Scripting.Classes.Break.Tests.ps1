@@ -1,4 +1,4 @@
-Describe 'Break statements with classes' -Tags "DRT" {
+Describe 'Break statements with classes' -Tags "CI" {
     
     function Get-Errors([string]$sourceCode) {
         $tokens = $null 

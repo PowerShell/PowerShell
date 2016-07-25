@@ -1,4 +1,4 @@
-Describe "Read-Host" {
+Describe "Read-Host" -Tags "CI" {
     Context "[Console]::ReadKey() implementation on non-Windows" {
         BeforeAll {
             $powershell = Join-Path -Path $PsHome -ChildPath "powershell"

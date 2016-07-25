@@ -1,4 +1,4 @@
-Describe "Write-Error DRT Unit Tests" -Tags DRT{
+Describe "Write-Error DRT Unit Tests" -Tags "CI" {
     It "Should be works with command: write-error myerrortext" {
         $e = Write-Error myerrortext 2>&1
         $e | Should Not BeNullOrEmpty
@@ -80,7 +80,7 @@ Describe "Write-Error DRT Unit Tests" -Tags DRT{
     }
 }
 
-Describe "Write-Error" {
+Describe "Write-Error" -Tags "CI" {
     It "Should be able to throw" {
 	Write-Error "test throw" -ErrorAction SilentlyContinue | Should Throw
     }

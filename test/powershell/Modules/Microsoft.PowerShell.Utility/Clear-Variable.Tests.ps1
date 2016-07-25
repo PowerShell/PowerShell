@@ -1,4 +1,4 @@
-Describe "Clear-Variable DRT Unit Tests" -Tags DRT{
+Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 	It "Clear-Variable normal variable Name should works"{
 		Set-Variable foo bar
 		Clear-Variable -Name foo
@@ -97,7 +97,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags DRT{
 	}
 }
 
-Describe "Clear-Variable" {
+Describe "Clear-Variable" -Tags "CI" {
 		BeforeEach {
 	$var1 = 3
 		}

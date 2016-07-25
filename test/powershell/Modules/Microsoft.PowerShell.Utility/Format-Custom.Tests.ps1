@@ -1,4 +1,4 @@
-Describe "Format-Custom" {
+Describe "Format-Custom" -Tags "CI" {
 
     Context "Check Format-Custom aliases" {
 
@@ -25,7 +25,7 @@ Describe "Format-Custom" {
 }
 
 
-Describe "Format-Custom DRT basic functionality" -Tags DRT{
+Describe "Format-Custom DRT basic functionality" -Tags "CI" {
 	Add-Type -TypeDefinition @"
     public abstract class NamedItem
     {

@@ -4,7 +4,7 @@
 
 Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
 
-Describe 'Classes inheritance syntax' -Tags "DRT" {
+Describe 'Classes inheritance syntax' -Tags "CI" {
 
     It 'Base types' {
         class C1 {}

@@ -1,5 +1,5 @@
 
-Describe "Update-TypeData basic functionality" -Tags DRT{
+Describe "Update-TypeData basic functionality" -Tags "CI" {
     BeforeAll {
         $testfilename = "testfile.ps1xml"
         $testfile = Join-Path -Path $TestDrive -ChildPath $testfilename

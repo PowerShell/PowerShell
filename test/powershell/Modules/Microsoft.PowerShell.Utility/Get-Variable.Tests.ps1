@@ -1,5 +1,5 @@
 
-Describe "Get-Variable DRT Unit Tests" -Tags DRT{
+Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 	It "Get-Variable of not existing variable Name should throw ItemNotFoundException"{	
 		try { 
 			Get-Variable -EA Stop -Name nonexistingVariableName
@@ -52,7 +52,7 @@ Describe "Get-Variable DRT Unit Tests" -Tags DRT{
 	}
 }
 
-Describe "Get-Variable" {
+Describe "Get-Variable" -Tags "CI" {
     It "Should be able to call with no parameters without error" {
 		{ Get-Variable } | Should Not Throw
     }

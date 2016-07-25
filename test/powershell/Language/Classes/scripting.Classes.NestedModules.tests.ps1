@@ -1,4 +1,4 @@
-Describe 'NestedModules' -Tags "DRT" {
+Describe 'NestedModules' -Tags "CI" {
     
     Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
 

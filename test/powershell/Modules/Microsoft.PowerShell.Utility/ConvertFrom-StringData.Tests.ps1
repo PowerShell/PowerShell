@@ -1,4 +1,4 @@
-Describe "ConvertFrom-StringData DRT Unit Tests" -Tags DRT {  
+Describe "ConvertFrom-StringData DRT Unit Tests" -Tags "CI" {
     It "Should able to throw error when convert invalid line" {
         $str =@"
 #comments here
@@ -18,7 +18,7 @@ def=content of def
     }
 }
 
-Describe "ConvertFrom-StringData" {
+Describe "ConvertFrom-StringData" -Tags "CI" {
     $sampleData = @'
 foo  = 0
 bar  = 1

@@ -32,7 +32,7 @@ $typeDefinition += "`n}"
 Write-Verbose $typeDefinition
 Add-Type $typeDefinition
 
-Describe "bnot on enums" -Tags "DRT" {
+Describe "bnot on enums" -Tags "CI" {
     foreach ($enumType in [type[]]$enumTypeNames)
     {
         Context $enumType.Name {
@@ -63,7 +63,7 @@ Describe "bnot on enums" -Tags "DRT" {
     }
 }
 
-Describe "bnot on integral types" -Tags "DRT" {
+Describe "bnot on integral types" -Tags "CI" {
     foreach ($baseType in $baseTypes.Keys)
     {
         Context $baseType.Name  {

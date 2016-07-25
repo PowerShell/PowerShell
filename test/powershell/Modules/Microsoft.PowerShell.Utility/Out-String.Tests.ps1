@@ -1,4 +1,4 @@
-Describe "Out-String DRT Unit Tests" -Tags DRT{
+Describe "Out-String DRT Unit Tests" -Tags "CI" {
 
     It "check display of properties with names containing wildcard characters" {
         $results = new-object psobject | add-member -passthru noteproperty 'name with square brackets: [0]' 'myvalue' | out-string
@@ -10,7 +10,7 @@ Describe "Out-String DRT Unit Tests" -Tags DRT{
 
 }
 
-Describe "Out-String" {
+Describe "Out-String" -Tags "CI" {
     $nl = [Environment]::NewLine
 
     It "Should accumulate the strings and returns them as a single string" {

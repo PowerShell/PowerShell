@@ -40,7 +40,7 @@ Register-PackageSource -Name $InternalSource -Location $InternalGallery -Provide
 # ------------------------------------------------------------------------------
 # Actual Tests:
 
-Describe "import-packageprovider" -Tags @('BVT', 'DRT'){
+Describe "import-packageprovider" -Tags "Feature" {
     
     It "Import -force 'PowerShellGet', a builtin package provider, Expect succeed" {
         #avoid popup for installing nuget-any.exe
@@ -159,7 +159,7 @@ Describe "import-packageprovider" -Tags @('BVT', 'DRT'){
 
 
 
-Describe "import-packageprovider Error Cases" -Tags @('BVT', 'DRT'){
+Describe "import-packageprovider Error Cases" -Tags "Feature" {
 
      It "Expected error when importing wildcard chars 'OneGetTest*" {
         $Error.Clear()
@@ -225,7 +225,7 @@ Describe "import-packageprovider Error Cases" -Tags @('BVT', 'DRT'){
 }
 
 
-Describe "Import-PackageProvider with OneGetTest that has 3 versions: 1.1, 3.5, and 9.9." -Tags @('BVT', 'DRT') {
+Describe "Import-PackageProvider with OneGetTest that has 3 versions: 1.1, 3.5, and 9.9." -Tags "Feature" {
 
     It "EXPECTED: success 'import OneGetTest -requiredVersion 3.5'" -Skip {
         powershell '(Import-packageprovider -name OneGetTest -requiredVersion 3.5 -WarningAction SilentlyContinue).Version.ToString()' | should match "3.5.0.0"
@@ -344,7 +344,7 @@ Describe "Import-PackageProvider with OneGetTest that has 3 versions: 1.1, 3.5, 
     }
 }
 
-Describe "Import-PackageProvider with OneGetTestProvider that has 2 versions: 4.5, 6.1" -Tags @('BVT', 'DRT') {
+Describe "Import-PackageProvider with OneGetTestProvider that has 2 versions: 4.5, 6.1" -Tags "Feature" {
     # install onegettestprovider
     # Not working yet since powershellget not working
     # Install-PackageProvider -Name OneGetTestProvider -RequiredVersion 4.5.0.0 -Source $InternalGallery

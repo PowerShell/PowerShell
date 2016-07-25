@@ -1,4 +1,4 @@
-Describe "Remove-Event" {
+Describe "Remove-Event" -Tags "CI" {
 
     BeforeEach {
 	New-Event -sourceidentifier PesterTimer  -sender Windows.timer -messagedata "PesterTestMessage"

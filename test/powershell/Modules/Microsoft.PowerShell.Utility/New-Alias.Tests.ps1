@@ -1,4 +1,4 @@
-Describe "New-Alias DRT Unit Tests" -Tags DRT{
+Describe "New-Alias DRT Unit Tests" -Tags "CI" {
 	It "New-Alias Constant should throw SessionStateUnauthorizedAccessException"{	
 		try {
 			New-Alias -Name "ABCD" -Value "foo" -Option "Constant" -Force:$true
@@ -39,7 +39,7 @@ Describe "New-Alias DRT Unit Tests" -Tags DRT{
 	}
 }
 
-Describe "New-Alias" {
+Describe "New-Alias" -Tags "CI" {
     It "Should be able to be called using the name and value parameters without error" {
 	{ New-Alias -Name testAlias -Value 100 } | Should Not Throw
     }

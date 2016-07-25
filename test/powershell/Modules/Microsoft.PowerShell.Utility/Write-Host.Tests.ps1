@@ -1,4 +1,4 @@
-﻿Describe "Write-Host DRT Unit Tests" -Tags DRT {
+﻿Describe "Write-Host DRT Unit Tests" -Tags "CI" {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"

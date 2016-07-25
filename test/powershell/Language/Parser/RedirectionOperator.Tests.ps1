@@ -1,4 +1,4 @@
-Describe "Redirection operator now supports encoding changes" {
+Describe "Redirection operator now supports encoding changes" -Tags "CI" {
     BeforeAll {
         $asciiString = "abc"
 

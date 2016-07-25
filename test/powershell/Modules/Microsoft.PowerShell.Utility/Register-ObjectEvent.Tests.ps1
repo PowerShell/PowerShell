@@ -1,4 +1,4 @@
-Describe "Register-ObjectEvent" {
+Describe "Register-ObjectEvent" -Tags "CI" {
 
     BeforeEach {
 	$pesterobject = (New-Object System.Collections.ObjectModel.ObservableCollection[object])

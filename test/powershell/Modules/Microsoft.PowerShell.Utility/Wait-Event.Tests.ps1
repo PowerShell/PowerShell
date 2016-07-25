@@ -1,4 +1,4 @@
-Describe "Wait-Event" {
+Describe "Wait-Event" -Tags "CI" {
 
     Context "Validate Wait-Event is waiting for events" {
 	It "Should time out when it does not receive a FakeEvent" {

@@ -1,5 +1,5 @@
 
-Describe "Select-XML DRT Unit Tests" -Tags DRT{
+Describe "Select-XML DRT Unit Tests" -Tags "CI" {
 	
 	BeforeAll {
 		$testfile = Join-Path -Path $TestDrive -ChildPath "testfile.xml"

@@ -1,4 +1,4 @@
-Describe "Clear-Content cmdlet tests" -Tags:DRT {
+Describe "Clear-Content cmdlet tests" -Tags "CI" {
   $file1 = "file1.txt"
   Setup -File "$file1"
 

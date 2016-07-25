@@ -1,5 +1,5 @@
 
-Describe "Type accelerators" -Tags "DRT" {
+Describe "Type accelerators" -Tags "CI" {
     $TypeAcceleratorsType = [psobject].Assembly.GetType("System.Management.Automation.TypeAccelerators")
 
     $TypeAccelerators = $TypeAcceleratorsType::Get

@@ -1,4 +1,4 @@
-Describe "ComparisonOperator" {
+Describe "ComparisonOperator" -tag "CI" {
     It "Should be $true for 1 -lt 2" {
 	 1 -lt 2       | Should Be $true
     }

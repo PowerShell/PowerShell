@@ -61,7 +61,7 @@ class C2
     #[ElapsedEventHandler][CompilerGeneratedAttribute()]$EventHandler
 }
 
-Describe "Using Namespace" -Tags "DRT" {
+Describe "Using Namespace" -Tags "CI" {
     It "Type literals w/ using namespace" {
         [Thread].FullName | Should Be System.Threading.Thread
         [Int32].FullName | Should Be System.Int32

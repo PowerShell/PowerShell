@@ -224,7 +224,7 @@ $canaryHashtable['canary'] += 100
     }
 }
 
-Describe "Exception error position" -Tags "DRT" {
+Describe "Exception error position" -Tags "CI" {
     class MSFT_3090412
     {
         static f1() { [MSFT_3090412]::bar = 42 }

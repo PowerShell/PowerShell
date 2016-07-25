@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation, 2015
 #
 
-Describe 'enums' -Tags "DRT" {
+Describe 'enums' -Tags "CI" {
 
     Context 'basic enums' {
         enum E1

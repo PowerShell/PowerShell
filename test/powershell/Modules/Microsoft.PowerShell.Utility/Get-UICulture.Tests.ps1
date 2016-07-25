@@ -1,4 +1,4 @@
-Describe "Get-UICulture" {
+Describe "Get-UICulture" -Tags "CI" {
     It "Should return a type of CultureInfo as the name of the type" {
 	(Get-UICulture).GetType().Name | Should Match CultureInfo
     }

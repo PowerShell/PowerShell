@@ -1,4 +1,4 @@
-Describe "Format-Wide" {
+Describe "Format-Wide" -Tags "CI" {
 
     It "Should have the same output between the alias and the unaliased function" {
         $nonaliased = Get-ChildItem | Format-Wide
@@ -39,7 +39,7 @@ Describe "Format-Wide" {
     }
 }
 
-Describe "Format-Wide DRT basic functionality" -Tags DRT{
+Describe "Format-Wide DRT basic functionality" -Tags "CI" {
   It "Format-Wide with array should work" {
 		$al = (0..255)
 		$info = @{}

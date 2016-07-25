@@ -1,4 +1,4 @@
-Describe "Write-Output DRT Unit Tests" -Tags DRT{
+Describe "Write-Output DRT Unit Tests" -Tags "CI" {
     It "Simple Write Object Test" {
         $objectWritten = 1, 2.2, @("John", "Smith", 10), "abc"
         $results = Write-Output $objectWritten
@@ -20,7 +20,7 @@ Describe "Write-Output DRT Unit Tests" -Tags DRT{
     }
 }
 
-Describe "Write-Output" {
+Describe "Write-Output" -Tags "CI" {
     $testString = $testString
     Context "Input Tests" {
 	It "Should allow piped input" {

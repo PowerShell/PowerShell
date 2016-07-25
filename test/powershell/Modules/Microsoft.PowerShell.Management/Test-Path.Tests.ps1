@@ -1,4 +1,4 @@
-Describe "Test-Path" {
+Describe "Test-Path" -Tags "CI" {
     BeforeAll {
 	$testdirectory = $TestDrive
 	$testfilename  = New-Item -path $testdirectory -Name testfile.txt -ItemType file -Value 1 -force

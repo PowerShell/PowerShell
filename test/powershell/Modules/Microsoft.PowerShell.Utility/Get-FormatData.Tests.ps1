@@ -1,4 +1,4 @@
-Describe "Get-FormatData" {
+Describe "Get-FormatData" -Tags "CI" {
 
     Context "Check return type of Get-FormatData" {
 

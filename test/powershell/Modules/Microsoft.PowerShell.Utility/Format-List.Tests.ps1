@@ -1,4 +1,4 @@
-Describe "Format-List" {
+Describe "Format-List" -Tags "CI" {
     $nl = [Environment]::NewLine
     BeforeEach {
         $in = New-Object PSObject
@@ -67,7 +67,7 @@ Describe "Format-List" {
     }
 }
 
-Describe "Format-List DRT basic functionality" -Tags DRT{
+Describe "Format-List DRT basic functionality" -Tags "CI" {
     It "Format-List with array should work" {
         $al = (0..255)
         $info = @{}
