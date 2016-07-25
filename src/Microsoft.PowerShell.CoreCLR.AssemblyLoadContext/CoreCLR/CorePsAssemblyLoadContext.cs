@@ -708,7 +708,33 @@ namespace System.Management.Automation
 
             PowerShellAssemblyLoadContext.InitializeSingleton(basePaths, useResolvingHandlerOnly: true);
         }
-        
+
+        /// <summary>
+        /// Create a singleton of PowerShellAssemblyLoadContext.
+        /// Then load System.Management.Automation and call the WSManPluginManagedEntryWrapper delegate.
+        /// </summary>
+        /// <remarks>
+        /// This method is used by the native host of the PSRP plugin.
+        /// </remarks>
+        /// <param name="wkrPtrs">
+        /// Passed to delegate.
+        /// </param>
+        public static int WSManPluginWrapper(IntPtr wkrPtrs)
+        {
+            string basePaths = System.IO.Path.GetDirectoryName(typeof(PowerShellAssemblyLoadContextInitializer).GetTypeInfo().Assembly.Location);
+            string entryAssemblyName = "System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
+            string entryTypeName = "System.Management.Automation.Remoting.WSManPluginManagedEntryWrapper";
+            string entryMethodName = "InitPlugin";
+            object[] args = { wkrPtrs };
+
+            var psLoadContext = PowerShellAssemblyLoadContext.InitializeSingleton(basePaths, useResolvingHandlerOnly: false);
+            var entryAssembly = psLoadContext.LoadFromAssemblyName(new AssemblyName(entryAssemblyName));
+            var entryType = entryAssembly.GetType(entryTypeName, throwOnError: true, ignoreCase: true);
+            var methodInfo = entryType.GetMethod(entryMethodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.IgnoreCase);
+
+            return (int)methodInfo.Invoke(null, args);
+        }
+
         /// <summary>
         /// Create a singleton of PowerShellAssemblyLoadContext.
         /// Then load the assembly containing the actual entry point using it.
