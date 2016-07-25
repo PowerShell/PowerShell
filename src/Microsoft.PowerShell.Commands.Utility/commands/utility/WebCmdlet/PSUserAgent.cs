@@ -1,12 +1,10 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
 using System.Management.Automation;
 using System.Globalization;
-using System.Reflection;
-using System.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -132,11 +130,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
+#if CORECLR
+                return System.Runtime.InteropServices.RuntimeInformation.OSDescription;
+#else
                 OperatingSystem os = Environment.OSVersion;
                 string platform = GetOSName(os.Platform);
                 string formattedOS = string.Format(CultureInfo.InvariantCulture, 
                     "{0} {1}.{2}", platform, os.Version.Major, os.Version.Minor);
                 return (formattedOS);
+#endif
             }
         }
 
@@ -148,6 +150,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+#if !CORECLR
         private static string GetOSName(PlatformID platformId)
         {
             string platform;
@@ -172,5 +175,6 @@ namespace Microsoft.PowerShell.Commands
 
             return (platform);
         }
+#endif
     }
 }

@@ -1577,7 +1577,8 @@ namespace Microsoft.PowerShell
         public override Coordinates CursorPosition
         {
             get { return new Coordinates(Console.CursorLeft, Console.CursorTop); }
-            set { Console.SetCursorPosition(value.X, value.Y); }
+            set { Console.SetCursorPosition(value.X < 0 ? 0 : value.X,
+                                            value.Y < 0 ? 0 : value.Y); }
         }
 
         /// <summary>
@@ -1796,54 +1797,49 @@ namespace Microsoft.PowerShell
         public override void SetBufferContents(Coordinates origin,
                                                BufferCell[,] contents)
         {
-            //if there are no contents, there is nothing to set the buffer to 
+            //if there are no contents, there is nothing to set the buffer to
             if (contents == null)
             {
                 PSTraceSource.NewArgumentNullException("contents");
             }
 
-            //variables to traverse through the buffer
-            int cursorX = origin.X; 
-            int cursorY = origin.Y;
-
             //if the cursor is on the last line, we need to make more space to print the specified buffer
-            if (cursorY == Console.BufferHeight -1 && cursorX >= Console.BufferWidth)
-            {   
-                //for each row in the buffer, create a new line    
+            if (origin.Y == BufferSize.Height - 1 && origin.X >= BufferSize.Width)
+            {
+                //for each row in the buffer, create a new line
                 int rows = contents.GetLength(0);
-                for (int i=0; i < rows; i++)
+                ScrollBuffer(rows);
+                // for each row in the buffer, move the cursor y up to the beginning of the created blank space
+                // but not above zero
+                if (origin.Y >= rows)
                 {
-                    ScrollBuffer(1);
+                    origin.Y -= rows;
                 }
-
-                //for each row in the buffer, move the cursor y up to the beginning of the created blank space
-                cursorY -= rows;
             }
 
-           //iterate through the buffer to set 
+            //iterate through the buffer to set
             foreach (var charitem in contents)
             {
-                //set the cursor to false to prevent cursor flicker 
+                //set the cursor to false to prevent cursor flicker
                 Console.CursorVisible = false;
-                
-                //if x is exceeding buffer width, reset to the next line                                   
-                if (cursorX >= Console.BufferWidth) 
-                {
-                    cursorX = 1; 
-                }            
 
-                //write the character from contents 
+                //if x is exceeding buffer width, reset to the next line
+                if (origin.X >= BufferSize.Width)
+                {
+                    origin.X = 1;
+                }
+
+                //write the character from contents
                 Console.Out.Write(charitem.Character);
 
                 //advance the character one position
-                cursorX++;
-            }            
+                origin.X++;
+            }
 
             //reset the cursor to the original position
-            Console.SetCursorPosition(cursorX, cursorY);
-            //reset the cursor to visible                
-            Console.CursorVisible = true;                    
-
+            CursorPosition = origin;
+            //reset the cursor to visible
+            Console.CursorVisible = true;
         }
 
         /// <summary>

@@ -40,29 +40,23 @@
                         "commands/utility/ShowCommand/ShowCommandParameterInfo.cs",
                         "commands/utility/ShowCommand/ShowCommandParameterSetInfo.cs",
                         "commands/utility/ShowCommand/ShowCommandParameterType.cs",
-                        "commands/utility/ShowCommand/ShowCommandProxy.cs",
-                        "commands/utility/WebCmdlet/BasicHtmlWebResponseObject.cs",
-                        "commands/utility/WebCmdlet/ContentHelper.cs",
-                        "commands/utility/WebCmdlet/FormObject.cs",
-                        "commands/utility/WebCmdlet/FormObjectCollection.cs",
-                        "commands/utility/WebCmdlet/HtmlWebResponseObject.cs",
-                        "commands/utility/WebCmdlet/InvokeRestMethodCommand.cs",
-                        "commands/utility/WebCmdlet/InvokeWebRequestCommand.cs",
-                        "commands/utility/WebCmdlet/JsonObjectTypeResolver.cs",
-                        "commands/utility/WebCmdlet/PSUserAgent.cs",
-                        "commands/utility/WebCmdlet/StreamHelper.cs",
-                        "commands/utility/WebCmdlet/WebCmdletElementCollection.cs",
-                        "commands/utility/WebCmdlet/WebRequestMethod.cs",
-                        "commands/utility/WebCmdlet/WebRequestPSCmdlet.cs",
-                        "commands/utility/WebCmdlet/WebRequestSession.cs",
-                        "commands/utility/WebCmdlet/WebResponseHelper.cs",
-                        "commands/utility/WebCmdlet/WebResponseObject.cs",
-                        "commands/utility/WebCmdlet/WebResponseObjectFactory.cs",
+                        "commands/utility/ShowCommand/ShowCommandProxy.cs",                        
                         "commands/utility/convert-HTML.cs",
                         "commands/utility/update-list.cs",
                         "singleshell/installer/MshUtilityMshSnapin.cs",
-
-                        "gen/FormatAndOut_out_gridview.cs",
+                        "commands/utility/WebCmdlet/FullClr/BasicHtmlWebResponseObject.FullClr.cs",
+                        "commands/utility/WebCmdlet/FullClr/ContentHelper.FullClr.cs",
+                        "commands/utility/WebCmdlet/FullClr/HtmlWebResponseObject.FullClr.cs",
+                        "commands/utility/WebCmdlet/FullClr/InvokeRestMethodCommand.FullClr.cs",
+                        "commands/utility/WebCmdlet/FullClr/InvokeWebRequestCommand.FullClr.cs",
+                        "commands/utility/WebCmdlet/FullClr/JsonObjectTypeResolver.cs",
+                        "commands/utility/WebCmdlet/FullClr/WebRequestPSCmdlet.FullClr.cs",
+                        "commands/utility/WebCmdlet/FullClr/WebResponseHelper.FullClr.cs",
+                        "commands/utility/WebCmdlet/FullClr/WebResponseObject.FullClr.cs",
+                        "commands/utility/WebCmdlet/FullClr/WebResponseObjectFactory.FullClr.cs",
+                        "commands/utility/WebCmdlet/CoreCLR/HtmlWebResponseObject.CoreClr.cs",
+                        
+			            "gen/FormatAndOut_out_gridview.cs",
                         "gen/ImplicitRemotingStrings.cs",
                         "gen/UtilityMshSnapinResources.cs",
                         "gen/OutPrinterDisplayStrings.cs",
@@ -96,15 +90,36 @@
                 "System.Diagnostics.TextWriterTraceListener": "4.0.0"
             }
         },
-        "net451": {
+        "net451": {            
             "frameworkAssemblies": {
                 "System.Drawing": "",
                 "System.Web": "",
                 "System.Web.Extensions": "",
-                "Microsoft.JScript": ""
+                "Microsoft.JScript": "",
             },
+
             "dependencies": {
                 "Microsoft.mshtml": "1.0.0"
+            },
+
+            "buildOptions": {
+                "define": [ "FULLCLR" ],
+                "compile": {
+                    "exclude": [
+                        "commands/utility/WebCmdlet/CoreCLR/BasicHtmlWebResponseObject.CoreClr.cs",
+                        "commands/utility/WebCmdlet/CoreCLR/ContentHelper.CoreClr.cs",
+                        "commands/utility/WebCmdlet/CoreCLR/HtmlWebResponseObject.CoreClr.cs",
+                        "commands/utility/WebCmdlet/CoreCLR/HttpKnownHeaderNames.cs",
+                        "commands/utility/WebCmdlet/CoreCLR/InvokeRestMethodCommand.CoreClr.cs",
+                        "commands/utility/WebCmdlet/CoreCLR/InvokeWebRequestCommand.CoreClr.cs",
+                        "commands/utility/WebCmdlet/CoreCLR/Resources.cs",
+                        "commands/utility/WebCmdlet/CoreCLR/WebProxy.cs",
+                        "commands/utility/WebCmdlet/CoreCLR/WebRequestPSCmdlet.CoreClr.cs",
+                        "commands/utility/WebCmdlet/CoreCLR/WebResponseHelper.CoreClr.cs",
+                        "commands/utility/WebCmdlet/CoreCLR/WebResponseObject.CoreClr.cs",
+                        "commands/utility/WebCmdlet/CoreCLR/WebResponseObjectFactory.CoreClr.cs"
+                    ]
+                }
             }
         }
     }

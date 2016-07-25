@@ -1,7 +1,6 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
-
 using System;
 using System.Net;
 using System.IO;
@@ -11,11 +10,6 @@ namespace Microsoft.PowerShell.Commands
 {
     internal static class WebResponseObjectFactory
     {
-        //internal static WebResponseObject GetResponseObject(WebResponse response)
-        //{
-        //    return GetResponseObject(response, null);
-        //}
-
         internal static WebResponseObject GetResponseObject(WebResponse response, Stream responseStream, ExecutionContext executionContext, bool useBasicParsing = false)
         {
             WebResponseObject output;

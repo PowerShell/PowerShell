@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
@@ -6,7 +6,6 @@ using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
-using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -20,6 +19,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Dictionary<string,string> Headers { get; set; }
+
+#if CORECLR
+        /// <summary>
+        /// gets or sets the content Headers when using HttpClient
+        /// </summary>
+        internal Dictionary<string, string> ContentHeaders { get; set; }
+#endif
 
         /// <summary>
         /// gets or sets the Cookies property
@@ -60,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
         /// gets or sets the RedirectMax property
         /// </summary>
         public int MaximumRedirection { get; set; }
-
+        
         /// <summary>
         /// Construct a new instance of a WebRequestSession object.
         /// </summary>
@@ -68,6 +74,9 @@ namespace Microsoft.PowerShell.Commands
         {
             // build the headers collection
             Headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+#if CORECLR
+            ContentHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+#endif
 
             // build the cookie jar
             Cookies = new CookieContainer();

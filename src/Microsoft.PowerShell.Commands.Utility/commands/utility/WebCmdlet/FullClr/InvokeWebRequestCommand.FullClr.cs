@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
@@ -6,11 +6,6 @@ using System;
 using System.Management.Automation;
 using System.Net;
 using System.IO;
-using System.Text;
-using System.Diagnostics.CodeAnalysis;
-using System.Collections;
-using Microsoft.Win32;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Microsoft.PowerShell.Commands
 {

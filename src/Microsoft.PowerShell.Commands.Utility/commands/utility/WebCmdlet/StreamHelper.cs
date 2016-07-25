@@ -1,15 +1,19 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
+using System.IO.Compression;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+
+#if CORECLR
+using System.Net.Http;
+#else
 using System.Net;
+#endif
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -99,44 +103,6 @@ namespace Microsoft.PowerShell.Commands
                 return base.Length;
             }
         }
-                
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="offset"></param>
-        /// <param name="count"></param>
-        /// <param name="callback"></param>
-        /// <param name="state"></param>
-        /// <returns></returns>
-        public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-        {
-            Initialize();
-            return base.BeginRead(buffer, offset, count, callback, state);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="offset"></param>
-        /// <param name="count"></param>
-        /// <param name="callback"></param>
-        /// <param name="state"></param>
-        /// <returns></returns>
-        public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
-        {
-            Initialize();
-            return base.BeginWrite(buffer, offset, count, callback, state);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public override void Close()
-        {
-            base.Close();
-        }
 
         /// <summary>
         /// 
@@ -149,16 +115,6 @@ namespace Microsoft.PowerShell.Commands
         {
             Initialize();
             return base.CopyToAsync(destination, bufferSize, cancellationToken);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override byte[] GetBuffer()
-        {
-            Initialize();
-            return base.GetBuffer();
         }
 
         /// <summary>
@@ -267,6 +223,51 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// 
         /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+        }
+
+#if !CORECLR
+        /// <summary>
+        /// 
+        /// </summary>
+        public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
+        {
+            Initialize();
+            return base.BeginRead(buffer, offset, count, callback, state);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
+        {
+            Initialize();
+            return base.BeginWrite(buffer, offset, count, callback, state);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override byte[] GetBuffer()
+        {
+            Initialize();
+            return base.GetBuffer();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override void Close()
+        {
+            base.Close();
+        }
+#endif
+
+        /// <summary>
+        /// 
+        /// </summary>
         private void Initialize()
         {
             if (isInitialized) { return; }
@@ -313,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception)
             {
-                base.Close();
+                base.Dispose();
                 throw;
             }
         }
@@ -371,7 +372,7 @@ namespace Microsoft.PowerShell.Commands
 
             output.Flush();
         }
-
+        
         internal static void WriteToStream(byte[] input, Stream output)
         {
             output.Write(input, 0, input.Length);
@@ -468,6 +469,29 @@ namespace Microsoft.PowerShell.Commands
             return EncodeToBytes(str, null);
         }
 
+#if CORECLR
+        internal static Stream GetResponseStream(HttpResponseMessage response)
+        {
+            Stream responseStream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
+            var contentEncoding = response.Content.Headers.ContentEncoding;
+
+            // HttpClient by default will automatically decompress GZip and Deflate content.
+            // We keep this decompression logic here just in case.
+            if (contentEncoding != null && contentEncoding.Count > 0)
+            {
+                if (contentEncoding.Contains("gzip"))
+                {
+                    responseStream = new GZipStream(responseStream, CompressionMode.Decompress);
+                }
+                else if (contentEncoding.Contains("deflate"))
+                {
+                    responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
+                }
+            }
+
+            return responseStream;
+        }
+#else
         internal static Stream GetResponseStream(WebResponse response)
         {
             Stream responseStream = response.GetResponseStream();
@@ -478,16 +502,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (contentEncoding.IndexOf("gzip", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    responseStream = new System.IO.Compression.GZipStream(responseStream, System.IO.Compression.CompressionMode.Decompress);
+                    responseStream = new GZipStream(responseStream, CompressionMode.Decompress);
                 }
                 else if (contentEncoding.IndexOf("deflate", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
-                    responseStream = new System.IO.Compression.DeflateStream(responseStream, System.IO.Compression.CompressionMode.Decompress);
+                    responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
                 }
             }
 
             return responseStream;
         }
+#endif
 
         #endregion Static Methods
     }
