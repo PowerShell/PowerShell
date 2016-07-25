@@ -69,19 +69,25 @@ Describe "Json Tests" -Tags "Feature" {
         It "Convertto-Json should handle Enum based on Int64" {
 
             # Test follow-up for bug Win8: 378368 Convertto-Json problems with Enum based on Int64.
-            enum TestEnum  : ulong { One = 1, Two = 2 } 
-            enum TestEnum1 : long  { One = 1, Two = 2 }
-            enum TestEnum2 : int   { One = 1, Two = 2 }
+            if ( ("JsonEnumTest" -as "Type") -eq $null ) { 
+                $enum1 = "TestEnum" + (get-random)
+                $enum2 = "TestEnum" + (get-random)
+                $enum3 = "TestEnum" + (get-random)
 
-            class Test {
-                [TestEnum]  $TestEnum  = [TestEnum]::One
-                [TestEnum1] $TestEnum1 = [TestEnum1]::Two
-                [TestEnum2] $TestEnum2 = [TestEnum2]::One
+                $jsontype = add-type -pass -TypeDef "
+                public enum $enum1 : ulong { One = 1, Two = 2 };
+                public enum $enum2 : long  { One = 1, Two = 2 };
+                public enum $enum3 : int   { One = 1, Two = 2 };
+                public class JsonEnumTest {
+                    public $enum1 TestEnum1 = ${enum1}.One;
+                    public $enum2 TestEnum2 = ${enum2}.Two;
+                    public $enum3 TestEnum3 = ${enum3}.One;
+                }" 
             }
-            $op = [Test]::New() | convertto-json | convertfrom-json
-            $op.TestEnum | Should Be "One"
-            $op.TestEnum1 | Should Be "Two"
-            $op.TestEnum2 | Should Be 1
+            $op = [JsonEnumTest]::New() | convertto-json | convertfrom-json
+            $op.TestEnum1 | Should Be "One"
+            $op.TestEnum2 | Should Be "Two"
+            $op.TestEnum3 | Should Be 1
         }
 
         It "Test followup for Windows 8 bug 121627" {
@@ -1321,7 +1327,9 @@ Describe "Validate Json serialization" -Tags "CI" {
             $a = 1..5
             $b = 6..10
 
-            $actual = [ordered]@{'a'=$a;'b'=$b} | ConvertTo-Json
+            # remove whitespace (and newline/cr) which reduces the complexity of a
+            # cross-plat test
+            $actual = ([ordered]@{'a'=$a;'b'=$b} | ConvertTo-Json) -replace "\s"
             $expected = @'
 {
     "a":  [
@@ -1340,7 +1348,8 @@ Describe "Validate Json serialization" -Tags "CI" {
           ]
 }
 '@
-            $actual | Should Be $expected
+            $expectedNoWhiteSpace = $expected -replace "\s"
+            $actual | Should Be $expectedNoWhiteSpace
         }
     }
 }
