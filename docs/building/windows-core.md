@@ -5,6 +5,8 @@ This guide will walk you through building PowerShell on Windows,
 targetting .NET Core. We'll start by showing how to set up your
 environment from scratch.
 
+You can also [build PowerShell for Full .NET framework](windows-full.md) on Windows.
+
 Environment
 ===========
 
