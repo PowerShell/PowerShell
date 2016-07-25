@@ -929,7 +929,7 @@ namespace System.Management.Automation
                     if (processedPath != null)
                         yield return processedPath;
                 }
-            }
+                }
 
             if (includeSystemModulePath)
             {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Xml;
 using System.IO;
 using System.Text;
@@ -43,13 +44,23 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Describes the desired module path during a GetModulePath call.
+        /// </summary>
+        internal enum ModulePathTarget
+        {
+            CurrentUser = 0,
+            SharedCommon = 1,
+            VersionSpecific = 2
+        }
+
+        /// <summary>
         /// Existing Key = HKLM:\System\CurrentControlSet\Control\Session Manager\Environment
         /// Proposed value = %ProgramFiles%\PowerShell\Modules by default
         /// 
         /// Note: There is no setter because this value is immutable.
         /// </summary>
         /// <returns>Module path values from the config file.</returns>
-        internal abstract string GetModulePath();
+        internal abstract string GetModulePath(ModulePathTarget target);
 
         /// <summary>
         /// Existing Key = HKCU and HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell
@@ -131,6 +142,7 @@ namespace System.Management.Automation
         private string psHomeConfigDirectory;
         private string appDataConfigDirectory;
         private const string configDirectoryName = "Configuration";
+        private const string modulePathFileName = "PSModulePath.json";
         private const string execPolicyFileName = "ExecutionPolicy.json";
         private const string maxStackSizeFileName = "PipeLineMaxStackSizeMB.json";
         private const string consolePromptingFileName = "ConsolePrompting.json";
@@ -164,9 +176,27 @@ namespace System.Management.Automation
             }
         }
 
-        internal override string GetModulePath()
+        /// <summary>
+        /// Note: This value is not writable, so it MUST be set during post-install configuration
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        internal override string GetModulePath(ModulePathTarget target)
         {
-            return string.Empty;
+            // TODO: This feels unnecessary since it can be calculated based on the current user...
+            if (ModulePathTarget.CurrentUser == target)
+            {
+                return ReadValueFromFile<string>(modulePathFileName, "UserModulePath");
+            }
+            else if (ModulePathTarget.SharedCommon == target)
+            {
+                return ReadValueFromFile<string>(modulePathFileName, "SharedCommonModulePath");
+            }
+            else
+            {
+                // TODO: Better way to handle this?
+                throw new InvalidEnumArgumentException();
+            }
         }
 
         /// <summary>
@@ -607,17 +637,17 @@ namespace System.Management.Automation
         internal RegistryAccessor()
         {
         }
-        /*
-        internal override string GetApplicationBase(string version)
-        {
-            string engineKeyPath = RegistryStrings.MonadRootKeyPath + "\\" + version + "\\" + RegistryStrings.MonadEngineKey;
 
-            return GetHklmString(engineKeyPath, RegistryStrings.MonadEngine_ApplicationBase);
-        }
-        */
-        internal override string GetModulePath()
+        /// <summary>
+        /// This method is not supported for systems when reading from the registry. Its value is
+        /// known at compile time for inbox PowerShell.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        internal override string GetModulePath(ModulePathTarget target)
         {
-            return string.Empty;
+            // TODO: Better way to handle this?
+            throw new InvalidEnumArgumentException();
         }
 
         /// <summary>
