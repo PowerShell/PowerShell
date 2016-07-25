@@ -461,12 +461,10 @@ function Get-PSOutput {
 function Start-PSPester {
     [CmdletBinding()]param(
         [string]$Flags = "-ExcludeTag 'Slow' -EnableExit -OutputFile pester-tests.xml -OutputFormat NUnitXml",
-        [string]$Tests = "*",
-        [ValidateScript({ Test-Path -PathType Container $_})]
-        [string]$Directory = "$PSScriptRoot/test/powershell"
+        [string]$Path = "$PSScriptRoot/test/powershell"
     )
 
-    & (Get-PSOutput) -noprofile -c "Import-Module '$PSScriptRoot/src/Modules/Shared/Pester'; Invoke-Pester $Flags $Directory/$Tests"
+    & (Get-PSOutput) -noprofile -c "Import-Module '$PSScriptRoot/src/Modules/Shared/Pester'; Invoke-Pester $Flags $Path"
     if ($LASTEXITCODE -ne 0) {
         throw "$LASTEXITCODE Pester tests failed"
     }
