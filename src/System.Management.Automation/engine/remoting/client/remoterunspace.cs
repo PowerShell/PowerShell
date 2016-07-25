@@ -974,6 +974,10 @@ namespace System.Management.Automation
             {
                 returnCaps |= RunspaceCapability.VMSocketTransport;
             }
+            else if (_connectionInfo is SSHConnectionInfo)
+            {
+                returnCaps |= RunspaceCapability.SSHTransport;
+            }
             else
             {
                 ContainerConnectionInfo containerConnectionInfo = _connectionInfo as ContainerConnectionInfo;

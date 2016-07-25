@@ -663,6 +663,7 @@ namespace System.Management.Automation.Runspaces
             if ((!(connectionInfo is WSManConnectionInfo)) &&
                 (!(connectionInfo is NewProcessConnectionInfo)) &&
                 (!(connectionInfo is NamedPipeConnectionInfo)) &&
+                (!(connectionInfo is SSHConnectionInfo)) &&
                 (!(connectionInfo is VMConnectionInfo)) &&
                 (!(connectionInfo is ContainerConnectionInfo)))
             {

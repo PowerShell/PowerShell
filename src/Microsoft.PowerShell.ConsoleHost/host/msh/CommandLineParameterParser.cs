@@ -155,6 +155,11 @@ namespace Microsoft.PowerShell
             get { return _namedPipeServerMode; }
         }
 
+        internal bool SSHServerMode
+        {
+            get { return sshServerMode; }
+        }
+
         internal bool ServerMode
         {
             get
@@ -393,6 +398,10 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "namedpipeservermode", "nam"))
                 {
                     _namedPipeServerMode = true;
+                }
+                else if (MatchSwitch(switchKey, "sshservermode", "sshs"))
+                {
+                    sshServerMode = true;
                 }
                 else if (MatchSwitch(switchKey, "configurationname", "config"))
                 {
@@ -932,19 +941,20 @@ namespace Microsoft.PowerShell
             return true;
         }
 
-        private bool _socketServerMode;
-        private bool _serverMode;
-        private bool _namedPipeServerMode;
-        private string _configurationName;
-        private ConsoleHost _parent;
-        private ConsoleHostUserInterface _ui;
-        private bool _showHelp;
-        private bool _showBanner = true;
-        private bool _noInteractive;
-        private string _bannerText;
-        private string _helpText;
-        private bool _abortStartup;
-        private bool _skipUserInit;
+        private bool socketServerMode;
+        private bool serverMode;
+        private bool namedPipeServerMode;
+        private bool sshServerMode;
+        private string configurationName;
+        private ConsoleHost parent;
+        private ConsoleHostUserInterface ui;
+        private bool showHelp;
+        private bool showBanner = true;
+        private bool noInteractive;
+        private string bannerText;
+        private string helpText;
+        private bool abortStartup;
+        private bool skipUserInit;
         // Win8: 182409 PowerShell 3.0 should run in STA mode by default
         // -sta and -mta are mutually exclusive..so tracking them using nullable boolean
         // if true, then sta is specified on the command line.

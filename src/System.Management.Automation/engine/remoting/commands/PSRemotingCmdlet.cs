@@ -177,6 +177,11 @@ namespace Microsoft.PowerShell.Commands
         protected const string VMNameParameterSet = "VMName";
 
         /// <summary>
+        /// SSH host parameter set
+        /// </summary>
+        protected const string SSHHostParameterSet = "SSHHost";
+
+        /// <summary>
         /// runspace parameter set
         /// </summary>
         protected const string SessionParameterSet = "Session";
@@ -673,6 +678,43 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _thumbPrint = null;
 
+        #region SSHHostParameters
+
+        /// <summary>
+        /// SSH Target Host Name
+        /// </summary>
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [ValidateNotNullOrEmpty()]
+        public virtual string HostName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// SSH User Name
+        /// </summary>
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [ValidateNotNullOrEmpty()]
+        public virtual string UserName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// SSH Key Path
+        /// </summary>
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [ValidateNotNullOrEmpty()]
+        public virtual string KeyPath
+        {
+            get;
+            set;
+        }
+
+        #endregion
+
         #endregion Properties
 
         #region Internal Static Methods
@@ -864,6 +906,11 @@ namespace Microsoft.PowerShell.Commands
         /// Container ID file path parameter set.
         /// </summary>
         protected const string FilePathContainerIdParameterSet = "FilePathContainerId";
+
+        /// <summary>
+        /// SSH Host file path parameter set.
+        /// </summary>
+        protected const string FilePathSSHHostParameterSet = "FilePathSSHHost";
 
         #endregion
 
@@ -1112,6 +1159,21 @@ namespace Microsoft.PowerShell.Commands
                 Operations.Add(operation);
             }
         }// CreateHelpersForSpecifiedComputerNames
+
+        /// <summary>
+        /// Creates helper objects for host names for PSRP over SSH
+        /// remoting.
+        /// </summary>
+        protected void CreateHelpersForSpecifiedHostNames()
+        {
+            var sshConnectionInfo = new SSHConnectionInfo(this.UserName, this.HostName, this.KeyPath);
+            var typeTable = TypeTable.LoadDefaultTypeFiles();
+            var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
+            var pipeline = CreatePipeline(remoteRunspace);
+
+            var operation = new ExecutionCmdletHelperComputerName(remoteRunspace, pipeline);
+            Operations.Add(operation);
+        }
 
         /// <summary>
         /// Creates helper objects with the specified command for 
@@ -1718,6 +1780,11 @@ namespace Microsoft.PowerShell.Commands
 
                         CreateHelpersForSpecifiedComputerNames();
                     }
+                    break;
+
+                case PSExecutionCmdlet.SSHHostParameterSet:
+                case PSExecutionCmdlet.FilePathSSHHostParameterSet:
+                    CreateHelpersForSpecifiedHostNames();
                     break;
 
                 case PSExecutionCmdlet.FilePathSessionParameterSet:
