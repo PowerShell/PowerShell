@@ -1,4 +1,4 @@
-Describe "History cmdlet test cases" -Tags "CI" {
+﻿Describe "History cmdlet test cases" -Tags "CI" {
 	
 	It "Tests Invoke-History on a cmdlet that generates output on all streams" {
         $streamSpammer = '

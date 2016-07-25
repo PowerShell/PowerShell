@@ -1,4 +1,4 @@
-# This is a Pester test suite to validate the Format-Hex cmdlet in the Microsoft.PowerShell.Utility module.
+﻿# This is a Pester test suite to validate the Format-Hex cmdlet in the Microsoft.PowerShell.Utility module.
 #
 # Copyright (c) Microsoft Corporation, 2015
 #

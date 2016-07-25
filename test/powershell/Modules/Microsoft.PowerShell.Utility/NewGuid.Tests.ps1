@@ -1,4 +1,4 @@
-Describe "New-Guid" -Tags "CI" {
+﻿Describe "New-Guid" -Tags "CI" {
 
     It "returns a new guid" {
         $guid = New-Guid

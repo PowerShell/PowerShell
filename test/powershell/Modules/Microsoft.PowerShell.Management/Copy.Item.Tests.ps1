@@ -1,4 +1,4 @@
-# This is a Pester test suite to validate Copy-Item remotely using a remote session.
+﻿# This is a Pester test suite to validate Copy-Item remotely using a remote session.
 #
 # Copyright (c) Microsoft Corporation, 2015
 #

@@ -69,57 +69,16 @@ Describe "Json Tests" -Tags "Feature" {
         It "Convertto-Json should handle Enum based on Int64" {
 
             # Test follow-up for bug Win8: 378368 Convertto-Json problems with Enum based on Int64.
-            $src = @"
-namespace Bug378368 
-{
-    public enum TestEnum : ulong
-    {
-        One = 1,
-        Two = 2
-    }
+            enum TestEnum  : ulong { One = 1, Two = 2 } 
+            enum TestEnum1 : long  { One = 1, Two = 2 }
+            enum TestEnum2 : int   { One = 1, Two = 2 }
 
-    public enum TestEnum1 : long
-    {
-        One = 1,
-        Two = 2
-    }
- 
-    public enum TestEnum2 : int
-    {
-        One = 1,
-        Two = 2
-    }
-
-    public class Test
-    {
-        public TestEnum TestEnum
-        {
-            get { return testEnum; }
-            set { testEnum = value;  }
-        }
-
-        private TestEnum testEnum = TestEnum.One;
-
-        public TestEnum1 TestEnum1
-        {
-            get { return testEnum1; }
-            set { testEnum1 = value;  }
-        }
-
-        private TestEnum1 testEnum1 = TestEnum1.Two;
-
-        public TestEnum2 TestEnum2
-        {
-            get { return testEnum2; }
-            set { testEnum2 = value;  }
-        }
-
-        private TestEnum2 testEnum2 = TestEnum2.One;
-    }
-}
-"@
-            Add-Type $src
-            $op = new-object Bug378368.Test | convertto-json | convertfrom-json
+            class Test {
+                [TestEnum]  $TestEnum  = [TestEnum]::One
+                [TestEnum1] $TestEnum1 = [TestEnum1]::Two
+                [TestEnum2] $TestEnum2 = [TestEnum2]::One
+            }
+            $op = [Test]::New() | convertto-json | convertfrom-json
             $op.TestEnum | Should Be "One"
             $op.TestEnum1 | Should Be "Two"
             $op.TestEnum2 | Should Be 1

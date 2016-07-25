@@ -1,4 +1,4 @@
-Describe "Object cmdlets" -Tags "CI" {
+﻿Describe "Object cmdlets" -Tags "CI" {
     Context "Group-Object" {
         It "AsHashtable returns a hashtable" {
             $result = Get-Process | Group-Object -Property ProcessName -AsHashTable

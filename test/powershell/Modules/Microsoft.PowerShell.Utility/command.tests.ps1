@@ -1,4 +1,4 @@
-Describe "Trace-Command" -tags "Feature" {
+﻿Describe "Trace-Command" -tags "Feature" {
     
     Context "Listner options" {
         BeforeAll {

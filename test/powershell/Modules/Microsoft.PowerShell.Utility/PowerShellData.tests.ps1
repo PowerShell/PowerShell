@@ -1,4 +1,4 @@
-Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "Feature" {
+﻿Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "Feature" {
 
     It "Validates error on a missing path" {
 
