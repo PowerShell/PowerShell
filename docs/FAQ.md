@@ -62,7 +62,7 @@ On subsequent runs, you may need to explicitly use `Start-PSBuild -ResGen` comma
 
 Try it, when you see compilation error about *strings.
 
-[More details](workflow/resources.md) about resource.
+[More details](dev-process/resx-files.md) about resource.
 
 ### TypeGen
 
