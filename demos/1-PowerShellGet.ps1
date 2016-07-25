@@ -6,9 +6,9 @@ Get-PackageProvider #(should show 2 providers - NuGet,PowerShellGet)
 ## Using PowerShellGet find and install other demos
 # Value: equivalent of pypi
 # Look for all the modules we'll be demoing today
-Find-Module -Tag 'Open PowerShell','Demos'
+Find-Module -Tag 'PSEdition_PowerShellCore','Demos'
 # Pipe this to Install-Module to install them
-Find-Module -Tag 'Open PowerShell','Demos' | Install-Module -Verbose
+Find-Module -Tag 'PSEdition_PowerShellCore','Demos' | Install-Module -Verbose
 Get-Module
 # Note that ScriptAnalyzer gets installed because the VSCode demo is dependent upon it
 
