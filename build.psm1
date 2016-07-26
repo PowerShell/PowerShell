@@ -1085,7 +1085,7 @@ function Start-TypeGen
     Push-Location "$PSScriptRoot/src/TypeCatalogParser"
     try
     {
-        dotnet run ../powershell-sdk
+        dotnet run
     }
     finally
     {
