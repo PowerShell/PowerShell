@@ -9,6 +9,8 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace Microsoft.PowerShell
 {
@@ -105,12 +107,25 @@ namespace Microsoft.PowerShell
                 int exitCode = 0;
                 try
                 {
+#if CORECLR
+                    string assemblyPath = typeof(PSVersionInfo).GetTypeInfo().Assembly.Location;
+                    string buildVersion = FileVersionInfo.GetVersionInfo(assemblyPath).FileVersion;
+                    string ShellBanner = String.Format(CultureInfo.InvariantCulture, ManagedEntranceStrings.ShellBannerNonWindowsPowerShell, buildVersion);
+                    exitCode = Microsoft.PowerShell.ConsoleShell.Start(
+                        null,
+                        ManagedEntranceStrings.ShellBanner,
+                        ManagedEntranceStrings.ShellHelp,
+                        warning == null ? null : warning.Message,
+                        args);
+#else       
+
                     exitCode = Microsoft.PowerShell.ConsoleShell.Start(
                         configuration,
                         ManagedEntranceStrings.ShellBanner,
                         ManagedEntranceStrings.ShellHelp,
                         warning == null ? null : warning.Message,
                         args);
+#endif
                 }
                 catch (System.Management.Automation.Host.HostException e)
                 {
