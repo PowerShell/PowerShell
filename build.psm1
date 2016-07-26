@@ -376,7 +376,7 @@ function New-PSOptions {
         }
         else
         {
-            $Top = "$PSScriptRoot/src/powershell-windows"
+            $Top = "$PSScriptRoot/src/powershell-win-core"
         }
     }
     Write-Verbose "Top project directory is $Top"
