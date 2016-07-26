@@ -2161,22 +2161,20 @@ namespace System.Management.Automation.Runspaces
             startInfo.CreateNoWindow = true;
             startInfo.UseShellExecute = false;
 
-#if !UNIX
-            return StartSSHProcessWinNative(startInfo, out stdInWriterVar, out stdOutReaderVar, out stdErrReaderVar);
-#else
-            return StartSSHProcessManaged(startInfo, out stdInWriterVar, out stdOutReaderVar, out stdErrReaderVar);
-#endif
+            return StartSSHProcessImpl(startInfo, out stdInWriterVar, out stdOutReaderVar, out stdErrReaderVar);
         }
 
-#endregion
+        #endregion
 
         #region SSH Process Creation
+
+#if UNIX
 
         /// <summary>
         /// Create a process through managed APIs and return StdIn, StdOut, StdError reader/writers
         /// This works for non-Windows platforms and is simpler.
         /// </summary>
-        private static System.Diagnostics.Process StartSSHProcessManaged(
+        private static System.Diagnostics.Process StartSSHProcessImpl(
             System.Diagnostics.ProcessStartInfo startInfo,
             out StreamWriter stdInWriterVar,
             out StreamReader stdOutReaderVar,
@@ -2198,6 +2196,8 @@ namespace System.Management.Automation.Runspaces
             return process;
         }
 
+#else
+
         /// <summary>
         /// Create a process through native Win32 APIs and return StdIn, StdOut, StdError reader/writers
         /// This needs to be done via Win32 APIs because managed code creates anonymous synchronous pipes 
@@ -2205,7 +2205,7 @@ namespace System.Management.Automation.Runspaces
         /// be through named pipes.  Managed code for named pipes is unreliable and so this is done via
         /// P-Invoking native APIs.
         /// </summary>
-        private static System.Diagnostics.Process StartSSHProcessWinNative(
+        private static System.Diagnostics.Process StartSSHProcessImpl(
             System.Diagnostics.ProcessStartInfo startInfo,
             out StreamWriter stdInWriterVar,
             out StreamReader stdOutReaderVar,
@@ -2258,6 +2258,8 @@ namespace System.Management.Automation.Runspaces
 
             return sshProcess;
         }
+
+#endif
 
         #region SSH process creation with Std named pipes
 
