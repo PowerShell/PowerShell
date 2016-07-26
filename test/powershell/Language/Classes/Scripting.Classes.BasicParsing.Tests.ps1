@@ -649,7 +649,7 @@ function test-it([EE]$ee){$ee}
         }
     }
 
-Describe 'Type building' -Tags "DRT" {
+Describe 'Type building' -Tags "CI" {
     It 'should build the type only once for scriptblock' {
         $a = $null
         1..10 | % {
@@ -671,7 +671,7 @@ Describe 'Type building' -Tags "DRT" {
     }
 }
 
-Describe 'RuntimeType created for TypeDefinitionAst' {
+Describe 'RuntimeType created for TypeDefinitionAst' -Tags "CI" {
     
     It 'can make cast to the right RuntimeType in two different contexts' -pending {
         
@@ -707,7 +707,7 @@ class Derived : Base
     }
 }
 
-Describe 'TypeTable lookups' {
+Describe 'TypeTable lookups' -Tags "CI" {
     
     Context 'Call methods from a different thread' {
         $b = [powershell]::Create().AddScript(
@@ -733,7 +733,7 @@ class B
     }
 }
 
-Describe 'Protected method access' {
+Describe 'Protected method access' -Tags "CI" {
 
     Add-Type @'
 namespace Foo
@@ -816,7 +816,7 @@ return [A]::new()
     }
 }
 
-Describe 'variable analysis' {
+Describe 'variable analysis' -Tags "CI" {
     It 'can specify type construct on the local variables' {
         class A { [string] getFoo() { return 'foo'} }
 

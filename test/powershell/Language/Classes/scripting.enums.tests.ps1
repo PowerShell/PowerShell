@@ -73,7 +73,7 @@ Describe 'enums' -Tags "CI" {
     }
 }
 
-Describe 'Basic enum errors' -Tags "DRT" {
+Describe 'Basic enum errors' -Tags "CI" {
 
     Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
 

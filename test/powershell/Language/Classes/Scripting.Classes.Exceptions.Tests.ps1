@@ -270,7 +270,7 @@ Describe "Exception error position" -Tags "CI" {
     }
 }
 
-Describe "Exception from initializer" -Tags "DRT" {
+Describe "Exception from initializer" -Tags "CI" {
     class MSFT_6397334a
     {
         [int]$a = "zz"

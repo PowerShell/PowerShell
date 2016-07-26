@@ -774,7 +774,7 @@ Describe "save-package with Whatif" -Tags "Feature" {
 }
 
 
-Describe "install-package with Whatif" -Tags @('BVT', 'DRT'){
+Describe "install-package with Whatif" -Tags "Feature" {
     # make sure that packagemanagement is loaded
     #import-packagemanagement
     $installationPath = Join-Path $TestDrive "InstallationPath"
@@ -817,7 +817,7 @@ Describe "install-package with Whatif" -Tags @('BVT', 'DRT'){
     }
 }
 
-Describe "install-package with Scope" -Tags @('BVT', 'DRT'){
+Describe "install-package with Scope" -tags "Feature" {
 
      it "EXPECTED Success: Get and Install-Package without Scope without destination" {
             
