@@ -98,7 +98,7 @@ function Test-Completions
     {
         foreach ($test in $TestCases)
         {
-            Describe $test.Description {
+            Describe $test.Description -Tags "CI" {
                 $hash = $Test.TestInput
                 $results = Get-Completions @hash
                 

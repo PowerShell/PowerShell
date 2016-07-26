@@ -72,7 +72,7 @@ Describe "get-packageprovider" -Tags "CI" {
 }
 
 
-Describe "Get-PackageProvider with list" Tags "CI" {
+Describe "Get-PackageProvider with list" -Tags "CI" {
 
     It "lists package providers installed" {
         $x = (Get-PackageProvider).Count -gt 1 | should be $true

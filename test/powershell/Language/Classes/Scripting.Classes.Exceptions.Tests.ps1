@@ -1,4 +1,4 @@
-Describe 'Exceptions flow for classes' -Tags "DRT" {
+Describe 'Exceptions flow for classes' -Tags "CI" {
     
     $canaryHashtable = @{}
 

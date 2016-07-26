@@ -18,7 +18,7 @@ $source = "http://www.nuget.org/api/v2/"
 
 # Actual Tests:
 
-Describe "Get-package" -Tags @('BVT', 'DRT'){
+Describe "Get-package" -Tags "Feature" {
     # make sure that packagemanagement is loaded
     It "EXPECTED: Get-package accepts array of strings for -providername parameter" -Skip {
         $x = (get-package -providername Programs,Msi)

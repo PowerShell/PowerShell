@@ -467,11 +467,24 @@ function Get-PSOutput {
 
 function Start-PSPester {
     [CmdletBinding()]param(
-        [string]$Flags = "-ExcludeTag 'Slow' -Tag 'CI' -EnableExit -OutputFile pester-tests.xml -OutputFormat NUnitXml",
+        [string]$OutputFormat = "NUnitXml",
+        [string]$OutputFile = "pester-tests.xml",
+        [switch]$DisableExit,
+        [string[]]$ExcludeTag = "Slow",
+        [string[]]$Tag = "CI",
         [string]$Path = "$PSScriptRoot/test/powershell"
     )
+    $tagString = "-outputFormat ${OutputFormat} -outputFile ${outputFile} "
+    if ( ! $DisableExit ) { $tagString += " -EnableExit" }
+    if ( $ExcludeTag )    { $tagString += " -ExcludeTag @('" + (${ExcludeTag} -join "','") + "')" }
+    if ( $Tag )           { $tagString +=        " -Tag @('" + (${Tag} -join "','") + "')" }
 
-    & (Get-PSOutput) -noprofile -c "Import-Module '$PSHOME/Modules/Pester'; Invoke-Pester $Flags $Path"
+    $powershell = get-psoutput
+    $psdir = [io.path]::GetDirectoryName($powershell)
+    $moduleDir = [io.path]::Combine($psdir,"Modules","Pester")
+
+    Write-Verbose "Import-Module '$moduleDir'; Invoke-Pester $tagString $Path"
+    & (Get-PSOutput) -noprofile -c "Import-Module '$moduleDir'; Invoke-Pester $tagString $Path"
     if ($LASTEXITCODE -ne 0) {
         throw "$LASTEXITCODE Pester tests failed"
     }
