@@ -1,6 +1,6 @@
 #Breaking Changes
 
-We have a serious commitment to backwards compatibility with all earlier versions of PowerShell – including the language, cmdlets, APIs and the various protocols (e.g. MS_PSRP) and data formats (e.g. cdxml).
+We have a serious commitment to backwards compatibility with all earlier versions of PowerShell – including the language, cmdlets, APIs and the various protocols (e.g. MS_PowerShellRemoting) and data formats (e.g. cdxml).
 
 Below is a summary of our approach to handing breaking changes including what kinds of things constitute breaking changes, how we categorize them, and how we decide what we're willing to take.
 
