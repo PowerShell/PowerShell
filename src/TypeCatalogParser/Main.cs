@@ -15,9 +15,7 @@ namespace TypeCatalogParser
         {
             if (args.Length != 1)
             {
-                throw new ArgumentException(
-                    "Usage: ./TypeCatalogParser <path-to-top-level-powershell-project>\n" +
-                    "Valid options are '../powershell-unix' and '../powershell-windows'");
+                throw new ArgumentException("Usage: ./TypeCatalogParser ../powershell-sdk");
             }
 
             // These are packages that are not part of .NET Core and must be excluded

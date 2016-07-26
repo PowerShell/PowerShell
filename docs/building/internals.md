@@ -15,7 +15,7 @@ We are calling `dotnet` tool build for `$Top` directory
 
 - `src\powershell-windows` for CoreCLR on Windows.
 - `src\powershell-unix` for CoreCLR on Linux and OS X.
-- `src\Microsoft.PowerShell.ConsoleHost` for FullCLR builds (Windows only)
+- `src\powershell-full` for FullCLR builds (Windows only)
 
 ### Dummy dependencies
 
@@ -28,7 +28,7 @@ Dummy dependencies allows us to build just `$Top` folder, instead of building se
 ### Dummy dependencies rules
 
 * If assembly is part of FullCLR build,
-it should be listed as a dependency for FullCLR $Top folder (src\Microsoft.PowerShell.ConsoleHost)
+it should be listed as a dependency for FullCLR $Top folder (src\powershell-full)
 
 * If assembly is part of CoreCLR build,
 it should be listed as a dependency for $Top folder (src\powershell-unix or src\powershell-windows)
