@@ -269,7 +269,7 @@ See [Running PowerShell Scripts Is as Easy as 1-2-3] [run-ps] for more details.
 
 [run-ps]:http://windowsitpro.com/powershell/running-powershell-scripts-easy-1-2-3
 
-Further Reading
+Recommended Training and Reading
 ----
 -	Video: [Get Started with PowerShell][remoting] from Channel9
 - [eBooks from PowerShell.org](https://powershell.org/ebooks/)
