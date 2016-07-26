@@ -301,19 +301,16 @@ namespace System.Management.Automation.Remoting.Server
         protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(string configurationName, PSRemotingCryptoHelperServer cryptoHelper)
         {
             PSSenderInfo senderInfo;
-            if (Platform.IsWindows)
-            {
-                WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent();
-                PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity("", true, currentIdentity.Name, null),
-                    currentIdentity);
-                senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
-            }
-            else
-            {
-                PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity("", true, "", null),
-                    null);
-                senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
-            }
+#if !UNIX
+            WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent();
+            PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity("", true, currentIdentity.Name, null),
+                currentIdentity);
+            senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
+#else
+            PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity("", true, "", null),
+                null);
+            senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
+#endif
 
             OutOfProcessServerSessionTransportManager tm = new OutOfProcessServerSessionTransportManager(originalStdOut, originalStdErr, cryptoHelper);
 
@@ -504,30 +501,27 @@ namespace System.Management.Automation.Remoting.Server
 
         private SSHProcessMediator() : base(true)
         {
-            if (Platform.IsWindows)
-            {
-                var inputHandle = GetStdHandle((uint)StandardHandleId.Input);
+#if !UNIX
+            var inputHandle = GetStdHandle((uint)StandardHandleId.Input);
                 originalStdIn = new StreamReader(
                     new FileStream(new SafeFileHandle(inputHandle, false), FileAccess.Read));
 
-                var outputHandle = GetStdHandle((uint)StandardHandleId.Output);
-                originalStdOut = new OutOfProcessTextWriter(
-                    new StreamWriter(
-                        new FileStream(new SafeFileHandle(outputHandle, false), FileAccess.Write)));
+            var outputHandle = GetStdHandle((uint)StandardHandleId.Output);
+            originalStdOut = new OutOfProcessTextWriter(
+                new StreamWriter(
+                    new FileStream(new SafeFileHandle(outputHandle, false), FileAccess.Write)));
 
-                var errorHandle = GetStdHandle((uint)StandardHandleId.Error);
-                originalStdErr = new OutOfProcessTextWriter(
-                    new StreamWriter(
-                        new FileStream(new SafeFileHandle(errorHandle, false), FileAccess.Write)));
-            }
-            else
-            {
-                originalStdIn = new StreamReader(Console.OpenStandardInput(), true);
-                originalStdOut = new OutOfProcessTextWriter(
-                    new StreamWriter(Console.OpenStandardOutput()));
-                originalStdErr = new OutOfProcessTextWriter(
-                    new StreamWriter(Console.OpenStandardError()));
-            }
+            var errorHandle = GetStdHandle((uint)StandardHandleId.Error);
+            originalStdErr = new OutOfProcessTextWriter(
+                new StreamWriter(
+                    new FileStream(new SafeFileHandle(errorHandle, false), FileAccess.Write)));
+#else
+            originalStdIn = new StreamReader(Console.OpenStandardInput(), true);
+            originalStdOut = new OutOfProcessTextWriter(
+                new StreamWriter(Console.OpenStandardOutput()));
+            originalStdErr = new OutOfProcessTextWriter(
+                new StreamWriter(Console.OpenStandardError()));
+#endif
         }
 
         #endregion
@@ -551,8 +545,14 @@ namespace System.Management.Automation.Remoting.Server
                 SingletonInstance = new SSHProcessMediator();
             }
 
-            SingletonInstance.Start(initialCommand,
-                (Platform.IsWindows) ? new PSRemotingCryptoHelperServer() : null);
+            PSRemotingCryptoHelperServer cryptoHelper;
+#if !UNIX
+            cryptoHelper = new PSRemotingCryptoHelperServer();
+#else
+            cryptoHelper = null;
+#endif
+
+            SingletonInstance.Start(initialCommand, cryptoHelper);
         }
 
         #endregion
@@ -642,7 +642,7 @@ namespace System.Management.Automation.Remoting.Server
                 SingletonInstance = new NamedPipeProcessMediator(namedPipeServer);
             }
             
-#if !CORECLR 
+#if !CORECLR
             // AppDomain is not available in CoreCLR
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
 #endif
@@ -732,7 +732,7 @@ namespace System.Management.Automation.Remoting.Server
                 Instance = new HyperVSocketMediator();
             }
 
-#if !CORECLR 
+#if !CORECLR
             // AppDomain is not available in CoreCLR
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
 #endif

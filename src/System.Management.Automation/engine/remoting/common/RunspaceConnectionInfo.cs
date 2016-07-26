@@ -2109,35 +2109,31 @@ namespace System.Management.Automation.Runspaces
             out StreamReader stdErrReaderVar)
         {
             string filePath = string.Empty;
-            if (Platform.IsWindows)
+#if !UNIX
+            var context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
+            if (context != null)
             {
-                var context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-                if (context != null)
+                var cmdInfo = context.CommandDiscovery.LookupCommandInfo("ssh.exe", CommandOrigin.Internal) as ApplicationInfo;
+                if (cmdInfo != null)
                 {
-                    var cmdInfo = context.CommandDiscovery.LookupCommandInfo("ssh.exe", CommandOrigin.Internal) as ApplicationInfo;
-                    if (cmdInfo != null)
-                    {
-                        filePath = cmdInfo.Path;
-                    }
+                    filePath = cmdInfo.Path;
                 }
             }
-            else
-            {
-                filePath = @"ssh";
-            }
+#else
+            filePath = @"ssh";
+#endif
 
             // Extract an optional domain name if provided.
             string domainName = null;
             string userName = this.UserName;
-            if (Platform.IsWindows)
+#if !UNIX
+            var parts = this.UserName.Split(Utils.Separators.Backslash);
+            if (parts.Length == 2)
             {
-                var parts = this.UserName.Split(Utils.Separators.Backslash);
-                if (parts.Length == 2)
-                {
-                    domainName = parts[0];
-                    userName = parts[1];
-                }
+                domainName = parts[0];
+                userName = parts[1];
             }
+#endif
 
             // Create client ssh process that hosts powershell.exe as a subsystem and is configured
             // to be in server mode for PSRP over SSHD:
@@ -2165,17 +2161,14 @@ namespace System.Management.Automation.Runspaces
             startInfo.CreateNoWindow = true;
             startInfo.UseShellExecute = false;
 
-            if (Platform.IsWindows)
-            {
-                return StartSSHProcessWinNative(startInfo, out stdInWriterVar, out stdOutReaderVar, out stdErrReaderVar);
-            }
-            else
-            {
-                return StartSSHProcessManaged(startInfo, out stdInWriterVar, out stdOutReaderVar, out stdErrReaderVar);
-            }
+#if !UNIX
+            return StartSSHProcessWinNative(startInfo, out stdInWriterVar, out stdOutReaderVar, out stdErrReaderVar);
+#else
+            return StartSSHProcessManaged(startInfo, out stdInWriterVar, out stdOutReaderVar, out stdErrReaderVar);
+#endif
         }
 
-        #endregion
+#endregion
 
         #region SSH Process Creation
 
@@ -2267,6 +2260,8 @@ namespace System.Management.Automation.Runspaces
         }
 
         #region SSH process creation with Std named pipes
+
+#if !UNIX
 
         /// <summary>
         /// CreateProcessWithRedirectedStd
@@ -2449,9 +2444,13 @@ namespace System.Management.Automation.Runspaces
             return pipeHandle;
         }
 
+#endif
+
         #endregion
 
         #region Native APIs
+
+#if !UNIX
 
         internal static class SafeNativeMethods
         {
@@ -2646,6 +2645,8 @@ namespace System.Management.Automation.Runspaces
                 }
             }
         }
+
+#endif
 
         #endregion
 

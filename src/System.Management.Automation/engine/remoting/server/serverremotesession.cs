@@ -170,13 +170,11 @@ namespace System.Management.Automation.Remoting
             _senderInfo = senderInfo;
             _configProviderId = configurationProviderId;
             _initParameters = initializationParameters;
-            if (Platform.IsWindows)
-            {
-            	_cryptoHelper = (PSRemotingCryptoHelperServer)transportManager.CryptoHelper;
-            	_cryptoHelper.Session = this;
-            }
-
-            _context = new ServerRemoteSessionContext();
+#if !UNIX
+            _cryptoHelper = (PSRemotingCryptoHelperServer)transportManager.CryptoHelper;
+            _cryptoHelper.Session = this;
+#endif
+                _context = new ServerRemoteSessionContext();
             _sessionDSHandler = new ServerRemoteSessionDSHandlerlImpl(this, transportManager);
             BaseSessionDataStructureHandler = _sessionDSHandler;
             _sessionDSHandler.CreateRunspacePoolReceived += HandleCreateRunspacePool;
@@ -916,15 +914,11 @@ namespace System.Management.Automation.Remoting
                     _runspacePoolDriver.InstanceId);
             }
             
-            bool isAdministrator;
-            if (Platform.IsWindows)
-            {
-                isAdministrator = _senderInfo.UserInfo.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
-            }
-            else
-            {
-                isAdministrator = false;
-            }
+#if !UNIX
+            bool isAdministrator = _senderInfo.UserInfo.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+#else
+            bool isAdministrator = false;
+#endif
 
             ServerRunspacePoolDriver tmpDriver = new ServerRunspacePoolDriver(
                 clientRunspacePoolId,
@@ -1216,6 +1210,6 @@ namespace System.Management.Automation.Remoting
             cmdTransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = maxRecvdObjectSize;
         }
 
-        #endregion
+#endregion
     }
 }
