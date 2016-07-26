@@ -89,7 +89,15 @@ function Start-PSBuild {
     if ($Clean)
     {
         log "Cleaning your working directory. You can also do it with 'git clean -fdX'"
-        git clean -fdX
+        Push-Location $PSScriptRoot
+        try
+        {
+            git clean -fdX
+        }
+        finally
+        {
+            Pop-Location
+        }
     }
 
     # save Git description to file for PowerShell to include in PSVersionTable
