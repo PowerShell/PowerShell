@@ -70,7 +70,7 @@ namespace System.Management.Automation
         /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell"</param>
         /// <returns></returns>
         internal abstract string GetMachineExecutionPolicy(PropertyScope scope, string shellId);
-        internal abstract void RemoveMachineExecutionPolicy(PropertyScope scope, string shellId); // TODO: Necessary?
+        internal abstract void RemoveMachineExecutionPolicy(PropertyScope scope, string shellId);
         internal abstract void SetMachineExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy);
 
         /// <summary>
@@ -111,7 +111,6 @@ namespace System.Management.Automation
     {
         /// <summary>
         /// Template method to generate the appropriate accessor for a given environment.
-        /// TODO: Is it really necessary to make this Singleton-ish? 
         /// </summary>
         /// <returns></returns>
         internal static PropertyAccessor GetPropertyAccessor()
@@ -119,7 +118,7 @@ namespace System.Management.Automation
             if (null == _activePropertyAccessor)
             {
 #if CORECLR
-                // TODO: I must differentiate between inbox PS and side-by-side PS here!
+                // TODO: I must differentiate between inbox PS and side-by-side PS here eventually
                 _activePropertyAccessor = new JsonConfigFileAccessor();
 #else
                 _activePropertyAccessor = new RegistryAccessor();
@@ -166,9 +165,7 @@ namespace System.Management.Automation
             //
             // Initialize (and create if necessary) the per-user configuration directory
             //
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string psConfigPath = Path.Combine("PowerShell", "1.0", configDirectoryName);
-            appDataConfigDirectory = Path.Combine(appDataPath, psConfigPath);
+            appDataConfigDirectory = Path.Combine(Utils.GetUserSettingsDirectory(), configDirectoryName);
 
             if (!Directory.Exists(appDataConfigDirectory))
             {
@@ -183,9 +180,9 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override string GetModulePath(ModulePathTarget target)
         {
-            // TODO: This feels unnecessary since it can be calculated based on the current user...
             if (ModulePathTarget.CurrentUser == target)
             {
+                // TODO: This feels unnecessary since it can be calculated based on the current user...
                 return ReadValueFromFile<string>(modulePathFileName, "UserModulePath");
             }
             else if (ModulePathTarget.SharedCommon == target)
@@ -194,8 +191,8 @@ namespace System.Management.Automation
             }
             else
             {
-                // TODO: Better way to handle this?
-                throw new InvalidEnumArgumentException();
+                // TODO: Is there a better way to handle this?
+                throw new ArgumentException();
             }
         }
 
@@ -212,10 +209,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="scope">Whether this is a system-wide or per-user setting.</param>
         /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell"</param>
-        /// <returns></returns>
+        /// <returns>The execution policy if found. Null otherwise.</returns>
         internal override string GetMachineExecutionPolicy(PropertyScope scope, string shellId)
         {
-            string execPolicy = "Undefined";
+            string execPolicy = null;
             string scopeDirectory = psHomeConfigDirectory;
 
             // Defaults to system wide.
@@ -232,13 +229,22 @@ namespace System.Management.Automation
             {
                 execPolicy = rawExecPolicy;
             }
-            // TODO: Throw if NullOrEmpty?
             return execPolicy;
         }
 
-        internal override void RemoveMachineExecutionPolicy(PropertyScope scope, string shellId) // TODO: Necessary?
+        internal override void RemoveMachineExecutionPolicy(PropertyScope scope, string shellId)
         {
-            // TODO: Work to do here if I decide to support it
+            string scopeDirectory = psHomeConfigDirectory;
+
+            // Defaults to system wide.
+            if (PropertyScope.CurrentUser == scope)
+            {
+                scopeDirectory = appDataConfigDirectory;
+            }
+
+            string fileName = Path.Combine(scopeDirectory, execPolicyFileName);
+
+            RemoveValueFromFile<string>(fileName, shellId);
         }
 
         internal override void SetMachineExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy)
@@ -295,7 +301,7 @@ namespace System.Management.Automation
         ///     "ConsolePrompting" : bool
         /// }
         /// </summary>
-        /// <returns>Whether console prompting should happen.</returns>
+        /// <returns>Whether console prompting should happen. If the value cannot be read it defaults to false.</returns>
         internal override bool GetConsolePrompting(ref Exception exception)
         {
             string fileName = Path.Combine(psHomeConfigDirectory, consolePromptingFileName);
@@ -317,7 +323,7 @@ namespace System.Management.Automation
         ///     "DisablePromptToUpdateHelp" : bool
         /// }
         /// </summary>
-        /// <returns>Boolean indicating whether Update-Help should prompt</returns>
+        /// <returns>Boolean indicating whether Update-Help should prompt. If the value cannot be read, it defaults to false.</returns>
         internal override bool GetDisablePromptToUpdateHelp()
         {
             string fileName = Path.Combine(psHomeConfigDirectory, updateHelpPromptFileName);
@@ -339,7 +345,7 @@ namespace System.Management.Automation
         ///     "DefaultSourcePath" : "path to local updatable help location"
         /// }
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The source path if found, null otherwise.</returns>
         internal override string GetDefaultSourcePath()
         {
             string fileName = Path.Combine(psHomeConfigDirectory, updatableHelpSourcePathFileName);
@@ -350,8 +356,7 @@ namespace System.Management.Automation
             {
                 return rawExecPolicy;
             }
-            // TODO: Throw if NullOrEmpty?
-            return String.Empty;
+            return null;
         }
 
         internal override void SetDefaultSourcePath(string defaultPath)
@@ -370,7 +375,11 @@ namespace System.Management.Automation
                 using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
                 {
                     JObject jsonObject = (JObject) JToken.ReadFrom(jsonReader);
-                    return jsonObject.GetValue(key).ToObject<T>();
+                    JToken value = jsonObject.GetValue(key);
+                    if (null != value)
+                    {
+                        return value.ToObject<T>();
+                    }
                 }
             }
             catch (ArgumentException) { }
@@ -389,8 +398,80 @@ namespace System.Management.Automation
 
         /// <summary>
         /// TODO: Should this return success fail or throw?
-        /// 
-        /// TODO: Catch exceptions
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fileName"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="addValue">Whether the key-value pair should be added or removed from the file</param>
+        private void UpdateValueInFile<T>(string fileName, string key, T value, bool addValue)
+        {
+            try
+            {
+                JObject objectToWrite = new JObject();
+
+                if (File.Exists(fileName))
+                {
+                    // Since multiple properties can be in a single file, replacement
+                    // is required instead of overwrite if a file already exists.
+                    using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                    using (StreamReader streamRdr = new StreamReader(fs))
+                    using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
+                    {
+                        JObject jsonObject = (JObject) JToken.ReadFrom(jsonReader);
+                        IEnumerable<JProperty> properties = jsonObject.Properties();
+                        foreach (JProperty property in properties)
+                        {
+                            if (String.Equals(property.Name, key, StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (addValue)
+                                {
+                                    // Add the updated value to the output object instead
+                                    // of the preexisting one
+                                    objectToWrite.Add(new JProperty(key, value));
+                                }
+                                // else the value is skipped so it is removed from the file
+                            }
+                            else
+                            {
+                                // This preserves existing properties that do not
+                                // match the one to update
+                                objectToWrite.Add(new JProperty(property));
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (addValue)
+                    {
+                        // The file doesn't exist, so create it with the new property
+                        objectToWrite.Add(new JProperty(key, value));
+                    }
+                }
+
+                using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                using (StreamWriter streamWriter = new StreamWriter(fs))
+                using (JsonTextWriter jsonWriter = new JsonTextWriter(streamWriter))
+                {
+                    objectToWrite.WriteTo(jsonWriter);
+                }
+
+            }
+            catch (ArgumentException) { }
+            //catch (ArgumentNullException) { }
+            catch (NotSupportedException) { }
+            catch (FileNotFoundException) { }
+            catch (System.IO.IOException) { }
+            //catch (DirectoryNotFoundException) { }
+            catch (System.Security.SecurityException) { }
+            catch (UnauthorizedAccessException) { }
+            //catch (PathTooLongException) { }
+            //catch (ArgumentOutOfRangeException) { }
+        }
+
+        /// <summary>
+        /// TODO: Should this return success, fail, or throw?
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="fileName"></param>
@@ -398,233 +479,20 @@ namespace System.Management.Automation
         /// <param name="value"></param>
         private void WriteValueToFile<T>(string fileName, string key, T value)
         {
-            JObject objectToWrite = new JObject();
+            UpdateValueInFile<T>(fileName, key, value, true);
+        }
 
-            if (File.Exists(fileName))
-            {
-                // Since multiple properties can be in a single file, replacement
-                // is required instead of overwrite if a file already exists.
-                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
-                using (StreamReader streamRdr = new StreamReader(fs))
-                using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
-                {
-                    JObject jsonObject = (JObject) JToken.ReadFrom(jsonReader);
-                    IEnumerable<JProperty> properties = jsonObject.Properties();
-                    foreach (JProperty property in properties)
-                    {
-                        if (String.Equals(property.Name, key, StringComparison.OrdinalIgnoreCase))
-                        {
-                            // Add the updated value to the output object instead
-                            // of the preexisting one
-                            objectToWrite.Add(new JProperty(key, value));
-                        }
-                        else
-                        {
-                            // This preserves existing properties that do not
-                            // match the one to update
-                            objectToWrite.Add(new JProperty(property));
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // The file doesn't exist, so create it with the new property
-                objectToWrite.Add(new JProperty(key, value));
-            }
-
-            using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-            using (StreamWriter streamWriter = new StreamWriter(fs))
-            using (JsonTextWriter jsonWriter = new JsonTextWriter(streamWriter))
-            {
-                objectToWrite.WriteTo(jsonWriter);
-            }
+        /// <summary>
+        /// TODO: Should this return success, fail, or throw?
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fileName"></param>
+        /// <param name="key"></param>
+        private void RemoveValueFromFile<T>(string fileName, string key)
+        {
+            UpdateValueInFile<T>(fileName, key, default(T), false);
         }
     }
-    /*
-    /// <summary>
-    /// TODO: Add caching so for faster access? Would prevent runtime changes from affecting runtime reads though...
-    /// </summary>
-    internal class XmlConfigFileAccessor : PropertyAccessor
-    {
-        private string fileName = string.Empty;
-
-        internal XmlConfigFileAccessor()
-        {
-            Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
-            var result = Path.GetDirectoryName(ClrFacade.GetAssemblyLocation(assembly));
-            fileName = result + "\\PowerShellConfig.xml";
-        }
-
-        internal override string GetApplicationBase(string version)
-        {
-            return ReadElementContentFromFileAsString("PSHome");
-        }
-
-        internal override string GetModulePath()
-        {
-            return ReadElementContentFromFileAsString("PSModulePath");
-        }
-
-        internal override string GetMachineShellPath(string shellId)
-        {
-            return ReadElementContentFromFileAsString("MachinePowerShellExePath");
-        }
-
-        internal override string GetMachineExecutionPolicy(string shellId)
-        {
-
-            return ReadElementContentFromFileAsString("MachineExecutionPolicy");
-        }
-
-        internal override void SetMachineExecutionPolicy(string shellId, string executionPolicy)
-        {
-            this.ReplaceElementValueInFile("MachineExecutionPolicy", executionPolicy);
-        }
-
-        internal override void RemoveMachineExecutionPolicy(string shellId)
-        {
-            this.RemoveElementFromFile("MachineExecutionPolicy");
-        }
-
-        private string ReadElementContentFromFileAsString(string elementName)
-        {
-            using (FileStream fs = new FileStream(this.fileName, FileMode.Open, FileAccess.Read))
-            using (StreamReader streamRdr = new StreamReader(fs))
-            {
-                XmlReaderSettings xmlReaderSettings =
-                    InternalDeserializer.XmlReaderSettingsForUntrustedXmlDocument.Clone();
-
-                using (XmlReader reader = XmlReader.Create(streamRdr, xmlReaderSettings))
-                {
-                    reader.MoveToContent();
-                    if (reader.ReadToDescendant(elementName))
-                    {
-                        return reader.ReadElementContentAsString();
-                    }
-                }
-            }
-            return string.Empty;
-        }
-
-        private void AddElementToFile(string elementName, string elementValue)
-        {
-            XmlDocument doc = new XmlDocument();
-
-            using (FileStream fs = new FileStream(this.fileName, FileMode.Open, FileAccess.Read))
-            using (StreamReader streamRdr = new StreamReader(fs))
-            {
-                doc.Load(streamRdr);
-
-                XmlNodeList nodeList = doc.GetElementsByTagName(elementName);
-
-                if (nodeList.Count > 0)
-                {
-                    // Element exists. Replace it.
-                    this.ReplaceElementValueInFile(elementName, elementValue);
-                }
-                else
-                {
-                    XmlElement newElem = doc.CreateElement(elementName);
-                    newElem.InnerText = elementValue;
-                    doc.DocumentElement.AppendChild(newElem);
-                }
-            }
-            WriteDocumentToFile(doc);
-        }
-
-        private void RemoveElementFromFile(string elementName)
-        {
-            XmlDocument doc = new XmlDocument();
-
-            using (FileStream fs = new FileStream(this.fileName, FileMode.Open, FileAccess.Read))
-            using (StreamReader streamRdr = new StreamReader(fs))
-            {
-                doc.Load(streamRdr);
-
-                XmlNodeList nodeList = doc.GetElementsByTagName(elementName);
-
-                if (0 == nodeList.Count)
-                {
-                    // There is nothing to do because the specified node does not exist
-                    return;
-                }
-                else if (nodeList.Count > 1)
-                {
-                    // throw docuemnt format exception? Nodes should be unique...
-                    return;
-                }
-                else
-                {
-                    XmlNode first = nodeList.Item(0);
-                    if (null != first)
-                    {
-                        doc.DocumentElement.RemoveChild(first);
-                    }
-                }
-            }
-            WriteDocumentToFile(doc);
-        }
-
-        private void ReplaceElementValueInFile(string elementName, string elementValue)
-        {
-            XmlDocument doc = new XmlDocument();
-
-            using (FileStream fs = new FileStream(this.fileName, FileMode.Open, FileAccess.Read))
-            using (StreamReader streamRdr = new StreamReader(fs))
-            {
-                doc.Load(streamRdr);
-
-                XmlNodeList nodeList = doc.GetElementsByTagName(elementName);
-
-                if (0 == nodeList.Count)
-                {
-                    // There is nothing to do because the specified node does not exist
-                    return;
-                }
-                else if (nodeList.Count > 1)
-                {
-                    // throw docuemnt format exception? Nodes should be unique...
-                    return;
-                }
-                else
-                {
-                    XmlNode first = nodeList.Item(0);
-                    if (null != first)
-                    {
-                        first.InnerText = elementValue;
-                    }
-                }
-                // Alternate technique if the first one doesnt work
-                // Node is present, so replace it
-                //XmlElement newElem = doc.CreateElement("title");
-                //newElem.InnerText = elementValue;
-
-                //Replace the title element.
-                //doc.DocumentElement.ReplaceChild(elem, root.FirstChild);
-                
-            }
-            WriteDocumentToFile(doc);
-        }
-
-        private void WriteDocumentToFile(XmlDocument doc)
-        {
-            using (FileStream fs = new FileStream(this.fileName, FileMode.Create, FileAccess.Write))
-            using (StreamWriter streamWriter = new StreamWriter(fs))
-            {
-                XmlWriterSettings xmlSettings = new XmlWriterSettings();
-                xmlSettings.Encoding = Encoding.UTF8;
-                xmlSettings.CloseOutput = true;
-                xmlSettings.Indent = true;
-
-                using (XmlWriter writer = XmlWriter.Create(streamWriter, xmlSettings))
-                {
-                    doc.WriteTo(writer);
-                }
-            }
-        }
-    }
-    */
 
     internal class RegistryAccessor : PropertyAccessor
     {
@@ -647,7 +515,7 @@ namespace System.Management.Automation
         internal override string GetModulePath(ModulePathTarget target)
         {
             // TODO: Better way to handle this?
-            throw new InvalidEnumArgumentException();
+            throw new ArgumentException();
         }
 
         /// <summary>

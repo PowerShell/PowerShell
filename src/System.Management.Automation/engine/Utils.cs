@@ -278,6 +278,18 @@ namespace System.Management.Automation
 
         private static string[] s_productFolderDirectories;
 
+        /// <summary>
+        /// Specifies the per-user configuration settings directory in a platform agnostic manner.
+        /// Ex:
+        ///     %LOCALAPPDATA%\PowerShell\<version>
+        /// </summary>
+        /// <returns>The current user's configuration settings directory</returns>
+        internal static string GetUserSettingsDirectory()
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            return Path.Combine(appDataPath, "PowerShell", PSVersionInfo.PSVersion.ToString()); // TODO: This should be the external version#, but I don't see it anywhere in the code
+        }
+
         private static string[] GetProductFolderDirectories()
         {
             if (s_productFolderDirectories == null)
