@@ -173,8 +173,10 @@ namespace System.Management.Automation.Remoting
 #if !UNIX
             _cryptoHelper = (PSRemotingCryptoHelperServer)transportManager.CryptoHelper;
             _cryptoHelper.Session = this;
+#else
+            _cryptoHelper = null;
 #endif
-                _context = new ServerRemoteSessionContext();
+            _context = new ServerRemoteSessionContext();
             _sessionDSHandler = new ServerRemoteSessionDSHandlerlImpl(this, transportManager);
             BaseSessionDataStructureHandler = _sessionDSHandler;
             _sessionDSHandler.CreateRunspacePoolReceived += HandleCreateRunspacePool;
@@ -493,7 +495,7 @@ namespace System.Management.Automation.Remoting
             SessionDataStructureHandler.StateMachine.RaiseEvent(args);
         }
 
-        #endregion Overrides
+#endregion Overrides
 
         #region Properties
 
@@ -1210,6 +1212,6 @@ namespace System.Management.Automation.Remoting
             cmdTransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = maxRecvdObjectSize;
         }
 
-#endregion
+        #endregion
     }
 }

@@ -559,6 +559,8 @@ namespace System.Management.Automation.Remoting.Server
 
         #region Native APIs
 
+#if !UNIX
+
         internal static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);  // WinBase.h
 
         internal enum StandardHandleId : uint
@@ -570,6 +572,8 @@ namespace System.Management.Automation.Remoting.Server
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern IntPtr GetStdHandle(uint handleId);
+
+#endif
 
         #endregion
     }
