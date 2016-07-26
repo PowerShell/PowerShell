@@ -93,6 +93,12 @@ namespace Microsoft.PowerShell.Commands
                         // The first input string does not represent a complete Json Syntax. 
                         // Hence consider the the entire input as a single Json content.
                     }
+#if CORECLR
+                    catch (Newtonsoft.Json.JsonSerializationException)
+                    {
+                        // we use another serializer for CORECLR implementation
+                    }
+#endif
                     if (successfullyConverted)
                     {
                         for (int index = 1; index < inputObjectBuffer.Count; index++)
