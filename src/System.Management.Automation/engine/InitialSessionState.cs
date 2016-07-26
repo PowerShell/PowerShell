@@ -5122,8 +5122,8 @@ end
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
             new SessionStateVariableEntry(
-                SpecialVariables.IsCore,
-                Platform.IsCore,
+                SpecialVariables.IsCoreCLR,
+                Platform.IsCoreCLR,
                 String.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
             #endregion
@@ -5475,7 +5475,7 @@ end
         internal const string DefaultMoreFunctionText = @"
 param([string[]]$paths)
 # Nano needs to use Unicode, but Windows and Linux need the default
-$OutputEncoding = if ($IsWindows -and $IsCore) {
+$OutputEncoding = if ($IsWindows -and $IsCoreCLR) {
     [System.Text.Encoding]::Unicode
 } else {
     [System.Console]::OutputEncoding
@@ -5698,11 +5698,7 @@ if($paths) {
             {
                 AssemblyName assemblyName = ClrFacade.GetAssemblyName(psSnapInInfo.AbsoluteModulePath);
 
-                // Porting note: the snapins still require 'ProcessorArchitecture=MSIL' in
-                // the strong name, which is not in the strong name of assemblies created
-                // by dotnet-cli
-                if (!Platform.IsCore &&
-                    !string.Equals(assemblyName.FullName, psSnapInInfo.AssemblyName, StringComparison.OrdinalIgnoreCase))
+                if (!string.Equals(assemblyName.FullName, psSnapInInfo.AssemblyName, StringComparison.OrdinalIgnoreCase))
                 {
                     string message = StringUtil.Format(ConsoleInfoErrorStrings.PSSnapInAssemblyNameMismatch, psSnapInInfo.AbsoluteModulePath, psSnapInInfo.AssemblyName);
                     _PSSnapInTracer.TraceError(message);

@@ -778,12 +778,13 @@ namespace System.Management.Automation
             {
                 // Now handle the case where the environment variable is already set.
 
-                // Porting note: Open PowerShell has a Modules folder in the the application base path which contains the built-in modules
-                // It must be in the front of the path no matter what.
-                if (Platform.IsCore)
-                {
-                    currentProcessModulePath = AddToPath(currentProcessModulePath, GetSystemwideModulePath(), 0);
-                }
+                // CoreCLR PowerShell on Windows has a Modules folder in the the application base
+                // path which contains the built-in modules It must be in the front of the path no
+                // matter what, regardless of inherited path.
+#if CORECLR && !UNIX
+                // TODO: #1184 will resolve this work-around
+                currentProcessModulePath = AddToPath(currentProcessModulePath, GetSystemwideModulePath(), 0);
+#endif
 
                 // If there is no personal path key, then if the env variable doesn't match the system variable,
                 // the user modified it somewhere, else prepend the default personel module path

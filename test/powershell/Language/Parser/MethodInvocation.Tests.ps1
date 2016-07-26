@@ -1,4 +1,4 @@
-if ( $IsCore ) {
+if ( $IsCoreCLR ) {
     return
 }
 

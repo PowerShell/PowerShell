@@ -19,7 +19,7 @@ Describe "PSVersionTable" {
         $PSVersionTable.GitCommitId | Should not match "powershell.version"
     }
 
-    It "Should have the correct edition" -Skip:(!$IsCore) {
+    It "Should have the correct edition" -Skip:(!$IsCoreCLR) {
 	$PSVersionTable["PSEdition"] | Should Be "PowerShellCore"
     }
 }

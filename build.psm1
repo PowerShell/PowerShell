@@ -4,14 +4,14 @@ try {
     $Runtime = [System.Runtime.InteropServices.RuntimeInformation]
     $OSPlatform = [System.Runtime.InteropServices.OSPlatform]
 
-    $IsCore = $true
+    $IsCoreCLR = $true
     $IsLinux = $Runtime::IsOSPlatform($OSPlatform::Linux)
     $IsOSX = $Runtime::IsOSPlatform($OSPlatform::OSX)
     $IsWindows = $Runtime::IsOSPlatform($OSPlatform::Windows)
 } catch {
     # If these are already set, then they're read-only and we're done
     try {
-        $IsCore = $false
+        $IsCoreCLR = $false
         $IsLinux = $false
         $IsOSX = $false
         $IsWindows = $true
@@ -602,7 +602,7 @@ function Start-PSBootstrap {
         }
 
         # Install for Windows
-        if ($IsWindows -and -not $IsCore) {
+        if ($IsWindows -and -not $IsCoreCLR) {
             Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
             $installScript = "dotnet-install.ps1"
             Invoke-WebRequest -Uri $obtainUrl/$installScript -OutFile $installScript

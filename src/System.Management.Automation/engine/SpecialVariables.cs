@@ -166,8 +166,8 @@ namespace System.Management.Automation
         internal const string IsWindows = "IsWindows";
         internal static VariablePath IsWindowsPath = new VariablePath("IsWindows");
 
-        internal const string IsCore = "IsCore";
-        internal static VariablePath IsCorePath = new VariablePath("IsCore");
+        internal const string IsCoreCLR = "IsCoreCLR";
+        internal static VariablePath IsCoreCLRPath = new VariablePath("IsCoreCLR");
 
         #endregion
         #region Preference Variables

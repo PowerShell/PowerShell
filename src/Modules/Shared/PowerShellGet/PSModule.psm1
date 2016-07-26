@@ -17,7 +17,7 @@ $script:isNanoServer = $null -ne ('System.Runtime.Loader.AssemblyLoadContext' -a
 function IsWindows { $PSVariable = Get-Variable -Name IsWindows -ErrorAction Ignore; return (-not $PSVariable -or $PSVariable.Value) }
 function IsLinux { $PSVariable = Get-Variable -Name IsLinux -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
 function IsOSX { $PSVariable = Get-Variable -Name IsOSX -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
-function IsCore { $PSVariable = Get-Variable -Name IsCore -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
+function IsCoreCLR { $PSVariable = Get-Variable -Name IsCoreCLR -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
 
 if(IsWindows)
 {
@@ -727,7 +727,7 @@ function Publish-Module
 
     Begin
     {
-        if($script:isNanoServer -or (IsCore)) {
+        if($script:isNanoServer -or (IsCoreCLR)) {
             $message = $LocalizedData.PublishPSArtifactUnsupportedOnNano -f "Module"
             ThrowError -ExceptionName "System.InvalidOperationException" `
                         -ExceptionMessage $message `
@@ -2526,7 +2526,7 @@ function Publish-Script
 
     Begin
     {
-        if($script:isNanoServer -or (IsCore)) {
+        if($script:isNanoServer -or (IsCoreCLR)) {
             $message = $LocalizedData.PublishPSArtifactUnsupportedOnNano -f "Script"
             ThrowError -ExceptionName "System.InvalidOperationException" `
                         -ExceptionMessage $message `
@@ -7322,7 +7322,7 @@ function Install-NuGetClientBinaries
     }
     
     # On Nano server we don't need NuGet.exe
-    if(-not $bootstrapNuGetProvider -and ($script:isNanoServer -or (IsCore) -or -not $BootstrapNuGetExe))
+    if(-not $bootstrapNuGetProvider -and ($script:isNanoServer -or (IsCoreCLR) -or -not $BootstrapNuGetExe))
     {
         return
     }
@@ -7379,7 +7379,7 @@ function Install-NuGetClientBinaries
             }
         }
 
-        if($BootstrapNuGetExe -and -not $script:isNanoServer -and -not (IsCore))
+        if($BootstrapNuGetExe -and -not $script:isNanoServer -and -not (IsCoreCLR))
         {
             Write-Verbose -Message $LocalizedData.DownloadingNugetExe
 

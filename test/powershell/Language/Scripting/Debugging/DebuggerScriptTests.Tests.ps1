@@ -215,7 +215,7 @@ Describe "Line breakpoints on commands in multi-line pipelines" -tags 'Innerloop
     Context "COM TESTS" {
         # DRT for 133807 SetBreakpointWithShortPath
         BeforeAll {
-            if ( $IsCore ) { return } # no COM on core
+            if ( $IsCoreCLR ) { return } # no COM on core
             $scriptPath1 = Join-Path $TestDrive SBPShortPathBug133807.DRT.tmp.ps1
             $scriptPath1 = setup -f SBPShortPathBug133807.DRT.tmp.ps1 -content '
             1..3 |
@@ -230,19 +230,19 @@ Describe "Line breakpoints on commands in multi-line pipelines" -tags 'Innerloop
         }
 
         AfterAll {
-            if ( $IsCore ) { return }
+            if ( $IsCoreCLR ) { return }
             if ($breakpoints -ne $null) { $breakpoints | Remove-PSBreakpoint }
         }
 
-        It "Short path Breakpoint on line 1 hit count" -skip:$IsCore {
+        It "Short path Breakpoint on line 1 hit count" -skip:$IsCoreCLR {
             $breakpoints[0].HitCount | Should Be 1
         }
 
-        It "Short path Breakpoint on line 2 hit count" -skip:$IsCore {
+        It "Short path Breakpoint on line 2 hit count" -skip:$IsCoreCLR {
             $breakpoints[1].HitCount | Should Be 3
         }
 
-        It "Short path Breakpoint on line 3 hit count" -skip:$IsCore {
+        It "Short path Breakpoint on line 3 hit count" -skip:$IsCoreCLR {
             $breakpoints[2].HitCount | Should Be 1
         }
     }

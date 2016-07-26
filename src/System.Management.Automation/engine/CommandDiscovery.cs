@@ -1321,14 +1321,16 @@ namespace System.Management.Automation
                             }
                         }
 
+                        // TODO: this causes AppVeyor builds to fail due to invalid XML being output
+#if !CORECLR
                         // Close the progress pane that may have popped up from analyzing UNC paths.
-                        // Porting note: we don't like this message
-                        if (!Platform.IsCore && context.CurrentCommandProcessor != null)
+                        if (context.CurrentCommandProcessor != null)
                         {
                             ProgressRecord analysisProgress = new ProgressRecord(0, Modules.ScriptAnalysisPreparing, " ");
                             analysisProgress.RecordType = ProgressRecordType.Completed;
                             context.CurrentCommandProcessor.CommandRuntime.WriteProgress(analysisProgress);
                         }
+#endif
                     }
                 }
             }
