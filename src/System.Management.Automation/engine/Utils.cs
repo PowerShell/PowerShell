@@ -237,8 +237,9 @@ namespace System.Management.Automation
         /// </exception>
         internal static string GetApplicationBase(string shellId)
         {
-#if CORECLR // Use the location of SMA.dll as the application base
-            // Assembly.GetEntryAssembly is not in CoreCLR. GAC is not in CoreCLR.
+#if CORECLR 
+            // Use the location of SMA.dll as the application base
+            // Assembly.GetEntryAssembly and GAC are not in CoreCLR.
             Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
             return Path.GetDirectoryName(assembly.Location);
 #else
@@ -280,14 +281,16 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Specifies the per-user configuration settings directory in a platform agnostic manner.
-        /// Ex:
-        ///     %LOCALAPPDATA%\PowerShell\<version>
+        /// Windows Ex:
+        ///     %LOCALAPPDATA%\PowerShell
+        /// Non-Windows Ex:
+        ///     ~/.config/PowerShell
         /// </summary>
         /// <returns>The current user's configuration settings directory</returns>
         internal static string GetUserSettingsDirectory()
         {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            return Path.Combine(appDataPath, "PowerShell", PSVersionInfo.PSVersion.ToString()); // TODO: This should be the external version#, but I don't see it anywhere in the code
+            return Path.Combine(appDataPath, "PowerShell");
         }
 
         private static string[] GetProductFolderDirectories()

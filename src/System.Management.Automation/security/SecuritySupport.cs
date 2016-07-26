@@ -146,7 +146,6 @@ namespace System.Management.Automation.Internal
 #else
             string executionPolicy = "Restricted";
             string preferenceKey = Utils.GetRegistryConfigurationPath(shellId);
-            PropertyAccessor propertyAccessor = PropertyAccessorFactory.GetPropertyAccessor();
 
             switch (policy)
             {
@@ -166,43 +165,47 @@ namespace System.Management.Automation.Internal
             switch (scope)
             {
                 case ExecutionPolicyScope.Process:
-                    {
-                        if (policy == ExecutionPolicy.Undefined)
-                            executionPolicy = null;
+                {
+                    if (policy == ExecutionPolicy.Undefined)
+                        executionPolicy = null;
 
-                        Environment.SetEnvironmentVariable("PSExecutionPolicyPreference", executionPolicy);
-                        break;
-                    }
+                    Environment.SetEnvironmentVariable("PSExecutionPolicyPreference", executionPolicy);
+                    break;
+                }
 
                 case ExecutionPolicyScope.CurrentUser:
+                {
+                    // They want to remove it
+                    if (policy == ExecutionPolicy.Undefined)
                     {
-                        // They want to remove it
-                        if (policy == ExecutionPolicy.Undefined)
-                        {
-                            propertyAccessor.RemoveMachineExecutionPolicy(PropertyAccessor.PropertyScope.CurrentUser, shellId);
-                            CleanKeyParents(Registry.CurrentUser, preferenceKey);
-                        }
-                        else
-                        {
-                            propertyAccessor.SetMachineExecutionPolicy(PropertyAccessor.PropertyScope.CurrentUser, shellId, executionPolicy);
-                        }
-                        break;
+                        ConfigPropertyAccessor.Instance.RemoveExecutionPolicy(
+                            ConfigPropertyAccessor.PropertyScope.CurrentUser, shellId);
+                        CleanKeyParents(Registry.CurrentUser, preferenceKey);
                     }
+                    else
+                    {
+                        ConfigPropertyAccessor.Instance.SetExecutionPolicy(
+                            ConfigPropertyAccessor.PropertyScope.CurrentUser, shellId, executionPolicy);
+                    }
+                    break;
+                }
 
                 case ExecutionPolicyScope.LocalMachine:
+                {
+                    // They want to remove it
+                    if (policy == ExecutionPolicy.Undefined)
                     {
-                        // They want to remove it
-                        if (policy == ExecutionPolicy.Undefined)
-                        {
-                            propertyAccessor.RemoveMachineExecutionPolicy(PropertyAccessor.PropertyScope.SystemWide, shellId);
-                            CleanKeyParents(Registry.LocalMachine, preferenceKey);
-                        }
-                        else
-                        {
-                            propertyAccessor.SetMachineExecutionPolicy(PropertyAccessor.PropertyScope.SystemWide, shellId, executionPolicy);
-                        }
-                        break;
+                        ConfigPropertyAccessor.Instance.RemoveExecutionPolicy(
+                            ConfigPropertyAccessor.PropertyScope.SystemWide, shellId);
+                        CleanKeyParents(Registry.LocalMachine, preferenceKey);
                     }
+                    else
+                    {
+                        ConfigPropertyAccessor.Instance.SetExecutionPolicy(
+                            ConfigPropertyAccessor.PropertyScope.SystemWide, shellId, executionPolicy);
+                    }
+                    break;
+                }
             }
 #endif
         }
@@ -586,17 +589,15 @@ namespace System.Management.Automation.Internal
         /// <returns>NULL if it is not defined at this level</returns>
         private static string GetLocalPreferenceValue(string shellId, ExecutionPolicyScope scope)
         {
-            PropertyAccessor propertyAccessor = PropertyAccessorFactory.GetPropertyAccessor();
-
             switch (scope)
             {
                 // 1: Look up the current-user preference
                 case ExecutionPolicyScope.CurrentUser:
-                    return propertyAccessor.GetMachineExecutionPolicy(PropertyAccessor.PropertyScope.CurrentUser, shellId);
+                    return ConfigPropertyAccessor.Instance.GetExecutionPolicy(ConfigPropertyAccessor.PropertyScope.CurrentUser, shellId);
 
                 // 2: Look up the system-wide preference
                 case ExecutionPolicyScope.LocalMachine:
-                    return propertyAccessor.GetMachineExecutionPolicy(PropertyAccessor.PropertyScope.SystemWide, shellId);
+                    return ConfigPropertyAccessor.Instance.GetExecutionPolicy(ConfigPropertyAccessor.PropertyScope.SystemWide, shellId);
             }
 
             return null;

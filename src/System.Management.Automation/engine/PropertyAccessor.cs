@@ -9,19 +9,16 @@ using System.Globalization;
 using System.Threading;
 
 using System.Management.Automation;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Microsoft.Win32;
 
 #if CORECLR
 // Some APIs are missing from System.Environment. We use System.Management.Automation.Environment as a proxy type:
 //  - for missing APIs, System.Management.Automation.Environment has extension implementation.
 //  - for existing APIs, System.Management.Automation.Environment redirect the call to System.Environment.
 using Environment = System.Management.Automation.Environment;
-#else
-//using Microsoft.Win32;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 #endif
-
-using Microsoft.Win32;
 
 namespace System.Management.Automation
 {
@@ -30,8 +27,40 @@ namespace System.Management.Automation
     /// Leverages the strategy pattern to abstract away the details of gathering properties from outside sources.
     /// Note: This is a class so that it can be internal.
     /// </summary>
-    internal abstract class PropertyAccessor
+    internal abstract class ConfigPropertyAccessor
     {
+        #region Statics
+        /// <summary>
+        /// Static constructor to instantiate an instance
+        /// </summary>
+        static ConfigPropertyAccessor()
+        {
+#if CORECLR
+            // TODO: Update this for #1184
+            //if (Platform.IsInbox())
+            //{
+            //    Instance = new RegistryAccessor();
+            //}
+            //else
+            //{
+            //    Instance = new JsonConfigFileAccessor();
+            //}
+            // Remove this following line:
+            Instance = new JsonConfigFileAccessor();
+#else
+            Instance = new RegistryAccessor();
+#endif
+        }
+        /// <summary>
+        /// The instance of the ConfigPropertyAccessor to use to iteract with properties.
+        /// Derived classes should not be directly instantiated.
+        /// </summary>
+        internal static readonly ConfigPropertyAccessor Instance;
+
+        #endregion // Statics
+
+        #region Enums
+
         /// <summary>
         /// Describes the scope of the property query.
         /// SystemWide properties apply to all users.
@@ -53,6 +82,10 @@ namespace System.Management.Automation
             VersionSpecific = 2
         }
 
+        #endregion // Enums
+
+        #region Interface Methods
+
         /// <summary>
         /// Existing Key = HKLM:\System\CurrentControlSet\Control\Session Manager\Environment
         /// Proposed value = %ProgramFiles%\PowerShell\Modules by default
@@ -69,18 +102,9 @@ namespace System.Management.Automation
         /// <param name="scope">Where it should check for the value.</param>
         /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell"</param>
         /// <returns></returns>
-        internal abstract string GetMachineExecutionPolicy(PropertyScope scope, string shellId);
-        internal abstract void RemoveMachineExecutionPolicy(PropertyScope scope, string shellId);
-        internal abstract void SetMachineExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy);
-
-        /// <summary>
-        /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds
-        /// Proposed value = Existing value, otherwise 10.
-        /// </summary>
-        /// <returns>Max stack size in MB. If not set, defaults to 10 MB.</returns>
-        internal abstract int GetPipeLineMaxStackSizeMb(int defaultValue);
-
-        internal abstract void SetPipeLineMaxStackSizeMb(int maxStackSize);
+        internal abstract string GetExecutionPolicy(PropertyScope scope, string shellId);
+        internal abstract void RemoveExecutionPolicy(PropertyScope scope, string shellId);
+        internal abstract void SetExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy);
 
         /// <summary>
         /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds
@@ -105,30 +129,12 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal abstract string GetDefaultSourcePath();
         internal abstract void SetDefaultSourcePath(string defaultPath);
+
+        #endregion // Interface Methods
     }
 
-    internal class PropertyAccessorFactory
-    {
-        /// <summary>
-        /// Template method to generate the appropriate accessor for a given environment.
-        /// </summary>
-        /// <returns></returns>
-        internal static PropertyAccessor GetPropertyAccessor()
-        {
-            if (null == _activePropertyAccessor)
-            {
 #if CORECLR
-                // TODO: I must differentiate between inbox PS and side-by-side PS here eventually
-                _activePropertyAccessor = new JsonConfigFileAccessor();
-#else
-                _activePropertyAccessor = new RegistryAccessor();
-#endif
-            }
-            return _activePropertyAccessor;
-        }
-
-        private static PropertyAccessor _activePropertyAccessor;
-    }
+    // TODO: JSON .Net should not be a required component for inbox PowerShell. We need to decide on the long term plan.
 
     /// <summary>
     /// JSON configuration file accessor
@@ -136,24 +142,18 @@ namespace System.Management.Automation
     /// Reads from and writes to configuration files. The values stored were 
     /// originally stored in the Windows registry.
     /// </summary>
-    internal class JsonConfigFileAccessor : PropertyAccessor
+    internal class JsonConfigFileAccessor : ConfigPropertyAccessor
     {
         private string psHomeConfigDirectory;
         private string appDataConfigDirectory;
         private const string configDirectoryName = "Configuration";
-        private const string modulePathFileName = "PSModulePath.json";
-        private const string execPolicyFileName = "ExecutionPolicy.json";
-        private const string maxStackSizeFileName = "PipeLineMaxStackSizeMB.json";
-        private const string consolePromptingFileName = "ConsolePrompting.json";
-        private const string updateHelpPromptFileName = "UpdateHelpPrompt.json";
-        private const string updatableHelpSourcePathFileName = "UpdatableHelpDefaultSourcePath.json";
+        private const string configFileName = "PowerShellProperties.json";
 
         internal JsonConfigFileAccessor()
         {
             //
             // Initialize (and create if necessary) the system-wide configuration directory
             //
-            // TODO: Use Utils.GetApplicationBase("Microsoft.PowerShell") instead?
             Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
             psHomeConfigDirectory = Path.Combine(Path.GetDirectoryName(assembly.Location), configDirectoryName);
 
@@ -174,25 +174,26 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Note: This value is not writable, so it MUST be set during post-install configuration
+        /// Note: This value is not writable, so it MUST be set during post-install configuration.
+        /// Also, it will only be written to the $PSHOME configuration file (not the per-user file).
         /// </summary>
         /// <param name="target"></param>
-        /// <returns></returns>
+        /// <returns>Value if found, null otherwise. The behavior matches Environment.GetEnvironmentVariable().</returns>
         internal override string GetModulePath(ModulePathTarget target)
         {
+            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             if (ModulePathTarget.CurrentUser == target)
             {
                 // TODO: This feels unnecessary since it can be calculated based on the current user...
-                return ReadValueFromFile<string>(modulePathFileName, "UserModulePath");
+                return ReadValueFromFile<string>(fileName, "UserModulePath");
             }
             else if (ModulePathTarget.SharedCommon == target)
             {
-                return ReadValueFromFile<string>(modulePathFileName, "SharedCommonModulePath");
+                return ReadValueFromFile<string>(fileName, "SharedCommonModulePath");
             }
             else
             {
-                // TODO: Is there a better way to handle this?
-                throw new ArgumentException();
+                return null; 
             }
         }
 
@@ -202,15 +203,15 @@ namespace System.Management.Automation
         /// 
         /// Schema:
         /// {
-        ///     "shell ID string" : "execution policy string"
+        ///     "shell ID string","ExecutionPolicy" : "execution policy string"
         /// }
         /// 
-        /// Note: If we switch to a single config file, then this will need to be nested
+        /// TODO: In a single config file, it might be better to nest this. It is unnecessary complexity until a need arises for more nested values.
         /// </summary>
         /// <param name="scope">Whether this is a system-wide or per-user setting.</param>
         /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell"</param>
         /// <returns>The execution policy if found. Null otherwise.</returns>
-        internal override string GetMachineExecutionPolicy(PropertyScope scope, string shellId)
+        internal override string GetExecutionPolicy(PropertyScope scope, string shellId)
         {
             string execPolicy = null;
             string scopeDirectory = psHomeConfigDirectory;
@@ -221,9 +222,9 @@ namespace System.Management.Automation
                 scopeDirectory = appDataConfigDirectory;
             }
 
-            string fileName = Path.Combine(scopeDirectory, execPolicyFileName);
-
-            string rawExecPolicy = ReadValueFromFile<string>(fileName, shellId);
+            string fileName = Path.Combine(scopeDirectory, configFileName);
+            string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
+            string rawExecPolicy = ReadValueFromFile<string>(fileName, valueName);
 
             if (!String.IsNullOrEmpty(rawExecPolicy))
             {
@@ -232,7 +233,7 @@ namespace System.Management.Automation
             return execPolicy;
         }
 
-        internal override void RemoveMachineExecutionPolicy(PropertyScope scope, string shellId)
+        internal override void RemoveExecutionPolicy(PropertyScope scope, string shellId)
         {
             string scopeDirectory = psHomeConfigDirectory;
 
@@ -242,12 +243,12 @@ namespace System.Management.Automation
                 scopeDirectory = appDataConfigDirectory;
             }
 
-            string fileName = Path.Combine(scopeDirectory, execPolicyFileName);
-
-            RemoveValueFromFile<string>(fileName, shellId);
+            string fileName = Path.Combine(scopeDirectory, configFileName);
+            string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
+            RemoveValueFromFile<string>(fileName, valueName);
         }
 
-        internal override void SetMachineExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy)
+        internal override void SetExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy)
         {
             string scopeDirectory = psHomeConfigDirectory;
 
@@ -257,39 +258,9 @@ namespace System.Management.Automation
                 scopeDirectory = appDataConfigDirectory;
             }
 
-            string fileName = Path.Combine(scopeDirectory, execPolicyFileName);
-
-            WriteValueToFile<string>(fileName, shellId, executionPolicy);
-        }
-
-        /// <summary>
-        /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds
-        /// Proposed value = Existing value, otherwise 10. 
-        /// 
-        /// Schema:
-        /// {
-        ///     "PipeLineMaxStackSizeMB" : int
-        /// }
-        /// </summary>
-        /// <returns>Max stack size in MB. If not set, defaults to 10 MB.</returns>
-        internal override int GetPipeLineMaxStackSizeMb(int defaultValue)
-        {
-            string fileName = Path.Combine(psHomeConfigDirectory, maxStackSizeFileName);
-
-            int maxStackSize = defaultValue;
-            int rawMaxStackSize = ReadValueFromFile<int>(fileName, "PipeLineMaxStackSizeMB");
-
-            if (0 != rawMaxStackSize)
-            {
-                maxStackSize = rawMaxStackSize;
-            }
-            return maxStackSize;
-        }
-
-        internal override void SetPipeLineMaxStackSizeMb(int maxStackSize)
-        {
-            string fileName = Path.Combine(psHomeConfigDirectory, maxStackSizeFileName);
-            WriteValueToFile<int>(fileName, "PipeLineMaxStackSizeMB", maxStackSize);
+            string fileName = Path.Combine(scopeDirectory, configFileName);
+            string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
+            WriteValueToFile<string>(fileName, valueName, executionPolicy);
         }
 
         /// <summary>
@@ -304,13 +275,13 @@ namespace System.Management.Automation
         /// <returns>Whether console prompting should happen. If the value cannot be read it defaults to false.</returns>
         internal override bool GetConsolePrompting(ref Exception exception)
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, consolePromptingFileName);
+            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             return ReadValueFromFile<bool>(fileName, "ConsolePrompting");
         }
 
         internal override void SetConsolePrompting(bool shouldPrompt)
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, consolePromptingFileName);
+            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             WriteValueToFile<bool>(fileName, "ConsolePrompting", shouldPrompt);
         }
 
@@ -326,13 +297,13 @@ namespace System.Management.Automation
         /// <returns>Boolean indicating whether Update-Help should prompt. If the value cannot be read, it defaults to false.</returns>
         internal override bool GetDisablePromptToUpdateHelp()
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, updateHelpPromptFileName);
+            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             return ReadValueFromFile<bool>(fileName, "DisablePromptToUpdateHelp");
         }
 
         internal override void SetDisablePromptToUpdateHelp(bool prompt)
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, updateHelpPromptFileName);
+            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             WriteValueToFile<bool>(fileName, "DisablePromptToUpdateHelp", prompt);
         }
 
@@ -348,7 +319,7 @@ namespace System.Management.Automation
         /// <returns>The source path if found, null otherwise.</returns>
         internal override string GetDefaultSourcePath()
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, updatableHelpSourcePathFileName);
+            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
 
             string rawExecPolicy = ReadValueFromFile<string>(fileName, "DefaultSourcePath");
 
@@ -361,7 +332,7 @@ namespace System.Management.Automation
 
         internal override void SetDefaultSourcePath(string defaultPath)
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, updatableHelpSourcePathFileName);
+            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
 
             WriteValueToFile<string>(fileName, "DefaultSourcePath", defaultPath);
         }
@@ -383,15 +354,11 @@ namespace System.Management.Automation
                 }
             }
             catch (ArgumentException) { }
-            //catch (ArgumentNullException) { }
             catch (NotSupportedException) { }
             catch (FileNotFoundException) { }
-            catch (System.IO.IOException) { }
-            //catch (DirectoryNotFoundException) { }
+            catch (IOException) { }
             catch (System.Security.SecurityException) { }
             catch (UnauthorizedAccessException) { }
-            //catch (PathTooLongException) { }
-            //catch (ArgumentOutOfRangeException) { }
 
             return default(T);
         }
@@ -403,71 +370,94 @@ namespace System.Management.Automation
         /// <param name="fileName"></param>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        /// <param name="addValue">Whether the key-value pair should be added or removed from the file</param>
+        /// <param name="addValue">Whether the key-value pair should be added to or removed from the file</param>
         private void UpdateValueInFile<T>(string fileName, string key, T value, bool addValue)
         {
             try
             {
-                JObject objectToWrite = new JObject();
-
-                if (File.Exists(fileName))
+                // Since multiple properties can be in a single file, replacement
+                // is required instead of overwrite if a file already exists.
+                // Handling the read and write operations within a single FileStream
+                // prevents other processes from reading or writing the file while
+                // the update is in progress.
+                using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+                using (StreamReader streamRdr = new StreamReader(fs))
+                using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
                 {
-                    // Since multiple properties can be in a single file, replacement
-                    // is required instead of overwrite if a file already exists.
-                    using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
-                    using (StreamReader streamRdr = new StreamReader(fs))
-                    using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
+                    JObject jsonObject = null;
+                    bool isReadSuccess = jsonReader.Read(); // Safely determines whether there is content to read from the file
+
+                    if ( ! isReadSuccess)
                     {
-                        JObject jsonObject = (JObject) JToken.ReadFrom(jsonReader);
-                        IEnumerable<JProperty> properties = jsonObject.Properties();
-                        foreach (JProperty property in properties)
+                        // The file doesn't already exist and we want to write to it or 
+                        // exists with no content.
+                        // A new file will be created that contains only this value.
+                        // If the file doesn't exist and a we don't want to write to it, no
+                        // action is necessary.
+                        if (addValue)
                         {
-                            if (String.Equals(property.Name, key, StringComparison.OrdinalIgnoreCase))
+                            jsonObject = new JObject(new JProperty(key, value));
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        // Read the stream into a root JObject for manipulation
+                        jsonObject = (JObject) JToken.ReadFrom(jsonReader);
+                        JProperty propertyToModify = jsonObject.Property(key);
+
+                        if (null == propertyToModify)
+                        {
+                            // The property doesn't exist, so add it
+                            if (addValue)
                             {
-                                if (addValue)
-                                {
-                                    // Add the updated value to the output object instead
-                                    // of the preexisting one
-                                    objectToWrite.Add(new JProperty(key, value));
-                                }
-                                // else the value is skipped so it is removed from the file
+                                jsonObject.Add(new JProperty(key, value));
+                            }
+                            // else the property doesn't exist so there is nothing to remove
+                        }
+                        // The property exists
+                        else
+                        {
+                            if (addValue)
+                            {
+                                propertyToModify.Replace(new JProperty(key, value));
                             }
                             else
                             {
-                                // This preserves existing properties that do not
-                                // match the one to update
-                                objectToWrite.Add(new JProperty(property));
+                                propertyToModify.Remove();
                             }
                         }
                     }
-                }
-                else
-                {
-                    if (addValue)
+
+                    // Reset the stream position to the beginning so that the 
+                    // changes to the file can be written to disk
+                    fs.Seek(0, SeekOrigin.Begin);
+
+                    // Update the file with new content
+                    using (StreamWriter streamWriter = new StreamWriter(fs))
+                    using (JsonTextWriter jsonWriter = new JsonTextWriter(streamWriter))
                     {
-                        // The file doesn't exist, so create it with the new property
-                        objectToWrite.Add(new JProperty(key, value));
+                        // The entire document exists within the root JObject.
+                        // I just need to write that object to produce the document.
+                        jsonObject.WriteTo(jsonWriter);
+
+                        // This trims the file if the file shrank. If the file grew,
+                        // it is a no-op. The purpose is to trim extraneous characters 
+                        // from the file stream when the resultant JObject is smaller
+                        // than the input JObject.
+                        fs.SetLength(fs.Position);
                     }
                 }
-
-                using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-                using (StreamWriter streamWriter = new StreamWriter(fs))
-                using (JsonTextWriter jsonWriter = new JsonTextWriter(streamWriter))
-                {
-                    objectToWrite.WriteTo(jsonWriter);
-                }
-
             }
             catch (ArgumentException) { }
-            //catch (ArgumentNullException) { }
             catch (NotSupportedException) { }
             catch (FileNotFoundException) { }
-            catch (System.IO.IOException) { }
-            //catch (DirectoryNotFoundException) { }
+            catch (IOException) { }
             catch (System.Security.SecurityException) { }
             catch (UnauthorizedAccessException) { }
-            //catch (PathTooLongException) { }
-            //catch (ArgumentOutOfRangeException) { }
         }
 
         /// <summary>
@@ -494,7 +484,9 @@ namespace System.Management.Automation
         }
     }
 
-    internal class RegistryAccessor : PropertyAccessor
+#endif // CORECLR
+
+    internal class RegistryAccessor : ConfigPropertyAccessor
     {
         private const string DisablePromptToUpdateHelpRegPath = "Software\\Microsoft\\PowerShell";
         private const string DisablePromptToUpdateHelpRegPath32 = "Software\\Wow6432Node\\Microsoft\\PowerShell";
@@ -524,7 +516,7 @@ namespace System.Management.Automation
         /// <param name="scope"></param>
         /// <param name="shellId"></param>
         /// <returns>The execution policy string if found, otherwise null.</returns>
-        internal override string GetMachineExecutionPolicy(PropertyScope scope, string shellId)
+        internal override string GetExecutionPolicy(PropertyScope scope, string shellId)
         {
             string regKeyName = Utils.GetRegistryConfigurationPath(shellId);
             RegistryKey scopedKey = Registry.LocalMachine;
@@ -538,7 +530,7 @@ namespace System.Management.Automation
             return GetRegistryString(scopedKey, regKeyName, "ExecutionPolicy");
         }
 
-        internal override void SetMachineExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy)
+        internal override void SetExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy)
         {
             string regKeyName = Utils.GetRegistryConfigurationPath(shellId);
             RegistryKey scopedKey = Registry.LocalMachine;
@@ -558,7 +550,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal override void RemoveMachineExecutionPolicy(PropertyScope scope, string shellId)
+        internal override void RemoveExecutionPolicy(PropertyScope scope, string shellId)
         {
             string regKeyName = Utils.GetRegistryConfigurationPath(shellId);
             RegistryKey scopedKey = Registry.LocalMachine;
@@ -577,21 +569,6 @@ namespace System.Management.Automation
                         key.DeleteValue("ExecutionPolicy");
                 }
             }
-        }
-
-        internal override int GetPipeLineMaxStackSizeMb(int defaultValue)
-        {
-            string regKeyName = Utils.GetRegistryConfigurationPrefix();
-
-            int? tempInt = GetRegistryDword(Registry.LocalMachine, regKeyName, "PipelineMaxStackSizeMB");
-
-            return (tempInt.HasValue ? tempInt.Value : defaultValue);
-        }
-
-        internal override void SetPipeLineMaxStackSizeMb(int maxStackSize)
-        {
-            string regKeyName = Utils.GetRegistryConfigurationPrefix();
-            SetRegistryDword(Registry.LocalMachine, regKeyName, "PipelineMaxStackSizeMB", maxStackSize);
         }
 
         /// <summary>
@@ -727,7 +704,7 @@ namespace System.Management.Automation
             catch (ObjectDisposedException) { }
             catch (System.Security.SecurityException) { }
             catch (ArgumentException) { }
-            catch (System.IO.IOException) { }
+            catch (IOException) { }
             catch (UnauthorizedAccessException) { }
             catch (FormatException) { }
             catch (OverflowException) { }
@@ -751,7 +728,7 @@ namespace System.Management.Automation
             catch (ObjectDisposedException) { }
             catch (System.Security.SecurityException) { }
             catch (ArgumentException) { }
-            catch (System.IO.IOException) { }
+            catch (IOException) { }
             catch (UnauthorizedAccessException) { }
             catch (FormatException) { }
             catch (OverflowException) { }
@@ -794,7 +771,7 @@ namespace System.Management.Automation
             catch (ObjectDisposedException e) { exception = e; }
             catch (System.Security.SecurityException e) { exception = e; }
             catch (ArgumentException e) { exception = e; }
-            catch (System.IO.IOException e) { exception = e; }
+            catch (IOException e) { exception = e; }
             catch (UnauthorizedAccessException e) { exception = e; }
             catch (FormatException e) { exception = e; }
             catch (OverflowException e) { exception = e; }
@@ -818,7 +795,7 @@ namespace System.Management.Automation
             catch (ObjectDisposedException) { }
             catch (System.Security.SecurityException) { }
             catch (ArgumentException) { }
-            catch (System.IO.IOException) { }
+            catch (IOException) { }
             catch (UnauthorizedAccessException) { }
             catch (FormatException) { }
             catch (OverflowException) { }

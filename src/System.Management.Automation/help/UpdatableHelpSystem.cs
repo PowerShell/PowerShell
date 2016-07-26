@@ -1593,8 +1593,7 @@ namespace System.Management.Automation.Help
         /// <returns></returns>
         internal string GetDefaultSourcePath()
         {
-            PropertyAccessor propertyAccessor = PropertyAccessorFactory.GetPropertyAccessor();
-            return propertyAccessor.GetDefaultSourcePath();
+            return ConfigPropertyAccessor.Instance.GetDefaultSourcePath();
         }
 
         /// <summary>
@@ -1602,8 +1601,7 @@ namespace System.Management.Automation.Help
         /// </summary>
         internal static void SetDisablePromptToUpdateHelp()
         {
-            PropertyAccessor propertyAccessor = PropertyAccessorFactory.GetPropertyAccessor();
-            propertyAccessor.SetDisablePromptToUpdateHelp(true);
+            ConfigPropertyAccessor.Instance.SetDisablePromptToUpdateHelp(true);
         }
 
         /// <summary>
@@ -1619,8 +1617,7 @@ namespace System.Management.Automation.Help
                     return false;
                 }
 
-                PropertyAccessor propertyAccessor = PropertyAccessorFactory.GetPropertyAccessor();
-                return propertyAccessor.GetDisablePromptToUpdateHelp();
+                return ConfigPropertyAccessor.Instance.GetDisablePromptToUpdateHelp();
             }
             catch (SecurityException)
             {

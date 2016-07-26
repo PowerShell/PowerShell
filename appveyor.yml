@@ -40,7 +40,7 @@ test_script:
       $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
       Write-Host -Foreground Green 'Run CoreCLR tests'
       $testResultsFile = "$pwd\TestsResults.xml"
-      & ("$env:CoreOutput\powershell.exe") -noprofile -noninteractive -c "Invoke-Pester test/powershell -Tag 'CI' -ExcludeTag 'Slow' -OutputFormat NUnitXml -OutputFile $testResultsFile"
+      & ("$env:CoreOutput\powershell.exe") -noprofile -noninteractive -c "Set-ExecutionPolicy -Scope Process Unrestricted; Invoke-Pester test/powershell -Tag 'CI' -ExcludeTag 'Slow' -OutputFormat NUnitXml -OutputFile $testResultsFile"
                                                                                                        
       (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFile))
       #
@@ -48,7 +48,7 @@ test_script:
       $env:FullOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -FullCLR))
       Write-Host -Foreground Green 'Run FullCLR tests'
       $testResultsFileFullCLR = "$pwd\TestsResults.FullCLR.xml"
-      Start-DevPowerShell -FullCLR -NoNewWindow -ArgumentList '-noprofile', '-noninteractive' -Command "Invoke-Pester test/fullCLR -ExcludeTag 'Slow' -OutputFormat NUnitXml -OutputFile $testResultsFileFullCLR"
+      Start-DevPowerShell -FullCLR -NoNewWindow -ArgumentList '-noprofile', '-noninteractive' -Command "Set-ExecutionPolicy -Scope Process Unrestricted; Invoke-Pester test/fullCLR -ExcludeTag 'Slow' -OutputFormat NUnitXml -OutputFile $testResultsFileFullCLR"
       (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFileFullCLR))
       #
       # Fail the build, if tests failed

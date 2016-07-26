@@ -170,12 +170,12 @@ namespace Microsoft.PowerShell
         // APIs
         private bool PromptUsingConsole()
         {
-#if CORECLR  // on Nano there is no other way to prompt except by using console
+#if CORECLR
+            // on Nano there is no other way to prompt except by using console
             return true;
 #else
-            PropertyAccessor propertyAccessor = PropertyAccessorFactory.GetPropertyAccessor();
             Exception exception = null;
-            bool promptUsingConsole = propertyAccessor.GetConsolePrompting(ref exception);
+            bool promptUsingConsole = ConfigPropertyAccessor.Instance.GetConsolePrompting(ref exception);
             if (null != exception)
             {
                 s_tracer.TraceError("Could not read CredUI registry key: " + exception.Message);
