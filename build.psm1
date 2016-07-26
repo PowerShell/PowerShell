@@ -476,7 +476,7 @@ function Start-PSPester {
     )
     $tagString = "-outputFormat ${OutputFormat} -outputFile ${outputFile} "
     if ( ! $DisableExit ) { $tagString += " -EnableExit" }
-    if ( $ExcludeTag )    { $tagString += " -ExcludeTag @('" + (${ExcludeTag} -join "','") + "')" }
+    if ( $ExcludeTag -and ($ExcludeTag -ne "")) { $tagString += " -ExcludeTag @('" + (${ExcludeTag} -join "','") + "')" }
     if ( $Tag )           { $tagString +=        " -Tag @('" + (${Tag} -join "','") + "')" }
 
     $powershell = get-psoutput
@@ -484,7 +484,8 @@ function Start-PSPester {
     $moduleDir = [io.path]::Combine($psdir,"Modules","Pester")
 
     Write-Verbose "Import-Module '$moduleDir'; Invoke-Pester $tagString $Path"
-    & (Get-PSOutput) -noprofile -c "Import-Module '$moduleDir'; Invoke-Pester $tagString $Path"
+    $powershellexe = get-psoutput
+    & $powershell -noprofile -c "Import-Module '$moduleDir'; Invoke-Pester $tagString $Path"
     if ($LASTEXITCODE -ne 0) {
         throw "$LASTEXITCODE Pester tests failed"
     }
