@@ -1,4 +1,3 @@
-
 #Region utility functions
 Function GetApacheCmd{
     if (Test-Path "/usr/sbin/apache2ctl"){
@@ -14,14 +13,11 @@ Function GetApacheCmd{
 
 Function GetApacheVHostDir{
     if (Test-Path "/etc/httpd/conf.d"){
-        $VHostsDirectory = "/etc/httpd/conf.d/"
+        Return "/etc/httpd/conf.d/"
     }
     if (Test-Path "/etc/apache2/sites-enabled"){
-        $VHostsDirectory = "/etc/apache2/sites-enabled"
-    }else{
-        $VHostsDirectory = $null
+        Return "/etc/apache2/sites-enabled"
     }
-    $VHostsDirectory
 }
 
 Function CleanInputString([string]$inputStr){
@@ -33,19 +29,49 @@ Function CleanInputString([string]$inputStr){
 
 #Region Class specifications
 
+Class ApacheModule{
+        [string]$ModuleName
+
+        ApacheModule([string]$aModule){
+            $this.ModuleName = $aModule
+        }
+}
 
 Class ApacheVirtualHost{
         [string]$ServerName
         [string]$DocumentRoot
         [string]$VirtualHostIPAddress = "*"
         [string[]]$ServerAliases
-        [string]$VirtualHostPort = "80"
+        [int]$VirtualHostPort = "80"
         [string]$ServerAdmin
         [string]$CustomLogPath
-        [string]$ErrorLogPath   
+        [string]$ErrorLogPath
         [string]$ConfigurationFile
 
         #region class constructors
+        ApacheVirtualHost([string]$ServerName, [string]$ConfFile, [string]$VirtualHostIPAddress,[int]$VirtualHostPort){
+            $this.ServerName = $ServerName
+            $this.ConfigurationFile = $ConfFile
+            $this.VirtualHostIPAddress = $VirtualHostIPAddress
+            $this.VirtualHostPort = $VirtualHostPort
+        }
+
+        #Full specification
+        ApacheVirtualHost([string]$ServerName, [string]$DocumentRoot, [string[]]$ServerAliases, [string]$ServerAdmin,[string]$CustomLogPath,[string]$ErrorLogPath,[string]$VirtualHostIPAddress,[int]$VirtualHostPort,[string]$ConfigurationFile){
+            $this.ServerName = $ServerName
+            $this.DocumentRoot = $DocumentRoot
+            $this.ServerAliases = $ServerAliases
+            $this.ServerAdmin = $ServerAdmin
+            $this.CustomLogPath = $CustomLogPath
+            $this.ErrorLogPath = $ErrorLogPath
+            $this.VirtualHostIPAddress = $VirtualHostIPAddress
+            $this.VirtualHostPort = $VirtualHostPort
+            $this.ConfigurationFile = $ConfigurationFile
+        }
+
+
+
+        #Default Port and IP
         #endregion
 
         #region class methods
@@ -57,11 +83,16 @@ Class ApacheVirtualHost{
                 Write-Error "Specified virtual hosts directory does not exist: $VHostsDirectory"
                 exit 1
             }
-            $vHostDef = "<VirtualHost $this.VirtualHostIPAddress:$this.VirtualHostPort >`n"
+            $VHostIPAddress = $this.VirtualHostIPAddress
+            [string]$VhostPort = $this.VirtualHostPort
+            $VHostDef = "<VirtualHost " + "$VHostIPAddress" + ":" + $VHostPort + " >`n"
             $vHostDef += "DocumentRoot " + $this.DocumentRoot + "`n"
             ForEach ($Alias in $this.ServerAliases){
-                $vHostDef += "ServerAlias " + $Alias + "`n"
+                if ($Alias.trim() -ne ""){
+                    $vHostDef += "ServerAlias " + $Alias + "`n"
+                }
             }
+            $vHostDef += "ServerName " + $this.ServerName +"`n"
             if ($this.ServerAdmin.Length -gt 1){$vHostDef += "ServerAdmin " + $this.ServerAdmin +"`n"}
             if ($this.CustomLogPath -like "*/*"){$vHostDef += "CustomLog " + $this.CustomLogPath +"`n"}
             if ($this.ErrorLogPath -like "*/*"){$vHostDef += "ErrorLog " + $this.ErrorLogpath +"`n"}
@@ -84,38 +115,60 @@ Function New-ApacheVHost {
         [parameter (Mandatory = $true)][string]$DocumentRoot,
         [string]$VirtualHostIPAddress,
         [string[]]$ServerAliases,
-        [string]$VirtualHostPort,
+        [int]$VirtualHostPort,
         [string]$ServerAdmin,
         [string]$CustomLogPath,
         [string]$ErrorLogPath
         )
 
-        $newVHost = [ApacheVirtualHost]::new()
-        $newVHost.ServerName = $ServerName
-        $newVHost.DocumentRoot = $DocumentRoot
-        $newVHost.ServerAliases = $ServerAliases
-        if ($VirtualHostIPAddress){$newVHost.VirtualHostIPAddress = $VirtualHostIPAddress}
-        if ($VirtualHostPort){$newVHost.VirtualHostPort = $VirtualHostPort}
-        $newVHost.ServerAdmin = $ServerAdmin
-        $newVHost.CustomLogPath = $CustomLogPath
-        $newVHost.ErrorLogPath = $ErrorLogPath
-        $newVHost.Save("$ServerName.conf")        
+        $NewConfFile = $VHostsDirectory + "/" + $ServerName + ".conf"
+        if(!($VirtualHostIPAddress)){$VirtualHostIPAddress = "*"}
+        if(!($VirtualHostPort)){$VirtualHostPort = "80"}
+        $newVHost = [ApacheVirtualHost]::new("$ServerName","$DocumentRoot","$ServerAliases","$ServerAdmin","$CustomLogPath","$ErrorLogPath","$VirtualHostIPAddress",$VirtualHostPort,"$NewConfFile")
+        $newVHost.Save("$ServerName.conf")
+}
+
+Function GetVHostProps([string]$ConfFile,[string]$ServerName,[string]$Listener){
+    $confContents = Get-Content $ConfFile
+    [boolean]$Match = $false
+    $DocumentRoot = ""
+    $CustomLogPath = ""
+    $ErrorLogPath = ""
+    $ServerAdmin = ""
+    ForEach ($confline in $confContents){
+        if ($confLine -like "<VirtualHost*${Listener}*"){
+            $Match = $true
+        }
+        if($Match){
+            Switch -wildcard  ($confline) {
+                "*DocumentRoot*"{$DocumentRoot = $confline.split()[1].trim()}
+                "*CustomLog*"{$CustomLogPath = $confline.split()[1].trim()}
+                "*ErrorLog*"{$ErrorLogPath = $confline.split()[1].trim()}
+                "*ServerAdmin*"{$ServerAdmin = $confline.split()[1].trim()}
+               #Todo: Server aliases
+            }
+            if($confline -like "*</VirtualHost>*"){
+                $Match = $false
+            }
+        }
+    }
+    @{"DocumentRoot" = "$DocumentRoot"; "CustomLogPath" = "$CustomLogPath"; "ErrorLogPath" = "$ErrorLogPath"; "ServerAdmin" = $ServerAdmin}
+
 }
 
 Function Get-ApacheVHost{
     $cmd = GetApacheCmd
-   
+
     $Vhosts = @()
     $res = & $cmd -t -D DUMP_VHOSTS
 
     ForEach ($line in $res){
         $ServerName = $null
         if ($line -like "*:*.conf*"){
-            #$vhobject = New-VHostObj
             $RMatch = $line -match "(?<Listen>.*:[0-9]*)(?<ServerName>.*)\((?<ConfFile>.*)\)"
             $ListenAddress = $Matches.Listen.trim()
             $ServerName = $Matches.ServerName.trim()
-            $ConfFile = $Matches.ConfFile.trim()
+            $ConfFile = $Matches.ConfFile.trim().split(":")[0].Replace('(','')
         }else{
             if ($line.trim().split()[0] -like "*:*"){
                 $ListenAddress = $line.trim().split()[0]
@@ -131,14 +184,17 @@ Function Get-ApacheVHost{
         }
 
         if ($ServerName -ne $null){
-            $vHost = [ApacheVirtualHost]::New
-            $vHost.ServerName = $ServerName
-            $vHost.ConfFile = $ConfFile
-            $vHost.VirtualHostIPAddress = $ListenAddress.Split(":")[0]
-            $vHost.VirtualHostPort = $ListenAddress.Split(":")[1]
+            $vHost = [ApacheVirtualHost]::New($ServerName, $ConfFile, $ListenAddress.Split(":")[0],$ListenAddress.Split(":")[1])
+            $ExtProps = GetVHostProps $ConfFile $ServerName $ListenAddress
+            $vHost.DocumentRoot = $ExtProps.DocumentRoot
+            #Custom log requires additional handling. NYI
+            #$vHost.CustomLogPath = $ExtProps.CustomLogPath
+            $vHost.ErrorLogPath = $ExtProps.ErrorLogPath
+            $vHost.ServerAdmin = $ExtProps.ServerAdmin
             $Vhosts += $vHost
             }
         }
+
     Return $Vhosts
     }
 
@@ -147,15 +203,30 @@ Function Restart-ApacheHTTPServer{
   Param(
    [switch]$Graceful
    )
-  
+
     if ($Graceful -eq $null){$Graceful = $fase}
     $cmd = GetApacheCmd
-	if ($Graceful){
-		& $cmd  -k graceful
-	}else{
-		& $cmd  -k restart
-	}
+        if ($Graceful){
+                & $cmd  -k graceful
+        }else{
+                & $cmd  -k restart
+        }
 
 }
 
 
+Function Get-ApacheModule{
+    $cmd = GetApacheCmd
+
+        $ApacheModules = @()
+
+        $Results = & $cmd -M |grep -v Loaded
+
+        Foreach ($mod in $Results){
+        $modInst = [ApacheModule]::new($mod.trim())
+        $ApacheModules += ($modInst)
+        }
+
+    $ApacheModules
+
+}
