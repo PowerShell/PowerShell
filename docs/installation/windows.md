@@ -2,13 +2,13 @@ Package installation instructions
 =================================
 
 ###MSI:
-To install PowerShell on Windows Full SKU, download either the MSI from [AppVeyor][] for a nightly build, 
+To install PowerShell on Windows Full SKU (works on Win7 SP1 and above - x64 based systems), download either the MSI from [AppVeyor][] for a nightly build, 
 or a released package from our GitHub [releases][] page. The MSI file looks like this - `PowerShell_6.0.0.buildversion.msi`
 
 Once downloaded, double-click the installer and follow the prompts.
 
 ###APPX/WSA:
-Additionally, we provide APPX/WSA packages (that are compatible with Nano Server), 
+Additionally, we provide APPX/WSA packages (that are compatible with Nano Server and works on Win10 x64 and above systems), 
 but these must be self-signed prior to install. 
 See the [`Sign-Package.ps1`][signing] script for details.
 
