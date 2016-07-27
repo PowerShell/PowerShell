@@ -465,6 +465,53 @@ function Get-PSOutput {
 }
 
 
+function Get-PesterTag {
+    param ( [Parameter(Position=0)][string]$testbase = "$PSScriptRoot/test/powershell" )
+    $alltags = @{}
+    $warnings = @()
+
+    get-childitem -Recurse $testbase -File |?{$_.name -match "tests.ps1"}| %{
+        $fullname = $_.fullname
+        $tok = $err = $null
+        $ast = [System.Management.Automation.Language.Parser]::ParseFile($FullName, [ref]$tok,[ref]$err)
+        $des = $ast.FindAll({$args[0] -is "System.Management.Automation.Language.CommandAst" -and $args[0].CommandElements[0].Value -eq "Describe"},$true)
+        foreach( $describe in $des) {
+            $elements = $describe.CommandElements
+            $lineno = $elements[0].Extent.StartLineNumber
+            $foundTag = $false
+            for ( $i = 0; $i -lt $elements.Count; $i++) {
+                if ( $elements[$i].extent.text -match "^-t" ) {
+                    $vAst = $elements[$i+1]
+                    if ( $vAst.FindAll({$args[0] -is "System.Management.Automation.Language.VariableExpressionAst"},$true) ) {
+                        $warnings += "TAGS must be static strings, error in ${fullname}, line $lineno"
+                    }
+                    $values = $vAst.FindAll({$args[0] -is "System.Management.Automation.Language.StringConstantExpressionAst"},$true).Value
+                    $values | %{ 
+                        if ( $_ -notmatch "CI|FEATURE|SCENARIO|SLOW" ) {
+                            $warnings += "${fullname} includes improper tag '$_', line '$lineno'"
+                        }
+                        $alltags[$_]++ 
+                        }
+                    $foundTag = $true
+                }
+            }
+            if ( ! $foundTag ) {
+                $warnings += "${fullname} does not include -Tag in Describe, line '$lineno'"
+            }
+        }
+    }
+    if ( $Warnings.Count -gt 0 ) {
+        $alltags['Result'] = "Fail"
+    }
+    else {
+        $alltags['Result'] = "Pass"
+    }
+    $alltags['Warnings'] = $warnings
+    $o = [pscustomobject]$alltags 
+    $o.psobject.TypeNames.Add("DescribeTagsInUse")
+    $o
+}
+
 function Start-PSPester {
     [CmdletBinding()]param(
         [string]$OutputFormat = "NUnitXml",

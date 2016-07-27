@@ -22,6 +22,12 @@ install:
 build_script:
   - ps: |
       $ErrorActionPreference = 'Stop'
+      # check to be sure our test tags are correct
+      $result = Get-PesterTag
+      if ( $result.Result -ne "Pass" ) {
+        $result.Warnings
+        throw "Tags must be CI, Feature, Scenario, or Slow"
+      }
       Start-PSBuild -Publish
       Start-PSBuild -FullCLR
 
