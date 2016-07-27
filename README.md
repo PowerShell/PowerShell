@@ -27,15 +27,16 @@ Get PowerShell
 --------------
 
 1. Download the package for your platform at [PowerShell Releases][releases].
-1. Install the package.
-    * Package installation documents are available for [Linux or OS X][inst-linux] and [Windows][inst-win].
+1. Install the package. 
+   * [Linux or OS X][inst-linux].
+   * [Windows][inst-win].
 
 Building PowerShell
 -------------------
 
-|                       | Linux | Windows  | OS X |
-|-----------------------|-------|-------------------|------|
-| Build from **Source** | [Instructions][build-linux] | [Instructions][build-wc] | [Instructions][build-osx] |
+| Linux | Windows  | OS X |
+|-------|----------|------|
+| [Instructions][build-linux] | [Instructions][build-wc] | [Instructions][build-osx] |
 
 Downloading the Source Code
 ----------------------
