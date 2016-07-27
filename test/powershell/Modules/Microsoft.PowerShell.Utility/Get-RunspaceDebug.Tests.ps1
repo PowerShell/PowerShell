@@ -1,4 +1,4 @@
-Describe "Get-RunspaceDebug" {
+Describe "Get-RunspaceDebug" -Tags "CI" {
 
     Context "Check return types of RunspaceDebug" {
 

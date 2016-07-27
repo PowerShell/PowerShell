@@ -1,4 +1,4 @@
-Describe "ConvertTo-SecureString" {
+Describe "ConvertTo-SecureString" -Tags "CI" {
 
     Context "Checking return types of ConvertTo-SecureString" {
 

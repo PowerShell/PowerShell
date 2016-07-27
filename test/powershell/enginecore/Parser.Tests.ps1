@@ -1,4 +1,4 @@
-Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" {
+Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" -Tags "CI" {
     BeforeAll {
 		$functionDefinitionFile = Join-Path -Path $TestDrive -ChildPath "functionDefinition.ps1"
 		$functionDefinition = @'

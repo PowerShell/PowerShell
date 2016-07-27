@@ -1,4 +1,4 @@
-Describe "Get-Location" {
+Describe "Get-Location" -Tags "CI" {
     $currentDirectory=[System.IO.Directory]::GetCurrentDirectory()
     BeforeEach {
 	pushd $currentDirectory

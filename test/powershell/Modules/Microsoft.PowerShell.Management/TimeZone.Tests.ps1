@@ -28,7 +28,7 @@ function Assert-ListsSame
     }
 }
 
-Describe "Get-Timezone test case no switches" -tags 'BVT' {
+Describe "Get-Timezone test case no switches" -Tags "CI" {
     It "Call without ListAvailable switch returns current TimeZoneInfo" {
         $observed = (Get-TimeZone).Id
         $expected = ([System.TimeZoneInfo]::Local).Id
@@ -36,7 +36,7 @@ Describe "Get-Timezone test case no switches" -tags 'BVT' {
     }
 }
 
-Describe "Get-Timezone test cases" -tags 'Innerloop','RI' {
+Describe "Get-Timezone test cases" -Tags "CI" {
 
     It "Call without ListAvailable switch returns an object of type TimeZoneInfo" {
         $result = (Get-TimeZone).GetType().Name
@@ -118,7 +118,7 @@ Describe "Get-Timezone test cases" -tags 'Innerloop','RI' {
     }
 }
 
-Describe "Set-Timezone test case: call by single Id" -tags 'BVT' {
+Describe "Set-Timezone test case: call by single Id" -Tags "CI" {
     $originalTimeZoneId
     BeforeAll {
         $originalTimeZoneId = (Get-TimeZone).Id
@@ -145,7 +145,7 @@ Describe "Set-Timezone test case: call by single Id" -tags 'BVT' {
     }
 }
 
-Describe "Set-Timezone test cases" -tags 'Innerloop','RI' {
+Describe "Set-Timezone test cases" -Tags "Feature" {
     $originalTimeZoneId
     BeforeAll {
         $originalTimeZoneId = (Get-TimeZone).Id

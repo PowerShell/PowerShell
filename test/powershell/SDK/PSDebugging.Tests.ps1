@@ -1,6 +1,6 @@
 using namespace System.Diagnostics
 
-Describe "PowerShell Command Debugging" {
+Describe "PowerShell Command Debugging" -tags "CI" {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"

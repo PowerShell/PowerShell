@@ -1,4 +1,4 @@
-Describe "Configuration file locations" {
+Describe "Configuration file locations" -tags "CI","Slow" {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"

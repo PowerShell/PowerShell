@@ -1,4 +1,4 @@
-Describe "Measure-Object" {
+Describe "Measure-Object" -Tags "CI" {
     $testObject = 1,3,4
 
     It "Should be able to be called without error" {
@@ -158,7 +158,7 @@ Describe "Measure-Object" {
     }
 }
 
-Describe "Measure-Object DRT basic functionality" -Tags DRT{
+Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 
 	BeforeAll {
 		if(-not ([System.Management.Automation.PSTypeName]'TestMeasureGeneric').Type)

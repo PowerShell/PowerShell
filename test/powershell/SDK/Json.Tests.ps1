@@ -1,6 +1,6 @@
 # http://www.newtonsoft.com/json/help/html/ParsingLINQtoJSON.htm
 
-Describe "Json.NET LINQ Parsing" {
+Describe "Json.NET LINQ Parsing" -tags "CI" {
     BeforeEach {
 	$jsonFile = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestJson.json
 	$jsonData = (Get-Content $jsonFile | Out-String)

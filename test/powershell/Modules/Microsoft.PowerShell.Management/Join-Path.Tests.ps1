@@ -1,4 +1,4 @@
-Describe "Join-Path cmdlet tests" -Tags DRT {
+Describe "Join-Path cmdlet tests" -Tags "CI" {
   $SepChar=[io.path]::DirectorySeparatorChar
   BeforeAll {
     $StartingLocation = Get-Location

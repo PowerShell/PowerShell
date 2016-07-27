@@ -1,4 +1,4 @@
-Describe "Set-Location" {
+Describe "Set-Location" -Tags "CI" {
     $startDirectory = Get-Location
 
     if ($IsWindows)

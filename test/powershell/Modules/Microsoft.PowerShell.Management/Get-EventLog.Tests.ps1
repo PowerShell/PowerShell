@@ -5,7 +5,7 @@
   if ($windowsPrincipal.IsInRole("Administrators") -eq $true) {
     $NonWinAdmin=$false
   } else {exit}
-  Describe "Get-EventLog cmdlet tests" -Tags:DRT {
+  Describe "Get-EventLog cmdlet tests" -Tags "CI" {
     #CmdLets are not yet implemented, so these cases are -Pending:($True) for now...
     It "should return an array of eventlogs objects when called with -AsString parameter" -Pending:($True) {
       {$result=Get-EventLog -AsString -ea stop}    | Should Not Throw

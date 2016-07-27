@@ -1,4 +1,4 @@
-Describe "Set-Content cmdlet tests" -Tags:DRT {
+Describe "Set-Content cmdlet tests" -Tags "CI" {
   $file1 = "file1.txt"
   Setup -File "$file1" -Content $file1
   Context "Set-Content should actually set content" {

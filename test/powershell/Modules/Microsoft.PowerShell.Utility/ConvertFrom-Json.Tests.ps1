@@ -1,4 +1,4 @@
-Describe 'ConvertFrom-Json' {
+Describe 'ConvertFrom-Json' -tags "CI" {
     It 'can convert a single-line object' {
         ('{"a" : "1"}' | ConvertFrom-Json).a | Should Be 1
     }

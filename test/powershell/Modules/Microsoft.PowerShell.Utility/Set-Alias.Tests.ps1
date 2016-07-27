@@ -1,5 +1,5 @@
 
-Describe "Set-Alias DRT Unit Tests" -Tags DRT{
+Describe "Set-Alias DRT Unit Tests" -Tags "CI" {
 	It "Set-Alias Invalid Scope Name should throw PSArgumentException"{	
 		try { 
 			Set-Alias -Name "ABCD" -Value "foo" -Scope "bogus"
@@ -83,7 +83,7 @@ Describe "Set-Alias DRT Unit Tests" -Tags DRT{
 	}
 }
 
-Describe "Set-Alias" {
+Describe "Set-Alias" -Tags "CI" {
     Mock Get-Date { return "Friday, October 30, 2015 3:38:08 PM" }
     It "Should be able to set alias without error" {
 

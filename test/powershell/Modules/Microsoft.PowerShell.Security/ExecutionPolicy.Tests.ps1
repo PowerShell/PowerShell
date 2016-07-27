@@ -1,4 +1,4 @@
-Describe "ExecutionPolicy" {
+Describe "ExecutionPolicy" -Tags "CI" {
 
     Context "Check Get-ExecutionPolicy behavior" {
         It "Should unrestricted when not on Windows" -Skip:$IsWindows {

@@ -1,4 +1,4 @@
-Describe "Get-PSDrive" {
+Describe "Get-PSDrive" -Tags "CI" {
 
     It "Should not throw" {
 	Get-PSDrive | Should Not BeNullOrEmpty

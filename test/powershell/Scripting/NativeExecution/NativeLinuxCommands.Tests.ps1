@@ -1,4 +1,4 @@
-Describe "NativeLinuxCommands" {
+Describe "NativeLinuxCommands" -tags "CI" {
     It "Should return a type of System.Object for hostname cmdlet" {
         (hostname).GetType().BaseType | Should Be 'System.Object'
         (hostname).GetType().Name | Should Be String
@@ -17,7 +17,7 @@ Describe "NativeLinuxCommands" {
     }
 }
 
-Describe "Scripts with extensions" {
+Describe "Scripts with extensions" -tags "CI" {
     BeforeAll {
         $data = "Hello World"
         Setup -File testScript.ps1 -Content "'$data'"

@@ -1,6 +1,6 @@
 $assetsDir = Join-Path -Path $PSScriptRoot -ChildPath assets
 
-Describe "Import-LocalizedData" {
+Describe "Import-LocalizedData" -Tags "CI" {
 
     BeforeAll {
 	$script = "localized.ps1"

@@ -1,4 +1,4 @@
-Describe "Stream writer tests" {
+Describe "Stream writer tests" -Tags "CI" {
     $targetfile = "writeoutput.txt"
 
     # A custom function is defined here do handle the debug stream dealing with the confirm prompt

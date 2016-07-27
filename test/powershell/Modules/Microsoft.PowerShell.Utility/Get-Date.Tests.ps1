@@ -1,4 +1,4 @@
-Describe "Get-Date DRT Unit Tests"  -Tags DRT {
+Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     It "Get-Date with all parameters returns proper results" {
         $date = [datetime]::Now + ([timespan]::new(0,0,30))
         $result = Get-Date -Date $date -Year 1973 -Month 2 -Day 22 -Hour 15 -Minute 40 -Second 10 -Millisecond 200
@@ -80,7 +80,7 @@ Describe "Get-Date DRT Unit Tests"  -Tags DRT {
 } 
 
 
-Describe "Get-Date" {
+Describe "Get-Date" -Tags "CI" {
     It "Should return a DateTime object upon being called" {
 	(Get-Date).GetType().Name.Equals('DateTime') | Should Be $true
     }

@@ -1,4 +1,4 @@
-﻿Describe "ConvertTo-Xml DRT Unit Tests" -Tags DRT{
+﻿Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
     $customPSObject = [pscustomobject]@{ "prop1" = "val1"; "prop2" = "val2" } 
     $newLine = [System.Environment]::NewLine
     It "Test convertto-xml with a depth parameter" {

@@ -1,4 +1,4 @@
-Describe "Get-Event" {
+Describe "Get-Event" -Tags "CI" {
 
     BeforeEach {
 	( New-Event -SourceIdentifier PesterTestEvent -sender Windows.timer -messagedata "PesterTestMessage" )

@@ -18,14 +18,14 @@ $source = "http://www.nuget.org/api/v2/"
 
 # Actual Tests:
 
-Describe "Get-package" -Tags @('BVT', 'DRT'){
+Describe "Get-package" -Tags "Feature" {
     # make sure that packagemanagement is loaded
     It "EXPECTED: Get-package accepts array of strings for -providername parameter" -Skip {
         $x = (get-package -providername Programs,Msi)
     }
 }
 
-Describe "Get-package with version parameter  - valid scenarios" -Tags @('BVT', 'DRT'){
+Describe "Get-package with version parameter  - valid scenarios" -Tags "Feature" {
     $destination = Join-Path $TestDrive GetPackageTests
 
     It "Get-package supports -AllVersions parameter" -Skip {
@@ -64,7 +64,7 @@ Describe "Get-package with version parameter  - valid scenarios" -Tags @('BVT', 
     }    
 }
 
-Describe "Get-package with version parameter - Error scenarios" -Tags @('BVT', 'DRT'){
+Describe "Get-package with version parameter - Error scenarios" -Tags "Feature" {
 
     It "Get-package -AllVersions -- Cannot be used with other version parameters" {
         $Error.Clear()

@@ -1,4 +1,4 @@
-Describe "Split-Path" {
+Describe "Split-Path" -Tags "CI" {
 
     It "Should return a string object when invoked" {
 	( Split-Path . ).GetType().Name          | Should Be "String"

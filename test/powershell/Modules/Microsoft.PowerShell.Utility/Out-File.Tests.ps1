@@ -1,4 +1,4 @@
-Describe "Out-File DRT Unit Tests" -Tags DRT{
+Describe "Out-File DRT Unit Tests" -Tags "CI" {
     It "Should be able to write the contens into a file with -pspath" {
         $tempFile = "ExposeBug928965"
         { 1 | Out-File -PSPath $tempFile } | Should Not Throw
@@ -17,7 +17,7 @@ Describe "Out-File DRT Unit Tests" -Tags DRT{
     }
 }
 
-Describe "Out-File" {
+Describe "Out-File" -Tags "CI" {
     $expectedContent = "some test text"
     $inObject = New-Object psobject -Property @{text=$expectedContent}
     $testfile = Join-Path -Path $TestDrive -ChildPath outfileTest.txt

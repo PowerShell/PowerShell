@@ -1,6 +1,6 @@
 . (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
 
-Describe "Select-Object" {
+Describe "Select-Object" -Tags "CI" {
     BeforeEach {
 	$dirObject  = GetFileMock
 	$TestLength = 3
@@ -113,7 +113,7 @@ Describe "Select-Object" {
     }
 }
 
-Describe "Select-Object DRT basic functionality" -Tags DRT{
+Describe "Select-Object DRT basic functionality" -Tags "CI" {
 	BeforeAll {
 		$employees = [pscustomobject]@{"FirstName"="joseph"; "LastName"="smith"; "YearsInMS"=15},
                             [pscustomobject]@{"FirstName"="paul"; "LastName"="smith"; "YearsInMS"=15},

@@ -143,7 +143,7 @@ function GetTestData
     return $body
 }
 
-Describe "Invoke-WebRequest tests" {
+Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     # Validate the output of Invoke-WebRequest
     #
@@ -381,7 +381,7 @@ Describe "Invoke-WebRequest tests" {
 
 }
 
-Describe "Invoke-RestMethod tests" {
+Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Invoke-RestMethod returns User-Agent" {
 

@@ -1,4 +1,4 @@
-Describe "Get-ItemProperty" {
+Describe "Get-ItemProperty" -Tags "CI" {
     $currentDirectory = Split-Path $PSScriptRoot -Leaf
     $parentDirectory  = Split-Path (Join-Path -Path $PSScriptRoot -ChildPath "..") -Leaf
     $tempDirectory = $TestDrive

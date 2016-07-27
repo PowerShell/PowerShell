@@ -1,4 +1,4 @@
-Describe "Pop-Location" {
+Describe "Pop-Location" -Tags "CI" {
     $startDirectory = $(Get-Location).Path
 
     BeforeEach { Set-Location $startDirectory }

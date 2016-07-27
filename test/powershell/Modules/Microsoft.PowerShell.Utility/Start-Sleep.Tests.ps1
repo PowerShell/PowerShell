@@ -1,4 +1,4 @@
-Describe "Start-Sleep DRT Unit Tests" -Tags DRT{
+Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
     It "Should be works properly when sleeping with Second" {
         $dtStart = [DateTime]::Now
         Start-Sleep -Seconds 1
@@ -17,7 +17,7 @@ Describe "Start-Sleep DRT Unit Tests" -Tags DRT{
 
 }
 
-Describe "Start-Sleep" {
+Describe "Start-Sleep" -Tags "CI" {
 
     Context "Validate Start-Sleep works properly" {
 	It "Should only sleep for at least 1 second" {

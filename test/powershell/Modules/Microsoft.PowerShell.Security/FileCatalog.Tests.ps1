@@ -7,7 +7,7 @@ if ($IsWindows) {
 
 $script:catalogPath = "" 
  
-Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "Innerloop","BVT" {
+Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
 
     #compare two hashtables 
     function CompareHashTables

@@ -1,4 +1,4 @@
-Describe "Import-Alias DRT Unit Tests" -Tags DRT{
+Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
     $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
     $testAliases        = "TestAliases"
     $fulltestpath       = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
@@ -61,7 +61,7 @@ Describe "Import-Alias DRT Unit Tests" -Tags DRT{
     }
 }
 
-Describe "Import-Alias" {
+Describe "Import-Alias" -Tags "CI" {
 	$newLine=[Environment]::NewLine
 	$testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
     $testAliases        = "pesteralias.txt"

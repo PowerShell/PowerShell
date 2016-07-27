@@ -1,4 +1,4 @@
-Describe "Register-EngineEvent" {
+Describe "Register-EngineEvent" -Tags "CI" {
 
     Context "Check return type of Register-ObjectEvent" {
 	It "Should return System.Management.Automation.PSEventJob as return type of Register-EngineEvent" {

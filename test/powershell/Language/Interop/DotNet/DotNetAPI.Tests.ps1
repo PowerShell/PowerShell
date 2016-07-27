@@ -1,4 +1,4 @@
-Describe "DotNetAPI" {
+Describe "DotNetAPI" -Tags "CI" {
     $posh_E  = 2.718281828459045
     $posh_pi = 3.14159265358979
 

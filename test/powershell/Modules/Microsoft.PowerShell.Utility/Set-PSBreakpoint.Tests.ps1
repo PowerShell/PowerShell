@@ -1,6 +1,6 @@
 $ps = Join-Path -Path $PsHome -ChildPath "powershell"
 
-Describe "Set-PSBreakpoint DRT Unit Tests" -Tags DRT {
+Describe "Set-PSBreakpoint DRT Unit Tests" -Tags "CI" {
     #Set up
     $scriptFileName = Join-Path $TestDrive -ChildPath breakpointTestScript.ps1
     $scriptFileNameBug = Join-Path -Path $TestDrive -ChildPath SetPSBreakpointTests.ExposeBug154112.ps1
@@ -189,7 +189,7 @@ set-psbreakpoint -command foo
     Remove-Item -Path $scriptFileNameBug -Force
 }
 
-Describe "Set-PSBreakpoint" {
+Describe "Set-PSBreakpoint" -Tags "CI" {
     # Set up test script
     $testScript = Join-Path -Path $PSScriptRoot -ChildPath psbreakpointtestscript.ps1
 

@@ -1,4 +1,4 @@
-Describe "Tee-Object" {
+Describe "Tee-Object" -Tags "CI" {
 
     Context "Validate Tee-Object is correctly forking output" {
 
@@ -20,7 +20,7 @@ Describe "Tee-Object" {
     }
 }
 
-Describe "Tee-Object DRT Unit Tests" -Tags DRT {
+Describe "Tee-Object DRT Unit Tests" -Tags "CI" {
     BeforeAll {
         $tempFile = Join-Path $TestDrive -ChildPath "TeeObjectTestsTempFile"
     }

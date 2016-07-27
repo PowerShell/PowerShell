@@ -1,4 +1,4 @@
-Describe "XmlCommand DRT basic functionality Tests" -Tags DRT{
+Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 
 	BeforeAll {
 		if(-not ('IsHiddenTestType' -as "type"))

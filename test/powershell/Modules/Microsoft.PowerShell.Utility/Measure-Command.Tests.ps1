@@ -1,4 +1,4 @@
-Describe "Measure-Command" {
+Describe "Measure-Command" -Tags "CI" {
 
     Context "Validate return types for Measure-Command" {
 

@@ -1,4 +1,4 @@
-﻿Describe "Add-Member DRT Unit Tests" -Tags DRT{
+﻿Describe "Add-Member DRT Unit Tests" -Tags "CI" {
 
     It "Mandatory parameters should not be null nor empty" {
         # when Name is null 
@@ -278,7 +278,7 @@
     }
 }
 
-Describe "Add-Member" {
+Describe "Add-Member" -Tags "CI" {
 
     It "should be able to see a newly added member of an object" {
 	$o = New-Object psobject

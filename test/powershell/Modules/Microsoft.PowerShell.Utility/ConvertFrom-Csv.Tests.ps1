@@ -1,6 +1,6 @@
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-Describe "ConvertFrom-Csv" {
+Describe "ConvertFrom-Csv" -Tags "CI" {
     $testObject = "a", "1"
     $testcsv = Join-Path -Path (Join-Path -Path $here -ChildPath assets) -ChildPath TestCsv2.csv
     $testName = "Zaphod BeebleBrox"
@@ -51,7 +51,7 @@ a,b,c
     }
 }
 
-Describe "ConvertFrom-Csv DRT Unit Tests" -Tags DRT{
+Describe "ConvertFrom-Csv DRT Unit Tests" -Tags "CI" {
     It "Test ConvertFrom-Csv with pipelined InputObject and Header" {
         $inputObject = [pscustomobject]@{ First = 1; Second = 2 } 
         $res = $inputObject | ConvertTo-Csv         

@@ -1,6 +1,6 @@
 using namespace System.Diagnostics
 
-Describe "Invoke-Item" {
+Describe "Invoke-Item" -Tags "CI" {
 
     function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
     {

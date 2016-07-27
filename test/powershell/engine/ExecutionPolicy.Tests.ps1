@@ -8,7 +8,7 @@ if(-not $IsWindows)
     return
 }
 
-Describe "Help work with ExecutionPolicy Restricted " {
+Describe "Help work with ExecutionPolicy Restricted " -Tags "Feature" {
 
     # Validate that 'Get-Help Get-Disk' returns one result when the execution policy is 'Restricted' on Nano
     # From an internal bug - [Regression] Get-Help returns multiple matches when there is an exact match
@@ -36,7 +36,7 @@ Describe "Help work with ExecutionPolicy Restricted " {
     }
 }
 
-Describe "Validate ExecutionPolicy cmdlets in PowerShell" -Tags "Innerloop", "BVT" {
+Describe "Validate ExecutionPolicy cmdlets in PowerShell" -Tags "CI" {
 
     BeforeAll {
 
@@ -852,7 +852,7 @@ ZoneId=$FileType
 }
 
 
-Describe "Validate that 'ConvertTo-SecureString -Key' and 'ConvertFrom-SecureString -Key' work on NanoServer and IoT" -Tags "Innerloop", "BVT" {
+Describe "Validate that 'ConvertTo-SecureString -Key' and 'ConvertFrom-SecureString -Key' work on NanoServer and IoT" -Tags "CI" {
 
     It "ConvertTo-SecureString should return back the SecureString that was constructed from 'ValidateConvertSecureString'." -skip:(-not $IsWindows) {
 

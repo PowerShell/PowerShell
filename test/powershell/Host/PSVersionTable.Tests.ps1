@@ -1,4 +1,4 @@
-Describe "PSVersionTable" {
+Describe "PSVersionTable" -Tags "CI" {
     It "Should have version table entries" {
 	$PSVersionTable.Count | Should Be 9
     }

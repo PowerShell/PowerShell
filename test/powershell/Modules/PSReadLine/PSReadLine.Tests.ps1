@@ -1,4 +1,4 @@
-Describe "PSReadLine" {
+Describe "PSReadLine" -tags "CI" {
     BeforeAll {
         if (Get-Module PSReadLine) {
             $originalEditMode = (Get-PSReadLineOption).EditMode

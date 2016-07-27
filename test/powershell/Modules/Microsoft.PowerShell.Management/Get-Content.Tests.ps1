@@ -1,4 +1,4 @@
-Describe "Get-Content" -Tags:DRT {
+Describe "Get-Content" -Tags "CI" {
   $testString = "This is a test content for a file"
   $nl         = [Environment]::NewLine
   $firstline  = "Here's a first line "

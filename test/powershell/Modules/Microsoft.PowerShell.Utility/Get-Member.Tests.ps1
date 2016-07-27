@@ -1,4 +1,4 @@
-Describe "Get-Member" {
+Describe "Get-Member" -Tags "CI" {
     It "Should be able to be called on string objects, ints, arrays, etc" {
 	$a = 1 #test numbers
 	$b = 1.3
@@ -40,7 +40,7 @@ Describe "Get-Member" {
     }
 }
 
-Describe "Get-Member DRT Unit Tests" -Tags DRT {
+Describe "Get-Member DRT Unit Tests" -Tags "CI" {
     Context "Verify Get-Member with Class" {
 		if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
 		{

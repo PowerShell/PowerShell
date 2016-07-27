@@ -16,7 +16,7 @@
 # ------------------------------------------------------------------------------
 # Actual Tests:
 
-Describe "get-packageprovider" -Tags @('BVT', 'DRT'){
+Describe "get-packageprovider" -Tags "Feature" {
 
     It "lists package providers installed" {
         $x = (get-packageprovider -name "nuget").name | should match "nuget"
@@ -72,7 +72,7 @@ Describe "get-packageprovider" -Tags @('BVT', 'DRT'){
 }
 
 
-Describe "Get-PackageProvider with list" -Tags @('BVT', 'DRT'){
+Describe "Get-PackageProvider with list" -Tags "Feature" {
 
     It "lists package providers installed" {
         $x = (Get-PackageProvider).Count -gt 1 | should be $true

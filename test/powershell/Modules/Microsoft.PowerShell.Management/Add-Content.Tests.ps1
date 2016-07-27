@@ -1,4 +1,4 @@
-Describe "Add-Content cmdlet tests" -Tags:DRT {
+Describe "Add-Content cmdlet tests" -Tags "CI" {
   $file1 = "file1.txt"
   Setup -File "$file1"
 

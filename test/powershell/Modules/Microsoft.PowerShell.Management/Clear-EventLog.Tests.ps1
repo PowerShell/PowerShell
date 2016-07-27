@@ -5,7 +5,7 @@ if ($IsWindows -and !$IsCoreCLR) {
   if ($windowsPrincipal.IsInRole("Administrators") -eq $true) {
       $NonWinAdmin=$false
   } else {$NonWinAdmin=$true}
-  Describe "Clear-EventLog cmdlet tests" -Tags:DRT {
+  Describe "Clear-EventLog cmdlet tests" -Tags "CI" {
     #DRT - CmdLet is NYI - change to -Skip:($NonWinAdmin) when implemented
     It "should be able to Clear-EventLog" -Pending:($True -Or $NonWinAdmin) {
       Remove-EventLog -LogName TestLog -ea Ignore

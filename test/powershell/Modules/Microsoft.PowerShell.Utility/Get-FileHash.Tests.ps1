@@ -1,4 +1,4 @@
-Describe "Get-FileHash" {
+Describe "Get-FileHash" -Tags "CI" {
     New-Variable testDocument -Value (Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath testablescript.ps1) -Scope Global -Force
     # The MACTripleDES and RIPEMD160 algorithms are unsupported on Linux
     $algorithms = @{"SHA1"      ="01B865D143E07ECC875AB0EFC0A4429387FD0CF7";

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation, 2015
 #
 
-Describe 'enums' -Tags "DRT" {
+Describe 'enums' -Tags "CI" {
 
     Context 'basic enums' {
         enum E1
@@ -73,7 +73,7 @@ Describe 'enums' -Tags "DRT" {
     }
 }
 
-Describe 'Basic enum errors' -Tags "DRT" {
+Describe 'Basic enum errors' -Tags "CI" {
 
     Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
 

@@ -1,5 +1,5 @@
 
-Describe 'Automatic variable $input' {
+Describe 'Automatic variable $input' -Tags "CI" {
     It '$input Type should be enumerator' {
         function from_begin { [cmdletbinding()]param() begin { Write-Output -NoEnumerate $input } }
         function from_process { [cmdletbinding()]param() process { Write-Output -NoEnumerate $input } }

@@ -1,4 +1,4 @@
-Describe "Get-EventSubscriber" {
+Describe "Get-EventSubscriber" -Tags "CI" {
 
     AfterEach {
 	Unregister-Event -SourceIdentifier PesterTestRegister -ErrorAction SilentlyContinue

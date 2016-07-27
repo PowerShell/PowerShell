@@ -1,4 +1,4 @@
-Describe "Get-Item" {
+Describe "Get-Item" -Tags "CI" {
     It "Should list all the items in the current working directory when asterisk is used" {
 	(Get-Item (Join-Path -Path $PSScriptRoot -ChildPath "*")).GetType().BaseType | Should Be 'array'
 	(Get-Item (Join-Path -Path $PSScriptRoot -ChildPath "*")).GetType().Name | Should Be 'Object[]'

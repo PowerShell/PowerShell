@@ -1,4 +1,4 @@
-Describe "ConvertTo-Csv DRT Unit Tests" -Tags DRT{
+Describe "ConvertTo-Csv DRT Unit Tests" -Tags "CI" {
     $inputObject = [pscustomobject]@{ First = 1; Second = 2 } 
 
     It "Test convertto-csv with psobject pipelined" {        
@@ -35,7 +35,7 @@ Describe "ConvertTo-Csv DRT Unit Tests" -Tags DRT{
     }
 }
 
-Describe "ConvertTo-Csv" {
+Describe "ConvertTo-Csv" -Tags "CI" {
     $Name = "Hello"; $Data = "World";
     $testObject = New-Object psobject -Property @{ FirstColumn = $Name; SecondColumn = $Data }
 

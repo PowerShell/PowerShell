@@ -1,4 +1,4 @@
-Describe "New-Event" {
+Describe "New-Event" -Tags "CI" {
 
     Context "Check return type of New-Event" {
 

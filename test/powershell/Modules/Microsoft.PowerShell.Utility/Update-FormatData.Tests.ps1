@@ -1,4 +1,4 @@
-Describe "Update-FormatData" {
+Describe "Update-FormatData" -Tags "CI" {
 
     BeforeAll {
         $path = Join-Path -Path $TestDrive -ChildPath "outputfile.ps1xml"
@@ -27,7 +27,7 @@ Describe "Update-FormatData" {
     }
 }
 
-Describe "Update-FormatData basic functionality" -Tags DRT{
+Describe "Update-FormatData basic functionality" -Tags "CI" {
     BeforeAll {
         $testfilename = "testfile.ps1xml"
         $testfile = Join-Path -Path $TestDrive -ChildPath $testfilename
