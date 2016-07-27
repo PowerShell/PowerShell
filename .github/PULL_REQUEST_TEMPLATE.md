@@ -1,8 +1,7 @@
-<!-- PR checklist -->
-
-- [ ] Resolves issue #xyz.
-- [ ] Code is up-to-date with `master`.
+- [ ] Resolves issue #abcd.
+- [ ] Code is [rebased][sync] on `origin/master`.
 - [ ] Add tests that fail without your changes.
-- [ ] Update all relevant [documentation](../docs).
+- [ ] Update all relevant [documentation][docs].
 
-<!-- Provide more details about the PR below -->
+[sync]: https://github.com/PowerShell/PowerShell/blob/master/docs/git/powershell-repository-101.md#sync-your-local-repo
+[docs]: https://github.com/PowerShell/PowerShell/tree/master/docs
