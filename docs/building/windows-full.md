@@ -92,20 +92,20 @@ Assembly Cache (GAC), not your output directory.
 Use `Start-DevPowerShell` helper funciton, to workaround it with `$env:DEVPATH`
 
 ```powershell
-Start-DevPowerShell
+Start-DevPowerShell -FullCLR
 ```
 
 This command has a reasonable default to run `powershell.exe` from the build output folder.
 If you are building an unusual configuration (i.e. not `Debug`), you can explicitly specify path to the bin directory
 
 ```powershell
-Start-DevPowerShell -binDir .\src\Microsoft.PowerShell.ConsoleHost\bin\Debug\net451
+Start-DevPowerShell -FullCLR -binDir .\src\Microsoft.PowerShell.ConsoleHost\bin\Debug\net451
 ```
 
 Or more programmatically:
 
 ```powershell
-Start-DevPowerShell -binDir (Split-Path -Parent (Get-PSOutput))
+Start-DevPowerShell -FullCLR -binDir (Split-Path -Parent (Get-PSOutput))
 ```
 
 The default for produced `powershell.exe` is x64.

@@ -42,7 +42,7 @@ test_script:
       $env:FullOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -FullCLR))
       Write-Host -Foreground Green 'Run FullCLR tests'
       $testResultsFileFullCLR = "$pwd\TestsResults.FullCLR.xml"
-      Start-DevPowerShell -NoNewWindow -ArgumentList '-noprofile', '-noninteractive' -Command "Invoke-Pester test/fullCLR -ExcludeTag 'Slow' -OutputFormat NUnitXml -OutputFile $testResultsFileFullCLR"
+      Start-DevPowerShell -FullCLR -NoNewWindow -ArgumentList '-noprofile', '-noninteractive' -Command "Invoke-Pester test/fullCLR -ExcludeTag 'Slow' -OutputFormat NUnitXml -OutputFile $testResultsFileFullCLR"
       (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFileFullCLR))
       #
       # Fail the build, if tests failed
