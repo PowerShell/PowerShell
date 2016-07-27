@@ -74,9 +74,7 @@ If you already cloned but forgot to use `--recursive`, you can update submodules
 git submodule update --init
 ```
 
-See [working with the PowerShell repository][powershell-repo-101] for more information.
-
-[powershell-repo-101]: docs/git/powershell-repository-101.md
+See [working with the PowerShell repository](docs/git) for more information.
 
 Developing and Contributing
 --------------------------
