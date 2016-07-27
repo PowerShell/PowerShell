@@ -895,9 +895,9 @@ function Start-DevPowerShell {
     )
 
     try {
-        if ((-not $NoNewWindow) -and ($IsLinux -or $IsOSX))
+        if ((-not $NoNewWindow) -and ($IsCoreCLR))
         {
-            Write-Warning "Start-DevPowerShell -NoNewWindow is implied on non-windows systems"
+            Write-Warning "Start-DevPowerShell -NoNewWindow is currently implied in PowerShellCore edition https://github.com/PowerShell/PowerShell/issues/1543"
             $NoNewWindow = $true
         }
 
