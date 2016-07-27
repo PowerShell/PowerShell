@@ -13,14 +13,14 @@ Top directory
 
 We are calling `dotnet` tool build for `$Top` directory
 
-- `src\powershell-windows` for CoreCLR on Windows.
+- `src\powershell-win-core` for CoreCLR on Windows.
 - `src\powershell-unix` for CoreCLR on Linux and OS X.
-- `src\Microsoft.PowerShell.ConsoleHost` for FullCLR builds (Windows only)
+- `src\powershell-win-full` for FullCLR builds (Windows only)
 
 ### Dummy dependencies
 
 We use dummy dependencies between project.json files to leverage `dotnet` build functionality.
-For example, `src\powershell-windows\project.json` has dependency on `Microsoft.PowerShell.PSReadLine`,
+For example, `src\powershell-win-core\project.json` has dependency on `Microsoft.PowerShell.PSReadLine`,
 but in reality, there is no build dependency.
 
 Dummy dependencies allows us to build just `$Top` folder, instead of building several folders.
@@ -28,7 +28,7 @@ Dummy dependencies allows us to build just `$Top` folder, instead of building se
 ### Dummy dependencies rules
 
 * If assembly is part of FullCLR build,
-it should be listed as a dependency for FullCLR $Top folder (src\Microsoft.PowerShell.ConsoleHost)
+it should be listed as a dependency for FullCLR $Top folder (src\powershell-win-full)
 
 * If assembly is part of CoreCLR build,
-it should be listed as a dependency for $Top folder (src\powershell-unix or src\powershell-windows)
+it should be listed as a dependency for $Top folder (src\powershell-unix or src\powershell-win-core)

@@ -180,7 +180,7 @@ function Start-PSBuild {
 
     # setup arguments
     $Arguments = @()
-    if ($Publish) {
+    if ($Publish -or $FullCLR) {
         $Arguments += "publish"
     } else {
         $Arguments += "build"
@@ -368,7 +368,7 @@ function New-PSOptions {
     }
 
     if ($FullCLR) {
-        $Top = "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost"
+        $Top = "$PSScriptRoot/src/powershell-win-full"
     } else {
         if ($Configuration -eq 'Linux')
         {
@@ -376,7 +376,7 @@ function New-PSOptions {
         }
         else
         {
-            $Top = "$PSScriptRoot/src/powershell-windows"
+            $Top = "$PSScriptRoot/src/powershell-win-core"
         }
     }
     Write-Verbose "Top project directory is $Top"
@@ -415,15 +415,10 @@ function New-PSOptions {
     if ($Output) {
         $Output = Join-Path $PSScriptRoot $Output
     } else {
-        $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework)
-
-        # FullCLR only builds a library, so there is no runtime component
-        if (-not $FullCLR) {
-            $Output = [IO.Path]::Combine($Output, $Runtime)
-        }
+        $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime)
 
         # Publish injects the publish directory
-        if ($Publish) {
+        if ($Publish -or $FullCLR) {
             $Output = [IO.Path]::Combine($Output, "publish")
         }
 
@@ -770,11 +765,11 @@ function Publish-NuGetFeed
 'Microsoft.PowerShell.Commands.Management',
 'Microsoft.PowerShell.Commands.Utility',
 'Microsoft.PowerShell.ConsoleHost',
-'Microsoft.PowerShell.PSReadLine',
 'Microsoft.PowerShell.Security',
 'System.Management.Automation',
 'Microsoft.PowerShell.CoreCLR.AssemblyLoadContext',
-'Microsoft.PowerShell.CoreCLR.Eventing'
+'Microsoft.PowerShell.CoreCLR.Eventing',
+'Microsoft.PowerShell.SDK'
     ) | % {
         if ($VersionSuffix)
         {
@@ -1090,8 +1085,7 @@ function Start-TypeGen
     Push-Location "$PSScriptRoot/src/TypeCatalogParser"
     try
     {
-        $topPath = if ($IsWindows) {'../powershell-windows'} else {'../powershell-unix'}
-        dotnet run $topPath
+        dotnet run
     }
     finally
     {

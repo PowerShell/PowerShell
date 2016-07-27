@@ -1,7 +1,7 @@
 {
     "name": "powershell",
     "version": "1.0.0-*",
-    "description": ".NET CLI PowerShell app",
+    "description": "PowerShell top-level project with .NET CLI PowerShell app",
 
     "buildOptions": {
         "xmlDoc": true,
@@ -51,11 +51,9 @@
     },
 
     "dependencies": {
-        "Microsoft.PowerShell.ConsoleHost": "1.0.0-*",
+        "Microsoft.PowerShell.SDK": "1.0.0-*",
         "Microsoft.PowerShell.PSReadLine": "1.0.0-*",
         "Microsoft.PowerShell.Commands.Diagnostics": "1.0.0-*",
-        "Microsoft.PowerShell.Commands.Management": "1.0.0-*",
-        "Microsoft.PowerShell.Commands.Utility": "1.0.0-*",
         "Microsoft.PowerShell.LocalAccounts": "1.0.0-*",
         "Microsoft.PowerShell.PackageManagement": "1.0.0-*",
         "Microsoft.Management.Infrastructure.CimCmdlets": "1.0.0-*"

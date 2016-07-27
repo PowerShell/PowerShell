@@ -10,50 +10,7 @@
         "delaySign": true,
         "publicSign": false,
         "warningsAsErrors": true,
-        "allowUnsafe": true,
-        "copyToOutput": {
-            "mappings": {
-                "Modules/" : {
-                    "include": [
-                        "../Modules/Windows-Full",
-                        "../Modules/Windows-Core+Full",
-                        "../Modules/Shared"
-                    ],
-                    "exclude": [
-                        "../Modules/Shared/Pester/.git*"
-                    ]
-                }
-            },
-            "include" : [
-                "powershell.exe",
-                "powershell.pdb",
-                "pwrshplugin.dll",
-                "pwrshplugin.pdb",
-                "../../powershell.version"
-            ]
-        }
-    },
-
-    "publishOptions": {
-        "mappings": {
-            "Modules/" : {
-                "include": [
-                    "../Modules/Windows-Full",
-                    "../Modules/Windows-Core+Full",
-                    "../Modules/Shared"
-                ],
-                "exclude": [
-                    "../Modules/Shared/Pester/.git*"
-                ]
-            }
-        },
-        "include" : [
-            "powershell.exe",
-            "powershell.pdb",
-            "pwrshplugin.dll",
-            "pwrshplugin.pdb",
-            "../../powershell.version"
-        ]
+        "allowUnsafe": true
     },
 
     "configurations": {
@@ -94,25 +51,6 @@
             }
         },
         "net451": {
-            "dependencies": {
-                "Microsoft.Management.Infrastructure.CimCmdlets": "1.0.0-*",
-                "Microsoft.PowerShell.Activities": "1.0.0-*",
-                "Microsoft.PowerShell.Commands.Diagnostics": "1.0.0-*",
-                "Microsoft.PowerShell.Commands.Management": "1.0.0-*",
-                "Microsoft.PowerShell.Commands.Utility": "1.0.0-*",
-                "Microsoft.PowerShell.Core.Activities": "1.0.0-*",
-                "Microsoft.PowerShell.Diagnostics.Activities": "1.0.0-*",
-                "Microsoft.PowerShell.GraphicalHost": "1.0.0-*",
-                "Microsoft.PowerShell.LocalAccounts": "1.0.0-*",
-                "Microsoft.PowerShell.Management.Activities": "1.0.0-*",
-                "Microsoft.PowerShell.PackageManagement": "1.0.0-*",
-                "Microsoft.PowerShell.PSReadLine": "1.0.0-*",
-                "Microsoft.PowerShell.ScheduledJob": "1.0.0-*",
-                "Microsoft.PowerShell.Security.Activities": "1.0.0-*",
-                "Microsoft.PowerShell.Utility.Activities": "1.0.0-*",
-                "Microsoft.PowerShell.Workflow.ServiceCore": "1.0.0-*",
-                "Microsoft.WSMan.Management.Activities": "1.0.0-*"
-            }
         }
     }
 }
