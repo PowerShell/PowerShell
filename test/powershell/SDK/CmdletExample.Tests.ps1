@@ -37,7 +37,7 @@ Describe 'SDK Send Greeting Sample Tests' -Tag CI {
         } 
 
         $importPesterCommand = 'Import-module Pester'
-        if($isCore)
+        if($IsCoreCLR)
         {
             $importPesterCommand = "Import-Module $(Join-Path -path $PSHOME -child '/Modules/Pester')"
         }
