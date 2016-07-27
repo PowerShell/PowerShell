@@ -122,14 +122,14 @@ function Start-PSBuild {
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
     if ($FullCLR) {
         # cmake is needed to build powershell.exe
-        $precheck = $precheck -and (precheck 'cmake' 'cmake not found. You can install it from https://chocolatey.org/packages/cmake.portable')
+        $precheck = $precheck -and (precheck 'cmake' 'cmake not found. Run Start-PSBootstrap. You can also install it from https://chocolatey.org/packages/cmake.portable')
 
         Use-MSBuild
 
         #mc.exe is Message Compiler for native resources
-        $mcexe = Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\" -Recurse -Filter 'mc.exe' | ? {$_.FullName -match 'x64'} | select -First 1 | % {$_.FullName}
+        $mcexe = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\" -Recurse -Filter 'mc.exe' | ? {$_.FullName -match 'x64'} | select -First 1 | % {$_.FullName}
         if (-not $mcexe) {
-            throw 'mc.exe not found. Install Microsoft Windows SDK.'
+            throw 'mc.exe not found. Run Start-PSBootstrap or install Microsoft Windows 10 SDK from https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk'
         }
 
         $vcVarsPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
@@ -525,11 +525,15 @@ function Start-PSxUnit {
 
 
 function Start-PSBootstrap {
-    [CmdletBinding()]param(
+    [CmdletBinding(
+        SupportsShouldProcess=$true,
+        ConfirmImpact="High")]
+    param(
         [ValidateSet("dev", "beta", "preview")]
         [string]$Channel = "rel-1.0.0",
         [string]$Version = "latest",
-        [switch]$Package
+        [switch]$Package,
+        [switch]$Force
     )
 
     log "Installing Open PowerShell build dependencies"
@@ -569,8 +573,6 @@ function Start-PSBootstrap {
             brew install $Deps
             # OpenSSL libraries must be updated
             brew link --force openssl
-        } else {
-            Write-Warning "This script only supports Ubuntu 14.04, CentOS 7, and OS X, you must install dependencies manually!"
         }
 
         # Install [fpm](https://github.com/jordansissel/fpm)
@@ -610,6 +612,96 @@ function Start-PSBootstrap {
             $installScript = "dotnet-install.ps1"
             Invoke-WebRequest -Uri $obtainUrl/$installScript -OutFile $installScript
             & ./$installScript -c $Channel -v $Version
+
+            $machinePath = [Environment]::GetEnvironmentVariable('Path', 'MACHINE')
+            $newMachineEnvironmentPath = $machinePath
+
+            $cmakePresent = precheck 'cmake' $null
+            $sdkPath = "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\v10.0A"
+            $sdkPresent = Test-Path -Path $sdkPath -PathType Container
+
+            # Install chocolatey
+            $chocolateyPath = "$env:AllUsersProfile\chocolatey\bin"
+            
+            if(precheck 'choco' $null) 
+            {
+                log "Chocolatey is already installed. Skipping installation."
+            }
+            elseif(($cmakePresent -eq $false) -or ($sdkPresent -eq $false)) 
+            {
+                log "Chocolatey not present. Installing chocolatey."
+                if ($Force -or $PSCmdlet.ShouldProcess("Install chocolatey via https://chocolatey.org/install.ps1")) 
+                {
+                    Invoke-Expression ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+                
+                    if (-not ($machinePath.ToLower().Contains($chocolateyPath.ToLower())))
+                    {
+                        log "Adding $chocolateyPath to Path environment variable"
+                        $env:Path += ";$chocolateyPath"
+                        $newMachineEnvironmentPath += ";$chocolateyPath"    
+                    }
+                    else
+                    {
+                        log "$chocolateyPath already present in Path environment variable"
+                    }
+                }
+                else
+                {
+                    Write-Error "Chocolatey is required to install missing dependencies. Please install it from https://chocolatey.org/ manually. Alternatively, install cmake and Windows 10 SDK."
+                    return $null
+                }
+            }
+            else
+            {
+                log "Skipping installation of chocolatey, cause both cmake and Win 10 SDK are present."
+            }
+
+            # Install cmake
+            $cmakePath = "${env:ProgramFiles(x86)}\CMake\bin"
+            if($cmakePresent)
+            {
+                log "Cmake is already installed. Skipping installation."
+            }
+            else
+            {
+                log "Cmake not present. Installing cmake."
+                choco install cmake.portable -y --version 3.6.0
+                
+                if (-not ($machinePath.ToLower().Contains($cmakePath.ToLower())))
+                {
+                    log "Adding $cmakePath to Path environment variable"
+                    $env:Path += ";$cmakePath"
+                    $newMachineEnvironmentPath = "$cmakePath;$newMachineEnvironmentPath"
+                }
+                else
+                {
+                    log "$cmakePath already present in Path environment variable"
+                }
+            }
+
+            # Install Windows 10 SDK   
+            $packageName = "windows-sdk-10.0"
+
+            if (-not $sdkPresent)
+            {
+                log "Windows 10 SDK not present. Installing $packageName."
+                choco install windows-sdk-10.0 -y
+            }
+            else
+            {
+                log "Windows 10 SDK present. Skipping installation."
+            }
+            
+            # Update path machine environment variable
+            if ($newMachineEnvironmentPath -ne $machinePath)
+            {
+                log "Updating Path machine environment variable"
+                if ($Force -or $PSCmdlet.ShouldProcess("Update Path machine environment variable to $newMachineEnvironmentPath")) 
+                {
+                    [Environment]::SetEnvironmentVariable('Path', $newMachineEnvironmentPath, 'MACHINE')
+                }
+            }
+
         } elseif ($IsWindows) {
             Write-Warning "Start-PSBootstrap cannot be run in Core PowerShell on Windows (need Invoke-WebRequest!)"
         }
@@ -1335,7 +1427,10 @@ function script:log([string]$message) {
 function script:precheck([string]$command, [string]$missedMessage) {
     $c = Get-Command $command -ErrorAction SilentlyContinue
     if (-not $c) {
-        Write-Warning $missedMessage
+        if ($missedMessage -ne $null)
+        {
+            Write-Warning $missedMessage
+        }
         return $false
     } else {
         return $true
