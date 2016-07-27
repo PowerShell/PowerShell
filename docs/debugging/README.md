@@ -1,7 +1,7 @@
 Debugging
 =========
 
-VS Code
+Visual Studio Code
 =======
 
 [Experimental .NET Core Debugging in VS Code][core-debug] enables

@@ -1,6 +1,6 @@
 Using PowerShell Integrated Scripting Environment (ISE)
 ====
-The PowerShell ISE only works on Windows. If you are not using Windows, please see [Using VS Code](./using-vscode.md).
+The PowerShell ISE only works on Windows. If you are not using Windows, please see [Using Visual Studio Code](./using-vscode.md).
 
 Editing with ISE
 ---
