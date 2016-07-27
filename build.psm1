@@ -237,7 +237,7 @@ function Start-PSBuild {
     }
 
     # Build native components
-    if ($IsLinux -or $IsOSX) {
+    if (($IsLinux -or $IsOSX) -and -not $SMAOnly) {
         $Ext = if ($IsLinux) {
             "so"
         } elseif ($IsOSX) {
