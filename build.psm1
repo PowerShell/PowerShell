@@ -895,6 +895,12 @@ function Start-DevPowerShell {
     )
 
     try {
+        if ((-not $NoNewWindow) -and ($IsLinux -or $IsOSX))
+        {
+            Write-Warning "Start-DevPowerShell -NoNewWindow is implied on non-windows systems"
+            $NoNewWindow = $true
+        }
+
         if (-not $LoadProfile) {
             $ArgumentList = @('-noprofile') + $ArgumentList
         }
