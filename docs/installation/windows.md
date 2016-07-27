@@ -1,13 +1,18 @@
 Package installation instructions
 =================================
 
-To install PowerShell from a package, download either the MSI from [AppVeyor][] for a nightly build, 
-or a released package from our GitHub [releases][] page. 
+###MSI:
+To install PowerShell on Windows Full SKU, download either the MSI from [AppVeyor][] for a nightly build, 
+or a released package from our GitHub [releases][] page. The MSI file looks like this - `PowerShell_6.0.0.buildversion.msi`
+
 Once downloaded, double-click the installer and follow the prompts.
 
-Additionally, we provide APPX/WSA packages (that are compatible with Nano Server also), 
+###APPX/WSA:
+Additionally, we provide APPX/WSA packages (that are compatible with Nano Server), 
 but these must be self-signed prior to install. 
 See the [`Sign-Package.ps1`][signing] script for details.
+
+When using APPX/WSA, the OS needs to be configured to allow [sideloading apps](https://technet.microsoft.com/en-us/windows/jj874388.aspx)
 
 Artifact installation instructions
 ==================================
