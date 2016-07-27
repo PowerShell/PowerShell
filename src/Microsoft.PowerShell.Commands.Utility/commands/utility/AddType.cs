@@ -1059,14 +1059,12 @@ namespace Microsoft.PowerShell.Commands
         private static PortableExecutableReference ObjectImplementationAssemblyReference =
             MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location);
 
-        // This assembly should be System.Runtime.dll
-        private static PortableExecutableReference ObjectDeclaredAssemblyReference =
-            MetadataReference.CreateFromFile(ClrFacade.GetAssemblies(typeof(object).FullName).First().Location);
-
-        // In CoreCLR 1.0.0 RTM, System.Attribute need to be loaded from mscorlib.dll,
-        // not from ObjectDeclaredAssemblyReference.
-        private static PortableExecutableReference AttributeDeclaredAssemblyReference =
+         private static PortableExecutableReference MscorlibAssemblyReference =
             MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("mscorlib")).Location);
+
+        // This assembly should be System.Runtime.dll
+        private static PortableExecutableReference SystemRuntimeAssemblyReference =
+            MetadataReference.CreateFromFile(ClrFacade.GetAssemblies(typeof(object).FullName).First().Location);
 
         // SecureString is defined in a separate assembly.
         // This fact is an implementation detail and should not require the user to specify one more assembly, 
@@ -1076,22 +1074,22 @@ namespace Microsoft.PowerShell.Commands
             MetadataReference.CreateFromFile(typeof(System.Security.SecureString).GetTypeInfo().Assembly.Location);
 
 
-        // These assemlbies are automatically added to ReferencedAssemblies.
+        // These assemlbies are always automatically added to ReferencedAssemblies.
         private static PortableExecutableReference[] autoReferencedAssemblies = new PortableExecutableReference[]
         {
-            ObjectImplementationAssemblyReference,
-            ObjectDeclaredAssemblyReference,
-            AttributeDeclaredAssemblyReference,
-            SecureStringAssemblyReference
+            MscorlibAssemblyReference,
+            SystemRuntimeAssemblyReference,
+            SecureStringAssemblyReference,
+            ObjectImplementationAssemblyReference
         };
 
         // These assemlbies are used, when ReferencedAssemblies parameter is not specified.
         private static PortableExecutableReference[] defaultAssemblies = new PortableExecutableReference[]
         {
-            ObjectImplementationAssemblyReference,
-            ObjectDeclaredAssemblyReference,
-            AttributeDeclaredAssemblyReference,
+            MscorlibAssemblyReference,
+            SystemRuntimeAssemblyReference,
             SecureStringAssemblyReference,
+            ObjectImplementationAssemblyReference,
             MetadataReference.CreateFromFile(typeof(PSObject).GetTypeInfo().Assembly.Location)
         };
 
@@ -1233,10 +1231,7 @@ namespace Microsoft.PowerShell.Commands
             if (referencedAssembliesSpecified)
             {
                 var tempReferences = ReferencedAssemblies.Select(a => MetadataReference.CreateFromFile(ResolveReferencedAssembly(a))).ToList();
-                foreach (var reference in autoReferencedAssemblies)
-                {
-                    tempReferences.Add(reference);
-                }
+                tempReferences.AddRange(autoReferencedAssemblies);
 
                 references = tempReferences.ToArray();
             }
