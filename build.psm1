@@ -884,10 +884,11 @@ function Publish-NuGetFeed
 
 function Start-DevPowerShell {
     param(
+        [switch]$FullCLR,
         [switch]$ZapDisable,
         [string[]]$ArgumentList = '',
         [switch]$LoadProfile,
-        [string]$binDir = (Split-Path (New-PSOptions -FullCLR).Output),
+        [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output),
         [switch]$NoNewWindow,
         [string]$Command,
         [switch]$KeepPSModulePath
@@ -918,7 +919,7 @@ function Start-DevPowerShell {
             $env:COMPLUS_ZapDisable = 1
         }
 
-        if (-not (Test-Path $binDir\powershell.exe.config)) {
+        if ($FullCLR -and (-not (Test-Path $binDir\powershell.exe.config))) {
             $configContents = @"
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
@@ -932,7 +933,7 @@ function Start-DevPowerShell {
 
         # splatting for the win
         $startProcessArgs = @{
-            FilePath = "$binDir\powershell.exe"
+            FilePath = "$binDir\powershell"
             ArgumentList = "$ArgumentList"
         }
 
