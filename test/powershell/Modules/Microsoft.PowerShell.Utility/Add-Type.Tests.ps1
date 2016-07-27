@@ -12,4 +12,8 @@ public class AttributeTest$guid {}
 "@
         Add-Type -TypeDefinition $code -PassThru | Should Not Be $null
     }
+
+    It "Can load TPA assembly System.Runtime.Serialization.Primitives.dll" {
+        Add-Type -AssemblyName 'System.Runtime.Serialization.Primitives' -PassThru | Should Not Be $null
+    }
 }
