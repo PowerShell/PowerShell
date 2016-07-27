@@ -502,16 +502,16 @@ namespace System.Management.Automation.Remoting.Server
         private SSHProcessMediator() : base(true)
         {
 #if !UNIX
-            var inputHandle = GetStdHandle((uint)StandardHandleId.Input);
+            var inputHandle = PlatformInvokes.GetStdHandle((uint)PlatformInvokes.StandardHandleId.Input);
                 originalStdIn = new StreamReader(
                     new FileStream(new SafeFileHandle(inputHandle, false), FileAccess.Read));
 
-            var outputHandle = GetStdHandle((uint)StandardHandleId.Output);
+            var outputHandle = PlatformInvokes.GetStdHandle((uint)PlatformInvokes.StandardHandleId.Output);
             originalStdOut = new OutOfProcessTextWriter(
                 new StreamWriter(
                     new FileStream(new SafeFileHandle(outputHandle, false), FileAccess.Write)));
 
-            var errorHandle = GetStdHandle((uint)StandardHandleId.Error);
+            var errorHandle = PlatformInvokes.GetStdHandle((uint)PlatformInvokes.StandardHandleId.Error);
             originalStdErr = new OutOfProcessTextWriter(
                 new StreamWriter(
                     new FileStream(new SafeFileHandle(errorHandle, false), FileAccess.Write)));
@@ -554,26 +554,6 @@ namespace System.Management.Automation.Remoting.Server
 
             SingletonInstance.Start(initialCommand, cryptoHelper);
         }
-
-        #endregion
-
-        #region Native APIs
-
-#if !UNIX
-
-        internal static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);  // WinBase.h
-
-        internal enum StandardHandleId : uint
-        {
-            Error = unchecked((uint)-12),
-            Output = unchecked((uint)-11),
-            Input = unchecked((uint)-10),
-        }
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern IntPtr GetStdHandle(uint handleId);
-
-#endif
 
         #endregion
     }

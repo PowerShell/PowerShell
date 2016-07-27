@@ -23,14 +23,6 @@ using Microsoft.Win32.SafeHandles;
 using Dbg = System.Management.Automation.Diagnostics;
 using WSManAuthenticationMechanism = System.Management.Automation.Remoting.Client.WSManNativeApi.WSManAuthenticationMechanism;
 
-#if CORECLR
-// Use stubs for SafeHandleZeroOrMinusOneIsInvalid and SerializableAttribute
-using Microsoft.PowerShell.CoreClr.Stubs;
-#else
-using System.Runtime.ConstrainedExecution;
-using System.Security.Permissions;
-#endif
-
 // ReSharper disable CheckNamespace
 namespace System.Management.Automation.Runspaces
 // ReSharper restore CheckNamespace
@@ -2213,6 +2205,12 @@ namespace System.Management.Automation.Runspaces
         {
             Exception ex = null;
             System.Diagnostics.Process sshProcess = null;
+            //
+            // These std pipe handles are bound to managed Reader/Writer objects and returned to the transport
+            // manager object, which uses them for PSRP communication.  The lifetime of these handles are then
+            // tied to the reader/writer objects which the transport is responsible for disposing (see 
+            // SSHClientSessionTransportManger and the CloseConnection() method.
+            //
             SafePipeHandle stdInPipeServer = null;
             SafePipeHandle stdOutPipeServer = null;
             SafePipeHandle stdErrPipeServer = null;
@@ -2249,21 +2247,15 @@ namespace System.Management.Automation.Runspaces
             catch (Exception e)
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                if (stdInWriterVar != null) { stdInWriterVar.Dispose(); }
-                if (stdOutReaderVar != null) { stdInWriterVar.Dispose(); }
-                if (stdErrReaderVar != null) { stdInWriterVar.Dispose(); }
+                if (stdInWriterVar != null) { stdInWriterVar.Dispose(); } else { stdInPipeServer.Dispose(); }
+                if (stdOutReaderVar != null) { stdInWriterVar.Dispose(); } else { stdOutPipeServer.Dispose(); }
+                if (stdErrReaderVar != null) { stdInWriterVar.Dispose(); } else { stdErrPipeServer.Dispose(); }
 
                 throw;
             }
 
             return sshProcess;
         }
-
-#endif
-
-        #region SSH process creation with Std named pipes
-
-#if !UNIX
 
         /// <summary>
         /// CreateProcessWithRedirectedStd
@@ -2317,8 +2309,8 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Create process
-            ProcessNativeMethods.STARTUPINFO lpStartupInfo = new ProcessNativeMethods.STARTUPINFO();
-            SafeNativeMethods.PROCESS_INFORMATION lpProcessInformation = new SafeNativeMethods.PROCESS_INFORMATION();
+            PlatformInvokes.STARTUPINFO lpStartupInfo = new PlatformInvokes.STARTUPINFO();
+            PlatformInvokes.PROCESS_INFORMATION lpProcessInformation = new PlatformInvokes.PROCESS_INFORMATION();
             int creationFlags = 0;
 
             try
@@ -2336,9 +2328,9 @@ namespace System.Management.Automation.Runspaces
                 // Create the new process suspended so we have a chance to get a corresponding Process object in case it terminates quickly.
                 creationFlags |= 0x00000004;
 
-                ProcessNativeMethods.SECURITY_ATTRIBUTES lpProcessAttributes = new ProcessNativeMethods.SECURITY_ATTRIBUTES();
-                ProcessNativeMethods.SECURITY_ATTRIBUTES lpThreadAttributes = new ProcessNativeMethods.SECURITY_ATTRIBUTES();
-                bool success = ProcessNativeMethods.CreateProcess(
+                PlatformInvokes.SECURITY_ATTRIBUTES lpProcessAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
+                PlatformInvokes.SECURITY_ATTRIBUTES lpThreadAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
+                bool success = PlatformInvokes.CreateProcess(
                     null,
                     cmdLine,
                     lpProcessAttributes,
@@ -2357,7 +2349,7 @@ namespace System.Management.Automation.Runspaces
 
                 // At this point, we should have a suspended process.  Get the .Net Process object, resume the process, and return.
                 Process result = Process.GetProcessById(lpProcessInformation.dwProcessId);
-                ProcessNativeMethods.ResumeThread(lpProcessInformation.hThread);
+                PlatformInvokes.ResumeThread(lpProcessInformation.hThread);
 
                 return result;
             }
@@ -2385,10 +2377,10 @@ namespace System.Management.Automation.Runspaces
             uint pipeFlags = NamedPipeNative.FILE_FLAG_OVERLAPPED;
 
             // We want an inheritable handle.
-            ProcessNativeMethods.SECURITY_ATTRIBUTES securityAttributes = new ProcessNativeMethods.SECURITY_ATTRIBUTES();
+            PlatformInvokes.SECURITY_ATTRIBUTES securityAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
 
             // Get handle to pipe.
-            var fileHandle = ProcessNativeMethods.CreateFileW(
+            var fileHandle = PlatformInvokes.CreateFileW(
                 pipeName,
                 NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
                 0,
@@ -2398,7 +2390,7 @@ namespace System.Management.Automation.Runspaces
                 IntPtr.Zero);
 
             int lastError = Marshal.GetLastWin32Error();
-            if (fileHandle == ProcessNativeMethods.INVALID_HANDLE_VALUE)
+            if (fileHandle == PlatformInvokes.INVALID_HANDLE_VALUE)
             {
                 throw new System.ComponentModel.Win32Exception(lastError);
             }
@@ -2447,210 +2439,6 @@ namespace System.Management.Automation.Runspaces
         }
 
 #endif
-
-        #endregion
-
-        #region Native APIs
-
-#if !UNIX
-
-        internal static class SafeNativeMethods
-        {
-            [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true, ExactSpelling = true)]
-            public static extern bool CloseHandle(IntPtr handle);
-
-            [StructLayout(LayoutKind.Sequential)]
-            internal class PROCESS_INFORMATION
-            {
-                public IntPtr hProcess;
-                public IntPtr hThread;
-                public int dwProcessId;
-                public int dwThreadId;
-
-                public PROCESS_INFORMATION()
-                {
-                    this.hProcess = IntPtr.Zero;
-                    this.hThread = IntPtr.Zero;
-                }
-
-                /// <summary>
-                /// Dispose
-                /// </summary>
-                public void Dispose()
-                {
-                    Dispose(true);
-                }
-
-                /// <summary>
-                /// Dispose
-                /// </summary>
-                /// <param name="disposing"></param>
-                private void Dispose(bool disposing)
-                {
-                    if (disposing)
-                    {
-                        if (this.hProcess != IntPtr.Zero)
-                        {
-                            CloseHandle(this.hProcess);
-                            this.hProcess = IntPtr.Zero;
-                        }
-
-                        if (this.hThread != IntPtr.Zero)
-                        {
-                            CloseHandle(this.hThread);
-                            this.hThread = IntPtr.Zero;
-                        }
-                    }
-                }
-            }
-        }
-
-        internal static class ProcessNativeMethods
-        {
-            // Fields
-            internal static readonly IntPtr INVALID_HANDLE_VALUE = IntPtr.Zero;
-            internal static UInt32 GENERIC_READ = 0x80000000;
-            internal static UInt32 GENERIC_WRITE = 0x40000000;
-            internal static UInt32 FILE_ATTRIBUTE_NORMAL = 0x80000000;
-            internal static UInt32 CREATE_ALWAYS = 2;
-            internal static UInt32 FILE_SHARE_WRITE = 0x00000002;
-            internal static UInt32 FILE_SHARE_READ = 0x00000001;
-            internal static UInt32 OF_READWRITE = 0x00000002;
-            internal static UInt32 OPEN_EXISTING = 3;
-
-            //
-            // Methods
-            //
-
-            [DllImport(PinvokeDllNames.CreateProcessDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            public static extern bool CreateProcess(
-                [MarshalAs(UnmanagedType.LPWStr)] string lpApplicationName,
-                [MarshalAs(UnmanagedType.LPWStr)] string lpCommandLine,
-                SECURITY_ATTRIBUTES lpProcessAttributes,
-                SECURITY_ATTRIBUTES lpThreadAttributes,
-                bool bInheritHandles,
-                int dwCreationFlags,
-                IntPtr lpEnvironment,
-                [MarshalAs(UnmanagedType.LPWStr)] string lpCurrentDirectory,
-                STARTUPINFO lpStartupInfo,
-                SafeNativeMethods.PROCESS_INFORMATION lpProcessInformation);
-
-            [DllImport(PinvokeDllNames.ResumeThreadDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            public static extern uint ResumeThread(IntPtr threadHandle);
-
-            [DllImport(PinvokeDllNames.CreateFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            public static extern System.IntPtr CreateFileW(
-                [In, MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
-                UInt32 dwDesiredAccess,
-                UInt32 dwShareMode,
-                ProcessNativeMethods.SECURITY_ATTRIBUTES lpSecurityAttributes,
-                UInt32 dwCreationDisposition,
-                UInt32 dwFlagsAndAttributes,
-                System.IntPtr hTemplateFile);
-
-            [StructLayout(LayoutKind.Sequential)]
-            internal class SECURITY_ATTRIBUTES
-            {
-                public int nLength;
-                public SafeLocalMemHandle lpSecurityDescriptor;
-                public bool bInheritHandle;
-                public SECURITY_ATTRIBUTES()
-                {
-                    this.nLength = 12;
-                    this.bInheritHandle = true;
-                    this.lpSecurityDescriptor = new SafeLocalMemHandle(IntPtr.Zero, true);
-                }
-            }
-
-            internal sealed class SafeLocalMemHandle : SafeHandleZeroOrMinusOneIsInvalid
-            {
-                // Methods
-                internal SafeLocalMemHandle()
-                    : base(true)
-                {
-                }
-                [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-                internal SafeLocalMemHandle(IntPtr existingHandle, bool ownsHandle)
-                    : base(ownsHandle)
-                {
-                    base.SetHandle(existingHandle);
-
-                }
-                [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), DllImport(PinvokeDllNames.LocalFreeDllName)]
-                private static extern IntPtr LocalFree(IntPtr hMem);
-                protected override bool ReleaseHandle()
-                {
-                    return (LocalFree(base.handle) == IntPtr.Zero);
-
-                }
-            }
-
-            [StructLayout(LayoutKind.Sequential)]
-            internal class STARTUPINFO
-            {
-                public int cb;
-                public IntPtr lpReserved;
-                public IntPtr lpDesktop;
-                public IntPtr lpTitle;
-                public int dwX;
-                public int dwY;
-                public int dwXSize;
-                public int dwYSize;
-                public int dwXCountChars;
-                public int dwYCountChars;
-                public int dwFillAttribute;
-                public int dwFlags;
-                public short wShowWindow;
-                public short cbReserved2;
-                public IntPtr lpReserved2;
-                public SafeFileHandle hStdInput;
-                public SafeFileHandle hStdOutput;
-                public SafeFileHandle hStdError;
-                public STARTUPINFO()
-                {
-                    this.lpReserved = IntPtr.Zero;
-                    this.lpDesktop = IntPtr.Zero;
-                    this.lpTitle = IntPtr.Zero;
-                    this.lpReserved2 = IntPtr.Zero;
-                    this.hStdInput = new SafeFileHandle(IntPtr.Zero, false);
-                    this.hStdOutput = new SafeFileHandle(IntPtr.Zero, false);
-                    this.hStdError = new SafeFileHandle(IntPtr.Zero, false);
-                    this.cb = Marshal.SizeOf(this);
-
-                }
-
-                public void Dispose(bool disposing)
-                {
-                    if (disposing)
-                    {
-                        if ((this.hStdInput != null) && !this.hStdInput.IsInvalid)
-                        {
-                            this.hStdInput.Dispose();
-                            this.hStdInput = null;
-                        }
-                        if ((this.hStdOutput != null) && !this.hStdOutput.IsInvalid)
-                        {
-                            this.hStdOutput.Dispose();
-                            this.hStdOutput = null;
-                        }
-                        if ((this.hStdError != null) && !this.hStdError.IsInvalid)
-                        {
-                            this.hStdError.Dispose();
-                            this.hStdError = null;
-                        }
-                    }
-                }
-
-                public void Dispose()
-                {
-                    Dispose(true);
-                }
-            }
-        }
-
-#endif
-
-        #endregion
 
         #endregion
     }
