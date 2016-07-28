@@ -3,64 +3,79 @@ Describe "Set-Location" -Tags "CI" {
 
     if ($IsWindows)
     {
-	$target = "C:\"
+        $target = "C:\"
     }
     else
     {
-	$target = "/"
+        $target = "/"
     }
 
     It "Should be able to be called without error" {
-	{ Set-Location $target }    | Should Not Throw
+        { Set-Location $target }    | Should Not Throw
     }
 
     It "Should be able to be called on different providers" {
-	{ Set-Location alias: } | Should Not Throw
-	{ Set-Location env: }   | Should Not Throw
+        { Set-Location alias: } | Should Not Throw
+        { Set-Location env: }   | Should Not Throw
     }
 
     It "Should be able use the cd alias without error" {
-	{ cd $target } | Should Not Throw
+        { cd $target } | Should Not Throw
     }
 
     It "Should be able to use the chdir alias without error" {
-	{ chdir $target } | Should Not Throw
+        { chdir $target } | Should Not Throw
     }
 
     It "Should be able to use the sl alias without error" {
-	{ sl $target } | Should Not Throw
+        { sl $target } | Should Not Throw
     }
 
     It "Should have the correct current location when using the set-location cmdlet" {
-	Set-Location $startDirectory
+        Set-Location $startDirectory
 
-	$(Get-Location).Path | Should Be $startDirectory.Path
+        $(Get-Location).Path | Should Be $startDirectory.Path
     }
 
     It "Should have the correct current location when using the cd alias" {
-	cd $target
+        cd $target
 
-	$(Get-Location).Path | Should Be $target
+        $(Get-Location).Path | Should Be $target
     }
 
     It "Should have the correct current location when using the chdir alias" {
-	chdir $target
+        chdir $target
 
-	$(Get-Location).Path | Should Be $target
+        $(Get-Location).Path | Should Be $target
     }
 
     It "Should have the correct current location when using the chdir alias" {
-	sl $target
+        sl $target
 
-	$(Get-Location).Path | Should Be $target
+        $(Get-Location).Path | Should Be $target
     }
 
     It "Should be able to use the Path switch" {
-	{ Set-Location -Path $target } | Should Not Throw
+        { Set-Location -Path $target } | Should Not Throw
     }
 
     It "Should generate a pathinfo object when using the Passthru switch" {
-	$(Set-Location $target -PassThru).GetType().Name | Should Be PathInfo
+        $(Set-Location $target -PassThru).GetType().Name | Should Be PathInfo
+    }
+
+    Context 'cd with no arguments' {
+
+        It 'Should go to $env:HOME when cd run with no arguments from FileSystem provider' {
+            Set-Location 'TestDrive:\'
+            cd
+            (Get-Location).Path | Should Be (Get-PSProvider FileSystem).Home
+        }
+
+        It 'Should go to $env:HOME when cd run with no arguments from Env: provider' {
+            Set-Location 'Env:'
+            cd
+            (Get-Location).Path | Should Be (Get-PSProvider FileSystem).Home
+        }
     }
 
     Set-Location $startDirectory
