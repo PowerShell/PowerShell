@@ -17,16 +17,14 @@ Get PowerShell
 --------------
 
 You can download and install a PowerShell package for any of the following platforms.
-Our packages are hosted on the GitHub [releases][] page.
 
-| **Platform** | [Releases][]                                      | Build status             |
-|--------------|---------------------------------------------------|--------------------------|
-| Windows      | [.msi][rl-windows] [(how to install)][in-windows] | [![av-image][]][av-site] |
-| Ubuntu 14.04 | [.deb][rl-ubuntu]  [(how to install)][in-ubuntu]  | [![tv-image][]][tv-site] |
-| CentOS 7     | [.rpm][rl-centos]  [(how to install)][in-centos]  | *N/A*                    |
-| OS X 10.11   | [.pkg][rl-osx]     [(how to install)][in-osx]     | [![tv-image][]][tv-site] |
+| Platform     | Releases           | How to Install                 |
+|--------------|--------------------|--------------------------------|
+| Windows      | [.msi][rl-windows] | [How to Install][in-windows] |
+| Ubuntu 14.04 | [.deb][rl-ubuntu]  | [How to Install][in-ubuntu]  |
+| CentOS 7     | [.rpm][rl-centos]  | [How to Install][in-centos]  |
+| OS X 10.11   | [.pkg][rl-osx]     | [How to Install][in-osx]     |
 
-[releases]: https://github.com/PowerShell/PowerShell/releases
 [rl-windows]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.7/PowerShell_6.0.0.7.msi
 [rl-ubuntu]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.7/powershell_6.0.0-alpha.7-1_amd64.deb
 [rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.7/powershell-6.0.0_alpha.7-1.x86_64.rpm
@@ -38,24 +36,32 @@ Our packages are hosted on the GitHub [releases][] page.
 [in-centos]: docs/installation/linux.md#centos-7
 [in-osx]: docs/installation/linux.md#os-x-1011
 
-[tv-image]: https://travis-ci.com/PowerShell/PowerShell.svg?token=31YifM4jfyVpBmEGitCm&branch=master
-[tv-site]: https://travis-ci.com/PowerShell/PowerShell/branches
-[av-image]: https://ci.appveyor.com/api/projects/status/jtefab3hpngtyesp/branch/master?svg=true
-[av-site]: https://ci.appveyor.com/project/PowerShell/powershell/branch/master
 
 Building the Repository
 -----------------------
-
-Please refer to the platform-specific [build][] documentation.
 
 | Linux                    | Windows                    | OS X                   |
 |--------------------------|----------------------------|------------------------|
 | [Instructions][bd-linux] | [Instructions][bd-windows] | [Instructions][bd-osx] |
 
-[build]: docs/building
+If you have any problems building, please consult the developer [FAQ][].
+
+### Build status of master branches
+
+| AppVeyor (Windows)       | Travis CI (Linux / OS X) |
+|--------------------------|--------------------------|
+| [![av-image][]][av-site] | [![tv-image][]][tv-site] |
+
 [bd-linux]: docs/building/linux.md
 [bd-windows]: docs/building/windows-core.md
 [bd-osx]: docs/building/osx.md
+
+[FAQ]: docs/FAQ.md
+
+[tv-image]: https://travis-ci.com/PowerShell/PowerShell.svg?token=31YifM4jfyVpBmEGitCm&branch=master
+[tv-site]: https://travis-ci.com/PowerShell/PowerShell/branches
+[av-image]: https://ci.appveyor.com/api/projects/status/jtefab3hpngtyesp/branch/master?svg=true
+[av-site]: https://ci.appveyor.com/project/PowerShell/powershell/branch/master
 
 Downloading the Source Code
 ---------------------------
@@ -86,7 +92,6 @@ If you do not see your problem captured, please file a [new issue][] and follow 
 
 [Contribution Guide]: .github/CONTRIBUTING.md
 [known issues]: docs/KNOWNISSUES.md
-[FAQ]: docs/FAQ.md
 [GitHub issues]: https://github.com/PowerShell/PowerShell/issues
 [new issue]:https://github.com/PowerShell/PowerShell/issues/new
 
