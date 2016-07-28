@@ -11,12 +11,12 @@
     "monad/src/oneget/PowerShell.Module/PackageManagement.psd1": "Shared/PackageManagement/PackageManagement.psd1",
     "monad/src/oneget/PowerShell.Module/PackageManagement.format.ps1xml": "Shared/PackageManagement/PackageManagement.format.ps1xml",
     "monad/src/oneget/providers/inbox/powershell.metaprovider/PackageProviderFunctions.psm1": "Shared/PackageManagement/PackageProviderFunctions.psm1",
-    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataAdapter.ps1": "Shared/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataAdapter.ps1",
-    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtils.psd1": "Shared/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtils.psd1",
-    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtils.psm1": "Shared/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtils.psm1",
-    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsHelper.ps1": "Shared/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsHelper.ps1",
-    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataV4Adapter.ps1": "Shared/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataV4Adapter.ps1",
-    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsStrings.psd1": "Shared/Microsoft.PowerShell.ODataUtils/en-US/Microsoft.PowerShell.ODataUtilsStrings.psd1",
+    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataAdapter.ps1": "Windows-Full/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataAdapter.ps1",
+    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtils.psd1": "Windows-Full/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtils.psd1",
+    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtils.psm1": "Windows-Full/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtils.psm1",
+    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsHelper.ps1": "Windows-Full/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsHelper.ps1",
+    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataV4Adapter.ps1": "Windows-Full/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataV4Adapter.ps1",
+    "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsStrings.psd1": "Windows-Full/Microsoft.PowerShell.ODataUtils/en-US/Microsoft.PowerShell.ODataUtilsStrings.psd1",
     
     "wmi/WMIv2/Client/CIMCmdlets/CimCmdlets.psd1": "Windows-Core+Full/CimCmdlets/CimCmdlets.psd1",
     "monad/miscfiles/modules/Microsoft.WSMan.Management/Microsoft.WSMan.Management.psd1": "Windows-Core+Full/Microsoft.WSMan.Management/Microsoft.WSMan.Management.psd1",
@@ -44,6 +44,6 @@
     
     "monad/miscfiles/modules/Microsoft.PowerShell.Diagnostics/CoreClr/Microsoft.PowerShell.Diagnostics.psd1":  "Windows-Core/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1",
 
-    "monad/miscfiles/modules/Microsoft.PowerShell.Security/CoreClr/Microsoft.PowerShell.Security.psd1": "Windows+Unix-Core/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.psd1",
+    "monad/miscfiles/modules/Microsoft.PowerShell.Security/CoreClr/Microsoft.PowerShell.Security.psd1": "Windows-Core/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.psd1",
     "monad/miscfiles/modules/Microsoft.PowerShell.Utility/CoreClr/Microsoft.PowerShell.Utility.psd1":  "Windows+Unix-Core/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1"
 }
