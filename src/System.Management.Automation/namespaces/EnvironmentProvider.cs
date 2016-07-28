@@ -190,8 +190,15 @@ namespace Microsoft.PowerShell.Commands
         /// 
         internal override IDictionary GetSessionStateTable ()
         {
+            // Environment variables are case-sensitive on Unix and
+            // case-insensitive on Windows
+#if UNIX
+            Dictionary<string, DictionaryEntry> providerTable =
+                new Dictionary<string, DictionaryEntry>(StringComparer.Ordinal);
+#else
             Dictionary<string, DictionaryEntry> providerTable =
                 new Dictionary<string, DictionaryEntry>(StringComparer.OrdinalIgnoreCase);
+#endif
 
             // The environment variables returns a dictionary of keys and values that are 
             // both strings. We want to return a dictionary with the key as a string and
