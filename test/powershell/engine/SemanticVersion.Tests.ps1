@@ -1,7 +1,7 @@
 using namespace System.Management.Automation
 using namespace System.Management.Automation.Language
 
-Describe "SemanticVersion api tests" {
+Describe "SemanticVersion api tests" -Tags 'CI' {
     Context "constructing valid versions" {
         It "string argument constructor" {
             $v = [SemanticVersion]::new("1.2.3-alpha")
