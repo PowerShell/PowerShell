@@ -16,6 +16,7 @@ These files are copied as-is by `dotnet`
 - Windows-Core
 - Windows-Core+Full
 - Windows-Full
+- Unix
 
 Notes
 -----------

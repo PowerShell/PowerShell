@@ -973,7 +973,7 @@ function Start-DevPowerShell {
                 $ArgumentList = @('-NoExit') + $ArgumentList
             }
 
-            $Command = '$env:PSModulePath = Join-Path $env:DEVPATH Modules; ' + $Command   
+            $Command = '$env:PSMODULEPATH = Join-Path $env:DEVPATH Modules; ' + $Command
         }   
 
         if ($Command)
