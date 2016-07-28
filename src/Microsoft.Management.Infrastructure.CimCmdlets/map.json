@@ -34,8 +34,5 @@
     "wmi/WMIv2/client/CIMCmdlets/RemoveCimSessionCommand.cs" : "RemoveCimSessionCommand.cs",
     "wmi/WMIv2/client/CIMCmdlets/SetCimInstanceCommand.cs" : "SetCimInstanceCommand.cs",
     "wmi/WMIv2/client/CIMCmdlets/Utils.cs" : "Utils.cs",
-    "wmi/WMIv2/client/CIMCmdlets/BinaryMiLogBase.cs" : "BinaryMiLogBase.cs",
-    "wmi/WMIv2/client/CIMCmdlets/ExportBinaryMiLogCommand.cs" : "ExportBinaryMiLogCommand.cs",
-    "wmi/WMIv2/client/CIMCmdlets/ImportBinaryMiLogCommand.cs" : "ImportBinaryMiLogCommand.cs",
     "wmi/WMIv2/client/CIMCmdlets/Strings.resx" : "resources/Microsoft.Management.Infrastructure.CimCmdlets.Strings.resx"
 }
