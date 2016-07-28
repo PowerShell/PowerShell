@@ -42,7 +42,11 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     public abstract class CmdletWithSearchAndSource : CmdletWithSearch {
         internal readonly OrderedDictionary<string, List<SoftwareIdentity>> _resultsPerName = new OrderedDictionary<string, List<SoftwareIdentity>>();
         protected List<PackageProvider> _providersNotFindingAnything = new List<PackageProvider>();
+#if CORECLR
+        internal static readonly string[] ProviderFilters = new[] { "Packagemanagement", "Provider", "PSEdition_PowerShellCore" };
+#else
         internal static readonly string[] ProviderFilters = new[] { "Packagemanagement", "Provider" };
+#endif
         protected const string Bootstrap = "Bootstrap";
         protected const string PowerShellGet = "PowerShellGet";
         internal static readonly string[] RequiredProviders = new[] { Bootstrap, PowerShellGet };
