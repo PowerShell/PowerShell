@@ -31,7 +31,7 @@ Describe "One is really one" {
     }
     It "1 is really an int" {
        $i = 1
-       $i.GetType().FullName | Should Be System.Int32
+       $i.GetType() | Should Be "int"
     }
 } 
 ```
@@ -49,7 +49,7 @@ Describe "One is really one" {
 } 
 ```
 
-If you are checking for proper errors, do that in a `try/catch`, and then check `FullyQualifiedErrorId`
+If you are checking for proper errors, do that in a `try/catch`, and then check `FullyQualifiedErrorId`. Checking against `FullyQualifiedErrorId` is recommended because it does not change based on culture as an error message might.
 ```
 ...
 it "Get-Item on a nonexisting file should have error PathNotFound" {
@@ -60,8 +60,7 @@ it "Get-Item on a nonexisting file should have error PathNotFound" {
     }
     catch
     {
-        $_.FullyQualifiedErrorId | 
-        should be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+        $_.FullyQualifiedErrorId | should be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
     }
 }
 ```
