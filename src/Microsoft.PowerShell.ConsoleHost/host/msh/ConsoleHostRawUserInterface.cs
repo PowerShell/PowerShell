@@ -1520,16 +1520,11 @@ namespace Microsoft.PowerShell
 
     internal sealed class ConsoleHostRawUserInterface : PSHostRawUserInterface
     {
-        private ConsoleColor _defaultForeground = ConsoleColor.Gray;
-
-        private ConsoleColor _defaultBackground = ConsoleColor.Black;
 
         private ConsoleHostUserInterface _parent = null;
 
         internal ConsoleHostRawUserInterface(ConsoleHostUserInterface mshConsole) : base()
         {
-            _defaultForeground = ForegroundColor;
-            _defaultBackground = BackgroundColor;
             _parent = mshConsole;
         }
 
@@ -1539,14 +1534,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         public override ConsoleColor BackgroundColor
         {
-            get
-            {
-                // Console can return UnknownColor, a private enum, equivalent
-                // to -1. When this is a case, map it instead to our default.
-                return Console.BackgroundColor == (ConsoleColor)(-1)
-                    ? _defaultBackground
-                    : Console.BackgroundColor;
-            }
+            get { return Console.BackgroundColor; }
             set { Console.BackgroundColor = value; }
         }
 
@@ -1600,14 +1588,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         public override ConsoleColor ForegroundColor
         {
-            get
-            {
-                // Console can return UnknownColor, a private enum, equivalent
-                // to -1. When this is a case, map it instead to our default.
-                return Console.ForegroundColor == (ConsoleColor)(-1)
-                    ? _defaultForeground
-                    : Console.ForegroundColor;
-            }
+            get { return Console.ForegroundColor; }
             set { Console.ForegroundColor = value; }
         }
 

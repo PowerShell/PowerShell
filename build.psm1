@@ -1489,8 +1489,9 @@ function script:Use-MSBuild {
 
 function script:log([string]$message) {
     Write-Host -Foreground Green $message
+    #reset colors for older package to at return to default after error message on a compiliation error
+    [console]::ResetColor() 
 }
-
 
 function script:precheck([string]$command, [string]$missedMessage) {
     $c = Get-Command $command -ErrorAction SilentlyContinue

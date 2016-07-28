@@ -1450,7 +1450,8 @@ namespace Microsoft.PowerShell
             set
             { _errorForegroundColor = value; }
         }
-        private ConsoleColor _errorBackgroundColor = ConsoleColor.Black;
+
+        private ConsoleColor _errorBackgroundColor = Console.BackgroundColor;
         public ConsoleColor ErrorBackgroundColor
         {
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
@@ -1472,7 +1473,8 @@ namespace Microsoft.PowerShell
             set
             { _warningForegroundColor = value; }
         }
-        private ConsoleColor _warningBackgroundColor = ConsoleColor.Black;
+
+        private ConsoleColor _warningBackgroundColor = Console.BackgroundColor;
         public ConsoleColor WarningBackgroundColor
         {
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
@@ -1494,7 +1496,8 @@ namespace Microsoft.PowerShell
             set
             { _debugForegroundColor = value; }
         }
-        private ConsoleColor _debugBackgroundColor = ConsoleColor.Black;
+
+        private ConsoleColor _debugBackgroundColor = Console.BackgroundColor;
         public ConsoleColor DebugBackgroundColor
         {
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
@@ -1516,7 +1519,8 @@ namespace Microsoft.PowerShell
             set
             { _verboseForegroundColor = value; }
         }
-        private ConsoleColor _verboseBackgroundColor = ConsoleColor.Black;
+
+        private ConsoleColor _verboseBackgroundColor = Console.BackgroundColor;
         public ConsoleColor VerboseBackgroundColor
         {
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
