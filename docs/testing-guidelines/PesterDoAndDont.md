@@ -4,9 +4,9 @@
 	1. Test only what you need
 	2. Reduce dependencies
 3. Be sure to tag your `Describe` blocks based on their purpose
-	1. Tag "CI" indicates that it will be run as part of the continuous integration process
-	2. Tag "Feature" indicates a higher level feature test (we will run these on a regular basis)
-	3. Tag "Scenario" indicates tests of integration with other features (these will be run on a less regular basis
+	1. Tag `CI` indicates that it will be run as part of the continuous integration process. These should be unit test like, and fast.
+	2. Tag `Feature` indicates a higher level feature test (we will run these on a regular basis), for example, tests which go to remote resources, or test broader functionality
+	3. Tag `Scenario` indicates tests of integration with other features (these will be run on a less regular basis and test even broader functionality than feature tests.
 4. Make sure that `Describe`/`Context`/`It` descriptions are useful
 	1. The error message should not be the place where you describe the test
 5. Use `Context` to group tests
