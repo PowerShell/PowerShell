@@ -199,6 +199,43 @@ namespace Microsoft.PowerShell.Workflow
         /// </returns>
         public List<WorkflowInfo> CompileWorkflows(ScriptBlockAst ast, PSModuleInfo definingModule, InitialSessionState initialSessionState, out ParseException parsingErrors, string rootWorkflowName)
         {
+            return CompileWorkflowsImpl(ast, definingModule, initialSessionState, null, out parsingErrors, rootWorkflowName);
+        }
+
+        /// <summary>
+        /// Converts a PowerShell AST into a script block that represents
+        /// the workflow to run.
+        /// </summary>
+        /// <param name="ast">The PowerShell AST correpsponding to the job's definition.</param>
+        /// <param name="definingModule">The module that is defining this command (if any).</param>
+        /// <param name="initialSessionState">The initial session state of a runspace.</param>
+        /// <param name="sourceLanguageMode">Language mode of source that is creating the workflow.</param>
+        /// <param name="parsingErrors">Optional, once assigned, only root Workflow will be compiled.</param>
+        /// <returns>
+        /// A PowerShell script block that invokes an underlying job,
+        /// based on the definition provided by this script block.
+        /// </returns>
+        public List<WorkflowInfo> CompileWorkflows(ScriptBlockAst ast, PSModuleInfo definingModule, InitialSessionState initialSessionState, PSLanguageMode? sourceLanguageMode, out ParseException parsingErrors)
+        {
+            return CompileWorkflowsImpl(ast, definingModule, initialSessionState, sourceLanguageMode, out parsingErrors, null);
+        }
+
+        /// <summary>
+        /// Converts a PowerShell AST into a script block that represents
+        /// the workflow to run.
+        /// </summary>
+        /// <param name="ast">The PowerShell AST correpsponding to the job's definition.</param>
+        /// <param name="definingModule">The module that is defining this command (if any)</param>
+        /// <param name="initialSessionState">The initial session state of a runspace.</param>
+        /// <param name="sourceLanguageMode">Language mode of source that is creating the workflow.</param>
+        /// <param name="parsingErrors">parsing errors</param>
+        /// <param name="rootWorkflowName">Optional, once assigned, only root Workflow will be compiled</param>
+        /// <returns>
+        /// A PowerShell script block that invokes an underlying job,
+        /// based on the definition provided by this script block.
+        /// </returns>
+        private List<WorkflowInfo> CompileWorkflowsImpl(ScriptBlockAst ast, PSModuleInfo definingModule, InitialSessionState initialSessionState, PSLanguageMode? sourceLanguageMode, out ParseException parsingErrors, string rootWorkflowName)
+        {
             List<ParseError> errorList = new List<ParseError>();
 
             if (ast == null)
@@ -327,7 +364,7 @@ namespace Microsoft.PowerShell.Workflow
 
                     try
                     {
-                        entry.workflowInfo = CompileSingleWorkflow(entry.scope, func, scriptBlockTokenCache, definingModule, requiredAssemblies, activityMap, processedActivityLibraries, invoker, rootWorkflowName);
+                        entry.workflowInfo = CompileSingleWorkflow(entry.scope, func, scriptBlockTokenCache, definingModule, requiredAssemblies, activityMap, processedActivityLibraries, invoker, sourceLanguageMode, rootWorkflowName);
                         result.Add(entry.workflowInfo);
                     }
                     catch (ParseException e)
@@ -365,6 +402,7 @@ namespace Microsoft.PowerShell.Workflow
                                                           Dictionary<string, Type> activityMap,
                                                           HashSet<string> processedActivityLibraries,
                                                           System.Management.Automation.PowerShell invoker,
+                                                          PSLanguageMode? sourceLanguageMode = (PSLanguageMode?)null,
                                                           string rootWorkflowName = null)
         {
             Dictionary<string, ParameterAst> parameterValidation;
@@ -399,10 +437,11 @@ namespace Microsoft.PowerShell.Workflow
             // Pass either the workflow script file path if available or the full source otherwise.
             string scriptFile = parentAst.Extent.File;
             string scriptSource = string.IsNullOrEmpty(scriptFile) ? parentAst.Extent.StartScriptPosition.GetFullScript() : null;
+            ReadOnlyCollection<AttributeAst> attributeAstCollection = (func.Body.ParamBlock != null) ? func.Body.ParamBlock.Attributes : null;
             var functionDefinition = ImportWorkflowCommand.CreateFunctionFromXaml(func.Name, xaml,
                                                                                   referencedAssemblies, calledWorkflows.Select(wfi => wfi.NestedXamlDefinition).ToArray(),
                                                                                   null, parameterValidation, modulePath, true, workflowAttributes,
-                                                                                  scriptFile, scriptSource, rootWorkflowName); 
+                                                                                  scriptFile, scriptSource, rootWorkflowName, sourceLanguageMode, attributeAstCollection);
 
             var helpContent = func.GetHelpContent(scriptBlockTokenCache);
             if (helpContent != null)

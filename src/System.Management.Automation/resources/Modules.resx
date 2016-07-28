@@ -597,7 +597,7 @@
     <value>Cannot define the workflow. The language mode for this session is incompatible with the system-wide language mode.</value>
   </data>
   <data name="XamlWorkflowsNotSupported" xml:space="preserve">
-    <value>Cannot load the workflow. XAML-based workflows are not supported in the current language mode. Only script-based workflows are supported in this language mode.</value>
+    <value>Cannot load the workflow. Only signed in-box XAML-based workflows or script-based workflows are supported in the current language mode.</value>
   </data>
   <data name="CannotDetectNetFrameworkVersion" xml:space="preserve">
     <value>Cannot verify the Microsoft .NET Framework version {0} because it is not included in the list of permitted versions.</value>

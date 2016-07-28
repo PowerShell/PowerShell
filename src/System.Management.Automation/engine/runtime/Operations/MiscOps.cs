@@ -1125,7 +1125,8 @@ namespace System.Management.Automation
             try
             {
                 var converterInstance = Utils.GetAstToWorkflowConverterAndEnsureWorkflowModuleLoaded(context);
-                var workflows = converterInstance.CompileWorkflows(scriptBlockAst, context.EngineSessionState.Module, null, out parseErrors);
+                PSLanguageMode? languageMode = (context != null) ? context.LanguageMode : (PSLanguageMode?) null;
+                var workflows = converterInstance.CompileWorkflows(scriptBlockAst, context.EngineSessionState.Module, null, languageMode, out parseErrors);
                 foreach (var workflow in workflows)
                 {
                     context.EngineSessionState.SetWorkflowRaw(workflow,

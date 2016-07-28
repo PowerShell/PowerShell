@@ -22,10 +22,12 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using System.Management.Automation;
     using Microsoft.PackageManagement.Provider.Utility;
     using PackageManagement.Packaging;
-    using ErrorCategory = PackageManagement.Internal.ErrorCategory;    
+    using ErrorCategory = PackageManagement.Internal.ErrorCategory;
+    using System.Security.Cryptography;
 
     public class PackageSourceListProvider {
 
@@ -37,6 +39,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
         private const string RequiredPackageManagementVersion = "1.0.0.1";
         private static bool _doesPackageManagementVersionMatch = false;
         private static Version _currentPackageManagementVersion;
+        private static string _pslDirLocation = Path.Combine(Environment.GetEnvironmentVariable("appdata"), Constants.ProviderName);
 
         /// <summary>
         /// The features that this package supports.
@@ -125,6 +128,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
 
                 case "install":
                     request.YieldDynamicOption("Scope", "String", false, new[] {"CurrentUser", "AllUsers"});
+                    request.YieldDynamicOption("SkipHashValidation", Constants.OptionType.Switch, false);
                     break;
             }
         }
@@ -189,23 +193,16 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                     return;
                 }
 
-                request.Debug(Resources.Messages.DebugInfoCallMethod, PackageProviderName, "GetOptionValue");
-                // if this is supposed to be an update, there will be a dynamic parameter set for IsUpdatePackageSource
+                // Set-PackageSource will update the existing package source. In that case IsUpdate = true.
                 var isUpdate = request.GetOptionValue(Constants.Parameters.IsUpdate).IsTrue();
 
                 request.Debug(Resources.Messages.VariableCheck, "IsUpdate", isUpdate);
 
-                // if your source supports credentials you get get them too:
-                // string username =request.Username;
-                // SecureString password = request.Password;
-                // feel free to send back an error here if your provider requires credentials for package sources.
 
                 // check first that we're not clobbering an existing source, unless this is an update
-
                 request.Debug(Resources.Messages.DebugInfoCallMethod, PackageProviderName, string.Format(CultureInfo.InvariantCulture, "FindRegisteredSource -name'{0}'", name));
 
                 var src = request.FindRegisteredSource(name);
-
                 if (src != null && !isUpdate) {
                     // tell the user that there's one here already
                     request.WriteError(ErrorCategory.InvalidArgument, name, Constants.Messages.PackageSourceExists, name);
@@ -213,28 +210,71 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                 }
 
                 // conversely, if it didn't find one, and it is an update, that's bad too:
-                if (src == null && isUpdate) {
+                if (src == null && isUpdate)
+                {
                     // you can't find that package source? Tell that to the user
-                    request.WriteError(ErrorCategory.ObjectNotFound, name, Constants.Messages.UnableToResolveSource, Constants.ProviderName, name);
+                    request.WriteError(ErrorCategory.ObjectNotFound, name, Constants.Messages.UnableToResolveSource, name);
                     return;
                 }
 
                 // ok, we know that we're ok to save this source
                 // next we check if the location is valid (if we support that kind of thing)
-
                 var validated = false;
-
-                if (!request.SkipValidate.Value) {
-                    // the user has not opted to skip validating the package source location, so check if the source is valid
-                    validated = request.ValidateSourceLocation(location);
-
-                    if (!validated) {
-                        request.WriteError(ErrorCategory.InvalidData, name, Constants.Messages.SourceLocationNotValid, location);
-                        return;
-                    }
-
+                validated = request.ValidateSourceLocation(location);
+                if (!validated) {
+                     request.WriteError(ErrorCategory.InvalidData, name, Constants.Messages.SourceLocationNotValid, location);
+                     return;
+                }
+                else
+                { 
                     request.Verbose(Resources.Messages.SuccessfullyValidated, name);
                 }
+
+                bool force = request.GetOptionValue("Force") != null;
+                //if source is UNC location/ copy it to local path;
+                Uri uri;
+                if (Uri.TryCreate(location, UriKind.Absolute, out uri))
+                {
+                    if (uri.IsFile && uri.IsUnc)
+                    {
+                        string fileName = Path.GetFileNameWithoutExtension(location);
+                        string directory = Path.GetDirectoryName(location);
+                        string catalogFilePath = Path.Combine(directory, fileName+".cat");
+                        if (!File.Exists(catalogFilePath))
+                        {
+                            request.WriteError(ErrorCategory.InvalidData, location, Resources.Messages.CatalogFileMissing, location);
+                            return;
+                        }
+                        if (!TestCatalogFile(location, catalogFilePath, request))
+                        {
+                            return;
+                        }
+                        if (force || request.ShouldContinue(Resources.Messages.QueryDownloadPackageSourceList.format(location), Resources.Messages.PackageSourceListNotTrusted))
+                        {                            
+                            string destination = Path.Combine(_pslDirLocation, Path.GetFileName(uri.LocalPath));
+                            if (File.Exists(destination))
+                            {
+                                if (force || request.ShouldContinue(Resources.Messages.OverwriteFile, Resources.Messages.FileExists))
+                                {
+                                    File.Copy(location, destination, true);
+                                    location = destination;
+                                }
+                                else
+                                {
+                                    return;
+                                }
+                            }
+                            else {
+                                File.Copy(location, destination);
+                                location = destination;
+                            }                  
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                }                   
 
                 // it's good to check just before you actaully write something to see if the user has cancelled the operation
                 if (request.IsCanceled) {
@@ -314,13 +354,13 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                     request.Warning(Resources.Messages.WildCardCharsAreNotSupported, name);
                     return;
                 }
-
+       
                 var packages = request.GetPackages(name);
                 if (request.GetOptionValue("AllVersions").IsTrue())
                 {
                     // if version is specified then name can not be empty or with wildcard. in this case the cmdlet has been errored out already.
                     // here we just return all packages we can find
-                    if (request.FilterOnVersion(packages, requiredVersion, minimumVersion, maximumVersion, minInclusive: true, maxInclusive: true, latest: false).Any(p => !request.YieldFromSwidtag(p, p.Name)))
+                    if (request.FilterOnVersion(packages, requiredVersion, minimumVersion, maximumVersion, minInclusive: true, maxInclusive: true, latest: false).OrderBy(p => p.Name).Any(p => !request.YieldFromSwidtag(p, p.Name)))
                     {
                         return;
                     }
@@ -329,7 +369,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
 
                 //return the latest version
                 if (packages.GroupBy(p => p.Name)
-                        .Select(each => each.OrderByDescending(pp => pp.Version).FirstOrDefault()).Any( item =>!request.YieldFromSwidtag(item, item.Name)))
+                        .Select(each => each.OrderByDescending(pp => pp.Version).FirstOrDefault()).OrderBy(p=>p.Name).Any( item =>!request.YieldFromSwidtag(item, item.Name)))
                 {
                     return;
                 }
@@ -717,20 +757,19 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
 
             //download the msi package to the temp file
             WebDownloader.DownloadFile(package.Source, destination, request, null);
-
+            
             if (!File.Exists(destination))
             {
                 return;
             }
+
+
             // validate the file
-            if (!WebDownloader.PerformSecurityScan(destination))
+            if (!WebDownloader.VerifyHash(destination,package, request))
             {
-                //TODO Security Scan work
-                request.WriteError(ErrorCategory.InvalidOperation, Constants.ProviderName, "The package download from '{0}' failed in the security scan.", package.Source);
                 return;
             }
-
-
+           
             if (!package.IsTrustedSource)
             {
                 if (!request.ShouldContinueWithUntrustedPackageSource(package.Name, package.Source))
@@ -868,7 +907,38 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
 
             return Enumerable.Empty<PSModuleInfo>();
 
-        }      
+        }
+
+        internal static bool TestCatalogFile(string jsonFile, string catalogFile, PackageSourceListRequest request)
+        {
+            try
+            {
+                PSObject result = null;
+                using (PowerShell powershell = PowerShell.Create())
+                {
+                    if (powershell != null)
+                    {
+                        result = powershell
+                        .AddCommand("Test-FileCatalog")
+                        .AddParameter("CatalogFilePath", catalogFile)
+                        .AddParameter("Path", jsonFile)
+                        .Invoke().FirstOrDefault();
+                    }
+                    if (result.ToString().EqualsIgnoreCase("Valid"))
+                        return true;
+                }
+            }
+            catch(Exception ex) 
+            {
+                request.WriteError(ErrorCategory.InvalidData, catalogFile, Resources.Messages.CatalogFileVerificationFailedWithError, catalogFile, ex.Message.ToString());
+                return false;
+            }
+
+            request.WriteError(ErrorCategory.InvalidData, catalogFile, Resources.Messages.CatalogFileVerificationFailed, jsonFile);
+            return false;
+
+        }
+
     }
 }
 

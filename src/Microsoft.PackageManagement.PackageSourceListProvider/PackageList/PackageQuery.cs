@@ -43,6 +43,12 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                 throw new ArgumentNullException("packageSource");
             }
 
+            if(string.IsNullOrWhiteSpace(packageSource.Location) || !System.IO.File.Exists(packageSource.Location))
+            {
+                request.Warning(Resources.Messages.PackageSourceManifestNotFound, packageSource.Location, Constants.ProviderName);
+                return;
+            }
+
             Uri uri;
 
             if (Uri.TryCreate(packageSource.Location, UriKind.Absolute, out uri))
@@ -56,6 +62,12 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                     }
                     catch (Exception ex)
                     {
+                        request.Warning(ex.Message);
+                        while (ex.InnerException != null)
+                        {
+                            ex = ex.InnerException;
+                            request.Warning(ex.Message);
+                        }
                         request.Warning(string.Format(CultureInfo.CurrentCulture, Resources.Messages.InvalidPackageListFormat, uri.AbsolutePath));
                         ex.Dump(request);
                     }
@@ -82,6 +94,12 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
             }
             catch (Exception ex)
             {
+                request.Warning(ex.Message);
+                while (ex.InnerException != null)
+                {
+                    ex = ex.InnerException;
+                    request.Warning(ex.Message);
+                }
                 request.Warning(string.Format(CultureInfo.CurrentCulture, Resources.Messages.InvalidPackageListFormat, file));
                 ex.Dump(request);
             }

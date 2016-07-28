@@ -110,17 +110,15 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             // In ConstrainedLanguage, XAML workflows are not supported (even from a trusted FullLanguage state),
-            // since we can't prevent tampering.
+            // unless they are signed in-box OS binaries.
+            bool checkSignatures = false;
             if ((SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) ||
                 (this.SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguage))
             {
                 // However, this static internal property can be changed by tests that can already run a script
                 // in full-language mode.
                 PropertyInfo xamlProperty = typeof(SystemPolicy).GetProperty("XamlWorkflowSupported", BindingFlags.NonPublic | BindingFlags.Static);
-                if (! ((bool) xamlProperty.GetValue(null, null)))
-                {
-                    throw new NotSupportedException(Resources.XamlWorkflowsNotSupported);
-                }
+                checkSignatures = !((bool)xamlProperty.GetValue(null, null));
             }
 
             string dependentWorkflowAssemblyPath = string.Empty;
@@ -174,8 +172,10 @@ namespace Microsoft.PowerShell.Commands
                                     WriteError(er);
                                     Tracer.TraceErrorRecord(er);
                                     continue;
-
                                 }
+
+                                CheckFileSignatureAsNeeded(checkSignatures, resolvedPath);
+
                                 try
                                 {
                                     // Finally load the file. If there is an access violation, write a
@@ -251,6 +251,8 @@ namespace Microsoft.PowerShell.Commands
                                 continue;
                             }
 
+                            CheckFileSignatureAsNeeded(checkSignatures, resolvedPath);
+
                             FunctionDetails detailsToUseForUpdate = null;
                             try
                             {
@@ -302,7 +304,8 @@ namespace Microsoft.PowerShell.Commands
                                                                                 requiredAssemblies,
                                                                                 dependentWorkflowContent.ToArray(),
                                                                                 dependentWorkflowAssemblyPath,
-                                                                                resolvedPath);
+                                                                                resolvedPath,
+                                                                                this.SessionState.LanguageMode);
 
                             // check if the function cache already has the entry to this file
                             // If detailsToUseForUpdate is not null it is a forced import module
@@ -342,6 +345,14 @@ namespace Microsoft.PowerShell.Commands
 
         } //ProcessRecord  
 
+        private static void CheckFileSignatureAsNeeded(bool checkSignatures, string filePath)
+        {
+            if (checkSignatures && !System.Management.Automation.Internal.SecuritySupport.IsProductBinary(filePath))
+            {
+                throw new NotSupportedException(Resources.XamlWorkflowsNotSupported);
+            }
+        }
+
         private static readonly ConcurrentDictionary<string, FunctionDetails> FunctionCache =
             new ConcurrentDictionary<string, FunctionDetails>(StringComparer.OrdinalIgnoreCase);
 
@@ -358,7 +369,15 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="dependentWorkflows">Any workflows required by this workflow.</param>
         /// <param name="dependentAssemblyPath">Path to the dependent assembly.</param>
         /// <param name="resolvedPath">Resolved Path of the xaml</param>
-        private static FunctionDetails GenerateFunctionFromXaml(string name, string xaml, Dictionary<string, string> requiredAssemblies, string[] dependentWorkflows, string dependentAssemblyPath, string resolvedPath)
+        /// <param name="sourceLanguageMode">Language mode of source in which workflow should run</param>
+        private static FunctionDetails GenerateFunctionFromXaml(
+            string name, 
+            string xaml, 
+            Dictionary<string, string> requiredAssemblies, 
+            string[] dependentWorkflows, 
+            string dependentAssemblyPath, 
+            string resolvedPath,
+            PSLanguageMode sourceLanguageMode)
         {
             if (name == null)
             {
@@ -368,7 +387,21 @@ namespace Microsoft.PowerShell.Commands
             }
 
             string modulePath = System.IO.Path.GetDirectoryName(resolvedPath);
-            string functionDefinition = CreateFunctionFromXaml(name, xaml, requiredAssemblies, dependentWorkflows, dependentAssemblyPath, null, modulePath, false, "[CmdletBinding()]");
+            string functionDefinition = CreateFunctionFromXaml(
+                name, 
+                xaml, 
+                requiredAssemblies, 
+                dependentWorkflows, 
+                dependentAssemblyPath, 
+                null, 
+                modulePath, 
+                false, 
+                "[CmdletBinding()]",
+                null,   /* scriptContent */
+                null,   /* fullScript */
+                null,   /* rootWorkflowName */
+                sourceLanguageMode,
+                null);
 
             FunctionDetails details = new FunctionDetails
                                           {Name = name, FunctionDefinition = functionDefinition, Xaml = xaml};
@@ -438,6 +471,24 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "workFlowDefinition")]
         public static ContainerParentJob StartWorkflowApplication(PSCmdlet command, string jobName, string workflowGuid, bool startAsync,
             bool parameterCollectionProcessed, Hashtable[] parameters, bool debuggerActive)
+        {
+            return StartWorkflowApplication(command, jobName, workflowGuid, startAsync, parameterCollectionProcessed, parameters, false, null);
+        }
+
+        /// <summary>
+        /// Executes an instance of the workflow object graph identified by the passed
+        /// GUID, binding parameters from the Parameters hastable.
+        /// </summary>
+        /// <param name="command">The powershell command.</param>
+        /// <param name="workflowGuid">The GUID used to identify the workflow to run.</param>
+        /// <param name="parameters">The parameters to pass to the workflow instance.</param>
+        /// <param name="jobName">The friendly name for the job</param>
+        /// <param name="parameterCollectionProcessed">True if there was a PSParameters collection</param>
+        /// <param name="startAsync"></param>
+        /// <param name="debuggerActive">True if debugger is in active state.</param>
+        /// <param name="SourceLanguageMode">Language mode of source creating workflow.</param>
+        public static ContainerParentJob StartWorkflowApplication(PSCmdlet command, string jobName, string workflowGuid, bool startAsync,
+            bool parameterCollectionProcessed, Hashtable[] parameters, bool debuggerActive, string SourceLanguageMode)
         {
             Guid trackingGuid = Guid.NewGuid();
             _structuredTracer.BeginStartWorkflowApplication(trackingGuid);
@@ -573,6 +624,15 @@ namespace Microsoft.PowerShell.Commands
             myJob = command.JobManager.NewJob(specification) as ContainerParentJob;
             _structuredTracer.EndCreateNewJob(trackingGuid);
 
+            // Pass the source language mode to the workflow job so that it can be
+            // applied during activity execution.
+            PSLanguageMode sourceLanguageModeValue;
+            PSLanguageMode? sourceLanguageMode = null;
+            if (!string.IsNullOrEmpty(SourceLanguageMode) && Enum.TryParse<PSLanguageMode>(SourceLanguageMode, out sourceLanguageModeValue))
+            {
+                sourceLanguageMode = sourceLanguageModeValue;
+            }
+
             // Raise engine event of new WF job start for debugger, if 
             // debugger is active (i.e., has breakpoints set).
             if (debuggerActive)
@@ -582,12 +642,13 @@ namespace Microsoft.PowerShell.Commands
 
             if (startAsync)
             {
-                if (!PSSessionConfigurationData.IsServerManager)
+                foreach(PSWorkflowJob childjob in myJob.ChildJobs)
                 {
-                    foreach(PSWorkflowJob childjob in myJob.ChildJobs)
+                    if (!PSSessionConfigurationData.IsServerManager)
                     {
                         childjob.EnableStreamUnloadOnPersistentState();
                     }
+                    childjob.SourceLanguageMode = sourceLanguageMode;
                 }
                 myJob.StartJobAsync();
             }
@@ -598,6 +659,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (PSWorkflowJob childJob in myJob.ChildJobs)
                 {
                     childJob.SynchronousExecution = true;
+                    childJob.SourceLanguageMode = sourceLanguageMode;
                 }
                 myJob.StartJob();
             }
@@ -605,8 +667,8 @@ namespace Microsoft.PowerShell.Commands
             // write an event specifying that job creation is done
             _structuredTracer.EndStartWorkflowApplication(trackingGuid);
             _structuredTracer.TrackingGuidContainerParentJobCorrelation(trackingGuid, myJob.InstanceId);
-            return myJob;
 
+            return myJob;
         }
 
         private static void RaiseWFJobEvent(PSCmdlet command, ContainerParentJob job, bool startAsync)
@@ -1011,6 +1073,46 @@ namespace Microsoft.PowerShell.Commands
             string rootWorkflowName
             )
         {
+            return CreateFunctionFromXaml(name, xaml, requiredAssemblies, dependentWorkflows, dependentAssemblyPath, parameterValidation, modulePath,
+                scriptWorkflow, workflowAttributes, scriptContent, fullScript, rootWorkflowName, null, null);
+        }
+
+        /// <summary>
+        /// Creates a workflow activity based on the provided Xaml and returns PowerShell script that will
+        /// run the workflow.
+        /// </summary>
+        /// <param name="name">Workflow name</param>
+        /// <param name="xaml">Workflow Xaml definition</param>
+        /// <param name="requiredAssemblies">Required assemblies</param>
+        /// <param name="dependentWorkflows">Dependent workflows</param>
+        /// <param name="dependentAssemblyPath">Path for dependent assemblies</param>
+        /// <param name="parameterValidation">Workflow parameters</param>
+        /// <param name="modulePath">Module path</param>
+        /// <param name="scriptWorkflow">True if this is script workflow</param>
+        /// <param name="workflowAttributes">the attribute string to use for the workflow, should be '[CmdletBinding()]'</param>
+        /// <param name="scriptContent">File path containing script content.</param>
+        /// <param name="fullScript">Full source script.</param>
+        /// <param name="rootWorkflowName">Only root Workflow will be compiled</param>
+        /// <param name="sourceLanguageMode">Language mode of source that is creating the workflow</param>
+        /// <param name="attributeAstCollection">Optional collection of parameter attribute Asts</param>
+        /// <returns></returns>
+        public static string CreateFunctionFromXaml(
+            string name,
+            string xaml,
+            Dictionary<string, string> requiredAssemblies,
+            string[] dependentWorkflows,
+            string dependentAssemblyPath,
+            Dictionary<string, ParameterAst> parameterValidation,
+            string modulePath,
+            bool scriptWorkflow,
+            string workflowAttributes,
+            string scriptContent,
+            string fullScript,
+            string rootWorkflowName,
+            PSLanguageMode? sourceLanguageMode,
+            ReadOnlyCollection<AttributeAst> attributeAstCollection
+            )
+        {
             // check to see if the specified name is allowed
             if (!Regex.IsMatch(name, functionNamePattern))
             {
@@ -1304,9 +1406,15 @@ namespace Microsoft.PowerShell.Commands
             completeFunctionDefinitionTemplate.AppendLine("              }}");
             completeFunctionDefinitionTemplate.AppendLine(FunctionBodyTemplate);
 
+            // Mark the function definition with sourceLanguageMode (language mode that function can run under, i.e.,
+            // as trusted or not trusted), unless the workflow script is marked with the "SecurityCritical" attribute in 
+            // which case the function will always be run under the current system lock down setting.
+            bool isSecurityCritical = ContainsSecurityCriticalAttribute(attributeAstCollection);
+            string sourceLanguageModeStr = (!isSecurityCritical && (sourceLanguageMode != null)) ? sourceLanguageMode.ToString() : string.Empty;
+
             // Combine the pieces to create the complete function
             string functionDefinition = String.Format(CultureInfo.InvariantCulture, completeFunctionDefinitionTemplate.ToString(),
-                     defaultUpdates, workflowGuid, modulePath);
+                     defaultUpdates, workflowGuid, modulePath, sourceLanguageModeStr);
 
 #if DEBUG
             // Verify that the generated function is valid powershell. This is only an issue when changing the
@@ -1332,6 +1440,23 @@ namespace Microsoft.PowerShell.Commands
             functionDefinition = System.Text.RegularExpressions.Regex.Replace(functionDefinition, "^ *\\#.*$", "", RegexOptions.Multiline);
 #endif
             return functionDefinition;
+        }
+
+        private static Type securityCriticalAttributeType = typeof(System.Security.SecurityCriticalAttribute);
+        private static bool ContainsSecurityCriticalAttribute(ReadOnlyCollection<AttributeAst> attributeAsts)
+        {
+            if (attributeAsts != null)
+            {
+                foreach (var attributeAst in attributeAsts)
+                {
+                    if (attributeAst.TypeName.GetReflectionAttributeType() == securityCriticalAttributeType)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
 
@@ -1515,6 +1640,9 @@ namespace Microsoft.PowerShell.Commands
                 # which uses this as a base path to find localized content files.
                 $psBoundParameters['" + Constants.ModulePath + @"'] = '{2}'
 
+                # Variable that contains the source language mode.
+                [string] $SourceLanguageMode = '{3}'
+
                 if (Test-Path variable:\PSSenderInfo)
                 {{
                     $psBoundParameters['" + Constants.PSSenderInfo + @"'] = $PSSenderInfo
@@ -1693,7 +1821,8 @@ namespace Microsoft.PowerShell.Commands
                                         $AsJob,
                                         $parameterCollectionProcessed,
                                         $finalParameterCollection,
-                                        $debuggerActive)
+                                        $debuggerActive,
+                                        $SourceLanguageMode)
                 }}
                 catch
                 {{

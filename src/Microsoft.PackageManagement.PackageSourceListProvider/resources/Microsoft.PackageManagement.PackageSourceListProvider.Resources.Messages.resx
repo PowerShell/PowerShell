@@ -277,7 +277,7 @@
     <value>Unknown category for '{0}'::'{1}': '{2}'</value>
   </data>
   <data name="UriSchemeNotSupported" xml:space="preserve">
-    <value>Uri Scheme '{0}' is not supported.</value>
+    <value>Uri Scheme '{0}' is not supported. Only '{1}' is supported.</value>
   </data>
   <data name="UseDefaultConfig" xml:space="preserve">
     <value>Use the default configuration.</value>
@@ -391,5 +391,51 @@
   </data>
   <data name="InvalidPackageListFormat" xml:space="preserve">
     <value>Package List Source '{0}' has incorrect format.</value>
+  </data>
+  <data name="QueryDownloadPackageSourceList" xml:space="preserve">
+    <value>Do you want to download package source list from '{0}'?</value>
+    <comment>0 - source list path</comment>
+  </data>
+  <data name="FileExists" xml:space="preserve">
+    <value>A file with this name already exists in target directory</value>
+  </data>
+  <data name="OverwriteFile" xml:space="preserve">
+    <value>Do you want to overwrite it?</value>
+  </data>
+  <data name="PackageSourceListNotTrusted" xml:space="preserve">
+    <value>PackageSourceList is not trusted</value>
+  </data>
+  <data name="VersionNotFound" xml:space="preserve">
+    <value>Package '{0}' in json file '{1}' is missing version information.</value>
+  </data>
+  <data name="HashNotSpecified" xml:space="preserve">
+    <value>Invalid hash for package '{0}'. Please correct the values in json file or use -SkipHashValidation switch to skip Hash validation.</value>
+  </data>
+  <data name="HashValidationSuccessfull" xml:space="preserve">
+    <value>Hash validation was successful.</value>
+  </data>
+  <data name="HashVerificationFailed" xml:space="preserve">
+    <value>Hash verification failed for package '{0}' downloaded from '{1}'.</value>
+  </data>
+  <data name="InvalidHashAlgorithm" xml:space="preserve">
+    <value>Hash algorithm '{0}' is not supported. We only support sha512, md5 and sha256.</value>
+  </data>
+  <data name="SkipHashValidation" xml:space="preserve">
+    <value>Skipping Hash Validation.</value>
+  </data>
+  <data name="CatalogFileMissing" xml:space="preserve">
+    <value>Catalog file not found for '{0}'. Catalog files are required for non local json files and should have the same name and located in the same directory as json file.</value>
+  </data>
+  <data name="CatalogFileVerificationFailed" xml:space="preserve">
+    <value>Catalog File verification failed for  '{0}'.</value>
+  </data>
+  <data name="CatalogFileVerificationFailedWithError" xml:space="preserve">
+    <value>Catalog File '{0}' verification failed with '{1}'.</value>
+  </data>
+  <data name="PackageSourceListNotFound" xml:space="preserve">
+    <value>Cannot find source list file '{0}'.</value>
+  </data>
+  <data name="PackageSourceManifestNotFound" xml:space="preserve">
+    <value>File '{0}' is registered as a package source location for the provider '{1}'. But it does not exist. Run 'Get-PackageSource' to view the registered package sources, 'Unregister-PackageSource' to unregister the source if you do not wish to use it or 'Set-PackageSource' to fix the source location.</value>
   </data>
 </root>

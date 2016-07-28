@@ -37,12 +37,16 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
     using SemanticVersion = Microsoft.PackageManagement.Provider.Utility.SemanticVersion;
 
     public abstract class PackageSourceListRequest : Request {
-       
+
         private IEnumerable<PackageQuery> _packageQuery;
         private static IDictionary<string, PackageSource> _registeredPackageSources;
         private string _configurationFileLocation;
         private XDocument _config;
         private string _defaultConfig;
+        private string PowerShellSourceURL = @"http://go.microsoft.com/fwlink/?LinkID=821777&clcid=0x409";
+        private string PowerShellNanoSourceURL = @"http://go.microsoft.com/fwlink/?LinkID=821783&clcid=0x409";
+        private string PowerShellSourceCatalogURL = @"http://go.microsoft.com/fwlink/?LinkID=823093&clcid=0x409";
+        private string PowerShellNanoSourceCatalogURL = @"http://go.microsoft.com/fwlink/?LinkID=823094&clcid=0x409";
         private IEnumerable<string> _packageSources;
         private const string _PackageSourceListRequest = "PackageSourceListRequest";
         private HttpClient _httpClient;
@@ -57,6 +61,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
         internal Lazy<bool> SkipValidate;
         internal readonly Lazy<bool> AllVersions;
         internal readonly Lazy<string[]> Headers;
+        internal Lazy<bool> SkipHashValidation; 
 
         internal const WildcardOptions WildcardOptions = System.Management.Automation.WildcardOptions.CultureInvariant | System.Management.Automation.WildcardOptions.IgnoreCase;
 
@@ -64,6 +69,12 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
 <configuration>
   <packageSources>
     <add key=""PSL"" value=""##"" />
+  </packageSources>
+</configuration>";
+
+        internal const string EmptyConfig = @"<?xml version=""1.0""?>
+<configuration>
+  <packageSources>    
   </packageSources>
 </configuration>";
 
@@ -75,20 +86,48 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
             AllVersions = new Lazy<bool>(() => GetOptionValue("AllVersions").IsTrue());
             SkipValidate = new Lazy<bool>(() => GetOptionValue("SkipValidate").IsTrue());
             Headers = new Lazy<string[]>(() => (GetOptionValues("Headers") ?? new string[0]).ToArray());
+            SkipHashValidation = new Lazy<bool>(() => GetOptionValue("SkipHashValidation").IsTrue());
         }
-        internal string DefaultConfigLocation
+
+        internal string DefaultJSONFileLocation
+        {
+            get
+            {
+                return Path.Combine(Environment.GetEnvironmentVariable("appdata"), Constants.ProviderName, Constants.JSONFileName);
+            }
+        }
+
+        internal string DefaultCatlogFileLocation
+        {
+            get
+            {
+                return Path.Combine(Environment.GetEnvironmentVariable("appdata"), Constants.ProviderName, Constants.CatFileName);
+            }
+        }
+
+        internal string DefaultJSONSourceLocation
         {
             get
             {
 #if CORECLR
-                return Path.Combine(Environment.GetEnvironmentVariable("ProgramFiles"), "PackageManagement\\ProviderAssemblies\\PSL", "PSL.json"); 
+                    return PowerShellNanoSourceURL;                         
 #else
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "PackageManagement\\ProviderAssemblies\\PSL", "PSL.json");
+                return PowerShellSourceURL;
 #endif
             }
         }
 
-       
+        internal string DefaultJSONCatalogFileLocation
+        {
+            get
+            {
+#if CORECLR
+                    return PowerShellNanoSourceCatalogURL;                         
+#else
+                return PowerShellSourceCatalogURL;
+#endif
+            }
+        }
 
         internal string DefaultConfig
         {
@@ -96,13 +135,13 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
             {
                 if (_defaultConfig == null)
                 {
-                    _defaultConfig = DefaultConfigDefinition.Replace("##", DefaultConfigLocation);
-
+                    _defaultConfig = DefaultConfigDefinition.Replace("##", DefaultJSONFileLocation);
                 }
                 return _defaultConfig;
             }
         }
-        
+
+
         internal IEnumerable<string> PackageSources
         {
             get
@@ -790,66 +829,23 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
 
                     Debug(Resources.Messages.NotFoundRegisteredSource, src, Constants.ProviderName);
 
-                    // doesn't look like we have this as a source.
-                    if (Uri.IsWellFormedUriString(src, UriKind.Absolute))
-                    {
-                        // we have been passed in an URI
-                        var srcUri = new Uri(src);
-                        if (SupportedSchemes.Contains(srcUri.Scheme.ToLower()))
-                        {
-                            // it's one of our supported uri types.
-                            var isValidated = false;
-
-                            //if (!SkipValidate.Value)
-                            //{
-                            //    isValidated = PathUtility.ValidateSourceUri(SupportedSchemes, srcUri, this);
-                            //}
-
-                            if (SkipValidate.Value || isValidated)
-                            {
-                                Debug(Resources.Messages.SuccessfullyValidated, src);
-
-                                yield return new PackageSource
-                                {
-                                    Request = this,
-                                    Location = srcUri.ToString(),
-                                    Name = srcUri.ToString(),
-                                    Trusted = false,
-                                    IsRegistered = false,
-                                    IsValidated = isValidated,
-                                };
-                                continue;
-                            }
-                            if (userSpecifiesArrayOfSources)
-                            {
-                                Verbose(Constants.Messages.UnableToResolveSource, Constants.ProviderName, src);
-                            }
-                            else
-                            {
-                                Warning(Constants.Messages.UnableToResolveSource, Constants.ProviderName, src);
-                            }
-                      
-                            continue;
-                        }
-
-                        // Not a valid location?
-                        if (userSpecifiesArrayOfSources)
-                        {
-                            Verbose(Constants.Messages.UnableToResolveSource, Constants.ProviderName, src);
-                        }
-                        else
-                        {
-                            Warning(Constants.Messages.UnableToResolveSource, Constants.ProviderName, src);
-                        }
-                      
-                        continue;
-                    }
-
                     // is it a file path?
                     if (System.IO.Directory.Exists(src))
                     {
                         Debug(Resources.Messages.SourceIsADirectory, src);
-
+                        PackageSource newSource = new PackageSource
+                        {
+                            Request = this,
+                            Location = src,
+                            Name = src,
+                            Trusted = true,
+                            IsRegistered = false,
+                            IsValidated = true,
+                        };
+                        yield return newSource;
+                    }
+                    else if (File.Exists(src) && (Path.GetExtension(src).EqualsIgnoreCase(".json")) )
+                    {                     
                         PackageSource newSource = new PackageSource
                         {
                             Request = this,
@@ -947,46 +943,51 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(_configurationFileLocation))
-                {
-                    // get the value from the request
-                    var path = GetOptionValue("ConfigFile");
+            if (string.IsNullOrWhiteSpace(_configurationFileLocation))
+            {      
+                    var appdataFolder = Environment.GetEnvironmentVariable("appdata");
+                    _configurationFileLocation = Path.Combine(appdataFolder, Constants.ProviderName, Constants.SettingsFileName);
 
-                    if (!String.IsNullOrWhiteSpace(path))
+                    //create directory if does not exist
+                    string dir = Path.GetDirectoryName(_configurationFileLocation);
+                    if (dir != null && !System.IO.Directory.Exists(dir))
                     {
-                        _configurationFileLocation = path;
-
-                        if (!System.IO.File.Exists(_configurationFileLocation))
-                        {
-                            WriteError(Internal.ErrorCategory.InvalidArgument, _configurationFileLocation, Resources.Messages.FileNotFound);
-                        }
-
+                        Debug(Resources.Messages.CreateDirectory, dir);
+                        System.IO.Directory.CreateDirectory(dir);
                     }
-                    else
+                    //create place holder config file
+                    if (!System.IO.File.Exists(_configurationFileLocation))
                     {
-                        var appdataFolder = Environment.GetEnvironmentVariable("appdata");
-                        _configurationFileLocation = Path.Combine(appdataFolder, Constants.ProviderName, Constants.SettingsFileName);
+                        Debug(Resources.Messages.CreateFile, _configurationFileLocation);
+                        bool addDefaultConfig = false;
+                        if (System.IO.File.Exists(DefaultJSONFileLocation))
+                        {
+                            addDefaultConfig = true;
+                        }
+                        else
+                        {
+                            bool force = this.GetOptionValue("Force") != null;
+                            if (force || this.ShouldContinue(Resources.Messages.QueryDownloadPackageSourceList.format(DefaultJSONSourceLocation), Resources.Messages.PackageSourceListNotFound.format(DefaultJSONFileLocation)))
+                            {
+                                WebDownloader.DownloadFile(DefaultJSONSourceLocation, DefaultJSONFileLocation, this, null);
+                                WebDownloader.DownloadFile(DefaultJSONCatalogFileLocation, DefaultCatlogFileLocation, this, null);
+                                if (System.IO.File.Exists(DefaultJSONFileLocation) && System.IO.File.Exists(DefaultCatlogFileLocation) && 
+                                    PackageSourceListProvider.TestCatalogFile(DefaultJSONFileLocation, DefaultCatlogFileLocation, this))
+                                {
+                                   addDefaultConfig = true;
+                                }                            
+                            }
+                        }
 
-                        //create directory if does not exist
-                        string dir = Path.GetDirectoryName(_configurationFileLocation);
-                        if (dir != null && !System.IO.Directory.Exists(dir))
-                        {
-                            Debug(Resources.Messages.CreateDirectory, dir);
-                            System.IO.Directory.CreateDirectory(dir);
-                        }
-                        //create place holder config file
-                        if (!System.IO.File.Exists(_configurationFileLocation))
-                        {
-                            Debug(Resources.Messages.CreateFile, _configurationFileLocation);
+                        if(addDefaultConfig)
                             System.IO.File.WriteAllText(_configurationFileLocation, DefaultConfig);
-                        }
+                        else
+                            System.IO.File.WriteAllText(_configurationFileLocation, EmptyConfig);
                     }
                 }
-
                 return _configurationFileLocation;
             }
         }
-
 
         internal bool WriteError(Internal.ErrorCategory category, string targetObjectValue, string messageText, params object[] args)
         {
@@ -1001,9 +1002,11 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
         internal bool ValidateSourceLocation(string location)
         {
             Debug(Resources.Messages.DebugInfoCallMethod3, _PackageSourceListRequest, "ValidateSourceLocation", location);
-            
-            //TODO this is needed for register-packagesource 
-            return true;
+            if (File.Exists(location) && (Path.GetExtension(location).EqualsIgnoreCase(".json")))
+            {
+                return true;
+            }            
+            return false;
         }
 
         internal static IRequest ExtendRequest(Dictionary<string, string[]> options, string[] sources, bool isTrusted, PackageSourceListRequest request) {

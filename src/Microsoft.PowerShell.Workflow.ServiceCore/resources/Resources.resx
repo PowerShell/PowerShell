@@ -413,7 +413,7 @@ For more information about how to add checkpoints, see the help topics for Windo
     <comment>{0} is a number and should not be localized.</comment>
   </data>
   <data name="XamlWorkflowsNotSupported" xml:space="preserve">
-    <value>Cannot load workflow. XAML-based workflows are not supported in this language mode. Only script-based workflows are supported.</value>
+    <value>Cannot load the workflow. Only signed in-box XAML-based workflows or script-based workflows are supported in the current language mode.</value>
   </data>
   <data name="RetryingConnection" xml:space="preserve">
     <value>Retrying activity connection: attempt {0} of {1}.</value>

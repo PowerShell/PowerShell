@@ -54,10 +54,8 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
             }
 
             // validate the file
-            if (!WebDownloader.PerformSecurityScan(file))
-            {
-                //TODO Security Scan work
-                request.WriteError(ErrorCategory.InvalidOperation, Constants.ProviderName, "The package download from '{0}' failed in the security scan.", package.Source);
+            if (!WebDownloader.VerifyHash(file, package,request))
+            {                
                 return false;
             }
 
