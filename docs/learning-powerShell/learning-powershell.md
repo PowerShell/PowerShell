@@ -93,7 +93,7 @@ TODO: Don & JP to fill in
 | Clear, Ctrl+L, Reset | cls | Clear screen
 
 
-Further Reading
+Recommended Training and Reading
 ----
 - Microsoft Virtual Academy: [Getting Started with PowerShell][getstarted-with-powershell]
 - [Why Learn PowerShell][why-learn-powershell] by Ed Wilson
