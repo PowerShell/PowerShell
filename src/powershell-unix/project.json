@@ -13,6 +13,7 @@
                 "Modules/" : {
                     "include": [
                         "../Modules/Windows+Unix-Core",
+                        "../Modules/Unix",
                         "../Modules/Shared"
                     ],
                     "exclude": [
