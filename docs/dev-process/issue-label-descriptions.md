@@ -39,3 +39,4 @@ The assignee(s) are responsible for signing off before the PR will be merged.
 
 * `help wanted` : We are looking for someone to work on this issue.
 * `need review` : This Pull Request is being reviewed.  Please see [Pull Request - Code Review](../../.github/CONTRIBUTING.md#pull-request-code-review)
+* `waiting for author`: The issue or pull request needs 

@@ -3,7 +3,7 @@
 ## Terms
 
 * [**PowerShell Committee**](#powershell-committee): A committee of project owners who are responsible for design decisions, approving [RFCs][RFC-repo], and approving new maintainers/committee members 
-* [**Repository maintainer**](#repository-maintainer): An individual responsible for merging pull requests (PRs) into `master` when all requirements are met (code review, tests, docs, and RFC approval as applicable).
+* [**Repository maintainer**](#repository-maintainers): An individual responsible for merging pull requests (PRs) into `master` when all requirements are met (code review, tests, docs, and RFC approval as applicable).
 Repository Maintainers are the only people with write permissions into `master`.
 * [**Area experts**](#area-experts): People who are experts for specific components (e.g. PSReadline, the parser) or technologies (e.g. security, performance). 
 Area experts are responsible for code reviews, issue triage, and providing their expertise to others. 
@@ -15,7 +15,15 @@ The Corporate Maintainer for PowerShell is Microsoft.
 
 ## PowerShell Committee
 
-The PowerShell Committee and its members (aka Committee Members) are the primary (TODO: stewards, powerShell experience) decision makers of the PowerShell language, design, and project.
+The PowerShell Committee and its members (aka Committee Members) are the primary caretakers of the PowerShell experience, including the PowerShell language, design, and project.
+
+### Current Committee Members
+
+* Bruce Payette ([BrucePay](https://github.com/BrucePay))
+* Jason Shirk ([lzybkr](https://github.com/lzybkr))
+* Steve Lee ([SteveL-MSFT](https://github.com/SteveL-MSFT))
+* Hemant Mahawar ([HemantMahawar](https://github.com/HemantMahawar))
+* Joey Aiello ([joeyaiello](https://github.com/joeyaiello))
 
 ### Committee Member Responsibilities
 
@@ -44,7 +52,6 @@ If any Committee Members feels like this behavior is large enough to warrant an 
 
 As a PowerShell Committee Member:
 
-1. **DO** assign issues to area experts or repository maintainers as appropriate 
 1. **DO** reply to issues and pull requests with design opinions
 (this could include offering support for good work or exciting new features)
 1. **DO** encourage healthy discussion about the direction of PowerShell
@@ -69,20 +76,12 @@ At any point in time, a Committee Member can nominate a strong community member 
 Nominations should be submitted in the form of [RFCs][RFC-repo] detailing why that individual is qualified and how they will contribute.
 After the RFC has been discussed, a unanimous vote will be required for the new Committee Member to be confirmed. 
 
-### Current Committee Members
-
-* Bruce Payette
-* Jason Shirk
-* Steve Lee
-* Hemant Mahawar
-* Joey Aiello ([joeyaiello](https://github.com/joeyaiello))
-
 ## Repository Maintainers
 
 Repository Maintainers are trusted stewards of the PowerShell repository responsible for maintaining consistency and quality of PowerShell code. 
 One of their primary responsibilities is merging pull requests after all requirements have been fulfilled. 
 
-Repository Maintainers have [write access](https://help.github.com/articles/permission-levels-for-an-organization-repository/) to the PowerShell repository which gives them the power to:
+Repository Maintainers have [write access](https://help.github.com/articles/repository-permission-levels-for-an-organization/) to the PowerShell repository which gives them the power to:
 
 1. Merge pull requests to all branches *including* `master`.
 1. `git push` to all branches *including* `master`.
@@ -95,7 +94,7 @@ Repository Maintainers enable rapid contributions while maintaining a high level
 If you are a Repository Maintainer:
 
 1. **DO** add [the correct labels](../dev-process/issue-label-descriptions.md) to issues and pull requests 
-1. **DO** make sure that [any change requiring approval from the PowerShell Committee](#committee-member-responsibilities) has gone through the proper [RFC][RFC-repo] or approval process
+1. **DO** make sure that [any change requiring approval from the PowerShell Committee](#changes-that-require-an-rfc) has gone through the proper [RFC][RFC-repo] or approval process
 1. **DO** make sure the correct [Area Experts](#area-experts) are assigned to relevant pull requests and issues.
 This includes adding extra reviewers when it makes sense
 (e.g. a pull request that adds remoting capabilities might require a security expert)
@@ -126,9 +125,9 @@ At any point in time, a Repository Maintainers can nominate a strong community m
 Nominations should be submitted in the form of [RFCs][RFC-repo] detailing why that individual is qualified and how they will contribute.
 After the RFC has been discussed, a unanimous vote by the PowerShell Committee will be required for the new Repository Maintainer to be confirmed. 
 
-## Area experts
+## Area Experts
 
-Area experts are people with knowledge of specific components or technologies in the PowerShell domain. They are responsible for code reviews, issue triage, and providing their expertise to others. 
+Area Experts are people with knowledge of specific components or technologies in the PowerShell domain. They are responsible for code reviews, issue triage, and providing their expertise to others. 
 
 They have [write access](https://help.github.com/articles/permission-levels-for-an-organization-repository/) to the PowerShell repository which gives them the power to:
 
@@ -138,7 +137,7 @@ They have [write access](https://help.github.com/articles/permission-levels-for-
 
 ### Area Expert Responsibilities
 
-If you are an area expert, you are expected to be actively involved in any development, design, or contributions in your area of expertise. 
+If you are an Area Expert, you are expected to be actively involved in any development, design, or contributions in your area of expertise. 
 
 If you are an Area Expert:
 
@@ -149,7 +148,8 @@ If you are an Area Expert:
 (while reviewing PRs, leave your comment even if everything looks good - a simple "Looks good to me" or "LGTM" will suffice, so that we know someone has already taken a look at it).
 1. **DO** make sure contributors are following the [contributor guidelines](../../.github/CONTRIBUTING.md).
 1. **DO** ask people to resend a pull request, if it [doesn't target `master`](../../.github/CONTRIBUTING.md#lifecycle-of-a-pull-request).
-1. **DO** encourage people to [write Pester tests][pester] for all new/changed functionality.
+1. **DO** ensure that contributors [write Pester tests][pester] for all new/changed functionality
+1. **DO** ensure that contributors [write documentation][docs-contributing] for all new-/changed functionality
 1. **DO** encourage contributors to refer to issues in their pull request description per the [issue template](../../.github/ISSUE_TEMPLATE) (e.g. `Resolves issue #123`)
 1. **DO** encourage contributors to create meaningful titles for all PRs. Edit title if necessary.
 1. **DO** verify that all contributors are following the [Coding Guidelines](../dev-process/coding-guidelines.md).
@@ -170,3 +170,4 @@ See our [Pull Request Process][pull-request-process]
 [breaking-changes]: ../dev-process/breaking-change-contract.md
 [issue-process]: ../dev-process/issue-label-descriptions.md
 [pull-request-process]: ../dev-process/pull-request-process.md
+[docs-contributing]: https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md

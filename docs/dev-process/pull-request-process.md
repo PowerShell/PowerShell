@@ -4,7 +4,6 @@ author:  Hemant
 >	Hemant: "SLAs" for pull requests
   > ALWAYS point to documents when critiquing PRs
   >	this should also include the blackbox of Windows/STEX testing
-  >	time can totally be wishy-washy here
   > "some tests we can only run internally"
   >	exact timeline not need for Aug17
   >	Windows quality gates
@@ -24,7 +23,7 @@ Our [pull request template][pr-template] includes the bare minimum requirements 
   - If the build fails, a [Repository Maintainer][repository-maintainer] adds the ```waiting for author``` label to the pull request. 
   The contributor can then continue to update the pull request until the build passes.
 1. Once the build passes, the maintainer either reviews the pull request immediately or adds the ```need review``` label.
-1. A maintainer or trusted contributor reviews the pull request code.
+1. An [Area Expert][area-expert] reviews the pull request code.
   - If the contributor does not meet the reviewer's standards, the reviewer makes comments. A maintainer then removes the ```need review``` label and adds the ```waiting for author``` label. The contributor must address the comments and repeat from step 2.
   - If the contributor meets the reviewer's standards, the reviewer comments that they are satisfied. A maintainer then removes the ```need review``` label.
 1. Once the code review is completed, a maintainer merges the pull request.
@@ -44,4 +43,5 @@ In these cases:
 [pr-template]: ../.github/PULL_REQUEST_TEMPLATE.md
 [code-review]: code-review-guidelines.md
 [governance]: ../community/governance.md
-[repository-maintainer]: ../community/governance.md#repository-maintainer
+[repository-maintainer]: ../community/governance.md#repository-maintainers
+[area-expert]: ../community/governance.md#area-experts#area-experts
