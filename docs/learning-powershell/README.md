@@ -1,7 +1,7 @@
 Learning PowerShell
 ====
 
-Whether you're a Developer, a DevOps Professional or an IT Professional, this doc will help you getting started with PowerShell.
+Whether you're a Developer, a DevOps or an IT Professional, this doc will help you getting started with PowerShell.
 In this document we'll cover the following:
 installing PowerShell, samples walkthrough, PowerShell editor, debugger, testing tools and a map book for experienced bash users to get started with PowerShell faster.
 
