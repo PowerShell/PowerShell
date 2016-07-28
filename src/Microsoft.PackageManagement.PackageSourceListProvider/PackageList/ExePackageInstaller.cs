@@ -29,6 +29,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
     using Microsoft.PackageManagement.Provider.Utility;
     using Microsoft.Win32;
     using ErrorCategory = PackageManagement.Internal.ErrorCategory;
+    using SemanticVersion = Microsoft.PackageManagement.Provider.Utility.SemanticVersion;
 
     internal static class ExePackageInstaller
     {           
