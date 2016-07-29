@@ -21,7 +21,7 @@
     },
 
     "dependencies": {
-        "Microsoft.Management.Infrastructure": "1.0.0-rc2"
+        "Microsoft.Management.Infrastructure": "1.0.0-alpha02"
     },
 
     "frameworks": {
