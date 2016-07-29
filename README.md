@@ -1,7 +1,7 @@
 ![logo][] PowerShell
 ====================
 
-PowerShell is a task automation and configuration management platform.
+PowerShell is an automation and configuration management platform.
 It consists of a cross-platform command-line shell and associated scripting language.
 
 [logo]: assets/Powershell_64.png
