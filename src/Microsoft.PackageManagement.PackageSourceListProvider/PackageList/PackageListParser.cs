@@ -347,9 +347,9 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
 
                     if (!uri.IsFile)
                     {
-                        if (uri.Scheme != Uri.UriSchemeHttps)
+                        if (uri.Scheme != "https")
                         {
-                            throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.Messages.UriSchemeNotSupported, uri.Scheme, Uri.UriSchemeHttps));
+                            throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.Messages.UriSchemeNotSupported, uri.Scheme, "https"));
                         }
                     }
 
