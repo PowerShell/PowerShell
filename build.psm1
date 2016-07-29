@@ -45,9 +45,6 @@ function Start-PSBuild {
         # it's useful for development, to do a quick changes in the engine
         [switch]$SMAOnly,
 
-        [Parameter(ParameterSetName='CoreCLR')]
-        [switch]$Publish,
-
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("ubuntu.14.04-x64",
@@ -71,7 +68,16 @@ function Start-PSBuild {
         [string]$NativeHostArch = "x64",
 
         [ValidateSet('Linux', 'Debug', 'Release', '')] # We might need "Checked" as well
-        [string]$Configuration
+        [string]$Configuration,
+
+        [Parameter(ParameterSetName='CrossGen', Mandatory=$true)]
+        [switch]$Publish,
+
+        [Parameter(ParameterSetName='CrossGen', Mandatory=$true)]
+        [switch]$CrossGen,
+
+        [Parameter(ParameterSetName='CrossGen', Mandatory=$true)]
+        [switch]$RemoveILs
     )
 
     function Stop-DevPowerShell
@@ -328,7 +334,17 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         Push-Location $Options.Top
         log "Run dotnet $Arguments from $pwd"
         Start-NativeExecution { dotnet $Arguments }
-        log "PowerShell output: $($Options.Output)"
+
+        if ($CrossGen -and $IsWindows)
+        {
+            $publishPath = Split-Path $Options.Output
+            Start-CrossGen -PublishPath $publishPath -RemoveILs:$RemoveILs
+            log "PowerShell.exe with ngen binaries is available at $($Options.Output)"
+        }
+        else
+        {
+            log "PowerShell output: $($Options.Output)"
+        }
     } finally {
         Pop-Location
     }
@@ -1917,3 +1933,116 @@ $script:RESX_TEMPLATE = @'
 {0}
 </root>
 '@
+
+
+function Start-CrossGen {
+
+    param (
+    [Parameter(Mandatory= $true)]
+    [ValidateNotNullOrEmpty()]
+    [String]
+    $PublishPath,
+    [switch]$RemoveILs
+    )
+
+    # Helper functions
+
+    function Get-PSCoreAssemblyList {
+
+        $psAssemblies = @()
+        $psAssemblies += "Microsoft.PowerShell.Commands.Utility.dll"
+        $psAssemblies += "Microsoft.PowerShell.Commands.Management.dll"
+        $psAssemblies += "Microsoft.PowerShell.Security.dll"
+        $psAssemblies += "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll"
+        $psAssemblies += "Microsoft.PowerShell.CoreCLR.Eventing.dll"
+        $psAssemblies += "Microsoft.PowerShell.ConsoleHost.dll"
+        $psAssemblies += "Microsoft.PowerShell.LocalAccounts.dll"
+        $psAssemblies += "Microsoft.PowerShell.Commands.Diagnostics.dll"
+        $psAssemblies += "Microsoft.Management.Infrastructure.CimCmdlets.dll"
+        $psAssemblies += "System.Management.Automation.dll"
+
+        # TODO: These need to be enable once they are ported to OPS.
+        #$psAssemblies += "Microsoft.WSMan.Management.dll"
+        #$psAssemblies += "Microsoft.WSMan.Runtime.dll"
+        #$psAssemblies += "Microsoft.PowerShell.ConsoleHost.dll"
+
+        return $psAssemblies
+    }
+    
+    function Generate-CrossGenAssembly {
+
+        param (
+            [Parameter(Mandatory= $true)]
+            [ValidateNotNullOrEmpty()]
+            [String]
+            $AssemblyPath,
+            [Parameter(Mandatory= $true)]
+            [ValidateNotNullOrEmpty()]
+            [String]
+            $CrossgenPath
+        )
+
+        $outputAssembly = $AssemblyPath.Replace(".dll", ".ni.dll")
+        $platformAssembliesPath = Split-Path $AssemblyPath -Parent
+        $crossgenFolder = Split-Path $CrossgenPath
+        $niAssemblyName = Split-Path $outputAssembly -Leaf
+
+        try
+        {
+            Push-Location $crossgenFolder
+
+            # Generate the ngen binary
+            Write-Host "Generating assembly $niAssemblyName ..."
+            $null = & $CrossgenPath /MissingDependenciesOK /in $AssemblyPath /out $outputAssembly /Platform_Assemblies_Paths $platformAssembliesPath
+    
+            # TODO: Generate the pdb for the ngen binary - currently, there is a hard dependency on diasymreader.dll, which is available at %windir%\Microsoft.NET\Framework\v4.0.30319.
+            # However, we still need to figure out the prerequisites on Linux.
+            # & $CrossgenPath /Platform_Assemblies_Paths $platformAssembliesPath  /CreatePDB $platformAssembliesPath /lines $platformAssembliesPath $niAssemblyName
+        }
+        finally
+        {
+            Pop-Location
+        }
+    }
+
+    if (-not (Test-Path $PublishPath))
+    {
+        throw "Path '$PublishPath' does not exist."
+    }
+
+    # Get the path to crossgen.exe.
+    $crossGenPath = Get-ChildItem "$PSScriptRoot\Packages\*crossgen.exe" -Recurse | Where-Object {$_.FullName -match 'x64'} | select -First 1 | % {$_.FullName}
+    if (-not $crossGenPath)
+    {
+        throw "Unable to find latest version of crossgen.exe. 'Please run Start-PSBuild -Clean' first, and then try again."
+    }
+
+    # Crossgen.exe requires the following assemblies:
+    # mscorlib.dll
+    # System.Private.CoreLib.dll
+    # clrjit.dll
+    $crossGenRequiredAssemblies = @("mscorlib.dll", "System.Private.CoreLib.dll", "clrjit.dll")
+    $crossGenFolder = Split-Path $crossGenPath
+
+    # Make sure that all dependencies required by crossgen.exe are at the directory.
+    foreach ($assemblyName in $crossGenRequiredAssemblies)
+    {
+        if (-not (Test-Path "$crossGenFolder\$assemblyName"))
+        {
+            Copy-Item -Path "$PublishPath\$assemblyName" -Destination $crossGenFolder
+        }
+    }
+
+    # Get a list of ps assemblies to ngen.
+    $psCoreAssemblies = Get-PSCoreAssemblyList
+    foreach ($assemblyName in $psCoreAssemblies)
+    {
+        $assemblyPath = Join-Path $PublishPath $assemblyName
+        Generate-CrossGenAssembly  -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
+
+        if ($RemoveILs)
+        {
+            Remove-Item $assemblyPath -Force
+        }
+    }
+}
