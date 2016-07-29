@@ -93,9 +93,13 @@ namespace Microsoft.PowerShell
             {
                 // Because a comparison of two ConsoleKeyInfo objects is a comparison of the
                 // combination of the ConsoleKey and Modifiers, we must combine their hashes.
-                // This is based on Tuple.GetHashCode
-                int h1 = obj.Key.GetHashCode();
+                // Note that if the ConsoleKey is default, we must fall back to the KeyChar,
+                // otherwise every non-special key will compare as the same.
+                int h1 = obj.Key == default(ConsoleKey)
+                    ? obj.KeyChar.GetHashCode()
+                    : obj.Key.GetHashCode();
                 int h2 = obj.Modifiers.GetHashCode();
+                // This is based on Tuple.GetHashCode
                 return unchecked(((h1 << 5) + h1) ^ h2);
             }
         }
