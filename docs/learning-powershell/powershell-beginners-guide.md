@@ -213,7 +213,7 @@ PS /> Get-Help -Name Get-Process
 
 It displays the examples how to use the Get-Process cmdlet.
 ```PowerShell
-PS />**Get-Help -Name Get-Process -Examples**
+PS />Get-Help -Name Get-Process -Examples
 ```
 
 If you use **-Full** parameter, for example, `Get-Help -Name Get-Process -Full`, it will display more technical information.
