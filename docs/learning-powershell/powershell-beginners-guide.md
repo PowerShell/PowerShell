@@ -259,15 +259,7 @@ Mode                LastWriteTime       Length  Name
 -a----        5/16/2016   1:15 PM        32972  test.log
 
 ```
-How to Create and Run PowerShell scripts
-----
-- You can use ISE, Visual Studio Code or your favorite editor to create a PowerShell script and save the script with a .ps1 file extension (for example, helloworld.ps1)
-- To run the script, cd to your current folder and type ./yourscript.ps1 (for example, ./helloworld.ps1).
 
-Note: If you are using Windows, make sure you set the PowerShell's execution policy to "RemoteSigned" in this case.
-See [Running PowerShell Scripts Is as Easy as 1-2-3] [run-ps] for more details.
-
-[run-ps]:http://windowsitpro.com/powershell/running-powershell-scripts-easy-1-2-3
 
 Recommended Training and Reading
 ----
