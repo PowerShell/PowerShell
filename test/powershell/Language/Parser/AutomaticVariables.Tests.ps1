@@ -1,6 +1,8 @@
 
 Describe 'Automatic variable $input' -Tags "CI" {
-    It '$input Type should be enumerator' {
+    # Skip on hold for discussion on https://github.com/PowerShell/PowerShell/issues/1563
+    # $input type in advanced functions
+    It '$input Type should be enumerator' -Skip {
         function from_begin { [cmdletbinding()]param() begin { Write-Output -NoEnumerate $input } }
         function from_process { [cmdletbinding()]param() process { Write-Output -NoEnumerate $input } }
         function from_end { [cmdletbinding()]param() end { Write-Output -NoEnumerate $input } }
