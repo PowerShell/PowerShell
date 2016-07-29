@@ -197,9 +197,6 @@
                 "System.Management": "",
                 "System.Configuration": "",
                 "System.Configuration.Install": ""
-            },
-            "dependencies": {
-                "Newtonsoft.Json": "7.0.1"
             }
         }
     }

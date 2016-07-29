@@ -267,11 +267,12 @@ function Start-PSBuild {
             Push-Location "$PSScriptRoot\src\powershell-native"
 
             # Compile native resources
+            $currentLocation = Get-Location
             @("nativemsh/pwrshplugin") | % {
                 $nativeResourcesFolder = $_
                 Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | % {
                     $command = @"
-cmd.exe /C cd /d "(Get-Location)" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" mc.exe -o -d -c -U $($_.FullName) -h "$nativeResourcesFolder" -r "$nativeResourcesFolder"
+cmd.exe /C cd /d "$currentLocation" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" mc.exe -o -d -c -U $($_.FullName) -h "$nativeResourcesFolder" -r "$nativeResourcesFolder"
 "@
                     log "  Executing mc.exe Command: $command"
                     Start-NativeExecution { Invoke-Expression -Command:$command }

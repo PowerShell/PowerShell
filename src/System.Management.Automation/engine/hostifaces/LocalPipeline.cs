@@ -255,7 +255,6 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 int i = ReadRegistryInt("PipelineMaxStackSizeMB", 10);
-
                 if (i < 10)
                     i = 10; // minimum 10MB
                 else if (i > 100)
@@ -536,35 +535,35 @@ namespace System.Management.Automation.Runspaces
         // Removed HandleUnexpectedExceptions infrastructure
 
         internal static int ReadRegistryInt(string policyValueName, int defaultValue)
-        {    
-            RegistryKey key;    
-            try    
-            {    
-                key = Registry.LocalMachine.OpenSubKey(Utils.GetRegistryConfigurationPrefix());    
-            }    
-            catch (System.Security.SecurityException)    
-            {    
-                return defaultValue;    
-            }    
-            if (null == key)    
-                return defaultValue;    
-    
-            object temp;    
-            try    
-            {    
-                temp = key.GetValue(policyValueName);    
-            }    
-            catch (System.Security.SecurityException)    
-            {    
-                return defaultValue;    
-            }    
-            if (!(temp is int))    
-            {    
-                return defaultValue;    
-            }    
-            int i = (int)temp;    
-            return i;    
-        }  
+        {
+            RegistryKey key;
+            try
+            {
+                key = Registry.LocalMachine.OpenSubKey(Utils.GetRegistryConfigurationPrefix());
+            }
+            catch (System.Security.SecurityException)
+            {
+                return defaultValue;
+            }
+            if (null == key)
+                return defaultValue;
+
+            object temp;
+            try
+            {
+                temp = key.GetValue(policyValueName);
+            }
+            catch (System.Security.SecurityException)
+            {
+                return defaultValue;
+            }
+            if (!(temp is int))
+            {
+                return defaultValue;
+            }
+            int i = (int)temp;
+            return i;
+        }
 
         // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
         // Removed HandleUnexpectedExceptions infrastructure
