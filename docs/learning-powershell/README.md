@@ -103,6 +103,7 @@ Recommended Training and Reading
 - [Learn PowerShell Video Library][powershell.com-learn-powershell] from PowerShell.com
 - [PowerShell Quick Reference Guides][quick-reference] by PowerShellMagazine.com
 - [PowerShell 5 How-To Videos][script-guy-how-to] by Ed Wilson
+- [PowerShell TechNet Resources][https://technet.microsoft.com/en-us/scriptcenter/dd742419.aspx] from ScriptCenter
 
 
 Commercial Resources
