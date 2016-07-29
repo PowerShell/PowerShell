@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -28,14 +29,14 @@ namespace Microsoft.PowerShell.Commands
         private const string DynamicTypeSet = "DynamicTypeSet";
         private const string TypeDataSet = "TypeDataSet";
 
-        private static object notSpecified = new object();
+        private static object s_notSpecified = new object();
         private static bool HasBeenSpecified(object obj)
         {
-            return !System.Object.ReferenceEquals(obj, notSpecified);
+            return !System.Object.ReferenceEquals(obj, s_notSpecified);
         }
-        
-        private PSMemberTypes memberType;
-        private bool isMemberTypeSet = false;
+
+        private PSMemberTypes _memberType;
+        private bool _isMemberTypeSet = false;
         /// <summary>
         /// The member type of to be added
         /// </summary>
@@ -51,13 +52,13 @@ namespace Microsoft.PowerShell.Commands
         {
             set
             {
-                memberType = value;
-                isMemberTypeSet = true;
+                _memberType = value;
+                _isMemberTypeSet = true;
             }
-            get { return memberType; }
+            get { return _memberType; }
         }
 
-        string memberName;
+        private string _memberName;
         /// <summary>
         /// The name of the new member
         /// </summary>
@@ -65,11 +66,11 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string MemberName
         {
-            set { memberName = value; }
-            get { return memberName; }
+            set { _memberName = value; }
+            get { return _memberName; }
         }
 
-        private object value1 = notSpecified;
+        private object _value1 = s_notSpecified;
         /// <summary>
         /// First value of the new member. The meaning of this value
         /// changes according to the member type.
@@ -77,11 +78,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = DynamicTypeSet)]
         public object Value
         {
-            set { value1 = value; }
-            get { return value1; }
+            set { _value1 = value; }
+            get { return _value1; }
         }
 
-        private object value2;
+        private object _value2;
         /// <summary>
         /// Second value of the new member. The meaning of this value
         /// changes according to the member type.
@@ -90,11 +91,11 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public object SecondValue
         {
-            set { value2 = value; }
-            get { return value2; }
+            set { _value2 = value; }
+            get { return _value2; }
         }
 
-        private Type typeConverter;
+        private Type _typeConverter;
         /// <summary>
         /// The type converter to be added
         /// </summary>
@@ -102,11 +103,11 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public Type TypeConverter
         {
-            set { typeConverter = value; }
-            get { return typeConverter; }
+            set { _typeConverter = value; }
+            get { return _typeConverter; }
         }
 
-        private Type typeAdapter;
+        private Type _typeAdapter;
         /// <summary>
         /// The type adapter to be added
         /// </summary>
@@ -114,8 +115,8 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public Type TypeAdapter
         {
-            set { typeAdapter = value; }
-            get { return typeAdapter; }
+            set { _typeAdapter = value; }
+            get { return _typeAdapter; }
         }
 
         /// <summary>
@@ -256,7 +257,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _typeName; }
         }
 
-        private bool force = false;
+        private bool _force = false;
         /// <summary>
         /// True if we should overwrite a possibly existing member
         /// </summary>
@@ -264,8 +265,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = TypeDataSet)]
         public SwitchParameter Force
         {
-            set { force = value; }
-            get { return force; }
+            set { _force = value; }
+            get { return _force; }
         }
 
         #endregion dynamic type set
@@ -342,7 +343,7 @@ namespace Microsoft.PowerShell.Commands
                 TypeData type = item.Copy();
 
                 // Set property IsOverride to be true if -Force parameter is specified
-                if (force)
+                if (_force)
                 {
                     type.IsOverride = true;
                 }
@@ -401,17 +402,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 ThrowTerminatingError(NewError("TargetTypeNameEmpty", UpdateDataStrings.TargetTypeNameEmpty, _typeName));
             }
-            TypeData type = new TypeData(_typeName) {IsOverride = force};
+            TypeData type = new TypeData(_typeName) { IsOverride = _force };
 
             GetMembers(type.Members);
 
-            if(typeConverter != null)
+            if (_typeConverter != null)
             {
-                type.TypeConverter = typeConverter;
+                type.TypeConverter = _typeConverter;
             }
-            if(typeAdapter != null)
+            if (_typeAdapter != null)
             {
-                type.TypeAdapter = typeAdapter;
+                type.TypeAdapter = _typeAdapter;
             }
 
             if (_serializationMethod != null)
@@ -455,7 +456,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // If the type contains no members at all, report the error and return
-            if(!EnsureTypeDataIsNotEmpty(type))
+            if (!EnsureTypeDataIsNotEmpty(type))
             {
                 return;
             }
@@ -511,11 +512,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private void GetMembers(Dictionary<string, TypeMemberData> members)
         {
-            if(!isMemberTypeSet)
+            if (!_isMemberTypeSet)
             {
                 // If the MemberType is not specified, the MemberName, Value, and SecondValue parameters
                 // should not be specified either
-                if(memberName != null || HasBeenSpecified(value1) || value2 != null)
+                if (_memberName != null || HasBeenSpecified(_value1) || _value2 != null)
                 {
                     ThrowTerminatingError(NewError("MemberTypeIsMissing", UpdateDataStrings.MemberTypeIsMissing, null));
                 }
@@ -549,7 +550,7 @@ namespace Microsoft.PowerShell.Commands
                     members.Add(codeMethod.Name, codeMethod);
                     break;
                 default:
-                    ThrowTerminatingError(NewError("CannotUpdateMemberType", UpdateDataStrings.CannotUpdateMemberType, null, memberType.ToString()));
+                    ThrowTerminatingError(NewError("CannotUpdateMemberType", UpdateDataStrings.CannotUpdateMemberType, null, _memberType.ToString()));
                     break;
             }
         }
@@ -561,50 +562,50 @@ namespace Microsoft.PowerShell.Commands
 
         private void EnsureMemberNameHasBeenSpecified()
         {
-            if(String.IsNullOrEmpty(this.memberName))
+            if (String.IsNullOrEmpty(_memberName))
             {
-                ThrowTerminatingError(NewError("MemberNameShouldBeSpecified", UpdateDataStrings.ShouldBeSpecified, null, "MemberName", this.memberType));
+                ThrowTerminatingError(NewError("MemberNameShouldBeSpecified", UpdateDataStrings.ShouldBeSpecified, null, "MemberName", _memberType));
             }
         }
 
         private void EnsureValue1HasBeenSpecified()
         {
-            if (!HasBeenSpecified(value1))
+            if (!HasBeenSpecified(_value1))
             {
-                ThrowTerminatingError(NewError("ValueShouldBeSpecified", UpdateDataStrings.ShouldBeSpecified, null, "Value", this.memberType));
+                ThrowTerminatingError(NewError("ValueShouldBeSpecified", UpdateDataStrings.ShouldBeSpecified, null, "Value", _memberType));
             }
         }
 
         private void EnsureValue1NotNullOrEmpty()
         {
-            if(value1 is string)
+            if (_value1 is string)
             {
-                if(String.IsNullOrEmpty((string)value1))
+                if (String.IsNullOrEmpty((string)_value1))
                 {
-                    ThrowTerminatingError(NewError("ValueShouldBeSpecified", UpdateDataStrings.ShouldNotBeNull, null, "Value", this.memberType));
+                    ThrowTerminatingError(NewError("ValueShouldBeSpecified", UpdateDataStrings.ShouldNotBeNull, null, "Value", _memberType));
                 }
                 return;
             }
 
-            if (value1 == null)
+            if (_value1 == null)
             {
-                ThrowTerminatingError(NewError("ValueShouldBeSpecified", UpdateDataStrings.ShouldNotBeNull, null, "Value", this.memberType));
+                ThrowTerminatingError(NewError("ValueShouldBeSpecified", UpdateDataStrings.ShouldNotBeNull, null, "Value", _memberType));
             }
         }
 
         private void EnsureValue2HasNotBeenSpecified()
         {
-            if (value2 != null)
+            if (_value2 != null)
             {
-                ThrowTerminatingError(NewError("SecondValueShouldNotBeSpecified", UpdateDataStrings.ShouldNotBeSpecified, null, "SecondValue", this.memberType));
+                ThrowTerminatingError(NewError("SecondValueShouldNotBeSpecified", UpdateDataStrings.ShouldNotBeSpecified, null, "SecondValue", _memberType));
             }
         }
 
         private void EnsureValue1AndValue2AreNotBothNull()
         {
-            if (value1 == null && value2 == null)
+            if (_value1 == null && _value2 == null)
             {
-                ThrowTerminatingError(NewError("ValueAndSecondValueAreNotBothNull", UpdateDataStrings.Value1AndValue2AreNotBothNull, null, this.memberType));
+                ThrowTerminatingError(NewError("ValueAndSecondValueAreNotBothNull", UpdateDataStrings.Value1AndValue2AreNotBothNull, null, _memberType));
             }
         }
 
@@ -615,7 +616,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>false if empty, true if not</returns>
         private bool EnsureTypeDataIsNotEmpty(TypeData typeData)
         {
-            if (typeData.Members.Count == 0 && typeData.StandardMembers.Count == 0 
+            if (typeData.Members.Count == 0 && typeData.StandardMembers.Count == 0
                 && typeData.TypeConverter == null && typeData.TypeAdapter == null
                 && typeData.DefaultDisplayPropertySet == null
                 && typeData.DefaultKeyPropertySet == null
@@ -632,7 +633,7 @@ namespace Microsoft.PowerShell.Commands
             EnsureMemberNameHasBeenSpecified();
             EnsureValue1HasBeenSpecified();
             EnsureValue2HasNotBeenSpecified();
-            return new NotePropertyData(memberName, value1);
+            return new NotePropertyData(_memberName, _value1);
         }
 
         private AliasPropertyData GetAliasProperty()
@@ -642,14 +643,14 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue1NotNullOrEmpty();
 
             AliasPropertyData alias;
-            string referencedName = GetParameterType<string>(value1);
-            if(value2 != null)
+            string referencedName = GetParameterType<string>(_value1);
+            if (_value2 != null)
             {
-                Type type = GetParameterType<Type>(value2);
-                alias = new AliasPropertyData(memberName, referencedName, type);
+                Type type = GetParameterType<Type>(_value2);
+                alias = new AliasPropertyData(_memberName, referencedName, type);
                 return alias;
             }
-            alias = new AliasPropertyData(memberName, referencedName);
+            alias = new AliasPropertyData(_memberName, referencedName);
             return alias;
         }
 
@@ -660,18 +661,18 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue1AndValue2AreNotBothNull();
 
             ScriptBlock value1ScriptBlock = null;
-            if(value1 != null)
+            if (_value1 != null)
             {
-                value1ScriptBlock = GetParameterType<ScriptBlock>(value1);
-            }
-            
-            ScriptBlock value2ScriptBlock = null;
-            if(value2 != null)
-            {
-                value2ScriptBlock = GetParameterType<ScriptBlock>(value2);
+                value1ScriptBlock = GetParameterType<ScriptBlock>(_value1);
             }
 
-            ScriptPropertyData scriptProperty = new ScriptPropertyData(memberName, value1ScriptBlock, value2ScriptBlock);
+            ScriptBlock value2ScriptBlock = null;
+            if (_value2 != null)
+            {
+                value2ScriptBlock = GetParameterType<ScriptBlock>(_value2);
+            }
+
+            ScriptPropertyData scriptProperty = new ScriptPropertyData(_memberName, value1ScriptBlock, value2ScriptBlock);
             return scriptProperty;
         }
 
@@ -682,18 +683,18 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue1AndValue2AreNotBothNull();
 
             MethodInfo value1CodeReference = null;
-            if(value1 != null)
+            if (_value1 != null)
             {
-                value1CodeReference = GetParameterType<MethodInfo>(value1);
+                value1CodeReference = GetParameterType<MethodInfo>(_value1);
             }
 
             MethodInfo value2CodeReference = null;
-            if(value2 != null)
+            if (_value2 != null)
             {
-                value2CodeReference = GetParameterType<MethodInfo>(value2);
+                value2CodeReference = GetParameterType<MethodInfo>(_value2);
             }
 
-            CodePropertyData codeProperty = new CodePropertyData(memberName, value1CodeReference, value2CodeReference);
+            CodePropertyData codeProperty = new CodePropertyData(_memberName, value1CodeReference, value2CodeReference);
             return codeProperty;
         }
 
@@ -703,8 +704,8 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue1HasBeenSpecified();
             EnsureValue2HasNotBeenSpecified();
 
-            ScriptBlock method = GetParameterType<ScriptBlock>(value1);
-            ScriptMethodData scriptMethod = new ScriptMethodData(memberName, method);
+            ScriptBlock method = GetParameterType<ScriptBlock>(_value1);
+            ScriptMethodData scriptMethod = new ScriptMethodData(_memberName, method);
             return scriptMethod;
         }
 
@@ -714,8 +715,8 @@ namespace Microsoft.PowerShell.Commands
             EnsureValue1HasBeenSpecified();
             EnsureValue2HasNotBeenSpecified();
 
-            MethodInfo codeReference = GetParameterType<MethodInfo>(value1);
-            CodeMethodData codeMethod = new CodeMethodData(memberName, codeReference);
+            MethodInfo codeReference = GetParameterType<MethodInfo>(_value1);
+            CodeMethodData codeMethod = new CodeMethodData(_memberName, codeReference);
             return codeMethod;
         }
 
@@ -748,8 +749,9 @@ namespace Microsoft.PowerShell.Commands
             Collection<string> appendPathTotal = Glob(this.AppendPath, "TypesAppendPathException", this);
 
             // There are file path input but they did not pass the validation in the method Glob
-            if ((PrependPath.Length > 0 || AppendPath.Length > 0) && 
-                prependPathTotal.Count == 0 && appendPathTotal.Count == 0) { return; }
+            if ((PrependPath.Length > 0 || AppendPath.Length > 0) &&
+                prependPathTotal.Count == 0 && appendPathTotal.Count == 0)
+            { return; }
 
             string action = UpdateDataStrings.UpdateTypeDataAction;
             // Load the resource once and format it whenver a new target
@@ -825,15 +827,15 @@ namespace Microsoft.PowerShell.Commands
                         newTypes.Add(entry);
                     }
                 }
-                
+
                 foreach (string appendPathTotalItem in appendPathTotal)
                 {
-                    string formattedTarget = string.Format(CultureInfo.InvariantCulture,target, appendPathTotalItem);
+                    string formattedTarget = string.Format(CultureInfo.InvariantCulture, target, appendPathTotalItem);
                     string resolvedPath = ModuleCmdletBase.ResolveRootedFilePath(appendPathTotalItem, Context) ?? appendPathTotalItem;
 
                     if (ShouldProcess(formattedTarget, action))
                     {
-                        if(!fullFileNameHash.Contains(resolvedPath))
+                        if (!fullFileNameHash.Contains(resolvedPath))
                         {
                             fullFileNameHash.Add(resolvedPath);
                             newTypes.Add(new SessionStateTypeEntry(appendPathTotalItem));
@@ -920,8 +922,9 @@ namespace Microsoft.PowerShell.Commands
             Collection<string> appendPathTotal = Glob(this.AppendPath, "FormatAppendPathException", this);
 
             // There are file path input but they did not pass the validation in the method Glob
-            if ((PrependPath.Length > 0 || AppendPath.Length > 0) && 
-                prependPathTotal.Count == 0 && appendPathTotal.Count == 0) { return; }
+            if ((PrependPath.Length > 0 || AppendPath.Length > 0) &&
+                prependPathTotal.Count == 0 && appendPathTotal.Count == 0)
+            { return; }
 
             string action = UpdateDataStrings.UpdateFormatDataAction;
 
@@ -964,7 +967,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (Context.InitialSessionState.DisableFormatUpdates)
                 {
-                    throw new PSInvalidOperationException(UpdateDataStrings.FormatUpdatesDisabled);    
+                    throw new PSInvalidOperationException(UpdateDataStrings.FormatUpdatesDisabled);
                 }
 
                 // This hashSet is to detect if there are duplicate format files
@@ -1038,7 +1041,7 @@ namespace Microsoft.PowerShell.Commands
                             this.WriteError(new ErrorRecord(ex, "CannotUpdateFormatWithFormatTable", ErrorCategory.InvalidOperation, null));
                             continue;
                         }
-                        else if(ssfe.FormatData != null)
+                        else if (ssfe.FormatData != null)
                         {
                             entries.Add(new PSSnapInTypeAndFormatErrors(name, ssfe.FormatData));
                         }
@@ -1083,7 +1086,7 @@ namespace Microsoft.PowerShell.Commands
         private const string RemoveFileSet = "RemoveFileSet";
         private const string RemoveTypeDataSet = "RemoveTypeDataSet";
 
-        private string typeName;
+        private string _typeName;
         /// <summary>
         /// The target type to remove
         /// </summary>
@@ -1092,11 +1095,11 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string TypeName
         {
-            get { return typeName; }
-            set { typeName = value; }
+            get { return _typeName; }
+            set { _typeName = value; }
         }
 
-        private string[] typeFiles;
+        private string[] _typeFiles;
         /// <summary>
         /// The type xml file to remove from the cache
         /// </summary>
@@ -1105,19 +1108,19 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string[] Path
         {
-            get { return typeFiles; }
-            set { typeFiles = value; }
+            get { return _typeFiles; }
+            set { _typeFiles = value; }
         }
 
-        private TypeData typeData;
+        private TypeData _typeData;
         /// <summary>
         /// The TypeData to remove
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = RemoveTypeDataSet)]
         public TypeData TypeData
         {
-            get { return typeData; }
-            set { typeData = value; }
+            get { return _typeData; }
+            set { _typeData = value; }
         }
 
         private static void ConstructFileToIndexMap(string fileName, int index, Dictionary<string, List<int>> fileNameToIndexMap)
@@ -1129,7 +1132,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                fileNameToIndexMap[fileName] = new List<int> {index};
+                fileNameToIndexMap[fileName] = new List<int> { index };
             }
         }
 
@@ -1138,13 +1141,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if(ParameterSetName == RemoveFileSet)
+            if (ParameterSetName == RemoveFileSet)
             {
                 // Load the resource strings
                 string removeFileAction = UpdateDataStrings.RemoveTypeFileAction;
                 string removeFileTarget = UpdateDataStrings.UpdateTarget;
 
-                Collection<string> typeFileTotal = UpdateData.Glob(typeFiles, "TypePathException", this);
+                Collection<string> typeFileTotal = UpdateData.Glob(_typeFiles, "TypePathException", this);
                 if (typeFileTotal.Count == 0) { return; }
 
                 // Key of the map is the name of the file that is in the cache. Value of the map is a index list. Duplicate files might 
@@ -1242,17 +1245,17 @@ namespace Microsoft.PowerShell.Commands
             string removeTypeTarget = UpdateDataStrings.RemoveTypeDataTarget;
             string typeNameToRemove = null;
 
-            if(ParameterSetName == RemoveTypeDataSet)
+            if (ParameterSetName == RemoveTypeDataSet)
             {
-                typeNameToRemove = typeData.TypeName;
+                typeNameToRemove = _typeData.TypeName;
             }
             else
             {
-                if (String.IsNullOrWhiteSpace(typeName))
+                if (String.IsNullOrWhiteSpace(_typeName))
                 {
-                    ThrowTerminatingError(NewError("TargetTypeNameEmpty", UpdateDataStrings.TargetTypeNameEmpty, typeName));
+                    ThrowTerminatingError(NewError("TargetTypeNameEmpty", UpdateDataStrings.TargetTypeNameEmpty, _typeName));
                 }
-                typeNameToRemove = typeName;
+                typeNameToRemove = _typeName;
             }
 
             Dbg.Assert(!String.IsNullOrEmpty(typeNameToRemove), "TypeNameToRemove should be not null and not empty at this point");

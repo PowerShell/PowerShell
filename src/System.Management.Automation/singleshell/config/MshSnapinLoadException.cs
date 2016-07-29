@@ -74,7 +74,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initiate an instance of PSSnapInException.
         /// </summary>
-        public PSSnapInException () : base()
+        public PSSnapInException() : base()
         {
         }
 
@@ -203,8 +203,8 @@ namespace System.Management.Automation.Runspaces
 
             base.GetObjectData(info, context);
 
-            info.AddValue("PSSnapIn", this._PSSnapin);
-            info.AddValue("Reason", this._reason);
+            info.AddValue("PSSnapIn", _PSSnapin);
+            info.AddValue("Reason", _reason);
         }
 
         #endregion Serialization

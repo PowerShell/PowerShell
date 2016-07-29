@@ -30,9 +30,9 @@ using Microsoft.Win32.SafeHandles;
 using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 
-using WORD   = System.UInt16;
-using ULONG  = System.UInt32;
-using DWORD  = System.UInt32;
+using WORD = System.UInt16;
+using ULONG = System.UInt32;
+using DWORD = System.UInt32;
 using NakedWin32Handle = System.IntPtr;
 using HWND = System.IntPtr;
 using HDC = System.IntPtr;
@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell
 
     internal static class ConsoleControl
     {
-        #region structs
+#region structs
 
         internal enum InputRecordEventTypes : ushort
         {
@@ -246,7 +246,7 @@ namespace Microsoft.PowerShell
             public byte tmCharSet;
         }
 
-        #region SentInput Data Structures
+#region SentInput Data Structures
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct INPUT
@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell
             /// INPUT_KEYBOARD = 0x01
             /// </summary>
             Keyboard = 1,
-            
+
             /// <summary>
             /// INPUT_HARDWARE = 0x02
             /// </summary>
@@ -417,11 +417,11 @@ namespace Microsoft.PowerShell
             ScanCode = 0x0008
         }
 
-        #endregion SentInput Data Structures
+#endregion SentInput Data Structures
 
-        #endregion structs
+#endregion structs
 
-        #region Window Visibility
+#region Window Visibility
         [DllImport(PinvokeDllNames.GetConsoleWindowDllName)]
         internal static extern IntPtr GetConsoleWindow();
 
@@ -451,12 +451,12 @@ namespace Microsoft.PowerShell
         /// <returns>true it it was successful</returns>
         [DllImport("user32.dll")]
         internal static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
-        
+
         internal static void SetConsoleMode(ProcessWindowStyle style)
         {
             IntPtr hwnd = GetConsoleWindow();
             Dbg.Assert(hwnd != IntPtr.Zero, "Console handle should never be zero");
-            switch(style)
+            switch (style)
             {
                 case ProcessWindowStyle.Hidden:
                     ShowWindow(hwnd, SW_HIDE);
@@ -473,9 +473,9 @@ namespace Microsoft.PowerShell
             }
         }
 #endif
-        #endregion
+#endregion
 
-        #region Input break handler (Ctrl-C, Ctrl-Break)
+#region Input break handler (Ctrl-C, Ctrl-Break)
 
         /// <summary>
         /// 
@@ -548,13 +548,13 @@ namespace Microsoft.PowerShell
             }
         }
 
-        #endregion
+#endregion
 
-        #region Win32Handles
+#region Win32Handles
 
-        static readonly Lazy<ConsoleHandle> _keyboardInputHandle = new Lazy<SafeFileHandle>(() =>
+        private static readonly Lazy<ConsoleHandle> _keyboardInputHandle = new Lazy<SafeFileHandle>(() =>
             {
-                var handle =  NativeMethods.CreateFile(
+                var handle = NativeMethods.CreateFile(
                     "CONIN$",
                     (UInt32)
                     (NativeMethods.AccessQualifiers.GenericRead | NativeMethods.AccessQualifiers.GenericWrite),
@@ -586,7 +586,7 @@ namespace Microsoft.PowerShell
             return _keyboardInputHandle.Value;
         }
 
-        static readonly Lazy<ConsoleHandle> _outputHandle = new Lazy<SafeFileHandle>(() =>
+        private static readonly Lazy<ConsoleHandle> _outputHandle = new Lazy<SafeFileHandle>(() =>
             {
                 // We use CreateFile here instead of GetStdWin32Handle, as GetStdWin32Handle will return redirected handles
                 var handle = NativeMethods.CreateFile(
@@ -623,9 +623,9 @@ namespace Microsoft.PowerShell
             return _outputHandle.Value;
         }
 
-        #endregion
+#endregion
 
-        #region Mode
+#region Mode
 
         /// <summary>
         /// 
@@ -720,9 +720,9 @@ namespace Microsoft.PowerShell
         }
 
 
-        #endregion
+#endregion
 
-        #region Input
+#region Input
 
 
 
@@ -800,9 +800,9 @@ namespace Microsoft.PowerShell
                     ErrorCategory.ReadError, ConsoleControlStrings.ReadConsoleExceptionTemplate);
                 throw e;
             }
-            if (charsReadUnused > (uint) buffer.Length)
-                charsReadUnused = (uint) buffer.Length;
-            return buffer.ToString(0, (int) charsReadUnused);
+            if (charsReadUnused > (uint)buffer.Length)
+                charsReadUnused = (uint)buffer.Length;
+            return buffer.ToString(0, (int)charsReadUnused);
         }
 
         /// <summary>
@@ -969,9 +969,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-        #endregion Input
+#endregion Input
 
-        #region Buffer
+#region Buffer
 
         /// <summary>
         /// Wraps Win32 GetConsoleScreenBufferInfo
@@ -1183,7 +1183,6 @@ namespace Microsoft.PowerShell
             {
                 WriteConsoleOutputPlain(consoleHandle, origin, contents);
             }
-
         }
 
         private static void BuildEdgeTypeInfo(
@@ -1198,7 +1197,7 @@ namespace Microsoft.PowerShell
             BufferCellArrayRowType edgeType =
                 GetEdgeType(contents[contentsRegion.Top, contentsRegion.Left],
                     contents[contentsRegion.Top, contentsRegion.Right]);
-            for (int r = contentsRegion.Top; r <= contentsRegion.Bottom; )
+            for (int r = contentsRegion.Top; r <= contentsRegion.Bottom;)
             {
                 BufferCellArrayRowTypeRange range;
                 range.Start = r;
@@ -1211,7 +1210,7 @@ namespace Microsoft.PowerShell
                 {
                     firstRightLeadingRow = r;
                 }
-                for (; ; )
+                for (;;)
                 {
                     r++;
                     if (r > contentsRegion.Bottom)
@@ -1382,8 +1381,8 @@ namespace Microsoft.PowerShell
                 "origin must be within the output buffer");
             int rows = contentsRegion.Bottom - contentsRegion.Top + 1;
             int cols = contentsRegion.Right - contentsRegion.Left + 1;
-            
-            CONSOLE_FONT_INFO_EX fontInfo = GetConsoleFontInfo(consoleHandle); 
+
+            CONSOLE_FONT_INFO_EX fontInfo = GetConsoleFontInfo(consoleHandle);
             int fontType = fontInfo.FontFamily & NativeMethods.FontTypeMask;
             bool trueTypeInUse = (fontType & NativeMethods.TrueTypeFont) == NativeMethods.TrueTypeFont;
 
@@ -1800,7 +1799,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        #region ReadConsoleOutput CJK
+#region ReadConsoleOutput CJK
         /// <summary>
         /// If an edge cell read is a blank, it is potentially part of a double width character. Hence,
         ///  at least one of the left and right edges should be checked
@@ -2030,7 +2029,6 @@ namespace Microsoft.PowerShell
                                 bufferSize.X = (short)Math.Min(colsRemaining, bufferLimit);
                                 continue;
                             }
-
                         }
                     }
                     colsRemaining -= bufferSize.X;
@@ -2092,7 +2090,7 @@ namespace Microsoft.PowerShell
                 rowIndex++;
             }
         }
-        #endregion ReadConsoleOutput CJK
+#endregion ReadConsoleOutput CJK
 
 
         private static void ReadConsoleOutputPlain
@@ -2459,9 +2457,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-        #endregion Buffer
+#endregion Buffer
 
-        #region Window
+#region Window
 
         /// <summary>
         /// Wraps Win32 SetConsoleWindowInfo
@@ -2603,10 +2601,10 @@ namespace Microsoft.PowerShell
             }
         }
 
-        #endregion Window
+#endregion Window
 
 #if !CORECLR
-        #region Font Selection
+#region Font Selection
 
         /// <summary>
         /// UpdateLocaleSpecificFont is a helper method used to update 
@@ -2706,7 +2704,7 @@ namespace Microsoft.PowerShell
             return LucidaSupportedCodePages.Contains(currentLocaleCodePage);
         }
 
-        #endregion
+#endregion
 #endif
         /// <summary>
         /// 
@@ -2815,7 +2813,7 @@ namespace Microsoft.PowerShell
         }
 
 
-        #region Dealing with CJK
+#region Dealing with CJK
 
         /// <summary>
         /// From IsConsoleFullWidth in \windows\core\ntcon\server\dbcs.c
@@ -3139,7 +3137,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="codePage"></param>
         /// <returns></returns>
-        internal static bool IsCJKOutputCodePage(out uint codePage) 
+        internal static bool IsCJKOutputCodePage(out uint codePage)
         {
             codePage = NativeMethods.GetConsoleOutputCP();
             return codePage == 932 || // Japanese
@@ -3148,9 +3146,9 @@ namespace Microsoft.PowerShell
                 codePage == 950;  // Traditional Chinese
         }
 
-        #endregion Dealing with CJK
+#endregion Dealing with CJK
 
-        #region Cursor
+#region Cursor
 
 
         /// <summary>
@@ -3285,9 +3283,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-        #endregion Cursor
+#endregion Cursor
 
-        #region helper
+#region helper
 
         /// <summary>
         /// Helper function to create the proper HostException
@@ -3306,9 +3304,9 @@ namespace Microsoft.PowerShell
             return e;
         }
 
-        #endregion helper
+#endregion helper
 
-        #region SendInput
+#region SendInput
 
         internal static void MimicKeyPress(INPUT[] inputs)
         {
@@ -3325,7 +3323,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        #endregion SendInput
+#endregion SendInput
 
         /// <summary>
         /// 
@@ -3339,7 +3337,7 @@ namespace Microsoft.PowerShell
             internal const int FontTypeMask = 0x06;
             internal const int TrueTypeFont = 0x04;
 
-            #region CreateFile
+#region CreateFile
 
             [Flags]
             internal enum AccessQualifiers : uint
@@ -3379,9 +3377,9 @@ namespace Microsoft.PowerShell
                 NakedWin32Handle templateFileWin32Handle
             );
 
-            #endregion CreateFile
+#endregion CreateFile
 
-            #region Code Page
+#region Code Page
 
             [DllImport(PinvokeDllNames.GetConsoleCPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
             internal static extern uint GetConsoleCP();
@@ -3389,7 +3387,7 @@ namespace Microsoft.PowerShell
             [DllImport(PinvokeDllNames.GetConsoleOutputCPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
             internal static extern uint GetConsoleOutputCP();
 
-            #endregion Code Page
+#endregion Code Page
 
             [DllImport(PinvokeDllNames.GetConsoleWindowDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern HWND GetConsoleWindow();
@@ -3570,7 +3568,6 @@ namespace Microsoft.PowerShell
             {
                 COMMON_LVB_LEADING_BYTE = 0x0100,
                 COMMON_LVB_TRAILING_BYTE = 0x0200
-
             }
         }
 

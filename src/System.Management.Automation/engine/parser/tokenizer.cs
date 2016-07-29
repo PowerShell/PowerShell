@@ -42,7 +42,6 @@ namespace System.Management.Automation.Language
         /// Name may be optionally present, expression or bare word
         /// </summary>
         OptionalName = 4,
-
     };
 
     /// <summary>
@@ -77,14 +76,15 @@ namespace System.Management.Automation.Language
         /// </summary>
         private static Dictionary<string, DynamicKeyword> DynamicKeywords
         {
-            get {
-                return _dynamicKeywords ??
-                       (_dynamicKeywords = new Dictionary<string, DynamicKeyword>(StringComparer.OrdinalIgnoreCase));
+            get
+            {
+                return t_dynamicKeywords ??
+                       (t_dynamicKeywords = new Dictionary<string, DynamicKeyword>(StringComparer.OrdinalIgnoreCase));
             }
         }
 
         [ThreadStatic]
-        private static Dictionary<string, DynamicKeyword> _dynamicKeywords;
+        private static Dictionary<string, DynamicKeyword> t_dynamicKeywords;
 
         /// <summary>
         /// stack of DynamicKeywords Cache
@@ -94,19 +94,19 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                return _dynamicKeywordsStack ??
-                       (_dynamicKeywordsStack = new Stack<Dictionary<string, DynamicKeyword>>());
+                return t_dynamicKeywordsStack ??
+                       (t_dynamicKeywordsStack = new Stack<Dictionary<string, DynamicKeyword>>());
             }
         }
         [ThreadStatic]
-        private static Stack<Dictionary<string, DynamicKeyword>> _dynamicKeywordsStack;
+        private static Stack<Dictionary<string, DynamicKeyword>> t_dynamicKeywordsStack;
 
         /// <summary>
         /// Reset the keyword table to a new empty collection.
         /// </summary>
         public static void Reset()
         {
-            _dynamicKeywords = new Dictionary<string, DynamicKeyword>(StringComparer.OrdinalIgnoreCase);
+            t_dynamicKeywords = new Dictionary<string, DynamicKeyword>(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public static void Push()
         {
-            DynamicKeywordsStack.Push(_dynamicKeywords);
+            DynamicKeywordsStack.Push(t_dynamicKeywords);
             Reset();
         }
 
@@ -123,7 +123,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public static void Pop()
         {
-            _dynamicKeywords = DynamicKeywordsStack.Pop();
+            t_dynamicKeywords = DynamicKeywordsStack.Pop();
         }
 
         /// <summary>
@@ -214,15 +214,15 @@ namespace System.Management.Automation.Language
                 throw e;
             }
 
-            return HiddenDynamicKeywords.Contains(name);
+            return s_hiddenDynamicKeywords.Contains(name);
         }
 
         /// <summary>
         /// A set of dynamic keywords that are not supposed to be used in script directly.
         /// They are for internal use only.
         /// </summary>
-        private static readonly HashSet<string> HiddenDynamicKeywords =
-            new HashSet<string>(StringComparer.OrdinalIgnoreCase) {"MSFT_Credential"};
+        private static readonly HashSet<string> s_hiddenDynamicKeywords =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "MSFT_Credential" };
 
         #endregion
 
@@ -320,24 +320,26 @@ namespace System.Management.Automation.Language
         /// </summary>
         public Dictionary<string, DynamicKeywordProperty> Properties
         {
-            get {
+            get
+            {
                 return _properties ??
                        (_properties = new Dictionary<string, DynamicKeywordProperty>(StringComparer.OrdinalIgnoreCase));
             }
         }
-        Dictionary<string, DynamicKeywordProperty> _properties;
+        private Dictionary<string, DynamicKeywordProperty> _properties;
 
         /// <summary>
         /// A list of the parameters allowed for this constuctor.
         /// </summary>
         public Dictionary<string, DynamicKeywordParameter> Parameters
         {
-            get {
+            get
+            {
                 return _parameters ??
                        (_parameters = new Dictionary<string, DynamicKeywordParameter>(StringComparer.OrdinalIgnoreCase));
             }
         }
-        Dictionary<string, DynamicKeywordParameter> _parameters;
+        private Dictionary<string, DynamicKeywordParameter> _parameters;
 
         /// <summary>
         /// A custom function that gets executed at parsing time before parsing dynamickeyword block
@@ -375,7 +377,7 @@ namespace System.Management.Automation.Language
                     (ConfigurationType != ConfigurationType.Meta && !keyword.IsMetaDSCResource()));
         }
 
-        private static Dictionary<String, List<String>> _excludeKeywords = new Dictionary<String, List<String>>(StringComparer.OrdinalIgnoreCase)
+        private static Dictionary<String, List<String>> s_excludeKeywords = new Dictionary<String, List<String>>(StringComparer.OrdinalIgnoreCase)
         {
             {@"Node", new List<String> {@"Node"}},
         };
@@ -392,7 +394,7 @@ namespace System.Management.Automation.Language
             if (String.Compare(keywordName, @"Node", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 List<string> excludeKeywords;
-                if (_excludeKeywords.TryGetValue(keywordName, out excludeKeywords))
+                if (s_excludeKeywords.TryGetValue(keywordName, out excludeKeywords))
                 {
                     return allowedKeywords.Where(k => !excludeKeywords.Contains(k.Keyword));
                 }
@@ -425,7 +427,7 @@ namespace System.Management.Automation.Language
         {
             get { return _attributes ?? (_attributes = new List<string>()); }
         }
-        List<string> _attributes;
+        private List<string> _attributes;
 
         /// <summary>
         /// List of strings that may be used as values for this property.
@@ -434,7 +436,7 @@ namespace System.Management.Automation.Language
         {
             get { return _values ?? (_values = new List<string>()); }
         }
-        List<string> _values;
+        private List<string> _values;
 
         /// <summary>
         /// Mapping the descriptive values to the actual values
@@ -500,9 +502,9 @@ namespace System.Management.Automation.Language
     [DebuggerDisplay("Mode = {Mode}; Script = {_script}")]
     internal class Tokenizer
     {
-        readonly private static Dictionary<string, TokenKind> _keywordTable
+        readonly private static Dictionary<string, TokenKind> s_keywordTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
-        readonly private static Dictionary<string, TokenKind> _operatorTable
+        readonly private static Dictionary<string, TokenKind> s_operatorTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
 
         private readonly Parser _parser;
@@ -524,7 +526,7 @@ namespace System.Management.Automation.Language
 
         #region Tables for initialization
 
-        readonly private static string[] _keywordText = new string[] {
+        readonly private static string[] s_keywordText = new string[] {
         /*1*/    "elseif",                  "if",               "else",             "switch",                     /*1*/
         /*2*/    "foreach",                 "from",             "in",               "for",                        /*2*/
         /*3*/    "while",                   "until",            "do",               "try",                        /*3*/
@@ -540,7 +542,7 @@ namespace System.Management.Automation.Language
         /*D*/    "base",                                                                                          /*D*/
         };
 
-        readonly private static TokenKind[] _keywordTokenKind = new TokenKind[] {
+        readonly private static TokenKind[] s_keywordTokenKind = new TokenKind[] {
         /*1*/    TokenKind.ElseIf,          TokenKind.If,       TokenKind.Else,     TokenKind.Switch,             /*1*/
         /*2*/    TokenKind.Foreach,         TokenKind.From,     TokenKind.In,       TokenKind.For,                /*2*/
         /*3*/    TokenKind.While,           TokenKind.Until,    TokenKind.Do,       TokenKind.Try,                /*3*/
@@ -575,7 +577,7 @@ namespace System.Management.Automation.Language
         /*16*/  "join",                 "shl",                  "shr",                                            /*16*/
         };
 
-        readonly static TokenKind[] _operatorTokenKind = new TokenKind[] {
+        private readonly static TokenKind[] s_operatorTokenKind = new TokenKind[] {
         /*1*/   TokenKind.Bnot,         TokenKind.Not,          TokenKind.Ieq,          TokenKind.Ieq,            /*1*/ 
         /*2*/   TokenKind.Ceq,          TokenKind.Ine,          TokenKind.Ine,          TokenKind.Cne,            /*2*/ 
         /*3*/   TokenKind.Ige,          TokenKind.Ige,          TokenKind.Cge,          TokenKind.Igt,            /*3*/ 
@@ -598,17 +600,17 @@ namespace System.Management.Automation.Language
 
         static Tokenizer()
         {
-            Diagnostics.Assert(_keywordText.Length == _keywordTokenKind.Length, "Keyword table sizes must match");
-            Diagnostics.Assert(_operatorText.Length == _operatorTokenKind.Length, "Operator table sizes must match");
+            Diagnostics.Assert(s_keywordText.Length == s_keywordTokenKind.Length, "Keyword table sizes must match");
+            Diagnostics.Assert(_operatorText.Length == s_operatorTokenKind.Length, "Operator table sizes must match");
 
-            for (int i = 0; i < _keywordText.Length; ++i)
+            for (int i = 0; i < s_keywordText.Length; ++i)
             {
-                _keywordTable.Add(_keywordText[i], _keywordTokenKind[i]);
+                s_keywordTable.Add(s_keywordText[i], s_keywordTokenKind[i]);
             }
 
             for (int i = 0; i < _operatorText.Length; ++i)
             {
-                _operatorTable.Add(_operatorText[i], _operatorTokenKind[i]);
+                s_operatorTable.Add(_operatorText[i], s_operatorTokenKind[i]);
             }
 
             // The real signature (in mshsip.cpp) has spaces, but we ignore whitespace when looking
@@ -619,13 +621,13 @@ namespace System.Management.Automation.Language
             beginSig.Aggregate(0, (current, t) => current + t);
 
             // Spot check to help make sure the arrays are in sync
-            Diagnostics.Assert(_keywordTable["using"] == TokenKind.Using, "Keyword table out of sync w/ enum");
-            Diagnostics.Assert(_operatorTable["join"] == TokenKind.Join, "Operator table out of sync w/ enum");
+            Diagnostics.Assert(s_keywordTable["using"] == TokenKind.Using, "Keyword table out of sync w/ enum");
+            Diagnostics.Assert(s_operatorTable["join"] == TokenKind.Join, "Operator table out of sync w/ enum");
         }
 
         internal Tokenizer(Parser parser)
         {
-            this._parser = parser;
+            _parser = parser;
         }
 
         internal TokenizerMode Mode { get; set; }
@@ -633,7 +635,7 @@ namespace System.Management.Automation.Language
         internal bool WantSimpleName { get; set; }
         internal bool InWorkflowContext { get; set; }
         internal List<Token> TokenList { get; set; }
-        internal Token FirstToken { get;  private set; }
+        internal Token FirstToken { get; private set; }
         internal Token LastToken { get; private set; }
         private List<Token> RequiresTokens { get; set; }
 
@@ -644,22 +646,22 @@ namespace System.Management.Automation.Language
 
         internal void Initialize(string fileName, string input, List<Token> tokenList)
         {
-            this._positionHelper = new PositionHelper(fileName, input);
-            this._script = input;
+            _positionHelper = new PositionHelper(fileName, input);
+            _script = input;
             this.TokenList = tokenList;
             this.FirstToken = null;
             this.LastToken = null;
             this.RequiresTokens = null;
-            this._beginSignatureExtent = null;
+            _beginSignatureExtent = null;
 
-            List<int> lineStartMap = new List<int>(100) {0};
+            List<int> lineStartMap = new List<int>(100) { 0 };
             for (int i = 0; i < input.Length; ++i)
             {
                 char c = input[i];
-            
+
                 if (c == '\r')
                 {
-                    if ((i+1) < input.Length && input[i+1] == '\n')
+                    if ((i + 1) < input.Length && input[i + 1] == '\n')
                     {
                         i += 1;
                     }
@@ -676,10 +678,11 @@ namespace System.Management.Automation.Language
             _positionHelper.LineStartMap = lineStartMap.ToArray();
         }
 
- 
+
         internal TokenizerState StartNestedScan(UnscannedSubExprToken nestedText)
         {
-            TokenizerState ts = new TokenizerState {
+            TokenizerState ts = new TokenizerState
+            {
                 CurrentIndex = _currentIndex,
                 NestedTokensAdjustment = _nestedTokensAdjustment,
                 Script = _script,
@@ -715,7 +718,7 @@ namespace System.Management.Automation.Language
         private char GetChar()
         {
             Diagnostics.Assert(0 <= _currentIndex, "GetChar reading before start of input.");
-            Diagnostics.Assert(_currentIndex <= _script.Length+1, "GetChar reading after end of input.");
+            Diagnostics.Assert(_currentIndex <= _script.Length + 1, "GetChar reading after end of input.");
 
             // Increment _currentIndex, even if it goes over the Length so callers can call UngetChar to unget EOF.
             int current = _currentIndex++;
@@ -758,7 +761,7 @@ namespace System.Management.Automation.Language
 
         internal static bool IsKeyword(string str)
         {
-            if (_keywordTable.ContainsKey(str))
+            if (s_keywordTable.ContainsKey(str))
             {
                 return true;
             }
@@ -772,84 +775,84 @@ namespace System.Management.Automation.Language
 
         internal void SkipNewlines(bool skipSemis, bool v3)
         {
-            // We normally don't create any tokens here, but the V2 tokenizer api returns newline tokens,
-            // so we create them when asked to create them.
+        // We normally don't create any tokens here, but the V2 tokenizer api returns newline tokens,
+        // so we create them when asked to create them.
 
-            again:
+        again:
             char c = GetChar();
             switch (c)
             {
-            case ' ':
-            case '\t':
-            case '\f':
-            case '\v':
-            case SpecialChars.NoBreakSpace:
-            case SpecialChars.NextLine:
-                SkipWhiteSpace();
-                goto again;
+                case ' ':
+                case '\t':
+                case '\f':
+                case '\v':
+                case SpecialChars.NoBreakSpace:
+                case SpecialChars.NextLine:
+                    SkipWhiteSpace();
+                    goto again;
 
-            case '\r':
-            case '\n':
-                if (v3) _parser.NoteV3FeatureUsed();
-                if (TokenList != null)
-                {
-                    _tokenStart = _currentIndex - 1;
-                    ScanNewline(c);
-                    NewToken(TokenKind.NewLine);
-                }
-                goto again;
-
-            case ';':
-                if (skipSemis)
-                {
+                case '\r':
+                case '\n':
+                    if (v3) _parser.NoteV3FeatureUsed();
                     if (TokenList != null)
                     {
                         _tokenStart = _currentIndex - 1;
-                        NewToken(TokenKind.Semi);
+                        ScanNewline(c);
+                        NewToken(TokenKind.NewLine);
                     }
                     goto again;
-                }
-                break;
 
-            case '#':
-                _tokenStart = _currentIndex - 1;
-                ScanLineComment();
-                goto again;
+                case ';':
+                    if (skipSemis)
+                    {
+                        if (TokenList != null)
+                        {
+                            _tokenStart = _currentIndex - 1;
+                            NewToken(TokenKind.Semi);
+                        }
+                        goto again;
+                    }
+                    break;
 
-            case '<':
-                if (PeekChar() == '#')
-                {
+                case '#':
                     _tokenStart = _currentIndex - 1;
-                    SkipChar();
-                    ScanBlockComment();
+                    ScanLineComment();
                     goto again;
-                }
-                break;
-            
-            case '`':
-                char c1 = GetChar();
-                if (c1 == '\n' || c1 == '\r')
-                {
-                    _tokenStart = _currentIndex - 2;
-                    ScanNewline(c1);
-                    NewToken(TokenKind.LineContinuation);
-                    goto again;
-                }
-                if (char.IsWhiteSpace(c1))
-                {
-                    SkipWhiteSpace();
-                    goto again;
-                }
-                UngetChar();
-                break;
 
-            default:
-                if (c.IsWhitespace())
-                {
-                    SkipWhiteSpace();
-                    goto again;
-                }
-                break;
+                case '<':
+                    if (PeekChar() == '#')
+                    {
+                        _tokenStart = _currentIndex - 1;
+                        SkipChar();
+                        ScanBlockComment();
+                        goto again;
+                    }
+                    break;
+
+                case '`':
+                    char c1 = GetChar();
+                    if (c1 == '\n' || c1 == '\r')
+                    {
+                        _tokenStart = _currentIndex - 2;
+                        ScanNewline(c1);
+                        NewToken(TokenKind.LineContinuation);
+                        goto again;
+                    }
+                    if (char.IsWhiteSpace(c1))
+                    {
+                        SkipWhiteSpace();
+                        goto again;
+                    }
+                    UngetChar();
+                    break;
+
+                default:
+                    if (c.IsWhitespace())
+                    {
+                        SkipWhiteSpace();
+                        goto again;
+                    }
+                    break;
             }
             UngetChar();
         }
@@ -984,7 +987,7 @@ namespace System.Management.Automation.Language
 
         private void ReportError(int errorOffset, Expression<Func<string>> message, params object[] args)
         {
-            _parser.ReportError(NewScriptExtent(errorOffset, errorOffset+1), message, args);
+            _parser.ReportError(NewScriptExtent(errorOffset, errorOffset + 1), message, args);
         }
 
         private void ReportError(IScriptExtent extent, Expression<Func<string>> message)
@@ -1037,7 +1040,7 @@ namespace System.Management.Automation.Language
                     if (_skippedCharOffsets[i])
                     {
                         end += 1;
-                    }                    
+                    }
                 }
             }
             return new InternalScriptExtent(_positionHelper, start, end);
@@ -1053,7 +1056,7 @@ namespace System.Management.Automation.Language
             return SaveToken(new Token(CurrentExtent(), TokenKind.Comment, TokenFlags.None));
         }
 
-        private T SaveToken<T>(T token) where T: Token
+        private T SaveToken<T>(T token) where T : Token
         {
             if (TokenList != null)
             {
@@ -1064,19 +1067,19 @@ namespace System.Management.Automation.Language
             // for the special variables $$ and $^.
             switch (token.Kind)
             {
-            case TokenKind.NewLine:
-            case TokenKind.LineContinuation:
-            case TokenKind.Comment:
-            case TokenKind.EndOfInput:
-                // Don't remember these tokens, they aren't useful in $$ and $^.
-                break;
-            default:
-                if (FirstToken == null)
-                {
-                    FirstToken = token;
-                }
-                LastToken = token;
-                break;
+                case TokenKind.NewLine:
+                case TokenKind.LineContinuation:
+                case TokenKind.Comment:
+                case TokenKind.EndOfInput:
+                    // Don't remember these tokens, they aren't useful in $$ and $^.
+                    break;
+                default:
+                    if (FirstToken == null)
+                    {
+                        FirstToken = token;
+                    }
+                    LastToken = token;
+                    break;
             }
             return token;
         }
@@ -1182,7 +1185,7 @@ namespace System.Management.Automation.Language
                     continue;
                 }
 
-                if (_script[i] == '<' && (i+1) < _script.Length && _script[i+1] == '#')
+                if (_script[i] == '<' && (i + 1) < _script.Length && _script[i + 1] == '#')
                 {
                     i = SkipBlockComment(i + 2) - 1;
                     continue;
@@ -1190,7 +1193,7 @@ namespace System.Management.Automation.Language
 
                 if (!_script[i].IsWhitespace())
                 {
-                    return false;                    
+                    return false;
                 }
             }
             return true;
@@ -1217,7 +1220,7 @@ namespace System.Management.Automation.Language
             {
                 char c = _script[i];
 
-                if (c == '#' && (i+1) < _script.Length && _script[i+1] == '>')
+                if (c == '#' && (i + 1) < _script.Length && _script[i + 1] == '>')
                 {
                     return i + 2;
                 }
@@ -1230,15 +1233,15 @@ namespace System.Management.Automation.Language
         {
             switch (c)
             {
-            case '0': return '\0';
-            case 'a': return '\a';
-            case 'b': return '\b';
-            case 'f': return '\f';
-            case 'n': return '\n';
-            case 'r': return '\r';
-            case 't': return '\t';
-            case 'v': return '\v';
-            default : return c;
+                case '0': return '\0';
+                case 'a': return '\a';
+                case 'b': return '\b';
+                case 'f': return '\f';
+                case 'n': return '\n';
+                case 'r': return '\r';
+                case 't': return '\t';
+                case 'v': return '\v';
+                default: return c;
             }
         }
 
@@ -1274,100 +1277,106 @@ namespace System.Management.Automation.Language
 
                 switch (c)
                 {
-                case 'e': case 'E':
-                    if (requiresMatchState == 1 || requiresMatchState == 6)
-                        requiresMatchState += 1;
-                    else
-                        requiresMatchState = -1;
-                    break;
-                case 'i': case 'I':
-                    if (requiresMatchState == 4)
-                        requiresMatchState += 1;
-                    else
-                        requiresMatchState = -1;
-                    break;
-                case 'q': case 'Q':
-                    if (requiresMatchState == 2)
-                        requiresMatchState += 1;
-                    else
-                        requiresMatchState = -1;
-                    break;
-                case 'r': case 'R':
-                    if (requiresMatchState == 0 || requiresMatchState == 5)
-                        requiresMatchState += 1;
-                    else
-                        requiresMatchState = -1;
-                    break;
-                case 's': case 'S':
-                    if (requiresMatchState == 7)
-                        matchedRequires = true;
-                    else
-                        requiresMatchState = -1;
-                    break;
-                case 'u': case 'U':
-                    if (requiresMatchState == 3)
-                        requiresMatchState += 1;
-                    else
-                        requiresMatchState = -1;
-                    break;
-                case '\0':
-                    if (AtEof())
-                    {
-                        goto case '\n';
-                    }
-                    goto default;
-                case '\r':
-                case '\n':
-                    UngetChar();
+                    case 'e':
+                    case 'E':
+                        if (requiresMatchState == 1 || requiresMatchState == 6)
+                            requiresMatchState += 1;
+                        else
+                            requiresMatchState = -1;
+                        break;
+                    case 'i':
+                    case 'I':
+                        if (requiresMatchState == 4)
+                            requiresMatchState += 1;
+                        else
+                            requiresMatchState = -1;
+                        break;
+                    case 'q':
+                    case 'Q':
+                        if (requiresMatchState == 2)
+                            requiresMatchState += 1;
+                        else
+                            requiresMatchState = -1;
+                        break;
+                    case 'r':
+                    case 'R':
+                        if (requiresMatchState == 0 || requiresMatchState == 5)
+                            requiresMatchState += 1;
+                        else
+                            requiresMatchState = -1;
+                        break;
+                    case 's':
+                    case 'S':
+                        if (requiresMatchState == 7)
+                            matchedRequires = true;
+                        else
+                            requiresMatchState = -1;
+                        break;
+                    case 'u':
+                    case 'U':
+                        if (requiresMatchState == 3)
+                            requiresMatchState += 1;
+                        else
+                            requiresMatchState = -1;
+                        break;
+                    case '\0':
+                        if (AtEof())
+                        {
+                            goto case '\n';
+                        }
+                        goto default;
+                    case '\r':
+                    case '\n':
+                        UngetChar();
 
-                    // The token similarity threshold was chosen by instrumenting the tokenizer and
-                    // analyzing every comment from PoshCode, Technet Script Center, and Windows.
-                    //
-                    // The closest comments above "10" had a score of 11, which are marginal and
-                    // appropriately close to being tricky.
-                    //
-                    // # END BEGIN SCRIPT BLOCK
-                    // # SET TEXT SIGNATURE
-                    //
-                    // Below 11 were only actual signature blocks:
-                    //
-                    // # SIG # END SIGNATURE BLOCK
-                    // # SIG # BEGIN SIGNATURE BLOCK
-                    //
-                    // There were only 279 (out of 269,387) comments with a similarity of 11,12,13,14, or 15.
-                    // At a similarity of 16-77, there were thousands of comments per similarity bucket.
-                    //
-                    // System.IO.File.AppendAllText(@"c:\temp\signature_similarity.txt", "" + sawBeginTokenSimilarity + ":" + commentLineComparison);
-
-                    const string beginSignatureTextNoSpace = "sig#beginsignatureblock\n";
-                    const int beginTokenSimilarityThreshold = 10;
-
-                    // Quick exit - the comment line is more than 'threshold' longer. Therefore,
-                    // its similarity will be over the threshold.
-                    if (commentLine.Length > (beginSignatureTextNoSpace.Length + beginTokenSimilarityThreshold))
-                    {
-                        sawBeginSig = false;
-                    }
-                    else
-                    {
-                        // Perf note - the GetStringSimilarity function is able to evaluate approximately 50kb of pure comments
-                        // (1000 lines, each of length between 10 and 80 characters) in about 40ms, compared to 6ms it took to
-                        // doing the error-prone hashing approach we had implemented before.
+                        // The token similarity threshold was chosen by instrumenting the tokenizer and
+                        // analyzing every comment from PoshCode, Technet Script Center, and Windows.
                         //
-                        // The average script is 14% comments and parses in about 5.05 ms with this algorithm,
-                        // about 4.45 ms with the more simplistic algorithm.
-                        // 
-                        string commentLineComparison = commentLine.ToString().ToLowerInvariant();
+                        // The closest comments above "10" had a score of 11, which are marginal and
+                        // appropriately close to being tricky.
+                        //
+                        // # END BEGIN SCRIPT BLOCK
+                        // # SET TEXT SIGNATURE
+                        //
+                        // Below 11 were only actual signature blocks:
+                        //
+                        // # SIG # END SIGNATURE BLOCK
+                        // # SIG # BEGIN SIGNATURE BLOCK
+                        //
+                        // There were only 279 (out of 269,387) comments with a similarity of 11,12,13,14, or 15.
+                        // At a similarity of 16-77, there were thousands of comments per similarity bucket.
+                        //
+                        // System.IO.File.AppendAllText(@"c:\temp\signature_similarity.txt", "" + sawBeginTokenSimilarity + ":" + commentLineComparison);
 
-                        int sawBeginTokenSimilarity = GetStringSimilarity(commentLineComparison, beginSignatureTextNoSpace);
-                        sawBeginSig = sawBeginTokenSimilarity < beginTokenSimilarityThreshold;
-                    }
+                        const string beginSignatureTextNoSpace = "sig#beginsignatureblock\n";
+                        const int beginTokenSimilarityThreshold = 10;
 
-                    Release(commentLine);
-                    return;
-                default:
-                    requiresMatchState = -1;
-                    break;
+                        // Quick exit - the comment line is more than 'threshold' longer. Therefore,
+                        // its similarity will be over the threshold.
+                        if (commentLine.Length > (beginSignatureTextNoSpace.Length + beginTokenSimilarityThreshold))
+                        {
+                            sawBeginSig = false;
+                        }
+                        else
+                        {
+                            // Perf note - the GetStringSimilarity function is able to evaluate approximately 50kb of pure comments
+                            // (1000 lines, each of length between 10 and 80 characters) in about 40ms, compared to 6ms it took to
+                            // doing the error-prone hashing approach we had implemented before.
+                            //
+                            // The average script is 14% comments and parses in about 5.05 ms with this algorithm,
+                            // about 4.45 ms with the more simplistic algorithm.
+                            // 
+                            string commentLineComparison = commentLine.ToString().ToLowerInvariant();
+
+                            int sawBeginTokenSimilarity = GetStringSimilarity(commentLineComparison, beginSignatureTextNoSpace);
+                            sawBeginSig = sawBeginTokenSimilarity < beginTokenSimilarityThreshold;
+                        }
+
+                        Release(commentLine);
+                        return;
+                    default:
+                        requiresMatchState = -1;
+                        break;
                 }
             }
         }
@@ -1376,21 +1385,21 @@ namespace System.Management.Automation.Language
 
         #region Object reuse
 
-        private readonly Queue<StringBuilder> stringBuilders = new Queue<StringBuilder>();
+        private readonly Queue<StringBuilder> _stringBuilders = new Queue<StringBuilder>();
 
         private StringBuilder GetStringBuilder()
         {
-            return stringBuilders.Count == 0 ? new StringBuilder() : stringBuilders.Dequeue();
+            return _stringBuilders.Count == 0 ? new StringBuilder() : _stringBuilders.Dequeue();
         }
 
         private void Release(StringBuilder sb)
         {
             // We don't want to cache too much, so limit to 10 string builders
             // and don't keep any that have > 1kb
-            if (stringBuilders.Count < 10 && sb.Capacity < 1024)
+            if (_stringBuilders.Count < 10 && sb.Capacity < 1024)
             {
                 sb.Clear();
-                stringBuilders.Enqueue(sb);
+                _stringBuilders.Enqueue(sb);
             }
         }
 
@@ -1575,38 +1584,38 @@ namespace System.Management.Automation.Language
                     if (snapinName != null)
                     {
                         Diagnostics.Assert(PSSnapInInfo.IsPSSnapinIdValid(snapinName), "we shouldn't set snapinName if it wasn't valid");
-                        requiredSnapins.Add(new PSSnapInSpecification(snapinName) {Version = snapinVersion});
+                        requiredSnapins.Add(new PSSnapInSpecification(snapinName) { Version = snapinVersion });
                     }
                 }
             }
 
             return new ScriptRequirements
-                       {
-                           RequiredApplicationId = requiredShellId,
-                           RequiredPSVersion = requiredVersion,
-                           RequiredPSEditions = requiredEditions != null
+            {
+                RequiredApplicationId = requiredShellId,
+                RequiredPSVersion = requiredVersion,
+                RequiredPSEditions = requiredEditions != null
                                                     ? new ReadOnlyCollection<string>(requiredEditions)
                                                     : ScriptRequirements.EmptyEditionCollection,
-                           RequiresPSSnapIns = requiredSnapins != null
+                RequiresPSSnapIns = requiredSnapins != null
                                                    ? new ReadOnlyCollection<PSSnapInSpecification>(requiredSnapins)
                                                    : ScriptRequirements.EmptySnapinCollection,
-                           RequiredAssemblies = requiredAssemblies != null
+                RequiredAssemblies = requiredAssemblies != null
                                                     ? new ReadOnlyCollection<string>(requiredAssemblies)
                                                     : ScriptRequirements.EmptyAssemblyCollection,
-                           RequiredModules = requiredModules != null
+                RequiredModules = requiredModules != null
                                                     ? new ReadOnlyCollection<ModuleSpecification>(requiredModules)
                                                     : ScriptRequirements.EmptyModuleCollection,
-                           IsElevationRequired = requiresElevation
+                IsElevationRequired = requiresElevation
             };
         }
 
-        const string shellIDToken = "shellid";
-        const string PSSnapinToken = "pssnapin";
-        const string versionToken = "version";
-        const string editionToken = "psedition";
-        const string assemblyToken = "assembly";
-        const string modulesToken = "modules";
-        const string elevationToken = "runasadministrator";
+        private const string shellIDToken = "shellid";
+        private const string PSSnapinToken = "pssnapin";
+        private const string versionToken = "version";
+        private const string editionToken = "psedition";
+        private const string assemblyToken = "assembly";
+        private const string modulesToken = "modules";
+        private const string elevationToken = "runasadministrator";
 
         private void HandleRequiresParameter(CommandParameterAst parameter,
                                              ReadOnlyCollection<CommandElementAst> commandElements,
@@ -1632,7 +1641,7 @@ namespace System.Management.Automation.Language
                 }
                 return;
             }
-            
+
             if (argumentAst == null)
             {
                 ReportError(parameter.Extent, () => ParserStrings.ParameterRequiresArgument, parameter.ParameterName);
@@ -1804,7 +1813,7 @@ namespace System.Management.Automation.Language
                 if (requiredEditions == null)
                     requiredEditions = new List<string>();
 
-                var edition = (string) arg;
+                var edition = (string)arg;
                 if (!Utils.IsValidPSEditionValue(edition))
                 {
                     ReportError(argumentAst.Extent, () => ParserStrings.RequiresPSEditionInvalid, editionToken);
@@ -1918,50 +1927,50 @@ namespace System.Management.Automation.Language
                 char c = GetChar();
                 switch (c)
                 {
-                case '(':
-                    sb.Append(c);
-                    ++parenCount;
-                    break;
-
-                case ')':
-                    sb.Append(c);
-                    if (--parenCount == 0)
-                    {
-                        scanning = false;
-                    }
-                    break;
-
-                case '`':
-                case '"':
-                case SpecialChars.QuoteDoubleLeft:
-                case SpecialChars.QuoteDoubleRight:
-                case SpecialChars.QuoteLowDoubleLeft:
-                    char c1 = PeekChar();
-                    if (!hereString && c1.IsDoubleQuote())
-                    {
-                        SkipChar();
-                        sb.Append(c1);
-                        skippedCharOffsets.Add(_currentIndex - 2 + _nestedTokensAdjustment);
-                    }
-                    else
-                    {
+                    case '(':
                         sb.Append(c);
-                    }
-                    break;
+                        ++parenCount;
+                        break;
 
-                case '\0':
-                    if (!AtEof())
-                        goto default;
+                    case ')':
+                        sb.Append(c);
+                        if (--parenCount == 0)
+                        {
+                            scanning = false;
+                        }
+                        break;
 
-                    UngetChar();
-                    ReportIncompleteInput(_tokenStart, () => ParserStrings.IncompleteDollarSubexpressionReference);
-                    flags = TokenFlags.TokenInError;
-                    scanning = false;
-                    break;
+                    case '`':
+                    case '"':
+                    case SpecialChars.QuoteDoubleLeft:
+                    case SpecialChars.QuoteDoubleRight:
+                    case SpecialChars.QuoteLowDoubleLeft:
+                        char c1 = PeekChar();
+                        if (!hereString && c1.IsDoubleQuote())
+                        {
+                            SkipChar();
+                            sb.Append(c1);
+                            skippedCharOffsets.Add(_currentIndex - 2 + _nestedTokensAdjustment);
+                        }
+                        else
+                        {
+                            sb.Append(c);
+                        }
+                        break;
 
-                default:
-                    sb.Append(c);
-                    break;
+                    case '\0':
+                        if (!AtEof())
+                            goto default;
+
+                        UngetChar();
+                        ReportIncompleteInput(_tokenStart, () => ParserStrings.IncompleteDollarSubexpressionReference);
+                        flags = TokenFlags.TokenInError;
+                        scanning = false;
+                        break;
+
+                    default:
+                        sb.Append(c);
+                        break;
                 }
             }
 
@@ -2313,7 +2322,7 @@ namespace System.Management.Automation.Language
                         }
                         continue;
                     }
-                    
+
                     if (c == '$')
                     {
                         if (ScanDollarInStringExpandable(sb, formatSb, true, nestedTokens))
@@ -2348,7 +2357,7 @@ namespace System.Management.Automation.Language
                         UngetChar();
                         if (falseFooterOffset != -1)
                         {
-                            ReportIncompleteInput(falseFooterOffset, () => ParserStrings.WhitespaceBeforeHereStringFooter);                           
+                            ReportIncompleteInput(falseFooterOffset, () => ParserStrings.WhitespaceBeforeHereStringFooter);
                         }
                         else
                         {
@@ -2357,7 +2366,7 @@ namespace System.Management.Automation.Language
                         flags = TokenFlags.TokenInError;
                         break;
                     }
-                }                
+                }
             }
 
             return NewStringExpandableToken(GetStringAndRelease(sb), GetStringAndRelease(formatSb), TokenKind.HereStringExpandable, nestedTokens, flags);
@@ -2387,51 +2396,51 @@ namespace System.Management.Automation.Language
 
                     switch (c)
                     {
-                    case '}':
-                        goto end_braced_variable_scan;
-                    case '`':
-                    {
-                        char c1 = GetChar();
-                        if (c1 == '\0' && AtEof())
-                        {
-                            UngetChar();
+                        case '}':
                             goto end_braced_variable_scan;
-                        }
-                        c = Backtick(c1);
-                        break;
-                    }
-                    case '"':
-                    case SpecialChars.QuoteDoubleLeft:
-                    case SpecialChars.QuoteDoubleRight:
-                    case SpecialChars.QuoteLowDoubleLeft:
-                        if (inStringExpandable)
-                        {
-                            char c1 = GetChar();
-                            if (c1 == '\0' && AtEof())
+                        case '`':
+                            {
+                                char c1 = GetChar();
+                                if (c1 == '\0' && AtEof())
+                                {
+                                    UngetChar();
+                                    goto end_braced_variable_scan;
+                                }
+                                c = Backtick(c1);
+                                break;
+                            }
+                        case '"':
+                        case SpecialChars.QuoteDoubleLeft:
+                        case SpecialChars.QuoteDoubleRight:
+                        case SpecialChars.QuoteLowDoubleLeft:
+                            if (inStringExpandable)
+                            {
+                                char c1 = GetChar();
+                                if (c1 == '\0' && AtEof())
+                                {
+                                    UngetChar();
+                                    goto end_braced_variable_scan;
+                                }
+                                if (c1.IsDoubleQuote())
+                                {
+                                    c = c1;
+                                }
+                                else
+                                {
+                                    UngetChar();
+                                }
+                            }
+                            break;
+                        case '{':
+                            ReportError(_currentIndex, () => ParserStrings.OpenBraceNeedsToBeBackTickedInVariableName);
+                            break;
+                        case '\0':
+                            if (AtEof())
                             {
                                 UngetChar();
                                 goto end_braced_variable_scan;
                             }
-                            if (c1.IsDoubleQuote())
-                            {
-                                c = c1;
-                            }
-                            else
-                            {
-                                UngetChar();
-                            }
-                        }
-                        break;
-                    case '{':
-                        ReportError(_currentIndex, () => ParserStrings.OpenBraceNeedsToBeBackTickedInVariableName);
-                        break;
-                    case '\0':
-                        if (AtEof())
-                        {
-                            UngetChar();
-                            goto end_braced_variable_scan;
-                        }
-                        break;
+                            break;
                     }
 
                     sb.Append(c);
@@ -2501,59 +2510,126 @@ namespace System.Management.Automation.Language
                     c = GetChar();
                     switch (c)
                     {
-                    case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j':
-                    case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't':
-                    case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
-                    case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J':
-                    case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T':
-                    case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
-                    case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-                    case '_': case '?':
-                        sb.Append(c);
-                        break;
-
-                    case ':':
-                        if (PeekChar() == ':')
-                        {
-                            // Something like $a::b is static member access
-                            UngetChar();
-                            scanning = false;
-                        }
-                        else
-                        {
+                        case 'a':
+                        case 'b':
+                        case 'c':
+                        case 'd':
+                        case 'e':
+                        case 'f':
+                        case 'g':
+                        case 'h':
+                        case 'i':
+                        case 'j':
+                        case 'k':
+                        case 'l':
+                        case 'm':
+                        case 'n':
+                        case 'o':
+                        case 'p':
+                        case 'q':
+                        case 'r':
+                        case 's':
+                        case 't':
+                        case 'u':
+                        case 'v':
+                        case 'w':
+                        case 'x':
+                        case 'y':
+                        case 'z':
+                        case 'A':
+                        case 'B':
+                        case 'C':
+                        case 'D':
+                        case 'E':
+                        case 'F':
+                        case 'G':
+                        case 'H':
+                        case 'I':
+                        case 'J':
+                        case 'K':
+                        case 'L':
+                        case 'M':
+                        case 'N':
+                        case 'O':
+                        case 'P':
+                        case 'Q':
+                        case 'R':
+                        case 'S':
+                        case 'T':
+                        case 'U':
+                        case 'V':
+                        case 'W':
+                        case 'X':
+                        case 'Y':
+                        case 'Z':
+                        case '0':
+                        case '1':
+                        case '2':
+                        case '3':
+                        case '4':
+                        case '5':
+                        case '6':
+                        case '7':
+                        case '8':
+                        case '9':
+                        case '_':
+                        case '?':
                             sb.Append(c);
-                        }
-                        break;
+                            break;
 
-                    case '\0': case '\t': case '\r': case '\n': case ' ': case '&': case '(': case ')':
-                    case ',': case ';': case '{':  case '}': case '|':
+                        case ':':
+                            if (PeekChar() == ':')
+                            {
+                                // Something like $a::b is static member access
+                                UngetChar();
+                                scanning = false;
+                            }
+                            else
+                            {
+                                sb.Append(c);
+                            }
+                            break;
+
+                        case '\0':
+                        case '\t':
+                        case '\r':
+                        case '\n':
+                        case ' ':
+                        case '&':
+                        case '(':
+                        case ')':
+                        case ',':
+                        case ';':
+                        case '{':
+                        case '}':
+                        case '|':
                         // The above cases would also be handled correctly below in the default case,
                         // but we can avoid extra checks on some of these characters which commonly
                         // occur after a variable.
-                    case '.':
-                    case '[':
-                        // Something like $a.b or $a[1].
-                        UngetChar();
-                        scanning = false;
-                        break;
-
-                    default:
-                        if (Char.IsLetterOrDigit(c))
-                        {
-                            sb.Append(c);
-                        }
-                        else if (InCommandMode() && !c.ForceStartNewToken())
-                        {
-                            _currentIndex = _tokenStart;
-                            sb.Clear();
-                            return ScanGenericToken(sb);
-                        }
-                        else
-                        {
+                        case '.':
+                        case '[':
+                            // Something like $a.b or $a[1].
                             UngetChar();
                             scanning = false;
-                        }
-                        break;
+                            break;
+
+                        default:
+                            if (Char.IsLetterOrDigit(c))
+                            {
+                                sb.Append(c);
+                            }
+                            else if (InCommandMode() && !c.ForceStartNewToken())
+                            {
+                                _currentIndex = _tokenStart;
+                                sb.Clear();
+                                return ScanGenericToken(sb);
+                            }
+                            else
+                            {
+                                UngetChar();
+                                scanning = false;
+                            }
+                            break;
                     }
                 }
             }
@@ -2603,63 +2679,118 @@ namespace System.Management.Automation.Language
 
                 switch (c)
                 {
-                case '{': case '}': case '(': case ')': case ';': case ',': case '|': case '&':
-                case '.': case '[':
-                case '\r': case '\n':
-                case '\0':
-                    UngetChar();
-                    scanning = false;
-                    break;
-
-                case ':':
-                    scanning = false;
-                    sawColonAtEnd = true;
-                    if (!InCommandMode())
-                    {
-                        UngetChar();
-                    }
-                    break;
-
-                case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j':
-                case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't':
-                case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
-                case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J':
-                case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T':
-                case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
-                    sb.Append(c);
-                    break;
-
-                case '\'':
-                case SpecialChars.QuoteSingleLeft:
-                case SpecialChars.QuoteSingleRight:
-                case SpecialChars.QuoteSingleBase:
-                case SpecialChars.QuoteReversed:
-                case '"':
-                case SpecialChars.QuoteDoubleLeft:
-                case SpecialChars.QuoteDoubleRight:
-                case SpecialChars.QuoteLowDoubleLeft:
-                    if (InCommandMode())
-                    {
-                        // Quotes are never part of a parameter.  Treat the token as an argument.
-                        UngetChar();
-                        sb.Insert(0, _script[_tokenStart]); // Insert the '-' that we skipped.
-                        return ScanGenericToken(sb);
-                    }
-                    UngetChar();
-                    scanning = false;
-                    break;
-
-                default:
-                    if (InCommandMode())
-                    {
-                        sb.Append(c);
-                    }
-                    else
-                    {
+                    case '{':
+                    case '}':
+                    case '(':
+                    case ')':
+                    case ';':
+                    case ',':
+                    case '|':
+                    case '&':
+                    case '.':
+                    case '[':
+                    case '\r':
+                    case '\n':
+                    case '\0':
                         UngetChar();
                         scanning = false;
-                    }
-                    break;
+                        break;
+
+                    case ':':
+                        scanning = false;
+                        sawColonAtEnd = true;
+                        if (!InCommandMode())
+                        {
+                            UngetChar();
+                        }
+                        break;
+
+                    case 'a':
+                    case 'b':
+                    case 'c':
+                    case 'd':
+                    case 'e':
+                    case 'f':
+                    case 'g':
+                    case 'h':
+                    case 'i':
+                    case 'j':
+                    case 'k':
+                    case 'l':
+                    case 'm':
+                    case 'n':
+                    case 'o':
+                    case 'p':
+                    case 'q':
+                    case 'r':
+                    case 's':
+                    case 't':
+                    case 'u':
+                    case 'v':
+                    case 'w':
+                    case 'x':
+                    case 'y':
+                    case 'z':
+                    case 'A':
+                    case 'B':
+                    case 'C':
+                    case 'D':
+                    case 'E':
+                    case 'F':
+                    case 'G':
+                    case 'H':
+                    case 'I':
+                    case 'J':
+                    case 'K':
+                    case 'L':
+                    case 'M':
+                    case 'N':
+                    case 'O':
+                    case 'P':
+                    case 'Q':
+                    case 'R':
+                    case 'S':
+                    case 'T':
+                    case 'U':
+                    case 'V':
+                    case 'W':
+                    case 'X':
+                    case 'Y':
+                    case 'Z':
+                        sb.Append(c);
+                        break;
+
+                    case '\'':
+                    case SpecialChars.QuoteSingleLeft:
+                    case SpecialChars.QuoteSingleRight:
+                    case SpecialChars.QuoteSingleBase:
+                    case SpecialChars.QuoteReversed:
+                    case '"':
+                    case SpecialChars.QuoteDoubleLeft:
+                    case SpecialChars.QuoteDoubleRight:
+                    case SpecialChars.QuoteLowDoubleLeft:
+                        if (InCommandMode())
+                        {
+                            // Quotes are never part of a parameter.  Treat the token as an argument.
+                            UngetChar();
+                            sb.Insert(0, _script[_tokenStart]); // Insert the '-' that we skipped.
+                            return ScanGenericToken(sb);
+                        }
+                        UngetChar();
+                        scanning = false;
+                        break;
+
+                    default:
+                        if (InCommandMode())
+                        {
+                            sb.Append(c);
+                        }
+                        else
+                        {
+                            UngetChar();
+                            scanning = false;
+                        }
+                        break;
                 }
             }
 
@@ -2668,7 +2799,7 @@ namespace System.Management.Automation.Language
             if (InExpressionMode())
             {
                 TokenKind operatorKind;
-                if (_operatorTable.TryGetValue(str, out operatorKind))
+                if (s_operatorTable.TryGetValue(str, out operatorKind))
                 {
                     return NewToken(operatorKind);
                 }
@@ -3277,63 +3408,63 @@ namespace System.Management.Automation.Language
             char c = GetChar();
             switch (c)
             {
-            case ' ':
-            case '\t':
-            case '\f':
-            case '\v':
-            case SpecialChars.NoBreakSpace:
-            case SpecialChars.NextLine:
-                resyncIfMemberAccess = true;
-                SkipWhiteSpace();
-                goto again;
-
-            case '#':
-                resyncIfMemberAccess = true;
-                ScanLineComment();
-                goto again;
-
-            case '<':
-                if (PeekChar() == '#')
-                {
-                    // We resync if we find any whitespace, but only if the whitespace occurs after a
-                    // multi-line comment (rationale: backwards compatibility.)
-                    resyncIfMemberAccess = false;
-                    SkipChar();
-                    ScanBlockComment();
-                    goto again;
-                }
-                UngetChar();
-                break;
-
-            case '[':
-                return NewToken(TokenKind.LBracket);
-
-            case '.':
-            case ':':
-                // We don't call resync here unless we might have a member access token, in which case
-                // we want to rescan the comments to ensure there is no whitespace between the expression
-                // and the member access token.  The resync here should rarely do much other than move
-                // the _currentIndex because there will rarely be any comment tokens after the closing ']'
-                // in an attribute and the member access token.
-                if (resyncIfMemberAccess)
-                {
-                    Resync(resyncPoint);
-                }
-                else
-                {
-                    UngetChar();
-                }
-                break;
-
-            default:
-                if (c.IsWhitespace())
-                {
+                case ' ':
+                case '\t':
+                case '\f':
+                case '\v':
+                case SpecialChars.NoBreakSpace:
+                case SpecialChars.NextLine:
                     resyncIfMemberAccess = true;
                     SkipWhiteSpace();
                     goto again;
-                }
-                UngetChar();
-                break;
+
+                case '#':
+                    resyncIfMemberAccess = true;
+                    ScanLineComment();
+                    goto again;
+
+                case '<':
+                    if (PeekChar() == '#')
+                    {
+                        // We resync if we find any whitespace, but only if the whitespace occurs after a
+                        // multi-line comment (rationale: backwards compatibility.)
+                        resyncIfMemberAccess = false;
+                        SkipChar();
+                        ScanBlockComment();
+                        goto again;
+                    }
+                    UngetChar();
+                    break;
+
+                case '[':
+                    return NewToken(TokenKind.LBracket);
+
+                case '.':
+                case ':':
+                    // We don't call resync here unless we might have a member access token, in which case
+                    // we want to rescan the comments to ensure there is no whitespace between the expression
+                    // and the member access token.  The resync here should rarely do much other than move
+                    // the _currentIndex because there will rarely be any comment tokens after the closing ']'
+                    // in an attribute and the member access token.
+                    if (resyncIfMemberAccess)
+                    {
+                        Resync(resyncPoint);
+                    }
+                    else
+                    {
+                        UngetChar();
+                    }
+                    break;
+
+                default:
+                    if (c.IsWhitespace())
+                    {
+                        resyncIfMemberAccess = true;
+                        SkipWhiteSpace();
+                        goto again;
+                    }
+                    UngetChar();
+                    break;
             }
 
             return null;
@@ -3413,7 +3544,7 @@ namespace System.Management.Automation.Language
                 TokenKind tokenKind;
                 var ident = GetStringAndRelease(sb);
                 sb = null;
-                if (_keywordTable.TryGetValue(ident, out tokenKind))
+                if (s_keywordTable.TryGetValue(ident, out tokenKind))
                 {
                     if (tokenKind != TokenKind.InlineScript || InWorkflowContext)
                         return NewToken(tokenKind);
@@ -3439,19 +3570,19 @@ namespace System.Management.Automation.Language
 
                 switch (c)
                 {
-                case '.':
-                case '`':
-                case '_':
-                case '+':
-                case '#':
-                case '\\':
-                    continue;
-                default:
-                    if (char.IsLetterOrDigit(c))
-                    {
+                    case '.':
+                    case '`':
+                    case '_':
+                    case '+':
+                    case '#':
+                    case '\\':
                         continue;
-                    }
-                    break;
+                    default:
+                        if (char.IsLetterOrDigit(c))
+                        {
+                            continue;
+                        }
+                        break;
                 }
 
                 UngetChar();
@@ -3587,349 +3718,404 @@ namespace System.Management.Automation.Language
             char c = GetChar();
             switch (c)
             {
-            case ' ':
-            case '\t':
-            case '\f':
-            case '\v':
-            case SpecialChars.NoBreakSpace:
-            case SpecialChars.NextLine:
-                SkipWhiteSpace();
-                goto again;
-
-            case '\'':
-            case SpecialChars.QuoteSingleLeft:
-            case SpecialChars.QuoteSingleRight:
-            case SpecialChars.QuoteSingleBase:
-            case SpecialChars.QuoteReversed:
-                return ScanStringLiteral();
-
-            case '"':
-            case SpecialChars.QuoteDoubleLeft:
-            case SpecialChars.QuoteDoubleRight:
-            case SpecialChars.QuoteLowDoubleLeft:
-                return ScanStringExpandable();
-
-            case '@':
-                // Could be start of hash literal, array operator, multi-line string, splatted variable
-                c1 = GetChar();
-                if (c1 == '{')
-                {
-                    return NewToken(TokenKind.AtCurly);
-                }
-                if (c1 == '(')
-                {
-                    return NewToken(TokenKind.AtParen);
-                }
-                if (c1.IsSingleQuote())
-                {
-                    return ScanHereStringLiteral();
-                }
-                if (c1.IsDoubleQuote())
-                {
-                    return ScanHereStringExpandable();
-                }
-                UngetChar();
-                if (c1.IsVariableStart())
-                {
-                    return ScanVariable(true, false);
-                }
-
-                ReportError(_currentIndex - 1, () => ParserStrings.UnrecognizedToken);
-                return NewToken(TokenKind.Unknown);
-
-            case '#':
-                ScanLineComment();
-                goto again;
-
-            case '\r':
-            case '\n':
-                ScanNewline(c);
-                return NewToken(TokenKind.NewLine);
-
-            case '`':
-                c1 = GetChar();
-                if (c1 == '\n' || c1 == '\r')
-                {
-                    ScanNewline(c1);
-                    NewToken(TokenKind.LineContinuation);
-                    goto again;
-                }
-                if (char.IsWhiteSpace(c1))
-                {
+                case ' ':
+                case '\t':
+                case '\f':
+                case '\v':
+                case SpecialChars.NoBreakSpace:
+                case SpecialChars.NextLine:
                     SkipWhiteSpace();
                     goto again;
-                }
-                if (c1 == '\0' && AtEof())
-                {
-                    ReportIncompleteInput(_currentIndex, () => ParserStrings.IncompleteString);
 
-                    // Unget the EOF so we can return an EOF token.
+                case '\'':
+                case SpecialChars.QuoteSingleLeft:
+                case SpecialChars.QuoteSingleRight:
+                case SpecialChars.QuoteSingleBase:
+                case SpecialChars.QuoteReversed:
+                    return ScanStringLiteral();
+
+                case '"':
+                case SpecialChars.QuoteDoubleLeft:
+                case SpecialChars.QuoteDoubleRight:
+                case SpecialChars.QuoteLowDoubleLeft:
+                    return ScanStringExpandable();
+
+                case '@':
+                    // Could be start of hash literal, array operator, multi-line string, splatted variable
+                    c1 = GetChar();
+                    if (c1 == '{')
+                    {
+                        return NewToken(TokenKind.AtCurly);
+                    }
+                    if (c1 == '(')
+                    {
+                        return NewToken(TokenKind.AtParen);
+                    }
+                    if (c1.IsSingleQuote())
+                    {
+                        return ScanHereStringLiteral();
+                    }
+                    if (c1.IsDoubleQuote())
+                    {
+                        return ScanHereStringExpandable();
+                    }
                     UngetChar();
+                    if (c1.IsVariableStart())
+                    {
+                        return ScanVariable(true, false);
+                    }
+
+                    ReportError(_currentIndex - 1, () => ParserStrings.UnrecognizedToken);
+                    return NewToken(TokenKind.Unknown);
+
+                case '#':
+                    ScanLineComment();
                     goto again;
-                }
 
-                return ScanGenericToken(Backtick(c1));
+                case '\r':
+                case '\n':
+                    ScanNewline(c);
+                    return NewToken(TokenKind.NewLine);
 
-            case '=':
-                return CheckOperatorInCommandMode(c, TokenKind.Equals);
+                case '`':
+                    c1 = GetChar();
+                    if (c1 == '\n' || c1 == '\r')
+                    {
+                        ScanNewline(c1);
+                        NewToken(TokenKind.LineContinuation);
+                        goto again;
+                    }
+                    if (char.IsWhiteSpace(c1))
+                    {
+                        SkipWhiteSpace();
+                        goto again;
+                    }
+                    if (c1 == '\0' && AtEof())
+                    {
+                        ReportIncompleteInput(_currentIndex, () => ParserStrings.IncompleteString);
 
-            case '+':
-                c1 = PeekChar();
-                if (c1 == '+')
-                {
-                    SkipChar();
-                    return CheckOperatorInCommandMode(c, c1, TokenKind.PlusPlus);
-                }
-                if (c1 == '=')
-                {
-                    SkipChar();
-                    return CheckOperatorInCommandMode(c, c1, TokenKind.PlusEquals);
-                }
-                if (AllowSignedNumbers && (char.IsDigit(c1) || c1 == '.'))
-                {
-                    return ScanNumber(c);
-                }
-                return CheckOperatorInCommandMode(c, TokenKind.Plus);
+                        // Unget the EOF so we can return an EOF token.
+                        UngetChar();
+                        goto again;
+                    }
 
-            case '-':
-            case SpecialChars.EmDash:
-            case SpecialChars.EnDash:
-            case SpecialChars.HorizontalBar:
-                c1 = PeekChar();
-                if (c1.IsDash())
-                {
-                    SkipChar();
-                    return CheckOperatorInCommandMode(c, c1, TokenKind.MinusMinus);
-                }
-                if (c1 == '=')
-                {
-                    SkipChar();
-                    return CheckOperatorInCommandMode(c, c1, TokenKind.MinusEquals);
-                }
-                if (char.IsLetter(c1) || c1 == '_' || c1 == '?')
-                {
-                    return ScanParameter();
-                }
-                if (AllowSignedNumbers && (char.IsDigit(c1) || c1 == '.'))
-                {
-                    return ScanNumber(c);
-                }
-                return CheckOperatorInCommandMode(c, TokenKind.Minus);
+                    return ScanGenericToken(Backtick(c1));
 
-            case '*':
-                c1 = PeekChar();
-                if (c1 == '=')
-                {
-                    SkipChar();
-                    return CheckOperatorInCommandMode(c, c1, TokenKind.MultiplyEquals);
-                }
-                if (c1 == '>')
-                {
-                    SkipChar();
+                case '=':
+                    return CheckOperatorInCommandMode(c, TokenKind.Equals);
+
+                case '+':
                     c1 = PeekChar();
+                    if (c1 == '+')
+                    {
+                        SkipChar();
+                        return CheckOperatorInCommandMode(c, c1, TokenKind.PlusPlus);
+                    }
+                    if (c1 == '=')
+                    {
+                        SkipChar();
+                        return CheckOperatorInCommandMode(c, c1, TokenKind.PlusEquals);
+                    }
+                    if (AllowSignedNumbers && (char.IsDigit(c1) || c1 == '.'))
+                    {
+                        return ScanNumber(c);
+                    }
+                    return CheckOperatorInCommandMode(c, TokenKind.Plus);
+
+                case '-':
+                case SpecialChars.EmDash:
+                case SpecialChars.EnDash:
+                case SpecialChars.HorizontalBar:
+                    c1 = PeekChar();
+                    if (c1.IsDash())
+                    {
+                        SkipChar();
+                        return CheckOperatorInCommandMode(c, c1, TokenKind.MinusMinus);
+                    }
+                    if (c1 == '=')
+                    {
+                        SkipChar();
+                        return CheckOperatorInCommandMode(c, c1, TokenKind.MinusEquals);
+                    }
+                    if (char.IsLetter(c1) || c1 == '_' || c1 == '?')
+                    {
+                        return ScanParameter();
+                    }
+                    if (AllowSignedNumbers && (char.IsDigit(c1) || c1 == '.'))
+                    {
+                        return ScanNumber(c);
+                    }
+                    return CheckOperatorInCommandMode(c, TokenKind.Minus);
+
+                case '*':
+                    c1 = PeekChar();
+                    if (c1 == '=')
+                    {
+                        SkipChar();
+                        return CheckOperatorInCommandMode(c, c1, TokenKind.MultiplyEquals);
+                    }
                     if (c1 == '>')
                     {
                         SkipChar();
-                        return NewFileRedirectionToken(0, append: true, fromSpecifiedExplicitly: false);
-                    }
-                    if (c1 == '&')
-                    {
-                        SkipChar();
                         c1 = PeekChar();
-                        if (c1 == '1')
+                        if (c1 == '>')
                         {
                             SkipChar();
-                            return NewMergingRedirectionToken(0, 1);
+                            return NewFileRedirectionToken(0, append: true, fromSpecifiedExplicitly: false);
                         }
-                        UngetChar();
+                        if (c1 == '&')
+                        {
+                            SkipChar();
+                            c1 = PeekChar();
+                            if (c1 == '1')
+                            {
+                                SkipChar();
+                                return NewMergingRedirectionToken(0, 1);
+                            }
+                            UngetChar();
+                        }
+
+                        return NewFileRedirectionToken(0, append: false, fromSpecifiedExplicitly: false);
                     }
 
-                    return NewFileRedirectionToken(0, append: false, fromSpecifiedExplicitly: false);
-                }
+                    return CheckOperatorInCommandMode(c, TokenKind.Multiply);
 
-                return CheckOperatorInCommandMode(c, TokenKind.Multiply);
-
-            case '/':
-                c1 = PeekChar();
-                if (c1 == '=')
-                {
-                    SkipChar();
-                    return CheckOperatorInCommandMode(c, c1, TokenKind.DivideEquals);
-                }
-                return CheckOperatorInCommandMode(c, TokenKind.Divide);
-
-            case '%':
-                c1 = PeekChar();
-                if (c1 == '=')
-                {
-                    SkipChar();
-                    return CheckOperatorInCommandMode(c, c1, TokenKind.RemainderEquals);
-                }
-                return CheckOperatorInCommandMode(c, TokenKind.Rem);
-
-            case '$':
-                if (PeekChar() == '(')
-                {
-                    SkipChar();
-                    return NewToken(TokenKind.DollarParen);
-                }
-                return ScanVariable(false, false);
-
-            case '<':
-                if (PeekChar() == '#')
-                {
-                    SkipChar();
-                    ScanBlockComment();
-                    goto again;
-                }
-                return NewInputRedirectionToken();
-
-            case '>':
-                if (PeekChar() == '>')
-                {
-                    SkipChar();
-                    return NewFileRedirectionToken(1, append: true, fromSpecifiedExplicitly: false);
-                }
-                return NewFileRedirectionToken(1, append: false, fromSpecifiedExplicitly: false);
-
-            case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j':
-            case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't':
-            case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
-            case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J':
-            case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T':
-            case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z': case '_':                    
-                return ScanIdentifier(c);
-
-            case '(':
-                return NewToken(TokenKind.LParen);
-            case ')':
-                return NewToken(TokenKind.RParen);
-            case '[':
-                if (InCommandMode() && !PeekChar().ForceStartNewToken())
-                {
-                    return ScanGenericToken('[');
-                }
-                return NewToken(TokenKind.LBracket);
-            case ']':
-                return NewToken(TokenKind.RBracket);
-            case '{':
-                return NewToken(TokenKind.LCurly);
-            case '}':
-                return NewToken(TokenKind.RCurly);
-            case '.':
-                return ScanDot();
-            case ';':
-                return NewToken(TokenKind.Semi);
-            case ',':
-                return NewToken(TokenKind.Comma);
-
-            case '0': case '7': case '8': case '9':
-                return ScanNumber(c);
-
-            case '1': case '2': case '3': case '4': case '5': case '6':
-                if (PeekChar() == '>')
-                {
-                    SkipChar();
+                case '/':
                     c1 = PeekChar();
-                    if (c1 == '>')
+                    if (c1 == '=')
                     {
                         SkipChar();
-                        return NewFileRedirectionToken(c - '0', append: true, fromSpecifiedExplicitly: true);
+                        return CheckOperatorInCommandMode(c, c1, TokenKind.DivideEquals);
                     }
-                    if (c1 == '&')
+                    return CheckOperatorInCommandMode(c, TokenKind.Divide);
+
+                case '%':
+                    c1 = PeekChar();
+                    if (c1 == '=')
                     {
                         SkipChar();
-                        c1 = PeekChar();
-                        if (c1 == '1' || c1 == '2')
-                        {
-                            SkipChar();
-                            return NewMergingRedirectionToken(c - '0', c1 - '0');
-                        }
-                        UngetChar();
+                        return CheckOperatorInCommandMode(c, c1, TokenKind.RemainderEquals);
                     }
+                    return CheckOperatorInCommandMode(c, TokenKind.Rem);
 
-                    return NewFileRedirectionToken(c - '0', append: false, fromSpecifiedExplicitly: true);
-                }
-                return ScanNumber(c);
-
-            case '&':
-                if (PeekChar() == '&')
-                {
-                    SkipChar();
-                    return NewToken(TokenKind.AndAnd);
-                }
-                return NewToken(TokenKind.Ampersand);
-
-            case '|':
-                if (PeekChar() == '|')
-                {
-                    SkipChar();
-                    return NewToken(TokenKind.OrOr);
-                }
-                return NewToken(TokenKind.Pipe);
-
-            case '!':
-                c1 = PeekChar();
-                if ((InCommandMode() && !c1.ForceStartNewToken()) ||
-                    (InExpressionMode() && c1.IsIndentifierStart()))
-                {
-                    return ScanGenericToken(c);
-                }
-
-                if (InExpressionMode() && (char.IsDigit(c1) || c1 == '.'))
-                {
-                    bool hex, real;
-                    char suffix;
-                    long multiplier;
-
-                    // check if the next token is actually a number
-                    string strNum = ScanNumberHelper(c, out hex, out real, out suffix, out multiplier);
-                    // rescan characters after the check 
-                    _currentIndex = _tokenStart;
-                    c = GetChar();
-
-                    if (strNum == null) { return ScanGenericToken(c); }
-                }
-
-                return NewToken(TokenKind.Exclaim);
-
-            case ':':
-                if (PeekChar() == ':')
-                {
-                    SkipChar();
-                    if (InCommandMode() && !WantSimpleName && !PeekChar().ForceStartNewToken())
+                case '$':
+                    if (PeekChar() == '(')
                     {
-                        var sb = GetStringBuilder();
-                        sb.Append("::");
-                        return ScanGenericToken(sb);
+                        SkipChar();
+                        return NewToken(TokenKind.DollarParen);
                     }
-                    return NewToken(TokenKind.ColonColon);
-                }
-                if (InCommandMode())
-                {
-                    return ScanLabel();
-                }
-                return this.NewToken(TokenKind.Colon);
+                    return ScanVariable(false, false);
 
-            case '\0':
-                if (AtEof())
-                {
-                    return SaveToken(new Token(NewScriptExtent(_tokenStart + 1, _tokenStart + 1), TokenKind.EndOfInput, TokenFlags.None));
-                }
-                return ScanGenericToken(c);
+                case '<':
+                    if (PeekChar() == '#')
+                    {
+                        SkipChar();
+                        ScanBlockComment();
+                        goto again;
+                    }
+                    return NewInputRedirectionToken();
 
-            default:
-                if (c.IsWhitespace())
-                {
-                    SkipWhiteSpace();
-                    goto again;
-                }
+                case '>':
+                    if (PeekChar() == '>')
+                    {
+                        SkipChar();
+                        return NewFileRedirectionToken(1, append: true, fromSpecifiedExplicitly: false);
+                    }
+                    return NewFileRedirectionToken(1, append: false, fromSpecifiedExplicitly: false);
 
-                if (char.IsLetter(c))
-                {
+                case 'a':
+                case 'b':
+                case 'c':
+                case 'd':
+                case 'e':
+                case 'f':
+                case 'g':
+                case 'h':
+                case 'i':
+                case 'j':
+                case 'k':
+                case 'l':
+                case 'm':
+                case 'n':
+                case 'o':
+                case 'p':
+                case 'q':
+                case 'r':
+                case 's':
+                case 't':
+                case 'u':
+                case 'v':
+                case 'w':
+                case 'x':
+                case 'y':
+                case 'z':
+                case 'A':
+                case 'B':
+                case 'C':
+                case 'D':
+                case 'E':
+                case 'F':
+                case 'G':
+                case 'H':
+                case 'I':
+                case 'J':
+                case 'K':
+                case 'L':
+                case 'M':
+                case 'N':
+                case 'O':
+                case 'P':
+                case 'Q':
+                case 'R':
+                case 'S':
+                case 'T':
+                case 'U':
+                case 'V':
+                case 'W':
+                case 'X':
+                case 'Y':
+                case 'Z':
+                case '_':
                     return ScanIdentifier(c);
-                }
-                return ScanGenericToken(c);
+
+                case '(':
+                    return NewToken(TokenKind.LParen);
+                case ')':
+                    return NewToken(TokenKind.RParen);
+                case '[':
+                    if (InCommandMode() && !PeekChar().ForceStartNewToken())
+                    {
+                        return ScanGenericToken('[');
+                    }
+                    return NewToken(TokenKind.LBracket);
+                case ']':
+                    return NewToken(TokenKind.RBracket);
+                case '{':
+                    return NewToken(TokenKind.LCurly);
+                case '}':
+                    return NewToken(TokenKind.RCurly);
+                case '.':
+                    return ScanDot();
+                case ';':
+                    return NewToken(TokenKind.Semi);
+                case ',':
+                    return NewToken(TokenKind.Comma);
+
+                case '0':
+                case '7':
+                case '8':
+                case '9':
+                    return ScanNumber(c);
+
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                    if (PeekChar() == '>')
+                    {
+                        SkipChar();
+                        c1 = PeekChar();
+                        if (c1 == '>')
+                        {
+                            SkipChar();
+                            return NewFileRedirectionToken(c - '0', append: true, fromSpecifiedExplicitly: true);
+                        }
+                        if (c1 == '&')
+                        {
+                            SkipChar();
+                            c1 = PeekChar();
+                            if (c1 == '1' || c1 == '2')
+                            {
+                                SkipChar();
+                                return NewMergingRedirectionToken(c - '0', c1 - '0');
+                            }
+                            UngetChar();
+                        }
+
+                        return NewFileRedirectionToken(c - '0', append: false, fromSpecifiedExplicitly: true);
+                    }
+                    return ScanNumber(c);
+
+                case '&':
+                    if (PeekChar() == '&')
+                    {
+                        SkipChar();
+                        return NewToken(TokenKind.AndAnd);
+                    }
+                    return NewToken(TokenKind.Ampersand);
+
+                case '|':
+                    if (PeekChar() == '|')
+                    {
+                        SkipChar();
+                        return NewToken(TokenKind.OrOr);
+                    }
+                    return NewToken(TokenKind.Pipe);
+
+                case '!':
+                    c1 = PeekChar();
+                    if ((InCommandMode() && !c1.ForceStartNewToken()) ||
+                        (InExpressionMode() && c1.IsIndentifierStart()))
+                    {
+                        return ScanGenericToken(c);
+                    }
+
+                    if (InExpressionMode() && (char.IsDigit(c1) || c1 == '.'))
+                    {
+                        bool hex, real;
+                        char suffix;
+                        long multiplier;
+
+                        // check if the next token is actually a number
+                        string strNum = ScanNumberHelper(c, out hex, out real, out suffix, out multiplier);
+                        // rescan characters after the check 
+                        _currentIndex = _tokenStart;
+                        c = GetChar();
+
+                        if (strNum == null) { return ScanGenericToken(c); }
+                    }
+
+                    return NewToken(TokenKind.Exclaim);
+
+                case ':':
+                    if (PeekChar() == ':')
+                    {
+                        SkipChar();
+                        if (InCommandMode() && !WantSimpleName && !PeekChar().ForceStartNewToken())
+                        {
+                            var sb = GetStringBuilder();
+                            sb.Append("::");
+                            return ScanGenericToken(sb);
+                        }
+                        return NewToken(TokenKind.ColonColon);
+                    }
+                    if (InCommandMode())
+                    {
+                        return ScanLabel();
+                    }
+                    return this.NewToken(TokenKind.Colon);
+
+                case '\0':
+                    if (AtEof())
+                    {
+                        return SaveToken(new Token(NewScriptExtent(_tokenStart + 1, _tokenStart + 1), TokenKind.EndOfInput, TokenFlags.None));
+                    }
+                    return ScanGenericToken(c);
+
+                default:
+                    if (c.IsWhitespace())
+                    {
+                        SkipWhiteSpace();
+                        goto again;
+                    }
+
+                    if (char.IsLetter(c))
+                    {
+                        return ScanIdentifier(c);
+                    }
+                    return ScanGenericToken(c);
             }
         }
     }

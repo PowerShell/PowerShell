@@ -16,14 +16,18 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace System.Management.Automation.ComInterop {
-    internal sealed class BoolArgBuilder : SimpleArgBuilder {
+namespace System.Management.Automation.ComInterop
+{
+    internal sealed class BoolArgBuilder : SimpleArgBuilder
+    {
         internal BoolArgBuilder(Type parameterType)
-            : base(parameterType) {
+            : base(parameterType)
+        {
             Debug.Assert(parameterType == typeof(bool));
         }
 
-        internal override Expression MarshalToRef(Expression parameter) {
+        internal override Expression MarshalToRef(Expression parameter)
+        {
             // parameter  ? -1 : 0
             return Expression.Condition(
                 Marshal(parameter),
@@ -32,7 +36,8 @@ namespace System.Management.Automation.ComInterop {
             );
         }
 
-        internal override Expression UnmarshalFromRef(Expression value) {
+        internal override Expression UnmarshalFromRef(Expression value)
+        {
             //parameter = temp != 0
             return base.UnmarshalFromRef(
                 Expression.NotEqual(

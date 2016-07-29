@@ -118,8 +118,8 @@ namespace System.Management.Automation
             {
                 if (null == _errorRecord)
                 {
-                    _errorRecord = new ErrorRecord (
-                        new ParentContainsErrorRecordException (this),
+                    _errorRecord = new ErrorRecord(
+                        new ParentContainsErrorRecordException(this),
                         _errorId,
                         ErrorCategory.InvalidOperation,
                         null);

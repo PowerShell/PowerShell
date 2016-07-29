@@ -32,12 +32,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// instance of the object holding the format.ps1xml in memory database
         /// </summary>
-        private TypeInfoDataBase dataBase;
+        private TypeInfoDataBase _dataBase;
         internal TypeInfoDataBase Database
         {
             get
             {
-                return dataBase;
+                return _dataBase;
             }
         }
 
@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal object updateDatabaseLock = new object();
         // this is used to throw errors when updating a shared TypeTable.
         internal bool isShared;
-        private List<string> formatFileList;
+        private List<string> _formatFileList;
 
         /// <summary>
         /// If set to true, disables any updates to format table. This includes disabling 
@@ -56,11 +56,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// All the disabling happens silently ie., the user will not get any exception.
         /// By default, this is set to False.
         /// </summary>
-        private bool disableFormatTableUpdates;
+        private bool _disableFormatTableUpdates;
         internal bool DisableFormatTableUpdates
         {
-            get { return disableFormatTableUpdates; }
-            set { disableFormatTableUpdates = value; }
+            get { return _disableFormatTableUpdates; }
+            set { _disableFormatTableUpdates = value; }
         }
 
 
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal TypeInfoDataBaseManager()
         {
             isShared = false;
-            formatFileList = new List<string>();
+            _formatFileList = new List<string>();
         }
 
         /// <summary>
@@ -94,12 +94,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// detailed error messages.
         /// </exception>
         internal TypeInfoDataBaseManager(
-            IEnumerable<string> formatFiles, 
-            bool isShared, 
-            AuthorizationManager authorizationManager, 
+            IEnumerable<string> formatFiles,
+            bool isShared,
+            AuthorizationManager authorizationManager,
             PSHost host)
         {
-            formatFileList = new List<string>();
+            _formatFileList = new List<string>();
 
             Collection<PSSnapInTypeAndFormatErrors> filesToLoad = new Collection<PSSnapInTypeAndFormatErrors>();
             ConcurrentBag<string> errors = new ConcurrentBag<string>();
@@ -113,12 +113,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 PSSnapInTypeAndFormatErrors fileToLoad = new PSSnapInTypeAndFormatErrors(string.Empty, formatFile);
                 fileToLoad.Errors = errors;
                 filesToLoad.Add(fileToLoad);
-                formatFileList.Add(formatFile);
+                _formatFileList.Add(formatFile);
             }
 
             MshExpressionFactory expressionFactory = new MshExpressionFactory();
             List<XmlLoaderLoggerEntry> logEntries = null;
-            
+
             // load the files
             LoadFromFile(filesToLoad, expressionFactory, true, authorizationManager, host, false, out logEntries);
             this.isShared = isShared;
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal TypeInfoDataBase GetTypeInfoDataBase()
         {
-            return dataBase;
+            return _dataBase;
         }
 
         /// <summary>
@@ -153,15 +153,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 throw PSTraceSource.NewArgumentException("formatFile", FormatAndOutXmlLoadingStrings.FormatFileNotRooted, formatFile);
             }
 
-            lock (formatFileList)
+            lock (_formatFileList)
             {
                 if (shouldPrepend)
                 {
-                    formatFileList.Insert(0, formatFile);
+                    _formatFileList.Insert(0, formatFile);
                 }
                 else
                 {
-                    formatFileList.Add(formatFile);
+                    _formatFileList.Add(formatFile);
                 }
             }
         }
@@ -173,9 +173,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="formatFile"></param>
         internal void Remove(string formatFile)
         {
-            lock (formatFileList)
+            lock (_formatFileList)
             {
-                formatFileList.Remove(formatFile);
+                _formatFileList.Remove(formatFile);
             }
         }
 
@@ -193,33 +193,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal void AddFormatData(IEnumerable<ExtendedTypeDefinition> formatData, bool shouldPrepend)
         {
             Diagnostics.Assert(isShared, "this method should only be called from FormatTable to update a shared database");
-            
+
             Collection<PSSnapInTypeAndFormatErrors> filesToLoad = new Collection<PSSnapInTypeAndFormatErrors>();
             ConcurrentBag<string> errors = new ConcurrentBag<string>();
-            if(shouldPrepend)
-            {
-                foreach(ExtendedTypeDefinition typeDefinition in formatData)
-                {
-                    PSSnapInTypeAndFormatErrors entryToLoad = new PSSnapInTypeAndFormatErrors(string.Empty, typeDefinition);
-                    entryToLoad.Errors = errors;
-                    filesToLoad.Add(entryToLoad);
-                }
-                // check if the passed in formatData is empty
-                if(filesToLoad.Count == 0)
-                {
-                    return;
-                }
-            }
-            lock (formatFileList)
-            {
-                foreach (string formatFile in formatFileList)
-                {
-                    PSSnapInTypeAndFormatErrors fileToLoad = new PSSnapInTypeAndFormatErrors(string.Empty, formatFile);
-                    fileToLoad.Errors = errors;
-                    filesToLoad.Add(fileToLoad);
-                }
-            }
-            if(!shouldPrepend)
+            if (shouldPrepend)
             {
                 foreach (ExtendedTypeDefinition typeDefinition in formatData)
                 {
@@ -228,7 +205,30 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     filesToLoad.Add(entryToLoad);
                 }
                 // check if the passed in formatData is empty
-                if(filesToLoad.Count == formatFileList.Count)
+                if (filesToLoad.Count == 0)
+                {
+                    return;
+                }
+            }
+            lock (_formatFileList)
+            {
+                foreach (string formatFile in _formatFileList)
+                {
+                    PSSnapInTypeAndFormatErrors fileToLoad = new PSSnapInTypeAndFormatErrors(string.Empty, formatFile);
+                    fileToLoad.Errors = errors;
+                    filesToLoad.Add(fileToLoad);
+                }
+            }
+            if (!shouldPrepend)
+            {
+                foreach (ExtendedTypeDefinition typeDefinition in formatData)
+                {
+                    PSSnapInTypeAndFormatErrors entryToLoad = new PSSnapInTypeAndFormatErrors(string.Empty, typeDefinition);
+                    entryToLoad.Errors = errors;
+                    filesToLoad.Add(entryToLoad);
+                }
+                // check if the passed in formatData is empty
+                if (filesToLoad.Count == _formatFileList.Count)
                 {
                     return;
                 }
@@ -271,9 +271,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             Collection<PSSnapInTypeAndFormatErrors> filesToLoad = new Collection<PSSnapInTypeAndFormatErrors>();
-            lock (formatFileList)
+            lock (_formatFileList)
             {
-                foreach (string formatFile in formatFileList)
+                foreach (string formatFile in _formatFileList)
                 {
                     PSSnapInTypeAndFormatErrors fileToLoad = new PSSnapInTypeAndFormatErrors(string.Empty, formatFile);
                     filesToLoad.Add(fileToLoad);
@@ -363,7 +363,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 lock (databaseLock)
                 {
                     if (acceptLoadingErrors || success)
-                        this.dataBase = newDataBase;
+                        _dataBase = newDataBase;
                 }
             }
             finally
@@ -372,18 +372,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // data base to an empty instance
                 lock (databaseLock)
                 {
-                    if (this.dataBase == null)
+                    if (_dataBase == null)
                     {
                         TypeInfoDataBase tempDataBase = new TypeInfoDataBase();
                         AddPreLoadInstrinsics(tempDataBase);
                         AddPostLoadInstrinsics(tempDataBase);
-                        this.dataBase = tempDataBase;
+                        _dataBase = tempDataBase;
                     }
                 }
             }
             return success;
         }
-        
+
         /// <summary>
         /// it loads a database from file(s).
         /// </summary>
@@ -403,8 +403,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="success"> true if no error occurred</param>
         /// <returns>a database instance loaded from file(s)</returns>
         private static TypeInfoDataBase LoadFromFileHelper(
-            Collection<PSSnapInTypeAndFormatErrors> files, 
-            MshExpressionFactory expressionFactory, 
+            Collection<PSSnapInTypeAndFormatErrors> files,
+            MshExpressionFactory expressionFactory,
             AuthorizationManager authorizationManager,
             PSHost host,
             bool preValidated,
@@ -414,12 +414,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             success = true;
             // Holds the aggregated log entries for all files...
             logEntries = new List<XmlLoaderLoggerEntry>();
-            
+
             // fresh instance of the database
             TypeInfoDataBase db = new TypeInfoDataBase();
 
             // prepopulate the database with any necessary overriding data
-            AddPreLoadInstrinsics (db);
+            AddPreLoadInstrinsics(db);
 
             var etwEnabled = RunspaceEventSource.Log.IsEnabled();
 
@@ -439,7 +439,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (!ProcessBuiltin(file, db, expressionFactory, logEntries, ref success))
                 {
                     // Loads formatting data from formatting data XML file
-                    XmlFileLoadInfo info = 
+                    XmlFileLoadInfo info =
                         new XmlFileLoadInfo(Path.GetPathRoot(file.FullPath), file.FullPath, file.Errors, file.PSSnapinName);
                     using (TypeInfoDataBaseLoader loader = new TypeInfoDataBaseLoader())
                     {
@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // add any sensible defaults to the database
-            AddPostLoadInstrinsics (db);
+            AddPostLoadInstrinsics(db);
 
             return db;
         }
@@ -498,7 +498,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         private delegate IEnumerable<ExtendedTypeDefinition> TypeGenerator();
-        private static Dictionary<string, Tuple<bool, TypeGenerator>> _builtinGenerators;
+        private static Dictionary<string, Tuple<bool, TypeGenerator>> s_builtinGenerators;
 
         private static Tuple<bool, TypeGenerator> GetBuiltin(bool isForHelp, TypeGenerator generator)
         {
@@ -512,7 +512,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             List<XmlLoaderLoggerEntry> logEntries,
             ref bool success)
         {
-            if (_builtinGenerators == null)
+            if (s_builtinGenerators == null)
             {
                 var builtInGenerators = new Dictionary<string, Tuple<bool, TypeGenerator>>(StringComparer.OrdinalIgnoreCase);
 
@@ -530,11 +530,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 builtInGenerators.Add(Path.Combine(psHome, "Registry.format.ps1xml"), GetBuiltin(false, Registry_Format_Ps1Xml.GetFormatData));
                 builtInGenerators.Add(Path.Combine(psHome, "WSMan.Format.ps1xml"), GetBuiltin(false, WSMan_Format_Ps1Xml.GetFormatData));
 
-                Interlocked.CompareExchange(ref _builtinGenerators, builtInGenerators, null);
+                Interlocked.CompareExchange(ref s_builtinGenerators, builtInGenerators, null);
             }
 
             Tuple<bool, TypeGenerator> generator;
-            if (!_builtinGenerators.TryGetValue(file.FullPath, out generator))
+            if (!s_builtinGenerators.TryGetValue(file.FullPath, out generator))
                 return false;
 
             ProcessBuiltinFormatViewDefinitions(generator.Item2(), db, expressionFactory, file, logEntries, generator.Item1, ref success);
@@ -560,7 +560,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// helper to to add any pre-load intrinsics to the db
         /// </summary>
         /// <param name="db">db being iniitalized</param>
-        private static void AddPreLoadInstrinsics (TypeInfoDataBase db)
+        private static void AddPreLoadInstrinsics(TypeInfoDataBase db)
         {
             // NOTE: nothing to add for the time being. Add here if needed.
         }
@@ -569,17 +569,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// helper to to add any post-load intrinsics to the db
         /// </summary>
         /// <param name="db">db being iniitalized</param>
-        private static void AddPostLoadInstrinsics (TypeInfoDataBase db)
+        private static void AddPostLoadInstrinsics(TypeInfoDataBase db)
         {
             // add entry for the output of update-formatdata
             // we want to be able to display this as a list, unless overridden
             // by an entry loaded from file
-            FormatShapeSelectionOnType sel = new FormatShapeSelectionOnType ();
-            sel.appliesTo = new AppliesTo ();
+            FormatShapeSelectionOnType sel = new FormatShapeSelectionOnType();
+            sel.appliesTo = new AppliesTo();
             sel.appliesTo.AddAppliesToType("Microsoft.PowerShell.Commands.FormatDataLoadingInfo");
             sel.formatShape = FormatShape.List;
 
-            db.defaultSettingsSection.shapeSelectionDirectives.formatShapeSelectionOnTypeList.Add (sel);
+            db.defaultSettingsSection.shapeSelectionDirectives.formatShapeSelectionOnTypeList.Add(sel);
         }
     }
 }

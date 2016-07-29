@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Management.Automation;
 
@@ -36,9 +37,9 @@ namespace Microsoft.PowerShell.Commands
         {
             // If it's not a forwarded event, the user must specify
             // an action
-            if(
+            if (
                 (Action == null) &&
-                (! (bool) Forward)
+                (!(bool)Forward)
                )
             {
                 ErrorRecord errorRecord = new ErrorRecord(

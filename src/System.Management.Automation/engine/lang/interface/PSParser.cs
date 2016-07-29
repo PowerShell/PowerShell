@@ -3,13 +3,13 @@
 
     Project:     PowerShell
 
-    File:        PSParser.cs
 
     Contents:    PowerShell parser interface for syntax editors 
 
     Classes:     System.Management.Automation.PSParser
 
 --********************************************************************/
+
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -86,15 +86,15 @@ namespace System.Management.Automation
 
         #region Parsing Logic
 
-        private readonly List<Language.Token> tokenList = new List<Language.Token>();
-        private Language.ParseError[] errors;
+        private readonly List<Language.Token> _tokenList = new List<Language.Token>();
+        private Language.ParseError[] _errors;
 
         private void Parse(string script)
         {
             try
             {
                 var parser = new Language.Parser { ProduceV2Tokens = true };
-                parser.Parse(null, script, tokenList, out errors, ParseMode.Default);
+                parser.Parse(null, script, _tokenList, out _errors, ParseMode.Default);
             }
             catch (Exception e)
             {
@@ -112,9 +112,9 @@ namespace System.Management.Automation
             {
                 Collection<PSToken> resultTokens = new Collection<PSToken>();
                 // Skip the last token, it's always EOF.
-                for (int i = 0; i < tokenList.Count - 1; i++)
+                for (int i = 0; i < _tokenList.Count - 1; i++)
                 {
-                    var token = tokenList[i];
+                    var token = _tokenList[i];
                     resultTokens.Add(new PSToken(token));
                 }
 
@@ -130,7 +130,7 @@ namespace System.Management.Automation
             get
             {
                 Collection<PSParseError> resultErrors = new Collection<PSParseError>();
-                foreach (var error in errors)
+                foreach (var error in _errors)
                 {
                     resultErrors.Add(new PSParseError(error));
                 }

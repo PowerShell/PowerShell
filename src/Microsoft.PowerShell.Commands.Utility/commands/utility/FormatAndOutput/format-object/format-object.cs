@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using Microsoft.PowerShell.Commands.Internal.Format;
@@ -19,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public FormatCustomCommand()
         {
-            this.implementation = new InnerFormatShapeCommand (FormatShape.Complex);
+            this.implementation = new InnerFormatShapeCommand(FormatShape.Complex);
         }
 
 
@@ -31,63 +32,63 @@ namespace Microsoft.PowerShell.Commands
         /// The paramater is optional, since the defaults
         /// will be determined using property sets, etc.
         /// </summary>
-        [Parameter (Position = 0)]
+        [Parameter(Position = 0)]
         public object[] Property
         {
-            get { return props; }
-            set { props = value; }
+            get { return _props; }
+            set { _props = value; }
         }
 
-        private object[] props;
+        private object[] _props;
 
         /// <summary>
         /// 
         /// </summary>
         /// <value></value>
-        [ValidateRangeAttribute (1, int.MaxValue)]
+        [ValidateRangeAttribute(1, int.MaxValue)]
         [Parameter]
         public int Depth
         {
-            get { return depth; }
-            set { depth = value; }
+            get { return _depth; }
+            set { _depth = value; }
         }
 
-        private int depth = ComplexSpecificParameters.maxDepthAllowable;
+        private int _depth = ComplexSpecificParameters.maxDepthAllowable;
 
         #endregion
 
-        internal override FormattingCommandLineParameters GetCommandLineParameters ()
+        internal override FormattingCommandLineParameters GetCommandLineParameters()
         {
-            FormattingCommandLineParameters parameters = new FormattingCommandLineParameters ();
+            FormattingCommandLineParameters parameters = new FormattingCommandLineParameters();
 
-            if (this.props != null)
+            if (_props != null)
             {
-                ParameterProcessor processor = new ParameterProcessor (new FormatObjectParameterDefinition());
-                TerminatingErrorContext invocationContext = new TerminatingErrorContext (this);
-                parameters.mshParameterList = processor.ProcessParameters (this.props, invocationContext);
+                ParameterProcessor processor = new ParameterProcessor(new FormatObjectParameterDefinition());
+                TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
+                parameters.mshParameterList = processor.ProcessParameters(_props, invocationContext);
             }
 
-            if (!string.IsNullOrEmpty (this.View))
+            if (!string.IsNullOrEmpty(this.View))
             {
                 // we have a view command line switch
                 if (parameters.mshParameterList.Count != 0)
                 {
-                    ReportCannotSpecifyViewAndProperty ();
+                    ReportCannotSpecifyViewAndProperty();
                 }
                 parameters.viewName = this.View;
             }
 
-            parameters.groupByParameter = this.ProcessGroupByParameter ();
+            parameters.groupByParameter = this.ProcessGroupByParameter();
             parameters.forceFormattingAlsoOnOutOfBand = this.Force;
             if (this.showErrorsAsMessages.HasValue)
                 parameters.showErrorsAsMessages = this.showErrorsAsMessages;
             if (this.showErrorsInFormattedOutput.HasValue)
                 parameters.showErrorsInFormattedOutput = this.showErrorsInFormattedOutput;
 
-            parameters.expansion = ProcessExpandParameter ();
+            parameters.expansion = ProcessExpandParameter();
 
-            ComplexSpecificParameters csp = new ComplexSpecificParameters ();
-            csp.maxDepth = this.depth;
+            ComplexSpecificParameters csp = new ComplexSpecificParameters();
+            csp.maxDepth = _depth;
             parameters.shapeParameters = csp;
 
             return parameters;

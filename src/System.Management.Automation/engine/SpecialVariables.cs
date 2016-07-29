@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.Generic;
 
@@ -19,7 +20,7 @@ namespace System.Management.Automation
     // field name.  In general, it is preferred to use the VariablePath instead of the string
     // because we'll end up creating a VariablePath anyway, so doing it once is faster.
     //
-    static class SpecialVariables
+    internal static class SpecialVariables
     {
         internal const string HistorySize = "MaximumHistoryCount";
         internal static readonly VariablePath HistorySizeVarPath = new VariablePath(HistorySize);
@@ -218,7 +219,7 @@ namespace System.Management.Automation
         #region AllScope variables created in every session
 
         internal const string ConsoleFileName = "ConsoleFileName";
-        internal const string ExecutionContext = "ExecutionContext"; 
+        internal const string ExecutionContext = "ExecutionContext";
         internal const string Home = "HOME";
         internal const string Host = "Host";
         internal const string PID = "PID";
@@ -232,18 +233,18 @@ namespace System.Management.Automation
 
         internal static List<string> AllScopeSessionVariables = new List<string>
         {
-            ConsoleFileName, 
-            ExecutionContext, 
-            Home, 
-            Host, 
-            PID, 
-            PSCulture, 
-            PSHome, 
-            PSUICulture, 
-            PSVersionTable, 
-            PSEdition, 
+            ConsoleFileName,
+            ExecutionContext,
+            Home,
+            Host,
+            PID,
+            PSCulture,
+            PSHome,
+            PSUICulture,
+            PSVersionTable,
+            PSEdition,
             ShellId
-        } ;
+        };
 
         #endregion AllScope variables created in every session
 
@@ -312,9 +313,9 @@ namespace System.Management.Automation
                                                                   SpecialVariables.True,
                                                               };
 
-        private static readonly HashSet<string> ClassMethodsAccessibleVariables = new HashSet<string>
+        private static readonly HashSet<string> s_classMethodsAccessibleVariables = new HashSet<string>
             (
-                new string[] 
+                new string[]
                 {
                     SpecialVariables.LastExitCode,
                     SpecialVariables.Error,
@@ -329,11 +330,11 @@ namespace System.Management.Automation
 
         internal static bool IsImplicitVariableAccessibleInClassMethod(VariablePath variablePath)
         {
-            return ClassMethodsAccessibleVariables.Contains(variablePath.UserPath);
+            return s_classMethodsAccessibleVariables.Contains(variablePath.UserPath);
         }
     }
 
-    enum AutomaticVariable
+    internal enum AutomaticVariable
     {
         Underbar = 0,
         Args = 1,
@@ -347,7 +348,7 @@ namespace System.Management.Automation
         NumberOfAutomaticVariables // 1 + the last, used to initialize global scope.
     }
 
-    enum PreferenceVariable
+    internal enum PreferenceVariable
     {
         Debug = 9,
         Verbose = 10,

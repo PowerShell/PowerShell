@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace System.Management.Automation
     /// of PSSnapIns
     /// 
     /// </summary>
-    internal class HelpFileHelpProvider: HelpProviderWithCache
+    internal class HelpFileHelpProvider : HelpProviderWithCache
     {
         /// <summary>
         /// Constructor for HelpProvider
@@ -64,7 +65,7 @@ namespace System.Management.Automation
             int countHelpInfosFound = 0;
             string helpFileName = helpRequest.Target + ".help.txt";
             Collection<string> filesMatched = MUIFileSearcher.SearchFiles(helpFileName, GetExtendedSearchPaths());
-            
+
             Diagnostics.Assert(filesMatched != null, "Files collection should not be null.");
             var matchedFilesToRemove = FilterToLatestModuleVersion(filesMatched);
 
@@ -105,12 +106,12 @@ namespace System.Management.Automation
 
         private Collection<string> FilterToLatestModuleVersion(Collection<string> filesMatched)
         {
-            Collection<string> matchedFilesToRemove = new Collection<string>();            
-            
+            Collection<string> matchedFilesToRemove = new Collection<string>();
+
             if (filesMatched.Count > 1)
             {
                 //Dictionary<<ModuleName,fileName>, <Version, helpFileFullName>>
-                Dictionary<Tuple<string,string>, Tuple<string, Version>> modulesAndVersion = new Dictionary<Tuple<string,string>, Tuple<string,Version>>();
+                Dictionary<Tuple<string, string>, Tuple<string, Version>> modulesAndVersion = new Dictionary<Tuple<string, string>, Tuple<string, Version>>();
                 HashSet<string> filesProcessed = new HashSet<string>();
 
                 var allPSModulePaths = ModuleIntrinsics.GetModulePath(false, this.HelpSystem.ExecutionContext);
@@ -154,12 +155,12 @@ namespace System.Management.Automation
                             else
                             {
                                 //Add the module to the dictionary as it was not processes earlier.
-                                modulesAndVersion.Add(new Tuple<string, string>(moduleName,fileName), 
+                                modulesAndVersion.Add(new Tuple<string, string>(moduleName, fileName),
                                                       new Tuple<string, Version>(fileFullName, moduleVersionFromPath));
                             }
                         }
                     }
-                    
+
                     filesProcessed.Add(fileName);
                 }
             }
@@ -186,7 +187,7 @@ namespace System.Management.Automation
             if (searchOnlyContent)
             {
                 string searchTarget = helpRequest.Target;
-                if(!WildcardPattern.ContainsWildcardCharacters(helpRequest.Target))
+                if (!WildcardPattern.ContainsWildcardCharacters(helpRequest.Target))
                 {
                     searchTarget = "*" + searchTarget + "*";
                 }
@@ -287,7 +288,7 @@ namespace System.Management.Automation
             if (!path.EndsWith(".help.txt", StringComparison.OrdinalIgnoreCase))
                 return null;
 
-            string name = fileName.Substring(0, fileName.Length -  9 /* ".help.txt".Length */);
+            string name = fileName.Substring(0, fileName.Length - 9 /* ".help.txt".Length */);
 
             if (String.IsNullOrEmpty(name))
                 return null;
@@ -320,7 +321,7 @@ namespace System.Management.Automation
         internal Collection<string> GetExtendedSearchPaths()
         {
             Collection<String> searchPaths = GetSearchPaths();
-                        
+
             // Add $pshome at the top of the list
             String defaultShellSearchPath = GetDefaultShellSearchPath();
             int index = searchPaths.IndexOf(defaultShellSearchPath);
@@ -346,7 +347,7 @@ namespace System.Management.Automation
                         string[] directories = Directory.GetDirectories(psModulePath, "*", SearchOption.AllDirectories);
 
                         var possibleModuleDirectories = directories.Where(directory => ModuleUtils.IsPossibleModuleDirectory(directory));
-                        
+
                         foreach (string directory in possibleModuleDirectories)
                         {
                             // Add only directories that are not empty

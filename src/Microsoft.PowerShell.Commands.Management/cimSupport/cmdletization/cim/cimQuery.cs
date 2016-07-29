@@ -21,12 +21,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// </summary>
     internal class CimQuery : QueryBuilder, ISessionBoundQueryBuilder<CimSession>
     {
-        private readonly StringBuilder wqlCondition;
+        private readonly StringBuilder _wqlCondition;
 
-        private CimInstance associatedObject;
-        private string associationName;
-        private string resultRole;
-        private string sourceRole;
+        private CimInstance _associatedObject;
+        private string _associationName;
+        private string _resultRole;
+        private string _sourceRole;
 
         internal readonly Dictionary<string, object> queryOptions = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal CimQuery()
         {
-            this.wqlCondition = new StringBuilder();
+            _wqlCondition = new StringBuilder();
             this.ClientSideQuery = new ClientSideQuery();
         }
 
@@ -42,11 +42,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private void AddWqlCondition(string condition)
         {
-            this.wqlCondition.Append(this.wqlCondition.Length != 0 ? " AND " : " WHERE ");
+            _wqlCondition.Append(_wqlCondition.Length != 0 ? " AND " : " WHERE ");
 
-            this.wqlCondition.Append('(');
-            this.wqlCondition.Append(condition);
-            this.wqlCondition.Append(')');
+            _wqlCondition.Append('(');
+            _wqlCondition.Append(condition);
+            _wqlCondition.Append(')');
         }
 
         private static string ObjectToWqlLiteral(object o)
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             if (typeCode == TypeCode.DateTime)
             {
-                var dateTime = (DateTime) LanguagePrimitives.ConvertTo(o, typeof (DateTime), CultureInfo.InvariantCulture);
+                var dateTime = (DateTime)LanguagePrimitives.ConvertTo(o, typeof(DateTime), CultureInfo.InvariantCulture);
                 string result = ClrFacade.ToDmtfDateTime(dateTime);
                 return "'" + result + "'";
             }
@@ -301,10 +301,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         public override void FilterByAssociatedInstance(object associatedInstance, string associationName, string sourceRole, string resultRole, BehaviorOnNoMatch behaviorOnNoMatch)
         {
             this.ClientSideQuery.FilterByAssociatedInstance(associatedInstance, associationName, sourceRole, resultRole, behaviorOnNoMatch);
-            this.associatedObject = associatedInstance as CimInstance;
-            this.associationName = associationName;
-            this.resultRole = resultRole;
-            this.sourceRole = sourceRole;
+            _associatedObject = associatedInstance as CimInstance;
+            _associationName = associationName;
+            _resultRole = resultRole;
+            _sourceRole = sourceRole;
         }
 
         /// <summary>
@@ -332,13 +332,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal StartableJob GetQueryJob(CimJobContext jobContext)
         {
-            if (this.associationName == null)
+            if (_associationName == null)
             {
-                return new QueryInstancesJob(jobContext, this, this.wqlCondition.ToString());
+                return new QueryInstancesJob(jobContext, this, _wqlCondition.ToString());
             }
             else
             {
-                return new EnumerateAssociatedInstancesJob(jobContext, this, this.associatedObject, this.associationName, this.resultRole, this.sourceRole);
+                return new EnumerateAssociatedInstancesJob(jobContext, this, _associatedObject, _associationName, _resultRole, _sourceRole);
             }
         }
 
@@ -357,9 +357,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         CimSession ISessionBoundQueryBuilder<CimSession>.GetTargetSession()
         {
-            if (this.associatedObject != null)
+            if (_associatedObject != null)
             {
-                return CimCmdletAdapter.GetSessionOfOriginFromCimInstance(this.associatedObject);
+                return CimCmdletAdapter.GetSessionOfOriginFromCimInstance(_associatedObject);
             }
             return null;
         }
@@ -370,7 +370,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <returns>A string that represents the current CIM query</returns>
         public override string ToString()
         {
-            return this.wqlCondition.ToString();
+            return _wqlCondition.ToString();
         }
     }
 }

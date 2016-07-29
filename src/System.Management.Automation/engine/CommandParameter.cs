@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Diagnostics;
 using System.Management.Automation.Language;
@@ -13,13 +14,13 @@ namespace System.Management.Automation
     [DebuggerDisplay("{ParameterName}")]
     internal sealed class CommandParameterInternal
     {
-        class Parameter
+        private class Parameter
         {
             internal IScriptExtent extent;
             internal string parameterName;
             internal string parameterText;
         }
-        class Argument
+        private class Argument
         {
             internal IScriptExtent extent;
             internal object value;
@@ -31,7 +32,7 @@ namespace System.Management.Automation
         private Argument _argument;
         private bool _spaceAfterParameter;
 
-        internal bool SpaceAfterParameter { get { return _spaceAfterParameter; } } 
+        internal bool SpaceAfterParameter { get { return _spaceAfterParameter; } }
         internal bool ParameterNameSpecified { get { return _parameter != null; } }
         internal bool ArgumentSpecified { get { return _argument != null; } }
         internal bool ParameterAndArgumentSpecified { get { return ParameterNameSpecified && ArgumentSpecified; } }
@@ -78,7 +79,7 @@ namespace System.Management.Automation
         /// </summary>
         internal IScriptExtent ArgumentExtent
         {
-            get { return _argument != null ? _argument.extent : PositionUtilities.EmptyExtent; }            
+            get { return _argument != null ? _argument.extent : PositionUtilities.EmptyExtent; }
         }
 
         /// <summary>
@@ -151,10 +152,10 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(extent != null, "Caller to verify extent argument");
             return new CommandParameterInternal
-                   {
-                       _parameter =
+            {
+                _parameter =
                            new Parameter { extent = extent, parameterName = parameterName, parameterText = parameterText }
-                   };
+            };
         }
 
         /// <summary>
@@ -172,15 +173,15 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(extent != null, "Caller to verify extent argument");
             return new CommandParameterInternal
-                   {
-                       _argument = new Argument
-                       {
-                           extent = extent,
-                           value = value,
-                           splatted = splatted,
-                           arrayIsSingleArgumentForNativeCommand = arrayIsSingleArgumentForNativeCommand
-                       }
-                   };
+            {
+                _argument = new Argument
+                {
+                    extent = extent,
+                    value = value,
+                    splatted = splatted,
+                    arrayIsSingleArgumentForNativeCommand = arrayIsSingleArgumentForNativeCommand
+                }
+            };
         }
 
         /// <summary>
@@ -216,9 +217,9 @@ namespace System.Management.Automation
                 _parameter = new Parameter { extent = parameterExtent, parameterName = parameterName, parameterText = parameterText },
                 _argument = new Argument { extent = argumentExtent, value = value, arrayIsSingleArgumentForNativeCommand = arrayIsSingleArgumentForNativeCommand },
                 _spaceAfterParameter = spaceAfterParameter
-            };            
+            };
         }
-        
+
         #endregion  ctor
 
         internal bool IsDashQuestion()

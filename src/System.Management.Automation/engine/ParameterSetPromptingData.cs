@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,8 +21,8 @@ namespace System.Management.Automation
     {
         internal ParameterSetPromptingData(uint parameterSet, bool isDefaultSet)
         {
-            this.parameterSet = parameterSet;
-            this.isDefaultSet = isDefaultSet;
+            _parameterSet = parameterSet;
+            _isDefaultSet = isDefaultSet;
         }
 
         /// <summary>
@@ -30,9 +31,9 @@ namespace System.Management.Automation
         /// 
         internal bool IsDefaultSet
         {
-            get { return isDefaultSet; }
+            get { return _isDefaultSet; }
         }
-        private bool isDefaultSet;
+        private bool _isDefaultSet;
 
         /// <summary>
         /// The parameter set this data represents
@@ -40,16 +41,16 @@ namespace System.Management.Automation
         /// 
         internal uint ParameterSet
         {
-            get { return parameterSet; }
+            get { return _parameterSet; }
         }
-        private uint parameterSet = 0;
+        private uint _parameterSet = 0;
 
         /// <summary>
         /// True if the parameter set represents parameters in all the parameter sets
         /// </summary>
         internal bool IsAllSet
         {
-            get { return parameterSet == uint.MaxValue; }
+            get { return _parameterSet == uint.MaxValue; }
         }
 
         /// <summary>
@@ -57,9 +58,9 @@ namespace System.Management.Automation
         /// </summary>
         internal Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata> PipelineableMandatoryParameters
         {
-            get { return pipelineableMandatoryParameters; }
+            get { return _pipelineableMandatoryParameters; }
         }
-        private Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata> pipelineableMandatoryParameters = 
+        private Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata> _pipelineableMandatoryParameters =
             new Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata>();
 
         /// <summary>
@@ -67,9 +68,9 @@ namespace System.Management.Automation
         /// </summary>
         internal Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata> PipelineableMandatoryByValueParameters
         {
-            get { return pipelineableMandatoryByValueParameters; }
+            get { return _pipelineableMandatoryByValueParameters; }
         }
-        private Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata> pipelineableMandatoryByValueParameters =
+        private Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata> _pipelineableMandatoryByValueParameters =
             new Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata>();
 
         /// <summary>
@@ -77,9 +78,9 @@ namespace System.Management.Automation
         /// </summary>
         internal Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata> PipelineableMandatoryByPropertyNameParameters
         {
-            get { return pipelineableMandatoryByPropertyNameParameters; }
+            get { return _pipelineableMandatoryByPropertyNameParameters; }
         }
-        private Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata> pipelineableMandatoryByPropertyNameParameters = 
+        private Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata> _pipelineableMandatoryByPropertyNameParameters =
             new Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata>();
 
 
@@ -88,9 +89,9 @@ namespace System.Management.Automation
         /// </summary>
         internal Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata> NonpipelineableMandatoryParameters
         {
-            get { return nonpipelineableMandatoryParameters; }
+            get { return _nonpipelineableMandatoryParameters; }
         }
-        private Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata> nonpipelineableMandatoryParameters = 
+        private Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata> _nonpipelineableMandatoryParameters =
             new Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata>();
     }
 }

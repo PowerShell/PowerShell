@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,14 +14,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class TableViewGenerator : ViewGenerator
     {
         // tableBody to use for this instance of the ViewGenerator;
-        private TableControlBody tableBody;
+        private TableControlBody _tableBody;
 
         internal override void Initialize(TerminatingErrorContext terminatingErrorContext, MshExpressionFactory mshExpressionFactory, TypeInfoDataBase db, ViewDefinition view, FormattingCommandLineParameters formatParameters)
         {
             base.Initialize(terminatingErrorContext, mshExpressionFactory, db, view, formatParameters);
             if ((null != this.dataBaseInfo) && (null != this.dataBaseInfo.view))
             {
-                tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl;
+                _tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl;
             }
         }
 
@@ -32,7 +33,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if ((null != this.dataBaseInfo) && (null != this.dataBaseInfo.view))
             {
-                tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl;
+                _tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl;
             }
 
             List<MshParameter> rawMshParameterList = null;
@@ -93,21 +94,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // dont change the original format definition in the database..just make a copy and work
                 // with the copy
-                tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl.Copy();
+                _tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl.Copy();
 
                 TableRowItemDefinition cnRowDefinition = new TableRowItemDefinition();
                 PropertyTokenBase propToken = new FieldPropertyToken();
                 propToken.expression = new ExpressionToken(RemotingConstants.ComputerNameNoteProperty, false);
                 cnRowDefinition.formatTokenList.Add(propToken);
-                tableBody.defaultDefinition.rowItemDefinitionList.Add(cnRowDefinition);
+                _tableBody.defaultDefinition.rowItemDefinitionList.Add(cnRowDefinition);
 
                 // add header only if there are other header definitions
-                if (tableBody.header.columnHeaderDefinitionList.Count > 0)
+                if (_tableBody.header.columnHeaderDefinitionList.Count > 0)
                 {
                     TableColumnHeaderDefinition cnHeaderDefinition = new TableColumnHeaderDefinition();
                     cnHeaderDefinition.label = new TextToken();
                     cnHeaderDefinition.label.text = RemotingConstants.ComputerNameNoteProperty;
-                    tableBody.header.columnHeaderDefinitionList.Add(cnHeaderDefinition);
+                    _tableBody.header.columnHeaderDefinitionList.Add(cnHeaderDefinition);
                 }
             }
         }
@@ -155,7 +156,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             TableHeaderInfo thi = new TableHeaderInfo();
 
             bool dummy;
-            List<TableRowItemDefinition> activeRowItemDefinitionList = GetActiveTableRowDefinition(tableBody, so, out dummy);
+            List<TableRowItemDefinition> activeRowItemDefinitionList = GetActiveTableRowDefinition(_tableBody, so, out dummy);
             thi.hideHeader = this.HideHeaders;
 
             int col = 0;
@@ -163,8 +164,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 TableColumnInfo ci = new TableColumnInfo();
                 TableColumnHeaderDefinition colHeader = null;
-                if (tableBody.header.columnHeaderDefinitionList.Count > 0)
-                    colHeader = tableBody.header.columnHeaderDefinitionList[col];
+                if (_tableBody.header.columnHeaderDefinitionList.Count > 0)
+                    colHeader = _tableBody.header.columnHeaderDefinitionList[col];
 
                 if (colHeader != null)
                 {
@@ -289,7 +290,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // if we have a view, get the value out of it
                 if (this.dataBaseInfo.view != null)
                 {
-                    return tableBody.header.hideHeader;
+                    return _tableBody.header.hideHeader;
                 }
                 return false;
             }
@@ -434,7 +435,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             TableRowEntry tre = new TableRowEntry();
 
-            List<TableRowItemDefinition> activeRowItemDefinitionList = GetActiveTableRowDefinition(tableBody, so, out tre.multiLine);
+            List<TableRowItemDefinition> activeRowItemDefinitionList = GetActiveTableRowDefinition(_tableBody, so, out tre.multiLine);
             foreach (TableRowItemDefinition rowItem in activeRowItemDefinitionList)
             {
                 FormatPropertyField fpf = GenerateFormatPropertyField(rowItem.formatTokenList, so, enumerationLimit);
@@ -465,8 +466,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             return tre;
         }
-
     }
-
 }
 

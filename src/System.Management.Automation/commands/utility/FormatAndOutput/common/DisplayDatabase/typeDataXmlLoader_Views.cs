@@ -20,45 +20,44 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal sealed partial class TypeInfoDataBaseLoader : XmlLoaderBase
     {
-
-        private void LoadViewDefinitions (TypeInfoDataBase db, XmlNode viewDefinitionsNode)
+        private void LoadViewDefinitions(TypeInfoDataBase db, XmlNode viewDefinitionsNode)
         {
-            using (this.StackFrame (viewDefinitionsNode))
+            using (this.StackFrame(viewDefinitionsNode))
             {
                 int index = 0;
                 foreach (XmlNode n in viewDefinitionsNode.ChildNodes)
                 {
                     if (MatchNodeName(n, XmlTags.ViewNode))
                     {
-                        ViewDefinition view = LoadView (n, index++);
+                        ViewDefinition view = LoadView(n, index++);
                         if (view != null)
                         {
                             ReportTrace(string.Format(CultureInfo.InvariantCulture,
                                 "{0} view {1} is loaded from file {2}",
                                 ControlBase.GetControlShapeName(view.mainControl),
-                                view.name, view.loadingInfo.filePath ));
+                                view.name, view.loadingInfo.filePath));
                             // we are fine, add the view to the list
-                            db.viewDefinitionsSection.viewDefinitionList.Add (view);
+                            db.viewDefinitionsSection.viewDefinitionList.Add(view);
                         }
                     }
                     else
                     {
-                        ProcessUnknownNode (n);
+                        ProcessUnknownNode(n);
                     }
                 }
             }
         }
 
- 
- 
-        private ViewDefinition LoadView (XmlNode viewNode, int index)
+
+
+        private ViewDefinition LoadView(XmlNode viewNode, int index)
         {
-            using (this.StackFrame (viewNode, index))
+            using (this.StackFrame(viewNode, index))
             {
                 // load the common data
-                ViewDefinition view = new ViewDefinition ();
-                List<XmlNode> unprocessedNodes = new List<XmlNode> ();
-                bool success = LoadCommonViewData (viewNode, view, unprocessedNodes);
+                ViewDefinition view = new ViewDefinition();
+                List<XmlNode> unprocessedNodes = new List<XmlNode>();
+                bool success = LoadCommonViewData(viewNode, view, unprocessedNodes);
 
                 if (!success)
                 {
@@ -71,7 +70,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // only one control can exist, and it can be
                 // of the various types: Table, List, etc.
 
-                string[] controlNodeTags = new string[] 
+                string[] controlNodeTags = new string[]
                 {
                     XmlTags.TableControlNode,
                     XmlTags.ListControlNode,
@@ -79,65 +78,65 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     XmlTags.ComplexControlNode
                 };
 
-                List<XmlNode> secondPassUnprocessedNodes = new List<XmlNode> ();
+                List<XmlNode> secondPassUnprocessedNodes = new List<XmlNode>();
 
                 bool mainControlFound = false; // cardinality 1
                 foreach (XmlNode n in unprocessedNodes)
                 {
-                    if (MatchNodeName (n, XmlTags.TableControlNode))
+                    if (MatchNodeName(n, XmlTags.TableControlNode))
                     {
                         if (mainControlFound)
                         {
-                            ProcessDuplicateNode (n);
+                            ProcessDuplicateNode(n);
                             return null;
                         }
                         mainControlFound = true;
-                        view.mainControl = LoadTableControl (n);
+                        view.mainControl = LoadTableControl(n);
                     }
-                    else if (MatchNodeName (n, XmlTags.ListControlNode))
+                    else if (MatchNodeName(n, XmlTags.ListControlNode))
                     {
                         if (mainControlFound)
                         {
-                            ProcessDuplicateNode (n);
+                            ProcessDuplicateNode(n);
                             return null;
                         }
                         mainControlFound = true;
-                        view.mainControl = LoadListControl (n);
+                        view.mainControl = LoadListControl(n);
                     }
 
-                    else if (MatchNodeName (n, XmlTags.WideControlNode))
+                    else if (MatchNodeName(n, XmlTags.WideControlNode))
                     {
                         if (mainControlFound)
                         {
-                            ProcessDuplicateNode (n);
+                            ProcessDuplicateNode(n);
                             return null;
                         }
                         mainControlFound = true;
-                        view.mainControl = LoadWideControl (n);
+                        view.mainControl = LoadWideControl(n);
                     }
-                    else if (MatchNodeName (n, XmlTags.ComplexControlNode))
+                    else if (MatchNodeName(n, XmlTags.ComplexControlNode))
                     {
                         if (mainControlFound)
                         {
-                            ProcessDuplicateNode (n);
+                            ProcessDuplicateNode(n);
                             return null;
                         }
                         mainControlFound = true;
-                        view.mainControl = LoadComplexControl (n);
+                        view.mainControl = LoadComplexControl(n);
                     }
                     else
                     {
-                        secondPassUnprocessedNodes.Add (n);
+                        secondPassUnprocessedNodes.Add(n);
                     }
                 } // foreach
 
                 if (view.mainControl == null)
                 {
-                    this.ReportMissingNodes (controlNodeTags);
+                    this.ReportMissingNodes(controlNodeTags);
                     return null; // fatal
                 }
 
-                if (!LoadMainControlDependentData (secondPassUnprocessedNodes, view))
+                if (!LoadMainControlDependentData(secondPassUnprocessedNodes, view))
                 {
                     return null; // fatal
                 }
@@ -154,23 +153,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private bool LoadMainControlDependentData (List<XmlNode> unprocessedNodes, ViewDefinition view)
+        private bool LoadMainControlDependentData(List<XmlNode> unprocessedNodes, ViewDefinition view)
         {
             foreach (XmlNode n in unprocessedNodes)
             {
                 bool outOfBandNodeFound = false; // cardinality 0..1
                 bool controlDefinitionsFound = false; // cardinality 0..1
 
-                if (MatchNodeName (n, XmlTags.OutOfBandNode))
+                if (MatchNodeName(n, XmlTags.OutOfBandNode))
                 {
                     if (outOfBandNodeFound)
                     {
-                        this.ProcessDuplicateNode (n);
+                        this.ProcessDuplicateNode(n);
                         return false;
                     }
 
                     outOfBandNodeFound = true;
-                    if (!this.ReadBooleanNode (n, out view.outOfBand))
+                    if (!this.ReadBooleanNode(n, out view.outOfBand))
                     {
                         return false;
                     }
@@ -181,36 +180,36 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         return false;
                     }
                 }
-                else if (MatchNodeName (n, XmlTags.ControlsNode))
+                else if (MatchNodeName(n, XmlTags.ControlsNode))
                 {
                     if (controlDefinitionsFound)
                     {
-                        this.ProcessDuplicateNode (n);
+                        this.ProcessDuplicateNode(n);
                         return false;
                     }
 
                     controlDefinitionsFound = true;
-                    LoadControlDefinitions (n, view.formatControlDefinitionHolder.controlDefinitionList);
+                    LoadControlDefinitions(n, view.formatControlDefinitionHolder.controlDefinitionList);
                 }
                 else
                 {
-                    ProcessUnknownNode (n);
+                    ProcessUnknownNode(n);
                 }
             }
             return true;
         }
 
-        private bool LoadCommonViewData (XmlNode viewNode, ViewDefinition view, List<XmlNode> unprocessedNodes)
+        private bool LoadCommonViewData(XmlNode viewNode, ViewDefinition view, List<XmlNode> unprocessedNodes)
         {
             if (viewNode == null)
-                throw PSTraceSource.NewArgumentNullException ("viewNode");
+                throw PSTraceSource.NewArgumentNullException("viewNode");
 
             if (view == null)
-                throw PSTraceSource.NewArgumentNullException ("view");
+                throw PSTraceSource.NewArgumentNullException("view");
 
             // set loading information
             view.loadingInfo = this.LoadingInfo;
-            view.loadingInfo.xPath = this.ComputeCurrentXPath ();
+            view.loadingInfo.xPath = this.ComputeCurrentXPath();
 
             // start the loading process
             bool nameNodeFound = false;             // cardinality 1
@@ -219,48 +218,48 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             foreach (XmlNode n in viewNode.ChildNodes)
             {
-                if (MatchNodeName (n, XmlTags.NameNode))
+                if (MatchNodeName(n, XmlTags.NameNode))
                 {
                     if (nameNodeFound)
                     {
-                        this.ProcessDuplicateNode (n);
+                        this.ProcessDuplicateNode(n);
                         return false;
                     }
 
                     nameNodeFound = true;
-                    view.name = GetMandatoryInnerText (n);
+                    view.name = GetMandatoryInnerText(n);
                     if (view.name == null)
                     {
                         return false;
                     }
                 }
-                else if (MatchNodeName (n, XmlTags.ViewSelectedByNode))
+                else if (MatchNodeName(n, XmlTags.ViewSelectedByNode))
                 {
                     if (appliesToNodeFound)
                     {
-                        this.ProcessDuplicateNode (n);
+                        this.ProcessDuplicateNode(n);
                         return false;
                     }
 
                     appliesToNodeFound = true;
 
                     // if null, we invalidate the view
-                    view.appliesTo = LoadAppliesToSection (n, false);
+                    view.appliesTo = LoadAppliesToSection(n, false);
                     if (view.appliesTo == null)
                     {
                         return false;
                     }
                 }
-                else if (MatchNodeName (n, XmlTags.GroupByNode))
+                else if (MatchNodeName(n, XmlTags.GroupByNode))
                 {
                     if (groupByFound)
                     {
-                        this.ProcessDuplicateNode (n);
+                        this.ProcessDuplicateNode(n);
                         return false;
                     }
 
                     groupByFound = true;
-                    view.groupBy = LoadGroupBySection (n);
+                    view.groupBy = LoadGroupBySection(n);
                     if (view.groupBy == null)
                     {
                         return false;
@@ -269,69 +268,69 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 else
                 {
                     // save for further processing 
-                    unprocessedNodes.Add (n);
+                    unprocessedNodes.Add(n);
                 }
             } // for
 
             if (!nameNodeFound)
             {
-                this.ReportMissingNode (XmlTags.NameNode);
+                this.ReportMissingNode(XmlTags.NameNode);
                 return false;
             }
 
             if (!appliesToNodeFound)
             {
-                this.ReportMissingNode (XmlTags.ViewSelectedByNode);
+                this.ReportMissingNode(XmlTags.ViewSelectedByNode);
                 return false;
             }
 
             return true;
         }
 
-        private void LoadControlDefinitions (XmlNode definitionsNode, List<ControlDefinition> controlDefinitionList)
+        private void LoadControlDefinitions(XmlNode definitionsNode, List<ControlDefinition> controlDefinitionList)
         {
-            using (this.StackFrame (definitionsNode))
+            using (this.StackFrame(definitionsNode))
             {
                 int controlDefinitionIndex = 0;
                 foreach (XmlNode n in definitionsNode.ChildNodes)
                 {
-                    if (MatchNodeName (n, XmlTags.ControlNode))
+                    if (MatchNodeName(n, XmlTags.ControlNode))
                     {
-                        ControlDefinition def = LoadControlDefinition (n, controlDefinitionIndex++);
+                        ControlDefinition def = LoadControlDefinition(n, controlDefinitionIndex++);
                         if (def != null)
                         {
-                            controlDefinitionList.Add (def);
+                            controlDefinitionList.Add(def);
                         }
                     }
                     else
                     {
-                        ProcessUnknownNode (n);
+                        ProcessUnknownNode(n);
                     }
                 }
             }
         }
 
-        private ControlDefinition LoadControlDefinition (XmlNode controlDefinitionNode, int index)
+        private ControlDefinition LoadControlDefinition(XmlNode controlDefinitionNode, int index)
         {
-            using(this.StackFrame(controlDefinitionNode, index))
+            using (this.StackFrame(controlDefinitionNode, index))
             {
                 bool nameNodeFound = false;         // cardinality 1
                 bool controlNodeFound = false;         // cardinality 1
 
                 ControlDefinition def = new ControlDefinition();
- 
+
                 foreach (XmlNode n in controlDefinitionNode.ChildNodes)
                 {
-                    if (MatchNodeName (n, XmlTags.NameNode))
+                    if (MatchNodeName(n, XmlTags.NameNode))
                     {
                         if (nameNodeFound)
                         {
-                            this.ProcessDuplicateNode (n);
+                            this.ProcessDuplicateNode(n);
                             continue;
                         }
 
                         nameNodeFound = true;
-                        def.name = GetMandatoryInnerText (n);
+                        def.name = GetMandatoryInnerText(n);
                         if (def.name == null)
                         {
                             //Error at XPath {0} in file {1}: Control cannot have a null Name.
@@ -339,17 +338,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             return null; //fatal error
                         }
                     }
-                    else if (MatchNodeName (n, XmlTags.ComplexControlNode))
+                    else if (MatchNodeName(n, XmlTags.ComplexControlNode))
                     {
                         // NOTE: for the time being we allow only complex control definitions to be loaded
                         if (controlNodeFound)
                         {
-                            this.ProcessDuplicateNode (n);
+                            this.ProcessDuplicateNode(n);
                             return null; //fatal
                         }
 
                         controlNodeFound = true;
-                        def.controlBody = LoadComplexControl (n);
+                        def.controlBody = LoadComplexControl(n);
                         if (def.controlBody == null)
                         {
                             return null; //fatal error
@@ -357,27 +356,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        this.ProcessUnknownNode (n);
+                        this.ProcessUnknownNode(n);
                     }
                 }
 
                 if (def.name == null)
                 {
-                    this.ReportMissingNode (XmlTags.NameNode);
+                    this.ReportMissingNode(XmlTags.NameNode);
                     return null; //fatal
                 }
 
                 if (def.controlBody == null)
                 {
-                    this.ReportMissingNode (XmlTags.ComplexControlNode);
+                    this.ReportMissingNode(XmlTags.ComplexControlNode);
                     return null; //fatal
                 }
 
                 return def;
             }
         }
-        
     }
-
-    
 }

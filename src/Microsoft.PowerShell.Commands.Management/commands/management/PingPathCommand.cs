@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
@@ -40,18 +41,18 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the path parameter to the command
         /// </summary>
-        [Parameter (Position = 0, ParameterSetName = "Path",
+        [Parameter(Position = 0, ParameterSetName = "Path",
                     Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
             get
             {
-                return paths;
+                return _paths;
             } // get
 
             set
             {
-                paths = value;
+                _paths = value;
             } // set
         } // Path
 
@@ -59,19 +60,19 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the literal path parameter to the command
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
-                   Mandatory = true, ValueFromPipeline=false, ValueFromPipelineByPropertyName = true)]
+                   Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath")]
         public string[] LiteralPath
         {
             get
             {
-                return paths;
+                return _paths;
             } // get
 
             set
             {
                 base.SuppressWildcardExpansion = true;
-                paths = value;
+                _paths = value;
             } // set
         } // LiteralPath
 
@@ -134,12 +135,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return type;
+                return _type;
             } // get
 
             set
             {
-                type = value;
+                _type = value;
             } // set
         } // Type
 
@@ -151,15 +152,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return isValid;
+                return _isValid;
             } // get
 
             set
             {
-                isValid = value;
+                _isValid = value;
             } // set
         } // IsValid
-        
+
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
         /// that require dynamic parameters should override this method and return the
@@ -196,11 +197,11 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         #region parameter data
-        
+
         /// <summary>
         /// The path to the item to ping
         /// </summary>
-        private string[] paths;
+        private string[] _paths;
 
 
         /// <summary>
@@ -208,12 +209,12 @@ namespace Microsoft.PowerShell.Commands
         /// the specified path, a container exists at the specified path, or a 
         /// leaf item exists at the specified path.
         /// </summary>
-        private TestPathType type = TestPathType.Any;
+        private TestPathType _type = TestPathType.Any;
 
         /// <summary>
         /// Determines if the path should be checked for validity.
         /// </summary>
-        private SwitchParameter isValid = new SwitchParameter();
+        private SwitchParameter _isValid = new SwitchParameter();
 
         #endregion parameter data
 
@@ -222,25 +223,25 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Determines if an item at the specified path exists.
         /// </summary>
-        protected override void ProcessRecord ()
+        protected override void ProcessRecord()
         {
             CmdletProviderContext currentContext = CmdletProviderContext;
-            
-            foreach (string path in paths)
+
+            foreach (string path in _paths)
             {
                 bool result = false;
 
                 try
                 {
-                    if(IsValid)
+                    if (IsValid)
                     {
-                        result = SessionState.Path.IsValid (path, currentContext);
+                        result = SessionState.Path.IsValid(path, currentContext);
                     }
                     else
                     {
                         if (this.PathType == TestPathType.Container)
                         {
-                            result = InvokeProvider.Item.IsContainer (path, currentContext);
+                            result = InvokeProvider.Item.IsContainer(path, currentContext);
                         }
                         else if (this.PathType == TestPathType.Leaf)
                         {
@@ -253,7 +254,6 @@ namespace Microsoft.PowerShell.Commands
                             result = InvokeProvider.Item.Exists(path, currentContext);
                         }
                     }
-
                 }
                 // Any of the known exceptions means the path does not exist.
                 catch (PSNotSupportedException)
@@ -276,6 +276,5 @@ namespace Microsoft.PowerShell.Commands
 
 
     } // PingPathCommand
-
 } // namespace Microsoft.PowerShell.Commands
 

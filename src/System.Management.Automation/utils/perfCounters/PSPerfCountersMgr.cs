@@ -24,7 +24,7 @@ namespace System.Management.Automation.PerformanceData
     public class PSPerfCountersMgr
     {
         #region Private Members
-        private static PSPerfCountersMgr _PSPerfCountersMgrInstance;
+        private static PSPerfCountersMgr s_PSPerfCountersMgrInstance;
         private ConcurrentDictionary<Guid, CounterSetInstanceBase> _CounterSetIdToInstanceMapping;
         private ConcurrentDictionary<string, Guid> _CounterSetNameToIdMapping;
         private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
@@ -33,8 +33,8 @@ namespace System.Management.Automation.PerformanceData
 
         private PSPerfCountersMgr()
         {
-            this._CounterSetIdToInstanceMapping = new ConcurrentDictionary<Guid, CounterSetInstanceBase>();
-            this._CounterSetNameToIdMapping = new ConcurrentDictionary<string, Guid>();
+            _CounterSetIdToInstanceMapping = new ConcurrentDictionary<Guid, CounterSetInstanceBase>();
+            _CounterSetNameToIdMapping = new ConcurrentDictionary<string, Guid>();
         }
 
         #endregion
@@ -63,11 +63,11 @@ namespace System.Management.Automation.PerformanceData
         {
             get
             {
-                if (_PSPerfCountersMgrInstance == null)
+                if (s_PSPerfCountersMgrInstance == null)
                 {
-                    _PSPerfCountersMgrInstance = new PSPerfCountersMgr();
+                    s_PSPerfCountersMgrInstance = new PSPerfCountersMgr();
                 }
-                return _PSPerfCountersMgrInstance;
+                return s_PSPerfCountersMgrInstance;
             }
         }
 
@@ -94,7 +94,7 @@ namespace System.Management.Automation.PerformanceData
                 _tracer.TraceException(argNullException);
                 return false;
             }
-            return this._CounterSetNameToIdMapping.TryGetValue(counterSetName, out counterSetId);
+            return _CounterSetNameToIdMapping.TryGetValue(counterSetName, out counterSetId);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace System.Management.Automation.PerformanceData
         /// </summary>
         public bool IsCounterSetRegistered(Guid counterSetId, out CounterSetInstanceBase counterSetInst)
         {
-            return this._CounterSetIdToInstanceMapping.TryGetValue(counterSetId, out counterSetInst);
+            return _CounterSetIdToInstanceMapping.TryGetValue(counterSetId, out counterSetInst);
         }
 
         /// <summary>
@@ -111,14 +111,13 @@ namespace System.Management.Automation.PerformanceData
         /// </summary>
         public bool AddCounterSetInstance(CounterSetRegistrarBase counterSetRegistrarInstance)
         {
-            
             if (counterSetRegistrarInstance == null)
             {
                 ArgumentNullException argNullException = new ArgumentNullException("counterSetRegistrarInstance");
                 _tracer.TraceException(argNullException);
                 return false;
             }
-            
+
             Guid counterSetId = counterSetRegistrarInstance.CounterSetId;
             string counterSetName = counterSetRegistrarInstance.CounterSetName;
             CounterSetInstanceBase counterSetInst = null;
@@ -151,12 +150,11 @@ namespace System.Management.Automation.PerformanceData
                         _tracer.TraceException(invalidOperationException);
                         return false;
                     }
-                    this._CounterSetNameToIdMapping.TryAdd(counterSetName, counterSetId);
+                    _CounterSetNameToIdMapping.TryAdd(counterSetName, counterSetId);
                 }
-                this._CounterSetIdToInstanceMapping.TryAdd(
+                _CounterSetIdToInstanceMapping.TryAdd(
                     counterSetId,
                     counterSetRegistrarInstance.CounterSetInstance);
-
             }
             catch (OverflowException overflowException)
             {
@@ -164,7 +162,7 @@ namespace System.Management.Automation.PerformanceData
                 return false;
             }
             return true;
-         }
+        }
 
         /// <summary>
         /// If IsNumerator is true, then updates the numerator component
@@ -186,7 +184,7 @@ namespace System.Management.Automation.PerformanceData
             }
             else
             {
-                InvalidOperationException invalidOperationException = 
+                InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
                         String.Format(
                         CultureInfo.InvariantCulture,
@@ -251,7 +249,7 @@ namespace System.Management.Automation.PerformanceData
             Guid counterSetId;
             if (this.IsCounterSetRegistered(counterSetName, out counterSetId))
             {
-                CounterSetInstanceBase counterSetInst = this._CounterSetIdToInstanceMapping[counterSetId];
+                CounterSetInstanceBase counterSetInst = _CounterSetIdToInstanceMapping[counterSetId];
                 return counterSetInst.UpdateCounterByValue(counterId, stepAmount, isNumerator);
             }
             else
@@ -292,7 +290,7 @@ namespace System.Management.Automation.PerformanceData
 
             if (this.IsCounterSetRegistered(counterSetName, out counterSetId))
             {
-                CounterSetInstanceBase counterSetInst = this._CounterSetIdToInstanceMapping[counterSetId];
+                CounterSetInstanceBase counterSetInst = _CounterSetIdToInstanceMapping[counterSetId];
                 return counterSetInst.UpdateCounterByValue(counterName, stepAmount, isNumerator);
             }
             else
@@ -328,7 +326,7 @@ namespace System.Management.Automation.PerformanceData
             }
             else
             {
-                InvalidOperationException invalidOperationException = 
+                InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
                         String.Format(
                         CultureInfo.InvariantCulture,
@@ -394,7 +392,7 @@ namespace System.Management.Automation.PerformanceData
             Guid counterSetId;
             if (this.IsCounterSetRegistered(counterSetName, out counterSetId))
             {
-                CounterSetInstanceBase counterSetInst = this._CounterSetIdToInstanceMapping[counterSetId];
+                CounterSetInstanceBase counterSetInst = _CounterSetIdToInstanceMapping[counterSetId];
                 return counterSetInst.SetCounterValue(counterId, counterValue, isNumerator);
             }
             else
@@ -434,12 +432,12 @@ namespace System.Management.Automation.PerformanceData
             Guid counterSetId;
             if (this.IsCounterSetRegistered(counterSetName, out counterSetId))
             {
-                CounterSetInstanceBase counterSetInst = this._CounterSetIdToInstanceMapping[counterSetId];
+                CounterSetInstanceBase counterSetInst = _CounterSetIdToInstanceMapping[counterSetId];
                 return counterSetInst.SetCounterValue(counterName, counterValue, isNumerator);
             }
             else
             {
-                InvalidOperationException invalidOperationException = 
+                InvalidOperationException invalidOperationException =
                     new InvalidOperationException(
                         String.Format(
                         CultureInfo.InvariantCulture,
@@ -460,17 +458,16 @@ namespace System.Management.Automation.PerformanceData
         /// </summary>
         internal void RemoveAllCounterSets()
         {
-            ICollection<Guid> counterSetIdKeys = this._CounterSetIdToInstanceMapping.Keys;
+            ICollection<Guid> counterSetIdKeys = _CounterSetIdToInstanceMapping.Keys;
             foreach (Guid counterSetId in counterSetIdKeys)
             {
-                CounterSetInstanceBase currentCounterSetInstance = this._CounterSetIdToInstanceMapping[counterSetId];
+                CounterSetInstanceBase currentCounterSetInstance = _CounterSetIdToInstanceMapping[counterSetId];
                 currentCounterSetInstance.Dispose();
             }
-            this._CounterSetIdToInstanceMapping.Clear();
-            this._CounterSetNameToIdMapping.Clear();
+            _CounterSetIdToInstanceMapping.Clear();
+            _CounterSetNameToIdMapping.Clear();
         }
 
         #endregion
-
     }
 }

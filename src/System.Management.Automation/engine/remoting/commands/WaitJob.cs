@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -57,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
                 _timeoutInSeconds = value;
             }
         }
-        int _timeoutInSeconds = -1; // -1: infinite, this default is to wait for as long as it takes.
+        private int _timeoutInSeconds = -1; // -1: infinite, this default is to wait for as long as it takes.
 
         /// <summary>
         /// Forces the cmdlet to wait for Finished states (Completed, Failed, Stopped) instead of
@@ -81,25 +82,25 @@ namespace Microsoft.PowerShell.Commands
         private void SetEndProcessingAction(Action endProcessingAction)
         {
             Dbg.Assert(endProcessingAction != null, "Caller should verify endProcessingAction != null");
-            lock (this._endProcessingActionLock)
+            lock (_endProcessingActionLock)
             {
-                if (this._endProcessingAction == null)
+                if (_endProcessingAction == null)
                 {
-                    Dbg.Assert(!this._endProcessingActionIsReady.IsSet, "This line should execute only once");
-                    this._endProcessingAction = endProcessingAction;
-                    this._endProcessingActionIsReady.Set();
+                    Dbg.Assert(!_endProcessingActionIsReady.IsSet, "This line should execute only once");
+                    _endProcessingAction = endProcessingAction;
+                    _endProcessingActionIsReady.Set();
                 }
             }
         }
 
         private void InvokeEndProcesingAction()
         {
-            this._endProcessingActionIsReady.Wait();
+            _endProcessingActionIsReady.Wait();
 
             Action endProcessingAction;
-            lock (this._endProcessingActionLock)
+            lock (_endProcessingActionLock)
             {
-                endProcessingAction = this._endProcessingAction;
+                endProcessingAction = _endProcessingAction;
             }
 
             // Inovke action outside lock.
@@ -111,13 +112,13 @@ namespace Microsoft.PowerShell.Commands
 
         private void CleanUpEndProcessing()
         {
-            this._endProcessingActionIsReady.Dispose();
+            _endProcessingActionIsReady.Dispose();
         }
 
         #endregion
 
         #region Support for triggering EndProcesing when jobs are finished or blocked
-        
+
         private readonly HashSet<Job> _finishedJobs = new HashSet<Job>();
         private readonly HashSet<Job> _blockedJobs = new HashSet<Job>();
         private readonly List<Job> _jobsToWaitFor = new List<Job>();
@@ -128,20 +129,20 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(source is Job, "Caller should verify source is Job");
             Dbg.Assert(eventArgs != null, "Caller should verify eventArgs != null");
 
-            var job = (Job) source;
+            var job = (Job)source;
             lock (_jobTrackingLock)
             {
-                Dbg.Assert(this._blockedJobs.All(j => !this._finishedJobs.Contains(j)), "Job cannot be in *both* _blockedJobs and _finishedJobs");
+                Dbg.Assert(_blockedJobs.All(j => !_finishedJobs.Contains(j)), "Job cannot be in *both* _blockedJobs and _finishedJobs");
 
                 if (eventArgs.JobStateInfo.State == JobState.Blocked)
                 {
-                    this._blockedJobs.Add(job);
-                } 
+                    _blockedJobs.Add(job);
+                }
                 else
                 {
-                    this._blockedJobs.Remove(job);
-                } 
-                
+                    _blockedJobs.Remove(job);
+                }
+
                 // Treat jobs in Disconnected state as finished jobs since the user
                 // will have to reconnect the job before more information can be
                 // obtained.
@@ -156,33 +157,33 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _warnNotTerminal = true;
                     }
-                    this._finishedJobs.Add(job);
+                    _finishedJobs.Add(job);
                 }
                 else
                 {
-                    this._finishedJobs.Remove(job);
+                    _finishedJobs.Remove(job);
                 }
 
-                Dbg.Assert(this._blockedJobs.All(j => !this._finishedJobs.Contains(j)), "Job cannot be in *both* _blockedJobs and _finishedJobs");
+                Dbg.Assert(_blockedJobs.All(j => !_finishedJobs.Contains(j)), "Job cannot be in *both* _blockedJobs and _finishedJobs");
 
                 if (this.Any.IsPresent)
                 {
-                    if (this._finishedJobs.Count > 0)
+                    if (_finishedJobs.Count > 0)
                     {
                         this.SetEndProcessingAction(this.EndProcessingOutputSingleFinishedJob);
                     }
-                    else if (this._blockedJobs.Count == this._jobsToWaitFor.Count)
+                    else if (_blockedJobs.Count == _jobsToWaitFor.Count)
                     {
                         this.SetEndProcessingAction(this.EndProcessingBlockedJobsError);
                     }
                 }
                 else
                 {
-                    if (this._finishedJobs.Count == this._jobsToWaitFor.Count)
+                    if (_finishedJobs.Count == _jobsToWaitFor.Count)
                     {
                         this.SetEndProcessingAction(this.EndProcessingOutputAllFinishedJobs);
                     }
-                    else if (this._blockedJobs.Count > 0)
+                    else if (_blockedJobs.Count > 0)
                     {
                         this.SetEndProcessingAction(this.EndProcessingBlockedJobsError);
                     }
@@ -194,23 +195,23 @@ namespace Microsoft.PowerShell.Commands
         {
             Dbg.Assert(jobsToAdd != null, "Caller should verify jobs != null");
 
-            lock (this._jobTrackingLock)
+            lock (_jobTrackingLock)
             {
-                this._jobsToWaitFor.AddRange(jobsToAdd);
+                _jobsToWaitFor.AddRange(jobsToAdd);
             }
         }
 
         private void StartJobChangesTracking()
         {
-            lock (this._jobTrackingLock)
+            lock (_jobTrackingLock)
             {
-                if (this._jobsToWaitFor.Count == 0)
+                if (_jobsToWaitFor.Count == 0)
                 {
                     this.SetEndProcessingAction(this.EndProcessingDoNothing);
                     return;
                 }
 
-                foreach (Job job in this._jobsToWaitFor)
+                foreach (Job job in _jobsToWaitFor)
                 {
                     job.StateChanged += this.HandleJobStateChangedEvent;
                     this.HandleJobStateChangedEvent(job, new JobStateEventArgs(job.JobStateInfo));
@@ -220,9 +221,9 @@ namespace Microsoft.PowerShell.Commands
 
         private void CleanUpJobChangesTracking()
         {
-            lock (this._jobTrackingLock)
+            lock (_jobTrackingLock)
             {
-                foreach (Job job in this._jobsToWaitFor)
+                foreach (Job job in _jobsToWaitFor)
                 {
                     job.StateChanged -= this.HandleJobStateChangedEvent;
                 }
@@ -232,18 +233,18 @@ namespace Microsoft.PowerShell.Commands
         private List<Job> GetFinishedJobs()
         {
             List<Job> jobsToOutput;
-            lock (this._jobTrackingLock)
+            lock (_jobTrackingLock)
             {
-                jobsToOutput = this._jobsToWaitFor.Where(j => ((!Force && j.IsPersistentState(j.JobStateInfo.State)) || (Force && j.IsFinishedState(j.JobStateInfo.State)))).ToList();
+                jobsToOutput = _jobsToWaitFor.Where(j => ((!Force && j.IsPersistentState(j.JobStateInfo.State)) || (Force && j.IsFinishedState(j.JobStateInfo.State)))).ToList();
             }
             return jobsToOutput;
         }
 
         private Job GetOneBlockedJob()
         {
-            lock (this._jobTrackingLock)
+            lock (_jobTrackingLock)
             {
-                return this._jobsToWaitFor.FirstOrDefault(j => j.JobStateInfo.State == JobState.Blocked);
+                return _jobsToWaitFor.FirstOrDefault(j => j.JobStateInfo.State == JobState.Blocked);
             }
         }
 
@@ -262,21 +263,21 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (timeoutInSeconds > 0)
             {
-                lock (this._timerLock)
+                lock (_timerLock)
                 {
-                    this._timer = new Timer((_) => this.SetEndProcessingAction(this.EndProcessingDoNothing), null, timeoutInSeconds * 1000, System.Threading.Timeout.Infinite);
+                    _timer = new Timer((_) => this.SetEndProcessingAction(this.EndProcessingDoNothing), null, timeoutInSeconds * 1000, System.Threading.Timeout.Infinite);
                 }
             }
         }
 
         private void CleanUpTimoutTracking()
         {
-            lock (this._timerLock)
+            lock (_timerLock)
             {
-                if (this._timer != null)
+                if (_timer != null)
                 {
-                    this._timer.Dispose();
-                    this._timer = null;
+                    _timer.Dispose();
+                    _timer = null;
                 }
             }
         }
@@ -298,7 +299,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            this.StartTimeoutTracking(this._timeoutInSeconds);
+            this.StartTimeoutTracking(_timeoutInSeconds);
         }
 
         /// <summary>

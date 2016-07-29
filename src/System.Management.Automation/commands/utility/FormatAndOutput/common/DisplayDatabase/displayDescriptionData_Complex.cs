@@ -11,7 +11,6 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
-
     #region Complex View Definitions
 
     /// <summary>
@@ -28,7 +27,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// optional list of list entry definition overrides. It can be empty if there are no overrides
         /// </summary>
-        internal List<ComplexControlEntryDefinition> optionalEntryList = new List<ComplexControlEntryDefinition> ();
+        internal List<ComplexControlEntryDefinition> optionalEntryList = new List<ComplexControlEntryDefinition>();
     }
 
     internal sealed class ComplexControlEntryDefinition
@@ -42,7 +41,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// item associated with this entry definition
         /// </summary>
-        internal ComplexControlItemDefinition itemDefinition = new ComplexControlItemDefinition ();
+        internal ComplexControlItemDefinition itemDefinition = new ComplexControlItemDefinition();
     }
 
     internal sealed class ComplexControlItemDefinition
@@ -50,12 +49,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// list of tokens the item can contain
         /// </summary>
-        internal List<FormatToken> formatTokenList = new List<FormatToken> ();
+        internal List<FormatToken> formatTokenList = new List<FormatToken>();
     }
- 
 
     #endregion
-
 }
 
 namespace System.Management.Automation
@@ -98,7 +95,7 @@ namespace System.Management.Automation
         /// <summary/>
         public static CustomControlBuilder Create(bool outOfBand = false)
         {
-            var customControl = new CustomControl {OutOfBand = outOfBand};
+            var customControl = new CustomControl { OutOfBand = outOfBand };
             return new CustomControlBuilder(customControl);
         }
 
@@ -152,7 +149,7 @@ namespace System.Management.Automation
 
         /// <summary/>
         public EntrySelectedBy SelectedBy { get; set; }
-        
+
         /// <summary/>
         public List<CustomItemBase> CustomItems { get; set; }
 
@@ -194,8 +191,8 @@ namespace System.Management.Automation
             {
                 var frame = new CustomItemFrame
                 {
-                    RightIndent = (uint) frameToken.frameInfoDefinition.rightIndentation,
-                    LeftIndent = (uint) frameToken.frameInfoDefinition.leftIndentation
+                    RightIndent = (uint)frameToken.frameInfoDefinition.rightIndentation,
+                    LeftIndent = (uint)frameToken.frameInfoDefinition.leftIndentation
                 };
                 var firstLine = frameToken.frameInfoDefinition.firstLine;
                 if (firstLine > 0)
@@ -204,8 +201,7 @@ namespace System.Management.Automation
                 }
                 else if (firstLine < 0)
                 {
-                    frame.FirstLineHanging = (uint) -firstLine;
-
+                    frame.FirstLineHanging = (uint)-firstLine;
                 }
                 foreach (var frameItemToken in frameToken.itemDefinition.formatTokenList)
                 {
@@ -217,7 +213,7 @@ namespace System.Management.Automation
             var cpt = token as CompoundPropertyToken;
             if (cpt != null)
             {
-                var cie = new CustomItemExpression {EnumerateCollection = cpt.enumerateCollection};
+                var cie = new CustomItemExpression { EnumerateCollection = cpt.enumerateCollection };
 
                 if (cpt.conditionToken != null)
                 {
@@ -347,7 +343,7 @@ namespace System.Management.Automation
         /// <summary/>
         public CustomEntryBuilder AddText(string text)
         {
-            _entryStack.Peek().Add(new CustomItemText {Text = text});
+            _entryStack.Peek().Add(new CustomItemText { Text = text });
             return this;
         }
 
@@ -413,7 +409,7 @@ namespace System.Management.Automation
                 EnumerateCollection = enumerateCollection,
                 CustomControl = customControl
             });
-            
+
             return this;
         }
 

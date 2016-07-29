@@ -17,14 +17,14 @@ namespace System.Management.Automation.Language
 {
     internal class TypeDefiner
     {
-        private static int globalCounter = 0;
-        private static readonly object[] emptyArgArray = Utils.EmptyArray<object>();
-        static readonly CustomAttributeBuilder hiddenCustomAttributeBuilder =
-            new CustomAttributeBuilder(typeof(HiddenAttribute).GetConstructor(Type.EmptyTypes), emptyArgArray);
+        private static int s_globalCounter = 0;
+        private static readonly object[] s_emptyArgArray = Utils.EmptyArray<object>();
+        private static readonly CustomAttributeBuilder s_hiddenCustomAttributeBuilder =
+            new CustomAttributeBuilder(typeof(HiddenAttribute).GetConstructor(Type.EmptyTypes), s_emptyArgArray);
 
-        private static readonly string SessionStateKeeperFieldName = "__sessionStateKeeper";
+        private static readonly string s_sessionStateKeeperFieldName = "__sessionStateKeeper";
         internal static readonly string SessionStateFieldName = "__sessionState";
-        private static readonly MethodInfo SessionStateKeeper_GetSessionState =
+        private static readonly MethodInfo s_sessionStateKeeper_GetSessionState =
             typeof(SessionStateKeeper).GetMethod("GetSessionState", BindingFlags.Instance | BindingFlags.Public);
 
         private static bool TryConvertArg(object arg, Type type, out object result, Parser parser, IScriptExtent errorExtent)
@@ -42,8 +42,8 @@ namespace System.Management.Automation.Language
             }
             return true;
         }
-        
-        static CustomAttributeBuilder GetAttributeBuilder(Parser parser, AttributeAst attributeAst, AttributeTargets attributeTargets)
+
+        private static CustomAttributeBuilder GetAttributeBuilder(Parser parser, AttributeAst attributeAst, AttributeTargets attributeTargets)
         {
             var attributeType = attributeAst.TypeName.GetReflectionAttributeType();
             Diagnostics.Assert(attributeType != null, "Semantic checks should have verified attribute type exists");
@@ -53,7 +53,7 @@ namespace System.Management.Automation.Language
                 (attributeType.GetTypeInfo().GetCustomAttribute<AttributeUsageAttribute>(true).ValidOn & attributeTargets) != 0, "Semantic checks should have verified attribute usage");
 
             var positionalArgs = new object[attributeAst.PositionalArguments.Count];
-            var cvv = new ConstantValueVisitor {AttributeArgument = false};
+            var cvv = new ConstantValueVisitor { AttributeArgument = false };
             for (var i = 0; i < attributeAst.PositionalArguments.Count; i++)
             {
                 var posArg = attributeAst.PositionalArguments[i];
@@ -136,7 +136,7 @@ namespace System.Management.Automation.Language
                     "Semantic checks should have ensured names attribute argument exists");
 
                 arg = namedArg.Argument.Accept(cvv);
-                
+
                 var propertyInfo = members[0] as PropertyInfo;
                 if (propertyInfo != null)
                 {
@@ -167,7 +167,7 @@ namespace System.Management.Automation.Language
                 propertyInfoList.ToArray(), propertyArgs.ToArray(),
                 fieldInfoList.ToArray(), fieldArgs.ToArray());
         }
-        
+
         internal static void DefineCustomAttributes(TypeBuilder member, ReadOnlyCollection<AttributeAst> attributes, Parser parser, AttributeTargets attributeTargets)
         {
             if (attributes != null)
@@ -243,7 +243,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        class DefineTypeHelper
+        private class DefineTypeHelper
         {
             private readonly Parser _parser;
             internal readonly TypeDefinitionAst _typeDefinitionAst;
@@ -278,11 +278,11 @@ namespace System.Management.Automation.Language
                 _typeDefinitionAst.Type = _typeBuilder.AsType();
 
                 _fieldsToInitForMemberFunctions = new List<Tuple<string, object>>();
-                _definedMethods = new Dictionary<string, List<Tuple<FunctionMemberAst,Type[]>>>(StringComparer.OrdinalIgnoreCase);
+                _definedMethods = new Dictionary<string, List<Tuple<FunctionMemberAst, Type[]>>>(StringComparer.OrdinalIgnoreCase);
                 _definedProperties = new Dictionary<string, PropertyMemberAst>(StringComparer.OrdinalIgnoreCase);
 
                 _sessionStateField = _typeBuilder.DefineField(SessionStateFieldName, typeof(SessionStateInternal), FieldAttributes.Private);
-                _sessionStateKeeperField = _staticHelpersTypeBuilder.DefineField(SessionStateKeeperFieldName, typeof(SessionStateKeeper), FieldAttributes.Assembly | FieldAttributes.Static);
+                _sessionStateKeeperField = _staticHelpersTypeBuilder.DefineField(s_sessionStateKeeperFieldName, typeof(SessionStateKeeper), FieldAttributes.Assembly | FieldAttributes.Static);
             }
 
             /// <summary>
@@ -382,7 +382,6 @@ namespace System.Management.Automation.Language
                             }
                             else
                             {
-
                                 if (interfaceType.GetTypeInfo().IsInterface)
                                 {
                                     interfaces.Add(interfaceType);
@@ -435,7 +434,7 @@ namespace System.Management.Automation.Language
                     else
                     {
                         FunctionMemberAst method = member as FunctionMemberAst;
-                        Diagnostics.Assert(method != null, StringUtil.Format("Unexpected subtype of MemberAst '{0}'. Expect `{1}`", 
+                        Diagnostics.Assert(method != null, StringUtil.Format("Unexpected subtype of MemberAst '{0}'. Expect `{1}`",
                             member.GetType().Name, typeof(FunctionMemberAst).GetType().Name));
                         if (method.IsConstructor)
                         {
@@ -560,12 +559,12 @@ namespace System.Management.Automation.Language
                             hasValidateAttributes = true;
                             break;
                         }
-                    } 
+                    }
                 }
 
                 // The last argument of DefineProperty is null, because the property has no parameters. 
                 PropertyBuilder property = _typeBuilder.DefineProperty(propertyMemberAst.Name, Reflection.PropertyAttributes.None, type, null);
-                
+
                 // Define the "get" accessor method.
                 MethodBuilder getMethod = _typeBuilder.DefineMethod(String.Concat("get_", propertyMemberAst.Name), getSetAttributes, type, Type.EmptyTypes);
                 ILGenerator getIlGen = getMethod.GetILGenerator();
@@ -581,7 +580,7 @@ namespace System.Management.Automation.Language
                     getIlGen.Emit(OpCodes.Ldarg_0);
                     getIlGen.Emit(OpCodes.Ldfld, backingField);
                     getIlGen.Emit(OpCodes.Ret);
-                } 
+                }
 
                 // Define the "set" accessor method.
                 MethodBuilder setMethod = _typeBuilder.DefineMethod(String.Concat("set_", propertyMemberAst.Name), getSetAttributes, null, new Type[] { type });
@@ -600,7 +599,7 @@ namespace System.Management.Automation.Language
                     }
                     setIlGen.Emit(OpCodes.Call, CachedReflectionInfo.ClassOps_ValidateSetProperty);
                 }
-                
+
                 if (propertyMemberAst.IsStatic)
                 {
                     setIlGen.Emit(OpCodes.Ldarg_0);
@@ -621,7 +620,7 @@ namespace System.Management.Automation.Language
 
                 if (propertyMemberAst.IsHidden)
                 {
-                    property.SetCustomAttribute(hiddenCustomAttributeBuilder);
+                    property.SetCustomAttribute(s_hiddenCustomAttributeBuilder);
                 }
 
                 return property;
@@ -678,7 +677,7 @@ namespace System.Management.Automation.Language
 
             private Type[] GetParameterTypes(FunctionMemberAst functionMemberAst)
             {
-                var parameters = ((IParameterMetadataProvider) functionMemberAst).Parameters;
+                var parameters = ((IParameterMetadataProvider)functionMemberAst).Parameters;
                 if (parameters == null)
                 {
                     return PSTypeExtensions.EmptyTypes;
@@ -777,7 +776,7 @@ namespace System.Management.Automation.Language
                 DefineCustomAttributes(method, functionMemberAst.Attributes, _parser, AttributeTargets.Method);
                 if (functionMemberAst.IsHidden)
                 {
-                    method.SetCustomAttribute(hiddenCustomAttributeBuilder);
+                    method.SetCustomAttribute(s_hiddenCustomAttributeBuilder);
                 }
                 var ilGenerator = method.GetILGenerator();
                 DefineMethodBody(functionMemberAst, ilGenerator, GetMetaDataName(method.Name, parameterTypes.Count()), functionMemberAst.IsStatic, parameterTypes, returnType,
@@ -793,7 +792,7 @@ namespace System.Management.Automation.Language
                 DefineCustomAttributes(ctor, attributeAsts, _parser, AttributeTargets.Constructor);
                 if (isHidden)
                 {
-                    ctor.SetCustomAttribute(hiddenCustomAttributeBuilder);
+                    ctor.SetCustomAttribute(s_hiddenCustomAttributeBuilder);
                 }
                 var ilGenerator = ctor.GetILGenerator();
 
@@ -803,7 +802,7 @@ namespace System.Management.Automation.Language
 
                     ilGenerator.Emit(OpCodes.Ldnull);
                     ilGenerator.Emit(OpCodes.Ldfld, _sessionStateKeeperField);
-                    ilGenerator.EmitCall(OpCodes.Call, SessionStateKeeper_GetSessionState, null); // load 'sessionState' on stack for Stfld call
+                    ilGenerator.EmitCall(OpCodes.Call, s_sessionStateKeeper_GetSessionState, null); // load 'sessionState' on stack for Stfld call
 
                     ilGenerator.Emit(OpCodes.Stfld, _sessionStateField);
                 }
@@ -814,7 +813,7 @@ namespace System.Management.Automation.Language
 
             private string GetMetaDataName(string name, int numberOfParameters)
             {
-                int currentId = Interlocked.Increment(ref globalCounter);
+                int currentId = Interlocked.Increment(ref s_globalCounter);
                 string metaDataName = name + "_" + numberOfParameters + "_" + currentId;
                 return metaDataName;
             }
@@ -850,10 +849,10 @@ namespace System.Management.Automation.Language
                 if (parameterCount > 0)
                 {
                     var parameters = ipmp.Parameters;
-                    var local = ilGenerator.DeclareLocal(typeof (object[]));
+                    var local = ilGenerator.DeclareLocal(typeof(object[]));
 
                     EmitLdc(ilGenerator, parameterCount);               // Create an array to hold all
-                    ilGenerator.Emit(OpCodes.Newarr, typeof (object));  //     of the parameters
+                    ilGenerator.Emit(OpCodes.Newarr, typeof(object));  //     of the parameters
                     ilGenerator.Emit(OpCodes.Stloc, local);             // Save array for repeated use
                     int j = isStatic ? 0 : 1;
                     for (int i = 0; i < parameterCount; i++, j++)
@@ -896,7 +895,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        class DefineEnumHelper
+        private class DefineEnumHelper
         {
             private readonly Parser _parser;
             private readonly TypeDefinitionAst _enumDefinitionAst;
@@ -950,7 +949,7 @@ namespace System.Management.Automation.Language
                 // There won't be many nodes in our graph, so we just use a dictionary with a list of edges instead
                 // of something cleaner.
                 var graph = new Dictionary<TypeDefinitionAst, Tuple<DefineEnumHelper, List<TypeDefinitionAst>>>();
-                
+
                 // Add all of our nodes to the graph
                 foreach (var helper in defineEnumHelpers)
                 {
@@ -1072,7 +1071,6 @@ namespace System.Management.Automation.Language
                                         _parser.ReportError(enumerator.InitialValue.Extent, () => ParserStrings.CannotConvertValue,
                                             ToStringCodeMethods.Type(typeof(int)));
                                     }
-                                    
                                 }
                             }
                         }
@@ -1111,7 +1109,7 @@ namespace System.Management.Automation.Language
 
         private static IEnumerable<CustomAttributeBuilder> GetAssemblyAttributeBuilders()
         {
-            yield return new CustomAttributeBuilder(typeof(DynamicClassImplementationAssemblyAttribute).GetConstructor(Type.EmptyTypes), emptyArgArray);
+            yield return new CustomAttributeBuilder(typeof(DynamicClassImplementationAssemblyAttribute).GetConstructor(Type.EmptyTypes), s_emptyArgArray);
         }
 
         internal static Assembly DefineTypes(Parser parser, Ast rootAst, TypeDefinitionAst[] typeDefinitions)
@@ -1119,7 +1117,7 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(rootAst.Parent == null, "Caller should only define types from the root ast");
 
             var definedTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            
+
             // First character is a special mark that allows us to cheaply ignore dynamic generated assemblies in ClrFacede.GetAssemblies()
             // Two replaces at the end are for not-allowed characters. They are replaced by similar-looking chars.
             string assemblyName = ClrFacade.FIRST_CHAR_PSASSEMBLY_MARK + (string.IsNullOrWhiteSpace(rootAst.Extent.File)
@@ -1128,7 +1126,7 @@ namespace System.Management.Automation.Language
                                       .Replace('\\', (char)0x29f9)
                                       .Replace('/', (char)0x29f9)
                                       .Replace(':', (char)0x0589));
-                                      
+
             var assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName),
                                                                  AssemblyBuilderAccess.RunAndCollect, GetAssemblyAttributeBuilders());
             var module = assembly.DefineDynamicModule(assemblyName);
@@ -1187,7 +1185,7 @@ namespace System.Management.Automation.Language
                             }
                         }
 
-                        helperType.GetField(SessionStateKeeperFieldName, BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, new SessionStateKeeper());
+                        helperType.GetField(s_sessionStateKeeperFieldName, BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, new SessionStateKeeper());
                     }
                     catch (TypeLoadException e)
                     {
@@ -1198,8 +1196,6 @@ namespace System.Management.Automation.Language
                         // Error checking should be moved/added to semantic checks.
                         parser.ReportError(helper._typeDefinitionAst.Extent, () => ParserStrings.TypeCreationError,
                             helper._typeBuilder.Name, e.Message);
-
-                        
                     }
                 }
 
@@ -1212,7 +1208,7 @@ namespace System.Management.Automation.Language
 
             return assembly;
         }
-        
+
         private static string GetClassNameInAssembly(TypeDefinitionAst typeDefinitionAst)
         {
             // Only allocate a list if necessary - in the most common case, we don't need it.
@@ -1247,7 +1243,7 @@ namespace System.Management.Automation.Language
             return string.Join(".", nameParts);
         }
 
-        private static OpCode[] _ldc =
+        private static OpCode[] s_ldc =
         {
             OpCodes.Ldc_I4_0, OpCodes.Ldc_I4_1, OpCodes.Ldc_I4_2, OpCodes.Ldc_I4_3, OpCodes.Ldc_I4_4,
             OpCodes.Ldc_I4_5, OpCodes.Ldc_I4_6, OpCodes.Ldc_I4_7, OpCodes.Ldc_I4_8
@@ -1255,9 +1251,9 @@ namespace System.Management.Automation.Language
 
         private static void EmitLdc(ILGenerator emitter, int c)
         {
-            if (c < _ldc.Length)
+            if (c < s_ldc.Length)
             {
-                emitter.Emit(_ldc[c]);
+                emitter.Emit(s_ldc[c]);
             }
             else
             {
@@ -1265,16 +1261,16 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private static OpCode[] _ldarg =
+        private static OpCode[] s_ldarg =
         {
             OpCodes.Ldarg_0, OpCodes.Ldarg_1, OpCodes.Ldarg_2, OpCodes.Ldarg_3
         };
 
         private static void EmitLdarg(ILGenerator emitter, int c)
         {
-            if (c < _ldarg.Length)
+            if (c < s_ldarg.Length)
             {
-                emitter.Emit(_ldarg[c]);
+                emitter.Emit(s_ldarg[c]);
             }
             else
             {

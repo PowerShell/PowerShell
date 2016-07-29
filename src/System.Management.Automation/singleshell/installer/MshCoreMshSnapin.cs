@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell
             get
             {
                 return "This PSSnapIn contains MSH management cmdlets used to manage components affecting the MSH engine.";
-            }   
+            }
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private string[] _types = new string[] {"types.ps1xml"};
+        private string[] _types = new string[] { "types.ps1xml" };
 
         /// <summary>
         /// Get type files to be used for this mshsnapin.
@@ -104,8 +104,8 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private string[] _formats = new string[] { 
-                                                    "Certificate.format.ps1xml", 
+        private string[] _formats = new string[] {
+                                                    "Certificate.format.ps1xml",
                                                     "DotNetTypes.format.ps1xml",
                                                     "FileSystem.format.ps1xml",
                                                     "Help.format.ps1xml",

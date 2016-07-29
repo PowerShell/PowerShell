@@ -15,15 +15,18 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
-namespace System.Management.Automation.ComInterop {
-    internal class ErrorArgBuilder : SimpleArgBuilder {
+namespace System.Management.Automation.ComInterop
+{
+    internal class ErrorArgBuilder : SimpleArgBuilder
+    {
         internal ErrorArgBuilder(Type parameterType)
-            : base(parameterType) {
-
+            : base(parameterType)
+        {
             Debug.Assert(parameterType == typeof(ErrorWrapper));
         }
 
-        internal override Expression Marshal(Expression parameter) {
+        internal override Expression Marshal(Expression parameter)
+        {
             // parameter.ErrorCode
             return Expression.Property(
                 Helpers.Convert(base.Marshal(parameter), typeof(ErrorWrapper)),
@@ -31,7 +34,8 @@ namespace System.Management.Automation.ComInterop {
             );
         }
 
-        internal override Expression UnmarshalFromRef(Expression value) {
+        internal override Expression UnmarshalFromRef(Expression value)
+        {
             // new ErrorWrapper(value)
             return base.UnmarshalFromRef(
                 Expression.New(

@@ -14,6 +14,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using Microsoft.PowerShell.Commands.Internal.Format;
+
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -34,71 +35,71 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return inputObject;
+                return _inputObject;
             }
             set
             {
-                inputObject = value;
+                _inputObject = value;
             }
         }
-        private PSObject inputObject;
+        private PSObject _inputObject;
 
         /// <summary>
         /// The list of properties to display
         /// These take the form of an MshExpression
         /// </summary>
         /// <value></value>
-        [Parameter (Position = 0)]
+        [Parameter(Position = 0)]
         public object[] Property
         {
             get
             {
-                return property;
+                return _property;
             }
             set
             {
-                property = value;
+                _property = value;
             }
         }
-        private object[] property;
+        private object[] _property;
 
         /// <summary>
         /// Text to go after the opening body tag
         /// and before the table
         /// </summary>
         /// <value></value>
-        [Parameter(ParameterSetName = "Page",Position = 3)]
+        [Parameter(ParameterSetName = "Page", Position = 3)]
         public string[] Body
         {
             get
             {
-                return body;
+                return _body;
             }
             set
             {
-                body = value;
+                _body = value;
             }
         }
-        private string[] body;
+        private string[] _body;
 
         /// <summary>
         /// Text to go into the head section
         /// of the html doc
         /// </summary>
         /// <value></value>
-        [Parameter(ParameterSetName = "Page",Position = 1)]
+        [Parameter(ParameterSetName = "Page", Position = 1)]
         public string[] Head
         {
             get
             {
-                return head;
+                return _head;
             }
             set
             {
-                head = value;
+                _head = value;
             }
         }
-        private string[] head;
+        private string[] _head;
 
         /// <summary>
         /// The string for the title tag
@@ -114,14 +115,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return title;
+                return _title;
             }
             set
             {
-                title = value;
+                _title = value;
             }
         }
-        private string title = "HTML TABLE";
+        private string _title = "HTML TABLE";
 
         /// <summary>
         /// This specifies whether the objects should
@@ -131,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        [ValidateSet("Table","List")]
+        [ValidateSet("Table", "List")]
         public string As
         {
             get
@@ -151,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
         /// The html should reference the css file specified
         /// </summary>
         [Parameter(ParameterSetName = "Page")]
-        [Alias("cu","uri")]
+        [Alias("cu", "uri")]
         [ValidateNotNullOrEmpty]
         public Uri CssUri
         {
@@ -162,11 +163,11 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _cssuri = value;
-                cssuriSpecified = true;
+                _cssuriSpecified = true;
             }
         }
         private Uri _cssuri;
-        private bool cssuriSpecified;
+        private bool _cssuriSpecified;
 
         /// <summary>
         /// When this switch is specified generate only the
@@ -264,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
                 new ParameterProcessor(new ConvertHTMLExpressionParameterDefinition());
             if (properties == null)
             {
-                properties = new object[]{"*"};
+                properties = new object[] { "*" };
             }
             return processor.ProcessParameters(properties, invocationContext);
         }
@@ -277,13 +278,13 @@ namespace Microsoft.PowerShell.Commands
             // temp list of properties with wildcards resolved
             ArrayList resolvedNameProperty = new ArrayList();
 
-            foreach (MshParameter p in this.propertyMshParameterList)
+            foreach (MshParameter p in _propertyMshParameterList)
             {
                 string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
                 string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
                 string width = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
                 MshExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
-                List<MshExpression> resolvedNames = ex.ResolveNames(inputObject);
+                List<MshExpression> resolvedNames = ex.ResolveNames(_inputObject);
                 if (resolvedNames.Count == 1)
                 {
                     Hashtable ht = CreateAuxPropertyHT(label, alignment, width);
@@ -303,7 +304,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            resolvedNameMshParameters = ProcessParameter(resolvedNameProperty.ToArray());
+            _resolvedNameMshParameters = ProcessParameter(resolvedNameProperty.ToArray());
         }
 
         private static Hashtable CreateAuxPropertyHT(
@@ -349,7 +350,7 @@ namespace Microsoft.PowerShell.Commands
             }
             return "";
         }
-             
+
 
         /// <summary>
         /// 
@@ -357,18 +358,18 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             //ValidateNotNullOrEmpty attribute is not working for System.Uri datatype, so handling it here
-            if ((cssuriSpecified) && (string.IsNullOrEmpty(_cssuri.OriginalString.Trim())))
+            if ((_cssuriSpecified) && (string.IsNullOrEmpty(_cssuri.OriginalString.Trim())))
             {
                 ArgumentException ex = new ArgumentException(StringUtil.Format(UtilityCommonStrings.EmptyCSSUri, "CSSUri"));
                 ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, "CSSUri");
                 ThrowTerminatingError(er);
             }
 
-            propertyMshParameterList = ProcessParameter(property);
+            _propertyMshParameterList = ProcessParameter(_property);
 
-            if (!String.IsNullOrEmpty(title))
+            if (!String.IsNullOrEmpty(_title))
             {
-                WebUtility.HtmlEncode(title);
+                WebUtility.HtmlEncode(_title);
             }
 
 
@@ -381,15 +382,15 @@ namespace Microsoft.PowerShell.Commands
                 WriteObject("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
                 WriteObject("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
                 WriteObject("<head>");
-                WriteObject(head ?? new string[] { "<title>" + title + "</title>" }, true);
-                if (cssuriSpecified)
+                WriteObject(_head ?? new string[] { "<title>" + _title + "</title>" }, true);
+                if (_cssuriSpecified)
                 {
                     WriteObject("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + _cssuri + "\" />");
                 }
                 WriteObject("</head><body>");
-                if (body != null)
+                if (_body != null)
                 {
-                    WriteObject(body, true);
+                    WriteObject(_body, true);
                 }
             }
             if (_preContent != null)
@@ -397,8 +398,8 @@ namespace Microsoft.PowerShell.Commands
                 WriteObject(_preContent, true);
             }
             WriteObject("<table>");
-            isTHWritten = false;
-            propertyCollector = new StringCollection();
+            _isTHWritten = false;
+            _propertyCollector = new StringCollection();
         }
 
         /// <summary>
@@ -441,7 +442,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WriteListEntry()
         {
-            foreach (MshParameter p in resolvedNameMshParameters)
+            foreach (MshParameter p in _resolvedNameMshParameters)
             {
                 StringBuilder Listtag = new StringBuilder();
                 Listtag.Append("<tr><td>");
@@ -463,7 +464,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// To write the Property name
         /// </summary>
-        private void WritePropertyName(StringBuilder Listtag,MshParameter p)
+        private void WritePropertyName(StringBuilder Listtag, MshParameter p)
         {
             //for writing the property name
             string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
@@ -481,12 +482,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// To write the Property value
         /// </summary>
-        private void WritePropertyValue(StringBuilder Listtag,MshParameter p)
+        private void WritePropertyValue(StringBuilder Listtag, MshParameter p)
         {
             MshExpression exValue = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
 
             // get the value of the property
-            List<MshExpressionResult> resultList = exValue.GetValues(inputObject);
+            List<MshExpressionResult> resultList = exValue.GetValues(_inputObject);
             foreach (MshExpressionResult result in resultList)
             {
                 // create comma sep list for multiple results
@@ -532,8 +533,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         //count of the objects
-        int numberObjects = 0;
-      
+        private int _numberObjects = 0;
+
         /// <summary>
         /// 
         /// 
@@ -543,39 +544,39 @@ namespace Microsoft.PowerShell.Commands
             // writes the table headers
             // it is not in BeginProcessing because the first inputObject is needed for
             // the number of columns and column name
-            if (inputObject == null || inputObject == AutomationNull.Value)
+            if (_inputObject == null || _inputObject == AutomationNull.Value)
             {
                 return;
             }
-            numberObjects++;
-            if (!isTHWritten)
+            _numberObjects++;
+            if (!_isTHWritten)
             {
                 InitializeResolvedNameMshParameters();
-                if (resolvedNameMshParameters == null || resolvedNameMshParameters.Count == 0)
+                if (_resolvedNameMshParameters == null || _resolvedNameMshParameters.Count == 0)
                 {
                     return;
                 }
-                
+
                 //if the As parameter is given as List
                 if (_as.Equals("List", StringComparison.OrdinalIgnoreCase))
                 {
                     //if more than one object,write the horizontal rule to put visual separator
-                    if (numberObjects > 1)
+                    if (_numberObjects > 1)
                         WriteObject("<tr><td><hr></td></tr>");
                     WriteListEntry();
                 }
                 else //if the As parameter is Table, first we have to write the property names
                 {
-                    WriteColumns(resolvedNameMshParameters);
+                    WriteColumns(_resolvedNameMshParameters);
 
                     StringBuilder THtag = new StringBuilder("<tr>");
 
                     //write the table header
-                    WriteTableHeader(THtag, resolvedNameMshParameters);
+                    WriteTableHeader(THtag, _resolvedNameMshParameters);
 
                     THtag.Append("</tr>");
                     WriteObject(THtag.ToString());
-                    isTHWritten = true;
+                    _isTHWritten = true;
                 }
             }
             //if the As parameter is Table, write the property values
@@ -584,7 +585,7 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder TRtag = new StringBuilder("<tr>");
 
                 //write the table row
-                WriteTableRow(TRtag, resolvedNameMshParameters);
+                WriteTableRow(TRtag, _resolvedNameMshParameters);
 
                 TRtag.Append("</tr>");
                 WriteObject(TRtag.ToString());
@@ -613,10 +614,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// list of incoming objects to compare
         /// </summary>
-        private bool isTHWritten;
-        private StringCollection propertyCollector;
-        private List<MshParameter> propertyMshParameterList;
-        private List<MshParameter> resolvedNameMshParameters;
+        private bool _isTHWritten;
+        private StringCollection _propertyCollector;
+        private List<MshParameter> _propertyMshParameterList;
+        private List<MshParameter> _resolvedNameMshParameters;
         //private string ResourcesBaseName = "ConvertHTMLStrings";
 
         #endregion private

@@ -28,12 +28,12 @@ namespace Microsoft.PowerShell.Commands
         /// 
         /// Starts the transcription
         /// </summary>
-        
+
         protected override
         void
         BeginProcessing()
         {
-            try 
+            try
             {
                 string outFilename = Host.UI.StopTranscribing();
                 if (outFilename != null)

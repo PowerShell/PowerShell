@@ -11,9 +11,9 @@ using System.Diagnostics.CodeAnalysis;
 //
 // Now define the set of commands for manipulating modules.
 //
+
 namespace Microsoft.PowerShell.Commands
 {
-
     #region Export-ModuleMember
     /// <summary>
     /// Implements a cmdlet that loads a module
@@ -147,8 +147,6 @@ namespace Microsoft.PowerShell.Commands
                 this.Context.EngineSessionState,
                 _functionPatterns, _cmdletPatterns, _aliasPatterns, _variablePatterns, null);
         }
-
     }
     #endregion Export-ModuleMember
- 
 } // Microsoft.PowerShell.Commands

@@ -734,7 +734,6 @@ namespace Microsoft.PowerShell.Commands
 
             string body = FormatDictionary(content);
             return (SetRequestContent(request, body));
-
         }
 
         #endregion Helper Methods

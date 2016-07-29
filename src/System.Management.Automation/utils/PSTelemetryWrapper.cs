@@ -12,8 +12,8 @@ namespace System.Management.Automation.Internal
     /// </summary>    
     internal static class TelemetryWrapper
     {
-        private static readonly PSObject eventSourceInstance;
-        private static readonly object eventSourceOptionsForWrite;
+        private static readonly PSObject s_eventSourceInstance;
+        private static readonly object s_eventSourceOptionsForWrite;
 
         /// <summary>    
         /// Performing EventSource initialization in the Static Constructor since this is thread safe.
@@ -52,7 +52,7 @@ namespace System.Management.Automation.Internal
                                   new[] { "ETW_GROUP", "{4f50731a-89cf-4782-b3e0-dce8c90476ba}" }});
 
                 // Wrap in PSObject so we can invoke a method dynamically using our binder (the C# dynamic binder fails for some reason.)
-                eventSourceInstance = new PSObject(eventSource);
+                s_eventSourceInstance = new PSObject(eventSource);
 
                 // Initialize EventSourceOptions for Writing informational messages
                 // WdiContext will ensure Universal Telemetry Client [UTC] will upload telemetry messages to Cosmos/xPert pipeline
@@ -64,23 +64,23 @@ namespace System.Management.Automation.Internal
 
                 // Create Instance of EventSourceOptions struct
                 Type eventSourceOptionsType = diagnosticsTracingAssembly.GetType("System.Diagnostics.Tracing.EventSourceOptions");
-                eventSourceOptionsForWrite = Activator.CreateInstance(eventSourceOptionsType, null);
+                s_eventSourceOptionsForWrite = Activator.CreateInstance(eventSourceOptionsType, null);
 
                 // Set the Level and Keywords properties
-                eventSourceOptionsType.GetProperty("Level").SetValue(eventSourceOptionsForWrite, EventLevel.Informational, null);
-                eventSourceOptionsType.GetProperty("Keywords").SetValue(eventSourceOptionsForWrite, measuresKeyword, null);
+                eventSourceOptionsType.GetProperty("Level").SetValue(s_eventSourceOptionsForWrite, EventLevel.Informational, null);
+                eventSourceOptionsType.GetProperty("Keywords").SetValue(s_eventSourceOptionsForWrite, measuresKeyword, null);
             }
             catch
             {
                 // If there are any exceptions, just disable tracing completely by making sure these are both null
-                eventSourceInstance = null;
-                eventSourceOptionsForWrite = null;
+                s_eventSourceInstance = null;
+                s_eventSourceOptionsForWrite = null;
             }
         }
 
         internal static bool IsEnabled
         {
-            get { return eventSourceInstance != null && ((EventSource) eventSourceInstance.BaseObject).IsEnabled(); }
+            get { return s_eventSourceInstance != null && ((EventSource)s_eventSourceInstance.BaseObject).IsEnabled(); }
         }
 
         /// <summary>    
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Internal
 
         public static void TraceMessage<T>(string message, T arguments)
         {
-            if (null != eventSourceOptionsForWrite)
+            if (null != s_eventSourceOptionsForWrite)
             {
                 try
                 {
@@ -134,9 +134,9 @@ namespace System.Management.Automation.Internal
                     // method on each call).
                     // We use a PSObject wrapper to force calling the PowerShell binder because the C# binder fails
                     // for an unknown reason.
-                    
+
                     // The ETW provider GUID for events written here is: 5037b0a0-3a31-5cd2-ff19-103e9f160a74
-                    ((dynamic)eventSourceInstance).Write(message, eventSourceOptionsForWrite, arguments);
+                    ((dynamic)s_eventSourceInstance).Write(message, s_eventSourceOptionsForWrite, arguments);
                 }
                 catch
                 {

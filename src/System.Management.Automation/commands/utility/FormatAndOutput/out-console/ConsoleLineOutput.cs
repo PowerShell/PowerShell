@@ -19,9 +19,9 @@ using System.Management.Automation.Host;
 using Dbg = System.Management.Automation.Diagnostics;
 
 // interfaces for host interaction
+
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
-
 #if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
 
     /// <summary>
@@ -150,8 +150,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class ConsoleLineOutput : LineOutput
     {
         #region tracer
-        [TraceSource ("ConsoleLineOutput", "ConsoleLineOutput")]
-        internal static PSTraceSource tracer = PSTraceSource.GetTracer ("ConsoleLineOutput", "ConsoleLineOutput");
+        [TraceSource("ConsoleLineOutput", "ConsoleLineOutput")]
+        internal static PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleLineOutput", "ConsoleLineOutput");
         #endregion tracer
 
         #region LineOutput implementation
@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             get
             {
                 CheckStopProcessing();
-                PSHostRawUserInterface raw = this.console.RawUI;
+                PSHostRawUserInterface raw = _console.RawUI;
 
                 // IMPORTANT NOTE: we subtract one because
                 // we want to make sure the console's last column
@@ -175,14 +175,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 try
                 {
-                    return forceNewLine ? raw.BufferSize.Width - 1 : raw.BufferSize.Width;
+                    return _forceNewLine ? raw.BufferSize.Width - 1 : raw.BufferSize.Width;
                 }
                 catch (HostException)
                 {
                     //thrown when external host rawui is not implemented, in which case
                     //we will fallback to the default value.
                 }
-                return forceNewLine ? this.fallbackRawConsoleColumnNumber - 1 : this.fallbackRawConsoleColumnNumber;
+                return _forceNewLine ? _fallbackRawConsoleColumnNumber - 1 : _fallbackRawConsoleColumnNumber;
             }
         }
 
@@ -196,7 +196,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             get
             {
                 CheckStopProcessing();
-                PSHostRawUserInterface raw = this.console.RawUI;
+                PSHostRawUserInterface raw = _console.RawUI;
 
                 try
                 {
@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     //thrown when external host rawui is not implemented, in which case
                     //we will fallback to the default value.
                 }
-                return this.fallbackRawConsoleRowNumber;
+                return _fallbackRawConsoleRowNumber;
             }
         }
 
@@ -215,13 +215,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// write a line to the output device
         /// </summary>
         /// <param name="s">line to write</param>
-        internal override void WriteLine (string s)
+        internal override void WriteLine(string s)
         {
             CheckStopProcessing();
             // delegate the action to the helper,
             // that will properly break the string into
             // screen lines
-            this.writeLineHelper.WriteLine (s, this.ColumnNumber);
+            _writeLineHelper.WriteLine(s, this.ColumnNumber);
         }
 
         internal override DisplayCells DisplayCells
@@ -245,15 +245,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="hostConsole">PSHostUserInterface to wrap</param>
         /// <param name="paging">true if we require prompting for page breaks</param>
         /// <param name="errorContext">error context to throw exceptions</param>
-        internal ConsoleLineOutput (PSHostUserInterface hostConsole, bool paging, TerminatingErrorContext errorContext)
+        internal ConsoleLineOutput(PSHostUserInterface hostConsole, bool paging, TerminatingErrorContext errorContext)
         {
             if (hostConsole == null)
-                throw PSTraceSource.NewArgumentNullException ("hostConsole");
+                throw PSTraceSource.NewArgumentNullException("hostConsole");
             if (errorContext == null)
-                throw PSTraceSource.NewArgumentNullException ("errorContext");
+                throw PSTraceSource.NewArgumentNullException("errorContext");
 
-            this.console = hostConsole;
-            this.errorContext = errorContext;
+            _console = hostConsole;
+            _errorContext = errorContext;
 
             if (paging)
             {
@@ -261,11 +261,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // if we need to do paging, instantiate a prompt handler
                 // that will take care of the screen interaction
                 string promptString = StringUtil.Format(FormatAndOut_out_xxx.ConsoleLineOutput_PagingPrompt);
-                this.prompt = new PromptHandler (promptString, this);
+                _prompt = new PromptHandler(promptString, this);
             }
 
 
-            PSHostRawUserInterface raw = this.console.RawUI;
+            PSHostRawUserInterface raw = _console.RawUI;
             if (raw != null)
             {
                 tracer.WriteLine("there is a valid raw interface");
@@ -274,21 +274,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 this._displayCellsPSHost = new DisplayCellsTest();
 #else
                 // set only if we have a valid raw interface
-                this._displayCellsPSHost = new DisplayCellsPSHost(raw);
+                _displayCellsPSHost = new DisplayCellsPSHost(raw);
 #endif
             }
 
             // instantiate the helper to do the line processing when ILineOutput.WriteXXX() is called
-            WriteLineHelper.WriteCallback wl = new WriteLineHelper.WriteCallback (this.OnWriteLine);
-            WriteLineHelper.WriteCallback w = new WriteLineHelper.WriteCallback (this.OnWrite);
+            WriteLineHelper.WriteCallback wl = new WriteLineHelper.WriteCallback(this.OnWriteLine);
+            WriteLineHelper.WriteCallback w = new WriteLineHelper.WriteCallback(this.OnWrite);
 
-            if (forceNewLine)
+            if (_forceNewLine)
             {
-                this.writeLineHelper = new WriteLineHelper (/*lineWrap*/false, wl, null, this.DisplayCells);
+                _writeLineHelper = new WriteLineHelper(/*lineWrap*/false, wl, null, this.DisplayCells);
             }
             else
             {
-                this.writeLineHelper = new WriteLineHelper(/*lineWrap*/false, wl, w, this.DisplayCells);
+                _writeLineHelper = new WriteLineHelper(/*lineWrap*/false, wl, w, this.DisplayCells);
             }
         }
 
@@ -296,45 +296,45 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// callback to be called when ILineOutput.WriteLine() is called by WriteLineHelper 
         /// </summary>
         /// <param name="s">string to write</param>
-        private void OnWriteLine (string s)
+        private void OnWriteLine(string s)
         {
 #if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
             s = ((DisplayCellsTest)this._displayCellsPSHost).GenerateTestString(s);
 #endif
             // Do any default transcription.
-            this.console.TranscribeResult(s);
+            _console.TranscribeResult(s);
 
             switch (this.WriteStream)
             {
                 case WriteStreamType.Error:
-                    this.console.WriteErrorLine(s);
+                    _console.WriteErrorLine(s);
                     break;
 
                 case WriteStreamType.Warning:
-                    this.console.WriteWarningLine(s);
+                    _console.WriteWarningLine(s);
                     break;
 
                 case WriteStreamType.Verbose:
-                    this.console.WriteVerboseLine(s);
+                    _console.WriteVerboseLine(s);
                     break;
 
                 case WriteStreamType.Debug:
-                    this.console.WriteDebugLine(s);
+                    _console.WriteDebugLine(s);
                     break;
 
                 default:
                     // If the host is in "transcribe only"
                     // mode (due to an implicitly added call to Out-Default -Transcribe),
                     // then don't call the actual host API.
-                    if (! console.TranscribeOnly)
+                    if (!_console.TranscribeOnly)
                     {
-                        this.console.WriteLine(s);
+                        _console.WriteLine(s);
                     }
-                    
+
                     break;
             }
 
-            LineWrittenEvent ();
+            LineWrittenEvent();
         }
 
         /// <summary>
@@ -343,7 +343,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// is the same as the width of the screen buffer
         /// </summary>
         /// <param name="s">string to write</param>
-        private void OnWrite (string s)
+        private void OnWrite(string s)
         {
 #if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
             s = ((DisplayCellsTest)this._displayCellsPSHost).GenerateTestString(s);
@@ -351,66 +351,66 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             switch (this.WriteStream)
             {
                 case WriteStreamType.Error:
-                    this.console.WriteErrorLine(s);
+                    _console.WriteErrorLine(s);
                     break;
 
                 case WriteStreamType.Warning:
-                    this.console.WriteWarningLine(s);
+                    _console.WriteWarningLine(s);
                     break;
 
                 case WriteStreamType.Verbose:
-                    this.console.WriteVerboseLine(s);
+                    _console.WriteVerboseLine(s);
                     break;
 
                 case WriteStreamType.Debug:
-                    this.console.WriteDebugLine(s);
+                    _console.WriteDebugLine(s);
                     break;
 
                 default:
-                    this.console.Write(s);
+                    _console.Write(s);
                     break;
             }
 
-            LineWrittenEvent ();
+            LineWrittenEvent();
         }
 
         /// <summary>
         /// called when a line was written to console
         /// </summary>
-        private void LineWrittenEvent ()
+        private void LineWrittenEvent()
         {
             // check to avoid reeentrancy from the prompt handler
             // writing during the PropmtUser() call
-            if (this.disableLineWrittenEvent)
+            if (_disableLineWrittenEvent)
                 return;
 
             // if there is no promting, we are done
-            if (this.prompt == null)
+            if (_prompt == null)
                 return;
 
             // increment the count of lines written to the screen
-            this.linesWritten++;
+            _linesWritten++;
 
             // check if we need to put out a prompt
             if (this.NeedToPrompt)
             {
                 // put out the prompt
-                this.disableLineWrittenEvent = true;
-                PromptHandler.PromptResponse response = this.prompt.PromptUser(this.console);
-                this.disableLineWrittenEvent = false;
+                _disableLineWrittenEvent = true;
+                PromptHandler.PromptResponse response = _prompt.PromptUser(_console);
+                _disableLineWrittenEvent = false;
 
                 switch (response)
                 {
                     case PromptHandler.PromptResponse.NextPage:
                         {
                             // reset the counter, since we are starting a new page
-                            this.linesWritten = 0;
+                            _linesWritten = 0;
                         }
                         break;
                     case PromptHandler.PromptResponse.NextLine:
                         {
                             // roll back the counter by one, since we allow one more line
-                            this.linesWritten--;
+                            _linesWritten--;
                         }
                         break;
                     case PromptHandler.PromptResponse.Quit:
@@ -418,8 +418,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         // HaltCommandException will cause the command
                         // to stop, but not be reported as an error.
                         throw new HaltCommandException();
-                   }
-               
+                }
             }
         }
 
@@ -442,7 +441,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 // the prompt will occupy some lines, so we need to subtract them form the total
                 // screen line count
-                int computedPromptLines = this.prompt.ComputePromptLines (this.DisplayCells, this.ColumnNumber);
+                int computedPromptLines = _prompt.ComputePromptLines(this.DisplayCells, this.ColumnNumber);
                 int availableLines = this.RowNumber - computedPromptLines;
 
                 if (availableLines <= 0)
@@ -452,11 +451,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return false;
                 }
 
-                return this.linesWritten >= availableLines;
+                return _linesWritten >= availableLines;
             }
         }
 
-#region Private Members
+        #region Private Members
         /// <summary>
         /// object to manage prompting
         /// </summary>
@@ -472,8 +471,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (string.IsNullOrEmpty(s))
                     throw PSTraceSource.NewArgumentNullException("s");
 
-                promptString = s;
-                callingCmdlet = cmdlet;
+                _promptString = s;
+                _callingCmdlet = cmdlet;
             }
 
             /// <summary>
@@ -485,8 +484,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal int ComputePromptLines(DisplayCells displayCells, int cols)
             {
                 // split the prompt string into lines
-                this.actualPrompt = StringManipulationHelper.GenerateLines(displayCells, this.promptString, cols, cols);
-                return this.actualPrompt.Count;
+                _actualPrompt = StringManipulationHelper.GenerateLines(displayCells, _promptString, cols, cols);
+                return _actualPrompt.Count;
             }
 
             /// <summary>
@@ -509,17 +508,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 // write out the prompt line(s). The last one will not have a new line
                 // at the end because we leave the prompt at the end of the line
-                for (int k = 0; k < this.actualPrompt.Count; k++)
+                for (int k = 0; k < _actualPrompt.Count; k++)
                 {
-                    if (k < (this.actualPrompt.Count - 1))
-                        console.WriteLine(this.actualPrompt[k]); // intermediate line(s)
+                    if (k < (_actualPrompt.Count - 1))
+                        console.WriteLine(_actualPrompt[k]); // intermediate line(s)
                     else
-                        console.Write(this.actualPrompt[k]); // last line
+                        console.Write(_actualPrompt[k]); // last line
                 }
 
                 while (true)
                 {
-                    callingCmdlet.CheckStopProcessing();
+                    _callingCmdlet.CheckStopProcessing();
                     KeyInfo ki = console.RawUI.ReadKey(ReadKeyOptions.IncludeKeyUp | ReadKeyOptions.NoEcho);
                     char key = ki.Character;
                     if (key == 'q' || key == 'Q')
@@ -540,25 +539,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         console.WriteLine();
                         return PromptResponse.NextLine;
                     }
-
                 }
             }
 
             /// <summary>
             /// cached string(s) valid during a sequence of ComputePromptLines()/PromptUser()
             /// </summary>
-            private StringCollection actualPrompt;
+            private StringCollection _actualPrompt;
 
             /// <summary>
             /// prompt string as passed at initialization
             /// </summary>
-            private string promptString;
+            private string _promptString;
 
             /// <summary>
             /// The cmdlet that uses this prompt helper
             /// </summary>
-            private ConsoleLineOutput callingCmdlet = null;
-
+            private ConsoleLineOutput _callingCmdlet = null;
         }
 
         /// <summary>
@@ -566,40 +563,40 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// usable width to N-1 (e.g. 80-1) and forcing a call
         /// to WriteLine()
         /// </summary>
-        private bool forceNewLine = true;
+        private bool _forceNewLine = true;
 
         /// <summary>
         /// use this if IRawConsole is null;
         /// </summary>
-        private int fallbackRawConsoleColumnNumber = 80;
+        private int _fallbackRawConsoleColumnNumber = 80;
 
         /// <summary>
         /// use this if IRawConsole is null;
         /// </summary>
-        private int fallbackRawConsoleRowNumber = 40;
+        private int _fallbackRawConsoleRowNumber = 40;
 
-        private WriteLineHelper writeLineHelper;
+        private WriteLineHelper _writeLineHelper;
 
         /// <summary>
         /// handler to prompt the user for page breaks
         /// if this handler is not null, we have promting
         /// </summary>
-        private PromptHandler prompt = null;
+        private PromptHandler _prompt = null;
 
         /// <summary>
         /// conter for the # of lines written when prompting is on
         /// </summary>
-        private long linesWritten = 0;
+        private long _linesWritten = 0;
 
         /// <summary>
         /// flag to avoid renetrancy on promting
         /// </summary>
-        private bool disableLineWrittenEvent = false;
+        private bool _disableLineWrittenEvent = false;
 
         /// <summary>
         /// refecence to the PSHostUserInterface interface we use
         /// </summary>
-        private PSHostUserInterface console = null;
+        private PSHostUserInterface _console = null;
 
         /// <summary>
         /// Msh host specific string manipulation helper
@@ -609,8 +606,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// reference to error context to throw Msh exceptions
         /// </summary>
-        private TerminatingErrorContext errorContext = null;
+        private TerminatingErrorContext _errorContext = null;
 
-#endregion
+        #endregion
     }
 }

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -61,21 +62,21 @@ namespace System.Management.Automation
         /// The value of this dictionary is never empty. A value of type DummyProvider means 
         /// no logging.
         /// </summary>
-        private static ConcurrentDictionary<string, Collection<LogProvider>> _logProviders =
+        private static ConcurrentDictionary<string, Collection<LogProvider>> s_logProviders =
             new ConcurrentDictionary<string, Collection<LogProvider>>();
 
         private const string _crimsonLogProviderAssemblyName = "MshCrimsonLog";
         private const string _crimsonLogProviderTypeName = "System.Management.Automation.Logging.CrimsonLogProvider";
 
-        private static Collection<string> ignoredCommands = new Collection<string>();
+        private static Collection<string> s_ignoredCommands = new Collection<string>();
 
         /// <summary>
         /// Static constructor
         /// </summary>
         static MshLog()
         {
-            ignoredCommands.Add("Out-Lineoutput");
-            ignoredCommands.Add("Format-Default");
+            s_ignoredCommands.Add("Out-Lineoutput");
+            s_ignoredCommands.Add("Format-Default");
         }
 
         /// <summary>
@@ -91,7 +92,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         static private IEnumerable<LogProvider> GetLogProvider(string shellId)
         {
-            return _logProviders.GetOrAdd(shellId, CreateLogProvider);
+            return s_logProviders.GetOrAdd(shellId, CreateLogProvider);
         }
 
         /// <summary>
@@ -210,13 +211,13 @@ namespace System.Management.Automation
         static internal void SetDummyLog(string shellId)
         {
             Collection<LogProvider> providers = new Collection<LogProvider> { new DummyLogProvider() };
-            _logProviders.AddOrUpdate(shellId, providers, (key, value) => providers);
+            s_logProviders.AddOrUpdate(shellId, providers, (key, value) => providers);
         }
 
         #endregion
 
         #region Engine Health Event Logging Api
-        
+
         /// <summary>
         /// LogEngineHealthEvent: Log an engine health event. If engine state is changed, a engine 
         /// lifecycle event will be logged also.
@@ -232,11 +233,11 @@ namespace System.Management.Automation
         /// <param name="severity">Severity of this event</param>
         /// <param name="additionalInfo">Additional information for this event</param>
         /// <param name="newEngineState">New engine state</param>
-        static internal void LogEngineHealthEvent(ExecutionContext executionContext, 
-                                                int eventId, 
+        static internal void LogEngineHealthEvent(ExecutionContext executionContext,
+                                                int eventId,
                                                 Exception exception,
                                                 Severity severity,
-                                                Dictionary<String, String> additionalInfo, 
+                                                Dictionary<String, String> additionalInfo,
                                                 EngineState newEngineState)
         {
             if (executionContext == null)
@@ -295,7 +296,7 @@ namespace System.Management.Automation
         /// <param name="exception"></param>
         /// <param name="severity"></param>
         static internal void LogEngineHealthEvent(ExecutionContext executionContext,
-                                                Exception exception, 
+                                                Exception exception,
                                                 Severity severity)
         {
             LogEngineHealthEvent(executionContext, 100, exception, severity, null);
@@ -495,7 +496,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            if (ignoredCommands.Contains(invocationInfo.MyCommand.Name))
+            if (s_ignoredCommands.Contains(invocationInfo.MyCommand.Name))
             {
                 return;
             }
@@ -706,7 +707,7 @@ namespace System.Management.Automation
         /// <param name="previousValue">Previous value for the variable</param>
         /// <param name="invocationInfo">Invocation data for the command that is currently running</param>
         static internal void LogSettingsEvent(ExecutionContext executionContext,
-                                            string variableName, 
+                                            string variableName,
                                             string newValue,
                                             string previousValue,
                                             InvocationInfo invocationInfo)
@@ -793,7 +794,7 @@ namespace System.Management.Automation
         /// <param name="invocationInfo"></param>
         /// <param name="severity"></param>
         /// <returns></returns>
-        static LogContext GetLogContext(ExecutionContext executionContext, InvocationInfo invocationInfo, Severity severity)
+        private static LogContext GetLogContext(ExecutionContext executionContext, InvocationInfo invocationInfo, Severity severity)
         {
             if (executionContext == null)
                 return null;
@@ -815,7 +816,7 @@ namespace System.Management.Automation
 
             logContext.HostApplication = String.Join(" ", Environment.GetCommandLineArgs());
 
-            if(executionContext.CurrentRunspace != null)
+            if (executionContext.CurrentRunspace != null)
             {
                 logContext.EngineVersion = executionContext.CurrentRunspace.Version.ToString();
                 logContext.RunspaceId = executionContext.CurrentRunspace.InstanceId.ToString();
@@ -846,9 +847,9 @@ namespace System.Management.Automation
                 logContext.User = Logging.UnknownUserName;
             }
 
-            System.Management.Automation.Remoting.PSSenderInfo psSenderInfo = 
+            System.Management.Automation.Remoting.PSSenderInfo psSenderInfo =
                     executionContext.SessionState.PSVariable.GetValue("PSSenderInfo") as System.Management.Automation.Remoting.PSSenderInfo;
-            if(psSenderInfo != null)
+            if (psSenderInfo != null)
             {
                 logContext.ConnectedUser = psSenderInfo.UserInfo.Identity.Name;
             }
@@ -857,7 +858,7 @@ namespace System.Management.Automation
 
             if (invocationInfo == null)
                 return logContext;
-            
+
             logContext.ScriptName = invocationInfo.ScriptName;
             logContext.CommandLine = invocationInfo.Line;
 
@@ -876,7 +877,7 @@ namespace System.Management.Automation
                         break;
                 }
             }
-           
+
             return logContext;
         }
 
@@ -1045,7 +1046,7 @@ namespace System.Management.Automation
 
         #region Sequence Id Generator
 
-        private static int _nextSequenceNumber = 0;
+        private static int s_nextSequenceNumber = 0;
 
         /// <summary>
         /// generate next sequence id to be attached to current event.
@@ -1055,17 +1056,17 @@ namespace System.Management.Automation
         {
             get
             {
-                return Convert.ToString(Interlocked.Increment(ref _nextSequenceNumber), CultureInfo.CurrentCulture);
+                return Convert.ToString(Interlocked.Increment(ref s_nextSequenceNumber), CultureInfo.CurrentCulture);
             }
         }
 
         #endregion
 
         #region EventId Constants
-        
+
         //General health issues.
         internal const int EVENT_ID_GENERAL_HEALTH_ISSUE = 100;
-        
+
         // Dependency. resource not available
         internal const int EVENT_ID_RESOURCE_NOT_AVAILABLE = 101;
         //Connectivity. network connection failure 
@@ -1075,7 +1076,7 @@ namespace System.Management.Automation
         //Performance. system is experiencing some performance issues
         internal const int EVENT_ID_PERFORMANCE_ISSUE = 104;
         //Security: system is experiencing some security issues
-        internal const int EVENT_ID_SECURITY_ISSUE=105;
+        internal const int EVENT_ID_SECURITY_ISSUE = 105;
         //Workload. system is overloaded.
         internal const int EVENT_ID_SYSTEM_OVERLOADED = 106;
 
@@ -1090,17 +1091,17 @@ namespace System.Management.Automation
     /// </summary>
     internal class LogContextCache
     {
-        private string user = null;
+        private string _user = null;
 
         internal string User
         {
             get
             {
-                return user;
+                return _user;
             }
             set
             {
-                user = value;
+                _user = value;
             }
         }
     }
@@ -1115,7 +1116,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Undefined severity.
         /// </summary>
-        None, 
+        None,
         /// <summary>
         /// Critical event causing engine not to work.
         /// </summary>

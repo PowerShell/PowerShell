@@ -42,7 +42,7 @@ namespace System.Management.Automation
                     HelpCategory.Workflow;
             }
         }
-        
+
         /// <summary>
         /// Gets a command searcher used for ExactMatch help lookup.
         /// </summary>
@@ -52,7 +52,7 @@ namespace System.Management.Automation
         internal override CommandSearcher GetCommandSearcherForExactMatch(string commandName, ExecutionContext context)
         {
             CommandSearcher searcher = new CommandSearcher(
-                commandName, 
+                commandName,
                 SearchResolutionOptions.None,
                 CommandTypes.Filter | CommandTypes.Function | CommandTypes.ExternalScript | CommandTypes.Configuration,
                 context);

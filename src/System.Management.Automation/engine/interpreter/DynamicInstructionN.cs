@@ -19,15 +19,18 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 
-namespace System.Management.Automation.Interpreter {
-    internal sealed partial class DynamicInstructionN : Instruction {
+namespace System.Management.Automation.Interpreter
+{
+    internal sealed partial class DynamicInstructionN : Instruction
+    {
         private readonly CallInstruction _target;
         private readonly object _targetDelegate;
         private readonly CallSite _site;
         private readonly int _argumentCount;
         private readonly bool _isVoid;
 
-        public DynamicInstructionN(Type delegateType, CallSite site) {
+        public DynamicInstructionN(Type delegateType, CallSite site)
+        {
             var methodInfo = delegateType.GetMethod("Invoke");
             var parameters = methodInfo.GetParameters();
 
@@ -38,25 +41,31 @@ namespace System.Management.Automation.Interpreter {
         }
 
         public DynamicInstructionN(Type delegateType, CallSite site, bool isVoid)
-            : this(delegateType, site) {
+            : this(delegateType, site)
+        {
             _isVoid = isVoid;
         }
 
         public override int ProducedStack { get { return _isVoid ? 0 : 1; } }
         public override int ConsumedStack { get { return _argumentCount; } }
 
-        public override int Run(InterpretedFrame frame) {
+        public override int Run(InterpretedFrame frame)
+        {
             int first = frame.StackIndex - _argumentCount;
             object[] args = new object[1 + _argumentCount];
             args[0] = _site;
-            for (int i = 0; i < _argumentCount; i++) {
+            for (int i = 0; i < _argumentCount; i++)
+            {
                 args[1 + i] = frame.Data[first + i];
             }
 
             object ret = _target.InvokeInstance(_targetDelegate, args);
-            if (_isVoid) {
+            if (_isVoid)
+            {
                 frame.StackIndex = first;
-            } else {
+            }
+            else
+            {
                 frame.Data[first] = ret;
                 frame.StackIndex = first + 1;
             }
@@ -64,7 +73,8 @@ namespace System.Management.Automation.Interpreter {
             return 1;
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return "DynamicInstructionN(" + _site + ")";
         }
     }

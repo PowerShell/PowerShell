@@ -63,7 +63,7 @@ namespace System.Management.Automation
         {
             Enabled = true;
             Script = script;
-            Id = _lastID++;
+            Id = s_lastID++;
             Action = action;
             HitCount = 0;
         }
@@ -110,7 +110,7 @@ namespace System.Management.Automation
         }
 
         virtual internal void RemoveSelf(ScriptDebugger debugger)
-        {            
+        {
         }
 
         #endregion methods
@@ -127,7 +127,7 @@ namespace System.Management.Automation
 
         #region private members
 
-        private static int _lastID;
+        private static int s_lastID;
 
         #endregion private members
     }
@@ -267,7 +267,7 @@ namespace System.Management.Automation
         /// Gets the string representation of this breakpoint
         /// </summary>
         /// <returns>The string representation of this breakpoint</returns>
-        public override string  ToString()
+        public override string ToString()
         {
             return IsScriptBreakpoint
                        ? StringUtil.Format(DebuggerStrings.VariableScriptBreakpointString, Script, Variable, AccessMode)

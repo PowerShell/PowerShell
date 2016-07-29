@@ -35,11 +35,11 @@ namespace System.Management.Automation
             if (parentScope != null)
             {
                 // Now copy the script: scope stack from the parent
-                this._scriptScope = parentScope.ScriptScope;
+                _scriptScope = parentScope.ScriptScope;
             }
             else
             {
-                this._scriptScope = this;
+                _scriptScope = this;
             }
         } // SessionStateScope constructor
 
@@ -506,7 +506,7 @@ namespace System.Management.Automation
 
             // Set the variable directly in the table, bypassing all of the checks. This
             // can only be used for global scope otherwise the slow path is used.
-            if (fastPath )
+            if (fastPath)
             {
                 if (Parent != null)
                 {
@@ -690,7 +690,7 @@ namespace System.Management.Automation
                                 "VariableNotWritableRare",
                                 SessionStateStrings.VariableNotWritableRare);
 
-                    throw e;                    
+                    throw e;
                 }
 
                 // If the new and old variable are the same then don't bother
@@ -812,7 +812,6 @@ namespace System.Management.Automation
             // Finally mark the variable itself has having been removed so
             // anyone holding a reference to it can be aware of this.
             variable.WasRemoved = true;
-
         } // RemoveVariable
 
         internal bool TrySetLocalParameterValue(string name, object value)
@@ -1270,7 +1269,6 @@ namespace System.Management.Automation
             }
 
             aliasInfos.Remove(name);
-
         } // RemoveAlias
 
         #endregion aliases
@@ -1646,7 +1644,7 @@ namespace System.Management.Automation
                 else
                 {
                     bool applyForce = force || (options & ScopedItemOptions.ReadOnly) == 0;
-                    
+
                     existingFunction.Update(newValue, applyForce, options, helpFile);
                     result = existingFunction;
                 }
@@ -1700,7 +1698,6 @@ namespace System.Management.Automation
                 }
             }
             functionInfos.Remove(name);
-
         } // RemoveFunction
 
         #endregion functions
@@ -1867,7 +1864,6 @@ namespace System.Management.Automation
             }
 
             return _cmdlets[name][0];
-
         } // AddCmdlet
 
         /// <summary>
@@ -2004,7 +2000,7 @@ namespace System.Management.Automation
             return (function.Options & options) != 0;
         }
 
-        private static FunctionInfo CreateFunction(string name, ScriptBlock function, FunctionInfo originalFunction, 
+        private static FunctionInfo CreateFunction(string name, ScriptBlock function, FunctionInfo originalFunction,
             ScopedItemOptions options, ExecutionContext context, string helpFile)
         {
             FunctionInfo newValue = null;
@@ -2110,9 +2106,9 @@ namespace System.Management.Automation
                 // These variables will automatically propagate to new
                 // scopes since they are marked AllScope.
 
-                _variables.Add(_nullVar.Name, _nullVar);
-                _variables.Add(_falseVar.Name, _falseVar);
-                _variables.Add(_trueVar.Name, _trueVar);
+                _variables.Add(s_nullVar.Name, s_nullVar);
+                _variables.Add(s_falseVar.Name, s_falseVar);
+                _variables.Add(s_trueVar.Name, s_trueVar);
             }
             else
             {
@@ -2331,7 +2327,7 @@ namespace System.Management.Automation
         /// is ScopedItemOptions.Constant.
         /// </summary>
         /// 
-        private static readonly PSVariable _trueVar =
+        private static readonly PSVariable s_trueVar =
             new PSVariable(
                 StringLiterals.True,
                 true,
@@ -2344,7 +2340,7 @@ namespace System.Management.Automation
         /// is ScopedItemOptions.Constant.
         /// </summary>
         /// 
-        private static readonly PSVariable _falseVar =
+        private static readonly PSVariable s_falseVar =
             new PSVariable(
                 StringLiterals.False,
                 false,
@@ -2357,14 +2353,14 @@ namespace System.Management.Automation
         /// is ScopedItemOptions.Constant.
         /// </summary>
         /// 
-        private static readonly NullVariable _nullVar =
+        private static readonly NullVariable s_nullVar =
             new NullVariable();
 
         #endregion Private members
 
         #region Alias mapping
 
-        private Dictionary<string, List<string>> commandsToAliasesCache = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        private Dictionary<string, List<string>> _commandsToAliasesCache = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets the alises by command name (used by metadata-driven help)
@@ -2374,7 +2370,7 @@ namespace System.Management.Automation
         internal IEnumerable<string> GetAliasesByCommandName(string command)
         {
             List<string> commandsToAliases;
-            if (commandsToAliasesCache.TryGetValue(command, out commandsToAliases))
+            if (_commandsToAliasesCache.TryGetValue(command, out commandsToAliases))
             {
                 foreach (string str in commandsToAliases)
                 {
@@ -2393,11 +2389,11 @@ namespace System.Management.Automation
         private void AddAliasToCache(string alias, string value)
         {
             List<string> existingAliases;
-            if (!commandsToAliasesCache.TryGetValue(value, out existingAliases))
+            if (!_commandsToAliasesCache.TryGetValue(value, out existingAliases))
             {
                 List<string> list = new List<string>();
                 list.Add(alias);
-                commandsToAliasesCache.Add(value, list);
+                _commandsToAliasesCache.Add(value, list);
             }
             else
             {
@@ -2416,14 +2412,14 @@ namespace System.Management.Automation
         private void RemoveAliasFromCache(string alias, string value)
         {
             List<string> list;
-            if (!commandsToAliasesCache.TryGetValue(value, out list))
+            if (!_commandsToAliasesCache.TryGetValue(value, out list))
             {
                 return;
             }
 
             if (list.Count <= 1)
             {
-                commandsToAliasesCache.Remove(value);
+                _commandsToAliasesCache.Remove(value);
             }
             else
             {
@@ -2436,7 +2432,6 @@ namespace System.Management.Automation
         }
 
         #endregion
-
     } // class SessionStateScope
 } // namespace System.Management.Automation
 

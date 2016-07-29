@@ -33,12 +33,12 @@ namespace System.Management.Automation
         internal ServerRunspacePoolDataStructureHandler(ServerRunspacePoolDriver driver,
             AbstractServerSessionTransportManager transportManager)
         {
-            this.clientRunspacePoolId = driver.InstanceId;
-            this.transportManager = transportManager;
+            _clientRunspacePoolId = driver.InstanceId;
+            _transportManager = transportManager;
         }
 
         #endregion Constructors
-        
+
         #region Data Structure Handler Methods
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace System.Management.Automation
             versionTable[PSVersionInfo.PSVersionName] = PSVersionInfo.PSVersion;
 
             RemoteDataObject data = RemotingEncoder.GenerateApplicationPrivateData(
-                clientRunspacePoolId, applicationPrivateDataWithVersionTable);
+                _clientRunspacePoolId, applicationPrivateDataWithVersionTable);
 
             SendDataAsync(data);
         }
@@ -73,7 +73,7 @@ namespace System.Management.Automation
         internal void SendStateInfoToClient(RunspacePoolStateInfo stateInfo)
         {
             RemoteDataObject data = RemotingEncoder.GenerateRunspacePoolStateInfo(
-                    clientRunspacePoolId, stateInfo);
+                    _clientRunspacePoolId, stateInfo);
 
             SendDataAsync(data);
         }
@@ -84,7 +84,7 @@ namespace System.Management.Automation
         /// <param name="e">event to send</param>
         internal void SendPSEventArgsToClient(PSEventArgs e)
         {
-            RemoteDataObject data = RemotingEncoder.GeneratePSEventArgs(clientRunspacePoolId, e);
+            RemoteDataObject data = RemotingEncoder.GeneratePSEventArgs(_clientRunspacePoolId, e);
 
             SendDataAsync(data);
         }
@@ -96,9 +96,9 @@ namespace System.Management.Automation
         internal void ProcessConnect()
         {
             List<ServerPowerShellDataStructureHandler> dsHandlers;
-            lock (associationSyncObject)
+            lock (_associationSyncObject)
             {
-                dsHandlers = new List<ServerPowerShellDataStructureHandler>(associatedShells.Values);
+                dsHandlers = new List<ServerPowerShellDataStructureHandler>(_associatedShells.Values);
             }
             foreach (var dsHandler in dsHandlers)
             {
@@ -150,8 +150,8 @@ namespace System.Management.Automation
 
                         //part of host message robustness algo. Now the host response is back, report to transport that
                         // execution status is back to running
-                        transportManager.ReportExecutionStatusAsRunning(); 
-                        
+                        _transportManager.ReportExecutionStatusAsRunning();
+
                         HostResponseReceived.SafeInvoke(this, new RemoteDataEventArgs<RemoteHostResponse>(remoteHostResponse));
                     }
                     break;
@@ -191,7 +191,6 @@ namespace System.Management.Automation
                         ResetRunspaceState.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
                     }
                     break;
-                    
             } // switch...
         }
 
@@ -207,20 +206,20 @@ namespace System.Management.Automation
             Guid instanceId, Guid runspacePoolId, RemoteStreamOptions remoteStreamOptions, PowerShell localPowerShell)
         {
             // start with pool's transport manager.
-            AbstractServerTransportManager cmdTransportManager = transportManager;
+            AbstractServerTransportManager cmdTransportManager = _transportManager;
 
             if (instanceId != Guid.Empty)
             {
-                cmdTransportManager = transportManager.GetCommandTransportManager(instanceId);
+                cmdTransportManager = _transportManager.GetCommandTransportManager(instanceId);
                 Dbg.Assert(cmdTransportManager.TypeTable != null, "This should be already set in managed C++ code");
             }
 
             ServerPowerShellDataStructureHandler dsHandler =
                 new ServerPowerShellDataStructureHandler(instanceId, runspacePoolId, remoteStreamOptions, cmdTransportManager, localPowerShell);
 
-            lock (associationSyncObject)
+            lock (_associationSyncObject)
             {
-                associatedShells.Add(dsHandler.PowerShellId, dsHandler);
+                _associatedShells.Add(dsHandler.PowerShellId, dsHandler);
             }
 
             dsHandler.RemoveAssociation += new EventHandler(HandleRemoveAssociation);
@@ -236,11 +235,11 @@ namespace System.Management.Automation
         /// </returns>
         internal ServerPowerShellDataStructureHandler GetPowerShellDataStructureHandler()
         {
-            lock (associationSyncObject)
+            lock (_associationSyncObject)
             {
-                if (associatedShells.Count > 0)
+                if (_associatedShells.Count > 0)
                 {
-                    foreach(object o in associatedShells.Values)
+                    foreach (object o in _associatedShells.Values)
                     {
                         ServerPowerShellDataStructureHandler result = o as ServerPowerShellDataStructureHandler;
                         if (result != null)
@@ -278,8 +277,8 @@ namespace System.Management.Automation
         /// <param name="response">response to send</param>
         internal void SendResponseToClient(long callId, object response)
         {
-            RemoteDataObject message = 
-                RemotingEncoder.GenerateRunspacePoolOperationResponse(clientRunspacePoolId, response, callId);
+            RemoteDataObject message =
+                RemotingEncoder.GenerateRunspacePoolOperationResponse(_clientRunspacePoolId, response, callId);
 
             SendDataAsync(message);
         }
@@ -289,8 +288,8 @@ namespace System.Management.Automation
         /// </summary>
         internal TypeTable TypeTable
         {
-            get { return transportManager.TypeTable; }
-            set { transportManager.TypeTable = value; }
+            get { return _transportManager.TypeTable; }
+            set { _transportManager.TypeTable = value; }
         }
 
         #endregion Data Structure Handler Methods
@@ -353,7 +352,7 @@ namespace System.Management.Automation
         private void SendDataAsync(RemoteDataObject data)
         {
             Dbg.Assert(null != data, "Cannot send null object.");
-            transportManager.SendDataToClient(data, true);
+            _transportManager.SendDataToClient(data, true);
         }
 
         /// <summary>
@@ -368,9 +367,9 @@ namespace System.Management.Automation
         {
             ServerPowerShellDataStructureHandler dsHandler = null;
 
-            lock (associationSyncObject)
+            lock (_associationSyncObject)
             {
-                bool success = associatedShells.TryGetValue(clientPowerShellId, out dsHandler);
+                bool success = _associatedShells.TryGetValue(clientPowerShellId, out dsHandler);
 
                 if (!success)
                 {
@@ -392,30 +391,30 @@ namespace System.Management.Automation
 
             ServerPowerShellDataStructureHandler dsHandler = sender as ServerPowerShellDataStructureHandler;
 
-            lock (associationSyncObject)
+            lock (_associationSyncObject)
             {
-                associatedShells.Remove(dsHandler.PowerShellId);
+                _associatedShells.Remove(dsHandler.PowerShellId);
             }
 
             // let session transport manager remove its association of command transport manager.
-            transportManager.RemoveCommandTransportManager(dsHandler.PowerShellId);
+            _transportManager.RemoveCommandTransportManager(dsHandler.PowerShellId);
         }
 
         #endregion Private Methods
 
         #region Private Members
 
-        private Guid clientRunspacePoolId;
+        private Guid _clientRunspacePoolId;
         // transport manager using which this
         // runspace pool driver handles all client
         // communication
-        private AbstractServerSessionTransportManager transportManager;                                
-        private Dictionary<Guid, ServerPowerShellDataStructureHandler> associatedShells
+        private AbstractServerSessionTransportManager _transportManager;
+        private Dictionary<Guid, ServerPowerShellDataStructureHandler> _associatedShells
             = new Dictionary<Guid, ServerPowerShellDataStructureHandler>();
-                                // powershell data structure handlers associated with this
-                                // runspace pool data structure handler
-        object associationSyncObject = new object();
-                                // object to synchronize operations to above
+        // powershell data structure handlers associated with this
+        // runspace pool data structure handler
+        private object _associationSyncObject = new object();
+        // object to synchronize operations to above
 
         #endregion Private Members
     }
@@ -430,11 +429,11 @@ namespace System.Management.Automation
         // transport manager using which this
         // powershell driver handles all client
         // communication
-        private AbstractServerTransportManager transportManager;                                       
-        private Guid clientRunspacePoolId;
-        private Guid clientPowerShellId;
-        private RemoteStreamOptions streamSerializationOptions;
-        private Runspace rsUsedToInvokePowerShell;
+        private AbstractServerTransportManager _transportManager;
+        private Guid _clientRunspacePoolId;
+        private Guid _clientPowerShellId;
+        private RemoteStreamOptions _streamSerializationOptions;
+        private Runspace _rsUsedToInvokePowerShell;
 
         #endregion Private Members
 
@@ -452,10 +451,10 @@ namespace System.Management.Automation
         internal ServerPowerShellDataStructureHandler(Guid instanceId, Guid runspacePoolId, RemoteStreamOptions remoteStreamOptions,
             AbstractServerTransportManager transportManager, PowerShell localPowerShell)
         {
-            this.clientPowerShellId = instanceId;
-            this.clientRunspacePoolId = runspacePoolId;
-            this.transportManager = transportManager;
-            this.streamSerializationOptions = remoteStreamOptions;
+            _clientPowerShellId = instanceId;
+            _clientRunspacePoolId = runspacePoolId;
+            _transportManager = transportManager;
+            _streamSerializationOptions = remoteStreamOptions;
             transportManager.Closing += HandleTransportClosing;
 
             if (localPowerShell != null)
@@ -465,9 +464,9 @@ namespace System.Management.Automation
             }
         }
 
-        void LocalPowerShell_RunspaceAssigned(object sender, PSEventArgs<Runspace> e)
+        private void LocalPowerShell_RunspaceAssigned(object sender, PSEventArgs<Runspace> e)
         {
-            rsUsedToInvokePowerShell = e.Args;
+            _rsUsedToInvokePowerShell = e.Args;
         }
 
         #endregion Constructors
@@ -481,9 +480,9 @@ namespace System.Management.Automation
         {
             // When Guid.Empty is used, PowerShell must be using pool's transport manager
             // to send data to client. so we dont need to prepare command transport manager
-            if (clientPowerShellId != Guid.Empty)
+            if (_clientPowerShellId != Guid.Empty)
             {
-                transportManager.Prepare();
+                _transportManager.Prepare();
             }
         }
 
@@ -500,18 +499,18 @@ namespace System.Management.Automation
                        (stateInfo.State == PSInvocationState.Stopped),
                        "SendStateChangedInformationToClient should be called to notify a termination state");
             SendDataAsync(RemotingEncoder.GeneratePowerShellStateInfo(
-                stateInfo, clientPowerShellId, clientRunspacePoolId));
+                stateInfo, _clientPowerShellId, _clientRunspacePoolId));
 
             // Close the transport manager only if the PowerShell Guid != Guid.Empty.
             // When Guid.Empty is used, PowerShell must be using pool's transport manager
             // to send data to client.
-            if (clientPowerShellId != Guid.Empty)
+            if (_clientPowerShellId != Guid.Empty)
             {
                 // no need to listen for closing events as we are initiating the close
-                transportManager.Closing -= HandleTransportClosing;
+                _transportManager.Closing -= HandleTransportClosing;
                 // if terminal state is reached close the transport manager instead of letting
                 // the client intiate the close.
-                transportManager.Close(null);
+                _transportManager.Close(null);
             }
         }
 
@@ -522,7 +521,7 @@ namespace System.Management.Automation
         internal void SendOutputDataToClient(PSObject data)
         {
             SendDataAsync(RemotingEncoder.GeneratePowerShellOutput(data,
-                clientPowerShellId, clientRunspacePoolId));
+                _clientPowerShellId, _clientRunspacePoolId));
         }
 
         /// <summary>
@@ -531,10 +530,10 @@ namespace System.Management.Automation
         /// <param name="errorRecord">error record to send</param>
         internal void SendErrorRecordToClient(ErrorRecord errorRecord)
         {
-            errorRecord.SerializeExtendedInfo = (this.streamSerializationOptions & RemoteStreamOptions.AddInvocationInfoToErrorRecord) != 0;
+            errorRecord.SerializeExtendedInfo = (_streamSerializationOptions & RemoteStreamOptions.AddInvocationInfoToErrorRecord) != 0;
 
             SendDataAsync(RemotingEncoder.GeneratePowerShellError(
-                errorRecord, clientRunspacePoolId, clientPowerShellId));
+                errorRecord, _clientRunspacePoolId, _clientPowerShellId));
         }
 
         /// <summary>
@@ -543,10 +542,10 @@ namespace System.Management.Automation
         /// <param name="record">warning record</param>
         internal void SendWarningRecordToClient(WarningRecord record)
         {
-            record.SerializeExtendedInfo = (this.streamSerializationOptions & RemoteStreamOptions.AddInvocationInfoToWarningRecord) != 0;
+            record.SerializeExtendedInfo = (_streamSerializationOptions & RemoteStreamOptions.AddInvocationInfoToWarningRecord) != 0;
 
             SendDataAsync(RemotingEncoder.GeneratePowerShellInformational(
-                record, clientRunspacePoolId, clientPowerShellId, RemotingDataType.PowerShellWarning));                    
+                record, _clientRunspacePoolId, _clientPowerShellId, RemotingDataType.PowerShellWarning));
         }
 
         /// <summary>
@@ -555,10 +554,10 @@ namespace System.Management.Automation
         /// <param name="record">debug record</param>
         internal void SendDebugRecordToClient(DebugRecord record)
         {
-            record.SerializeExtendedInfo = (this.streamSerializationOptions & RemoteStreamOptions.AddInvocationInfoToDebugRecord) != 0;
+            record.SerializeExtendedInfo = (_streamSerializationOptions & RemoteStreamOptions.AddInvocationInfoToDebugRecord) != 0;
 
             SendDataAsync(RemotingEncoder.GeneratePowerShellInformational(
-                record, clientRunspacePoolId, clientPowerShellId, RemotingDataType.PowerShellDebug));
+                record, _clientRunspacePoolId, _clientPowerShellId, RemotingDataType.PowerShellDebug));
         }
 
         /// <summary>
@@ -567,10 +566,10 @@ namespace System.Management.Automation
         /// <param name="record">warning record</param>
         internal void SendVerboseRecordToClient(VerboseRecord record)
         {
-            record.SerializeExtendedInfo = (this.streamSerializationOptions & RemoteStreamOptions.AddInvocationInfoToVerboseRecord) != 0;
+            record.SerializeExtendedInfo = (_streamSerializationOptions & RemoteStreamOptions.AddInvocationInfoToVerboseRecord) != 0;
 
             SendDataAsync(RemotingEncoder.GeneratePowerShellInformational(
-                record, clientRunspacePoolId, clientPowerShellId, RemotingDataType.PowerShellVerbose));
+                record, _clientRunspacePoolId, _clientPowerShellId, RemotingDataType.PowerShellVerbose));
         }
 
         /// <summary>
@@ -580,7 +579,7 @@ namespace System.Management.Automation
         internal void SendProgressRecordToClient(ProgressRecord record)
         {
             SendDataAsync(RemotingEncoder.GeneratePowerShellInformational(
-                record, clientRunspacePoolId, clientPowerShellId));
+                record, _clientRunspacePoolId, _clientPowerShellId));
         }
 
         /// <summary>
@@ -590,7 +589,7 @@ namespace System.Management.Automation
         internal void SendInformationRecordToClient(InformationRecord record)
         {
             SendDataAsync(RemotingEncoder.GeneratePowerShellInformational(
-                record, clientRunspacePoolId, clientPowerShellId));
+                record, _clientRunspacePoolId, _clientPowerShellId));
         }
 
         /// <summary>
@@ -636,7 +635,7 @@ namespace System.Management.Automation
                         InputReceived.SafeInvoke(this, new RemoteDataEventArgs<object>(receivedData.Data));
                     }
                     break;
-                
+
                 case RemotingDataType.PowerShellInputEnd:
                     {
                         Dbg.Assert(InputEndReceived != null,
@@ -654,7 +653,7 @@ namespace System.Management.Automation
 
                         //part of host message robustness algo. Now the host response is back, report to transport that
                         // execution status is back to running
-                        transportManager.ReportExecutionStatusAsRunning();
+                        _transportManager.ReportExecutionStatusAsRunning();
 
                         HostResponseReceived.SafeInvoke(this, new RemoteDataEventArgs<RemoteHostResponse>(remoteHostResponse));
                     }
@@ -662,7 +661,7 @@ namespace System.Management.Automation
             } // switch ...
         }
 
-       /// <summary>
+        /// <summary>
         /// Raise a remove association event. This is raised
         /// when the powershell has gone into a terminal state
         /// and the runspace pool need not maintain any further
@@ -702,8 +701,8 @@ namespace System.Management.Automation
 
             // If the host was not null on the client, then the PowerShell object should 
             // get a brand spanking new host.
-            return new ServerRemoteHost(clientRunspacePoolId, clientPowerShellId, hostInfo,
-                transportManager, runspaceServerRemoteHost.Runspace, runspaceServerRemoteHost as ServerDriverRemoteHost);
+            return new ServerRemoteHost(_clientRunspacePoolId, _clientPowerShellId, hostInfo,
+                _transportManager, runspaceServerRemoteHost.Runspace, runspaceServerRemoteHost as ServerDriverRemoteHost);
         }
 
         #endregion Data Structure Handler Methods
@@ -756,7 +755,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return clientPowerShellId;
+                return _clientPowerShellId;
             }
         }
 
@@ -766,7 +765,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Runspace RunspaceUsedToInvokePowerShell
         {
-            get { return rsUsedToInvokePowerShell; }
+            get { return _rsUsedToInvokePowerShell; }
         }
 
         #endregion Internal Methods
@@ -786,7 +785,7 @@ namespace System.Management.Automation
             Dbg.Assert(null != data, "Cannot send null object.");
             // this is from a command execution..let transport manager collect
             // as much data as possible and send bigger buffer to client.
-            transportManager.SendDataToClient(data, false);
+            _transportManager.SendDataToClient(data, false);
         }
 
         /// <summary>
@@ -801,5 +800,4 @@ namespace System.Management.Automation
 
         #endregion Private Methods
     }
-
 }

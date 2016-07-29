@@ -4,7 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 
 using System;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,7 +13,6 @@ using System.Management.Automation.Provider;
 
 namespace Microsoft.PowerShell.Commands
 {
-
     /// <summary>
     /// This provider is the data accessor for shell variables. It uses
     /// the HashtableProvider as the base class to get a hashtable as
@@ -38,8 +37,8 @@ namespace Microsoft.PowerShell.Commands
         /// The constructor for the provider that exposes variables to the user
         /// as drives.
         /// </summary>
-        public VariableProvider  () 
-        { 
+        public VariableProvider()
+        {
         } // constructor
 
         #endregion Constructor
@@ -54,11 +53,11 @@ namespace Microsoft.PowerShell.Commands
         /// An array of a single PSDriveInfo object representing the variables drive.
         /// </returns>
         ///
-        protected override Collection<PSDriveInfo> InitializeDefaultDrives ()
+        protected override Collection<PSDriveInfo> InitializeDefaultDrives()
         {
             string description = SessionStateStrings.VariableDriveDescription;
 
-            PSDriveInfo variableDrive = 
+            PSDriveInfo variableDrive =
                 new PSDriveInfo(
                     DriveNames.VariableDrive,
                     ProviderInfo,
@@ -161,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
         /// The name of the variable to remove from session state.
         /// </param>
         /// 
-        internal override void RemoveSessionStateItem (string name)
+        internal override void RemoveSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
                 !String.IsNullOrEmpty(name),
@@ -179,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
         /// session state.
         /// </returns>
         /// 
-        internal override IDictionary GetSessionStateTable ()
+        internal override IDictionary GetSessionStateTable()
         {
             return (IDictionary)SessionState.Internal.GetVariableTable();
         } // GetSessionStateTable
@@ -197,7 +196,7 @@ namespace Microsoft.PowerShell.Commands
         /// The value of the specified item.
         /// </returns>
         /// 
-        internal override object GetValueOfItem (object item)
+        internal override object GetValueOfItem(object item)
         {
             Dbg.Diagnostics.Assert(
                 item != null,

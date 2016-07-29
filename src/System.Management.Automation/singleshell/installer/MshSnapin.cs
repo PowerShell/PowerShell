@@ -74,7 +74,7 @@ namespace System.Management.Automation
                 {
                     _regValues = base.RegValues;
 
-                    if(this.Types != null && this.Types.Length > 0)
+                    if (this.Types != null && this.Types.Length > 0)
                         _regValues[RegistryStrings.MshSnapin_BuiltInTypes] = this.Types;
 
                     if (this.Formats != null && this.Formats.Length > 0)

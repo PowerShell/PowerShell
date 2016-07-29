@@ -4,7 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System.Collections.ObjectModel;
 using System.Security.AccessControl;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -42,8 +42,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("cmdlet");
             }
 
-            this.cmdlet = cmdlet;
-            this.sessionState = cmdlet.Context.EngineSessionState;
+            _cmdlet = cmdlet;
+            _sessionState = cmdlet.Context.EngineSessionState;
         } // CmdletProviderIntrinsics internal
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("sessionState");
             }
 
-            this.sessionState = sessionState;
+            _sessionState = sessionState;
         } // CmdletProviderIntrinsics internal
 
         #endregion Constructors
@@ -89,11 +89,11 @@ namespace System.Management.Automation
         public Collection<PSObject> Get(string path, AccessControlSections includeSections)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
-            return sessionState.GetSecurityDescriptor(path, includeSections);
+            return _sessionState.GetSecurityDescriptor(path, includeSections);
         } // GetSecurityDescriptor
 
         /// <summary>
@@ -120,11 +120,11 @@ namespace System.Management.Automation
                         CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
-            sessionState.GetSecurityDescriptor(path, includeSections, context);
+            _sessionState.GetSecurityDescriptor(path, includeSections, context);
         } // GetSecurityDescriptor
 
         #endregion GetSecurityDescriptor
@@ -149,11 +149,11 @@ namespace System.Management.Automation
         public Collection<PSObject> Set(string path, ObjectSecurity sd)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
-            Collection<PSObject> result = sessionState.SetSecurityDescriptor(path, sd);
+            Collection<PSObject> result = _sessionState.SetSecurityDescriptor(path, sd);
 
             return result;
         } // SetSecurityDescriptor
@@ -179,12 +179,12 @@ namespace System.Management.Automation
         internal void Set(string path, ObjectSecurity sd, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.SetSecurityDescriptor(path, sd, context);
+            _sessionState.SetSecurityDescriptor(path, sd, context);
         } // SetSecurityDescriptor
 
         #endregion SetSecurityDescriptor
@@ -210,11 +210,11 @@ namespace System.Management.Automation
         public ObjectSecurity NewFromPath(string path, AccessControlSections includeSections)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
-            return sessionState.NewSecurityDescriptorFromPath(path, includeSections);
+            return _sessionState.NewSecurityDescriptorFromPath(path, includeSections);
         } // NewSecurityDescriptor
 
 
@@ -241,12 +241,12 @@ namespace System.Management.Automation
         public ObjectSecurity NewOfType(string providerId, string type, AccessControlSections includeSections)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.NewSecurityDescriptorOfType(providerId,
+            return _sessionState.NewSecurityDescriptorOfType(providerId,
                                                             type,
                                                             includeSections);
         } // NewSecurityDescriptor
@@ -257,8 +257,8 @@ namespace System.Management.Automation
 
         #region private data
 
-        private Cmdlet cmdlet;
-        private SessionStateInternal sessionState;
+        private Cmdlet _cmdlet;
+        private SessionStateInternal _sessionState;
 
         #endregion private data
     } // SecurityDescriptorCmdletProviderIntrinsics

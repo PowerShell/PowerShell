@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,10 +21,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="lineOutput">LineOutput interfaces to write to</param>
         /// <param name="numberOfTextColumns">number of columns used to write out</param>
-        internal void Initialize (LineOutput lineOutput, int numberOfTextColumns)
+        internal void Initialize(LineOutput lineOutput, int numberOfTextColumns)
         {
-            lo = lineOutput;
-            textColumns = numberOfTextColumns;
+            _lo = lineOutput;
+            _textColumns = numberOfTextColumns;
         }
 
         /// <summary>
@@ -32,7 +33,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="s"></param>
         internal void WriteString(string s)
         {
-            this.indentationManager.Clear();
+            _indentationManager.Clear();
 
             AddToBuffer(s);
 
@@ -46,16 +47,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal void WriteObject(List<FormatValue> formatValueList)
         {
             // we always start with no identation
-            this.indentationManager.Clear ();
+            _indentationManager.Clear();
 
             foreach (FormatEntry fe in formatValueList)
             {
                 // operate on each directive inside the list,
                 // carrying the identation from invocation to invocation
-                GenerateFormatEntryDisplay (fe, 0);
+                GenerateFormatEntryDisplay(fe, 0);
             }
             // make sure that, if we have pending text in the buffer it gets flushed
-            WriteToScreen ();
+            WriteToScreen();
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="fe">entry to process</param>
         /// <param name="currentDepth">current depth of recursion</param>
-        private void GenerateFormatEntryDisplay (FormatEntry fe, int currentDepth)
+        private void GenerateFormatEntryDisplay(FormatEntry fe, int currentDepth)
         {
             foreach (object obj in fe.formatValueList)
             {
@@ -72,39 +73,38 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     if (currentDepth < maxRecursionDepth)
                     {
-                        
                         if (feChild.frameInfo != null)
                         {
                             // if we have frame information, we need to push it on the
                             // indentation stack
-                            using (this.indentationManager.StackFrame (feChild.frameInfo))
+                            using (_indentationManager.StackFrame(feChild.frameInfo))
                             {
-                                GenerateFormatEntryDisplay (feChild, currentDepth + 1);
+                                GenerateFormatEntryDisplay(feChild, currentDepth + 1);
                             }
                         }
                         else
                         {
                             // no need here of activating an indentation stack frame
-                            GenerateFormatEntryDisplay (feChild, currentDepth + 1);
+                            GenerateFormatEntryDisplay(feChild, currentDepth + 1);
                         }
                     }
                     continue;
                 }
                 if (obj is FormatNewLine)
                 {
-                    this.WriteToScreen ();
+                    this.WriteToScreen();
                     continue;
                 }
                 FormatTextField ftf = obj as FormatTextField;
                 if (ftf != null)
                 {
-                    this.AddToBuffer (ftf.text);
+                    this.AddToBuffer(ftf.text);
                     continue;
                 }
                 FormatPropertyField fpf = obj as FormatPropertyField;
                 if (fpf != null)
                 {
-                    this.AddToBuffer (fpf.propertyValue);
+                    this.AddToBuffer(fpf.propertyValue);
                 }
             }
         }
@@ -113,29 +113,29 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// add a string to the current buffer, waiting for a FlushBuffer()
         /// </summary>
         /// <param name="s">string to add to buffer</param>
-        private void AddToBuffer (string s)
+        private void AddToBuffer(string s)
         {
-            this.stringBuffer.Append (s);
+            _stringBuffer.Append(s);
         }
 
         /// <summary>
         /// write to the output interface
         /// </summary>
-        private void WriteToScreen ()
+        private void WriteToScreen()
         {
-            int leftIndentation = this.indentationManager.LeftIndentation;
-            int rightIndentation = this.indentationManager.RightIndentation;
-            int firstLineIndentation = this.indentationManager.FirstLineIndentation;
+            int leftIndentation = _indentationManager.LeftIndentation;
+            int rightIndentation = _indentationManager.RightIndentation;
+            int firstLineIndentation = _indentationManager.FirstLineIndentation;
 
             // VALIDITY CHECKS:
 
             // check the useful ("active") witdth
-            int usefulWidth = this.textColumns - rightIndentation - leftIndentation;
+            int usefulWidth = _textColumns - rightIndentation - leftIndentation;
             if (usefulWidth <= 0)
             {
                 // fatal error, there is nothing to write to the device
                 // just clear the buffer and return
-                this.stringBuffer = new StringBuilder ();
+                _stringBuffer = new StringBuilder();
             }
 
             // check indentation or hanging is not larger than the active width
@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
 
             // compute the first line indentation or hanging
-            int firstLineWidth = this.textColumns - rightIndentation - leftIndentation;
+            int firstLineWidth = _textColumns - rightIndentation - leftIndentation;
             int followingLinesWidth = firstLineWidth;
 
             if (firstLineIndentation >= 0)
@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             //error checking on invalid values
 
             // generate the lines using the computed widths
-            StringCollection sc = StringManipulationHelper.GenerateLines (lo.DisplayCells, this.stringBuffer.ToString (), 
+            StringCollection sc = StringManipulationHelper.GenerateLines(_lo.DisplayCells, _stringBuffer.ToString(),
                                         firstLineWidth, followingLinesWidth);
 
             // compute padding
@@ -189,36 +189,36 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (firstLine)
                 {
                     firstLine = false;
-                    lo.WriteLine (StringManipulationHelper.PadLeft (s, firstLinePadding));
+                    _lo.WriteLine(StringManipulationHelper.PadLeft(s, firstLinePadding));
                 }
                 else
                 {
-                    lo.WriteLine (StringManipulationHelper.PadLeft (s, followingLinesPadding));
+                    _lo.WriteLine(StringManipulationHelper.PadLeft(s, followingLinesPadding));
                 }
             }
 
-            this.stringBuffer = new StringBuilder ();
+            _stringBuffer = new StringBuilder();
         }
-      
+
         /// <summary>
         /// helper object to manage the frame-based indentation and margins
         /// </summary>
-        private IndentationManager indentationManager = new IndentationManager ();
+        private IndentationManager _indentationManager = new IndentationManager();
 
         /// <summary>
         /// buffer to accumulate partially constructed text
         /// </summary>
-        private StringBuilder stringBuffer = new StringBuilder ();
+        private StringBuilder _stringBuffer = new StringBuilder();
 
         /// <summary>
         /// interface to write to
         /// </summary>
-        private LineOutput lo;
+        private LineOutput _lo;
 
         /// <summary>
         /// nomber of columns for the output device
         /// </summary>
-        private int textColumns;
+        private int _textColumns;
 
         private const int maxRecursionDepth = 50;
     }
@@ -228,37 +228,37 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         private sealed class IndentationStackFrame : IDisposable
         {
-            internal IndentationStackFrame (IndentationManager mgr)
+            internal IndentationStackFrame(IndentationManager mgr)
             {
                 _mgr = mgr;
             }
 
-            public void Dispose ()
+            public void Dispose()
             {
-                if (this._mgr != null)
+                if (_mgr != null)
                 {
-                    this._mgr.RemoveStackFrame ();
+                    _mgr.RemoveStackFrame();
                 }
             }
 
             private IndentationManager _mgr;
         }
 
-        internal void Clear ()
+        internal void Clear()
         {
-            _frameInfoStack.Clear ();
+            _frameInfoStack.Clear();
         }
 
-        internal IDisposable StackFrame (FrameInfo frameInfo)
+        internal IDisposable StackFrame(FrameInfo frameInfo)
         {
-            IndentationStackFrame frame = new IndentationStackFrame (this);
-            _frameInfoStack.Push (frameInfo);
+            IndentationStackFrame frame = new IndentationStackFrame(this);
+            _frameInfoStack.Push(frameInfo);
             return frame;
         }
 
-        private void RemoveStackFrame ()
+        private void RemoveStackFrame()
         {
-            _frameInfoStack.Pop ();
+            _frameInfoStack.Pop();
         }
 
         internal int RightIndentation
@@ -283,32 +283,32 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (_frameInfoStack.Count == 0)
                     return 0;
-                return _frameInfoStack.Peek ().firstLine;
+                return _frameInfoStack.Peek().firstLine;
             }
         }
 
 
-        private int ComputeRightIndentation ()
+        private int ComputeRightIndentation()
         {
             int val = 0;
-            foreach (FrameInfo fi in this._frameInfoStack)
+            foreach (FrameInfo fi in _frameInfoStack)
             {
                 val += fi.rightIndentation;
             }
             return val;
         }
 
-        private int ComputeLeftIndentation ()
+        private int ComputeLeftIndentation()
         {
             int val = 0;
-            foreach (FrameInfo fi in this._frameInfoStack)
+            foreach (FrameInfo fi in _frameInfoStack)
             {
                 val += fi.leftIndentation;
             }
             return val;
         }
 
-        private Stack<FrameInfo> _frameInfoStack = new Stack<FrameInfo> ();
+        private Stack<FrameInfo> _frameInfoStack = new Stack<FrameInfo>();
     }
 
     /// <summary>
@@ -325,19 +325,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal sealed class StringManipulationHelper
     {
-        private static readonly char SoftHyphen = '\u00AD';
-        private static readonly char HardHyphen = '\u2011';
-        private static readonly char NonBreakingSpace = '\u00A0';
-        private static Collection<string> CultureCollection = new Collection<string>();
+        private static readonly char s_softHyphen = '\u00AD';
+        private static readonly char s_hardHyphen = '\u2011';
+        private static readonly char s_nonBreakingSpace = '\u00A0';
+        private static Collection<string> s_cultureCollection = new Collection<string>();
 
         static StringManipulationHelper()
         {
-            CultureCollection.Add("en");        // English
-            CultureCollection.Add("fr");        // French
-            CultureCollection.Add("de");        // German
-            CultureCollection.Add("it");        // Italian
-            CultureCollection.Add("pt");        // Portuguese
-            CultureCollection.Add("es");        // Spanish
+            s_cultureCollection.Add("en");        // English
+            s_cultureCollection.Add("fr");        // French
+            s_cultureCollection.Add("de");        // German
+            s_cultureCollection.Add("it");        // Italian
+            s_cultureCollection.Add("pt");        // Portuguese
+            s_cultureCollection.Add("es");        // Spanish
         }
 
         /// <summary>
@@ -355,7 +355,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             for (int i = 0; i < s.Length; i++)
             {
                 // Soft hyphen = \u00AD - Should break, and add a hyphen if needed. If not needed for a break, hyphen should be absent
-                if (s[i] == ' ' || s[i] == '\t' || s[i] == SoftHyphen)
+                if (s[i] == ' ' || s[i] == '\t' || s[i] == s_softHyphen)
                 {
                     result.Word = sb.ToString();
                     sb.Clear();
@@ -365,7 +365,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 // Non-breaking space = \u00A0 - ideally shouldn't wrap
                 // Hard hyphen = \u2011 - Should not break
-                else if (s[i] == HardHyphen || s[i] == NonBreakingSpace)
+                else if (s[i] == s_hardHyphen || s[i] == s_nonBreakingSpace)
                 {
                     result.Word = sb.ToString();
                     sb.Clear();
@@ -387,7 +387,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal static StringCollection GenerateLines(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)
         {
-            if (CultureCollection.Contains(CultureInfo.CurrentCulture.TwoLetterISOLanguageName))
+            if (s_cultureCollection.Contains(CultureInfo.CurrentCulture.TwoLetterISOLanguageName))
             {
                 return GenerateLinesWithWordWrap(displayCells, val, firstLineLen, followingLinesLen);
             }
@@ -399,17 +399,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static StringCollection GenerateLinesWithoutWordWrap(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)
         {
-            StringCollection retVal = new StringCollection ();
+            StringCollection retVal = new StringCollection();
 
-            if (string.IsNullOrEmpty (val))
+            if (string.IsNullOrEmpty(val))
             {
                 // if null or empty, just add and we are done
-                retVal.Add (val);
+                retVal.Add(val);
                 return retVal;
             }
 
             // break string on newlines and process each line separately
-            string[] lines = SplitLines (val);
+            string[] lines = SplitLines(val);
 
             for (int k = 0; k < lines.Length; k++)
             {
@@ -480,20 +480,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private sealed class SplitLinesAccumulator
         {
-            internal SplitLinesAccumulator (StringCollection retVal, int firstLineLen, int followingLinesLen)
+            internal SplitLinesAccumulator(StringCollection retVal, int firstLineLen, int followingLinesLen)
             {
                 _retVal = retVal;
                 _firstLineLen = firstLineLen;
                 _followingLinesLen = followingLinesLen;
             }
 
-            internal void AddLine (string s)
+            internal void AddLine(string s)
             {
                 if (!_addedFirstLine)
                 {
                     _addedFirstLine = true;
                 }
-                _retVal.Add (s);
+                _retVal.Add(s);
             }
 
             internal int ActiveLen
@@ -510,29 +510,28 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             private bool _addedFirstLine;
             private int _firstLineLen;
             private int _followingLinesLen;
-
         }
 
         private static StringCollection GenerateLinesWithWordWrap(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)
         {
-            StringCollection retVal = new StringCollection ();
+            StringCollection retVal = new StringCollection();
 
-            if (string.IsNullOrEmpty (val))
+            if (string.IsNullOrEmpty(val))
             {
                 // if null or empty, just add and we are done
-                retVal.Add (val);
+                retVal.Add(val);
                 return retVal;
             }
 
             // break string on newlines and process each line separately
-            string[] lines = SplitLines (val);
+            string[] lines = SplitLines(val);
 
             for (int k = 0; k < lines.Length; k++)
             {
                 if (lines[k] == null || displayCells.Length(lines[k]) <= firstLineLen)
                 {
                     // we do not need to split further, just add
-                    retVal.Add (lines[k]);
+                    retVal.Add(lines[k]);
                     continue;
                 }
 
@@ -546,9 +545,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     string wordToAdd = word.Word;
 
                     // Handle soft hyphen
-                    if (word.Delim == SoftHyphen.ToString())
+                    if (word.Delim == s_softHyphen.ToString())
                     {
-                        int wordWidthWithHyphen = displayCells.Length(wordToAdd) + displayCells.Length(SoftHyphen.ToString());
+                        int wordWidthWithHyphen = displayCells.Length(wordToAdd) + displayCells.Length(s_softHyphen.ToString());
 
                         // Add hyphen only if necessary
                         if (wordWidthWithHyphen == spacesLeft)
@@ -658,20 +657,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="s">string to split</param>
         /// <returns>string array with the values</returns>
-        internal static string[] SplitLines (string s)
+        internal static string[] SplitLines(string s)
         {
-            if (string.IsNullOrEmpty (s))
+            if (string.IsNullOrEmpty(s))
                 return new string[1] { s };
 
-            StringBuilder sb = new StringBuilder ();
+            StringBuilder sb = new StringBuilder();
 
             foreach (char c in s)
             {
                 if (c != '\r')
-                    sb.Append (c);
+                    sb.Append(c);
             }
 
-            return sb.ToString ().Split (newLineChar);
+            return sb.ToString().Split(s_newLineChar);
         }
 
 #if false
@@ -701,26 +700,26 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return sb.ToString ();
         }
 #endif
-        internal static string TruncateAtNewLine (string s)
+        internal static string TruncateAtNewLine(string s)
         {
-            if (string.IsNullOrEmpty (s))
+            if (string.IsNullOrEmpty(s))
                 return s;
 
-            int lineBreak = s.IndexOfAny (lineBreakChars);
+            int lineBreak = s.IndexOfAny(s_lineBreakChars);
 
             if (lineBreak < 0)
                 return s;
 
-            return s.Substring (0, lineBreak) + PSObjectHelper.ellipses;
+            return s.Substring(0, lineBreak) + PSObjectHelper.ellipses;
         }
 
-        internal static string PadLeft (string val, int count)
+        internal static string PadLeft(string val, int count)
         {
-            return new string (' ', count) + val;
+            return new string(' ', count) + val;
         }
 
-        static readonly private char[] newLineChar = new char[] { '\n' };
-        static readonly private char[] lineBreakChars = new char[] { '\n', '\r' };
+        static readonly private char[] s_newLineChar = new char[] { '\n' };
+        static readonly private char[] s_lineBreakChars = new char[] { '\n', '\r' };
     }
 }
 

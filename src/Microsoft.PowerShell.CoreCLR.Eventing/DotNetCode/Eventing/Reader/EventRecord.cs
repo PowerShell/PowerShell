@@ -1,11 +1,6 @@
-// ==++==
-// 
-//   Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
-// ==--==
+
 /*============================================================
 **
-** Class: EventRecord
 **
 ** Purpose: 
 ** This public abstract class defines the methods / properties
@@ -17,12 +12,13 @@ using System.Collections.Generic;
 using System.Security.Principal;
 using System.Diagnostics.CodeAnalysis;
 
-namespace System.Diagnostics.Eventing.Reader {
-
+namespace System.Diagnostics.Eventing.Reader
+{
     /// <summary>
     /// Represents an event obtained from an EventReader.    
     /// </summary>
-    public abstract class EventRecord : IDisposable {
+    public abstract class EventRecord : IDisposable
+    {
         public abstract int Id { get; }
         public abstract byte? Version { get; }
         public abstract byte? Level { get; }
@@ -63,8 +59,9 @@ namespace System.Diagnostics.Eventing.Reader {
         public abstract IList<EventProperty> Properties { get; }
 
         public abstract string ToXml();
-         
-        public void Dispose() {
+
+        public void Dispose()
+        {
             Dispose(true);
             GC.SuppressFinalize(this);
         }

@@ -237,160 +237,160 @@ namespace System.Management.Automation.Interpreter {
         }
         public static MethodInfo CacheFunc<TRet>(Func<TRet> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new FuncCallInstruction<TRet>(method);
+            lock (s_cache) {
+                s_cache[info] = new FuncCallInstruction<TRet>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheFunc<T0, TRet>(Func<T0, TRet> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new FuncCallInstruction<T0, TRet>(method);
+            lock (s_cache) {
+                s_cache[info] = new FuncCallInstruction<T0, TRet>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheFunc<T0, T1, TRet>(Func<T0, T1, TRet> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new FuncCallInstruction<T0, T1, TRet>(method);
+            lock (s_cache) {
+                s_cache[info] = new FuncCallInstruction<T0, T1, TRet>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheFunc<T0, T1, T2, TRet>(Func<T0, T1, T2, TRet> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new FuncCallInstruction<T0, T1, T2, TRet>(method);
+            lock (s_cache) {
+                s_cache[info] = new FuncCallInstruction<T0, T1, T2, TRet>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheFunc<T0, T1, T2, T3, TRet>(Func<T0, T1, T2, T3, TRet> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new FuncCallInstruction<T0, T1, T2, T3, TRet>(method);
+            lock (s_cache) {
+                s_cache[info] = new FuncCallInstruction<T0, T1, T2, T3, TRet>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheFunc<T0, T1, T2, T3, T4, TRet>(Func<T0, T1, T2, T3, T4, TRet> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new FuncCallInstruction<T0, T1, T2, T3, T4, TRet>(method);
+            lock (s_cache) {
+                s_cache[info] = new FuncCallInstruction<T0, T1, T2, T3, T4, TRet>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheFunc<T0, T1, T2, T3, T4, T5, TRet>(Func<T0, T1, T2, T3, T4, T5, TRet> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new FuncCallInstruction<T0, T1, T2, T3, T4, T5, TRet>(method);
+            lock (s_cache) {
+                s_cache[info] = new FuncCallInstruction<T0, T1, T2, T3, T4, T5, TRet>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheFunc<T0, T1, T2, T3, T4, T5, T6, TRet>(Func<T0, T1, T2, T3, T4, T5, T6, TRet> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new FuncCallInstruction<T0, T1, T2, T3, T4, T5, T6, TRet>(method);
+            lock (s_cache) {
+                s_cache[info] = new FuncCallInstruction<T0, T1, T2, T3, T4, T5, T6, TRet>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheFunc<T0, T1, T2, T3, T4, T5, T6, T7, TRet>(Func<T0, T1, T2, T3, T4, T5, T6, T7, TRet> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new FuncCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7, TRet>(method);
+            lock (s_cache) {
+                s_cache[info] = new FuncCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7, TRet>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheFunc<T0, T1, T2, T3, T4, T5, T6, T7, T8, TRet>(Func<T0, T1, T2, T3, T4, T5, T6, T7, T8, TRet> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new FuncCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8, TRet>(method);
+            lock (s_cache) {
+                s_cache[info] = new FuncCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8, TRet>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheAction(Action method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new ActionCallInstruction(method);
+            lock (s_cache) {
+                s_cache[info] = new ActionCallInstruction(method);
             }
             return info;
         }
 
         public static MethodInfo CacheAction<T0>(Action<T0> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new ActionCallInstruction<T0>(method);
+            lock (s_cache) {
+                s_cache[info] = new ActionCallInstruction<T0>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheAction<T0, T1>(Action<T0, T1> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new ActionCallInstruction<T0, T1>(method);
+            lock (s_cache) {
+                s_cache[info] = new ActionCallInstruction<T0, T1>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheAction<T0, T1, T2>(Action<T0, T1, T2> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new ActionCallInstruction<T0, T1, T2>(method);
+            lock (s_cache) {
+                s_cache[info] = new ActionCallInstruction<T0, T1, T2>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheAction<T0, T1, T2, T3>(Action<T0, T1, T2, T3> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new ActionCallInstruction<T0, T1, T2, T3>(method);
+            lock (s_cache) {
+                s_cache[info] = new ActionCallInstruction<T0, T1, T2, T3>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheAction<T0, T1, T2, T3, T4>(Action<T0, T1, T2, T3, T4> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new ActionCallInstruction<T0, T1, T2, T3, T4>(method);
+            lock (s_cache) {
+                s_cache[info] = new ActionCallInstruction<T0, T1, T2, T3, T4>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheAction<T0, T1, T2, T3, T4, T5>(Action<T0, T1, T2, T3, T4, T5> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new ActionCallInstruction<T0, T1, T2, T3, T4, T5>(method);
+            lock (s_cache) {
+                s_cache[info] = new ActionCallInstruction<T0, T1, T2, T3, T4, T5>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheAction<T0, T1, T2, T3, T4, T5, T6>(Action<T0, T1, T2, T3, T4, T5, T6> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new ActionCallInstruction<T0, T1, T2, T3, T4, T5, T6>(method);
+            lock (s_cache) {
+                s_cache[info] = new ActionCallInstruction<T0, T1, T2, T3, T4, T5, T6>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheAction<T0, T1, T2, T3, T4, T5, T6, T7>(Action<T0, T1, T2, T3, T4, T5, T6, T7> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new ActionCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7>(method);
+            lock (s_cache) {
+                s_cache[info] = new ActionCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7>(method);
             }
             return info;
         }
 
         public static MethodInfo CacheAction<T0, T1, T2, T3, T4, T5, T6, T7, T8>(Action<T0, T1, T2, T3, T4, T5, T6, T7, T8> method) {
             var info = method.GetMethodInfo();
-            lock (_cache) {
-                _cache[info] = new ActionCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8>(method);
+            lock (s_cache) {
+                s_cache[info] = new ActionCallInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8>(method);
             }
             return info;
         }

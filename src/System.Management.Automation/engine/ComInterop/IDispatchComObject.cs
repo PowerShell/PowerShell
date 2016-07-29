@@ -21,8 +21,8 @@ using System.Security.Permissions;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
 using System.Dynamic;
 
-namespace System.Management.Automation.ComInterop {
-
+namespace System.Management.Automation.ComInterop
+{
     /// <summary>
     /// An object that implements IDispatch
     /// 
@@ -90,46 +90,55 @@ namespace System.Management.Automation.ComInterop {
     /// dispid.
     ///  </summary>
 
-    internal sealed class IDispatchComObject : ComObject, IDynamicMetaObjectProvider {
-
+    internal sealed class IDispatchComObject : ComObject, IDynamicMetaObjectProvider
+    {
         private readonly IDispatch _dispatchObject;
         private ComTypeDesc _comTypeDesc;
-        private static readonly Dictionary<Guid, ComTypeDesc> _CacheComTypeDesc = new Dictionary<Guid, ComTypeDesc>();
+        private static readonly Dictionary<Guid, ComTypeDesc> s_cacheComTypeDesc = new Dictionary<Guid, ComTypeDesc>();
 
         internal IDispatchComObject(IDispatch rcw)
-            : base(rcw) {
+            : base(rcw)
+        {
             _dispatchObject = rcw;
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             ComTypeDesc ctd = _comTypeDesc;
             string typeName = null;
 
-            if (ctd != null) {
+            if (ctd != null)
+            {
                 typeName = ctd.TypeName;
             }
 
-            if (String.IsNullOrEmpty(typeName)) {
+            if (String.IsNullOrEmpty(typeName))
+            {
                 typeName = "IDispatch";
             }
 
             return String.Format(CultureInfo.CurrentCulture, "{0} ({1})", RuntimeCallableWrapper.ToString(), typeName);
         }
 
-        public ComTypeDesc ComTypeDesc {
-            get {
+        public ComTypeDesc ComTypeDesc
+        {
+            get
+            {
                 EnsureScanDefinedMethods();
                 return _comTypeDesc;
             }
         }
 
-        public IDispatch DispatchObject {
-            get {
+        public IDispatch DispatchObject
+        {
+            get
+            {
                 return _dispatchObject;
             }
         }
 
-        private static int GetIDsOfNames(IDispatch dispatch, string name, out int dispId) {
+        private static int GetIDsOfNames(IDispatch dispatch, string name, out int dispId)
+        {
             int[] dispIds = new int[1];
             Guid emtpyRiid = Guid.Empty;
             int hresult = dispatch.TryGetIDsOfNames(
@@ -143,7 +152,8 @@ namespace System.Management.Automation.ComInterop {
             return hresult;
         }
 
-        static int Invoke(IDispatch dispatch, int memberDispId, out object result) {
+        private static int Invoke(IDispatch dispatch, int memberDispId, out object result)
+        {
             Guid emtpyRiid = Guid.Empty;
             ComTypes.DISPPARAMS dispParams = new ComTypes.DISPPARAMS();
             ComTypes.EXCEPINFO excepInfo = new ComTypes.EXCEPINFO();
@@ -161,9 +171,11 @@ namespace System.Management.Automation.ComInterop {
             return hresult;
         }
 
-        internal bool TryGetGetItem(out ComMethodDesc value) {
+        internal bool TryGetGetItem(out ComMethodDesc value)
+        {
             ComMethodDesc methodDesc = _comTypeDesc.GetItem;
-            if (methodDesc != null) {
+            if (methodDesc != null)
+            {
                 value = methodDesc;
                 return true;
             }
@@ -171,13 +183,15 @@ namespace System.Management.Automation.ComInterop {
             return SlowTryGetGetItem(out value);
         }
 
-        private bool SlowTryGetGetItem(out ComMethodDesc value) {
+        private bool SlowTryGetGetItem(out ComMethodDesc value)
+        {
             EnsureScanDefinedMethods();
 
             ComMethodDesc methodDesc = _comTypeDesc.GetItem;
 
             // Without type information, we really don't know whether or not we have a property getter.
-            if (methodDesc == null) {
+            if (methodDesc == null)
+            {
                 string name = "[PROPERTYGET, DISPID(0)]";
 
                 _comTypeDesc.EnsureGetItem(new ComMethodDesc(name, ComDispIds.DISPID_VALUE, ComTypes.INVOKEKIND.INVOKE_PROPERTYGET));
@@ -188,9 +202,11 @@ namespace System.Management.Automation.ComInterop {
             return true;
         }
 
-        internal bool TryGetSetItem(out ComMethodDesc value) {
+        internal bool TryGetSetItem(out ComMethodDesc value)
+        {
             ComMethodDesc methodDesc = _comTypeDesc.SetItem;
-            if (methodDesc != null) {
+            if (methodDesc != null)
+            {
                 value = methodDesc;
                 return true;
             }
@@ -198,13 +214,15 @@ namespace System.Management.Automation.ComInterop {
             return SlowTryGetSetItem(out value);
         }
 
-        private bool SlowTryGetSetItem(out ComMethodDesc value) {
+        private bool SlowTryGetSetItem(out ComMethodDesc value)
+        {
             EnsureScanDefinedMethods();
 
             ComMethodDesc methodDesc = _comTypeDesc.SetItem;
 
             // Without type information, we really don't know whether or not we have a property setter.
-            if (methodDesc == null) {
+            if (methodDesc == null)
+            {
                 string name = "[PROPERTYPUT, DISPID(0)]";
 
                 _comTypeDesc.EnsureSetItem(new ComMethodDesc(name, ComDispIds.DISPID_VALUE, ComTypes.INVOKEKIND.INVOKE_PROPERTYPUT));
@@ -215,42 +233,52 @@ namespace System.Management.Automation.ComInterop {
             return true;
         }
 
-        internal bool TryGetMemberMethod(string name, out ComMethodDesc method) {
+        internal bool TryGetMemberMethod(string name, out ComMethodDesc method)
+        {
             EnsureScanDefinedMethods();
             return _comTypeDesc.TryGetFunc(name, out method);
         }
 
-        internal bool TryGetMemberEvent(string name, out ComEventDesc @event) {
+        internal bool TryGetMemberEvent(string name, out ComEventDesc @event)
+        {
             EnsureScanDefinedEvents();
             return _comTypeDesc.TryGetEvent(name, out @event);
         }
 
-        internal bool TryGetMemberMethodExplicit(string name, out ComMethodDesc method) {
+        internal bool TryGetMemberMethodExplicit(string name, out ComMethodDesc method)
+        {
             EnsureScanDefinedMethods();
 
             int dispId;
             int hresult = GetIDsOfNames(_dispatchObject, name, out dispId);
 
-            if (hresult == ComHresults.S_OK) {
+            if (hresult == ComHresults.S_OK)
+            {
                 ComMethodDesc cmd = new ComMethodDesc(name, dispId, ComTypes.INVOKEKIND.INVOKE_FUNC);
                 _comTypeDesc.AddFunc(name, cmd);
                 method = cmd;
                 return true;
-            } else if (hresult == ComHresults.DISP_E_UNKNOWNNAME) {
+            }
+            else if (hresult == ComHresults.DISP_E_UNKNOWNNAME)
+            {
                 method = null;
                 return false;
-            } else {
+            }
+            else
+            {
                 throw Error.CouldNotGetDispId(name, String.Format(CultureInfo.InvariantCulture, "0x{0:X})", hresult));
             }
         }
 
-        internal bool TryGetPropertySetterExplicit(string name, out ComMethodDesc method, Type limitType, bool holdsNull) {
+        internal bool TryGetPropertySetterExplicit(string name, out ComMethodDesc method, Type limitType, bool holdsNull)
+        {
             EnsureScanDefinedMethods();
 
             int dispId;
             int hresult = GetIDsOfNames(_dispatchObject, name, out dispId);
 
-            if (hresult == ComHresults.S_OK) {
+            if (hresult == ComHresults.S_OK)
+            {
                 // we do not know whether we have put or putref here
                 // and we will not guess and pretend we found both.
                 ComMethodDesc put = new ComMethodDesc(name, dispId, ComTypes.INVOKEKIND.INVOKE_PROPERTYPUT);
@@ -259,21 +287,29 @@ namespace System.Management.Automation.ComInterop {
                 ComMethodDesc putref = new ComMethodDesc(name, dispId, ComTypes.INVOKEKIND.INVOKE_PROPERTYPUTREF);
                 _comTypeDesc.AddPutRef(name, putref);
 
-                if (ComBinderHelpers.PreferPut(limitType, holdsNull)) {
+                if (ComBinderHelpers.PreferPut(limitType, holdsNull))
+                {
                     method = put;
-                } else {
+                }
+                else
+                {
                     method = putref;
                 }
                 return true;
-            } else if (hresult == ComHresults.DISP_E_UNKNOWNNAME) {
+            }
+            else if (hresult == ComHresults.DISP_E_UNKNOWNNAME)
+            {
                 method = null;
                 return false;
-            } else {
+            }
+            else
+            {
                 throw Error.CouldNotGetDispId(name, String.Format(CultureInfo.InvariantCulture, "0x{0:X})", hresult));
             }
         }
 
-        internal override IList<string> GetMemberNames(bool dataOnly) {
+        internal override IList<string> GetMemberNames(bool dataOnly)
+        {
             EnsureScanDefinedMethods();
             EnsureScanDefinedEvents();
 
@@ -281,22 +317,28 @@ namespace System.Management.Automation.ComInterop {
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-        internal override IList<KeyValuePair<string, object>> GetMembers(IEnumerable<string> names) {
-            if (names == null) {
+        internal override IList<KeyValuePair<string, object>> GetMembers(IEnumerable<string> names)
+        {
+            if (names == null)
+            {
                 names = GetMemberNames(true);
             }
 
             Type comType = RuntimeCallableWrapper.GetType();
 
             var members = new List<KeyValuePair<string, object>>();
-            foreach (string name in names) {
-                if (name == null) {
+            foreach (string name in names)
+            {
+                if (name == null)
+                {
                     continue;
                 }
 
                 ComMethodDesc method;
-                if (ComTypeDesc.TryGetFunc(name, out method) && method.IsDataMember) {
-                    try {
+                if (ComTypeDesc.TryGetFunc(name, out method) && method.IsDataMember)
+                {
+                    try
+                    {
                         object value = comType.InvokeMember(
                             method.Name,
                             BindingFlags.GetProperty,
@@ -308,7 +350,9 @@ namespace System.Management.Automation.ComInterop {
                         members.Add(new KeyValuePair<string, object>(method.Name, value));
 
                         //evaluation failed for some reason. pass exception out 
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex)
+                    {
                         members.Add(new KeyValuePair<string, object>(method.Name, ex));
                     }
                 }
@@ -317,18 +361,21 @@ namespace System.Management.Automation.ComInterop {
             return members.ToArray();
         }
 
-        DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter) {
+        DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter)
+        {
             EnsureScanDefinedMethods();
             return new IDispatchMetaObject(parameter, this);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
-        private static void GetFuncDescForDescIndex(ComTypes.ITypeInfo typeInfo, int funcIndex, out ComTypes.FUNCDESC funcDesc, out IntPtr funcDescHandle) {
+        private static void GetFuncDescForDescIndex(ComTypes.ITypeInfo typeInfo, int funcIndex, out ComTypes.FUNCDESC funcDesc, out IntPtr funcDescHandle)
+        {
             IntPtr pFuncDesc = IntPtr.Zero;
             typeInfo.GetFuncDesc(funcIndex, out pFuncDesc);
 
             // GetFuncDesc should never return null, this is just to be safe
-            if (pFuncDesc == IntPtr.Zero) {
+            if (pFuncDesc == IntPtr.Zero)
+            {
                 throw Error.CannotRetrieveTypeInformation();
             }
 
@@ -336,26 +383,32 @@ namespace System.Management.Automation.ComInterop {
             funcDescHandle = pFuncDesc;
         }
 
-        private void EnsureScanDefinedEvents() {
+        private void EnsureScanDefinedEvents()
+        {
             // _comTypeDesc.Events is null if we have not yet attempted
             // to scan the object for events.
-            if (_comTypeDesc != null && _comTypeDesc.Events != null) {
+            if (_comTypeDesc != null && _comTypeDesc.Events != null)
+            {
                 return;
             }
 
             // check type info in the type descriptions cache
             ComTypes.ITypeInfo typeInfo = ComRuntimeHelpers.GetITypeInfoFromIDispatch(_dispatchObject, true);
-            if (typeInfo == null) {
+            if (typeInfo == null)
+            {
                 _comTypeDesc = ComTypeDesc.CreateEmptyTypeDesc();
                 return;
             }
 
             ComTypes.TYPEATTR typeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(typeInfo);
 
-            if (_comTypeDesc == null) {
-                lock (_CacheComTypeDesc) {
-                    if (_CacheComTypeDesc.TryGetValue(typeAttr.guid, out _comTypeDesc) == true &&
-                        _comTypeDesc.Events != null) {
+            if (_comTypeDesc == null)
+            {
+                lock (s_cacheComTypeDesc)
+                {
+                    if (s_cacheComTypeDesc.TryGetValue(typeAttr.guid, out _comTypeDesc) == true &&
+                        _comTypeDesc.Events != null)
+                    {
                         return;
                     }
                 }
@@ -367,18 +420,24 @@ namespace System.Management.Automation.ComInterop {
             Dictionary<string, ComEventDesc> events = null;
 
             var cpc = RuntimeCallableWrapper as ComTypes.IConnectionPointContainer;
-            if (cpc == null) {
+            if (cpc == null)
+            {
                 // No ICPC - this object does not support events
                 events = ComTypeDesc.EmptyEvents;
-            } else if ((classTypeInfo = GetCoClassTypeInfo(this.RuntimeCallableWrapper, typeInfo)) == null) {
+            }
+            else if ((classTypeInfo = GetCoClassTypeInfo(this.RuntimeCallableWrapper, typeInfo)) == null)
+            {
                 // no class info found - this object may support events
                 // but we could not discover those
                 events = ComTypeDesc.EmptyEvents;
-            } else {
+            }
+            else
+            {
                 events = new Dictionary<string, ComEventDesc>();
 
                 ComTypes.TYPEATTR classTypeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(classTypeInfo);
-                for (int i = 0; i < classTypeAttr.cImplTypes; i++) {
+                for (int i = 0; i < classTypeAttr.cImplTypes; i++)
+                {
                     int hRefType;
                     classTypeInfo.GetRefTypeOfImplType(i, out hRefType);
 
@@ -387,43 +446,54 @@ namespace System.Management.Automation.ComInterop {
 
                     ComTypes.IMPLTYPEFLAGS flags;
                     classTypeInfo.GetImplTypeFlags(i, out flags);
-                    if ((flags & ComTypes.IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE) != 0) {
+                    if ((flags & ComTypes.IMPLTYPEFLAGS.IMPLTYPEFLAG_FSOURCE) != 0)
+                    {
                         ScanSourceInterface(interfaceTypeInfo, ref events);
                     }
                 }
 
-                if (events.Count == 0) {
+                if (events.Count == 0)
+                {
                     events = ComTypeDesc.EmptyEvents;
                 }
             }
 
-            lock (_CacheComTypeDesc) {
+            lock (s_cacheComTypeDesc)
+            {
                 ComTypeDesc cachedTypeDesc;
-                if (_CacheComTypeDesc.TryGetValue(typeAttr.guid, out cachedTypeDesc)) {
+                if (s_cacheComTypeDesc.TryGetValue(typeAttr.guid, out cachedTypeDesc))
+                {
                     _comTypeDesc = cachedTypeDesc;
-                } else {
+                }
+                else
+                {
                     _comTypeDesc = typeDesc;
-                    _CacheComTypeDesc.Add(typeAttr.guid, _comTypeDesc);
+                    s_cacheComTypeDesc.Add(typeAttr.guid, _comTypeDesc);
                 }
                 _comTypeDesc.Events = events;
             }
         }
 
-        private static void ScanSourceInterface(ComTypes.ITypeInfo sourceTypeInfo, ref Dictionary<string, ComEventDesc> events) {
+        private static void ScanSourceInterface(ComTypes.ITypeInfo sourceTypeInfo, ref Dictionary<string, ComEventDesc> events)
+        {
             ComTypes.TYPEATTR sourceTypeAttribute = ComRuntimeHelpers.GetTypeAttrForTypeInfo(sourceTypeInfo);
 
-            for (int index = 0; index < sourceTypeAttribute.cFuncs; index++) {
+            for (int index = 0; index < sourceTypeAttribute.cFuncs; index++)
+            {
                 IntPtr funcDescHandleToRelease = IntPtr.Zero;
 
-                try {
+                try
+                {
                     ComTypes.FUNCDESC funcDesc;
                     GetFuncDescForDescIndex(sourceTypeInfo, index, out funcDesc, out funcDescHandleToRelease);
 
                     // we are not interested in hidden or restricted functions for now.
-                    if ((funcDesc.wFuncFlags & (int)ComTypes.FUNCFLAGS.FUNCFLAG_FHIDDEN) != 0) {
+                    if ((funcDesc.wFuncFlags & (int)ComTypes.FUNCFLAGS.FUNCFLAG_FHIDDEN) != 0)
+                    {
                         continue;
                     }
-                    if ((funcDesc.wFuncFlags & (int)ComTypes.FUNCFLAGS.FUNCFLAG_FRESTRICTED) != 0) {
+                    if ((funcDesc.wFuncFlags & (int)ComTypes.FUNCFLAGS.FUNCFLAG_FRESTRICTED) != 0)
+                    {
                         continue;
                     }
 
@@ -434,33 +504,44 @@ namespace System.Management.Automation.ComInterop {
                     // adding new events and putting them on new interfaces while keeping the
                     // old interfaces around. This may cause name collisioning which we are
                     // resolving by keeping only the first event with the same name.
-                    if (events.ContainsKey(name) == false) {
+                    if (events.ContainsKey(name) == false)
+                    {
                         ComEventDesc eventDesc = new ComEventDesc();
                         eventDesc.dispid = funcDesc.memid;
                         eventDesc.sourceIID = sourceTypeAttribute.guid;
                         events.Add(name, eventDesc);
                     }
-                } finally {
-                    if (funcDescHandleToRelease != IntPtr.Zero) {
+                }
+                finally
+                {
+                    if (funcDescHandleToRelease != IntPtr.Zero)
+                    {
                         sourceTypeInfo.ReleaseFuncDesc(funcDescHandleToRelease);
                     }
                 }
             }
         }
 
-        private static ComTypes.ITypeInfo GetCoClassTypeInfo(object rcw, ComTypes.ITypeInfo typeInfo) {
+        private static ComTypes.ITypeInfo GetCoClassTypeInfo(object rcw, ComTypes.ITypeInfo typeInfo)
+        {
             Debug.Assert(typeInfo != null);
 
             IProvideClassInfo provideClassInfo = rcw as IProvideClassInfo;
-            if (provideClassInfo != null) {
+            if (provideClassInfo != null)
+            {
                 IntPtr typeInfoPtr = IntPtr.Zero;
-                try {
+                try
+                {
                     provideClassInfo.GetClassInfo(out typeInfoPtr);
-                    if (typeInfoPtr != IntPtr.Zero) {
+                    if (typeInfoPtr != IntPtr.Zero)
+                    {
                         return Marshal.GetObjectForIUnknown(typeInfoPtr) as ComTypes.ITypeInfo;
                     }
-                } finally {
-                    if (typeInfoPtr != IntPtr.Zero) {
+                }
+                finally
+                {
+                    if (typeInfoPtr != IntPtr.Zero)
+                    {
                         Marshal.Release(typeInfoPtr);
                     }
                 }
@@ -476,7 +557,8 @@ namespace System.Management.Automation.ComInterop {
 
             ComTypeLibDesc typeLibDesc = ComTypeLibDesc.GetFromTypeLib(typeLib);
             ComTypeClassDesc coclassDesc = typeLibDesc.GetCoClassForInterface(typeName);
-            if (coclassDesc == null) {
+            if (coclassDesc == null)
+            {
                 return null;
             }
 
@@ -486,23 +568,29 @@ namespace System.Management.Automation.ComInterop {
             return typeInfoCoClass;
         }
 
-        private void EnsureScanDefinedMethods() {
-            if (_comTypeDesc != null && _comTypeDesc.Funcs != null) {
+        private void EnsureScanDefinedMethods()
+        {
+            if (_comTypeDesc != null && _comTypeDesc.Funcs != null)
+            {
                 return;
             }
 
             ComTypes.ITypeInfo typeInfo = ComRuntimeHelpers.GetITypeInfoFromIDispatch(_dispatchObject, true);
-            if (typeInfo == null) {
+            if (typeInfo == null)
+            {
                 _comTypeDesc = ComTypeDesc.CreateEmptyTypeDesc();
                 return;
             }
 
             ComTypes.TYPEATTR typeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(typeInfo);
 
-            if (_comTypeDesc == null) {
-                lock (_CacheComTypeDesc) {
-                    if (_CacheComTypeDesc.TryGetValue(typeAttr.guid, out _comTypeDesc) == true &&
-                        _comTypeDesc.Funcs != null) {
+            if (_comTypeDesc == null)
+            {
+                lock (s_cacheComTypeDesc)
+                {
+                    if (s_cacheComTypeDesc.TryGetValue(typeAttr.guid, out _comTypeDesc) == true &&
+                        _comTypeDesc.Funcs != null)
+                    {
                         return;
                     }
                 }
@@ -530,14 +618,17 @@ namespace System.Management.Automation.ComInterop {
             Hashtable puts = new Hashtable();
             Hashtable putrefs = new Hashtable();
 
-            for (int definedFuncIndex = 0; definedFuncIndex < typeAttr.cFuncs; definedFuncIndex++) {
+            for (int definedFuncIndex = 0; definedFuncIndex < typeAttr.cFuncs; definedFuncIndex++)
+            {
                 IntPtr funcDescHandleToRelease = IntPtr.Zero;
 
-                try {
+                try
+                {
                     ComTypes.FUNCDESC funcDesc;
                     GetFuncDescForDescIndex(typeInfo, definedFuncIndex, out funcDesc, out funcDescHandleToRelease);
 
-                    if ((funcDesc.wFuncFlags & (int)ComTypes.FUNCFLAGS.FUNCFLAG_FRESTRICTED) != 0) {
+                    if ((funcDesc.wFuncFlags & (int)ComTypes.FUNCFLAGS.FUNCFLAG_FRESTRICTED) != 0)
+                    {
                         // This function is not meant for the script user to use.
                         continue;
                     }
@@ -545,26 +636,27 @@ namespace System.Management.Automation.ComInterop {
                     ComMethodDesc method = new ComMethodDesc(typeInfo, funcDesc);
                     string name = method.Name.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
 
-                    if ((funcDesc.invkind & ComTypes.INVOKEKIND.INVOKE_PROPERTYPUT) != 0) {
-
+                    if ((funcDesc.invkind & ComTypes.INVOKEKIND.INVOKE_PROPERTYPUT) != 0)
+                    {
                         // If there is a getter for this put, use that ReturnType as the
                         // PropertyType.
                         if (funcs.ContainsKey(name))
                         {
-                            method.InputType = ((ComMethodDesc) funcs[name]).ReturnType;
+                            method.InputType = ((ComMethodDesc)funcs[name]).ReturnType;
                         }
 
                         puts.Add(name, method);
 
                         // for the special dispId == 0, we need to store
                         // the method descriptor for the Do(SetItem) binder. 
-                        if (method.DispId == ComDispIds.DISPID_VALUE && setItem == null) {
+                        if (method.DispId == ComDispIds.DISPID_VALUE && setItem == null)
+                        {
                             setItem = method;
                         }
                         continue;
                     }
-                    if ((funcDesc.invkind & ComTypes.INVOKEKIND.INVOKE_PROPERTYPUTREF) != 0) {
-
+                    if ((funcDesc.invkind & ComTypes.INVOKEKIND.INVOKE_PROPERTYPUTREF) != 0)
+                    {
                         // If there is a getter for this put, use that ReturnType as the
                         // PropertyType.
                         if (funcs.ContainsKey(name))
@@ -575,13 +667,15 @@ namespace System.Management.Automation.ComInterop {
                         putrefs.Add(name, method);
                         // for the special dispId == 0, we need to store
                         // the method descriptor for the Do(SetItem) binder. 
-                        if (method.DispId == ComDispIds.DISPID_VALUE && setItem == null) {
+                        if (method.DispId == ComDispIds.DISPID_VALUE && setItem == null)
+                        {
                             setItem = method;
                         }
                         continue;
                     }
 
-                    if (funcDesc.memid == ComDispIds.DISPID_NEWENUM) {
+                    if (funcDesc.memid == ComDispIds.DISPID_NEWENUM)
+                    {
                         funcs.Add("GETENUMERATOR", method);
                         continue;
                     }
@@ -601,23 +695,31 @@ namespace System.Management.Automation.ComInterop {
 
                     // for the special dispId == 0, we need to store the method descriptor 
                     // for the Do(GetItem) binder. 
-                    if (funcDesc.memid == ComDispIds.DISPID_VALUE) {
+                    if (funcDesc.memid == ComDispIds.DISPID_VALUE)
+                    {
                         getItem = method;
                     }
-                } finally {
-                    if (funcDescHandleToRelease != IntPtr.Zero) {
+                }
+                finally
+                {
+                    if (funcDescHandleToRelease != IntPtr.Zero)
+                    {
                         typeInfo.ReleaseFuncDesc(funcDescHandleToRelease);
                     }
                 }
             }
 
-            lock (_CacheComTypeDesc) {
+            lock (s_cacheComTypeDesc)
+            {
                 ComTypeDesc cachedTypeDesc;
-                if (_CacheComTypeDesc.TryGetValue(typeAttr.guid, out cachedTypeDesc)) {
+                if (s_cacheComTypeDesc.TryGetValue(typeAttr.guid, out cachedTypeDesc))
+                {
                     _comTypeDesc = cachedTypeDesc;
-                } else {
+                }
+                else
+                {
                     _comTypeDesc = typeDesc;
-                    _CacheComTypeDesc.Add(typeAttr.guid, _comTypeDesc);
+                    s_cacheComTypeDesc.Add(typeAttr.guid, _comTypeDesc);
                 }
                 _comTypeDesc.Funcs = funcs;
                 _comTypeDesc.Puts = puts;
@@ -627,13 +729,17 @@ namespace System.Management.Automation.ComInterop {
             }
         }
 
-        internal bool TryGetPropertySetter(string name, out ComMethodDesc method, Type limitType, bool holdsNull) {
+        internal bool TryGetPropertySetter(string name, out ComMethodDesc method, Type limitType, bool holdsNull)
+        {
             EnsureScanDefinedMethods();
 
-            if (ComBinderHelpers.PreferPut(limitType, holdsNull)) {
+            if (ComBinderHelpers.PreferPut(limitType, holdsNull))
+            {
                 return _comTypeDesc.TryGetPut(name, out method) ||
                     _comTypeDesc.TryGetPutRef(name, out method);
-            } else {
+            }
+            else
+            {
                 return _comTypeDesc.TryGetPutRef(name, out method) ||
                     _comTypeDesc.TryGetPut(name, out method);
             }

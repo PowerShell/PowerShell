@@ -67,12 +67,12 @@ namespace Microsoft.PowerShell
         /// </param>
         internal Executor(ConsoleHost parent, bool useNestedPipelines, bool isPromptFunctionExecutor)
         {
-                Dbg.Assert(parent != null, "parent should not be null");
+            Dbg.Assert(parent != null, "parent should not be null");
 
-                this.parent = parent;
-                this.useNestedPipelines = useNestedPipelines;
-                this.isPromptFunctionExecutor = isPromptFunctionExecutor;
-                Reset();
+            _parent = parent;
+            this.useNestedPipelines = useNestedPipelines;
+            _isPromptFunctionExecutor = isPromptFunctionExecutor;
+            Reset();
         }
 
         #region async
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell
             Collection<PSObject> objects = reader.NonBlockingRead();
             foreach (PSObject obj in objects)
             {
-                parent.OutputSerializer.Serialize(obj);
+                _parent.OutputSerializer.Serialize(obj);
             }
         }
 
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell
             Collection<object> objects = reader.NonBlockingRead();
             foreach (object obj in objects)
             {
-                parent.ErrorSerializer.Serialize(obj);
+                _parent.ErrorSerializer.Serialize(obj);
             }
         }
 
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell
             {
                 er = new ErrorRecord(ex, "ConsoleHostAsyncPipelineFailure", ErrorCategory.NotSpecified, null);
             }
-            parent.ErrorSerializer.Serialize(er);
+            _parent.ErrorSerializer.Serialize(er);
         }
 
         private class PipelineFinishedWaitHandle
@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell
 
             internal void Wait()
             {
-                eventHandle.WaitOne();
+                _eventHandle.WaitOne();
             }
 
             private void PipelineStateChangedHandler(object sender, PipelineStateEventArgs e)
@@ -163,11 +163,11 @@ namespace Microsoft.PowerShell
                     || e.PipelineStateInfo.State == PipelineState.Failed
                     || e.PipelineStateInfo.State == PipelineState.Stopped)
                 {
-                    eventHandle.Set();
+                    _eventHandle.Set();
                 }
             }
 
-            private System.Threading.ManualResetEvent eventHandle = new System.Threading.ManualResetEvent(false);
+            private System.Threading.ManualResetEvent _eventHandle = new System.Threading.ManualResetEvent(false);
         }
 
         internal void ExecuteCommandAsync(string command, out Exception exceptionThrown, ExecutionOptions options)
@@ -176,27 +176,27 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!String.IsNullOrEmpty(command), "command should have a value");
 
             bool addToHistory = (options & ExecutionOptions.AddToHistory) > 0;
-            Pipeline tempPipeline = this.parent.RunspaceRef.CreatePipeline(command, addToHistory, false);
+            Pipeline tempPipeline = _parent.RunspaceRef.CreatePipeline(command, addToHistory, false);
             ExecuteCommandAsyncHelper(tempPipeline, out exceptionThrown, options);
         }
 
         internal void ExecuteCommandAsyncHelper(Pipeline tempPipeline, out Exception exceptionThrown, ExecutionOptions options)
         {
-            Dbg.Assert(!isPromptFunctionExecutor, "should not async invoke the prompt");
+            Dbg.Assert(!_isPromptFunctionExecutor, "should not async invoke the prompt");
 
             exceptionThrown = null;
             Executor oldCurrent = CurrentExecutor;
             CurrentExecutor = this;
 
-            lock (instanceStateLock)
+            lock (_instanceStateLock)
             {
-                Dbg.Assert(pipeline == null, "no other pipeline should exist");
-                pipeline = tempPipeline;
+                Dbg.Assert(_pipeline == null, "no other pipeline should exist");
+                _pipeline = tempPipeline;
             }
 
             try
             {
-                if ((options & ExecutionOptions.AddOutputter) > 0 && parent.OutputFormat == Serialization.DataFormat.Text)
+                if ((options & ExecutionOptions.AddOutputter) > 0 && _parent.OutputFormat == Serialization.DataFormat.Text)
                 {
                     // Tell the script command to merge it's output and error streams
 
@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell
                 {
                     // read input objects from stdin
 
-                    WrappedDeserializer des = new WrappedDeserializer(parent.InputFormat, "Input", Console.In);
+                    WrappedDeserializer des = new WrappedDeserializer(_parent.InputFormat, "Input", Console.In);
                     while (!des.AtEnd)
                     {
                         object o = des.Deserialize();
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell
                 //report error if pipeline failed
                 if (tempPipeline.PipelineStateInfo.State == PipelineState.Failed && tempPipeline.PipelineStateInfo.Reason != null)
                 {
-                    if (parent.OutputFormat == Serialization.DataFormat.Text)
+                    if (_parent.OutputFormat == Serialization.DataFormat.Text)
                     {
                         //Report the exception using normal error reporting
                         exceptionThrown = tempPipeline.PipelineStateInfo.Reason;
@@ -271,7 +271,7 @@ namespace Microsoft.PowerShell
             {
                 // Once we have the results, or an exception is thrown, we throw away the pipeline.
 
-                parent.ui.ResetProgress();
+                _parent.ui.ResetProgress();
                 CurrentExecutor = oldCurrent;
                 Reset();
             }
@@ -283,18 +283,18 @@ namespace Microsoft.PowerShell
         {
             if (useNestedPipelines)
             {
-                return parent.RunspaceRef.CreateNestedPipeline();
+                return _parent.RunspaceRef.CreateNestedPipeline();
             }
             else
             {
-                return parent.RunspaceRef.CreatePipeline();
+                return _parent.RunspaceRef.CreatePipeline();
             }
         }
 
         internal Pipeline CreatePipeline(string command, bool addToHistory)
         {
             Dbg.Assert(!String.IsNullOrEmpty(command), "command should have a value");
-            return parent.RunspaceRef.CreatePipeline(command, addToHistory, useNestedPipelines);
+            return _parent.RunspaceRef.CreatePipeline(command, addToHistory, useNestedPipelines);
         }
 
         /// <summary>
@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell
                     }
 
                     // Add Out-Default to the pipeline to render.
-                    tempPipeline.Commands.Add(GetOutDefaultCommand(endOfStatement:false));
+                    tempPipeline.Commands.Add(GetOutDefaultCommand(endOfStatement: false));
                 }
                 else
                 {
@@ -382,7 +382,7 @@ namespace Microsoft.PowerShell
                         {
                             // End of statement needs to pipe to Out-Default.
                             cmd.IsEndOfStatement = false;
-                            executeCommands.Add(GetOutDefaultCommand(endOfStatement:true));
+                            executeCommands.Add(GetOutDefaultCommand(endOfStatement: true));
                         }
                     }
 
@@ -390,9 +390,9 @@ namespace Microsoft.PowerShell
                     if (!((lastCmd.CommandText != null) &&
                           (lastCmd.CommandText.Equals("Out-Default", StringComparison.OrdinalIgnoreCase)))
                        )
-                    {   
+                    {
                         // Ensure pipeline output goes to Out-Default.
-                        executeCommands.Add(GetOutDefaultCommand(endOfStatement:false));
+                        executeCommands.Add(GetOutDefaultCommand(endOfStatement: false));
                     }
 
                     tempPipeline.Commands.Clear();
@@ -406,10 +406,10 @@ namespace Microsoft.PowerShell
             Executor oldCurrent = CurrentExecutor;
             CurrentExecutor = this;
 
-            lock (instanceStateLock)
+            lock (_instanceStateLock)
             {
-                Dbg.Assert(pipeline == null, "no other pipeline should exist");
-                pipeline = tempPipeline;
+                Dbg.Assert(_pipeline == null, "no other pipeline should exist");
+                _pipeline = tempPipeline;
             }
 
             try
@@ -426,7 +426,7 @@ namespace Microsoft.PowerShell
             {
                 // Once we have the results, or an exception is thrown, we throw away the pipeline.
 
-                parent.ui.ResetProgress();
+                _parent.ui.ResetProgress();
                 CurrentExecutor = oldCurrent;
                 Reset();
             }
@@ -609,25 +609,25 @@ namespace Microsoft.PowerShell
         {
             // if there's a pipeline running, stop it.
 
-            lock (instanceStateLock)
+            lock (_instanceStateLock)
             {
-                if (pipeline != null && !cancelled)
+                if (_pipeline != null && !_cancelled)
                 {
-                    cancelled = true;
+                    _cancelled = true;
 
-                    if (isPromptFunctionExecutor)
+                    if (_isPromptFunctionExecutor)
                     {
                         System.Threading.Thread.Sleep(100);
                     }
 
-                    pipeline.Stop();
+                    _pipeline.Stop();
                 }
             }
         }
 
         internal void BlockCommandOutput()
         {
-            RemotePipeline remotePipeline = pipeline as RemotePipeline;
+            RemotePipeline remotePipeline = _pipeline as RemotePipeline;
             if (remotePipeline != null)
             {
                 // Waits until queued data is handled.
@@ -640,7 +640,7 @@ namespace Microsoft.PowerShell
 
         internal void ResumeCommandOutput()
         {
-            RemotePipeline remotePipeline = pipeline as RemotePipeline;
+            RemotePipeline remotePipeline = _pipeline as RemotePipeline;
             if (remotePipeline != null)
             {
                 // Resumes data flow.
@@ -655,10 +655,10 @@ namespace Microsoft.PowerShell
         /// </summary>
         private void Reset()
         {
-            lock (instanceStateLock)
+            lock (_instanceStateLock)
             {
-                pipeline = null;
-                cancelled = false;
+                _pipeline = null;
+                _cancelled = false;
             }
         }
 
@@ -715,24 +715,24 @@ namespace Microsoft.PowerShell
             {
                 Executor result = null;
 
-                lock (staticStateLock)
+                lock (s_staticStateLock)
                 {
-                    result = currentExecutor;
+                    result = s_currentExecutor;
                 }
 
                 return result;
             }
             set
             {
-                lock (staticStateLock)
+                lock (s_staticStateLock)
                 {
                     // null is acceptable.
 
-                    currentExecutor = value;
+                    s_currentExecutor = value;
                 }
             }
         }
- 
+
         /// <summary>
         /// 
         /// Cancels the execution of the current instance (the instance last passed to PushCurrentExecutor), if any.  If no 
@@ -743,9 +743,9 @@ namespace Microsoft.PowerShell
         {
             Executor temp = null;
 
-            lock (staticStateLock)
+            lock (s_staticStateLock)
             {
-                temp = currentExecutor;
+                temp = s_currentExecutor;
             }
 
             if (temp != null)
@@ -753,20 +753,19 @@ namespace Microsoft.PowerShell
                 temp.Cancel();
             }
         }
-        
+
         // These statics are threadsafe, as there can be only one instance of ConsoleHost in a process at a time, and access
         // to currentExecutor is guarded by staticStateLock, and static initializers are run by the CLR at program init time.
 
-        private static Executor currentExecutor;
-        private static object staticStateLock = new object();
+        private static Executor s_currentExecutor;
+        private static object s_staticStateLock = new object();
 
-        private ConsoleHost parent;
-        private Pipeline pipeline;
-        private bool cancelled;
+        private ConsoleHost _parent;
+        private Pipeline _pipeline;
+        private bool _cancelled;
         internal bool useNestedPipelines;
-        private object instanceStateLock = new object();
-        private bool isPromptFunctionExecutor;
-    }        
-
+        private object _instanceStateLock = new object();
+        private bool _isPromptFunctionExecutor;
+    }
 }   // namespace 
 

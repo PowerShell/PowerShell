@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections;
 using System.Collections.Generic;
 
@@ -148,7 +149,7 @@ namespace System.Management.Automation
                 int countOfHelpInfoObjectsFound = 0;
                 WildcardPattern helpMatchter = WildcardPattern.Get(wildcardpattern, WildcardOptions.IgnoreCase);
                 foreach (string key in _helpCache.Keys)
-                {                    
+                {
                     if ((!searchOnlyContent && helpMatchter.IsMatch(key)) ||
                         (searchOnlyContent && ((HelpInfo)_helpCache[key]).MatchPatternInContent(helpMatchter)))
                     {

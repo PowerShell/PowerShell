@@ -1,12 +1,13 @@
 ﻿/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation.Remoting;
 using System.Text;
-using System.Diagnostics;    
+using System.Diagnostics;
 
 
 namespace System.Management.Automation.Runspaces
@@ -20,7 +21,7 @@ namespace System.Management.Automation.Runspaces
 
         private readonly ProcessStartInfo _startInfo;
         private Process _process;
-        private static readonly string PSExePath;
+        private static readonly string s_PSExePath;
         private RunspacePool _runspacePool;
         private readonly object _syncObject = new object();
         private OutOfProcessTextWriter _textWriter;
@@ -37,7 +38,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         static PowerShellProcessInstance()
         {
-            PSExePath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID),
+            s_PSExePath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID),
                             "powershell.exe");
         }
 
@@ -50,7 +51,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="useWow64"></param>
         public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64)
         {
-            string psWow64Path = PSExePath;
+            string psWow64Path = s_PSExePath;
 
             if (useWow64)
             {
@@ -59,7 +60,7 @@ namespace System.Management.Automation.Runspaces
                 if ((!string.IsNullOrEmpty(procArch)) && (procArch.Equals("amd64", StringComparison.OrdinalIgnoreCase) ||
                     procArch.Equals("ia64", StringComparison.OrdinalIgnoreCase)))
                 {
-                    psWow64Path = PSExePath.ToLowerInvariant().Replace("\\system32\\", "\\syswow64\\");
+                    psWow64Path = s_PSExePath.ToLowerInvariant().Replace("\\system32\\", "\\syswow64\\");
 
                     if (!File.Exists(psWow64Path))
                     {
@@ -104,16 +105,16 @@ namespace System.Management.Automation.Runspaces
             // 'WindowStyle' is used only if 'UseShellExecute' is 'true'. Since 'UseShellExecute' is set
             // to 'false' in our use, we can ignore the 'WindowStyle' setting in the initialization below.
             _startInfo = new ProcessStartInfo
-                            {
-                                FileName = useWow64 ? psWow64Path : PSExePath,
-                                Arguments = processArguments,
-                                UseShellExecute = false,
-                                RedirectStandardInput = true,
-                                RedirectStandardOutput = true,
-                                RedirectStandardError = true,
-                                CreateNoWindow = true,
-                                LoadUserProfile = true,
-                            };
+            {
+                FileName = useWow64 ? psWow64Path : s_PSExePath,
+                Arguments = processArguments,
+                UseShellExecute = false,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true,
+                LoadUserProfile = true,
+            };
 
             if (credential != null)
             {
@@ -128,13 +129,13 @@ namespace System.Management.Automation.Runspaces
 #endif
             }
 
-            _process = new Process {StartInfo = _startInfo, EnableRaisingEvents = true};
+            _process = new Process { StartInfo = _startInfo, EnableRaisingEvents = true };
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public PowerShellProcessInstance(): this(null, null, null, false)
+        public PowerShellProcessInstance() : this(null, null, null, false)
         {
         }
 
@@ -170,8 +171,8 @@ namespace System.Management.Automation.Runspaces
         /// <param name="disposing"></param>
         private void Dispose(bool disposing)
         {
-            if(_isDisposed) return;
-            lock(_syncObject)
+            if (_isDisposed) return;
+            lock (_syncObject)
             {
                 if (_isDisposed) return;
                 _isDisposed = true;
@@ -254,10 +255,10 @@ namespace System.Management.Automation.Runspaces
                 _started = true;
                 _process.Exited += ProcessExited;
             }
-            _process.Start();            
+            _process.Start();
         }
 
-        void ProcessExited(object sender, EventArgs e)
+        private void ProcessExited(object sender, EventArgs e)
         {
             lock (_syncObject)
             {

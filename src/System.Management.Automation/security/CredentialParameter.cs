@@ -12,7 +12,7 @@ namespace System.Management.Automation
     /// should accept credentials.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
-    public sealed class CredentialAttribute : ArgumentTransformationAttribute 
+    public sealed class CredentialAttribute : ArgumentTransformationAttribute
     {
         /// <summary>
         /// Transforms the input data to an PSCredential.
@@ -36,7 +36,7 @@ namespace System.Management.Automation
             string userName = null;
             bool shouldPrompt = false;
 
-            if((engineIntrinsics == null) ||
+            if ((engineIntrinsics == null) ||
                (engineIntrinsics.Host == null) ||
                (engineIntrinsics.Host.UI == null))
             {
@@ -57,7 +57,7 @@ namespace System.Management.Automation
                 {
                     shouldPrompt = true;
                     userName = LanguagePrimitives.FromObjectAs<string>(inputData);
-                    
+
                     // If we couldn't get the username (as a string,)
                     // throw an exception
                     if (userName == null)
@@ -70,12 +70,12 @@ namespace System.Management.Automation
             if (shouldPrompt)
             {
                 string caption = null;
-                string prompt  = null;
+                string prompt = null;
 
 
                 caption = CredentialAttributeStrings.CredentialAttribute_Prompt_Caption;
 
-                prompt  = CredentialAttributeStrings.CredentialAttribute_Prompt;
+                prompt = CredentialAttributeStrings.CredentialAttribute_Prompt;
 
                 cred = engineIntrinsics.Host.UI.PromptForCredential(
                            caption,

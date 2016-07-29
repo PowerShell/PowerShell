@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -24,35 +25,35 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return transactedScript;
+                return _transactedScript;
             }
             set
             {
-                transactedScript = value;
+                _transactedScript = value;
             }
         }
-        private ScriptBlock transactedScript;
+        private ScriptBlock _transactedScript;
 
         /// <summary>
         /// Commits the current transaction
         /// </summary>
-        protected override void EndProcessing ()
+        protected override void EndProcessing()
         {
-            using(CurrentPSTransaction)
+            using (CurrentPSTransaction)
             {
                 try
                 {
                     var emptyArray = Utils.EmptyArray<object>();
-                    transactedScript.InvokeUsingCmdlet(
-                        contextCmdlet:         this,
-                        useLocalScope:         false,
-                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe, 
-                        dollarUnder:           null,
-                        input:                 emptyArray,
-                        scriptThis:            AutomationNull.Value,
-                        args:                  emptyArray);
+                    _transactedScript.InvokeUsingCmdlet(
+                        contextCmdlet: this,
+                        useLocalScope: false,
+                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                        dollarUnder: null,
+                        input: emptyArray,
+                        scriptThis: AutomationNull.Value,
+                        args: emptyArray);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     // Catch-all OK. This is a third-party call-out.
                     CommandProcessorBase.CheckForSevereException(e);
@@ -63,9 +64,9 @@ namespace Microsoft.PowerShell.Commands
                     // exceedingly obtuse. We clarify things here.
                     bool isTimeoutException = false;
                     Exception tempException = e;
-                    while(tempException != null)
+                    while (tempException != null)
                     {
-                        if(tempException is System.TimeoutException)
+                        if (tempException is System.TimeoutException)
                         {
                             isTimeoutException = true;
                             break;
@@ -74,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
                         tempException = tempException.InnerException;
                     }
 
-                    if(isTimeoutException)
+                    if (isTimeoutException)
                     {
                         errorRecord = new ErrorRecord(
                             new InvalidOperationException(
@@ -88,8 +89,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-
     } // CommitTransactionCommand
-
 } // namespace Microsoft.PowerShell.Commands
 

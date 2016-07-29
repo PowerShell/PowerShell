@@ -25,18 +25,18 @@ namespace System.Management.Automation
     /// <summary>
     /// Exception with a full stack trace excluding the last two frames
     /// </summary>
-    internal class AssertException: SystemException
+    internal class AssertException : SystemException
     {
         /// <summary>
         /// calls the base class with message and sets the stack frame
         /// </summary>
         /// <param name="message">repassed to the base class</param>
-        internal AssertException(string message):base(message)
+        internal AssertException(string message) : base(message)
         {
             // 3 will skip the assertion caller, this method and AssertException.StackTrace
-            stackTrace = Diagnostics.StackTrace(3);
+            _stackTrace = Diagnostics.StackTrace(3);
         }
-        private string stackTrace;
+        private string _stackTrace;
         /// <summary>
         /// returns the stack trace set in the constructor
         /// </summary>
@@ -45,7 +45,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return stackTrace;
+                return _stackTrace;
             }
         }
     }
@@ -87,9 +87,9 @@ namespace System.Management.Automation
 #endif
         }
 
-        private static object throwInsteadOfAssertLock = 1;
+        private static object s_throwInsteadOfAssertLock = 1;
 
-        private static bool throwInsteadOfAssert = false;
+        private static bool s_throwInsteadOfAssert = false;
         /// <summary>
         /// If set to true will prevent the assertion dialog from showing up
         /// by throwing an exception instead of calling Debug.Assert
@@ -97,18 +97,18 @@ namespace System.Management.Automation
         /// <value>false for dialog, true for exception</value>
         internal static bool ThrowInsteadOfAssert
         {
-            get 
+            get
             {
-                lock (throwInsteadOfAssertLock)
+                lock (s_throwInsteadOfAssertLock)
                 {
-                    return throwInsteadOfAssert;
+                    return s_throwInsteadOfAssert;
                 }
             }
-            set 
+            set
             {
-                lock (throwInsteadOfAssertLock)
+                lock (s_throwInsteadOfAssertLock)
                 {
-                    throwInsteadOfAssert = value;
+                    s_throwInsteadOfAssert = value;
                 }
             }
         }
@@ -116,7 +116,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This class only has statics, so we shouldn't need to instantiate any object.
         /// </summary>
-        private Diagnostics() {}
+        private Diagnostics() { }
 
         /// <summary>
         /// Basic assertion with logical condition and message
@@ -169,7 +169,7 @@ namespace System.Management.Automation
 #if RESHARPER_ATTRIBUTES
         [JetBrains.Annotations.AssertionMethod]
 #endif
-        internal static void 
+        internal static void
         Assert(
 #if RESHARPER_ATTRIBUTES
             [JetBrains.Annotations.AssertionCondition(JetBrains.Annotations.AssertionConditionType.IS_TRUE)]

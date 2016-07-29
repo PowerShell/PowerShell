@@ -395,14 +395,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return asjob;
+                return _asjob;
             }
             set
             {
-                asjob = value;
+                _asjob = value;
             }
         }
-        private bool asjob = false;
+        private bool _asjob = false;
 
         /// <summary>
         /// Specifies that after the command is invoked on a remote computer the
@@ -432,7 +432,7 @@ namespace Microsoft.PowerShell.Commands
             get { return DisconnectedSessionName; }
             set { DisconnectedSessionName = value; }
         }
-        
+
         /// <summary>
         /// Hide/Show computername of the remote objects.
         /// </summary>
@@ -451,10 +451,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("HCN")]
         public SwitchParameter HideComputerName
         {
-            get { return hideComputerName; }
-            set { hideComputerName = value; }
+            get { return _hideComputerName; }
+            set { _hideComputerName = value; }
         }
-        private bool hideComputerName;
+        private bool _hideComputerName;
 
         /// <summary>
         /// Friendly name for the job object if AsJob is used
@@ -471,18 +471,18 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return name;
+                return _name;
             }
             set
             {
                 if (!String.IsNullOrEmpty(value))
                 {
-                    name = value;
-                    asjob = true;
+                    _name = value;
+                    _asjob = true;
                 }
             }
         }
-        private String name = String.Empty;
+        private String _name = String.Empty;
 
         /// <summary>
         /// The script block that the user has specified in the 
@@ -567,23 +567,23 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-         /// <summary>
-         /// The AllowRediraction parameter enables the implicit redirection functionality
-         /// </summary>
-         [Parameter(ParameterSetName = InvokeCommandCommand.UriParameterSet)]
-         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathUriParameterSet)]
-         public override SwitchParameter AllowRedirection
-         {
-             get
-             {
-                 return base.AllowRedirection;
-             }
-             set
-             {
-                 base.AllowRedirection = value;
-             }
-         }
- 
+        /// <summary>
+        /// The AllowRediraction parameter enables the implicit redirection functionality
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.UriParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathUriParameterSet)]
+        public override SwitchParameter AllowRedirection
+        {
+            get
+            {
+                return base.AllowRedirection;
+            }
+            set
+            {
+                base.AllowRedirection = value;
+            }
+        }
+
 
         /// <summary>
         /// Extended Session Options for controlling the session creation. Use 
@@ -664,13 +664,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (this.InvokeAndDisconnect && this.asjob)
+            if (this.InvokeAndDisconnect && _asjob)
             {
                 // The -AsJob and -InDisconnectedSession parameter switches are mutually exclusive.
                 throw new InvalidOperationException(RemotingErrorIdStrings.AsJobAndDisconnectedError);
             }
 
-            if (this.InvokeAndDisconnect && 
+            if (this.InvokeAndDisconnect &&
                 (this.ComputerName == null || this.ComputerName.Length == 0) &&
                 (this.ConnectionUri == null || this.ConnectionUri.Length == 0))
             {
@@ -685,7 +685,7 @@ namespace Microsoft.PowerShell.Commands
             // Checking session's availability and reporting errors in early stage, unless '-AsJob' is specified.
             // When '-AsJob' is specified, Invoke-Command should return a job object without throwing error, even
             // if the session is not in available state -- this is the PSv3 behavior and we should not break it.
-            if (!this.asjob && (ParameterSetName.Equals(InvokeCommandCommand.SessionParameterSet) || 
+            if (!_asjob && (ParameterSetName.Equals(InvokeCommandCommand.SessionParameterSet) ||
                 ParameterSetName.Equals(InvokeCommandCommand.FilePathSessionParameterSet)))
             {
                 long localPipelineId =
@@ -761,8 +761,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            this.steppablePipeline = ScriptBlock.GetSteppablePipeline(CommandOrigin.Internal, ArgumentList);
-                            this.steppablePipeline.Begin(this);
+                            _steppablePipeline = ScriptBlock.GetSteppablePipeline(CommandOrigin.Internal, ArgumentList);
+                            _steppablePipeline.Begin(this);
                         }
                         catch (InvalidOperationException)
                         {
@@ -796,7 +796,7 @@ namespace Microsoft.PowerShell.Commands
             // create collection of input writers here
             foreach (IThrottleOperation operation in Operations)
             {
-                inputWriters.Add(((ExecutionCmdletHelper)operation).Pipeline.Input);
+                _inputWriters.Add(((ExecutionCmdletHelper)operation).Pipeline.Input);
             }
 
             // we need to verify, if this Invoke-Command is the first
@@ -835,8 +835,8 @@ namespace Microsoft.PowerShell.Commands
                                     if (version >= RemotingConstants.ProtocolVersionWin8RTM)
                                     {
                                         // Supress collection behavior
-                                        needToCollect = false;
-                                        needToStartSteppablePipelineOnServer = true;
+                                        _needToCollect = false;
+                                        _needToStartSteppablePipelineOnServer = true;
                                         break;
                                     }
                                 }
@@ -844,14 +844,14 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         // Either version table is null or the server is not version 2.2 and beyond, we need to collect
-                        needToCollect = true;
-                        needToStartSteppablePipelineOnServer = false;
+                        _needToCollect = true;
+                        _needToStartSteppablePipelineOnServer = false;
                         break;
                     }
                 }
             }
 
-            if (needToStartSteppablePipelineOnServer)
+            if (_needToStartSteppablePipelineOnServer)
             {
                 // create collection of input writers here
                 foreach (IThrottleOperation operation in Operations)
@@ -870,7 +870,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // RemoteRunspace must be holding this InvokeCommand..So release
                 // this at dispose time
-                clearInvokeCommandOnRunspace = true;
+                _clearInvokeCommandOnRunspace = true;
             }
 
             // check if we need to propagate terminating errors
@@ -890,14 +890,14 @@ namespace Microsoft.PowerShell.Commands
             // we should create the pipeline on first instance
             // and if there are no invoke-commands running
             // ahead in the pipeline
-            if (!pipelineinvoked &&!needToCollect)
+            if (!_pipelineinvoked && !_needToCollect)
             {
-                pipelineinvoked = true;
+                _pipelineinvoked = true;
 
                 if (InputObject == AutomationNull.Value)
                 {
                     CloseAllInputStreams();
-                    inputStreamClosed = true;
+                    _inputStreamClosed = true;
                 }
 
                 if (!ParameterSetName.Equals("InProcess"))
@@ -905,7 +905,7 @@ namespace Microsoft.PowerShell.Commands
                     // at this point there is nothing to do for
                     // inproc case. The script block is executed
                     // in EndProcessing
-                    if (!asjob)
+                    if (!_asjob)
                     {
                         CreateAndRunSyncJob();
                     }
@@ -925,9 +925,9 @@ namespace Microsoft.PowerShell.Commands
                                     if (ResolvedComputerNames.Length != 0 && Operations.Count > 0)
                                     {
                                         PSRemotingJob job = new PSRemotingJob(ResolvedComputerNames, Operations,
-                                                ScriptBlock.ToString(), ThrottleLimit, name);
+                                                ScriptBlock.ToString(), ThrottleLimit, _name);
                                         job.PSJobTypeName = RemoteJobType;
-                                        job.HideComputerName = hideComputerName;
+                                        job.HideComputerName = _hideComputerName;
                                         this.JobRepository.Add(job);
                                         WriteObject(job);
                                     }
@@ -938,9 +938,9 @@ namespace Microsoft.PowerShell.Commands
                             case InvokeCommandCommand.FilePathSessionParameterSet:
                                 {
                                     PSRemotingJob job = new PSRemotingJob(Session, Operations,
-                                            ScriptBlock.ToString(), ThrottleLimit, name);
+                                            ScriptBlock.ToString(), ThrottleLimit, _name);
                                     job.PSJobTypeName = RemoteJobType;
-                                    job.HideComputerName = hideComputerName;
+                                    job.HideComputerName = _hideComputerName;
                                     this.JobRepository.Add(job);
                                     WriteObject(job);
                                 }
@@ -958,9 +958,9 @@ namespace Microsoft.PowerShell.Commands
                                         }
 
                                         PSRemotingJob job = new PSRemotingJob(locations, Operations,
-                                            ScriptBlock.ToString(), ThrottleLimit, name);
+                                            ScriptBlock.ToString(), ThrottleLimit, _name);
                                         job.PSJobTypeName = RemoteJobType;
-                                        job.HideComputerName = hideComputerName;
+                                        job.HideComputerName = _hideComputerName;
                                         this.JobRepository.Add(job);
                                         WriteObject(job);
                                     }
@@ -971,23 +971,23 @@ namespace Microsoft.PowerShell.Commands
                 }
             } // if (!pipelineinvoked...
 
-            if (InputObject != AutomationNull.Value && !inputStreamClosed)
+            if (InputObject != AutomationNull.Value && !_inputStreamClosed)
             {
-                if ((ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet) && (this.steppablePipeline == null)) ||
-                    needToCollect)
+                if ((ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet) && (_steppablePipeline == null)) ||
+                    _needToCollect)
                 {
-                    input.Add(InputObject);
+                    _input.Add(InputObject);
                 }
-                else if (ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet) && (this.steppablePipeline != null))
+                else if (ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet) && (_steppablePipeline != null))
                 {
-                    this.steppablePipeline.Process(InputObject);
+                    _steppablePipeline.Process(InputObject);
                 }
                 else
                 {
                     WriteInput(InputObject);
 
                     // if not a job write out the results available thus far
-                    if (!asjob)
+                    if (!_asjob)
                     {
                         WriteJobResults(true);
                     }
@@ -1002,35 +1002,35 @@ namespace Microsoft.PowerShell.Commands
         protected override void EndProcessing()
         {
             // close the input stream on all the pipelines 
-            if (!needToCollect)
+            if (!_needToCollect)
             {
                 CloseAllInputStreams();
             }
 
-            if (!asjob)
+            if (!_asjob)
             {
                 if (ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet))
                 {
-                    if (this.steppablePipeline != null)
+                    if (_steppablePipeline != null)
                     {
-                        this.steppablePipeline.End();
+                        _steppablePipeline.End();
                     }
                     else
                     {
                         ScriptBlock.InvokeUsingCmdlet(
-                            contextCmdlet:         this,
-                            useLocalScope:         ! NoNewScope,
+                            contextCmdlet: this,
+                            useLocalScope: !NoNewScope,
                             errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                            dollarUnder:           AutomationNull.Value,
-                            input:                 input,
-                            scriptThis:            AutomationNull.Value,
-                            args:                  ArgumentList);
+                            dollarUnder: AutomationNull.Value,
+                            input: _input,
+                            scriptThis: AutomationNull.Value,
+                            args: ArgumentList);
                     }
                 }
                 else
                 {
                     // runspace and computername parameter sets
-                    if (job != null)
+                    if (_job != null)
                     {
                         // The job/command is disconnected immediately after it is invoked.  The command
                         // will continue to run on the server but we don't wait and return immediately.
@@ -1048,9 +1048,9 @@ namespace Microsoft.PowerShell.Commands
                         WriteJobResults(false);
 
                         // finally dispose the job.
-                        if (!asjob)
+                        if (!_asjob)
                         {
-                            job.Dispose();
+                            _job.Dispose();
                         }
 
                         // We no longer need to call ClearInvokeCommandOnRunspaces() here because
@@ -1060,7 +1060,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (needToCollect && ParameterSetName.Equals(InvokeCommandCommand.SessionParameterSet))
+                        if (_needToCollect && ParameterSetName.Equals(InvokeCommandCommand.SessionParameterSet))
                         {
                             // if job was null, then its because the invoke-command
                             // was collecting or ProcessRecord() was not called. 
@@ -1069,13 +1069,13 @@ namespace Microsoft.PowerShell.Commands
                             // so now start the execution with the collected
                             // input
 
-                            Dbg.Assert(needToCollect, "InvokeCommand should have collected input before this");
+                            Dbg.Assert(_needToCollect, "InvokeCommand should have collected input before this");
                             Dbg.Assert(ParameterSetName.Equals(InvokeCommandCommand.SessionParameterSet), "Collecting and invoking should happen only in case of Runspace parameter set");
 
                             CreateAndRunSyncJob();
 
                             // loop through and write all input
-                            foreach (object inputValue in input)
+                            foreach (object inputValue in _input)
                             {
                                 WriteInput(inputValue);
                             }
@@ -1098,14 +1098,13 @@ namespace Microsoft.PowerShell.Commands
                             WriteJobResults(false);
 
                             // finally dispose the job.
-                            if (!asjob)
+                            if (!_asjob)
                             {
-                                job.Dispose();
+                                _job.Dispose();
                             }
                         } // if (needToCollect...
                     }// else - job == null
                 }
-
             }// if (!async ...
         } // EndProcessing
 
@@ -1123,16 +1122,16 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet))
             {
-                if (!asjob)
+                if (!_asjob)
                 {
                     // stop all operations in the job
                     // we need to check is job is not null, since
                     // StopProcessing() may be called even before the
                     // job is created
                     bool stopjob = false;
-                    lock (jobSyncObject)
+                    lock (_jobSyncObject)
                     {
-                        if (job != null)
+                        if (_job != null)
                         {
                             stopjob = true;
                         }
@@ -1140,20 +1139,19 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // StopProcessing() has already been called
                             // the job should not be created anymore
-                            nojob = true;
+                            _nojob = true;
                         }
                     }
 
                     if (stopjob)
                     {
-                        job.StopJob();
+                        _job.StopJob();
                     }
 
                     // clear the need to collect flag
-                    needToCollect = false;
+                    _needToCollect = false;
                 }
             }
-
         }// StopProcessing()
 
         #endregion Overrides
@@ -1168,9 +1166,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="eventArgs"></param>
         private void HandleThrottleComplete(object sender, EventArgs eventArgs)
         {
-            operationsComplete.Set();
-            throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleComplete);
-
+            _operationsComplete.Set();
+            _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleComplete);
         } // HandleThrottleComplete
 
         /// <summary>
@@ -1195,24 +1192,24 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void CreateAndRunSyncJob()
         {
-            lock (jobSyncObject)
+            lock (_jobSyncObject)
             {
-                if (!nojob)
+                if (!_nojob)
                 {
-                    throttleManager.ThrottleLimit = ThrottleLimit;
-                    throttleManager.ThrottleComplete += new EventHandler<EventArgs>(HandleThrottleComplete);
+                    _throttleManager.ThrottleLimit = ThrottleLimit;
+                    _throttleManager.ThrottleComplete += new EventHandler<EventArgs>(HandleThrottleComplete);
 
-                    operationsComplete.Reset();
-                    Dbg.Assert(this.disconnectComplete == null, "disconnectComplete event should only be used once.");
-                    this.disconnectComplete = new ManualResetEvent(false);
-                    job = new PSInvokeExpressionSyncJob(Operations, throttleManager);
-                    job.HideComputerName = hideComputerName;
-                    job.StateChanged += new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
+                    _operationsComplete.Reset();
+                    Dbg.Assert(_disconnectComplete == null, "disconnectComplete event should only be used once.");
+                    _disconnectComplete = new ManualResetEvent(false);
+                    _job = new PSInvokeExpressionSyncJob(Operations, _throttleManager);
+                    _job.HideComputerName = _hideComputerName;
+                    _job.StateChanged += new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
 
                     // Add robust connection retry notification handler.
-                    AddConnectionRetryHandler(job);
+                    AddConnectionRetryHandler(_job);
 
-                    job.StartOperations(Operations);
+                    _job.StartOperations(Operations);
                 }
             }
         }
@@ -1225,15 +1222,15 @@ namespace Microsoft.PowerShell.Commands
                 state == JobState.Stopped ||
                 state == JobState.Failed)
             {
-                job.StateChanged -= new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
+                _job.StateChanged -= new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
                 RemoveConnectionRetryHandler(sender as PSInvokeExpressionSyncJob);
 
                 // Signal that this job has been disconnected, or has ended.
-                lock (jobSyncObject)
+                lock (_jobSyncObject)
                 {
-                    if (this.disconnectComplete != null)
+                    if (_disconnectComplete != null)
                     {
-                        this.disconnectComplete.Set();
+                        _disconnectComplete.Set();
                     }
                 }
             }
@@ -1250,7 +1247,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ps.RemotePowerShell != null)
                 {
-                    ps.RemotePowerShell.RCConnectionNotification += 
+                    ps.RemotePowerShell.RCConnectionNotification +=
                         new EventHandler<PSConnectionRetryStatusEventArgs>(RCConnectionNotificationHandler);
                 }
             }
@@ -1299,12 +1296,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WaitForDisconnectAndDisposeJob()
         {
-            if (this.disconnectComplete != null)
+            if (_disconnectComplete != null)
             {
-                this.disconnectComplete.WaitOne();
+                _disconnectComplete.WaitOne();
 
                 // Create disconnected PSSession objects for each powershell and write to output.
-                List<PSSession> discSessions = GetDisconnectedSessions(job);
+                List<PSSession> discSessions = GetDisconnectedSessions(_job);
                 foreach (PSSession session in discSessions)
                 {
                     this.RunspaceRepository.AddOrReplace(session);
@@ -1312,12 +1309,12 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Check to see if the disconnect was successful.  If not write any errors there may be.
-                if (job.Error.Count > 0)
+                if (_job.Error.Count > 0)
                 {
-                    WriteStreamObjectsFromCollection(job.ReadAll());
+                    WriteStreamObjectsFromCollection(_job.ReadAll());
                 }
 
-                job.Dispose();
+                _job.Dispose();
             }
         }
 
@@ -1335,7 +1332,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (System.Management.Automation.PowerShell ps in powershells)
             {
                 // Get the command information from the PowerShell object.
-                string commandText = (ps.Commands != null && ps.Commands.Commands.Count > 0) ? 
+                string commandText = (ps.Commands != null && ps.Commands.Commands.Count > 0) ?
                     ps.Commands.Commands[0].CommandText : string.Empty;
                 ConnectCommandInfo cmdInfo = new ConnectCommandInfo(ps.InstanceId, commandText);
 
@@ -1418,9 +1415,9 @@ namespace Microsoft.PowerShell.Commands
             // when there are no input writers, there is no
             // point either accumulating or trying to write data
             // so throw an exception in that case
-            if (inputWriters.Count == 0)
+            if (_inputWriters.Count == 0)
             {
-                if (!asjob)
+                if (!_asjob)
                 {
                     WriteJobResults(false);
                 }
@@ -1431,7 +1428,7 @@ namespace Microsoft.PowerShell.Commands
 
             List<PipelineWriter> removeCollection = new List<PipelineWriter>();
 
-            foreach(PipelineWriter writer in inputWriters)
+            foreach (PipelineWriter writer in _inputWriters)
             {
                 try
                 {
@@ -1446,7 +1443,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (PipelineWriter writer in removeCollection)
             {
-                inputWriters.Remove(writer);
+                _inputWriters.Remove(writer);
             }
         }
 
@@ -1456,10 +1453,10 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="nonblocking">Write in a non-blocking manner</param>
         private void WriteJobResults(bool nonblocking)
         {
-            if (job != null)
+            if (_job != null)
             {
                 PipelineStoppedException caughtPipelineStoppedException = null;
-                job.PropagateThrows = this.propagateErrors;
+                _job.PropagateThrows = _propagateErrors;
 
                 do
                 {
@@ -1470,23 +1467,23 @@ namespace Microsoft.PowerShell.Commands
                         // ensure that the thread blocks. Else
                         // the thread will spin leading to a CPU
                         // usage spike
-                        if (this.disconnectComplete != null)
+                        if (_disconnectComplete != null)
                         {
                             // An auto-disconnect can occur and we need to detect
                             // this condition along with a job results signal.
                             WaitHandle.WaitAny(new WaitHandle[] {
-                                                    this.disconnectComplete,
-                                                    job.Results.WaitHandle });
+                                                    _disconnectComplete,
+                                                    _job.Results.WaitHandle });
                         }
                         else
                         {
-                            job.Results.WaitHandle.WaitOne();
+                            _job.Results.WaitHandle.WaitOne();
                         }
                     }
 
                     try
                     {
-                        WriteStreamObjectsFromCollection(job.ReadAll());
+                        WriteStreamObjectsFromCollection(_job.ReadAll());
                     }
                     catch (System.Management.Automation.PipelineStoppedException pse)
                     {
@@ -1497,11 +1494,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         break;
                     }
-                } while (!job.IsTerminalState());
+                } while (!_job.IsTerminalState());
 
                 try
                 {
-                    WriteStreamObjectsFromCollection(job.ReadAll());
+                    WriteStreamObjectsFromCollection(_job.ReadAll());
                 }
                 catch (System.Management.Automation.PipelineStoppedException pse)
                 {
@@ -1514,14 +1511,14 @@ namespace Microsoft.PowerShell.Commands
                     throw caughtPipelineStoppedException;
                 }
 
-                if (job.JobStateInfo.State == JobState.Disconnected)
+                if (_job.JobStateInfo.State == JobState.Disconnected)
                 {
                     if (ParameterSetName == InvokeCommandCommand.SessionParameterSet ||
                         ParameterSetName == InvokeCommandCommand.FilePathSessionParameterSet)
                     {
                         // Create a PSRemoting job we can add to the job repository and that
                         // a user can reconnect to (via Receive-PSSession).
-                        PSRemotingJob rtnJob = job.CreateDisconnectedRemotingJob();
+                        PSRemotingJob rtnJob = _job.CreateDisconnectedRemotingJob();
                         if (rtnJob != null)
                         {
                             rtnJob.PSJobTypeName = RemoteJobType;
@@ -1529,7 +1526,7 @@ namespace Microsoft.PowerShell.Commands
                             // Don't let the job object be disposed or stopped since
                             // we want to be able to reconnect to the disconnected
                             // pipelines.
-                            this.asjob = true;
+                            _asjob = true;
 
                             List<Job> removedDebugStopJobs = new List<Job>();
 
@@ -1594,7 +1591,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // Create disconnected sessions for each PowerShell in job that was disconnected, 
                         // and add them to the local repository.
-                        List<PSSession> discSessions = GetDisconnectedSessions(job);
+                        List<PSSession> discSessions = GetDisconnectedSessions(_job);
                         foreach (PSSession session in discSessions)
                         {
                             // Add to session repository.
@@ -1661,7 +1658,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Emit warning for cases where commands were stopped during connection retry attempts.
             bool retryCanceled = false;
-            Collection<System.Management.Automation.PowerShell> powershells = job.GetPowerShells();
+            Collection<System.Management.Automation.PowerShell> powershells = _job.GetPowerShells();
             foreach (System.Management.Automation.PowerShell ps in powershells)
             {
                 if (ps.RemotePowerShell != null &&
@@ -1686,7 +1683,7 @@ namespace Microsoft.PowerShell.Commands
             string computerName,
             int totalSeconds)
         {
-            RCProgress.StartProgress(
+            s_RCProgress.StartProgress(
                 sourceId,
                 computerName,
                 totalSeconds,
@@ -1696,7 +1693,7 @@ namespace Microsoft.PowerShell.Commands
         private void StopProgressBar(
             long sourceId)
         {
-            RCProgress.StopProgress(sourceId);
+            s_RCProgress.StopProgress(sourceId);
         }
 
         /// <summary>
@@ -1738,14 +1735,14 @@ namespace Microsoft.PowerShell.Commands
                 // in proc parameter set - just return
                 return;
             }
-            if (!asjob)
+            if (!_asjob)
             {
                 if (ParameterSetName.Equals(InvokeCommandCommand.ComputerNameParameterSet) ||
                     ParameterSetName.Equals(InvokeCommandCommand.FilePathComputerNameParameterSet))
                 {
                     if (ComputerName.Length == 1)
                     {
-                        propagateErrors = true;
+                        _propagateErrors = true;
                     }
                 }
                 else if (ParameterSetName.Equals(InvokeCommandCommand.SessionParameterSet) ||
@@ -1753,7 +1750,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (Session.Length == 1)
                     {
-                        propagateErrors = true;
+                        _propagateErrors = true;
                     }
                 }
                 else if (ParameterSetName.Equals(InvokeCommandCommand.UriParameterSet) ||
@@ -1761,7 +1758,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (ConnectionUri.Length == 1)
                     {
-                        propagateErrors = true;
+                        _propagateErrors = true;
                     }
                 }
             }
@@ -1779,16 +1776,16 @@ namespace Microsoft.PowerShell.Commands
             // In case of PSDirectException, we should output the precise error message
             // in inner exception instead of the generic one in outer exception.
             //
-            if ((errorRecord != null) && 
-                (errorRecord.Exception != null) && 
+            if ((errorRecord != null) &&
+                (errorRecord.Exception != null) &&
                 (errorRecord.Exception.InnerException != null))
             {
                 PSDirectException ex = errorRecord.Exception.InnerException as PSDirectException;
                 if (ex != null)
                 {
-                    streamObject.Value = new ErrorRecord(errorRecord.Exception.InnerException, 
-                                                         errorRecord.FullyQualifiedErrorId, 
-                                                         errorRecord.CategoryInfo.Category, 
+                    streamObject.Value = new ErrorRecord(errorRecord.Exception.InnerException,
+                                                         errorRecord.FullyQualifiedErrorId,
+                                                         errorRecord.CategoryInfo.Category,
                                                          errorRecord.TargetObject);
                 }
             }
@@ -1798,36 +1795,36 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Members
 
-        private ThrottleManager throttleManager = new ThrottleManager();
+        private ThrottleManager _throttleManager = new ThrottleManager();
         // throttle manager for handling all throttling operations
-        private ManualResetEvent operationsComplete = new ManualResetEvent(true);
-        private ManualResetEvent disconnectComplete;
+        private ManualResetEvent _operationsComplete = new ManualResetEvent(true);
+        private ManualResetEvent _disconnectComplete;
         // the initial state is true because when no 
         // operations actually take place as in case of a 
         // parameter binding exception, then Dispose is
         // called. Since Dispose waits on this handler
         // it is set to true initially and is Reset() in
         // BeginProcessing()
-        private PSInvokeExpressionSyncJob job;
+        private PSInvokeExpressionSyncJob _job;
 
         // used for streaming behavior for local invocations
-        private SteppablePipeline steppablePipeline;
+        private SteppablePipeline _steppablePipeline;
 
-        private bool pipelineinvoked = false;    // if pipeline has been invoked
-        private bool inputStreamClosed = false;
+        private bool _pipelineinvoked = false;    // if pipeline has been invoked
+        private bool _inputStreamClosed = false;
 
         private const string InProcParameterSet = "InProcess";
-        private PSDataCollection<object> input = new PSDataCollection<object>();
-        private bool needToCollect = false;
-        private bool needToStartSteppablePipelineOnServer = false;
-        private bool clearInvokeCommandOnRunspace = false;
-        private List<PipelineWriter> inputWriters = new List<PipelineWriter>();
-        private object jobSyncObject = new object();
-        private bool nojob = false;
-        private Guid instanceId = Guid.NewGuid();
-        private bool propagateErrors = false;
+        private PSDataCollection<object> _input = new PSDataCollection<object>();
+        private bool _needToCollect = false;
+        private bool _needToStartSteppablePipelineOnServer = false;
+        private bool _clearInvokeCommandOnRunspace = false;
+        private List<PipelineWriter> _inputWriters = new List<PipelineWriter>();
+        private object _jobSyncObject = new object();
+        private bool _nojob = false;
+        private Guid _instanceId = Guid.NewGuid();
+        private bool _propagateErrors = false;
 
-        private static RobustConnectionProgress RCProgress = new RobustConnectionProgress();
+        private static RobustConnectionProgress s_RCProgress = new RobustConnectionProgress();
 
         internal static readonly string RemoteJobType = "RemoteJob";
 
@@ -1858,36 +1855,36 @@ namespace Microsoft.PowerShell.Commands
 
                 this.StopProcessing();
                 // wait for all operations to complete
-                operationsComplete.WaitOne();
-                operationsComplete.Dispose();
+                _operationsComplete.WaitOne();
+                _operationsComplete.Dispose();
 
-                if (!asjob)
+                if (!_asjob)
                 {
-                    if (job != null)
+                    if (_job != null)
                     {
                         // job will be null in the "InProcess" case
-                        job.Dispose();
+                        _job.Dispose();
                     }
 
-                    throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleComplete);
-                    throttleManager.Dispose();
-                    throttleManager = null;
+                    _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleComplete);
+                    _throttleManager.Dispose();
+                    _throttleManager = null;
                 }
 
                 // clear the invoke command references we have stored
-                if (this.clearInvokeCommandOnRunspace)
+                if (_clearInvokeCommandOnRunspace)
                 {
                     ClearInvokeCommandOnRunspaces();
                 }
 
-                input.Dispose();
+                _input.Dispose();
 
-                lock (jobSyncObject)
+                lock (_jobSyncObject)
                 {
-                    if (this.disconnectComplete != null)
+                    if (_disconnectComplete != null)
                     {
-                        this.disconnectComplete.Dispose();
-                        this.disconnectComplete = null;
+                        _disconnectComplete.Dispose();
+                        _disconnectComplete = null;
                     }
                 }
             }
@@ -2000,7 +1997,7 @@ namespace System.Management.Automation.Internal
                 if (_secondsRemaining > 0)
                 {
                     // Update progress bar.
-                    _progressRecord.PercentComplete = 
+                    _progressRecord.PercentComplete =
                         ((_secondsTotal - _secondsRemaining) * 100) / _secondsTotal;
                     _progressRecord.SecondsRemaining = _secondsRemaining--;
                     _progressRecord.RecordType = ProgressRecordType.Processing;

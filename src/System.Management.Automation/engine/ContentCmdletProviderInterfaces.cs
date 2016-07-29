@@ -1,10 +1,11 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -46,8 +47,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("cmdlet");
             }
 
-            this.cmdlet = cmdlet;
-            this.sessionState = cmdlet.Context.EngineSessionState;
+            _cmdlet = cmdlet;
+            _sessionState = cmdlet.Context.EngineSessionState;
         } // ContentCmdletProviderIntrinsics internal
 
         /// <summary>
@@ -69,9 +70,9 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("sessionState");
             }
 
-            this.sessionState = sessionState;
+            _sessionState = sessionState;
         } // ContentCmdletProviderIntrinsics internal
-        
+
         #endregion Constructors
 
         #region Public methods
@@ -118,12 +119,12 @@ namespace System.Management.Automation
         public Collection<IContentReader> GetReader(string path)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetContentReader(new string[] { path }, false, false);
+            return _sessionState.GetContentReader(new string[] { path }, false, false);
         } // GetContentReader
 
         /// <summary>
@@ -174,14 +175,14 @@ namespace System.Management.Automation
         public Collection<IContentReader> GetReader(string[] path, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetContentReader(path, force, literalPath);
+            return _sessionState.GetContentReader(path, force, literalPath);
         }
-        
+
         /// <summary>
         /// </summary>
         ///
@@ -220,18 +221,18 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal Collection<IContentReader> GetReader(
-            string path, 
+            string path,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetContentReader(new string[] { path }, context);
+            return _sessionState.GetContentReader(new string[] { path }, context);
         } // GetContentReader
-        
+
         /// <summary>
         /// Gets the dynamic parameters for the get-content cmdlet.
         /// </summary>
@@ -271,16 +272,16 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal object GetContentReaderDynamicParameters(
-            string path, 
+            string path,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetContentReaderDynamicParameters(path, context);
+            return _sessionState.GetContentReaderDynamicParameters(path, context);
         } // GetContentReaderDynamicParameters
 
         #endregion GetContentReader
@@ -327,12 +328,12 @@ namespace System.Management.Automation
         public Collection<IContentWriter> GetWriter(string path)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetContentWriter(new string[] { path }, false, false);
+            return _sessionState.GetContentWriter(new string[] { path }, false, false);
         } // GetContentWriter
 
         /// <summary>
@@ -383,14 +384,14 @@ namespace System.Management.Automation
         public Collection<IContentWriter> GetWriter(string[] path, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetContentWriter(path, force, literalPath);
+            return _sessionState.GetContentWriter(path, force, literalPath);
         } // GetContentWriter
-       
+
         /// <summary>
         /// </summary>
         ///
@@ -429,18 +430,18 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal Collection<IContentWriter> GetWriter(
-            string path, 
+            string path,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetContentWriter(new string[] { path }, context);
+            return _sessionState.GetContentWriter(new string[] { path }, context);
         } // GetContentWriter
-        
+
         /// <summary>
         /// Gets the dynamic parameters for the set-content and add-content cmdlet.
         /// </summary>
@@ -480,16 +481,16 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal object GetContentWriterDynamicParameters(
-            string path, 
+            string path,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetContentWriterDynamicParameters(path, context);
+            return _sessionState.GetContentWriterDynamicParameters(path, context);
         } // GetContentWriterDynamicParameters
 
         #endregion GetContentWriter
@@ -532,12 +533,12 @@ namespace System.Management.Automation
         public void Clear(string path)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.ClearContent(new string[] { path }, false, false);
+            _sessionState.ClearContent(new string[] { path }, false, false);
         } // ClearContent
 
         /// <summary>
@@ -584,14 +585,14 @@ namespace System.Management.Automation
         public void Clear(string[] path, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.ClearContent(path, force, literalPath);
+            _sessionState.ClearContent(path, force, literalPath);
         }
-        
+
         /// <summary>
         /// Clears the content from the specified item(s)
         /// </summary>
@@ -632,14 +633,14 @@ namespace System.Management.Automation
         internal void Clear(string path, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.ClearContent(new string[] { path }, context);
+            _sessionState.ClearContent(new string[] { path }, context);
         } // ClearContent
-        
+
         /// <summary>
         /// Gets the dynamic parameters for the clear-content cmdlet.
         /// </summary>
@@ -681,12 +682,12 @@ namespace System.Management.Automation
         internal object ClearContentDynamicParameters(string path, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.ClearContentDynamicParameters(path, context);
+            return _sessionState.ClearContentDynamicParameters(path, context);
         } // ClearContentDynamicParameters
 
         #endregion ClearContent
@@ -695,8 +696,8 @@ namespace System.Management.Automation
 
         #region private data
 
-        private Cmdlet cmdlet;
-        private SessionStateInternal sessionState;
+        private Cmdlet _cmdlet;
+        private SessionStateInternal _sessionState;
 
         #endregion private data
     } // ContentCmdletProviderIntrinsics

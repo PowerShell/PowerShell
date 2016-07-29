@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(ui != null, "ui needs a value");
 
-            this.ui = ui;
+            _ui = ui;
         }
 
 
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell
         void
         Write(string value)
         {
-            ui.WriteToConsole(value, true);
+            _ui.WriteToConsole(value, true);
         }
 
 
@@ -98,9 +98,8 @@ namespace Microsoft.PowerShell
 
 
 
-        private ConsoleHostUserInterface ui;
+        private ConsoleHostUserInterface _ui;
     }
-
 }   // namespace 
 
 

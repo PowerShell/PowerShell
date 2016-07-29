@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Management.Automation;
 
@@ -17,45 +18,45 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A source identifier for this event subscription
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName="BySource")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "BySource")]
         public string SourceIdentifier
         {
             get
             {
-                return sourceIdentifier;
+                return _sourceIdentifier;
             }
             set
             {
-                sourceIdentifier = value;
+                _sourceIdentifier = value;
 
-                if(value != null)
+                if (value != null)
                 {
-                    matchPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);
+                    _matchPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);
                 }
             }
         }
-        private string sourceIdentifier = null;
+        private string _sourceIdentifier = null;
 
         /// <summary>
         /// An identifier for this event subscription
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, ParameterSetName="ByIdentifier")]
+        [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByIdentifier")]
         public int EventIdentifier
         {
             get
             {
-                return eventIdentifier;
+                return _eventIdentifier;
             }
             set
             {
-                eventIdentifier = value;
+                _eventIdentifier = value;
             }
         }
-        private int eventIdentifier = -1;
+        private int _eventIdentifier = -1;
 
         #endregion parameters
 
-        WildcardPattern matchPattern;
+        private WildcardPattern _matchPattern;
 
         /// <summary>
         /// Remove the event from the queue
@@ -66,32 +67,32 @@ namespace Microsoft.PowerShell.Commands
             // pipeline
             bool foundMatch = false;
 
-            lock(Events.ReceivedEvents.SyncRoot)
+            lock (Events.ReceivedEvents.SyncRoot)
             {
                 PSEventArgsCollection currentEvents = Events.ReceivedEvents;
 
-                for(int eventCounter = currentEvents.Count; eventCounter > 0; eventCounter--)
+                for (int eventCounter = currentEvents.Count; eventCounter > 0; eventCounter--)
                 {
                     PSEventArgs currentEvent = currentEvents[eventCounter - 1];
 
                     // If they specified a event identifier and we don't match, continue
-                    if((sourceIdentifier != null) &&
-                       (! matchPattern.IsMatch(currentEvent.SourceIdentifier)))
+                    if ((_sourceIdentifier != null) &&
+                       (!_matchPattern.IsMatch(currentEvent.SourceIdentifier)))
                     {
                         continue;
                     }
 
                     // If they specified a TimeGenerated and we don't match, continue
-                    if ((eventIdentifier >= 0) &&
-                        (currentEvent.EventIdentifier != eventIdentifier))
+                    if ((_eventIdentifier >= 0) &&
+                        (currentEvent.EventIdentifier != _eventIdentifier))
                     {
                         continue;
                     }
 
                     foundMatch = true;
-                    if(ShouldProcess(
+                    if (ShouldProcess(
                         String.Format(
-                            System.Globalization.CultureInfo.CurrentCulture,                    
+                            System.Globalization.CultureInfo.CurrentCulture,
                             EventingStrings.EventResource,
                             currentEvent.SourceIdentifier),
                         EventingStrings.Remove))
@@ -103,28 +104,28 @@ namespace Microsoft.PowerShell.Commands
 
             // Generate an error if we couldn't find the subscription identifier,
             // and no globbing was done.
-            if((sourceIdentifier != null) &&
-               (! WildcardPattern.ContainsWildcardCharacters(sourceIdentifier)) &&
-               (! foundMatch))
+            if ((_sourceIdentifier != null) &&
+               (!WildcardPattern.ContainsWildcardCharacters(_sourceIdentifier)) &&
+               (!foundMatch))
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new ArgumentException(
                         String.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
-                            EventingStrings.SourceIdentifierNotFound, sourceIdentifier)),
+                            EventingStrings.SourceIdentifierNotFound, _sourceIdentifier)),
                     "INVALID_SOURCE_IDENTIFIER",
                     ErrorCategory.InvalidArgument,
                     null);
 
                 WriteError(errorRecord);
             }
-            else if((eventIdentifier >= 0) && (! foundMatch))
+            else if ((_eventIdentifier >= 0) && (!foundMatch))
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new ArgumentException(
                         String.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
-                            EventingStrings.EventIdentifierNotFound, eventIdentifier)),
+                            EventingStrings.EventIdentifierNotFound, _eventIdentifier)),
                     "INVALID_EVENT_IDENTIFIER",
                     ErrorCategory.InvalidArgument,
                     null);

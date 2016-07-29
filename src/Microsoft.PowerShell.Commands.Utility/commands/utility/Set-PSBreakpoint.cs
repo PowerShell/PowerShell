@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -22,9 +23,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// the action to take when hitting this breakpoint
         /// </summary>
-        [Parameter(ParameterSetName="Command")]
-        [Parameter(ParameterSetName="Line")]
-        [Parameter(ParameterSetName="Variable")]
+        [Parameter(ParameterSetName = "Command")]
+        [Parameter(ParameterSetName = "Line")]
+        [Parameter(ParameterSetName = "Variable")]
         public ScriptBlock Action
         {
             get
@@ -41,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The column to set the breakpoint on
         /// </summary>
-        [Parameter(Position=2, ParameterSetName="Line")]
+        [Parameter(Position = 2, ParameterSetName = "Line")]
         [ValidateRange(1, int.MaxValue)]
         public int Column
         {
@@ -143,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
             set { _accessMode = value; }
         }
 
-        VariableAccessMode _accessMode = VariableAccessMode.Write;
+        private VariableAccessMode _accessMode = VariableAccessMode.Write;
 
         #endregion parameters
 
@@ -175,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
             // script block.  So debugging is supported in Constrained language mode only if
             // the system is also in lock down mode.
             if ((Context.LanguageMode == PSLanguageMode.ConstrainedLanguage) &&
-                (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() != 
+                (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() !=
                  System.Management.Automation.Security.SystemEnforcementMode.Enforce))
             {
                 ThrowTerminatingError(
@@ -251,7 +252,7 @@ namespace Microsoft.PowerShell.Commands
                             WriteObject(
                                 Context.Debugger.NewCommandBreakpoint(path.ToString(), Command[i], Action));
                         }
-                    }   
+                    }
                     else
                     {
                         WriteObject(

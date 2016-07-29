@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _property;
 
-        private PSListModifier listModifier;
+        private PSListModifier _listModifier;
 
         /// <summary>
         /// ProcessRecord method.
@@ -112,9 +112,9 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    if (listModifier == null)
+                    if (_listModifier == null)
                     {
-                        listModifier = CreatePSListModifier();
+                        _listModifier = CreatePSListModifier();
                     }
 
                     PSMemberInfo memberInfo = InputObject.Members[Property];
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            listModifier.ApplyTo(memberInfo.Value);
+                            _listModifier.ApplyTo(memberInfo.Value);
                             WriteObject(InputObject);
                         }
                         catch (PSInvalidOperationException e)

@@ -19,11 +19,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal sealed partial class TypeInfoDataBaseLoader : XmlLoaderBase
     {
-        private ControlBase LoadTableControl (XmlNode controlNode)
+        private ControlBase LoadTableControl(XmlNode controlNode)
         {
-             using (this.StackFrame (controlNode))
+            using (this.StackFrame(controlNode))
             {
-                TableControlBody tableBody = new TableControlBody ();
+                TableControlBody tableBody = new TableControlBody();
                 bool headersNodeFound = false;      // cardinality 0..1
                 bool rowEntriesNodeFound = false;   // cardinality 1
                 bool hideHeadersNodeFound = false;   // cardinality 0..1
@@ -31,11 +31,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 foreach (XmlNode n in controlNode.ChildNodes)
                 {
-                    if (MatchNodeName (n, XmlTags.HideTableHeadersNode))
+                    if (MatchNodeName(n, XmlTags.HideTableHeadersNode))
                     {
                         if (hideHeadersNodeFound)
                         {
-                            this.ProcessDuplicateNode (n);
+                            this.ProcessDuplicateNode(n);
                             return null; // fatal error
                         }
 
@@ -45,11 +45,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             return null; //fatal error
                         }
                     }
-                    else if (MatchNodeName (n, XmlTags.AutoSizeNode))
+                    else if (MatchNodeName(n, XmlTags.AutoSizeNode))
                     {
                         if (autosizeNodeFound)
                         {
-                            this.ProcessDuplicateNode (n);
+                            this.ProcessDuplicateNode(n);
                             return null; // fatal error
                         }
                         autosizeNodeFound = true;
@@ -60,36 +60,36 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                         tableBody.autosize = tempVal;
                     }
-                    else if (MatchNodeName (n, XmlTags.TableHeadersNode))
+                    else if (MatchNodeName(n, XmlTags.TableHeadersNode))
                     {
                         if (headersNodeFound)
                         {
-                            this.ProcessDuplicateNode (n);
+                            this.ProcessDuplicateNode(n);
                             return null; // fatal error
                         }
 
                         headersNodeFound = true;
 
                         // now read the columns header section
-                        LoadHeadersSection (tableBody, n);
+                        LoadHeadersSection(tableBody, n);
                         if (tableBody.header.columnHeaderDefinitionList == null)
                         {
                             // if we have an empty list, it means there was a failure
                             return null; // fatal error
                         }
                     }
-                    else if (MatchNodeName (n, XmlTags.TableRowEntriesNode))
+                    else if (MatchNodeName(n, XmlTags.TableRowEntriesNode))
                     {
                         if (rowEntriesNodeFound)
                         {
-                            this.ProcessDuplicateNode (n);
+                            this.ProcessDuplicateNode(n);
                             return null; // fatal error
                         }
 
                         rowEntriesNodeFound = true;
 
                         // now read the columns section
-                        LoadRowEntriesSection (tableBody, n);
+                        LoadRowEntriesSection(tableBody, n);
                         if (tableBody.defaultDefinition == null)
                         {
                             return null; // fatal error
@@ -97,13 +97,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        this.ProcessUnknownNode (n);
+                        this.ProcessUnknownNode(n);
                     }
                 }
 
                 if (!rowEntriesNodeFound)
                 {
-                    this.ReportMissingNode (XmlTags.TableRowEntriesNode);
+                    this.ReportMissingNode(XmlTags.TableRowEntriesNode);
                     return null; // fatal error
                 }
 
@@ -148,19 +148,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private void LoadHeadersSection (TableControlBody tableBody, XmlNode headersNode)
+        private void LoadHeadersSection(TableControlBody tableBody, XmlNode headersNode)
         {
-            using (this.StackFrame (headersNode))
+            using (this.StackFrame(headersNode))
             {
                 int columnIndex = 0;
                 foreach (XmlNode n in headersNode.ChildNodes)
                 {
-                    if (MatchNodeName (n, XmlTags.TableColumnHeaderNode))
+                    if (MatchNodeName(n, XmlTags.TableColumnHeaderNode))
                     {
-                        TableColumnHeaderDefinition chd = LoadColumnHeaderDefinition (n, columnIndex++);
+                        TableColumnHeaderDefinition chd = LoadColumnHeaderDefinition(n, columnIndex++);
 
                         if (chd != null)
-                            tableBody.header.columnHeaderDefinitionList.Add (chd);
+                            tableBody.header.columnHeaderDefinitionList.Add(chd);
                         else
                         {
                             //Error at XPath {0} in file {1}: Column header definition is invalid; all headers are discarded.
@@ -171,18 +171,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        this.ProcessUnknownNode (n);
+                        this.ProcessUnknownNode(n);
                     }
                 }
                 // NOTICE: the list can be empty if no entries were found
             }
         }
 
-        private TableColumnHeaderDefinition LoadColumnHeaderDefinition (XmlNode columnHeaderNode, int index)
+        private TableColumnHeaderDefinition LoadColumnHeaderDefinition(XmlNode columnHeaderNode, int index)
         {
-            using (this.StackFrame (columnHeaderNode, index))
+            using (this.StackFrame(columnHeaderNode, index))
             {
-                TableColumnHeaderDefinition chd = new TableColumnHeaderDefinition ();
+                TableColumnHeaderDefinition chd = new TableColumnHeaderDefinition();
 
                 bool labelNodeFound = false; // cardinality 0..1
                 bool widthNodeFound = false; // cardinality 0..1
@@ -190,32 +190,32 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 foreach (XmlNode n in columnHeaderNode.ChildNodes)
                 {
-                    if (MatchNodeNameWithAttributes (n, XmlTags.LabelNode))
+                    if (MatchNodeNameWithAttributes(n, XmlTags.LabelNode))
                     {
                         if (labelNodeFound)
                         {
-                            this.ProcessDuplicateNode (n);
+                            this.ProcessDuplicateNode(n);
                             return null; // fatal error
                         }
 
                         labelNodeFound = true;
-                        chd.label = LoadLabel (n);
+                        chd.label = LoadLabel(n);
                         if (chd.label == null)
                         {
                             return null; // fatal error
                         }
                     }
-                    else if (MatchNodeName (n, XmlTags.WidthNode))
+                    else if (MatchNodeName(n, XmlTags.WidthNode))
                     {
                         if (widthNodeFound)
                         {
-                            this.ProcessDuplicateNode (n);
+                            this.ProcessDuplicateNode(n);
                             return null; // fatal error
                         }
 
                         widthNodeFound = true;
                         int wVal;
-                        if (ReadPositiveIntegerValue (n, out wVal))
+                        if (ReadPositiveIntegerValue(n, out wVal))
                         {
                             chd.width = wVal;
                         }
@@ -226,23 +226,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             return null; //fatal error
                         }
                     }
-                    else if (MatchNodeName (n, XmlTags.AlignmentNode))
+                    else if (MatchNodeName(n, XmlTags.AlignmentNode))
                     {
                         if (alignmentNodeFound)
                         {
-                            this.ProcessDuplicateNode (n);
+                            this.ProcessDuplicateNode(n);
                             return null; // fatal error
                         }
 
                         alignmentNodeFound = true;
-                        if (!LoadAlignmentValue (n, out chd.alignment))
+                        if (!LoadAlignmentValue(n, out chd.alignment))
                         {
                             return null; // fatal error
                         }
                     }
                     else
                     {
-                        this.ProcessUnknownNode (n);
+                        this.ProcessUnknownNode(n);
                     }
                 } // foreach
                 return chd;
@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool ReadPositiveIntegerValue(XmlNode n, out int val)
         {
             val = -1;
-            string text = GetMandatoryInnerText (n);
+            string text = GetMandatoryInnerText(n);
             if (text == null)
                 return false;
             bool isInteger = int.TryParse(text, out val);
@@ -265,24 +265,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return true;
         }
 
-        private bool LoadAlignmentValue (XmlNode n, out int alignmentValue)
+        private bool LoadAlignmentValue(XmlNode n, out int alignmentValue)
         {
             alignmentValue = TextAlignment.Undefined;
-            string alignmentString = GetMandatoryInnerText (n);
+            string alignmentString = GetMandatoryInnerText(n);
             if (alignmentString == null)
             {
                 return false; // fatal error
             }
 
-            if (string.Equals (n.InnerText, XMLStringValues.AligmentLeft, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(n.InnerText, XMLStringValues.AligmentLeft, StringComparison.OrdinalIgnoreCase))
             {
                 alignmentValue = TextAlignment.Left;
             }
-            else if (string.Equals (n.InnerText, XMLStringValues.AligmentRight, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(n.InnerText, XMLStringValues.AligmentRight, StringComparison.OrdinalIgnoreCase))
             {
                 alignmentValue = TextAlignment.Right;
             }
-            else if (string.Equals (n.InnerText, XMLStringValues.AligmentCenter, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(n.InnerText, XMLStringValues.AligmentCenter, StringComparison.OrdinalIgnoreCase))
             {
                 alignmentValue = TextAlignment.Center;
             }
@@ -295,16 +295,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return true;
         }
 
-        private void LoadRowEntriesSection (TableControlBody tableBody, XmlNode rowEntriesNode)
+        private void LoadRowEntriesSection(TableControlBody tableBody, XmlNode rowEntriesNode)
         {
-            using (this.StackFrame (rowEntriesNode))
+            using (this.StackFrame(rowEntriesNode))
             {
                 int rowEntryIndex = 0;
                 foreach (XmlNode n in rowEntriesNode.ChildNodes)
                 {
-                    if (MatchNodeName (n, XmlTags.TableRowEntryNode))
+                    if (MatchNodeName(n, XmlTags.TableRowEntryNode))
                     {
-                        TableRowDefinition trd = LoadRowEntryDefinition (n, rowEntryIndex++);
+                        TableRowDefinition trd = LoadRowEntryDefinition(n, rowEntryIndex++);
                         if (trd == null)
                         {
                             //Error at XPath {0} in file {1}: {2} failed to load.
@@ -330,12 +330,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                         else
                         {
-                            tableBody.optionalDefinitionList.Add (trd);
+                            tableBody.optionalDefinitionList.Add(trd);
                         }
                     }
                     else
                     {
-                        this.ProcessUnknownNode (n);
+                        this.ProcessUnknownNode(n);
                     }
                 }
                 if (tableBody.defaultDefinition == null)
@@ -346,78 +346,78 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private TableRowDefinition LoadRowEntryDefinition (XmlNode rowEntryNode, int index)
+        private TableRowDefinition LoadRowEntryDefinition(XmlNode rowEntryNode, int index)
         {
-            using(this.StackFrame(rowEntryNode, index))
+            using (this.StackFrame(rowEntryNode, index))
             {
                 bool appliesToNodeFound = false;    // cardinality 0..1
                 bool columnEntriesNodeFound = false;         // cardinality 1
                 bool multiLineFound = false;    // cardinality 0..1
 
-                TableRowDefinition trd = new TableRowDefinition ();
+                TableRowDefinition trd = new TableRowDefinition();
                 foreach (XmlNode n in rowEntryNode.ChildNodes)
                 {
-                    if (MatchNodeName (n, XmlTags.EntrySelectedByNode))
+                    if (MatchNodeName(n, XmlTags.EntrySelectedByNode))
                     {
                         if (appliesToNodeFound)
                         {
-                            this.ProcessDuplicateNode (n);
+                            this.ProcessDuplicateNode(n);
                             return null; // fatal error
                         }
 
                         appliesToNodeFound = true;
 
                         // optional section
-                        trd.appliesTo = LoadAppliesToSection (n, true);
+                        trd.appliesTo = LoadAppliesToSection(n, true);
                     }
-                    else if (MatchNodeName (n, XmlTags.TableColumnItemsNode))
+                    else if (MatchNodeName(n, XmlTags.TableColumnItemsNode))
                     {
                         if (columnEntriesNodeFound)
                         {
-                            this.ProcessDuplicateNode (n);
+                            this.ProcessDuplicateNode(n);
                             return null; //fatal
                         }
-                        LoadColumnEntries (n, trd);
+                        LoadColumnEntries(n, trd);
                         if (trd.rowItemDefinitionList == null)
                         {
                             return null; // fatal error
                         }
                     }
-                    else if (MatchNodeName (n, XmlTags.MultiLineNode))
+                    else if (MatchNodeName(n, XmlTags.MultiLineNode))
                     {
                         if (multiLineFound)
                         {
-                            this.ProcessDuplicateNode (n);
+                            this.ProcessDuplicateNode(n);
                             return null; //fatal
                         }
                         multiLineFound = true;
-                        if (!this.ReadBooleanNode (n, out trd.multiLine))
+                        if (!this.ReadBooleanNode(n, out trd.multiLine))
                         {
                             return null; //fatal error
                         }
                     }
                     else
                     {
-                        this.ProcessUnknownNode (n);
+                        this.ProcessUnknownNode(n);
                     }
                 }
                 return trd;
             }
         }
 
-        private void LoadColumnEntries (XmlNode columnEntriesNode, TableRowDefinition trd)
+        private void LoadColumnEntries(XmlNode columnEntriesNode, TableRowDefinition trd)
         {
-            using (this.StackFrame (columnEntriesNode))
+            using (this.StackFrame(columnEntriesNode))
             {
                 int columnEntryIndex = 0;
                 foreach (XmlNode n in columnEntriesNode.ChildNodes)
                 {
-                    if (MatchNodeName (n, XmlTags.TableColumnItemNode))
+                    if (MatchNodeName(n, XmlTags.TableColumnItemNode))
                     {
-                        TableRowItemDefinition rid = LoadColumnEntry (n, columnEntryIndex++);
+                        TableRowItemDefinition rid = LoadColumnEntry(n, columnEntryIndex++);
                         if (rid != null)
                         {
-                            trd.rowItemDefinitionList.Add (rid);
+                            trd.rowItemDefinitionList.Add(rid);
                         }
                         else
                         {
@@ -429,48 +429,47 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        this.ProcessUnknownNode (n);
+                        this.ProcessUnknownNode(n);
                     }
                 }
             }
         }
 
-        private TableRowItemDefinition LoadColumnEntry (XmlNode columnEntryNode, int index)
+        private TableRowItemDefinition LoadColumnEntry(XmlNode columnEntryNode, int index)
         {
-            using (this.StackFrame (columnEntryNode, index))
+            using (this.StackFrame(columnEntryNode, index))
             {
-
                 // process Mshexpression, format string and text token
-                ViewEntryNodeMatch match = new ViewEntryNodeMatch (this);
-                List<XmlNode> unprocessedNodes = new List<XmlNode> ();
-                if (!match.ProcessExpressionDirectives (columnEntryNode, unprocessedNodes))
+                ViewEntryNodeMatch match = new ViewEntryNodeMatch(this);
+                List<XmlNode> unprocessedNodes = new List<XmlNode>();
+                if (!match.ProcessExpressionDirectives(columnEntryNode, unprocessedNodes))
                 {
                     return null; // fatal error
                 }
 
-                TableRowItemDefinition rid = new TableRowItemDefinition ();
+                TableRowItemDefinition rid = new TableRowItemDefinition();
 
                 // process the remaining nodes 
                 bool alignmentNodeFound = false; // cardinality 0..1
                 foreach (XmlNode n in unprocessedNodes)
                 {
-                    if (MatchNodeName (n, XmlTags.AlignmentNode))
+                    if (MatchNodeName(n, XmlTags.AlignmentNode))
                     {
                         if (alignmentNodeFound)
                         {
-                            this.ProcessDuplicateNode (n);
+                            this.ProcessDuplicateNode(n);
                             return null; // fatal error
                         }
 
                         alignmentNodeFound = true;
-                        if (!LoadAlignmentValue (n, out rid.alignment))
+                        if (!LoadAlignmentValue(n, out rid.alignment))
                         {
                             return null; // fatal error
                         }
                     }
                     else
                     {
-                        this.ProcessUnknownNode (n);
+                        this.ProcessUnknownNode(n);
                     }
                 }
 
@@ -478,14 +477,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // add either the text token or the MshExpression with optional format string
                 if (match.TextToken != null)
                 {
-                    rid.formatTokenList.Add (match.TextToken);
+                    rid.formatTokenList.Add(match.TextToken);
                 }
                 else if (match.Expression != null)
                 {
-                    FieldPropertyToken fpt = new FieldPropertyToken ();
+                    FieldPropertyToken fpt = new FieldPropertyToken();
                     fpt.expression = match.Expression;
                     fpt.fieldFormattingDirective.formatString = match.FormatString;
-                    rid.formatTokenList.Add (fpt);
+                    rid.formatTokenList.Add(fpt);
                 }
 
                 return rid;

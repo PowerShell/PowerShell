@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
             set { _includeChildJob = value; }
         }
         private SwitchParameter _includeChildJob;
-        
+
         /// <summary>
         /// ChildJobState parameter.
         /// </summary>
@@ -267,11 +267,11 @@ namespace Microsoft.PowerShell.Commands
 
             // add all child jobs if ChildJobState is not specified
             //
-            if(!childJobStateParameter && includeChildJobParameter)
+            if (!childJobStateParameter && includeChildJobParameter)
             {
                 foreach (Job job in jobList)
                 {
-                    if ( job.ChildJobs != null && job.ChildJobs.Count>0 )
+                    if (job.ChildJobs != null && job.ChildJobs.Count > 0)
                     {
                         matches.AddRange(job.ChildJobs);
                     }
@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // Apply Newest count.
             //
-            
+
             // Sort filtered jobs
             filteredJobs.Sort((firstJob, secondJob) =>
                 {

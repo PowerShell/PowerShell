@@ -21,10 +21,10 @@ namespace Microsoft.CodeAnalysis
         /// Represents the current Processor architecture
         /// </summary>
         public static readonly ProcessorArchitecture[] CurrentArchitectures = (IntPtr.Size == 4)
-            ? new []{ProcessorArchitecture.None, ProcessorArchitecture.MSIL, ProcessorArchitecture.X86}
-            : new []{ProcessorArchitecture.None, ProcessorArchitecture.MSIL, ProcessorArchitecture.Amd64};
+            ? new[] { ProcessorArchitecture.None, ProcessorArchitecture.MSIL, ProcessorArchitecture.X86 }
+            : new[] { ProcessorArchitecture.None, ProcessorArchitecture.MSIL, ProcessorArchitecture.Amd64 };
 
-        #region Interop
+#region Interop
 
         private const int MAX_PATH = 260;
 
@@ -81,7 +81,7 @@ namespace Microsoft.CodeAnalysis
         [DllImport("clr", CharSet = CharSet.Auto, PreserveSig = false)]
         private static extern void CreateAssemblyCache(out IAssemblyCache ppAsmCache, uint dwReserved);
 
-        #endregion
+#endregion
 
         private const int S_OK = 0;
         private const int S_FALSE = 1;

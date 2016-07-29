@@ -56,7 +56,7 @@ namespace System.Management.Automation
         public Collection<CompletionResult> CompletionMatches { get; set; }
 
         internal static readonly IList<CompletionResult> EmptyCompletionResult = Utils.EmptyArray<CompletionResult>();
-        private static readonly CommandCompletion EmptyCommandCompletion = new CommandCompletion(
+        private static readonly CommandCompletion s_emptyCommandCompletion = new CommandCompletion(
             new Collection<CompletionResult>(EmptyCompletionResult), -1, -1, -1);
 
         #endregion Fields and Properties
@@ -96,7 +96,7 @@ namespace System.Management.Automation
         {
             if (input == null)
             {
-                return EmptyCommandCompletion;
+                return s_emptyCommandCompletion;
             }
 
             var parsedInput = MapStringInputToParsedInput(input, cursorIndex);
@@ -145,7 +145,7 @@ namespace System.Management.Automation
         {
             if (input == null)
             {
-                return EmptyCommandCompletion;
+                return s_emptyCommandCompletion;
             }
 
             if (cursorIndex > input.Length)
@@ -172,7 +172,7 @@ namespace System.Management.Automation
                 // supported on remote runspaces.
                 if (powershell.IsNested || (remoteRunspace.RunspaceAvailability != RunspaceAvailability.Available))
                 {
-                    return EmptyCommandCompletion;
+                    return s_emptyCommandCompletion;
                 }
 
                 // If it's in the nested prompt, the powershell instance is created by "PowerShell.Create(RunspaceMode.CurrentRunspace);".
@@ -251,7 +251,7 @@ namespace System.Management.Automation
                 // supported on remote runspaces.
                 if (powershell.IsNested || (remoteRunspace.RunspaceAvailability != RunspaceAvailability.Available))
                 {
-                    return EmptyCommandCompletion;
+                    return s_emptyCommandCompletion;
                 }
 
                 if (!powershell.IsChild)
@@ -332,7 +332,7 @@ namespace System.Management.Automation
         {
             if (input == null)
             {
-                return EmptyCommandCompletion;
+                return s_emptyCommandCompletion;
             }
 
             if (cursorIndex > input.Length)
@@ -420,7 +420,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return EmptyCommandCompletion;
+            return s_emptyCommandCompletion;
         }
 
         #endregion
@@ -454,7 +454,7 @@ namespace System.Management.Automation
                 var results = powershell.Invoke();
                 if (results == null)
                 {
-                    return EmptyCommandCompletion;
+                    return s_emptyCommandCompletion;
                 }
 
                 if (results.Count == 1)
@@ -476,7 +476,7 @@ namespace System.Management.Automation
                 powershell.Commands.Clear();
             }
 
-            return EmptyCommandCompletion;
+            return s_emptyCommandCompletion;
         }
 
         private static CommandCompletion CallScriptWithAstParameterSet(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable options, PowerShell powershell)
@@ -492,7 +492,7 @@ namespace System.Management.Automation
                 var results = powershell.Invoke();
                 if (results == null)
                 {
-                    return EmptyCommandCompletion;
+                    return s_emptyCommandCompletion;
                 }
 
                 if (results.Count == 1)
@@ -514,7 +514,7 @@ namespace System.Management.Automation
                 powershell.Commands.Clear();
             }
 
-            return EmptyCommandCompletion;
+            return s_emptyCommandCompletion;
         }
 
         // This is the start of the real implementation of autocomplete/intellisense/tab completion
@@ -528,7 +528,7 @@ namespace System.Management.Automation
                 var context = LocalPipeline.GetExecutionContextFromTLS();
 
                 bool cleanupModuleAnalysisAppDomain = context.TakeResponsibilityForModuleAnalysisAppDomain();
-                
+
                 try
                 {
                     // First, check if a V1/V2 implementation of TabExpansion exists.  If so, the user had overridden
@@ -577,8 +577,8 @@ namespace System.Management.Automation
                         try
                         {
                         */
-                            var completionAnalysis = new CompletionAnalysis(ast, tokens, positionOfCursor, options);
-                            results = completionAnalysis.GetResults(powershell, out replacementIndex, out replacementLength);
+                        var completionAnalysis = new CompletionAnalysis(ast, tokens, positionOfCursor, options);
+                        results = completionAnalysis.GetResults(powershell, out replacementIndex, out replacementLength);
                         /*
                         }
                         finally
@@ -627,7 +627,7 @@ namespace System.Management.Automation
             var functionInfo = executionContext.EngineSessionState.GetFunction("TabExpansion");
             if (functionInfo != null)
                 return true;
-            
+
             var aliasInfo = executionContext.EngineSessionState.GetAlias("TabExpansion");
             if (aliasInfo != null)
                 return true;
@@ -700,8 +700,8 @@ namespace System.Management.Automation
         /// </remarks>
         private static class PSv2CompletionCompleter
         {
-            private static readonly Regex CmdletTabRegex = new Regex(@"^[\w\*\?]+-[\w\*\?]*");
-            private static readonly char[] CharsRequiringQuotedString = "`&@'#{}()$,;|<> \t".ToCharArray();
+            private static readonly Regex s_cmdletTabRegex = new Regex(@"^[\w\*\?]+-[\w\*\?]*");
+            private static readonly char[] s_charsRequiringQuotedString = "`&@'#{}()$,;|<> \t".ToCharArray();
 
             #region "Handle Command"
 
@@ -718,14 +718,14 @@ namespace System.Management.Automation
                 string[] cmdletParts = lastWord.Split(Utils.Separators.Backslash);
                 if (cmdletParts.Length == 1)
                 {
-                    return CmdletTabRegex.IsMatch(lastWord);
+                    return s_cmdletTabRegex.IsMatch(lastWord);
                 }
                 if (cmdletParts.Length == 2)
                 {
                     isSnapinSpecified = PSSnapInInfo.IsPSSnapinIdValid(cmdletParts[0]);
                     if (isSnapinSpecified)
                     {
-                        return CmdletTabRegex.IsMatch(cmdletParts[1]);
+                        return s_cmdletTabRegex.IsMatch(cmdletParts[1]);
                     }
                 }
                 return false;
@@ -850,7 +850,6 @@ namespace System.Management.Automation
                             nextCommandAndName.CommandName.ShortName,
                             StringComparison.OrdinalIgnoreCase) == 0)
                     {
-
                         AddCommandResult(commandAndName, true, completingAtStartOfLine, quote, results);
                         previousMatched = true;
                     }
@@ -946,7 +945,7 @@ namespace System.Management.Automation
 
             private static string AddQuoteIfNecessary(string completionText, string quote, bool completingAtStartOfLine)
             {
-                if (completionText.IndexOfAny(CharsRequiringQuotedString) != -1)
+                if (completionText.IndexOfAny(s_charsRequiringQuotedString) != -1)
                 {
                     bool needAmpersand = quote.Length == 0 && completingAtStartOfLine;
                     string quoteInUse = quote.Length == 0 ? "'" : quote;
@@ -1127,7 +1126,7 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                result.Sort(delegate(PathItemAndConvertedPath x, PathItemAndConvertedPath y)
+                result.Sort(delegate (PathItemAndConvertedPath x, PathItemAndConvertedPath y)
                                 {
                                     Diagnostics.Assert(x.Path != null && y.Path != null, "SafeToString always returns a non-null string");
                                     return string.Compare(x.Path, y.Path, StringComparison.CurrentCultureIgnoreCase);
@@ -1152,9 +1151,9 @@ namespace System.Management.Automation
 
             private LastWordFinder(string sentence)
             {
-                replacementIndex = 0;
+                _replacementIndex = 0;
                 Diagnostics.Assert(sentence != null, "need to provide an instance");
-                this.sentence = sentence;
+                _sentence = sentence;
             }
 
             /// <summary>
@@ -1179,7 +1178,7 @@ namespace System.Management.Automation
 
                 ReplacementIndex = 0;
 
-                for (sentenceIndex = 0; sentenceIndex < sentence.Length; ++sentenceIndex)
+                for (_sentenceIndex = 0; _sentenceIndex < _sentence.Length; ++_sentenceIndex)
                 {
                     Diagnostics.Assert(
                         (inSingleQuote && !inDoubleQuote)
@@ -1187,7 +1186,7 @@ namespace System.Management.Automation
                         || (!inSingleQuote && !inDoubleQuote),
                         "Can't be in both single and double quotes");
 
-                    char c = sentence[sentenceIndex];
+                    char c = _sentence[_sentenceIndex];
 
                     // there are 3 possibilities:
                     // 1) a new sequence is starting,
@@ -1205,18 +1204,18 @@ namespace System.Management.Automation
                     else if (c == '`')
                     {
                         Consume(c);
-                        if (++sentenceIndex < sentence.Length)
+                        if (++_sentenceIndex < _sentence.Length)
                         {
-                            Consume(sentence[sentenceIndex]);
+                            Consume(_sentence[_sentenceIndex]);
                         }
                     }
                     else if (IsWhitespace(c))
                     {
-                        if (sequenceDueToEnd)
+                        if (_sequenceDueToEnd)
                         {
                             // we skipped a quote earlier, now end that sequence
 
-                            sequenceDueToEnd = false;
+                            _sequenceDueToEnd = false;
                             if (inSingleQuote)
                             {
                                 inSingleQuote = false;
@@ -1227,7 +1226,7 @@ namespace System.Management.Automation
                                 inDoubleQuote = false;
                             }
 
-                            ReplacementIndex = sentenceIndex + 1;
+                            ReplacementIndex = _sentenceIndex + 1;
                         }
                         else if (inSingleQuote || inDoubleQuote)
                         {
@@ -1239,7 +1238,7 @@ namespace System.Management.Automation
                         {
                             // no sequence is started, so ignore c
 
-                            ReplacementIndex = sentenceIndex + 1;
+                            ReplacementIndex = _sentenceIndex + 1;
                         }
                     }
                     else
@@ -1250,7 +1249,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                string result = new string(wordBuffer, 0, wordBufferIndex);
+                string result = new string(_wordBuffer, 0, _wordBufferIndex);
 
                 closingQuote = inSingleQuote ? '\'' : inDoubleQuote ? '"' : '\0';
                 replacementIndexOut = ReplacementIndex;
@@ -1268,43 +1267,43 @@ namespace System.Management.Automation
 
                 if (inQuote)
                 {
-                    if (sequenceDueToEnd)
+                    if (_sequenceDueToEnd)
                     {
                         // I've ended a sequence and am starting another; don't consume c, update replacementIndex
-                        ReplacementIndex = sentenceIndex + 1;
+                        ReplacementIndex = _sentenceIndex + 1;
                     }
 
-                    sequenceDueToEnd = !sequenceDueToEnd;
+                    _sequenceDueToEnd = !_sequenceDueToEnd;
                 }
                 else
                 {
                     // I'm starting a sequence; don't consume c, update replacementIndex
                     inQuote = true;
-                    ReplacementIndex = sentenceIndex;
+                    ReplacementIndex = _sentenceIndex;
                 }
             }
 
             private void Consume(char c)
             {
-                Diagnostics.Assert(wordBuffer != null, "wordBuffer is not initialized");
-                Diagnostics.Assert(wordBufferIndex < wordBuffer.Length, "wordBufferIndex is out of range");
+                Diagnostics.Assert(_wordBuffer != null, "wordBuffer is not initialized");
+                Diagnostics.Assert(_wordBufferIndex < _wordBuffer.Length, "wordBufferIndex is out of range");
 
-                wordBuffer[wordBufferIndex++] = c;
+                _wordBuffer[_wordBufferIndex++] = c;
             }
 
             private int ReplacementIndex
             {
-                get { return replacementIndex; }
+                get { return _replacementIndex; }
                 set
                 {
-                    Diagnostics.Assert(value >= 0 && value < sentence.Length + 1, "value out of range");
+                    Diagnostics.Assert(value >= 0 && value < _sentence.Length + 1, "value out of range");
 
                     // when we set the replacement index, that means we're also resetting our word buffer. we know wordBuffer
                     // will never be longer than sentence.
 
-                    wordBuffer = new char[sentence.Length];
-                    wordBufferIndex = 0;
-                    replacementIndex = value;
+                    _wordBuffer = new char[_sentence.Length];
+                    _wordBufferIndex = 0;
+                    _replacementIndex = value;
                 }
             }
 
@@ -1313,12 +1312,12 @@ namespace System.Management.Automation
                 return (c == ' ') || (c == '\x0009');
             }
 
-            private readonly string sentence;
-            private char[] wordBuffer;
-            private int wordBufferIndex;
-            private int replacementIndex;
-            private int sentenceIndex;
-            private bool sequenceDueToEnd;
+            private readonly string _sentence;
+            private char[] _wordBuffer;
+            private int _wordBufferIndex;
+            private int _replacementIndex;
+            private int _sentenceIndex;
+            private bool _sequenceDueToEnd;
         }
 
         #endregion private methods

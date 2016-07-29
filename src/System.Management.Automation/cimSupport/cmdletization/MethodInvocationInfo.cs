@@ -26,8 +26,8 @@ namespace Microsoft.PowerShell.Cmdletization
             if (parameters == null) throw new ArgumentNullException("parameters");
             // returnValue can be null
 
-            this.methodName = name;
-            this.returnValue = returnValue;
+            _methodName = name;
+            _returnValue = returnValue;
 
             KeyedCollection<string, MethodParameter> mpk = new MethodParametersCollection();
             foreach (var parameter in parameters)
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 mpk.Add(parameter);
             }
 
-            this.parameters = mpk;
+            _parameters = mpk;
         }
 
         /// <summary>
@@ -43,29 +43,29 @@ namespace Microsoft.PowerShell.Cmdletization
         /// </summary>
         public string MethodName
         {
-            get { return this.methodName; }
+            get { return _methodName; }
         }
-        private readonly string methodName;
+        private readonly string _methodName;
 
         /// <summary>
         /// Method parameters
         /// </summary>
         public KeyedCollection<string, MethodParameter> Parameters
         {
-            get { return this.parameters; }
+            get { return _parameters; }
         }
-        private readonly KeyedCollection<string, MethodParameter> parameters;
+        private readonly KeyedCollection<string, MethodParameter> _parameters;
 
         /// <summary>
         /// Return value of the method.  Can be <c>null</c> if the method doesn't return anything.
         /// </summary>
         public MethodParameter ReturnValue
         {
-            get { return this.returnValue; }
+            get { return _returnValue; }
         }
-        private readonly MethodParameter returnValue;
+        private readonly MethodParameter _returnValue;
 
-        internal IEnumerable<T> GetArgumentsOfType<T>() where T: class
+        internal IEnumerable<T> GetArgumentsOfType<T>() where T : class
         {
             List<T> result = new List<T>();
             foreach (var methodParameter in this.Parameters)

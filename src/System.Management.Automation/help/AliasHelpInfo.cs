@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Diagnostics.CodeAnalysis; // for fxcop
 
 namespace System.Management.Automation
@@ -18,7 +19,7 @@ namespace System.Management.Automation
         /// The constructor is private. The only way to create an 
         /// AliasHelpInfo object is through static method <see cref="GetHelpInfo"/>
         /// </remarks>
-        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")] 
+        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         private AliasHelpInfo(AliasInfo aliasInfo)
         {
             _fullHelpObject = new PSObject();

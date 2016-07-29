@@ -25,7 +25,7 @@ namespace System.Management.Automation
             AssemblyHashAlgorithm hashAlgorithm = assemblyDefinition.HashAlgorithm;
             BlobHandle blobHandle = assemblyDefinition.PublicKey;
             BlobReader blobReader = metadataReader.GetBlobReader(blobHandle);
-            
+
             string publicKeyTokenString = "null";
             // Extract public key token only if PublicKey exists in the metadata
             if (blobReader.Length > 0)
@@ -65,7 +65,7 @@ namespace System.Management.Automation
                 // Convert bytes to hex format strings in lower case.
                 publicKeyTokenString = BitConverter.ToString(publicKeyTokenBytes).Replace("-", string.Empty).ToLowerInvariant();
             }
-            
+
             string strongAssemblyName = string.Format(CultureInfo.InvariantCulture,
                                                       "{0}, Version={1}, Culture={2}, PublicKeyToken={3}",
                                                       asmName, asmVersion, asmCulture, publicKeyTokenString);

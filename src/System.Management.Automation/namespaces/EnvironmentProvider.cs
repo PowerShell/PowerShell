@@ -4,7 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 
 using System;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -39,8 +39,8 @@ namespace Microsoft.PowerShell.Commands
         /// The constructor for the provider that exposes environment variables to the user
         /// as drives.
         /// </summary>
-        public EnvironmentProvider  () 
-        { 
+        public EnvironmentProvider()
+        {
         } // constructor
 
         #endregion Constructor
@@ -55,11 +55,11 @@ namespace Microsoft.PowerShell.Commands
         /// An array of a single PSDriveInfo object representing the alias drive.
         /// </returns>
         ///
-        protected override Collection<PSDriveInfo> InitializeDefaultDrives ()
+        protected override Collection<PSDriveInfo> InitializeDefaultDrives()
         {
             string description = SessionStateStrings.EnvironmentDriveDescription;
 
-            PSDriveInfo envDrive = 
+            PSDriveInfo envDrive =
                 new PSDriveInfo(
                     DriveNames.EnvironmentDrive,
                     ProviderInfo,
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
         /// The name of the environment variable to remove from session state.
         /// </param>
         /// 
-        internal override void RemoveSessionStateItem (string name)
+        internal override void RemoveSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
                 !String.IsNullOrEmpty(name),
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
         /// session state.
         /// </returns>
         /// 
-        internal override IDictionary GetSessionStateTable ()
+        internal override IDictionary GetSessionStateTable()
         {
             // Environment variables are case-sensitive on Unix and
             // case-insensitive on Windows
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
         /// The value of the item.
         /// </returns>
         /// 
-        internal override object GetValueOfItem (object item)
+        internal override object GetValueOfItem(object item)
         {
             Dbg.Diagnostics.Assert(
                 item != null,
@@ -242,7 +242,6 @@ namespace Microsoft.PowerShell.Commands
         } // GetValueOfItem
 
         #endregion protected members
-
     } // EnvironmentProvider
 }
 

@@ -43,23 +43,23 @@ namespace System.Management.Automation.Security
         /// <returns>An EnforcementMode that describes the system policy</returns>
         public static SystemEnforcementMode GetSystemLockdownPolicy()
         {
-            if (wasSystemPolicyDebugPolicy || (systemLockdownPolicy == null))
+            if (s_wasSystemPolicyDebugPolicy || (s_systemLockdownPolicy == null))
             {
-                lock (systemLockdownPolicyLock)
+                lock (s_systemLockdownPolicyLock)
                 {
-                    if (wasSystemPolicyDebugPolicy || (systemLockdownPolicy == null))
+                    if (s_wasSystemPolicyDebugPolicy || (s_systemLockdownPolicy == null))
                     {
-                        systemLockdownPolicy = GetLockdownPolicy(null, null);
+                        s_systemLockdownPolicy = GetLockdownPolicy(null, null);
                     }
                 }
             }
 
-            return systemLockdownPolicy.Value;
+            return s_systemLockdownPolicy.Value;
         }
 
-        private static object systemLockdownPolicyLock = new Object();
-        private static Nullable<SystemEnforcementMode> systemLockdownPolicy = null;
-        private static bool wasSystemPolicyDebugPolicy = false;
+        private static object s_systemLockdownPolicyLock = new Object();
+        private static Nullable<SystemEnforcementMode> s_systemLockdownPolicy = null;
+        private static bool s_wasSystemPolicyDebugPolicy = false;
 
         /// <summary>
         /// Gets lockdown policy as applied to a file
@@ -69,7 +69,7 @@ namespace System.Management.Automation.Security
         {
             // Check the WLDP API
             SystemEnforcementMode lockdownPolicy = GetWldpPolicy(path, handle);
-            if(lockdownPolicy == SystemEnforcementMode.Enforce)
+            if (lockdownPolicy == SystemEnforcementMode.Enforce)
             {
                 return lockdownPolicy;
             }
@@ -77,7 +77,7 @@ namespace System.Management.Automation.Security
             // At this point, LockdownPolicy = Audit or Allowed.
             // If there was a WLDP policy, but WLDP didn't block it,
             // then it was explicitly allowed. Therefore, return the result for the file.
-            SystemEnforcementMode systemWldpPolicy = cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
+            SystemEnforcementMode systemWldpPolicy = s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             if ((systemWldpPolicy == SystemEnforcementMode.Enforce) ||
                 (systemWldpPolicy == SystemEnforcementMode.Audit))
             {
@@ -93,7 +93,7 @@ namespace System.Management.Automation.Security
 
             // If there was a system-wide AppLocker policy, but AppLocker didn't block it,
             // then return AppLocker's status.
-            if (cachedSaferSystemPolicy.GetValueOrDefault(SaferPolicy.Allowed) ==
+            if (s_cachedSaferSystemPolicy.GetValueOrDefault(SaferPolicy.Allowed) ==
                 SaferPolicy.Disallowed)
             {
                 return lockdownPolicy;
@@ -108,18 +108,18 @@ namespace System.Management.Automation.Security
         private static SystemEnforcementMode GetWldpPolicy(string path, SafeHandle handle)
         {
             // If the WLDP assembly is missing (such as windows 7 or down OS), return default/None to skip WLDP valification
-            if (hadMissingWldpAssembly || !IO.File.Exists(IO.Path.Combine(Environment.SystemDirectory, "wldp.dll")))
+            if (s_hadMissingWldpAssembly || !IO.File.Exists(IO.Path.Combine(Environment.SystemDirectory, "wldp.dll")))
             {
-                hadMissingWldpAssembly = true;
-                return cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
+                s_hadMissingWldpAssembly = true;
+                return s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             }
 
             // If path is NULL, see if we have the cached system-wide lockdown policy.
             if (String.IsNullOrEmpty(path))
             {
-                if ((cachedWldpSystemPolicy != null) && (!InternalTestHooks.BypassAppLockerPolicyCaching))
+                if ((s_cachedWldpSystemPolicy != null) && (!InternalTestHooks.BypassAppLockerPolicyCaching))
                 {
-                    return cachedWldpSystemPolicy.Value;
+                    return s_cachedWldpSystemPolicy.Value;
                 }
             }
 
@@ -150,7 +150,7 @@ namespace System.Management.Automation.Security
                     // If this is a query for the system-wide lockdown policy, cache it.
                     if (String.IsNullOrEmpty(path))
                     {
-                        cachedWldpSystemPolicy = resultingLockdownPolicy;
+                        s_cachedWldpSystemPolicy = resultingLockdownPolicy;
                     }
 
                     return resultingLockdownPolicy;
@@ -163,12 +163,12 @@ namespace System.Management.Automation.Security
             }
             catch (DllNotFoundException)
             {
-                hadMissingWldpAssembly = true;
-                return cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
+                s_hadMissingWldpAssembly = true;
+                return s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             }
         }
-        private static SystemEnforcementMode? cachedWldpSystemPolicy = null;
-        
+        private static SystemEnforcementMode? s_cachedWldpSystemPolicy = null;
+
 
         private static SystemEnforcementMode GetAppLockerPolicy(string path, SafeHandle handle)
         {
@@ -180,9 +180,9 @@ namespace System.Management.Automation.Security
             // no AppLocker script policy.
             if (String.IsNullOrEmpty(path))
             {
-                if ((cachedSaferSystemPolicy != null) && (! InternalTestHooks.BypassAppLockerPolicyCaching))
+                if ((s_cachedSaferSystemPolicy != null) && (!InternalTestHooks.BypassAppLockerPolicyCaching))
                 {
-                    result = cachedSaferSystemPolicy.Value;
+                    result = s_cachedSaferSystemPolicy.Value;
                 }
                 else
                 {
@@ -265,8 +265,8 @@ namespace System.Management.Automation.Security
                         if (IO.File.Exists(testPathScript)) { IO.File.Delete(testPathScript); }
                         if (IO.File.Exists(testPathModule)) { IO.File.Delete(testPathModule); }
                     }
-                                        
-                    cachedSaferSystemPolicy = result;
+
+                    s_cachedSaferSystemPolicy = result;
                 }
 
                 if (result == SaferPolicy.Disallowed)
@@ -290,7 +290,7 @@ namespace System.Management.Automation.Security
                 return SystemEnforcementMode.None;
             }
         }
-        private static SaferPolicy? cachedSaferSystemPolicy = null;
+        private static SaferPolicy? s_cachedSaferSystemPolicy = null;
 
         private static string GetKnownFolderPath(Guid knownFolderId)
         {
@@ -331,7 +331,7 @@ namespace System.Management.Automation.Security
                 return SystemEnforcementMode.Enforce;
             }
 
-            wasSystemPolicyDebugPolicy = true;
+            s_wasSystemPolicyDebugPolicy = true;
 
             // Support fall-back debug hook for path exclusions on non-WOA platforms
             if (path != null)
@@ -371,7 +371,7 @@ namespace System.Management.Automation.Security
 
                 // No explicit debug allowance for the file, so return the system policy if there
                 // is one.
-                return systemLockdownPolicy.GetValueOrDefault(SystemEnforcementMode.None);
+                return s_systemLockdownPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             }
 
             // Support fall-back debug hook for system-wide policy on non-WOA platforms
@@ -386,9 +386,9 @@ namespace System.Management.Automation.Security
             // If the system-wide debug policy had no preference, then there is no enforcement.
             return SystemEnforcementMode.None;
         }
-        private static bool hadMissingWldpAssembly = false;
+        private static bool s_hadMissingWldpAssembly = false;
 
-        
+
 
         /// <summary>
         /// Gets lockdown policy as applied to a COM object
@@ -405,14 +405,14 @@ namespace System.Management.Automation.Security
                 int pIsApproved = 0;
                 int result = WldpNativeMethods.WldpIsClassInApprovedList(ref clsid, ref hostInformation, ref pIsApproved, 0);
 
-                if(result >= 0)
+                if (result >= 0)
                 {
-                    if(pIsApproved == 1)
+                    if (pIsApproved == 1)
                     {
                         // Hook for testability. If we've got an environmental override, say that ADODB.Parameter
                         // is not allowed.
                         // 0000050b-0000-0010-8000-00aa006d2ea4 = ADODB.Parameter
-                        if (wasSystemPolicyDebugPolicy)
+                        if (s_wasSystemPolicyDebugPolicy)
                         {
                             if (String.Equals(clsid.ToString(), "0000050b-0000-0010-8000-00aa006d2ea4", StringComparison.OrdinalIgnoreCase))
                             {
@@ -566,7 +566,7 @@ namespace System.Management.Automation.Security
 
             [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
             internal static extern int SHGetKnownFolderPath(
-                [MarshalAs(UnmanagedType.LPStruct)] 
+                [MarshalAs(UnmanagedType.LPStruct)]
                 Guid rfid,
                 int dwFlags,
                 IntPtr hToken,

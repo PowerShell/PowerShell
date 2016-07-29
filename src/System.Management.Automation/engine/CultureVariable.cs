@@ -61,5 +61,5 @@ namespace System.Management.Automation
                 return System.Globalization.CultureInfo.CurrentUICulture.Name;
             }
         }
-    } 
+    }
 }

@@ -15,14 +15,17 @@ using System.Dynamic;
 using System.Management.Automation.Interpreter;
 using AstUtils = System.Management.Automation.Interpreter.Utils;
 
-namespace System.Management.Automation.ComInterop {
-
-    internal class ComClassMetaObject : DynamicMetaObject {
+namespace System.Management.Automation.ComInterop
+{
+    internal class ComClassMetaObject : DynamicMetaObject
+    {
         internal ComClassMetaObject(Expression expression, ComTypeClassDesc cls)
-            : base(expression, BindingRestrictions.Empty, cls) {
+            : base(expression, BindingRestrictions.Empty, cls)
+        {
         }
 
-        public override DynamicMetaObject BindCreateInstance(CreateInstanceBinder binder, DynamicMetaObject[] args) {
+        public override DynamicMetaObject BindCreateInstance(CreateInstanceBinder binder, DynamicMetaObject[] args)
+        {
             return new DynamicMetaObject(
                 Expression.Call(
                     AstUtils.Convert(Expression, typeof(ComTypeClassDesc)),

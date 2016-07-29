@@ -1,10 +1,11 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 #pragma warning disable 56500
@@ -195,8 +196,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private IContentReader GetContentReaderPrivate(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             CmdletProviderContext context)
         {
             // All parameters should have been validated by caller
@@ -287,7 +288,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal object GetContentReaderDynamicParameters(
-             string path, 
+             string path,
             CmdletProviderContext context)
         {
             if (path == null)
@@ -356,7 +357,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object GetContentReaderDynamicParameters(
-            CmdletProvider providerInstance, 
+            CmdletProvider providerInstance,
             string path,
             CmdletProviderContext context)
         {
@@ -406,7 +407,7 @@ namespace System.Management.Automation
             }
             return result;
         } // GetContentReaderDynamicParameters
-        
+
         #endregion GetContentReader
 
         #region GetContentWriter
@@ -584,8 +585,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private IContentWriter GetContentWriterPrivate(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             CmdletProviderContext context)
         {
             // All parameters should have been validated by caller
@@ -675,7 +676,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal object GetContentWriterDynamicParameters(
-             string path, 
+             string path,
             CmdletProviderContext context)
         {
             if (path == null)
@@ -744,7 +745,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object GetContentWriterDynamicParameters(
-            CmdletProvider providerInstance, 
+            CmdletProvider providerInstance,
             string path,
             CmdletProviderContext context)
         {
@@ -785,7 +786,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "GetContentWriterDynamicParametersProviderException",
                     SessionStateStrings.GetContentWriterDynamicParametersProviderException,
                     providerInstance.ProviderInfo,
@@ -794,9 +795,9 @@ namespace System.Management.Automation
             }
             return result;
         } // GetContentWriterDynamicParameters
-        
+
         #endregion GetContentWriter
-        
+
         #region ClearContent
 
         /// <summary>
@@ -953,8 +954,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private void ClearContentPrivate(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             CmdletProviderContext context)
         {
             // All parameters should have been validated by caller
@@ -1042,7 +1043,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal object ClearContentDynamicParameters(
-             string path, 
+             string path,
             CmdletProviderContext context)
         {
             if (path == null)
@@ -1110,7 +1111,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object ClearContentDynamicParameters(
-            CmdletProvider providerInstance, 
+            CmdletProvider providerInstance,
             string path,
             CmdletProviderContext context)
         {
@@ -1160,7 +1161,7 @@ namespace System.Management.Automation
             }
             return result;
         } // ClearContentDynamicParameters
-        
+
         #endregion ClearContent
 
         #endregion IContentCmdletProvider accessors

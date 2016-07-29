@@ -16,7 +16,7 @@ namespace System.Management.Automation.Remoting
     internal class ClientRemoteSessionDSHandlerImpl : ClientRemoteSessionDataStructureHandler, IDisposable
     {
         [TraceSourceAttribute("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl")]
-        static private PSTraceSource _trace = PSTraceSource.GetTracer("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl");
+        static private PSTraceSource s_trace = PSTraceSource.GetTracer("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl");
         private const string resBaseName = "remotingerroridstrings";
 
         private BaseClientSessionTransportManager _transportManager;
@@ -25,12 +25,12 @@ namespace System.Management.Automation.Remoting
         private RunspaceConnectionInfo _connectionInfo;
         // used for connection redirection.
         private Uri _redirectUri;
-        private int maxUriRedirectionCount;
-        private bool isCloseCalled;
-        private object syncObject = new object();
+        private int _maxUriRedirectionCount;
+        private bool _isCloseCalled;
+        private object _syncObject = new object();
         private PSRemotingCryptoHelper _cryptoHelper;
 
-        private ClientRemoteSession.URIDirectionReported uriRedirectionHandler;
+        private ClientRemoteSession.URIDirectionReported _uriRedirectionHandler;
 
         internal override BaseClientSessionTransportManager TransportManager
         {
@@ -57,12 +57,12 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates an instance of ClientRemoteSessionDSHandlerImpl
         /// </summary>
-        internal ClientRemoteSessionDSHandlerImpl(ClientRemoteSession session, 
+        internal ClientRemoteSessionDSHandlerImpl(ClientRemoteSession session,
             PSRemotingCryptoHelper cryptoHelper,
             RunspaceConnectionInfo connectionInfo,
             ClientRemoteSession.URIDirectionReported uriRedirectionHandler)
         {
-            Dbg.Assert(maxUriRedirectionCount >= 0, "maxUriRedirectionCount cannot be less than 0.");
+            Dbg.Assert(_maxUriRedirectionCount >= 0, "maxUriRedirectionCount cannot be less than 0.");
 
             if (session == null)
             {
@@ -99,8 +99,8 @@ namespace System.Management.Automation.Remoting
 
                 // store the uri redirection handler and authmechanism 
                 // for uri redirection.
-                this.uriRedirectionHandler = uriRedirectionHandler;
-                this.maxUriRedirectionCount = wsmanConnectionInfo.MaximumConnectionRedirectionCount;
+                _uriRedirectionHandler = uriRedirectionHandler;
+                _maxUriRedirectionCount = wsmanConnectionInfo.MaximumConnectionRedirectionCount;
             }
         }
 
@@ -160,7 +160,7 @@ namespace System.Management.Automation.Remoting
 
         #region RobustConnection events
 
-        void HandleRobustConnectionNotification(object sender, ConnectionStatusEventArgs e)
+        private void HandleRobustConnectionNotification(object sender, ConnectionStatusEventArgs e)
         {
             RemoteSessionStateMachineEventArgs eventArgument = null;
             switch (e.Notification)
@@ -210,24 +210,24 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal override void CloseConnectionAsync()
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (isCloseCalled)
+                if (_isCloseCalled)
                 {
                     return;
                 }
 
                 _transportManager.CloseAsync();
-                isCloseCalled = true;
+                _isCloseCalled = true;
             }
         }
 
         private void HandleCloseComplete(object sender, EventArgs args)
         {
             // This event gets raised only when the connection is closed successfully.
-            
+
             RemoteSessionStateMachineEventArgs closeCompletedArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.CloseCompleted);
-            _stateMachine.RaiseEvent(closeCompletedArg);                
+            _stateMachine.RaiseEvent(closeCompletedArg);
         }
 
 
@@ -256,7 +256,7 @@ namespace System.Management.Automation.Remoting
             else if (sessionState == RemoteSessionState.NegotiationSendingOnConnect)
             {
                 _transportManager.ConnectCompleted += HandleConnectComplete;
-                _transportManager.ConnectAsync();                
+                _transportManager.ConnectAsync();
             }
             else
             {
@@ -304,7 +304,7 @@ namespace System.Management.Automation.Remoting
                 if (tm != null)
                 {
                     tm.AdjustForProtocolVariations(_session.ServerProtocolVersion);
-                    tm.StartReceivingData();                    
+                    tm.StartReceivingData();
                 }
             }
 
@@ -381,10 +381,10 @@ namespace System.Management.Automation.Remoting
             _redirectUri = new Uri(newURIString);
 
             // make sure connection is not closed while we are handling the redirection.
-            lock (syncObject)
+            lock (_syncObject)
             {
                 // if connection is closed by the user..no need to redirect
-                if (isCloseCalled)
+                if (_isCloseCalled)
                 {
                     return;
                 }
@@ -407,7 +407,7 @@ namespace System.Management.Automation.Remoting
         {
             _transportManager.CloseCompleted -= HandleTransportCloseCompleteForRedirection;
             _transportManager.WSManTransportErrorOccured -= HandleTransportErrorForRedirection;
-            
+
             // reattach the close complete and error handlers
             _transportManager.CloseCompleted += HandleCloseComplete;
             _transportManager.WSManTransportErrorOccured += HandleTransportError;
@@ -419,7 +419,7 @@ namespace System.Management.Automation.Remoting
         {
             _transportManager.CloseCompleted -= HandleTransportCloseCompleteForRedirection;
             _transportManager.WSManTransportErrorOccured -= HandleTransportErrorForRedirection;
-            
+
             // reattach the close complete and error handlers
             _transportManager.CloseCompleted += HandleCloseComplete;
             _transportManager.WSManTransportErrorOccured += HandleTransportError;
@@ -435,18 +435,18 @@ namespace System.Management.Automation.Remoting
         private void PerformURIRedirectionStep2(System.Uri newURI)
         {
             Dbg.Assert(null != newURI, "Uri cannot be null");
-            lock (syncObject)
+            lock (_syncObject)
             {
                 // if connection is closed by the user..no need to redirect
-                if (isCloseCalled)
+                if (_isCloseCalled)
                 {
                     return;
                 }
 
                 // raise warning to report the redirection
-                if (null != uriRedirectionHandler)
+                if (null != _uriRedirectionHandler)
                 {
-                    uriRedirectionHandler(newURI);
+                    _uriRedirectionHandler(newURI);
                 }
 
                 // start a new connection
@@ -468,14 +468,14 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(e != null, "HandleTransportError expects non-null eventargs");
             // handle uri redirections
             PSRemotingTransportRedirectException redirectException = e.Exception as PSRemotingTransportRedirectException;
-            if ((redirectException != null) && (maxUriRedirectionCount > 0))
+            if ((redirectException != null) && (_maxUriRedirectionCount > 0))
             {
                 Exception exception = null;
 
                 try
                 {
                     // honor max redirection count given by the user.
-                    maxUriRedirectionCount--;
+                    _maxUriRedirectionCount--;
                     PerformURIRedirection(redirectException.RedirectLocation);
                     return;
                 }
@@ -492,7 +492,7 @@ namespace System.Management.Automation.Remoting
                 {
                     PSRemotingTransportException newException =
                         new PSRemotingTransportException(PSRemotingErrorId.RedirectedURINotWellFormatted, RemotingErrorIdStrings.RedirectedURINotWellFormatted,
-                            _session.Context.RemoteAddress.OriginalString, 
+                            _session.Context.RemoteAddress.OriginalString,
                             redirectException.RedirectLocation);
                     newException.TransportMessage = e.Exception.TransportMessage;
                     e.Exception = newException;
@@ -666,7 +666,7 @@ namespace System.Management.Automation.Remoting
                     {
                         throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ReceivedUnsupportedAction, dataType);
                     }
-            }                          
+            }
         }
 
         /// <summary>
@@ -693,7 +693,7 @@ namespace System.Management.Automation.Remoting
             {
                 case RemotingTargetInterface.Session:
 
-                    Dbg.Assert(false, 
+                    Dbg.Assert(false,
                         "The session remote data is handled my session data structure handler, not here");
                     break;
 
@@ -710,7 +710,7 @@ namespace System.Management.Automation.Remoting
                     {
                         // The runspace pool may have been removed on the client side,
                         // so, we should just ignore the message.
-                        _trace.WriteLine(@"Client received data for Runspace (id: {0}), 
+                        s_trace.WriteLine(@"Client received data for Runspace (id: {0}), 
                             but the Runspace cannot be found", clientRunspacePoolId);
                     }
 
@@ -752,8 +752,8 @@ namespace System.Management.Automation.Remoting
         {
             if (disposing)
             {
-                 _transportManager.Dispose();
-            }            
+                _transportManager.Dispose();
+            }
         }
 
         #endregion IDisposable
@@ -767,7 +767,7 @@ namespace System.Management.Automation.Remoting
         /// Send the specified local public key to the remote end
         /// </summary>
         /// <param name="localPublicKey">local public key as a string</param>
-        internal override void  SendPublicKeyAsync(string localPublicKey)
+        internal override void SendPublicKeyAsync(string localPublicKey)
         {
             _transportManager.DataToBeSentCollection.Add<object>(
                 RemotingEncoder.GenerateMyPublicKey(_session.RemoteRunspacePoolInternal.InstanceId,
@@ -786,5 +786,5 @@ namespace System.Management.Automation.Remoting
         }
 
         #endregion Key Exchange
-    }      
+    }
 }

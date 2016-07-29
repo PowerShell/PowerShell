@@ -79,7 +79,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return ((IEnumerator<SessionStateScope>) this).Current;
+                return ((IEnumerator<SessionStateScope>)this).Current;
             }
         }
 
@@ -99,7 +99,7 @@ namespace System.Management.Automation
         {
             return this;
         }
-       
+
         public void Dispose()
         {
             Reset();

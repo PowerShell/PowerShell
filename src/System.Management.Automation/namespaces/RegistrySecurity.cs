@@ -5,7 +5,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 using System.Security.AccessControl;
 using Microsoft.PowerShell.Commands.Internal;
 
@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// <see cref="System.Management.Automation.Provider.ISecurityDescriptorCmdletProvider"/>
     /// interfaces. 
     /// </summary>
-    public sealed partial class RegistryProvider :  
+    public sealed partial class RegistryProvider :
         NavigationCmdletProvider,
         IPropertyCmdletProvider,
 #if SUPPORTS_IMULTIVALUEPROPERTYCMDLETPROVIDER
@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         public void GetSecurityDescriptor(string path,
                                           AccessControlSections sections)
         {
-            ObjectSecurity sd=null;
+            ObjectSecurity sd = null;
             IRegistryWrapper key = null;
 
             // Validate input first.
@@ -63,9 +63,9 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException("sections");
             }
 
-            path = NormalizePath(path);                
+            path = NormalizePath(path);
 
-            key = GetRegkeyForPathWriteIfError(path, false);               
+            key = GetRegkeyForPathWriteIfError(path, false);
 
             if (key != null)
             {
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (System.Security.SecurityException e)
                 {
-                    WriteError (new ErrorRecord (e, e.GetType().FullName, ErrorCategory.PermissionDenied, path));
+                    WriteError(new ErrorRecord(e, e.GetType().FullName, ErrorCategory.PermissionDenied, path));
                     return;
                 }
                 WriteSecurityDescriptorObject(sd, path);
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         /// The new security descriptor for the item.
         /// </param>
         public void SetSecurityDescriptor(
-            string path, 
+            string path,
             ObjectSecurity securityDescriptor)
         {
             IRegistryWrapper key = null;
@@ -219,7 +219,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion ISecurityDescriptorCmdletProvider members
-
     }
 }
 

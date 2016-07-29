@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// This command convert a Json string representation to a JsonObject
     /// </summary>
     [Cmdlet(VerbsData.ConvertFrom, "Json", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217031", RemotingCapability = RemotingCapability.None)]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")] 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public class ConvertFromJsonCommand : Cmdlet
     {
         #region parameters
@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// inputObjectBuffer buffers all InputObjet contents avaliable in the pipeline.
         /// </summary>
-        private List<string> inputObjectBuffer = new List<string>();
+        private List<string> _inputObjectBuffer = new List<string>();
 
         #endregion parameters
 
@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            inputObjectBuffer.Add(InputObject);
+            _inputObjectBuffer.Add(InputObject);
         }
 
         /// <summary>
@@ -75,18 +75,18 @@ namespace Microsoft.PowerShell.Commands
             // When Input is provided through pipeline, the input can be represented in the following two ways:
             // 1. Each input to the buffer is a complete Json content. There can be multiple inputs of this format. 
             // 2. The complete buffer input collectively represent a single JSon format. This is typically the majority of the case.
-            if (inputObjectBuffer.Count > 0)
+            if (_inputObjectBuffer.Count > 0)
             {
-                if (inputObjectBuffer.Count == 1)
+                if (_inputObjectBuffer.Count == 1)
                 {
-                    ConvertFromJsonHelper(inputObjectBuffer[0]);
+                    ConvertFromJsonHelper(_inputObjectBuffer[0]);
                 }
                 else
                 {
                     bool successfullyConverted = false;
                     try
                     {
-                        successfullyConverted = ConvertFromJsonHelper(inputObjectBuffer[0]);
+                        successfullyConverted = ConvertFromJsonHelper(_inputObjectBuffer[0]);
                     }
                     catch (ArgumentException)
                     {
@@ -101,14 +101,14 @@ namespace Microsoft.PowerShell.Commands
 #endif
                     if (successfullyConverted)
                     {
-                        for (int index = 1; index < inputObjectBuffer.Count; index++)
+                        for (int index = 1; index < _inputObjectBuffer.Count; index++)
                         {
-                            ConvertFromJsonHelper(inputObjectBuffer[index]);
+                            ConvertFromJsonHelper(_inputObjectBuffer[index]);
                         }
                     }
                     else
                     {
-                        ConvertFromJsonHelper(string.Join(System.Environment.NewLine, inputObjectBuffer.ToArray()));
+                        ConvertFromJsonHelper(string.Join(System.Environment.NewLine, _inputObjectBuffer.ToArray()));
                     }
                 }
             }

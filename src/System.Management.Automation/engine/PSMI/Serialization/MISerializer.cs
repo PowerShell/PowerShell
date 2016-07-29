@@ -32,7 +32,7 @@ namespace System.Management.Automation
 
         public MISerializer(int depth)
         {
-            internalSerializer = new InternalMISerializer(depth); 
+            internalSerializer = new InternalMISerializer(depth);
         }
 
         public CimInstance Serialize(object source)

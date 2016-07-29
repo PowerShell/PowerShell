@@ -7,7 +7,7 @@ using System.Security.AccessControl;
 namespace System.Management.Automation.Provider
 {
     #region ISecurityDescriptorCmdletProvider
-        
+
     /// <summary>
     /// Provides an interface that allows simplified interaction
     /// with namespaces that support security descriptors. The methods
@@ -67,9 +67,9 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         void SetSecurityDescriptor(
-            string path, 
+            string path,
             ObjectSecurity securityDescriptor);
-        
+
         /// <summary>
         /// Creates a new empty security descriptor of the same type as
         /// the item specified by the path.  For example, if "path" points 
@@ -121,7 +121,5 @@ namespace System.Management.Automation.Provider
             AccessControlSections includeSections);
     } // ISecurityDescriptorCmdletProvider
 
-
     #endregion ISecurityDescriptorCmdletProvider
-
 } // namespace System.Management.Automation

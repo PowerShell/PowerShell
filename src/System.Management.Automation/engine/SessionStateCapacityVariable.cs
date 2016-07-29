@@ -53,8 +53,8 @@ namespace System.Management.Automation
 
             ValidateRangeAttribute validateRange =
                 new ValidateRangeAttribute(minCapacity, maxCapacity);
-            this.minCapacity = minCapacity;
-            this.maxCapacity = maxCapacity;
+            _minCapacity = minCapacity;
+            _maxCapacity = maxCapacity;
             base.Attributes.Add(validateRange);
             _fastValue = defaultCapacity;
         }
@@ -87,14 +87,14 @@ namespace System.Management.Automation
                 new ValidateRangeAttribute(0, int.MaxValue);
             base.Attributes.Add(validateRange);
 
-            this.sharedCapacityVariable = sharedCapacityVariable;
+            _sharedCapacityVariable = sharedCapacityVariable;
 
             // Also propagate the description to prevent re-fetching them from the
             // resource manager.  That causes a measurable performance degradation.
             this.Description = sharedCapacityVariable.Description;
 
             // Initialize the fast value...
-            _fastValue = (int) sharedCapacityVariable.Value;
+            _fastValue = (int)sharedCapacityVariable.Value;
         }
         #endregion ctor
 
@@ -110,9 +110,9 @@ namespace System.Management.Automation
             {
                 object result;
 
-                if (sharedCapacityVariable != null)
+                if (_sharedCapacityVariable != null)
                 {
-                    result = sharedCapacityVariable.Value;
+                    result = _sharedCapacityVariable.Value;
                 }
                 else
                 {
@@ -123,7 +123,7 @@ namespace System.Management.Automation
 
             set
             {
-                sharedCapacityVariable = null;
+                _sharedCapacityVariable = null;
                 base.Value = LanguagePrimitives.ConvertTo(value, typeof(int), CultureInfo.InvariantCulture);
                 _fastValue = (int)base.Value;
             }
@@ -162,16 +162,16 @@ namespace System.Management.Automation
             // If the value is within the limits, then return true
             // otherwise call the base validator so we'll get the error
             // from the validation attribute...
-            if (capacity >= minCapacity && capacity <= maxCapacity)
+            if (capacity >= _minCapacity && capacity <= _maxCapacity)
                 return true;
             else
-                return base.IsValidValue (value);
+                return base.IsValidValue(value);
         }
 
-        private int minCapacity;
-        private int maxCapacity = int.MaxValue;
+        private int _minCapacity;
+        private int _maxCapacity = int.MaxValue;
 
-        private SessionStateCapacityVariable sharedCapacityVariable;
+        private SessionStateCapacityVariable _sharedCapacityVariable;
     } // class SessionStateCapacityVariable
- }
+}
 

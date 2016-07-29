@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
@@ -17,12 +18,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Creates a new transaction.
         /// </summary>
-        protected override void EndProcessing ()
+        protected override void EndProcessing()
         {
             WriteObject(this.Context.TransactionManager.GetCurrent());
         }
-
     } // GetTransactionCommand
-
 } // namespace Microsoft.PowerShell.Commands
 

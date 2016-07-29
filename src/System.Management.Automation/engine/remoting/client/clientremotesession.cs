@@ -14,6 +14,7 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
 
 using Dbg = System.Management.Automation.Diagnostics;
+
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
@@ -116,9 +117,8 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal abstract class ClientRemoteSession : RemoteSession
     {
-
         [TraceSourceAttribute("CRSession", "ClientRemoteSession")]
-        static private PSTraceSource _trace = PSTraceSource.GetTracer("CRSession", "ClientRemoteSession");
+        static private PSTraceSource s_trace = PSTraceSource.GetTracer("CRSession", "ClientRemoteSession");
 
         #region Public_Method_API
 
@@ -216,7 +216,7 @@ namespace System.Management.Automation.Remoting
 
 
 
-        private RemoteRunspacePoolInternal remoteRunspacePool;
+        private RemoteRunspacePoolInternal _remoteRunspacePool;
 
         /// <summary>
         /// remote runspace pool if used, for this session
@@ -225,13 +225,13 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                return remoteRunspacePool;
+                return _remoteRunspacePool;
             }
             set
             {
-                Dbg.Assert(remoteRunspacePool == null, @"RunspacePool should be 
+                Dbg.Assert(_remoteRunspacePool == null, @"RunspacePool should be 
                         attached only once to the session");
-                remoteRunspacePool = value;
+                _remoteRunspacePool = value;
             }
         }
 
@@ -244,15 +244,14 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         internal RemoteRunspacePoolInternal GetRunspacePool(Guid clientRunspacePoolId)
         {
-            if (remoteRunspacePool != null)
+            if (_remoteRunspacePool != null)
             {
-                if (remoteRunspacePool.InstanceId.Equals(clientRunspacePoolId))
-                    return remoteRunspacePool;
+                if (_remoteRunspacePool.InstanceId.Equals(clientRunspacePoolId))
+                    return _remoteRunspacePool;
             }
 
             return null;
         }
-
     }
 
     /// <summary>
@@ -260,9 +259,8 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class ClientRemoteSessionImpl : ClientRemoteSession, IDisposable
     {
-
         [TraceSourceAttribute("CRSessionImpl", "ClientRemoteSessionImpl")]
-        static private PSTraceSource _trace = PSTraceSource.GetTracer("CRSessionImpl", "ClientRemoteSessionImpl");
+        static private PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionImpl", "ClientRemoteSessionImpl");
 
         private PSRemotingCryptoHelperClient _cryptoHelper = null;
 
@@ -355,7 +353,6 @@ namespace System.Management.Automation.Remoting
         {
             RemoteSessionStateMachineEventArgs startDisconnectArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.DisconnectStart);
             SessionDataStructureHandler.StateMachine.RaiseEvent(startDisconnectArg);
-
         }
 
         /// <summary>
@@ -381,7 +378,7 @@ namespace System.Management.Automation.Remoting
         /// </param>
         private void HandleConnectionStateChanged(object sender, RemoteSessionStateEventArgs arg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (arg == null)
                 {
@@ -534,7 +531,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg"></param>
         private void HandleNegotiationReceived(object sender, RemoteSessionNegotiationEventArgs arg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (arg == null)
                 {
@@ -695,7 +692,6 @@ namespace System.Management.Automation.Remoting
         }
 
         #endregion IDisposable
-
     }
 }
 

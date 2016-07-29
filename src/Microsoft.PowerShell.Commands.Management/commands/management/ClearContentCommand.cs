@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
@@ -10,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command that appends the specified content to the item at the specified path.
     /// </summary>
-    [Cmdlet (VerbsCommon.Clear, "Content", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
+    [Cmdlet(VerbsCommon.Clear, "Content", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113282")]
     public class ClearContentCommand : ContentCommandBase
     {
@@ -19,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Clears the contents from the item at the specified path.
         /// </summary>
-        protected override void ProcessRecord ()
+        protected override void ProcessRecord()
         {
             // Default to the CmdletProviderContext that will direct output to
             // the pipeline.
@@ -100,10 +101,9 @@ namespace Microsoft.PowerShell.Commands
                 // Go ahead an let any exceptions terminate the pipeline.
                 return InvokeProvider.Content.ClearContentDynamicParameters(Path[0], context);
             }
-            
+
             return InvokeProvider.Content.ClearContentDynamicParameters(".", context);
         } // GetDynamicParameters
     } // ClearContentCommand
-
 } // namespace Microsoft.PowerShell.Commands
 

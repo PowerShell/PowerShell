@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 namespace System.Management.Automation.Runspaces
 {
     using System;
@@ -124,22 +125,22 @@ namespace System.Management.Automation.Runspaces
 
     internal class DiscardingPipelineWriter : PipelineWriter
     {
-        private ManualResetEvent waitHandle = new ManualResetEvent(true);
+        private ManualResetEvent _waitHandle = new ManualResetEvent(true);
         public override WaitHandle WaitHandle
         {
-            get { return this.waitHandle; }
+            get { return _waitHandle; }
         }
 
-        private bool isOpen = true;
+        private bool _isOpen = true;
         public override bool IsOpen
         {
-            get { return this.isOpen; }
+            get { return _isOpen; }
         }
 
-        private int count = 0;
+        private int _count = 0;
         public override int Count
         {
-            get { return this.count; }
+            get { return _count; }
         }
 
         public override int MaxCapacity
@@ -149,7 +150,7 @@ namespace System.Management.Automation.Runspaces
 
         public override void Close()
         {
-            this.isOpen = false;
+            _isOpen = false;
         }
 
         public override void Flush()
@@ -159,7 +160,7 @@ namespace System.Management.Automation.Runspaces
         public override int Write(object obj)
         {
             int numberOfObjectsWritten = 1;
-            this.count += numberOfObjectsWritten;
+            _count += numberOfObjectsWritten;
             return numberOfObjectsWritten;
         }
 
@@ -184,7 +185,7 @@ namespace System.Management.Automation.Runspaces
                 numberOfObjectsWritten++;
             }
 
-            this.count += numberOfObjectsWritten;
+            _count += numberOfObjectsWritten;
             return numberOfObjectsWritten;
         }
     }

@@ -42,7 +42,7 @@ namespace System.Management.Automation.PerformanceData
         /// Dictionary mapping counter name to id.
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
-        protected ConcurrentDictionary<string,int> _counterNameToIdMapping;
+        protected ConcurrentDictionary<string, int> _counterNameToIdMapping;
         /// <summary>
         /// Dictionary mapping counter id to counter type.
         /// </summary>
@@ -61,7 +61,7 @@ namespace System.Management.Automation.PerformanceData
 
             CounterInfo[] counterInfoArray = this._counterSetRegistrarBase.CounterInfoArray;
 
-            for(int i=0; i < counterInfoArray.Length; i++)
+            for (int i = 0; i < counterInfoArray.Length; i++)
             {
                 this._counterIdToTypeMapping.TryAdd(counterInfoArray[i].Id, counterInfoArray[i].Type);
                 if (!string.IsNullOrWhiteSpace(counterInfoArray[i].Name))
@@ -103,7 +103,7 @@ namespace System.Management.Automation.PerformanceData
                 }
                 if (isDenominatorValid == false)
                 {
-                    InvalidOperationException invalidOperationException = 
+                    InvalidOperationException invalidOperationException =
                         new InvalidOperationException(
                             String.Format(
                             CultureInfo.InvariantCulture,
@@ -130,7 +130,7 @@ namespace System.Management.Automation.PerformanceData
             int counterId,
             long stepAmount,
             bool isNumerator);
-        
+
 
         /// <summary>
         /// If isNumerator is true, then updates the numerator component
@@ -307,7 +307,7 @@ namespace System.Management.Automation.PerformanceData
         protected virtual void Dispose(bool disposing)
         {
             // Check to see if Dispose has already been called.
-            if (!this._Disposed)
+            if (!_Disposed)
             {
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
@@ -318,7 +318,7 @@ namespace System.Management.Automation.PerformanceData
                     _CounterSet.Dispose();
                 }
                 // Note disposing has been done.
-               this._Disposed = true;
+                _Disposed = true;
             }
         }
 
@@ -337,7 +337,6 @@ namespace System.Management.Automation.PerformanceData
             // and prevent finalization code for this object
             // from executing a second time.
             GC.SuppressFinalize(this);
-
         }
 
         #endregion
@@ -353,7 +352,7 @@ namespace System.Management.Automation.PerformanceData
         /// </summary>
         public override bool UpdateCounterByValue(int counterId, long stepAmount, bool isNumerator)
         {
-            if (this._Disposed)
+            if (_Disposed)
             {
                 ObjectDisposedException objectDisposedException =
                     new ObjectDisposedException("PSCounterSetInstance");
@@ -362,9 +361,9 @@ namespace System.Management.Automation.PerformanceData
             }
 
             int targetCounterId;
-            if(base.RetrieveTargetCounterIdIfValid(counterId, isNumerator, out targetCounterId))
+            if (base.RetrieveTargetCounterIdIfValid(counterId, isNumerator, out targetCounterId))
             {
-                CounterData targetCounterData = this._CounterSetInstance.Counters[targetCounterId];
+                CounterData targetCounterData = _CounterSetInstance.Counters[targetCounterId];
                 if (targetCounterData != null)
                 {
                     this.UpdateCounterByValue(targetCounterData, stepAmount);
@@ -394,7 +393,7 @@ namespace System.Management.Automation.PerformanceData
         /// </summary>
         public override bool UpdateCounterByValue(string counterName, long stepAmount, bool isNumerator)
         {
-            if (this._Disposed)
+            if (_Disposed)
             {
                 ObjectDisposedException objectDisposedException =
                     new ObjectDisposedException("PSCounterSetInstance");
@@ -425,7 +424,6 @@ namespace System.Management.Automation.PerformanceData
                 _tracer.TraceException(invalidOperationException);
                 return false;
             }
-
         }
 
         /// <summary>
@@ -435,7 +433,7 @@ namespace System.Management.Automation.PerformanceData
         /// </summary>
         public override bool SetCounterValue(int counterId, long counterValue, bool isNumerator)
         {
-            if (this._Disposed)
+            if (_Disposed)
             {
                 ObjectDisposedException objectDisposedException =
                     new ObjectDisposedException("PSCounterSetInstance");
@@ -444,9 +442,9 @@ namespace System.Management.Automation.PerformanceData
             }
 
             int targetCounterId;
-            if(base.RetrieveTargetCounterIdIfValid(counterId, isNumerator, out targetCounterId))
+            if (base.RetrieveTargetCounterIdIfValid(counterId, isNumerator, out targetCounterId))
             {
-                CounterData targetCounterData = this._CounterSetInstance.Counters[targetCounterId];
+                CounterData targetCounterData = _CounterSetInstance.Counters[targetCounterId];
 
                 if (targetCounterData != null)
                 {
@@ -455,11 +453,11 @@ namespace System.Management.Automation.PerformanceData
                 }
                 else
                 {
-                    InvalidOperationException invalidOperationException = 
+                    InvalidOperationException invalidOperationException =
                         new InvalidOperationException(
                             String.Format(
                             CultureInfo.InvariantCulture,
-                            "Lookup for counter corresponding to counter id {0} failed", 
+                            "Lookup for counter corresponding to counter id {0} failed",
                             counterId));
                     _tracer.TraceException(invalidOperationException);
                     return false;
@@ -478,7 +476,7 @@ namespace System.Management.Automation.PerformanceData
         /// </summary>
         public override bool SetCounterValue(string counterName, long counterValue, bool isNumerator)
         {
-            if (this._Disposed)
+            if (_Disposed)
             {
                 ObjectDisposedException objectDisposedException =
                     new ObjectDisposedException("PSCounterSetInstance");
@@ -504,12 +502,11 @@ namespace System.Management.Automation.PerformanceData
                     new InvalidOperationException(
                     String.Format(
                     CultureInfo.InvariantCulture,
-                    "Lookup for counter corresponding to counter name {0} failed", 
+                    "Lookup for counter corresponding to counter name {0} failed",
                     counterName));
                 _tracer.TraceException(invalidOperationException);
                 return false;
             }
-
         }
 
         /// <summary>
@@ -519,7 +516,7 @@ namespace System.Management.Automation.PerformanceData
         public override bool GetCounterValue(int counterId, bool isNumerator, out long counterValue)
         {
             counterValue = -1;
-            if (this._Disposed)
+            if (_Disposed)
             {
                 ObjectDisposedException objectDisposedException =
                     new ObjectDisposedException("PSCounterSetInstance");
@@ -529,7 +526,7 @@ namespace System.Management.Automation.PerformanceData
             int targetCounterId;
             if (base.RetrieveTargetCounterIdIfValid(counterId, isNumerator, out targetCounterId))
             {
-                CounterData targetCounterData = this._CounterSetInstance.Counters[targetCounterId];
+                CounterData targetCounterData = _CounterSetInstance.Counters[targetCounterId];
 
                 if (targetCounterData != null)
                 {
@@ -538,7 +535,7 @@ namespace System.Management.Automation.PerformanceData
                 }
                 else
                 {
-                    InvalidOperationException invalidOperationException = 
+                    InvalidOperationException invalidOperationException =
                         new InvalidOperationException(
                             String.Format(
                             CultureInfo.InvariantCulture,
@@ -552,7 +549,6 @@ namespace System.Management.Automation.PerformanceData
             {
                 return false;
             }
-
         }
 
 
@@ -563,7 +559,7 @@ namespace System.Management.Automation.PerformanceData
         public override bool GetCounterValue(string counterName, bool isNumerator, out long counterValue)
         {
             counterValue = -1;
-            if (this._Disposed)
+            if (_Disposed)
             {
                 ObjectDisposedException objectDisposedException =
                     new ObjectDisposedException("PSCounterSetInstance");
@@ -593,13 +589,10 @@ namespace System.Management.Automation.PerformanceData
                         counterName));
                 _tracer.TraceException(invalidOperationException);
                 return false;
-
             }
-
         }
 
         #endregion
         #endregion
     }
-
 }

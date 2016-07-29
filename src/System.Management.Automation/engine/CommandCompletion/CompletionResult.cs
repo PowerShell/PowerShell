@@ -1,5 +1,4 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="CompletionResult.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 // <summary>
@@ -53,7 +52,7 @@ namespace System.Management.Automation
 
         /// <summary>A type name</summary>
         Type = 11,
-    
+
         /// <summary>A keyword</summary>
         Keyword = 12,
 
@@ -68,32 +67,32 @@ namespace System.Management.Automation
     /// <summary>
     /// Class used to store a tab completion or Intellisense result
     /// </summary>
-	public class CompletionResult
-	{
+    public class CompletionResult
+    {
         /// <summary>
         /// Text to be used as the auto completion result
         /// </summary>
-        private string completionText;
+        private string _completionText;
 
         /// <summary>
         /// Text to be displayed in a list
         /// </summary>
-        private string listItemText;
+        private string _listItemText;
 
         /// <summary>
         /// The text for the tooltip with details to be displayed about the object
         /// </summary>
-        private string toolTip;
+        private string _toolTip;
 
         /// <summary>
         /// Type of completion result
         /// </summary>
-        private CompletionResultType resultType;
+        private CompletionResultType _resultType;
 
         /// <summary>
         /// Private member for null instance
         /// </summary>
-        private static readonly CompletionResult NullInstance = new CompletionResult();
+        private static readonly CompletionResult s_nullInstance = new CompletionResult();
 
         /// <summary>
         /// Gets the text to be used as the auto completion result
@@ -102,11 +101,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this == NullInstance)
+                if (this == s_nullInstance)
                 {
                     throw PSTraceSource.NewInvalidOperationException(TabCompletionStrings.NoAccessToProperties);
                 }
-                return this.completionText;
+                return _completionText;
             }
         }
 
@@ -117,11 +116,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this == NullInstance)
+                if (this == s_nullInstance)
                 {
                     throw PSTraceSource.NewInvalidOperationException(TabCompletionStrings.NoAccessToProperties);
                 }
-                return this.listItemText;
+                return _listItemText;
             }
         }
 
@@ -132,11 +131,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this == NullInstance)
+                if (this == s_nullInstance)
                 {
                     throw PSTraceSource.NewInvalidOperationException(TabCompletionStrings.NoAccessToProperties);
                 }
-                return this.resultType;
+                return _resultType;
             }
         }
 
@@ -147,11 +146,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this == NullInstance)
+                if (this == s_nullInstance)
                 {
                     throw PSTraceSource.NewInvalidOperationException(TabCompletionStrings.NoAccessToProperties);
                 }
-                return this.toolTip;
+                return _toolTip;
             }
         }
 
@@ -160,7 +159,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static CompletionResult Null
         {
-            get { return NullInstance; }
+            get { return s_nullInstance; }
         }
 
         /// <summary>
@@ -192,10 +191,10 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("toolTip");
             }
 
-            this.completionText = completionText;
-            this.listItemText = listItemText;
-            this.toolTip = toolTip;
-            this.resultType = resultType;
+            _completionText = completionText;
+            _listItemText = listItemText;
+            _toolTip = toolTip;
+            _resultType = resultType;
         }
 
 
@@ -216,6 +215,6 @@ namespace System.Management.Automation
         /// This can be used in argument completion, to indicate that the completion attempt has gone through the
         /// native command argument completion methods.
         /// </remarks>
-        private CompletionResult() {}
+        private CompletionResult() { }
     }
 }

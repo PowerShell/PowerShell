@@ -23,8 +23,8 @@ using System.Runtime.InteropServices;
 
 using Microsoft.Win32;
 
-using DWORD  = System.UInt32;
-using BOOL   = System.UInt32;
+using DWORD = System.UInt32;
+using BOOL = System.UInt32;
 
 namespace Microsoft.PowerShell
 {
@@ -163,70 +163,70 @@ namespace System.Management.Automation.Internal
             }
 
             // Set the execution policy
-            switch(scope)
+            switch (scope)
             {
                 case ExecutionPolicyScope.Process:
-                {
-                    if(policy == ExecutionPolicy.Undefined)
-                        executionPolicy = null;
-                    
-                    Environment.SetEnvironmentVariable("PSExecutionPolicyPreference", executionPolicy);
-                    break;
-                }
+                    {
+                        if (policy == ExecutionPolicy.Undefined)
+                            executionPolicy = null;
+
+                        Environment.SetEnvironmentVariable("PSExecutionPolicyPreference", executionPolicy);
+                        break;
+                    }
 
                 case ExecutionPolicyScope.CurrentUser:
-                {
-                    // They want to remove it
-                    if(policy == ExecutionPolicy.Undefined)
                     {
-                        using (RegistryKey key = Registry.CurrentUser.OpenSubKey(preferenceKey, true))
+                        // They want to remove it
+                        if (policy == ExecutionPolicy.Undefined)
                         {
-                            if(key != null)
+                            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(preferenceKey, true))
                             {
-                                if(key.GetValue(PolicyKeyValueName) != null)
-                                    key.DeleteValue(PolicyKeyValueName);
+                                if (key != null)
+                                {
+                                    if (key.GetValue(PolicyKeyValueName) != null)
+                                        key.DeleteValue(PolicyKeyValueName);
+                                }
+                            }
+
+                            CleanKeyParents(Registry.CurrentUser, preferenceKey);
+                        }
+                        else
+                        {
+                            using (RegistryKey key = Registry.CurrentUser.CreateSubKey(preferenceKey))
+                            {
+                                key.SetValue(PolicyKeyValueName, executionPolicy, RegistryValueKind.String);
                             }
                         }
 
-                        CleanKeyParents(Registry.CurrentUser, preferenceKey);
+                        break;
                     }
-                    else
-                    {
-                        using (RegistryKey key = Registry.CurrentUser.CreateSubKey(preferenceKey))
-                        {
-                            key.SetValue(PolicyKeyValueName, executionPolicy, RegistryValueKind.String);
-                        }
-                    }
-
-                    break;
-                }
 
                 case ExecutionPolicyScope.LocalMachine:
-                {
-                    // They want to remove it
-                    if (policy == ExecutionPolicy.Undefined)
                     {
-                        using (RegistryKey key = Registry.LocalMachine.OpenSubKey(preferenceKey, true))
+                        // They want to remove it
+                        if (policy == ExecutionPolicy.Undefined)
                         {
-                            if (key != null)
+                            using (RegistryKey key = Registry.LocalMachine.OpenSubKey(preferenceKey, true))
                             {
-                                if (key.GetValue(PolicyKeyValueName) != null)
-                                    key.DeleteValue(PolicyKeyValueName);
+                                if (key != null)
+                                {
+                                    if (key.GetValue(PolicyKeyValueName) != null)
+                                        key.DeleteValue(PolicyKeyValueName);
+                                }
+                            }
+
+                            CleanKeyParents(Registry.LocalMachine, preferenceKey);
+                        }
+                        else
+                        {
+                            using (RegistryKey key = Registry.LocalMachine.CreateSubKey(preferenceKey))
+                            {
+                                key.SetValue(PolicyKeyValueName, executionPolicy, RegistryValueKind.String);
                             }
                         }
 
-                        CleanKeyParents(Registry.LocalMachine, preferenceKey);
+                        break;
                     }
-                    else
-                    {
-                        using (RegistryKey key = Registry.LocalMachine.CreateSubKey(preferenceKey))
-                        {
-                            key.SetValue(PolicyKeyValueName, executionPolicy, RegistryValueKind.String);
-                        }
-                    }
-
-                    break;
-                }
             }
 #endif
         }
@@ -273,10 +273,10 @@ namespace System.Management.Automation.Internal
 
         internal static ExecutionPolicy GetExecutionPolicy(string shellId)
         {
-            foreach(ExecutionPolicyScope scope in ExecutionPolicyScopePreferences)
+            foreach (ExecutionPolicyScope scope in ExecutionPolicyScopePreferences)
             {
                 ExecutionPolicy policy = GetExecutionPolicy(shellId, scope);
-                if(policy != ExecutionPolicy.Undefined)
+                if (policy != ExecutionPolicy.Undefined)
                     return policy;
             }
 
@@ -291,80 +291,80 @@ namespace System.Management.Automation.Internal
             switch (scope)
             {
                 case ExecutionPolicyScope.Process:
-                {
-                    string policy = Environment.GetEnvironmentVariable("PSExecutionPolicyPreference");
+                    {
+                        string policy = Environment.GetEnvironmentVariable("PSExecutionPolicyPreference");
 
-                    if (!String.IsNullOrEmpty(policy))
-                        return ParseExecutionPolicy(policy);
-                    else
-                        return ExecutionPolicy.Undefined;
-                }
+                        if (!String.IsNullOrEmpty(policy))
+                            return ParseExecutionPolicy(policy);
+                        else
+                            return ExecutionPolicy.Undefined;
+                    }
 
                 case ExecutionPolicyScope.CurrentUser:
                 case ExecutionPolicyScope.LocalMachine:
-                {
-                    string policy = GetLocalPreferenceValue(shellId, scope);
+                    {
+                        string policy = GetLocalPreferenceValue(shellId, scope);
 
-                    if (!String.IsNullOrEmpty(policy))
-                        return ParseExecutionPolicy(policy);
-                    else
-                        return ExecutionPolicy.Undefined;
-                }
+                        if (!String.IsNullOrEmpty(policy))
+                            return ParseExecutionPolicy(policy);
+                        else
+                            return ExecutionPolicy.Undefined;
+                    }
 
                 case ExecutionPolicyScope.UserPolicy:
                 case ExecutionPolicyScope.MachinePolicy:
-                {
-                    string groupPolicyPreference = GetGroupPolicyValue(shellId, scope);
-                    if (!String.IsNullOrEmpty(groupPolicyPreference))
                     {
-                        // Be sure we aren't being called by Group Policy
-                        // itself. A group policy should never block a logon /
-                        // logoff script.
-                        Process currentProcess = Process.GetCurrentProcess();
-                        string gpScriptPath = IO.Path.Combine(
-                            Environment.GetFolderPath(Environment.SpecialFolder.System),
-                            "gpscript.exe");
-                        bool foundGpScriptParent = false;
-
-                        try
+                        string groupPolicyPreference = GetGroupPolicyValue(shellId, scope);
+                        if (!String.IsNullOrEmpty(groupPolicyPreference))
                         {
-                            while (currentProcess != null)
+                            // Be sure we aren't being called by Group Policy
+                            // itself. A group policy should never block a logon /
+                            // logoff script.
+                            Process currentProcess = Process.GetCurrentProcess();
+                            string gpScriptPath = IO.Path.Combine(
+                                Environment.GetFolderPath(Environment.SpecialFolder.System),
+                                "gpscript.exe");
+                            bool foundGpScriptParent = false;
+
+                            try
                             {
-                                if (String.Equals(gpScriptPath,
-                                        PsUtils.GetMainModule(currentProcess).FileName, StringComparison.OrdinalIgnoreCase))
+                                while (currentProcess != null)
                                 {
-                                    foundGpScriptParent = true;
-                                    break;
-                                }
-                                else
-                                {
-                                    currentProcess = PsUtils.GetParentProcess(currentProcess);
+                                    if (String.Equals(gpScriptPath,
+                                            PsUtils.GetMainModule(currentProcess).FileName, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        foundGpScriptParent = true;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        currentProcess = PsUtils.GetParentProcess(currentProcess);
+                                    }
                                 }
                             }
-                        }
-                        catch (System.ComponentModel.Win32Exception)
-                        {
-                            // If you attempt to retrieve the MainModule of a 64-bit process
-                            // from a WOW64 (32-bit) process, the Win32 API has a fatal
-                            // flaw that causes this to return the error:
-                            //   "Only part of a ReadProcessMemory or WriteProcessMemory
-                            //   request was completed."
-                            // In this case, we just catch the exception and eat it.
-                            // The implication is that logon / logoff scripts that somehow
-                            // launch the Wow64 version of PowerShell will be subject
-                            // to the execution policy deployed by Group Policy (where
-                            // our goal here is to not have the Group Policy execution policy
-                            // affect logon / logoff scripts.
+                            catch (System.ComponentModel.Win32Exception)
+                            {
+                                // If you attempt to retrieve the MainModule of a 64-bit process
+                                // from a WOW64 (32-bit) process, the Win32 API has a fatal
+                                // flaw that causes this to return the error:
+                                //   "Only part of a ReadProcessMemory or WriteProcessMemory
+                                //   request was completed."
+                                // In this case, we just catch the exception and eat it.
+                                // The implication is that logon / logoff scripts that somehow
+                                // launch the Wow64 version of PowerShell will be subject
+                                // to the execution policy deployed by Group Policy (where
+                                // our goal here is to not have the Group Policy execution policy
+                                // affect logon / logoff scripts.
+                            }
+
+                            if (!foundGpScriptParent)
+                            {
+                                return ParseExecutionPolicy(groupPolicyPreference);
+                            }
                         }
 
-                        if (!foundGpScriptParent)
-                        {
-                            return ParseExecutionPolicy(groupPolicyPreference);
-                        }
+                        return ExecutionPolicy.Undefined;
                     }
-
-                    return ExecutionPolicy.Undefined;
-                }
             }
 
             return ExecutionPolicy.Restricted;
@@ -424,7 +424,7 @@ namespace System.Management.Automation.Internal
         /// <returns>True when file has product binary signature</returns>
         public static bool IsProductBinary(string file)
         {
-            if(String.IsNullOrEmpty(file) || (! IO.File.Exists(file)))
+            if (String.IsNullOrEmpty(file) || (!IO.File.Exists(file)))
             {
                 return false;
             }
@@ -484,11 +484,11 @@ namespace System.Management.Automation.Internal
             codeProperties.cbSize = (uint)Marshal.SizeOf(typeof(SAFER_CODE_PROPERTIES));
             codeProperties.dwCheckFlags = (
                 NativeConstants.SAFER_CRITERIA_IMAGEPATH |
-                NativeConstants.SAFER_CRITERIA_IMAGEHASH | 
+                NativeConstants.SAFER_CRITERIA_IMAGEHASH |
                 NativeConstants.SAFER_CRITERIA_AUTHENTICODE);
             codeProperties.ImagePath = path;
 
-            if(handle != null)
+            if (handle != null)
             {
                 codeProperties.hImageFileHandle = handle.DangerousGetHandle();
             }
@@ -561,14 +561,14 @@ namespace System.Management.Automation.Internal
             switch (scope)
             {
                 case ExecutionPolicyScope.MachinePolicy:
-                {
-                    scopeKey = Utils.RegLocalMachine;
-                }; break;
+                    {
+                        scopeKey = Utils.RegLocalMachine;
+                    }; break;
 
                 case ExecutionPolicyScope.UserPolicy:
-                {
-                    scopeKey = Utils.RegCurrentUser;
-                }; break;
+                    {
+                        scopeKey = Utils.RegCurrentUser;
+                    }; break;
             }
 
             Dictionary<string, object> groupPolicySettings = Utils.GetGroupPolicySetting(".", scopeKey);
@@ -611,35 +611,35 @@ namespace System.Management.Automation.Internal
             {
                 // 1: Look up the current-user preference
                 case ExecutionPolicyScope.CurrentUser:
-                {
-                    using (RegistryKey key = Registry.CurrentUser.OpenSubKey(LocalPreferenceKey))
                     {
-                        if (key != null)
+                        using (RegistryKey key = Registry.CurrentUser.OpenSubKey(LocalPreferenceKey))
                         {
-                            object temp = key.GetValue(PolicyValueName);
-                            string policy = temp as string;
-                            key.Dispose();
+                            if (key != null)
+                            {
+                                object temp = key.GetValue(PolicyValueName);
+                                string policy = temp as string;
+                                key.Dispose();
 
-                            return policy;
+                                return policy;
+                            }
                         }
-                    }
-                }; break;
+                    }; break;
 
                 // 1: Look up the system-wide preference
                 case ExecutionPolicyScope.LocalMachine:
-                {
-                    using (RegistryKey key = Registry.LocalMachine.OpenSubKey(LocalPreferenceKey))
                     {
-                        if (key != null)
+                        using (RegistryKey key = Registry.LocalMachine.OpenSubKey(LocalPreferenceKey))
                         {
-                            object temp = key.GetValue(PolicyValueName);
-                            string policy = temp as string;
-                            key.Dispose();
+                            if (key != null)
+                            {
+                                object temp = key.GetValue(PolicyValueName);
+                                string policy = temp as string;
+                                key.Dispose();
 
-                            return policy;
+                                return policy;
+                            }
                         }
-                    }
-                }; break;
+                    }; break;
             }
 
             return null;
@@ -709,7 +709,7 @@ namespace System.Management.Automation.Internal
         private static bool CertHasOid(X509Certificate2 c, string oid)
         {
             Collection<string> ekus = GetCertEKU(c);
-            
+
             foreach (string testOid in ekus)
             {
                 if (testOid == oid)
@@ -785,7 +785,7 @@ namespace System.Management.Automation.Internal
                                                                   ekuBuffer,
                                                                   out structSize))
                         {
-                            Security.NativeMethods.CERT_ENHKEY_USAGE ekuStruct = 
+                            Security.NativeMethods.CERT_ENHKEY_USAGE ekuStruct =
                                 (Security.NativeMethods.CERT_ENHKEY_USAGE)
                                 ClrFacade.PtrToStructure<Security.NativeMethods.CERT_ENHKEY_USAGE>(ekuBuffer);
                             IntPtr ep = ekuStruct.rgpszUsageIdentifier;
@@ -830,7 +830,7 @@ namespace System.Management.Automation.Internal
         internal static DWORD GetDWORDFromInt(int n)
         {
             UInt32 result = BitConverter.ToUInt32(BitConverter.GetBytes(n), 0);
-            return (DWORD) result;
+            return (DWORD)result;
         }
 
         /// <summary>
@@ -846,7 +846,7 @@ namespace System.Management.Automation.Internal
         internal static int GetIntFromDWORD(DWORD n)
         {
             Int64 n64 = n - 0x100000000L;
-            return (int) n64;
+            return (int)n64;
         }
     }
 
@@ -864,8 +864,8 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal CertificatePurpose Purpose
         {
-            get { return purpose; }
-            set { purpose = value; }
+            get { return _purpose; }
+            set { _purpose = value; }
         }
 
         /// <summary>
@@ -873,8 +873,8 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal bool SSLServerAuthentication
         {
-            get { return sslServerAuthentication; }
-            set { sslServerAuthentication = value; }
+            get { return _sslServerAuthentication; }
+            set { _sslServerAuthentication = value; }
         }
 
         /// <summary>
@@ -882,7 +882,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal string DnsName
         {
-            set { dnsName = value; }
+            set { _dnsName = value; }
         }
 
         /// <summary>
@@ -890,7 +890,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal string[] Eku
         {
-            set { eku = value; }
+            set { _eku = value; }
         }
 
         /// <summary>
@@ -898,7 +898,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal int ExpiringInDays
         {
-            set { expiringInDays = value; }
+            set { _expiringInDays = value; }
         }
 
         /// <summary>
@@ -910,24 +910,24 @@ namespace System.Management.Automation.Internal
             {
                 string filterString = "";
 
-                if (dnsName != null)
+                if (_dnsName != null)
                 {
-                    filterString = AppendFilter(filterString, "dns", dnsName);
+                    filterString = AppendFilter(filterString, "dns", _dnsName);
                 }
 
                 string ekuT = "";
-                if (eku != null)
+                if (_eku != null)
                 {
-                    for (int i = 0; i < eku.Length; i++)
+                    for (int i = 0; i < _eku.Length; i++)
                     {
                         if (ekuT.Length != 0)
                         {
                             ekuT = ekuT + ",";
                         }
-                        ekuT = ekuT + eku[i];
+                        ekuT = ekuT + _eku[i];
                     }
                 }
-                if (purpose == CertificatePurpose.CodeSigning)
+                if (_purpose == CertificatePurpose.CodeSigning)
                 {
                     if (ekuT.Length != 0)
                     {
@@ -935,7 +935,7 @@ namespace System.Management.Automation.Internal
                     }
                     ekuT = ekuT + CodeSigningOid;
                 }
-                if (purpose == CertificatePurpose.DocumentEncryption)
+                if (_purpose == CertificatePurpose.DocumentEncryption)
                 {
                     if (ekuT.Length != 0)
                     {
@@ -943,7 +943,7 @@ namespace System.Management.Automation.Internal
                     }
                     ekuT = ekuT + DocumentEncryptionOid;
                 }
-                if (sslServerAuthentication)
+                if (_sslServerAuthentication)
                 {
                     if (ekuT.Length != 0)
                     {
@@ -954,18 +954,18 @@ namespace System.Management.Automation.Internal
                 if (ekuT.Length != 0)
                 {
                     filterString = AppendFilter(filterString, "eku", ekuT);
-                    if (purpose == CertificatePurpose.CodeSigning ||
-                        sslServerAuthentication)
+                    if (_purpose == CertificatePurpose.CodeSigning ||
+                        _sslServerAuthentication)
                     {
                         filterString = AppendFilter(filterString, "key", "*");
                     }
                 }
-                if (expiringInDays >= 0)
+                if (_expiringInDays >= 0)
                 {
                     filterString = AppendFilter(
                                     filterString,
                                     "ExpiringInDays",
-                                    expiringInDays.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                                    _expiringInDays.ToString(System.Globalization.CultureInfo.InvariantCulture));
                 }
 
                 if (filterString.Length == 0)
@@ -1007,11 +1007,11 @@ namespace System.Management.Automation.Internal
             return filterString + newfilter;
         }
 
-        private CertificatePurpose purpose = 0;
-        private bool sslServerAuthentication = false;
-        private string dnsName = null;
-        private string[] eku = null;
-        private int expiringInDays = -1;
+        private CertificatePurpose _purpose = 0;
+        private bool _sslServerAuthentication = false;
+        private string _dnsName = null;
+        private string[] _eku = null;
+        private int _expiringInDays = -1;
 
         internal const string CodeSigningOid = "1.3.6.1.5.5.7.3.3";
         internal const string szOID_PKIX_KP_SERVER_AUTH = "1.3.6.1.5.5.7.3.1";
@@ -1028,7 +1028,7 @@ namespace Microsoft.PowerShell.Commands
     /// Defines the valid purposes by which
     /// we can filter certificates.
     /// </summary>    
-    enum CertificatePurpose
+    internal enum CertificatePurpose
     {
         /// <summary>
         /// Certificates where a purpose has not been specified.
@@ -1058,7 +1058,6 @@ namespace Microsoft.PowerShell.Commands
 
 namespace System.Management.Automation
 {
-
 #if !CORECLR
 
     using System.Security.Cryptography.Pkcs;
@@ -1099,7 +1098,7 @@ namespace System.Management.Automation
                 {
                     recipient.Resolve(sessionState, ResolutionPurpose.Encryption, out error);
                 }
-                
+
                 if (error != null)
                 {
                     return null;
@@ -1203,10 +1202,10 @@ namespace System.Management.Automation
         /// </param>
         public CmsMessageRecipient(string identifier)
         {
-            this.identifier = identifier;
+            _identifier = identifier;
             this.Certificates = new X509Certificate2Collection();
         }
-        private string identifier = null;
+        private string _identifier = null;
 
         /// <summary>
         /// Creates an instance of the CmsMessageRecipient class
@@ -1214,10 +1213,10 @@ namespace System.Management.Automation
         /// <param name="certificate">The certificate to use.</param>
         public CmsMessageRecipient(X509Certificate2 certificate)
         {
-            pendingCertificate = certificate;
+            _pendingCertificate = certificate;
             this.Certificates = new X509Certificate2Collection();
         }
-        private X509Certificate2 pendingCertificate = null;
+        private X509Certificate2 _pendingCertificate = null;
 
         /// <summary>
         /// Gets the certificate associated with this recipient
@@ -1239,17 +1238,17 @@ namespace System.Management.Automation
             error = null;
 
             // Process the certificate if that was supplied exactly
-            if (pendingCertificate != null)
+            if (_pendingCertificate != null)
             {
                 ProcessResolvedCertificates(purpose,
-                    new List<X509Certificate2> { pendingCertificate }, out error);
+                    new List<X509Certificate2> { _pendingCertificate }, out error);
                 if ((error != null) || (Certificates.Count != 0))
                 {
                     return;
                 }
             }
 
-            if (identifier != null)
+            if (_identifier != null)
             {
                 // First try to resolve assuming that the cert was Base64 encoded.
                 ResolveFromBase64Encoding(purpose, out error);
@@ -1285,13 +1284,13 @@ namespace System.Management.Automation
             // don't generate an error if they used wildcards. If they did not use wildcards,
             // then generate an error because they were expecting something specific.
             if ((purpose == ResolutionPurpose.Encryption) ||
-                (!WildcardPattern.ContainsWildcardCharacters(identifier)))
+                (!WildcardPattern.ContainsWildcardCharacters(_identifier)))
             {
                 error = new ErrorRecord(
                     new ArgumentException(
                         String.Format(CultureInfo.InvariantCulture,
-                            SecuritySupportStrings.NoCertificateFound, identifier)),
-                    "NoCertificateFound", ErrorCategory.ObjectNotFound, identifier);
+                            SecuritySupportStrings.NoCertificateFound, _identifier)),
+                    "NoCertificateFound", ErrorCategory.ObjectNotFound, _identifier);
             }
 
             return;
@@ -1304,7 +1303,7 @@ namespace System.Management.Automation
             byte[] messageBytes = null;
             try
             {
-                messageBytes = CmsUtils.RemoveAsciiArmor(identifier, CmsUtils.BEGIN_CERTIFICATE_SIGIL, CmsUtils.END_CERTIFICATE_SIGIL, out startIndex, out endIndex);
+                messageBytes = CmsUtils.RemoveAsciiArmor(_identifier, CmsUtils.BEGIN_CERTIFICATE_SIGIL, CmsUtils.END_CERTIFICATE_SIGIL, out startIndex, out endIndex);
             }
             catch (FormatException)
             {
@@ -1345,7 +1344,7 @@ namespace System.Management.Automation
 
             try
             {
-                resolvedPaths = sessionState.Path.GetResolvedProviderPathFromPSPath(identifier, out pathProvider);
+                resolvedPaths = sessionState.Path.GetResolvedProviderPathFromPSPath(_identifier, out pathProvider);
             }
             catch (SessionStateException)
             {
@@ -1361,7 +1360,7 @@ namespace System.Management.Automation
                     error = new ErrorRecord(
                         new ArgumentException(
                             String.Format(CultureInfo.InvariantCulture,
-                                SecuritySupportStrings.CertificatePathMustBeFileSystemPath, identifier)),
+                                SecuritySupportStrings.CertificatePathMustBeFileSystemPath, _identifier)),
                         "CertificatePathMustBeFileSystemPath", ErrorCategory.ObjectNotFound, pathProvider);
                     return;
                 }
@@ -1419,7 +1418,7 @@ namespace System.Management.Automation
         private void ResolveFromThumbprint(SessionState sessionState, ResolutionPurpose purpose, out ErrorRecord error)
         {
             // Quickly check that this is a thumbprint-like pattern (just hex)
-            if (!System.Text.RegularExpressions.Regex.IsMatch(identifier, "^[a-f0-9]+$", Text.RegularExpressions.RegexOptions.IgnoreCase))
+            if (!System.Text.RegularExpressions.Regex.IsMatch(_identifier, "^[a-f0-9]+$", Text.RegularExpressions.RegexOptions.IgnoreCase))
             {
                 error = null;
                 return;
@@ -1430,7 +1429,7 @@ namespace System.Management.Automation
             try
             {
                 // Get first from 'My' store
-                string certificatePath = sessionState.Path.Combine("Microsoft.PowerShell.Security\\Certificate::CurrentUser\\My", identifier);
+                string certificatePath = sessionState.Path.Combine("Microsoft.PowerShell.Security\\Certificate::CurrentUser\\My", _identifier);
                 if (sessionState.InvokeProvider.Item.Exists(certificatePath))
                 {
                     foreach (PSObject certificateObject in sessionState.InvokeProvider.Item.Get(certificatePath))
@@ -1440,7 +1439,7 @@ namespace System.Management.Automation
                 }
 
                 // Second from 'LocalMachine' store
-                certificatePath = sessionState.Path.Combine("Microsoft.PowerShell.Security\\Certificate::LocalMachine\\My", identifier);
+                certificatePath = sessionState.Path.Combine("Microsoft.PowerShell.Security\\Certificate::LocalMachine\\My", _identifier);
                 if (sessionState.InvokeProvider.Item.Exists(certificatePath))
                 {
                     foreach (PSObject certificateObject in sessionState.InvokeProvider.Item.Get(certificatePath))
@@ -1470,7 +1469,7 @@ namespace System.Management.Automation
         private void ResolveFromSubjectName(SessionState sessionState, ResolutionPurpose purpose, out ErrorRecord error)
         {
             Collection<PSObject> certificates = new Collection<PSObject>();
-            WildcardPattern subjectNamePattern = WildcardPattern.Get(identifier, WildcardOptions.IgnoreCase);
+            WildcardPattern subjectNamePattern = WildcardPattern.Get(_identifier, WildcardOptions.IgnoreCase);
 
             try
             {
@@ -1519,7 +1518,7 @@ namespace System.Management.Automation
                 {
                     // If they specified a specific cert, generate an error if it isn't good
                     // for encryption.
-                    if (!WildcardPattern.ContainsWildcardCharacters(identifier))
+                    if (!WildcardPattern.ContainsWildcardCharacters(_identifier))
                     {
                         error = new ErrorRecord(
                             new ArgumentException(
@@ -1562,7 +1561,7 @@ namespace System.Management.Automation
                         error = new ErrorRecord(
                             new ArgumentException(
                                 String.Format(CultureInfo.InvariantCulture,
-                                    SecuritySupportStrings.IdentifierMustReferenceSingleCertificate, identifier, "To")),
+                                    SecuritySupportStrings.IdentifierMustReferenceSingleCertificate, _identifier, "To")),
                             "IdentifierMustReferenceSingleCertificate", ErrorCategory.LimitsExceeded, certificatesToProcess);
                         Certificates.Clear();
                         return;
@@ -1594,9 +1593,9 @@ namespace System.Management.Automation
     {
         internal static int Init()
         {
-            Diagnostics.Assert(amsiContext == IntPtr.Zero, "Init should be called just once");
+            Diagnostics.Assert(s_amsiContext == IntPtr.Zero, "Init should be called just once");
 
-            lock (amsiLockObject)
+            lock (s_amsiLockObject)
             {
                 Process currentProcess = Process.GetCurrentProcess();
                 string hostname;
@@ -1619,10 +1618,10 @@ namespace System.Management.Automation
                 AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 #endif
 
-                var hr = AmsiNativeMethods.AmsiInitialize(hostname, ref amsiContext);
+                var hr = AmsiNativeMethods.AmsiInitialize(hostname, ref s_amsiContext);
                 if (!Utils.Succeeded(hr))
                 {
-                    amsiInitFailed = true;
+                    s_amsiInitFailed = true;
                 }
 
                 return hr;
@@ -1642,7 +1641,7 @@ namespace System.Management.Automation
 #if UNIX
             return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
 #else
-            return WinScanContent(content,sourceMetadata);
+            return WinScanContent(content, sourceMetadata);
 #endif
         }
 
@@ -1663,14 +1662,14 @@ namespace System.Management.Automation
             }
 
             // If we had a previous initialization failure, just return the neutral result.
-            if (amsiInitFailed)
+            if (s_amsiInitFailed)
             {
                 return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
             }
 
-            lock (amsiLockObject)
+            lock (s_amsiLockObject)
             {
-                if (amsiInitFailed)
+                if (s_amsiInitFailed)
                 {
                     return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                 }
@@ -1681,27 +1680,27 @@ namespace System.Management.Automation
 
                     // Initialize AntiMalware Scan Interface, if not already initialized.
                     // If we failed to initialize previously, just return the neutral result ("AMSI_RESULT_NOT_DETECTED")
-                    if (amsiContext == IntPtr.Zero)
+                    if (s_amsiContext == IntPtr.Zero)
                     {
                         hr = Init();
 
-                        if (! Utils.Succeeded(hr))
+                        if (!Utils.Succeeded(hr))
                         {
-                            amsiInitFailed = true;
+                            s_amsiInitFailed = true;
                             return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                         }
                     }
 
                     // Initialize the session, if one isn't already started.
                     // If we failed to initialize previously, just return the neutral result ("AMSI_RESULT_NOT_DETECTED")
-                    if (amsiSession == IntPtr.Zero)
+                    if (s_amsiSession == IntPtr.Zero)
                     {
-                        hr = AmsiNativeMethods.AmsiOpenSession(amsiContext, ref amsiSession);
+                        hr = AmsiNativeMethods.AmsiOpenSession(s_amsiContext, ref s_amsiSession);
                         AmsiInitialized = true;
 
                         if (!Utils.Succeeded(hr))
                         {
-                            amsiInitFailed = true;
+                            s_amsiInitFailed = true;
                             return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                         }
                     }
@@ -1709,10 +1708,10 @@ namespace System.Management.Automation
                     AmsiNativeMethods.AMSI_RESULT result = AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_CLEAN;
 
                     hr = AmsiNativeMethods.AmsiScanString(
-                        amsiContext,
+                        s_amsiContext,
                         content,
                         sourceMetadata,
-                        amsiSession,
+                        s_amsiSession,
                         ref result);
 
                     if (!Utils.Succeeded(hr))
@@ -1725,7 +1724,7 @@ namespace System.Management.Automation
                 }
                 catch (DllNotFoundException)
                 {
-                    amsiInitFailed = true;
+                    s_amsiInitFailed = true;
                     return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                 }
             }
@@ -1739,12 +1738,12 @@ namespace System.Management.Automation
         }
 
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
-        static IntPtr amsiContext = IntPtr.Zero;
+        private static IntPtr s_amsiContext = IntPtr.Zero;
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
-        static IntPtr amsiSession = IntPtr.Zero;
+        private static IntPtr s_amsiSession = IntPtr.Zero;
 
-        static bool amsiInitFailed = false;
-        static object amsiLockObject = new Object();
+        private static bool s_amsiInitFailed = false;
+        private static object s_amsiLockObject = new Object();
 
         /// <summary>
         /// Reset the AMSI session (used to track related script invocations)
@@ -1758,17 +1757,17 @@ namespace System.Management.Automation
 
         internal static void WinCloseSession()
         {
-            if (!amsiInitFailed)
+            if (!s_amsiInitFailed)
             {
-                if ((amsiContext != IntPtr.Zero) && (amsiSession != IntPtr.Zero))
+                if ((s_amsiContext != IntPtr.Zero) && (s_amsiSession != IntPtr.Zero))
                 {
-                    lock (amsiLockObject)
+                    lock (s_amsiLockObject)
                     {
                         // Clean up the session if one was open.
-                        if ((amsiContext != IntPtr.Zero) && (amsiSession != IntPtr.Zero))
+                        if ((s_amsiContext != IntPtr.Zero) && (s_amsiSession != IntPtr.Zero))
                         {
-                            AmsiNativeMethods.AmsiCloseSession(amsiContext, amsiSession);
-                            amsiSession = IntPtr.Zero;
+                            AmsiNativeMethods.AmsiCloseSession(s_amsiContext, s_amsiSession);
+                            s_amsiSession = IntPtr.Zero;
                         }
                     }
                 }
@@ -1788,18 +1787,18 @@ namespace System.Management.Automation
         internal static void WinUninitialize()
         {
             AmsiUninitializeCalled = true;
-            if (!amsiInitFailed)
+            if (!s_amsiInitFailed)
             {
-                lock (amsiLockObject)
+                lock (s_amsiLockObject)
                 {
-                    if (amsiContext != IntPtr.Zero)
+                    if (s_amsiContext != IntPtr.Zero)
                     {
                         CloseSession();
 
                         // Uninitialize the AMSI interface.
                         AmsiCleanedUp = true;
-                        AmsiNativeMethods.AmsiUninitialize(amsiContext);
-                        amsiContext = IntPtr.Zero;
+                        AmsiNativeMethods.AmsiUninitialize(s_amsiContext);
+                        s_amsiContext = IntPtr.Zero;
                     }
                 }
             }

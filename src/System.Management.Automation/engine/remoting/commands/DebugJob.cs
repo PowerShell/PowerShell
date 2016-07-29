@@ -424,7 +424,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return null;
             }
-            
+
             if ((jobs1.Count > 1) ||
                 (jobs1.Count == 1) && (job2 != null))
             {

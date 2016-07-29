@@ -35,7 +35,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="error">Error detail for the exception</param>
         /// <param name="assemblyName">Assembly on which runspace configuration attribute is defined or should be defined.</param>
-        internal RunspaceConfigurationAttributeException (string error, string assemblyName) : base()
+        internal RunspaceConfigurationAttributeException(string error, string assemblyName) : base()
         {
             _error = error;
             _assemblyName = assemblyName;
@@ -45,7 +45,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initiate an instance of RunspaceConfigurationAttributeException.
         /// </summary>
-        public RunspaceConfigurationAttributeException () : base()
+        public RunspaceConfigurationAttributeException() : base()
         {
         }
 
@@ -74,7 +74,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="error">Error detail</param>
         /// <param name="assemblyName">Assembly on which runspace configuration attribute is defined or should be defined.</param>
         /// <param name="innerException">The inner exception of this exception</param>
-        internal RunspaceConfigurationAttributeException (string error, string assemblyName, Exception innerException) : base (innerException.Message, innerException) 
+        internal RunspaceConfigurationAttributeException(string error, string assemblyName, Exception innerException) : base(innerException.Message, innerException)
         {
             _error = error;
             _assemblyName = assemblyName;
@@ -190,8 +190,8 @@ namespace System.Management.Automation.Runspaces
 
             base.GetObjectData(info, context);
 
-            info.AddValue("Error", this._error);
-            info.AddValue("AssemblyName", this._assemblyName);
+            info.AddValue("Error", _error);
+            info.AddValue("AssemblyName", _assemblyName);
         }
 
         #endregion Serialization

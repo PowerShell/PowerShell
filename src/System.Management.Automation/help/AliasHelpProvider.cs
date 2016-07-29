@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation.Internal;
@@ -19,7 +20,7 @@ namespace System.Management.Automation
     /// The real information for alias is stored in command help. To retrieve the real 
     /// help information, help forwarding is needed. 
     /// </remarks>
-    internal class AliasHelpProvider: HelpProvider
+    internal class AliasHelpProvider : HelpProvider
     {
         /// <summary>
         /// Initializes a new instance of AliasHelpProvider class.
@@ -99,7 +100,7 @@ namespace System.Management.Automation
 
             try
             {
-                commandInfo = this._commandDiscovery.LookupCommandInfo(helpRequest.Target);
+                commandInfo = _commandDiscovery.LookupCommandInfo(helpRequest.Target);
             }
             catch (CommandNotFoundException)
             {
@@ -265,7 +266,7 @@ namespace System.Management.Automation
             if (0 == (helpRequest.HelpCategory & helpInfo.HelpCategory))
             {
                 return false;
-            }           
+            }
 
             if (!Match(helpInfo.Component, helpRequest.Component))
             {

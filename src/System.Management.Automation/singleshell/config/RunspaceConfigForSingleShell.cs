@@ -32,7 +32,7 @@ namespace System.Management.Automation.Runspaces
     /// and RunspaceConfigForSingleShell may merge into one class. 
     /// 
     /// </summary>
-    internal class RunspaceConfigForSingleShell: RunspaceConfiguration
+    internal class RunspaceConfigForSingleShell : RunspaceConfiguration
     {
         #region RunspaceConfigForSingleShell Factory
 
@@ -53,13 +53,13 @@ namespace System.Management.Automation.Runspaces
         {
             PSConsoleLoadException warning1 = null;
 
-            _mshsnapinTracer.WriteLine("Creating MshConsoleInfo. consoleFile={0}", consoleFile);
+            s_mshsnapinTracer.WriteLine("Creating MshConsoleInfo. consoleFile={0}", consoleFile);
 
             MshConsoleInfo consoleInfo = MshConsoleInfo.CreateFromConsoleFile(consoleFile, out warning1);
 
-            if(warning1 != null)
+            if (warning1 != null)
             {
-                _mshsnapinTracer.TraceWarning("There was a warning while creating MshConsoleInfo: {0}", warning1.Message);
+                s_mshsnapinTracer.TraceWarning("There was a warning while creating MshConsoleInfo: {0}", warning1.Message);
             }
 
             // At this time, consoleInfo should not be null. 
@@ -73,7 +73,7 @@ namespace System.Management.Automation.Runspaces
 
                 if (warning2 != null)
                 {
-                    _mshsnapinTracer.TraceWarning("There was a warning while loading console: {0}", warning2.Message);
+                    s_mshsnapinTracer.TraceWarning("There was a warning while loading console: {0}", warning2.Message);
                 }
 
                 warning = CombinePSConsoleLoadException(warning1, warning2);
@@ -111,7 +111,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         internal static RunspaceConfigForSingleShell CreateDefaultConfiguration()
         {
-            _mshsnapinTracer.WriteLine("Creating default runspace configuration.");
+            s_mshsnapinTracer.WriteLine("Creating default runspace configuration.");
 
             MshConsoleInfo consoleInfo = MshConsoleInfo.CreateDefaultConfiguration();
 
@@ -126,13 +126,13 @@ namespace System.Management.Automation.Runspaces
 
                 if (warning != null)
                 {
-                    _mshsnapinTracer.TraceWarning("There was a warning while loading console: {0}", warning.Message);
+                    s_mshsnapinTracer.TraceWarning("There was a warning while loading console: {0}", warning.Message);
                 }
 
                 return rspcfg;
             }
 
-            _mshsnapinTracer.WriteLine("Default runspace configuration created.");
+            s_mshsnapinTracer.WriteLine("Default runspace configuration created.");
 
             return null;
         }
@@ -186,7 +186,7 @@ namespace System.Management.Automation.Runspaces
         {
             warning = null;
 
-            _mshsnapinTracer.WriteLine("Adding mshsnapin {0}", name);
+            s_mshsnapinTracer.WriteLine("Adding mshsnapin {0}", name);
 
             if (_consoleInfo == null)
                 return null;
@@ -197,16 +197,16 @@ namespace System.Management.Automation.Runspaces
             {
                 mshsnapinInfo = _consoleInfo.AddPSSnapIn(name);
             }
-            catch(PSArgumentException mae)
+            catch (PSArgumentException mae)
             {
-                _mshsnapinTracer.TraceError(mae.Message);
-                _mshsnapinTracer.WriteLine("Adding mshsnapin {0} failed.", name);
+                s_mshsnapinTracer.TraceError(mae.Message);
+                s_mshsnapinTracer.WriteLine("Adding mshsnapin {0} failed.", name);
                 throw;
             }
-            catch(PSArgumentNullException mane)
+            catch (PSArgumentNullException mane)
             {
-                _mshsnapinTracer.TraceError(mane.Message);
-                _mshsnapinTracer.WriteLine("Adding mshsnapin {0} failed.", name);
+                s_mshsnapinTracer.TraceError(mane.Message);
+                s_mshsnapinTracer.WriteLine("Adding mshsnapin {0} failed.", name);
                 throw;
             }
 
@@ -217,10 +217,10 @@ namespace System.Management.Automation.Runspaces
 
             if (warning != null)
             {
-                _mshsnapinTracer.TraceWarning("There was a warning when loading mshsnapin {0}: {1}", name, warning.Message);
+                s_mshsnapinTracer.TraceWarning("There was a warning when loading mshsnapin {0}: {1}", name, warning.Message);
             }
 
-            _mshsnapinTracer.WriteLine("MshSnapin {0} added", name);
+            s_mshsnapinTracer.WriteLine("MshSnapin {0} added", name);
 
             return mshsnapinInfo;
         }
@@ -238,13 +238,13 @@ namespace System.Management.Automation.Runspaces
             if (_consoleInfo == null)
                 return null;
 
-            _mshsnapinTracer.WriteLine("Removing mshsnapin {0}", name);
+            s_mshsnapinTracer.WriteLine("Removing mshsnapin {0}", name);
 
             PSSnapInInfo mshsnapinInfo = _consoleInfo.RemovePSSnapIn(name);
 
             UnloadPSSnapIn(mshsnapinInfo, out warning);
 
-            _mshsnapinTracer.WriteLine("MshSnapin {0} removed", name);
+            s_mshsnapinTracer.WriteLine("MshSnapin {0} removed", name);
 
             return mshsnapinInfo;
         }
@@ -264,7 +264,7 @@ namespace System.Management.Automation.Runspaces
             this.Cmdlets.Update();
             this.Providers.Update();
 
-            _mshsnapinTracer.WriteLine("Updating types and formats");
+            s_mshsnapinTracer.WriteLine("Updating types and formats");
 
             try
             {
@@ -272,7 +272,7 @@ namespace System.Management.Automation.Runspaces
             }
             catch (RuntimeException e)
             {
-                _mshsnapinTracer.TraceWarning("There was a warning updating types: {0}", e.Message);
+                s_mshsnapinTracer.TraceWarning("There was a warning updating types: {0}", e.Message);
 
                 errors += e.Message + "\n";
             }
@@ -283,7 +283,7 @@ namespace System.Management.Automation.Runspaces
             }
             catch (RuntimeException e)
             {
-                _mshsnapinTracer.TraceWarning("There was a warning updating formats: {0}", e.Message);
+                s_mshsnapinTracer.TraceWarning("There was a warning updating formats: {0}", e.Message);
 
                 errors += e.Message + "\n";
             }
@@ -294,12 +294,12 @@ namespace System.Management.Automation.Runspaces
             }
             catch (RuntimeException e)
             {
-                _mshsnapinTracer.TraceWarning("There was a warning updating assemblies: {0}", e.Message);
+                s_mshsnapinTracer.TraceWarning("There was a warning updating assemblies: {0}", e.Message);
 
                 errors += e.Message + "\n";
             }
 
-            _mshsnapinTracer.WriteLine("Types and formats updated successfully");
+            s_mshsnapinTracer.WriteLine("Types and formats updated successfully");
         }
 
         #endregion
@@ -325,22 +325,22 @@ namespace System.Management.Automation.Runspaces
             {
                 LoadPSSnapIn(mshsnapinInfo);
             }
-            catch(PSSnapInException)
+            catch (PSSnapInException)
             {
-                if(!mshsnapinInfo.IsDefault)
+                if (!mshsnapinInfo.IsDefault)
                     _consoleInfo.RemovePSSnapIn(mshsnapinInfo.Name);
 
                 // exception during load mshsnapin are fatal. 
                 throw;
             }
 
-            string errors; 
+            string errors;
 
             UpdateAll(out errors);
 
             if (!String.IsNullOrEmpty(errors))
             {
-                _mshsnapinTracer.TraceWarning("There was a warning while loading mshsnapin {0}:{1}", mshsnapinInfo.Name, errors);
+                s_mshsnapinTracer.TraceWarning("There was a warning while loading mshsnapin {0}:{1}", mshsnapinInfo.Name, errors);
 
                 warning = new PSSnapInException(mshsnapinInfo.Name, errors, true);
             }
@@ -361,7 +361,7 @@ namespace System.Management.Automation.Runspaces
                     LoadPSSnapIn(mshsnapinInfo);
                     partialSuccess = true;
                 }
-                catch(PSSnapInException e)
+                catch (PSSnapInException e)
                 {
                     if (!mshsnapinInfo.IsDefault)
                     {
@@ -383,15 +383,15 @@ namespace System.Management.Automation.Runspaces
 
                 if (!String.IsNullOrEmpty(errors))
                 {
-                    _mshsnapinTracer.TraceWarning(errors);
+                    s_mshsnapinTracer.TraceWarning(errors);
                     mshsnapinExceptions.Add(new PSSnapInException(null, errors, true));
                 }
             }
 
             if (mshsnapinExceptions.Count > 0)
             {
-                warning = new PSConsoleLoadException(this._consoleInfo, mshsnapinExceptions);
-                _mshsnapinTracer.TraceWarning(warning.Message);
+                warning = new PSConsoleLoadException(_consoleInfo, mshsnapinExceptions);
+                s_mshsnapinTracer.TraceWarning(warning.Message);
             }
         }
 
@@ -409,17 +409,17 @@ namespace System.Management.Automation.Runspaces
 #endif
             Assembly assembly = null;
 
-            _mshsnapinTracer.WriteLine("Loading assembly for mshsnapin {0}", mshsnapinInfo.Name);
+            s_mshsnapinTracer.WriteLine("Loading assembly for mshsnapin {0}", mshsnapinInfo.Name);
 
             assembly = LoadMshSnapinAssembly(mshsnapinInfo);
 
             if (assembly == null)
             {
-                _mshsnapinTracer.TraceError("Loading assembly for mshsnapin {0} failed", mshsnapinInfo.Name);
+                s_mshsnapinTracer.TraceError("Loading assembly for mshsnapin {0} failed", mshsnapinInfo.Name);
                 return;
             }
 
-            _mshsnapinTracer.WriteLine("Loading assembly for mshsnapin {0} succeeded", mshsnapinInfo.Name);
+            s_mshsnapinTracer.WriteLine("Loading assembly for mshsnapin {0} succeeded", mshsnapinInfo.Name);
 
             Dictionary<string, SessionStateCmdletEntry> cmdlets = null;
             Dictionary<string, List<SessionStateAliasEntry>> aliases = null;
@@ -482,13 +482,13 @@ namespace System.Management.Automation.Runspaces
 
             Assembly assembly = null;
 
-            _mshsnapinTracer.WriteLine("Loading assembly for mshsnapin {0}", mshsnapinInfo.Name);
+            s_mshsnapinTracer.WriteLine("Loading assembly for mshsnapin {0}", mshsnapinInfo.Name);
 
             assembly = LoadMshSnapinAssembly(mshsnapinInfo);
 
             if (assembly == null)
             {
-                _mshsnapinTracer.TraceError("Loading assembly for mshsnapin {0} failed", mshsnapinInfo.Name);
+                s_mshsnapinTracer.TraceError("Loading assembly for mshsnapin {0} failed", mshsnapinInfo.Name);
                 return;
             }
 
@@ -502,7 +502,7 @@ namespace System.Management.Automation.Runspaces
                     customPSSnapIn = (CustomPSSnapIn)Activator.CreateInstance(type);
                 }
 
-                _mshsnapinTracer.WriteLine("Loading assembly for mshsnapin {0} succeeded", mshsnapinInfo.Name);
+                s_mshsnapinTracer.WriteLine("Loading assembly for mshsnapin {0} succeeded", mshsnapinInfo.Name);
             }
             catch (TypeLoadException tle)
             {
@@ -539,11 +539,11 @@ namespace System.Management.Automation.Runspaces
             if (mshsnapinInfo == null || customPSSnapIn == null)
                 return;
 
-            _mshsnapinTracer.WriteLine("Merging configuration from custom mshsnapin {0}", mshsnapinInfo.Name);
+            s_mshsnapinTracer.WriteLine("Merging configuration from custom mshsnapin {0}", mshsnapinInfo.Name);
 
             if (customPSSnapIn.Cmdlets != null)
             {
-                foreach(CmdletConfigurationEntry entry in customPSSnapIn.Cmdlets)
+                foreach (CmdletConfigurationEntry entry in customPSSnapIn.Cmdlets)
                 {
                     CmdletConfigurationEntry cmdlet = new CmdletConfigurationEntry(entry.Name, entry.ImplementingType, entry.HelpFileName, mshsnapinInfo);
                     _cmdlets.AddBuiltInItem(cmdlet);
@@ -582,7 +582,7 @@ namespace System.Management.Automation.Runspaces
             AssemblyConfigurationEntry assemblyEntry = new AssemblyConfigurationEntry(mshsnapinInfo.AssemblyName, mshsnapinInfo.AbsoluteModulePath, mshsnapinInfo);
             this.Assemblies.AddBuiltInItem(assemblyEntry);
 
-            _mshsnapinTracer.WriteLine("Configuration from custom mshsnapin {0} merged", mshsnapinInfo.Name);
+            s_mshsnapinTracer.WriteLine("Configuration from custom mshsnapin {0} merged", mshsnapinInfo.Name);
         }
 #endif
 
@@ -603,7 +603,7 @@ namespace System.Management.Automation.Runspaces
 
                 if (!String.IsNullOrEmpty(errors))
                 {
-                    _mshsnapinTracer.TraceWarning(errors);
+                    s_mshsnapinTracer.TraceWarning(errors);
                     warning = new PSSnapInException(mshsnapinInfo.Name, errors, true);
                 }
             }
@@ -613,7 +613,7 @@ namespace System.Management.Automation.Runspaces
         {
             Assembly assembly = null;
 
-            _mshsnapinTracer.WriteLine("Loading assembly from GAC. Assembly Name: {0}", mshsnapinInfo.AssemblyName);
+            s_mshsnapinTracer.WriteLine("Loading assembly from GAC. Assembly Name: {0}", mshsnapinInfo.AssemblyName);
 
             try
             {
@@ -622,21 +622,21 @@ namespace System.Management.Automation.Runspaces
             }
             catch (FileLoadException e)
             {
-                _mshsnapinTracer.TraceWarning("Not able to load assembly {0}: {1}", mshsnapinInfo.AssemblyName, e.Message);
+                s_mshsnapinTracer.TraceWarning("Not able to load assembly {0}: {1}", mshsnapinInfo.AssemblyName, e.Message);
             }
             catch (BadImageFormatException e)
             {
-                _mshsnapinTracer.TraceWarning("Not able to load assembly {0}: {1}", mshsnapinInfo.AssemblyName, e.Message);
+                s_mshsnapinTracer.TraceWarning("Not able to load assembly {0}: {1}", mshsnapinInfo.AssemblyName, e.Message);
             }
             catch (FileNotFoundException e)
             {
-                _mshsnapinTracer.TraceWarning("Not able to load assembly {0}: {1}", mshsnapinInfo.AssemblyName, e.Message);
+                s_mshsnapinTracer.TraceWarning("Not able to load assembly {0}: {1}", mshsnapinInfo.AssemblyName, e.Message);
             }
 
             if (assembly != null)
                 return assembly;
 
-            _mshsnapinTracer.WriteLine("Loading assembly from path: {0}", mshsnapinInfo.AssemblyName);
+            s_mshsnapinTracer.WriteLine("Loading assembly from path: {0}", mshsnapinInfo.AssemblyName);
 
             try
             {
@@ -644,7 +644,7 @@ namespace System.Management.Automation.Runspaces
                 if (string.Compare(assemblyName.FullName, mshsnapinInfo.AssemblyName, StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     string message = StringUtil.Format(ConsoleInfoErrorStrings.PSSnapInAssemblyNameMismatch, mshsnapinInfo.AbsoluteModulePath, mshsnapinInfo.AssemblyName);
-                    _mshsnapinTracer.TraceError(message);
+                    s_mshsnapinTracer.TraceError(message);
                     throw new PSSnapInException(mshsnapinInfo.Name, message);
                 }
 
@@ -652,17 +652,17 @@ namespace System.Management.Automation.Runspaces
             }
             catch (FileLoadException e)
             {
-                _mshsnapinTracer.TraceError("Not able to load assembly {0}: {1}", mshsnapinInfo.AssemblyName, e.Message);
+                s_mshsnapinTracer.TraceError("Not able to load assembly {0}: {1}", mshsnapinInfo.AssemblyName, e.Message);
                 throw new PSSnapInException(mshsnapinInfo.Name, e.Message);
             }
             catch (BadImageFormatException e)
             {
-                _mshsnapinTracer.TraceError("Not able to load assembly {0}: {1}", mshsnapinInfo.AssemblyName, e.Message);
+                s_mshsnapinTracer.TraceError("Not able to load assembly {0}: {1}", mshsnapinInfo.AssemblyName, e.Message);
                 throw new PSSnapInException(mshsnapinInfo.Name, e.Message);
             }
             catch (FileNotFoundException e)
             {
-                _mshsnapinTracer.TraceError("Not able to load assembly {0}: {1}", mshsnapinInfo.AssemblyName, e.Message);
+                s_mshsnapinTracer.TraceError("Not able to load assembly {0}: {1}", mshsnapinInfo.AssemblyName, e.Message);
                 throw new PSSnapInException(mshsnapinInfo.Name, e.Message);
             }
 
@@ -768,6 +768,6 @@ namespace System.Management.Automation.Runspaces
 
         #endregion
 
-        static private PSTraceSource _mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
+        static private PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
     }
 }

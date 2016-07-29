@@ -258,7 +258,7 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
-               /// <summary>
+        /// <summary>
         /// The arguments to pass to the scriptblock used to create the module
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
@@ -345,25 +345,25 @@ namespace Microsoft.PowerShell.Commands
             "DefaultCommandPrefix"
         };
 
-        static string[] ModuleVersionMembers = new string[] {
+        private static string[] s_moduleVersionMembers = new string[] {
             "ModuleName",
             "GUID",
             "ModuleVersion"
         };
 
-        private static List<string> ServiceCoreAssemblyCmdlets = new List<string>(new string[] {
+        private static List<string> s_serviceCoreAssemblyCmdlets = new List<string>(new string[] {
             "Microsoft.PowerShell.Workflow.ServiceCore\\Import-PSWorkflow",
             "Microsoft.PowerShell.Workflow.ServiceCore\\New-PSWorkflowExecutionOption",
         });
 
-        private Dictionary<string, PSModuleInfo> currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
+        private Dictionary<string, PSModuleInfo> _currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
 
         internal bool LoadUsingModulePath(bool found, IEnumerable<string> modulePath, string name, SessionState ss,
             ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, out PSModuleInfo module)
         {
             return LoadUsingModulePath(null, found, modulePath, name, ss, options, manifestProcessingFlags, out module);
         }
-       
+
         internal bool LoadUsingModulePath(PSModuleInfo parentModule, bool found, IEnumerable<string> modulePath, string name, SessionState ss,
             ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, out PSModuleInfo module)
         {
@@ -516,7 +516,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Extra variables that are allowed to be referenced in moudle manifest file
         /// </summary>
-        private static readonly string[] ExtraAllowedVariables = new string[] { "PSScriptRoot", "PSEdition" };
+        private static readonly string[] s_extraAllowedVariables = new string[] { "PSScriptRoot", "PSEdition" };
 
         /// <summary>
         /// Load and execute the manifest psd1 file or a localized manifest psd1 file.
@@ -536,7 +536,7 @@ namespace Microsoft.PowerShell.Commands
             // Load the data file(s) to get the module info...
             try
             {
-                scriptBlock.CheckRestrictedLanguage(PermittedCmdlets, ExtraAllowedVariables, true);
+                scriptBlock.CheckRestrictedLanguage(PermittedCmdlets, s_extraAllowedVariables, true);
             }
             catch (RuntimeException pe)
             {
@@ -555,7 +555,7 @@ namespace Microsoft.PowerShell.Commands
             object result;
             object oldPSScriptRoot = Context.GetVariableValue(SpecialVariables.PSScriptRootVarPath);
             object oldPSCommandPath = Context.GetVariableValue(SpecialVariables.PSCommandPathVarPath);
-            ArrayList errors = (ArrayList) Context.GetVariableValue(SpecialVariables.ErrorVarPath);
+            ArrayList errors = (ArrayList)Context.GetVariableValue(SpecialVariables.ErrorVarPath);
             int oldErrorCount = errors.Count;
 
             try
@@ -831,7 +831,7 @@ namespace Microsoft.PowerShell.Commands
                 // The rooted files wasn't found, so don't search anymore...
                 if (found == false && wasRooted == true)
                     return null;
-                
+
                 if (searchModulePath && found == false && moduleFileFound == false)
                 {
                     if (VerifyIfNestedModuleIsAvailable(moduleSpecification, null, null, out tempModuleInfoFromVerification))
@@ -1069,7 +1069,6 @@ namespace Microsoft.PowerShell.Commands
                                             yield return module;
                                         }
                                     }
-
                                 }
                             }
 
@@ -1088,7 +1087,6 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(CreateModuleNotFoundError(modulePath));
                     }
                 }
-
             }
         }
 
@@ -1193,10 +1191,10 @@ namespace Microsoft.PowerShell.Commands
                         if (!ModuleUtils.IsModuleInVersionSubdirectory(file, out directoryVersion)
                             || directoryVersion == module.Version)
                         {
-                        availableModules.Add(module);
+                            availableModules.Add(module);
+                        }
                     }
                 }
-            }
             }
 
             ClearAnalysisCaches();
@@ -1207,7 +1205,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get the version type of input string MaximumVersion, translate "*" if there's any.
         /// </summary>
-        internal static Version GetMaximumVersion (string stringVersion)
+        internal static Version GetMaximumVersion(string stringVersion)
         {
             Version maxVersion;
             // First, try to convert maxVersion to version directly
@@ -1252,12 +1250,12 @@ namespace Microsoft.PowerShell.Commands
         {
             // Ensure we don't have any recursion in module lookup
             PSModuleInfo moduleInfo = null;
-            if (currentlyProcessingModules.TryGetValue(file, out moduleInfo))
+            if (_currentlyProcessingModules.TryGetValue(file, out moduleInfo))
             {
                 return moduleInfo;
             }
 
-            currentlyProcessingModules[file] = null;
+            _currentlyProcessingModules[file] = null;
 
             // Create a fake module info for this file
             string extension;
@@ -1304,7 +1302,7 @@ namespace Microsoft.PowerShell.Commands
                     // It's not a module manifest, process the individual module
                     ImportModuleOptions options = new ImportModuleOptions();
                     bool found = false;
-                    
+
                     moduleInfo = LoadModule(file, null, String.Empty, null, ref options, flags, out found);
                 }
 
@@ -1346,7 +1344,6 @@ namespace Microsoft.PowerShell.Commands
                         moduleInfo.SetModuleType(ModuleType.Manifest);
                         moduleInfo.RootModule = moduleInfo.Path;
                     }
-                    
                 }
                 else if (extension.Equals(StringLiterals.DependentWorkflowAssemblyExtension, StringComparison.OrdinalIgnoreCase) || extension.Equals(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase))
                 {
@@ -1403,7 +1400,7 @@ namespace Microsoft.PowerShell.Commands
                 ModuleIntrinsics.Tracer.WriteLine("Caching skipped for {0} because it had errors while loading.", moduleInfo.Name);
             }
 
-            currentlyProcessingModules[file] = moduleInfo;
+            _currentlyProcessingModules[file] = moduleInfo;
             return moduleInfo;
         }
 
@@ -2446,12 +2443,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (localizedData != null && localizedData.Contains("Description"))
                 {
-                    description = (string) LanguagePrimitives.ConvertTo(localizedData["Description"],
+                    description = (string)LanguagePrimitives.ConvertTo(localizedData["Description"],
                         typeof(string), CultureInfo.InvariantCulture);
                 }
                 if (string.IsNullOrEmpty(description))
                 {
-                    description = (string) LanguagePrimitives.ConvertTo(data["Description"],
+                    description = (string)LanguagePrimitives.ConvertTo(data["Description"],
                         typeof(string), CultureInfo.InvariantCulture);
                 }
             }
@@ -2654,7 +2651,7 @@ namespace Microsoft.PowerShell.Commands
             manifestInfo.RootModuleForManifest = savedActualRootModule;
             if (manifestGuid != null)
             {
-                manifestInfo.SetGuid((Guid) manifestGuid);
+                manifestInfo.SetGuid((Guid)manifestGuid);
             }
             if (helpInfoUri != null)
             {
@@ -2958,16 +2955,16 @@ namespace Microsoft.PowerShell.Commands
                     this.BaseGlobal = false;
 
                     string shortModuleName = null;
-                    if (nestedModuleSpecification.Name == ServiceCoreAssemblyFullName)
+                    if (nestedModuleSpecification.Name == _serviceCoreAssemblyFullName)
                     {
-                        shortModuleName = ServiceCoreAssemblyShortName;
+                        shortModuleName = _serviceCoreAssemblyShortName;
                     }
 
                     PSModuleInfo nestedModule;
                     if (
-                        string.Equals(nestedModuleSpecification.Name, ServiceCoreAssemblyFullName,
+                        string.Equals(nestedModuleSpecification.Name, _serviceCoreAssemblyFullName,
                             StringComparison.OrdinalIgnoreCase) ||
-                        string.Equals(nestedModuleSpecification.Name, ServiceCoreAssemblyShortName,
+                        string.Equals(nestedModuleSpecification.Name, _serviceCoreAssemblyShortName,
                             StringComparison.OrdinalIgnoreCase))
                     {
                         nestedModule = LoadServiceCoreModule(
@@ -3009,7 +3006,7 @@ namespace Microsoft.PowerShell.Commands
                             // If this was ServiceCore, don't process its exports - as these
                             // should not show up when a module defines WorkflowsToProcess
                             if (
-                                !String.Equals(nestedModule.Name, ServiceCoreAssemblyShortName,
+                                !String.Equals(nestedModule.Name, _serviceCoreAssemblyShortName,
                                     StringComparison.OrdinalIgnoreCase))
                             {
                                 foreach (string detectedCmdlet in nestedModule.ExportedCmdlets.Keys)
@@ -3059,11 +3056,11 @@ namespace Microsoft.PowerShell.Commands
                 if (workflowsToProcess != null && workflowsToProcess.Count > 0)
                 {
 #if CORECLR // Workflow Not Supported On CSS
-                        PSNotSupportedException workflowModuleNotSupported =
-                            PSTraceSource.NewNotSupportedException(
-                                Modules.WorkflowModuleNotSupportedInPowerShellCore,
-                                ModuleIntrinsics.GetModuleName(moduleManifestPath));
-                        throw workflowModuleNotSupported;
+                    PSNotSupportedException workflowModuleNotSupported =
+                        PSTraceSource.NewNotSupportedException(
+                            Modules.WorkflowModuleNotSupportedInPowerShellCore,
+                            ModuleIntrinsics.GetModuleName(moduleManifestPath));
+                    throw workflowModuleNotSupported;
 #else
                     // Depending on current execution policy, check the signature of Module manfiest file if required.
                     // Reusing already created ScriptInfo object to avoid race condition when modulemanifest was not signed during first check and signed before this step.
@@ -3266,7 +3263,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 if (newManifestInfo.Guid.Equals(Guid.Empty) && (manifestGuid != null))
                 {
-                    newManifestInfo.SetGuid((Guid) manifestGuid);
+                    newManifestInfo.SetGuid((Guid)manifestGuid);
                 }
                 if (newManifestInfo.HelpInfoUri == null && (helpInfoUri != null))
                 {
@@ -3518,7 +3515,7 @@ namespace Microsoft.PowerShell.Commands
                     if ((ss != null) && (!ss.Internal.UseExportList))
                     {
                         ModuleIntrinsics.ExportModuleMembers(this, ss.Internal, MatchAll,
-                            MatchAll, null, null, options.ServiceCoreAutoAdded ? ServiceCoreAssemblyCmdlets : null);
+                            MatchAll, null, null, options.ServiceCoreAutoAdded ? s_serviceCoreAssemblyCmdlets : null);
                     }
 
                     // Export* fields in .psd1 subset Export-ModuleMember calls from ModuleToProcess=psm1
@@ -3611,7 +3608,7 @@ namespace Microsoft.PowerShell.Commands
                         ss.Internal,
                         exportedFunctions, exportedCmdlets,
                         exportedAliases, exportedVariables,
-                        options.ServiceCoreAutoAdded ? ServiceCoreAssemblyCmdlets : null);
+                        options.ServiceCoreAutoAdded ? s_serviceCoreAssemblyCmdlets : null);
                 }
             }
 
@@ -3708,14 +3705,14 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private readonly string ServiceCoreAssemblyFullName = "Microsoft.Powershell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL";
-        private readonly string ServiceCoreAssemblyShortName = "Microsoft.Powershell.Workflow.ServiceCore";
+        private readonly string _serviceCoreAssemblyFullName = "Microsoft.Powershell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL";
+        private readonly string _serviceCoreAssemblyShortName = "Microsoft.Powershell.Workflow.ServiceCore";
 
         private PSModuleInfo LoadServiceCoreModule(PSModuleInfo parentModule, string moduleBase, SessionState ss, ImportModuleOptions nestedModuleOptions, ManifestProcessingFlags manifestProcessingFlags, bool addToParentModueIfFound, out bool found)
         {
             SessionStateInternal oldSessionState = Context.EngineSessionState;
 
-            if (ss != null )
+            if (ss != null)
                 Context.EngineSessionState = ss.Internal;
 
             try
@@ -3728,7 +3725,7 @@ namespace Microsoft.PowerShell.Commands
                 PSModuleInfo nestedModule = LoadBinaryModule(
                                                             parentModule,                // parentModule
                                                             false,                       // trySnapInName 
-                                                            ServiceCoreAssemblyFullName, // moduleName
+                                                            _serviceCoreAssemblyFullName, // moduleName
                                                             null,                        // fileName
                                                             null,                        // assemblyToLoad
                                                             moduleBase,                  // moduleBase
@@ -3739,7 +3736,7 @@ namespace Microsoft.PowerShell.Commands
                                                             true,                        // loadTypes
                                                             true,                        // loadFormats
                                                             out found,                   // found
-                                                            ServiceCoreAssemblyShortName,// shortModuleName
+                                                            _serviceCoreAssemblyShortName,// shortModuleName
                                                             true                         // disableFormatUpdates 
                                                             );
                 this.BaseGlobal = oldGLobal;
@@ -3756,7 +3753,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    string errorMessage = StringUtil.Format(Modules.ManifestMemberNotFound, ServiceCoreAssemblyFullName, "NestedModules", parentModule.Name);
+                    string errorMessage = StringUtil.Format(Modules.ManifestMemberNotFound, _serviceCoreAssemblyFullName, "NestedModules", parentModule.Name);
                     FileNotFoundException fnf = new FileNotFoundException(errorMessage);
                     PSInvalidOperationException invalidOperation = new PSInvalidOperationException(errorMessage, fnf, "Modules_ModuleFileNotFound", ErrorCategory.ResourceUnavailable, parentModule.Name);
                     throw invalidOperation;
@@ -3770,7 +3767,7 @@ namespace Microsoft.PowerShell.Commands
 
 #if !CORECLR // Workflow Not Supported On CSS
         private void ProcessWorkflowsToProcess(string moduleBase, List<string> workflowsToProcess, List<string> dependentWorkflows, List<string> assemblyList, SessionState ss, PSModuleInfo manifestInfo, ImportModuleOptions options)
-        {                        
+        {
             // If we are actually processing
             if (ss != null)
             {
@@ -3783,7 +3780,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // However, this static internal property can be changed by tests that can already run a script
                         // in full-language mode.
-                        if (! SystemPolicy.XamlWorkflowSupported)
+                        if (!SystemPolicy.XamlWorkflowSupported)
                         {
                             foreach (string workflowPath in ResolveWorkflowFiles(moduleBase, workflowsToProcess))
                             {
@@ -3840,7 +3837,7 @@ namespace Microsoft.PowerShell.Commands
                         // the members of the manifest are canonical...
                         ModuleIntrinsics.ExportModuleMembers(this, ss.Internal,
                             MatchAll, MatchAll, MatchAll, MatchAll,
-                            options.ServiceCoreAutoAdded ? ServiceCoreAssemblyCmdlets : null);
+                            options.ServiceCoreAutoAdded ? s_serviceCoreAssemblyCmdlets : null);
                     }
                     finally
                     {
@@ -4198,7 +4195,7 @@ namespace Microsoft.PowerShell.Commands
                     Dictionary<ModuleSpecification, List<ModuleSpecification>> requiredModules = new Dictionary<ModuleSpecification, List<ModuleSpecification>>(new ModuleSpecificationComparer());
                     if (currentModule != null)
                     {
-                        requiredModules.Add(new ModuleSpecification(currentModule), new List<ModuleSpecification> {requiredModuleSpecification});
+                        requiredModules.Add(new ModuleSpecification(currentModule), new List<ModuleSpecification> { requiredModuleSpecification });
                     }
 
                     // We always need to check against the module name and not the file name
@@ -4286,7 +4283,7 @@ namespace Microsoft.PowerShell.Commands
                     // This should never happen because one of the two should be true
                     // 1) loadedModule should either be PSModuleInfo 
                     // 2) loaded = true
-                    Dbg.Assert(false,"loadedModule should either be PSModuleInfo or loaded should be true");
+                    Dbg.Assert(false, "loadedModule should either be PSModuleInfo or loaded should be true");
                 }
             }
 
@@ -4301,12 +4298,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 powerShell.AddCommand("Import-Module");
                 powerShell.AddParameter("Name", requiredModule.Name);
-                
+
                 if (requiredModule.RequiredVersion != null)
                 {
                     powerShell.AddParameter("RequiredVersion", requiredModule.RequiredVersion);
                 }
-                else if(requiredModule.MaximumVersion != null)
+                else if (requiredModule.MaximumVersion != null)
                 {
                     powerShell.AddParameter("MaximumVersion", requiredModule.MaximumVersion);
                 }
@@ -4386,7 +4383,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="extension"></param>
         /// <param name="nestedModuleInfoIfAvailable"></param>
         /// <returns></returns>
-        internal bool VerifyIfNestedModuleIsAvailable(ModuleSpecification nestedModuleSpec, 
+        internal bool VerifyIfNestedModuleIsAvailable(ModuleSpecification nestedModuleSpec,
             string rootedModulePath,
             string extension,
             out PSModuleInfo nestedModuleInfoIfAvailable)
@@ -4395,7 +4392,7 @@ namespace Microsoft.PowerShell.Commands
             nestedModuleInfoIfAvailable = null;
             if ((nestedModuleSpec.Guid != null) || (nestedModuleSpec.Version != null) || (nestedModuleSpec.RequiredVersion != null) || (nestedModuleSpec.MaximumVersion != null))
             {
-                if (!string.IsNullOrEmpty(extension) && 
+                if (!string.IsNullOrEmpty(extension) &&
                     (!string.Equals(extension, StringLiterals.PowerShellDataFileExtension)))
                 {
                     // A module can declare its GUID/Version only in the PSD1 file.
@@ -4430,7 +4427,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 Collection<PSModuleInfo> availableModules = GetModuleIfAvailable(tempSpec);
-                
+
                 // With Side-b-Side module version support, more than one module will be returned by GetModuleIfAvailable
                 if (availableModules.Count < 1)
                 {
@@ -4853,7 +4850,7 @@ namespace Microsoft.PowerShell.Commands
                     else if (WildcardPattern.ContainsWildcardCharacters(currentGPModuleName))
                     {
                         WildcardPattern wildcard = WildcardPattern.Get(currentGPModuleName, WildcardOptions.IgnoreCase);
-                        if(wildcard.IsMatch(m.Name))
+                        if (wildcard.IsMatch(m.Name))
                         {
                             m.LogPipelineExecutionDetails = true;
                         }
@@ -5109,7 +5106,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return null;
                 }
-
             }
             else
             {
@@ -5149,7 +5145,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return null;
                 }
-
             }
             else
             {
@@ -5205,7 +5200,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        for (int i = formatIndicesToRemove.Count - 1; i >= 0; i --)
+                        for (int i = formatIndicesToRemove.Count - 1; i >= 0; i--)
                         {
                             Context.RunspaceConfiguration.Formats.RemoveItem(formatIndicesToRemove[i]);
                         }
@@ -5240,7 +5235,7 @@ namespace Microsoft.PowerShell.Commands
             catch (RuntimeException rte)
             {
                 string fullErrorId = rte.ErrorRecord.FullyQualifiedErrorId;
-                if (fullErrorId.Equals("ErrorsUpdatingTypes", StringComparison.Ordinal) || 
+                if (fullErrorId.Equals("ErrorsUpdatingTypes", StringComparison.Ordinal) ||
                     fullErrorId.Equals("ErrorsUpdatingFormats", StringComparison.Ordinal))
                 {
                     return;
@@ -5291,7 +5286,7 @@ namespace Microsoft.PowerShell.Commands
                             dollarUnder: AutomationNull.Value,
                             input: AutomationNull.Value,
                             scriptThis: AutomationNull.Value,
-                            args: new object[] {module});
+                            args: new object[] { module });
                     }
 
                     if (module.ImplementingAssembly != null && module.ImplementingAssembly.IsDynamic == false)
@@ -5427,7 +5422,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     string message = StringUtil.Format(Modules.UnableToRemoveModuleMember, func.Name, module.Name, e.Message);
                                     InvalidOperationException memberNotRemoved = new InvalidOperationException(message, e);
-                                    ErrorRecord er = new ErrorRecord(memberNotRemoved, "Modules_MemberNotRemoved", 
+                                    ErrorRecord er = new ErrorRecord(memberNotRemoved, "Modules_MemberNotRemoved",
                                                                      ErrorCategory.PermissionDenied, func.Name);
                                     WriteError(er);
                                 }
@@ -5648,7 +5643,6 @@ namespace Microsoft.PowerShell.Commands
             bool throwAwayModuleFileFound = false;
             return LoadUsingExtensions(parentModule, moduleName, fileBaseName, extension, moduleBase, prefix, ss,
                                        options, manifestProcessingFlags, out found, out throwAwayModuleFileFound);
-
         }
 
         /// <summary>
@@ -5761,8 +5755,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     moduleFileFound = true;
                     // Win8: 325243 - Added the version check so that we do not unload modules with the same name but different version 
-                    if (BaseForce && module != null && 
-                        (this.BaseRequiredVersion == null || module.Version.Equals(this.BaseRequiredVersion)) && 
+                    if (BaseForce && module != null &&
+                        (this.BaseRequiredVersion == null || module.Version.Equals(this.BaseRequiredVersion)) &&
                         (BaseGuid == null || module.Guid.Equals(BaseGuid)))
                     // TODO/FIXME: use IsModuleAlreadyLoaded to get consistent behavior
                     // TODO/FIXME: (for example the checks above are not lookint at this.BaseMinimumVersion)
@@ -5802,13 +5796,13 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (localizedData != null && localizedData.Contains("DefaultCommandPrefix"))
                         {
-                            prefix = (string) LanguagePrimitives.ConvertTo(localizedData["DefaultCommandPrefix"],
-                                typeof (string), CultureInfo.InvariantCulture);
+                            prefix = (string)LanguagePrimitives.ConvertTo(localizedData["DefaultCommandPrefix"],
+                                typeof(string), CultureInfo.InvariantCulture);
                         }
                         if (string.IsNullOrEmpty(prefix))
                         {
-                            prefix = (string) LanguagePrimitives.ConvertTo(data["DefaultCommandPrefix"],
-                                typeof (string), CultureInfo.InvariantCulture);
+                            prefix = (string)LanguagePrimitives.ConvertTo(data["DefaultCommandPrefix"],
+                                typeof(string), CultureInfo.InvariantCulture);
                         }
                     }
                 }
@@ -6005,7 +5999,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (!module.SessionState.Internal.UseExportList)
                                 {
                                     ModuleIntrinsics.ExportModuleMembers(this, module.SessionState.Internal, MatchAll,
-                                        MatchAll, MatchAll, null, options.ServiceCoreAutoAdded ? ModuleCmdletBase.ServiceCoreAssemblyCmdlets : null);
+                                        MatchAll, MatchAll, null, options.ServiceCoreAutoAdded ? ModuleCmdletBase.s_serviceCoreAssemblyCmdlets : null);
                                 }
 
                                 // Add it to the all module tables
@@ -6023,9 +6017,9 @@ namespace Microsoft.PowerShell.Commands
                                 else
                                     // If -pass has been specified, emit a module info...
                                     if (BasePassThru)
-                                    {
-                                        WriteObject(module);
-                                    }
+                                {
+                                    WriteObject(module);
+                                }
                             }
                             catch (RuntimeException e)
                             {
@@ -6034,7 +6028,7 @@ namespace Microsoft.PowerShell.Commands
                                     e.ErrorRecord.PreserveInvocationInfoOnce = true;
                                 }
 
-                                if(e.WasThrownFromThrowStatement)
+                                if (e.WasThrownFromThrowStatement)
                                 {
                                     ThrowTerminatingError(e.ErrorRecord);
                                 }
@@ -6091,14 +6085,14 @@ namespace Microsoft.PowerShell.Commands
                                 InvocationInfo invocationInfo = new InvocationInfo(scriptInfo, scriptInfo.ScriptBlock.Ast.Extent,
                                                                                     Context);
                                 scriptInfo.ScriptBlock.InvokeWithPipe(
-                                    useLocalScope:         false,
+                                    useLocalScope: false,
                                     errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                                    dollarUnder:           AutomationNull.Value,
-                                    input:                 AutomationNull.Value,
-                                    scriptThis:            AutomationNull.Value,
-                                    outputPipe:            ((MshCommandRuntime) this.CommandRuntime).OutputPipe,
-                                    invocationInfo:        invocationInfo,
-                                    args:                  this.BaseArgumentList ?? Utils.EmptyArray<object>());
+                                    dollarUnder: AutomationNull.Value,
+                                    input: AutomationNull.Value,
+                                    scriptThis: AutomationNull.Value,
+                                    outputPipe: ((MshCommandRuntime)this.CommandRuntime).OutputPipe,
+                                    invocationInfo: invocationInfo,
+                                    args: this.BaseArgumentList ?? Utils.EmptyArray<object>());
                             }
                             finally
                             {
@@ -6122,9 +6116,9 @@ namespace Microsoft.PowerShell.Commands
                             else
                                 // If -pass has been specified, emit a module info...
                                 if (BasePassThru)
-                                {
-                                    WriteObject(module);
-                                }
+                            {
+                                WriteObject(module);
+                            }
                         }
                         catch (RuntimeException e)
                         {
@@ -6305,7 +6299,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 scriptWriter.WriteScriptModule(cmdletizationProxyModuleWriter);
                                 ScriptBlock sb = ScriptBlock.Create(this.Context, cmdletizationProxyModuleWriter.ToString());
-                                
+
                                 // CDXML doesn't allow script injection, so it is trusted.
                                 sb.LanguageMode = PSLanguageMode.FullLanguage;
 
@@ -6317,7 +6311,7 @@ namespace Microsoft.PowerShell.Commands
                                 scriptWriter.ReportExportedCommands(module, prefix);
 
                                 ImportModuleMembers(module, prefix, options);
-                                
+
                                 AddModuleToModuleTables(this.Context, this.TargetSessionState.Internal, module);
                             }
                         }
@@ -6340,9 +6334,9 @@ namespace Microsoft.PowerShell.Commands
                         else
                             // If -pass has been specified, emit a module info...
                             if (BasePassThru)
-                            {
-                                WriteObject(module);
-                            }
+                        {
+                            WriteObject(module);
+                        }
                     }
                     catch (RuntimeException e)
                     {
@@ -6409,19 +6403,19 @@ namespace Microsoft.PowerShell.Commands
             return shouldProcessModule;
         }
 
-        private static object lockObject = new object();
+        private static object s_lockObject = new object();
 
         private void ClearAnalysisCaches()
-        {   
-            lock(lockObject)
+        {
+            lock (s_lockObject)
             {
-                binaryAnalysisCache.Clear();
-                scriptAnalysisCache.Clear();
+                s_binaryAnalysisCache.Clear();
+                s_scriptAnalysisCache.Clear();
             }
         }
 
         // Analyzes a binary module implementation for its cmdlets.
-        static Dictionary<string, Tuple<BinaryAnalysisResult, Version>> binaryAnalysisCache = 
+        private static Dictionary<string, Tuple<BinaryAnalysisResult, Version>> s_binaryAnalysisCache =
             new Dictionary<string, Tuple<BinaryAnalysisResult, Version>>();
 
 #if CORECLR
@@ -6435,13 +6429,13 @@ namespace Microsoft.PowerShell.Commands
         private static BinaryAnalysisResult GetCmdletsFromBinaryModuleImplementation(string path, ManifestProcessingFlags manifestProcessingFlags, out Version assemblyVersion)
         {
             Tuple<BinaryAnalysisResult, Version> tuple;
-            
-            lock(lockObject)
+
+            lock (s_lockObject)
             {
-                binaryAnalysisCache.TryGetValue(path, out tuple);
+                s_binaryAnalysisCache.TryGetValue(path, out tuple);
             }
 
-            if(tuple != null)
+            if (tuple != null)
             {
                 assemblyVersion = tuple.Item2;
                 return tuple.Item1;
@@ -6456,10 +6450,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var resultToReturn = analysisResult ?? new BinaryAnalysisResult();
-            
-            lock(lockObject)
+
+            lock (s_lockObject)
             {
-                binaryAnalysisCache[path] = Tuple.Create(resultToReturn, assemblyVersion);
+                s_binaryAnalysisCache[path] = Tuple.Create(resultToReturn, assemblyVersion);
             }
 
             return resultToReturn;
@@ -6472,12 +6466,12 @@ namespace Microsoft.PowerShell.Commands
         {
             Tuple<BinaryAnalysisResult, Version> tuple = null;
 
-            lock(lockObject)
+            lock (s_lockObject)
             {
-                binaryAnalysisCache.TryGetValue(path, out tuple);
+                s_binaryAnalysisCache.TryGetValue(path, out tuple);
             }
 
-            if(tuple != null)
+            if (tuple != null)
             {
                 assemblyVersion = tuple.Item2;
                 return tuple.Item1;
@@ -6522,9 +6516,9 @@ namespace Microsoft.PowerShell.Commands
                 result.DetectedCmdlets = detectedCmdlets;
                 result.DetectedAliases = detectedAliases;
 
-                lock (lockObject)
+                lock (s_lockObject)
                 {
-                    binaryAnalysisCache[path] = Tuple.Create(result, assemblyVersion);
+                    s_binaryAnalysisCache[path] = Tuple.Create(result, assemblyVersion);
                 }
 
                 return result;
@@ -6617,22 +6611,22 @@ namespace Microsoft.PowerShell.Commands
 #endif
 
         // Analyzes a script module implementation for its exports.
-        static Dictionary<string, PSModuleInfo> scriptAnalysisCache = new Dictionary<string, PSModuleInfo>();
+        private static Dictionary<string, PSModuleInfo> s_scriptAnalysisCache = new Dictionary<string, PSModuleInfo>();
 
         private PSModuleInfo AnalyzeScriptFile(string filename, bool force, ExecutionContext context)
         {
             // We need to return a cloned version here.
             // This is because the Get-Module -List -All modifies the returned module info and we do not want the original one changed.
             PSModuleInfo module = null;
-            
-            lock(lockObject)
+
+            lock (s_lockObject)
             {
-                scriptAnalysisCache.TryGetValue(filename, out module);
+                s_scriptAnalysisCache.TryGetValue(filename, out module);
             }
 
-            if(module != null)
+            if (module != null)
                 return module.Clone();
-            
+
             // fake/empty manifestInfo for processing in (!loadElements) mode
             module = new PSModuleInfo(filename, null, null);
 
@@ -6670,9 +6664,9 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    lock (lockObject)
+                    lock (s_lockObject)
                     {
-                        scriptAnalysisCache[filename] = module;
+                        s_scriptAnalysisCache[filename] = module;
                     }
 
                     return module;
@@ -6694,7 +6688,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Add any directly discovered exports
-            foreach(var command in scriptAnalysis.DiscoveredExports)
+            foreach (var command in scriptAnalysis.DiscoveredExports)
             {
                 if (SessionStateUtilities.MatchesAnyWildcardPattern(command, scriptAnalysisPatterns, true))
                 {
@@ -6706,7 +6700,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Add the discovered aliases
-            foreach(var pair in scriptAnalysis.DiscoveredAliases)
+            foreach (var pair in scriptAnalysis.DiscoveredAliases)
             {
                 var commandName = pair.Key;
                 // These are already filtered
@@ -6782,7 +6776,7 @@ namespace Microsoft.PowerShell.Commands
                         if (SessionStateUtilities.MatchesAnyWildcardPattern(commandName, patterns, true) &&
                             SessionStateUtilities.MatchesAnyWildcardPattern(commandName, scriptAnalysisPatterns, true))
                         {
-                            if (!HasInvalidCharacters(commandName.Replace("-","")))
+                            if (!HasInvalidCharacters(commandName.Replace("-", "")))
                             {
                                 module.AddDetectedFunctionExport(commandName);
                             }
@@ -6823,9 +6817,9 @@ namespace Microsoft.PowerShell.Commands
                 ModuleIntrinsics.Tracer.WriteLine("Caching skipped for {0} because it had errors while loading.", module.Name);
             }
 
-            lock (lockObject)
+            lock (s_lockObject)
             {
-                scriptAnalysisCache[filename] = module;
+                s_scriptAnalysisCache[filename] = module;
             }
 
             return module;
@@ -6942,7 +6936,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // Avoid trying to import a PowerShell assembly as Snapin as it results in PSArgementException
-                if ((moduleName != null) && Utils.IsPowerShellAssembly(moduleName)) 
+                if ((moduleName != null) && Utils.IsPowerShellAssembly(moduleName))
                 {
                     trySnapInName = false;
                 }
@@ -7003,7 +6997,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (importingModule)
                     {
-
                         assembly = Context.AddAssembly(moduleName, fileName, out error);
 
                         if (assembly == null)
@@ -7052,7 +7045,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             found = true;
-            if(string.IsNullOrEmpty(shortModuleName))
+            if (string.IsNullOrEmpty(shortModuleName))
                 module = new PSModuleInfo(moduleName, modulePath, Context, ss);
             else
                 module = new PSModuleInfo(shortModuleName, modulePath, Context, ss);
@@ -7334,7 +7327,7 @@ namespace Microsoft.PowerShell.Commands
             return commandName;
         }
 
-                /// <summary>
+        /// <summary>
         /// Removes prefix from a command name and returns the command name
         /// </summary>
         /// <param name="commandName">The command name from which the prefix needs to be removed.</param>
@@ -7383,7 +7376,7 @@ namespace Microsoft.PowerShell.Commands
 
             return isPrefixed;
         }
-        
+
         static internal void AddModuleToModuleTables(ExecutionContext context, SessionStateInternal targetSessionState, PSModuleInfo module)
         {
             Dbg.Assert(context != null, "Caller should verify that context != null");
@@ -7557,7 +7550,6 @@ namespace Microsoft.PowerShell.Commands
                     // Write directly into the local cmdlet cache table...
                     message = StringUtil.Format(Modules.ImportingCmdlet, prefixedCmdlet.Name);
                     cmdlet.WriteVerbose(message);
-
                 }
             }
 
@@ -7639,7 +7631,7 @@ namespace Microsoft.PowerShell.Commands
                         var scope = options.Local ? targetSessionState.CurrentScope : targetSessionState.ModuleScope;
                         PSVariable newVariable = scope.NewVariable(v, true, source);
 
-                        if(isImportModulePrivate)
+                        if (isImportModulePrivate)
                         {
                             newVariable.Visibility = SessionStateEntryVisibility.Private;
                         }
@@ -7790,10 +7782,35 @@ namespace Microsoft.PowerShell.Commands
             {
                 switch (c)
                 {
-                    case '#': case ',': case '(': case ')': case '{': case '}': case '[': case ']':
-                    case '&': case '-': case '/': case '\\': case '$': case '^': case ';': case ':':
-                    case '"': case '\'': case '<': case '>': case '|': case '?': case '@': case '`':
-                    case '*': case '%': case '+': case '=': case '~':
+                    case '#':
+                    case ',':
+                    case '(':
+                    case ')':
+                    case '{':
+                    case '}':
+                    case '[':
+                    case ']':
+                    case '&':
+                    case '-':
+                    case '/':
+                    case '\\':
+                    case '$':
+                    case '^':
+                    case ';':
+                    case ':':
+                    case '"':
+                    case '\'':
+                    case '<':
+                    case '>':
+                    case '|':
+                    case '?':
+                    case '@':
+                    case '`':
+                    case '*':
+                    case '%':
+                    case '+':
+                    case '=':
+                    case '~':
                         return true;
                 }
             }
@@ -7839,7 +7856,6 @@ namespace Microsoft.PowerShell.Commands
                         cmdlet.WriteVerbose(message);
                     }
                 }
-
             }
 
             if (HasInvalidCharacters(noun))
@@ -7878,7 +7894,6 @@ namespace Microsoft.PowerShell.Commands
 
             return null;
         }
-
     } // end ModuleCmdletBase
 
     /// <summary>
@@ -7895,6 +7910,5 @@ namespace Microsoft.PowerShell.Commands
         internal List<Tuple<string, string>> DetectedAliases { get; set; }
     }
 
-#endregion ModuleCmdletBase
-
+    #endregion ModuleCmdletBase
 } // Microsoft.PowerShell.Commands

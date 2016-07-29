@@ -82,7 +82,7 @@ namespace System.Management.Automation
         /// <param name="innerException">The inner exception to use when initializing this object</param>
         /// <returns> constructed object </returns>
         internal ApplicationFailedException(string message, string errorId, Exception innerException)
-            : base(message,innerException)
+            : base(message, innerException)
         {
             base.SetErrorId(errorId);
             base.SetErrorCategory(ErrorCategory.ResourceUnavailable);
@@ -97,12 +97,11 @@ namespace System.Management.Automation
         /// <returns> constructed object </returns>
         public ApplicationFailedException(string message,
                         Exception innerException)
-                : base (message, innerException)
+                : base(message, innerException)
         {
             base.SetErrorId(errorIdString);
             base.SetErrorCategory(ErrorCategory.ResourceUnavailable);
         }
         #endregion ctor
     } // ApplicationFailedException
-
 } // namespace System.Management.Automation

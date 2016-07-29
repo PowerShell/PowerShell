@@ -15,25 +15,25 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// </summary>
     internal class EnumerateAssociatedInstancesJob : QueryJobBase
     {
-        private readonly CimInstance associatedObject;
-        private readonly string associationName;
-        private readonly string resultRole;
-        private readonly string sourceRole;
+        private readonly CimInstance _associatedObject;
+        private readonly string _associationName;
+        private readonly string _resultRole;
+        private readonly string _sourceRole;
 
         internal EnumerateAssociatedInstancesJob(CimJobContext jobContext, CimQuery cimQuery, CimInstance associatedObject, string associationName, string resultRole, string sourceRole)
                 : base(jobContext, cimQuery)
         {
-            this.associatedObject = associatedObject;
-            Dbg.Assert(this.associatedObject != null, "Caller should verify that associatedObject is not null");
+            _associatedObject = associatedObject;
+            Dbg.Assert(_associatedObject != null, "Caller should verify that associatedObject is not null");
 
-            this.associationName = associationName;
-            Dbg.Assert(this.associationName != null, "Caller should verify that associationName is not null");
+            _associationName = associationName;
+            Dbg.Assert(_associationName != null, "Caller should verify that associationName is not null");
 
-            this.resultRole = resultRole;
-            Dbg.Assert(this.resultRole != null, "Caller should verify that resultRole is not null");
+            _resultRole = resultRole;
+            Dbg.Assert(_resultRole != null, "Caller should verify that resultRole is not null");
 
-            this.sourceRole = sourceRole;
-            Dbg.Assert(this.sourceRole != null, "Caller should verify that sourceRole is not null");
+            _sourceRole = sourceRole;
+            Dbg.Assert(_sourceRole != null, "Caller should verify that sourceRole is not null");
         }
 
         internal override IObservable<CimInstance> GetCimOperation()
@@ -41,11 +41,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             this.WriteVerboseStartOfCimOperation();
             IObservable<CimInstance> observable = this.JobContext.Session.EnumerateAssociatedInstancesAsync(
                 this.JobContext.Namespace,
-                this.associatedObject,
-                this.associationName,
+                _associatedObject,
+                _associationName,
                 this.JobContext.ClassNameOrNullIfResourceUriIsUsed,
-                this.sourceRole,
-                this.resultRole,
+                _sourceRole,
+                _resultRole,
                 this.CreateOperationOptions());
 
             return observable;
@@ -53,20 +53,20 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal override string Description
         {
-            get 
+            get
             {
                 return string.Format(
                     CultureInfo.InvariantCulture,
                     CmdletizationResources.CimJob_AssociationDescription,
                     this.JobContext.CmdletizationClassName,
                     this.JobContext.Session.ComputerName,
-                    this.associatedObject.ToString());
+                    _associatedObject.ToString());
             }
         }
 
         internal override string FailSafeDescription
         {
-            get 
+            get
             {
                 return string.Format(
                     CultureInfo.InvariantCulture,
@@ -80,12 +80,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             return CimCustomOptionsDictionary.MergeOptions(
                 base.CalculateJobSpecificCustomOptions(),
-                this.associatedObject);
+                _associatedObject);
         }
 
         internal override void WriteObject(object outputObject)
         {
-            if (IsShowComputerNameMarkerPresent(this.associatedObject))
+            if (IsShowComputerNameMarkerPresent(_associatedObject))
             {
                 PSObject pso = PSObject.AsPSObject(outputObject);
                 AddShowComputerNameMarker(pso);

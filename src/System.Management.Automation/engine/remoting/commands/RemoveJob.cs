@@ -54,17 +54,17 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="recurse">recurse and check in child jobs</param>
         /// <returns>list of matching jobs</returns>
         internal List<Job> FindJobsMatchingByName(
-            bool recurse, 
-            bool writeobject, 
-            bool writeErrorOnNoMatch, 
+            bool recurse,
+            bool writeobject,
+            bool writeErrorOnNoMatch,
             bool checkIfJobCanBeRemoved)
         {
             List<Job> matches = new List<Job>();
             Hashtable duplicateDetector = new Hashtable();
 
-            if (names == null) return matches;
+            if (_names == null) return matches;
 
-            foreach (String name in names)
+            foreach (String name in _names)
             {
                 if (string.IsNullOrEmpty(name))
                     continue;
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
                 string message = PSRemotingErrorInvariants.FormatResourceString(resourceString, args);
                 Exception ex = new ArgumentException(message, parameterName);
                 WriteError(new ErrorRecord(ex, "JobObjectNotFinishedCannotBeRemoved", ErrorCategory.InvalidOperation, job2));
-                return false;                
+                return false;
             }
 
             return true;
@@ -192,9 +192,9 @@ namespace Microsoft.PowerShell.Commands
 
             Hashtable duplicateDetector = new Hashtable();
 
-            if (instanceIds == null) return matches;
+            if (_instanceIds == null) return matches;
 
-            foreach (Guid id in instanceIds)
+            foreach (Guid id in _instanceIds)
             {
                 // search all jobs in Job repository
                 duplicateDetector.Clear();
@@ -306,11 +306,11 @@ namespace Microsoft.PowerShell.Commands
         {
             List<Job> matches = new List<Job>();
 
-            if (sessionIds == null) return matches;
+            if (_sessionIds == null) return matches;
 
             Hashtable duplicateDetector = new Hashtable();
 
-            foreach (int id in sessionIds)
+            foreach (int id in _sessionIds)
             {
                 // check jobs in job repository
                 bool jobFound = FindJobsMatchingBySessionIdHelper(matches, JobRepository.Jobs, id,
@@ -408,19 +408,19 @@ namespace Microsoft.PowerShell.Commands
         {
             List<Job> matches = new List<Job>();
 
-            if (commands == null) return matches;
+            if (_commands == null) return matches;
 
             List<Job> jobs = new List<Job>();
 
             jobs.AddRange(JobRepository.Jobs);
 
-            foreach (string command in commands)
+            foreach (string command in _commands)
             {
                 List<Job2> jobs2 = JobManager.GetJobsByCommand(command, this, false, false, false, null);
 
                 if (jobs2 != null)
                 {
-                    foreach(Job2 job2 in jobs2)
+                    foreach (Job2 job2 in jobs2)
                     {
                         jobs.Add(job2);
                     }
@@ -464,7 +464,7 @@ namespace Microsoft.PowerShell.Commands
 
             jobs.AddRange(JobRepository.Jobs);
 
-            List<Job2> jobs2 = JobManager.GetJobsByState(jobstate, this, false, false, false, null);
+            List<Job2> jobs2 = JobManager.GetJobsByState(_jobstate, this, false, false, false, null);
 
             if (jobs2 != null)
             {
@@ -476,7 +476,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (Job job in jobs)
             {
-                if (job.JobStateInfo.State != jobstate) continue;
+                if (job.JobStateInfo.State != _jobstate) continue;
 
                 if (writeobject)
                 {
@@ -499,14 +499,14 @@ namespace Microsoft.PowerShell.Commands
         {
             List<Job> matches = new List<Job>();
             List<Job> jobs = new List<Job>();
-            
+
             // add Jobs from JobRepository -- only job property based filters are supported.
             FindJobsMatchingByFilterHelper(jobs, JobRepository.Jobs);
 
             var filterDictionary = new Dictionary<string, object>();
-            foreach (string item in filter.Keys)
+            foreach (string item in _filter.Keys)
             {
-                filterDictionary.Add(item, filter[item]);
+                filterDictionary.Add(item, _filter[item]);
             }
 
             List<Job2> jobs2 = JobManager.GetJobsByFilter(filterDictionary, this, false, false, true);
@@ -584,7 +584,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="resourceString">Resource String in case of error</param>
         /// <param name="list">Parameters for resource message</param>
         /// <returns>true if object should be removed, else false</returns>
-        bool CheckJobCanBeRemoved(Job job, string parameterName, string resourceString, params object[] list)
+        private bool CheckJobCanBeRemoved(Job job, string parameterName, string resourceString, params object[] list)
         {
             if (job.IsFinishedState(job.JobStateInfo.State))
                 return true;
@@ -609,18 +609,18 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return names;
+                return _names;
             }
             set
             {
-                names = value;
+                _names = value;
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        private String[] names;
+        private String[] _names;
 
         /// <summary>
         /// InstanceIds for which job
@@ -634,25 +634,25 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return instanceIds;
+                return _instanceIds;
             }
             set
             {
-                instanceIds = value;
+                _instanceIds = value;
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        private Guid[] instanceIds;
+        private Guid[] _instanceIds;
 
         /// <summary>
         /// SessionId for which job
         /// need to be obtained
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, Position = 0,
-                  Mandatory=true,
+                  Mandatory = true,
                   ParameterSetName = JobCmdletBase.SessionIdParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -660,18 +660,18 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return sessionIds;
+                return _sessionIds;
             }
             set
             {
-                sessionIds = value;
+                _sessionIds = value;
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        private int[] sessionIds;
+        private int[] _sessionIds;
 
         /// <summary>
         /// All the job objects having this state.
@@ -683,18 +683,18 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return jobstate;
+                return _jobstate;
             }
             set
             {
-                jobstate = value;
+                _jobstate = value;
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        private JobState jobstate;
+        private JobState _jobstate;
 
         /// <summary>
         /// All the job objects having this command.
@@ -706,18 +706,18 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return commands;
+                return _commands;
             }
             set
             {
-                commands = value;
+                _commands = value;
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        private String[] commands;
+        private String[] _commands;
 
         /// <summary>
         /// All the job objects matching the values in filter
@@ -729,11 +729,11 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual Hashtable Filter
         {
-            get { return filter; }
-            set { filter = value; }
+            get { return _filter; }
+            set { _filter = value; }
         }
 
-        private Hashtable filter;
+        private Hashtable _filter;
 
         #endregion Parameters
 
@@ -765,7 +765,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "Job", SupportsShouldProcess = true, DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet,
         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113377")]
-    [OutputType(typeof(Job), ParameterSetName = new string[] { JobCmdletBase.JobParameterSet})]
+    [OutputType(typeof(Job), ParameterSetName = new string[] { JobCmdletBase.JobParameterSet })]
     public class RemoveJobCommand : JobCmdletBase, IDisposable
     {
         #region Parameters
@@ -776,7 +776,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true,
                    Position = 0,
-                   ValueFromPipeline = true, 
+                   ValueFromPipeline = true,
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = RemoveJobCommand.JobParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -785,14 +785,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return jobs;
+                return _jobs;
             }
             set
             {
-                jobs = value;
+                _jobs = value;
             }
         }
-        private Job[] jobs;
+        private Job[] _jobs;
 
         /// <summary>
         /// If state of the job is running or notstarted, this will forcefully stop it.
@@ -807,14 +807,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return force;
+                return _force;
             }
             set
             {
-                force = value;
+                _force = value;
             }
         }
-        private bool force = false;
+        private bool _force = false;
 
         #endregion Parameters
 
@@ -831,19 +831,19 @@ namespace Microsoft.PowerShell.Commands
             {
                 case NameParameterSet:
                     {
-                        listOfJobsToRemove = FindJobsMatchingByName(false, false, true, !force);
+                        listOfJobsToRemove = FindJobsMatchingByName(false, false, true, !_force);
                     }
                     break;
 
                 case InstanceIdParameterSet:
                     {
-                        listOfJobsToRemove = FindJobsMatchingByInstanceId(true, false, true, !force);
+                        listOfJobsToRemove = FindJobsMatchingByInstanceId(true, false, true, !_force);
                     }
                     break;
 
                 case SessionIdParameterSet:
                     {
-                        listOfJobsToRemove = FindJobsMatchingBySessionId(true, false, true, !force);
+                        listOfJobsToRemove = FindJobsMatchingBySessionId(true, false, true, !_force);
                     }
                     break;
 
@@ -867,7 +867,7 @@ namespace Microsoft.PowerShell.Commands
 
                 default:
                     {
-                        listOfJobsToRemove = CopyJobsToList(jobs, false, !force);
+                        listOfJobsToRemove = CopyJobsToList(_jobs, false, !_force);
                     }
                     break;
             }
@@ -890,7 +890,7 @@ namespace Microsoft.PowerShell.Commands
                         _cleanUpActions.Add(job2, HandleStopJobCompleted);
                         job2.StopJobCompleted += HandleStopJobCompleted;
 
-                        lock(_syncObject)
+                        lock (_syncObject)
                         {
                             if (!job2.IsFinishedState(job2.JobStateInfo.State) &&
                                 !_pendingJobs.Contains(job2.InstanceId))
@@ -898,7 +898,7 @@ namespace Microsoft.PowerShell.Commands
                                 _pendingJobs.Add(job2.InstanceId);
                             }
                         }
-                        
+
                         job2.StopJobAsync();
                     }
                     else
@@ -909,7 +909,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    RemoveJobAndDispose(job, job2 != null);                    
+                    RemoveJobAndDispose(job, job2 != null);
                 }
             }
         } // ProcessRecord
@@ -920,7 +920,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void EndProcessing()
         {
             bool haveToWait = false;
-            lock(_syncObject)
+            lock (_syncObject)
             {
                 _needToCheckForWaitingJobs = true;
                 if (_pendingJobs.Count > 0)
@@ -952,7 +952,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     job2TypeFound = JobManager.RemoveJob(job as Job2, this, true, false);
                 }
-                
+
                 if (!job2TypeFound)
                 {
                     JobRepository.Remove(job);
@@ -982,7 +982,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _pendingJobs.Remove(job.InstanceId);
                 }
-                if (_needToCheckForWaitingJobs && _pendingJobs.Count ==0)
+                if (_needToCheckForWaitingJobs && _pendingJobs.Count == 0)
                     releaseWait = true;
             }
             // end processing has been called
@@ -1023,7 +1023,7 @@ namespace Microsoft.PowerShell.Commands
         protected void Dispose(bool disposing)
         {
             if (!disposing) return;
-            foreach(var pair in _cleanUpActions)
+            foreach (var pair in _cleanUpActions)
             {
                 pair.Key.StopJobCompleted -= pair.Value;
             }

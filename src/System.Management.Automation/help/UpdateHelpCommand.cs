@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -32,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-        private bool alreadyCheckedOncePerDayPerModule = false;
+        private bool _alreadyCheckedOncePerDayPerModule = false;
 
         #region Parameters
 
@@ -126,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-        private bool isInitialized = false;
+        private bool _isInitialized = false;
 
         #region Implementation
 
@@ -166,14 +167,14 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(error);
                 }
 
-                if (!isInitialized)
+                if (!_isInitialized)
                 {
                     if (_path == null && Recurse.IsPresent)
                     {
                         PSArgumentException e = new PSArgumentException(StringUtil.Format(HelpDisplayStrings.CannotSpecifyRecurseWithoutPath));
                         ThrowTerminatingError(e.ErrorRecord);
                     }
-                    isInitialized = true;
+                    _isInitialized = true;
                 }
 
                 base.Process(_module, FullyQualifiedModule);
@@ -222,20 +223,20 @@ namespace Microsoft.PowerShell.Commands
             {
                 // constructing the helpinfo object from previous update help log xml..
                 // no need to resolve the uri's in this case.
-                currentHelpInfo = _helpSystem.CreateHelpInfo(xml, module.ModuleName, module.ModuleGuid, 
-                                                             currentCulture: null, pathOverride: null, verbose: false, 
-                                                             shouldResolveUri: false, 
+                currentHelpInfo = _helpSystem.CreateHelpInfo(xml, module.ModuleName, module.ModuleGuid,
+                                                             currentCulture: null, pathOverride: null, verbose: false,
+                                                             shouldResolveUri: false,
                                                              // ignore validation exception if _force is true
                                                              ignoreValidationException: _force);
             }
 
             // Don't update too frequently
-            if (!alreadyCheckedOncePerDayPerModule && !CheckOncePerDayPerModule(module.ModuleName, module.ModuleBase, module.GetHelpInfoName(), DateTime.UtcNow, _force))
+            if (!_alreadyCheckedOncePerDayPerModule && !CheckOncePerDayPerModule(module.ModuleName, module.ModuleBase, module.GetHelpInfoName(), DateTime.UtcNow, _force))
             {
                 return true;
             }
 
-            alreadyCheckedOncePerDayPerModule = true;
+            _alreadyCheckedOncePerDayPerModule = true;
 
             if (_path != null)
             {
@@ -294,7 +295,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (xml != null)
                         {
-                            newHelpInfo = _helpSystem.CreateHelpInfo(xml, module.ModuleName, module.ModuleGuid, culture, resolvedPath, 
+                            newHelpInfo = _helpSystem.CreateHelpInfo(xml, module.ModuleName, module.ModuleGuid, culture, resolvedPath,
                                                                      verbose: false, shouldResolveUri: true, ignoreValidationException: false);
                             helpInfoUri = resolvedPath;
                             break;
@@ -341,8 +342,8 @@ namespace Microsoft.PowerShell.Commands
                 string updateHelpShouldProcessAction = string.Format(CultureInfo.InvariantCulture,
                     HelpDisplayStrings.UpdateHelpShouldProcessActionMessage,
                     module.ModuleName,
-                    (currentHelpVersion != null) ? currentHelpVersion.ToString() : "0.0.0.0", 
-                    newHelpInfo.GetCultureVersion(contentUri.Culture), 
+                    (currentHelpVersion != null) ? currentHelpVersion.ToString() : "0.0.0.0",
+                    newHelpInfo.GetCultureVersion(contentUri.Culture),
                     contentUri.Culture);
                 if (!this.ShouldProcess(updateHelpShouldProcessAction, "Update-Help"))
                 {
@@ -350,7 +351,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 if (Utils.IsUnderProductFolder(module.ModuleBase) && (!Utils.IsAdministrator()))
-                { 
+                {
                     string message = StringUtil.Format(HelpErrors.UpdatableHelpRequiresElevation);
                     ProcessException(module.ModuleName, null, new UpdatableHelpSystemException("UpdatableHelpSystemRequiresElevation",
                             message, ErrorCategory.InvalidOperation, null, null));
@@ -428,7 +429,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 _helpSystem.InstallHelpContent(UpdatableHelpCommandType.UpdateHelpCommand, Context, helpContentUri,
                                     destPaths, module.GetHelpContentName(contentUri.Culture),
-                                    Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName())), 
+                                    Path.Combine(Path.GetTempPath(), Path.GetFileNameWithoutExtension(Path.GetRandomFileName())),
                                     contentUri.Culture, xsdPath, out filesInstalled);
                             }
                         }

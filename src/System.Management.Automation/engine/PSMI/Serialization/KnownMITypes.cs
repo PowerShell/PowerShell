@@ -38,9 +38,9 @@ namespace System.Management.Automation
         /// </summary>
         static KnownMITypes()
         {
-            for (int i = 0; i < _TypeSerializationInfo.Length; i++)
+            for (int i = 0; i < s_typeSerializationInfo.Length; i++)
             {
-                _knownTableKeyType.Add(_TypeSerializationInfo[i].Type.FullName, _TypeSerializationInfo[i]);
+                s_knownTableKeyType.Add(s_typeSerializationInfo[i].Type.FullName, s_typeSerializationInfo[i]);
             }
         }
 
@@ -52,7 +52,7 @@ namespace System.Management.Automation
         internal static MITypeSerializationInfo GetTypeSerializationInfo(Type type)
         {
             MITypeSerializationInfo temp = null;
-            _knownTableKeyType.TryGetValue(type.FullName, out temp);
+            s_knownTableKeyType.TryGetValue(type.FullName, out temp);
             return temp;
         }
 
@@ -61,10 +61,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Array of known types.
         /// </summary>
-        private static readonly MITypeSerializationInfo[] _TypeSerializationInfo = new MITypeSerializationInfo[]
-		{
-			new MITypeSerializationInfo(typeof(Boolean),
-								InternalMISerializer.CreateCimInstanceForPrimitiveType,
+        private static readonly MITypeSerializationInfo[] s_typeSerializationInfo = new MITypeSerializationInfo[]
+        {
+            new MITypeSerializationInfo(typeof(Boolean),
+                                InternalMISerializer.CreateCimInstanceForPrimitiveType,
                                 "PS_ObjectProperty_boolean"),
 
             new MITypeSerializationInfo(typeof(Byte),
@@ -72,7 +72,7 @@ namespace System.Management.Automation
                                 "PS_ObjectProperty_uint8"),
 
             new MITypeSerializationInfo(typeof(Char),
-								InternalMISerializer.CreateCimInstanceForPrimitiveType,
+                                InternalMISerializer.CreateCimInstanceForPrimitiveType,
                                 "PS_ObjectProperty_char16"),
 
             new MITypeSerializationInfo(typeof(Double),
@@ -148,14 +148,13 @@ namespace System.Management.Automation
 
             //new MITypeSerializationInfo(typeof(SecureString),
             //                          InternalSerializer.WriteSecureString),
-
 		};
 
         /// <summary>
         /// Dictionary of knowntypes. 
         /// Key is Type.FullName and value is Type object.
         /// </summary>
-        private static readonly Dictionary<string, MITypeSerializationInfo> _knownTableKeyType = new Dictionary<string, MITypeSerializationInfo>();
+        private static readonly Dictionary<string, MITypeSerializationInfo> s_knownTableKeyType = new Dictionary<string, MITypeSerializationInfo>();
 
         #endregion private_fields
     }

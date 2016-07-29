@@ -1,9 +1,10 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.ObjectModel;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -45,8 +46,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("cmdlet");
             }
 
-            this.cmdlet = cmdlet;
-            this.sessionState = cmdlet.Context.EngineSessionState;
+            _cmdlet = cmdlet;
+            _sessionState = cmdlet.Context.EngineSessionState;
         } // CmdletProviderIntrinsics internal
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("sessionState");
             }
 
-            this.sessionState = sessionState;
+            _sessionState = sessionState;
         } // CmdletProviderIntrinsics internal
 
         #endregion Constructors
@@ -118,12 +119,12 @@ namespace System.Management.Automation
         public Collection<PSObject> Get(string path)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetItem(new string[] { path }, false, false);
+            return _sessionState.GetItem(new string[] { path }, false, false);
         } // GetItem
 
         /// <summary>
@@ -175,12 +176,12 @@ namespace System.Management.Automation
         public Collection<PSObject> Get(string[] path, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetItem(path, force, literalPath);
+            return _sessionState.GetItem(path, force, literalPath);
         } // GetItem
 
         /// <summary>
@@ -228,12 +229,12 @@ namespace System.Management.Automation
         internal void Get(string path, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.GetItem(new string[] { path }, context);
+            _sessionState.GetItem(new string[] { path }, context);
         } // GetItem
 
         /// <summary>
@@ -277,12 +278,12 @@ namespace System.Management.Automation
         internal object GetItemDynamicParameters(string path, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetItemDynamicParameters(path, context);
+            return _sessionState.GetItemDynamicParameters(path, context);
         } // GetItemDynamicParamters
 
         #endregion GetItem
@@ -334,12 +335,12 @@ namespace System.Management.Automation
         public Collection<PSObject> Set(string path, object value)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.SetItem(new string[] { path }, value, false, false);
+            return _sessionState.SetItem(new string[] { path }, value, false, false);
         } // SetItem
 
         /// <summary>
@@ -395,12 +396,12 @@ namespace System.Management.Automation
         public Collection<PSObject> Set(string[] path, object value, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.SetItem(path, value, force, literalPath);
+            return _sessionState.SetItem(path, value, force, literalPath);
         } // SetItem
 
         /// <summary>
@@ -452,12 +453,12 @@ namespace System.Management.Automation
         internal void Set(string path, object value, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.SetItem(new string[] { path }, value, context);
+            _sessionState.SetItem(new string[] { path }, value, context);
         } // SetItem
 
         /// <summary>
@@ -503,19 +504,19 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal object SetItemDynamicParameters(
-            string path, 
-            object value, 
+            string path,
+            object value,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.SetItemDynamicParameters(path, value, context);
+            return _sessionState.SetItemDynamicParameters(path, value, context);
         } // SetItemDynamicParameters
-        
+
         #endregion SetItem
 
         #region ClearItem
@@ -561,12 +562,12 @@ namespace System.Management.Automation
         public Collection<PSObject> Clear(string path)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.ClearItem(new string[] { path }, false, false);
+            return _sessionState.ClearItem(new string[] { path }, false, false);
         } // ClearItem
 
         /// <summary>
@@ -618,12 +619,12 @@ namespace System.Management.Automation
         public Collection<PSObject> Clear(string[] path, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.ClearItem(path, force, literalPath);
+            return _sessionState.ClearItem(path, force, literalPath);
         } // ClearItem
 
         /// <summary>
@@ -671,12 +672,12 @@ namespace System.Management.Automation
         internal void Clear(string path, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.ClearItem(new string[] { path }, context);
+            _sessionState.ClearItem(new string[] { path }, context);
         } // ClearItem
 
         /// <summary>
@@ -720,14 +721,14 @@ namespace System.Management.Automation
         internal object ClearItemDynamicParameters(string path, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.ClearItemDynamicParameters(path, context);
+            return _sessionState.ClearItemDynamicParameters(path, context);
         } // ClearItemDynamicParameters
-        
+
         #endregion ClearItem
 
         #region InvokeDefaultAction
@@ -769,12 +770,12 @@ namespace System.Management.Automation
         public void Invoke(string path)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.InvokeDefaultAction(new string[] { path }, false);
+            _sessionState.InvokeDefaultAction(new string[] { path }, false);
         } // InvokeDefaultAction
 
 
@@ -819,12 +820,12 @@ namespace System.Management.Automation
         public void Invoke(string[] path, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.InvokeDefaultAction(path, literalPath);
+            _sessionState.InvokeDefaultAction(path, literalPath);
         } // InvokeDefaultAction
 
 
@@ -869,12 +870,12 @@ namespace System.Management.Automation
         internal void Invoke(string path, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.InvokeDefaultAction(new string[] { path }, context);
+            _sessionState.InvokeDefaultAction(new string[] { path }, context);
         } // InvokeDefaultAction
 
         /// <summary>
@@ -918,14 +919,14 @@ namespace System.Management.Automation
         internal object InvokeItemDynamicParameters(string path, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.InvokeDefaultActionDynamicParameters(path, context);
+            return _sessionState.InvokeDefaultActionDynamicParameters(path, context);
         } // InvokeItemDynamicParameters
-        
+
         #endregion InvokeDefaultAction
 
         #region RenameItem
@@ -975,12 +976,12 @@ namespace System.Management.Automation
         public Collection<PSObject> Rename(string path, string newName)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.RenameItem(path, newName, false);
+            return _sessionState.RenameItem(path, newName, false);
         } // RenameItem
 
         /// <summary>
@@ -1032,12 +1033,12 @@ namespace System.Management.Automation
         public Collection<PSObject> Rename(string path, string newName, bool force)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.RenameItem(path, newName, force);
+            return _sessionState.RenameItem(path, newName, force);
         } // RenameItem
 
         /// <summary>
@@ -1087,17 +1088,17 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal void Rename(
-            string path, 
-            string newName, 
+            string path,
+            string newName,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.RenameItem(path, newName, context);
+            _sessionState.RenameItem(path, newName, context);
         } // RenameItem
 
         /// <summary>
@@ -1143,17 +1144,17 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal object RenameItemDynamicParameters(
-            string path, 
-            string newName, 
+            string path,
+            string newName,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.RenameItemDynamicParameters(path, newName, context);
+            return _sessionState.RenameItemDynamicParameters(path, newName, context);
         } // RenameItemDynamicParameters
 
         #endregion RenameItem
@@ -1211,18 +1212,18 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         public Collection<PSObject> New(
-            string path, 
-            string name, 
-            string itemTypeName, 
+            string path,
+            string name,
+            string itemTypeName,
             object content)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.NewItem(new string[] { path }, name, itemTypeName, content, false);
+            return _sessionState.NewItem(new string[] { path }, name, itemTypeName, content, false);
         } // NewItem
 
 
@@ -1288,12 +1289,12 @@ namespace System.Management.Automation
             bool force)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.NewItem(path, name, itemTypeName, content, force);
+            return _sessionState.NewItem(path, name, itemTypeName, content, force);
         } // NewItem
 
 
@@ -1352,19 +1353,19 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal void New(
-            string path, 
+            string path,
             string name,
-            string type, 
+            string type,
             object content,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.NewItem(new string[] { path }, name, type, content, context);
+            _sessionState.NewItem(new string[] { path }, name, type, content, context);
         } // NewItem
 
         /// <summary>
@@ -1414,18 +1415,18 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal object NewItemDynamicParameters(
-            string path, 
-            string type, 
-            object content, 
+            string path,
+            string type,
+            object content,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.NewItemDynamicParameters(path, type, content, context);
+            return _sessionState.NewItemDynamicParameters(path, type, content, context);
         } // NewItemDynamicParameters
 
         #endregion NewItem
@@ -1475,12 +1476,12 @@ namespace System.Management.Automation
         public void Remove(string path, bool recurse)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.RemoveItem(new string[] { path }, recurse, false, false);
+            _sessionState.RemoveItem(new string[] { path }, recurse, false, false);
         } // RemoveItem
 
         /// <summary>
@@ -1534,12 +1535,12 @@ namespace System.Management.Automation
         public void Remove(string[] path, bool recurse, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.RemoveItem(path, recurse, force, literalPath);
+            _sessionState.RemoveItem(path, recurse, force, literalPath);
         } // RemoveItem
 
         /// <summary>
@@ -1583,17 +1584,17 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal void Remove(
-            string path, 
-            bool recurse, 
+            string path,
+            bool recurse,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.RemoveItem(new string[] { path }, recurse, context);
+            _sessionState.RemoveItem(new string[] { path }, recurse, context);
         } // RemoveItem
 
         /// <summary>
@@ -1641,17 +1642,17 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal object RemoveItemDynamicParameters(
-            string path, 
-            bool recurse, 
+            string path,
+            bool recurse,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.RemoveItemDynamicParameters(path, recurse, context);
+            return _sessionState.RemoveItemDynamicParameters(path, recurse, context);
         } // RemoveItemDynamicParameters
 
         #endregion RemoveItem
@@ -1710,18 +1711,18 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         public Collection<PSObject> Copy(
-            string path, 
-            string destinationPath, 
+            string path,
+            string destinationPath,
             bool recurse,
             CopyContainers copyContainers)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.CopyItem(new string[] { path }, destinationPath, recurse, copyContainers, false, false);
+            return _sessionState.CopyItem(new string[] { path }, destinationPath, recurse, copyContainers, false, false);
         } // CopyItem
 
         /// <summary>
@@ -1792,12 +1793,12 @@ namespace System.Management.Automation
             bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.CopyItem(path, destinationPath, recurse, copyContainers, force, literalPath);
+            return _sessionState.CopyItem(path, destinationPath, recurse, copyContainers, force, literalPath);
         } // CopyItem
 
         /// <summary>
@@ -1856,19 +1857,19 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal void Copy(
-            string path, 
+            string path,
             string destinationPath,
-            bool recurse, 
+            bool recurse,
             CopyContainers copyContainers,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.CopyItem(new string[] { path }, destinationPath, recurse, copyContainers, context);
+            _sessionState.CopyItem(new string[] { path }, destinationPath, recurse, copyContainers, context);
         } // CopyItem
 
         /// <summary>
@@ -1919,18 +1920,18 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal object CopyItemDynamicParameters(
-            string path, 
-            string destination, 
-            bool recurse, 
+            string path,
+            string destination,
+            bool recurse,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.CopyItemDynamicParameters(path, destination, recurse, context);
+            return _sessionState.CopyItemDynamicParameters(path, destination, recurse, context);
         } // CopyItemDynamicParameters
 
         #endregion CopyItem
@@ -1991,12 +1992,12 @@ namespace System.Management.Automation
         public Collection<PSObject> Move(string path, string destination)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.MoveItem(new string[] { path }, destination, false, false);
+            return _sessionState.MoveItem(new string[] { path }, destination, false, false);
         } // MoveItem
 
 
@@ -2062,12 +2063,12 @@ namespace System.Management.Automation
         public Collection<PSObject> Move(string[] path, string destination, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.MoveItem(path, destination, force, literalPath);
+            return _sessionState.MoveItem(path, destination, force, literalPath);
         } // MoveItem
 
 
@@ -2117,19 +2118,19 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal void Move(
-            string path, 
+            string path,
             string destination,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.MoveItem(new string[] { path }, destination, context);
+            _sessionState.MoveItem(new string[] { path }, destination, context);
         } // MoveItem
-        
+
         /// <summary>
         /// Gets the dynamic parameters for the move-item cmdlet.
         /// </summary>
@@ -2173,17 +2174,17 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal object MoveItemDynamicParameters(
-            string path, 
-            string destination, 
+            string path,
+            string destination,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.MoveItemDynamicParameters(path, destination, context);
+            return _sessionState.MoveItemDynamicParameters(path, destination, context);
         } // MoveItemDynamicParameters
 
         #endregion MoveItem
@@ -2226,12 +2227,12 @@ namespace System.Management.Automation
         public bool Exists(string path)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.ItemExists(path, false, false);
+            return _sessionState.ItemExists(path, false, false);
         } // ItemExists
 
         /// <summary>
@@ -2278,12 +2279,12 @@ namespace System.Management.Automation
         public bool Exists(string path, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.ItemExists(path, force, literalPath);
+            return _sessionState.ItemExists(path, force, literalPath);
         } // ItemExists
 
         /// <summary>
@@ -2324,16 +2325,16 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal bool Exists(
-            string path, 
+            string path,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.ItemExists(path, context);
+            return _sessionState.ItemExists(path, context);
         } // ItemExists
 
         /// <summary>
@@ -2374,16 +2375,16 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal object ItemExistsDynamicParameters(
-            string path, 
+            string path,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.ItemExistsDynamicParameters(path, context);
+            return _sessionState.ItemExistsDynamicParameters(path, context);
         } // ItemExistsDynamicParameters
         #endregion ItemExists
 
@@ -2424,14 +2425,14 @@ namespace System.Management.Automation
         public bool IsContainer(string path)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.IsItemContainer(path);
+            return _sessionState.IsItemContainer(path);
         } // IsItemContainer
-        
+
         /// <summary>
         /// Determines if the specified path is to an item that is a container.
         /// </summary>
@@ -2469,26 +2470,26 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal bool IsContainer(
-            string path, 
+            string path,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.IsItemContainer(path, context);
+            return _sessionState.IsItemContainer(path, context);
         } // IsItemContainer
-        
+
         #endregion IsItemContainer
 
-       #endregion Public methods
+        #endregion Public methods
 
         #region private data
 
-        private Cmdlet cmdlet;
-        private SessionStateInternal sessionState;
+        private Cmdlet _cmdlet;
+        private SessionStateInternal _sessionState;
 
         #endregion private data
     } // ItemCmdletProviderIntrinsics

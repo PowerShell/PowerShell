@@ -1,6 +1,7 @@
 ﻿/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -166,7 +167,7 @@ namespace System.Management.Automation
         protected JobDefinition(SerializationInfo info, StreamingContext context)
         {
             throw new NotImplementedException();
-        }        
+        }
 
         /// <summary>
         /// 
@@ -209,7 +210,7 @@ namespace System.Management.Automation
                 _name = value;
             }
         }
-        string _name = string.Empty;
+        private string _name = string.Empty;
 
         private string _command;
 
@@ -289,7 +290,7 @@ namespace System.Management.Automation
         /// Constructor.
         /// </summary>
         protected JobInvocationInfo()
-        { }        
+        { }
 
         /// <summary>
         /// Create a new job definition with a single set of parameters.
@@ -456,7 +457,7 @@ namespace System.Management.Automation
             duplicateDetector.Add(job.InstanceId, job.InstanceId);
 
             JobManager.SaveJobId(job.InstanceId, job.Id, this.GetType().Name);
-            
+
             if (!recurse || job.ChildJobs == null) return;
             foreach (Job child in job.ChildJobs)
             {
@@ -473,7 +474,7 @@ namespace System.Management.Automation
         /// <returns>job object</returns>
         public Job2 NewJob(JobDefinition definition)
         {
-            return NewJob(new JobInvocationInfo(definition, new Dictionary<string,object>()));
+            return NewJob(new JobInvocationInfo(definition, new Dictionary<string, object>()));
         }
 
         /// <summary>

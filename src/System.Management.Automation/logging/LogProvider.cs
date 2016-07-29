@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using System.Collections.Generic;
@@ -51,7 +52,7 @@ namespace System.Management.Automation
         /// <param name="exception"></param>
         /// <param name="additionalInfo"></param>
         /// 
-        abstract internal void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String,String> additionalInfo);
+        abstract internal void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo);
 
         /// <summary>
         /// Provider interface function for logging engine lifecycle event

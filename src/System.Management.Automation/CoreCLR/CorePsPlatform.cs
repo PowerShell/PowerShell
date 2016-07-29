@@ -21,7 +21,6 @@ using SpecialFolder = System.Management.Automation.Environment.SpecialFolder;
 
 namespace System.Management.Automation
 {
-
     /// <summary>
     /// These are platform abstractions and platform specific implementations
     ///
@@ -30,7 +29,6 @@ namespace System.Management.Automation
     /// </summary>
     public static class Platform
     {
-
         /// <summary>
         /// True if the current platform is Linux.
         /// </summary>
@@ -38,11 +36,11 @@ namespace System.Management.Automation
         {
             get
             {
-                #if CORECLR
+#if CORECLR
                 return RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-                #else
+#else
                 return false;
-                #endif
+#endif
             }
         }
 
@@ -53,11 +51,11 @@ namespace System.Management.Automation
         {
             get
             {
-                #if CORECLR
+#if CORECLR
                 return RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-                #else
+#else
                 return false;
-                #endif
+#endif
             }
         }
 
@@ -68,11 +66,11 @@ namespace System.Management.Automation
         {
             get
             {
-                #if CORECLR
+#if CORECLR
                 return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-                #else
+#else
                 return true;
-                #endif
+#endif
             }
         }
 
@@ -83,11 +81,11 @@ namespace System.Management.Automation
         {
             get
             {
-                #if CORECLR
+#if CORECLR
                 return true;
-                #else
+#else
                 return false;
-                #endif
+#endif
             }
         }
 
@@ -127,20 +125,20 @@ namespace System.Management.Automation
         /// <summary>
         /// function for choosing directory location of PowerShell for profile loading
         /// </summary>
-        public static string SelectProductNameForDirectory (Platform.XDG_Type dirpath)
+        public static string SelectProductNameForDirectory(Platform.XDG_Type dirpath)
         {
-
             //TODO: XDG_DATA_DIRS implementation as per GitHub issue #1060
 
             string xdgconfighome = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
-            string xdgConfigHomeDefault =  Path.Combine ( System.Environment.GetEnvironmentVariable("HOME"), ".config", "powershell");
-            string xdgDataHomeDefault = Path.Combine( System.Environment.GetEnvironmentVariable("HOME"), ".local", "share", "powershell");
-            string xdgModuleDefault = Path.Combine ( xdgDataHomeDefault, "Modules");
-            string xdgCacheDefault = Path.Combine (System.Environment.GetEnvironmentVariable("HOME"), ".cache", "powershell");
+            string xdgConfigHomeDefault = Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".config", "powershell");
+            string xdgDataHomeDefault = Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".local", "share", "powershell");
+            string xdgModuleDefault = Path.Combine(xdgDataHomeDefault, "Modules");
+            string xdgCacheDefault = Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".cache", "powershell");
 
-            switch (dirpath){
+            switch (dirpath)
+            {
                 case Platform.XDG_Type.CONFIG:
                     //the user has set XDG_CONFIG_HOME corrresponding to profile path
                     if (String.IsNullOrEmpty(xdgconfighome))
@@ -156,8 +154,8 @@ namespace System.Management.Automation
 
                 case Platform.XDG_Type.DATA:
                     //the user has set XDG_DATA_HOME corresponding to module path
-                    if (String.IsNullOrEmpty(xdgdatahome)){
-
+                    if (String.IsNullOrEmpty(xdgdatahome))
+                    {
                         // create the xdg folder if needed
                         if (!Directory.Exists(xdgDataHomeDefault))
                         {
@@ -172,8 +170,8 @@ namespace System.Management.Automation
 
                 case Platform.XDG_Type.MODULES:
                     //the user has set XDG_DATA_HOME corresponding to module path
-                    if (String.IsNullOrEmpty(xdgdatahome)){
-
+                    if (String.IsNullOrEmpty(xdgdatahome))
+                    {
                         //xdg values have not been set
                         if (!Directory.Exists(xdgModuleDefault)) //module folder not always guaranteed to exist
                         {
@@ -218,18 +216,18 @@ namespace System.Management.Automation
                     //This folder is the default in the event of all other failures for data storage
                     if (!Directory.Exists(xdgConfigHomeDefault))
                     {
-                        try {
+                        try
+                        {
                             Directory.CreateDirectory(xdgConfigHomeDefault);
                         }
-                        catch{
-
+                        catch
+                        {
                             Console.Error.WriteLine("Failed to create default data directory: " + xdgConfigHomeDefault);
                         }
                     }
 
                     return xdgConfigHomeDefault;
             }
-
         }
 
         // Platform methods prefixed NonWindows are:
@@ -273,12 +271,12 @@ namespace System.Management.Automation
             return Unix.NativeMethods.GetUserFromPid(path);
         }
 
-        #if CORECLR
+#if CORECLR
         internal static string NonWindowsGetFolderPath(SpecialFolder folder)
         {
             return Unix.GetFolderPath(folder);
         }
-        #endif
+#endif
 
         internal static string NonWindowsInternalGetLinkType(FileSystemInfo fileInfo)
         {
@@ -371,21 +369,21 @@ namespace System.Management.Automation
 
     internal static class Unix
     {
-        private static string _userName;
+        private static string s_userName;
         public static string UserName
         {
             get
             {
-                if (string.IsNullOrEmpty(_userName))
+                if (string.IsNullOrEmpty(s_userName))
                 {
-                    _userName = NativeMethods.GetUserName();
-                    if (string.IsNullOrEmpty(_userName))
+                    s_userName = NativeMethods.GetUserName();
+                    if (string.IsNullOrEmpty(s_userName))
                     {
                         int lastError = Marshal.GetLastWin32Error();
                         throw new InvalidOperationException("Unix.UserName error: " + lastError);
                     }
                 }
-                return _userName;
+                return s_userName;
             }
         }
 
@@ -408,7 +406,7 @@ namespace System.Management.Automation
             }
         }
 
-        #if CORECLR
+#if CORECLR
         public static string GetFolderPath(SpecialFolder folder)
         {
             string s = null;
@@ -441,7 +439,7 @@ namespace System.Management.Automation
             }
             return s;
         }
-        #endif
+#endif
 
         public static bool IsHardLink(ref IntPtr handle)
         {
@@ -469,7 +467,6 @@ namespace System.Management.Automation
                 int lastError = Marshal.GetLastWin32Error();
                 throw new InvalidOperationException("Unix.IsHardLink error: " + lastError);
             }
-
         }
 
         public static void SetDate(SetDateInfoInternal info)
@@ -521,7 +518,7 @@ namespace System.Management.Automation
 
         internal static class NativeMethods
         {
-            const string psLib = "libpsl-native";
+            private const string psLib = "libpsl-native";
 
             // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and OS X
 
@@ -573,8 +570,6 @@ namespace System.Management.Automation
             [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
             [return: MarshalAs(UnmanagedType.I1)]
             internal static extern bool IsDirectory([MarshalAs(UnmanagedType.LPStr)]string filePath);
-
         }
     }
-
 } // namespace System.Management.Automation

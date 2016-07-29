@@ -41,13 +41,13 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] Attachments
         {
-            get { return attachments; }
+            get { return _attachments; }
             set
             {
-                attachments = value;
+                _attachments = value;
             }
         }
-        private String[] attachments;
+        private String[] _attachments;
 
         /// <summary>
         /// Specifies the address collection that contains the 
@@ -58,13 +58,13 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] Bcc
         {
-            get { return bcc; }
+            get { return _bcc; }
             set
             {
-                bcc = value;
+                _bcc = value;
             }
         }
-        private String[] bcc;
+        private String[] _bcc;
 
         /// <summary>
         /// Specifies the body (content) of the message
@@ -73,13 +73,13 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public String Body
         {
-            get { return body; }
+            get { return _body; }
             set
             {
-                body = value;
+                _body = value;
             }
         }
-        private String body;
+        private String _body;
 
         /// <summary>
         /// Specifies a value indicating whether the mail message body is in Html.
@@ -88,13 +88,13 @@ namespace Microsoft.PowerShell.Commands
         [Alias("BAH")]
         public SwitchParameter BodyAsHtml
         {
-            get { return bodyashtml; }
+            get { return _bodyashtml; }
             set
             {
-                bodyashtml = value;
+                _bodyashtml = value;
             }
         }
-        private SwitchParameter bodyashtml;
+        private SwitchParameter _bodyashtml;
 
         /// <summary>
         /// Specifies the encoding used for the content of the body and also the subject. 
@@ -105,13 +105,13 @@ namespace Microsoft.PowerShell.Commands
         [ArgumentToEncodingNameTransformationAttribute()]
         public Encoding Encoding
         {
-            get { return encoding; }
+            get { return _encoding; }
             set
             {
-                encoding = value;
+                _encoding = value;
             }
         }
-        private Encoding encoding = new ASCIIEncoding();
+        private Encoding _encoding = new ASCIIEncoding();
 
         /// <summary>
         /// Specifies the address collection that contains the 
@@ -123,13 +123,13 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] Cc
         {
-            get { return cc; }
+            get { return _cc; }
             set
             {
-                cc = value;
+                _cc = value;
             }
         }
-        private String[] cc;
+        private String[] _cc;
 
         /// <summary>
         /// Specifies the delivery notifications options for the e-mail message. The various 
@@ -140,13 +140,13 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public DeliveryNotificationOptions DeliveryNotificationOption
         {
-            get { return deliverynotification; }
+            get { return _deliverynotification; }
             set
             {
-                deliverynotification = value;
+                _deliverynotification = value;
             }
         }
-        private DeliveryNotificationOptions deliverynotification;
+        private DeliveryNotificationOptions _deliverynotification;
 
         /// <summary>
         /// Specifies the from address for this e-mail message. The default value for 
@@ -156,13 +156,13 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public String From
         {
-            get { return from; }
+            get { return _from; }
             set
             {
-                from = value;
+                _from = value;
             }
         }
-        private String from;
+        private String _from;
 
         /// <summary>
         /// Specifies the name of the Host used to send the email. This host name will be assigned  
@@ -174,13 +174,13 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public String SmtpServer
         {
-            get { return smtpserver; }
+            get { return _smtpserver; }
             set
             {
-                smtpserver = value;
+                _smtpserver = value;
             }
         }
-        private String smtpserver;
+        private String _smtpserver;
 
         /// <summary>
         /// Specifies the priority of the email message. The valid values for this are Normal, High and Low
@@ -189,13 +189,13 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public MailPriority Priority
         {
-            get { return priority; }
+            get { return _priority; }
             set
             {
-                priority = value;
+                _priority = value;
             }
         }
-        private MailPriority priority;
+        private MailPriority _priority;
 
         /// <summary>
         /// Specifies the  subject of the email message.
@@ -205,13 +205,13 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public String Subject
         {
-            get { return subject; }
+            get { return _subject; }
             set
             {
-                subject = value;
+                _subject = value;
             }
         }
-        private String subject;
+        private String _subject;
 
 
         /// <summary>
@@ -222,13 +222,13 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] To
         {
-            get { return to; }
+            get { return _to; }
             set
             {
-                to = value;
+                _to = value;
             }
         }
-        private String[] to;
+        private String[] _to;
 
         /// <summary>
         /// Specifies the credential for this e-mail message.
@@ -238,13 +238,13 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public PSCredential Credential
         {
-            get { return credential; }
+            get { return _credential; }
             set
             {
-                credential = value;
+                _credential = value;
             }
         }
-        private PSCredential credential;
+        private PSCredential _credential;
 
         /// <summary>
         /// Specifies if Secured layer is required or not
@@ -252,13 +252,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter UseSsl
         {
-            get { return usessl; }
+            get { return _usessl; }
             set
             {
-                usessl = value;
+                _usessl = value;
             }
         }
-        private SwitchParameter usessl;
+        private SwitchParameter _usessl;
 
         /// <summary>
         /// Specifies the Port to be used on the server. <see cref="SmtpServer"/>
@@ -270,10 +270,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(0, Int32.MaxValue)]
         public int Port
         {
-            get { return port; }
-            set { port = value; }
+            get { return _port; }
+            set { _port = value; }
         }
-        private int port = 0;
+        private int _port = 0;
 
         #endregion
 
@@ -282,9 +282,9 @@ namespace Microsoft.PowerShell.Commands
 
 
         // Instantiate a new instance of MailMessage
-        private MailMessage mMailMessage = new MailMessage();
+        private MailMessage _mMailMessage = new MailMessage();
 
-        private SmtpClient mSmtpClient = null;
+        private SmtpClient _mSmtpClient = null;
 
         /// <summary>
         /// Add the input addresses which are either string or hashtable to the MailMessage
@@ -302,20 +302,19 @@ namespace Microsoft.PowerShell.Commands
                 {
                     switch (param)
                     {
-
                         case "to":
                             {
-                                mMailMessage.To.Add(new MailAddress(strEmailAddress));
+                                _mMailMessage.To.Add(new MailAddress(strEmailAddress));
                                 break;
                             }
                         case "cc":
                             {
-                                mMailMessage.CC.Add(new MailAddress(strEmailAddress));
+                                _mMailMessage.CC.Add(new MailAddress(strEmailAddress));
                                 break;
                             }
                         case "bcc":
                             {
-                                mMailMessage.Bcc.Add(new MailAddress(strEmailAddress));
+                                _mMailMessage.Bcc.Add(new MailAddress(strEmailAddress));
                                 break;
                             }
                     }
@@ -343,97 +342,89 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 // Set the sender address of the mail message                                  
-                mMailMessage.From = new MailAddress(from);
+                _mMailMessage.From = new MailAddress(_from);
             }
             catch (FormatException e)
             {
-                ErrorRecord er = new ErrorRecord(e, "FormatException", ErrorCategory.InvalidType, from);
+                ErrorRecord er = new ErrorRecord(e, "FormatException", ErrorCategory.InvalidType, _from);
                 ThrowTerminatingError(er);
                 // return;
             }
 
             // Set the recepient address of the mail message 
-            AddAddressesToMailMessage(to, "to");
+            AddAddressesToMailMessage(_to, "to");
 
             // Set the BCC address of the mail message 
-            if (bcc != null)
+            if (_bcc != null)
             {
-                AddAddressesToMailMessage(bcc, "bcc");
-
+                AddAddressesToMailMessage(_bcc, "bcc");
             }
 
             // Set the CC address of the mail message
-            if (cc != null)
+            if (_cc != null)
             {
-                AddAddressesToMailMessage(cc, "cc");
-
+                AddAddressesToMailMessage(_cc, "cc");
             }
 
 
 
             //set the delivery notification
-            mMailMessage.DeliveryNotificationOptions = deliverynotification;
+            _mMailMessage.DeliveryNotificationOptions = _deliverynotification;
 
             // Set the subject of the mail message
-            mMailMessage.Subject = subject;
+            _mMailMessage.Subject = _subject;
 
             // Set the body of the mail message
-            mMailMessage.Body = body;
+            _mMailMessage.Body = _body;
 
             //set the subject and body encoding
-            mMailMessage.SubjectEncoding = encoding;
-            mMailMessage.BodyEncoding = encoding;
+            _mMailMessage.SubjectEncoding = _encoding;
+            _mMailMessage.BodyEncoding = _encoding;
 
             // Set the format of the mail message body as HTML
-            mMailMessage.IsBodyHtml = bodyashtml;
+            _mMailMessage.IsBodyHtml = _bodyashtml;
 
             // Set the priority of the mail message to normal
-            mMailMessage.Priority = priority;
+            _mMailMessage.Priority = _priority;
 
 
             //get the PowerShell environment variable
             //globalEmailServer might be null if it is deleted by: PS> del variable:PSEmailServer
             PSVariable globalEmailServer = SessionState.Internal.GetVariable(SpecialVariables.PSEmailServer);
 
-            if (smtpserver == null && globalEmailServer != null)
+            if (_smtpserver == null && globalEmailServer != null)
             {
-                smtpserver = Convert.ToString(globalEmailServer.Value, CultureInfo.InvariantCulture);
+                _smtpserver = Convert.ToString(globalEmailServer.Value, CultureInfo.InvariantCulture);
             }
-            if (string.IsNullOrEmpty(smtpserver))
+            if (string.IsNullOrEmpty(_smtpserver))
             {
                 ErrorRecord er = new ErrorRecord(new InvalidOperationException(SendMailMessageStrings.HostNameValue), null, ErrorCategory.InvalidArgument, null);
                 this.ThrowTerminatingError(er);
             }
 
-            if (0 == port)
+            if (0 == _port)
             {
-                mSmtpClient = new SmtpClient(smtpserver);
+                _mSmtpClient = new SmtpClient(_smtpserver);
             }
             else
             {
-                mSmtpClient = new SmtpClient(smtpserver, port);
+                _mSmtpClient = new SmtpClient(_smtpserver, _port);
             }
 
-            if (usessl)
+            if (_usessl)
             {
-                mSmtpClient.EnableSsl = true;
+                _mSmtpClient.EnableSsl = true;
             }
 
-            if (credential != null)
+            if (_credential != null)
             {
-
-                mSmtpClient.UseDefaultCredentials = false;
-                mSmtpClient.Credentials = credential.GetNetworkCredential();
+                _mSmtpClient.UseDefaultCredentials = false;
+                _mSmtpClient.Credentials = _credential.GetNetworkCredential();
             }
-            else if (!usessl)
+            else if (!_usessl)
             {
-                mSmtpClient.UseDefaultCredentials = true;
+                _mSmtpClient.UseDefaultCredentials = true;
             }
-
-
-
-
-
         }
 
         /// <summary>
@@ -442,10 +433,10 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             //add the attachments 
-            if (attachments != null)
+            if (_attachments != null)
             {
                 string filepath = string.Empty;
-                foreach (string attachFile in attachments)
+                foreach (string attachFile in _attachments)
                 {
                     try
                     {
@@ -457,7 +448,7 @@ namespace Microsoft.PowerShell.Commands
                         PathUtils.ReportFileOpenFailure(this, filepath, e);
                     }
                     Attachment mailAttachment = new Attachment(filepath);
-                    mMailMessage.Attachments.Add(mailAttachment);
+                    _mMailMessage.Attachments.Add(mailAttachment);
                 }
             }
         }
@@ -470,49 +461,42 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 // Send the mail message
-                mSmtpClient.Send(mMailMessage);
-
+                _mSmtpClient.Send(_mMailMessage);
             }
             catch (SmtpFailedRecipientsException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "SmtpFailedRecipientsException", ErrorCategory.InvalidOperation, mSmtpClient);
+                ErrorRecord er = new ErrorRecord(ex, "SmtpFailedRecipientsException", ErrorCategory.InvalidOperation, _mSmtpClient);
                 WriteError(er);
             }
             catch (SmtpException ex)
             {
-
                 if (ex.InnerException != null)
                 {
-                    ErrorRecord er = new ErrorRecord(new SmtpException(ex.InnerException.Message), "SmtpException", ErrorCategory.InvalidOperation, mSmtpClient);
+                    ErrorRecord er = new ErrorRecord(new SmtpException(ex.InnerException.Message), "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
                     WriteError(er);
                 }
                 else
                 {
-                    ErrorRecord er = new ErrorRecord(ex, "SmtpException", ErrorCategory.InvalidOperation, mSmtpClient);
+                    ErrorRecord er = new ErrorRecord(ex, "SmtpException", ErrorCategory.InvalidOperation, _mSmtpClient);
                     WriteError(er);
                 }
-
             }
             catch (InvalidOperationException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, mSmtpClient);
+                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, _mSmtpClient);
                 WriteError(er);
             }
             catch (System.Security.Authentication.AuthenticationException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "AuthenticationException", ErrorCategory.InvalidOperation, mSmtpClient);
+                ErrorRecord er = new ErrorRecord(ex, "AuthenticationException", ErrorCategory.InvalidOperation, _mSmtpClient);
                 WriteError(er);
             }
 
             //if we don't dispose the attachments, the sender can't modify or use the files sent.
-            mMailMessage.Attachments.Dispose();
-
+            _mMailMessage.Attachments.Dispose();
         }
 
-
-
         #endregion
-
     }
 
     /// <summary>

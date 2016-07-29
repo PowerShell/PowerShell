@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Globalization;
@@ -142,7 +143,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// 
         internal string GetResourceStringIndirect(
-            RegistryKey key, 
+            RegistryKey key,
             string valueName,
             string assemblyName,
             string modulePath)
@@ -185,7 +186,6 @@ namespace System.Management.Automation
                 }
 
                 result = GetResourceStringIndirect(assemblyName, modulePath, regValue);
-
             } while (false);
 
             return result;
@@ -278,7 +278,6 @@ namespace System.Management.Automation
 
                 // Get the resource in the app-domain
                 result = _resourceRetriever.GetStringResource(assemblyName, modulePath, baseName, resourceID);
-
             } while (false);
 
             return result;
@@ -325,8 +324,6 @@ namespace System.Management.Automation
 
             return result;
         }
-
-
     }
 
     /// <summary>
@@ -398,7 +395,7 @@ namespace System.Management.Automation
                     {
                         break;
                     }
-                    
+
                     currentCulture = currentCulture.Parent;
                 } while (true);
 
@@ -496,8 +493,8 @@ namespace System.Management.Automation
         /// </returns>
         /// 
         private static Assembly LoadAssemblyForCulture(
-            CultureInfo culture, 
-            AssemblyName assemblyName, 
+            CultureInfo culture,
+            AssemblyName assemblyName,
             string moduleBase,
             string moduleFile)
         {
@@ -610,7 +607,6 @@ namespace System.Management.Automation
              */
             return result;
         }
-
     }
 }
 

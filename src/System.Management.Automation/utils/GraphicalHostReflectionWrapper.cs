@@ -1,5 +1,4 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="GraphicalHostReflectionWrapper.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 // <summary>
@@ -29,17 +28,17 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Initialized in GetGraphicalHostReflectionWrapper with the  Microsoft.PowerShell.GraphicalHost.dll assembly.
         /// </summary>
-        private Assembly graphicalHostAssembly;
+        private Assembly _graphicalHostAssembly;
 
         /// <summary>
         /// A type in Microsoft.PowerShell.GraphicalHost.dll we want to invoke members on
         /// </summary>
-        private Type graphicalHostHelperType;
+        private Type _graphicalHostHelperType;
 
         /// <summary>
         /// An object in Microsoft.PowerShell.GraphicalHost.dll of type graphicalHostHelperType
         /// </summary>
-        private object graphicalHostHelperObject;
+        private object _graphicalHostHelperObject;
 
         /// <summary>
         /// Prevents a default instance of the GraphicalHostReflectionWrapper class from being created
@@ -101,14 +100,14 @@ namespace System.Management.Automation.Internal
 
             try
             {
-                returnValue.graphicalHostAssembly = Assembly.Load(graphicalHostAssemblyName);
+                returnValue._graphicalHostAssembly = Assembly.Load(graphicalHostAssemblyName);
             }
             catch (FileNotFoundException fileNotFoundEx)
             {
                 // This exception is thrown if the Microsoft.PowerShell.GraphicalHost.dll could not be found (was not installed).
                 string errorMessage = StringUtil.Format(
                         HelpErrors.GraphicalHostAssemblyIsNotFound,
-                        featureName, 
+                        featureName,
                         fileNotFoundEx.Message);
 
                 parentCmdlet.ThrowTerminatingError(
@@ -129,19 +128,19 @@ namespace System.Management.Automation.Internal
                         graphicalHostAssemblyName));
             }
 
-            returnValue.graphicalHostHelperType = returnValue.graphicalHostAssembly.GetType(graphicalHostHelperTypeName);
+            returnValue._graphicalHostHelperType = returnValue._graphicalHostAssembly.GetType(graphicalHostHelperTypeName);
 
-            Diagnostics.Assert(returnValue.graphicalHostHelperType != null, "the type exists in Microsoft.PowerShell.GraphicalHost");
-            ConstructorInfo constructor = returnValue.graphicalHostHelperType.GetConstructor(
-                BindingFlags.NonPublic | BindingFlags.Instance, 
-                null, 
-                new Type[] { }, 
+            Diagnostics.Assert(returnValue._graphicalHostHelperType != null, "the type exists in Microsoft.PowerShell.GraphicalHost");
+            ConstructorInfo constructor = returnValue._graphicalHostHelperType.GetConstructor(
+                BindingFlags.NonPublic | BindingFlags.Instance,
+                null,
+                new Type[] { },
                 null);
 
             if (constructor != null)
             {
-                returnValue.graphicalHostHelperObject = constructor.Invoke(new object[] { });
-                Diagnostics.Assert(returnValue.graphicalHostHelperObject != null, "the constructor does not throw anything");
+                returnValue._graphicalHostHelperObject = constructor.Invoke(new object[] { });
+                Diagnostics.Assert(returnValue._graphicalHostHelperObject != null, "the constructor does not throw anything");
             }
 
             return returnValue;
@@ -165,10 +164,10 @@ namespace System.Management.Automation.Internal
         /// <returns>The method return value</returns>
         internal object CallMethod(string methodName, params object[] arguments)
         {
-            Diagnostics.Assert(this.graphicalHostHelperObject != null, "there should be a constructor in order to call an instance method");
-            MethodInfo method = this.graphicalHostHelperType.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
+            Diagnostics.Assert(_graphicalHostHelperObject != null, "there should be a constructor in order to call an instance method");
+            MethodInfo method = _graphicalHostHelperType.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
             Diagnostics.Assert(method != null, "method " + methodName + " exists in graphicalHostHelperType is verified by caller");
-            return method.Invoke(this.graphicalHostHelperObject, arguments);
+            return method.Invoke(_graphicalHostHelperObject, arguments);
         }
 
         /// <summary>
@@ -179,7 +178,7 @@ namespace System.Management.Automation.Internal
         /// <returns>The method return value</returns>
         internal object CallStaticMethod(string methodName, params object[] arguments)
         {
-            MethodInfo method = this.graphicalHostHelperType.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static);
+            MethodInfo method = _graphicalHostHelperType.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static);
             Diagnostics.Assert(method != null, "method " + methodName + " exists in graphicalHostHelperType is verified by caller");
             return method.Invoke(null, arguments);
         }
@@ -191,10 +190,10 @@ namespace System.Management.Automation.Internal
         /// <returns>the value of an instance property with name <paramref name="propertyName"/></returns>
         internal object GetPropertyValue(string propertyName)
         {
-            Diagnostics.Assert(this.graphicalHostHelperObject != null, "there should be a constructor in order to get an instance property value");
-            PropertyInfo property = this.graphicalHostHelperType.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Instance);
+            Diagnostics.Assert(_graphicalHostHelperObject != null, "there should be a constructor in order to get an instance property value");
+            PropertyInfo property = _graphicalHostHelperType.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Instance);
             Diagnostics.Assert(property != null, "property " + propertyName + " exists in graphicalHostHelperType is verified by caller");
-            return property.GetValue(this.graphicalHostHelperObject, new object[] { });
+            return property.GetValue(_graphicalHostHelperObject, new object[] { });
         }
 
         /// <summary>
@@ -204,7 +203,7 @@ namespace System.Management.Automation.Internal
         /// <returns>the value of a static property with name <paramref name="propertyName"/></returns>
         internal object GetStaticPropertyValue(string propertyName)
         {
-            PropertyInfo property = this.graphicalHostHelperType.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Static);
+            PropertyInfo property = _graphicalHostHelperType.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Static);
             Diagnostics.Assert(property != null, "property " + propertyName + " exists in graphicalHostHelperType is verified by caller");
             return property.GetValue(null, new object[] { });
         }

@@ -1,8 +1,8 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ShowCommandCommandInfo.cs" company="Microsoft">
 //     Copyright © Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+
 namespace Microsoft.PowerShell.Commands.ShowCommandExtension
 {
     using System;

@@ -1,11 +1,6 @@
-// ==++==
-// 
-//   Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
-// ==--==
+
 /*============================================================
 **
-** Class: EventProperty
 **
 ** Purpose: 
 ** This public class defines the methods / properties for the 
@@ -14,17 +9,22 @@
 ** 
 ============================================================*/
 
-namespace System.Diagnostics.Eventing.Reader {
-    public sealed class EventProperty {
-        private object value;
+namespace System.Diagnostics.Eventing.Reader
+{
+    public sealed class EventProperty
+    {
+        private object _value;
 
-        internal EventProperty(object value) {
-            this.value = value;
+        internal EventProperty(object value)
+        {
+            _value = value;
         }
 
-        public object Value {
-            get {
-                return value;
+        public object Value
+        {
+            get
+            {
+                return _value;
             }
         }
     }

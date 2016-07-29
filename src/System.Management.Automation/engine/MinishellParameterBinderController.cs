@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -116,7 +117,7 @@ namespace System.Management.Automation
                         if (i + 1 >= parameters.Count)
                         {
                             throw NewParameterBindingException(null, ErrorCategory.InvalidArgument, CommandParameter,
-                                                               typeof (ScriptBlock), null,
+                                                               typeof(ScriptBlock), null,
                                                                NativeCP.NoValueForCommandParameter,
                                                                "NoValueForCommandParameter");
                         }
@@ -129,11 +130,11 @@ namespace System.Management.Automation
                         if (!scriptBlockArgument.ArgumentSpecified || !(argumentValue is ScriptBlock))
                         {
                             throw NewParameterBindingException(null, ErrorCategory.InvalidArgument, CommandParameter,
-                                                               typeof (ScriptBlock), argumentValue.GetType(),
+                                                               typeof(ScriptBlock), argumentValue.GetType(),
                                                                NativeCP.IncorrectValueForCommandParameter,
                                                                "IncorrectValueForCommandParameter");
                         }
-                        
+
                         // Replace the parameters with -EncodedCommand <base64 encoded scriptblock>
                         parameters[i - 1] = CommandParameterInternal.CreateParameter(parameter.ParameterExtent, EncodedCommandParameter, "-" + EncodedCommandParameter);
                         string encodedScript = StringToBase64Converter.StringToBase64String(argumentValue.ToString());
@@ -147,11 +148,11 @@ namespace System.Management.Automation
                         if (i + 1 >= parameters.Count)
                         {
                             throw NewParameterBindingException(null, ErrorCategory.InvalidArgument, InputFormatParameter,
-                                                               typeof (string), null,
+                                                               typeof(string), null,
                                                                NativeCP.NoValueForInputFormatParameter,
                                                                "NoValueForInputFormatParameter");
                         }
-                        
+
                         // Update the argument (partial arguments are allowed)
                         i += 1;
                         var inputFormatArg = parameters[i];
@@ -167,11 +168,11 @@ namespace System.Management.Automation
                         if (i + 1 >= parameters.Count)
                         {
                             throw NewParameterBindingException(null, ErrorCategory.InvalidArgument, OutputFormatParameter,
-                                                               typeof (string), null,
+                                                               typeof(string), null,
                                                                NativeCP.NoValueForOutputFormatParameter,
                                                                "NoValueForInputFormatParameter");
                         }
-                        
+
                         // Update the argument (partial arguments are allowed)
                         i += 1;
                         var outputFormatArg = parameters[i];
@@ -187,7 +188,7 @@ namespace System.Management.Automation
                         if (i + 1 >= parameters.Count)
                         {
                             throw NewParameterBindingException(null, ErrorCategory.InvalidArgument, ArgsParameter,
-                                                               typeof (string), null, NativeCP.NoValuesSpecifiedForArgs,
+                                                               typeof(string), null, NativeCP.NoValuesSpecifiedForArgs,
                                                                "NoValuesSpecifiedForArgs");
                         }
 
@@ -207,7 +208,7 @@ namespace System.Management.Automation
                     if (argumentValue is ScriptBlock)
                     {
                         HandleSeenParameter(ref seen, MinishellParameters.Command, CommandParameter);
-                        
+
                         // Replace the argument with -EncodedCommand <base64 encoded scriptblock>
                         string encodedScript = StringToBase64Converter.StringToBase64String(argumentValue.ToString());
                         parameters[i] = CommandParameterInternal.CreateParameterWithArgument(
@@ -215,7 +216,6 @@ namespace System.Management.Automation
                             parameter.ArgumentExtent, encodedScript,
                             spaceAfterParameter: true, arrayIsSingleArgumentForNativeCommand: false);
                     }
-                    
                 }
             }
 
@@ -256,12 +256,12 @@ namespace System.Management.Automation
 
             ((NativeCommandParameterBinder)DefaultParameterBinder).BindParameters(parameters);
 
-            Diagnostics.Assert(emptyReturnCollection.Count == 0, "This list shouldn't be used for anything as it's shared.");
+            Diagnostics.Assert(s_emptyReturnCollection.Count == 0, "This list shouldn't be used for anything as it's shared.");
 
-            return emptyReturnCollection;
+            return s_emptyReturnCollection;
         } // BindParameters
 
-        static readonly Collection<CommandParameterInternal> emptyReturnCollection = new Collection<CommandParameterInternal>(); 
+        private static readonly Collection<CommandParameterInternal> s_emptyReturnCollection = new Collection<CommandParameterInternal>();
 
         internal const string CommandParameter = "command";
         internal const string EncodedCommandParameter = "encodedCommand";
@@ -274,7 +274,7 @@ namespace System.Management.Automation
         internal const string NonInteractiveParameter = "noninteractive";
 
         [Flags]
-        enum MinishellParameters
+        private enum MinishellParameters
         {
             Command = 0x01,
             Arguments = 0x02,
@@ -285,13 +285,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Handles error handling if some parameter is specified more than once.
         /// </summary>
-        void HandleSeenParameter(ref MinishellParameters seen, MinishellParameters parameter, string parameterName)
+        private void HandleSeenParameter(ref MinishellParameters seen, MinishellParameters parameter, string parameterName)
         {
             if ((seen & parameter) == parameter)
             {
-                throw NewParameterBindingException(null, ErrorCategory.InvalidArgument, 
+                throw NewParameterBindingException(null, ErrorCategory.InvalidArgument,
                                                    "-" + parameterName, null, null,
-                                                   NativeCP.ParameterSpecifiedAlready, 
+                                                   NativeCP.ParameterSpecifiedAlready,
                                                    "ParameterSpecifiedAlready",
                                                    parameterName);
             }
@@ -307,7 +307,7 @@ namespace System.Management.Automation
         /// <param name="parameterName">Name of the parameter for error messages. Value should be -inputFormat or -outputFormat</param>
         /// <param name="value">value to process</param>
         /// <returns>Processed value</returns>
-        string
+        private string
         ProcessFormatParameterValue(string parameterName, object value)
         {
             string fpValue;
@@ -317,8 +317,8 @@ namespace System.Management.Automation
             }
             catch (PSInvalidCastException ex)
             {
-                throw NewParameterBindingException(ex, ErrorCategory.InvalidArgument, parameterName, 
-                                                   typeof (string), value.GetType(), 
+                throw NewParameterBindingException(ex, ErrorCategory.InvalidArgument, parameterName,
+                                                   typeof(string), value.GetType(),
                                                    NativeCP.StringValueExpectedForFormatParameter,
                                                    "StringValueExpectedForFormatParameter", parameterName);
             }
@@ -332,25 +332,25 @@ namespace System.Management.Automation
                 return TextFormatValue;
             }
 
-            throw NewParameterBindingException(null, ErrorCategory.InvalidArgument, parameterName, 
-                typeof (string), value.GetType(), 
+            throw NewParameterBindingException(null, ErrorCategory.InvalidArgument, parameterName,
+                typeof(string), value.GetType(),
                 NativeCP.IncorrectValueForFormatParameter,
-                "IncorrectValueForFormatParameter", 
+                "IncorrectValueForFormatParameter",
                 fpValue, parameterName);
         }
 
         /// <summary>
         /// Converts value of args parameter in to an encoded string
         /// </summary>
-        static string ConvertArgsValueToEncodedString(object value)
+        private static string ConvertArgsValueToEncodedString(object value)
         {
             ArrayList list = ConvertArgsValueToArrayList(value);
 
             //Serialize the list
             StringWriter stringWriter = new StringWriter(System.Globalization.CultureInfo.InvariantCulture);
             //When (if) switching to XmlTextWriter.Create remember the OmitXmlDeclaration difference
-            XmlWriter xmlWriter = XmlWriter.Create(stringWriter); 
-            Serializer serializer = new Serializer(xmlWriter); 
+            XmlWriter xmlWriter = XmlWriter.Create(stringWriter);
+            Serializer serializer = new Serializer(xmlWriter);
             serializer.Serialize(list);
             serializer.Done();
             xmlWriter.Flush();
@@ -364,7 +364,7 @@ namespace System.Management.Automation
         /// Converts the value of -args parameter received from
         /// parser in to an arraylist
         /// </summary>
-        static ArrayList ConvertArgsValueToArrayList(object value)
+        private static ArrayList ConvertArgsValueToArrayList(object value)
         {
             ArrayList results = new ArrayList();
             IEnumerator list = LanguagePrimitives.GetEnumerator(value);
@@ -382,7 +382,7 @@ namespace System.Management.Automation
             return results;
         }
 
-        ParameterBindingException NewParameterBindingException(
+        private ParameterBindingException NewParameterBindingException(
             Exception innerException,
             ErrorCategory errorCategory,
             string parameterName,

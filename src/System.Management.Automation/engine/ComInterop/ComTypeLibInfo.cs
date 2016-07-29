@@ -13,41 +13,50 @@ using Microsoft.Scripting.Ast;
 using System;
 using System.Dynamic;
 
-namespace System.Management.Automation.ComInterop {
-
-    internal sealed class ComTypeLibInfo : IDynamicMetaObjectProvider  {
+namespace System.Management.Automation.ComInterop
+{
+    internal sealed class ComTypeLibInfo : IDynamicMetaObjectProvider
+    {
         private readonly ComTypeLibDesc _typeLibDesc;
 
-        internal ComTypeLibInfo(ComTypeLibDesc typeLibDesc) {
+        internal ComTypeLibInfo(ComTypeLibDesc typeLibDesc)
+        {
             _typeLibDesc = typeLibDesc;
         }
 
-        public string Name {
+        public string Name
+        {
             get { return _typeLibDesc.Name; }
         }
 
-        public Guid Guid {
+        public Guid Guid
+        {
             get { return _typeLibDesc.Guid; }
         }
 
-        public short VersionMajor {
+        public short VersionMajor
+        {
             get { return _typeLibDesc.VersionMajor; }
         }
 
-        public short VersionMinor {
+        public short VersionMinor
+        {
             get { return _typeLibDesc.VersionMinor; }
         }
 
-        public ComTypeLibDesc TypeLibDesc {
+        public ComTypeLibDesc TypeLibDesc
+        {
             get { return _typeLibDesc; }
         }
 
         // TODO: internal
-        public string[] GetMemberNames() {
+        public string[] GetMemberNames()
+        {
             return new string[] { this.Name, "Guid", "Name", "VersionMajor", "VersionMinor" };
         }
 
-        DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter) {
+        DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter)
+        {
             return new TypeLibInfoMetaObject(parameter, this);
         }
     }

@@ -41,7 +41,7 @@ namespace System.Management.Automation.Runspaces
                 .EndControl();
 
             var MamlShortDescriptionControl = CustomControl.Create()
-                    .StartEntry(entrySelectedByType: new[] {"MamlParaTextItem"})
+                    .StartEntry(entrySelectedByType: new[] { "MamlParaTextItem" })
                         .AddPropertyExpressionBinding(@"Text")
                         .AddNewline()
                     .EndEntry()
@@ -51,25 +51,25 @@ namespace System.Management.Automation.Runspaces
                 .EndControl();
 
             var MamlDescriptionControl = CustomControl.Create()
-                    .StartEntry(entrySelectedByType: new[] {"MamlParaTextItem"})
+                    .StartEntry(entrySelectedByType: new[] { "MamlParaTextItem" })
                         .AddPropertyExpressionBinding(@"Text")
                         .AddNewline()
                     .EndEntry()
-                    .StartEntry(entrySelectedByType: new[] {"MamlOrderedListTextItem"})
+                    .StartEntry(entrySelectedByType: new[] { "MamlOrderedListTextItem" })
                         .StartFrame(firstLineHanging: 4)
                             .AddPropertyExpressionBinding(@"Tag")
                             .AddPropertyExpressionBinding(@"Text")
                             .AddNewline()
                         .EndFrame()
                     .EndEntry()
-                    .StartEntry(entrySelectedByType: new[] {"MamlUnorderedListTextItem"})
+                    .StartEntry(entrySelectedByType: new[] { "MamlUnorderedListTextItem" })
                         .StartFrame(firstLineHanging: 2)
                             .AddPropertyExpressionBinding(@"Tag")
                             .AddPropertyExpressionBinding(@"Text")
                             .AddNewline()
                         .EndFrame()
                     .EndEntry()
-                    .StartEntry(entrySelectedByType: new[] {"MamlDefinitionTextItem"})
+                    .StartEntry(entrySelectedByType: new[] { "MamlDefinitionTextItem" })
                         .AddPropertyExpressionBinding(@"Term")
                         .AddNewline()
                         .StartFrame(leftIndent: 4)
@@ -83,7 +83,7 @@ namespace System.Management.Automation.Runspaces
                 .EndControl();
 
             var MamlFieldCustomControl = CustomControl.Create()
-                    .StartEntry(entrySelectedByType: new[] {"MamlPSClassHelpInfo#field"})
+                    .StartEntry(entrySelectedByType: new[] { "MamlPSClassHelpInfo#field" })
                         .AddScriptBlockExpressionBinding(@"""["" + $_.fieldData.type.name + ""] $"" + $_.fieldData.name")
                         .AddNewline()
                         .AddScriptBlockExpressionBinding(@"$_.introduction.text")
@@ -96,7 +96,7 @@ namespace System.Management.Automation.Runspaces
                 .EndControl();
 
             var MamlMethodCustomControl = CustomControl.Create()
-                    .StartEntry(entrySelectedByType: new[] {"MamlPSClassHelpInfo#method"})
+                    .StartEntry(entrySelectedByType: new[] { "MamlPSClassHelpInfo#method" })
                         .StartFrame()
                             .AddNewline()
                             .AddScriptBlockExpressionBinding(@"function GetParam

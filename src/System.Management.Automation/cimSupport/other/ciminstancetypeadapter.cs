@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.Cim
             }
 
             Collection<PSAdaptedProperty> result = new Collection<PSAdaptedProperty>();
-            
+
             if (cimInstance.CimInstanceProperties != null)
             {
                 foreach (CimProperty property in cimInstance.CimInstanceProperties)
@@ -110,11 +110,11 @@ namespace Microsoft.PowerShell.Cim
             }
 
             // baseObject should never be null
-           CimInstance cimInstance = baseObject as CimInstance;
+            CimInstance cimInstance = baseObject as CimInstance;
             if (null == cimInstance)
             {
                 string msg = string.Format(CultureInfo.InvariantCulture,
-                    CimInstanceTypeAdapterResources.BaseObjectNotCimInstance, 
+                    CimInstanceTypeAdapterResources.BaseObjectNotCimInstance,
                     "baseObject",
                     typeof(CimInstance).ToString());
                 throw new PSInvalidOperationException(msg);
@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Cim
 
             if (adaptedProperty.Name.Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase))
             {
-                return ToStringCodeMethods.Type(typeof (string));
+                return ToStringCodeMethods.Type(typeof(string));
             }
 
             throw new ArgumentNullException("adaptedProperty");
@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Cim
 
             if (adaptedProperty.Name.Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase))
             {
-                CimInstance cimInstance = (CimInstance) adaptedProperty.Tag;
+                CimInstance cimInstance = (CimInstance)adaptedProperty.Tag;
                 return cimInstance.GetCimSessionComputerName();
             }
 
@@ -221,9 +221,8 @@ namespace Microsoft.PowerShell.Cim
             typeNamesWithoutNamespace.Add(string.Format(CultureInfo.InvariantCulture,
                                      "Microsoft.Management.Infrastructure.CimInstance#{0}",
                                      className));
-
         }
-        
+
         private List<CimClass> GetInheritanceChain(CimInstance cimInstance)
         {
             List<CimClass> inheritanceChain = new List<CimClass>();
@@ -264,9 +263,9 @@ namespace Microsoft.PowerShell.Cim
             if ((inheritanceChain == null) || (inheritanceChain.Count == 0))
             {
                 AddTypeNameHierarchy(
-                    typeNamesWithNamespace, 
-                    typeNamesWithoutNamespace, 
-                    cimInstance.CimSystemProperties.Namespace, 
+                    typeNamesWithNamespace,
+                    typeNamesWithoutNamespace,
+                    cimInstance.CimSystemProperties.Namespace,
                     cimInstance.CimSystemProperties.ClassName);
             }
             else
@@ -274,9 +273,9 @@ namespace Microsoft.PowerShell.Cim
                 foreach (CimClass cimClass in inheritanceChain)
                 {
                     AddTypeNameHierarchy(
-                        typeNamesWithNamespace, 
-                        typeNamesWithoutNamespace, 
-                        cimClass.CimSystemProperties.Namespace, 
+                        typeNamesWithNamespace,
+                        typeNamesWithoutNamespace,
+                        cimClass.CimSystemProperties.Namespace,
                         cimClass.CimSystemProperties.ClassName);
                     cimClass.Dispose();
                 }
@@ -370,10 +369,10 @@ namespace Microsoft.PowerShell.Cim
                 switch (cimProperty.CimType)
                 {
                     case CimType.DateTime:
-                        paramType = typeof (object);
+                        paramType = typeof(object);
                         break;
                     case CimType.DateTimeArray:
-                        paramType = typeof (object[]);
+                        paramType = typeof(object[]);
                         break;
                     default:
                         paramType = CimConverter.GetDotNetType(cimProperty.CimType);

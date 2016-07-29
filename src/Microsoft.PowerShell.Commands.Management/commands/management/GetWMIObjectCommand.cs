@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Globalization;
 using System.Management.Automation;
@@ -14,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command to get WMI Objects
     /// </summary>
-    [Cmdlet (VerbsCommon.Get, "WmiObject", DefaultParameterSetName = "query",
+    [Cmdlet(VerbsCommon.Get, "WmiObject", DefaultParameterSetName = "query",
         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113337", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class GetWmiObjectCommand : WmiBaseCmdlet
     {
@@ -26,11 +27,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Alias("ClassName")]
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "query")]
-        [Parameter(Position =1, ParameterSetName = "list")]
+        [Parameter(Position = 1, ParameterSetName = "list")]
         public string Class
         {
-            get { return this.wmiClass; }
-            set { this.wmiClass = value; }
+            get { return _wmiClass; }
+            set { _wmiClass = value; }
         }
         /// <summary>
         /// To specify whether to get the results recursively
@@ -38,8 +39,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "list")]
         public SwitchParameter Recurse
         {
-            get { return this.recurse; }
-            set { this.recurse = value; }
+            get { return _recurse; }
+            set { _recurse = value; }
         }
 
         /// <summary>
@@ -48,8 +49,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, ParameterSetName = "query")]
         public string[] Property
         {
-            get { return (string[])this.property.Clone(); }
-            set { this.property = value; }
+            get { return (string[])_property.Clone(); }
+            set { _property = value; }
         }
 
         /// <summary>
@@ -58,8 +59,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "query")]
         public string Filter
         {
-            get { return this.filter; }
-            set { this.filter = value; }
+            get { return _filter; }
+            set { _filter = value; }
         }
 
         /// <summary>
@@ -68,19 +69,19 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter Amended
         {
-            get { return amended; }
-            set { amended = value; }
+            get { return _amended; }
+            set { _amended = value; }
         }
 
         /// <summary>
         /// If Enumerate Deep flag to use. When 'list' parameter is specified 'EnumerateDeep' parameter is ignored.
         /// </summary>
-        [Parameter(ParameterSetName ="WQLQuery")]
-        [Parameter(ParameterSetName ="query")]        
+        [Parameter(ParameterSetName = "WQLQuery")]
+        [Parameter(ParameterSetName = "query")]
         public SwitchParameter DirectRead
         {
-            get { return directRead; }
-            set { directRead = value; }
+            get { return _directRead; }
+            set { _directRead = value; }
         }
 
         /// <summary>
@@ -89,8 +90,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "list")]
         public SwitchParameter List
         {
-            get { return this.list; }
-            set { this.list = value; }
+            get { return _list; }
+            set { _list = value; }
         }
 
         /// <summary>
@@ -99,21 +100,21 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "WQLQuery")]
         public string Query
         {
-            get { return this.objectQuery; }
-            set { this.objectQuery = value; }
+            get { return _objectQuery; }
+            set { _objectQuery = value; }
         }
 
         #endregion Parameters
 
         #region parameter data
-        private string wmiClass;
-        private string[] property = new string[] {"*"};
-        private string filter;
-        private SwitchParameter amended;
-        private SwitchParameter directRead;
-        private string objectQuery;
-        private SwitchParameter list = false;
-        private SwitchParameter recurse = false;
+        private string _wmiClass;
+        private string[] _property = new string[] { "*" };
+        private string _filter;
+        private SwitchParameter _amended;
+        private SwitchParameter _directRead;
+        private string _objectQuery;
+        private SwitchParameter _list = false;
+        private SwitchParameter _recurse = false;
 
         #endregion parameter data
 
@@ -125,67 +126,66 @@ namespace Microsoft.PowerShell.Commands
         internal string GetQueryString()
         {
             StringBuilder returnValue = new StringBuilder("select ");
-            returnValue.Append(String.Join(", ", this.property));
+            returnValue.Append(String.Join(", ", _property));
             returnValue.Append(" from ");
-            returnValue.Append(this.wmiClass);
-            if(!String.IsNullOrEmpty(this.filter))
+            returnValue.Append(_wmiClass);
+            if (!String.IsNullOrEmpty(_filter))
             {
                 returnValue.Append(" where ");
-                returnValue.Append(this.filter);
+                returnValue.Append(_filter);
             }
             return returnValue.ToString();
         }
         /// <summary>
         /// Uses filter table to convert the class into WMI understandable language.
-       ///            Character   Description Example Match   Comment
-       ///             *   Matches zero or more characters starting at the specified position  A*  A,ag,Apple  Supported by PowerShell.
-       ///              ?   Matches any character at the specified position ?n  An,in,on (does not match ran)   Supported by PowerShell.
-       ///              _   Matches any character at the specified position    _n  An,in,on (does not match ran)   Supperted by WMI
-       ///             %   Matches zero or more characters starting at the specified position   A%  A,ag,Apple  Supperted by WMI
-       ///             []  Matches a range of characters  [a-l]ook    Book,cook,look (does not match took)    Supported by WMI and powershell
-       ///              []  Matches specified characters   [bc]ook Book,cook, (does not match look)    Supported by WMI and powershell
-       ///              ^   Does not Match specified characters. [^bc]ook    Look, took (does not match book, cook)  Supported by WMI.
+        ///            Character   Description Example Match   Comment
+        ///             *   Matches zero or more characters starting at the specified position  A*  A,ag,Apple  Supported by PowerShell.
+        ///              ?   Matches any character at the specified position ?n  An,in,on (does not match ran)   Supported by PowerShell.
+        ///              _   Matches any character at the specified position    _n  An,in,on (does not match ran)   Supperted by WMI
+        ///             %   Matches zero or more characters starting at the specified position   A%  A,ag,Apple  Supperted by WMI
+        ///             []  Matches a range of characters  [a-l]ook    Book,cook,look (does not match took)    Supported by WMI and powershell
+        ///              []  Matches specified characters   [bc]ook Book,cook, (does not match look)    Supported by WMI and powershell
+        ///              ^   Does not Match specified characters. [^bc]ook    Look, took (does not match book, cook)  Supported by WMI.
         /// </summary>
 
         internal string GetFilterClassName()
         {
-            if(string.IsNullOrEmpty(this.Class))
+            if (string.IsNullOrEmpty(this.Class))
                 return string.Empty;
             string filterClass = string.Copy(this.Class);
-            filterClass = filterClass.Replace('*','%');
-            filterClass = filterClass.Replace('?','_');
+            filterClass = filterClass.Replace('*', '%');
+            filterClass = filterClass.Replace('?', '_');
             return filterClass;
-            
         }
         internal bool IsLocalizedNamespace(string sNamespace)
         {
             bool toReturn = false;
-            if( sNamespace.StartsWith("ms_", StringComparison.OrdinalIgnoreCase) )
+            if (sNamespace.StartsWith("ms_", StringComparison.OrdinalIgnoreCase))
             {
                 toReturn = true;
             }
             return toReturn;
         }
-         internal bool ValidateClassFormat()
+        internal bool ValidateClassFormat()
         {
             string filterClass = this.Class;
-            if( string.IsNullOrEmpty(filterClass) )
+            if (string.IsNullOrEmpty(filterClass))
                 return true;
             StringBuilder newClassName = new StringBuilder();
-            for (int i = 0; i < filterClass.Length; i ++)
+            for (int i = 0; i < filterClass.Length; i++)
             {
-                if( Char.IsLetterOrDigit(filterClass[i]) || 
-                    filterClass[i].Equals('[') || filterClass[i].Equals(']')   || 
-                    filterClass[i].Equals('*') || filterClass[i].Equals('?') || 
-                    filterClass[i].Equals('-') )
+                if (Char.IsLetterOrDigit(filterClass[i]) ||
+                    filterClass[i].Equals('[') || filterClass[i].Equals(']') ||
+                    filterClass[i].Equals('*') || filterClass[i].Equals('?') ||
+                    filterClass[i].Equals('-'))
                 {
-                    newClassName.Append(filterClass[ i ]);
+                    newClassName.Append(filterClass[i]);
                     continue;
                 }
-                else if ( filterClass[i].Equals('_') )
+                else if (filterClass[i].Equals('_'))
                 {
                     newClassName.Append('[');
-                    newClassName.Append(filterClass[ i ]);
+                    newClassName.Append(filterClass[i]);
                     newClassName.Append(']');
                     continue;
                 }
@@ -194,22 +194,22 @@ namespace Microsoft.PowerShell.Commands
             this.Class = newClassName.ToString();
             return true;
         }
-        
+
         /// <summary>
         /// Gets the ManagementObjectSearcher object
         /// </summary>
         internal ManagementObjectSearcher GetObjectList(ManagementScope scope)
         {
-            ManagementObjectSearcher searcher =null;
-            StringBuilder queryStringBuilder  = new StringBuilder();
-            if(string.IsNullOrEmpty(this.Class) )
+            ManagementObjectSearcher searcher = null;
+            StringBuilder queryStringBuilder = new StringBuilder();
+            if (string.IsNullOrEmpty(this.Class))
             {
                 queryStringBuilder.Append("select * from meta_class");
             }
             else
             {
                 string filterClass = GetFilterClassName();
-                if( filterClass == null )
+                if (filterClass == null)
                     return searcher;
                 queryStringBuilder.Append("select * from meta_class where __class like '");
                 queryStringBuilder.Append(filterClass);
@@ -229,38 +229,37 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             ConnectionOptions options = GetConnectionOption();
-            if( this.AsJob )
+            if (this.AsJob)
             {
                 RunAsJob("Get-WMIObject");
                 return;
             }
             else
             {
-                
-                if (this.list.IsPresent)
+                if (_list.IsPresent)
                 {
-                    if(!this.ValidateClassFormat() )
+                    if (!this.ValidateClassFormat())
                     {
-                         ErrorRecord errorRecord = new ErrorRecord(
-                        new ArgumentException(
-                            String.Format(
-                                Thread.CurrentThread.CurrentCulture,
-                                "Class", this.Class)),
-                        "INVALID_QUERY_IDENTIFIER",
-                        ErrorCategory.InvalidArgument,
-                        null);
-                     errorRecord.ErrorDetails = new ErrorDetails(this,"WmiResources","WmiFilterInvalidClass", this.Class);
+                        ErrorRecord errorRecord = new ErrorRecord(
+                       new ArgumentException(
+                           String.Format(
+                               Thread.CurrentThread.CurrentCulture,
+                               "Class", this.Class)),
+                       "INVALID_QUERY_IDENTIFIER",
+                       ErrorCategory.InvalidArgument,
+                       null);
+                        errorRecord.ErrorDetails = new ErrorDetails(this, "WmiResources", "WmiFilterInvalidClass", this.Class);
 
-                    WriteError(errorRecord);
-                    return;
+                        WriteError(errorRecord);
+                        return;
                     }
                     foreach (string name in ComputerName)
                     {
-                        if( this.Recurse.IsPresent)
+                        if (this.Recurse.IsPresent)
                         {
                             Queue namespaceElement = new Queue();
                             namespaceElement.Enqueue(this.Namespace);
-                            while(namespaceElement.Count > 0 )
+                            while (namespaceElement.Count > 0)
                             {
                                 string connectNamespace = (string)namespaceElement.Dequeue();
                                 ManagementScope scope = new ManagementScope(WMIHelper.GetScopeString(name, connectNamespace), options);
@@ -270,55 +269,54 @@ namespace Microsoft.PowerShell.Commands
                                 }
                                 catch (ManagementException e)
                                 {
-                                   ErrorRecord errorRecord = new ErrorRecord(
-                                        e,
-                                        "INVALID_NAMESPACE_IDENTIFIER",
-                                        ErrorCategory.ObjectNotFound,
-                                        null);
-                                   errorRecord.ErrorDetails = new ErrorDetails(this,"WmiResources","WmiNamespaceConnect",connectNamespace, e.Message);
-                                   WriteError(errorRecord);
-                                   continue;
+                                    ErrorRecord errorRecord = new ErrorRecord(
+                                         e,
+                                         "INVALID_NAMESPACE_IDENTIFIER",
+                                         ErrorCategory.ObjectNotFound,
+                                         null);
+                                    errorRecord.ErrorDetails = new ErrorDetails(this, "WmiResources", "WmiNamespaceConnect", connectNamespace, e.Message);
+                                    WriteError(errorRecord);
+                                    continue;
                                 }
                                 catch (System.Runtime.InteropServices.COMException e)
                                 {
-                                   ErrorRecord errorRecord = new ErrorRecord(
-                                        e,
-                                        "INVALID_NAMESPACE_IDENTIFIER",
-                                        ErrorCategory.ObjectNotFound,
-                                        null);
-                                   errorRecord.ErrorDetails = new ErrorDetails(this,"WmiResources","WmiNamespaceConnect",connectNamespace, e.Message);
-                                   WriteError(errorRecord);
-                                   continue;
+                                    ErrorRecord errorRecord = new ErrorRecord(
+                                         e,
+                                         "INVALID_NAMESPACE_IDENTIFIER",
+                                         ErrorCategory.ObjectNotFound,
+                                         null);
+                                    errorRecord.ErrorDetails = new ErrorDetails(this, "WmiResources", "WmiNamespaceConnect", connectNamespace, e.Message);
+                                    WriteError(errorRecord);
+                                    continue;
                                 }
                                 catch (System.UnauthorizedAccessException e)
                                 {
-                                   ErrorRecord errorRecord = new ErrorRecord(
-                                        e,
-                                        "INVALID_NAMESPACE_IDENTIFIER",
-                                        ErrorCategory.ObjectNotFound,
-                                        null);
-                                   errorRecord.ErrorDetails = new ErrorDetails(this,"WmiResources","WmiNamespaceConnect",connectNamespace, e.Message);
-                                   WriteError(errorRecord);
-                                   continue;
+                                    ErrorRecord errorRecord = new ErrorRecord(
+                                         e,
+                                         "INVALID_NAMESPACE_IDENTIFIER",
+                                         ErrorCategory.ObjectNotFound,
+                                         null);
+                                    errorRecord.ErrorDetails = new ErrorDetails(this, "WmiResources", "WmiNamespaceConnect", connectNamespace, e.Message);
+                                    WriteError(errorRecord);
+                                    continue;
                                 }
-                                
-                                ManagementClass namespaceClass= new ManagementClass(scope, new ManagementPath("__Namespace"), new ObjectGetOptions() );
-                                foreach (ManagementBaseObject obj in namespaceClass.GetInstances() )
+
+                                ManagementClass namespaceClass = new ManagementClass(scope, new ManagementPath("__Namespace"), new ObjectGetOptions());
+                                foreach (ManagementBaseObject obj in namespaceClass.GetInstances())
                                 {
-                                    if( !IsLocalizedNamespace( (string)obj["Name"]) )
+                                    if (!IsLocalizedNamespace((string)obj["Name"]))
                                     {
                                         namespaceElement.Enqueue(connectNamespace + "\\" + obj["Name"]);
                                     }
                                 }
 
                                 ManagementObjectSearcher searcher = this.GetObjectList(scope);
-                                if( searcher == null )
+                                if (searcher == null)
                                     continue;
                                 foreach (ManagementBaseObject obj in searcher.Get())
                                 {
                                     WriteObject(obj);
                                 }
-                                
                             }
                         }
                         else
@@ -330,39 +328,39 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (ManagementException e)
                             {
-                               ErrorRecord errorRecord = new ErrorRecord(
-                                    e,
-                                    "INVALID_NAMESPACE_IDENTIFIER",
-                                    ErrorCategory.ObjectNotFound,
-                                    null);
-                               errorRecord.ErrorDetails = new ErrorDetails(this,"WmiResources","WmiNamespaceConnect",this.Namespace, e.Message);
-                               WriteError(errorRecord);
-                               continue;
+                                ErrorRecord errorRecord = new ErrorRecord(
+                                     e,
+                                     "INVALID_NAMESPACE_IDENTIFIER",
+                                     ErrorCategory.ObjectNotFound,
+                                     null);
+                                errorRecord.ErrorDetails = new ErrorDetails(this, "WmiResources", "WmiNamespaceConnect", this.Namespace, e.Message);
+                                WriteError(errorRecord);
+                                continue;
                             }
                             catch (System.Runtime.InteropServices.COMException e)
                             {
-                               ErrorRecord errorRecord = new ErrorRecord(
-                                    e,
-                                    "INVALID_NAMESPACE_IDENTIFIER",
-                                    ErrorCategory.ObjectNotFound,
-                                    null);
-                               errorRecord.ErrorDetails = new ErrorDetails(this,"WmiResources","WmiNamespaceConnect",this.Namespace, e.Message);
-                               WriteError(errorRecord);
-                               continue;
+                                ErrorRecord errorRecord = new ErrorRecord(
+                                     e,
+                                     "INVALID_NAMESPACE_IDENTIFIER",
+                                     ErrorCategory.ObjectNotFound,
+                                     null);
+                                errorRecord.ErrorDetails = new ErrorDetails(this, "WmiResources", "WmiNamespaceConnect", this.Namespace, e.Message);
+                                WriteError(errorRecord);
+                                continue;
                             }
                             catch (System.UnauthorizedAccessException e)
                             {
-                               ErrorRecord errorRecord = new ErrorRecord(
-                                    e,
-                                    "INVALID_NAMESPACE_IDENTIFIER",
-                                    ErrorCategory.ObjectNotFound,
-                                    null);
-                               errorRecord.ErrorDetails = new ErrorDetails(this,"WmiResources","WmiNamespaceConnect",this.Namespace, e.Message);
-                               WriteError(errorRecord);
-                               continue;
+                                ErrorRecord errorRecord = new ErrorRecord(
+                                     e,
+                                     "INVALID_NAMESPACE_IDENTIFIER",
+                                     ErrorCategory.ObjectNotFound,
+                                     null);
+                                errorRecord.ErrorDetails = new ErrorDetails(this, "WmiResources", "WmiNamespaceConnect", this.Namespace, e.Message);
+                                WriteError(errorRecord);
+                                continue;
                             }
                             ManagementObjectSearcher searcher = this.GetObjectList(scope);
-                            if( searcher == null )
+                            if (searcher == null)
                                 continue;
                             foreach (ManagementBaseObject obj in searcher.Get())
                             {
@@ -371,11 +369,10 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     return;
-
                 }
 
                 // When -List is not specified and -Recurse is specified, we need the -Class parameter to compose the right query string
-                if (this.Recurse.IsPresent && string.IsNullOrEmpty(wmiClass))
+                if (this.Recurse.IsPresent && string.IsNullOrEmpty(_wmiClass))
                 {
                     string errormMsg = string.Format(CultureInfo.InvariantCulture, WmiResources.WmiParameterMissing, "-Class");
                     ErrorRecord er = new ErrorRecord(new InvalidOperationException(errormMsg), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
@@ -392,8 +389,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ManagementScope scope = new ManagementScope(WMIHelper.GetScopeString(name, this.Namespace), options);
                         EnumerationOptions enumOptions = new EnumerationOptions();
-                        enumOptions.UseAmendedQualifiers = amended;
-                        enumOptions.DirectRead = this.directRead;
+                        enumOptions.UseAmendedQualifiers = _amended;
+                        enumOptions.DirectRead = _directRead;
                         ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query, enumOptions);
                         foreach (ManagementBaseObject obj in searcher.Get())
                         {
@@ -450,9 +447,9 @@ namespace Microsoft.PowerShell.Commands
             System.Management.Automation.Diagnostics.Assert(query.Contains("from"),
                                                             "Only get called when ErrorCode is InvalidClass, which means the query string contains 'from' and the class name");
 
-            if (wmiClass != null)
+            if (_wmiClass != null)
             {
-                return wmiClass;
+                return _wmiClass;
             }
 
             int fromIndex = query.IndexOf(" from ", StringComparison.OrdinalIgnoreCase);
@@ -462,9 +459,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Command code
-
-
     } // GetWmiObjectCommand
-
 } // namespace Microsoft.PowerShell.Commands
 

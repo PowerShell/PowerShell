@@ -1,11 +1,6 @@
-// ==++==
-// 
-//   Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
-// ==--==
+
 /*============================================================
 **
-** Class: NativeWrapper
 **
 ** Purpose: 
 ** This internal class contains wrapper methods over the Native
@@ -22,10 +17,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Security.Principal;
 
-namespace System.Diagnostics.Eventing.Reader {
-    internal class NativeWrapper {
-
-        public class SystemProperties {
+namespace System.Diagnostics.Eventing.Reader
+{
+    internal class NativeWrapper
+    {
+        public class SystemProperties
+        {
             //indicates if the SystemProperties values were already computed (for this event Instance, surely).
             public bool filled = false;
 
@@ -48,16 +45,18 @@ namespace System.Diagnostics.Eventing.Reader {
             public Guid? ActivityId = null;
             public Guid? RelatedActivityId = null;
 
-            public SystemProperties() {
+            public SystemProperties()
+            {
             }
         }
-        
+
         [System.Security.SecurityCritical]
         public static EventLogHandle EvtQuery(
                             EventLogHandle session,
                             string path,
                             string query,
-                            int flags) {
+                            int flags)
+        {
             EventLogHandle handle = UnsafeNativeMethods.EvtQuery(session, path, query, flags);
             int win32Error = Marshal.GetLastWin32Error();
             if (handle.IsInvalid)
@@ -65,14 +64,15 @@ namespace System.Diagnostics.Eventing.Reader {
             return handle;
         }
 
-        
+
         [System.Security.SecurityCritical]
         public static void EvtSeek(
                             EventLogHandle resultSet,
                             long position,
                             EventLogHandle bookmark,
                             int timeout,
-                            UnsafeNativeMethods.EvtSeekFlags flags) {
+                            UnsafeNativeMethods.EvtSeekFlags flags)
+        {
             bool status = UnsafeNativeMethods.EvtSeek(resultSet, position, bookmark, timeout, flags);
             int win32Error = Marshal.GetLastWin32Error();
             if (!status)
@@ -86,7 +86,8 @@ namespace System.Diagnostics.Eventing.Reader {
                             IntPtr[] events,
                             int timeout,
                             int flags,
-                            ref int returned) {
+                            ref int returned)
+        {
             bool status = UnsafeNativeMethods.EvtNext(queryHandle, eventSize, events, timeout, flags, ref returned);
             int win32Error = Marshal.GetLastWin32Error();
             if (!status && win32Error != UnsafeNativeMethods.ERROR_NO_MORE_ITEMS)
@@ -95,16 +96,18 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         [System.Security.SecuritySafeCritical]
-        public static void EvtCancel(EventLogHandle handle) {
-            
-            if (!UnsafeNativeMethods.EvtCancel(handle)) {
+        public static void EvtCancel(EventLogHandle handle)
+        {
+            if (!UnsafeNativeMethods.EvtCancel(handle))
+            {
                 int win32Error = Marshal.GetLastWin32Error();
                 EventLogException.Throw(win32Error);
             }
         }
-        
+
         [System.Security.SecurityCritical]
-        public static void EvtClose(IntPtr handle) {
+        public static void EvtClose(IntPtr handle)
+        {
             //
             // purposely don't check and throw - this is 
             // always called in cleanup / finalize / etc..
@@ -118,7 +121,8 @@ namespace System.Diagnostics.Eventing.Reader {
                             string ProviderId,
                             string logFilePath,
                             int locale,
-                            int flags) {
+                            int flags)
+        {
             //
             // ignore locale and pass 0 instead: that way, the thread locale will be retrieved in the API layer 
             // and the "strict rendering" flag will NOT be set.  Otherwise, the fall back logic is broken and the descriptions
@@ -133,7 +137,8 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         [System.Security.SecurityCritical]
-        public static int EvtGetObjectArraySize(EventLogHandle objectArray) {
+        public static int EvtGetObjectArraySize(EventLogHandle objectArray)
+        {
             int arraySize;
             bool status = UnsafeNativeMethods.EvtGetObjectArraySize(objectArray, out arraySize);
             int win32Error = Marshal.GetLastWin32Error();
@@ -143,7 +148,8 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         [System.Security.SecurityCritical]
-        public static EventLogHandle EvtOpenEventMetadataEnum(EventLogHandle ProviderMetadata, int flags) {
+        public static EventLogHandle EvtOpenEventMetadataEnum(EventLogHandle ProviderMetadata, int flags)
+        {
             EventLogHandle emEnumHandle = UnsafeNativeMethods.EvtOpenEventMetadataEnum(ProviderMetadata, flags);
             int win32Error = Marshal.GetLastWin32Error();
             if (emEnumHandle.IsInvalid)
@@ -153,11 +159,13 @@ namespace System.Diagnostics.Eventing.Reader {
 
         // returns null if EOF
         [System.Security.SecurityCritical]
-        public static EventLogHandle EvtNextEventMetadata(EventLogHandle eventMetadataEnum, int flags) {
+        public static EventLogHandle EvtNextEventMetadata(EventLogHandle eventMetadataEnum, int flags)
+        {
             EventLogHandle emHandle = UnsafeNativeMethods.EvtNextEventMetadata(eventMetadataEnum, flags);
             int win32Error = Marshal.GetLastWin32Error();
 
-            if (emHandle.IsInvalid) {
+            if (emHandle.IsInvalid)
+            {
                 if (win32Error != UnsafeNativeMethods.ERROR_NO_MORE_ITEMS)
                     EventLogException.Throw(win32Error);
                 return null;
@@ -167,8 +175,8 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         [System.Security.SecurityCritical]
-        public static EventLogHandle EvtOpenChannelEnum(EventLogHandle session, int flags) {
-
+        public static EventLogHandle EvtOpenChannelEnum(EventLogHandle session, int flags)
+        {
             EventLogHandle channelEnum = UnsafeNativeMethods.EvtOpenChannelEnum(session, flags);
             int win32Error = Marshal.GetLastWin32Error();
             if (channelEnum.IsInvalid)
@@ -177,8 +185,8 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         [System.Security.SecurityCritical]
-        public static EventLogHandle EvtOpenProviderEnum(EventLogHandle session, int flags) {
-
+        public static EventLogHandle EvtOpenProviderEnum(EventLogHandle session, int flags)
+        {
             EventLogHandle pubEnum = UnsafeNativeMethods.EvtOpenPublisherEnum(session, flags);
             int win32Error = Marshal.GetLastWin32Error();
             if (pubEnum.IsInvalid)
@@ -187,8 +195,8 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         [System.Security.SecurityCritical]
-        public static EventLogHandle EvtOpenChannelConfig(EventLogHandle session, String channelPath, int flags) {
-
+        public static EventLogHandle EvtOpenChannelConfig(EventLogHandle session, String channelPath, int flags)
+        {
             EventLogHandle handle = UnsafeNativeMethods.EvtOpenChannelConfig(session, channelPath, flags);
             int win32Error = Marshal.GetLastWin32Error();
             if (handle.IsInvalid)
@@ -197,7 +205,8 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         [System.Security.SecuritySafeCritical]
-        public static void EvtSaveChannelConfig(EventLogHandle channelConfig, int flags) {
+        public static void EvtSaveChannelConfig(EventLogHandle channelConfig, int flags)
+        {
             bool status = UnsafeNativeMethods.EvtSaveChannelConfig(channelConfig, flags);
             int win32Error = Marshal.GetLastWin32Error();
             if (!status)
@@ -206,8 +215,8 @@ namespace System.Diagnostics.Eventing.Reader {
 
 
         [System.Security.SecurityCritical]
-        public static EventLogHandle EvtOpenLog(EventLogHandle session, string path, PathType flags) {
-
+        public static EventLogHandle EvtOpenLog(EventLogHandle session, string path, PathType flags)
+        {
             EventLogHandle logHandle = UnsafeNativeMethods.EvtOpenLog(session, path, flags);
             int win32Error = Marshal.GetLastWin32Error();
             if (logHandle.IsInvalid)
@@ -221,8 +230,8 @@ namespace System.Diagnostics.Eventing.Reader {
                             string channelPath,
                             string query,
                             string targetFilePath,
-                            int flags) {
-            
+                            int flags)
+        {
             bool status;
             status = UnsafeNativeMethods.EvtExportLog(session, channelPath, query, targetFilePath, flags);
             int win32Error = Marshal.GetLastWin32Error();
@@ -235,8 +244,8 @@ namespace System.Diagnostics.Eventing.Reader {
                             EventLogHandle session,
                             string logFilePath,
                             int locale,
-                            int flags) {
-            
+                            int flags)
+        {
             bool status;
             status = UnsafeNativeMethods.EvtArchiveExportedLog(session, logFilePath, locale, flags);
             int win32Error = Marshal.GetLastWin32Error();
@@ -249,8 +258,8 @@ namespace System.Diagnostics.Eventing.Reader {
                             EventLogHandle session,
                             string channelPath,
                             string targetFilePath,
-                            int flags) {
-
+                            int flags)
+        {
             bool status;
             status = UnsafeNativeMethods.EvtClearLog(session, channelPath, targetFilePath, flags);
             int win32Error = Marshal.GetLastWin32Error();
@@ -262,8 +271,8 @@ namespace System.Diagnostics.Eventing.Reader {
         public static EventLogHandle EvtCreateRenderContext(
                             Int32 valuePathsCount,
                             String[] valuePaths,
-                            UnsafeNativeMethods.EvtRenderContextFlags flags) {
-
+                            UnsafeNativeMethods.EvtRenderContextFlags flags)
+        {
             EventLogHandle renderContextHandleValues = UnsafeNativeMethods.EvtCreateRenderContext(valuePathsCount, valuePaths, flags);
             int win32Error = Marshal.GetLastWin32Error();
             if (renderContextHandleValues.IsInvalid)
@@ -276,29 +285,32 @@ namespace System.Diagnostics.Eventing.Reader {
                             EventLogHandle context,
                             EventLogHandle eventHandle,
                             UnsafeNativeMethods.EvtRenderFlags flags,
-                            StringBuilder buffer) {
-
+                            StringBuilder buffer)
+        {
             int buffUsed;
             int propCount;
             bool status = UnsafeNativeMethods.EvtRender(context, eventHandle, flags, buffer.Capacity, buffer, out buffUsed, out propCount);
             int win32Error = Marshal.GetLastWin32Error();
 
-            if (!status) {
-                if (win32Error == UnsafeNativeMethods.ERROR_INSUFFICIENT_BUFFER) {
+            if (!status)
+            {
+                if (win32Error == UnsafeNativeMethods.ERROR_INSUFFICIENT_BUFFER)
+                {
                     //reallocate the new RenderBuffer with the right size.
                     buffer.Capacity = buffUsed;
                     status = UnsafeNativeMethods.EvtRender(context, eventHandle, flags, buffer.Capacity, buffer, out buffUsed, out propCount);
                     win32Error = Marshal.GetLastWin32Error();
                 }
-                if (!status) {
+                if (!status)
+                {
                     EventLogException.Throw(win32Error);
                 }
             }
         }
 
         [System.Security.SecurityCritical]
-        public static EventLogHandle EvtOpenSession(UnsafeNativeMethods.EvtLoginClass loginClass, ref UnsafeNativeMethods.EvtRpcLogin login, int timeout, int flags) {
-
+        public static EventLogHandle EvtOpenSession(UnsafeNativeMethods.EvtLoginClass loginClass, ref UnsafeNativeMethods.EvtRpcLogin login, int timeout, int flags)
+        {
             EventLogHandle handle = UnsafeNativeMethods.EvtOpenSession(loginClass, ref login, timeout, flags);
             int win32Error = Marshal.GetLastWin32Error();
             if (handle.IsInvalid)
@@ -307,8 +319,8 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         [System.Security.SecurityCritical]
-        public static EventLogHandle EvtCreateBookmark(string bookmarkXml) {
-
+        public static EventLogHandle EvtCreateBookmark(string bookmarkXml)
+        {
             EventLogHandle handle = UnsafeNativeMethods.EvtCreateBookmark(bookmarkXml);
             int win32Error = Marshal.GetLastWin32Error();
             if (handle.IsInvalid)
@@ -317,7 +329,8 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         [System.Security.SecurityCritical]
-        public static void EvtUpdateBookmark(EventLogHandle bookmark, EventLogHandle eventHandle) {
+        public static void EvtUpdateBookmark(EventLogHandle bookmark, EventLogHandle eventHandle)
+        {
             bool status = UnsafeNativeMethods.EvtUpdateBookmark(bookmark, eventHandle);
             int win32Error = Marshal.GetLastWin32Error();
             if (!status)
@@ -325,18 +338,21 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         [System.Security.SecuritySafeCritical]
-        public static object EvtGetEventInfo(EventLogHandle handle, UnsafeNativeMethods.EvtEventPropertyId enumType) {
+        public static object EvtGetEventInfo(EventLogHandle handle, UnsafeNativeMethods.EvtEventPropertyId enumType)
+        {
             IntPtr buffer = IntPtr.Zero;
             int bufferNeeded;
-            
-            try {
+
+            try
+            {
                 bool status = UnsafeNativeMethods.EvtGetEventInfo(handle, enumType, 0, IntPtr.Zero, out bufferNeeded);
                 int error = Marshal.GetLastWin32Error();
-                if (!status) {
+                if (!status)
+                {
                     if (error == UnsafeNativeMethods.ERROR_SUCCESS) { }
                     else
                         if (error != UnsafeNativeMethods.ERROR_INSUFFICIENT_BUFFER)
-                            EventLogException.Throw(error);
+                        EventLogException.Throw(error);
                 }
                 buffer = Marshal.AllocHGlobal((int)bufferNeeded);
                 status = UnsafeNativeMethods.EvtGetEventInfo(handle, enumType, bufferNeeded, buffer, out bufferNeeded);
@@ -346,22 +362,25 @@ namespace System.Diagnostics.Eventing.Reader {
 
                 UnsafeNativeMethods.EvtVariant varVal = Marshal.PtrToStructure<UnsafeNativeMethods.EvtVariant>(buffer);
                 return ConvertToObject(varVal);
-
             }
-            finally {
+            finally
+            {
                 if (buffer != IntPtr.Zero)
                     Marshal.FreeHGlobal(buffer);
             }
         }
 
         [System.Security.SecurityCritical]
-        public static object EvtGetQueryInfo(EventLogHandle handle, UnsafeNativeMethods.EvtQueryPropertyId enumType) {
+        public static object EvtGetQueryInfo(EventLogHandle handle, UnsafeNativeMethods.EvtQueryPropertyId enumType)
+        {
             IntPtr buffer = IntPtr.Zero;
             int bufferNeeded = 0;
-            try {
+            try
+            {
                 bool status = UnsafeNativeMethods.EvtGetQueryInfo(handle, enumType, 0, IntPtr.Zero, ref bufferNeeded);
                 int error = Marshal.GetLastWin32Error();
-                if (!status) {
+                if (!status)
+                {
                     if (error != UnsafeNativeMethods.ERROR_INSUFFICIENT_BUFFER)
                         EventLogException.Throw(error);
                 }
@@ -374,20 +393,24 @@ namespace System.Diagnostics.Eventing.Reader {
                 UnsafeNativeMethods.EvtVariant varVal = Marshal.PtrToStructure<UnsafeNativeMethods.EvtVariant>(buffer);
                 return ConvertToObject(varVal);
             }
-            finally {
+            finally
+            {
                 if (buffer != IntPtr.Zero) Marshal.FreeHGlobal(buffer);
             }
         }
 
         [System.Security.SecuritySafeCritical]
-        public static object EvtGetPublisherMetadataProperty(EventLogHandle pmHandle, UnsafeNativeMethods.EvtPublisherMetadataPropertyId thePropertyId) {
+        public static object EvtGetPublisherMetadataProperty(EventLogHandle pmHandle, UnsafeNativeMethods.EvtPublisherMetadataPropertyId thePropertyId)
+        {
             IntPtr buffer = IntPtr.Zero;
             int bufferNeeded;
-            
-            try {
+
+            try
+            {
                 bool status = UnsafeNativeMethods.EvtGetPublisherMetadataProperty(pmHandle, thePropertyId, 0, 0, IntPtr.Zero, out bufferNeeded);
                 int error = Marshal.GetLastWin32Error();
-                if (!status) {
+                if (!status)
+                {
                     if (error != UnsafeNativeMethods.ERROR_INSUFFICIENT_BUFFER)
                         EventLogException.Throw(error);
                 }
@@ -400,20 +423,24 @@ namespace System.Diagnostics.Eventing.Reader {
                 UnsafeNativeMethods.EvtVariant varVal = Marshal.PtrToStructure<UnsafeNativeMethods.EvtVariant>(buffer);
                 return ConvertToObject(varVal);
             }
-            finally {
+            finally
+            {
                 if (buffer != IntPtr.Zero) Marshal.FreeHGlobal(buffer);
             }
         }
 
 
         [System.Security.SecurityCritical]
-        internal static EventLogHandle EvtGetPublisherMetadataPropertyHandle(EventLogHandle pmHandle, UnsafeNativeMethods.EvtPublisherMetadataPropertyId thePropertyId) {
+        internal static EventLogHandle EvtGetPublisherMetadataPropertyHandle(EventLogHandle pmHandle, UnsafeNativeMethods.EvtPublisherMetadataPropertyId thePropertyId)
+        {
             IntPtr buffer = IntPtr.Zero;
-            try {
+            try
+            {
                 int bufferNeeded;
                 bool status = UnsafeNativeMethods.EvtGetPublisherMetadataProperty(pmHandle, thePropertyId, 0, 0, IntPtr.Zero, out bufferNeeded);
                 int error = Marshal.GetLastWin32Error();
-                if (!status) {
+                if (!status)
+                {
                     if (error != UnsafeNativeMethods.ERROR_INSUFFICIENT_BUFFER)
                         EventLogException.Throw(error);
                 }
@@ -433,7 +460,8 @@ namespace System.Diagnostics.Eventing.Reader {
                 UnsafeNativeMethods.EvtVariant varVal = Marshal.PtrToStructure<UnsafeNativeMethods.EvtVariant>(buffer);
                 return ConvertToSafeHandle(varVal);
             }
-            finally {
+            finally
+            {
                 if (buffer != IntPtr.Zero) Marshal.FreeHGlobal(buffer);
             }
         }
@@ -441,19 +469,21 @@ namespace System.Diagnostics.Eventing.Reader {
 
         // implies UnsafeNativeMethods.EvtFormatMessageFlags.EvtFormatMessageId flag.
         [System.Security.SecurityCritical]
-        public static string EvtFormatMessage(EventLogHandle handle, uint msgId) {
-
+        public static string EvtFormatMessage(EventLogHandle handle, uint msgId)
+        {
             int bufferNeeded;
 
             StringBuilder sb = new StringBuilder(null);
-            bool status = UnsafeNativeMethods.EvtFormatMessage(handle, EventLogHandle.Zero, msgId, 0, null,   UnsafeNativeMethods.EvtFormatMessageFlags.EvtFormatMessageId, 0, sb, out bufferNeeded);
+            bool status = UnsafeNativeMethods.EvtFormatMessage(handle, EventLogHandle.Zero, msgId, 0, null, UnsafeNativeMethods.EvtFormatMessageFlags.EvtFormatMessageId, 0, sb, out bufferNeeded);
             int error = Marshal.GetLastWin32Error();
 
             // ERROR_EVT_UNRESOLVED_VALUE_INSERT and its cousins are commonly returned for raw message text.
             if (!status && error != UnsafeNativeMethods.ERROR_EVT_UNRESOLVED_VALUE_INSERT
                         && error != UnsafeNativeMethods.ERROR_EVT_UNRESOLVED_PARAMETER_INSERT
-                        && error != UnsafeNativeMethods.ERROR_EVT_MAX_INSERTS_REACHED ) {
-                switch (error) {
+                        && error != UnsafeNativeMethods.ERROR_EVT_MAX_INSERTS_REACHED)
+            {
+                switch (error)
+                {
                     case UnsafeNativeMethods.ERROR_EVT_MESSAGE_NOT_FOUND:
                     case UnsafeNativeMethods.ERROR_EVT_MESSAGE_ID_NOT_FOUND:
                     case UnsafeNativeMethods.ERROR_EVT_MESSAGE_LOCALE_NOT_FOUND:
@@ -466,21 +496,24 @@ namespace System.Diagnostics.Eventing.Reader {
             }
 
             sb.EnsureCapacity(bufferNeeded);
-            status = UnsafeNativeMethods.EvtFormatMessage(handle, EventLogHandle.Zero, msgId, 0, null,   UnsafeNativeMethods.EvtFormatMessageFlags.EvtFormatMessageId, bufferNeeded, sb, out bufferNeeded);
+            status = UnsafeNativeMethods.EvtFormatMessage(handle, EventLogHandle.Zero, msgId, 0, null, UnsafeNativeMethods.EvtFormatMessageFlags.EvtFormatMessageId, bufferNeeded, sb, out bufferNeeded);
             error = Marshal.GetLastWin32Error();
 
             if (!status && error != UnsafeNativeMethods.ERROR_EVT_UNRESOLVED_VALUE_INSERT
                         && error != UnsafeNativeMethods.ERROR_EVT_UNRESOLVED_PARAMETER_INSERT
-                        && error != UnsafeNativeMethods.ERROR_EVT_MAX_INSERTS_REACHED ) {
-                switch (error) {
+                        && error != UnsafeNativeMethods.ERROR_EVT_MAX_INSERTS_REACHED)
+            {
+                switch (error)
+                {
                     case UnsafeNativeMethods.ERROR_EVT_MESSAGE_NOT_FOUND:
                     case UnsafeNativeMethods.ERROR_EVT_MESSAGE_ID_NOT_FOUND:
                     case UnsafeNativeMethods.ERROR_EVT_MESSAGE_LOCALE_NOT_FOUND:
                     case UnsafeNativeMethods.ERROR_RESOURCE_LANG_NOT_FOUND:
-                    case UnsafeNativeMethods.ERROR_MUI_FILE_NOT_FOUND:                        
+                    case UnsafeNativeMethods.ERROR_MUI_FILE_NOT_FOUND:
                         return null;
                 }
-                if (error == UnsafeNativeMethods.ERROR_EVT_UNRESOLVED_VALUE_INSERT) {
+                if (error == UnsafeNativeMethods.ERROR_EVT_UNRESOLVED_VALUE_INSERT)
+                {
                     return null;
                 }
                 EventLogException.Throw(error);
@@ -489,15 +522,18 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         [System.Security.SecurityCritical]
-        public static object EvtGetObjectArrayProperty(EventLogHandle objArrayHandle, int index, int thePropertyId) {
+        public static object EvtGetObjectArrayProperty(EventLogHandle objArrayHandle, int index, int thePropertyId)
+        {
             IntPtr buffer = IntPtr.Zero;
             int bufferNeeded;
 
-            try {
+            try
+            {
                 bool status = UnsafeNativeMethods.EvtGetObjectArrayProperty(objArrayHandle, thePropertyId, index, 0, 0, IntPtr.Zero, out bufferNeeded);
                 int error = Marshal.GetLastWin32Error();
 
-                if (!status) {
+                if (!status)
+                {
                     if (error != UnsafeNativeMethods.ERROR_INSUFFICIENT_BUFFER)
                         EventLogException.Throw(error);
                 }
@@ -510,20 +546,24 @@ namespace System.Diagnostics.Eventing.Reader {
                 UnsafeNativeMethods.EvtVariant varVal = Marshal.PtrToStructure<UnsafeNativeMethods.EvtVariant>(buffer);
                 return ConvertToObject(varVal);
             }
-            finally {
+            finally
+            {
                 if (buffer != IntPtr.Zero) Marshal.FreeHGlobal(buffer);
             }
         }
 
         [System.Security.SecurityCritical]
-        public static object EvtGetEventMetadataProperty(EventLogHandle handle, UnsafeNativeMethods.EvtEventMetadataPropertyId enumType) {
+        public static object EvtGetEventMetadataProperty(EventLogHandle handle, UnsafeNativeMethods.EvtEventMetadataPropertyId enumType)
+        {
             IntPtr buffer = IntPtr.Zero;
             int bufferNeeded;
 
-            try {
+            try
+            {
                 bool status = UnsafeNativeMethods.EvtGetEventMetadataProperty(handle, enumType, 0, 0, IntPtr.Zero, out bufferNeeded);
                 int win32Error = Marshal.GetLastWin32Error();
-                if (!status) {
+                if (!status)
+                {
                     if (win32Error != UnsafeNativeMethods.ERROR_INSUFFICIENT_BUFFER)
                         EventLogException.Throw(win32Error);
                 }
@@ -536,22 +576,25 @@ namespace System.Diagnostics.Eventing.Reader {
                 UnsafeNativeMethods.EvtVariant varVal = Marshal.PtrToStructure<UnsafeNativeMethods.EvtVariant>(buffer);
                 return ConvertToObject(varVal);
             }
-            finally {
+            finally
+            {
                 if (buffer != IntPtr.Zero)
                     Marshal.FreeHGlobal(buffer);
             }
         }
 
         [System.Security.SecuritySafeCritical]
-        public static object EvtGetChannelConfigProperty(EventLogHandle handle, UnsafeNativeMethods.EvtChannelConfigPropertyId enumType) {
+        public static object EvtGetChannelConfigProperty(EventLogHandle handle, UnsafeNativeMethods.EvtChannelConfigPropertyId enumType)
+        {
             IntPtr buffer = IntPtr.Zero;
             int bufferNeeded;
-            
-            try {
 
+            try
+            {
                 bool status = UnsafeNativeMethods.EvtGetChannelConfigProperty(handle, enumType, 0, 0, IntPtr.Zero, out bufferNeeded);
                 int win32Error = Marshal.GetLastWin32Error();
-                if (!status) {
+                if (!status)
+                {
                     if (win32Error != UnsafeNativeMethods.ERROR_INSUFFICIENT_BUFFER)
                         EventLogException.Throw(win32Error);
                 }
@@ -571,64 +614,74 @@ namespace System.Diagnostics.Eventing.Reader {
                 UnsafeNativeMethods.EvtVariant varVal = Marshal.PtrToStructure<UnsafeNativeMethods.EvtVariant>(buffer);
                 return ConvertToObject(varVal);
             }
-            finally {
+            finally
+            {
                 if (buffer != IntPtr.Zero)
                     Marshal.FreeHGlobal(buffer);
             }
         }
 
         [System.Security.SecuritySafeCritical]
-        public static void EvtSetChannelConfigProperty(EventLogHandle handle, UnsafeNativeMethods.EvtChannelConfigPropertyId enumType, object val) {
-            
+        public static void EvtSetChannelConfigProperty(EventLogHandle handle, UnsafeNativeMethods.EvtChannelConfigPropertyId enumType, object val)
+        {
             UnsafeNativeMethods.EvtVariant varVal = new UnsafeNativeMethods.EvtVariant();
 
             CoTaskMemSafeHandle taskMem = new CoTaskMemSafeHandle();
 
-            using (taskMem) {
-
-                if (val != null) {
-
-                    switch (enumType) {
-                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelConfigEnabled: {
+            using (taskMem)
+            {
+                if (val != null)
+                {
+                    switch (enumType)
+                    {
+                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelConfigEnabled:
+                            {
                                 varVal.Type = (uint)UnsafeNativeMethods.EvtVariantType.EvtVarTypeBoolean;
                                 if ((bool)val == true) varVal.Bool = 1;
                                 else varVal.Bool = 0;
                             }
                             break;
-                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelConfigAccess: {
+                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelConfigAccess:
+                            {
                                 varVal.Type = (uint)UnsafeNativeMethods.EvtVariantType.EvtVarTypeString;
                                 taskMem.SetMemory(Marshal.StringToCoTaskMemUni((string)val));
                                 varVal.StringVal = taskMem.GetMemory();
                             }
                             break;
-                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelLoggingConfigLogFilePath: {
+                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelLoggingConfigLogFilePath:
+                            {
                                 varVal.Type = (uint)UnsafeNativeMethods.EvtVariantType.EvtVarTypeString;
                                 taskMem.SetMemory(Marshal.StringToCoTaskMemUni((string)val));
                                 varVal.StringVal = taskMem.GetMemory();
                             }
                             break;
-                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelLoggingConfigMaxSize: {
+                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelLoggingConfigMaxSize:
+                            {
                                 varVal.Type = (uint)UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt64;
                                 varVal.ULong = (ulong)((long)val);
                             }
                             break;
-                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelPublishingConfigLevel: {
+                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelPublishingConfigLevel:
+                            {
                                 varVal.Type = (uint)UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt32;
                                 varVal.UInteger = (uint)((int)val);
                             }
                             break;
-                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelPublishingConfigKeywords: {
+                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelPublishingConfigKeywords:
+                            {
                                 varVal.Type = (uint)UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt64;
                                 varVal.ULong = (ulong)((long)val);
                             }
                             break;
-                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelLoggingConfigRetention: {
+                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelLoggingConfigRetention:
+                            {
                                 varVal.Type = (uint)UnsafeNativeMethods.EvtVariantType.EvtVarTypeBoolean;
                                 if ((bool)val == true) varVal.Bool = 1;
                                 else varVal.Bool = 0;
                             }
                             break;
-                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelLoggingConfigAutoBackup: {
+                        case UnsafeNativeMethods.EvtChannelConfigPropertyId.EvtChannelLoggingConfigAutoBackup:
+                            {
                                 varVal.Type = (uint)UnsafeNativeMethods.EvtVariantType.EvtVarTypeBoolean;
                                 if ((bool)val == true) varVal.Bool = 1;
                                 else varVal.Bool = 0;
@@ -638,7 +691,8 @@ namespace System.Diagnostics.Eventing.Reader {
                             throw new InvalidOperationException();
                     }
                 }
-                else {
+                else
+                {
                     varVal.Type = (uint)UnsafeNativeMethods.EvtVariantType.EvtVarTypeNull;
                 }
                 bool status = UnsafeNativeMethods.EvtSetChannelConfigProperty(handle, enumType, 0, ref varVal);
@@ -649,14 +703,17 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         [System.Security.SecurityCritical]
-        public static string EvtNextChannelPath(EventLogHandle handle, ref bool finish) {
+        public static string EvtNextChannelPath(EventLogHandle handle, ref bool finish)
+        {
             StringBuilder sb = new StringBuilder(null);
             int channelNameNeeded;
 
             bool status = UnsafeNativeMethods.EvtNextChannelPath(handle, 0, sb, out channelNameNeeded);
             int win32Error = Marshal.GetLastWin32Error();
-            if (!status) {
-                if (win32Error == UnsafeNativeMethods.ERROR_NO_MORE_ITEMS) {
+            if (!status)
+            {
+                if (win32Error == UnsafeNativeMethods.ERROR_NO_MORE_ITEMS)
+                {
                     finish = true;
                     return null;
                 }
@@ -675,14 +732,17 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         [System.Security.SecurityCritical]
-        public static string EvtNextPublisherId(EventLogHandle handle, ref bool finish) {
+        public static string EvtNextPublisherId(EventLogHandle handle, ref bool finish)
+        {
             StringBuilder sb = new StringBuilder(null);
             int ProviderIdNeeded;
 
             bool status = UnsafeNativeMethods.EvtNextPublisherId(handle, 0, sb, out ProviderIdNeeded);
             int win32Error = Marshal.GetLastWin32Error();
-            if (!status) {
-                if (win32Error == UnsafeNativeMethods.ERROR_NO_MORE_ITEMS) {
+            if (!status)
+            {
+                if (win32Error == UnsafeNativeMethods.ERROR_NO_MORE_ITEMS)
+                {
                     finish = true;
                     return null;
                 }
@@ -701,14 +761,17 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         [System.Security.SecurityCritical]
-        public static object EvtGetLogInfo(EventLogHandle handle, UnsafeNativeMethods.EvtLogPropertyId enumType) {
+        public static object EvtGetLogInfo(EventLogHandle handle, UnsafeNativeMethods.EvtLogPropertyId enumType)
+        {
             IntPtr buffer = IntPtr.Zero;
             int bufferNeeded;
 
-            try {
+            try
+            {
                 bool status = UnsafeNativeMethods.EvtGetLogInfo(handle, enumType, 0, IntPtr.Zero, out bufferNeeded);
                 int win32Error = Marshal.GetLastWin32Error();
-                if (!status) {
+                if (!status)
+                {
                     if (win32Error != UnsafeNativeMethods.ERROR_INSUFFICIENT_BUFFER)
                         EventLogException.Throw(win32Error);
                 }
@@ -721,22 +784,26 @@ namespace System.Diagnostics.Eventing.Reader {
                 UnsafeNativeMethods.EvtVariant varVal = Marshal.PtrToStructure<UnsafeNativeMethods.EvtVariant>(buffer);
                 return ConvertToObject(varVal);
             }
-            finally {
+            finally
+            {
                 if (buffer != IntPtr.Zero)
                     Marshal.FreeHGlobal(buffer);
             }
         }
 
         [System.Security.SecuritySafeCritical]
-        public static void EvtRenderBufferWithContextSystem(EventLogHandle contextHandle, EventLogHandle eventHandle, UnsafeNativeMethods.EvtRenderFlags flag, SystemProperties systemProperties, int SYSTEM_PROPERTY_COUNT) {
+        public static void EvtRenderBufferWithContextSystem(EventLogHandle contextHandle, EventLogHandle eventHandle, UnsafeNativeMethods.EvtRenderFlags flag, SystemProperties systemProperties, int SYSTEM_PROPERTY_COUNT)
+        {
             IntPtr buffer = IntPtr.Zero;
             IntPtr pointer = IntPtr.Zero;
             int bufferNeeded;
             int propCount;
-            
-            try {
+
+            try
+            {
                 bool status = UnsafeNativeMethods.EvtRender(contextHandle, eventHandle, flag, 0, IntPtr.Zero, out bufferNeeded, out propCount);
-                if (!status) {
+                if (!status)
+                {
                     int error = Marshal.GetLastWin32Error();
                     if (error != UnsafeNativeMethods.ERROR_INSUFFICIENT_BUFFER)
                         EventLogException.Throw(error);
@@ -753,68 +820,71 @@ namespace System.Diagnostics.Eventing.Reader {
 
                 pointer = buffer;
                 //read each Variant structure
-                for (int i = 0; i < propCount; i++) {
+                for (int i = 0; i < propCount; i++)
+                {
                     UnsafeNativeMethods.EvtVariant varVal = Marshal.PtrToStructure<UnsafeNativeMethods.EvtVariant>(pointer);
-                    switch (i) {
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemProviderName:
+                    switch (i)
+                    {
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemProviderName:
                             systemProperties.ProviderName = (string)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeString);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemProviderGuid:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemProviderGuid:
                             systemProperties.ProviderId = (Guid?)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeGuid);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemEventID:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemEventID:
                             systemProperties.Id = (ushort?)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt16);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemQualifiers:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemQualifiers:
                             systemProperties.Qualifiers = (ushort?)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt16);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemLevel:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemLevel:
                             systemProperties.Level = (byte?)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeByte);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemTask:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemTask:
                             systemProperties.Task = (ushort?)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt16);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemOpcode:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemOpcode:
                             systemProperties.Opcode = (byte?)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeByte);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemKeywords:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemKeywords:
                             systemProperties.Keywords = (ulong?)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeHexInt64);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemTimeCreated:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemTimeCreated:
                             systemProperties.TimeCreated = (DateTime?)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeFileTime);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemEventRecordId:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemEventRecordId:
                             systemProperties.RecordId = (ulong?)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt64);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemActivityID:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemActivityID:
                             systemProperties.ActivityId = (Guid?)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeGuid);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemRelatedActivityID:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemRelatedActivityID:
                             systemProperties.RelatedActivityId = (Guid?)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeGuid);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemProcessID:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemProcessID:
                             systemProperties.ProcessId = (uint?)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt32);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemThreadID:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemThreadID:
                             systemProperties.ThreadId = (uint?)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt32);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemChannel:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemChannel:
                             systemProperties.ChannelName = (string)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeString);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemComputer:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemComputer:
                             systemProperties.ComputerName = (string)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeString);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemUserID:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemUserID:
                             systemProperties.UserId = (SecurityIdentifier)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeSid);
                             break;
-                        case (int) UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemVersion:
+                        case (int)UnsafeNativeMethods.EvtSystemPropertyId.EvtSystemVersion:
                             systemProperties.Version = (byte?)ConvertToObject(varVal, UnsafeNativeMethods.EvtVariantType.EvtVarTypeByte);
                             break;
                     }
                     pointer = new IntPtr(((Int64)pointer + Marshal.SizeOf(varVal)));
                 }
             }
-            finally {
+            finally
+            {
                 if (buffer != IntPtr.Zero)
                     Marshal.FreeHGlobal(buffer);
             }
@@ -823,16 +893,19 @@ namespace System.Diagnostics.Eventing.Reader {
         //EvtRenderContextFlags can be both: EvtRenderContextFlags.EvtRenderContextUser and  EvtRenderContextFlags.EvtRenderContextValues
         //Render with Context = ContextUser or ContextValues (with user defined Xpath query strings)
         [System.Security.SecuritySafeCritical]
-        public static IList<object> EvtRenderBufferWithContextUserOrValues(EventLogHandle contextHandle, EventLogHandle eventHandle) {
+        public static IList<object> EvtRenderBufferWithContextUserOrValues(EventLogHandle contextHandle, EventLogHandle eventHandle)
+        {
             IntPtr buffer = IntPtr.Zero;
             IntPtr pointer = IntPtr.Zero;
             int bufferNeeded;
             int propCount;
-            UnsafeNativeMethods.EvtRenderFlags flag =  UnsafeNativeMethods.EvtRenderFlags.EvtRenderEventValues;
-            
-            try {
+            UnsafeNativeMethods.EvtRenderFlags flag = UnsafeNativeMethods.EvtRenderFlags.EvtRenderEventValues;
+
+            try
+            {
                 bool status = UnsafeNativeMethods.EvtRender(contextHandle, eventHandle, flag, 0, IntPtr.Zero, out bufferNeeded, out propCount);
-                if (!status) {
+                if (!status)
+                {
                     int error = Marshal.GetLastWin32Error();
                     if (error != UnsafeNativeMethods.ERROR_INSUFFICIENT_BUFFER)
                         EventLogException.Throw(error);
@@ -845,9 +918,11 @@ namespace System.Diagnostics.Eventing.Reader {
                     EventLogException.Throw(win32Error);
 
                 List<object> valuesList = new List<object>(propCount);
-                if (propCount > 0) {
+                if (propCount > 0)
+                {
                     pointer = buffer;
-                    for (int i = 0; i < propCount; i++) {
+                    for (int i = 0; i < propCount; i++)
+                    {
                         UnsafeNativeMethods.EvtVariant varVal = Marshal.PtrToStructure<UnsafeNativeMethods.EvtVariant>(pointer);
                         valuesList.Add(ConvertToObject(varVal));
                         pointer = new IntPtr(((Int64)pointer + Marshal.SizeOf(varVal)));
@@ -855,29 +930,32 @@ namespace System.Diagnostics.Eventing.Reader {
                 }
                 return valuesList;
             }
-            finally {
+            finally
+            {
                 if (buffer != IntPtr.Zero)
                     Marshal.FreeHGlobal(buffer);
             }
         }
 
         [System.Security.SecuritySafeCritical]
-        public static string EvtFormatMessageRenderName(EventLogHandle pmHandle, EventLogHandle eventHandle, UnsafeNativeMethods.EvtFormatMessageFlags flag) {
-            
+        public static string EvtFormatMessageRenderName(EventLogHandle pmHandle, EventLogHandle eventHandle, UnsafeNativeMethods.EvtFormatMessageFlags flag)
+        {
             int bufferNeeded;
             StringBuilder sb = new StringBuilder(null);
 
             bool status = UnsafeNativeMethods.EvtFormatMessage(pmHandle, eventHandle, 0, 0, null, flag, 0, sb, out bufferNeeded);
             int error = Marshal.GetLastWin32Error();
 
-            if (!status && error != UnsafeNativeMethods.ERROR_EVT_UNRESOLVED_VALUE_INSERT) {
+            if (!status && error != UnsafeNativeMethods.ERROR_EVT_UNRESOLVED_VALUE_INSERT)
+            {
                 //
                 // ERROR_EVT_UNRESOLVED_VALUE_INSERT can be returned.  It means
                 // message may have one or more unsubstitued strings.  This is 
                 // not an exception, but we have no way to convey the partial
                 // success out to enduser.
                 //
-                switch (error) {
+                switch (error)
+                {
                     case UnsafeNativeMethods.ERROR_EVT_MESSAGE_NOT_FOUND:
                     case UnsafeNativeMethods.ERROR_EVT_MESSAGE_ID_NOT_FOUND:
                     case UnsafeNativeMethods.ERROR_EVT_MESSAGE_LOCALE_NOT_FOUND:
@@ -893,9 +971,10 @@ namespace System.Diagnostics.Eventing.Reader {
             status = UnsafeNativeMethods.EvtFormatMessage(pmHandle, eventHandle, 0, 0, null, flag, bufferNeeded, sb, out bufferNeeded);
             error = Marshal.GetLastWin32Error();
 
-            if (!status && error != UnsafeNativeMethods.ERROR_EVT_UNRESOLVED_VALUE_INSERT)            
+            if (!status && error != UnsafeNativeMethods.ERROR_EVT_UNRESOLVED_VALUE_INSERT)
             {
-                switch (error) {
+                switch (error)
+                {
                     case UnsafeNativeMethods.ERROR_EVT_MESSAGE_NOT_FOUND:
                     case UnsafeNativeMethods.ERROR_EVT_MESSAGE_ID_NOT_FOUND:
                     case UnsafeNativeMethods.ERROR_EVT_MESSAGE_LOCALE_NOT_FOUND:
@@ -911,18 +990,21 @@ namespace System.Diagnostics.Eventing.Reader {
 
         //The EvtFormatMessage used for the obtaining of the Keywords names.
         [System.Security.SecuritySafeCritical]
-        public static IEnumerable<string> EvtFormatMessageRenderKeywords(EventLogHandle pmHandle, EventLogHandle eventHandle, UnsafeNativeMethods.EvtFormatMessageFlags flag) {
-            
+        public static IEnumerable<string> EvtFormatMessageRenderKeywords(EventLogHandle pmHandle, EventLogHandle eventHandle, UnsafeNativeMethods.EvtFormatMessageFlags flag)
+        {
             IntPtr buffer = IntPtr.Zero;
             int bufferNeeded;
 
-            try {
+            try
+            {
                 List<string> keywordsList = new List<string>();
                 bool status = UnsafeNativeMethods.EvtFormatMessageBuffer(pmHandle, eventHandle, 0, 0, IntPtr.Zero, flag, 0, IntPtr.Zero, out bufferNeeded);
                 int error = Marshal.GetLastWin32Error();
 
-                if (!status) {
-                    switch (error) {
+                if (!status)
+                {
+                    switch (error)
+                    {
                         case UnsafeNativeMethods.ERROR_EVT_MESSAGE_NOT_FOUND:
                         case UnsafeNativeMethods.ERROR_EVT_MESSAGE_ID_NOT_FOUND:
                         case UnsafeNativeMethods.ERROR_EVT_MESSAGE_LOCALE_NOT_FOUND:
@@ -937,7 +1019,8 @@ namespace System.Diagnostics.Eventing.Reader {
                 buffer = Marshal.AllocHGlobal(bufferNeeded * 2);
                 status = UnsafeNativeMethods.EvtFormatMessageBuffer(pmHandle, eventHandle, 0, 0, IntPtr.Zero, flag, bufferNeeded, buffer, out bufferNeeded);
                 error = Marshal.GetLastWin32Error();
-                if (!status) {
+                if (!status)
+                {
                     switch (error)
                     {
                         case UnsafeNativeMethods.ERROR_EVT_MESSAGE_NOT_FOUND:
@@ -952,7 +1035,8 @@ namespace System.Diagnostics.Eventing.Reader {
 
                 IntPtr pointer = buffer;
 
-                while (true) {
+                while (true)
+                {
                     string s = Marshal.PtrToStringUni(pointer);
                     if (String.IsNullOrEmpty(s))
                         break;
@@ -963,23 +1047,27 @@ namespace System.Diagnostics.Eventing.Reader {
 
                 return keywordsList.AsReadOnly();
             }
-            finally {
+            finally
+            {
                 if (buffer != IntPtr.Zero)
                     Marshal.FreeHGlobal(buffer);
             }
         }
 
         [System.Security.SecurityCritical]
-        public static string EvtRenderBookmark(EventLogHandle eventHandle) {
+        public static string EvtRenderBookmark(EventLogHandle eventHandle)
+        {
             IntPtr buffer = IntPtr.Zero;
             int bufferNeeded;
             int propCount;
-             UnsafeNativeMethods.EvtRenderFlags flag =  UnsafeNativeMethods.EvtRenderFlags.EvtRenderBookmark;
+            UnsafeNativeMethods.EvtRenderFlags flag = UnsafeNativeMethods.EvtRenderFlags.EvtRenderBookmark;
 
-            try {
+            try
+            {
                 bool status = UnsafeNativeMethods.EvtRender(EventLogHandle.Zero, eventHandle, flag, 0, IntPtr.Zero, out bufferNeeded, out propCount);
                 int error = Marshal.GetLastWin32Error();
-                if (!status) {
+                if (!status)
+                {
                     if (error != UnsafeNativeMethods.ERROR_INSUFFICIENT_BUFFER)
                         EventLogException.Throw(error);
                 }
@@ -992,7 +1080,8 @@ namespace System.Diagnostics.Eventing.Reader {
 
                 return Marshal.PtrToStringUni(buffer);
             }
-            finally {
+            finally
+            {
                 if (buffer != IntPtr.Zero)
                     Marshal.FreeHGlobal(buffer);
             }
@@ -1001,12 +1090,13 @@ namespace System.Diagnostics.Eventing.Reader {
 
         //Get the formatted description, using the msgId for FormatDescription(string [])
         [System.Security.SecuritySafeCritical]
-        public static string EvtFormatMessageFormatDescription(EventLogHandle handle, EventLogHandle eventHandle, string[] values) {
-            
+        public static string EvtFormatMessageFormatDescription(EventLogHandle handle, EventLogHandle eventHandle, string[] values)
+        {
             int bufferNeeded;
 
-            UnsafeNativeMethods.EvtStringVariant [] stringVariants = new UnsafeNativeMethods.EvtStringVariant[values.Length];
-            for (int i = 0; i < values.Length; i++) {
+            UnsafeNativeMethods.EvtStringVariant[] stringVariants = new UnsafeNativeMethods.EvtStringVariant[values.Length];
+            for (int i = 0; i < values.Length; i++)
+            {
                 stringVariants[i].Type = (uint)UnsafeNativeMethods.EvtVariantType.EvtVarTypeString;
                 stringVariants[i].StringVal = values[i];
             }
@@ -1015,7 +1105,8 @@ namespace System.Diagnostics.Eventing.Reader {
             bool status = UnsafeNativeMethods.EvtFormatMessage(handle, eventHandle, 0xffffffff, values.Length, stringVariants, UnsafeNativeMethods.EvtFormatMessageFlags.EvtFormatMessageEvent, 0, sb, out bufferNeeded);
             int error = Marshal.GetLastWin32Error();
 
-            if (!status && error != UnsafeNativeMethods.ERROR_EVT_UNRESOLVED_VALUE_INSERT) {
+            if (!status && error != UnsafeNativeMethods.ERROR_EVT_UNRESOLVED_VALUE_INSERT)
+            {
                 //
                 // ERROR_EVT_UNRESOLVED_VALUE_INSERT can be returned.  It means
                 // message may have one or more unsubstitued strings.  This is 
@@ -1039,7 +1130,8 @@ namespace System.Diagnostics.Eventing.Reader {
             status = UnsafeNativeMethods.EvtFormatMessage(handle, eventHandle, 0xffffffff, values.Length, stringVariants, UnsafeNativeMethods.EvtFormatMessageFlags.EvtFormatMessageEvent, bufferNeeded, sb, out bufferNeeded);
             error = Marshal.GetLastWin32Error();
 
-            if (!status && error != UnsafeNativeMethods.ERROR_EVT_UNRESOLVED_VALUE_INSERT) {
+            if (!status && error != UnsafeNativeMethods.ERROR_EVT_UNRESOLVED_VALUE_INSERT)
+            {
                 switch (error)
                 {
                     case UnsafeNativeMethods.ERROR_EVT_MESSAGE_NOT_FOUND:
@@ -1052,13 +1144,13 @@ namespace System.Diagnostics.Eventing.Reader {
                 EventLogException.Throw(error);
             }
             return sb.ToString();
-
         }
 
         [System.Security.SecurityCritical]
-        private static object ConvertToObject(UnsafeNativeMethods.EvtVariant val) {
-              
-            switch (val.Type) {
+        private static object ConvertToObject(UnsafeNativeMethods.EvtVariant val)
+        {
+            switch (val.Type)
+            {
                 case (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt32:
                     return val.UInteger;
                 case (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeInt32:
@@ -1092,92 +1184,94 @@ namespace System.Diagnostics.Eventing.Reader {
                 case (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSid:
                     return (val.SidVal == IntPtr.Zero) ? null : new SecurityIdentifier(val.SidVal);
                 case (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeGuid:
-                    return  (val.GuidReference == IntPtr.Zero) ? Guid.Empty : Marshal.PtrToStructure<Guid>(val.GuidReference);
+                    return (val.GuidReference == IntPtr.Zero) ? Guid.Empty : Marshal.PtrToStructure<Guid>(val.GuidReference);
                 case (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeEvtHandle:
                     return ConvertToSafeHandle(val);
                 case (int)(int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeFileTime:
                     return DateTime.FromFileTime((long)val.FileTime);
                 case (int)(int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSysTime:
-                    UnsafeNativeMethods.SystemTime sysTime = Marshal.PtrToStructure<UnsafeNativeMethods.SystemTime>(val.SystemTime);            
+                    UnsafeNativeMethods.SystemTime sysTime = Marshal.PtrToStructure<UnsafeNativeMethods.SystemTime>(val.SystemTime);
                     return new DateTime(sysTime.Year, sysTime.Month, sysTime.Day, sysTime.Hour, sysTime.Minute, sysTime.Second, sysTime.Milliseconds);
                 case (int)(int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSizeT:
-                    return val.SizeT;                    
+                    return val.SizeT;
                 case (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeBoolean:
                     if (val.Bool != 0) return true;
                     else return false;
                 case (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeBinary:
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeByte):
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeByte):
                     if (val.Reference == IntPtr.Zero) return new Byte[0];
                     Byte[] arByte = new Byte[val.Count];
                     Marshal.Copy(val.Reference, arByte, 0, (int)val.Count);
                     return arByte;
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeInt16):
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeInt16):
                     if (val.Reference == IntPtr.Zero) return new Int16[0];
                     Int16[] arInt16 = new Int16[val.Count];
                     Marshal.Copy(val.Reference, arInt16, 0, (int)val.Count);
                     return arInt16;
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeInt32):
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeInt32):
                     if (val.Reference == IntPtr.Zero) return new Int32[0];
                     Int32[] arInt32 = new Int32[val.Count];
                     Marshal.Copy(val.Reference, arInt32, 0, (int)val.Count);
                     return arInt32;
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeInt64):
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeInt64):
                     if (val.Reference == IntPtr.Zero) return new Int64[0];
                     Int64[] arInt64 = new Int64[val.Count];
                     Marshal.Copy(val.Reference, arInt64, 0, (int)val.Count);
-                    return arInt64;                
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSingle):
+                    return arInt64;
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSingle):
                     if (val.Reference == IntPtr.Zero) return new Single[0];
                     Single[] arSingle = new Single[val.Count];
                     Marshal.Copy(val.Reference, arSingle, 0, (int)val.Count);
                     return arSingle;
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeDouble):
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeDouble):
                     if (val.Reference == IntPtr.Zero) return new Double[0];
                     Double[] arDouble = new Double[val.Count];
                     Marshal.Copy(val.Reference, arDouble, 0, (int)val.Count);
                     return arDouble;
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSByte):
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSByte):
                     return ConvertToArray<SByte>(val, sizeof(SByte)); // not CLS-compliant
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt16):
-                    return ConvertToArray<UInt16>(val, sizeof(UInt16)); 
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt64):
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeHexInt64):
-                    return ConvertToArray<UInt64>(val, sizeof(UInt64)); 
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt32):
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeHexInt32):
-                    return ConvertToArray<UInt32>(val, sizeof(UInt32));   
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeString):
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt16):
+                    return ConvertToArray<UInt16>(val, sizeof(UInt16));
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt64):
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeHexInt64):
+                    return ConvertToArray<UInt64>(val, sizeof(UInt64));
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeUInt32):
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeHexInt32):
+                    return ConvertToArray<UInt32>(val, sizeof(UInt32));
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeString):
                     return ConvertToStringArray(val, false);
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeAnsiString):
-                    return ConvertToStringArray(val, true); 
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeBoolean):
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeAnsiString):
+                    return ConvertToStringArray(val, true);
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeBoolean):
                     return ConvertToBoolArray(val);
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeGuid):
-                    return ConvertToArray<Guid>(val, 16 * sizeof(byte));                                        
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeFileTime):
-                    return ConvertToFileTimeArray(val); 
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSysTime):
-                    return ConvertToSysTimeArray(val); 
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeBinary): //both length and count in the manifest: tracrpt supports, Crimson APIs don't
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSizeT):  //unused: array of win:pointer is returned as HexIntXX
-                case ((int) UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSid): //unsupported by native APIs
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeGuid):
+                    return ConvertToArray<Guid>(val, 16 * sizeof(byte));
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeFileTime):
+                    return ConvertToFileTimeArray(val);
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSysTime):
+                    return ConvertToSysTimeArray(val);
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeBinary): //both length and count in the manifest: tracrpt supports, Crimson APIs don't
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSizeT):  //unused: array of win:pointer is returned as HexIntXX
+                case ((int)UnsafeNativeMethods.EvtMasks.EVT_VARIANT_TYPE_ARRAY | (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeSid): //unsupported by native APIs
                 default:
                     throw new EventLogInvalidDataException();
             }
         }
 
-                [System.Security.SecurityCritical]
-        public static object ConvertToObject(UnsafeNativeMethods.EvtVariant val, UnsafeNativeMethods.EvtVariantType desiredType) {
+        [System.Security.SecurityCritical]
+        public static object ConvertToObject(UnsafeNativeMethods.EvtVariant val, UnsafeNativeMethods.EvtVariantType desiredType)
+        {
             if (val.Type == (int)UnsafeNativeMethods.EvtVariantType.EvtVarTypeNull) return null;
             if (val.Type != (int)desiredType)
                 throw new EventLogInvalidDataException();
 
 
             return ConvertToObject(val);
-        }            
+        }
 
         [System.Security.SecurityCritical]
-        public static string ConvertToString(UnsafeNativeMethods.EvtVariant val) {
+        public static string ConvertToString(UnsafeNativeMethods.EvtVariant val)
+        {
             if (val.StringVal == IntPtr.Zero)
                 return string.Empty;
             else
@@ -1185,16 +1279,18 @@ namespace System.Diagnostics.Eventing.Reader {
         }
 
         [System.Security.SecurityCritical]
-        public static string ConvertToAnsiString(UnsafeNativeMethods.EvtVariant val) {
+        public static string ConvertToAnsiString(UnsafeNativeMethods.EvtVariant val)
+        {
             if (val.AnsiString == IntPtr.Zero)
                 return string.Empty;
             else
                 return Marshal.PtrToStringAnsi(val.AnsiString);
         }
-      
+
 
         [System.Security.SecurityCritical]
-        public static EventLogHandle ConvertToSafeHandle(UnsafeNativeMethods.EvtVariant val) {
+        public static EventLogHandle ConvertToSafeHandle(UnsafeNativeMethods.EvtVariant val)
+        {
             if (val.Handle == IntPtr.Zero)
                 return EventLogHandle.Zero;
             else
@@ -1203,92 +1299,108 @@ namespace System.Diagnostics.Eventing.Reader {
 
 
         [System.Security.SecurityCritical]
-        public static Array ConvertToArray<T>(UnsafeNativeMethods.EvtVariant val, int size) where T : struct {
-           IntPtr ptr = val.Reference;
-           if (ptr == IntPtr.Zero) {
+        public static Array ConvertToArray<T>(UnsafeNativeMethods.EvtVariant val, int size) where T : struct
+        {
+            IntPtr ptr = val.Reference;
+            if (ptr == IntPtr.Zero)
+            {
                 return Array.CreateInstance(typeof(T), 0);
             }
-            else {                
-                Array array = Array.CreateInstance(typeof(T), (int)val.Count); 
-                for (int i = 0; i < val.Count; i++) {
+            else
+            {
+                Array array = Array.CreateInstance(typeof(T), (int)val.Count);
+                for (int i = 0; i < val.Count; i++)
+                {
                     array.SetValue(Marshal.PtrToStructure<T>(ptr), i);
-                    ptr = new IntPtr ((Int64)ptr + size);
+                    ptr = new IntPtr((Int64)ptr + size);
                 }
-                return array;                
+                return array;
             }
         }
 
         [System.Security.SecurityCritical]
-        public static Array ConvertToBoolArray(UnsafeNativeMethods.EvtVariant val) {
-
-           //NOTE: booleans are padded to 4 bytes in ETW
-           IntPtr ptr = val.Reference;
-           if (ptr == IntPtr.Zero) {
+        public static Array ConvertToBoolArray(UnsafeNativeMethods.EvtVariant val)
+        {
+            //NOTE: booleans are padded to 4 bytes in ETW
+            IntPtr ptr = val.Reference;
+            if (ptr == IntPtr.Zero)
+            {
                 return new bool[0];
             }
-            else {                
-                bool[] array = new bool[val.Count]; 
-                for (int i = 0; i < val.Count; i++) {
+            else
+            {
+                bool[] array = new bool[val.Count];
+                for (int i = 0; i < val.Count; i++)
+                {
                     bool value = (Marshal.ReadInt32(ptr) != 0) ? true : false;
                     array[i] = value;
-                    ptr = new IntPtr ((Int64)ptr + 4); 
+                    ptr = new IntPtr((Int64)ptr + 4);
                 }
-                return array;                
+                return array;
             }
-        }          
+        }
 
         [System.Security.SecurityCritical]
-        public static Array ConvertToFileTimeArray(UnsafeNativeMethods.EvtVariant val) {        
-           IntPtr ptr = val.Reference;
-           if (ptr == IntPtr.Zero) {
+        public static Array ConvertToFileTimeArray(UnsafeNativeMethods.EvtVariant val)
+        {
+            IntPtr ptr = val.Reference;
+            if (ptr == IntPtr.Zero)
+            {
                 return new DateTime[0];
             }
-            else {  
-                DateTime[] array = new DateTime[val.Count]; 
-                for (int i = 0; i < val.Count; i++) {
+            else
+            {
+                DateTime[] array = new DateTime[val.Count];
+                for (int i = 0; i < val.Count; i++)
+                {
                     array[i] = DateTime.FromFileTime(Marshal.ReadInt64(ptr));
-                    ptr = new IntPtr((Int64)ptr + 8*sizeof(byte)); // FILETIME values are 8 bytes
+                    ptr = new IntPtr((Int64)ptr + 8 * sizeof(byte)); // FILETIME values are 8 bytes
                 }
-                return array;   
+                return array;
             }
-        }  
+        }
 
         [System.Security.SecurityCritical]
-        public static Array ConvertToSysTimeArray(UnsafeNativeMethods.EvtVariant val) {        
-           IntPtr ptr = val.Reference;
-           if (ptr == IntPtr.Zero) {
+        public static Array ConvertToSysTimeArray(UnsafeNativeMethods.EvtVariant val)
+        {
+            IntPtr ptr = val.Reference;
+            if (ptr == IntPtr.Zero)
+            {
                 return new DateTime[0];
             }
-            else {  
-                DateTime[] array = new DateTime[val.Count]; 
-                for (int i = 0; i < val.Count; i++) {
-
-                    UnsafeNativeMethods.SystemTime sysTime = Marshal.PtrToStructure<UnsafeNativeMethods.SystemTime>(ptr); 
+            else
+            {
+                DateTime[] array = new DateTime[val.Count];
+                for (int i = 0; i < val.Count; i++)
+                {
+                    UnsafeNativeMethods.SystemTime sysTime = Marshal.PtrToStructure<UnsafeNativeMethods.SystemTime>(ptr);
                     array[i] = new DateTime(sysTime.Year, sysTime.Month, sysTime.Day, sysTime.Hour, sysTime.Minute, sysTime.Second, sysTime.Milliseconds);
-                    ptr = new IntPtr((Int64)ptr + 16*sizeof(byte)); // SystemTime values are 16 bytes
-
+                    ptr = new IntPtr((Int64)ptr + 16 * sizeof(byte)); // SystemTime values are 16 bytes
                 }
-                return array;   
+                return array;
             }
-        }          
-   
+        }
+
 
         [System.Security.SecurityCritical]
-        public static string[] ConvertToStringArray(UnsafeNativeMethods.EvtVariant val, bool ansi) {
-            if (val.Reference == IntPtr.Zero) {
+        public static string[] ConvertToStringArray(UnsafeNativeMethods.EvtVariant val, bool ansi)
+        {
+            if (val.Reference == IntPtr.Zero)
+            {
                 return new string[0];
             }
-            else {
+            else
+            {
                 IntPtr ptr = val.Reference;
                 IntPtr[] pointersToString = new IntPtr[val.Count];
-                Marshal.Copy(ptr, pointersToString, 0, (int)val.Count);  
+                Marshal.Copy(ptr, pointersToString, 0, (int)val.Count);
                 string[] stringArray = new string[val.Count];
-                for (int i = 0; i < val.Count; i++) {                    
+                for (int i = 0; i < val.Count; i++)
+                {
                     stringArray[i] = ansi ? Marshal.PtrToStringAnsi(pointersToString[i]) : Marshal.PtrToStringUni(pointersToString[i]);
                 }
                 return stringArray;
             }
         }
-
     }
 }

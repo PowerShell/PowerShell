@@ -18,33 +18,39 @@ using System.Security.Permissions;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
 
-namespace System.Management.Automation.ComInterop {
-    internal class DispCallableMetaObject : DynamicMetaObject {
+namespace System.Management.Automation.ComInterop
+{
+    internal class DispCallableMetaObject : DynamicMetaObject
+    {
         private readonly DispCallable _callable;
 
         internal DispCallableMetaObject(Expression expression, DispCallable callable)
-            : base(expression, BindingRestrictions.Empty, callable) {
+            : base(expression, BindingRestrictions.Empty, callable)
+        {
             _callable = callable;
         }
 
-        public override DynamicMetaObject BindGetIndex(GetIndexBinder binder, DynamicMetaObject[] indexes) {
+        public override DynamicMetaObject BindGetIndex(GetIndexBinder binder, DynamicMetaObject[] indexes)
+        {
             return BindGetOrInvoke(indexes, binder.CallInfo) ??
                 base.BindGetIndex(binder, indexes);
         }
 
-        public override DynamicMetaObject BindInvoke(InvokeBinder binder, DynamicMetaObject[] args) {
+        public override DynamicMetaObject BindInvoke(InvokeBinder binder, DynamicMetaObject[] args)
+        {
             return BindGetOrInvoke(args, binder.CallInfo) ??
                 base.BindInvoke(binder, args);
         }
 
-        private DynamicMetaObject BindGetOrInvoke(DynamicMetaObject[] args, CallInfo callInfo) {
+        private DynamicMetaObject BindGetOrInvoke(DynamicMetaObject[] args, CallInfo callInfo)
+        {
             ComMethodDesc method;
             var target = _callable.DispatchComObject;
             var name = _callable.MemberName;
 
             if (target.TryGetMemberMethod(name, out method) ||
-                target.TryGetMemberMethodExplicit(name, out method)) {
-
+                target.TryGetMemberMethodExplicit(name, out method))
+            {
                 List<ParameterExpression> temps = new List<ParameterExpression>();
                 List<Expression> initTemps = new List<Expression>();
 
@@ -54,7 +60,8 @@ namespace System.Management.Automation.ComInterop {
             return null;
         }
 
-        public override DynamicMetaObject BindSetIndex(SetIndexBinder binder, DynamicMetaObject[] indexes, DynamicMetaObject value) {
+        public override DynamicMetaObject BindSetIndex(SetIndexBinder binder, DynamicMetaObject[] indexes, DynamicMetaObject value)
+        {
             ComMethodDesc method;
             var target = _callable.DispatchComObject;
             var name = _callable.MemberName;
@@ -118,7 +125,8 @@ namespace System.Management.Automation.ComInterop {
             return invoke;
         }
 
-        private BindingRestrictions DispCallableRestrictions() {
+        private BindingRestrictions DispCallableRestrictions()
+        {
             var callable = Expression;
 
             var callableTypeRestrictions = BindingRestrictions.GetTypeRestriction(callable, typeof(DispCallable));

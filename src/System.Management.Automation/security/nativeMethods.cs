@@ -12,8 +12,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Management.Automation.Internal;
 using Microsoft.Win32.SafeHandles;
 
-using DWORD  = System.UInt32;
-using BOOL   = System.UInt32;
+using DWORD = System.UInt32;
+using BOOL = System.UInt32;
 using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
 #if CORECLR
@@ -566,7 +566,6 @@ namespace System.Management.Automation.Security
         {
             CRYPTUI_WIZ_DIGITAL_SIGN_ADD_CHAIN = 1,
             CRYPTUI_WIZ_DIGITAL_SIGN_ADD_CHAIN_NO_ROOT = 2
-
         };
 
         [StructLayout(LayoutKind.Sequential)]
@@ -616,8 +615,8 @@ namespace System.Management.Automation.Security
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct CRYPT_OID_INFO {
-
+        internal struct CRYPT_OID_INFO
+        {
             /// DWORD->unsigned int
             public uint cbSize;
 
@@ -1076,36 +1075,36 @@ namespace System.Management.Automation.Security
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPT_PROVIDER_CERT
         {
-            DWORD cbStruct;
+            private DWORD _cbStruct;
             internal IntPtr pCert; // PCCERT_CONTEXT
-            BOOL fCommercial;
-            BOOL fTrustedRoot;
-            BOOL fSelfSigned;
-            BOOL fTestCert;
-            DWORD dwRevokedReason;
-            DWORD dwConfidence;
-            DWORD dwError;
-            IntPtr pTrustListContext; // CTL_CONTEXT*
-            BOOL fTrustListSignerCert;
-            IntPtr pCtlContext; // PCCTL_CONTEXT
-            DWORD dwCtlError;
-            BOOL fIsCyclic;
-            IntPtr pChainElement; // PCERT_CHAIN_ELEMENT
+            private BOOL _fCommercial;
+            private BOOL _fTrustedRoot;
+            private BOOL _fSelfSigned;
+            private BOOL _fTestCert;
+            private DWORD _dwRevokedReason;
+            private DWORD _dwConfidence;
+            private DWORD _dwError;
+            private IntPtr _pTrustListContext; // CTL_CONTEXT*
+            private BOOL _fTrustListSignerCert;
+            private IntPtr _pCtlContext; // PCCTL_CONTEXT
+            private DWORD _dwCtlError;
+            private BOOL _fIsCyclic;
+            private IntPtr _pChainElement; // PCERT_CHAIN_ELEMENT
         };
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPT_PROVIDER_SGNR
         {
-            DWORD cbStruct;
-            FILETIME sftVerifyAsOf;
-            DWORD csCertChain;
-            IntPtr pasCertChain; // CRYPT_PROVIDER_CERT*
-            DWORD dwSignerType;
-            IntPtr psSigner; // CMSG_SIGNER_INFO*
-            DWORD dwError;
+            private DWORD _cbStruct;
+            private FILETIME _sftVerifyAsOf;
+            private DWORD _csCertChain;
+            private IntPtr _pasCertChain; // CRYPT_PROVIDER_CERT*
+            private DWORD _dwSignerType;
+            private IntPtr _psSigner; // CMSG_SIGNER_INFO*
+            private DWORD _dwError;
             internal DWORD csCounterSigners;
             internal IntPtr pasCounterSigners; // CRYPT_PROVIDER_SGNR*
-            IntPtr pChainContext; // PCCERT_CHAIN_CONTEXT
+            private IntPtr _pChainContext; // PCCERT_CHAIN_CONTEXT
         };
 
         [DllImport("wintrust.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -1217,7 +1216,6 @@ namespace System.Management.Automation.Security
 
         internal enum SIGNATURE_STATE
         {
-
             /// SIGNATURE_STATE_UNSIGNED_MISSING -> 0
             SIGNATURE_STATE_UNSIGNED_MISSING = 0,
 
@@ -1238,7 +1236,6 @@ namespace System.Management.Automation.Security
 
         internal enum SIGNATURE_INFO_FLAGS
         {
-
             /// SIF_NONE -> 0x0000
             SIF_NONE = 0,
 
@@ -1266,7 +1263,6 @@ namespace System.Management.Automation.Security
 
         internal enum SIGNATURE_INFO_AVAILABILITY
         {
-
             /// SIA_DISPLAYNAME -> 0x0001
             SIA_DISPLAYNAME = 1,
 
@@ -1282,7 +1278,6 @@ namespace System.Management.Automation.Security
 
         internal enum SIGNATURE_INFO_TYPE
         {
-
             /// SIT_UNKNOWN -> 0
             SIT_UNKNOWN = 0,
 
@@ -1294,7 +1289,6 @@ namespace System.Management.Automation.Security
         [StructLayoutAttribute(LayoutKind.Sequential)]
         internal struct SIGNATURE_INFO
         {
-
             /// DWORD->unsigned int
             internal uint cbSize;
 
@@ -1344,7 +1338,6 @@ namespace System.Management.Automation.Security
         [StructLayoutAttribute(LayoutKind.Sequential)]
         internal struct CERT_INFO
         {
-
             /// DWORD->unsigned int
             internal uint dwVersion;
 
@@ -1385,7 +1378,6 @@ namespace System.Management.Automation.Security
         [StructLayoutAttribute(LayoutKind.Sequential)]
         internal struct CRYPT_ALGORITHM_IDENTIFIER
         {
-
             /// LPSTR->CHAR*
             [MarshalAsAttribute(UnmanagedType.LPStr)]
             internal string pszObjId;
@@ -1397,7 +1389,6 @@ namespace System.Management.Automation.Security
         [StructLayoutAttribute(LayoutKind.Sequential)]
         internal struct FILETIME
         {
-
             /// DWORD->unsigned int
             internal uint dwLowDateTime;
 
@@ -1408,7 +1399,6 @@ namespace System.Management.Automation.Security
         [StructLayoutAttribute(LayoutKind.Sequential)]
         internal struct CERT_PUBLIC_KEY_INFO
         {
-
             /// CRYPT_ALGORITHM_IDENTIFIER->_CRYPT_ALGORITHM_IDENTIFIER
             internal CRYPT_ALGORITHM_IDENTIFIER Algorithm;
 
@@ -1419,7 +1409,6 @@ namespace System.Management.Automation.Security
         [StructLayoutAttribute(LayoutKind.Sequential)]
         internal struct CRYPT_BIT_BLOB
         {
-
             /// DWORD->unsigned int
             internal uint cbData;
 
@@ -1433,7 +1422,6 @@ namespace System.Management.Automation.Security
         [StructLayoutAttribute(LayoutKind.Sequential)]
         internal struct CERT_EXTENSION
         {
-
             /// LPSTR->CHAR*
             [MarshalAsAttribute(UnmanagedType.LPStr)]
             internal string pszObjId;
@@ -1647,7 +1635,6 @@ namespace System.Management.Automation.Security
     [StructLayoutAttribute(LayoutKind.Explicit)]
     internal struct LARGE_INTEGER
     {
-
         /// Anonymous_9320654f_2227_43bf_a385_74cc8c562686
         [FieldOffsetAttribute(0)]
         public Anonymous_9320654f_2227_43bf_a385_74cc8c562686 Struct1;
@@ -1664,7 +1651,6 @@ namespace System.Management.Automation.Security
     [StructLayoutAttribute(LayoutKind.Sequential)]
     internal struct HWND__
     {
-
         /// int
         public int unused;
     }
@@ -1672,7 +1658,6 @@ namespace System.Management.Automation.Security
     [StructLayoutAttribute(LayoutKind.Sequential)]
     internal struct Anonymous_9320654f_2227_43bf_a385_74cc8c562686
     {
-
         /// DWORD->unsigned int
         public uint LowPart;
 
@@ -1683,7 +1668,6 @@ namespace System.Management.Automation.Security
     [StructLayoutAttribute(LayoutKind.Sequential)]
     internal struct Anonymous_947eb392_1446_4e25_bbd4_10e98165f3a9
     {
-
         /// DWORD->unsigned int
         public uint LowPart;
 
@@ -2011,13 +1995,12 @@ namespace System.Management.Automation.Security
 
         // CRYPTCAT_E_CDF_ATTR_TYPECOMBO = "0x00020004";
         public const int CRYPTCAT_E_CDF_ATTR_TYPECOMBO = 131076;
-
     }
 
-        /// <summary>
-        /// pinvoke methods from wintrust.dll
-        /// These are added to Generate and Validate Window Catalog Files 
-        /// </summary>
+    /// <summary>
+    /// pinvoke methods from wintrust.dll
+    /// These are added to Generate and Validate Window Catalog Files 
+    /// </summary>
     internal static partial class NativeMethods
     {
         [StructLayout(LayoutKind.Sequential)]
@@ -2039,14 +2022,14 @@ namespace System.Management.Automation.Security
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTCATCDF
         {
-            DWORD cbStruct;
-            IntPtr hFile;
-            DWORD dwCurFilePos;
-            DWORD dwLastMemberOffset;
-            BOOL fEOF;
+            private DWORD _cbStruct;
+            private IntPtr _hFile;
+            private DWORD _dwCurFilePos;
+            private DWORD _dwLastMemberOffset;
+            private BOOL _fEOF;
             [MarshalAs(UnmanagedType.LPWStr)]
-            string pwszResultDir;
-            IntPtr hCATStore;
+            private string _pwszResultDir;
+            private IntPtr _hCATStore;
         };
 
         [StructLayout(LayoutKind.Sequential)]
@@ -2070,29 +2053,29 @@ namespace System.Management.Automation.Security
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTCATATTRIBUTE
         {
-            DWORD cbStruct;
+            private DWORD _cbStruct;
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszReferenceTag;
-            DWORD dwAttrTypeAndAction;
+            private DWORD _dwAttrTypeAndAction;
             internal DWORD cbValue;
             internal System.IntPtr pbValue;
-            DWORD dwReserved;
+            private DWORD _dwReserved;
         };
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTCATSTORE
         {
-            DWORD cbStruct;
-            internal  DWORD dwPublicVersion;
+            private DWORD _cbStruct;
+            internal DWORD dwPublicVersion;
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszP7File;
-            IntPtr hProv;
-            DWORD dwEncodingType;
-            DWORD fdwStoreFlags;
-            IntPtr hReserved;
-            IntPtr hAttrs;
-            IntPtr hCryptMsg;
-            IntPtr hSorted;
+            private IntPtr _hProv;
+            private DWORD _dwEncodingType;
+            private DWORD _fdwStoreFlags;
+            private IntPtr _hReserved;
+            private IntPtr _hAttrs;
+            private IntPtr _hCryptMsg;
+            private IntPtr _hSorted;
         };
 
         [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]
@@ -2170,7 +2153,7 @@ namespace System.Management.Automation.Security
         );
 
         [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern unsafe IntPtr CreateFile(            
+        internal static extern unsafe IntPtr CreateFile(
             string lpFileName,
             DWORD dwDesiredAccess,
             DWORD dwShareMode,
@@ -2179,7 +2162,7 @@ namespace System.Management.Automation.Security
             DWORD dwFlagsAndAttributes,
             IntPtr hTemplateFile
            );
-                
+
         [DllImport("wintrust.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern bool CryptCATAdminCalcHashFromFileHandle2(
             IntPtr hCatAdmin,
@@ -2224,7 +2207,7 @@ namespace System.Management.Automation.Security
         void CryptCATCDFEnumMembersByCDFTagExErrorCallBack(DWORD NotUsedDWORD1,
                                       DWORD NotUsedDWORD2,
                                       [MarshalAs(UnmanagedType.LPWStr)]
-                                      string NotUsedString);      
+                                      string NotUsedString);
     }
 }
 

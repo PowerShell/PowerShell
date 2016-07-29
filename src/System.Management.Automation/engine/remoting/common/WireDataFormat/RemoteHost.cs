@@ -99,7 +99,7 @@ namespace System.Management.Automation.Remoting
         {
             // Encode the parameters and wrap the array into an ArrayList and then into a PSObject.
             ArrayList parameterList = new ArrayList();
-            for (int i = 0 ; i < parameters.Length ; ++i)
+            for (int i = 0; i < parameters.Length; ++i)
             {
                 object parameter = parameters[i] == null ? null : RemoteHostEncoder.EncodeObject(parameters[i]);
                 parameterList.Add(parameter);
@@ -114,10 +114,10 @@ namespace System.Management.Automation.Remoting
         private static object[] DecodeParameters(PSObject parametersPSObject, Type[] parameterTypes)
         {
             // Extract the ArrayList and decode the parameters.
-            ArrayList parameters = (ArrayList) parametersPSObject.BaseObject;
+            ArrayList parameters = (ArrayList)parametersPSObject.BaseObject;
             List<object> decodedParameters = new List<object>();
             Dbg.Assert(parameters.Count == parameterTypes.Length, "Expected parameters.Count == parameterTypes.Length");
-            for (int i = 0 ; i < parameters.Count ; ++i)
+            for (int i = 0; i < parameters.Count; ++i)
             {
                 object parameter = parameters[i] == null ? null : RemoteHostEncoder.DecodeObject(parameters[i], parameterTypes[i]);
                 decodedParameters.Add(parameter);
@@ -242,7 +242,7 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                return (MethodBase) _methodInfo.InterfaceType.GetMethod(_methodInfo.Name, _methodInfo.ParameterTypes);
+                return (MethodBase)_methodInfo.InterfaceType.GetMethod(_methodInfo.Name, _methodInfo.ParameterTypes);
             }
         }
 
@@ -299,12 +299,12 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private object SelectTargetObject(PSHost host)
         {
-            if (host == null || host.UI == null ) { return null; }
-            if (_methodInfo.InterfaceType == typeof(PSHost))                     { return host; }
-            if (_methodInfo.InterfaceType == typeof(IHostSupportsInteractiveSession))  { return host; }
-            if (_methodInfo.InterfaceType == typeof(PSHostUserInterface))        { return host.UI; }
+            if (host == null || host.UI == null) { return null; }
+            if (_methodInfo.InterfaceType == typeof(PSHost)) { return host; }
+            if (_methodInfo.InterfaceType == typeof(IHostSupportsInteractiveSession)) { return host; }
+            if (_methodInfo.InterfaceType == typeof(PSHostUserInterface)) { return host.UI; }
             if (_methodInfo.InterfaceType == typeof(IHostUISupportsMultipleChoiceSelection)) { return host.UI; }
-            if (_methodInfo.InterfaceType == typeof(PSHostRawUserInterface))     { return host.UI.RawUI; }
+            if (_methodInfo.InterfaceType == typeof(PSHostRawUserInterface)) { return host.UI.RawUI; }
             throw RemoteHostExceptions.NewUnknownTargetClassException(_methodInfo.InterfaceType.ToString());
         }
 
@@ -356,7 +356,7 @@ namespace System.Management.Automation.Remoting
             //       (b) prepend "Message from Server XXXXX" to the text message
             if (_methodId == RemoteHostMethodId.PromptForCredential1 ||
                 _methodId == RemoteHostMethodId.PromptForCredential2)
-            {                
+            {
                 // modify the caption which is _parameters[0]
                 string modifiedCaption = ModifyCaption((string)_parameters[0]);
 
@@ -478,7 +478,7 @@ namespace System.Management.Automation.Remoting
         private String ModifyMessage(string message, string computerName)
         {
             string modifiedMessage = PSRemotingErrorInvariants.FormatResourceString(
-                    RemotingErrorIdStrings.RemoteHostPromptForCredentialModifiedMessage, 
+                    RemotingErrorIdStrings.RemoteHostPromptForCredentialModifiedMessage,
                         computerName.ToUpper(),
                             message);
 
@@ -499,11 +499,11 @@ namespace System.Management.Automation.Remoting
             string resourceString)
         {
             string warning = PSRemotingErrorInvariants.FormatResourceString(
-                resourceString, 
+                resourceString,
                     computerName.ToUpper());
 
-            return new RemoteHostCall(ServerDispatchTable.VoidCallId, 
-                RemoteHostMethodId.WriteWarningLine, new object[] {warning});
+            return new RemoteHostCall(ServerDispatchTable.VoidCallId,
+                RemoteHostMethodId.WriteWarningLine, new object[] { warning });
         }
 
         /// <summary>
@@ -628,7 +628,7 @@ namespace System.Management.Automation.Remoting
         {
             object result = RemoteHostEncoder.DecodePropertyValue(psObject, RemoteDataNameStrings.MethodException, typeof(Exception));
             if (result == null) { return null; }
-            if (result is Exception) { return (Exception) result; }
+            if (result is Exception) { return (Exception)result; }
             throw RemoteHostExceptions.NewDecodingFailedException();
         }
 

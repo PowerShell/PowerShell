@@ -26,8 +26,8 @@ namespace System.Management.Automation
 
         internal CompletionExecutionHelper Helper { get; set; }
         internal Hashtable Options { get; set; }
-        internal Dictionary<string, ScriptBlock> CustomArgumentCompleters { get; set; } 
-        internal Dictionary<string, ScriptBlock> NativeArgumentCompleters { get; set; } 
+        internal Dictionary<string, ScriptBlock> CustomArgumentCompleters { get; set; }
+        internal Dictionary<string, ScriptBlock> NativeArgumentCompleters { get; set; }
         internal string WordToComplete { get; set; }
         internal int ReplacementIndex { get; set; }
         internal int ReplacementLength { get; set; }
@@ -55,43 +55,43 @@ namespace System.Management.Automation
 
         internal CompletionAnalysis(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable options)
         {
-            this._ast = ast;
-            this._tokens = tokens;
-            this._cursorPosition = cursorPosition;
-            this._options = options;
+            _ast = ast;
+            _tokens = tokens;
+            _cursorPosition = cursorPosition;
+            _options = options;
         }
 
-        static bool IsInterestingToken(Token token)
+        private static bool IsInterestingToken(Token token)
         {
             return token.Kind != TokenKind.NewLine && token.Kind != TokenKind.EndOfInput;
         }
 
-        static bool IsCursorWithinOrJustAfterExtent(IScriptPosition cursor, IScriptExtent extent)
+        private static bool IsCursorWithinOrJustAfterExtent(IScriptPosition cursor, IScriptExtent extent)
         {
             return cursor.Offset > extent.StartOffset && cursor.Offset <= extent.EndOffset;
         }
 
-        static bool IsCursorRightAfterExtent(IScriptPosition cursor, IScriptExtent extent)
+        private static bool IsCursorRightAfterExtent(IScriptPosition cursor, IScriptExtent extent)
         {
             return cursor.Offset == extent.EndOffset;
         }
 
-        static bool IsCursorAfterExtentAndInTheSameLine(IScriptPosition cursor, IScriptExtent extent)
+        private static bool IsCursorAfterExtentAndInTheSameLine(IScriptPosition cursor, IScriptExtent extent)
         {
             return cursor.Offset >= extent.EndOffset && extent.EndLineNumber == cursor.LineNumber;
         }
 
-        static bool IsCursorBeforeExtent(IScriptPosition cursor, IScriptExtent extent)
+        private static bool IsCursorBeforeExtent(IScriptPosition cursor, IScriptExtent extent)
         {
             return cursor.Offset < extent.StartOffset;
         }
 
-        static bool IsCursorAfterExtent(IScriptPosition cursor, IScriptExtent extent)
+        private static bool IsCursorAfterExtent(IScriptPosition cursor, IScriptExtent extent)
         {
             return extent.EndOffset < cursor.Offset;
         }
 
-        static bool IsCursorOutsideOfExtent(IScriptPosition cursor, IScriptExtent extent)
+        private static bool IsCursorOutsideOfExtent(IScriptPosition cursor, IScriptExtent extent)
         {
             return cursor.Offset < extent.StartOffset || cursor.Offset > extent.EndOffset;
         }
@@ -178,7 +178,7 @@ namespace System.Management.Automation
                     return false;
                 }
 
-                return (errorStatement.Kind.Kind.Equals(TokenKind.Switch) && 
+                return (errorStatement.Kind.Kind.Equals(TokenKind.Switch) &&
                         errorStatement.Flags.TryGetValue("file", out fileConditionTuple) && fileConditionTuple.Item2 == pipeline);
             }
 
@@ -396,7 +396,7 @@ namespace System.Management.Automation
                     case TokenKind.RBracket:
                         if (lastAst is TypeExpressionAst)
                         {
-                            var targetExpr = (TypeExpressionAst) lastAst;
+                            var targetExpr = (TypeExpressionAst)lastAst;
                             var memberResult = new List<CompletionResult>();
 
                             CompletionCompleters.CompleteMemberHelper(
@@ -404,7 +404,7 @@ namespace System.Management.Automation
                                 "*",
                                 targetExpr,
                                 completionContext, memberResult);
-                            
+
                             if (memberResult.Count > 0)
                             {
                                 replacementIndex++;
@@ -415,10 +415,10 @@ namespace System.Management.Automation
                             }
                         }
                         break;
-                    
+
                     case TokenKind.Comma:
                         // Hanlde array elements such as dir .\cd,<tab> || dir -Path: .\cd,<tab>
-                        if (lastAst is ErrorExpressionAst && 
+                        if (lastAst is ErrorExpressionAst &&
                             (lastAst.Parent is CommandAst || lastAst.Parent is CommandParameterAst))
                         {
                             replacementIndex += replacementLength;
@@ -445,9 +445,9 @@ namespace System.Management.Automation
 
                     case TokenKind.Number:
                         // Handle scenarios such as Get-Process -Id 5<tab> || Get-Process -Id 5210, 3<tab> || Get-Process -Id: 5210, 3<tab>
-                        if (lastAst is ConstantExpressionAst && 
-                            (lastAst.Parent is CommandAst || lastAst.Parent is CommandParameterAst || 
-                            (lastAst.Parent is ArrayLiteralAst && 
+                        if (lastAst is ConstantExpressionAst &&
+                            (lastAst.Parent is CommandAst || lastAst.Parent is CommandParameterAst ||
+                            (lastAst.Parent is ArrayLiteralAst &&
                              (lastAst.Parent.Parent is CommandAst || lastAst.Parent.Parent is CommandParameterAst))))
                         {
                             completionContext.WordToComplete = tokenAtCursor.Text;
@@ -500,34 +500,33 @@ namespace System.Management.Automation
                     case TokenKind.Equals:
                     case TokenKind.AtParen:
                     case TokenKind.LParen:
-                    {
-                        if (lastAst is AttributeAst)
                         {
-                            completionContext.ReplacementIndex = replacementIndex += tokenAtCursor.Text.Length;
-                            completionContext.ReplacementLength = replacementLength = 0;
-                            result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                            if (lastAst is AttributeAst)
+                            {
+                                completionContext.ReplacementIndex = replacementIndex += tokenAtCursor.Text.Length;
+                                completionContext.ReplacementLength = replacementLength = 0;
+                                result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                            }
+                            else
+                            {
+                                //
+                                // Handle auto completion for enum/dependson property of DSC resource,
+                                // cursor is right after '=', '(' or '@('
+                                //
+                                // Configuration config
+                                // {
+                                //     User test
+                                //     {
+                                //         DependsOn=|
+                                //         DependsOn=@(|)
+                                //         DependsOn=(|
+                                //
+                                bool unused;
+                                result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty,
+                                    ref replacementIndex, ref replacementLength, out unused);
+                            }
+                            break;
                         }
-                        else
-                        {
-                            //
-                            // Handle auto completion for enum/dependson property of DSC resource,
-                            // cursor is right after '=', '(' or '@('
-                            //
-                            // Configuration config
-                            // {
-                            //     User test
-                            //     {
-                            //         DependsOn=|
-                            //         DependsOn=@(|)
-                            //         DependsOn=(|
-                            //
-                            bool unused;
-                            result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty,
-                                ref replacementIndex, ref replacementLength, out unused);
-                        
-                        }
-                        break;
-                    }
                     default:
                         if ((tokenAtCursor.TokenFlags & TokenFlags.Keyword) != 0)
                         {
@@ -580,7 +579,7 @@ namespace System.Management.Automation
                     (lastAst is CommandParameterAst || lastAst is CommandAst ||
                     (lastAstIsExpressionAst && lastAst.Parent is CommandAst) ||
                     (lastAstIsExpressionAst && lastAst.Parent is CommandParameterAst) ||
-                    (lastAstIsExpressionAst && lastAst.Parent is ArrayLiteralAst && 
+                    (lastAstIsExpressionAst && lastAst.Parent is ArrayLiteralAst &&
                     (lastAst.Parent.Parent is CommandAst || lastAst.Parent.Parent is CommandParameterAst))))
                 {
                     completionContext.WordToComplete = string.Empty;
@@ -673,23 +672,23 @@ namespace System.Management.Automation
                                 case TokenKind.Equals:
                                 case TokenKind.Comma:
                                 case TokenKind.AtParen:
-                                {
-                                    bool unused;
-                                    result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
-                                    break;
-                                }
+                                    {
+                                        bool unused;
+                                        result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
+                                        break;
+                                    }
                                 case TokenKind.LParen:
-                                if (lastAst is AttributeAst)
-                                {
-                                    completionContext.ReplacementLength = replacementLength = 0;
-                                    result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
-                                }
-                                else
-                                {
-                                    bool unused;
-                                    result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty,
-                                        ref replacementIndex, ref replacementLength, out unused);
-                                }
+                                    if (lastAst is AttributeAst)
+                                    {
+                                        completionContext.ReplacementLength = replacementLength = 0;
+                                        result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                                    }
+                                    else
+                                    {
+                                        bool unused;
+                                        result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty,
+                                            ref replacementIndex, ref replacementLength, out unused);
+                                    }
                                     break;
                                 default:
                                     break;
@@ -769,7 +768,7 @@ namespace System.Management.Automation
                 {
                     replacementIndex = completionContext.RelatedAsts[0].Extent.StartScriptPosition.Offset;
                     replacementLength = completionContext.RelatedAsts[0].Extent.EndScriptPosition.Offset - replacementIndex;
-                
+
                     completionContext.WordToComplete = input;
                     result = CompleteFileNameAsCommand(completionContext);
                 }
@@ -885,14 +884,14 @@ namespace System.Management.Automation
             {
                 return FindTypeNameToComplete(arrayTypeName.ElementType, cursor) ?? null;
             }
-            
+
             return null;
         }
 
         private static string GetFirstLineSubString(string stringToComplete, out bool hasNewLine)
         {
             hasNewLine = false;
-            if(!String.IsNullOrEmpty(stringToComplete))
+            if (!String.IsNullOrEmpty(stringToComplete))
             {
                 var index = stringToComplete.IndexOfAny(Utils.Separators.CrLf);
                 if (index >= 0)
@@ -1044,7 +1043,7 @@ namespace System.Management.Automation
                                 Diagnostics.Assert(isCursorInString || (!hasNewLine), "hasNoQuote and hasNewLine cannot be true at the same time");
                                 if (property.ValueMap != null && property.ValueMap.Count > 0)
                                 {
-                                    IEnumerable<string> orderedValues = property.ValueMap.Keys.OrderBy(x => x).Where(v=>!existingValues.Contains(v, StringComparer.OrdinalIgnoreCase));
+                                    IEnumerable<string> orderedValues = property.ValueMap.Keys.OrderBy(x => x).Where(v => !existingValues.Contains(v, StringComparer.OrdinalIgnoreCase));
                                     var matchedResults = orderedValues.Where(v => wildcardPattern.IsMatch(v));
                                     if (matchedResults == null || !matchedResults.Any())
                                     {
@@ -1290,10 +1289,10 @@ namespace System.Management.Automation
             matched = false;
 
 #if CORECLR // Microsoft.PowerShell.DesiredStateConfiguration is not in CORE CLR
-        results = new List<CompletionResult>();
+            results = new List<CompletionResult>();
 #else
             IEnumerable<DynamicKeyword> keywords = configureAst.DefinedKeywords.Where(
-                k=> // Node is special case, legal in both Resource and Meta configuration
+                k => // Node is special case, legal in both Resource and Meta configuration
                     String.Compare(k.Keyword, @"Node", StringComparison.OrdinalIgnoreCase) == 0 ||
                     (
                         // Check compatibility between Resource and Configuration Type
@@ -1330,7 +1329,7 @@ namespace System.Management.Automation
                     {
                         results = new List<CompletionResult>();
                     }
-                    results.Add(new CompletionResult(    
+                    results.Add(new CompletionResult(
                         keyword.Keyword,
                         keyword.Keyword,
                         CompletionResultType.DynamicKeyword,
@@ -1353,7 +1352,7 @@ namespace System.Management.Automation
             var strConst = lastAst as StringConstantExpressionAst;
             if (strConst != null)
             {
-                if( strConst.Value.Equals("$", StringComparison.Ordinal))
+                if (strConst.Value.Equals("$", StringComparison.Ordinal))
                 {
                     completionContext.WordToComplete = "";
                     return CompletionCompleters.CompleteVariable(completionContext);
@@ -1373,14 +1372,14 @@ namespace System.Management.Automation
                             case UsingStatementKind.Command:
                                 break;
                             case UsingStatementKind.Module:
-                                var moduleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) 
-                                {   
-                                    StringLiterals.PowerShellModuleFileExtension, 
+                                var moduleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                                {
+                                    StringLiterals.PowerShellModuleFileExtension,
                                     StringLiterals.PowerShellDataFileExtension,
                                     StringLiterals.PowerShellNgenAssemblyExtension,
-                                    StringLiterals.DependentWorkflowAssemblyExtension, 
-                                    StringLiterals.PowerShellCmdletizationFileExtension, 
-                                    StringLiterals.WorkflowFileExtension 
+                                    StringLiterals.DependentWorkflowAssemblyExtension,
+                                    StringLiterals.PowerShellCmdletizationFileExtension,
+                                    StringLiterals.WorkflowFileExtension
                                 };
                                 result = CompletionCompleters.CompleteFilename(completionContext, false, moduleExtensions).ToList();
                                 if (completionContext.WordToComplete.IndexOfAny(Utils.Separators.DirectoryOrDrive) != -1)
@@ -1401,7 +1400,6 @@ namespace System.Management.Automation
                             default:
                                 throw new ArgumentOutOfRangeException("UsingStatementKind");
                         }
-                        
                     }
                 }
             }
@@ -1422,7 +1420,7 @@ namespace System.Management.Automation
                         var scriptBlockAst = (ScriptBlockAst)completionContext.RelatedAsts[0];
                         cursorAst = GetLastAstAtCursor(scriptBlockAst, cursorBeforeCmdName);
                     }
-                    
+
                     if (cursorAst != null &&
                         cursorAst.Extent.EndLineNumber == tokenAtCursor.Extent.StartLineNumber &&
                         cursorAst.Extent.EndColumnNumber == tokenAtCursor.Extent.StartColumnNumber)
@@ -1451,14 +1449,14 @@ namespace System.Management.Automation
                                         extraText: tokenAtCursor.Text,
                                         executionContext: completionContext.ExecutionContext)
                                     : null;
-                    
+
                                 if (fullPath == null) { return result; }
-                    
+
                                 // Continue trying the filename/commandname completion for scenarios like this: $aa\d<tab>
                                 completionContext.WordToComplete = fullPath;
                                 replacementIndex = cursorAst.Extent.StartScriptPosition.Offset;
                                 replacementLength += cursorAst.Extent.Text.Length;
-                    
+
                                 completionContext.ReplacementIndex = replacementIndex;
                                 completionContext.ReplacementLength = replacementLength;
                             }
@@ -1483,9 +1481,9 @@ namespace System.Management.Automation
                         string expandedString = null;
                         var expandableStringAst = new ExpandableStringExpressionAst(strConst.Extent, strConst.Value, StringConstantType.BareWord);
                         if (CompletionCompleters.IsPathSafelyExpandable(expandableStringAst: expandableStringAst,
-                                                                        extraText:           String.Empty,
-                                                                        executionContext:    completionContext.ExecutionContext,
-                                                                        expandedString:      out expandedString))
+                                                                        extraText: String.Empty,
+                                                                        executionContext: completionContext.ExecutionContext,
+                                                                        expandedString: out expandedString))
                         {
                             completionContext.WordToComplete = expandedString;
                         }
@@ -1626,7 +1624,7 @@ namespace System.Management.Automation
             bool needFileCompletion = false;
             if (lastAst.Parent is FileRedirectionAst || CompleteAgainstSwitchFile(lastAst, completionContext.TokenBeforeCursor))
             {
-                string wordToComplete = 
+                string wordToComplete =
                     CompletionCompleters.ConcatenateStringPathArguments(lastAst as CommandElementAst, String.Empty, completionContext);
                 if (wordToComplete != null)
                 {
@@ -1667,7 +1665,7 @@ namespace System.Management.Automation
             }
             else
             {
-                string wordToComplete = 
+                string wordToComplete =
                     CompletionCompleters.ConcatenateStringPathArguments(lastAst as CommandElementAst, String.Empty, completionContext);
                 if (wordToComplete != null)
                 {
@@ -1733,7 +1731,7 @@ namespace System.Management.Automation
             var addAmpersandIfNecessary = CompletionCompleters.IsAmpersandNeeded(completionContext, true);
             var result = new List<CompletionResult>();
             var clearLiteralPathsKey = false;
-            
+
             if (completionContext.Options == null)
             {
                 completionContext.Options = new Hashtable { { "LiteralPaths", true } };

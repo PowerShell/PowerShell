@@ -16,20 +16,20 @@ namespace System.Management.Automation.Runspaces
     {
         #region Private Data
 
-        private Guid ownerId;
-        private bool isCompleted;
-        private ManualResetEvent completedWaitHandle;
+        private Guid _ownerId;
+        private bool _isCompleted;
+        private ManualResetEvent _completedWaitHandle;
         // exception occured in the async thread.
-        private Exception exception;
-        private AsyncCallback callback;
+        private Exception _exception;
+        private AsyncCallback _callback;
         // user supplied state object
-        private object state;
-        private object syncObject = new object();
+        private object _state;
+        private object _syncObject = new object();
 
         // Invoke on thread (remote debugging support).
-        private AutoResetEvent invokeOnThreadEvent;
-        private WaitCallback invokeCallback;
-        private object invokeCallbackState;
+        private AutoResetEvent _invokeOnThreadEvent;
+        private WaitCallback _invokeCallback;
+        private object _invokeCallbackState;
 
         #endregion
 
@@ -50,9 +50,9 @@ namespace System.Management.Automation.Runspaces
         internal AsyncResult(Guid ownerId, AsyncCallback callback, object state)
         {
             Dbg.Assert(Guid.Empty != ownerId, "ownerId cannot be empty");
-            this.ownerId = ownerId;
-            this.callback = callback;
-            this.state = state;
+            _ownerId = ownerId;
+            _callback = callback;
+            _state = state;
         }
 
         #endregion
@@ -78,7 +78,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return isCompleted;
+                return _isCompleted;
             }
         }
 
@@ -87,7 +87,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public object AsyncState
         {
-            get { return state; }
+            get { return _state; }
         }
 
         /// <summary>
@@ -98,18 +98,18 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (null == completedWaitHandle)
+                if (null == _completedWaitHandle)
                 {
-                    lock (syncObject)
+                    lock (_syncObject)
                     {
-                        if (null == completedWaitHandle)
+                        if (null == _completedWaitHandle)
                         {
-                            completedWaitHandle = new ManualResetEvent(isCompleted);
+                            _completedWaitHandle = new ManualResetEvent(_isCompleted);
                         }
                     }
                 }
 
-                return completedWaitHandle;
+                return _completedWaitHandle;
             }
         }
 
@@ -122,7 +122,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal Guid OwnerId
         {
-            get { return ownerId; }
+            get { return _ownerId; }
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal Exception Exception
         {
-            get { return exception; }
+            get { return _exception; }
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal AsyncCallback Callback
         {
-            get { return callback; }
+            get { return _callback; }
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal object SyncObject
         {
-            get { return syncObject; }
+            get { return _syncObject; }
         }
 
         /// <summary>
@@ -159,21 +159,21 @@ namespace System.Management.Automation.Runspaces
         internal void SetAsCompleted(Exception exception)
         {
             //Dbg.Assert(!isCompleted, "AsynResult already completed");
-            if (isCompleted)
+            if (_isCompleted)
             {
                 return;
             }
 
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (isCompleted)
+                if (_isCompleted)
                 {
                     return;
                 }
                 else
                 {
-                    this.exception = exception;
-                    isCompleted = true;
+                    _exception = exception;
+                    _isCompleted = true;
 
                     // release the threads waiting on this operation.
                     SignalWaitHandle();
@@ -181,9 +181,9 @@ namespace System.Management.Automation.Runspaces
             }
 
             // call the user supplied callback
-            if (null != callback)
+            if (null != _callback)
             {
-                callback(this);
+                _callback(this);
             }
         }
 
@@ -192,9 +192,9 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal void Release()
         {
-            if (!isCompleted)
+            if (!_isCompleted)
             {
-                isCompleted = true;
+                _isCompleted = true;
                 SignalWaitHandle();
             }
         }
@@ -208,11 +208,11 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal void SignalWaitHandle()
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (null != completedWaitHandle)
+                if (null != _completedWaitHandle)
                 {
-                    completedWaitHandle.Set();
+                    _completedWaitHandle.Set();
                 }
             }
         }
@@ -222,10 +222,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal void EndInvoke()
         {
-            invokeOnThreadEvent = new AutoResetEvent(false);
+            _invokeOnThreadEvent = new AutoResetEvent(false);
 
             // Start the thread wait loop.
-            WaitHandle[] waitHandles = new WaitHandle[2] { AsyncWaitHandle, invokeOnThreadEvent };
+            WaitHandle[] waitHandles = new WaitHandle[2] { AsyncWaitHandle, _invokeOnThreadEvent };
             bool waiting = true;
             while (waiting)
             {
@@ -240,7 +240,7 @@ namespace System.Management.Automation.Runspaces
                     // Invoke callback on thread.
                     try
                     {
-                        invokeCallback(invokeCallbackState);
+                        _invokeCallback(_invokeCallbackState);
                     }
                     catch (Exception e)
                     {
@@ -250,15 +250,15 @@ namespace System.Management.Automation.Runspaces
             }
 
             AsyncWaitHandle.Dispose();
-            completedWaitHandle = null;  // Allow early GC
+            _completedWaitHandle = null;  // Allow early GC
 
-            invokeOnThreadEvent.Dispose();
-            invokeOnThreadEvent = null;  // Allow early GC
+            _invokeOnThreadEvent.Dispose();
+            _invokeOnThreadEvent = null;  // Allow early GC
 
             // Operation is done: if an exception occured, throw it
-            if (null != exception)
+            if (null != _exception)
             {
-                throw exception;
+                throw _exception;
             }
         }
 
@@ -274,13 +274,13 @@ namespace System.Management.Automation.Runspaces
                 throw new PSArgumentNullException("callback");
             }
 
-            invokeCallback = callback;
-            invokeCallbackState = state;
+            _invokeCallback = callback;
+            _invokeCallbackState = state;
 
             // Signal thread to run callback.
-            if (invokeOnThreadEvent != null)
+            if (_invokeOnThreadEvent != null)
             {
-                invokeOnThreadEvent.Set();
+                _invokeOnThreadEvent.Set();
                 return true;
             }
 

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
 using System.Threading;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 
 namespace System.Management.Automation
@@ -351,7 +351,6 @@ namespace System.Management.Automation
                 string currentPath = path;
                 try
                 {
-
                     string providerName = null;
                     currentPathisProviderQualifiedPath = LocationGlobber.IsProviderQualifiedPath(resolvedPath.Path, out providerName);
                     if (currentPathisProviderQualifiedPath)
@@ -502,7 +501,6 @@ namespace System.Management.Automation
                                 "path",
                                 SessionStateStrings.PathResolvedToMultiple,
                                 originalPath);
-
                     }
                     else
                     {
@@ -534,7 +532,7 @@ namespace System.Management.Automation
                     path = path.Substring(1);
                 }
 
-                tracer.WriteLine(
+                s_tracer.WriteLine(
                     "New working path = {0}",
                     path);
 
@@ -638,7 +636,7 @@ namespace System.Management.Automation
 
             if (drive != null)
             {
-                tracer.WriteLine("Tracing drive");
+                s_tracer.WriteLine("Tracing drive");
                 drive.Trace();
             }
 
@@ -694,7 +692,7 @@ namespace System.Management.Automation
                     normalizePathContext.ThrowFirstErrorOrDoNothing();
                 }
 
-                tracer.WriteLine("Provider path = {0}", providerSpecificPath);
+                s_tracer.WriteLine("Provider path = {0}", providerSpecificPath);
 
                 // Get the current working directory provider specific path
 
@@ -703,24 +701,24 @@ namespace System.Management.Automation
 
                 string currentWorkingPath =
                     Globber.GetProviderPath(
-                        ".", 
-                        context, 
-                        out currentDriveProvider, 
+                        ".",
+                        context,
+                        out currentDriveProvider,
                         out currentWorkingDrive);
 
                 Dbg.Diagnostics.Assert(
                     currentWorkingDrive == CurrentDrive,
                     "The current working drive should be the CurrentDrive.");
-                    
-                tracer.WriteLine(
-                    "Current working path = {0}", 
+
+                s_tracer.WriteLine(
+                    "Current working path = {0}",
                     currentWorkingPath);
 
                 // See if the path is the current working directory or a parent
                 // of the current working directory
 
-                tracer.WriteLine(
-                    "Comparing {0} to {1}", 
+                s_tracer.WriteLine(
+                    "Comparing {0} to {1}",
                     providerSpecificPath,
                     currentWorkingPath);
 
@@ -729,7 +727,7 @@ namespace System.Management.Automation
                     // The path is the current working directory so
                     // return true
 
-                    tracer.WriteLine("The path is the current working directory");
+                    s_tracer.WriteLine("The path is the current working directory");
 
                     result = true;
                 }
@@ -747,15 +745,15 @@ namespace System.Management.Automation
                         // than the mount point for this drive. That is
                         // why we are passing the empty string as the root here.
 
-                        lockedDirectory = 
+                        lockedDirectory =
                             GetParentPath(
                                 drive.Provider,
                                 lockedDirectory,
                                 String.Empty,
                                 context);
 
-                        tracer.WriteLine(
-                            "Comparing {0} to {1}", 
+                        s_tracer.WriteLine(
+                            "Comparing {0} to {1}",
                             lockedDirectory,
                             providerSpecificPath);
 
@@ -764,7 +762,7 @@ namespace System.Management.Automation
                             // The path is a parent of the current working
                             // directory
 
-                            tracer.WriteLine(
+                            s_tracer.WriteLine(
                                 "The path is a parent of the current working directory: {0}",
                                 lockedDirectory);
 
@@ -776,7 +774,7 @@ namespace System.Management.Automation
             }
             else
             {
-                tracer.WriteLine("Drives are not the same");
+                s_tracer.WriteLine("Drives are not the same");
             }
 
             return result;
@@ -789,13 +787,13 @@ namespace System.Management.Automation
         /// <summary>
         /// A stack of the most recently pushed locations
         /// </summary>
-        private Dictionary<String, Stack<PathInfo>> workingLocationStack;
+        private Dictionary<String, Stack<PathInfo>> _workingLocationStack;
 
         private const string startingDefaultStackName = "default";
         /// <summary>
         /// The name of the default location stack
         /// </summary>
-        private string defaultStackName = startingDefaultStackName;
+        private string _defaultStackName = startingDefaultStackName;
 
         /// <summary>
         /// Pushes the current location onto the working
@@ -811,13 +809,13 @@ namespace System.Management.Automation
         {
             if (String.IsNullOrEmpty(stackName))
             {
-                stackName = defaultStackName;
+                stackName = _defaultStackName;
             }
 
             // Create a new instance of the directory/drive pair
 
             ProviderInfo provider = CurrentDrive.Provider;
-            string mshQualifiedPath = 
+            string mshQualifiedPath =
                 LocationGlobber.GetMshQualifiedPath(CurrentDrive.CurrentLocation, CurrentDrive);
 
             PathInfo newPushLocation =
@@ -827,7 +825,7 @@ namespace System.Management.Automation
                     mshQualifiedPath,
                     new SessionState(this));
 
-            tracer.WriteLine(
+            s_tracer.WriteLine(
                 "Pushing drive: {0} directory: {1}",
                 CurrentDrive.Name,
                 mshQualifiedPath);
@@ -836,12 +834,12 @@ namespace System.Management.Automation
 
             Stack<PathInfo> locationStack = null;
 
-            if (!workingLocationStack.TryGetValue(stackName, out locationStack))
+            if (!_workingLocationStack.TryGetValue(stackName, out locationStack))
             {
                 locationStack = new Stack<PathInfo>();
-                workingLocationStack[stackName] = locationStack;
+                _workingLocationStack[stackName] = locationStack;
             }
-            
+
             // Push the directory/drive pair onto the stack
 
             locationStack.Push(newPushLocation);
@@ -890,7 +888,7 @@ namespace System.Management.Automation
         {
             if (String.IsNullOrEmpty(stackName))
             {
-                stackName = defaultStackName;
+                stackName = _defaultStackName;
             }
 
             if (WildcardPattern.ContainsWildcardCharacters(stackName))
@@ -899,22 +897,20 @@ namespace System.Management.Automation
 
                 bool haveMatch = false;
 
-                WildcardPattern stackNamePattern = 
-                    WildcardPattern.Get(stackName,  WildcardOptions.IgnoreCase);
+                WildcardPattern stackNamePattern =
+                    WildcardPattern.Get(stackName, WildcardOptions.IgnoreCase);
 
-                foreach (string key in workingLocationStack.Keys)
+                foreach (string key in _workingLocationStack.Keys)
                 {
                     if (stackNamePattern.IsMatch(key))
                     {
                         if (haveMatch)
                         {
-
                             throw
                                 PSTraceSource.NewArgumentException(
                                     "stackName",
                                     SessionStateStrings.StackNameResolvedToMultiple,
                                     stackName);
-                                
                         }
                         haveMatch = true;
                         stackName = key;
@@ -927,7 +923,7 @@ namespace System.Management.Automation
             try
             {
                 Stack<PathInfo> locationStack = null;
-                if (!workingLocationStack.TryGetValue(stackName, out locationStack))
+                if (!_workingLocationStack.TryGetValue(stackName, out locationStack))
                 {
                     if (!string.Equals(stackName, startingDefaultStackName, StringComparison.OrdinalIgnoreCase))
                     {
@@ -947,12 +943,12 @@ namespace System.Management.Automation
                     "All items in the workingLocationStack should be " +
                     "of type PathInfo");
 
-                string newPath = 
+                string newPath =
                     LocationGlobber.GetMshQualifiedPath(
                         WildcardPattern.Escape(poppedWorkingDirectory.Path),
                         poppedWorkingDirectory.GetDrive());
 
-                result = SetLocation (newPath);
+                result = SetLocation(newPath);
 
                 if (locationStack.Count == 0 &&
                     !String.Equals(stackName, startingDefaultStackName, StringComparison.OrdinalIgnoreCase))
@@ -960,7 +956,7 @@ namespace System.Management.Automation
                     // Remove the stack from the stack list if it
                     // no longer contains any paths.
 
-                    workingLocationStack.Remove(stackName);
+                    _workingLocationStack.Remove(stackName);
                 }
             }
             catch (InvalidOperationException)
@@ -996,12 +992,12 @@ namespace System.Management.Automation
         {
             if (String.IsNullOrEmpty(stackName))
             {
-                stackName = defaultStackName;
+                stackName = _defaultStackName;
             }
 
             Stack<PathInfo> locationStack = null;
-            
-            if (!workingLocationStack.TryGetValue(stackName, out locationStack))
+
+            if (!_workingLocationStack.TryGetValue(stackName, out locationStack))
             {
                 // If the request was for the default stack, but it doesn't
                 // yet exist, create a dummy stack and return it.
@@ -1048,7 +1044,7 @@ namespace System.Management.Automation
                 stackName = startingDefaultStackName;
             }
 
-            if (!workingLocationStack.ContainsKey(stackName))
+            if (!_workingLocationStack.ContainsKey(stackName))
             {
                 if (String.Equals(stackName, startingDefaultStackName, StringComparison.OrdinalIgnoreCase))
                 {
@@ -1065,21 +1061,19 @@ namespace System.Management.Automation
                 throw itemNotFound;
             }
 
-            defaultStackName = stackName;
+            _defaultStackName = stackName;
 
-            Stack<PathInfo> locationStack = workingLocationStack[defaultStackName];
+            Stack<PathInfo> locationStack = _workingLocationStack[_defaultStackName];
 
             if (locationStack != null)
             {
-                return new PathInfoStack(defaultStackName, locationStack);
+                return new PathInfoStack(_defaultStackName, locationStack);
             }
             return null;
         } // SetDefaultLocationStack
 
         #endregion push-Pop current working directory
-
     }           // SessionStateInternal class
-
 }
 
 

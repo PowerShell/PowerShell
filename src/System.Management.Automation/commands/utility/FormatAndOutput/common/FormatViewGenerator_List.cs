@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,14 +14,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class ListViewGenerator : ViewGenerator
     {
         // tableBody to use for this instance of the ViewGenerator;
-        private ListControlBody listBody;
+        private ListControlBody _listBody;
 
         internal override void Initialize(TerminatingErrorContext terminatingErrorContext, MshExpressionFactory mshExpressionFactory, TypeInfoDataBase db, ViewDefinition view, FormattingCommandLineParameters formatParameters)
         {
             base.Initialize(terminatingErrorContext, mshExpressionFactory, db, view, formatParameters);
             if ((null != this.dataBaseInfo) && (null != this.dataBaseInfo.view))
             {
-                listBody = (ListControlBody)this.dataBaseInfo.view.mainControl;
+                _listBody = (ListControlBody)this.dataBaseInfo.view.mainControl;
             }
         }
 
@@ -30,7 +31,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             base.Initialize(errorContext, expressionFactory, so, db, parameters);
             if ((null != this.dataBaseInfo) && (null != this.dataBaseInfo.view))
             {
-                listBody = (ListControlBody)this.dataBaseInfo.view.mainControl;
+                _listBody = (ListControlBody)this.dataBaseInfo.view.mainControl;
             }
 
             this.inputParameters = parameters;
@@ -52,7 +53,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if ((dataBaseInfo != null) && (dataBaseInfo.view != null) && (dataBaseInfo.view.mainControl != null))
             {
-                listBody = (ListControlBody)this.dataBaseInfo.view.mainControl.Copy();
+                _listBody = (ListControlBody)this.dataBaseInfo.view.mainControl.Copy();
                 // build up the definition for computer name.
                 ListControlItemDefinition cnListItemDefinition = new ListControlItemDefinition();
                 cnListItemDefinition.label = new TextToken();
@@ -62,7 +63,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 cnListItemDefinition.formatTokenList.Add(fpt);
 
 
-                listBody.defaultEntryDefinition.itemDefinitionList.Add(cnListItemDefinition);
+                _listBody.defaultEntryDefinition.itemDefinitionList.Add(cnListItemDefinition);
             }
         }
 
@@ -89,7 +90,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ListViewEntry lve = new ListViewEntry();
 
             ListControlEntryDefinition activeListControlEntryDefinition =
-                GetActiveListControlEntryDefinition(listBody, so);
+                GetActiveListControlEntryDefinition(_listBody, so);
 
             foreach (ListControlItemDefinition listItem in activeListControlEntryDefinition.itemDefinitionList)
             {

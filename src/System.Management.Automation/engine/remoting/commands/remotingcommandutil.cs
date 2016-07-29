@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Threading;
 using System.Collections.ObjectModel;
@@ -18,7 +19,6 @@ using System.Management.Automation.Remoting.Client;
 
 namespace Microsoft.PowerShell.Commands
 {
-
     /// <summary>
     /// This enum is used to distinguish two sets of parameters on some of the remoting cmdlets.
     /// </summary>
@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
 #else
             bool notSupported = true;
             String WSManKeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\WSMAN\\";
-	    
+
             CheckHostRemotingPrerequisites();
 
             try
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
                     wsManStackValue = (string)wsManKey.GetValue("ServiceStackVersion");
                 }
 
-                Version wsManStackVersion = !string.IsNullOrEmpty(wsManStackValue) ? 
+                Version wsManStackVersion = !string.IsNullOrEmpty(wsManStackValue) ?
                     new Version(wsManStackValue.Trim()) :
                     System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STACK_VERSION;
 

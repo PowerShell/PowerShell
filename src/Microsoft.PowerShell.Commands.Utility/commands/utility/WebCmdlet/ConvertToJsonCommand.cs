@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
     /// This command convert an object to a Json string representation
     /// </summary>
     [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217032", RemotingCapability = RemotingCapability.None)]
-    [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")] 
+    [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public class ConvertToJsonCommand : PSCmdlet
     {
         #region parameters
@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
         }
 
-        private List<object> inputObjects = new List<object>();
+        private List<object> _inputObjects = new List<object>();
 
         /// <summary>
         /// Caching the input objects for the convertto-json command
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (InputObject != null)
             {
-                inputObjects.Add(InputObject);
+                _inputObjects.Add(InputObject);
             }
         }
 
@@ -114,9 +114,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (inputObjects.Count > 0)
+            if (_inputObjects.Count > 0)
             {
-                object objectToProcess = (inputObjects.Count > 1) ? (inputObjects.ToArray() as object) : (inputObjects[0]);
+                object objectToProcess = (_inputObjects.Count > 1) ? (_inputObjects.ToArray() as object) : (_inputObjects[0]);
                 // Pre-process the object so that it serializes the same, except that properties whose
                 // values cannot be evaluated are treated as having the value null.
                 object preprocessedObject = ProcessValue(objectToProcess, 0);
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
                 // ProcessValue creates an object to be serialized from 1 to depth. However, the properties of the object at 'depth' should also be serialized, 
                 // and from the perspective of the serializer, this means it needs to support serializing depth + 1. For the JavaScriptSerializer to support this, 
                 // RecursionLimit needs to be set to depth + 2.
-                JavaScriptSerializer helper = new JavaScriptSerializer() {RecursionLimit = (maxDepthAllowed + 2)};
+                JavaScriptSerializer helper = new JavaScriptSerializer() { RecursionLimit = (maxDepthAllowed + 2) };
                 helper.MaxJsonLength = Int32.MaxValue;
                 string output = helper.Serialize(preprocessedObject);
 #endif
@@ -373,7 +373,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="result"></param>
         private void AddIndentations(int numberOfTabsToReturn, StringBuilder result)
         {
-            int realNumber = numberOfTabsToReturn*4;
+            int realNumber = numberOfTabsToReturn * 4;
             for (int i = 0; i < realNumber; i++)
             {
                 result.Append(' ');
@@ -427,7 +427,7 @@ namespace Microsoft.PowerShell.Commands
             bool isPurePSObj = false;
             bool isCustomObj = false;
 
-            if (   obj == null
+            if (obj == null
                 || DBNull.Value.Equals(obj)
                 || obj is string
                 || obj is char
@@ -463,7 +463,6 @@ namespace Microsoft.PowerShell.Commands
                     {
                         rv = obj;
                     }
-
                 }
                 else
                 {
@@ -473,7 +472,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // The obj is a pure PSObject, we convet the original PSObject to a string, 
                             // instead of its base object in this case
-                            rv = LanguagePrimitives.ConvertTo(pso, typeof (string),
+                            rv = LanguagePrimitives.ConvertTo(pso, typeof(string),
                                 CultureInfo.InvariantCulture);
                             isPurePSObj = true;
                         }
@@ -531,7 +530,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private object AddPsProperties(object psobj, object obj, int depth, bool isPurePSObj, bool isCustomObj)
         {
-            PSObject    pso = psobj as PSObject;
+            PSObject pso = psobj as PSObject;
 
             if (pso == null)
                 return obj;
@@ -574,7 +573,7 @@ namespace Microsoft.PowerShell.Commands
             // serialize only Extended and Adapted properties..
             PSMemberInfoCollection<PSPropertyInfo> srcPropertiesToSearch =
                 new PSMemberInfoIntegratingCollection<PSPropertyInfo>(psobj,
-                    isCustomObject ? PSObject.GetPropertyCollection(PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted) : 
+                    isCustomObject ? PSObject.GetPropertyCollection(PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted) :
                     PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
 
             foreach (PSPropertyInfo prop in srcPropertiesToSearch)

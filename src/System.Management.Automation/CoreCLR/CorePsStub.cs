@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     // We create some stub attribute types to make some attribute markers work in CoreCLR.
     // The purpose of this is to avoid #if/def in powershell code as much as possible.
 
-#region Attribute_Related
+    #region Attribute_Related
 
     /// <summary>
     /// Stub for SpecialNameAttribute
@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         /// <summary>
         /// 
         /// </summary>
-        public SpecialNameAttribute() {}
+        public SpecialNameAttribute() { }
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         /// <summary>
         /// 
         /// </summary>
-        public SerializableAttribute() {}
+        public SerializableAttribute() { }
     }
 
     /// <summary>
@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         /// <summary>
         /// 
         /// </summary>
-        public NonSerializedAttribute() {}
+        public NonSerializedAttribute() { }
     }
 
     /// <summary>
@@ -76,9 +76,9 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     /// </summary>
     public sealed class SecurityPermissionAttribute : Attribute
     {
-        public SecurityPermissionAttribute(SecurityAction action) {}
+        public SecurityPermissionAttribute(SecurityAction action) { }
         public bool SerializationFormatter { get; set; }
-   
+
         public bool UnmanagedCode { get; set; }
     }
 
@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         /// 
         /// </summary>
         /// <param name="flags"></param>
-        public TypeLibTypeAttribute(short flags) {}
+        public TypeLibTypeAttribute(short flags) { }
     }
 
     /// <summary>
@@ -105,23 +105,24 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     /// </summary>
     public sealed class HostProtectionAttribute : Attribute
     {
-        public HostProtectionAttribute(SecurityAction action) {}
+        public HostProtectionAttribute(SecurityAction action) { }
         public bool MayLeakOnAbort { get; set; }
     }
-    
+
     /// <summary>
     /// Stub for ResourceExposureAttribute
     /// </summary>
     public sealed class ResourceExposureAttribute : Attribute
     {
         private ResourceScope _resourceExposureLevel;
-       
+
         public ResourceExposureAttribute(ResourceScope exposureLevel)
         {
             _resourceExposureLevel = exposureLevel;
         }
- 
-        public ResourceScope ResourceExposureLevel {
+
+        public ResourceScope ResourceExposureLevel
+        {
             get { return _resourceExposureLevel; }
         }
     }
@@ -133,12 +134,12 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     {
         None = 0,
         // Resource type
-        Machine   = 0x1,
-        Process   = 0x2,
+        Machine = 0x1,
+        Process = 0x2,
         AppDomain = 0x4,
-        Library   = 0x8,
+        Library = 0x8,
         // Visibility
-        Private  = 0x10,  // Private to this one class.
+        Private = 0x10,  // Private to this one class.
         Assembly = 0x20,  // Assembly-level, like C#'s "internal"
     }
 
@@ -202,9 +203,9 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         WillNotCorruptState
     }
 
-#endregion Attribute_Related
+    #endregion Attribute_Related
 
-#region Serialization_Related
+    #region Serialization_Related
 
     /// <summary>
     /// Stub for SerializationInfo
@@ -214,7 +215,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         /// <summary>
         /// 
         /// </summary>
-        public SerializationInfo() {}
+        public SerializationInfo() { }
 
         /// <summary>
         /// 
@@ -242,7 +243,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         /// <param name="name"></param>
         /// <param name="value"></param>
         /// <param name="type"></param>
-        public void AddValue(string name, Object value,    Type type)
+        public void AddValue(string name, Object value, Type type)
         {
             throw new NotImplementedException("AddValue(string name, Object value,    Type type)");
         }
@@ -318,9 +319,9 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         }
     }
 
-#endregion Serialization_Related
+    #endregion Serialization_Related
 
-#region Interface_Related
+    #region Interface_Related
 
     /// <summary>
     /// Stub for ISerializable
@@ -378,9 +379,9 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         object this[int index] { get; set; }
     }
 
-#endregion Interface_Related
+    #endregion Interface_Related
 
-#region Exception_Related
+    #region Exception_Related
 
     /// <summary>
     /// Stub for SystemException
@@ -391,33 +392,33 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         /// SystemException constructor
         /// </summary>
         public SystemException() : base() { }
-        
+
         /// <summary>
         /// SystemException constructor
         /// </summary>
         /// <param name="message"></param>
         public SystemException(string message) : base(message) { }
-        
+
         /// <summary>
         /// SystemException constructor
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
-        public SystemException(string message, Exception innerException) : base(message, innerException) {}
-        
+        public SystemException(string message, Exception innerException) : base(message, innerException) { }
+
         /// <summary>
         /// SystemException constructor
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
         protected SystemException(SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
-        
+
         /// <summary>
         /// SystemException constructor
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public virtual void GetObjectData(SerializationInfo info, System.Runtime.Serialization.StreamingContext context) {}
+        public virtual void GetObjectData(SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
     }
 
     /// <summary>
@@ -429,33 +430,33 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         /// AccessViolationException constructor
         /// </summary>
         public AccessViolationException() : base() { }
-        
+
         /// <summary>
         /// AccessViolationException constructor
         /// </summary>
         /// <param name="message"></param>
         public AccessViolationException(string message) : base(message) { }
-        
+
         /// <summary>
         /// AccessViolationException constructor
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
-        public AccessViolationException(string message, Exception innerException) : base(message, innerException) {}
-        
+        public AccessViolationException(string message, Exception innerException) : base(message, innerException) { }
+
         /// <summary>
         /// AccessViolationException constructor
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
         protected AccessViolationException(SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
-        
+
         /// <summary>
         /// AccessViolationException constructor
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public virtual void GetObjectData(SerializationInfo info, System.Runtime.Serialization.StreamingContext context) {}
+        public virtual void GetObjectData(SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
     }
 
     /// <summary>
@@ -472,9 +473,9 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     {
     }
 
-#endregion Exception_Related
+    #endregion Exception_Related
 
-#region SafeHandle_Related
+    #region SafeHandle_Related
 
     /// <summary>
     /// Stub for SafeHandleZeroOrMinusOneIsInvalid
@@ -484,7 +485,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         /// <summary>
         /// Constructor
         /// </summary>
-        protected SafeHandleZeroOrMinusOneIsInvalid(bool ownsHandle) 
+        protected SafeHandleZeroOrMinusOneIsInvalid(bool ownsHandle)
             : base(IntPtr.Zero, ownsHandle)
         {
         }
@@ -501,9 +502,9 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         }
     }
 
-#endregion SafeHandle_Related
+    #endregion SafeHandle_Related
 
-#region Misc_Types
+    #region Misc_Types
 
     /// <summary>
     /// Stub for SecurityZone
@@ -524,12 +525,12 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     /// </summary>
     public class MailAddress
     {
-        public MailAddress(string address) {}
+        public MailAddress(string address) { }
     }
 
-#endregion Misc_Types
+    #endregion Misc_Types
 
-#region SystemManagementStubs
+    #region SystemManagementStubs
 
     // Summary:
     //     Describes the authentication level to be used to connect to WMI. This is
@@ -602,7 +603,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         Delegate = 4,
     }
 
-#endregion
+    #endregion
 }
 
 
@@ -676,7 +677,7 @@ namespace System.Security
             int strLen = str.Length;
             int index; // Pointer into the string that indicates the location of the current '&' character
             int newIndex = 0; // Pointer into the string that indicates the start index of the "remaining" string (that still needs to be processed).
-            
+
             do
             {
                 index = str.IndexOfAny(s_escapeChars, newIndex);
@@ -731,7 +732,7 @@ namespace System.Security
 
 namespace System.Management.Automation
 {
-#region PSTransaction
+    #region PSTransaction
 
     /// <summary>
     /// We don't need PSTransaction related types on CSS because System.Transactions 
@@ -765,9 +766,9 @@ namespace System.Management.Automation
         Never
     }
 
-#endregion PSTransaction
+    #endregion PSTransaction
 
-#region CMS
+    #region CMS
 
     internal static class CmsUtils
     {
@@ -790,9 +791,9 @@ namespace System.Management.Automation
         }
     }
 
-#endregion CMS
+    #endregion CMS
 
-#region ApartmentState
+    #region ApartmentState
 
     internal enum ApartmentState
     {
@@ -810,7 +811,7 @@ namespace System.Management.Automation
         Unknown = 2
     }
 
-#endregion ApartmentState
+    #endregion ApartmentState
 }
 
 namespace System.Management.Automation.Internal
@@ -829,7 +830,7 @@ namespace System.Management.Automation.Internal
         /// </remarks>
         internal bool HasTransaction
         {
-            get 
+            get
             {
                 return false;
             }
@@ -888,7 +889,7 @@ namespace System.Management.Automation.Internal
             throw new NotImplementedException("Rollback");
         }
 
-        public void Dispose() {}
+        public void Dispose() { }
     }
 }
 
@@ -1144,7 +1145,7 @@ namespace Microsoft.PowerShell.Commands.Internal
     using System.Security.AccessControl;
     using System.Security.Principal;
 
-#region TransactedRegistryKey
+    #region TransactedRegistryKey
 
     internal abstract class TransactedRegistryKey : IDisposable
     {
@@ -1279,12 +1280,13 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
     }
 
-#endregion TransactedRegistryKey
+    #endregion TransactedRegistryKey
 }
 
 #endregion PS_STUBS
 
-#region TEMPORARY -- Will port the actual PS component [update: Not necessarily porting all PS components listed here]
+// -- Will port the actual PS component [update: Not necessarily porting all PS components listed here]
+#region TEMPORARY
 
 namespace System.Management.Automation.Internal
 {
@@ -1308,7 +1310,7 @@ namespace System.Management.Automation
 {
     using Microsoft.Win32;
 
-#region RegistryStringResourceIndirect
+    #region RegistryStringResourceIndirect
 
     internal sealed class RegistryStringResourceIndirect : IDisposable
     {
@@ -1343,10 +1345,10 @@ namespace System.Management.Automation
         }
     }
 
-#endregion
+    #endregion
 
-#region Environment 
-    
+    #region Environment 
+
     internal static partial class Environment
     {
         //TODO:CORECLR Need to be removed once we decide what will be the replacement 
@@ -1354,8 +1356,8 @@ namespace System.Management.Automation
         {
         }
     }
-    
-#endregion     Environment
+
+    #endregion     Environment
 }
 
 namespace System.Management.Automation.Security
@@ -1366,7 +1368,7 @@ namespace System.Management.Automation.Security
     /// </summary>
     internal sealed class SystemPolicy
     {
-        private SystemPolicy() {}
+        private SystemPolicy() { }
 
         /// <summary>
         /// Gets the system lockdown policy
@@ -1381,7 +1383,7 @@ namespace System.Management.Automation.Security
         /// Gets lockdown policy as applied to a file
         /// </summary>
         /// <remarks>Always return SystemEnforcementMode.None in CSS (trusted)</remarks>
-        public static SystemEnforcementMode GetLockdownPolicy(string path,  System.Runtime.InteropServices.SafeHandle handle)
+        public static SystemEnforcementMode GetLockdownPolicy(string path, System.Runtime.InteropServices.SafeHandle handle)
         {
             return SystemEnforcementMode.None;
         }
@@ -1465,13 +1467,13 @@ namespace System.Management.Automation.Tracing
         { }
         static internal void LogAnalyticVerbose(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args) { }
         static internal void SetActivityIdForCurrentThread(Guid newActivityId) { }
-        static internal void LogOperationalVerbose(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args){ }
-        static internal void LogOperationalWarning(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args){ }
+        static internal void LogOperationalVerbose(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args) { }
+        static internal void LogOperationalWarning(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args) { }
         static internal void ReplaceActivityIdForCurrentThread(Guid newActivityId, PSEventId eventForOperationalChannel, PSEventId eventForAnalyticChannel, PSKeyword keyword, PSTask task) { }
         static internal void LogOperationalError(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args) { }
-        static internal void LogOperationalError(PSEventId id, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad) {  }
-        static internal void LogAnalyticInformational(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args){ }
-        static internal void LogOperationalInformation(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args){  }    
+        static internal void LogOperationalError(PSEventId id, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad) { }
+        static internal void LogAnalyticInformational(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args) { }
+        static internal void LogOperationalInformation(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args) { }
     }
 
     public enum PowerShellTraceTask
@@ -1505,9 +1507,9 @@ namespace System.Management.Automation.Tracing
     /// <summary>
     /// Defines Keywords.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028")]    
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028")]
     [Flags]
-    public enum PowerShellTraceKeywords : ulong 
+    public enum PowerShellTraceKeywords : ulong
     {
         /// <summary>
         /// None
@@ -1575,16 +1577,16 @@ namespace System.Management.Automation.Tracing
         UseAlwaysAnalytic = 0x4000000000000000,
     }
 
-    public sealed partial class Tracer : System.Management.Automation.Tracing.EtwActivity 
+    public sealed partial class Tracer : System.Management.Automation.Tracing.EtwActivity
     {
-        static Tracer() {}
-        
+        static Tracer() { }
+
         public void EndpointRegistered(string endpointName, string endpointType, string registeredBy)
         {
         }
 
         public void EndpointUnregistered(string endpointName, string unregisteredBy)
-        {            
+        {
         }
 
         public void EndpointDisabled(string endpointName, string disabledBy)
@@ -1600,35 +1602,35 @@ namespace System.Management.Automation.Tracing
         }
 
         public void BeginContainerParentJobExecution(Guid containerParentJobInstanceId)
-        {            
+        {
         }
-    
+
         public void BeginProxyJobExecution(Guid proxyJobInstanceId)
-        {            
+        {
         }
 
         public void ProxyJobRemoteJobAssociation(Guid proxyJobInstanceId, Guid containerParentJobInstanceId)
-        {            
+        {
         }
-    
+
         public void EndProxyJobExecution(Guid proxyJobInstanceId)
-        {            
+        {
         }
-        
+
         public void BeginProxyJobEventHandler(Guid proxyJobInstanceId)
-        {            
+        {
         }
-        
+
         public void EndProxyJobEventHandler(Guid proxyJobInstanceId)
-        {        
+        {
         }
-        
+
         public void BeginProxyChildJobEventHandler(Guid proxyChildJobInstanceId)
-        {            
+        {
         }
-        
+
         public void EndContainerParentJobExecution(Guid containerParentJobInstanceId)
-        {        
+        {
         }
     }
 
@@ -1655,7 +1657,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public bool WriteMessage(string message1, string message2)
         {
-        return false;
+            return false;
         }
 
         /// <summary>
@@ -1666,7 +1668,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public bool WriteMessage(string message, Guid instanceId)
         {
-        return false;
+            return false;
         }
 
 
@@ -1681,7 +1683,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public void WriteMessage(string className, string methodName, Guid workflowId, string message, params string[] parameters)
         {
-        return ;
+            return;
         }
 
         /// <summary>
@@ -1696,16 +1698,16 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public void WriteMessage(string className, string methodName, Guid workflowId, Job job, string message, params string[] parameters)
         {
-        return;
+            return;
         }
 
-       public bool TraceException(Exception exception)
+        public bool TraceException(Exception exception)
         {
-        return false;
+            return false;
         }
     }
 
-       /// <summary>
+    /// <summary>
     /// TraceSourceFactory will return an instance of TraceSource every time GetTraceSource method is called.
     /// </summary>
     public static class PowerShellTraceSourceFactory
@@ -1757,8 +1759,8 @@ namespace Microsoft.PowerShell
 {
     internal static class NativeCultureResolver
     {
-        internal static void SetThreadUILanguage(Int16 langId) {}
-    
+        internal static void SetThreadUILanguage(Int16 langId) { }
+
         internal static CultureInfo UICulture
         {
             get
@@ -1779,7 +1781,7 @@ namespace Microsoft.PowerShell
 
 #endregion TEMPORARY
 
- 
+
 
 #region Timer
 namespace System
@@ -1801,29 +1803,29 @@ namespace System
         //
         //   isTerminating:
         //     true if the runtime is terminating; otherwise, false.
-        public UnhandledExceptionEventArgs(object exception, bool isTerminating) {}
+        public UnhandledExceptionEventArgs(object exception, bool isTerminating) { }
 
         // Summary:
         //     Gets the unhandled exception object.
         //
         // Returns:
         //     The unhandled exception object.
-        public object ExceptionObject 
-        { 
+        public object ExceptionObject
+        {
             get
-            { 
+            {
                 return null;
             }
         }
-        
+
         //
         // Summary:
         //     Indicates whether the common language runtime is terminating.
         //
         // Returns:
         //     true if the runtime is terminating; otherwise, false.
-        public bool IsTerminating 
-        { 
+        public bool IsTerminating
+        {
             get
             {
                 return false;

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -240,7 +241,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName)
         {
-            return _serverMethodExecutor.ExecuteMethod<PSCredential>(RemoteHostMethodId.PromptForCredential1, 
+            return _serverMethodExecutor.ExecuteMethod<PSCredential>(RemoteHostMethodId.PromptForCredential1,
                     new object[] { caption, message, userName, targetName });
         }
 
@@ -250,7 +251,7 @@ namespace System.Management.Automation.Remoting
         public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
         {
             return _serverMethodExecutor.ExecuteMethod<PSCredential>(RemoteHostMethodId.PromptForCredential2,
-                    new object[] { caption, message, userName, targetName, allowedCredentialTypes, options } );
+                    new object[] { caption, message, userName, targetName, allowedCredentialTypes, options });
         }
     }
 }

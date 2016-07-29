@@ -23,15 +23,15 @@ namespace System.Management.Automation
     {
         internal const string DynamicModulePrefixString = "__DynamicModule_";
 
-        private static readonly ReadOnlyDictionary<string, TypeDefinitionAst> EmptyTypeDefinitionDictionary = 
+        private static readonly ReadOnlyDictionary<string, TypeDefinitionAst> s_emptyTypeDefinitionDictionary =
             new ReadOnlyDictionary<string, TypeDefinitionAst>(new Dictionary<string, TypeDefinitionAst>(StringComparer.OrdinalIgnoreCase));
 
         // This dictionary doesn't include ExportedTypes from nested modules.
         private ReadOnlyDictionary<string, TypeDefinitionAst> _exportedTypeDefinitionsNoNested { set; get; }
 
-        private static readonly HashSet<string> ScriptModuleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) 
-            {   
-                StringLiterals.PowerShellModuleFileExtension, 
+        private static readonly HashSet<string> s_scriptModuleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                StringLiterals.PowerShellModuleFileExtension,
             };
 
         internal static void SetDefaultDynamicNameAndPath(PSModuleInfo module)
@@ -157,13 +157,13 @@ namespace System.Management.Automation
                 Pipe outputPipe = new Pipe { NullPipe = true };
                 // And run the scriptblock...
                 scriptBlock.InvokeWithPipe(
-                    useLocalScope:         false,
+                    useLocalScope: false,
                     errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                    dollarUnder:           AutomationNull.Value,
-                    input:                 AutomationNull.Value,
-                    scriptThis:            AutomationNull.Value,
-                    outputPipe:            outputPipe,
-                    invocationInfo:        null
+                    dollarUnder: AutomationNull.Value,
+                    input: AutomationNull.Value,
+                    scriptThis: AutomationNull.Value,
+                    outputPipe: outputPipe,
+                    invocationInfo: null
                     );
             }
             finally
@@ -229,7 +229,7 @@ namespace System.Management.Automation
         {
             _name = name;
         }
-        string _name = String.Empty;
+        private string _name = String.Empty;
 
         /// <summary>
         /// The path to the file that defined this module...
@@ -245,7 +245,7 @@ namespace System.Management.Automation
                 _path = value;
             }
         }
-        string _path = String.Empty;
+        private string _path = String.Empty;
 
         /// <summary>
         /// If the module is a binary module or a script module that defines
@@ -272,7 +272,7 @@ namespace System.Management.Automation
             get { return _description; }
             set { _description = value ?? String.Empty; }
         }
-        string _description = String.Empty;
+        private string _description = String.Empty;
 
         /// <summary>
         /// The guid for this module if one was defined in the module manifest.
@@ -286,7 +286,7 @@ namespace System.Management.Automation
         {
             _guid = guid;
         }
-        Guid _guid;
+        private Guid _guid;
 
         /// <summary>
         /// The HelpInfo for this module if one was defined in the module manifest.
@@ -301,7 +301,7 @@ namespace System.Management.Automation
         {
             _helpInfoUri = uri;
         }
-        string _helpInfoUri;
+        private string _helpInfoUri;
 
         /// <summary>
         /// Get the module base directory for this module. For modules loaded via a module
@@ -321,7 +321,7 @@ namespace System.Management.Automation
         {
             _moduleBase = moduleBase;
         }
-        string _moduleBase;
+        private string _moduleBase;
 
         /// <summary>
         /// This value is set from the PrivateData member in the module manifest.
@@ -467,7 +467,7 @@ namespace System.Management.Automation
         {
             _version = version;
         }
-        Version _version = new Version(0, 0);
+        private Version _version = new Version(0, 0);
 
         /// <summary>
         /// True if the module was compiled (i.e. a .DLL) instead of
@@ -477,7 +477,7 @@ namespace System.Management.Automation
         {
             get { return _moduleType; }
         }
-        ModuleType _moduleType = ModuleType.Script;
+        private ModuleType _moduleType = ModuleType.Script;
 
         /// <summary>
         /// This this module as being a compiled module...
@@ -491,7 +491,7 @@ namespace System.Management.Automation
         {
             get; internal set;
         }
-        
+
         /// <summary>
         /// Controls the module access mode...
         /// </summary>
@@ -507,8 +507,8 @@ namespace System.Management.Automation
                 _accessMode = value;
             }
         }
-        ModuleAccessMode _accessMode = ModuleAccessMode.ReadWrite;
-        
+        private ModuleAccessMode _accessMode = ModuleAccessMode.ReadWrite;
+
         /// <summary>
         /// CLR Version
         /// </summary>
@@ -559,7 +559,7 @@ namespace System.Management.Automation
                 {
                     foreach (string fn in DeclaredFunctionExports)
                     {
-                        FunctionInfo tempFunction = new FunctionInfo(fn, ScriptBlock.EmptyScriptBlock, null) {Module = this};
+                        FunctionInfo tempFunction = new FunctionInfo(fn, ScriptBlock.EmptyScriptBlock, null) { Module = this };
                         exports[fn] = tempFunction;
                     }
                 }
@@ -577,7 +577,7 @@ namespace System.Management.Automation
                         {
                             if (!exports.ContainsKey(fi.Name))
                             {
-                                exports[ModuleCmdletBase.AddPrefixToCommandName(fi.Name,fi.Prefix)] = fi;
+                                exports[ModuleCmdletBase.AddPrefixToCommandName(fi.Name, fi.Prefix)] = fi;
                             }
                         }
                     }
@@ -588,7 +588,7 @@ namespace System.Management.Automation
                     {
                         if (!exports.ContainsKey(detectedExport))
                         {
-                            FunctionInfo tempFunction = new FunctionInfo(detectedExport, ScriptBlock.EmptyScriptBlock, null) {Module = this};
+                            FunctionInfo tempFunction = new FunctionInfo(detectedExport, ScriptBlock.EmptyScriptBlock, null) { Module = this };
                             exports[detectedExport] = tempFunction;
                         }
                     }
@@ -601,7 +601,7 @@ namespace System.Management.Automation
         private bool IsScriptModuleFile(string path)
         {
             var ext = System.IO.Path.GetExtension(path);
-            return ext != null && ScriptModuleExtensions.Contains(ext);
+            return ext != null && s_scriptModuleExtensions.Contains(ext);
         }
 
         /// <summary>
@@ -630,7 +630,7 @@ namespace System.Management.Automation
                 }
 
                 // ExternalScriptInfo.GetScriptBlockAst() uses a cache layer to avoid re-parsing.
-                CreateExportedTypeDefinitions(rootedPath != null && IsScriptModuleFile(rootedPath) && IO.File.Exists(rootedPath) ? 
+                CreateExportedTypeDefinitions(rootedPath != null && IsScriptModuleFile(rootedPath) && IO.File.Exists(rootedPath) ?
                     (new ExternalScriptInfo(rootedPath, rootedPath)).GetScriptBlockAst() : null);
             }
 
@@ -671,11 +671,10 @@ namespace System.Management.Automation
         {
             if (moduleContentScriptBlockAsts == null)
             {
-                this._exportedTypeDefinitionsNoNested = EmptyTypeDefinitionDictionary;
+                this._exportedTypeDefinitionsNoNested = s_emptyTypeDefinitionDictionary;
             }
             else
             {
-
                 this._exportedTypeDefinitionsNoNested = new ReadOnlyDictionary<string, TypeDefinitionAst>(
                     moduleContentScriptBlockAsts.FindAll(a => (a is TypeDefinitionAst), false)
                         .OfType<TypeDefinitionAst>()
@@ -744,7 +743,7 @@ namespace System.Management.Automation
                 {
                     foreach (string fn in DeclaredCmdletExports)
                     {
-                        CmdletInfo tempCmdlet = new CmdletInfo(fn, null, null, null, null) {Module = this};
+                        CmdletInfo tempCmdlet = new CmdletInfo(fn, null, null, null, null) { Module = this };
                         exports[fn] = tempCmdlet;
                     }
                 }
@@ -765,7 +764,7 @@ namespace System.Management.Automation
                     {
                         if (!exports.ContainsKey(detectedExport))
                         {
-                            CmdletInfo tempCmdlet = new CmdletInfo(detectedExport, null, null, null, null) {Module = this};
+                            CmdletInfo tempCmdlet = new CmdletInfo(detectedExport, null, null, null, null) { Module = this };
                             exports[detectedExport] = tempCmdlet;
                         }
                     }
@@ -785,7 +784,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(cmdlet != null, "AddDetectedCmdletExport should not be called with a null value");
 
-            if(! _detectedCmdletExports.Contains(cmdlet))
+            if (!_detectedCmdletExports.Contains(cmdlet))
             {
                 _detectedCmdletExports.Add(cmdlet);
             }
@@ -878,7 +877,7 @@ namespace System.Management.Automation
             }
         }
 
-        readonly List<CmdletInfo> _compiledExports = new List<CmdletInfo>();
+        private readonly List<CmdletInfo> _compiledExports = new List<CmdletInfo>();
 
 
         /// <summary>
@@ -905,7 +904,7 @@ namespace System.Management.Automation
             }
         }
 
-        readonly List<AliasInfo> _compiledAliasExports = new List<AliasInfo>();
+        private readonly List<AliasInfo> _compiledAliasExports = new List<AliasInfo>();
 
 
         /// <summary>
@@ -965,7 +964,7 @@ namespace System.Management.Automation
                        (_readonlyNestedModules = new ReadOnlyCollection<PSModuleInfo>(_nestedModules));
             }
         }
-        ReadOnlyCollection<PSModuleInfo> _readonlyNestedModules;
+        private ReadOnlyCollection<PSModuleInfo> _readonlyNestedModules;
 
         /// <summary>
         /// Add a module to the list of child modules.
@@ -975,7 +974,7 @@ namespace System.Management.Automation
         {
             AddModuleToList(nestedModule, _nestedModules);
         }
-        readonly List<PSModuleInfo> _nestedModules = new List<PSModuleInfo>();
+        private readonly List<PSModuleInfo> _nestedModules = new List<PSModuleInfo>();
 
         /// <summary>
         /// PowerShell Host Name
@@ -1017,7 +1016,7 @@ namespace System.Management.Automation
         /// Scripts to Process
         /// </summary>
         public IEnumerable<String> Scripts
-        { 
+        {
             get { return _scripts; }
         }
 
@@ -1054,7 +1053,7 @@ namespace System.Management.Automation
                        (_readonlyRequiredModules = new ReadOnlyCollection<PSModuleInfo>(_requiredModules));
             }
         }
-        ReadOnlyCollection<PSModuleInfo> _readonlyRequiredModules;
+        private ReadOnlyCollection<PSModuleInfo> _readonlyRequiredModules;
 
         /// <summary>
         /// Add a module to the list of required modules.
@@ -1064,7 +1063,7 @@ namespace System.Management.Automation
         {
             AddModuleToList(requiredModule, _requiredModules);
         }
-        List<PSModuleInfo> _requiredModules = new List<PSModuleInfo>();
+        private List<PSModuleInfo> _requiredModules = new List<PSModuleInfo>();
 
         /// <summary>
         /// Returns the list of required modules specified in the module manifest of this module. This will only
@@ -1078,7 +1077,7 @@ namespace System.Management.Automation
                        (_readonlyRequiredModulesSpecification = new ReadOnlyCollection<ModuleSpecification>(_requiredModulesSpecification));
             }
         }
-        ReadOnlyCollection<ModuleSpecification> _readonlyRequiredModulesSpecification;
+        private ReadOnlyCollection<ModuleSpecification> _readonlyRequiredModulesSpecification;
 
         /// <summary>
         /// Add a module to the list of required modules specification
@@ -1088,7 +1087,7 @@ namespace System.Management.Automation
         {
             _requiredModulesSpecification.Add(requiredModuleSpecification);
         }
-        List<ModuleSpecification> _requiredModulesSpecification = new List<ModuleSpecification>();
+        private List<ModuleSpecification> _requiredModulesSpecification = new List<ModuleSpecification>();
 
         /// <summary>
         /// Root Module
@@ -1105,8 +1104,8 @@ namespace System.Management.Automation
         /// </summary>
         internal String RootModuleForManifest
         {
-            get; 
-            set; 
+            get;
+            set;
         }
 
         /// <summary>
@@ -1178,7 +1177,7 @@ namespace System.Management.Automation
                 {
                     foreach (string fn in DeclaredAliasExports)
                     {
-                        AliasInfo tempAlias = new AliasInfo(fn, null, null) {Module = this};
+                        AliasInfo tempAlias = new AliasInfo(fn, null, null) { Module = this };
                         exportedAliases[fn] = tempAlias;
                     }
                 }
@@ -1200,9 +1199,9 @@ namespace System.Management.Automation
                             foreach (var pair in _detectedAliasExports)
                             {
                                 string detectedExport = pair.Key;
-                                if (! exportedAliases.ContainsKey(detectedExport))
+                                if (!exportedAliases.ContainsKey(detectedExport))
                                 {
-                                    AliasInfo tempAlias = new AliasInfo(detectedExport, pair.Value, null) {Module = this};
+                                    AliasInfo tempAlias = new AliasInfo(detectedExport, pair.Value, null) { Module = this };
                                     exportedAliases[detectedExport] = tempAlias;
                                 }
                             }
@@ -1255,7 +1254,7 @@ namespace System.Management.Automation
                 {
                     foreach (string fn in DeclaredWorkflowExports)
                     {
-                        WorkflowInfo tempWf = new WorkflowInfo(fn, ScriptBlock.EmptyScriptBlock, context: null) {Module = this};
+                        WorkflowInfo tempWf = new WorkflowInfo(fn, ScriptBlock.EmptyScriptBlock, context: null) { Module = this };
                         exportedWorkflows[fn] = tempWf;
                     }
                 }
@@ -1274,7 +1273,7 @@ namespace System.Management.Automation
                         {
                             if (!exportedWorkflows.ContainsKey(detectedExport))
                             {
-                                WorkflowInfo tempWf = new WorkflowInfo(detectedExport, ScriptBlock.EmptyScriptBlock, context: null) {Module = this};
+                                WorkflowInfo tempWf = new WorkflowInfo(detectedExport, ScriptBlock.EmptyScriptBlock, context: null) { Module = this };
                                 exportedWorkflows[detectedExport] = tempWf;
                             }
                         }
@@ -1304,9 +1303,9 @@ namespace System.Management.Automation
                     : Utils.EmptyReadOnlyCollection<string>();
             }
         }
- 
+
         internal Collection<string> _declaredDscResourceExports = null;
-   
+
         /// <summary>
         /// The session state instance associated with this module.
         /// </summary>
@@ -1517,12 +1516,12 @@ namespace System.Management.Automation
         {
             get
             {
-                return this._exportedFormatFiles;
+                return _exportedFormatFiles;
             }
         }
         internal void SetExportedFormatFiles(ReadOnlyCollection<string> files)
         {
-            this._exportedFormatFiles = files;
+            _exportedFormatFiles = files;
         }
 
         private ReadOnlyCollection<string> _exportedTypeFiles = new ReadOnlyCollection<string>(new List<string>());
@@ -1534,13 +1533,12 @@ namespace System.Management.Automation
         {
             get
             {
-                return this._exportedTypeFiles;
+                return _exportedTypeFiles;
             }
-
         }
         internal void SetExportedTypeFiles(ReadOnlyCollection<string> files)
         {
-            this._exportedTypeFiles = files;
+            _exportedTypeFiles = files;
         }
 
         /// <summary>
@@ -1552,7 +1550,7 @@ namespace System.Management.Automation
             PSModuleInfo clone = (PSModuleInfo)this.MemberwiseClone();
 
             clone._fileList = new List<string>(this.FileList);
-            clone._moduleList = new Collection<object>(this._moduleList);
+            clone._moduleList = new Collection<object>(_moduleList);
 
             foreach (var n in this.NestedModules)
             {
@@ -1562,15 +1560,15 @@ namespace System.Management.Automation
             clone._readonlyNestedModules = new ReadOnlyCollection<PSModuleInfo>(this.NestedModules);
             clone._readonlyRequiredModules = new ReadOnlyCollection<PSModuleInfo>(this.RequiredModules);
             clone._readonlyRequiredModulesSpecification = new ReadOnlyCollection<ModuleSpecification>(this.RequiredModulesSpecification);
-            clone._requiredAssemblies = new Collection<string>(this._requiredAssemblies);
+            clone._requiredAssemblies = new Collection<string>(_requiredAssemblies);
             clone._requiredModulesSpecification = new List<ModuleSpecification>();
             clone._requiredModules = new List<PSModuleInfo>();
 
-            foreach (var r in this._requiredModules)
+            foreach (var r in _requiredModules)
             {
                 clone.AddRequiredModule(r);
             }
-            foreach (var r in this._requiredModulesSpecification)
+            foreach (var r in _requiredModulesSpecification)
             {
                 clone.AddRequiredModuleSpecification(r);
             }
@@ -1592,7 +1590,7 @@ namespace System.Management.Automation
         /// </summary>
         static public void ClearAppDomainLevelModulePathCache()
         {
-            _appdomainModulePathCache.Clear();
+            s_appdomainModulePathCache.Clear();
         }
 
 
@@ -1603,7 +1601,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         static public object GetAppDomainLevelModuleCache()
         {
-            return _appdomainModulePathCache;
+            return s_appdomainModulePathCache;
         }
 #endif
         /// <summary>
@@ -1614,7 +1612,7 @@ namespace System.Management.Automation
         static internal string ResolveUsingAppDomainLevelModuleCache(string moduleName)
         {
             string path;
-            if (_appdomainModulePathCache.TryGetValue(moduleName, out path))
+            if (s_appdomainModulePathCache.TryGetValue(moduleName, out path))
             {
                 return path;
             }
@@ -1635,11 +1633,11 @@ namespace System.Management.Automation
         {
             if (force)
             {
-                _appdomainModulePathCache.AddOrUpdate(moduleName, path, (modulename, oldPath) => path);
+                s_appdomainModulePathCache.AddOrUpdate(moduleName, path, (modulename, oldPath) => path);
             }
             else
             {
-                _appdomainModulePathCache.TryAdd(moduleName, path);
+                s_appdomainModulePathCache.TryAdd(moduleName, path);
             }
         }
 
@@ -1651,12 +1649,11 @@ namespace System.Management.Automation
         static internal bool RemoveFromAppDomainLevelCache(string moduleName)
         {
             string outString;
-            return _appdomainModulePathCache.TryRemove(moduleName, out outString);
+            return s_appdomainModulePathCache.TryRemove(moduleName, out outString);
         }
 
-        private readonly static System.Collections.Concurrent.ConcurrentDictionary<string, string> _appdomainModulePathCache = 
+        private readonly static System.Collections.Concurrent.ConcurrentDictionary<string, string> s_appdomainModulePathCache =
             new System.Collections.Concurrent.ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
     } // PSModuleInfo
 
     /// <summary>
@@ -1721,7 +1718,7 @@ namespace System.Management.Automation
             //Check whether any of the compared objects is null.
             if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null))
                 return false;
-            
+
             bool result = string.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase) &&
                 (x.Guid == y.Guid) && (x.Version == y.Version);
 
@@ -1758,5 +1755,4 @@ namespace System.Management.Automation
             }
         }
     }
-
 } // System.Management.Automation

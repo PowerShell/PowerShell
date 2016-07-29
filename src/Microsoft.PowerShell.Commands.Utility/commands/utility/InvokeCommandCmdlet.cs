@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet("Invoke", "Expression", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113343")]
     public sealed
-    class 
+    class
     InvokeExpressionCommand : PSCmdlet
     {
         #region parameters
@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Diagnostics.Assert(null != Command, "Command is null");
 
-            ScriptBlock myScriptBlock = InvokeCommand.NewScriptBlock( Command);
+            ScriptBlock myScriptBlock = InvokeCommand.NewScriptBlock(Command);
 
             // If the runspace has ever been in ConstrainedLanguage, lock down this
             // invocation as well - it is too easy for the command to be negatively influenced
@@ -45,13 +45,13 @@ namespace Microsoft.PowerShell.Commands
 
             var emptyArray = Utils.EmptyArray<object>();
             myScriptBlock.InvokeUsingCmdlet(
-                contextCmdlet:         this,
-                useLocalScope:         false,
+                contextCmdlet: this,
+                useLocalScope: false,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                dollarUnder:           AutomationNull.Value,
-                input:                 emptyArray,
-                scriptThis:            AutomationNull.Value,
-                args:                  emptyArray);
+                dollarUnder: AutomationNull.Value,
+                input: emptyArray,
+                scriptThis: AutomationNull.Value,
+                args: emptyArray);
         }
     }
 }   // namespace Microsoft.PowerShell.Commands

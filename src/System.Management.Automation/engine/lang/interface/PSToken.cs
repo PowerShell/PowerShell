@@ -3,13 +3,13 @@
 
     Project:     PowerShell
 
-    File:        PSToken.cs
 
     Contents:    PowerShell token interface for syntax editors 
 
     Classes:     System.Management.Automation.PSToken
 
 --********************************************************************/
+
 using System;
 using System.Management.Automation.Language;
 using System.Collections.Generic;
@@ -97,7 +97,7 @@ namespace System.Management.Automation
             {
                 return PSTokenType.Type;
             }
-            return _tokenKindMapping[(int)token.Kind];
+            return s_tokenKindMapping[(int)token.Kind];
         }
 
         private PSTokenType _type;
@@ -113,7 +113,7 @@ namespace System.Management.Automation
             }
         }
 
-        private readonly static PSTokenType[] _tokenKindMapping = new PSTokenType[]
+        private readonly static PSTokenType[] s_tokenKindMapping = new PSTokenType[]
         {
             #region Flags for unclassified tokens
 

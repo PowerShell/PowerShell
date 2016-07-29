@@ -11,9 +11,8 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
- 
     #region Table View Definitions
-   
+
     /// <summary>
     /// alignment values
     /// NOTE: we do not use an enum because this will have to be
@@ -35,7 +34,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// optional, if not present, use data off the default table row definition
         /// </summary>
-        internal TableHeaderDefinition header = new TableHeaderDefinition ();
+        internal TableHeaderDefinition header = new TableHeaderDefinition();
 
         /// <summary>
         /// default row definition
@@ -84,8 +83,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// mandatory list of column header definitions
         /// </summary>
-        internal List<TableColumnHeaderDefinition> columnHeaderDefinitionList = 
-                            new List<TableColumnHeaderDefinition> ();
+        internal List<TableColumnHeaderDefinition> columnHeaderDefinitionList =
+                            new List<TableColumnHeaderDefinition>();
 
         /// <summary>
         /// Returns a Shallow Copy of the current object.
@@ -93,7 +92,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         internal TableHeaderDefinition Copy()
         {
-            TableHeaderDefinition result = new TableHeaderDefinition {hideHeader = this.hideHeader};
+            TableHeaderDefinition result = new TableHeaderDefinition { hideHeader = this.hideHeader };
             foreach (TableColumnHeaderDefinition tchd in this.columnHeaderDefinitionList)
             {
                 result.columnHeaderDefinitionList.Add(tchd);
@@ -124,7 +123,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal int width = 0; // undefined
     }
-    
+
     /// <summary>
     /// definition of the data to be displayed in a table row
     /// </summary>
@@ -146,7 +145,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// mandatory list of column items.
         /// It cannot be empty
         /// </summary>
-        internal List<TableRowItemDefinition> rowItemDefinitionList = new List<TableRowItemDefinition> ();
+        internal List<TableRowItemDefinition> rowItemDefinitionList = new List<TableRowItemDefinition>();
 
         /// <summary>
         /// Returns a Shallow Copy of the current object.
@@ -185,11 +184,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         ///     * PropertyToken
         ///     * NOTHING (provide an empty cell)
         /// </summary>
-        internal List<FormatToken> formatTokenList = new List<FormatToken> ();
+        internal List<FormatToken> formatTokenList = new List<FormatToken>();
     }
 
     #endregion
-
 }
 
 namespace System.Management.Automation
@@ -214,7 +212,7 @@ namespace System.Management.Automation
         /// <summary>Create a default TableControl</summary>
         public static TableControlBuilder Create(bool outOfBand = false, bool autoSize = false, bool hideTableHeaders = false)
         {
-            var table = new TableControl {OutOfBand = outOfBand, AutoSize = autoSize, HideTableHeaders = hideTableHeaders};
+            var table = new TableControl { OutOfBand = outOfBand, AutoSize = autoSize, HideTableHeaders = hideTableHeaders };
             return new TableControlBuilder(table);
         }
 
@@ -265,7 +263,7 @@ namespace System.Management.Automation
         internal TableControl(TableControlBody tcb, ViewDefinition viewDefinition) : this()
         {
             this.OutOfBand = viewDefinition.outOfBand;
-            this.GroupBy = PSControlGroupBy.Get(viewDefinition.groupBy); 
+            this.GroupBy = PSControlGroupBy.Get(viewDefinition.groupBy);
 
             this.AutoSize = tcb.autosize.HasValue && tcb.autosize.Value;
             this.HideTableHeaders = tcb.header.hideHeader;
@@ -294,7 +292,7 @@ namespace System.Management.Automation
         /// <param name="tableControlRow"></param>
         public TableControl(TableControlRow tableControlRow) : this()
         {
-            if(tableControlRow == null)
+            if (tableControlRow == null)
                 throw PSTraceSource.NewArgumentNullException("tableControlRows");
 
             this.Rows.Add(tableControlRow);
@@ -584,11 +582,11 @@ namespace System.Management.Automation
             _table.Headers.Add(new TableControlColumnHeader(label, width, alignment));
             return this;
         }
-        
+
         /// <summary>Add a header</summary>
         public TableRowDefinitionBuilder StartRowDefinition(bool wrap = false, IEnumerable<string> entrySelectedByType = null, IEnumerable<DisplayEntry> entrySelectedByCondition = null)
         {
-            var row = new TableControlRow {Wrap = wrap};
+            var row = new TableControlRow { Wrap = wrap };
             if (entrySelectedByType != null || entrySelectedByCondition != null)
             {
                 row.SelectedBy = new EntrySelectedBy();
@@ -611,5 +609,4 @@ namespace System.Management.Automation
             return _table;
         }
     }
-
 }

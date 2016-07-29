@@ -27,17 +27,17 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             wqlQueryBuilder.Append(this.JobContext.ClassName);
             wqlQueryBuilder.Append(" ");
             wqlQueryBuilder.Append(wqlCondition);
-            this._wqlQuery = wqlQueryBuilder.ToString();
+            _wqlQuery = wqlQueryBuilder.ToString();
 
             if (string.IsNullOrWhiteSpace(wqlCondition))
             {
-                this._useEnumerateInstances = true;
+                _useEnumerateInstances = true;
             }
             else
             {
                 if (jobContext.CmdletInvocationContext.CmdletDefinitionContext.UseEnumerateInstancesInsteadOfWql)
                 {
-                    this._useEnumerateInstances = true;
+                    _useEnumerateInstances = true;
                 }
             }
         }
@@ -45,9 +45,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal override IObservable<CimInstance> GetCimOperation()
         {
             this.WriteVerboseStartOfCimOperation();
-                
+
             IObservable<CimInstance> observable;
-            if (this._useEnumerateInstances)
+            if (_useEnumerateInstances)
             {
                 observable = this.JobContext.Session.EnumerateInstancesAsync(
                     this.JobContext.Namespace,
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 observable = this.JobContext.Session.QueryInstancesAsync(
                     this.JobContext.Namespace,
                     "WQL",
-                    this._wqlQuery,
+                    _wqlQuery,
                     this.CreateOperationOptions());
             }
 
@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal override string Description
         {
-            get 
+            get
             {
                 return this.FailSafeDescription;
             }
@@ -76,14 +76,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal override string FailSafeDescription
         {
-            get 
+            get
             {
                 return string.Format(
                     CultureInfo.InvariantCulture,
                     CmdletizationResources.CimJob_SafeQueryDescription,
                     this.JobContext.CmdletizationClassName,
                     this.JobContext.Session.ComputerName,
-                    this._wqlQuery);
+                    _wqlQuery);
             }
         }
     }

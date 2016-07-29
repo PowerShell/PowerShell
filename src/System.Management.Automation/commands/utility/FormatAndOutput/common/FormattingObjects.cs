@@ -21,6 +21,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 // boudaries, therefore the objects provide a GUID based machanism to
 // preserve the information.
 //
+
 using System;
 using System.Globalization;
 using System.Collections;
@@ -190,7 +191,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
     }
-#endregion
+    #endregion
 
     #region Shape Info Classes
 
@@ -282,7 +283,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal abstract partial class FreeFormatEntry : FormatEntryInfo
     {
-        public List<FormatValue> formatValueList = new List<FormatValue> ();
+        public List<FormatValue> formatValueList = new List<FormatValue>();
     }
 
     internal sealed partial class ListViewEntry : FormatEntryInfo
@@ -291,7 +292,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
-        public List<ListViewField> listViewFieldList = new List<ListViewField> ();
+        public List<ListViewField> listViewFieldList = new List<ListViewField>();
     }
 
     internal sealed partial class ListViewField : FormatInfoData
@@ -311,7 +312,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
-        public List<FormatPropertyField> formatPropertyFieldList = new List<FormatPropertyField> ();
+        public List<FormatPropertyField> formatPropertyFieldList = new List<FormatPropertyField>();
         public bool multiLine = false;
     }
 
@@ -368,7 +369,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     #endregion
 
-#region Format Values
+    #region Format Values
 
     internal abstract class FormatValue : FormatInfoData
     {
@@ -404,9 +405,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string CLSID = "fba029a113a5458d932a2ed4871fadf2";
 
-        public FormatEntry ()
+        public FormatEntry()
         {
-            formatValueList = new List<FormatValue> ();
+            formatValueList = new List<FormatValue>();
         }
 
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
@@ -430,5 +431,5 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public int firstLine = 0;
     }
 
-#endregion
+    #endregion
 }

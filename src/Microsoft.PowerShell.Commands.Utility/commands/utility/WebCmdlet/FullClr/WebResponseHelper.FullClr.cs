@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
             HttpWebResponse httpResponse = response as HttpWebResponse;
             if (null != httpResponse)
             {
-                protocol = string.Format(CultureInfo.InvariantCulture, 
+                protocol = string.Format(CultureInfo.InvariantCulture,
                     "HTTP/{0}", httpResponse.ProtocolVersion);
             }
 

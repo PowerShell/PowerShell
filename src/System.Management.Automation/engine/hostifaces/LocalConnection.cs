@@ -46,8 +46,8 @@ namespace System.Management.Automation.Runspaces
         /// configuration information for this minshell.
         /// </param>
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
-        internal LocalRunspace (PSHost host, RunspaceConfiguration runspaceConfig)
-            : base( host,runspaceConfig)
+        internal LocalRunspace(PSHost host, RunspaceConfiguration runspaceConfig)
+            : base(host, runspaceConfig)
         {
         }
 
@@ -99,18 +99,18 @@ namespace System.Management.Automation.Runspaces
             // if we didn't get applicationPrivateData from a runspace pool,
             // then we create a new one
 
-            if (applicationPrivateData == null)
+            if (_applicationPrivateData == null)
             {
                 lock (this.SyncRoot)
                 {
-                    if (applicationPrivateData == null)
+                    if (_applicationPrivateData == null)
                     {
-                        applicationPrivateData = new PSPrimitiveDictionary();
+                        _applicationPrivateData = new PSPrimitiveDictionary();
                     }
                 }
             }
 
-            return applicationPrivateData;
+            return _applicationPrivateData;
         }
 
         /// <summary>
@@ -119,10 +119,10 @@ namespace System.Management.Automation.Runspaces
         /// <param name="applicationPrivateData"></param>
         internal override void SetApplicationPrivateData(PSPrimitiveDictionary applicationPrivateData)
         {
-            this.applicationPrivateData = applicationPrivateData;
+            _applicationPrivateData = applicationPrivateData;
         }
 
-        private PSPrimitiveDictionary applicationPrivateData;
+        private PSPrimitiveDictionary _applicationPrivateData;
 
         /// <summary>
         /// Gets the event manager
@@ -158,14 +158,14 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return this.createThreadOptions;
+                return _createThreadOptions;
             }
 
             set
             {
                 lock (this.SyncRoot)
                 {
-                    if (value != this.createThreadOptions)
+                    if (value != _createThreadOptions)
                     {
                         if (this.RunspaceStateInfo.State != RunspaceState.BeforeOpen)
                         {
@@ -185,12 +185,12 @@ namespace System.Management.Automation.Runspaces
                             }
                         }
 
-                        this.createThreadOptions = value;
+                        _createThreadOptions = value;
                     }
                 }
             }
         }
-        private PSThreadOptions createThreadOptions = PSThreadOptions.Default;
+        private PSThreadOptions _createThreadOptions = PSThreadOptions.Default;
 
         /// <summary>
         /// Resets the runspace state to allow for fast reuse. Not all of the runspace
@@ -204,7 +204,6 @@ namespace System.Management.Automation.Runspaces
             if (this.InitialSessionState == null)
             {
                 invalidOperation = PSTraceSource.NewInvalidOperationException();
-
             }
             else if (this.RunspaceState != Runspaces.RunspaceState.Opened)
             {
@@ -241,7 +240,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
-        protected override Pipeline CoreCreatePipeline (string command, bool addToHistory, bool isNested)
+        protected override Pipeline CoreCreatePipeline(string command, bool addToHistory, bool isNested)
         {
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
             if (_disposed)
@@ -325,10 +324,10 @@ namespace System.Management.Automation.Runspaces
                 return _transcriptionData;
             }
         }
-        TranscriptionData _transcriptionData = null;
+        private TranscriptionData _transcriptionData = null;
 
 
-        JobRepository _jobRepository;
+        private JobRepository _jobRepository;
         /// <summary>
         /// List of jobs in this runspace
         /// </summary>
@@ -340,12 +339,12 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        JobManager _jobManager;
+        private JobManager _jobManager;
 
         /// <summary>
         /// Manager for JobSourceAdapters registered in this runspace.
         /// </summary>
-        public override JobManager  JobManager
+        public override JobManager JobManager
         {
             get
             {
@@ -353,7 +352,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        RunspaceRepository _runspaceRepository;
+        private RunspaceRepository _runspaceRepository;
 
         /// <summary>
         /// List of remote runspaces in this runspace
@@ -381,8 +380,8 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private static string DebugPreferenceCachePath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell"), "DebugPreference.clixml");
-        private static object DebugPreferenceLockObject = new object();
+        private static string s_debugPreferenceCachePath = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell"), "DebugPreference.clixml");
+        private static object s_debugPreferenceLockObject = new object();
 
         /// <summary>
         /// DebugPreference serves as a property bag to keep 
@@ -413,7 +412,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="enable">Indicates if the debug preference has to be enabled or disabled.</param>
         internal static void SetDebugPreference(string processName, List<string> appDomainName, bool enable)
         {
-            lock(DebugPreferenceLockObject)
+            lock (s_debugPreferenceLockObject)
             {
                 bool iscacheUpdated = false;
                 Hashtable debugPreferenceCache = null;
@@ -424,7 +423,7 @@ namespace System.Management.Automation.Runspaces
                     appDomainNames = appDomainName.ToArray();
                 }
 
-                if (!File.Exists(LocalRunspace.DebugPreferenceCachePath))
+                if (!File.Exists(LocalRunspace.s_debugPreferenceCachePath))
                 {
                     if (enable)
                     {
@@ -440,7 +439,7 @@ namespace System.Management.Automation.Runspaces
                     if (debugPreferenceCache != null)
                     {
                         if (enable)
-                        { 
+                        {
                             // Debug preference is set to enable.
                             // If the cache does not contain the process name, then we just update the cache.
                             if (!debugPreferenceCache.ContainsKey(processName))
@@ -525,7 +524,6 @@ namespace System.Management.Automation.Runspaces
                                         }
                                     }
                                 }
-
                             }
                         }
                     }
@@ -546,7 +544,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     using (PowerShell ps = PowerShell.Create())
                     {
-                        ps.AddCommand("Export-Clixml").AddParameter("Path", LocalRunspace.DebugPreferenceCachePath).AddParameter("InputObject", debugPreferenceCache);
+                        ps.AddCommand("Export-Clixml").AddParameter("Path", LocalRunspace.s_debugPreferenceCachePath).AddParameter("InputObject", debugPreferenceCache);
                         ps.Invoke();
                     }
                 }
@@ -570,7 +568,7 @@ namespace System.Management.Automation.Runspaces
                     ps.Runspace = runspace;
                 }
 
-                ps.AddCommand("Import-Clixml").AddParameter("Path", LocalRunspace.DebugPreferenceCachePath);
+                ps.AddCommand("Import-Clixml").AddParameter("Path", LocalRunspace.s_debugPreferenceCachePath);
                 Collection<PSObject> psObjects = ps.Invoke();
 
                 if (psObjects != null && psObjects.Count == 1)
@@ -589,13 +587,13 @@ namespace System.Management.Automation.Runspaces
         private static DebugPreference GetProcessSpecificDebugPreference(object debugPreference)
         {
             DebugPreference processDebugPreference = null;
-            if(debugPreference != null)
+            if (debugPreference != null)
             {
                 PSObject debugPreferencePsObject = debugPreference as PSObject;
                 if (debugPreferencePsObject != null)
                 {
                     processDebugPreference = LanguagePrimitives.ConvertTo<DebugPreference>(debugPreferencePsObject);
-                }   
+                }
             }
             return processDebugPreference;
         }
@@ -646,7 +644,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Helper function used for opening a runspace
         /// </summary>
-        void DoOpenHelper ()
+        private void DoOpenHelper()
         {
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
             if (_disposed)
@@ -655,7 +653,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             bool startLifeCycleEventWritten = false;
-            runspaceInitTracer.WriteLine("begin open runspace");
+            s_runspaceInitTracer.WriteLine("begin open runspace");
             try
             {
                 _transcriptionData = new TranscriptionData();
@@ -683,13 +681,13 @@ namespace System.Management.Automation.Runspaces
                 _jobManager = new JobManager();
                 _runspaceRepository = new RunspaceRepository();
 
-                runspaceInitTracer.WriteLine("initializing built-in aliases and variable information");
+                s_runspaceInitTracer.WriteLine("initializing built-in aliases and variable information");
                 InitializeDefaults();
             }
             catch (Exception exception)
             {
                 CommandProcessorBase.CheckForSevereException(exception);
-                runspaceInitTracer.WriteLine("Runspace open failed");
+                s_runspaceInitTracer.WriteLine("Runspace open failed");
 
                 //Log engine health event
                 LogEngineHealthEvent(exception);
@@ -702,29 +700,29 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 //Open failed. Set the RunspaceState to Broken.
-                SetRunspaceState (RunspaceState.Broken, exception);
+                SetRunspaceState(RunspaceState.Broken, exception);
 
                 //Raise the event
-                RaiseRunspaceStateEvents ();
+                RaiseRunspaceStateEvents();
 
                 //Rethrow the exception. For asynchronous execution, 
                 //OpenThreadProc will catch it. For synchronous execution
                 //caller of open will catch it.
-                throw ;
+                throw;
             }
 
-            SetRunspaceState (RunspaceState.Opened);
+            SetRunspaceState(RunspaceState.Opened);
             RunspaceOpening.Set();
 
             //Raise the event
-            RaiseRunspaceStateEvents() ;
-            runspaceInitTracer.WriteLine("runspace opened successfully");
+            RaiseRunspaceStateEvents();
+            s_runspaceInitTracer.WriteLine("runspace opened successfully");
 
             // Now do initial state configuration that requires an active runspace
             if (InitialSessionState != null)
             {
-                Exception initError = InitialSessionState.BindRunspace(this, runspaceInitTracer);
-                if(initError != null)
+                Exception initError = InitialSessionState.BindRunspace(this, s_runspaceInitTracer);
+                if (initError != null)
                 {
                     // Log engine health event
                     LogEngineHealthEvent(initError);
@@ -802,45 +800,45 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         internal PipelineThread GetPipelineThread()
         {
-            if (this.pipelineThread == null)
+            if (_pipelineThread == null)
             {
 #if CORECLR     // No ApartmentState In CoreCLR
-                this.pipelineThread = new PipelineThread();
+                _pipelineThread = new PipelineThread();
 #else
-                this.pipelineThread = new PipelineThread(this.ApartmentState);
+                _pipelineThread = new PipelineThread(this.ApartmentState);
 #endif
             }
 
-            return this.pipelineThread;
+            return _pipelineThread;
         }
 
-        private PipelineThread pipelineThread = null;
+        private PipelineThread _pipelineThread = null;
 
         override protected void CloseHelper(bool syncCall)
         {
             if (syncCall)
             {
                 //Do close synchronously
-                DoCloseHelper ();
+                DoCloseHelper();
             }
             else
             {
                 //Do close asynchronously
-                Thread asyncThread = new Thread (new ThreadStart(this.CloseThreadProc));
+                Thread asyncThread = new Thread(new ThreadStart(this.CloseThreadProc));
 
-                asyncThread.Start ();
+                asyncThread.Start();
             }
         }
 
         /// <summary>
         /// Start method for asynchronous close
         /// </summary>
-        private void CloseThreadProc ()
+        private void CloseThreadProc()
         {
 #pragma warning disable 56500
             try
             {
-                DoCloseHelper ();
+                DoCloseHelper();
             }
             catch (Exception exception) // ignore non-severe exceptions
             {
@@ -856,7 +854,7 @@ namespace System.Management.Automation.Runspaces
         /// Attempts to create/execute pipelines after a call to 
         /// close will fail.
         /// </remarks>
-        void DoCloseHelper ()
+        private void DoCloseHelper()
         {
             // Stop any transcription if we're the last runspace to exit
             ExecutionContext executionContext = this.GetExecutionContext;
@@ -932,10 +930,10 @@ namespace System.Management.Automation.Runspaces
             _engine = null;
             _commandFactory = null;
 
-            SetRunspaceState (RunspaceState.Closed);
+            SetRunspaceState(RunspaceState.Closed);
 
             //Raise Event
-            RaiseRunspaceStateEvents ();
+            RaiseRunspaceStateEvents();
 
             // Report telemetry if we have no more open runspaces.
             bool allRunspacesClosed = true;
@@ -974,7 +972,7 @@ namespace System.Management.Automation.Runspaces
             using (ManualResetEvent remoteRunspaceCloseCompleted = new ManualResetEvent(false))
             {
                 ThrottleManager throttleManager = new ThrottleManager();
-                throttleManager.ThrottleComplete += delegate(object sender, EventArgs e)
+                throttleManager.ThrottleComplete += delegate (object sender, EventArgs e)
                 {
                     remoteRunspaceCloseCompleted.Set();
                 };
@@ -1001,7 +999,7 @@ namespace System.Management.Automation.Runspaces
             using (ManualResetEvent jobsStopCompleted = new ManualResetEvent(false))
             {
                 ThrottleManager throttleManager = new ThrottleManager();
-                throttleManager.ThrottleComplete += delegate(object sender, EventArgs e)
+                throttleManager.ThrottleComplete += delegate (object sender, EventArgs e)
                 {
                     jobsStopCompleted.Set();
                 };
@@ -1035,7 +1033,6 @@ namespace System.Management.Automation.Runspaces
                 // Stop jobs.
                 throttleManager.EndSubmitOperations();
                 jobsStopCompleted.WaitOne();
-
             } // using jobsStopCompleted
 
             // Disconnect all disconnectable job runspaces found.
@@ -1233,7 +1230,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Set to true when object is disposed
         /// </summary>
-        bool _disposed;
+        private bool _disposed;
 
         /// <summary>
         /// Protected dispose which can be overridden by derived classes.
@@ -1304,9 +1301,9 @@ namespace System.Management.Automation.Runspaces
 
             base.Close(); // call base.Close() first to make it stop the pipeline
 
-            if (this.pipelineThread != null)
+            if (_pipelineThread != null)
             {
-                this.pipelineThread.Close();
+                _pipelineThread.Close();
             }
         }
 
@@ -1335,17 +1332,17 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Manages history for this runspace
         /// </summary>
-        History _history;
+        private History _history;
 
         [TraceSource("RunspaceInit", "Initialization code for Runspace")]
         private static
-        PSTraceSource runspaceInitTracer =
+        PSTraceSource s_runspaceInitTracer =
             PSTraceSource.GetTracer("RunspaceInit", "Initialization code for Runspace", false);
 
         /// <summary>
         /// This ensures all processes have a server/listener.
         /// </summary>
-        private static RemoteSessionNamedPipeServer IPCNamedPipeServer = RemoteSessionNamedPipeServer.IPCNamedPipeServer;
+        private static RemoteSessionNamedPipeServer s_IPCNamedPipeServer = RemoteSessionNamedPipeServer.IPCNamedPipeServer;
 
         #endregion private fields
     }
@@ -1357,7 +1354,7 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     internal sealed class StopJobOperationHelper : IThrottleOperation
     {
-        private Job job;
+        private Job _job;
 
         /// <summary>
         /// Internal constructor
@@ -1365,8 +1362,8 @@ namespace System.Management.Automation.Runspaces
         /// <param name="job">Job object to stop.</param>
         internal StopJobOperationHelper(Job job)
         {
-            this.job = job;
-            this.job.StateChanged += new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
+            _job = job;
+            _job.StateChanged += new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
         }
 
         /// <summary>
@@ -1376,7 +1373,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="eventArgs">Event arguments containing Job state.</param>
         private void HandleJobStateChanged(object sender, JobStateEventArgs eventArgs)
         {
-            if (job.IsFinishedState(job.JobStateInfo.State))
+            if (_job.IsFinishedState(_job.JobStateInfo.State))
             {
                 // We are done when the job is in the finished state.
                 RaiseOperationCompleteEvent();
@@ -1388,7 +1385,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal override void StartOperation()
         {
-            if (job.IsFinishedState(job.JobStateInfo.State))
+            if (_job.IsFinishedState(_job.JobStateInfo.State))
             {
                 // The job is already in the finished state and so cannot be stopped.
                 RaiseOperationCompleteEvent();
@@ -1396,7 +1393,7 @@ namespace System.Management.Automation.Runspaces
             else
             {
                 // Otherwise stop the job.
-                job.StopJob();
+                _job.StopJob();
             }
         }
 
@@ -1418,7 +1415,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void RaiseOperationCompleteEvent()
         {
-            this.job.StateChanged -= new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
+            _job.StateChanged -= new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
 
             OperationStateEventArgs operationStateArgs = new OperationStateEventArgs();
             operationStateArgs.OperationState = OperationState.StartComplete;
@@ -1427,14 +1424,14 @@ namespace System.Management.Automation.Runspaces
             OperationComplete.SafeInvoke(this, operationStateArgs);
         }
     }
- 
+
     /// <summary>
     /// Helper class to disconnect a runspace if the runspace supports disconnect
     /// semantics or otherwise close the runspace.
     /// </summary>
     internal sealed class CloseOrDisconnectRunspaceOperationHelper : IThrottleOperation
     {
-        private RemoteRunspace remoteRunspace;
+        private RemoteRunspace _remoteRunspace;
 
         /// <summary>
         /// Internal constructor
@@ -1442,8 +1439,8 @@ namespace System.Management.Automation.Runspaces
         /// <param name="remoteRunspace"></param>
         internal CloseOrDisconnectRunspaceOperationHelper(RemoteRunspace remoteRunspace)
         {
-            this.remoteRunspace = remoteRunspace;
-            this.remoteRunspace.StateChanged += new EventHandler<RunspaceStateEventArgs>(HandleRunspaceStateChanged);
+            _remoteRunspace = remoteRunspace;
+            _remoteRunspace.StateChanged += new EventHandler<RunspaceStateEventArgs>(HandleRunspaceStateChanged);
         }
 
         /// <summary>
@@ -1473,9 +1470,9 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal override void StartOperation()
         {
-            if (remoteRunspace.RunspaceStateInfo.State == RunspaceState.Closed ||
-                remoteRunspace.RunspaceStateInfo.State == RunspaceState.Broken ||
-                remoteRunspace.RunspaceStateInfo.State == RunspaceState.Disconnected)
+            if (_remoteRunspace.RunspaceStateInfo.State == RunspaceState.Closed ||
+                _remoteRunspace.RunspaceStateInfo.State == RunspaceState.Broken ||
+                _remoteRunspace.RunspaceStateInfo.State == RunspaceState.Disconnected)
             {
                 // If the runspace is currently in a disconnected state then leave it
                 // as is.
@@ -1490,14 +1487,14 @@ namespace System.Management.Automation.Runspaces
             {
                 // If the runspace supports disconnect semantics and is running a command, 
                 // then disconnect it rather than closing it.
-                if (remoteRunspace.CanDisconnect &&
-                    remoteRunspace.GetCurrentlyRunningPipeline() != null)
+                if (_remoteRunspace.CanDisconnect &&
+                    _remoteRunspace.GetCurrentlyRunningPipeline() != null)
                 {
-                    remoteRunspace.DisconnectAsync();
+                    _remoteRunspace.DisconnectAsync();
                 }
                 else
                 {
-                    remoteRunspace.CloseAsync();
+                    _remoteRunspace.CloseAsync();
                 }
             }
         }
@@ -1508,7 +1505,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal override void StopOperation()
         {
-
         }
 
         /// <summary>
@@ -1521,7 +1517,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void RaiseOperationCompleteEvent()
         {
-            this.remoteRunspace.StateChanged -= new EventHandler<RunspaceStateEventArgs>(HandleRunspaceStateChanged);
+            _remoteRunspace.StateChanged -= new EventHandler<RunspaceStateEventArgs>(HandleRunspaceStateChanged);
 
             OperationStateEventArgs operationStateEventArgs =
                     new OperationStateEventArgs();
@@ -1595,7 +1591,7 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _errors; }
         }
-        PSDataCollection<ErrorRecord> _errors;
+        private PSDataCollection<ErrorRecord> _errors;
 
         #region Serialization
         /// <summary>
@@ -1626,9 +1622,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         #endregion Serialization
-
-
-
     } // RunspaceOpenException
 
     #endregion Helper Class

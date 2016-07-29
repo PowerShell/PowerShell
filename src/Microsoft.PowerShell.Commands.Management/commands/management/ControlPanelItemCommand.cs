@@ -1,7 +1,8 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
-﻿using System.Collections.ObjectModel;
+
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.Win32;
@@ -100,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Locale specific verb action Open string exposed by the control panel item.
         /// </summary>
-        private static string VerbActionOpenName = null;
+        private static string s_verbActionOpenName = null;
 
         /// <summary>
         /// Canonical name of the control panel item used as a refernece to fetch the verb
@@ -109,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         private const string RegionCanonicalName = "Microsoft.RegionAndLanguage";
 
         private const string ControlPanelShellFolder = "shell:::{26EE0668-A00A-44D7-9371-BEB064C98683}";
-        private static readonly string[] ControlPanelItemFilterList = new string[] { "Folder Options", "Taskbar and Start Menu" };
+        private static readonly string[] s_controlPanelItemFilterList = new string[] { "Folder Options", "Taskbar and Start Menu" };
         private const string TestHeadlessServerScript = @"
 $result = $false
 $serverManagerModule = Get-Module -ListAvailable | ? {$_.Name -eq 'ServerManager'}
@@ -153,7 +154,7 @@ $result
                         if (applyControlPanelItemFilterList)
                         {
                             bool match = false;
-                            foreach (string name in ControlPanelItemFilterList)
+                            foreach (string name in s_controlPanelItemFilterList)
                             {
                                 if (name.Equals(item.Name, StringComparison.OrdinalIgnoreCase))
                                 {
@@ -212,8 +213,8 @@ $result
             FolderItemVerbs verbs = item.Verbs();
             foreach (FolderItemVerb verb in verbs)
             {
-                if (!String.IsNullOrEmpty(verb.Name) && 
-                    (verb.Name.Equals(ControlPanelResources.VerbActionOpen, StringComparison.OrdinalIgnoreCase) || 
+                if (!String.IsNullOrEmpty(verb.Name) &&
+                    (verb.Name.Equals(ControlPanelResources.VerbActionOpen, StringComparison.OrdinalIgnoreCase) ||
                      CompareVerbActionOpen(verb.Name)))
                 {
                     result = true;
@@ -230,8 +231,8 @@ $result
         /// <param name="verbActionName">Locale spcific verb action exposed by the control panel item.</param>
         /// <returns>True if the control panel item supports verb action open or else returns false.</returns>
         private static bool CompareVerbActionOpen(string verbActionName)
-        {   
-            if (VerbActionOpenName == null)
+        {
+            if (s_verbActionOpenName == null)
             {
                 const string allItemFolderPath = ControlPanelShellFolder + "\\0";
                 IShellDispatch4 shell2 = (IShellDispatch4)new Shell();
@@ -248,16 +249,16 @@ $result
                     if (canonicalName != null && canonicalName.Equals(RegionCanonicalName, StringComparison.OrdinalIgnoreCase))
                     {
                         // The 'Region' control panel item always has '&Open' (english or other locale) as the first verb name
-                        VerbActionOpenName = item.Verbs().Item(0).Name;
+                        s_verbActionOpenName = item.Verbs().Item(0).Name;
                         break;
                     }
                 }
 
-                Dbg.Assert(VerbActionOpenName != null, "The 'Region' control panel item is available on all SKUs and it always " 
+                Dbg.Assert(s_verbActionOpenName != null, "The 'Region' control panel item is available on all SKUs and it always "
                                                        + "has '&Open' as the first verb item, so VerbActionOpenName should never be null at this point");
             }
 
-            return VerbActionOpenName.Equals(verbActionName, StringComparison.OrdinalIgnoreCase);
+            return s_verbActionOpenName.Equals(verbActionName, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -316,7 +317,7 @@ $result
             {
                 string path = category.Path;
                 string catNum = path.Substring(path.LastIndexOf("\\", StringComparison.OrdinalIgnoreCase) + 1);
-                
+
                 CategoryMap.Add(catNum, category.Name);
             }
         }
@@ -341,10 +342,10 @@ $result
                     int[] categories = (int[])item.ExtendedProperty("System.ControlPanel.Category");
                     foreach (int cat in categories)
                     {
-                        string catStr = (string)LanguagePrimitives.ConvertTo(cat, typeof (string), CultureInfo.InvariantCulture);
+                        string catStr = (string)LanguagePrimitives.ConvertTo(cat, typeof(string), CultureInfo.InvariantCulture);
                         Dbg.Assert(CategoryMap.ContainsKey(catStr), "the category should be contained in _categoryMap");
                         string catName = CategoryMap[catStr];
-                        
+
                         if (!wildcard.IsMatch(catName))
                             continue;
                         if (itemSet.Contains(path))
@@ -690,7 +691,7 @@ $result
 
         #endregion "Private Methods"
     }
-    
+
     /// <summary>
     /// Show the specified control panel applet
     /// </summary>

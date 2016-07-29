@@ -15,26 +15,31 @@ using System.Dynamic;
 //using AstUtils = Microsoft.Scripting.Ast.Utils;
 using AstUtils = System.Management.Automation.Interpreter.Utils;
 
-namespace System.Management.Automation.ComInterop {
-
-    internal sealed class TypeLibInfoMetaObject : DynamicMetaObject {
+namespace System.Management.Automation.ComInterop
+{
+    internal sealed class TypeLibInfoMetaObject : DynamicMetaObject
+    {
         private readonly ComTypeLibInfo _info;
 
         internal TypeLibInfoMetaObject(Expression expression, ComTypeLibInfo info)
-            : base(expression, BindingRestrictions.Empty, info) {
+            : base(expression, BindingRestrictions.Empty, info)
+        {
             _info = info;
         }
 
-        public override DynamicMetaObject BindGetMember(GetMemberBinder binder) {
+        public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
+        {
             string name = binder.Name;
 
-            if (name == _info.Name) {
+            if (name == _info.Name)
+            {
                 name = "TypeLibDesc";
-            } else if (name != "Guid" &&
-                name != "Name" &&
-                name != "VersionMajor" &&
-                name != "VersionMinor") {
-
+            }
+            else if (name != "Guid" &&
+              name != "Name" &&
+              name != "VersionMajor" &&
+              name != "VersionMinor")
+            {
                 return binder.FallbackGetMember(this);
             }
 
@@ -50,11 +55,13 @@ namespace System.Management.Automation.ComInterop {
             );
         }
 
-        public override IEnumerable<string> GetDynamicMemberNames() {
+        public override IEnumerable<string> GetDynamicMemberNames()
+        {
             return _info.GetMemberNames();
         }
 
-        private BindingRestrictions ComTypeLibInfoRestrictions(params DynamicMetaObject[] args) {
+        private BindingRestrictions ComTypeLibInfoRestrictions(params DynamicMetaObject[] args)
+        {
             return BindingRestrictions.Combine(args).Merge(BindingRestrictions.GetTypeRestriction(Expression, typeof(ComTypeLibInfo)));
         }
     }

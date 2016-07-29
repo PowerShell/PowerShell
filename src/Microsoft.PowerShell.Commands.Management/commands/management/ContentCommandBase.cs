@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,22 +18,22 @@ namespace Microsoft.PowerShell.Commands
     public class ContentCommandBase : CoreCommandWithCredentialsBase, IDisposable
     {
         #region Parameters
-        
+
         /// <summary>
         /// Gets or sets the path parameter to the command
         /// </summary>
-        [Parameter(Position=0, ParameterSetName = "Path",
-                   Mandatory =  true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 0, ParameterSetName = "Path",
+                   Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
             get
             {
-                return paths;
+                return _paths;
             } // get
 
             set
             {
-                paths = value;
+                _paths = value;
             } // set
         } // Path
 
@@ -40,19 +41,19 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the literal path parameter to the command
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
-                   Mandatory = true, ValueFromPipeline=false, ValueFromPipelineByPropertyName = true)]
+                   Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath")]
         public string[] LiteralPath
         {
             get
             {
-                return paths;
+                return _paths;
             } // get
 
             set
             {
                 base.SuppressWildcardExpansion = true;
-                paths = value;
+                _paths = value;
             } // set
         } // LiteralPath
 
@@ -72,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
                 base.Filter = value;
             } // set
         } // Filter
-        
+
         /// <summary>
         /// Gets or sets the include property
         /// </summary>
@@ -138,11 +139,11 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         #region parameter data
-        
+
         /// <summary>
         /// The path to the item to ping
         /// </summary>
-        private string[] paths;
+        private string[] _paths;
 
         #endregion parameter data
 
@@ -198,30 +199,30 @@ namespace Microsoft.PowerShell.Commands
             // Use the cached notes if the cache exists and the path is still the same
             PSNoteProperty note;
 
-            if (currentContentItem != null &&
-                ((currentContentItem.PathInfo == pathInfo) ||
-                 ( 
+            if (_currentContentItem != null &&
+                ((_currentContentItem.PathInfo == pathInfo) ||
+                 (
                     String.Compare(
                         pathInfo.Path,
-                        currentContentItem.PathInfo.Path,
+                        _currentContentItem.PathInfo.Path,
                         StringComparison.OrdinalIgnoreCase) == 0)
                     )
                 )
             {
-                result = currentContentItem.AttachNotes(result);
+                result = _currentContentItem.AttachNotes(result);
             }
             else
             {
                 // Generate a new cache item and cache the notes
 
-                currentContentItem = new ContentPathsCache(pathInfo);
+                _currentContentItem = new ContentPathsCache(pathInfo);
 
                 // Construct a provider qualified path as the Path note
                 string psPath = pathInfo.Path;
                 note = new PSNoteProperty("PSPath", psPath);
                 result.Properties.Add(note, true);
                 tracer.WriteLine("Attaching {0} = {1}", "PSPath", psPath);
-                currentContentItem.PSPath = psPath;
+                _currentContentItem.PSPath = psPath;
 
                 try
                 {
@@ -240,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
                     note = new PSNoteProperty("PSParentPath", parentPath);
                     result.Properties.Add(note, true);
                     tracer.WriteLine("Attaching {0} = {1}", "PSParentPath", parentPath);
-                    currentContentItem.ParentPath = parentPath;
+                    _currentContentItem.ParentPath = parentPath;
 
                     // Get the child name
 
@@ -248,7 +249,7 @@ namespace Microsoft.PowerShell.Commands
                     note = new PSNoteProperty("PSChildName", childName);
                     result.Properties.Add(note, true);
                     tracer.WriteLine("Attaching {0} = {1}", "PSChildName", childName);
-                    currentContentItem.ChildName = childName;
+                    _currentContentItem.ChildName = childName;
                 }
                 catch (NotSupportedException)
                 {
@@ -263,7 +264,7 @@ namespace Microsoft.PowerShell.Commands
                     note = new PSNoteProperty("PSDrive", drive);
                     result.Properties.Add(note, true);
                     tracer.WriteLine("Attaching {0} = {1}", "PSDrive", drive);
-                    currentContentItem.Drive = drive;
+                    _currentContentItem.Drive = drive;
                 }
 
                 // ProviderInfo
@@ -272,7 +273,7 @@ namespace Microsoft.PowerShell.Commands
                 note = new PSNoteProperty("PSProvider", provider);
                 result.Properties.Add(note, true);
                 tracer.WriteLine("Attaching {0} = {1}", "PSProvider", provider);
-                currentContentItem.Provider = provider;
+                _currentContentItem.Provider = provider;
             }
 
             // Add the ReadCount note
@@ -280,14 +281,13 @@ namespace Microsoft.PowerShell.Commands
             result.Properties.Add(note, true);
 
             WriteObject(result);
-
         } // WriteContentObject
 
         /// <summary>
         /// A cache of the notes that get added to the content items as they are written
         /// to the pipeline.
         /// </summary>
-        private ContentPathsCache currentContentItem;
+        private ContentPathsCache _currentContentItem;
 
         /// <summary>
         /// A class that stores a cache of the notes that get attached to content items
@@ -306,7 +306,7 @@ namespace Microsoft.PowerShell.Commands
             /// 
             public ContentPathsCache(PathInfo pathInfo)
             {
-                this.pathInfo = pathInfo;
+                _pathInfo = pathInfo;
             }
 
             /// <summary>
@@ -317,10 +317,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 get
                 {
-                    return pathInfo;
+                    return _pathInfo;
                 }
             } // PathInfo
-            private PathInfo pathInfo;
+            private PathInfo _pathInfo;
 
             /// <summary>
             /// The cached PSPath of the item.
@@ -330,15 +330,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 get
                 {
-                    return psPath;
+                    return _psPath;
                 }
 
                 set
                 {
-                    psPath = value;
+                    _psPath = value;
                 }
             } // PSPath
-            private string psPath;
+            private string _psPath;
 
             /// <summary>
             /// The cached parent path of the item.
@@ -348,15 +348,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 get
                 {
-                    return parentPath;
+                    return _parentPath;
                 }
 
                 set
                 {
-                    parentPath = value;
+                    _parentPath = value;
                 }
             } // ParentPath
-            private string parentPath;
+            private string _parentPath;
 
             /// <summary>
             /// The cached drive for the item.
@@ -366,15 +366,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 get
                 {
-                    return drive;
+                    return _drive;
                 }
 
                 set
                 {
-                    drive = value;
+                    _drive = value;
                 }
             } // Drive
-            private PSDriveInfo drive;
+            private PSDriveInfo _drive;
 
             /// <summary>
             /// The cached provider of the item.
@@ -384,15 +384,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 get
                 {
-                    return provider;
+                    return _provider;
                 }
 
                 set
                 {
-                    provider = value;
+                    _provider = value;
                 }
             } // Provider
-            private ProviderInfo provider;
+            private ProviderInfo _provider;
 
 
             /// <summary>
@@ -403,15 +403,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 get
                 {
-                    return childName;
+                    return _childName;
                 }
 
                 set
                 {
-                    childName = value;
+                    _childName = value;
                 }
             } // ChildName
-            private string childName;
+            private string _childName;
 
             /// <summary>
             /// Attaches the cached notes to the specified PSObject.
@@ -447,7 +447,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // PSDriveInfo
 
-                if (pathInfo.Drive != null)
+                if (_pathInfo.Drive != null)
                 {
                     note = new PSNoteProperty("PSDrive", Drive);
                     content.Properties.Add(note, true);
@@ -473,8 +473,8 @@ namespace Microsoft.PowerShell.Commands
         internal struct ContentHolder
         {
             internal ContentHolder(
-                PathInfo pathInfo, 
-                IContentReader reader, 
+                PathInfo pathInfo,
+                IContentReader reader,
                 IContentWriter writer)
             {
                 if (pathInfo == null)
@@ -482,9 +482,9 @@ namespace Microsoft.PowerShell.Commands
                     throw PSTraceSource.NewArgumentNullException("pathInfo");
                 }
 
-                this._pathInfo = pathInfo;
-                this._reader = reader;
-                this._writer = writer;
+                _pathInfo = pathInfo;
+                _reader = reader;
+                _writer = writer;
             } // constructor
 
             internal PathInfo PathInfo
@@ -524,7 +524,6 @@ namespace Microsoft.PowerShell.Commands
                     {
                         holder.Writer.Close();
                     }
-
                 }
                 catch (Exception e) // Catch-all OK. 3rd party callout
                 {
@@ -596,7 +595,6 @@ namespace Microsoft.PowerShell.Commands
                                 providerException));
                     }
                 }
-
             }
         } // CloseContent
 
@@ -694,7 +692,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (readers.Count == 1 && readers[0] != null)
                     {
-                        ContentHolder holder = 
+                        ContentHolder holder =
                             new ContentHolder(pathInfo, readers[0], null);
 
                         results.Add(holder);
@@ -731,7 +729,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         /// 
         internal Collection<PathInfo> ResolvePaths(
-            string[] pathsToResolve, 
+            string[] pathsToResolve,
             bool allowNonexistingPaths,
             bool allowEmptyResult,
             CmdletProviderContext currentCommandContext)
@@ -747,11 +745,10 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-
                     // First resolve each of the paths
-                    Collection<PathInfo> pathInfos = 
+                    Collection<PathInfo> pathInfos =
                         SessionState.Path.GetResolvedPSPathFromPSPath(
-                            path, 
+                            path,
                             currentCommandContext);
 
                     if (pathInfos.Count == 0)
@@ -803,9 +800,9 @@ namespace Microsoft.PowerShell.Commands
                 if (pathNotFound)
                 {
                     if (allowNonexistingPaths &&
-                        (! filtersHidPath) &&
+                        (!filtersHidPath) &&
                         (currentCommandContext.SuppressWildcardExpansion ||
-                        (! WildcardPattern.ContainsWildcardCharacters(path))))
+                        (!WildcardPattern.ContainsWildcardCharacters(path))))
                     {
                         ProviderInfo provider = null;
                         PSDriveInfo drive = null;
@@ -879,5 +876,4 @@ namespace Microsoft.PowerShell.Commands
         #endregion IDisposable
 
     } // ContentCommandBase
-
 } // namespace Microsoft.PowerShell.Commands

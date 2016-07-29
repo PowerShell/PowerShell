@@ -14,22 +14,25 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
-namespace System.Management.Automation.ComInterop {
-
-    internal class DispatchArgBuilder : SimpleArgBuilder {
+namespace System.Management.Automation.ComInterop
+{
+    internal class DispatchArgBuilder : SimpleArgBuilder
+    {
         private readonly bool _isWrapper;
 
         internal DispatchArgBuilder(Type parameterType)
-            : base(parameterType) {
-
+            : base(parameterType)
+        {
             _isWrapper = parameterType == typeof(DispatchWrapper);
         }
 
-        internal override Expression Marshal(Expression parameter) {
+        internal override Expression Marshal(Expression parameter)
+        {
             parameter = base.Marshal(parameter);
 
             // parameter.WrappedObject
-            if (_isWrapper) {
+            if (_isWrapper)
+            {
                 parameter = Expression.Property(
                     Helpers.Convert(parameter, typeof(DispatchWrapper)),
                     typeof(DispatchWrapper).GetProperty("WrappedObject")
@@ -39,7 +42,8 @@ namespace System.Management.Automation.ComInterop {
             return Helpers.Convert(parameter, typeof(object));
         }
 
-        internal override Expression MarshalToRef(Expression parameter) {
+        internal override Expression MarshalToRef(Expression parameter)
+        {
             parameter = Marshal(parameter);
 
             // parameter == null ? IntPtr.Zero : Marshal.GetIDispatchForObject(parameter);
@@ -53,7 +57,8 @@ namespace System.Management.Automation.ComInterop {
             );
         }
 
-        internal override Expression UnmarshalFromRef(Expression value) {
+        internal override Expression UnmarshalFromRef(Expression value)
+        {
             // value == IntPtr.Zero ? null : Marshal.GetObjectForIUnknown(value);
             Expression unmarshal = Expression.Condition(
                 Expression.Equal(value, Expression.Constant(IntPtr.Zero)),
@@ -64,7 +69,8 @@ namespace System.Management.Automation.ComInterop {
                 )
             );
 
-            if (_isWrapper) {
+            if (_isWrapper)
+            {
                 unmarshal = Expression.New(
                     typeof(DispatchWrapper).GetConstructor(new Type[] { typeof(object) }),
                     unmarshal
@@ -72,7 +78,6 @@ namespace System.Management.Automation.ComInterop {
             }
 
             return base.UnmarshalFromRef(unmarshal);
-
         }
     }
 }

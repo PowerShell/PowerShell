@@ -44,7 +44,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("stackName");
             }
 
-            this.stackName = stackName;
+            _stackName = stackName;
 
             // Since the Stack<T> constructor takes an IEnumerable and
             // not a Stack<T> the stack actually gets enumerated in the
@@ -65,10 +65,8 @@ namespace System.Management.Automation
         /// </summary>
         public string Name
         {
-            get { return stackName; }
+            get { return _stackName; }
         }
-        private string stackName = null;
-
+        private string _stackName = null;
     } // PathInfoStack
-
 } // namespace System.Management.Automation

@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implements a cmdlet that applies a script block
     /// to each element of the pipeline.
     /// </summary>
-    [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")] 
+    [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet("ForEach", "Object", SupportsShouldProcess = true, DefaultParameterSetName = "ScriptBlockSet",
         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113300", RemotingCapability = RemotingCapability.None)]
     public sealed class ForEachObjectCommand : PSCmdlet
@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region ScriptBlockSet
 
-        private List<ScriptBlock> scripts = new List<ScriptBlock>();
+        private List<ScriptBlock> _scripts = new List<ScriptBlock>();
 
         /// <summary>
         /// The script block to apply in begin processing
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         {
             set
             {
-                scripts.Insert(0, value);
+                _scripts.Insert(0, value);
             }
             get
             {
@@ -71,9 +71,9 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 if (value == null)
-                    scripts.Add(null);
+                    _scripts.Add(null);
                 else
-                    scripts.AddRange(value);
+                    _scripts.AddRange(value);
             }
             get
             {
@@ -81,8 +81,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private ScriptBlock endScript;
-        private bool setEndScript;
+        private ScriptBlock _endScript;
+        private bool _setEndScript;
         /// <summary>
         /// The script block to apply in complete processing
         /// </summary>
@@ -91,12 +91,12 @@ namespace Microsoft.PowerShell.Commands
         {
             set
             {
-                endScript = value;
-                setEndScript = true;
+                _endScript = value;
+                _setEndScript = true;
             }
             get
             {
-                return endScript;
+                return _endScript;
             }
         }
 
@@ -112,14 +112,14 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 if (value == null)
-                    scripts.Add(null);
+                    _scripts.Add(null);
                 else
-                    scripts.AddRange(value);
+                    _scripts.AddRange(value);
             }
             get { return null; }
         }
 
-        private int start, end;
+        private int _start, _end;
 
         #endregion ScriptBlockSet
 
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _propertyOrMethodName; }
         }
         private string _propertyOrMethodName;
-        private string targetString;
+        private string _targetString;
 
         /// <summary>
         /// The arguments passed to a method invocation
@@ -207,35 +207,35 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Calculate the start and end indexes for the processRecord script blocks
-            end = scripts.Count;
-            start = scripts.Count > 1 ? 1 : 0;
+            _end = _scripts.Count;
+            _start = _scripts.Count > 1 ? 1 : 0;
 
             // and set the end script if it wasn't explicilty set with a named parameter.
-            if (!setEndScript)
+            if (!_setEndScript)
             {
-                if (scripts.Count > 2)
+                if (_scripts.Count > 2)
                 {
-                    end = scripts.Count - 1;
-                    endScript = scripts[end];
+                    _end = _scripts.Count - 1;
+                    _endScript = _scripts[_end];
                 }
             }
 
             // only process the start script if there is more than one script...
-            if (end < 2)
+            if (_end < 2)
                 return;
 
-            if (scripts[0] == null)
+            if (_scripts[0] == null)
                 return;
 
             var emptyArray = Utils.EmptyArray<object>();
-            scripts[0].InvokeUsingCmdlet(
-                contextCmdlet:         this,
-                useLocalScope:         false,
+            _scripts[0].InvokeUsingCmdlet(
+                contextCmdlet: this,
+                useLocalScope: false,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                dollarUnder:           AutomationNull.Value,
-                input:                 emptyArray,
-                scriptThis:            AutomationNull.Value,
-                args:                  emptyArray);
+                dollarUnder: AutomationNull.Value,
+                input: emptyArray,
+                scriptThis: AutomationNull.Value,
+                args: emptyArray);
         }
 
         /// <summary>
@@ -255,15 +255,15 @@ namespace Microsoft.PowerShell.Commands
             switch (ParameterSetName)
             {
                 case "ScriptBlockSet":
-                    for (int i = start; i < end; i++)
+                    for (int i = _start; i < _end; i++)
                     {
                         // Only execute scripts that aren't null. This isn't treated as an error
                         // because it allows you to parameterize a command - for example you might allow
                         // for actions before and after the main processing script. They could be null
                         // by default and therefore ignored then filled in later...
-                        if (scripts[i] != null)
+                        if (_scripts[i] != null)
                         {
-                            scripts[i].InvokeUsingCmdlet(
+                            _scripts[i].InvokeUsingCmdlet(
                                 contextCmdlet: this,
                                 useLocalScope: false,
                                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
@@ -276,11 +276,11 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 case "PropertyAndMethodSet":
 
-                    targetString = String.Format(CultureInfo.InvariantCulture, InternalCommandStrings.ForEachObjectTarget, GetStringRepresentation(InputObject));
+                    _targetString = String.Format(CultureInfo.InvariantCulture, InternalCommandStrings.ForEachObjectTarget, GetStringRepresentation(InputObject));
 
                     if (LanguagePrimitives.IsNull(InputObject))
                     {
-                        if(_arguments != null && _arguments.Length > 0)
+                        if (_arguments != null && _arguments.Length > 0)
                         {
                             WriteError(GenerateNameParameterError("InputObject", ParserStrings.InvokeMethodOnNull,
                                                                   "InvokeMethodOnNull", _inputObject));
@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
                             string propertyAction = String.Format(CultureInfo.InvariantCulture,
                                 InternalCommandStrings.ForEachObjectPropertyAction, _propertyOrMethodName);
 
-                            if (ShouldProcess(targetString, propertyAction))
+                            if (ShouldProcess(_targetString, propertyAction))
                             {
                                 if (Context.IsStrictVersion(2))
                                 {
@@ -318,7 +318,7 @@ namespace Microsoft.PowerShell.Commands
                     ErrorRecord errorRecord = null;
 
                     // if args exist, this is explicitly a method invocation
-                    if(_arguments != null && _arguments.Length > 0)
+                    if (_arguments != null && _arguments.Length > 0)
                     {
                         MethodCallWithArguments();
                     }
@@ -329,7 +329,7 @@ namespace Microsoft.PowerShell.Commands
                         if (GetValueFromIDictionaryInput()) { return; }
 
                         PSMemberInfo member = null;
-                        if(WildcardPattern.ContainsWildcardCharacters(_propertyOrMethodName))
+                        if (WildcardPattern.ContainsWildcardCharacters(_propertyOrMethodName))
                         {
                             // get the matched member(s)
                             ReadOnlyPSMemberInfoCollection<PSMemberInfo> members =
@@ -360,7 +360,7 @@ namespace Microsoft.PowerShell.Commands
                             member = _inputObject.Members[_propertyOrMethodName];
                         }
 
-                        if(member == null)
+                        if (member == null)
                         {
                             errorRecord = GenerateNameParameterError("Name", InternalCommandStrings.PropertyOrMethodNotFound,
                                                                      "PropertyOrMethodNotFound", _inputObject,
@@ -373,20 +373,20 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 // first we check if the member is a ParameterizedProperty
                                 PSParameterizedProperty targetParameterizedProperty = member as PSParameterizedProperty;
-                                if(targetParameterizedProperty != null)
+                                if (targetParameterizedProperty != null)
                                 {
                                     // should process
                                     string propertyAction = String.Format(CultureInfo.InvariantCulture,
                                         InternalCommandStrings.ForEachObjectPropertyAction, targetParameterizedProperty.Name);
-                                    
+
                                     // ParameterizedProperty always take parameters, so we output the member.Value directly
-                                    if (ShouldProcess(targetString, propertyAction))
+                                    if (ShouldProcess(_targetString, propertyAction))
                                     {
                                         WriteObject(member.Value);
                                     }
                                     return;
                                 }
-                                
+
                                 PSMethodInfo targetMethod = member as PSMethodInfo;
                                 Dbg.Assert(targetMethod != null, "targetMethod should not be null here.");
                                 try
@@ -394,8 +394,8 @@ namespace Microsoft.PowerShell.Commands
                                     // should process
                                     string methodAction = String.Format(CultureInfo.InvariantCulture,
                                         InternalCommandStrings.ForEachObjectMethodActionWithoutArguments, targetMethod.Name);
-                                    
-                                    if (ShouldProcess(targetString, methodAction))
+
+                                    if (ShouldProcess(_targetString, methodAction))
                                     {
                                         if (!BlockMethodInLanguageMode(InputObject))
                                         {
@@ -429,8 +429,8 @@ namespace Microsoft.PowerShell.Commands
                                 // should process
                                 string propertyAction = String.Format(CultureInfo.InvariantCulture,
                                     InternalCommandStrings.ForEachObjectPropertyAction, member.Name);
-                                
-                                if (ShouldProcess(targetString, propertyAction))
+
+                                if (ShouldProcess(_targetString, propertyAction))
                                 {
                                     try
                                     {
@@ -462,12 +462,12 @@ namespace Microsoft.PowerShell.Commands
                         } // member is not null
                     } // no args provided
 
-                    if(errorRecord != null)
+                    if (errorRecord != null)
                     {
                         string propertyAction = String.Format(CultureInfo.InvariantCulture,
                             InternalCommandStrings.ForEachObjectPropertyAction, _propertyOrMethodName);
 
-                        if (ShouldProcess(targetString, propertyAction))
+                        if (ShouldProcess(_targetString, propertyAction))
                         {
                             if (Context.IsStrictVersion(2))
                             {
@@ -528,17 +528,17 @@ namespace Microsoft.PowerShell.Commands
 
                 // should process
                 StringBuilder arglist = new StringBuilder(GetStringRepresentation(_arguments[0]));
-                for (int i = 1; i < _arguments.Length; i++ )
+                for (int i = 1; i < _arguments.Length; i++)
                 {
                     arglist.AppendFormat(CultureInfo.InvariantCulture, ", {0}", GetStringRepresentation(_arguments[i]));
                 }
                 string methodAction = String.Format(CultureInfo.InvariantCulture,
                     InternalCommandStrings.ForEachObjectMethodActionWithArguments,
                     targetMethod.Name, arglist);
-                
+
                 try
                 {
-                    if (ShouldProcess(targetString, methodAction))
+                    if (ShouldProcess(_targetString, methodAction))
                     {
                         if (!BlockMethodInLanguageMode(InputObject))
                         {
@@ -604,7 +604,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string keyAction = String.Format(CultureInfo.InvariantCulture,
                             InternalCommandStrings.ForEachObjectKeyAction, _propertyOrMethodName);
-                    if (ShouldProcess(targetString, keyAction))
+                    if (ShouldProcess(_targetString, keyAction))
                     {
                         object result = hash[_propertyOrMethodName];
                         WriteToPipelineWithUnrolling(result);
@@ -644,7 +644,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="list"></param>
         private void WriteOutIEnumerator(IEnumerator list)
         {
-            if(list != null)
+            if (list != null)
             {
                 while (ParserOps.MoveNext(this.Context, null, list))
                 {
@@ -679,7 +679,7 @@ namespace Microsoft.PowerShell.Commands
             if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
                 Object baseObject = PSObject.Base(inputObject);
-                
+
                 if (!CoreTypes.Contains(baseObject.GetType()))
                 {
                     PSInvalidOperationException exception =
@@ -743,18 +743,18 @@ namespace Microsoft.PowerShell.Commands
         {
             if (ParameterSetName != "ScriptBlockSet") return;
 
-            if (endScript == null)
+            if (_endScript == null)
                 return;
 
             var emptyArray = Utils.EmptyArray<object>();
-            endScript.InvokeUsingCmdlet(
-                contextCmdlet:         this,
-                useLocalScope:         false,
+            _endScript.InvokeUsingCmdlet(
+                contextCmdlet: this,
+                useLocalScope: false,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                dollarUnder:           AutomationNull.Value,
-                input:                 emptyArray,
-                scriptThis:            AutomationNull.Value,
-                args:                  emptyArray);
+                dollarUnder: AutomationNull.Value,
+                input: emptyArray,
+                scriptThis: AutomationNull.Value,
+                args: emptyArray);
         }
     }
 
@@ -779,7 +779,7 @@ namespace Microsoft.PowerShell.Commands
         }
         private PSObject _inputObject = AutomationNull.Value;
 
-        private ScriptBlock script;
+        private ScriptBlock _script;
         /// <summary>
         /// The script block to apply
         /// </summary>
@@ -788,11 +788,11 @@ namespace Microsoft.PowerShell.Commands
         {
             set
             {
-                script = value;
+                _script = value;
             }
             get
             {
-                return script;
+                return _script;
             }
         }
 
@@ -901,8 +901,8 @@ namespace Microsoft.PowerShell.Commands
         [Alias("IEQ")]
         public SwitchParameter EQ
         {
-            set 
-            { 
+            set
+            {
                 _binaryOperator = TokenKind.Ieq;
                 _forceBooleanEvaluation = false;
             }
@@ -1220,17 +1220,17 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion binary operator parameters
 
-        private readonly CallSite<Func<CallSite, object, bool>> toBoolSite =
+        private readonly CallSite<Func<CallSite, object, bool>> _toBoolSite =
             CallSite<Func<CallSite, object, bool>>.Create(PSConvertBinder.Get(typeof(bool)));
-        private Func<object, object, object> operationDelegate;
+        private Func<object, object, object> _operationDelegate;
 
-        static Func<object, object, object> GetCallSiteDelegate(ExpressionType expressionType, bool ignoreCase)
+        private static Func<object, object, object> GetCallSiteDelegate(ExpressionType expressionType, bool ignoreCase)
         {
             var site = CallSite<Func<CallSite, object, object, object>>.Create(PSBinaryOperationBinder.Get(expressionType, ignoreCase));
             return (x, y) => site.Target.Invoke(site, x, y);
         }
 
-        static Tuple<CallSite<Func<CallSite, object, IEnumerator>>, CallSite<Func<CallSite, object, object, object>>> GetContainsCallSites(bool ignoreCase)
+        private static Tuple<CallSite<Func<CallSite, object, IEnumerator>>, CallSite<Func<CallSite, object, object, object>>> GetContainsCallSites(bool ignoreCase)
         {
             var enumerableSite = CallSite<Func<CallSite, object, IEnumerator>>.Create(PSEnumerableBinder.Get());
             var eqSite =
@@ -1240,7 +1240,7 @@ namespace Microsoft.PowerShell.Commands
             return Tuple.Create(enumerableSite, eqSite);
         }
 
-        void CheckLanguageMode()
+        private void CheckLanguageMode()
         {
             if (Context.LanguageMode.Equals(PSLanguageMode.RestrictedLanguage))
             {
@@ -1253,7 +1253,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        object GetLikeRHSOperand(object operand)
+        private object GetLikeRHSOperand(object operand)
         {
             var val = operand as string;
             if (val == null)
@@ -1263,163 +1263,162 @@ namespace Microsoft.PowerShell.Commands
                 ? WildcardOptions.IgnoreCase
                 : WildcardOptions.None;
             return WildcardPattern.Get(val, wildcardOptions);
-            
         }
 
         /// <summary/>
         protected override void BeginProcessing()
         {
-            if (script != null)
+            if (_script != null)
                 return;
 
             switch (_binaryOperator)
             {
-            case TokenKind.Ieq:
-                if (!_forceBooleanEvaluation)
-                {
-                    operationDelegate = GetCallSiteDelegate(ExpressionType.Equal, ignoreCase: true);
-                }
-                else
-                {
-                    // flip 'lval' and 'rval' in the scenario '... | Where-Object property' so as to make it
-                    // equivalent to '... | Where-Object {$true -eq property}'. Because we want the property to
-                    // be compared under the bool context. So that '"string" | Where-Object Length' would behave
-                    // just like '"string" | Where-Object {$_.Length}'.
-                    var site = CallSite<Func<CallSite, object, object, object>>.Create(PSBinaryOperationBinder.Get(ExpressionType.Equal, true));
-                    operationDelegate = (x, y) => site.Target.Invoke(site, y, x);
-                }
-                break;
-            case TokenKind.Ceq:
-                operationDelegate = GetCallSiteDelegate(ExpressionType.Equal, ignoreCase: false);
-                break;
-            case TokenKind.Ine:
-                operationDelegate = GetCallSiteDelegate(ExpressionType.NotEqual, ignoreCase: true);
-                break;
-            case TokenKind.Cne:
-                operationDelegate = GetCallSiteDelegate(ExpressionType.NotEqual, ignoreCase: false);
-                break;
-            case TokenKind.Igt:
-                operationDelegate = GetCallSiteDelegate(ExpressionType.GreaterThan, ignoreCase: true);
-                break;
-            case TokenKind.Cgt:
-                operationDelegate = GetCallSiteDelegate(ExpressionType.GreaterThan, ignoreCase: false);
-                break;
-            case TokenKind.Ilt:
-                operationDelegate = GetCallSiteDelegate(ExpressionType.LessThan, ignoreCase: true);
-                break;
-            case TokenKind.Clt:
-                operationDelegate = GetCallSiteDelegate(ExpressionType.LessThan, ignoreCase: false);
-                break;
-            case TokenKind.Ige:
-                operationDelegate = GetCallSiteDelegate(ExpressionType.GreaterThanOrEqual, ignoreCase: true);
-                break;
-            case TokenKind.Cge:
-                operationDelegate = GetCallSiteDelegate(ExpressionType.GreaterThanOrEqual, ignoreCase: false);
-                break;
-            case TokenKind.Ile:
-                operationDelegate = GetCallSiteDelegate(ExpressionType.LessThanOrEqual, ignoreCase: true);
-                break;
-            case TokenKind.Cle:
-                operationDelegate = GetCallSiteDelegate(ExpressionType.LessThanOrEqual, ignoreCase: false);
-                break;
-            case TokenKind.Ilike:
-                operationDelegate =
-                    (lval, rval) => ParserOps.LikeOperator(Context, PositionUtilities.EmptyExtent, lval, rval, _binaryOperator);
-                break;
-            case TokenKind.Clike:
-                operationDelegate =
-                    (lval, rval) => ParserOps.LikeOperator(Context, PositionUtilities.EmptyExtent, lval, rval, _binaryOperator);
-                break;
-            case TokenKind.Inotlike:
-                operationDelegate =
-                    (lval, rval) => ParserOps.LikeOperator(Context, PositionUtilities.EmptyExtent, lval, rval, _binaryOperator);
-                break;
-            case TokenKind.Cnotlike:
-                operationDelegate =
-                    (lval, rval) => ParserOps.LikeOperator(Context, PositionUtilities.EmptyExtent, lval, rval, _binaryOperator);
-                break;
-            case TokenKind.Imatch:
-                CheckLanguageMode();
-                operationDelegate =
-                    (lval, rval) => ParserOps.MatchOperator(Context, PositionUtilities.EmptyExtent, lval, rval, notMatch: false, ignoreCase: true);
-                break;
-            case TokenKind.Cmatch:
-                CheckLanguageMode();
-                operationDelegate =
-                    (lval, rval) => ParserOps.MatchOperator(Context, PositionUtilities.EmptyExtent, lval, rval, notMatch: false, ignoreCase: false);
-                break;
-            case TokenKind.Inotmatch:
-                CheckLanguageMode();
-                operationDelegate =
-                    (lval, rval) => ParserOps.MatchOperator(Context, PositionUtilities.EmptyExtent, lval, rval, notMatch: true, ignoreCase: true);
-                break;
-            case TokenKind.Cnotmatch:
-                CheckLanguageMode();
-                operationDelegate =
-                    (lval, rval) => ParserOps.MatchOperator(Context, PositionUtilities.EmptyExtent, lval, rval, notMatch: true, ignoreCase: false);
-                break;
-            // the second to last parameter in ContainsOperator has flipped semantics compared to others.
-            // "true" means "contains" while "false" means "notcontains"
-            case TokenKind.Icontains:
-            case TokenKind.Inotcontains:
-            case TokenKind.In:
-            case TokenKind.Inotin:
-            {
-                var sites = GetContainsCallSites(ignoreCase: true);
-                switch (_binaryOperator)
-                {
+                case TokenKind.Ieq:
+                    if (!_forceBooleanEvaluation)
+                    {
+                        _operationDelegate = GetCallSiteDelegate(ExpressionType.Equal, ignoreCase: true);
+                    }
+                    else
+                    {
+                        // flip 'lval' and 'rval' in the scenario '... | Where-Object property' so as to make it
+                        // equivalent to '... | Where-Object {$true -eq property}'. Because we want the property to
+                        // be compared under the bool context. So that '"string" | Where-Object Length' would behave
+                        // just like '"string" | Where-Object {$_.Length}'.
+                        var site = CallSite<Func<CallSite, object, object, object>>.Create(PSBinaryOperationBinder.Get(ExpressionType.Equal, true));
+                        _operationDelegate = (x, y) => site.Target.Invoke(site, y, x);
+                    }
+                    break;
+                case TokenKind.Ceq:
+                    _operationDelegate = GetCallSiteDelegate(ExpressionType.Equal, ignoreCase: false);
+                    break;
+                case TokenKind.Ine:
+                    _operationDelegate = GetCallSiteDelegate(ExpressionType.NotEqual, ignoreCase: true);
+                    break;
+                case TokenKind.Cne:
+                    _operationDelegate = GetCallSiteDelegate(ExpressionType.NotEqual, ignoreCase: false);
+                    break;
+                case TokenKind.Igt:
+                    _operationDelegate = GetCallSiteDelegate(ExpressionType.GreaterThan, ignoreCase: true);
+                    break;
+                case TokenKind.Cgt:
+                    _operationDelegate = GetCallSiteDelegate(ExpressionType.GreaterThan, ignoreCase: false);
+                    break;
+                case TokenKind.Ilt:
+                    _operationDelegate = GetCallSiteDelegate(ExpressionType.LessThan, ignoreCase: true);
+                    break;
+                case TokenKind.Clt:
+                    _operationDelegate = GetCallSiteDelegate(ExpressionType.LessThan, ignoreCase: false);
+                    break;
+                case TokenKind.Ige:
+                    _operationDelegate = GetCallSiteDelegate(ExpressionType.GreaterThanOrEqual, ignoreCase: true);
+                    break;
+                case TokenKind.Cge:
+                    _operationDelegate = GetCallSiteDelegate(ExpressionType.GreaterThanOrEqual, ignoreCase: false);
+                    break;
+                case TokenKind.Ile:
+                    _operationDelegate = GetCallSiteDelegate(ExpressionType.LessThanOrEqual, ignoreCase: true);
+                    break;
+                case TokenKind.Cle:
+                    _operationDelegate = GetCallSiteDelegate(ExpressionType.LessThanOrEqual, ignoreCase: false);
+                    break;
+                case TokenKind.Ilike:
+                    _operationDelegate =
+                        (lval, rval) => ParserOps.LikeOperator(Context, PositionUtilities.EmptyExtent, lval, rval, _binaryOperator);
+                    break;
+                case TokenKind.Clike:
+                    _operationDelegate =
+                        (lval, rval) => ParserOps.LikeOperator(Context, PositionUtilities.EmptyExtent, lval, rval, _binaryOperator);
+                    break;
+                case TokenKind.Inotlike:
+                    _operationDelegate =
+                        (lval, rval) => ParserOps.LikeOperator(Context, PositionUtilities.EmptyExtent, lval, rval, _binaryOperator);
+                    break;
+                case TokenKind.Cnotlike:
+                    _operationDelegate =
+                        (lval, rval) => ParserOps.LikeOperator(Context, PositionUtilities.EmptyExtent, lval, rval, _binaryOperator);
+                    break;
+                case TokenKind.Imatch:
+                    CheckLanguageMode();
+                    _operationDelegate =
+                        (lval, rval) => ParserOps.MatchOperator(Context, PositionUtilities.EmptyExtent, lval, rval, notMatch: false, ignoreCase: true);
+                    break;
+                case TokenKind.Cmatch:
+                    CheckLanguageMode();
+                    _operationDelegate =
+                        (lval, rval) => ParserOps.MatchOperator(Context, PositionUtilities.EmptyExtent, lval, rval, notMatch: false, ignoreCase: false);
+                    break;
+                case TokenKind.Inotmatch:
+                    CheckLanguageMode();
+                    _operationDelegate =
+                        (lval, rval) => ParserOps.MatchOperator(Context, PositionUtilities.EmptyExtent, lval, rval, notMatch: true, ignoreCase: true);
+                    break;
+                case TokenKind.Cnotmatch:
+                    CheckLanguageMode();
+                    _operationDelegate =
+                        (lval, rval) => ParserOps.MatchOperator(Context, PositionUtilities.EmptyExtent, lval, rval, notMatch: true, ignoreCase: false);
+                    break;
+                // the second to last parameter in ContainsOperator has flipped semantics compared to others.
+                // "true" means "contains" while "false" means "notcontains"
                 case TokenKind.Icontains:
-                    operationDelegate =
-                        (lval, rval) => ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, lval, rval);
-                    break;
                 case TokenKind.Inotcontains:
-                    operationDelegate =
-                        (lval, rval) => !ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, lval, rval);
-                    break;
                 case TokenKind.In:
-                    operationDelegate =
-                        (lval, rval) => ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, rval, lval);
-                    break;
                 case TokenKind.Inotin:
-                    operationDelegate =
-                        (lval, rval) => !ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, rval, lval);
-                    break;                
-                }
-                break;
-            }
-            case TokenKind.Ccontains:
-            case TokenKind.Cnotcontains:
-            case TokenKind.Cin:
-            case TokenKind.Cnotin:
-            {
-                var sites = GetContainsCallSites(ignoreCase: false);
-                switch (_binaryOperator)
-                {
+                    {
+                        var sites = GetContainsCallSites(ignoreCase: true);
+                        switch (_binaryOperator)
+                        {
+                            case TokenKind.Icontains:
+                                _operationDelegate =
+                                    (lval, rval) => ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, lval, rval);
+                                break;
+                            case TokenKind.Inotcontains:
+                                _operationDelegate =
+                                    (lval, rval) => !ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, lval, rval);
+                                break;
+                            case TokenKind.In:
+                                _operationDelegate =
+                                    (lval, rval) => ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, rval, lval);
+                                break;
+                            case TokenKind.Inotin:
+                                _operationDelegate =
+                                    (lval, rval) => !ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, rval, lval);
+                                break;
+                        }
+                        break;
+                    }
                 case TokenKind.Ccontains:
-                    operationDelegate =
-                        (lval, rval) => ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, lval, rval);
-                    break;
                 case TokenKind.Cnotcontains:
-                    operationDelegate =
-                        (lval, rval) => !ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, lval, rval);
-                    break;
                 case TokenKind.Cin:
-                    operationDelegate =
-                        (lval, rval) => ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, rval, lval);
-                    break;
                 case TokenKind.Cnotin:
-                    operationDelegate =
-                        (lval, rval) => !ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, rval, lval);
+                    {
+                        var sites = GetContainsCallSites(ignoreCase: false);
+                        switch (_binaryOperator)
+                        {
+                            case TokenKind.Ccontains:
+                                _operationDelegate =
+                                    (lval, rval) => ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, lval, rval);
+                                break;
+                            case TokenKind.Cnotcontains:
+                                _operationDelegate =
+                                    (lval, rval) => !ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, lval, rval);
+                                break;
+                            case TokenKind.Cin:
+                                _operationDelegate =
+                                    (lval, rval) => ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, rval, lval);
+                                break;
+                            case TokenKind.Cnotin:
+                                _operationDelegate =
+                                    (lval, rval) => !ParserOps.ContainsOperatorCompiled(Context, sites.Item1, sites.Item2, rval, lval);
+                                break;
+                        }
+                        break;
+                    }
+                case TokenKind.Is:
+                    _operationDelegate = (lval, rval) => ParserOps.IsOperator(Context, PositionUtilities.EmptyExtent, lval, rval);
                     break;
-                }
-                break;
-            }
-            case TokenKind.Is:
-                operationDelegate = (lval, rval) => ParserOps.IsOperator(Context, PositionUtilities.EmptyExtent, lval, rval);
-                break;
-            case TokenKind.IsNot:
-                operationDelegate = (lval, rval) => ParserOps.IsNotOperator(Context, PositionUtilities.EmptyExtent, lval, rval);
-                break;
+                case TokenKind.IsNot:
+                    _operationDelegate = (lval, rval) => ParserOps.IsNotOperator(Context, PositionUtilities.EmptyExtent, lval, rval);
+                    break;
             }
 
             _convertedValue = _value;
@@ -1468,17 +1467,17 @@ namespace Microsoft.PowerShell.Commands
             if (_inputObject == AutomationNull.Value)
                 return;
 
-            if (script != null)
+            if (_script != null)
             {
-                object result = script.DoInvokeReturnAsIs(
-                    useLocalScope:         false,
+                object result = _script.DoInvokeReturnAsIs(
+                    useLocalScope: false,
                     errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                    dollarUnder:           InputObject,
-                    input:                 new object[] {_inputObject},
-                    scriptThis:            AutomationNull.Value,
-                    args:                  Utils.EmptyArray<object>());
+                    dollarUnder: InputObject,
+                    input: new object[] { _inputObject },
+                    scriptThis: AutomationNull.Value,
+                    args: Utils.EmptyArray<object>());
 
-                if (toBoolSite.Target.Invoke(toBoolSite, result))
+                if (_toBoolSite.Target.Invoke(_toBoolSite, result))
                 {
                     WriteObject(InputObject);
                 }
@@ -1512,8 +1511,8 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    object result = operationDelegate.Invoke(lvalue, _convertedValue);
-                    if (toBoolSite.Target.Invoke(toBoolSite, result))
+                    object result = _operationDelegate.Invoke(lvalue, _convertedValue);
+                    if (_toBoolSite.Target.Invoke(_toBoolSite, result))
                     {
                         WriteObject(InputObject);
                     }
@@ -1554,7 +1553,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (LanguagePrimitives.IsNull(InputObject))
             {
-                if(Context.IsStrictVersion(2))
+                if (Context.IsStrictVersion(2))
                 {
                     WriteError(
                         ForEachObjectCommand.
@@ -1647,7 +1646,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 PSMemberInfoInternalCollection<PSMemberInfo> restuls = new PSMemberInfoInternalCollection<PSMemberInfo>();
                 PSMemberInfo member = _inputObject.Members[_property];
-                if(member != null)
+                if (member != null)
                 {
                     restuls.Add(member);
                 }
@@ -1675,10 +1674,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(0, 2)]
         public int Trace
         {
-            set { trace = value; }
-            get { return trace; }
+            set { _trace = value; }
+            get { return _trace; }
         }
-        private int trace = -1;
+        private int _trace = -1;
 
         /// <summary>
         /// Turns stepping on and off
@@ -1686,10 +1685,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "on")]
         public SwitchParameter Step
         {
-            set { step = value; }
-            get { return (SwitchParameter)step; }
+            set { _step = value; }
+            get { return (SwitchParameter)_step; }
         }
-        private bool? step;
+        private bool? _step;
 
         /// <summary>
         /// Turns strict mode on and off.
@@ -1697,10 +1696,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "on")]
         public SwitchParameter Strict
         {
-            set { strict = value; }
-            get { return (SwitchParameter)strict; }
+            set { _strict = value; }
+            get { return (SwitchParameter)_strict; }
         }
-        private bool? strict;
+        private bool? _strict;
 
         /// <summary>
         /// Turns all script debugging features off.
@@ -1708,10 +1707,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "off")]
         public SwitchParameter Off
         {
-            get { return off; }
-            set { off = value; }
+            get { return _off; }
+            set { _off = value; }
         }
-        private bool off;
+        private bool _off;
 
         /// <summary>
         /// Execute the begin scriptblock at the start of processing
@@ -1719,20 +1718,20 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // -off gets processed after the others so it takes precedence...
-            if (off)
+            if (_off)
             {
                 Context.Debugger.DisableTracing();
                 Context.EngineSessionState.GlobalScope.StrictModeVersion = null;
             }
             else
             {
-                if (trace >= 0 || step != null)
+                if (_trace >= 0 || _step != null)
                 {
-                    Context.Debugger.EnableTracing(trace, step);
+                    Context.Debugger.EnableTracing(_trace, _step);
                 }
                 // Version 0 is the same as off
-                if (strict != null)
-                    Context.EngineSessionState.GlobalScope.StrictModeVersion = new Version((bool)strict ? 1 : 0, 0);
+                if (_strict != null)
+                    Context.EngineSessionState.GlobalScope.StrictModeVersion = new Version((bool)_strict ? 1 : 0, 0);
             }
         }
     }
@@ -1766,10 +1765,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Off", Mandatory = true)]
         public SwitchParameter Off
         {
-            get { return off; }
-            set { off = value; }
+            get { return _off; }
+            set { _off = value; }
         }
-        private SwitchParameter off;
+        private SwitchParameter _off;
 
         /// <summary>
         /// To make it easier to specify a version, we add some conversions that wouldn't happen otherwise:
@@ -1837,21 +1836,21 @@ namespace Microsoft.PowerShell.Commands
         [Alias("v")]
         public Version Version
         {
-            get { return version; }
-            set { version = value; }
+            get { return _version; }
+            set { _version = value; }
         }
-        private Version version;
+        private Version _version;
 
         /// <summary>
         /// Set the correct version for strict mode checking in the current scope.
         /// </summary>
         protected override void EndProcessing()
         {
-            if (off.IsPresent)
+            if (_off.IsPresent)
             {
-                version = new Version(0, 0);
+                _version = new Version(0, 0);
             }
-            Context.EngineSessionState.CurrentScope.StrictModeVersion = version;
+            Context.EngineSessionState.CurrentScope.StrictModeVersion = _version;
         }
     }
     #endregion Set-StrictMode

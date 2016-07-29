@@ -12,23 +12,22 @@ using System.Management.Automation.Language;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
-
     /// <summary>
     /// facade class to provide context information to process
     /// exceptions
     /// </summary>
     internal sealed class TerminatingErrorContext
     {
-        internal TerminatingErrorContext (PSCmdlet command)
+        internal TerminatingErrorContext(PSCmdlet command)
         {
             if (command == null)
-                throw PSTraceSource.NewArgumentNullException ("command");
+                throw PSTraceSource.NewArgumentNullException("command");
             _command = command;
         }
 
-        internal void ThrowTerminatingError (ErrorRecord errorRecord)
+        internal void ThrowTerminatingError(ErrorRecord errorRecord)
         {
-            _command.ThrowTerminatingError (errorRecord);
+            _command.ThrowTerminatingError(errorRecord);
         }
 
         private PSCmdlet _command;
@@ -48,11 +47,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="execContext">ExecutionContext used to create sub pipeline</param>
         /// <param name="nameOfCommand">name of the command to run</param>
         /// <param name="typeOfCommand">Type of the command to run</param>
-        internal void Initialize (ExecutionContext execContext, string nameOfCommand, Type typeOfCommand)
+        internal void Initialize(ExecutionContext execContext, string nameOfCommand, Type typeOfCommand)
         {
-            context = execContext;
-            commandName = nameOfCommand;
-            commandType = typeOfCommand;
+            _context = execContext;
+            _commandName = nameOfCommand;
+            _commandType = typeOfCommand;
         }
 
         /// <summary>
@@ -61,9 +60,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="parameterName">name of the parameter</param>
         /// <param name="parameterValue">value of the parameter</param>
-        internal void AddNamedParameter (string parameterName, object parameterValue)
+        internal void AddNamedParameter(string parameterName, object parameterValue)
         {
-            commandParameterList.Add(
+            _commandParameterList.Add(
                 CommandParameterInternal.CreateParameterWithArgument(
                     PositionUtilities.EmptyExtent, parameterName, null,
                     PositionUtilities.EmptyExtent, parameterValue,
@@ -76,51 +75,51 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="o">object to process</param>
         /// <returns>Array of objects out of the success pipeline</returns>
-        internal Array Process (object o)
+        internal Array Process(object o)
         {
-            if (this.pp == null)
+            if (_pp == null)
             {
                 // if this is the first call, we need to initialize the
                 // pipeline underneath
-                DelayedInternalInitialize ();
+                DelayedInternalInitialize();
             }
 
-            return this.pp.Step (o);
+            return _pp.Step(o);
         }
 
         /// <summary>
         /// shut down the pipeline
         /// </summary>
         /// <returns>Array of objects out of the success pipeline</returns>
-        internal Array ShutDown ()
+        internal Array ShutDown()
         {
-            if (this.pp == null)
+            if (_pp == null)
             {
                 // if Process() never got called, no sub pipeline
                 // ever got created, hence we just return an empty array
                 return new object[0];
             }
 
-            PipelineProcessor ppTemp = this.pp;
+            PipelineProcessor ppTemp = _pp;
 
-            this.pp = null;
+            _pp = null;
             return ppTemp.SynchronousExecuteEnumerate(AutomationNull.Value);
         }
 
-        private void DelayedInternalInitialize ()
+        private void DelayedInternalInitialize()
         {
-            this.pp = new PipelineProcessor ();
+            _pp = new PipelineProcessor();
 
-            CmdletInfo cmdletInfo = new CmdletInfo(this.commandName, this.commandType, null, null, this.context);
+            CmdletInfo cmdletInfo = new CmdletInfo(_commandName, _commandType, null, null, _context);
 
-            CommandProcessor cp = new CommandProcessor (cmdletInfo, this.context);
+            CommandProcessor cp = new CommandProcessor(cmdletInfo, _context);
 
-            foreach (CommandParameterInternal par in this.commandParameterList)
+            foreach (CommandParameterInternal par in _commandParameterList)
             {
                 cp.AddParameter(par);
             }
 
-            this.pp.Add (cp);
+            _pp.Add(cp);
         }
 
         /// <summary>
@@ -128,20 +127,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         public void Dispose()
         {
-            if (this.pp == null)
+            if (_pp == null)
                 return;
 
-            this.pp.Dispose ();
-            this.pp = null;
+            _pp.Dispose();
+            _pp = null;
         }
 
-        private PipelineProcessor pp = null;
+        private PipelineProcessor _pp = null;
 
-        private string commandName = null;
-        private Type commandType;
-        private List<CommandParameterInternal> commandParameterList = new List<CommandParameterInternal>();
+        private string _commandName = null;
+        private Type _commandType;
+        private List<CommandParameterInternal> _commandParameterList = new List<CommandParameterInternal>();
 
-        private ExecutionContext context = null;
+        private ExecutionContext _context = null;
     }
 
     /// <summary>
@@ -155,46 +154,46 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// This parameter specifies the current pipeline object 
         /// </summary>
-        [Parameter (ValueFromPipeline = true)]
+        [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject
         {
             set { _inputObject = value; }
             get { return _inputObject; }
         }
         private PSObject _inputObject = AutomationNull.Value;
-        
+
         #endregion
 
         /// <summary>
         /// hook up the calls from the implementation object
         /// and then call the implementation's Begin()
         /// </summary>
-        protected override void BeginProcessing ()
+        protected override void BeginProcessing()
         {
-            Diagnostics.Assert (this.implementation != null, "this.implementation is null");
-            this.implementation.OuterCmdletCall = new ImplementationCommandBase.OuterCmdletCallback (this.OuterCmdletCall);
-            this.implementation.InputObjectCall = new ImplementationCommandBase.InputObjectCallback (this.InputObjectCall);
-            this.implementation.WriteObjectCall = new ImplementationCommandBase.WriteObjectCallback (this.WriteObjectCall);
-            
-            this.implementation.CreateTerminatingErrorContext ();
-            
-            implementation.BeginProcessing ();
+            Diagnostics.Assert(this.implementation != null, "this.implementation is null");
+            this.implementation.OuterCmdletCall = new ImplementationCommandBase.OuterCmdletCallback(this.OuterCmdletCall);
+            this.implementation.InputObjectCall = new ImplementationCommandBase.InputObjectCallback(this.InputObjectCall);
+            this.implementation.WriteObjectCall = new ImplementationCommandBase.WriteObjectCallback(this.WriteObjectCall);
+
+            this.implementation.CreateTerminatingErrorContext();
+
+            implementation.BeginProcessing();
         }
 
         /// <summary>
         /// call the implementation
         /// </summary>
-        protected override void ProcessRecord ()
+        protected override void ProcessRecord()
         {
-            implementation.ProcessRecord ();
+            implementation.ProcessRecord();
         }
 
         /// <summary>
         /// call the implementation
         /// </summary>
-        protected override void EndProcessing ()
+        protected override void EndProcessing()
         {
-            implementation.EndProcessing ();
+            implementation.EndProcessing();
         }
 
         /// <summary>
@@ -209,7 +208,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// callback for the implementation to obtain a reference to the Cmdlet object
         /// </summary>
         /// <returns>Cmdlet reference</returns>
-        protected virtual PSCmdlet OuterCmdletCall ()
+        protected virtual PSCmdlet OuterCmdletCall()
         {
             return this;
         }
@@ -218,7 +217,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// callback for the implementation to get the current pipeline object
         /// </summary>
         /// <returns>current object from the pipeline</returns>
-        protected virtual PSObject InputObjectCall ()
+        protected virtual PSObject InputObjectCall()
         {
             // just bind to the input object parameter
             return this.InputObject;
@@ -228,7 +227,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// callback for the implementation to write objects
         /// </summary>
         /// <param name="value">object to be written</param>
-        protected virtual void WriteObjectCall (object value)
+        protected virtual void WriteObjectCall(object value)
         {
             // just call Monad API
             this.WriteObject(value);
@@ -247,7 +246,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// default implementation just delegates to internal helper
         /// </summary>
         /// <remarks>This method calls GC.SuppressFinalize</remarks>
-        public void Dispose ()
+        public void Dispose()
         {
             Dispose(true);
 
@@ -269,12 +268,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Do-nothing implementation: derived classes will override as see fit
         /// </summary>
-        protected virtual void InternalDispose ()
+        protected virtual void InternalDispose()
         {
             if (this.implementation == null)
                 return;
 
-            this.implementation.Dispose ();
+            this.implementation.Dispose();
             this.implementation = null;
         }
         #endregion
@@ -289,21 +288,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// inner version of CommandBase.BeginProcessing()
         /// </summary>
-        internal virtual void BeginProcessing ()
+        internal virtual void BeginProcessing()
         {
         }
 
         /// <summary>
         /// inner version of CommandBase.ProcessRecord()
         /// </summary>
-        internal virtual void ProcessRecord ()
+        internal virtual void ProcessRecord()
         {
         }
 
         /// <summary>
         /// inner version of CommandBase.EndProcessing()
         /// </summary>
-        internal virtual void EndProcessing ()
+        internal virtual void EndProcessing()
         {
         }
 
@@ -317,22 +316,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// retrieve the current input pipeline object
         /// </summary>
-        internal virtual PSObject ReadObject ()
+        internal virtual PSObject ReadObject()
         {
             // delegate to the front end object
-            System.Diagnostics.Debug.Assert (this.InputObjectCall != null, "this.InputObjectCall is null");
-            return this.InputObjectCall ();
+            System.Diagnostics.Debug.Assert(this.InputObjectCall != null, "this.InputObjectCall is null");
+            return this.InputObjectCall();
         }
 
         /// <summary>
         /// write an object to the pipeline
         /// </summary>
         /// <param name="o">object to write to the pipeline</param>
-        internal virtual void WriteObject (object o)
+        internal virtual void WriteObject(object o)
         {
             // delegate to the front end object
-            System.Diagnostics.Debug.Assert (this.WriteObjectCall != null, "this.WriteObjectCall is null");
-            this.WriteObjectCall (o);
+            System.Diagnostics.Debug.Assert(this.WriteObjectCall != null, "this.WriteObjectCall is null");
+            this.WriteObjectCall(o);
         }
 
         // callback methods to get to the outer Monad Cmdlet
@@ -340,11 +339,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// get a hold of the Monad outer Cmdlet
         /// </summary>
         /// <returns></returns>
-        internal virtual PSCmdlet OuterCmdlet ()
+        internal virtual PSCmdlet OuterCmdlet()
         {
             // delegate to the front end object
-            System.Diagnostics.Debug.Assert (this.OuterCmdletCall != null, "this.OuterCmdletCall is null");
-            return this.OuterCmdletCall ();
+            System.Diagnostics.Debug.Assert(this.OuterCmdletCall != null, "this.OuterCmdletCall is null");
+            return this.OuterCmdletCall();
         }
 
         protected TerminatingErrorContext TerminatingErrorContext
@@ -357,7 +356,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal void CreateTerminatingErrorContext()
         {
-            _terminatingErrorContext = new TerminatingErrorContext (this.OuterCmdlet ());
+            _terminatingErrorContext = new TerminatingErrorContext(this.OuterCmdlet());
         }
 
         private TerminatingErrorContext _terminatingErrorContext;
@@ -365,7 +364,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// delegate definition to get to the outer command-let
         /// </summary>
-        internal delegate PSCmdlet OuterCmdletCallback ();
+        internal delegate PSCmdlet OuterCmdletCallback();
 
         /// <summary>
         /// callback to get to the outer command-let
@@ -376,12 +375,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// delegate definition to get to the current pipeline input object
         /// </summary>
-        internal delegate PSObject InputObjectCallback ();
+        internal delegate PSObject InputObjectCallback();
 
         /// <summary>
         /// delegate definition to write object
         /// </summary>
-        internal delegate void WriteObjectCallback (object o);
+        internal delegate void WriteObjectCallback(object o);
 
         /// <summary>
         /// callback to read object
@@ -400,7 +399,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// default implementation just delegates to internal helper
         /// </summary>
         /// <remarks>This method calls GC.SuppressFinalize</remarks>
-        public void Dispose ()
+        public void Dispose()
         {
             Dispose(true);
 
@@ -418,7 +417,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Do-nothing implementation: derived classes will override as see fit
         /// </summary>
-        protected virtual void InternalDispose ()
+        protected virtual void InternalDispose()
         {
         }
         #endregion

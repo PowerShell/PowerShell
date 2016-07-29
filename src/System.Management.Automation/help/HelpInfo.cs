@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections.ObjectModel;
 
 namespace System.Management.Automation
@@ -273,13 +274,13 @@ namespace System.Management.Automation
 
             this.FullHelp.Properties.Remove("Component");
             this.FullHelp.Properties.Add(new PSNoteProperty("Component", this.Component));
-            
+
             this.FullHelp.Properties.Remove("Role");
             this.FullHelp.Properties.Add(new PSNoteProperty("Role", this.Role));
-            
+
             this.FullHelp.Properties.Remove("Functionality");
             this.FullHelp.Properties.Add(new PSNoteProperty("Functionality", this.Functionality));
-        }        
+        }
 
         #region Error handling
 

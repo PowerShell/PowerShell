@@ -44,7 +44,7 @@ namespace System.Management.Automation
         }
         private readonly Dictionary<string, PSModuleInfo> _moduleTable = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
 
-        const int MaxModuleNestingDepth = 10;
+        private const int MaxModuleNestingDepth = 10;
 
         internal void IncrementModuleNestingDepth(PSCmdlet cmdlet, string path)
         {
@@ -68,7 +68,7 @@ namespace System.Management.Automation
             get { return _moduleNestingDepth; }
         }
 
-        int _moduleNestingDepth;
+        private int _moduleNestingDepth;
 
         /// <summary>
         /// Create a new module object from a scriptblock specifying the path to set for the module
@@ -196,7 +196,7 @@ namespace System.Management.Automation
                 {
                     ast = ast.Parent;
                 }
-                
+
                 // The variables set in the interpretted case get set by InvokeWithPipe in the compiled case.
                 Diagnostics.Assert(_context.SessionState.Internal.CurrentScope.LocalsTuple == null,
                                     "No locals tuple should have been created yet.");
@@ -209,14 +209,14 @@ namespace System.Management.Automation
 
                     // And run the scriptblock...
                     sb.InvokeWithPipe(
-                        useLocalScope:         false,
+                        useLocalScope: false,
                         errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                        dollarUnder:           AutomationNull.Value,
-                        input:                 AutomationNull.Value,
-                        scriptThis:            AutomationNull.Value,
-                        outputPipe:            outputPipe,
-                        invocationInfo:        invocationInfo,
-                        args:                  arguments ?? Utils.EmptyArray<object>());
+                        dollarUnder: AutomationNull.Value,
+                        input: AutomationNull.Value,
+                        scriptThis: AutomationNull.Value,
+                        outputPipe: outputPipe,
+                        invocationInfo: invocationInfo,
+                        args: arguments ?? Utils.EmptyArray<object>());
                 }
                 catch (ExitException ee)
                 {
@@ -264,7 +264,7 @@ namespace System.Management.Automation
         internal List<PSModuleInfo> GetExactMatchModules(string moduleName, bool all, bool exactMatch)
         {
             if (moduleName == null) { moduleName = String.Empty; }
-            return GetModuleCore(new string[] {moduleName}, all, exactMatch);
+            return GetModuleCore(new string[] { moduleName }, all, exactMatch);
         }
 
         private List<PSModuleInfo> GetModuleCore(string[] patterns, bool all, bool exactMatch)
@@ -297,7 +297,7 @@ namespace System.Management.Automation
                 foreach (PSModuleInfo module in ModuleTable.Values)
                 {
                     // See if this is the requested module...
-                    if ((exactMatch && module.Name.Equals(targetModuleName, StringComparison.OrdinalIgnoreCase)) || 
+                    if ((exactMatch && module.Name.Equals(targetModuleName, StringComparison.OrdinalIgnoreCase)) ||
                         (!exactMatch && SessionStateUtilities.MatchesAnyWildcardPattern(module.Name, wcpList, false)))
                     {
                         modulesMatched.Add(module);
@@ -421,7 +421,7 @@ namespace System.Management.Automation
 
         internal static Version GetManifestModuleVersion(string manifestPath)
         {
-            if (manifestPath != null && 
+            if (manifestPath != null &&
                 manifestPath.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
             {
                 try
@@ -570,8 +570,8 @@ namespace System.Management.Automation
         /// <returns>The default system wide module path</returns>
         internal static string GetSystemwideModulePath()
         {
-            if (SystemWideModulePath != null)
-                return SystemWideModulePath;
+            if (s_systemWideModulePath != null)
+                return s_systemWideModulePath;
 
             // There is no runspace config so we use the default string
             string shellId = Utils.DefaultPowerShellShellID;
@@ -603,13 +603,13 @@ namespace System.Management.Automation
                 {
                     psHome = psHome.ToLowerInvariant().Replace("\\syswow64\\", "\\system32\\");
                 }
-                Interlocked.CompareExchange(ref SystemWideModulePath, Path.Combine(psHome, Utils.ModuleDirectory), null);
+                Interlocked.CompareExchange(ref s_systemWideModulePath, Path.Combine(psHome, Utils.ModuleDirectory), null);
             }
 
-            return SystemWideModulePath;
+            return s_systemWideModulePath;
         }
 
-        private static string SystemWideModulePath;
+        private static string s_systemWideModulePath;
 
         /// <summary>
         /// Get the DSC module path.
@@ -904,7 +904,7 @@ namespace System.Management.Automation
 
             string newModulePathString = GetModulePath(currentModulePath, systemWideModulePath, personalModulePath);
 
-            if(!string.IsNullOrEmpty(newModulePathString))
+            if (!string.IsNullOrEmpty(newModulePathString))
             {
                 // Set the environment variable...
                 Environment.SetEnvironmentVariable("PSMODULEPATH", newModulePathString);
@@ -936,13 +936,13 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrWhiteSpace(modulePathString))
             {
-            foreach (string envPath in modulePathString.Split(Utils.Separators.Semicolon, StringSplitOptions.RemoveEmptyEntries))
-            {
-                var processedPath = ProcessOneModulePath(context, envPath, processedPathSet);
-                if (processedPath != null)
-                    yield return processedPath;
+                foreach (string envPath in modulePathString.Split(Utils.Separators.Semicolon, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    var processedPath = ProcessOneModulePath(context, envPath, processedPathSet);
+                    if (processedPath != null)
+                        yield return processedPath;
+                }
             }
-        }
 
             if (includeSystemModulePath)
             {
@@ -1027,7 +1027,7 @@ namespace System.Management.Automation
             Dbg.Assert(input != null, "Caller should verify that input != null");
 
             input.Sort(
-                delegate(T x, T y)
+                delegate (T x, T y)
                 {
                     string kx = keyGetter(x);
                     string ky = keyGetter(y);
@@ -1098,14 +1098,14 @@ namespace System.Management.Automation
                         else
                         {
                             message = StringUtil.Format(Modules.ExportingFunction, entry.Key);
-	                        sessionState.ExportedFunctions.Add(entry.Value);
+                            sessionState.ExportedFunctions.Add(entry.Value);
                         }
 
                         cmdlet.WriteVerbose(message);
                     }
                 }
-                SortAndRemoveDuplicates(sessionState.ExportedFunctions, delegate(FunctionInfo ci) { return ci.Name; });
-                SortAndRemoveDuplicates(sessionState.ExportedWorkflows, delegate(WorkflowInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedFunctions, delegate (FunctionInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedWorkflows, delegate (WorkflowInfo ci) { return ci.Name; });
             }
 
             if (cmdletPatterns != null)
@@ -1130,7 +1130,8 @@ namespace System.Management.Automation
                                 cmdlet.WriteVerbose(message);
                                 // Copy the cmdlet info, changing the module association to be the current module...
                                 CmdletInfo exportedCmdlet = new CmdletInfo(element.Name, element.ImplementingType,
-                                    element.HelpFile, null, element.Context) {Module = sessionState.Module};
+                                    element.HelpFile, null, element.Context)
+                                { Module = sessionState.Module };
                                 Dbg.Assert(sessionState.Module != null, "sessionState.Module should not be null by the time we're exporting cmdlets");
                                 sessionState.Module.CompiledExports.Add(exportedCmdlet);
                             }
@@ -1151,14 +1152,15 @@ namespace System.Management.Automation
                             cmdlet.WriteVerbose(message);
                             // Copy the cmdlet info, changing the module association to be the current module...
                             CmdletInfo exportedCmdlet = new CmdletInfo(cmdletToImport.Name, cmdletToImport.ImplementingType,
-                                cmdletToImport.HelpFile, null, cmdletToImport.Context) {Module = sessionState.Module};
+                                cmdletToImport.HelpFile, null, cmdletToImport.Context)
+                            { Module = sessionState.Module };
                             Dbg.Assert(sessionState.Module != null, "sessionState.Module should not be null by the time we're exporting cmdlets");
                             sessionState.Module.CompiledExports.Add(exportedCmdlet);
                         }
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.Module.CompiledExports, delegate(CmdletInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.Module.CompiledExports, delegate (CmdletInfo ci) { return ci.Name; });
             }
 
             if (variablePatterns != null)
@@ -1167,7 +1169,6 @@ namespace System.Management.Automation
 
                 foreach (KeyValuePair<string, PSVariable> entry in vt)
                 {
-
                     // The magic variables are always private as are all-scope variables...
                     if (entry.Value.IsAllScope || Array.IndexOf(PSModuleInfo._builtinVariables, entry.Key) != -1)
                     {
@@ -1181,7 +1182,7 @@ namespace System.Management.Automation
                         sessionState.ExportedVariables.Add(entry.Value);
                     }
                 }
-                SortAndRemoveDuplicates(sessionState.ExportedVariables, delegate(PSVariable v) { return v.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedVariables, delegate (PSVariable v) { return v.Name; });
             }
 
             if (aliasPatterns != null)
@@ -1221,7 +1222,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedAliases, delegate(AliasInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedAliases, delegate (AliasInfo ci) { return ci.Name; });
             }
         }
 
@@ -1263,5 +1264,4 @@ namespace System.Management.Automation
         /// </summary>
         void OnRemove(PSModuleInfo psModuleInfo);
     }
-
 } // System.Management.Automation

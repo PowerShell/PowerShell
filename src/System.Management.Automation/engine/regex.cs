@@ -38,7 +38,7 @@ namespace System.Management.Automation
         /// This yields faster execution but increases startup time.
         /// </summary>
         Compiled = 1,
-        
+
         /// <summary>
         /// Specifies case-insensitive matching.
         /// </summary>
@@ -58,7 +58,7 @@ namespace System.Management.Automation
         //
         // char that escapes special chars
         //
-        const char escapeChar = '`';
+        private const char escapeChar = '`';
 
         //
         // we convert a wildcard pattern to a predicate
@@ -68,19 +68,19 @@ namespace System.Management.Automation
         //
         // wildcard pattern
         //
-        readonly string pattern;
+        private readonly string _pattern;
         internal string Pattern
         {
-            get { return pattern; }
+            get { return _pattern; }
         }
 
         //
         // options that control match behavior
         // 
-        readonly WildcardOptions options = WildcardOptions.None;
+        private readonly WildcardOptions _options = WildcardOptions.None;
         internal WildcardOptions Options
         {
-            get { return options; }
+            get { return _options; }
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("pattern");
             }
 
-            this.pattern = pattern;
+            _pattern = pattern;
         }
 
         /// <summary>
@@ -129,11 +129,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("pattern");
             }
 
-            this.pattern = pattern;
-            this.options = options;
+            _pattern = pattern;
+            _options = options;
         }
 
-        static readonly WildcardPattern matchAllIgnoreCasePattern = new WildcardPattern("*", WildcardOptions.None);
+        private static readonly WildcardPattern s_matchAllIgnoreCasePattern = new WildcardPattern("*", WildcardOptions.None);
 
         /// <summary>
         /// Create a new WildcardPattern, or return an already created one.
@@ -147,7 +147,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("pattern");
 
             if (pattern.Length == 1 && pattern[0] == '*')
-                return matchAllIgnoreCasePattern;
+                return s_matchAllIgnoreCasePattern;
 
             return new WildcardPattern(pattern, options);
         }
@@ -164,7 +164,7 @@ namespace System.Management.Automation
         {
             if (_isMatch == null)
             {
-                if (pattern.Length == 1 && pattern[0] == '*')
+                if (_pattern.Length == 1 && _pattern[0] == '*')
                 {
                     _isMatch = _ => true;
                 }
@@ -198,7 +198,7 @@ namespace System.Management.Automation
         /// </returns>
         internal static string Escape(string pattern, char[] charsNotToEscape)
         {
-            #pragma warning disable 56506
+#pragma warning disable 56506
 
             if (pattern == null)
             {
@@ -213,7 +213,7 @@ namespace System.Management.Automation
             char[] temp = new char[pattern.Length * 2 + 1];
             int tempIndex = 0;
 
-            for (int i=0; i<pattern.Length; i++)
+            for (int i = 0; i < pattern.Length; i++)
             {
                 char ch = pattern[i];
 
@@ -241,7 +241,7 @@ namespace System.Management.Automation
 
             return s;
 
-            #pragma warning restore 56506
+#pragma warning restore 56506
         }
 
         /// <summary>
@@ -319,11 +319,11 @@ namespace System.Management.Automation
             int tempIndex = 0;
             bool prevCharWasEscapeChar = false;
 
-            for (int i=0; i<pattern.Length; i++)
+            for (int i = 0; i < pattern.Length; i++)
             {
                 char ch = pattern[i];
 
-                if ( ch == escapeChar )
+                if (ch == escapeChar)
                 {
                     if (prevCharWasEscapeChar)
                     {
@@ -418,12 +418,12 @@ namespace System.Management.Automation
         /// ErrorRecord object containing additional information about the error condition.
         /// </param>
         /// <returns> constructed object </returns>
-        internal WildcardPatternException (ErrorRecord errorRecord)
-            : base( RetrieveMessage(errorRecord) )
+        internal WildcardPatternException(ErrorRecord errorRecord)
+            : base(RetrieveMessage(errorRecord))
         {
             if (null == errorRecord)
             {
-                throw new ArgumentNullException ("errorRecord");
+                throw new ArgumentNullException("errorRecord");
             }
             _errorRecord = errorRecord;
         }
@@ -546,7 +546,7 @@ namespace System.Management.Automation
         /// and ending at <paramref name="endOfCharacterRange"/>
         /// </summary>
         protected abstract void AppendCharacterRangeToBracketExpression(
-                        char startOfCharacterRange, 
+                        char startOfCharacterRange,
                         char endOfCharacterRange);
 
         /// <summary>
@@ -574,7 +574,7 @@ namespace System.Management.Automation
             int i = 0;
             while (i < brackedExpressionContents.Length)
             {
-                if (((i + 2) < brackedExpressionContents.Length) && 
+                if (((i + 2) < brackedExpressionContents.Length) &&
                                 (bracketExpressionOperators[i + 1] == '-'))
                 {
                     char lowerBound = brackedExpressionContents[i];
@@ -691,13 +691,13 @@ namespace System.Management.Automation
                 new ParentContainsErrorRecordException(message);
 
             ErrorRecord er =
-                new ErrorRecord( pce,
+                new ErrorRecord(pce,
                                  "WildcardPattern_Invalid",
                                  ErrorCategory.InvalidArgument,
-                                 null );
+                                 null);
 
             WildcardPatternException e =
-                new WildcardPatternException( er );
+                new WildcardPatternException(er);
 
             return e;
         }
@@ -720,13 +720,13 @@ namespace System.Management.Automation
     /// </remarks>
     internal class WildcardPatternToRegexParser : WildcardPatternParser
     {
-        private StringBuilder regexPattern;
-        private RegexOptions regexOptions;
+        private StringBuilder _regexPattern;
+        private RegexOptions _regexOptions;
 
         private const string regexChars = "()[.?*{}^$+|\\"; // ']' is missing on purpose
         private static bool IsRegexChar(char ch)
         {
-            for (int i=0; i<regexChars.Length; i++)
+            for (int i = 0; i < regexChars.Length; i++)
             {
                 if (ch == regexChars[i])
                 {
@@ -761,10 +761,10 @@ namespace System.Management.Automation
 
         protected override void BeginWildcardPattern(WildcardPattern pattern)
         {
-            regexPattern = new StringBuilder(pattern.Pattern.Length * 2 + 2);
-            regexPattern.Append('^');
+            _regexPattern = new StringBuilder(pattern.Pattern.Length * 2 + 2);
+            _regexPattern.Append('^');
 
-            regexOptions = TranslateWildcardOptionsIntoRegexOptions(pattern.Options);
+            _regexOptions = TranslateWildcardOptionsIntoRegexOptions(pattern.Options);
         }
 
         internal static void AppendLiteralCharacter(StringBuilder regexPattern, char c)
@@ -778,47 +778,47 @@ namespace System.Management.Automation
 
         protected override void AppendLiteralCharacter(char c)
         {
-            AppendLiteralCharacter(this.regexPattern, c);
+            AppendLiteralCharacter(_regexPattern, c);
         }
 
         protected override void AppendAsterix()
         {
-            regexPattern.Append(".*");
+            _regexPattern.Append(".*");
         }
 
         protected override void AppendQuestionMark()
         {
-            regexPattern.Append('.');
+            _regexPattern.Append('.');
         }
 
         protected override void EndWildcardPattern()
         {
-            regexPattern.Append('$');
+            _regexPattern.Append('$');
 
             // lines below are not strictly necessary and are included to preserve
             // wildcard->regex conversion from PS v1 (i.e. not to break unit tests
             // and not to break backcompatibility).
-            string regexPatternString = regexPattern.ToString();
+            string regexPatternString = _regexPattern.ToString();
             if (regexPatternString.Equals("^.*$", StringComparison.Ordinal))
             {
-                regexPattern.Remove(0, 4);
+                _regexPattern.Remove(0, 4);
             }
-            else 
+            else
             {
                 if (regexPatternString.StartsWith("^.*", StringComparison.Ordinal))
                 {
-                    regexPattern.Remove(0, 3);
+                    _regexPattern.Remove(0, 3);
                 }
                 if (regexPatternString.EndsWith(".*$", StringComparison.Ordinal))
                 {
-                    regexPattern.Remove(regexPattern.Length - 3, 3);
+                    _regexPattern.Remove(_regexPattern.Length - 3, 3);
                 }
             }
         }
 
         protected override void BeginBracketExpression()
         {
-            regexPattern.Append('[');
+            _regexPattern.Append('[');
         }
 
         internal static void AppendLiteralCharacterToBracketExpression(StringBuilder regexPattern, char c)
@@ -842,12 +842,12 @@ namespace System.Management.Automation
         }
         protected override void AppendLiteralCharacterToBracketExpression(char c)
         {
-            AppendLiteralCharacterToBracketExpression(this.regexPattern, c);
+            AppendLiteralCharacterToBracketExpression(_regexPattern, c);
         }
 
         internal static void AppendCharacterRangeToBracketExpression(
                         StringBuilder regexPattern,
-                        char startOfCharacterRange, 
+                        char startOfCharacterRange,
                         char endOfCharacterRange)
         {
             AppendLiteralCharacterToBracketExpression(regexPattern, startOfCharacterRange);
@@ -859,12 +859,12 @@ namespace System.Management.Automation
                         char startOfCharacterRange,
                         char endOfCharacterRange)
         {
-            AppendCharacterRangeToBracketExpression(this.regexPattern, startOfCharacterRange, endOfCharacterRange);
+            AppendCharacterRangeToBracketExpression(_regexPattern, startOfCharacterRange, endOfCharacterRange);
         }
 
         protected override void EndBracketExpression()
         {
-            regexPattern.Append(']');
+            _regexPattern.Append(']');
         }
 
         /// <summary>
@@ -878,9 +878,9 @@ namespace System.Management.Automation
             WildcardPatternParser.Parse(wildcardPattern, parser);
             try
             {
-                return new Regex(parser.regexPattern.ToString(), parser.regexOptions);
+                return new Regex(parser._regexPattern.ToString(), parser._regexOptions);
             }
-            catch(ArgumentException)
+            catch (ArgumentException)
             {
                 throw WildcardPatternParser.NewWildcardPatternException(wildcardPattern.Pattern);
             }
@@ -894,10 +894,10 @@ namespace System.Management.Automation
 
         internal WildcardPatternMatcher(WildcardPattern wildcardPattern)
         {
-            this._characterNormalizer = new CharacterNormalizer(wildcardPattern.Options);
-            this._patternElements = MyWildcardPatternParser.Parse(
-                            wildcardPattern, 
-                            this._characterNormalizer);
+            _characterNormalizer = new CharacterNormalizer(wildcardPattern.Options);
+            _patternElements = MyWildcardPatternParser.Parse(
+                            wildcardPattern,
+                            _characterNormalizer);
         }
 
         internal bool IsMatch(string str)
@@ -918,15 +918,15 @@ namespace System.Management.Automation
             //  - Wikipedia calls this algorithm the "NFA" algorithm at
             //    http://en.wikipedia.org/wiki/Regular_expression#Implementations_and_running_times
 
-            var patternPositionsForCurrentStringPosition = 
-                    new PatternPositionsVisitor(this._patternElements.Length);
+            var patternPositionsForCurrentStringPosition =
+                    new PatternPositionsVisitor(_patternElements.Length);
             patternPositionsForCurrentStringPosition.Add(0);
 
-            var patternPositionsForNextStringPosition = 
-                    new PatternPositionsVisitor(this._patternElements.Length);
+            var patternPositionsForNextStringPosition =
+                    new PatternPositionsVisitor(_patternElements.Length);
 
-            for (int currentStringPosition = 0; 
-                 currentStringPosition < str.Length; 
+            for (int currentStringPosition = 0;
+                 currentStringPosition < str.Length;
                  currentStringPosition++)
             {
                 char currentStringCharacter = _characterNormalizer.Normalize(str[currentStringPosition]);
@@ -936,7 +936,7 @@ namespace System.Management.Automation
                 int patternPosition;
                 while (patternPositionsForCurrentStringPosition.MoveNext(out patternPosition))
                 {
-                    this._patternElements[patternPosition].ProcessStringCharacter(
+                    _patternElements[patternPosition].ProcessStringCharacter(
                         currentStringCharacter,
                         patternPosition,
                         patternPositionsForCurrentStringPosition,
@@ -953,7 +953,7 @@ namespace System.Management.Automation
             int patternPosition2;
             while (patternPositionsForCurrentStringPosition.MoveNext(out patternPosition2))
             {
-                this._patternElements[patternPosition2].ProcessEndOfString(
+                _patternElements[patternPosition2].ProcessEndOfString(
                     patternPosition2,
                     patternPositionsForCurrentStringPosition);
             }
@@ -974,16 +974,16 @@ namespace System.Management.Automation
             {
                 Dbg.Assert(lengthOfPattern >= 0, "Caller should verify lengthOfPattern >= 0");
 
-                this._lengthOfPattern = lengthOfPattern;
+                _lengthOfPattern = lengthOfPattern;
 
-                this._isPatternPositionVisitedMarker = new int[lengthOfPattern + 1];
-                for (int i = 0; i < this._isPatternPositionVisitedMarker.Length; i++)
+                _isPatternPositionVisitedMarker = new int[lengthOfPattern + 1];
+                for (int i = 0; i < _isPatternPositionVisitedMarker.Length; i++)
                 {
-                    this._isPatternPositionVisitedMarker[i] = -1;
+                    _isPatternPositionVisitedMarker[i] = -1;
                 }
 
-                this._patternPositionsForFurtherProcessing = new int[lengthOfPattern];
-                this._patternPositionsForFurtherProcessingCount = 0;
+                _patternPositionsForFurtherProcessing = new int[lengthOfPattern];
+                _patternPositionsForFurtherProcessingCount = 0;
             }
 
             public int StringPosition { private get; set; }
@@ -992,25 +992,25 @@ namespace System.Management.Automation
             {
                 Dbg.Assert(patternPosition >= 0, "Caller should verify patternPosition >= 0");
                 Dbg.Assert(
-                        patternPosition <= this._lengthOfPattern, 
+                        patternPosition <= _lengthOfPattern,
                         "Caller should verify patternPosition <= this._lengthOfPattern");
 
                 // is patternPosition already visited?);
-                if (this._isPatternPositionVisitedMarker[patternPosition] == this.StringPosition)
+                if (_isPatternPositionVisitedMarker[patternPosition] == this.StringPosition)
                 {
                     return;
                 }
 
                 // mark patternPosition as visited
-                this._isPatternPositionVisitedMarker[patternPosition] = this.StringPosition;
+                _isPatternPositionVisitedMarker[patternPosition] = this.StringPosition;
 
                 // add patternPosition to the queue for further processing
-                if (patternPosition < this._lengthOfPattern)
+                if (patternPosition < _lengthOfPattern)
                 {
-                    this._patternPositionsForFurtherProcessing[this._patternPositionsForFurtherProcessingCount] = patternPosition;
-                    this._patternPositionsForFurtherProcessingCount++;
+                    _patternPositionsForFurtherProcessing[_patternPositionsForFurtherProcessingCount] = patternPosition;
+                    _patternPositionsForFurtherProcessingCount++;
                     Dbg.Assert(
-                            this._patternPositionsForFurtherProcessingCount <= this._lengthOfPattern, 
+                            _patternPositionsForFurtherProcessingCount <= _lengthOfPattern,
                             "There should never be more elements in the queue than the length of the pattern");
                 }
             }
@@ -1019,7 +1019,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    return this._isPatternPositionVisitedMarker[this._lengthOfPattern] >= this.StringPosition;
+                    return _isPatternPositionVisitedMarker[_lengthOfPattern] >= this.StringPosition;
                 }
             }
 
@@ -1028,17 +1028,17 @@ namespace System.Management.Automation
             public bool MoveNext(out int patternPosition)
             {
                 Dbg.Assert(
-                        this._patternPositionsForFurtherProcessingCount >= 0, 
+                        _patternPositionsForFurtherProcessingCount >= 0,
                         "There should never be more elements in the queue than the length of the pattern");
 
-                if (this._patternPositionsForFurtherProcessingCount == 0)
+                if (_patternPositionsForFurtherProcessingCount == 0)
                 {
                     patternPosition = -1;
                     return false;
                 }
 
-                this._patternPositionsForFurtherProcessingCount--;
-                patternPosition = this._patternPositionsForFurtherProcessing[this._patternPositionsForFurtherProcessingCount];
+                _patternPositionsForFurtherProcessingCount--;
+                patternPosition = _patternPositionsForFurtherProcessing[_patternPositionsForFurtherProcessingCount];
                 return true;
             }
         }
@@ -1046,22 +1046,22 @@ namespace System.Management.Automation
         private abstract class PatternElement
         {
             public abstract void ProcessStringCharacter(
-                            char currentStringCharacter, 
-                            int currentPatternPosition, 
-                            PatternPositionsVisitor patternPositionsForCurrentStringPosition, 
+                            char currentStringCharacter,
+                            int currentPatternPosition,
+                            PatternPositionsVisitor patternPositionsForCurrentStringPosition,
                             PatternPositionsVisitor patternPositionsForNextStringPosition);
 
             public abstract void ProcessEndOfString(
-                            int currentPatternPosition, 
+                            int currentPatternPosition,
                             PatternPositionsVisitor patternPositionsForEndOfStringPosition);
         }
 
         private class QuestionMarkElement : PatternElement
         {
             public override void ProcessStringCharacter(
-                            char currentStringCharacter, 
-                            int currentPatternPosition, 
-                            PatternPositionsVisitor patternPositionsForCurrentStringPosition, 
+                            char currentStringCharacter,
+                            int currentPatternPosition,
+                            PatternPositionsVisitor patternPositionsForCurrentStringPosition,
                             PatternPositionsVisitor patternPositionsForNextStringPosition)
             {
                 // '?' : (patternPosition, stringPosition) => (patternPosition + 1, stringPosition + 1)
@@ -1069,7 +1069,7 @@ namespace System.Management.Automation
             }
 
             public override void ProcessEndOfString(
-                            int currentPatternPosition, 
+                            int currentPatternPosition,
                             PatternPositionsVisitor patternPositionsForEndOfStringPosition)
             {
                 // '?' : (patternPosition, endOfString) => <no transitions out of this state - cannot move beyond end of string>
@@ -1082,21 +1082,21 @@ namespace System.Management.Automation
 
             public LiteralCharacterElement(char literalCharacter)
             {
-                this._literalCharacter = literalCharacter;
+                _literalCharacter = literalCharacter;
             }
 
             public override void ProcessStringCharacter(
-                            char currentStringCharacter, 
-                            int currentPatternPosition, 
-                            PatternPositionsVisitor patternPositionsForCurrentStringPosition, 
+                            char currentStringCharacter,
+                            int currentPatternPosition,
+                            PatternPositionsVisitor patternPositionsForCurrentStringPosition,
                             PatternPositionsVisitor patternPositionsForNextStringPosition)
             {
-                if (this._literalCharacter == currentStringCharacter)
+                if (_literalCharacter == currentStringCharacter)
                 {
                     base.ProcessStringCharacter(
-                            currentStringCharacter, 
-                            currentPatternPosition, 
-                            patternPositionsForCurrentStringPosition, 
+                            currentStringCharacter,
+                            currentPatternPosition,
+                            patternPositionsForCurrentStringPosition,
                             patternPositionsForNextStringPosition);
                 }
             }
@@ -1109,16 +1109,16 @@ namespace System.Management.Automation
             public BracketExpressionElement(Regex regex)
             {
                 Dbg.Assert(regex != null, "Caller should verify regex != null");
-                this._regex = regex;
+                _regex = regex;
             }
 
             public override void ProcessStringCharacter(
-                            char currentStringCharacter, 
-                            int currentPatternPosition, 
-                            PatternPositionsVisitor patternPositionsForCurrentStringPosition, 
+                            char currentStringCharacter,
+                            int currentPatternPosition,
+                            PatternPositionsVisitor patternPositionsForCurrentStringPosition,
                             PatternPositionsVisitor patternPositionsForNextStringPosition)
             {
-                if (this._regex.IsMatch(new string(currentStringCharacter, 1)))
+                if (_regex.IsMatch(new string(currentStringCharacter, 1)))
                 {
                     base.ProcessStringCharacter(currentStringCharacter, currentPatternPosition,
                                                 patternPositionsForCurrentStringPosition,
@@ -1130,9 +1130,9 @@ namespace System.Management.Automation
         private class AsterixElement : PatternElement
         {
             public override void ProcessStringCharacter(
-                            char currentStringCharacter, 
-                            int currentPatternPosition, 
-                            PatternPositionsVisitor patternPositionsForCurrentStringPosition, 
+                            char currentStringCharacter,
+                            int currentPatternPosition,
+                            PatternPositionsVisitor patternPositionsForCurrentStringPosition,
                             PatternPositionsVisitor patternPositionsForNextStringPosition)
             {
                 // '*' : (patternPosition, stringPosition) => (patternPosition + 1, stringPosition)
@@ -1143,7 +1143,7 @@ namespace System.Management.Automation
             }
 
             public override void ProcessEndOfString(
-                            int currentPatternPosition, 
+                            int currentPatternPosition,
                             PatternPositionsVisitor patternPositionsForEndOfStringPosition)
             {
                 // '*' : (patternPosition, endOfString) => (patternPosition + 1, endOfString)
@@ -1159,62 +1159,62 @@ namespace System.Management.Automation
             private StringBuilder _bracketExpressionBuilder;
 
             static public PatternElement[] Parse(
-                            WildcardPattern pattern, 
+                            WildcardPattern pattern,
                             CharacterNormalizer characterNormalizer)
             {
                 var parser = new MyWildcardPatternParser
-                    {
-                        _characterNormalizer = characterNormalizer,
-                        _regexOptions = WildcardPatternToRegexParser.TranslateWildcardOptionsIntoRegexOptions(pattern.Options),
-                    }; 
+                {
+                    _characterNormalizer = characterNormalizer,
+                    _regexOptions = WildcardPatternToRegexParser.TranslateWildcardOptionsIntoRegexOptions(pattern.Options),
+                };
                 WildcardPatternParser.Parse(pattern, parser);
                 return parser._patternElements.ToArray();
             }
 
             protected override void AppendLiteralCharacter(char c)
             {
-                c = this._characterNormalizer.Normalize(c);
-                this._patternElements.Add(new LiteralCharacterElement(c));
+                c = _characterNormalizer.Normalize(c);
+                _patternElements.Add(new LiteralCharacterElement(c));
             }
 
             protected override void AppendAsterix()
             {
-                this._patternElements.Add(new AsterixElement());
+                _patternElements.Add(new AsterixElement());
             }
 
             protected override void AppendQuestionMark()
             {
-                this._patternElements.Add(new QuestionMarkElement());
+                _patternElements.Add(new QuestionMarkElement());
             }
 
             protected override void BeginBracketExpression()
             {
-                this._bracketExpressionBuilder = new StringBuilder();
-                this._bracketExpressionBuilder.Append('[');
+                _bracketExpressionBuilder = new StringBuilder();
+                _bracketExpressionBuilder.Append('[');
             }
 
             protected override void AppendLiteralCharacterToBracketExpression(char c)
             {
                 WildcardPatternToRegexParser.AppendLiteralCharacterToBracketExpression(
-                    this._bracketExpressionBuilder, 
+                    _bracketExpressionBuilder,
                     c);
             }
 
             protected override void AppendCharacterRangeToBracketExpression(
-                            char startOfCharacterRange, 
+                            char startOfCharacterRange,
                             char endOfCharacterRange)
             {
                 WildcardPatternToRegexParser.AppendCharacterRangeToBracketExpression(
-                    this._bracketExpressionBuilder, 
-                    startOfCharacterRange, 
+                    _bracketExpressionBuilder,
+                    startOfCharacterRange,
                     endOfCharacterRange);
             }
 
             protected override void EndBracketExpression()
             {
-                this._bracketExpressionBuilder.Append(']');
-                Regex regex = new Regex(this._bracketExpressionBuilder.ToString(), this._regexOptions);
-                this._patternElements.Add(new BracketExpressionElement(regex));
+                _bracketExpressionBuilder.Append(']');
+                Regex regex = new Regex(_bracketExpressionBuilder.ToString(), _regexOptions);
+                _patternElements.Add(new BracketExpressionElement(regex));
             }
         }
 
@@ -1242,9 +1242,9 @@ namespace System.Management.Automation
             [Pure]
             public char Normalize(char x)
             {
-                if (this._caseInsensitive)
+                if (_caseInsensitive)
                 {
-                    return this._cultureInfo.TextInfo.ToLower(x);
+                    return _cultureInfo.TextInfo.ToLower(x);
                 }
 
                 return x;
@@ -1257,21 +1257,21 @@ namespace System.Management.Automation
     /// </summary>
     internal class WildcardPatternToDosWildcardParser : WildcardPatternParser
     {
-        private readonly StringBuilder result = new StringBuilder();
+        private readonly StringBuilder _result = new StringBuilder();
 
         protected override void AppendLiteralCharacter(char c)
         {
-            this.result.Append(c);
+            _result.Append(c);
         }
 
         protected override void AppendAsterix()
         {
-            result.Append('*');
+            _result.Append('*');
         }
 
         protected override void AppendQuestionMark()
         {
-            result.Append('?');
+            _result.Append('?');
         }
 
         protected override void BeginBracketExpression()
@@ -1288,7 +1288,7 @@ namespace System.Management.Automation
 
         protected override void EndBracketExpression()
         {
-            result.Append('?');
+            _result.Append('?');
         }
 
         /// <summary>
@@ -1298,7 +1298,7 @@ namespace System.Management.Automation
         {
             var parser = new WildcardPatternToDosWildcardParser();
             WildcardPatternParser.Parse(wildcardPattern, parser);
-            return parser.result.ToString();
+            return parser._result.ToString();
         }
     }
 }

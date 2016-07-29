@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Xml;
 using System.Text;
 using System.Diagnostics.CodeAnalysis;
@@ -34,11 +35,11 @@ namespace System.Management.Automation
 
             _name = GetTerm();
 
-            this._fullHelpObject.TypeNames.Clear();
-            this._fullHelpObject.TypeNames.Add(string.Format(Globalization.CultureInfo.InvariantCulture,
+            _fullHelpObject.TypeNames.Clear();
+            _fullHelpObject.TypeNames.Add(string.Format(Globalization.CultureInfo.InvariantCulture,
                 "GlossaryHelpInfo#{0}", Name));
-            this._fullHelpObject.TypeNames.Add("GlossaryHelpInfo");
-            this._fullHelpObject.TypeNames.Add("HelpInfo");
+            _fullHelpObject.TypeNames.Add("GlossaryHelpInfo");
+            _fullHelpObject.TypeNames.Add("HelpInfo");
         }
 
         #region Basic Help Properties
@@ -67,12 +68,12 @@ namespace System.Management.Automation
             if (_fullHelpObject.Properties["Terms"].Value == null)
                 return "";
 
-            PSObject terms = (PSObject) _fullHelpObject.Properties["Terms"].Value;
+            PSObject terms = (PSObject)_fullHelpObject.Properties["Terms"].Value;
 
-            if(terms.Properties["Term"] == null)
+            if (terms.Properties["Term"] == null)
                 return "";
 
-            if(terms.Properties["Term"].Value == null)
+            if (terms.Properties["Term"].Value == null)
                 return "";
 
             if (terms.Properties["Term"].Value.GetType().Equals(typeof(PSObject)))
@@ -95,7 +96,7 @@ namespace System.Management.Automation
 
                     str = str.Trim();
 
-                    if(String.IsNullOrEmpty(str))
+                    if (String.IsNullOrEmpty(str))
                         continue;
 
                     if (result.Length > 0)

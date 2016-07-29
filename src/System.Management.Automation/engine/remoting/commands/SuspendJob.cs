@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -36,19 +37,19 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = JobParameterSet)]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]        
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Job[] Job
         {
             get
             {
-                return jobs;
+                return _jobs;
             }
             set
             {
-                jobs = value;
+                _jobs = value;
             }
         }
-        private Job[] jobs;
+        private Job[] _jobs;
 
         /// <summary>
         /// 
@@ -75,14 +76,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return force;
+                return _force;
             }
             set
             {
-                force = value;
+                _force = value;
             }
         }
-        private bool force = false;
+        private bool _force = false;
 
         /// <summary>
         /// 
@@ -148,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
 
                 default:
                     {
-                        jobsToSuspend = CopyJobsToList(jobs, false, false);
+                        jobsToSuspend = CopyJobsToList(_jobs, false, false);
                     }
                     break;
             }
@@ -165,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(
                         new ErrorRecord(
                             PSTraceSource.NewNotSupportedException(RemotingErrorIdStrings.JobSuspendNotSupported, job.Id),
-                            "Job2OperationNotSupportedOnJob", ErrorCategory.InvalidType, (object) job));
+                            "Job2OperationNotSupportedOnJob", ErrorCategory.InvalidType, (object)job));
                     continue;
                 }
 
@@ -188,9 +189,8 @@ namespace Microsoft.PowerShell.Commands
 
                         if (job2.JobStateInfo.State == JobState.Suspending || job2.JobStateInfo.State == JobState.Suspended)
                             continue;
-                     
-                        job2.StateChanged += noWait_Job2_StateChanged;
 
+                        job2.StateChanged += noWait_Job2_StateChanged;
                     }
 
                     job2.SuspendJobCompleted += HandleSuspendJobCompleted;
@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
                         this.ProcessExecutionErrorsAndReleaseWaitHandle(job2);
                     }
 
-                    job2.SuspendJobAsync(force, RemotingErrorIdStrings.ForceSuspendJob);
+                    job2.SuspendJobAsync(_force, RemotingErrorIdStrings.ForceSuspendJob);
                 }
             }
         }
@@ -225,7 +225,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly object _syncObject = new object();
         private bool _needToCheckForWaitingJobs;
 
-        void noWait_Job2_StateChanged(object sender, JobStateEventArgs e)
+        private void noWait_Job2_StateChanged(object sender, JobStateEventArgs e)
         {
             Job job = sender as Job;
 

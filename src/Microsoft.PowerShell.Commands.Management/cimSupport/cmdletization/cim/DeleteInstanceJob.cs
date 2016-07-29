@@ -13,17 +13,17 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// </summary>
     internal class DeleteInstanceJob : MethodInvocationJobBase<object>
     {
-        private readonly CimInstance objectToDelete;
+        private readonly CimInstance _objectToDelete;
 
         internal DeleteInstanceJob(CimJobContext jobContext, bool passThru, CimInstance objectToDelete, MethodInvocationInfo methodInvocationInfo)
                 : base(
-                    jobContext, 
-                    passThru, 
+                    jobContext,
+                    passThru,
                     objectToDelete.ToString(),
                     methodInvocationInfo)
         {
             Dbg.Assert(objectToDelete != null, "Caller should verify objectToDelete != null");
-            this.objectToDelete = objectToDelete;
+            _objectToDelete = objectToDelete;
         }
 
         internal override IObservable<object> GetCimOperation()
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             IObservable<object> observable = this.JobContext.Session.DeleteInstanceAsync(
                 this.JobContext.Namespace,
-                this.objectToDelete,
+                _objectToDelete,
                 this.CreateOperationOptions());
             return observable;
         }
@@ -47,14 +47,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal override object PassThruObject
         {
-            get { return this.objectToDelete; }
+            get { return _objectToDelete; }
         }
 
         internal override CimCustomOptionsDictionary CalculateJobSpecificCustomOptions()
         {
             return CimCustomOptionsDictionary.MergeOptions(
                 base.CalculateJobSpecificCustomOptions(),
-                this.objectToDelete);
+                _objectToDelete);
         }
     }
 }

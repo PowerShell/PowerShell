@@ -19,9 +19,9 @@ namespace System.Management.Automation.Language
         object VisitErrorStatement(ErrorStatementAst errorStatementAst);
         /// <summary/>
         object VisitErrorExpression(ErrorExpressionAst errorExpressionAst);
-        
+
         #region Script Blocks
-        
+
         /// <summary/>
         object VisitScriptBlock(ScriptBlockAst scriptBlockAst);
         /// <summary/>
@@ -38,7 +38,7 @@ namespace System.Management.Automation.Language
         object VisitNamedAttributeArgument(NamedAttributeArgumentAst namedAttributeArgumentAst);
         /// <summary/>
         object VisitParameter(ParameterAst parameterAst);
-        
+
         #endregion Script Blocks
 
         #region Statements
@@ -328,9 +328,9 @@ namespace System.Management.Automation.Language
 
         protected AstSearcher(Func<Ast, bool> callback, bool stopOnFirst, bool searchNestedScriptBlocks)
         {
-            this._callback = callback;
-            this._stopOnFirst = stopOnFirst;
-            this._searchNestedScriptBlocks = searchNestedScriptBlocks;
+            _callback = callback;
+            _stopOnFirst = stopOnFirst;
+            _searchNestedScriptBlocks = searchNestedScriptBlocks;
             this.Results = new List<Ast>();
         }
 
@@ -537,7 +537,6 @@ namespace System.Management.Automation.Language
         public virtual object VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst) { return null; }
         /// <summary/>
         public virtual object VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst) { return null; }
-
     }
 
     /// <summary>

@@ -1,6 +1,7 @@
 ﻿/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
@@ -16,40 +17,40 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// GC handle which prevents garbage collector from collecting this delegate.
         /// </summary>
-        private CabinetNativeApi.FdiAllocDelegate allocDelegate;
-        private GCHandle fdiAllocHandle;
-        private CabinetNativeApi.FdiFreeDelegate freeDelegate;
-        private GCHandle fdiFreeHandle;
-        private CabinetNativeApi.FdiOpenDelegate openDelegate;
-        private GCHandle fdiOpenHandle;
-        private CabinetNativeApi.FdiReadDelegate readDelegate;
-        private GCHandle fdiReadHandle;
-        private CabinetNativeApi.FdiWriteDelegate writeDelegate;
-        private GCHandle fdiWriteHandle;
-        private CabinetNativeApi.FdiCloseDelegate closeDelegate;
-        private GCHandle fdiCloseHandle;
-        private CabinetNativeApi.FdiSeekDelegate seekDelegate;
-        private GCHandle fdiSeekHandle;
-        private CabinetNativeApi.FdiNotifyDelegate notifyDelegate;
-        private GCHandle fdiNotifyHandle;
+        private CabinetNativeApi.FdiAllocDelegate _allocDelegate;
+        private GCHandle _fdiAllocHandle;
+        private CabinetNativeApi.FdiFreeDelegate _freeDelegate;
+        private GCHandle _fdiFreeHandle;
+        private CabinetNativeApi.FdiOpenDelegate _openDelegate;
+        private GCHandle _fdiOpenHandle;
+        private CabinetNativeApi.FdiReadDelegate _readDelegate;
+        private GCHandle _fdiReadHandle;
+        private CabinetNativeApi.FdiWriteDelegate _writeDelegate;
+        private GCHandle _fdiWriteHandle;
+        private CabinetNativeApi.FdiCloseDelegate _closeDelegate;
+        private GCHandle _fdiCloseHandle;
+        private CabinetNativeApi.FdiSeekDelegate _seekDelegate;
+        private GCHandle _fdiSeekHandle;
+        private CabinetNativeApi.FdiNotifyDelegate _notifyDelegate;
+        private GCHandle _fdiNotifyHandle;
 
         internal CabinetNativeApi.FdiContextHandle fdiContext; // HFDI
 
         internal CabinetExtractor()
         {
             CabinetNativeApi.FdiERF err = new CabinetNativeApi.FdiERF();
-            
+
             populateDelegates();
 
             // marshal the delegate to a unmanaged function pointer so that AppDomain reference is stored correctly.
             fdiContext = CabinetNativeApi.FDICreate(
-                Marshal.GetFunctionPointerForDelegate(allocDelegate),
-                Marshal.GetFunctionPointerForDelegate(freeDelegate),
-                Marshal.GetFunctionPointerForDelegate(openDelegate),
-                Marshal.GetFunctionPointerForDelegate(readDelegate),
-                Marshal.GetFunctionPointerForDelegate(writeDelegate),
-                Marshal.GetFunctionPointerForDelegate(closeDelegate),
-                Marshal.GetFunctionPointerForDelegate(seekDelegate),
+                Marshal.GetFunctionPointerForDelegate(_allocDelegate),
+                Marshal.GetFunctionPointerForDelegate(_freeDelegate),
+                Marshal.GetFunctionPointerForDelegate(_openDelegate),
+                Marshal.GetFunctionPointerForDelegate(_readDelegate),
+                Marshal.GetFunctionPointerForDelegate(_writeDelegate),
+                Marshal.GetFunctionPointerForDelegate(_closeDelegate),
+                Marshal.GetFunctionPointerForDelegate(_seekDelegate),
                 CabinetNativeApi.FdiCreateCpuType.Cpu80386,
                 err);
         }
@@ -59,7 +60,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Flag: Has Dispose already been called?
         /// </summary>
-        private bool disposed = false;
+        private bool _disposed = false;
 
         /// <summary>
         /// Protected implementation of Dispose pattern.
@@ -67,7 +68,7 @@ namespace System.Management.Automation.Internal
         /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
-            if (disposed)
+            if (_disposed)
             {
                 return;
             }
@@ -80,7 +81,7 @@ namespace System.Management.Automation.Internal
             // Free unmanaged objects here
             this.CleanUpDelegates();
 
-            disposed = true;
+            _disposed = true;
 
             // Call base class implementation in case it has resources to release
             base.Dispose(disposing);
@@ -103,9 +104,9 @@ namespace System.Management.Automation.Internal
             bool result = CabinetNativeApi.FDICopy(
                 fdiContext,
                 cabinetName,
-                srcPath, 
+                srcPath,
                 0,                    // Not used
-                Marshal.GetFunctionPointerForDelegate(notifyDelegate),
+                Marshal.GetFunctionPointerForDelegate(_notifyDelegate),
                 IntPtr.Zero,
                 nativeDestPath);
 
@@ -124,29 +125,29 @@ namespace System.Management.Automation.Internal
             // to the delegate, allowing relocation of the delegate, but preventing
             // disposal. Using GCHandle without pinning reduces fragmentation potential
             // of the managed heap.
-            allocDelegate = new CabinetNativeApi.FdiAllocDelegate(CabinetNativeApi.FdiAlloc);
-            this.fdiAllocHandle = GCHandle.Alloc(allocDelegate);
+            _allocDelegate = new CabinetNativeApi.FdiAllocDelegate(CabinetNativeApi.FdiAlloc);
+            _fdiAllocHandle = GCHandle.Alloc(_allocDelegate);
 
-            freeDelegate = new CabinetNativeApi.FdiFreeDelegate(CabinetNativeApi.FdiFree);
-            this.fdiFreeHandle = GCHandle.Alloc(freeDelegate);
+            _freeDelegate = new CabinetNativeApi.FdiFreeDelegate(CabinetNativeApi.FdiFree);
+            _fdiFreeHandle = GCHandle.Alloc(_freeDelegate);
 
-            openDelegate = new CabinetNativeApi.FdiOpenDelegate(CabinetNativeApi.FdiOpen);
-            this.fdiOpenHandle = GCHandle.Alloc(openDelegate);
+            _openDelegate = new CabinetNativeApi.FdiOpenDelegate(CabinetNativeApi.FdiOpen);
+            _fdiOpenHandle = GCHandle.Alloc(_openDelegate);
 
-            readDelegate = new CabinetNativeApi.FdiReadDelegate(CabinetNativeApi.FdiRead);
-            this.fdiReadHandle = GCHandle.Alloc(readDelegate);
+            _readDelegate = new CabinetNativeApi.FdiReadDelegate(CabinetNativeApi.FdiRead);
+            _fdiReadHandle = GCHandle.Alloc(_readDelegate);
 
-            writeDelegate = new CabinetNativeApi.FdiWriteDelegate(CabinetNativeApi.FdiWrite);
-            this.fdiWriteHandle = GCHandle.Alloc(writeDelegate);
+            _writeDelegate = new CabinetNativeApi.FdiWriteDelegate(CabinetNativeApi.FdiWrite);
+            _fdiWriteHandle = GCHandle.Alloc(_writeDelegate);
 
-            closeDelegate = new CabinetNativeApi.FdiCloseDelegate(CabinetNativeApi.FdiClose);
-            this.fdiCloseHandle = GCHandle.Alloc(closeDelegate);
+            _closeDelegate = new CabinetNativeApi.FdiCloseDelegate(CabinetNativeApi.FdiClose);
+            _fdiCloseHandle = GCHandle.Alloc(_closeDelegate);
 
-            seekDelegate = new CabinetNativeApi.FdiSeekDelegate(CabinetNativeApi.FdiSeek);
-            this.fdiSeekHandle = GCHandle.Alloc(seekDelegate);
+            _seekDelegate = new CabinetNativeApi.FdiSeekDelegate(CabinetNativeApi.FdiSeek);
+            _fdiSeekHandle = GCHandle.Alloc(_seekDelegate);
 
-            notifyDelegate = new CabinetNativeApi.FdiNotifyDelegate(CabinetNativeApi.FdiNotify);
-            this.fdiNotifyHandle = GCHandle.Alloc(notifyDelegate);
+            _notifyDelegate = new CabinetNativeApi.FdiNotifyDelegate(CabinetNativeApi.FdiNotify);
+            _fdiNotifyHandle = GCHandle.Alloc(_notifyDelegate);
         }
 
         /// <summary>
@@ -155,41 +156,41 @@ namespace System.Management.Automation.Internal
         private void CleanUpDelegates()
         {
             // Free GCHandles so that the memory they point to may be unpinned (garbage collected)
-            if (null != this.fdiAllocHandle)
+            if (null != _fdiAllocHandle)
             {
-                this.fdiAllocHandle.Free();
-                this.fdiFreeHandle.Free();
-                this.fdiOpenHandle.Free();
-                this.fdiReadHandle.Free();
-                this.fdiWriteHandle.Free();
-                this.fdiCloseHandle.Free();
-                this.fdiSeekHandle.Free();
-                this.fdiNotifyHandle.Free();
+                _fdiAllocHandle.Free();
+                _fdiFreeHandle.Free();
+                _fdiOpenHandle.Free();
+                _fdiReadHandle.Free();
+                _fdiWriteHandle.Free();
+                _fdiCloseHandle.Free();
+                _fdiSeekHandle.Free();
+                _fdiNotifyHandle.Free();
             }
-         }
+        }
     };
 
     // CabinetExtractor loader implementation
     internal class CabinetExtractorLoader : ICabinetExtractorLoader
     {
-        private static CabinetExtractor extractorInstance;
-        private static CabinetExtractorLoader instance;
-        private static double created = 0;
+        private static CabinetExtractor s_extractorInstance;
+        private static CabinetExtractorLoader s_instance;
+        private static double s_created = 0;
 
         internal static CabinetExtractorLoader GetInstance()
         {
-            if (0 == System.Threading.Interlocked.CompareExchange(ref created, 1, 0))
+            if (0 == System.Threading.Interlocked.CompareExchange(ref s_created, 1, 0))
             {
-                instance = new CabinetExtractorLoader();
-                extractorInstance = new CabinetExtractor();
+                s_instance = new CabinetExtractorLoader();
+                s_extractorInstance = new CabinetExtractor();
             }
 
-            return instance;
+            return s_instance;
         }
 
         internal override ICabinetExtractor GetCabinetExtractor()
         {
-            return extractorInstance;
+            return s_extractorInstance;
         }
     };
 
@@ -222,8 +223,8 @@ namespace System.Management.Automation.Internal
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal delegate IntPtr FdiOpenDelegate(
-            [MarshalAs(UnmanagedType.LPStr)] string filename, 
-            int oflag, 
+            [MarshalAs(UnmanagedType.LPStr)] string filename,
+            int oflag,
             int pmode);
 
         internal static IntPtr FdiOpen(string filename, int oflag, int pmode)
@@ -248,11 +249,11 @@ namespace System.Management.Automation.Internal
                 return new IntPtr(-1);
             }
         }
-    
+
         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal delegate int FdiReadDelegate(
             IntPtr fp,
-            [In, Out] 
+            [In, Out]
             [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2, ArraySubType = UnmanagedType.U1)]
             byte[] buffer,
             int count);
@@ -267,12 +268,12 @@ namespace System.Management.Automation.Internal
             {
                 numCharactersRead = stream.Read(buffer, 0, count);
             }
-            catch(ArgumentNullException) { numCharactersRead = -1; }
-            catch(ArgumentOutOfRangeException) { numCharactersRead = -1; }
-            catch(NotSupportedException) { numCharactersRead = -1; }
-            catch(IOException) { numCharactersRead = -1; }
-            catch(ArgumentException) { numCharactersRead = -1; }
-            catch(ObjectDisposedException) { numCharactersRead = -1; }
+            catch (ArgumentNullException) { numCharactersRead = -1; }
+            catch (ArgumentOutOfRangeException) { numCharactersRead = -1; }
+            catch (NotSupportedException) { numCharactersRead = -1; }
+            catch (IOException) { numCharactersRead = -1; }
+            catch (ArgumentException) { numCharactersRead = -1; }
+            catch (ObjectDisposedException) { numCharactersRead = -1; }
 
             return numCharactersRead;
         }
@@ -280,8 +281,8 @@ namespace System.Management.Automation.Internal
         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal delegate int FdiWriteDelegate(
             IntPtr fp,
-            [In] 
-            [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2, ArraySubType = UnmanagedType.U1)] 
+            [In]
+            [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2, ArraySubType = UnmanagedType.U1)]
             byte[] buffer,
             int count);
 
@@ -296,12 +297,12 @@ namespace System.Management.Automation.Internal
                 stream.Write(buffer, 0, count);
                 numCharactersWritten = count; // Write doesn't return the number of bytes written. Per MSDN, if it succeeds, it will have written count bytes.
             }
-            catch(ArgumentNullException) { numCharactersWritten = -1; }
-            catch(ArgumentOutOfRangeException) { numCharactersWritten = -1; }
-            catch(NotSupportedException) { numCharactersWritten = -1; }
-            catch(IOException) { numCharactersWritten = -1; }
-            catch(ArgumentException) { numCharactersWritten = -1; }
-            catch(ObjectDisposedException) { numCharactersWritten = -1; }
+            catch (ArgumentNullException) { numCharactersWritten = -1; }
+            catch (ArgumentOutOfRangeException) { numCharactersWritten = -1; }
+            catch (NotSupportedException) { numCharactersWritten = -1; }
+            catch (IOException) { numCharactersWritten = -1; }
+            catch (ArgumentException) { numCharactersWritten = -1; }
+            catch (ObjectDisposedException) { numCharactersWritten = -1; }
 
             return numCharactersWritten;
         }
@@ -339,10 +340,10 @@ namespace System.Management.Automation.Internal
             {
                 status = stream.Seek(offset, seekOrigin);
             }
-            catch(NotSupportedException) { status = -1; }
-            catch(IOException) { status = -1; }
-            catch(ArgumentException) { status = -1; }
-            catch(ObjectDisposedException) { status = -1; }
+            catch (NotSupportedException) { status = -1; }
+            catch (IOException) { status = -1; }
+            catch (ArgumentException) { status = -1; }
+            catch (ObjectDisposedException) { status = -1; }
 
             return (int)status;
         }
@@ -353,7 +354,7 @@ namespace System.Management.Automation.Internal
         // Handles FDI notification
         internal static IntPtr FdiNotify(FdiNotificationType fdint, FdiNotification fdin)
         {
-            switch(fdint)
+            switch (fdint)
             {
                 case FdiNotificationType.FdintCOPY_FILE:
                     {
@@ -407,7 +408,7 @@ namespace System.Management.Automation.Internal
                         }
 
                         PlatformInvokes.SetFileAttributesW(
-                            absoluteFilePath, 
+                            absoluteFilePath,
                             (PlatformInvokes.FileAttributes)fdin.attribs & (PlatformInvokes.FileAttributes.ReadOnly | PlatformInvokes.FileAttributes.Hidden | PlatformInvokes.FileAttributes.System | PlatformInvokes.FileAttributes.Archive));
 
                         // Call notification function
@@ -428,7 +429,7 @@ namespace System.Management.Automation.Internal
         /// <returns>The appropriate System.IO.SeekOrigin value.</returns>
         internal static SeekOrigin ConvertOriginToSeekOrigin(int origin)
         {
-            switch(origin)
+            switch (origin)
             {
                 case 0x0: // SEEK_SET
                     return SeekOrigin.Begin;
@@ -466,7 +467,7 @@ namespace System.Management.Automation.Internal
             {
                 return FileMode.Create;
             }
-            else if (0 != (oflag & (int)OpFlags.RdWr)) 
+            else if (0 != (oflag & (int)OpFlags.RdWr))
             {
                 return FileMode.Open;
             }
@@ -479,7 +480,7 @@ namespace System.Management.Automation.Internal
                 return FileMode.OpenOrCreate; // This seemed the safest way to handled unrecognized types
             }
         }
-        
+
         /// <summary>
         /// Converts an unmanaged define into a known managed type.
         /// </summary>
@@ -585,20 +586,20 @@ namespace System.Management.Automation.Internal
 
         internal enum FdiNotificationType : int
         {
-            FdintCABINET_INFO       = 0x0,
-            FdintPARTIAL_FILE       = 0x1,
-            FdintCOPY_FILE          = 0x2,
-            FdintCLOSE_FILE_INFO    = 0x3,
-            FdintNEXT_CABINET       = 0x4,
-            FdintENUMERATE          = 0x5
+            FdintCABINET_INFO = 0x0,
+            FdintPARTIAL_FILE = 0x1,
+            FdintCOPY_FILE = 0x2,
+            FdintCLOSE_FILE_INFO = 0x3,
+            FdintNEXT_CABINET = 0x4,
+            FdintENUMERATE = 0x5
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal class FdiERF 
+        internal class FdiERF
         {
-              internal int  erfOper;
-              internal int  erfType;
-              internal bool fError;
+            internal int erfOper;
+            internal int erfType;
+            internal bool fError;
         };
 
         internal sealed class FdiContextHandle : SafeHandleZeroOrMinusOneIsInvalid
@@ -657,7 +658,7 @@ namespace System.Management.Automation.Internal
         [DllImport("cabinet.dll", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl, SetLastError = true, BestFitMapping = false)]
         internal static extern bool FDICopy(
             FdiContextHandle hfdi,
-            [MarshalAs(UnmanagedType.LPStr)] string pszCabinet, 
+            [MarshalAs(UnmanagedType.LPStr)] string pszCabinet,
             [MarshalAs(UnmanagedType.LPStr)] string pszCabPath,
             int flags,
             IntPtr pfnfdin,

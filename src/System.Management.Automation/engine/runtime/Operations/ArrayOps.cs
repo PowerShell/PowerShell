@@ -11,7 +11,7 @@ using System.Management.Automation.Runspaces;
 
 namespace System.Management.Automation
 {
-    static class ArrayOps
+    internal static class ArrayOps
     {
         internal static object[] SlicingIndex(object target, object[] indexes, Func<object, object, object> indexer)
         {

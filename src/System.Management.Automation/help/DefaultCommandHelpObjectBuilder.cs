@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Globalization;
@@ -162,18 +163,18 @@ namespace System.Management.Automation.Help
         /// <param name="verb">command verb</param>
         /// <param name="typeNameForHelp">type name for help</param>
         /// <param name="synopsis">synopsis</param>
-        static internal void AddDetailsProperties(PSObject obj, string name, string noun, string verb, string typeNameForHelp, 
+        static internal void AddDetailsProperties(PSObject obj, string name, string noun, string verb, string typeNameForHelp,
             string synopsis = null)
         {
             PSObject mshObject = new PSObject();
 
             mshObject.TypeNames.Clear();
-            mshObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture,"{0}#details", typeNameForHelp));
+            mshObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#details", typeNameForHelp));
 
             mshObject.Properties.Add(new PSNoteProperty("name", name));
             mshObject.Properties.Add(new PSNoteProperty("noun", noun));
             mshObject.Properties.Add(new PSNoteProperty("verb", verb));
-            
+
             // add synopsis
             if (!string.IsNullOrEmpty(synopsis))
             {
@@ -226,7 +227,7 @@ namespace System.Management.Automation.Help
                 PSObject mshObject = new PSObject();
 
                 mshObject.TypeNames.Clear();
-                mshObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture,"{0}#syntaxItem", typeNameForHelp));
+                mshObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#syntaxItem", typeNameForHelp));
 
                 mshObject.Properties.Add(new PSNoteProperty("name", cmdletName));
                 mshObject.Properties.Add(new PSNoteProperty("CommonParameters", common));
@@ -358,7 +359,7 @@ namespace System.Management.Automation.Help
             PSObject paramValueGroup = new PSObject();
 
             paramValueGroup.TypeNames.Clear();
-            paramValueGroup.TypeNames.Add(String.Format(CultureInfo.InvariantCulture,"{0}#parameterValueGroup", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            paramValueGroup.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#parameterValueGroup", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
 
             ArrayList paramValue = new ArrayList(values);
 
@@ -379,7 +380,7 @@ namespace System.Management.Automation.Help
             PSObject paramsObject = new PSObject();
 
             paramsObject.TypeNames.Clear();
-            paramsObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture,"{0}#parameters",typeNameForHelp));
+            paramsObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#parameters", typeNameForHelp));
 
             ArrayList paramObjects = new ArrayList();
 
@@ -410,7 +411,7 @@ namespace System.Management.Automation.Help
                 PSObject paramObject = new PSObject();
 
                 paramObject.TypeNames.Clear();
-                paramObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture,"{0}#parameter", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+                paramObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#parameter", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
 
                 AddParameterProperties(paramObject, parameter, parameters[parameter].Aliases,
                     parameters[parameter].IsDynamic, parameters[parameter].ParameterType, parameters[parameter].Attributes);
@@ -605,7 +606,7 @@ namespace System.Management.Automation.Help
                 {
                     Collection<ParameterAttribute> attribs = GetParameterAttribute(parameter.Value.Attributes);
 
-                    foreach(ParameterAttribute attrib in attribs)
+                    foreach (ParameterAttribute attrib in attribs)
                     {
                         if (attrib.ValueFromPipeline ||
                             attrib.ValueFromPipelineByPropertyName ||
@@ -635,7 +636,7 @@ namespace System.Management.Automation.Help
             PSObject inputTypesObj = new PSObject();
 
             inputTypesObj.TypeNames.Clear();
-            inputTypesObj.TypeNames.Add(String.Format(CultureInfo.InvariantCulture,"{0}#inputTypes", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            inputTypesObj.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#inputTypes", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
 
             PSObject inputTypeObj = new PSObject();
 
@@ -663,7 +664,7 @@ namespace System.Management.Automation.Help
             PSObject returnValuesObj = new PSObject();
 
             returnValuesObj.TypeNames.Clear();
-            returnValuesObj.TypeNames.Add(String.Format(CultureInfo.InvariantCulture,"{0}#returnValues", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
+            returnValuesObj.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#returnValues", DefaultCommandHelpObjectBuilder.TypeNameForDefaultHelp));
 
             PSObject returnValueObj = new PSObject();
 
@@ -750,7 +751,7 @@ namespace System.Management.Automation.Help
         /// <param name="relatedLink"></param>
         static internal void AddRelatedLinksProperties(PSObject obj, string relatedLink)
         {
-            if(!String.IsNullOrEmpty(relatedLink))
+            if (!String.IsNullOrEmpty(relatedLink))
             {
                 PSObject navigationLinkObj = new PSObject();
 

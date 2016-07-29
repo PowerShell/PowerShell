@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,16 +11,15 @@ using System.Text;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
- 
     internal static class DefaultScalarTypes
     {
-        internal static bool IsTypeInList (Collection<string> typeNames)
+        internal static bool IsTypeInList(Collection<string> typeNames)
         {
             // NOTE: we do not use inheritance here, since we deal with
             // value types or with types where inheritance is not a factor for the selection
-            string typeName = PSObjectHelper.PSObjectIsOfExactType (typeNames);
+            string typeName = PSObjectHelper.PSObjectIsOfExactType(typeNames);
 
-            if (string.IsNullOrEmpty (typeName))
+            if (string.IsNullOrEmpty(typeName))
                 return false;
 
             string originalTypeName = Deserializer.MaskDeserializationPrefix(typeName);
@@ -33,31 +33,31 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (PSObjectHelper.PSObjectIsEnum(typeNames))
                 return true;
 
-            return defaultScalarTypesHash.Contains(originalTypeName);
+            return s_defaultScalarTypesHash.Contains(originalTypeName);
         }
 
-        static DefaultScalarTypes ()
+        static DefaultScalarTypes()
         {
-            defaultScalarTypesHash.Add("System.String");
-            defaultScalarTypesHash.Add("System.SByte");
-            defaultScalarTypesHash.Add("System.Byte");
-            defaultScalarTypesHash.Add("System.Int16");
-            defaultScalarTypesHash.Add("System.UInt16");
-            defaultScalarTypesHash.Add("System.Int32");
-            defaultScalarTypesHash.Add("System.UInt32");
-            defaultScalarTypesHash.Add("System.Int64");
-            defaultScalarTypesHash.Add("System.UInt64");
-            defaultScalarTypesHash.Add("System.Char");
-            defaultScalarTypesHash.Add("System.Single");
-            defaultScalarTypesHash.Add("System.Double");
-            defaultScalarTypesHash.Add("System.Boolean");
-            defaultScalarTypesHash.Add("System.Decimal");
-            defaultScalarTypesHash.Add("System.IntPtr");
-            defaultScalarTypesHash.Add("System.Security.SecureString");
-            defaultScalarTypesHash.Add("System.Numerics.BigInteger");
+            s_defaultScalarTypesHash.Add("System.String");
+            s_defaultScalarTypesHash.Add("System.SByte");
+            s_defaultScalarTypesHash.Add("System.Byte");
+            s_defaultScalarTypesHash.Add("System.Int16");
+            s_defaultScalarTypesHash.Add("System.UInt16");
+            s_defaultScalarTypesHash.Add("System.Int32");
+            s_defaultScalarTypesHash.Add("System.UInt32");
+            s_defaultScalarTypesHash.Add("System.Int64");
+            s_defaultScalarTypesHash.Add("System.UInt64");
+            s_defaultScalarTypesHash.Add("System.Char");
+            s_defaultScalarTypesHash.Add("System.Single");
+            s_defaultScalarTypesHash.Add("System.Double");
+            s_defaultScalarTypesHash.Add("System.Boolean");
+            s_defaultScalarTypesHash.Add("System.Decimal");
+            s_defaultScalarTypesHash.Add("System.IntPtr");
+            s_defaultScalarTypesHash.Add("System.Security.SecureString");
+            s_defaultScalarTypesHash.Add("System.Numerics.BigInteger");
         }
 
-        private readonly static HashSet<string> defaultScalarTypesHash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private readonly static HashSet<string> s_defaultScalarTypesHash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("FormatViewBinding", "Format view binding")]
-        private static PSTraceSource formatViewBindingTracer = PSTraceSource.GetTracer("FormatViewBinding", "Format view binding", false);
+        private static PSTraceSource s_formatViewBindingTracer = PSTraceSource.GetTracer("FormatViewBinding", "Format view binding", false);
         #endregion tracer
 
 
@@ -102,13 +102,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             const string viewNotFound = "No applicable view has been found";
             try
             {
-                DisplayDataQuery.SetTracer(formatViewBindingTracer);
+                DisplayDataQuery.SetTracer(s_formatViewBindingTracer);
 
                 // shape not specified: we need to select one
                 var typeNames = so.InternalTypeNames;
                 if (shape == FormatShape.Undefined)
                 {
-                    using (formatViewBindingTracer.TraceScope(findViewType, PSObjectTypeName(so)))
+                    using (s_formatViewBindingTracer.TraceScope(findViewType, PSObjectTypeName(so)))
                     {
                         view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, null);
                     }
@@ -116,22 +116,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         // we got a matching view from the database
                         // use this and we are done
-                        this.viewGenerator = SelectViewGeneratorFromViewDefinition(
+                        _viewGenerator = SelectViewGeneratorFromViewDefinition(
                                                 errorContext,
                                                 expressionFactory,
                                                 db,
                                                 view,
                                                 parameters);
-                        formatViewBindingTracer.WriteLine(viewFound);
-                        PrepareViewForRemoteObjects(ViewGenerator, so);                         
+                        s_formatViewBindingTracer.WriteLine(viewFound);
+                        PrepareViewForRemoteObjects(ViewGenerator, so);
                         return;
                     }
 
-                    formatViewBindingTracer.WriteLine(viewNotFound);
+                    s_formatViewBindingTracer.WriteLine(viewNotFound);
                     // we did not get any default view (and shape), we need to force one
                     // we just select properties out of the object itself, since they were not
                     // specified on the command line
-                    this.viewGenerator = SelectViewGeneratorFromProperties(shape, so, errorContext, expressionFactory, db, null);
+                    _viewGenerator = SelectViewGeneratorFromProperties(shape, so, errorContext, expressionFactory, db, null);
                     PrepareViewForRemoteObjects(ViewGenerator, so);
 
                     return;
@@ -140,61 +140,60 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we have a predefined shape: did the user specify properties on the command line?
                 if (parameters != null && parameters.mshParameterList.Count > 0)
                 {
-                    this.viewGenerator = SelectViewGeneratorFromProperties(shape, so, errorContext, expressionFactory, db, parameters);
+                    _viewGenerator = SelectViewGeneratorFromProperties(shape, so, errorContext, expressionFactory, db, parameters);
                     return;
                 }
 
                 // predefined shape: did the user specify the name of a view?
                 if (parameters != null && !string.IsNullOrEmpty(parameters.viewName))
                 {
-                    using (formatViewBindingTracer.TraceScope(findViewNameType, parameters.viewName,
+                    using (s_formatViewBindingTracer.TraceScope(findViewNameType, parameters.viewName,
                         PSObjectTypeName(so)))
                     {
                         view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, parameters.viewName);
                     }
                     if (view != null)
                     {
-                        this.viewGenerator = SelectViewGeneratorFromViewDefinition(
+                        _viewGenerator = SelectViewGeneratorFromViewDefinition(
                                                     errorContext,
                                                     expressionFactory,
                                                     db,
                                                     view,
                                                     parameters);
-                        formatViewBindingTracer.WriteLine(viewFound);
+                        s_formatViewBindingTracer.WriteLine(viewFound);
                         return;
                     }
-                    formatViewBindingTracer.WriteLine(viewNotFound);
+                    s_formatViewBindingTracer.WriteLine(viewNotFound);
                     // illegal input, we have to terminate
                     ProcessUnknownViewName(errorContext, parameters.viewName, so, db, shape);
                 }
 
                 // predefined shape: do we have a default view in format.ps1xml?
-                using (formatViewBindingTracer.TraceScope(findViewShapeType, shape, PSObjectTypeName(so)))
+                using (s_formatViewBindingTracer.TraceScope(findViewShapeType, shape, PSObjectTypeName(so)))
                 {
                     view = DisplayDataQuery.GetViewByShapeAndType(expressionFactory, db, shape, typeNames, null);
                 }
                 if (view != null)
                 {
-                    this.viewGenerator = SelectViewGeneratorFromViewDefinition(
+                    _viewGenerator = SelectViewGeneratorFromViewDefinition(
                                                 errorContext,
                                                 expressionFactory,
                                                 db,
                                                 view,
                                                 parameters);
-                    formatViewBindingTracer.WriteLine(viewFound);
+                    s_formatViewBindingTracer.WriteLine(viewFound);
                     PrepareViewForRemoteObjects(ViewGenerator, so);
 
                     return;
                 }
-                formatViewBindingTracer.WriteLine(viewNotFound);
+                s_formatViewBindingTracer.WriteLine(viewNotFound);
                 // we just select properties out of the object itself
-                this.viewGenerator = SelectViewGeneratorFromProperties(shape, so, errorContext, expressionFactory, db, parameters);
-                PrepareViewForRemoteObjects(ViewGenerator, so);                   
+                _viewGenerator = SelectViewGeneratorFromProperties(shape, so, errorContext, expressionFactory, db, parameters);
+                PrepareViewForRemoteObjects(ViewGenerator, so);
             }
             finally
             {
                 DisplayDataQuery.ResetTracer();
-
             }
         }
 
@@ -356,27 +355,27 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                Diagnostics.Assert (this.viewGenerator != null, "this.viewGenerator cannot be null");
-                return this.viewGenerator;
+                Diagnostics.Assert(_viewGenerator != null, "this.viewGenerator cannot be null");
+                return _viewGenerator;
             }
         }
 
 
-        private static ViewGenerator SelectViewGeneratorFromViewDefinition (
+        private static ViewGenerator SelectViewGeneratorFromViewDefinition(
                                         TerminatingErrorContext errorContext,
-                                        MshExpressionFactory expressionFactory, 
-                                        TypeInfoDataBase db, 
+                                        MshExpressionFactory expressionFactory,
+                                        TypeInfoDataBase db,
                                         ViewDefinition view,
                                         FormattingCommandLineParameters parameters)
         {
             ViewGenerator viewGenerator = null;
             if (view.mainControl is TableControlBody)
             {
-                viewGenerator = new TableViewGenerator ();
+                viewGenerator = new TableViewGenerator();
             }
             else if (view.mainControl is ListControlBody)
             {
-                viewGenerator = new ListViewGenerator ();
+                viewGenerator = new ListViewGenerator();
             }
             else if (view.mainControl is WideControlBody)
             {
@@ -384,27 +383,26 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             else if (view.mainControl is ComplexControlBody)
             {
-                viewGenerator = new ComplexViewGenerator ();
+                viewGenerator = new ComplexViewGenerator();
             }
 
-            Diagnostics.Assert (viewGenerator != null, "viewGenerator != null");
-            viewGenerator.Initialize (errorContext, expressionFactory, db, view, parameters);
-            return viewGenerator; 
+            Diagnostics.Assert(viewGenerator != null, "viewGenerator != null");
+            viewGenerator.Initialize(errorContext, expressionFactory, db, view, parameters);
+            return viewGenerator;
         }
 
-        private static ViewGenerator SelectViewGeneratorFromProperties (FormatShape shape, PSObject so, 
-                                    TerminatingErrorContext errorContext, 
+        private static ViewGenerator SelectViewGeneratorFromProperties(FormatShape shape, PSObject so,
+                                    TerminatingErrorContext errorContext,
                                     MshExpressionFactory expressionFactory,
                                     TypeInfoDataBase db,
                                     FormattingCommandLineParameters parameters)
         {
-
             // use some heuristics to determine the shape if none is specified
             if (shape == FormatShape.Undefined && parameters == null)
             {
                 // check first if we have a known shape for a type
                 var typeNames = so.InternalTypeNames;
-                shape = DisplayDataQuery.GetShapeFromType (expressionFactory, db, typeNames);
+                shape = DisplayDataQuery.GetShapeFromType(expressionFactory, db, typeNames);
 
                 if (shape == FormatShape.Undefined)
                 {
@@ -422,39 +420,39 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
 
                     // decide what shape we want for the given number of properties
-                    shape = DisplayDataQuery.GetShapeFromPropertyCount (db, expressionList.Count);
+                    shape = DisplayDataQuery.GetShapeFromPropertyCount(db, expressionList.Count);
                 }
             }
 
             ViewGenerator viewGenerator = null;
             if (shape == FormatShape.Table)
             {
-                viewGenerator = new TableViewGenerator ();
+                viewGenerator = new TableViewGenerator();
             }
             else if (shape == FormatShape.List)
             {
-                viewGenerator = new ListViewGenerator ();
+                viewGenerator = new ListViewGenerator();
             }
             else if (shape == FormatShape.Wide)
             {
-                viewGenerator = new WideViewGenerator ();
+                viewGenerator = new WideViewGenerator();
             }
             else if (shape == FormatShape.Complex)
             {
-                viewGenerator = new ComplexViewGenerator ();
+                viewGenerator = new ComplexViewGenerator();
             }
             Diagnostics.Assert(viewGenerator != null, "viewGenerator != null");
 
-            viewGenerator.Initialize (errorContext, expressionFactory, so, db, parameters);
+            viewGenerator.Initialize(errorContext, expressionFactory, so, db, parameters);
             return viewGenerator;
         }
 
-       
+
 
         /// <summary>
         /// the view generator that produced data for a selected shape
         /// </summary>
-        private ViewGenerator viewGenerator = null;
+        private ViewGenerator _viewGenerator = null;
     }
 
     /// <summary>
@@ -466,12 +464,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal static bool IsPropertyLessObject(PSObject so)
         {
             List<MshResolvedExpressionParameterAssociation> allProperties = AssociationManager.ExpandAll(so);
-            
+
             if (allProperties.Count == 0)
             {
                 return true;
             }
-            if(allProperties.Count == 3)
+            if (allProperties.Count == 3)
             {
                 foreach (MshResolvedExpressionParameterAssociation property in allProperties)
                 {
@@ -520,13 +518,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return false;
         }
 
-        internal static FormatEntryData GenerateOutOfBandData(TerminatingErrorContext errorContext, MshExpressionFactory expressionFactory, 
+        internal static FormatEntryData GenerateOutOfBandData(TerminatingErrorContext errorContext, MshExpressionFactory expressionFactory,
                     TypeInfoDataBase db, PSObject so, int enumerationLimit, bool useToStringFallback, out List<ErrorRecord> errors)
         {
             errors = null;
 
             var typeNames = so.InternalTypeNames;
-            ViewDefinition view = DisplayDataQuery.GetOutOfBandView (expressionFactory, db, typeNames);
+            ViewDefinition view = DisplayDataQuery.GetOutOfBandView(expressionFactory, db, typeNames);
 
             ViewGenerator outOfBandViewGenerator;
             if (view != null)
@@ -534,13 +532,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // process an out of band view retrieved from the display database
                 if (view.mainControl is ComplexControlBody)
                 {
-                    outOfBandViewGenerator = new ComplexViewGenerator ();
+                    outOfBandViewGenerator = new ComplexViewGenerator();
                 }
                 else
                 {
-                    outOfBandViewGenerator = new ListViewGenerator ();
+                    outOfBandViewGenerator = new ListViewGenerator();
                 }
-                outOfBandViewGenerator.Initialize (errorContext, expressionFactory, db, view, null);
+                outOfBandViewGenerator.Initialize(errorContext, expressionFactory, db, view, null);
             }
             else
             {
@@ -548,7 +546,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     IsPropertyLessObject(so))
                 {
                     // we force a ToString() on well known types
-                    return GenerateOutOfBandObjectAsToString (so);
+                    return GenerateOutOfBandObjectAsToString(so);
                 }
 
                 if (!useToStringFallback)
@@ -557,32 +555,32 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // we must check we have enough properties for a list view
-                if (new MshExpression ("*").ResolveNames (so).Count <= 0)
+                if (new MshExpression("*").ResolveNames(so).Count <= 0)
                 {
                     return null;
                 }
 
                 // we do not have a view, we default to list view
                 // process an out of band view as a default
-                outOfBandViewGenerator = new ListViewGenerator ();
-                outOfBandViewGenerator.Initialize (errorContext, expressionFactory, so, db, null);
+                outOfBandViewGenerator = new ListViewGenerator();
+                outOfBandViewGenerator.Initialize(errorContext, expressionFactory, so, db, null);
             }
-            
-            FormatEntryData fed = outOfBandViewGenerator.GeneratePayload (so, enumerationLimit);
+
+            FormatEntryData fed = outOfBandViewGenerator.GeneratePayload(so, enumerationLimit);
             fed.outOfBand = true;
             fed.SetStreamTypeFromPSObject(so);
 
-            errors = outOfBandViewGenerator.ErrorManager.DrainFailedResultList ();
+            errors = outOfBandViewGenerator.ErrorManager.DrainFailedResultList();
 
             return fed;
         }
 
-        internal static FormatEntryData GenerateOutOfBandObjectAsToString (PSObject so)
+        internal static FormatEntryData GenerateOutOfBandObjectAsToString(PSObject so)
         {
-            FormatEntryData fed = new FormatEntryData ();
+            FormatEntryData fed = new FormatEntryData();
             fed.outOfBand = true;
 
-            RawTextFormatEntry rawTextEntry = new RawTextFormatEntry ();
+            RawTextFormatEntry rawTextEntry = new RawTextFormatEntry();
             rawTextEntry.text = so.ToString();
             fed.formatEntryInfo = rawTextEntry;
 
@@ -601,9 +599,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal sealed class FormatErrorManager
     {
-        internal FormatErrorManager (FormatErrorPolicy formatErrorPolicy)
+        internal FormatErrorManager(FormatErrorPolicy formatErrorPolicy)
         {
-            this.formatErrorPolicy = formatErrorPolicy;
+            _formatErrorPolicy = formatErrorPolicy;
         }
 
         /// <summary>
@@ -611,49 +609,49 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="result">MshExpressionResult containing the failed evaluation data</param>
         /// <param name="sourceObject">object used to evaluate the MshExpression</param>
-        internal void LogMshExpressionFailedResult (MshExpressionResult result, object sourceObject)
+        internal void LogMshExpressionFailedResult(MshExpressionResult result, object sourceObject)
         {
-            if (!this.formatErrorPolicy.ShowErrorsAsMessages)
+            if (!_formatErrorPolicy.ShowErrorsAsMessages)
                 return;
-            MshExpressionError error = new MshExpressionError ();
+            MshExpressionError error = new MshExpressionError();
             error.result = result;
             error.sourceObject = sourceObject;
-            this.formattingErrorList.Add (error);
+            _formattingErrorList.Add(error);
         }
 
         /// <summary>
         /// log a failed formatting operation
         /// </summary>
         /// <param name="error">string format error object </param>
-        internal void LogStringFormatError (StringFormatError error)
+        internal void LogStringFormatError(StringFormatError error)
         {
-            if (!this.formatErrorPolicy.ShowErrorsAsMessages)
+            if (!_formatErrorPolicy.ShowErrorsAsMessages)
                 return;
-            this.formattingErrorList.Add (error);
+            _formattingErrorList.Add(error);
         }
 
         internal bool DisplayErrorStrings
         {
-            get { return this.formatErrorPolicy.ShowErrorsInFormattedOutput; }
+            get { return _formatErrorPolicy.ShowErrorsInFormattedOutput; }
         }
 
         internal bool DisplayFormatErrorString
         {
-            get 
+            get
             {
                 // NOTE: we key off the same flag
-                return this.DisplayErrorStrings; 
+                return this.DisplayErrorStrings;
             }
         }
 
         internal string ErrorString
         {
-            get { return this.formatErrorPolicy.errorStringInFormattedOutput; }
+            get { return _formatErrorPolicy.errorStringInFormattedOutput; }
         }
 
         internal string FormatErrorString
         {
-            get { return this.formatErrorPolicy.formatErrorStringInFormattedOutput; }
+            get { return _formatErrorPolicy.formatErrorStringInFormattedOutput; }
         }
 
         /// <summary>
@@ -662,19 +660,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// errors
         /// </summary>
         /// <returns>list of ErrorRecord objects</returns>
-        internal List<ErrorRecord> DrainFailedResultList ()
+        internal List<ErrorRecord> DrainFailedResultList()
         {
-            if (!this.formatErrorPolicy.ShowErrorsAsMessages)
+            if (!_formatErrorPolicy.ShowErrorsAsMessages)
                 return null;
 
-            List<ErrorRecord> retVal = new List<ErrorRecord> ();
-            foreach (FormattingError error in this.formattingErrorList)
+            List<ErrorRecord> retVal = new List<ErrorRecord>();
+            foreach (FormattingError error in _formattingErrorList)
             {
-                ErrorRecord errorRecord = GenerateErrorRecord (error);
+                ErrorRecord errorRecord = GenerateErrorRecord(error);
                 if (errorRecord != null)
-                    retVal.Add (errorRecord);
+                    retVal.Add(errorRecord);
             }
-            this.formattingErrorList.Clear ();
+            _formattingErrorList.Clear();
             return retVal;
         }
 
@@ -683,28 +681,28 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="error">internal error object</param>
         /// <returns>corresponding ErrorRecord instance</returns>
-        private static ErrorRecord GenerateErrorRecord (FormattingError error)
+        private static ErrorRecord GenerateErrorRecord(FormattingError error)
         {
             ErrorRecord errorRecord = null;
             string msg = null;
             MshExpressionError mshExpressionError = error as MshExpressionError;
             if (mshExpressionError != null)
             {
-                errorRecord = new ErrorRecord (
+                errorRecord = new ErrorRecord(
                                 mshExpressionError.result.Exception,
                                 "mshExpressionError",
                                 ErrorCategory.InvalidArgument,
                                 mshExpressionError.sourceObject);
 
                 msg = StringUtil.Format(FormatAndOut_format_xxx.MshExpressionError,
-                    mshExpressionError.result.ResolvedExpression.ToString ());
-                errorRecord.ErrorDetails = new ErrorDetails (msg);
+                    mshExpressionError.result.ResolvedExpression.ToString());
+                errorRecord.ErrorDetails = new ErrorDetails(msg);
             }
 
             StringFormatError formattingError = error as StringFormatError;
             if (formattingError != null)
             {
-                errorRecord = new ErrorRecord (
+                errorRecord = new ErrorRecord(
                                 formattingError.exception,
                                 "formattingError",
                                 ErrorCategory.InvalidArgument,
@@ -712,22 +710,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 msg = StringUtil.Format(FormatAndOut_format_xxx.FormattingError,
                     formattingError.formatString);
-                errorRecord.ErrorDetails = new ErrorDetails (msg);
+                errorRecord.ErrorDetails = new ErrorDetails(msg);
             }
             return errorRecord;
         }
 
 
-        FormatErrorPolicy formatErrorPolicy;
+        private FormatErrorPolicy _formatErrorPolicy;
 
         /// <summary>
         /// current list of failed MsExpression evaluations
         /// </summary>
-        private List<FormattingError> formattingErrorList = new List<FormattingError> ();
+        private List<FormattingError> _formattingErrorList = new List<FormattingError>();
     }
-
- 
- 
-
 }
 

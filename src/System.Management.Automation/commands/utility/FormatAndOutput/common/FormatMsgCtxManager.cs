@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
-
     /// <summary>
     /// INTERNAL IMPLEMENTATION CLASS
     /// 
@@ -20,12 +19,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal class FormatMessagesContextManager
     {
         // callbacks declarations
-        internal delegate OutputContext FormatContextCreationCallback (OutputContext parentContext, FormatInfoData formatData);
-        internal delegate void FormatStartCallback (OutputContext c);
-        internal delegate void FormatEndCallback (FormatEndData fe, OutputContext c);
-        internal delegate void GroupStartCallback (OutputContext c);
-        internal delegate void GroupEndCallback (GroupEndData fe, OutputContext c);
-        internal delegate void PayloadCallback (FormatEntryData formatEntryData, OutputContext c);
+        internal delegate OutputContext FormatContextCreationCallback(OutputContext parentContext, FormatInfoData formatData);
+        internal delegate void FormatStartCallback(OutputContext c);
+        internal delegate void FormatEndCallback(FormatEndData fe, OutputContext c);
+        internal delegate void GroupStartCallback(OutputContext c);
+        internal delegate void GroupEndCallback(GroupEndData fe, OutputContext c);
+        internal delegate void PayloadCallback(FormatEntryData formatEntryData, OutputContext c);
 
         // callback instances
         internal FormatContextCreationCallback contextCreation = null;
@@ -48,20 +47,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <param name="parentContextInStack">parent context in the stack, it can be null</param>
             internal OutputContext(OutputContext parentContextInStack)
             {
-                parentContext = parentContextInStack;
+                _parentContext = parentContextInStack;
             }
 
             /// <summary>
             /// accessor for the parent context field
             /// </summary>
-            internal OutputContext ParentContext { get { return this.parentContext; } }
+            internal OutputContext ParentContext { get { return _parentContext; } }
 
             /// <summary>
             /// the outer context: the context object pushed onto the
             /// stack before the current one. For the first object pushed onto
             /// the stack it will be null
             /// </summary>
-            private OutputContext parentContext;
+            private OutputContext _parentContext;
         }
 
         /// <summary>
@@ -69,17 +68,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// calls back on the specified event delegates
         /// </summary>
         /// <param name="o">object to process</param>
-        internal void Process (object o)
+        internal void Process(object o)
         {
             PacketInfoData formatData = o as PacketInfoData;
             FormatEntryData fed = formatData as FormatEntryData;
             if (fed != null)
             {
                 OutputContext ctx = null;
-                
+
                 if (!fed.outOfBand)
                 {
-                    ctx = this.stack.Peek ();
+                    ctx = _stack.Peek();
                 }
                 //  notify for Payload
                 this.payload(fed, ctx);
@@ -92,8 +91,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we assume for the moment that they are in the correct sequence
                 if (formatDataIsFormatStartData || formatDataIsGroupStartData)
                 {
-                    OutputContext oc = this.contextCreation(this.ActiveOutputContext, formatData); 
-                    this.stack.Push(oc);
+                    OutputContext oc = this.contextCreation(this.ActiveOutputContext, formatData);
+                    _stack.Push(oc);
 
                     // now we have the context properly set: need to notify the 
                     // underlying algorithm to do the start document or group stuff
@@ -115,7 +114,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     FormatEndData fEndd = formatData as FormatEndData;
                     if (ged != null || fEndd != null)
                     {
-                        OutputContext oc = this.stack.Peek();
+                        OutputContext oc = _stack.Peek();
                         if (fEndd != null)
                         {
                             // notify for Fe, passing the Fe info, before a Pop()
@@ -126,7 +125,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             // notify for Fe, passing the Fe info, before a Pop()
                             this.ge(ged, oc);
                         }
-                        this.stack.Pop();
+                        _stack.Pop();
                     }
                 }
             }
@@ -137,14 +136,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// access the active context (top of the stack). It can be null.
         /// </summary>
         internal OutputContext ActiveOutputContext
-        { 
-            get { return (this.stack.Count > 0)?this.stack.Peek() : null; }
+        {
+            get { return (_stack.Count > 0) ? _stack.Peek() : null; }
         }
 
         /// <summary>
         ///  internal stack to manage context
         /// </summary>
-        private Stack<OutputContext> stack = new Stack<OutputContext>();
+        private Stack<OutputContext> _stack = new Stack<OutputContext>();
     }
-
 }

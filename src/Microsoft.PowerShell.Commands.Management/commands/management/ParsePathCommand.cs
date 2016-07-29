@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -24,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
     public class SplitPathCommand : CoreCommandWithCredentialsBase
     {
         #region Parameters
-       
+
         /// <summary>
         /// The parameter set name to get the parent path
         /// </summary>
@@ -67,12 +68,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return paths;
+                return _paths;
             } // get
 
             set
             {
-                paths = value;
+                _paths = value;
             } // set
         } // Path
 
@@ -85,13 +86,13 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return paths;
+                return _paths;
             } // get
 
             set
             {
                 base.SuppressWildcardExpansion = true;
-                paths = value;
+                _paths = value;
             } // set
         } // LiteralPath
 
@@ -105,17 +106,17 @@ namespace Microsoft.PowerShell.Commands
         /// the MSH path.
         /// </value>
         ///
-        [Parameter(Position=1, ValueFromPipelineByPropertyName = true, ParameterSetName=qualifierSet, Mandatory=false)]
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ParameterSetName = qualifierSet, Mandatory = false)]
         public SwitchParameter Qualifier
         {
             get
             {
-                return qualifier;
+                return _qualifier;
             } // get
 
             set
             {
-                qualifier = value;
+                _qualifier = value;
             } //set
         } // Qualifier
 
@@ -129,17 +130,17 @@ namespace Microsoft.PowerShell.Commands
         /// the MSH path.
         /// </value>
         ///
-        [Parameter(ParameterSetName= noQualifierSet, Mandatory=false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = noQualifierSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter NoQualifier
         {
             get
             {
-                return noqualifier;
+                return _noqualifier;
             } // get
 
             set
             {
-                noqualifier = value;
+                _noqualifier = value;
             } //set
         } // NoQualifier
 
@@ -152,17 +153,17 @@ namespace Microsoft.PowerShell.Commands
         /// If true the parent of the path will be returned.
         /// </value>
         ///
-        [Parameter(ParameterSetName=parentSet, Mandatory=false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = parentSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Parent
         {
             get
             {
-                return parent;
+                return _parent;
             } // get
 
             set
             {
-                parent = value;
+                _parent = value;
             } //set
         } // Parent
 
@@ -174,17 +175,17 @@ namespace Microsoft.PowerShell.Commands
         /// If true the leaf name of the path will be returned.
         /// </value>
         ///
-        [Parameter(ParameterSetName=leafSet, Mandatory=false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = leafSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Leaf
         {
             get
             {
-                return leaf;
+                return _leaf;
             } // get
 
             set
             {
-                leaf = value;
+                _leaf = value;
             } //set
         } // Leaf
 
@@ -197,12 +198,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return resolve;
+                return _resolve;
             } // get
 
             set
             {
-                resolve = value;
+                _resolve = value;
             } //set
         } // Resolve
 
@@ -215,29 +216,29 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return isAbsolute;
+                return _isAbsolute;
             } // get
 
             set
             {
-                isAbsolute = value;
+                _isAbsolute = value;
             } //set
         }
         #endregion Parameters
 
         #region parameter data
-        
+
         /// <summary>
         /// The path to resolve
         /// </summary>
-        private string[] paths;
+        private string[] _paths;
 
         /// <summary>
         /// Determines if the qualifier of the path should be returned.
         /// The qualifier is either the drive name or provider name that
         /// is qualifying the path.
         /// </summary>
-        private bool qualifier;
+        private bool _qualifier;
 
         /// <summary>
         /// Determines if the qualifier of the path should be returned.
@@ -246,27 +247,27 @@ namespace Microsoft.PowerShell.Commands
         /// The qualifier is either the drive name or provider name that
         /// is qualifying the path.
         /// </summary>
-        private bool noqualifier;
+        private bool _noqualifier;
 
         /// <summary>
         /// Determines if the parent path of the specified path should be returned.
         /// </summary>
-        private bool parent = true;
+        private bool _parent = true;
 
         /// <summary>
         /// Determines if the leaf name of the specified path should be returned.
         /// </summary>
-        private bool leaf;
+        private bool _leaf;
 
         /// <summary>
         /// Determines if the path(s) should be resolved before being parsed.
         /// </summary>
-        private bool resolve;
+        private bool _resolve;
 
         /// <summary>
         /// Determines if the path(s) are absolute paths.
         /// </summary>
-        private bool isAbsolute;
+        private bool _isAbsolute;
 
         #endregion parameter data
 
@@ -276,20 +277,20 @@ namespace Microsoft.PowerShell.Commands
         /// Parses the specified path and returns the portion determined by the 
         /// boolean parameters.
         /// </summary>
-        protected override void ProcessRecord ()
+        protected override void ProcessRecord()
         {
             StringCollection pathsToParse = new StringCollection();
 
-            if (resolve)
+            if (_resolve)
             {
                 CmdletProviderContext currentContext = CmdletProviderContext;
 
-                foreach (string path in paths)
+                foreach (string path in _paths)
                 {
                     // resolve the paths and then parse each one.
 
                     Collection<PathInfo> resolvedPaths = null;
-                    
+
                     try
                     {
                         resolvedPaths =
@@ -369,7 +370,6 @@ namespace Microsoft.PowerShell.Commands
                                     pathNotFound));
                             continue;
                         }
-
                     }
                 }
             }
@@ -383,7 +383,7 @@ namespace Microsoft.PowerShell.Commands
             for (int index = 0; index < pathsToParse.Count; ++index)
             {
                 string result = null;
-                
+
                 switch (ParameterSetName)
                 {
                     case isAbsoluteSet:
@@ -394,16 +394,16 @@ namespace Microsoft.PowerShell.Commands
                         WriteObject(isPathAbsolute);
                         continue;
 
-                    case qualifierSet :
+                    case qualifierSet:
                         int separatorIndex = pathsToParse[index].IndexOf(":", StringComparison.CurrentCulture);
 
                         if (separatorIndex < 0)
                         {
-                            FormatException e = 
-                                new FormatException (
+                            FormatException e =
+                                new FormatException(
                                     StringUtil.Format(NavigationResources.ParsePathFormatError, pathsToParse[index]));
-                            WriteError (
-                                new ErrorRecord (
+                            WriteError(
+                                new ErrorRecord(
                                     e,
                                     "ParsePathFormatError", // RENAME
                                     ErrorCategory.InvalidArgument,
@@ -419,9 +419,9 @@ namespace Microsoft.PowerShell.Commands
                                 // The plus 2 is for the length of the provider separator
                                 // which is "::"
 
-                                result = 
+                                result =
                                     pathsToParse[index].Substring(
-                                        0, 
+                                        0,
                                         separatorIndex + 2);
                             }
                             else
@@ -433,10 +433,10 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                         break;
-                        
-                    case parentSet :
-                    case literalPathSet :
-                        bool pathStartsWithRoot = 
+
+                    case parentSet:
+                    case literalPathSet:
+                        bool pathStartsWithRoot =
                             pathsToParse[index].StartsWith("\\", StringComparison.CurrentCulture) ||
                             pathsToParse[index].StartsWith("/", StringComparison.CurrentCulture);
 
@@ -461,12 +461,12 @@ namespace Microsoft.PowerShell.Commands
 
                         break;
 
-                    case leafSet :
+                    case leafSet:
                         try
                         {
-                            result = 
+                            result =
                                 SessionState.Path.ParseChildName(
-                                    pathsToParse[index], 
+                                    pathsToParse[index],
                                     CmdletProviderContext,
                                     true);
                         }
@@ -498,7 +498,7 @@ namespace Microsoft.PowerShell.Commands
 
                         break;
 
-                    case noQualifierSet :
+                    case noQualifierSet:
                         result = RemoveQualifier(pathsToParse[index]);
                         break;
 
@@ -547,7 +547,7 @@ namespace Microsoft.PowerShell.Commands
                     result = path.Substring(index + 2);
                 }
             }
-            else 
+            else
             {
                 string driveName = String.Empty;
 
@@ -564,8 +564,6 @@ namespace Microsoft.PowerShell.Commands
 
             return result;
         } // RemoveQualifier
-
     } // SplitPathCommand
-
 } // namespace Microsoft.PowerShell.Commands
 

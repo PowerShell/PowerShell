@@ -23,25 +23,23 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Min Runspaces setting on the server runspace pool
         /// </summary>
-        internal int MinRunspaces 
+        internal int MinRunspaces
         {
             get
             {
-                return minRunspaces;
+                return _minRunspaces;
             }
-                
         }
 
         /// <summary>
         /// Max Runspaces setting on the server runspace pool
         /// </summary>
-        internal int MaxRunspaces 
+        internal int MaxRunspaces
         {
             get
             {
-                return maxRunspaces;
+                return _maxRunspaces;
             }
-                
         }
 
         /// <summary>
@@ -51,13 +49,11 @@ namespace System.Management.Automation.Remoting
         /// <param name="maxRS"></param>
         internal RunspacePoolInitInfo(int minRS, int maxRS)
         {
-            minRunspaces = minRS;
-            maxRunspaces = maxRS;            
+            _minRunspaces = minRS;
+            _maxRunspaces = maxRS;
         }
 
-        private int minRunspaces;
-        private int maxRunspaces;
-            
+        private int _minRunspaces;
+        private int _maxRunspaces;
     }
-
 }

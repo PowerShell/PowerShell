@@ -9,7 +9,6 @@ using System.Management.Automation.Internal;
 
 namespace System.Management.Automation
 {
-
     /// <summary>
     /// An PSTraceSource is a representation of a System.Diagnostics.TraceSource instance
     /// that is used the the Monad components to produce trace output.
@@ -56,7 +55,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Lock object for the GetTracer method
         /// </summary>
-        private static object getTracerLock = new object();
+        private static object s_getTracerLock = new object();
 
         /// <summary>
         /// A helper to get an instance of the PSTraceSource class
@@ -122,7 +121,7 @@ namespace System.Management.Automation
                 throw new ArgumentNullException("name");
             }
 
-            lock (PSTraceSource.getTracerLock)
+            lock (PSTraceSource.s_getTracerLock)
             {
                 PSTraceSource result = null;
 
@@ -216,17 +215,17 @@ namespace System.Management.Automation
             // uniform output
 
             string fullName = name;
-/*
-                // This is here to ensure all the trace category names are 16 characters,
-                // the problem is that the app-config file would need to contain the same
-                // trailing spaces if this actually does pad the name.
+            /*
+                            // This is here to ensure all the trace category names are 16 characters,
+                            // the problem is that the app-config file would need to contain the same
+                            // trailing spaces if this actually does pad the name.
 
-                name =
-                    String.Format(
-                        System.Globalization.CultureInfo.InvariantCulture,
-                        "{0,-16}",
-                        name);
-*/
+                            name =
+                                String.Format(
+                                    System.Globalization.CultureInfo.InvariantCulture,
+                                    "{0,-16}",
+                                    name);
+            */
             PSTraceSource result =
                 new PSTraceSource(
                     fullName,
@@ -257,7 +256,7 @@ namespace System.Management.Automation
 
             string message = StringUtil.Format(AutomationExceptions.ArgumentNull, paramName);
             var e = new PSArgumentNullException(paramName, message);
-            
+
             return e;
         }
 
@@ -368,7 +367,7 @@ namespace System.Management.Automation
                     new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name);
 #endif
             var e = new PSInvalidOperationException(message);
-            
+
             return e;
         }
 
@@ -476,7 +475,7 @@ namespace System.Management.Automation
 
             return e;
         }
-        
+
         /// <summary>
         /// Traces the Message and StackTrace properties of the exception
         /// and returns the new exception. This is not allowed to call other
@@ -517,7 +516,7 @@ namespace System.Management.Automation
             }
             string message = StringUtil.Format(AutomationExceptions.ArgumentOutOfRange, paramName);
             var e = new PSArgumentOutOfRangeException(paramName, actualValue, message);
-            
+
             return e;
         }
 
@@ -553,7 +552,7 @@ namespace System.Management.Automation
 
             string message = StringUtil.Format(resourceString, args);
             var e = new PSArgumentOutOfRangeException(paramName, actualValue, message);
-            
+
             return e;
         }
 
@@ -584,7 +583,6 @@ namespace System.Management.Automation
         }
 
         #endregion TraceFlags.New*Exception methods/helpers
-
     }      // class PSTraceSource
 }
 

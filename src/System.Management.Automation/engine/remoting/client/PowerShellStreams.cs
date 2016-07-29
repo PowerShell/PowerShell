@@ -12,68 +12,68 @@ namespace System.Management.Automation
         /// <summary>
         /// Input stream for incoming objects.
         /// </summary>
-        private PSDataCollection<TInput> inputStream;
-                
+        private PSDataCollection<TInput> _inputStream;
+
         /// <summary>
         /// Output stream for returned objects.
         /// </summary>
-        private PSDataCollection<TOutput> outputStream;
+        private PSDataCollection<TOutput> _outputStream;
 
         /// <summary>
         /// Error stream for error messages.
         /// </summary>
-        private PSDataCollection<ErrorRecord> errorStream;
+        private PSDataCollection<ErrorRecord> _errorStream;
 
         /// <summary>
         /// Warning stream for warning messages.
         /// </summary>
-        private PSDataCollection<WarningRecord> warningStream;
+        private PSDataCollection<WarningRecord> _warningStream;
 
         /// <summary>
         /// Progress stream for progress messages.
         /// </summary>
-        private PSDataCollection<ProgressRecord> progressStream;
+        private PSDataCollection<ProgressRecord> _progressStream;
 
         /// <summary>
         /// Verbose stream for verbose messages.
         /// </summary>
-        private PSDataCollection<VerboseRecord> verboseStream;
+        private PSDataCollection<VerboseRecord> _verboseStream;
 
         /// <summary>
         /// Debug stream for debug messages.
         /// </summary>
-        private PSDataCollection<DebugRecord> debugStream;
+        private PSDataCollection<DebugRecord> _debugStream;
 
         /// <summary>
         /// Information stream for Information messages.
         /// </summary>
-        private PSDataCollection<InformationRecord> informationStream;
+        private PSDataCollection<InformationRecord> _informationStream;
 
         /// <summary>
         /// If the object is already disposed or not.
         /// </summary>
-        private bool disposed;
+        private bool _disposed;
 
         /// <summary>
         /// Private object for thread-safe exection.
         /// </summary>
-        private readonly object syncLock = new object();
+        private readonly object _syncLock = new object();
 
         /// <summary>
         /// Default constructor.
         /// </summary>
         public PowerShellStreams()
         {
-            this.inputStream = null;
-            this.outputStream = null;
-            this.errorStream = null;
-            this.warningStream = null;
-            this.progressStream = null;
-            this.verboseStream = null;
-            this.debugStream = null;
-            this.informationStream = null;
+            _inputStream = null;
+            _outputStream = null;
+            _errorStream = null;
+            _warningStream = null;
+            _progressStream = null;
+            _verboseStream = null;
+            _debugStream = null;
+            _informationStream = null;
 
-            this.disposed = false;
+            _disposed = false;
         }
 
         /// <summary>
@@ -84,24 +84,24 @@ namespace System.Management.Automation
             // Populate the input collection if there is any...
             if (pipelineInput == null)
             {
-                inputStream = new PSDataCollection<TInput>();
+                _inputStream = new PSDataCollection<TInput>();
             }
             else
             {
-                inputStream = pipelineInput;
+                _inputStream = pipelineInput;
             }
 
-            inputStream.Complete();
+            _inputStream.Complete();
 
-            this.outputStream = new PSDataCollection<TOutput>();
-            this.errorStream = new PSDataCollection<ErrorRecord>();
-            this.warningStream = new PSDataCollection<WarningRecord>();
-            this.progressStream = new PSDataCollection<ProgressRecord>();
-            this.verboseStream = new PSDataCollection<VerboseRecord>();
-            this.debugStream = new PSDataCollection<DebugRecord>();
-            this.informationStream = new PSDataCollection<InformationRecord>();
+            _outputStream = new PSDataCollection<TOutput>();
+            _errorStream = new PSDataCollection<ErrorRecord>();
+            _warningStream = new PSDataCollection<WarningRecord>();
+            _progressStream = new PSDataCollection<ProgressRecord>();
+            _verboseStream = new PSDataCollection<VerboseRecord>();
+            _debugStream = new PSDataCollection<DebugRecord>();
+            _informationStream = new PSDataCollection<InformationRecord>();
 
-            this.disposed = false;
+            _disposed = false;
         }
 
         /// <summary>
@@ -119,35 +119,35 @@ namespace System.Management.Automation
         /// <param name="disposing"></param>
         private void Dispose(bool disposing)
         {
-            if (this.disposed)
+            if (_disposed)
                 return;
 
-            lock (syncLock)
+            lock (_syncLock)
             {
-                if (!this.disposed)
+                if (!_disposed)
                 {
                     if (disposing)
                     {
-                        this.inputStream.Dispose();
-                        this.outputStream.Dispose();
-                        this.errorStream.Dispose();
-                        this.warningStream.Dispose();
-                        this.progressStream.Dispose();
-                        this.verboseStream.Dispose();
-                        this.debugStream.Dispose();
-                        this.informationStream.Dispose();
+                        _inputStream.Dispose();
+                        _outputStream.Dispose();
+                        _errorStream.Dispose();
+                        _warningStream.Dispose();
+                        _progressStream.Dispose();
+                        _verboseStream.Dispose();
+                        _debugStream.Dispose();
+                        _informationStream.Dispose();
 
-                        this.inputStream = null;
-                        this.outputStream = null;
-                        this.errorStream = null;
-                        this.warningStream = null;
-                        this.progressStream = null;
-                        this.verboseStream = null;
-                        this.debugStream = null;
-                        this.informationStream = null;
+                        _inputStream = null;
+                        _outputStream = null;
+                        _errorStream = null;
+                        _warningStream = null;
+                        _progressStream = null;
+                        _verboseStream = null;
+                        _debugStream = null;
+                        _informationStream = null;
                     }
 
-                    this.disposed = true;
+                    _disposed = true;
                 }
             }
         }
@@ -158,8 +158,8 @@ namespace System.Management.Automation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public PSDataCollection<TInput> InputStream
         {
-            get { return this.inputStream; }
-            set { this.inputStream = value; }
+            get { return _inputStream; }
+            set { _inputStream = value; }
         }
 
         /// <summary>
@@ -168,8 +168,8 @@ namespace System.Management.Automation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public PSDataCollection<TOutput> OutputStream
         {
-            get { return this.outputStream; }
-            set { this.outputStream = value; }
+            get { return _outputStream; }
+            set { _outputStream = value; }
         }
 
         /// <summary>
@@ -178,8 +178,8 @@ namespace System.Management.Automation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public PSDataCollection<ErrorRecord> ErrorStream
         {
-            get { return this.errorStream; }
-            set { this.errorStream = value; }
+            get { return _errorStream; }
+            set { _errorStream = value; }
         }
 
         /// <summary>
@@ -188,8 +188,8 @@ namespace System.Management.Automation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public PSDataCollection<WarningRecord> WarningStream
         {
-            get { return this.warningStream; }
-            set { this.warningStream = value; }
+            get { return _warningStream; }
+            set { _warningStream = value; }
         }
 
         /// <summary>
@@ -198,8 +198,8 @@ namespace System.Management.Automation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public PSDataCollection<ProgressRecord> ProgressStream
         {
-            get { return this.progressStream; }
-            set { this.progressStream = value; }
+            get { return _progressStream; }
+            set { _progressStream = value; }
         }
 
         /// <summary>
@@ -208,8 +208,8 @@ namespace System.Management.Automation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public PSDataCollection<VerboseRecord> VerboseStream
         {
-            get { return this.verboseStream; }
-            set { this.verboseStream = value; }
+            get { return _verboseStream; }
+            set { _verboseStream = value; }
         }
 
         /// <summary>
@@ -218,8 +218,8 @@ namespace System.Management.Automation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public PSDataCollection<DebugRecord> DebugStream
         {
-            get { return this.debugStream; }
-            set { this.debugStream = value; }
+            get { return _debugStream; }
+            set { _debugStream = value; }
         }
 
         /// <summary>
@@ -228,8 +228,8 @@ namespace System.Management.Automation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public PSDataCollection<InformationRecord> InformationStream
         {
-            get { return this.informationStream; }
-            set { this.informationStream = value; }
+            get { return _informationStream; }
+            set { _informationStream = value; }
         }
 
         /// <summary>
@@ -238,19 +238,19 @@ namespace System.Management.Automation
         /// </summary>
         public void CloseAll()
         {
-            if (this.disposed == false)
+            if (_disposed == false)
             {
-                lock (syncLock)
+                lock (_syncLock)
                 {
-                    if (this.disposed == false)
+                    if (_disposed == false)
                     {
-                        this.outputStream.Complete();
-                        this.errorStream.Complete();
-                        this.warningStream.Complete();
-                        this.progressStream.Complete();
-                        this.verboseStream.Complete();
-                        this.debugStream.Complete();
-                        this.informationStream.Complete();
+                        _outputStream.Complete();
+                        _errorStream.Complete();
+                        _warningStream.Complete();
+                        _progressStream.Complete();
+                        _verboseStream.Complete();
+                        _debugStream.Complete();
+                        _informationStream.Complete();
                     }
                 }
             }

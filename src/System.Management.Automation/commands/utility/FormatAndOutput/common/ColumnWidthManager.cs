@@ -18,11 +18,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="tableWidth">overall width of the table in characters</param>
         /// <param name="minimumColumnWidth">minimum usable column width</param>
         /// <param name="separatorWidth">number of separator characters</param>
-        internal ColumnWidthManager (int tableWidth, int minimumColumnWidth, int separatorWidth)
+        internal ColumnWidthManager(int tableWidth, int minimumColumnWidth, int separatorWidth)
         {
-            this.tableWidth = tableWidth;
-            this.minimumColumnWidth = minimumColumnWidth;
-            this.separatorWidth = separatorWidth;
+            _tableWidth = tableWidth;
+            _minimumColumnWidth = minimumColumnWidth;
+            _separatorWidth = separatorWidth;
         }
 
         /// <summary>
@@ -32,16 +32,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// with column elimination, starting from the right most column
         /// </summary>
         /// <param name="columnWidths">array of column widths to appropriately size</param>
-        internal void CalculateColumnWidths (int[] columnWidths)
+        internal void CalculateColumnWidths(int[] columnWidths)
         {
-            if (AssignColumnWidths (columnWidths))
+            if (AssignColumnWidths(columnWidths))
             {
                 // we do not have any trimming to do, we are done
                 return;
             }
 
             // total width exceeds screen width, go on with trimming
-            TrimToFit (columnWidths);
+            TrimToFit(columnWidths);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="columnWidths">columns to process</param>
         /// <returns>true if there was a fit, false if there is need for trimming</returns>
-        private bool AssignColumnWidths (int[] columnWidths)
+        private bool AssignColumnWidths(int[] columnWidths)
         {
             // run a quick check to see if all the columns have a specified width,
             // if so, we are done
@@ -71,8 +71,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (allSpecified)
             {
                 // compute the total table width (columns and separators)
-                maxInitialWidthSum += this.separatorWidth * (columnWidths.Length - 1);
-                if (maxInitialWidthSum <= this.tableWidth)
+                maxInitialWidthSum += _separatorWidth * (columnWidths.Length - 1);
+                if (maxInitialWidthSum <= _tableWidth)
                 {
                     // we fit with all the columns specified
                     return true;
@@ -89,12 +89,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 fixedColumn[k] = columnWidths[k] > 0;
                 if (columnWidths[k] == 0)
-                    columnWidths[k] = this.minimumColumnWidth;
+                    columnWidths[k] = _minimumColumnWidth;
             }
 
             // see if we fit
-            int currentTableWidth = CurrentTableWidth (columnWidths);
-            int availableWidth = this.tableWidth - currentTableWidth;
+            int currentTableWidth = CurrentTableWidth(columnWidths);
+            int availableWidth = _tableWidth - currentTableWidth;
 
             if (availableWidth < 0)
             {
@@ -106,9 +106,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we just fit
                 return true;
             }
-                
+
             // we still have room and we want to add more width
-            
+
             while (availableWidth > 0)
             {
                 for (int k = 0; k < columnWidths.Length; k++)
@@ -130,19 +130,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// trim columns if the total column width is too much for the screen.
         /// </summary>
         /// <param name="columnWidths">column widths to trim</param>
-        private void TrimToFit (int[] columnWidths)
+        private void TrimToFit(int[] columnWidths)
         {
             while (true)
             {
-                int currentTableWidth = CurrentTableWidth (columnWidths);
-                int widthInExcess = currentTableWidth - this.tableWidth; 
+                int currentTableWidth = CurrentTableWidth(columnWidths);
+                int widthInExcess = currentTableWidth - _tableWidth;
                 if (widthInExcess <= 0)
                 {
                     return; // we are done, because we fit
                 }
 
                 // we need to remove or shrink the last visible column
-                int lastVisibleColumn = GetLastVisibleColumn (columnWidths);
+                int lastVisibleColumn = GetLastVisibleColumn(columnWidths);
 
                 if (lastVisibleColumn < 0)
                     return; // nothing left to hide, because all the columns are hidden
@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // try to trim the last column to fit
                 int newLastVisibleColumnWidth = columnWidths[lastVisibleColumn] - widthInExcess;
 
-                if (newLastVisibleColumnWidth < this.minimumColumnWidth)
+                if (newLastVisibleColumnWidth < _minimumColumnWidth)
                 {
                     // cannot fit it in, just hide
                     columnWidths[lastVisibleColumn] = -1;
@@ -162,7 +162,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     columnWidths[lastVisibleColumn] = newLastVisibleColumnWidth;
                 }
             }
-            
         }
 
         /// <summary>
@@ -170,7 +169,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="columnWidths">column widths array</param>
         /// <returns></returns>
-        private int CurrentTableWidth (int[] columnWidths)
+        private int CurrentTableWidth(int[] columnWidths)
         {
             int sum = 0;
             int visibleColumns = 0;
@@ -184,7 +183,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            return sum + this.separatorWidth * (visibleColumns-1);
+            return sum + _separatorWidth * (visibleColumns - 1);
         }
 
         /// <summary>
@@ -192,7 +191,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="columnWidths">column widths array</param>
         /// <returns>index of the last visible column, -1 if none</returns>
-        private static int GetLastVisibleColumn (int[] columnWidths)
+        private static int GetLastVisibleColumn(int[] columnWidths)
         {
             for (int k = 0; k < columnWidths.Length; k++)
             {
@@ -203,8 +202,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return columnWidths.Length - 1;
         }
 
-        private int tableWidth;
-        private int minimumColumnWidth;
-        private int separatorWidth;
+        private int _tableWidth;
+        private int _minimumColumnWidth;
+        private int _separatorWidth;
     }
 }

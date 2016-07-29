@@ -4,7 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 
 using System;
-using Dbg=System.Management.Automation.Diagnostics;
+using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -27,20 +27,20 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the path of the item for which to obtain the
         /// certificate.
         /// </summary>
-        [Parameter(Position=0, ValueFromPipeline=true, ValueFromPipelineByPropertyName = true, Mandatory=true, ParameterSetName = "ByPath")]
+        [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, Mandatory = true, ParameterSetName = "ByPath")]
         public string[] FilePath
         {
             get
             {
-                return path;
+                return _path;
             }
-            
+
             set
             {
-                path = value;
+                _path = value;
             }
         }
-        private string[] path;
+        private string[] _path;
 
         /// <summary>
         /// Gets or sets the literal path of the item for which to obtain the
@@ -53,21 +53,21 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return path;
+                return _path;
             }
 
             set
             {
-                path = value;
-                isLiteralPath = true;
+                _path = value;
+                _isLiteralPath = true;
             }
         }
-        private bool isLiteralPath = false;
+        private bool _isLiteralPath = false;
 
         //
         // list of files that were not found
         //
-        ArrayList filesNotFound = new ArrayList();
+        private ArrayList _filesNotFound = new ArrayList();
 
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
                 List<string> paths = new List<string>();
 
                 // Expand wildcard characters
-                if (isLiteralPath)
+                if (_isLiteralPath)
                 {
                     paths.Add(SessionState.Path.GetUnresolvedProviderPathFromPSPath(p));
                 }
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (ItemNotFoundException)
                     {
-                        filesNotFound.Add(p);
+                        _filesNotFound.Add(p);
                     }
                 }
 
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (resolvedProviderPath == null)
                     {
-                        filesNotFound.Add(p);
+                        _filesNotFound.Add(p);
                     }
                     else
                     {
@@ -178,9 +178,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (filesNotFound.Count > 0)
+            if (_filesNotFound.Count > 0)
             {
-                if (filesNotFound.Count == FilePath.Length)
+                if (_filesNotFound.Count == FilePath.Length)
                 {
                     ErrorRecord er =
                         SecurityUtils.CreateFileNotFoundErrorRecord(
@@ -195,7 +195,7 @@ namespace Microsoft.PowerShell.Commands
                     // we found some files but not others.
                     // Write error for each missing file
                     //
-                    foreach (string f in filesNotFound)
+                    foreach (string f in _filesNotFound)
                     {
                         ErrorRecord er =
                             SecurityUtils.CreateFileNotFoundErrorRecord(
@@ -234,8 +234,6 @@ namespace Microsoft.PowerShell.Commands
 
             return cert;
         }
-
-
     }
 }
 

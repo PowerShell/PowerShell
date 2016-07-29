@@ -32,9 +32,9 @@ namespace System.Management.Automation.Remoting
     {
         #region Private Data
 
-        private PSPrincipal userPrinicpal;
-        private string connectionString;
-        private PSPrimitiveDictionary applicationArguments;
+        private PSPrincipal _userPrinicpal;
+        private string _connectionString;
+        private PSPrimitiveDictionary _applicationArguments;
 
         #endregion
 
@@ -58,7 +58,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="context"></param>
         private PSSenderInfo(SerializationInfo info, StreamingContext context)
         {
-            if(info == null)
+            if (info == null)
             {
                 return;
             }
@@ -85,9 +85,9 @@ namespace System.Management.Automation.Remoting
                 PSObject result = PSObject.AsPSObject(PSSerializer.Deserialize(serializedData));
                 PSSenderInfo senderInfo = DeserializingTypeConverter.RehydratePSSenderInfo(result);
 
-                this.userPrinicpal = senderInfo.userPrinicpal;
-                this.connectionString = senderInfo.connectionString;
-                this.applicationArguments = senderInfo.applicationArguments;
+                _userPrinicpal = senderInfo._userPrinicpal;
+                _connectionString = senderInfo._connectionString;
+                _applicationArguments = senderInfo._applicationArguments;
 
 #if !CORECLR // TimeZone Not In CoreCLR
                 this.clientTimeZone = senderInfo.ClientTimeZone;
@@ -116,8 +116,8 @@ namespace System.Management.Automation.Remoting
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "1#")]
         public PSSenderInfo(PSPrincipal userPrincipal, string httpUrl)
         {
-            this.userPrinicpal = userPrincipal;
-            this.connectionString = httpUrl;
+            _userPrinicpal = userPrincipal;
+            _connectionString = httpUrl;
         }
 
         #endregion
@@ -129,7 +129,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public PSPrincipal UserInfo
         {
-            get { return userPrinicpal; }
+            get { return _userPrinicpal; }
             // No public set because PSSenderInfo/PSPrincipal is used by PSSessionConfiguration's
             // and usually they dont cache this data internally..so did not want to give
             // cmdlets/scripts a chance to modify these.
@@ -142,7 +142,7 @@ namespace System.Management.Automation.Remoting
         public TimeZone ClientTimeZone
         {
             get { return clientTimeZone; }
-            internal set { clientTimeZone = value;  }
+            internal set { clientTimeZone = value; }
         }
         private TimeZone clientTimeZone;
 #endif
@@ -151,9 +151,9 @@ namespace System.Management.Automation.Remoting
         /// Connection string used by the client to connect to the server. This is
         /// directly taken from WSMAN_SENDER_DETAILS struct (from wsman.h)
         /// </summary>
-        public string ConnectionString 
-        { 
-            get { return connectionString; }
+        public string ConnectionString
+        {
+            get { return _connectionString; }
             // No public set because PSSenderInfo/PSPrincipal is used by PSSessionConfiguration's
             // and usually they dont cache this data internally..so did not want to give
             // cmdlets/scripts a chance to modify these.
@@ -164,8 +164,8 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public PSPrimitiveDictionary ApplicationArguments
         {
-            get { return applicationArguments; }
-            internal set { applicationArguments = value; }
+            get { return _applicationArguments; }
+            internal set { _applicationArguments = value; }
         }
 
         #endregion
@@ -178,31 +178,31 @@ namespace System.Management.Automation.Remoting
     {
         #region Private Data
 
-        private PSIdentity psIdentity;
-        private WindowsIdentity windowsIdentity;
+        private PSIdentity _psIdentity;
+        private WindowsIdentity _windowsIdentity;
 
         #endregion
 
         /// <summary>
         /// Gets the identity of the current user principal.
         /// </summary>
-        public PSIdentity Identity 
-        { 
-            get { return psIdentity; }
+        public PSIdentity Identity
+        {
+            get { return _psIdentity; }
             // No public set because PSSenderInfo/PSPrincipal is used by PSSessionConfiguration's
             // and usually they dont cache this data internally..so did not want to give
             // cmdlets/scripts a chance to modify these.
         }
-        
+
         /// <summary>
         /// Gets the WindowsIdentity (if possible) representation of the current Identity.
         /// PSPrincipal can represent any user for example a LiveID user, network user within
         /// a domain etc. This property tries to convert the Identity to WindowsIdentity
         /// using the user token supplied.
         /// </summary>
-        public WindowsIdentity WindowsIdentity 
-        { 
-            get { return windowsIdentity; }
+        public WindowsIdentity WindowsIdentity
+        {
+            get { return _windowsIdentity; }
             // No public set because PSSenderInfo/PSPrincipal is used by PSSessionConfiguration's
             // and usually they dont cache this data internally..so did not want to give
             // cmdlets/scripts a chance to modify these.
@@ -228,10 +228,10 @@ namespace System.Management.Automation.Remoting
         /// </returns>
         public bool IsInRole(string role)
         {
-            if (null != windowsIdentity)
+            if (null != _windowsIdentity)
             {
                 // Get Windows Principal for this identity
-                WindowsPrincipal windowsPrincipal = new WindowsPrincipal(windowsIdentity);
+                WindowsPrincipal windowsPrincipal = new WindowsPrincipal(_windowsIdentity);
                 return windowsPrincipal.IsInRole(role);
             }
             else
@@ -245,10 +245,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal bool IsInRole(WindowsBuiltInRole role)
         {
-            if (null != windowsIdentity)
+            if (null != _windowsIdentity)
             {
                 // Get Windows Principal for this identity
-                WindowsPrincipal windowsPrincipal = new WindowsPrincipal(windowsIdentity);
+                WindowsPrincipal windowsPrincipal = new WindowsPrincipal(_windowsIdentity);
                 return windowsPrincipal.IsInRole(role);
             }
             else
@@ -271,8 +271,8 @@ namespace System.Management.Automation.Remoting
         /// </param>
         public PSPrincipal(PSIdentity identity, WindowsIdentity windowsIdentity)
         {
-            this.psIdentity = identity;
-            this.windowsIdentity = windowsIdentity;
+            _psIdentity = identity;
+            _windowsIdentity = windowsIdentity;
         }
 
         #endregion
@@ -285,10 +285,10 @@ namespace System.Management.Automation.Remoting
     {
         #region Private Data
 
-        private string authenticationType;
-        private bool isAuthenticated;
-        private string userName;
-        private PSCertificateDetails certDetails;
+        private string _authenticationType;
+        private bool _isAuthenticated;
+        private string _userName;
+        private PSCertificateDetails _certDetails;
 
         #endregion
 
@@ -304,19 +304,19 @@ namespace System.Management.Automation.Remoting
         ///  WSMAN_AUTH_CLIENT_CERTIFICATE
         ///  WSMAN_AUTH_LIVEID
         /// </summary>
-        public string AuthenticationType { get { return authenticationType; } }
+        public string AuthenticationType { get { return _authenticationType; } }
         /// <summary>
         /// Gets a value that indicates whether the user has been authenticated.
         /// </summary>
-        public bool IsAuthenticated { get { return isAuthenticated;  } }
+        public bool IsAuthenticated { get { return _isAuthenticated; } }
         /// <summary>
         /// Gets the name of the user.
         /// </summary>
-        public string Name { get { return userName;  } }
+        public string Name { get { return _userName; } }
         /// <summary>
         /// Gets the certificate details of the user if supported, null otherwise.
         /// </summary>
-        public PSCertificateDetails CertificateDetails { get { return certDetails;  } }
+        public PSCertificateDetails CertificateDetails { get { return _certDetails; } }
 
         #region Public Constructor
 
@@ -346,10 +346,10 @@ namespace System.Management.Automation.Remoting
         /// </param>
         public PSIdentity(string authType, bool isAuthenticated, string userName, PSCertificateDetails cert)
         {
-            this.authenticationType = authType;
-            this.isAuthenticated = isAuthenticated;
-            this.userName = userName;
-            this.certDetails = cert;
+            _authenticationType = authType;
+            _isAuthenticated = isAuthenticated;
+            _userName = userName;
+            _certDetails = cert;
         }
 
         #endregion
@@ -361,25 +361,25 @@ namespace System.Management.Automation.Remoting
     public sealed class PSCertificateDetails
     {
         #region Private Data
-        
-        private string subject;
-        private string issuerName;
-        private string issuerThumbprint;
+
+        private string _subject;
+        private string _issuerName;
+        private string _issuerThumbprint;
 
         #endregion
 
         /// <summary>
         /// Gets Subject of the certificate.
         /// </summary>
-        public string Subject { get { return subject; } }
+        public string Subject { get { return _subject; } }
         /// <summary>
         /// Gets the issuer name of the certificate.
         /// </summary>
-        public string IssuerName { get { return issuerName; } }
+        public string IssuerName { get { return _issuerName; } }
         /// <summary>
         /// Gets the issuer thumb print.
         /// </summary>
-        public string IssuerThumbprint { get { return issuerThumbprint;} }
+        public string IssuerThumbprint { get { return _issuerThumbprint; } }
 
         #region Constructor
 
@@ -397,9 +397,9 @@ namespace System.Management.Automation.Remoting
         /// </param>
         public PSCertificateDetails(string subject, string issuerName, string issuerThumbprint)
         {
-            this.subject = subject;
-            this.issuerName = issuerName;
-            this.issuerThumbprint = issuerThumbprint;
+            _subject = subject;
+            _issuerName = issuerName;
+            _issuerThumbprint = issuerThumbprint;
         }
 
         #endregion

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -20,29 +21,29 @@ namespace System.Management.Automation
     /// Class definition of CommandProcessor - This class provides interface to create
     /// and execute commands written in CLS compliant languages.
     /// </summary>
-    internal class CommandProcessor: CommandProcessorBase
+    internal class CommandProcessor : CommandProcessorBase
     {
         #region ctor
 
         static CommandProcessor()
         {
-            ConstructInstanceCache = new ConcurrentDictionary<Type, Func<Cmdlet>>();
+            s_constructInstanceCache = new ConcurrentDictionary<Type, Func<Cmdlet>>();
 
             // Avoid jitting constructors some of the more commonly used cmdlets in SMA.dll - not meant to be
             // exhaustive b/c many cmdlets aren't called at all, so we'd never even need an entry in the cache.
-            ConstructInstanceCache.GetOrAdd(typeof(ForEachObjectCommand), () => new ForEachObjectCommand());
-            ConstructInstanceCache.GetOrAdd(typeof(WhereObjectCommand), () => new WhereObjectCommand());
-            ConstructInstanceCache.GetOrAdd(typeof(ImportModuleCommand), () => new ImportModuleCommand());
-            ConstructInstanceCache.GetOrAdd(typeof(GetModuleCommand), () => new GetModuleCommand());
-            ConstructInstanceCache.GetOrAdd(typeof(GetHelpCommand), () => new GetHelpCommand());
-            ConstructInstanceCache.GetOrAdd(typeof(InvokeCommandCommand), () => new InvokeCommandCommand());
-            ConstructInstanceCache.GetOrAdd(typeof(GetCommandCommand), () => new GetCommandCommand());
-            ConstructInstanceCache.GetOrAdd(typeof(OutDefaultCommand), () => new OutDefaultCommand());
-            ConstructInstanceCache.GetOrAdd(typeof(OutHostCommand), () => new OutHostCommand());
-            ConstructInstanceCache.GetOrAdd(typeof(OutNullCommand), () => new OutNullCommand());
-            ConstructInstanceCache.GetOrAdd(typeof(SetStrictModeCommand), () => new SetStrictModeCommand());
-            ConstructInstanceCache.GetOrAdd(typeof(FormatDefaultCommand), () => new FormatDefaultCommand());
-            ConstructInstanceCache.GetOrAdd(typeof(OutLineOutputCommand), () => new OutLineOutputCommand());
+            s_constructInstanceCache.GetOrAdd(typeof(ForEachObjectCommand), () => new ForEachObjectCommand());
+            s_constructInstanceCache.GetOrAdd(typeof(WhereObjectCommand), () => new WhereObjectCommand());
+            s_constructInstanceCache.GetOrAdd(typeof(ImportModuleCommand), () => new ImportModuleCommand());
+            s_constructInstanceCache.GetOrAdd(typeof(GetModuleCommand), () => new GetModuleCommand());
+            s_constructInstanceCache.GetOrAdd(typeof(GetHelpCommand), () => new GetHelpCommand());
+            s_constructInstanceCache.GetOrAdd(typeof(InvokeCommandCommand), () => new InvokeCommandCommand());
+            s_constructInstanceCache.GetOrAdd(typeof(GetCommandCommand), () => new GetCommandCommand());
+            s_constructInstanceCache.GetOrAdd(typeof(OutDefaultCommand), () => new OutDefaultCommand());
+            s_constructInstanceCache.GetOrAdd(typeof(OutHostCommand), () => new OutHostCommand());
+            s_constructInstanceCache.GetOrAdd(typeof(OutNullCommand), () => new OutNullCommand());
+            s_constructInstanceCache.GetOrAdd(typeof(SetStrictModeCommand), () => new SetStrictModeCommand());
+            s_constructInstanceCache.GetOrAdd(typeof(FormatDefaultCommand), () => new FormatDefaultCommand());
+            s_constructInstanceCache.GetOrAdd(typeof(OutLineOutputCommand), () => new OutLineOutputCommand());
         }
 
         /// <summary>
@@ -382,7 +383,7 @@ namespace System.Management.Automation
         #endregion public_methods
 
         #region helper_methods
-        
+
         /// <summary>
         /// Tells whether it is the first call to Read 
         /// </summary>
@@ -442,7 +443,7 @@ namespace System.Management.Automation
             // ProcessRecord() until the incoming pipe is empty.  We need to
             // stop this loop if a downstream cmdlet broke guidelines and
             // "swallowed" a PipelineStoppedException.
-            Command.ThrowIfStopping ();
+            Command.ThrowIfStopping();
 
             // Prepare the default value parameter list if this is the first call to Read
             if (_firstCallToRead)
@@ -464,7 +465,7 @@ namespace System.Management.Automation
             // the final binding stage in before executing the cmdlet.
 
             bool mandatoryParametersSpecified = false;
-            
+
             while (!mandatoryParametersSpecified)
             {
                 // Retrieve the object from the input pipeline
@@ -514,7 +515,7 @@ namespace System.Management.Automation
 
                 Collection<MergedCompiledCommandParameter> missingMandatoryParameters;
 
-                using (ParameterBinderBase.bindingTracer.TraceScope (
+                using (ParameterBinderBase.bindingTracer.TraceScope(
                     "MANDATORY PARAMETER CHECK on cmdlet [{0}]",
                     this.CommandInfo.Name))
                 {
@@ -535,7 +536,7 @@ namespace System.Management.Automation
                     WriteInputObjectError(
                         inputObject,
                         ParameterBinderStrings.InputObjectMissingMandatory,
-                        "InputObjectMissingMandatory", 
+                        "InputObjectMissingMandatory",
                         missingParameters);
                 }
             }
@@ -632,15 +633,15 @@ namespace System.Management.Automation
             return this.CmdletParameterBinderController.BindPipelineParameters(inputToOperateOn);
         }
 
-        private static readonly ConcurrentDictionary<Type, Func<Cmdlet>> ConstructInstanceCache;
-        static Cmdlet ConstructInstance(Type type)
+        private static readonly ConcurrentDictionary<Type, Func<Cmdlet>> s_constructInstanceCache;
+        private static Cmdlet ConstructInstance(Type type)
         {
             // Call the default constructor if type derives from Cmdlet.
             // Return null (and the caller will generate an appropriate error) if
             // type does not derive from Cmdlet.  We do it this way so the expensive type check
             // is performed just once per type.
 
-            return ConstructInstanceCache.GetOrAdd(type,
+            return s_constructInstanceCache.GetOrAdd(type,
                 t => Expression.Lambda<Func<Cmdlet>>(
                      typeof(Cmdlet).IsAssignableFrom(t)
                         ? (Expression)Expression.New(t)
@@ -739,7 +740,7 @@ namespace System.Management.Automation
 
         private void Init(IScriptCommandInfo scriptCommandInfo)
         {
-            InternalCommand scriptCmdlet = 
+            InternalCommand scriptCmdlet =
                 new PSScriptCmdlet(scriptCommandInfo.ScriptBlock, _useLocalScope, FromScriptFile, _context);
 
             this.Command = scriptCmdlet;
@@ -762,7 +763,7 @@ namespace System.Management.Automation
             this.Command.CommandInfo = this.CommandInfo;
 
             // set the ObsoleteAttribute of the current command
-            this._obsoleteAttribute = this.CommandInfo.CommandMetadata.Obsolete;
+            _obsoleteAttribute = this.CommandInfo.CommandMetadata.Obsolete;
 
             // set the execution context
             this.Command.Context = this._context;
@@ -838,7 +839,6 @@ namespace System.Management.Automation
 
         #endregion helper_methods
     }
-
 }
 
 

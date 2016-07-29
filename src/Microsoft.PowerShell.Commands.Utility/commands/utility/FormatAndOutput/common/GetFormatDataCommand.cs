@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "FormatData", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144303")]
     [OutputType(typeof(System.Management.Automation.ExtendedTypeDefinition))]
-    public class GetFormatDataCommand: PSCmdlet
+    public class GetFormatDataCommand : PSCmdlet
     {
         private string[] _typename;
         private WildcardPattern[] _filter = new WildcardPattern[1];
@@ -30,9 +30,9 @@ namespace Microsoft.PowerShell.Commands
         /// Get Formatting information only for the specified
         /// typename
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]        
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [ValidateNotNullOrEmpty]
-        [Parameter(Position=0)]
+        [Parameter(Position = 0)]
         public String[] TypeName
         {
             get
@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
                                PowerShellVersion.Build < 11086;
 
             TypeInfoDataBase db = this.Context.FormatDBManager.Database;
-            
+
             List<ViewDefinition> viewdefinitions = db.viewDefinitionsSection.viewDefinitionList;
             Dictionary<string, List<string>> typeGroupMap = GetTypeGroupMap(db.typeGroupSection.typeGroupDefinitionList);
 

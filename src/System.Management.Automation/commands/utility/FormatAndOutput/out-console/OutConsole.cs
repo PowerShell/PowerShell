@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// input PSObject
         /// </summary>
-        private PSObject inputObject = AutomationNull.Value;
+        private PSObject _inputObject = AutomationNull.Value;
 
         /// <summary>
         /// This parameter specifies the current pipeline object
@@ -37,16 +37,16 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject
         {
-            set { this.inputObject = value; }
-            get { return this.inputObject; }
+            set { _inputObject = value; }
+            get { return _inputObject; }
         }
 
         /// 
         /// <summary>
         /// Do nothing
         /// </summary>
-        protected override void ProcessRecord() 
-        { 
+        protected override void ProcessRecord()
+        {
             // explicitely overriden:
             // do not do any processing
         }
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
                 mrt.MergeUnclaimedPreviousErrorResults = true;
             }
 
-            savedTranscribeOnly = Host.UI.TranscribeOnly;
+            _savedTranscribeOnly = Host.UI.TranscribeOnly;
             if (Transcript)
             {
                 Host.UI.TranscribeOnly = true;
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (Context.CurrentCommandProcessor.CommandRuntime.OutVarList != null)
             {
-                outVarResults = new ArrayList();
+                _outVarResults = new ArrayList();
             }
         }
 
@@ -123,18 +123,18 @@ namespace Microsoft.PowerShell.Commands
 
             // This needs to be done directly through the command runtime, as Out-Default
             // doesn't actually write pipeline objects.
-            if (outVarResults != null)
+            if (_outVarResults != null)
             {
                 Object inputObjectBase = PSObject.Base(InputObject);
 
                 // Ignore errors and formatting records, as those can't be captured
                 if (
                     (inputObjectBase != null) &&
-                    (! (inputObjectBase is ErrorRecord)) &&
-                    (! inputObjectBase.GetType().FullName.StartsWith(
+                    (!(inputObjectBase is ErrorRecord)) &&
+                    (!inputObjectBase.GetType().FullName.StartsWith(
                         "Microsoft.PowerShell.Commands.Internal.Format", StringComparison.OrdinalIgnoreCase)))
                 {
-                    outVarResults.Add(InputObject);
+                    _outVarResults.Add(InputObject);
                 }
             }
 
@@ -148,26 +148,26 @@ namespace Microsoft.PowerShell.Commands
         {
             // This needs to be done directly through the command runtime, as Out-Default
             // doesn't actually write pipeline objects.
-            if ((outVarResults != null) && (outVarResults.Count > 0))
+            if ((_outVarResults != null) && (_outVarResults.Count > 0))
             {
                 Context.CurrentCommandProcessor.CommandRuntime.OutVarList.Clear();
-                foreach (Object item in outVarResults)
+                foreach (Object item in _outVarResults)
                 {
                     Context.CurrentCommandProcessor.CommandRuntime.OutVarList.Add(item);
                 }
-                outVarResults = null;
+                _outVarResults = null;
             }
 
             base.EndProcessing();
 
             if (Transcript)
             {
-                Host.UI.TranscribeOnly = savedTranscribeOnly;
+                Host.UI.TranscribeOnly = _savedTranscribeOnly;
             }
         }
 
-        ArrayList outVarResults = null;
-        bool savedTranscribeOnly = false;
+        private ArrayList _outVarResults = null;
+        private bool _savedTranscribeOnly = false;
     }
 
     /// <summary>
@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// non positional parameter to specify paging
         /// </summary>
-        private bool paging;
+        private bool _paging;
 
         #endregion
 
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
         {
             this.implementation = new OutputManagerInner();
         }
-        
+
         /// <summary>
         /// optional, non positional parameter to specify paging
         /// FALSE: names only
@@ -201,8 +201,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter Paging
         {
-            get { return this.paging; }
-            set { this.paging = value; }
+            get { return _paging; }
+            set { _paging = value; }
         }
 
         /// <summary>
@@ -211,10 +211,10 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             PSHostUserInterface console = this.Host.UI;
-            ConsoleLineOutput lineOutput = new ConsoleLineOutput(console, this.paging, new TerminatingErrorContext(this));
+            ConsoleLineOutput lineOutput = new ConsoleLineOutput(console, _paging, new TerminatingErrorContext(this));
 
             ((OutputManagerInner)this.implementation).LineOutput = lineOutput;
             base.BeginProcessing();
-        }    
+        }
     }
 }

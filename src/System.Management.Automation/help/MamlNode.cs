@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -78,7 +79,7 @@ namespace System.Management.Automation
         }
 
         private XmlNode _xmlNode;
-        
+
         /// <summary>
         /// Underline xmlNode for this MamlNode object
         /// </summary>
@@ -217,14 +218,14 @@ namespace System.Management.Automation
                 // the ouput is readable. This is done only for complex nodes.
                 mshObject.TypeNames.Clear();
 
-                if(xmlNode.Attributes["type"] != null)
+                if (xmlNode.Attributes["type"] != null)
                 {
                     if (String.Compare(xmlNode.Attributes["type"].Value, "field", StringComparison.OrdinalIgnoreCase) == 0)
                         mshObject.TypeNames.Add("MamlPSClassHelpInfo#field");
                     else if (String.Compare(xmlNode.Attributes["type"].Value, "method", StringComparison.OrdinalIgnoreCase) == 0)
-                        mshObject.TypeNames.Add("MamlPSClassHelpInfo#method");                
+                        mshObject.TypeNames.Add("MamlPSClassHelpInfo#method");
                 }
-                                
+
                 mshObject.TypeNames.Add("MamlCommandHelpInfo#" + xmlNode.LocalName);
             }
 
@@ -235,7 +236,7 @@ namespace System.Management.Automation
                     mshObject.Properties.Add(new PSNoteProperty(attribute.Name, attribute.Value));
                 }
             }
-           
+
             return mshObject;
         }
 
@@ -312,7 +313,7 @@ namespace System.Management.Automation
             if (xmlNode.ChildNodes != null)
             {
                 foreach (XmlNode childNode in xmlNode.ChildNodes)
-                { 
+                {
                     AddProperty(properties, childNode.LocalName, GetPSObject(childNode));
                 }
             }
@@ -384,7 +385,7 @@ namespace System.Management.Automation
         /// <param name="mshObject">property value</param>
         static private void AddProperty(Hashtable properties, string name, PSObject mshObject)
         {
-            ArrayList propertyValues = (ArrayList) properties[name];
+            ArrayList propertyValues = (ArrayList)properties[name];
 
             if (propertyValues == null)
             {
@@ -402,9 +403,9 @@ namespace System.Management.Automation
                 return;
             }
 
-            PSObject[] mshObjects = (PSObject[]) mshObject.BaseObject;
+            PSObject[] mshObjects = (PSObject[])mshObject.BaseObject;
 
-            for(int i = 0; i < mshObjects.Length; i++)
+            for (int i = 0; i < mshObjects.Length; i++)
             {
                 propertyValues.Add(mshObjects[i]);
             }
@@ -431,16 +432,16 @@ namespace System.Management.Automation
             Hashtable result = new Hashtable(StringComparer.OrdinalIgnoreCase);
             IDictionaryEnumerator enumerator = properties.GetEnumerator();
 
-            while(enumerator.MoveNext())
+            while (enumerator.MoveNext())
             {
-                ArrayList propertyValues = (ArrayList) enumerator.Value;
+                ArrayList propertyValues = (ArrayList)enumerator.Value;
 
-                if(propertyValues == null || propertyValues.Count == 0)
+                if (propertyValues == null || propertyValues.Count == 0)
                     continue;
 
-                if(propertyValues.Count == 1)
+                if (propertyValues.Count == 1)
                 {
-                    if(!IsMamlFormattingPSObject((PSObject)propertyValues[0]))
+                    if (!IsMamlFormattingPSObject((PSObject)propertyValues[0]))
                     {
                         PSObject mshObject = (PSObject)propertyValues[0];
 
@@ -530,7 +531,7 @@ namespace System.Management.Automation
                 return true;
 
             if (xmlNode.LocalName.Equals("definitionList", StringComparison.OrdinalIgnoreCase))
-                return true;           
+                return true;
 
             return false;
         }
@@ -613,7 +614,7 @@ namespace System.Management.Automation
                 {
                     ++count;
                     PSObject paraPSObject = GetParaPSObject(childNode, count != paraNodes);
-                    if(paraPSObject != null)
+                    if (paraPSObject != null)
                         mshObjects.Add(paraPSObject);
                     continue;
                 }
@@ -640,13 +641,13 @@ namespace System.Management.Automation
                     }
 
                     continue;
-                }             
+                }
 
                 // If we get here, there is some tags that is not supported by maml.
                 WriteMamlInvalidChildNodeError(xmlNode, childNode);
             }
 
-            return (PSObject[]) mshObjects.ToArray(typeof(PSObject));
+            return (PSObject[])mshObjects.ToArray(typeof(PSObject));
         }
 
         /// <summary>
@@ -1058,7 +1059,7 @@ namespace System.Management.Automation
                 WriteMamlInvalidChildNodeCountError(xmlNode, "para", 1);
             }
 
-            string text = ""; 
+            string text = "";
 
             foreach (XmlNode childNode in xmlNode.ChildNodes)
             {
@@ -1163,7 +1164,7 @@ namespace System.Management.Automation
 
             int start = i;
 
-            if(start == lines.Length)
+            if (start == lines.Length)
                 return null;
 
             for (i = lines.Length - 1; i >= start; i--)
@@ -1194,7 +1195,7 @@ namespace System.Management.Automation
 
             for (int i = 0; i < lines.Length; i++)
             {
-                if(IsEmptyLine(lines[i]))
+                if (IsEmptyLine(lines[i]))
                     continue;
 
                 int indentation = GetIndentation(lines[i]);

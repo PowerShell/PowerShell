@@ -17,8 +17,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
-using DWORD  = System.UInt32;
-using BOOL   = System.UInt32;
+using DWORD = System.UInt32;
+using BOOL = System.UInt32;
 using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
 namespace Microsoft.PowerShell

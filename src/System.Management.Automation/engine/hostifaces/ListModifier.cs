@@ -26,11 +26,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a new PSListModifier with empty lists for Add/Remove.
         /// </summary>
-		public PSListModifier()
+        public PSListModifier()
         {
-            this._itemsToAdd = new Collection<object>();
-            this._itemsToRemove = new Collection<object>();
-            this._replacementItems = new Collection<object>();
+            _itemsToAdd = new Collection<object>();
+            _itemsToRemove = new Collection<object>();
+            _replacementItems = new Collection<object>();
         }
 
         /// <summary>
@@ -40,9 +40,9 @@ namespace System.Management.Automation
         /// <param name="addItems">The items to add</param>
         public PSListModifier(Collection<object> removeItems, Collection<object> addItems)
         {
-            this._itemsToAdd = (addItems != null) ? addItems : new Collection<object>();
-            this._itemsToRemove = (removeItems != null) ? removeItems : new Collection<object>();
-            this._replacementItems = new Collection<object>();
+            _itemsToAdd = (addItems != null) ? addItems : new Collection<object>();
+            _itemsToRemove = (removeItems != null) ? removeItems : new Collection<object>();
+            _replacementItems = new Collection<object>();
         }
 
         /// <summary>
@@ -51,32 +51,32 @@ namespace System.Management.Automation
         /// <param name="replacementItems">The item(s) to replace an existing list with</param>
         public PSListModifier(object replacementItems)
         {
-            this._itemsToAdd = new Collection<object>();
-            this._itemsToRemove = new Collection<object>();
+            _itemsToAdd = new Collection<object>();
+            _itemsToRemove = new Collection<object>();
             if (replacementItems == null)
             {
-                this._replacementItems = new Collection<object>();
+                _replacementItems = new Collection<object>();
             }
             else if (replacementItems is Collection<object>)
             {
-                this._replacementItems = (Collection<object>)replacementItems;
+                _replacementItems = (Collection<object>)replacementItems;
             }
             else if (replacementItems is IList<object>)
             {
-                this._replacementItems = new Collection<object>((IList<object>)replacementItems);
+                _replacementItems = new Collection<object>((IList<object>)replacementItems);
             }
             else if (replacementItems is IList)
             {
-                this._replacementItems = new Collection<object>();
+                _replacementItems = new Collection<object>();
                 foreach (object item in (IList)replacementItems)
                 {
-                    this._replacementItems.Add(item);
+                    _replacementItems.Add(item);
                 }
             }
             else
             {
-                this._replacementItems = new Collection<object>();
-                this._replacementItems.Add(replacementItems);
+                _replacementItems = new Collection<object>();
+                _replacementItems.Add(replacementItems);
             }
         }
 
@@ -92,9 +92,9 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("hash");
             }
 
-            this._itemsToAdd = new Collection<object>();
-            this._itemsToRemove = new Collection<object>();
-            this._replacementItems = new Collection<object>();
+            _itemsToAdd = new Collection<object>();
+            _itemsToRemove = new Collection<object>();
+            _replacementItems = new Collection<object>();
 
             foreach (DictionaryEntry entry in hash)
             {
@@ -113,15 +113,15 @@ namespace System.Management.Automation
                     Collection<object> collection;
                     if (isRemove)
                     {
-                        collection = this._itemsToRemove;
+                        collection = _itemsToRemove;
                     }
                     else if (isAdd)
                     {
-                        collection = this._itemsToAdd;
+                        collection = _itemsToAdd;
                     }
                     else
                     {
-                        collection = this._replacementItems;
+                        collection = _replacementItems;
                     }
 
                     IEnumerable enumerable = LanguagePrimitives.GetEnumerable(entry.Value);
@@ -151,7 +151,7 @@ namespace System.Management.Automation
         {
             get { return _itemsToAdd; }
         }
-        Collection<object> _itemsToAdd;
+        private Collection<object> _itemsToAdd;
 
         /// <summary>
         /// The list of items to remove when AppyTo is called.
@@ -160,7 +160,7 @@ namespace System.Management.Automation
         {
             get { return _itemsToRemove; }
         }
-        Collection<object> _itemsToRemove;
+        private Collection<object> _itemsToRemove;
 
         /// <summary>
         /// The list of items to replace an existing list with.
@@ -169,7 +169,7 @@ namespace System.Management.Automation
         {
             get { return _replacementItems; }
         }
-        Collection<Object> _replacementItems;
+        private Collection<Object> _replacementItems;
 
         /// <summary>
         /// Update the given collection with the items in Add and Remove.

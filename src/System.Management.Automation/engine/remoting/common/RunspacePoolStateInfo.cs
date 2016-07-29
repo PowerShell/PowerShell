@@ -27,23 +27,22 @@ namespace System.Management.Automation
         /// <summary>
         /// State of the runspace pool when this event occured
         /// </summary>
-        public RunspacePoolState State 
+        public RunspacePoolState State
         {
             get
             {
-                return state;
+                return _state;
             }
-                
         }
 
         /// <summary>
         /// Exception associated with that state
         /// </summary>
-        public Exception Reason 
+        public Exception Reason
         {
             get
             {
-                return reason;
+                return _reason;
             }
         }
 
@@ -55,12 +54,11 @@ namespace System.Management.Automation
         /// state change. Can be null</param>
         public RunspacePoolStateInfo(RunspacePoolState state, Exception reason)
         {
-            this.state = state;
-            this.reason = reason;
+            _state = state;
+            _reason = reason;
         }
 
-        private RunspacePoolState state;
-        private Exception reason;
+        private RunspacePoolState _state;
+        private Exception _reason;
     }
-
 }

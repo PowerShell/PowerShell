@@ -59,10 +59,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public PSSession[] Session
         {
-            get { return this.remotePSSessionInfo; }
-            set { this.remotePSSessionInfo = value; }
+            get { return _remotePSSessionInfo; }
+            set { _remotePSSessionInfo = value; }
         }
-        private PSSession[] remotePSSessionInfo;
+        private PSSession[] _remotePSSessionInfo;
 
         /// <summary>
         /// Idle Timeout session option in seconds.  Used in this cmdlet to set server disconnect idletimeout option.
@@ -102,10 +102,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = PSRunspaceCmdlet.InstanceIdParameterSet)]
         public Int32 ThrottleLimit
         {
-            get { return this.throttleLimit; }
-            set { this.throttleLimit = value; }
+            get { return _throttleLimit; }
+            set { _throttleLimit = value; }
         }
-        private Int32 throttleLimit = 0;
+        private Int32 _throttleLimit = 0;
 
         /// <summary>
         /// Disconnect-PSSession does not support ComputerName parameter set.
@@ -123,14 +123,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 // no need to lock as the cmdlet parameters will not be assigned
                 // from multiple threads.
-                if (null == sessionOption)
+                if (null == _sessionOption)
                 {
-                    sessionOption = new PSSessionOption();
+                    _sessionOption = new PSSessionOption();
                 }
-                return sessionOption;
+                return _sessionOption;
             }
         }
-        private PSSessionOption sessionOption;
+        private PSSessionOption _sessionOption;
 
         /// <summary>
         /// Overriding to suppress this parameter
@@ -176,8 +176,8 @@ namespace Microsoft.PowerShell.Commands
         {
             base.BeginProcessing();
 
-            this.throttleManager.ThrottleLimit = ThrottleLimit;
-            this.throttleManager.ThrottleComplete += new EventHandler<EventArgs>(HandleThrottleDisconnectComplete);
+            _throttleManager.ThrottleLimit = ThrottleLimit;
+            _throttleManager.ThrottleComplete += new EventHandler<EventArgs>(HandleThrottleDisconnectComplete);
         }
 
         /// <summary>
@@ -193,13 +193,13 @@ namespace Microsoft.PowerShell.Commands
                 // Get all remote runspaces to disconnect.
                 if (ParameterSetName == DisconnectPSSessionCommand.SessionParameterSet)
                 {
-                    if (this.remotePSSessionInfo == null || this.remotePSSessionInfo.Length == 0)
+                    if (_remotePSSessionInfo == null || _remotePSSessionInfo.Length == 0)
                     {
                         return;
                     }
 
                     psSessions = new Dictionary<Guid, PSSession>();
-                    foreach (PSSession psSession in this.remotePSSessionInfo)
+                    foreach (PSSession psSession in _remotePSSessionInfo)
                     {
                         psSessions.Add(psSession.InstanceId, psSession);
                     }
@@ -240,9 +240,9 @@ namespace Microsoft.PowerShell.Commands
                         if (psSession.Runspace.RunspaceStateInfo.State == RunspaceState.Opened)
                         {
                             // Update the connectionInfo object with passed in session options.
-                            if (sessionOption != null)
+                            if (_sessionOption != null)
                             {
-                                psSession.Runspace.ConnectionInfo.SetSessionOptions(sessionOption);
+                                psSession.Runspace.ConnectionInfo.SetSessionOptions(_sessionOption);
                             }
 
                             // Validate the ConnectionInfo IdleTimeout value against the MaxIdleTimeout
@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell.Commands
                                 continue;
                             }
 
-                            DisconnectRunspaceOperation disconnectOperation = new DisconnectRunspaceOperation(psSession, this.stream);
+                            DisconnectRunspaceOperation disconnectOperation = new DisconnectRunspaceOperation(psSession, _stream);
                             disconnectOperations.Add(disconnectOperation);
                         }
                         else if (psSession.Runspace.RunspaceStateInfo.State != RunspaceState.Disconnected)
@@ -274,38 +274,38 @@ namespace Microsoft.PowerShell.Commands
             catch (PSRemotingDataStructureException)
             {
                 // Allow cmdlet to end and then re-throw exception.
-                this.operationsComplete.Set();
+                _operationsComplete.Set();
                 throw;
             }
             catch (PSRemotingTransportException)
             {
                 // Allow cmdlet to end and then re-throw exception.
-                this.operationsComplete.Set();
+                _operationsComplete.Set();
                 throw;
             }
             catch (RemoteException)
             {
                 // Allow cmdlet to end and then re-throw exception.
-                this.operationsComplete.Set();
+                _operationsComplete.Set();
                 throw;
             }
             catch (InvalidRunspaceStateException)
             {
                 // Allow cmdlet to end and then re-throw exception.
-                this.operationsComplete.Set();
+                _operationsComplete.Set();
                 throw;
             }
 
             if (disconnectOperations.Count > 0)
             {
                 // Make sure operations are not set as complete while processing input.
-                this.operationsComplete.Reset();
+                _operationsComplete.Reset();
 
                 // Submit list of disconnect operations.
-                this.throttleManager.SubmitOperations(disconnectOperations);
+                _throttleManager.SubmitOperations(disconnectOperations);
 
                 // Write any output now.
-                Collection<object> streamObjects = this.stream.ObjectReader.NonBlockingRead();
+                Collection<object> streamObjects = _stream.ObjectReader.NonBlockingRead();
                 foreach (object streamObject in streamObjects)
                 {
                     WriteStreamObject((Action<Cmdlet>)streamObject);
@@ -318,15 +318,15 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            this.throttleManager.EndSubmitOperations();
+            _throttleManager.EndSubmitOperations();
 
             // Wait for all disconnect operations to complete.
-            this.operationsComplete.WaitOne();
+            _operationsComplete.WaitOne();
 
             // Read all objects in the stream pipeline.
-            while (!this.stream.ObjectReader.EndOfPipeline)
+            while (!_stream.ObjectReader.EndOfPipeline)
             {
-                Object streamObject = stream.ObjectReader.Read();
+                Object streamObject = _stream.ObjectReader.Read();
                 WriteStreamObject((Action<Cmdlet>)streamObject);
             }
         }
@@ -337,11 +337,11 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             // Close the output stream for any further writes.
-            this.stream.ObjectWriter.Close();
+            _stream.ObjectWriter.Close();
 
             // Signal the ThrottleManager to stop any further processing
             // of PSSessions.
-            this.throttleManager.StopAllOperations();
+            _throttleManager.StopAllOperations();
         }
 
         #endregion
@@ -355,8 +355,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="eventArgs">EventArgs</param>
         private void HandleThrottleDisconnectComplete(object sender, EventArgs eventArgs)
         {
-            this.stream.ObjectWriter.Close();
-            this.operationsComplete.Set();
+            _stream.ObjectWriter.Close();
+            _operationsComplete.Set();
         }
 
         private bool ValidateIdleTimeout(PSSession session)
@@ -368,9 +368,9 @@ namespace Microsoft.PowerShell.Commands
             if (idleTimeout != BaseTransportManager.UseServerDefaultIdleTimeout &&
                 (idleTimeout > maxIdleTimeout || idleTimeout < minIdleTimeout))
             {
-                string msg = StringUtil.Format(RemotingErrorIdStrings.CannotDisconnectSessionWithInvalidIdleTimeout, 
-                    session.Name, idleTimeout/1000, maxIdleTimeout/1000, minIdleTimeout/1000);
-                ErrorRecord errorRecord = new ErrorRecord(new RuntimeException(msg), 
+                string msg = StringUtil.Format(RemotingErrorIdStrings.CannotDisconnectSessionWithInvalidIdleTimeout,
+                    session.Name, idleTimeout / 1000, maxIdleTimeout / 1000, minIdleTimeout / 1000);
+                ErrorRecord errorRecord = new ErrorRecord(new RuntimeException(msg),
                     "CannotDisconnectSessionWithInvalidIdleTimeout", ErrorCategory.InvalidArgument, session);
                 WriteError(errorRecord);
 
@@ -411,14 +411,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private class DisconnectRunspaceOperation : IThrottleOperation
         {
-            private PSSession remoteSession;
-            private ObjectStream writeStream;
+            private PSSession _remoteSession;
+            private ObjectStream _writeStream;
 
             internal DisconnectRunspaceOperation(PSSession session, ObjectStream stream)
             {
-                this.remoteSession = session;
-                this.writeStream = stream;
-                this.remoteSession.Runspace.StateChanged += StateCallBackHandler;
+                _remoteSession = session;
+                _writeStream = stream;
+                _remoteSession.Runspace.StateChanged += StateCallBackHandler;
             }
 
             internal override void StartOperation()
@@ -427,7 +427,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    this.remoteSession.Runspace.DisconnectAsync();
+                    _remoteSession.Runspace.DisconnectAsync();
                 }
                 catch (InvalidRunspacePoolStateException e)
                 {
@@ -443,7 +443,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!startedSuccessfully)
                 {
                     // We are done at this point.  Notify throttle manager.
-                    this.remoteSession.Runspace.StateChanged -= StateCallBackHandler;
+                    _remoteSession.Runspace.StateChanged -= StateCallBackHandler;
                     SendStartComplete();
                 }
             }
@@ -451,14 +451,14 @@ namespace Microsoft.PowerShell.Commands
             internal override void StopOperation()
             {
                 // Cannot stop a disconnect attempt.
-                this.remoteSession.Runspace.StateChanged -= StateCallBackHandler;
+                _remoteSession.Runspace.StateChanged -= StateCallBackHandler;
                 SendStopComplete();
             }
 
             internal override event EventHandler<OperationStateEventArgs> OperationComplete;
 
             private void StateCallBackHandler(object sender, RunspaceStateEventArgs eArgs)
-            {           
+            {
                 if (eArgs.RunspaceStateInfo.State == RunspaceState.Disconnecting)
                 {
                     return;
@@ -476,10 +476,10 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Notify throttle manager that the start is complete.
-                this.remoteSession.Runspace.StateChanged -= StateCallBackHandler;
+                _remoteSession.Runspace.StateChanged -= StateCallBackHandler;
                 SendStartComplete();
             }
-  
+
             private void SendStartComplete()
             {
                 OperationStateEventArgs operationStateEventArgs = new OperationStateEventArgs();
@@ -496,37 +496,37 @@ namespace Microsoft.PowerShell.Commands
 
             private void WriteDisconnectedPSSession()
             {
-                if (this.writeStream.ObjectWriter.IsOpen)
+                if (_writeStream.ObjectWriter.IsOpen)
                 {
-                    Action<Cmdlet> outputWriter = delegate(Cmdlet cmdlet)
+                    Action<Cmdlet> outputWriter = delegate (Cmdlet cmdlet)
                     {
-                        cmdlet.WriteObject(this.remoteSession);
+                        cmdlet.WriteObject(_remoteSession);
                     };
-                    this.writeStream.ObjectWriter.Write(outputWriter);
+                    _writeStream.ObjectWriter.Write(outputWriter);
                 }
             }
 
             private void WriteDisconnectFailed(Exception e = null)
             {
-                if (this.writeStream.ObjectWriter.IsOpen)
+                if (_writeStream.ObjectWriter.IsOpen)
                 {
                     string msg;
 
                     if (e != null && !string.IsNullOrWhiteSpace(e.Message))
                     {
-                        msg = StringUtil.Format(RemotingErrorIdStrings.RunspaceDisconnectFailedWithReason, this.remoteSession.InstanceId, e.Message);
+                        msg = StringUtil.Format(RemotingErrorIdStrings.RunspaceDisconnectFailedWithReason, _remoteSession.InstanceId, e.Message);
                     }
                     else
                     {
-                        msg = StringUtil.Format(RemotingErrorIdStrings.RunspaceDisconnectFailed, this.remoteSession.InstanceId);
+                        msg = StringUtil.Format(RemotingErrorIdStrings.RunspaceDisconnectFailed, _remoteSession.InstanceId);
                     }
                     Exception reason = new RuntimeException(msg, e);
-                    ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionDisconnectFailed", ErrorCategory.InvalidOperation, this.remoteSession);
-                    Action<Cmdlet> errorWriter = delegate(Cmdlet cmdlet)
+                    ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionDisconnectFailed", ErrorCategory.InvalidOperation, _remoteSession);
+                    Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
                     {
                         cmdlet.WriteError(errorRecord);
                     };
-                    this.writeStream.ObjectWriter.Write(errorWriter);
+                    _writeStream.ObjectWriter.Write(errorWriter);
                 }
             }
         }
@@ -557,13 +557,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (disposing)
             {
-                this.throttleManager.Dispose();
+                _throttleManager.Dispose();
 
-                this.operationsComplete.WaitOne();
-                this.operationsComplete.Dispose();
+                _operationsComplete.WaitOne();
+                _operationsComplete.Dispose();
 
-                this.throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleDisconnectComplete);
-                this.stream.Dispose();
+                _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleDisconnectComplete);
+                _stream.Dispose();
             }
         }
 
@@ -572,16 +572,15 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         // Object used to perform network disconnect operations in a limited manner.
-        private ThrottleManager throttleManager = new ThrottleManager();
+        private ThrottleManager _throttleManager = new ThrottleManager();
 
         // Event indicating that all disconnect operations through the ThrottleManager
         // are complete.
-        private ManualResetEvent operationsComplete = new ManualResetEvent(true);
+        private ManualResetEvent _operationsComplete = new ManualResetEvent(true);
 
         // Output data stream.
-        private ObjectStream stream = new ObjectStream();
+        private ObjectStream _stream = new ObjectStream();
 
         #endregion
-
     } // DisconnectPSSessionCommand
 }

@@ -56,7 +56,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Defines which provider the user seeking help is curious about.
         /// </summary>
-        internal ProviderContext ProviderContext 
+        internal ProviderContext ProviderContext
         {
             get { return _providerContext; }
             set { _providerContext = value; }

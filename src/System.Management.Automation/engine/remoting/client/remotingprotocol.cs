@@ -23,9 +23,9 @@ namespace System.Management.Automation.Remoting
         #region Abstract_API
 
         internal abstract void CreateAsync();
-        
+
         internal abstract event EventHandler<RemoteSessionStateEventArgs> ConnectionStateChanged;
-      
+
         internal abstract void SendNegotiationAsync(RemoteSessionState sessionState);
 
         internal abstract event EventHandler<RemoteSessionNegotiationEventArgs> NegotiationReceived;
@@ -41,10 +41,10 @@ namespace System.Management.Automation.Remoting
             get;
         }
 
-        internal abstract BaseClientSessionTransportManager TransportManager { get;}
+        internal abstract BaseClientSessionTransportManager TransportManager { get; }
 
         internal abstract BaseClientCommandTransportManager CreateClientCommandTransportManager(
-            System.Management.Automation.Runspaces.Internal.ClientRemotePowerShell cmd, 
+            System.Management.Automation.Runspaces.Internal.ClientRemotePowerShell cmd,
             bool noInput);
 
         // TODO: If this is not used, remove this.

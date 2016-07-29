@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Reflection;
@@ -136,7 +137,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("HelpSystem");
             }
 
-            this._helpSystem = helpSystem;
+            _helpSystem = helpSystem;
         }
 
         /// <summary>

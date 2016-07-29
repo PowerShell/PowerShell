@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// Base class for a variety of commandlets that take color parameters
     /// 
     /// </summary>
-    
+
     public
     class ConsoleColorCmdlet : PSCmdlet
     {
@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public ConsoleColorCmdlet()
         {
-            consoleColorEnumType = typeof(ConsoleColor);
+            _consoleColorEnumType = typeof(ConsoleColor);
         }
 
         /// <summary>
@@ -41,24 +41,24 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (!isFgColorSet)
+                if (!_isFgColorSet)
                 {
-                    fgColor = this.Host.UI.RawUI.ForegroundColor;
-                    isFgColorSet = true;
+                    _fgColor = this.Host.UI.RawUI.ForegroundColor;
+                    _isFgColorSet = true;
                 }
 
-                return fgColor;
+                return _fgColor;
             }
             set
             {
-                if (value >= (ConsoleColor) 0 && value <= (ConsoleColor) 15)
+                if (value >= (ConsoleColor)0 && value <= (ConsoleColor)15)
                 {
-                    fgColor = value;
-                    isFgColorSet = true;
+                    _fgColor = value;
+                    _isFgColorSet = true;
                 }
                 else
                 {
-                    ThrowTerminatingError(BuildOutOfRangeErrorRecord(value, "SetInvalidForegroundColor")); 
+                    ThrowTerminatingError(BuildOutOfRangeErrorRecord(value, "SetInvalidForegroundColor"));
                 }
             }
         }
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
         /// 
         /// </summary>
         /// <value></value>
-        
+
         [Parameter]
         public
         ConsoleColor
@@ -77,20 +77,20 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (!isBgColorSet)
+                if (!_isBgColorSet)
                 {
-                    bgColor = this.Host.UI.RawUI.BackgroundColor;
-                    isBgColorSet = true;
+                    _bgColor = this.Host.UI.RawUI.BackgroundColor;
+                    _isBgColorSet = true;
                 }
 
-                return bgColor;
+                return _bgColor;
             }
             set
             {
-                if (value >= (ConsoleColor) 0 && value <= (ConsoleColor) 15)
+                if (value >= (ConsoleColor)0 && value <= (ConsoleColor)15)
                 {
-                    bgColor = value;
-                    isBgColorSet = true;
+                    _bgColor = value;
+                    _isBgColorSet = true;
                 }
                 else
                 {
@@ -108,13 +108,13 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion helper
 
-        private ConsoleColor fgColor;
-        private ConsoleColor bgColor;
+        private ConsoleColor _fgColor;
+        private ConsoleColor _bgColor;
 
-        private bool isFgColorSet = false;
-        private bool isBgColorSet = false;
+        private bool _isFgColorSet = false;
+        private bool _isBgColorSet = false;
 
-        private readonly Type consoleColorEnumType;
+        private readonly Type _consoleColorEnumType;
     }
 }
 

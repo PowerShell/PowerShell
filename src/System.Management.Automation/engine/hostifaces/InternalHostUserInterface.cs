@@ -23,7 +23,7 @@ namespace System.Management.Automation.Internal.Host
         {
             // externalUI may be null
 
-            this.externalUI = externalUI;
+            _externalUI = externalUI;
 
             // parent may not be null, however
 
@@ -32,7 +32,7 @@ namespace System.Management.Automation.Internal.Host
             {
                 throw PSTraceSource.NewArgumentNullException("parentHost");
             }
-            parent = parentHost;
+            _parent = parentHost;
 
             PSHostRawUserInterface rawui = null;
 
@@ -41,14 +41,14 @@ namespace System.Management.Automation.Internal.Host
                 rawui = externalUI.RawUI;
             }
 
-            internalRawUI = new InternalHostRawUserInterface(rawui, parent);
+            _internalRawUI = new InternalHostRawUserInterface(rawui, _parent);
         }
 
         private
         void
         ThrowNotInteractive()
         {
-            internalRawUI.ThrowNotInteractive();
+            _internalRawUI.ThrowNotInteractive();
         }
 
         private
@@ -78,13 +78,13 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                return internalRawUI;
+                return _internalRawUI;
             }
         }
 
         public override bool SupportsVirtualTerminal
         {
-            get { return externalUI.SupportsVirtualTerminal; }
+            get { return _externalUI.SupportsVirtualTerminal; }
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace System.Management.Automation.Internal.Host
         string
         ReadLine()
         {
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 ThrowNotInteractive();
             }
@@ -110,13 +110,13 @@ namespace System.Management.Automation.Internal.Host
             string result = null;
             try
             {
-                result = externalUI.ReadLine();
+                result = _externalUI.ReadLine();
             }
             catch (PipelineStoppedException)
             {
                 //PipelineStoppedException is thrown by host when it wants 
                 //to stop the pipeline. 
-                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)this.parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
                     throw;
@@ -141,26 +141,26 @@ namespace System.Management.Automation.Internal.Host
         ///
         /// </exception>
 
-        public override  
-        SecureString 
+        public override
+        SecureString
         ReadLineAsSecureString()
         {
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 ThrowNotInteractive();
             }
 
             SecureString result = null;
-            
+
             try
             {
-                result = externalUI.ReadLineAsSecureString();
+                result = _externalUI.ReadLineAsSecureString();
             }
             catch (PipelineStoppedException)
             {
                 //PipelineStoppedException is thrown by host when it wants 
                 //to stop the pipeline. 
-                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)this.parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
                     throw;
@@ -196,12 +196,12 @@ namespace System.Management.Automation.Internal.Host
                 return;
             }
 
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 return;
             }
 
-            externalUI.Write(value);
+            _externalUI.Write(value);
         }
 
 
@@ -233,12 +233,12 @@ namespace System.Management.Automation.Internal.Host
                 return;
             }
 
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 return;
             }
 
-            externalUI.Write(foregroundColor, backgroundColor, value);
+            _externalUI.Write(foregroundColor, backgroundColor, value);
         }
 
 
@@ -261,12 +261,12 @@ namespace System.Management.Automation.Internal.Host
         void
         WriteLine()
         {
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 return;
             }
 
-            externalUI.WriteLine();
+            _externalUI.WriteLine();
         }
 
 
@@ -294,12 +294,12 @@ namespace System.Management.Automation.Internal.Host
                 return;
             }
 
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 return;
             }
 
-            externalUI.WriteLine(value);
+            _externalUI.WriteLine(value);
         }
 
 
@@ -313,16 +313,16 @@ namespace System.Management.Automation.Internal.Host
                 return;
             }
 
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 return;
             }
 
-            externalUI.WriteErrorLine(value);
+            _externalUI.WriteErrorLine(value);
         }
 
-        
-        
+
+
         /// <summary>
         /// 
         /// See base class
@@ -350,12 +350,12 @@ namespace System.Management.Automation.Internal.Host
                 return;
             }
 
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 return;
             }
 
-            externalUI.WriteLine(foregroundColor, backgroundColor, value);
+            _externalUI.WriteLine(foregroundColor, backgroundColor, value);
         }
 
 
@@ -386,12 +386,12 @@ namespace System.Management.Automation.Internal.Host
         {
             WriteDebugInfoBuffers(record);
 
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 return;
             }
 
-            externalUI.WriteDebugLine(record.Message);
+            _externalUI.WriteDebugLine(record.Message);
         }
 
         /// <summary>
@@ -400,9 +400,9 @@ namespace System.Management.Automation.Internal.Host
         /// <param name="record">DebugRecord</param>
         internal void WriteDebugInfoBuffers(DebugRecord record)
         {
-            if (informationalBuffers != null)
+            if (_informationalBuffers != null)
             {
-                informationalBuffers.AddDebug(record);
+                _informationalBuffers.AddDebug(record);
             }
         }
 
@@ -490,7 +490,7 @@ namespace System.Management.Automation.Internal.Host
         /// </remarks>
         internal void SetInformationalMessageBuffers(PSInformationalBuffers informationalBuffers)
         {
-            this.informationalBuffers = informationalBuffers;
+            _informationalBuffers = informationalBuffers;
         }
 
         /// <summary>
@@ -499,11 +499,11 @@ namespace System.Management.Automation.Internal.Host
         /// <returns>informational message buffers</returns>
         internal PSInformationalBuffers GetInformationalMessageBuffers()
         {
-            return informationalBuffers;
+            return _informationalBuffers;
         }
 
-        private 
-        void 
+        private
+        void
         WriteDebugLineHelper(string message)
         {
             if (message == null)
@@ -557,9 +557,9 @@ namespace System.Management.Automation.Internal.Host
 
                 switch (
                     PromptForChoice(
-                        InternalHostUserInterfaceStrings.ShouldContinuePromptMessage, 
-                        message, 
-                        choices, 
+                        InternalHostUserInterfaceStrings.ShouldContinuePromptMessage,
+                        message,
+                        choices,
                         0))
                 {
                     case 0:
@@ -587,12 +587,12 @@ namespace System.Management.Automation.Internal.Host
                     case 4:
                         // This call returns when the user exits the nested prompt.
 
-                        parent.EnterNestedPrompt();
+                        _parent.EnterNestedPrompt();
                         endLoop = false;
                         break;
                 }//switch
             } while (endLoop != true);
-            
+
             return shouldContinue;
         }
 
@@ -620,17 +620,17 @@ namespace System.Management.Automation.Internal.Host
             }
 
             // Write to Information Buffers
-            if (null != informationalBuffers)
+            if (null != _informationalBuffers)
             {
-                informationalBuffers.AddProgress(record);
+                _informationalBuffers.AddProgress(record);
             }
 
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 return;
             }
 
-            externalUI.WriteProgress(sourceId, record);
+            _externalUI.WriteProgress(sourceId, record);
         }
 
 
@@ -666,12 +666,12 @@ namespace System.Management.Automation.Internal.Host
         {
             WriteVerboseInfoBuffers(record);
 
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 return;
             }
 
-            externalUI.WriteVerboseLine(record.Message);
+            _externalUI.WriteVerboseLine(record.Message);
         }
 
         /// <summary>
@@ -680,9 +680,9 @@ namespace System.Management.Automation.Internal.Host
         /// <param name="record">VerboseRecord</param>
         internal void WriteVerboseInfoBuffers(VerboseRecord record)
         {
-            if (informationalBuffers != null)
+            if (_informationalBuffers != null)
             {
-                informationalBuffers.AddVerbose(record);
+                _informationalBuffers.AddVerbose(record);
             }
         }
 
@@ -715,12 +715,12 @@ namespace System.Management.Automation.Internal.Host
         {
             WriteWarningInfoBuffers(record);
 
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 return;
             }
 
-            externalUI.WriteWarningLine(record.Message);
+            _externalUI.WriteWarningLine(record.Message);
         }
 
         /// <summary>
@@ -729,9 +729,9 @@ namespace System.Management.Automation.Internal.Host
         /// <param name="record">WarningRecord</param>
         internal void WriteWarningInfoBuffers(WarningRecord record)
         {
-            if (informationalBuffers != null)
+            if (_informationalBuffers != null)
             {
-                informationalBuffers.AddWarning(record);
+                _informationalBuffers.AddWarning(record);
             }
         }
 
@@ -742,12 +742,12 @@ namespace System.Management.Automation.Internal.Host
         {
             WriteInformationInfoBuffers(record);
 
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 return;
             }
 
-            externalUI.WriteInformation(record);
+            _externalUI.WriteInformation(record);
         }
 
         /// <summary>
@@ -756,9 +756,9 @@ namespace System.Management.Automation.Internal.Host
         /// <param name="record">WarningRecord</param>
         internal void WriteInformationInfoBuffers(InformationRecord record)
         {
-            if (informationalBuffers != null)
+            if (_informationalBuffers != null)
             {
-                informationalBuffers.AddInformation(record);
+                _informationalBuffers.AddInformation(record);
             }
         }
 
@@ -818,7 +818,7 @@ namespace System.Management.Automation.Internal.Host
         /// </exception>
 
         public override
-        Dictionary<String,PSObject>
+        Dictionary<String, PSObject>
         Prompt(string caption, string message, Collection<FieldDescription> descriptions)
         {
             if (descriptions == null)
@@ -831,22 +831,22 @@ namespace System.Management.Automation.Internal.Host
                 throw PSTraceSource.NewArgumentException("descriptions", InternalHostUserInterfaceStrings.PromptEmptyDescriptionsError, "descriptions");
             }
 
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 ThrowPromptNotInteractive(message);
             }
 
-            Dictionary<String,PSObject> result = null;
+            Dictionary<String, PSObject> result = null;
 
             try
             {
-                result = externalUI.Prompt(caption, message, descriptions);
+                result = _externalUI.Prompt(caption, message, descriptions);
             }
             catch (PipelineStoppedException)
             {
                 //PipelineStoppedException is thrown by host when it wants 
                 //to stop the pipeline. 
-                LocalPipeline lpl = (LocalPipeline) ((RunspaceBase) this.parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
                     throw;
@@ -881,7 +881,7 @@ namespace System.Management.Automation.Internal.Host
         int
         PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, int defaultChoice)
         {
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 ThrowPromptNotInteractive(message);
             }
@@ -889,13 +889,13 @@ namespace System.Management.Automation.Internal.Host
             int result = -1;
             try
             {
-                result = externalUI.PromptForChoice(caption, message, choices, defaultChoice);
+                result = _externalUI.PromptForChoice(caption, message, choices, defaultChoice);
             }
             catch (PipelineStoppedException)
             {
                 //PipelineStoppedException is thrown by host when it wants 
                 //to stop the pipeline. 
-                LocalPipeline lpl = (LocalPipeline) ((RunspaceBase) this.parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
                     throw;
@@ -931,13 +931,13 @@ namespace System.Management.Automation.Internal.Host
             Collection<ChoiceDescription> choices,
             IEnumerable<int> defaultChoices)
         {
-            if (externalUI == null)
+            if (_externalUI == null)
             {
                 ThrowPromptNotInteractive(message);
             }
 
             IHostUISupportsMultipleChoiceSelection hostForMultipleChoices =
-                externalUI as IHostUISupportsMultipleChoiceSelection;
+                _externalUI as IHostUISupportsMultipleChoiceSelection;
 
             Collection<int> result = null;
             try
@@ -959,7 +959,7 @@ namespace System.Management.Automation.Internal.Host
             {
                 //PipelineStoppedException is thrown by host when it wants 
                 //to stop the pipeline. 
-                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)this.parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
                     throw;
@@ -989,7 +989,7 @@ namespace System.Management.Automation.Internal.Host
             Collection<ChoiceDescription> choices,
             IEnumerable<int> defaultChoices)
         {
-            Dbg.Assert(null != externalUI, "externalUI cannot be null.");
+            Dbg.Assert(null != _externalUI, "externalUI cannot be null.");
 
             if (choices == null)
             {
@@ -1094,8 +1094,8 @@ namespace System.Management.Automation.Internal.Host
             {
                 string choiceMsg = StringUtil.Format(InternalHostUserInterfaceStrings.ChoiceMessage, choicesSelected);
                 messageToBeDisplayed += choiceMsg;
-                externalUI.WriteLine(messageToBeDisplayed);
-                string response = externalUI.ReadLine();
+                _externalUI.WriteLine(messageToBeDisplayed);
+                string response = _externalUI.ReadLine();
 
                 // they just hit enter
                 if (response.Length == 0)
@@ -1131,11 +1131,10 @@ namespace System.Management.Automation.Internal.Host
             return result;
         }
 
-        private PSHostUserInterface externalUI = null;
-        private InternalHostRawUserInterface internalRawUI = null;
-        private InternalHost parent = null;
-        private PSInformationalBuffers informationalBuffers = null;
+        private PSHostUserInterface _externalUI = null;
+        private InternalHostRawUserInterface _internalRawUI = null;
+        private InternalHost _parent = null;
+        private PSInformationalBuffers _informationalBuffers = null;
     }
-    
 }  // namespace 
 

@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using Microsoft.PowerShell.Activities;
 using System.Management.Automation;
 using System.Activities;
@@ -28,9 +29,9 @@ namespace Microsoft.PowerShell.Security.Activities
         /// Gets the fully qualified name of the command invoked by this activity.
         /// </summary>
         public override string PSCommandName { get { return "Microsoft.PowerShell.Security\\ConvertFrom-SecureString"; } }
-        
+
         // Arguments
-        
+
         /// <summary>
         /// Provides access to the SecureString parameter.
         /// </summary>
@@ -54,10 +55,10 @@ namespace Microsoft.PowerShell.Security.Activities
 
 
         // Module defining this command
-        
+
 
         // Optional custom code for this activity
-        
+
 
         /// <summary>
         /// Returns a configured instance of System.Management.Automation.PowerShell, pre-populated with the command to run.
@@ -71,18 +72,18 @@ namespace Microsoft.PowerShell.Security.Activities
             System.Management.Automation.PowerShell targetCommand = invoker.AddCommand(PSCommandName);
 
             // Initialize the arguments
-            
-            if(SecureString.Expression != null)
+
+            if (SecureString.Expression != null)
             {
                 targetCommand.AddParameter("SecureString", SecureString.Get(context));
             }
 
-            if(SecureKey.Expression != null)
+            if (SecureKey.Expression != null)
             {
                 targetCommand.AddParameter("SecureKey", SecureKey.Get(context));
             }
 
-            if(Key.Expression != null)
+            if (Key.Expression != null)
             {
                 targetCommand.AddParameter("Key", Key.Get(context));
             }

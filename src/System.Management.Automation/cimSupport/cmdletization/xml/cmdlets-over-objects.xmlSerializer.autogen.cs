@@ -2,7 +2,6 @@
 //
 // This file has been generated 
 // by D:\bluedev\admin\monad\src\cimSupport\cmdletization\xml\generate.ps1
-// based on the following input file: d:\bluedev\admin\monad\src\cimSupport\cmdletization\xml\cmdlets-over-objects.xsd
 // 
 // Generation timestamp: 10/21/2013 18:29:23
 
@@ -14,14 +13,16 @@
 #endif
 
 
-namespace Microsoft.PowerShell.Cmdletization.Xml {
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-    internal class XmlSerializationWriter1 : System.Xml.Serialization.XmlSerializationWriter {
-
-        public void Write50_PowerShellMetadata(object o) {
+namespace Microsoft.PowerShell.Cmdletization.Xml
+{
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal class XmlSerializationWriter1 : System.Xml.Serialization.XmlSerializationWriter
+    {
+        public void Write50_PowerShellMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteEmptyTag(@"PowerShellMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                 return;
             }
@@ -29,9 +30,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write39_PowerShellMetadata(@"PowerShellMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata)o), false, false);
         }
 
-        public void Write51_ClassMetadata(object o) {
+        public void Write51_ClassMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"ClassMetadata", @"");
                 return;
             }
@@ -39,9 +42,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write36_ClassMetadata(@"ClassMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata)o), true, false);
         }
 
-        public void Write52_ClassMetadataInstanceCmdlets(object o) {
+        public void Write52_ClassMetadataInstanceCmdlets(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"ClassMetadataInstanceCmdlets", @"");
                 return;
             }
@@ -49,9 +54,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write40_ClassMetadataInstanceCmdlets(@"ClassMetadataInstanceCmdlets", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets)o), true, false);
         }
 
-        public void Write53_GetCmdletParameters(object o) {
+        public void Write53_GetCmdletParameters(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"GetCmdletParameters", @"");
                 return;
             }
@@ -59,9 +66,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write19_GetCmdletParameters(@"GetCmdletParameters", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters)o), true, false);
         }
 
-        public void Write54_PropertyMetadata(object o) {
+        public void Write54_PropertyMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"PropertyMetadata", @"");
                 return;
             }
@@ -69,9 +78,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write15_PropertyMetadata(@"PropertyMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata)o), true, false);
         }
 
-        public void Write55_TypeMetadata(object o) {
+        public void Write55_TypeMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"TypeMetadata", @"");
                 return;
             }
@@ -79,9 +90,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write2_TypeMetadata(@"TypeMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata)o), true, false);
         }
 
-        public void Write56_Association(object o) {
+        public void Write56_Association(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"Association", @"");
                 return;
             }
@@ -89,9 +102,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write17_Association(@"Association", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.Association)o), true, false);
         }
 
-        public void Write57_AssociationAssociatedInstance(object o) {
+        public void Write57_AssociationAssociatedInstance(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"AssociationAssociatedInstance", @"");
                 return;
             }
@@ -99,9 +114,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write41_AssociationAssociatedInstance(@"AssociationAssociatedInstance", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance)o), true, false);
         }
 
-        public void Write58_CmdletParameterMetadata(object o) {
+        public void Write58_CmdletParameterMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"CmdletParameterMetadata", @"");
                 return;
             }
@@ -109,9 +126,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write10_CmdletParameterMetadata(@"CmdletParameterMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata)o), true, false);
         }
 
-        public void Write59_Item(object o) {
+        public void Write59_Item(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"CmdletParameterMetadataForGetCmdletParameter", @"");
                 return;
             }
@@ -119,9 +138,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write11_Item(@"CmdletParameterMetadataForGetCmdletParameter", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter)o), true, false);
         }
 
-        public void Write60_Item(object o) {
+        public void Write60_Item(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"CmdletParameterMetadataForGetCmdletFilteringParameter", @"");
                 return;
             }
@@ -129,9 +150,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write12_Item(@"CmdletParameterMetadataForGetCmdletFilteringParameter", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)o), true, false);
         }
 
-        public void Write61_Item(object o) {
+        public void Write61_Item(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"CmdletParameterMetadataValidateCount", @"");
                 return;
             }
@@ -139,9 +162,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write42_Item(@"CmdletParameterMetadataValidateCount", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount)o), true, false);
         }
 
-        public void Write62_Item(object o) {
+        public void Write62_Item(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"CmdletParameterMetadataValidateLength", @"");
                 return;
             }
@@ -149,9 +174,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write43_Item(@"CmdletParameterMetadataValidateLength", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength)o), true, false);
         }
 
-        public void Write63_Item(object o) {
+        public void Write63_Item(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"CmdletParameterMetadataValidateRange", @"");
                 return;
             }
@@ -159,9 +186,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write44_Item(@"CmdletParameterMetadataValidateRange", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)o), true, false);
         }
 
-        public void Write64_ObsoleteAttributeMetadata(object o) {
+        public void Write64_ObsoleteAttributeMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"ObsoleteAttributeMetadata", @"");
                 return;
             }
@@ -169,9 +198,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write7_ObsoleteAttributeMetadata(@"ObsoleteAttributeMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)o), true, false);
         }
 
-        public void Write65_Item(object o) {
+        public void Write65_Item(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"CmdletParameterMetadataForInstanceMethodParameter", @"");
                 return;
             }
@@ -179,9 +210,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write9_Item(@"CmdletParameterMetadataForInstanceMethodParameter", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter)o), true, false);
         }
 
-        public void Write66_Item(object o) {
+        public void Write66_Item(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"CmdletParameterMetadataForStaticMethodParameter", @"");
                 return;
             }
@@ -189,9 +222,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write8_Item(@"CmdletParameterMetadataForStaticMethodParameter", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter)o), true, false);
         }
 
-        public void Write67_QueryOption(object o) {
+        public void Write67_QueryOption(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"QueryOption", @"");
                 return;
             }
@@ -199,9 +234,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write18_QueryOption(@"QueryOption", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption)o), true, false);
         }
 
-        public void Write68_GetCmdletMetadata(object o) {
+        public void Write68_GetCmdletMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"GetCmdletMetadata", @"");
                 return;
             }
@@ -209,9 +246,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write22_GetCmdletMetadata(@"GetCmdletMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata)o), true, false);
         }
 
-        public void Write69_CommonCmdletMetadata(object o) {
+        public void Write69_CommonCmdletMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"CommonCmdletMetadata", @"");
                 return;
             }
@@ -219,18 +258,22 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write21_CommonCmdletMetadata(@"CommonCmdletMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata)o), true, false);
         }
 
-        public void Write70_ConfirmImpact(object o) {
+        public void Write70_ConfirmImpact(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteEmptyTag(@"ConfirmImpact", @"");
                 return;
             }
             WriteElementString(@"ConfirmImpact", @"", Write20_ConfirmImpact(((global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact)o)));
         }
 
-        public void Write71_StaticCmdletMetadata(object o) {
+        public void Write71_StaticCmdletMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"StaticCmdletMetadata", @"");
                 return;
             }
@@ -238,9 +281,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write34_StaticCmdletMetadata(@"StaticCmdletMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata)o), true, false);
         }
 
-        public void Write72_Item(object o) {
+        public void Write72_Item(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"StaticCmdletMetadataCmdletMetadata", @"");
                 return;
             }
@@ -248,9 +293,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write45_Item(@"StaticCmdletMetadataCmdletMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata)o), true, false);
         }
 
-        public void Write73_CommonMethodMetadata(object o) {
+        public void Write73_CommonMethodMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"CommonMethodMetadata", @"");
                 return;
             }
@@ -258,9 +305,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write29_CommonMethodMetadata(@"CommonMethodMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata)o), true, false);
         }
 
-        public void Write74_StaticMethodMetadata(object o) {
+        public void Write74_StaticMethodMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"StaticMethodMetadata", @"");
                 return;
             }
@@ -268,9 +317,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write28_StaticMethodMetadata(@"StaticMethodMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata)o), true, false);
         }
 
-        public void Write75_CommonMethodParameterMetadata(object o) {
+        public void Write75_CommonMethodParameterMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"CommonMethodParameterMetadata", @"");
                 return;
             }
@@ -278,9 +329,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write26_CommonMethodParameterMetadata(@"CommonMethodParameterMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata)o), true, false);
         }
 
-        public void Write76_StaticMethodParameterMetadata(object o) {
+        public void Write76_StaticMethodParameterMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"StaticMethodParameterMetadata", @"");
                 return;
             }
@@ -288,9 +341,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write27_StaticMethodParameterMetadata(@"StaticMethodParameterMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)o), true, false);
         }
 
-        public void Write77_CmdletOutputMetadata(object o) {
+        public void Write77_CmdletOutputMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"CmdletOutputMetadata", @"");
                 return;
             }
@@ -298,9 +353,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write23_CmdletOutputMetadata(@"CmdletOutputMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata)o), true, false);
         }
 
-        public void Write78_Item(object o) {
+        public void Write78_Item(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"InstanceMethodParameterMetadata", @"");
                 return;
             }
@@ -308,9 +365,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write25_Item(@"InstanceMethodParameterMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)o), true, false);
         }
 
-        public void Write79_Item(object o) {
+        public void Write79_Item(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"CommonMethodMetadataReturnValue", @"");
                 return;
             }
@@ -318,9 +377,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write46_Item(@"CommonMethodMetadataReturnValue", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue)o), true, false);
         }
 
-        public void Write80_InstanceMethodMetadata(object o) {
+        public void Write80_InstanceMethodMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"InstanceMethodMetadata", @"");
                 return;
             }
@@ -328,9 +389,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write30_InstanceMethodMetadata(@"InstanceMethodMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata)o), true, false);
         }
 
-        public void Write81_InstanceCmdletMetadata(object o) {
+        public void Write81_InstanceCmdletMetadata(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"InstanceCmdletMetadata", @"");
                 return;
             }
@@ -338,9 +401,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write31_InstanceCmdletMetadata(@"InstanceCmdletMetadata", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata)o), true, false);
         }
 
-        public void Write82_PropertyQuery(object o) {
+        public void Write82_PropertyQuery(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"PropertyQuery", @"");
                 return;
             }
@@ -348,9 +413,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write14_PropertyQuery(@"PropertyQuery", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)o), true, false);
         }
 
-        public void Write83_WildcardablePropertyQuery(object o) {
+        public void Write83_WildcardablePropertyQuery(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"WildcardablePropertyQuery", @"");
                 return;
             }
@@ -358,18 +425,22 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write13_WildcardablePropertyQuery(@"WildcardablePropertyQuery", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)o), true, false);
         }
 
-        public void Write84_ItemsChoiceType(object o) {
+        public void Write84_ItemsChoiceType(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteEmptyTag(@"ItemsChoiceType", @"");
                 return;
             }
             WriteElementString(@"ItemsChoiceType", @"", Write3_ItemsChoiceType(((global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType)o)));
         }
 
-        public void Write85_ClassMetadataData(object o) {
+        public void Write85_ClassMetadataData(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"ClassMetadataData", @"");
                 return;
             }
@@ -377,9 +448,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write47_ClassMetadataData(@"ClassMetadataData", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData)o), true, false);
         }
 
-        public void Write86_EnumMetadataEnum(object o) {
+        public void Write86_EnumMetadataEnum(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"EnumMetadataEnum", @"");
                 return;
             }
@@ -387,9 +460,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write48_EnumMetadataEnum(@"EnumMetadataEnum", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum)o), true, false);
         }
 
-        public void Write87_EnumMetadataEnumValue(object o) {
+        public void Write87_EnumMetadataEnumValue(object o)
+        {
             WriteStartDocument();
-            if (o == null) {
+            if (o == null)
+            {
                 WriteNullTagLiteral(@"EnumMetadataEnumValue", @"");
                 return;
             }
@@ -397,16 +472,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write49_EnumMetadataEnumValue(@"EnumMetadataEnumValue", @"", ((global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue)o), true, false);
         }
 
-        void Write49_EnumMetadataEnumValue(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write49_EnumMetadataEnumValue(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -417,16 +497,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write48_EnumMetadataEnum(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write48_EnumMetadataEnum(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -434,32 +519,41 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             if (needType) WriteXsiType(@"EnumMetadataEnum", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
             WriteAttribute(@"EnumName", @"", ((global::System.String)o.@EnumName));
             WriteAttribute(@"UnderlyingType", @"", ((global::System.String)o.@UnderlyingType));
-            if (o.@BitwiseFlagsSpecified) {
+            if (o.@BitwiseFlagsSpecified)
+            {
                 WriteAttribute(@"BitwiseFlags", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@BitwiseFlags)));
             }
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])o.@Value;
-                if (a != null) {
-                    for (int ia = 0; ia < a.Length; ia++) {
+                if (a != null)
+                {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         Write37_EnumMetadataEnumValue(@"Value", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue)a[ia]), false, false);
                     }
                 }
             }
-            if (o.@BitwiseFlagsSpecified) {
+            if (o.@BitwiseFlagsSpecified)
+            {
             }
             WriteEndElement(o);
         }
 
-        void Write37_EnumMetadataEnumValue(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write37_EnumMetadataEnumValue(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -470,31 +564,39 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write47_ClassMetadataData(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write47_ClassMetadataData(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
             WriteStartElement(n, ns, o, false, null);
             if (needType) WriteXsiType(@"ClassMetadataData", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
             WriteAttribute(@"Name", @"", ((global::System.String)o.@Name));
-            if ((object)(o.@Value) != null){
+            if ((object)(o.@Value) != null)
+            {
                 WriteValue(((global::System.String)o.@Value));
             }
             WriteEndElement(o);
         }
 
-        string Write3_ItemsChoiceType(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType v) {
+        private string Write3_ItemsChoiceType(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType v)
+        {
             string s = null;
-            switch (v) {
+            switch (v)
+            {
                 case global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@ExcludeQuery: s = @"ExcludeQuery"; break;
                 case global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MaxValueQuery: s = @"MaxValueQuery"; break;
                 case global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MinValueQuery: s = @"MinValueQuery"; break;
@@ -504,53 +606,68 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             return s;
         }
 
-        void Write13_WildcardablePropertyQuery(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write13_WildcardablePropertyQuery(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
             WriteStartElement(n, ns, o, false, null);
             if (needType) WriteXsiType(@"WildcardablePropertyQuery", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
-            if (o.@AllowGlobbingSpecified) {
+            if (o.@AllowGlobbingSpecified)
+            {
                 WriteAttribute(@"AllowGlobbing", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@AllowGlobbing)));
             }
             Write12_Item(@"CmdletParameterMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)o.@CmdletParameterMetadata), false, false);
-            if (o.@AllowGlobbingSpecified) {
+            if (o.@AllowGlobbingSpecified)
+            {
             }
             WriteEndElement(o);
         }
 
-        void Write12_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write12_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
             WriteStartElement(n, ns, o, false, null);
             if (needType) WriteXsiType(@"CmdletParameterMetadataForGetCmdletFilteringParameter", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
-            if (o.@IsMandatorySpecified) {
+            if (o.@IsMandatorySpecified)
+            {
                 WriteAttribute(@"IsMandatory", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@IsMandatory)));
             }
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null) {
+                if (a != null)
+                {
                     Writer.WriteStartAttribute(null, @"Aliases", @"");
-                    for (int i = 0; i < a.Length; i++) {
+                    for (int i = 0; i < a.Length; i++)
+                    {
                         global::System.String ai = (global::System.String)a[i];
                         if (i != 0) Writer.WriteString(" ");
                         WriteValue(ai);
@@ -560,17 +677,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             }
             WriteAttribute(@"PSName", @"", ((global::System.String)o.@PSName));
             WriteAttribute(@"Position", @"", ((global::System.String)o.@Position));
-            if (o.@ValueFromPipelineSpecified) {
+            if (o.@ValueFromPipelineSpecified)
+            {
                 WriteAttribute(@"ValueFromPipeline", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@ValueFromPipeline)));
             }
-            if (o.@ValueFromPipelineByPropertyNameSpecified) {
+            if (o.@ValueFromPipelineByPropertyNameSpecified)
+            {
                 WriteAttribute(@"ValueFromPipelineByPropertyName", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@ValueFromPipelineByPropertyName)));
             }
             {
                 global::System.String[] a = (global::System.String[])o.@CmdletParameterSets;
-                if (a != null) {
+                if (a != null)
+                {
                     Writer.WriteStartAttribute(null, @"CmdletParameterSets", @"");
-                    for (int i = 0; i < a.Length; i++) {
+                    for (int i = 0; i < a.Length; i++)
+                    {
                         global::System.String ai = (global::System.String)a[i];
                         if (i != 0) Writer.WriteString(" ");
                         WriteValue(ai);
@@ -578,7 +699,8 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
                     Writer.WriteEndAttribute();
                 }
             }
-            if (o.@ErrorOnNoMatchSpecified) {
+            if (o.@ErrorOnNoMatchSpecified)
+            {
                 WriteAttribute(@"ErrorOnNoMatch", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@ErrorOnNoMatch)));
             }
             Write1_Object(@"AllowEmptyCollection", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::System.Object)o.@AllowEmptyCollection), false, false);
@@ -591,36 +713,47 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write6_Item(@"ValidateRange", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)o.@ValidateRange), false, false);
             {
                 global::System.String[] a = (global::System.String[])((global::System.String[])o.@ValidateSet);
-                if (a != null){
+                if (a != null)
+                {
                     WriteStartElement(@"ValidateSet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
-                    for (int ia = 0; ia < a.Length; ia++) {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         WriteElementString(@"AllowedValue", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::System.String)a[ia]));
                     }
                     WriteEndElement();
                 }
             }
             Write7_ObsoleteAttributeMetadata(@"Obsolete", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)o.@Obsolete), false, false);
-            if (o.@IsMandatorySpecified) {
+            if (o.@IsMandatorySpecified)
+            {
             }
-            if (o.@ValueFromPipelineSpecified) {
+            if (o.@ValueFromPipelineSpecified)
+            {
             }
-            if (o.@ValueFromPipelineByPropertyNameSpecified) {
+            if (o.@ValueFromPipelineByPropertyNameSpecified)
+            {
             }
-            if (o.@ErrorOnNoMatchSpecified) {
+            if (o.@ErrorOnNoMatchSpecified)
+            {
             }
             WriteEndElement(o);
         }
 
-        void Write7_ObsoleteAttributeMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write7_ObsoleteAttributeMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -630,16 +763,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write6_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write6_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -650,16 +788,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write5_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write5_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -670,16 +813,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write4_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write4_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -690,169 +838,212 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write1_Object(string n, string ns, global::System.Object o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write1_Object(string n, string ns, global::System.Object o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::System.Object)) {
+                if (t == typeof(global::System.Object))
+                {
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue)) {
-                    Write49_EnumMetadataEnumValue(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue))
+                {
+                    Write49_EnumMetadataEnumValue(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum)) {
-                    Write48_EnumMetadataEnum(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum))
+                {
+                    Write48_EnumMetadataEnum(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData)) {
-                    Write47_ClassMetadataData(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData))
+                {
+                    Write47_ClassMetadataData(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue)) {
-                    Write46_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue))
+                {
+                    Write46_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)) {
-                    Write44_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange))
+                {
+                    Write44_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength)) {
-                    Write43_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength))
+                {
+                    Write43_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount)) {
-                    Write42_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount))
+                {
+                    Write42_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance)) {
-                    Write41_AssociationAssociatedInstance(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance))
+                {
+                    Write41_AssociationAssociatedInstance(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets)) {
-                    Write40_ClassMetadataInstanceCmdlets(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets))
+                {
+                    Write40_ClassMetadataInstanceCmdlets(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata)) {
-                    Write36_ClassMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata))
+                {
+                    Write36_ClassMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata)) {
-                    Write34_StaticCmdletMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata))
+                {
+                    Write34_StaticCmdletMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata)) {
-                    Write31_InstanceCmdletMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata))
+                {
+                    Write31_InstanceCmdletMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata)) {
-                    Write26_CommonMethodParameterMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata))
+                {
+                    Write26_CommonMethodParameterMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)) {
-                    Write27_StaticMethodParameterMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata))
+                {
+                    Write27_StaticMethodParameterMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)) {
-                    Write25_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata))
+                {
+                    Write25_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata)) {
-                    Write29_CommonMethodMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata))
+                {
+                    Write29_CommonMethodMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata)) {
-                    Write30_InstanceMethodMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata))
+                {
+                    Write30_InstanceMethodMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata)) {
-                    Write28_StaticMethodMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata))
+                {
+                    Write28_StaticMethodMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata)) {
-                    Write23_CmdletOutputMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata))
+                {
+                    Write23_CmdletOutputMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata)) {
-                    Write22_GetCmdletMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata))
+                {
+                    Write22_GetCmdletMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata)) {
-                    Write21_CommonCmdletMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata))
+                {
+                    Write21_CommonCmdletMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata)) {
-                    Write45_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata))
+                {
+                    Write45_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters)) {
-                    Write19_GetCmdletParameters(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters))
+                {
+                    Write19_GetCmdletParameters(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption)) {
-                    Write18_QueryOption(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption))
+                {
+                    Write18_QueryOption(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association)) {
-                    Write17_Association(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.Association)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association))
+                {
+                    Write17_Association(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.Association)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata)) {
-                    Write15_PropertyMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata))
+                {
+                    Write15_PropertyMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)) {
-                    Write14_PropertyQuery(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery))
+                {
+                    Write14_PropertyQuery(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)) {
-                    Write13_WildcardablePropertyQuery(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery))
+                {
+                    Write13_WildcardablePropertyQuery(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata)) {
-                    Write10_CmdletParameterMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata))
+                {
+                    Write10_CmdletParameterMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter)) {
-                    Write11_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter))
+                {
+                    Write11_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)) {
-                    Write12_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter))
+                {
+                    Write12_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter)) {
-                    Write9_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter))
+                {
+                    Write9_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter)) {
-                    Write8_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter))
+                {
+                    Write8_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)) {
-                    Write7_ObsoleteAttributeMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata))
+                {
+                    Write7_ObsoleteAttributeMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata)) {
-                    Write2_TypeMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata))
+                {
+                    Write2_TypeMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType)) {
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType))
+                {
                     Writer.WriteStartElement(n, ns);
                     WriteXsiType(@"ItemsChoiceType", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     Writer.WriteString(Write3_ItemsChoiceType((global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType)o));
                     Writer.WriteEndElement();
                     return;
                 }
-                else if (t == typeof(global::System.String[])) {
+                else if (t == typeof(global::System.String[]))
+                {
                     Writer.WriteStartElement(n, ns);
                     WriteXsiType(@"ArrayOfString", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::System.String[] a = (global::System.String[])o;
-                        if (a != null) {
-                            for (int ia = 0; ia < a.Length; ia++) {
+                        if (a != null)
+                        {
+                            for (int ia = 0; ia < a.Length; ia++)
+                            {
                                 WriteElementString(@"AllowedValue", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::System.String)a[ia]));
                             }
                         }
@@ -860,13 +1051,16 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
                     Writer.WriteEndElement();
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])) {
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[]))
+                {
                     Writer.WriteStartElement(n, ns);
                     WriteXsiType(@"ArrayOfPropertyMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])o;
-                        if (a != null) {
-                            for (int ia = 0; ia < a.Length; ia++) {
+                        if (a != null)
+                        {
+                            for (int ia = 0; ia < a.Length; ia++)
+                            {
                                 Write15_PropertyMetadata(@"Property", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata)a[ia]), false, false);
                             }
                         }
@@ -874,13 +1068,16 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
                     Writer.WriteEndElement();
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association[])) {
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association[]))
+                {
                     Writer.WriteStartElement(n, ns);
                     WriteXsiType(@"ArrayOfAssociation", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.Association[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.Association[])o;
-                        if (a != null) {
-                            for (int ia = 0; ia < a.Length; ia++) {
+                        if (a != null)
+                        {
+                            for (int ia = 0; ia < a.Length; ia++)
+                            {
                                 Write17_Association(@"Association", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.Association)a[ia]), false, false);
                             }
                         }
@@ -888,13 +1085,16 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
                     Writer.WriteEndElement();
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])) {
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[]))
+                {
                     Writer.WriteStartElement(n, ns);
                     WriteXsiType(@"ArrayOfQueryOption", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])o;
-                        if (a != null) {
-                            for (int ia = 0; ia < a.Length; ia++) {
+                        if (a != null)
+                        {
+                            for (int ia = 0; ia < a.Length; ia++)
+                            {
                                 Write18_QueryOption(@"Option", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption)a[ia]), false, false);
                             }
                         }
@@ -902,20 +1102,24 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
                     Writer.WriteEndElement();
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact)) {
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact))
+                {
                     Writer.WriteStartElement(n, ns);
                     WriteXsiType(@"ConfirmImpact", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     Writer.WriteString(Write20_ConfirmImpact((global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact)o));
                     Writer.WriteEndElement();
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])) {
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[]))
+                {
                     Writer.WriteStartElement(n, ns);
                     WriteXsiType(@"ArrayOfStaticMethodParameterMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])o;
-                        if (a != null) {
-                            for (int ia = 0; ia < a.Length; ia++) {
+                        if (a != null)
+                        {
+                            for (int ia = 0; ia < a.Length; ia++)
+                            {
                                 Write27_StaticMethodParameterMetadata(@"Parameter", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)a[ia]), false, false);
                             }
                         }
@@ -923,13 +1127,16 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
                     Writer.WriteEndElement();
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])) {
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[]))
+                {
                     Writer.WriteStartElement(n, ns);
                     WriteXsiType(@"ArrayOfInstanceMethodParameterMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])o;
-                        if (a != null) {
-                            for (int ia = 0; ia < a.Length; ia++) {
+                        if (a != null)
+                        {
+                            for (int ia = 0; ia < a.Length; ia++)
+                            {
                                 Write25_Item(@"Parameter", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)a[ia]), false, false);
                             }
                         }
@@ -937,13 +1144,16 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
                     Writer.WriteEndElement();
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])) {
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[]))
+                {
                     Writer.WriteStartElement(n, ns);
                     WriteXsiType(@"ArrayOfStaticCmdletMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])o;
-                        if (a != null) {
-                            for (int ia = 0; ia < a.Length; ia++) {
+                        if (a != null)
+                        {
+                            for (int ia = 0; ia < a.Length; ia++)
+                            {
                                 Write34_StaticCmdletMetadata(@"Cmdlet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata)a[ia]), false, false);
                             }
                         }
@@ -951,13 +1161,16 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
                     Writer.WriteEndElement();
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])) {
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[]))
+                {
                     Writer.WriteStartElement(n, ns);
                     WriteXsiType(@"ArrayOfClassMetadataData", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])o;
-                        if (a != null) {
-                            for (int ia = 0; ia < a.Length; ia++) {
+                        if (a != null)
+                        {
+                            for (int ia = 0; ia < a.Length; ia++)
+                            {
                                 Write35_ClassMetadataData(@"Data", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData)a[ia]), false, false);
                             }
                         }
@@ -965,13 +1178,16 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
                     Writer.WriteEndElement();
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])) {
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[]))
+                {
                     Writer.WriteStartElement(n, ns);
                     WriteXsiType(@"ArrayOfEnumMetadataEnum", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
                     {
                         global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])o;
-                        if (a != null) {
-                            for (int ia = 0; ia < a.Length; ia++) {
+                        if (a != null)
+                        {
+                            for (int ia = 0; ia < a.Length; ia++)
+                            {
                                 Write38_EnumMetadataEnum(@"Enum", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum)a[ia]), false, false);
                             }
                         }
@@ -979,7 +1195,8 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
                     Writer.WriteEndElement();
                     return;
                 }
-                else {
+                else
+                {
                     WriteTypedPrimitive(n, ns, o, true);
                     return;
                 }
@@ -988,16 +1205,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write38_EnumMetadataEnum(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write38_EnumMetadataEnum(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1005,54 +1227,69 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             if (needType) WriteXsiType(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
             WriteAttribute(@"EnumName", @"", ((global::System.String)o.@EnumName));
             WriteAttribute(@"UnderlyingType", @"", ((global::System.String)o.@UnderlyingType));
-            if (o.@BitwiseFlagsSpecified) {
+            if (o.@BitwiseFlagsSpecified)
+            {
                 WriteAttribute(@"BitwiseFlags", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@BitwiseFlags)));
             }
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])o.@Value;
-                if (a != null) {
-                    for (int ia = 0; ia < a.Length; ia++) {
+                if (a != null)
+                {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         Write37_EnumMetadataEnumValue(@"Value", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue)a[ia]), false, false);
                     }
                 }
             }
-            if (o.@BitwiseFlagsSpecified) {
+            if (o.@BitwiseFlagsSpecified)
+            {
             }
             WriteEndElement(o);
         }
 
-        void Write35_ClassMetadataData(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write35_ClassMetadataData(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
             WriteStartElement(n, ns, o, false, null);
             if (needType) WriteXsiType(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
             WriteAttribute(@"Name", @"", ((global::System.String)o.@Name));
-            if ((object)(o.@Value) != null){
+            if ((object)(o.@Value) != null)
+            {
                 WriteValue(((global::System.String)o.@Value));
             }
             WriteEndElement(o);
         }
 
-        void Write34_StaticCmdletMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write34_StaticCmdletMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1061,8 +1298,10 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write33_Item(@"CmdletMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata)o.@CmdletMetadata), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata[])o.@Method;
-                if (a != null) {
-                    for (int ia = 0; ia < a.Length; ia++) {
+                if (a != null)
+                {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         Write28_StaticMethodMetadata(@"Method", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata)a[ia]), false, false);
                     }
                 }
@@ -1070,16 +1309,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write28_StaticMethodMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write28_StaticMethodMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1090,9 +1334,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write24_Item(@"ReturnValue", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue)o.@ReturnValue), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])((global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])o.@Parameters);
-                if (a != null){
+                if (a != null)
+                {
                     WriteStartElement(@"Parameters", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
-                    for (int ia = 0; ia < a.Length; ia++) {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         Write27_StaticMethodParameterMetadata(@"Parameter", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)a[ia]), false, false);
                     }
                     WriteEndElement();
@@ -1101,16 +1347,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write27_StaticMethodParameterMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write27_StaticMethodParameterMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1124,16 +1375,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write23_CmdletOutputMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write23_CmdletOutputMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1144,29 +1400,37 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write8_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write8_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
             WriteStartElement(n, ns, o, false, null);
             if (needType) WriteXsiType(@"CmdletParameterMetadataForStaticMethodParameter", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
-            if (o.@IsMandatorySpecified) {
+            if (o.@IsMandatorySpecified)
+            {
                 WriteAttribute(@"IsMandatory", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@IsMandatory)));
             }
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null) {
+                if (a != null)
+                {
                     Writer.WriteStartAttribute(null, @"Aliases", @"");
-                    for (int i = 0; i < a.Length; i++) {
+                    for (int i = 0; i < a.Length; i++)
+                    {
                         global::System.String ai = (global::System.String)a[i];
                         if (i != 0) Writer.WriteString(" ");
                         WriteValue(ai);
@@ -1176,10 +1440,12 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             }
             WriteAttribute(@"PSName", @"", ((global::System.String)o.@PSName));
             WriteAttribute(@"Position", @"", ((global::System.String)o.@Position));
-            if (o.@ValueFromPipelineSpecified) {
+            if (o.@ValueFromPipelineSpecified)
+            {
                 WriteAttribute(@"ValueFromPipeline", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@ValueFromPipeline)));
             }
-            if (o.@ValueFromPipelineByPropertyNameSpecified) {
+            if (o.@ValueFromPipelineByPropertyNameSpecified)
+            {
                 WriteAttribute(@"ValueFromPipelineByPropertyName", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@ValueFromPipelineByPropertyName)));
             }
             Write1_Object(@"AllowEmptyCollection", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::System.Object)o.@AllowEmptyCollection), false, false);
@@ -1192,34 +1458,44 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write6_Item(@"ValidateRange", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)o.@ValidateRange), false, false);
             {
                 global::System.String[] a = (global::System.String[])((global::System.String[])o.@ValidateSet);
-                if (a != null){
+                if (a != null)
+                {
                     WriteStartElement(@"ValidateSet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
-                    for (int ia = 0; ia < a.Length; ia++) {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         WriteElementString(@"AllowedValue", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::System.String)a[ia]));
                     }
                     WriteEndElement();
                 }
             }
             Write7_ObsoleteAttributeMetadata(@"Obsolete", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)o.@Obsolete), false, false);
-            if (o.@IsMandatorySpecified) {
+            if (o.@IsMandatorySpecified)
+            {
             }
-            if (o.@ValueFromPipelineSpecified) {
+            if (o.@ValueFromPipelineSpecified)
+            {
             }
-            if (o.@ValueFromPipelineByPropertyNameSpecified) {
+            if (o.@ValueFromPipelineByPropertyNameSpecified)
+            {
             }
             WriteEndElement(o);
         }
 
-        void Write2_TypeMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write2_TypeMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1230,16 +1506,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write24_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write24_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1250,16 +1531,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write33_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write33_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1269,9 +1555,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteAttribute(@"Noun", @"", ((global::System.String)o.@Noun));
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null) {
+                if (a != null)
+                {
                     Writer.WriteStartAttribute(null, @"Aliases", @"");
-                    for (int i = 0; i < a.Length; i++) {
+                    for (int i = 0; i < a.Length; i++)
+                    {
                         global::System.String ai = (global::System.String)a[i];
                         if (i != 0) Writer.WriteString(" ");
                         WriteValue(ai);
@@ -1279,20 +1567,24 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
                     Writer.WriteEndAttribute();
                 }
             }
-            if (o.@ConfirmImpactSpecified) {
+            if (o.@ConfirmImpactSpecified)
+            {
                 WriteAttribute(@"ConfirmImpact", @"", Write20_ConfirmImpact(((global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact)o.@ConfirmImpact)));
             }
             WriteAttribute(@"HelpUri", @"", ((global::System.String)o.@HelpUri));
             WriteAttribute(@"DefaultCmdletParameterSet", @"", ((global::System.String)o.@DefaultCmdletParameterSet));
             Write7_ObsoleteAttributeMetadata(@"Obsolete", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)o.@Obsolete), false, false);
-            if (o.@ConfirmImpactSpecified) {
+            if (o.@ConfirmImpactSpecified)
+            {
             }
             WriteEndElement(o);
         }
 
-        string Write20_ConfirmImpact(global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact v) {
+        private string Write20_ConfirmImpact(global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact v)
+        {
             string s = null;
-            switch (v) {
+            switch (v)
+            {
                 case global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact.@None: s = @"None"; break;
                 case global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact.@Low: s = @"Low"; break;
                 case global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact.@Medium: s = @"Medium"; break;
@@ -1302,16 +1594,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             return s;
         }
 
-        void Write25_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write25_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1325,29 +1622,37 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write9_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write9_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
             WriteStartElement(n, ns, o, false, null);
             if (needType) WriteXsiType(@"CmdletParameterMetadataForInstanceMethodParameter", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
-            if (o.@IsMandatorySpecified) {
+            if (o.@IsMandatorySpecified)
+            {
                 WriteAttribute(@"IsMandatory", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@IsMandatory)));
             }
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null) {
+                if (a != null)
+                {
                     Writer.WriteStartAttribute(null, @"Aliases", @"");
-                    for (int i = 0; i < a.Length; i++) {
+                    for (int i = 0; i < a.Length; i++)
+                    {
                         global::System.String ai = (global::System.String)a[i];
                         if (i != 0) Writer.WriteString(" ");
                         WriteValue(ai);
@@ -1357,7 +1662,8 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             }
             WriteAttribute(@"PSName", @"", ((global::System.String)o.@PSName));
             WriteAttribute(@"Position", @"", ((global::System.String)o.@Position));
-            if (o.@ValueFromPipelineByPropertyNameSpecified) {
+            if (o.@ValueFromPipelineByPropertyNameSpecified)
+            {
                 WriteAttribute(@"ValueFromPipelineByPropertyName", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@ValueFromPipelineByPropertyName)));
             }
             Write1_Object(@"AllowEmptyCollection", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::System.Object)o.@AllowEmptyCollection), false, false);
@@ -1370,32 +1676,41 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write6_Item(@"ValidateRange", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)o.@ValidateRange), false, false);
             {
                 global::System.String[] a = (global::System.String[])((global::System.String[])o.@ValidateSet);
-                if (a != null){
+                if (a != null)
+                {
                     WriteStartElement(@"ValidateSet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
-                    for (int ia = 0; ia < a.Length; ia++) {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         WriteElementString(@"AllowedValue", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::System.String)a[ia]));
                     }
                     WriteEndElement();
                 }
             }
             Write7_ObsoleteAttributeMetadata(@"Obsolete", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)o.@Obsolete), false, false);
-            if (o.@IsMandatorySpecified) {
+            if (o.@IsMandatorySpecified)
+            {
             }
-            if (o.@ValueFromPipelineByPropertyNameSpecified) {
+            if (o.@ValueFromPipelineByPropertyNameSpecified)
+            {
             }
             WriteEndElement(o);
         }
 
-        void Write18_QueryOption(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write18_QueryOption(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1407,33 +1722,42 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write11_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write11_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter))
+                {
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)) {
-                    Write12_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter))
+                {
+                    Write12_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)o, isNullable, true);
                     return;
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
             WriteStartElement(n, ns, o, false, null);
             if (needType) WriteXsiType(@"CmdletParameterMetadataForGetCmdletParameter", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
-            if (o.@IsMandatorySpecified) {
+            if (o.@IsMandatorySpecified)
+            {
                 WriteAttribute(@"IsMandatory", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@IsMandatory)));
             }
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null) {
+                if (a != null)
+                {
                     Writer.WriteStartAttribute(null, @"Aliases", @"");
-                    for (int i = 0; i < a.Length; i++) {
+                    for (int i = 0; i < a.Length; i++)
+                    {
                         global::System.String ai = (global::System.String)a[i];
                         if (i != 0) Writer.WriteString(" ");
                         WriteValue(ai);
@@ -1443,17 +1767,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             }
             WriteAttribute(@"PSName", @"", ((global::System.String)o.@PSName));
             WriteAttribute(@"Position", @"", ((global::System.String)o.@Position));
-            if (o.@ValueFromPipelineSpecified) {
+            if (o.@ValueFromPipelineSpecified)
+            {
                 WriteAttribute(@"ValueFromPipeline", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@ValueFromPipeline)));
             }
-            if (o.@ValueFromPipelineByPropertyNameSpecified) {
+            if (o.@ValueFromPipelineByPropertyNameSpecified)
+            {
                 WriteAttribute(@"ValueFromPipelineByPropertyName", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@ValueFromPipelineByPropertyName)));
             }
             {
                 global::System.String[] a = (global::System.String[])o.@CmdletParameterSets;
-                if (a != null) {
+                if (a != null)
+                {
                     Writer.WriteStartAttribute(null, @"CmdletParameterSets", @"");
-                    for (int i = 0; i < a.Length; i++) {
+                    for (int i = 0; i < a.Length; i++)
+                    {
                         global::System.String ai = (global::System.String)a[i];
                         if (i != 0) Writer.WriteString(" ");
                         WriteValue(ai);
@@ -1471,34 +1799,44 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write6_Item(@"ValidateRange", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)o.@ValidateRange), false, false);
             {
                 global::System.String[] a = (global::System.String[])((global::System.String[])o.@ValidateSet);
-                if (a != null){
+                if (a != null)
+                {
                     WriteStartElement(@"ValidateSet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
-                    for (int ia = 0; ia < a.Length; ia++) {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         WriteElementString(@"AllowedValue", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::System.String)a[ia]));
                     }
                     WriteEndElement();
                 }
             }
             Write7_ObsoleteAttributeMetadata(@"Obsolete", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)o.@Obsolete), false, false);
-            if (o.@IsMandatorySpecified) {
+            if (o.@IsMandatorySpecified)
+            {
             }
-            if (o.@ValueFromPipelineSpecified) {
+            if (o.@ValueFromPipelineSpecified)
+            {
             }
-            if (o.@ValueFromPipelineByPropertyNameSpecified) {
+            if (o.@ValueFromPipelineByPropertyNameSpecified)
+            {
             }
             WriteEndElement(o);
         }
 
-        void Write17_Association(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.Association o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write17_Association(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.Association o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1511,16 +1849,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write16_AssociationAssociatedInstance(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write16_AssociationAssociatedInstance(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1531,16 +1874,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write15_PropertyMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write15_PropertyMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1550,31 +1898,40 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write2_TypeMetadata(@"Type", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata)o.@Type), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[])o.@Items;
-                if (a != null) {
+                if (a != null)
+                {
                     global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[] c = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[])o.@ItemsElementName;
-                    if (c == null || c.Length < a.Length) {
-                        throw CreateInvalidChoiceIdentifierValueException(@"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType", @"ItemsElementName");}
-                    for (int ia = 0; ia < a.Length; ia++) {
+                    if (c == null || c.Length < a.Length)
+                    {
+                        throw CreateInvalidChoiceIdentifierValueException(@"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType", @"ItemsElementName");
+                    }
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery ai = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)a[ia];
                         global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType ci = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType)c[ia];
                         {
-                            if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@RegularQuery && ((object)(ai) != null)) {
+                            if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@RegularQuery && ((object)(ai) != null))
+                            {
                                 if (((object)ai) != null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@RegularQuery");
                                 Write13_WildcardablePropertyQuery(@"RegularQuery", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)ai), false, false);
                             }
-                            else if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@ExcludeQuery && ((object)(ai) != null)) {
+                            else if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@ExcludeQuery && ((object)(ai) != null))
+                            {
                                 if (((object)ai) != null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@ExcludeQuery");
                                 Write13_WildcardablePropertyQuery(@"ExcludeQuery", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)ai), false, false);
                             }
-                            else if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MaxValueQuery && ((object)(ai) != null)) {
+                            else if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MaxValueQuery && ((object)(ai) != null))
+                            {
                                 if (((object)ai) != null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MaxValueQuery");
                                 Write14_PropertyQuery(@"MaxValueQuery", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)ai), false, false);
                             }
-                            else if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MinValueQuery && ((object)(ai) != null)) {
+                            else if (ci == Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MinValueQuery && ((object)(ai) != null))
+                            {
                                 if (((object)ai) != null && !(ai is global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)) throw CreateMismatchChoiceException(@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery", @"ItemsElementName", @"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MinValueQuery");
                                 Write14_PropertyQuery(@"MinValueQuery", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)ai), false, false);
                             }
-                            else  if ((object)(ai) != null){
+                            else if ((object)(ai) != null)
+                            {
                                 throw CreateUnknownTypeException(ai);
                             }
                         }
@@ -1584,20 +1941,26 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write14_PropertyQuery(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write14_PropertyQuery(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery))
+                {
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)) {
-                    Write13_WildcardablePropertyQuery(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery))
+                {
+                    Write13_WildcardablePropertyQuery(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)o, isNullable, true);
                     return;
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1607,45 +1970,57 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write10_CmdletParameterMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write10_CmdletParameterMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata))
+                {
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter)) {
-                    Write11_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter))
+                {
+                    Write11_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)) {
-                    Write12_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter))
+                {
+                    Write12_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter)) {
-                    Write9_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter))
+                {
+                    Write9_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter)) {
-                    Write8_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter))
+                {
+                    Write8_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter)o, isNullable, true);
                     return;
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
             WriteStartElement(n, ns, o, false, null);
             if (needType) WriteXsiType(@"CmdletParameterMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
-            if (o.@IsMandatorySpecified) {
+            if (o.@IsMandatorySpecified)
+            {
                 WriteAttribute(@"IsMandatory", @"", System.Xml.XmlConvert.ToString((global::System.Boolean)((global::System.Boolean)o.@IsMandatory)));
             }
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null) {
+                if (a != null)
+                {
                     Writer.WriteStartAttribute(null, @"Aliases", @"");
-                    for (int i = 0; i < a.Length; i++) {
+                    for (int i = 0; i < a.Length; i++)
+                    {
                         global::System.String ai = (global::System.String)a[i];
                         if (i != 0) Writer.WriteString(" ");
                         WriteValue(ai);
@@ -1665,30 +2040,38 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write6_Item(@"ValidateRange", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)o.@ValidateRange), false, false);
             {
                 global::System.String[] a = (global::System.String[])((global::System.String[])o.@ValidateSet);
-                if (a != null){
+                if (a != null)
+                {
                     WriteStartElement(@"ValidateSet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
-                    for (int ia = 0; ia < a.Length; ia++) {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         WriteElementString(@"AllowedValue", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::System.String)a[ia]));
                     }
                     WriteEndElement();
                 }
             }
             Write7_ObsoleteAttributeMetadata(@"Obsolete", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)o.@Obsolete), false, false);
-            if (o.@IsMandatorySpecified) {
+            if (o.@IsMandatorySpecified)
+            {
             }
             WriteEndElement(o);
         }
 
-        void Write19_GetCmdletParameters(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write19_GetCmdletParameters(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1697,9 +2080,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteAttribute(@"DefaultCmdletParameterSet", @"", ((global::System.String)o.@DefaultCmdletParameterSet));
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])((global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])o.@QueryableProperties);
-                if (a != null){
+                if (a != null)
+                {
                     WriteStartElement(@"QueryableProperties", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
-                    for (int ia = 0; ia < a.Length; ia++) {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         Write15_PropertyMetadata(@"Property", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata)a[ia]), false, false);
                     }
                     WriteEndElement();
@@ -1707,9 +2092,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             }
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.Association[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.Association[])((global::Microsoft.PowerShell.Cmdletization.Xml.Association[])o.@QueryableAssociations);
-                if (a != null){
+                if (a != null)
+                {
                     WriteStartElement(@"QueryableAssociations", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
-                    for (int ia = 0; ia < a.Length; ia++) {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         Write17_Association(@"Association", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.Association)a[ia]), false, false);
                     }
                     WriteEndElement();
@@ -1717,9 +2104,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             }
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])((global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])o.@QueryOptions);
-                if (a != null){
+                if (a != null)
+                {
                     WriteStartElement(@"QueryOptions", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
-                    for (int ia = 0; ia < a.Length; ia++) {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         Write18_QueryOption(@"Option", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption)a[ia]), false, false);
                     }
                     WriteEndElement();
@@ -1728,16 +2117,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write45_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write45_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1747,9 +2141,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteAttribute(@"Noun", @"", ((global::System.String)o.@Noun));
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null) {
+                if (a != null)
+                {
                     Writer.WriteStartAttribute(null, @"Aliases", @"");
-                    for (int i = 0; i < a.Length; i++) {
+                    for (int i = 0; i < a.Length; i++)
+                    {
                         global::System.String ai = (global::System.String)a[i];
                         if (i != 0) Writer.WriteString(" ");
                         WriteValue(ai);
@@ -1757,31 +2153,39 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
                     Writer.WriteEndAttribute();
                 }
             }
-            if (o.@ConfirmImpactSpecified) {
+            if (o.@ConfirmImpactSpecified)
+            {
                 WriteAttribute(@"ConfirmImpact", @"", Write20_ConfirmImpact(((global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact)o.@ConfirmImpact)));
             }
             WriteAttribute(@"HelpUri", @"", ((global::System.String)o.@HelpUri));
             WriteAttribute(@"DefaultCmdletParameterSet", @"", ((global::System.String)o.@DefaultCmdletParameterSet));
             Write7_ObsoleteAttributeMetadata(@"Obsolete", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)o.@Obsolete), false, false);
-            if (o.@ConfirmImpactSpecified) {
+            if (o.@ConfirmImpactSpecified)
+            {
             }
             WriteEndElement(o);
         }
 
-        void Write21_CommonCmdletMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write21_CommonCmdletMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata))
+                {
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata)) {
-                    Write45_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata))
+                {
+                    Write45_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata)o, isNullable, true);
                     return;
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1791,9 +2195,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteAttribute(@"Noun", @"", ((global::System.String)o.@Noun));
             {
                 global::System.String[] a = (global::System.String[])o.@Aliases;
-                if (a != null) {
+                if (a != null)
+                {
                     Writer.WriteStartAttribute(null, @"Aliases", @"");
-                    for (int i = 0; i < a.Length; i++) {
+                    for (int i = 0; i < a.Length; i++)
+                    {
                         global::System.String ai = (global::System.String)a[i];
                         if (i != 0) Writer.WriteString(" ");
                         WriteValue(ai);
@@ -1801,26 +2207,33 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
                     Writer.WriteEndAttribute();
                 }
             }
-            if (o.@ConfirmImpactSpecified) {
+            if (o.@ConfirmImpactSpecified)
+            {
                 WriteAttribute(@"ConfirmImpact", @"", Write20_ConfirmImpact(((global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact)o.@ConfirmImpact)));
             }
             WriteAttribute(@"HelpUri", @"", ((global::System.String)o.@HelpUri));
             Write7_ObsoleteAttributeMetadata(@"Obsolete", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)o.@Obsolete), false, false);
-            if (o.@ConfirmImpactSpecified) {
+            if (o.@ConfirmImpactSpecified)
+            {
             }
             WriteEndElement(o);
         }
 
-        void Write22_GetCmdletMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write22_GetCmdletMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1831,16 +2244,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write30_InstanceMethodMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write30_InstanceMethodMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1850,9 +2268,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write24_Item(@"ReturnValue", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue)o.@ReturnValue), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])((global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])o.@Parameters);
-                if (a != null){
+                if (a != null)
+                {
                     WriteStartElement(@"Parameters", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
-                    for (int ia = 0; ia < a.Length; ia++) {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         Write25_Item(@"Parameter", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)a[ia]), false, false);
                     }
                     WriteEndElement();
@@ -1861,24 +2281,31 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write29_CommonMethodMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write29_CommonMethodMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata))
+                {
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata)) {
-                    Write30_InstanceMethodMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata))
+                {
+                    Write30_InstanceMethodMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata)) {
-                    Write28_StaticMethodMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata))
+                {
+                    Write28_StaticMethodMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata)o, isNullable, true);
                     return;
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1889,24 +2316,31 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write26_CommonMethodParameterMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write26_CommonMethodParameterMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata))
+                {
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)) {
-                    Write27_StaticMethodParameterMetadata(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata))
+                {
+                    Write27_StaticMethodParameterMetadata(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)o, isNullable, true);
                     return;
                 }
-                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)) {
-                    Write25_Item(n, ns,(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)o, isNullable, true);
+                else if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata))
+                {
+                    Write25_Item(n, ns, (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)o, isNullable, true);
                     return;
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1918,16 +2352,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write31_InstanceCmdletMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write31_InstanceCmdletMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1939,16 +2378,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write36_ClassMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write36_ClassMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -1962,9 +2406,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write32_ClassMetadataInstanceCmdlets(@"InstanceCmdlets", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets)o.@InstanceCmdlets), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])((global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])o.@StaticCmdlets);
-                if (a != null){
+                if (a != null)
+                {
                     WriteStartElement(@"StaticCmdlets", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
-                    for (int ia = 0; ia < a.Length; ia++) {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         Write34_StaticCmdletMetadata(@"Cmdlet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata)a[ia]), false, false);
                     }
                     WriteEndElement();
@@ -1972,9 +2418,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             }
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])((global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])o.@CmdletAdapterPrivateData);
-                if (a != null){
+                if (a != null)
+                {
                     WriteStartElement(@"CmdletAdapterPrivateData", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
-                    for (int ia = 0; ia < a.Length; ia++) {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         Write35_ClassMetadataData(@"Data", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData)a[ia]), false, false);
                     }
                     WriteEndElement();
@@ -1983,16 +2431,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write32_ClassMetadataInstanceCmdlets(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write32_ClassMetadataInstanceCmdlets(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -2002,8 +2455,10 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write22_GetCmdletMetadata(@"GetCmdlet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata)o.@GetCmdlet), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])o.@Cmdlet;
-                if (a != null) {
-                    for (int ia = 0; ia < a.Length; ia++) {
+                if (a != null)
+                {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         Write31_InstanceCmdletMetadata(@"Cmdlet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata)a[ia]), false, false);
                     }
                 }
@@ -2011,16 +2466,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write40_ClassMetadataInstanceCmdlets(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write40_ClassMetadataInstanceCmdlets(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -2030,8 +2490,10 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write22_GetCmdletMetadata(@"GetCmdlet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata)o.@GetCmdlet), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])o.@Cmdlet;
-                if (a != null) {
-                    for (int ia = 0; ia < a.Length; ia++) {
+                if (a != null)
+                {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         Write31_InstanceCmdletMetadata(@"Cmdlet", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata)a[ia]), false, false);
                     }
                 }
@@ -2039,16 +2501,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write41_AssociationAssociatedInstance(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write41_AssociationAssociatedInstance(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -2059,16 +2526,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write42_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write42_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -2079,16 +2551,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write43_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write43_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -2099,16 +2576,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write44_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write44_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -2119,16 +2601,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write46_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write46_Item(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -2139,16 +2626,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        void Write39_PowerShellMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata o, bool isNullable, bool needType) {
-            if ((object)o == null) {
+        private void Write39_PowerShellMetadata(string n, string ns, global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata o, bool isNullable, bool needType)
+        {
+            if ((object)o == null)
+            {
                 if (isNullable) WriteNullTagLiteral(n, ns);
                 return;
             }
-            if (!needType) {
+            if (!needType)
+            {
                 System.Type t = o.GetType();
-                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata)) {
+                if (t == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata))
+                {
                 }
-                else {
+                else
+                {
                     throw CreateUnknownTypeException(o);
                 }
             }
@@ -2157,9 +2649,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Write36_ClassMetadata(@"Class", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata)o.@Class), false, false);
             {
                 global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[] a = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])((global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])o.@Enums);
-                if (a != null){
+                if (a != null)
+                {
                     WriteStartElement(@"Enums", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", null, false);
-                    for (int ia = 0; ia < a.Length; ia++) {
+                    for (int ia = 0; ia < a.Length; ia++)
+                    {
                         Write38_EnumMetadataEnum(@"Enum", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11", ((global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum)a[ia]), false, false);
                     }
                     WriteEndElement();
@@ -2168,692 +2662,891 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             WriteEndElement(o);
         }
 
-        protected override void InitCallbacks() {
+        protected override void InitCallbacks()
+        {
         }
     }
 
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-    internal class XmlSerializationReader1 : System.Xml.Serialization.XmlSerializationReader {
-
-        public object Read50_PowerShellMetadata() {
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal class XmlSerializationReader1 : System.Xml.Serialization.XmlSerializationReader
+    {
+        public object Read50_PowerShellMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id1_PowerShellMetadata && (object) Reader.NamespaceURI == (object)id2_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id1_PowerShellMetadata && (object)Reader.NamespaceURI == (object)_id2_Item))
+                {
                     o = Read39_PowerShellMetadata(false, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:PowerShellMetadata");
             }
             return (object)o;
         }
 
-        public object Read51_ClassMetadata() {
+        public object Read51_ClassMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id3_ClassMetadata && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id3_ClassMetadata && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read36_ClassMetadata(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":ClassMetadata");
             }
             return (object)o;
         }
 
-        public object Read52_ClassMetadataInstanceCmdlets() {
+        public object Read52_ClassMetadataInstanceCmdlets()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id5_ClassMetadataInstanceCmdlets && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id5_ClassMetadataInstanceCmdlets && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read40_ClassMetadataInstanceCmdlets(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":ClassMetadataInstanceCmdlets");
             }
             return (object)o;
         }
 
-        public object Read53_GetCmdletParameters() {
+        public object Read53_GetCmdletParameters()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id6_GetCmdletParameters && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id6_GetCmdletParameters && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read19_GetCmdletParameters(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":GetCmdletParameters");
             }
             return (object)o;
         }
 
-        public object Read54_PropertyMetadata() {
+        public object Read54_PropertyMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id7_PropertyMetadata && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id7_PropertyMetadata && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read15_PropertyMetadata(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":PropertyMetadata");
             }
             return (object)o;
         }
 
-        public object Read55_TypeMetadata() {
+        public object Read55_TypeMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id8_TypeMetadata && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id8_TypeMetadata && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read2_TypeMetadata(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":TypeMetadata");
             }
             return (object)o;
         }
 
-        public object Read56_Association() {
+        public object Read56_Association()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id9_Association && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id9_Association && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read17_Association(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":Association");
             }
             return (object)o;
         }
 
-        public object Read57_AssociationAssociatedInstance() {
+        public object Read57_AssociationAssociatedInstance()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id10_AssociationAssociatedInstance && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id10_AssociationAssociatedInstance && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read41_AssociationAssociatedInstance(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":AssociationAssociatedInstance");
             }
             return (object)o;
         }
 
-        public object Read58_CmdletParameterMetadata() {
+        public object Read58_CmdletParameterMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id11_CmdletParameterMetadata && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id11_CmdletParameterMetadata && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read10_CmdletParameterMetadata(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":CmdletParameterMetadata");
             }
             return (object)o;
         }
 
-        public object Read59_Item() {
+        public object Read59_Item()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id12_Item && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id12_Item && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read11_Item(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":CmdletParameterMetadataForGetCmdletParameter");
             }
             return (object)o;
         }
 
-        public object Read60_Item() {
+        public object Read60_Item()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id13_Item && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id13_Item && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read12_Item(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":CmdletParameterMetadataForGetCmdletFilteringParameter");
             }
             return (object)o;
         }
 
-        public object Read61_Item() {
+        public object Read61_Item()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id14_Item && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id14_Item && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read42_Item(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":CmdletParameterMetadataValidateCount");
             }
             return (object)o;
         }
 
-        public object Read62_Item() {
+        public object Read62_Item()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id15_Item && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id15_Item && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read43_Item(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":CmdletParameterMetadataValidateLength");
             }
             return (object)o;
         }
 
-        public object Read63_Item() {
+        public object Read63_Item()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id16_Item && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id16_Item && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read44_Item(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":CmdletParameterMetadataValidateRange");
             }
             return (object)o;
         }
 
-        public object Read64_ObsoleteAttributeMetadata() {
+        public object Read64_ObsoleteAttributeMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id17_ObsoleteAttributeMetadata && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id17_ObsoleteAttributeMetadata && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read7_ObsoleteAttributeMetadata(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":ObsoleteAttributeMetadata");
             }
             return (object)o;
         }
 
-        public object Read65_Item() {
+        public object Read65_Item()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id18_Item && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id18_Item && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read9_Item(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":CmdletParameterMetadataForInstanceMethodParameter");
             }
             return (object)o;
         }
 
-        public object Read66_Item() {
+        public object Read66_Item()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id19_Item && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id19_Item && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read8_Item(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":CmdletParameterMetadataForStaticMethodParameter");
             }
             return (object)o;
         }
 
-        public object Read67_QueryOption() {
+        public object Read67_QueryOption()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id20_QueryOption && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id20_QueryOption && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read18_QueryOption(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":QueryOption");
             }
             return (object)o;
         }
 
-        public object Read68_GetCmdletMetadata() {
+        public object Read68_GetCmdletMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id21_GetCmdletMetadata && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id21_GetCmdletMetadata && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read22_GetCmdletMetadata(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":GetCmdletMetadata");
             }
             return (object)o;
         }
 
-        public object Read69_CommonCmdletMetadata() {
+        public object Read69_CommonCmdletMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id22_CommonCmdletMetadata && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id22_CommonCmdletMetadata && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read21_CommonCmdletMetadata(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":CommonCmdletMetadata");
             }
             return (object)o;
         }
 
-        public object Read70_ConfirmImpact() {
+        public object Read70_ConfirmImpact()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id23_ConfirmImpact && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id23_ConfirmImpact && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     {
                         o = Read20_ConfirmImpact(Reader.ReadElementString());
                     }
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":ConfirmImpact");
             }
             return (object)o;
         }
 
-        public object Read71_StaticCmdletMetadata() {
+        public object Read71_StaticCmdletMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id24_StaticCmdletMetadata && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id24_StaticCmdletMetadata && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read34_StaticCmdletMetadata(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":StaticCmdletMetadata");
             }
             return (object)o;
         }
 
-        public object Read72_Item() {
+        public object Read72_Item()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id25_Item && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id25_Item && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read45_Item(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":StaticCmdletMetadataCmdletMetadata");
             }
             return (object)o;
         }
 
-        public object Read73_CommonMethodMetadata() {
+        public object Read73_CommonMethodMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id26_CommonMethodMetadata && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id26_CommonMethodMetadata && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read29_CommonMethodMetadata(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":CommonMethodMetadata");
             }
             return (object)o;
         }
 
-        public object Read74_StaticMethodMetadata() {
+        public object Read74_StaticMethodMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id27_StaticMethodMetadata && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id27_StaticMethodMetadata && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read28_StaticMethodMetadata(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":StaticMethodMetadata");
             }
             return (object)o;
         }
 
-        public object Read75_CommonMethodParameterMetadata() {
+        public object Read75_CommonMethodParameterMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id28_CommonMethodParameterMetadata && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id28_CommonMethodParameterMetadata && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read26_CommonMethodParameterMetadata(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":CommonMethodParameterMetadata");
             }
             return (object)o;
         }
 
-        public object Read76_StaticMethodParameterMetadata() {
+        public object Read76_StaticMethodParameterMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id29_StaticMethodParameterMetadata && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id29_StaticMethodParameterMetadata && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read27_StaticMethodParameterMetadata(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":StaticMethodParameterMetadata");
             }
             return (object)o;
         }
 
-        public object Read77_CmdletOutputMetadata() {
+        public object Read77_CmdletOutputMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id30_CmdletOutputMetadata && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id30_CmdletOutputMetadata && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read23_CmdletOutputMetadata(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":CmdletOutputMetadata");
             }
             return (object)o;
         }
 
-        public object Read78_Item() {
+        public object Read78_Item()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id31_Item && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id31_Item && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read25_Item(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":InstanceMethodParameterMetadata");
             }
             return (object)o;
         }
 
-        public object Read79_Item() {
+        public object Read79_Item()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id32_Item && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id32_Item && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read46_Item(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":CommonMethodMetadataReturnValue");
             }
             return (object)o;
         }
 
-        public object Read80_InstanceMethodMetadata() {
+        public object Read80_InstanceMethodMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id33_InstanceMethodMetadata && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id33_InstanceMethodMetadata && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read30_InstanceMethodMetadata(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":InstanceMethodMetadata");
             }
             return (object)o;
         }
 
-        public object Read81_InstanceCmdletMetadata() {
+        public object Read81_InstanceCmdletMetadata()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id34_InstanceCmdletMetadata && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id34_InstanceCmdletMetadata && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read31_InstanceCmdletMetadata(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":InstanceCmdletMetadata");
             }
             return (object)o;
         }
 
-        public object Read82_PropertyQuery() {
+        public object Read82_PropertyQuery()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id35_PropertyQuery && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id35_PropertyQuery && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read14_PropertyQuery(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":PropertyQuery");
             }
             return (object)o;
         }
 
-        public object Read83_WildcardablePropertyQuery() {
+        public object Read83_WildcardablePropertyQuery()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id36_WildcardablePropertyQuery && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id36_WildcardablePropertyQuery && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read13_WildcardablePropertyQuery(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":WildcardablePropertyQuery");
             }
             return (object)o;
         }
 
-        public object Read84_ItemsChoiceType() {
+        public object Read84_ItemsChoiceType()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id37_ItemsChoiceType && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id37_ItemsChoiceType && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     {
                         o = Read3_ItemsChoiceType(Reader.ReadElementString());
                     }
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":ItemsChoiceType");
             }
             return (object)o;
         }
 
-        public object Read85_ClassMetadataData() {
+        public object Read85_ClassMetadataData()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id38_ClassMetadataData && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id38_ClassMetadataData && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read47_ClassMetadataData(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":ClassMetadataData");
             }
             return (object)o;
         }
 
-        public object Read86_EnumMetadataEnum() {
+        public object Read86_EnumMetadataEnum()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id39_EnumMetadataEnum && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id39_EnumMetadataEnum && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read48_EnumMetadataEnum(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":EnumMetadataEnum");
             }
             return (object)o;
         }
 
-        public object Read87_EnumMetadataEnumValue() {
+        public object Read87_EnumMetadataEnumValue()
+        {
             object o = null;
             Reader.MoveToContent();
-            if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                if (((object) Reader.LocalName == (object)id40_EnumMetadataEnumValue && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)_id40_EnumMetadataEnumValue && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o = Read49_EnumMetadataEnumValue(true, true);
                 }
-                else {
+                else
+                {
                     throw CreateUnknownNodeException();
                 }
             }
-            else {
+            else
+            {
                 UnknownNode(null, @":EnumMetadataEnumValue");
             }
             return (object)o;
         }
 
-        global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue Read49_EnumMetadataEnumValue(bool isNullable, bool checkType) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue Read49_EnumMetadataEnumValue(bool isNullable, bool checkType)
+        {
             System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
             bool isNull = false;
             if (isNullable) isNull = ReadNull();
-            if (checkType) {
-            if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id40_EnumMetadataEnumValue && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-            }
-            else
-                throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id40_EnumMetadataEnumValue && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue();
             bool[] paramsRead = new bool[2];
-            while (Reader.MoveToNextAttribute()) {
-                if (!paramsRead[0] && ((object) Reader.LocalName == (object)id41_Name && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id41_Name && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@Name = Reader.Value;
                     paramsRead[0] = true;
                 }
-                else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id42_Value && (object) Reader.NamespaceURI == (object)id4_Item)) {
+                else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id42_Value && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@Value = CollapseWhitespace(Reader.Value);
                     paramsRead[1] = true;
                 }
-                else if (!IsXmlnsAttribute(Reader.Name)) {
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
                     UnknownNode((object)o, @":Name, :Value");
                 }
             }
             Reader.MoveToElement();
-            if (Reader.IsEmptyElement) {
+            if (Reader.IsEmptyElement)
+            {
                 Reader.Skip();
                 return o;
             }
@@ -2861,11 +3554,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Reader.MoveToContent();
             int whileIterations0 = 0;
             int readerCount0 = ReaderCount;
-            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
                     UnknownNode((object)o, @"");
                 }
-                else {
+                else
+                {
                     UnknownNode((object)o, @"");
                 }
                 Reader.MoveToContent();
@@ -2875,15 +3571,18 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             return o;
         }
 
-        global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum Read48_EnumMetadataEnum(bool isNullable, bool checkType) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum Read48_EnumMetadataEnum(bool isNullable, bool checkType)
+        {
             System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
             bool isNull = false;
             if (isNullable) isNull = ReadNull();
-            if (checkType) {
-            if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id39_EnumMetadataEnum && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-            }
-            else
-                throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id39_EnumMetadataEnum && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum o;
@@ -2891,26 +3590,32 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[] a_0 = null;
             int ca_0 = 0;
             bool[] paramsRead = new bool[4];
-            while (Reader.MoveToNextAttribute()) {
-                if (!paramsRead[1] && ((object) Reader.LocalName == (object)id43_EnumName && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id43_EnumName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@EnumName = Reader.Value;
                     paramsRead[1] = true;
                 }
-                else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id44_UnderlyingType && (object) Reader.NamespaceURI == (object)id4_Item)) {
+                else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id44_UnderlyingType && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@UnderlyingType = Reader.Value;
                     paramsRead[2] = true;
                 }
-                else if (!paramsRead[3] && ((object) Reader.LocalName == (object)id45_BitwiseFlags && (object) Reader.NamespaceURI == (object)id4_Item)) {
+                else if (!paramsRead[3] && ((object)Reader.LocalName == (object)_id45_BitwiseFlags && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@BitwiseFlags = System.Xml.XmlConvert.ToBoolean(Reader.Value);
                     o.@BitwiseFlagsSpecified = true;
                     paramsRead[3] = true;
                 }
-                else if (!IsXmlnsAttribute(Reader.Name)) {
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
                     UnknownNode((object)o, @":EnumName, :UnderlyingType, :BitwiseFlags");
                 }
             }
             Reader.MoveToElement();
-            if (Reader.IsEmptyElement) {
+            if (Reader.IsEmptyElement)
+            {
                 Reader.Skip();
                 o.@Value = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])ShrinkArray(a_0, ca_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue), true);
                 return o;
@@ -2919,16 +3624,21 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Reader.MoveToContent();
             int whileIterations1 = 0;
             int readerCount1 = ReaderCount;
-            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                    if (((object) Reader.LocalName == (object)id42_Value && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                        a_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])EnsureArrayIndex(a_0, ca_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue));a_0[ca_0++] = Read37_EnumMetadataEnumValue(false, true);
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (((object)Reader.LocalName == (object)_id42_Value && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        a_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])EnsureArrayIndex(a_0, ca_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue)); a_0[ca_0++] = Read37_EnumMetadataEnumValue(false, true);
                     }
-                    else {
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Value");
                     }
                 }
-                else {
+                else
+                {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Value");
                 }
                 Reader.MoveToContent();
@@ -2939,35 +3649,43 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             return o;
         }
 
-        global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue Read37_EnumMetadataEnumValue(bool isNullable, bool checkType) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue Read37_EnumMetadataEnumValue(bool isNullable, bool checkType)
+        {
             System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
             bool isNull = false;
             if (isNullable) isNull = ReadNull();
-            if (checkType) {
-            if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id4_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-            }
-            else
-                throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue();
             bool[] paramsRead = new bool[2];
-            while (Reader.MoveToNextAttribute()) {
-                if (!paramsRead[0] && ((object) Reader.LocalName == (object)id41_Name && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id41_Name && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@Name = Reader.Value;
                     paramsRead[0] = true;
                 }
-                else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id42_Value && (object) Reader.NamespaceURI == (object)id4_Item)) {
+                else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id42_Value && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@Value = CollapseWhitespace(Reader.Value);
                     paramsRead[1] = true;
                 }
-                else if (!IsXmlnsAttribute(Reader.Name)) {
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
                     UnknownNode((object)o, @":Name, :Value");
                 }
             }
             Reader.MoveToElement();
-            if (Reader.IsEmptyElement) {
+            if (Reader.IsEmptyElement)
+            {
                 Reader.Skip();
                 return o;
             }
@@ -2975,11 +3693,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Reader.MoveToContent();
             int whileIterations2 = 0;
             int readerCount2 = ReaderCount;
-            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
                     UnknownNode((object)o, @"");
                 }
-                else {
+                else
+                {
                     UnknownNode((object)o, @"");
                 }
                 Reader.MoveToContent();
@@ -2989,31 +3710,38 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             return o;
         }
 
-        global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData Read47_ClassMetadataData(bool isNullable, bool checkType) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData Read47_ClassMetadataData(bool isNullable, bool checkType)
+        {
             System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
             bool isNull = false;
             if (isNullable) isNull = ReadNull();
-            if (checkType) {
-            if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id38_ClassMetadataData && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-            }
-            else
-                throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id38_ClassMetadataData && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData();
             bool[] paramsRead = new bool[2];
-            while (Reader.MoveToNextAttribute()) {
-                if (!paramsRead[0] && ((object) Reader.LocalName == (object)id41_Name && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id41_Name && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@Name = Reader.Value;
                     paramsRead[0] = true;
                 }
-                else if (!IsXmlnsAttribute(Reader.Name)) {
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
                     UnknownNode((object)o, @":Name");
                 }
             }
             Reader.MoveToElement();
-            if (Reader.IsEmptyElement) {
+            if (Reader.IsEmptyElement)
+            {
                 Reader.Skip();
                 return o;
             }
@@ -3021,19 +3749,23 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Reader.MoveToContent();
             int whileIterations3 = 0;
             int readerCount3 = ReaderCount;
-            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
                 string tmp = null;
-                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
                     UnknownNode((object)o, @"");
                 }
-                else if (Reader.NodeType == System.Xml.XmlNodeType.Text || 
-                Reader.NodeType == System.Xml.XmlNodeType.CDATA || 
-                Reader.NodeType == System.Xml.XmlNodeType.Whitespace || 
-                Reader.NodeType == System.Xml.XmlNodeType.SignificantWhitespace) {
+                else if (Reader.NodeType == System.Xml.XmlNodeType.Text ||
+                Reader.NodeType == System.Xml.XmlNodeType.CDATA ||
+                Reader.NodeType == System.Xml.XmlNodeType.Whitespace ||
+                Reader.NodeType == System.Xml.XmlNodeType.SignificantWhitespace)
+                {
                     tmp = ReadString(tmp, false);
                     o.@Value = tmp;
                 }
-                else {
+                else
+                {
                     UnknownNode((object)o, @"");
                 }
                 Reader.MoveToContent();
@@ -3043,8 +3775,10 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             return o;
         }
 
-        global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType Read3_ItemsChoiceType(string s) {
-            switch (s) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType Read3_ItemsChoiceType(string s)
+        {
+            switch (s)
+            {
                 case @"ExcludeQuery": return global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@ExcludeQuery;
                 case @"MaxValueQuery": return global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MaxValueQuery;
                 case @"MinValueQuery": return global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MinValueQuery;
@@ -3053,32 +3787,39 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             }
         }
 
-        global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery Read13_WildcardablePropertyQuery(bool isNullable, bool checkType) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery Read13_WildcardablePropertyQuery(bool isNullable, bool checkType)
+        {
             System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
             bool isNull = false;
             if (isNullable) isNull = ReadNull();
-            if (checkType) {
-            if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id36_WildcardablePropertyQuery && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-            }
-            else
-                throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id36_WildcardablePropertyQuery && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery();
             bool[] paramsRead = new bool[2];
-            while (Reader.MoveToNextAttribute()) {
-                if (!paramsRead[1] && ((object) Reader.LocalName == (object)id46_AllowGlobbing && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id46_AllowGlobbing && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@AllowGlobbing = System.Xml.XmlConvert.ToBoolean(Reader.Value);
                     o.@AllowGlobbingSpecified = true;
                     paramsRead[1] = true;
                 }
-                else if (!IsXmlnsAttribute(Reader.Name)) {
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
                     UnknownNode((object)o, @":AllowGlobbing");
                 }
             }
             Reader.MoveToElement();
-            if (Reader.IsEmptyElement) {
+            if (Reader.IsEmptyElement)
+            {
                 Reader.Skip();
                 return o;
             }
@@ -3086,17 +3827,22 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Reader.MoveToContent();
             int whileIterations4 = 0;
             int readerCount4 = ReaderCount;
-            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                    if (!paramsRead[0] && ((object) Reader.LocalName == (object)id11_CmdletParameterMetadata && (object) Reader.NamespaceURI == (object)id2_Item)) {
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id11_CmdletParameterMetadata && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
                         o.@CmdletParameterMetadata = Read12_Item(false, true);
                         paramsRead[0] = true;
                     }
-                    else {
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
                     }
                 }
-                else {
+                else
+                {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
                 }
                 Reader.MoveToContent();
@@ -3106,15 +3852,18 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             return o;
         }
 
-        global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter Read12_Item(bool isNullable, bool checkType) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter Read12_Item(bool isNullable, bool checkType)
+        {
             System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
             bool isNull = false;
             if (isNullable) isNull = ReadNull();
-            if (checkType) {
-            if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id13_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-            }
-            else
-                throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id13_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter o;
@@ -3126,55 +3875,68 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             global::System.String[] a_16 = null;
             int ca_16 = 0;
             bool[] paramsRead = new bool[18];
-            while (Reader.MoveToNextAttribute()) {
-                if (!paramsRead[10] && ((object) Reader.LocalName == (object)id47_IsMandatory && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[10] && ((object)Reader.LocalName == (object)_id47_IsMandatory && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@IsMandatory = System.Xml.XmlConvert.ToBoolean(Reader.Value);
                     o.@IsMandatorySpecified = true;
                     paramsRead[10] = true;
                 }
-                else if (((object) Reader.LocalName == (object)id48_Aliases && (object) Reader.NamespaceURI == (object)id4_Item)) {
+                else if (((object)Reader.LocalName == (object)_id48_Aliases && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     string listValues = Reader.Value;
                     string[] vals = listValues.Split(null);
-                    for (int i = 0; i < vals.Length; i++) {
-                        a_11 = (global::System.String[])EnsureArrayIndex(a_11, ca_11, typeof(global::System.String));a_11[ca_11++] = vals[i];
+                    for (int i = 0; i < vals.Length; i++)
+                    {
+                        a_11 = (global::System.String[])EnsureArrayIndex(a_11, ca_11, typeof(global::System.String)); a_11[ca_11++] = vals[i];
                     }
                 }
-                else if (!paramsRead[12] && ((object) Reader.LocalName == (object)id49_PSName && (object) Reader.NamespaceURI == (object)id4_Item)) {
+                else if (!paramsRead[12] && ((object)Reader.LocalName == (object)_id49_PSName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@PSName = Reader.Value;
                     paramsRead[12] = true;
                 }
-                else if (!paramsRead[13] && ((object) Reader.LocalName == (object)id50_Position && (object) Reader.NamespaceURI == (object)id4_Item)) {
+                else if (!paramsRead[13] && ((object)Reader.LocalName == (object)_id50_Position && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@Position = CollapseWhitespace(Reader.Value);
                     paramsRead[13] = true;
                 }
-                else if (!paramsRead[14] && ((object) Reader.LocalName == (object)id51_ValueFromPipeline && (object) Reader.NamespaceURI == (object)id4_Item)) {
+                else if (!paramsRead[14] && ((object)Reader.LocalName == (object)_id51_ValueFromPipeline && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@ValueFromPipeline = System.Xml.XmlConvert.ToBoolean(Reader.Value);
                     o.@ValueFromPipelineSpecified = true;
                     paramsRead[14] = true;
                 }
-                else if (!paramsRead[15] && ((object) Reader.LocalName == (object)id52_Item && (object) Reader.NamespaceURI == (object)id4_Item)) {
+                else if (!paramsRead[15] && ((object)Reader.LocalName == (object)_id52_Item && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@ValueFromPipelineByPropertyName = System.Xml.XmlConvert.ToBoolean(Reader.Value);
                     o.@ValueFromPipelineByPropertyNameSpecified = true;
                     paramsRead[15] = true;
                 }
-                else if (((object) Reader.LocalName == (object)id53_CmdletParameterSets && (object) Reader.NamespaceURI == (object)id4_Item)) {
+                else if (((object)Reader.LocalName == (object)_id53_CmdletParameterSets && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     string listValues = Reader.Value;
                     string[] vals = listValues.Split(null);
-                    for (int i = 0; i < vals.Length; i++) {
-                        a_16 = (global::System.String[])EnsureArrayIndex(a_16, ca_16, typeof(global::System.String));a_16[ca_16++] = vals[i];
+                    for (int i = 0; i < vals.Length; i++)
+                    {
+                        a_16 = (global::System.String[])EnsureArrayIndex(a_16, ca_16, typeof(global::System.String)); a_16[ca_16++] = vals[i];
                     }
                 }
-                else if (!paramsRead[17] && ((object) Reader.LocalName == (object)id54_ErrorOnNoMatch && (object) Reader.NamespaceURI == (object)id4_Item)) {
+                else if (!paramsRead[17] && ((object)Reader.LocalName == (object)_id54_ErrorOnNoMatch && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@ErrorOnNoMatch = System.Xml.XmlConvert.ToBoolean(Reader.Value);
                     o.@ErrorOnNoMatchSpecified = true;
                     paramsRead[17] = true;
                 }
-                else if (!IsXmlnsAttribute(Reader.Name)) {
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
                     UnknownNode((object)o, @":IsMandatory, :Aliases, :PSName, :Position, :ValueFromPipeline, :ValueFromPipelineByPropertyName, :CmdletParameterSets, :ErrorOnNoMatch");
                 }
             }
             Reader.MoveToElement();
-            if (Reader.IsEmptyElement) {
+            if (Reader.IsEmptyElement)
+            {
                 Reader.Skip();
                 o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
                 o.@CmdletParameterSets = (global::System.String[])ShrinkArray(a_16, ca_16, typeof(global::System.String), true);
@@ -3184,83 +3946,105 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Reader.MoveToContent();
             int whileIterations5 = 0;
             int readerCount5 = ReaderCount;
-            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                    if (!paramsRead[0] && ((object) Reader.LocalName == (object)id55_AllowEmptyCollection && (object) Reader.NamespaceURI == (object)id2_Item)) {
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id55_AllowEmptyCollection && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
                         o.@AllowEmptyCollection = Read1_Object(false, true);
                         paramsRead[0] = true;
                     }
-                    else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id56_AllowEmptyString && (object) Reader.NamespaceURI == (object)id2_Item)) {
+                    else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id56_AllowEmptyString && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
                         o.@AllowEmptyString = Read1_Object(false, true);
                         paramsRead[1] = true;
                     }
-                    else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id57_AllowNull && (object) Reader.NamespaceURI == (object)id2_Item)) {
+                    else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id57_AllowNull && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
                         o.@AllowNull = Read1_Object(false, true);
                         paramsRead[2] = true;
                     }
-                    else if (!paramsRead[3] && ((object) Reader.LocalName == (object)id58_ValidateNotNull && (object) Reader.NamespaceURI == (object)id2_Item)) {
+                    else if (!paramsRead[3] && ((object)Reader.LocalName == (object)_id58_ValidateNotNull && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
                         o.@ValidateNotNull = Read1_Object(false, true);
                         paramsRead[3] = true;
                     }
-                    else if (!paramsRead[4] && ((object) Reader.LocalName == (object)id59_ValidateNotNullOrEmpty && (object) Reader.NamespaceURI == (object)id2_Item)) {
+                    else if (!paramsRead[4] && ((object)Reader.LocalName == (object)_id59_ValidateNotNullOrEmpty && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
                         o.@ValidateNotNullOrEmpty = Read1_Object(false, true);
                         paramsRead[4] = true;
                     }
-                    else if (!paramsRead[5] && ((object) Reader.LocalName == (object)id60_ValidateCount && (object) Reader.NamespaceURI == (object)id2_Item)) {
+                    else if (!paramsRead[5] && ((object)Reader.LocalName == (object)_id60_ValidateCount && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
                         o.@ValidateCount = Read4_Item(false, true);
                         paramsRead[5] = true;
                     }
-                    else if (!paramsRead[6] && ((object) Reader.LocalName == (object)id61_ValidateLength && (object) Reader.NamespaceURI == (object)id2_Item)) {
+                    else if (!paramsRead[6] && ((object)Reader.LocalName == (object)_id61_ValidateLength && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
                         o.@ValidateLength = Read5_Item(false, true);
                         paramsRead[6] = true;
                     }
-                    else if (!paramsRead[7] && ((object) Reader.LocalName == (object)id62_ValidateRange && (object) Reader.NamespaceURI == (object)id2_Item)) {
+                    else if (!paramsRead[7] && ((object)Reader.LocalName == (object)_id62_ValidateRange && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
                         o.@ValidateRange = Read6_Item(false, true);
                         paramsRead[7] = true;
                     }
-                    else if (((object) Reader.LocalName == (object)id63_ValidateSet && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                        if (!ReadNull()) {
+                    else if (((object)Reader.LocalName == (object)_id63_ValidateSet && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        if (!ReadNull())
+                        {
                             global::System.String[] a_8_0 = null;
                             int ca_8_0 = 0;
-                            if ((Reader.IsEmptyElement)) {
+                            if ((Reader.IsEmptyElement))
+                            {
                                 Reader.Skip();
                             }
-                            else {
+                            else
+                            {
                                 Reader.ReadStartElement();
                                 Reader.MoveToContent();
                                 int whileIterations6 = 0;
                                 int readerCount6 = ReaderCount;
-                                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                        if (((object) Reader.LocalName == (object)id64_AllowedValue && (object) Reader.NamespaceURI == (object)id2_Item)) {
+                                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                                {
+                                    if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                    {
+                                        if (((object)Reader.LocalName == (object)_id64_AllowedValue && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                        {
                                             {
-                                                a_8_0 = (global::System.String[])EnsureArrayIndex(a_8_0, ca_8_0, typeof(global::System.String));a_8_0[ca_8_0++] = Reader.ReadElementString();
+                                                a_8_0 = (global::System.String[])EnsureArrayIndex(a_8_0, ca_8_0, typeof(global::System.String)); a_8_0[ca_8_0++] = Reader.ReadElementString();
                                             }
                                         }
-                                        else {
+                                        else
+                                        {
                                             UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
                                         }
                                     }
-                                    else {
+                                    else
+                                    {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
                                     }
                                     Reader.MoveToContent();
                                     CheckReaderCount(ref whileIterations6, ref readerCount6);
                                 }
-                            ReadEndElement();
+                                ReadEndElement();
                             }
                             o.@ValidateSet = (global::System.String[])ShrinkArray(a_8_0, ca_8_0, typeof(global::System.String), false);
                         }
                     }
-                    else if (!paramsRead[9] && ((object) Reader.LocalName == (object)id65_Obsolete && (object) Reader.NamespaceURI == (object)id2_Item)) {
+                    else if (!paramsRead[9] && ((object)Reader.LocalName == (object)_id65_Obsolete && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
                         o.@Obsolete = Read7_ObsoleteAttributeMetadata(false, true);
                         paramsRead[9] = true;
                     }
-                    else {
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                     }
                 }
-                else {
+                else
+                {
                     UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                 }
                 Reader.MoveToContent();
@@ -3272,31 +4056,38 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             return o;
         }
 
-        global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata Read7_ObsoleteAttributeMetadata(bool isNullable, bool checkType) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata Read7_ObsoleteAttributeMetadata(bool isNullable, bool checkType)
+        {
             System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
             bool isNull = false;
             if (isNullable) isNull = ReadNull();
-            if (checkType) {
-            if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id17_ObsoleteAttributeMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-            }
-            else
-                throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id17_ObsoleteAttributeMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata();
             bool[] paramsRead = new bool[1];
-            while (Reader.MoveToNextAttribute()) {
-                if (!paramsRead[0] && ((object) Reader.LocalName == (object)id66_Message && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id66_Message && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@Message = Reader.Value;
                     paramsRead[0] = true;
                 }
-                else if (!IsXmlnsAttribute(Reader.Name)) {
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
                     UnknownNode((object)o, @":Message");
                 }
             }
             Reader.MoveToElement();
-            if (Reader.IsEmptyElement) {
+            if (Reader.IsEmptyElement)
+            {
                 Reader.Skip();
                 return o;
             }
@@ -3304,11 +4095,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Reader.MoveToContent();
             int whileIterations7 = 0;
             int readerCount7 = ReaderCount;
-            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
                     UnknownNode((object)o, @"");
                 }
-                else {
+                else
+                {
                     UnknownNode((object)o, @"");
                 }
                 Reader.MoveToContent();
@@ -3318,35 +4112,43 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             return o;
         }
 
-        global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange Read6_Item(bool isNullable, bool checkType) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange Read6_Item(bool isNullable, bool checkType)
+        {
             System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
             bool isNull = false;
             if (isNullable) isNull = ReadNull();
-            if (checkType) {
-            if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id4_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-            }
-            else
-                throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange();
             bool[] paramsRead = new bool[2];
-            while (Reader.MoveToNextAttribute()) {
-                if (!paramsRead[0] && ((object) Reader.LocalName == (object)id67_Min && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id67_Min && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@Min = CollapseWhitespace(Reader.Value);
                     paramsRead[0] = true;
                 }
-                else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id68_Max && (object) Reader.NamespaceURI == (object)id4_Item)) {
+                else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id68_Max && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@Max = CollapseWhitespace(Reader.Value);
                     paramsRead[1] = true;
                 }
-                else if (!IsXmlnsAttribute(Reader.Name)) {
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
                     UnknownNode((object)o, @":Min, :Max");
                 }
             }
             Reader.MoveToElement();
-            if (Reader.IsEmptyElement) {
+            if (Reader.IsEmptyElement)
+            {
                 Reader.Skip();
                 return o;
             }
@@ -3354,11 +4156,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Reader.MoveToContent();
             int whileIterations8 = 0;
             int readerCount8 = ReaderCount;
-            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
                     UnknownNode((object)o, @"");
                 }
-                else {
+                else
+                {
                     UnknownNode((object)o, @"");
                 }
                 Reader.MoveToContent();
@@ -3368,35 +4173,43 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             return o;
         }
 
-        global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength Read5_Item(bool isNullable, bool checkType) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength Read5_Item(bool isNullable, bool checkType)
+        {
             System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
             bool isNull = false;
             if (isNullable) isNull = ReadNull();
-            if (checkType) {
-            if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id4_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-            }
-            else
-                throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength();
             bool[] paramsRead = new bool[2];
-            while (Reader.MoveToNextAttribute()) {
-                if (!paramsRead[0] && ((object) Reader.LocalName == (object)id67_Min && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id67_Min && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@Min = CollapseWhitespace(Reader.Value);
                     paramsRead[0] = true;
                 }
-                else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id68_Max && (object) Reader.NamespaceURI == (object)id4_Item)) {
+                else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id68_Max && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@Max = CollapseWhitespace(Reader.Value);
                     paramsRead[1] = true;
                 }
-                else if (!IsXmlnsAttribute(Reader.Name)) {
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
                     UnknownNode((object)o, @":Min, :Max");
                 }
             }
             Reader.MoveToElement();
-            if (Reader.IsEmptyElement) {
+            if (Reader.IsEmptyElement)
+            {
                 Reader.Skip();
                 return o;
             }
@@ -3404,11 +4217,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Reader.MoveToContent();
             int whileIterations9 = 0;
             int readerCount9 = ReaderCount;
-            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
                     UnknownNode((object)o, @"");
                 }
-                else {
+                else
+                {
                     UnknownNode((object)o, @"");
                 }
                 Reader.MoveToContent();
@@ -3418,35 +4234,43 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             return o;
         }
 
-        global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount Read4_Item(bool isNullable, bool checkType) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount Read4_Item(bool isNullable, bool checkType)
+        {
             System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
             bool isNull = false;
             if (isNullable) isNull = ReadNull();
-            if (checkType) {
-            if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id4_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-            }
-            else
-                throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
             }
             if (isNull) return null;
             global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount o;
             o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount();
             bool[] paramsRead = new bool[2];
-            while (Reader.MoveToNextAttribute()) {
-                if (!paramsRead[0] && ((object) Reader.LocalName == (object)id67_Min && (object) Reader.NamespaceURI == (object)id4_Item)) {
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id67_Min && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@Min = CollapseWhitespace(Reader.Value);
                     paramsRead[0] = true;
                 }
-                else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id68_Max && (object) Reader.NamespaceURI == (object)id4_Item)) {
+                else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id68_Max && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
                     o.@Max = CollapseWhitespace(Reader.Value);
                     paramsRead[1] = true;
                 }
-                else if (!IsXmlnsAttribute(Reader.Name)) {
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
                     UnknownNode((object)o, @":Min, :Max");
                 }
             }
             Reader.MoveToElement();
-            if (Reader.IsEmptyElement) {
+            if (Reader.IsEmptyElement)
+            {
                 Reader.Skip();
                 return o;
             }
@@ -3454,11 +4278,14 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             Reader.MoveToContent();
             int whileIterations10 = 0;
             int readerCount10 = ReaderCount;
-            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
                     UnknownNode((object)o, @"");
                 }
-                else {
+                else
+                {
                     UnknownNode((object)o, @"");
                 }
                 Reader.MoveToContent();
@@ -3468,403 +4295,490 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
             return o;
         }
 
-        global::System.Object Read1_Object(bool isNullable, bool checkType) {
+        private global::System.Object Read1_Object(bool isNullable, bool checkType)
+        {
             System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
             bool isNull = false;
             if (isNullable) isNull = ReadNull();
-            if (checkType) {
-                if (isNull) {
+            if (checkType)
+            {
+                if (isNull)
+                {
                     if (xsiType != null) return (global::System.Object)ReadTypedNull(xsiType);
                     else return null;
                 }
-                if (xsiType == null) {
+                if (xsiType == null)
+                {
                     return ReadTypedPrimitive(new System.Xml.XmlQualifiedName("anyType", "http://www.w3.org/2001/XMLSchema"));
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id40_EnumMetadataEnumValue && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id40_EnumMetadataEnumValue && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read49_EnumMetadataEnumValue(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id39_EnumMetadataEnum && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id39_EnumMetadataEnum && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read48_EnumMetadataEnum(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id38_ClassMetadataData && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id38_ClassMetadataData && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read47_ClassMetadataData(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id32_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id32_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read46_Item(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id16_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id16_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read44_Item(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id15_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id15_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read43_Item(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id14_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id14_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read42_Item(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id10_AssociationAssociatedInstance && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id10_AssociationAssociatedInstance && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read41_AssociationAssociatedInstance(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id5_ClassMetadataInstanceCmdlets && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id5_ClassMetadataInstanceCmdlets && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read40_ClassMetadataInstanceCmdlets(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id3_ClassMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id3_ClassMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read36_ClassMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id24_StaticCmdletMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id24_StaticCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read34_StaticCmdletMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id34_InstanceCmdletMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id34_InstanceCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read31_InstanceCmdletMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id28_CommonMethodParameterMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id28_CommonMethodParameterMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read26_CommonMethodParameterMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id29_StaticMethodParameterMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id29_StaticMethodParameterMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read27_StaticMethodParameterMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id31_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id31_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read25_Item(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id26_CommonMethodMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id26_CommonMethodMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read29_CommonMethodMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id33_InstanceMethodMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id33_InstanceMethodMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read30_InstanceMethodMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id27_StaticMethodMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id27_StaticMethodMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read28_StaticMethodMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id30_CmdletOutputMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id30_CmdletOutputMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read23_CmdletOutputMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id21_GetCmdletMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id21_GetCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read22_GetCmdletMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id22_CommonCmdletMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id22_CommonCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read21_CommonCmdletMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id25_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id25_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read45_Item(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id6_GetCmdletParameters && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id6_GetCmdletParameters && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read19_GetCmdletParameters(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id20_QueryOption && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id20_QueryOption && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read18_QueryOption(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id9_Association && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id9_Association && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read17_Association(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id7_PropertyMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id7_PropertyMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read15_PropertyMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id35_PropertyQuery && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id35_PropertyQuery && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read14_PropertyQuery(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id36_WildcardablePropertyQuery && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id36_WildcardablePropertyQuery && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read13_WildcardablePropertyQuery(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id11_CmdletParameterMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id11_CmdletParameterMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read10_CmdletParameterMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id12_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id12_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read11_Item(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id13_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id13_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read12_Item(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id18_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id18_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read9_Item(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id19_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id19_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read8_Item(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id17_ObsoleteAttributeMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id17_ObsoleteAttributeMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read7_ObsoleteAttributeMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id8_TypeMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id8_TypeMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read2_TypeMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id37_ItemsChoiceType && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id37_ItemsChoiceType && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                     Reader.ReadStartElement();
                     object e = Read3_ItemsChoiceType(CollapseWhitespace(Reader.ReadString()));
                     ReadEndElement();
                     return e;
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id69_ArrayOfString && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id69_ArrayOfString && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                     global::System.String[] a = null;
-                    if (!ReadNull()) {
+                    if (!ReadNull())
+                    {
                         global::System.String[] z_0_0 = null;
                         int cz_0_0 = 0;
-                        if ((Reader.IsEmptyElement)) {
+                        if ((Reader.IsEmptyElement))
+                        {
                             Reader.Skip();
                         }
-                        else {
+                        else
+                        {
                             Reader.ReadStartElement();
                             Reader.MoveToContent();
                             int whileIterations11 = 0;
                             int readerCount11 = ReaderCount;
-                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                    if (((object) Reader.LocalName == (object)id64_AllowedValue && (object) Reader.NamespaceURI == (object)id2_Item)) {
+                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                            {
+                                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                {
+                                    if (((object)Reader.LocalName == (object)_id64_AllowedValue && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                    {
                                         {
-                                            z_0_0 = (global::System.String[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::System.String));z_0_0[cz_0_0++] = Reader.ReadElementString();
+                                            z_0_0 = (global::System.String[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::System.String)); z_0_0[cz_0_0++] = Reader.ReadElementString();
                                         }
                                     }
-                                    else {
+                                    else
+                                    {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
                                     }
                                 }
-                                else {
+                                else
+                                {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
                                 }
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations11, ref readerCount11);
                             }
-                        ReadEndElement();
+                            ReadEndElement();
                         }
                         a = (global::System.String[])ShrinkArray(z_0_0, cz_0_0, typeof(global::System.String), false);
                     }
                     return a;
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id70_ArrayOfPropertyMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id70_ArrayOfPropertyMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                     global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[] a = null;
-                    if (!ReadNull()) {
+                    if (!ReadNull())
+                    {
                         global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[] z_0_0 = null;
                         int cz_0_0 = 0;
-                        if ((Reader.IsEmptyElement)) {
+                        if ((Reader.IsEmptyElement))
+                        {
                             Reader.Skip();
                         }
-                        else {
+                        else
+                        {
                             Reader.ReadStartElement();
                             Reader.MoveToContent();
                             int whileIterations12 = 0;
                             int readerCount12 = ReaderCount;
-                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                    if (((object) Reader.LocalName == (object)id71_Property && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata));z_0_0[cz_0_0++] = Read15_PropertyMetadata(false, true);
+                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                            {
+                                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                {
+                                    if (((object)Reader.LocalName == (object)_id71_Property && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                    {
+                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata)); z_0_0[cz_0_0++] = Read15_PropertyMetadata(false, true);
                                     }
-                                    else {
+                                    else
+                                    {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Property");
                                     }
                                 }
-                                else {
+                                else
+                                {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Property");
                                 }
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations12, ref readerCount12);
                             }
-                        ReadEndElement();
+                            ReadEndElement();
                         }
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata), false);
                     }
                     return a;
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id72_ArrayOfAssociation && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id72_ArrayOfAssociation && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                     global::Microsoft.PowerShell.Cmdletization.Xml.Association[] a = null;
-                    if (!ReadNull()) {
+                    if (!ReadNull())
+                    {
                         global::Microsoft.PowerShell.Cmdletization.Xml.Association[] z_0_0 = null;
                         int cz_0_0 = 0;
-                        if ((Reader.IsEmptyElement)) {
+                        if ((Reader.IsEmptyElement))
+                        {
                             Reader.Skip();
                         }
-                        else {
+                        else
+                        {
                             Reader.ReadStartElement();
                             Reader.MoveToContent();
                             int whileIterations13 = 0;
                             int readerCount13 = ReaderCount;
-                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                    if (((object) Reader.LocalName == (object)id9_Association && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.Association[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association));z_0_0[cz_0_0++] = Read17_Association(false, true);
+                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                            {
+                                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                {
+                                    if (((object)Reader.LocalName == (object)_id9_Association && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                    {
+                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.Association[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association)); z_0_0[cz_0_0++] = Read17_Association(false, true);
                                     }
-                                    else {
+                                    else
+                                    {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Association");
                                     }
                                 }
-                                else {
+                                else
+                                {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Association");
                                 }
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations13, ref readerCount13);
                             }
-                        ReadEndElement();
+                            ReadEndElement();
                         }
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.Association[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association), false);
                     }
                     return a;
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id73_ArrayOfQueryOption && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id73_ArrayOfQueryOption && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                     global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[] a = null;
-                    if (!ReadNull()) {
+                    if (!ReadNull())
+                    {
                         global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[] z_0_0 = null;
                         int cz_0_0 = 0;
-                        if ((Reader.IsEmptyElement)) {
+                        if ((Reader.IsEmptyElement))
+                        {
                             Reader.Skip();
                         }
-                        else {
+                        else
+                        {
                             Reader.ReadStartElement();
                             Reader.MoveToContent();
                             int whileIterations14 = 0;
                             int readerCount14 = ReaderCount;
-                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                    if (((object) Reader.LocalName == (object)id74_Option && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption));z_0_0[cz_0_0++] = Read18_QueryOption(false, true);
+                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                            {
+                                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                {
+                                    if (((object)Reader.LocalName == (object)_id74_Option && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                    {
+                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption)); z_0_0[cz_0_0++] = Read18_QueryOption(false, true);
                                     }
-                                    else {
+                                    else
+                                    {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Option");
                                     }
                                 }
-                                else {
+                                else
+                                {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Option");
                                 }
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations14, ref readerCount14);
                             }
-                        ReadEndElement();
+                            ReadEndElement();
                         }
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption), false);
                     }
                     return a;
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id23_ConfirmImpact && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id23_ConfirmImpact && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                     Reader.ReadStartElement();
                     object e = Read20_ConfirmImpact(CollapseWhitespace(Reader.ReadString()));
                     ReadEndElement();
                     return e;
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id75_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id75_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                     global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[] a = null;
-                    if (!ReadNull()) {
+                    if (!ReadNull())
+                    {
                         global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[] z_0_0 = null;
                         int cz_0_0 = 0;
-                        if ((Reader.IsEmptyElement)) {
+                        if ((Reader.IsEmptyElement))
+                        {
                             Reader.Skip();
                         }
-                        else {
+                        else
+                        {
                             Reader.ReadStartElement();
                             Reader.MoveToContent();
                             int whileIterations15 = 0;
                             int readerCount15 = ReaderCount;
-                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                    if (((object) Reader.LocalName == (object)id76_Parameter && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata));z_0_0[cz_0_0++] = Read27_StaticMethodParameterMetadata(false, true);
+                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                            {
+                                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                {
+                                    if (((object)Reader.LocalName == (object)_id76_Parameter && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                    {
+                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)); z_0_0[cz_0_0++] = Read27_StaticMethodParameterMetadata(false, true);
                                     }
-                                    else {
+                                    else
+                                    {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
                                     }
                                 }
-                                else {
+                                else
+                                {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
                                 }
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations15, ref readerCount15);
                             }
-                        ReadEndElement();
+                            ReadEndElement();
                         }
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata), false);
                     }
                     return a;
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id77_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id77_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                     global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[] a = null;
-                    if (!ReadNull()) {
+                    if (!ReadNull())
+                    {
                         global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[] z_0_0 = null;
                         int cz_0_0 = 0;
-                        if ((Reader.IsEmptyElement)) {
+                        if ((Reader.IsEmptyElement))
+                        {
                             Reader.Skip();
                         }
-                        else {
+                        else
+                        {
                             Reader.ReadStartElement();
                             Reader.MoveToContent();
                             int whileIterations16 = 0;
                             int readerCount16 = ReaderCount;
-                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                    if (((object) Reader.LocalName == (object)id76_Parameter && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata));z_0_0[cz_0_0++] = Read25_Item(false, true);
+                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                            {
+                                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                {
+                                    if (((object)Reader.LocalName == (object)_id76_Parameter && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                    {
+                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)); z_0_0[cz_0_0++] = Read25_Item(false, true);
                                     }
-                                    else {
+                                    else
+                                    {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
                                     }
                                 }
-                                else {
+                                else
+                                {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
                                 }
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations16, ref readerCount16);
                             }
-                        ReadEndElement();
+                            ReadEndElement();
                         }
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata), false);
                     }
                     return a;
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id78_ArrayOfStaticCmdletMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id78_ArrayOfStaticCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                     global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[] a = null;
-                    if (!ReadNull()) {
+                    if (!ReadNull())
+                    {
                         global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[] z_0_0 = null;
                         int cz_0_0 = 0;
-                        if ((Reader.IsEmptyElement)) {
+                        if ((Reader.IsEmptyElement))
+                        {
                             Reader.Skip();
                         }
-                        else {
+                        else
+                        {
                             Reader.ReadStartElement();
                             Reader.MoveToContent();
                             int whileIterations17 = 0;
                             int readerCount17 = ReaderCount;
-                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                    if (((object) Reader.LocalName == (object)id79_Cmdlet && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata));z_0_0[cz_0_0++] = Read34_StaticCmdletMetadata(false, true);
+                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                            {
+                                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                {
+                                    if (((object)Reader.LocalName == (object)_id79_Cmdlet && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                    {
+                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata)); z_0_0[cz_0_0++] = Read34_StaticCmdletMetadata(false, true);
                                     }
-                                    else {
+                                    else
+                                    {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Cmdlet");
                                     }
                                 }
-                                else {
+                                else
+                                {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Cmdlet");
                                 }
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations17, ref readerCount17);
                             }
-                        ReadEndElement();
+                            ReadEndElement();
                         }
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata), false);
                     }
                     return a;
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id80_ArrayOfClassMetadataData && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id80_ArrayOfClassMetadataData && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                     global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[] a = null;
-                    if (!ReadNull()) {
+                    if (!ReadNull())
+                    {
                         global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[] z_0_0 = null;
                         int cz_0_0 = 0;
-                        if ((Reader.IsEmptyElement)) {
+                        if ((Reader.IsEmptyElement))
+                        {
                             Reader.Skip();
                         }
-                        else {
+                        else
+                        {
                             Reader.ReadStartElement();
                             Reader.MoveToContent();
                             int whileIterations18 = 0;
                             int readerCount18 = ReaderCount;
-                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                    if (((object) Reader.LocalName == (object)id81_Data && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData));z_0_0[cz_0_0++] = Read35_ClassMetadataData(false, true);
+                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                            {
+                                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                {
+                                    if (((object)Reader.LocalName == (object)_id81_Data && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                    {
+                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData)); z_0_0[cz_0_0++] = Read35_ClassMetadataData(false, true);
                                     }
-                                    else {
+                                    else
+                                    {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Data");
                                     }
                                 }
-                                else {
+                                else
+                                {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Data");
                                 }
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations18, ref readerCount18);
                             }
-                        ReadEndElement();
+                            ReadEndElement();
                         }
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData), false);
                     }
                     return a;
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id82_ArrayOfEnumMetadataEnum && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id82_ArrayOfEnumMetadataEnum && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                     global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[] a = null;
-                    if (!ReadNull()) {
+                    if (!ReadNull())
+                    {
                         global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[] z_0_0 = null;
                         int cz_0_0 = 0;
-                        if ((Reader.IsEmptyElement)) {
+                        if ((Reader.IsEmptyElement))
+                        {
                             Reader.Skip();
                         }
-                        else {
+                        else
+                        {
                             Reader.ReadStartElement();
                             Reader.MoveToContent();
                             int whileIterations19 = 0;
                             int readerCount19 = ReaderCount;
-                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                    if (((object) Reader.LocalName == (object)id83_Enum && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum));z_0_0[cz_0_0++] = Read38_EnumMetadataEnum(false, true);
+                            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                            {
+                                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                {
+                                    if (((object)Reader.LocalName == (object)_id83_Enum && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                    {
+                                        z_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])EnsureArrayIndex(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum)); z_0_0[cz_0_0++] = Read38_EnumMetadataEnum(false, true);
                                     }
-                                    else {
+                                    else
+                                    {
                                         UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Enum");
                                     }
                                 }
-                                else {
+                                else
+                                {
                                     UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Enum");
                                 }
                                 Reader.MoveToContent();
                                 CheckReaderCount(ref whileIterations19, ref readerCount19);
                             }
-                        ReadEndElement();
+                            ReadEndElement();
                         }
                         a = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])ShrinkArray(z_0_0, cz_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum), false);
                     }
@@ -3872,3886 +4786,4653 @@ namespace Microsoft.PowerShell.Cmdletization.Xml {
                 }
                 else
                     return ReadTypedPrimitive((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::System.Object o;
+            o = new global::System.Object();
+            bool[] paramsRead = new bool[0];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o);
                 }
-                if (isNull) return null;
-                global::System.Object o;
-                o = new global::System.Object();
-                bool[] paramsRead = new bool[0];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o);
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations20 = 0;
-                int readerCount20 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        UnknownNode((object)o, @"");
-                    }
-                    else {
-                        UnknownNode((object)o, @"");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations20, ref readerCount20);
-                }
-                ReadEndElement();
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
                 return o;
             }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations20 = 0;
+            int readerCount20 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    UnknownNode((object)o, @"");
+                }
+                else
+                {
+                    UnknownNode((object)o, @"");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations20, ref readerCount20);
+            }
+            ReadEndElement();
+            return o;
+        }
 
-            global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum Read38_EnumMetadataEnum(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id4_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum Read38_EnumMetadataEnum(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum();
+            global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[] a_0 = null;
+            int ca_0 = 0;
+            bool[] paramsRead = new bool[4];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id43_EnumName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@EnumName = Reader.Value;
+                    paramsRead[1] = true;
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum();
-                global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[] a_0 = null;
-                int ca_0 = 0;
-                bool[] paramsRead = new bool[4];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[1] && ((object) Reader.LocalName == (object)id43_EnumName && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@EnumName = Reader.Value;
-                        paramsRead[1] = true;
-                    }
-                    else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id44_UnderlyingType && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@UnderlyingType = Reader.Value;
-                        paramsRead[2] = true;
-                    }
-                    else if (!paramsRead[3] && ((object) Reader.LocalName == (object)id45_BitwiseFlags && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@BitwiseFlags = System.Xml.XmlConvert.ToBoolean(Reader.Value);
-                        o.@BitwiseFlagsSpecified = true;
-                        paramsRead[3] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":EnumName, :UnderlyingType, :BitwiseFlags");
-                    }
+                else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id44_UnderlyingType && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@UnderlyingType = Reader.Value;
+                    paramsRead[2] = true;
                 }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    o.@Value = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])ShrinkArray(a_0, ca_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue), true);
-                    return o;
+                else if (!paramsRead[3] && ((object)Reader.LocalName == (object)_id45_BitwiseFlags && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@BitwiseFlags = System.Xml.XmlConvert.ToBoolean(Reader.Value);
+                    o.@BitwiseFlagsSpecified = true;
+                    paramsRead[3] = true;
                 }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations21 = 0;
-                int readerCount21 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (((object) Reader.LocalName == (object)id42_Value && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            a_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])EnsureArrayIndex(a_0, ca_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue));a_0[ca_0++] = Read37_EnumMetadataEnumValue(false, true);
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Value");
-                        }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":EnumName, :UnderlyingType, :BitwiseFlags");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                o.@Value = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])ShrinkArray(a_0, ca_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue), true);
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations21 = 0;
+            int readerCount21 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (((object)Reader.LocalName == (object)_id42_Value && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        a_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])EnsureArrayIndex(a_0, ca_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue)); a_0[ca_0++] = Read37_EnumMetadataEnumValue(false, true);
                     }
-                    else {
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Value");
                     }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations21, ref readerCount21);
                 }
-                o.@Value = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])ShrinkArray(a_0, ca_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue), true);
-                ReadEndElement();
-                return o;
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Value");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations21, ref readerCount21);
             }
+            o.@Value = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue[])ShrinkArray(a_0, ca_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue), true);
+            ReadEndElement();
+            return o;
+        }
 
-            global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData Read35_ClassMetadataData(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id4_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData Read35_ClassMetadataData(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData();
+            bool[] paramsRead = new bool[2];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id41_Name && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Name = Reader.Value;
+                    paramsRead[0] = true;
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData();
-                bool[] paramsRead = new bool[2];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[0] && ((object) Reader.LocalName == (object)id41_Name && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Name = Reader.Value;
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":Name");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations22 = 0;
+            int readerCount22 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                string tmp = null;
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    UnknownNode((object)o, @"");
+                }
+                else if (Reader.NodeType == System.Xml.XmlNodeType.Text ||
+                Reader.NodeType == System.Xml.XmlNodeType.CDATA ||
+                Reader.NodeType == System.Xml.XmlNodeType.Whitespace ||
+                Reader.NodeType == System.Xml.XmlNodeType.SignificantWhitespace)
+                {
+                    tmp = ReadString(tmp, false);
+                    o.@Value = tmp;
+                }
+                else
+                {
+                    UnknownNode((object)o, @"");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations22, ref readerCount22);
+            }
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata Read34_StaticCmdletMetadata(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id24_StaticCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata();
+            global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata[] a_1 = null;
+            int ca_1 = 0;
+            bool[] paramsRead = new bool[2];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o);
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                o.@Method = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata[])ShrinkArray(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata), true);
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations23 = 0;
+            int readerCount23 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id84_CmdletMetadata && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@CmdletMetadata = Read33_Item(false, true);
                         paramsRead[0] = true;
                     }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":Name");
+                    else if (((object)Reader.LocalName == (object)_id85_Method && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata[])EnsureArrayIndex(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata)); a_1[ca_1++] = Read28_StaticMethodMetadata(false, true);
                     }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations22 = 0;
-                int readerCount22 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    string tmp = null;
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        UnknownNode((object)o, @"");
-                    }
-                    else if (Reader.NodeType == System.Xml.XmlNodeType.Text || 
-                    Reader.NodeType == System.Xml.XmlNodeType.CDATA || 
-                    Reader.NodeType == System.Xml.XmlNodeType.Whitespace || 
-                    Reader.NodeType == System.Xml.XmlNodeType.SignificantWhitespace) {
-                        tmp = ReadString(tmp, false);
-                        o.@Value = tmp;
-                    }
-                    else {
-                        UnknownNode((object)o, @"");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations22, ref readerCount22);
-                }
-                ReadEndElement();
-                return o;
-            }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata Read34_StaticCmdletMetadata(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id24_StaticCmdletMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-                }
-                else
-                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
-                }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata();
-                global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata[] a_1 = null;
-                int ca_1 = 0;
-                bool[] paramsRead = new bool[2];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o);
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    o.@Method = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata[])ShrinkArray(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata), true);
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations23 = 0;
-                int readerCount23 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id84_CmdletMetadata && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@CmdletMetadata = Read33_Item(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (((object) Reader.LocalName == (object)id85_Method && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata[])EnsureArrayIndex(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata));a_1[ca_1++] = Read28_StaticMethodMetadata(false, true);
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Method");
-                        }
-                    }
-                    else {
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Method");
                     }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations23, ref readerCount23);
-                }
-                o.@Method = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata[])ShrinkArray(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata), true);
-                ReadEndElement();
-                return o;
-            }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata Read28_StaticMethodMetadata(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id27_StaticMethodMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
                 }
                 else
-                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Method");
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata();
-                global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[] a_2 = null;
-                int ca_2 = 0;
-                bool[] paramsRead = new bool[4];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[1] && ((object) Reader.LocalName == (object)id86_MethodName && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@MethodName = Reader.Value;
-                        paramsRead[1] = true;
-                    }
-                    else if (!paramsRead[3] && ((object) Reader.LocalName == (object)id87_CmdletParameterSet && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@CmdletParameterSet = Reader.Value;
-                        paramsRead[3] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":MethodName, :CmdletParameterSet");
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
                 Reader.MoveToContent();
-                int whileIterations24 = 0;
-                int readerCount24 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id88_ReturnValue && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ReturnValue = Read24_Item(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (((object) Reader.LocalName == (object)id89_Parameters && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            if (!ReadNull()) {
-                                global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[] a_2_0 = null;
-                                int ca_2_0 = 0;
-                                if ((Reader.IsEmptyElement)) {
-                                    Reader.Skip();
-                                }
-                                else {
-                                    Reader.ReadStartElement();
-                                    Reader.MoveToContent();
-                                    int whileIterations25 = 0;
-                                    int readerCount25 = ReaderCount;
-                                    while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                        if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                            if (((object) Reader.LocalName == (object)id76_Parameter && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                                a_2_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])EnsureArrayIndex(a_2_0, ca_2_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata));a_2_0[ca_2_0++] = Read27_StaticMethodParameterMetadata(false, true);
-                                            }
-                                            else {
-                                                UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
-                                            }
-                                        }
-                                        else {
-                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
-                                        }
-                                        Reader.MoveToContent();
-                                        CheckReaderCount(ref whileIterations25, ref readerCount25);
-                                    }
-                                ReadEndElement();
-                                }
-                                o.@Parameters = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])ShrinkArray(a_2_0, ca_2_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata), false);
-                            }
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ReturnValue, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameters");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ReturnValue, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameters");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations24, ref readerCount24);
-                }
-                ReadEndElement();
-                return o;
+                CheckReaderCount(ref whileIterations23, ref readerCount23);
             }
+            o.@Method = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata[])ShrinkArray(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata), true);
+            ReadEndElement();
+            return o;
+        }
 
-            global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata Read27_StaticMethodParameterMetadata(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id29_StaticMethodParameterMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata Read28_StaticMethodMetadata(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id27_StaticMethodMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata();
+            global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[] a_2 = null;
+            int ca_2 = 0;
+            bool[] paramsRead = new bool[4];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id86_MethodName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@MethodName = Reader.Value;
+                    paramsRead[1] = true;
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata();
-                bool[] paramsRead = new bool[5];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[1] && ((object) Reader.LocalName == (object)id90_ParameterName && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@ParameterName = Reader.Value;
-                        paramsRead[1] = true;
-                    }
-                    else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id91_DefaultValue && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@DefaultValue = Reader.Value;
-                        paramsRead[2] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":ParameterName, :DefaultValue");
-                    }
+                else if (!paramsRead[3] && ((object)Reader.LocalName == (object)_id87_CmdletParameterSet && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@CmdletParameterSet = Reader.Value;
+                    paramsRead[3] = true;
                 }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":MethodName, :CmdletParameterSet");
                 }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations26 = 0;
-                int readerCount26 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id92_Type && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Type = Read2_TypeMetadata(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[3] && ((object) Reader.LocalName == (object)id11_CmdletParameterMetadata && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@CmdletParameterMetadata = Read8_Item(false, true);
-                            paramsRead[3] = true;
-                        }
-                        else if (!paramsRead[4] && ((object) Reader.LocalName == (object)id30_CmdletOutputMetadata && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@CmdletOutputMetadata = Read23_CmdletOutputMetadata(false, true);
-                            paramsRead[4] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations26, ref readerCount26);
-                }
-                ReadEndElement();
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
                 return o;
             }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata Read23_CmdletOutputMetadata(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id30_CmdletOutputMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-                }
-                else
-                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
-                }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata();
-                bool[] paramsRead = new bool[2];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[1] && ((object) Reader.LocalName == (object)id49_PSName && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@PSName = Reader.Value;
-                        paramsRead[1] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":PSName");
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations27 = 0;
-                int readerCount27 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id93_ErrorCode && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ErrorCode = Read1_Object(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ErrorCode");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ErrorCode");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations27, ref readerCount27);
-                }
-                ReadEndElement();
-                return o;
-            }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter Read8_Item(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id19_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-                }
-                else
-                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
-                }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter();
-                global::System.String[] a_8 = null;
-                int ca_8 = 0;
-                global::System.String[] a_11 = null;
-                int ca_11 = 0;
-                bool[] paramsRead = new bool[16];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[10] && ((object) Reader.LocalName == (object)id47_IsMandatory && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@IsMandatory = System.Xml.XmlConvert.ToBoolean(Reader.Value);
-                        o.@IsMandatorySpecified = true;
-                        paramsRead[10] = true;
-                    }
-                    else if (((object) Reader.LocalName == (object)id48_Aliases && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        string listValues = Reader.Value;
-                        string[] vals = listValues.Split(null);
-                        for (int i = 0; i < vals.Length; i++) {
-                            a_11 = (global::System.String[])EnsureArrayIndex(a_11, ca_11, typeof(global::System.String));a_11[ca_11++] = vals[i];
-                        }
-                    }
-                    else if (!paramsRead[12] && ((object) Reader.LocalName == (object)id49_PSName && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@PSName = Reader.Value;
-                        paramsRead[12] = true;
-                    }
-                    else if (!paramsRead[13] && ((object) Reader.LocalName == (object)id50_Position && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Position = CollapseWhitespace(Reader.Value);
-                        paramsRead[13] = true;
-                    }
-                    else if (!paramsRead[14] && ((object) Reader.LocalName == (object)id51_ValueFromPipeline && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@ValueFromPipeline = System.Xml.XmlConvert.ToBoolean(Reader.Value);
-                        o.@ValueFromPipelineSpecified = true;
-                        paramsRead[14] = true;
-                    }
-                    else if (!paramsRead[15] && ((object) Reader.LocalName == (object)id52_Item && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@ValueFromPipelineByPropertyName = System.Xml.XmlConvert.ToBoolean(Reader.Value);
-                        o.@ValueFromPipelineByPropertyNameSpecified = true;
-                        paramsRead[15] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":IsMandatory, :Aliases, :PSName, :Position, :ValueFromPipeline, :ValueFromPipelineByPropertyName");
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations28 = 0;
-                int readerCount28 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id55_AllowEmptyCollection && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@AllowEmptyCollection = Read1_Object(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id56_AllowEmptyString && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@AllowEmptyString = Read1_Object(false, true);
-                            paramsRead[1] = true;
-                        }
-                        else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id57_AllowNull && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@AllowNull = Read1_Object(false, true);
-                            paramsRead[2] = true;
-                        }
-                        else if (!paramsRead[3] && ((object) Reader.LocalName == (object)id58_ValidateNotNull && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateNotNull = Read1_Object(false, true);
-                            paramsRead[3] = true;
-                        }
-                        else if (!paramsRead[4] && ((object) Reader.LocalName == (object)id59_ValidateNotNullOrEmpty && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateNotNullOrEmpty = Read1_Object(false, true);
-                            paramsRead[4] = true;
-                        }
-                        else if (!paramsRead[5] && ((object) Reader.LocalName == (object)id60_ValidateCount && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateCount = Read4_Item(false, true);
-                            paramsRead[5] = true;
-                        }
-                        else if (!paramsRead[6] && ((object) Reader.LocalName == (object)id61_ValidateLength && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateLength = Read5_Item(false, true);
-                            paramsRead[6] = true;
-                        }
-                        else if (!paramsRead[7] && ((object) Reader.LocalName == (object)id62_ValidateRange && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateRange = Read6_Item(false, true);
-                            paramsRead[7] = true;
-                        }
-                        else if (((object) Reader.LocalName == (object)id63_ValidateSet && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            if (!ReadNull()) {
-                                global::System.String[] a_8_0 = null;
-                                int ca_8_0 = 0;
-                                if ((Reader.IsEmptyElement)) {
-                                    Reader.Skip();
-                                }
-                                else {
-                                    Reader.ReadStartElement();
-                                    Reader.MoveToContent();
-                                    int whileIterations29 = 0;
-                                    int readerCount29 = ReaderCount;
-                                    while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                        if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                            if (((object) Reader.LocalName == (object)id64_AllowedValue && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                                {
-                                                    a_8_0 = (global::System.String[])EnsureArrayIndex(a_8_0, ca_8_0, typeof(global::System.String));a_8_0[ca_8_0++] = Reader.ReadElementString();
-                                                }
-                                            }
-                                            else {
-                                                UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
-                                            }
-                                        }
-                                        else {
-                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
-                                        }
-                                        Reader.MoveToContent();
-                                        CheckReaderCount(ref whileIterations29, ref readerCount29);
-                                    }
-                                ReadEndElement();
-                                }
-                                o.@ValidateSet = (global::System.String[])ShrinkArray(a_8_0, ca_8_0, typeof(global::System.String), false);
-                            }
-                        }
-                        else if (!paramsRead[9] && ((object) Reader.LocalName == (object)id65_Obsolete && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Obsolete = Read7_ObsoleteAttributeMetadata(false, true);
-                            paramsRead[9] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations28, ref readerCount28);
-                }
-                o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
-                ReadEndElement();
-                return o;
-            }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata Read2_TypeMetadata(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id8_TypeMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-                }
-                else
-                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
-                }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata();
-                bool[] paramsRead = new bool[2];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[0] && ((object) Reader.LocalName == (object)id94_PSType && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@PSType = Reader.Value;
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations24 = 0;
+            int readerCount24 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id88_ReturnValue && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ReturnValue = Read24_Item(false, true);
                         paramsRead[0] = true;
                     }
-                    else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id95_ETSType && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@ETSType = Reader.Value;
-                        paramsRead[1] = true;
+                    else if (((object)Reader.LocalName == (object)_id89_Parameters && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        if (!ReadNull())
+                        {
+                            global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[] a_2_0 = null;
+                            int ca_2_0 = 0;
+                            if ((Reader.IsEmptyElement))
+                            {
+                                Reader.Skip();
+                            }
+                            else
+                            {
+                                Reader.ReadStartElement();
+                                Reader.MoveToContent();
+                                int whileIterations25 = 0;
+                                int readerCount25 = ReaderCount;
+                                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                                {
+                                    if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                    {
+                                        if (((object)Reader.LocalName == (object)_id76_Parameter && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                        {
+                                            a_2_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])EnsureArrayIndex(a_2_0, ca_2_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)); a_2_0[ca_2_0++] = Read27_StaticMethodParameterMetadata(false, true);
+                                        }
+                                        else
+                                        {
+                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
+                                    }
+                                    Reader.MoveToContent();
+                                    CheckReaderCount(ref whileIterations25, ref readerCount25);
+                                }
+                                ReadEndElement();
+                            }
+                            o.@Parameters = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata[])ShrinkArray(a_2_0, ca_2_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata), false);
+                        }
                     }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":PSType, :ETSType");
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ReturnValue, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameters");
                     }
                 }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ReturnValue, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameters");
                 }
-                Reader.ReadStartElement();
                 Reader.MoveToContent();
-                int whileIterations30 = 0;
-                int readerCount30 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        UnknownNode((object)o, @"");
-                    }
-                    else {
-                        UnknownNode((object)o, @"");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations30, ref readerCount30);
-                }
-                ReadEndElement();
-                return o;
+                CheckReaderCount(ref whileIterations24, ref readerCount24);
             }
+            ReadEndElement();
+            return o;
+        }
 
-            global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue Read24_Item(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id4_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata Read27_StaticMethodParameterMetadata(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id29_StaticMethodParameterMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata();
+            bool[] paramsRead = new bool[5];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id90_ParameterName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@ParameterName = Reader.Value;
+                    paramsRead[1] = true;
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue();
-                bool[] paramsRead = new bool[2];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o);
-                    }
+                else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id91_DefaultValue && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@DefaultValue = Reader.Value;
+                    paramsRead[2] = true;
                 }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":ParameterName, :DefaultValue");
                 }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations31 = 0;
-                int readerCount31 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id92_Type && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Type = Read2_TypeMetadata(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id30_CmdletOutputMetadata && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@CmdletOutputMetadata = Read23_CmdletOutputMetadata(false, true);
-                            paramsRead[1] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations31, ref readerCount31);
-                }
-                ReadEndElement();
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
                 return o;
             }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata Read33_Item(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id4_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-                }
-                else
-                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
-                }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata();
-                global::System.String[] a_3 = null;
-                int ca_3 = 0;
-                bool[] paramsRead = new bool[7];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[1] && ((object) Reader.LocalName == (object)id96_Verb && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Verb = Reader.Value;
-                        paramsRead[1] = true;
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations26 = 0;
+            int readerCount26 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id92_Type && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Type = Read2_TypeMetadata(false, true);
+                        paramsRead[0] = true;
                     }
-                    else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id97_Noun && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Noun = Reader.Value;
-                        paramsRead[2] = true;
+                    else if (!paramsRead[3] && ((object)Reader.LocalName == (object)_id11_CmdletParameterMetadata && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@CmdletParameterMetadata = Read8_Item(false, true);
+                        paramsRead[3] = true;
                     }
-                    else if (((object) Reader.LocalName == (object)id48_Aliases && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        string listValues = Reader.Value;
-                        string[] vals = listValues.Split(null);
-                        for (int i = 0; i < vals.Length; i++) {
-                            a_3 = (global::System.String[])EnsureArrayIndex(a_3, ca_3, typeof(global::System.String));a_3[ca_3++] = vals[i];
-                        }
-                    }
-                    else if (!paramsRead[4] && ((object) Reader.LocalName == (object)id23_ConfirmImpact && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@ConfirmImpact = Read20_ConfirmImpact(Reader.Value);
-                        o.@ConfirmImpactSpecified = true;
+                    else if (!paramsRead[4] && ((object)Reader.LocalName == (object)_id30_CmdletOutputMetadata && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@CmdletOutputMetadata = Read23_CmdletOutputMetadata(false, true);
                         paramsRead[4] = true;
                     }
-                    else if (!paramsRead[5] && ((object) Reader.LocalName == (object)id98_HelpUri && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@HelpUri = CollapseWhitespace(Reader.Value);
-                        paramsRead[5] = true;
-                    }
-                    else if (!paramsRead[6] && ((object) Reader.LocalName == (object)id99_DefaultCmdletParameterSet && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@DefaultCmdletParameterSet = Reader.Value;
-                        paramsRead[6] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":Verb, :Noun, :Aliases, :ConfirmImpact, :HelpUri, :DefaultCmdletParameterSet");
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations32 = 0;
-                int readerCount32 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id65_Obsolete && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Obsolete = Read7_ObsoleteAttributeMetadata(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations32, ref readerCount32);
-                }
-                o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
-                ReadEndElement();
-                return o;
-            }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact Read20_ConfirmImpact(string s) {
-                switch (s) {
-                    case @"None": return global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact.@None;
-                    case @"Low": return global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact.@Low;
-                    case @"Medium": return global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact.@Medium;
-                    case @"High": return global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact.@High;
-                    default: throw CreateUnknownConstantException(s, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact));
-                }
-            }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata Read25_Item(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id31_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-                }
-                else
-                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
-                }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata();
-                bool[] paramsRead = new bool[5];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[1] && ((object) Reader.LocalName == (object)id90_ParameterName && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@ParameterName = Reader.Value;
-                        paramsRead[1] = true;
-                    }
-                    else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id91_DefaultValue && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@DefaultValue = Reader.Value;
-                        paramsRead[2] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":ParameterName, :DefaultValue");
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations33 = 0;
-                int readerCount33 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id92_Type && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Type = Read2_TypeMetadata(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[3] && ((object) Reader.LocalName == (object)id11_CmdletParameterMetadata && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@CmdletParameterMetadata = Read9_Item(false, true);
-                            paramsRead[3] = true;
-                        }
-                        else if (!paramsRead[4] && ((object) Reader.LocalName == (object)id30_CmdletOutputMetadata && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@CmdletOutputMetadata = Read23_CmdletOutputMetadata(false, true);
-                            paramsRead[4] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
-                        }
-                    }
-                    else {
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
                     }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations33, ref readerCount33);
-                }
-                ReadEndElement();
-                return o;
-            }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter Read9_Item(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id18_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
                 }
                 else
-                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter();
-                global::System.String[] a_8 = null;
-                int ca_8 = 0;
-                global::System.String[] a_11 = null;
-                int ca_11 = 0;
-                bool[] paramsRead = new bool[15];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[10] && ((object) Reader.LocalName == (object)id47_IsMandatory && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@IsMandatory = System.Xml.XmlConvert.ToBoolean(Reader.Value);
-                        o.@IsMandatorySpecified = true;
-                        paramsRead[10] = true;
-                    }
-                    else if (((object) Reader.LocalName == (object)id48_Aliases && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        string listValues = Reader.Value;
-                        string[] vals = listValues.Split(null);
-                        for (int i = 0; i < vals.Length; i++) {
-                            a_11 = (global::System.String[])EnsureArrayIndex(a_11, ca_11, typeof(global::System.String));a_11[ca_11++] = vals[i];
-                        }
-                    }
-                    else if (!paramsRead[12] && ((object) Reader.LocalName == (object)id49_PSName && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@PSName = Reader.Value;
-                        paramsRead[12] = true;
-                    }
-                    else if (!paramsRead[13] && ((object) Reader.LocalName == (object)id50_Position && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Position = CollapseWhitespace(Reader.Value);
-                        paramsRead[13] = true;
-                    }
-                    else if (!paramsRead[14] && ((object) Reader.LocalName == (object)id52_Item && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@ValueFromPipelineByPropertyName = System.Xml.XmlConvert.ToBoolean(Reader.Value);
-                        o.@ValueFromPipelineByPropertyNameSpecified = true;
-                        paramsRead[14] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":IsMandatory, :Aliases, :PSName, :Position, :ValueFromPipelineByPropertyName");
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
-                    return o;
-                }
-                Reader.ReadStartElement();
                 Reader.MoveToContent();
-                int whileIterations34 = 0;
-                int readerCount34 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id55_AllowEmptyCollection && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@AllowEmptyCollection = Read1_Object(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id56_AllowEmptyString && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@AllowEmptyString = Read1_Object(false, true);
-                            paramsRead[1] = true;
-                        }
-                        else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id57_AllowNull && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@AllowNull = Read1_Object(false, true);
-                            paramsRead[2] = true;
-                        }
-                        else if (!paramsRead[3] && ((object) Reader.LocalName == (object)id58_ValidateNotNull && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateNotNull = Read1_Object(false, true);
-                            paramsRead[3] = true;
-                        }
-                        else if (!paramsRead[4] && ((object) Reader.LocalName == (object)id59_ValidateNotNullOrEmpty && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateNotNullOrEmpty = Read1_Object(false, true);
-                            paramsRead[4] = true;
-                        }
-                        else if (!paramsRead[5] && ((object) Reader.LocalName == (object)id60_ValidateCount && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateCount = Read4_Item(false, true);
-                            paramsRead[5] = true;
-                        }
-                        else if (!paramsRead[6] && ((object) Reader.LocalName == (object)id61_ValidateLength && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateLength = Read5_Item(false, true);
-                            paramsRead[6] = true;
-                        }
-                        else if (!paramsRead[7] && ((object) Reader.LocalName == (object)id62_ValidateRange && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateRange = Read6_Item(false, true);
-                            paramsRead[7] = true;
-                        }
-                        else if (((object) Reader.LocalName == (object)id63_ValidateSet && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            if (!ReadNull()) {
-                                global::System.String[] a_8_0 = null;
-                                int ca_8_0 = 0;
-                                if ((Reader.IsEmptyElement)) {
-                                    Reader.Skip();
-                                }
-                                else {
-                                    Reader.ReadStartElement();
-                                    Reader.MoveToContent();
-                                    int whileIterations35 = 0;
-                                    int readerCount35 = ReaderCount;
-                                    while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                        if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                            if (((object) Reader.LocalName == (object)id64_AllowedValue && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                                {
-                                                    a_8_0 = (global::System.String[])EnsureArrayIndex(a_8_0, ca_8_0, typeof(global::System.String));a_8_0[ca_8_0++] = Reader.ReadElementString();
-                                                }
-                                            }
-                                            else {
-                                                UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
-                                            }
-                                        }
-                                        else {
-                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
-                                        }
-                                        Reader.MoveToContent();
-                                        CheckReaderCount(ref whileIterations35, ref readerCount35);
-                                    }
-                                ReadEndElement();
-                                }
-                                o.@ValidateSet = (global::System.String[])ShrinkArray(a_8_0, ca_8_0, typeof(global::System.String), false);
-                            }
-                        }
-                        else if (!paramsRead[9] && ((object) Reader.LocalName == (object)id65_Obsolete && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Obsolete = Read7_ObsoleteAttributeMetadata(false, true);
-                            paramsRead[9] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations34, ref readerCount34);
-                }
-                o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
-                ReadEndElement();
-                return o;
+                CheckReaderCount(ref whileIterations26, ref readerCount26);
             }
+            ReadEndElement();
+            return o;
+        }
 
-            global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption Read18_QueryOption(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id20_QueryOption && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata Read23_CmdletOutputMetadata(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id30_CmdletOutputMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata();
+            bool[] paramsRead = new bool[2];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id49_PSName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@PSName = Reader.Value;
+                    paramsRead[1] = true;
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption();
-                bool[] paramsRead = new bool[3];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[2] && ((object) Reader.LocalName == (object)id100_OptionName && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@OptionName = Reader.Value;
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":PSName");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations27 = 0;
+            int readerCount27 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id93_ErrorCode && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ErrorCode = Read1_Object(false, true);
+                        paramsRead[0] = true;
+                    }
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ErrorCode");
+                    }
+                }
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ErrorCode");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations27, ref readerCount27);
+            }
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter Read8_Item(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id19_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter();
+            global::System.String[] a_8 = null;
+            int ca_8 = 0;
+            global::System.String[] a_11 = null;
+            int ca_11 = 0;
+            bool[] paramsRead = new bool[16];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[10] && ((object)Reader.LocalName == (object)_id47_IsMandatory && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@IsMandatory = System.Xml.XmlConvert.ToBoolean(Reader.Value);
+                    o.@IsMandatorySpecified = true;
+                    paramsRead[10] = true;
+                }
+                else if (((object)Reader.LocalName == (object)_id48_Aliases && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    string listValues = Reader.Value;
+                    string[] vals = listValues.Split(null);
+                    for (int i = 0; i < vals.Length; i++)
+                    {
+                        a_11 = (global::System.String[])EnsureArrayIndex(a_11, ca_11, typeof(global::System.String)); a_11[ca_11++] = vals[i];
+                    }
+                }
+                else if (!paramsRead[12] && ((object)Reader.LocalName == (object)_id49_PSName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@PSName = Reader.Value;
+                    paramsRead[12] = true;
+                }
+                else if (!paramsRead[13] && ((object)Reader.LocalName == (object)_id50_Position && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Position = CollapseWhitespace(Reader.Value);
+                    paramsRead[13] = true;
+                }
+                else if (!paramsRead[14] && ((object)Reader.LocalName == (object)_id51_ValueFromPipeline && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@ValueFromPipeline = System.Xml.XmlConvert.ToBoolean(Reader.Value);
+                    o.@ValueFromPipelineSpecified = true;
+                    paramsRead[14] = true;
+                }
+                else if (!paramsRead[15] && ((object)Reader.LocalName == (object)_id52_Item && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@ValueFromPipelineByPropertyName = System.Xml.XmlConvert.ToBoolean(Reader.Value);
+                    o.@ValueFromPipelineByPropertyNameSpecified = true;
+                    paramsRead[15] = true;
+                }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":IsMandatory, :Aliases, :PSName, :Position, :ValueFromPipeline, :ValueFromPipelineByPropertyName");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations28 = 0;
+            int readerCount28 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id55_AllowEmptyCollection && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@AllowEmptyCollection = Read1_Object(false, true);
+                        paramsRead[0] = true;
+                    }
+                    else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id56_AllowEmptyString && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@AllowEmptyString = Read1_Object(false, true);
+                        paramsRead[1] = true;
+                    }
+                    else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id57_AllowNull && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@AllowNull = Read1_Object(false, true);
                         paramsRead[2] = true;
                     }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":OptionName");
+                    else if (!paramsRead[3] && ((object)Reader.LocalName == (object)_id58_ValidateNotNull && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateNotNull = Read1_Object(false, true);
+                        paramsRead[3] = true;
+                    }
+                    else if (!paramsRead[4] && ((object)Reader.LocalName == (object)_id59_ValidateNotNullOrEmpty && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateNotNullOrEmpty = Read1_Object(false, true);
+                        paramsRead[4] = true;
+                    }
+                    else if (!paramsRead[5] && ((object)Reader.LocalName == (object)_id60_ValidateCount && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateCount = Read4_Item(false, true);
+                        paramsRead[5] = true;
+                    }
+                    else if (!paramsRead[6] && ((object)Reader.LocalName == (object)_id61_ValidateLength && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateLength = Read5_Item(false, true);
+                        paramsRead[6] = true;
+                    }
+                    else if (!paramsRead[7] && ((object)Reader.LocalName == (object)_id62_ValidateRange && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateRange = Read6_Item(false, true);
+                        paramsRead[7] = true;
+                    }
+                    else if (((object)Reader.LocalName == (object)_id63_ValidateSet && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        if (!ReadNull())
+                        {
+                            global::System.String[] a_8_0 = null;
+                            int ca_8_0 = 0;
+                            if ((Reader.IsEmptyElement))
+                            {
+                                Reader.Skip();
+                            }
+                            else
+                            {
+                                Reader.ReadStartElement();
+                                Reader.MoveToContent();
+                                int whileIterations29 = 0;
+                                int readerCount29 = ReaderCount;
+                                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                                {
+                                    if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                    {
+                                        if (((object)Reader.LocalName == (object)_id64_AllowedValue && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                        {
+                                            {
+                                                a_8_0 = (global::System.String[])EnsureArrayIndex(a_8_0, ca_8_0, typeof(global::System.String)); a_8_0[ca_8_0++] = Reader.ReadElementString();
+                                            }
+                                        }
+                                        else
+                                        {
+                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
+                                    }
+                                    Reader.MoveToContent();
+                                    CheckReaderCount(ref whileIterations29, ref readerCount29);
+                                }
+                                ReadEndElement();
+                            }
+                            o.@ValidateSet = (global::System.String[])ShrinkArray(a_8_0, ca_8_0, typeof(global::System.String), false);
+                        }
+                    }
+                    else if (!paramsRead[9] && ((object)Reader.LocalName == (object)_id65_Obsolete && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Obsolete = Read7_ObsoleteAttributeMetadata(false, true);
+                        paramsRead[9] = true;
+                    }
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                     }
                 }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                 }
-                Reader.ReadStartElement();
                 Reader.MoveToContent();
-                int whileIterations36 = 0;
-                int readerCount36 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id92_Type && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Type = Read2_TypeMetadata(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id11_CmdletParameterMetadata && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@CmdletParameterMetadata = Read11_Item(false, true);
-                            paramsRead[1] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations36, ref readerCount36);
+                CheckReaderCount(ref whileIterations28, ref readerCount28);
+            }
+            o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata Read2_TypeMetadata(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id8_TypeMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
-                ReadEndElement();
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata();
+            bool[] paramsRead = new bool[2];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id94_PSType && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@PSType = Reader.Value;
+                    paramsRead[0] = true;
+                }
+                else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id95_ETSType && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@ETSType = Reader.Value;
+                    paramsRead[1] = true;
+                }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":PSType, :ETSType");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
                 return o;
             }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter Read11_Item(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id12_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations30 = 0;
+            int readerCount30 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    UnknownNode((object)o, @"");
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id13_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else
+                {
+                    UnknownNode((object)o, @"");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations30, ref readerCount30);
+            }
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue Read24_Item(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue();
+            bool[] paramsRead = new bool[2];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o);
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations31 = 0;
+            int readerCount31 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id92_Type && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Type = Read2_TypeMetadata(false, true);
+                        paramsRead[0] = true;
+                    }
+                    else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id30_CmdletOutputMetadata && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@CmdletOutputMetadata = Read23_CmdletOutputMetadata(false, true);
+                        paramsRead[1] = true;
+                    }
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
+                    }
+                }
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations31, ref readerCount31);
+            }
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata Read33_Item(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata();
+            global::System.String[] a_3 = null;
+            int ca_3 = 0;
+            bool[] paramsRead = new bool[7];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id96_Verb && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Verb = Reader.Value;
+                    paramsRead[1] = true;
+                }
+                else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id97_Noun && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Noun = Reader.Value;
+                    paramsRead[2] = true;
+                }
+                else if (((object)Reader.LocalName == (object)_id48_Aliases && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    string listValues = Reader.Value;
+                    string[] vals = listValues.Split(null);
+                    for (int i = 0; i < vals.Length; i++)
+                    {
+                        a_3 = (global::System.String[])EnsureArrayIndex(a_3, ca_3, typeof(global::System.String)); a_3[ca_3++] = vals[i];
+                    }
+                }
+                else if (!paramsRead[4] && ((object)Reader.LocalName == (object)_id23_ConfirmImpact && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@ConfirmImpact = Read20_ConfirmImpact(Reader.Value);
+                    o.@ConfirmImpactSpecified = true;
+                    paramsRead[4] = true;
+                }
+                else if (!paramsRead[5] && ((object)Reader.LocalName == (object)_id98_HelpUri && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@HelpUri = CollapseWhitespace(Reader.Value);
+                    paramsRead[5] = true;
+                }
+                else if (!paramsRead[6] && ((object)Reader.LocalName == (object)_id99_DefaultCmdletParameterSet && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@DefaultCmdletParameterSet = Reader.Value;
+                    paramsRead[6] = true;
+                }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":Verb, :Noun, :Aliases, :ConfirmImpact, :HelpUri, :DefaultCmdletParameterSet");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations32 = 0;
+            int readerCount32 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id65_Obsolete && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Obsolete = Read7_ObsoleteAttributeMetadata(false, true);
+                        paramsRead[0] = true;
+                    }
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
+                    }
+                }
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations32, ref readerCount32);
+            }
+            o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact Read20_ConfirmImpact(string s)
+        {
+            switch (s)
+            {
+                case @"None": return global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact.@None;
+                case @"Low": return global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact.@Low;
+                case @"Medium": return global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact.@Medium;
+                case @"High": return global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact.@High;
+                default: throw CreateUnknownConstantException(s, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact));
+            }
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata Read25_Item(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id31_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata();
+            bool[] paramsRead = new bool[5];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id90_ParameterName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@ParameterName = Reader.Value;
+                    paramsRead[1] = true;
+                }
+                else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id91_DefaultValue && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@DefaultValue = Reader.Value;
+                    paramsRead[2] = true;
+                }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":ParameterName, :DefaultValue");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations33 = 0;
+            int readerCount33 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id92_Type && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Type = Read2_TypeMetadata(false, true);
+                        paramsRead[0] = true;
+                    }
+                    else if (!paramsRead[3] && ((object)Reader.LocalName == (object)_id11_CmdletParameterMetadata && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@CmdletParameterMetadata = Read9_Item(false, true);
+                        paramsRead[3] = true;
+                    }
+                    else if (!paramsRead[4] && ((object)Reader.LocalName == (object)_id30_CmdletOutputMetadata && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@CmdletOutputMetadata = Read23_CmdletOutputMetadata(false, true);
+                        paramsRead[4] = true;
+                    }
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
+                    }
+                }
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations33, ref readerCount33);
+            }
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter Read9_Item(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id18_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter();
+            global::System.String[] a_8 = null;
+            int ca_8 = 0;
+            global::System.String[] a_11 = null;
+            int ca_11 = 0;
+            bool[] paramsRead = new bool[15];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[10] && ((object)Reader.LocalName == (object)_id47_IsMandatory && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@IsMandatory = System.Xml.XmlConvert.ToBoolean(Reader.Value);
+                    o.@IsMandatorySpecified = true;
+                    paramsRead[10] = true;
+                }
+                else if (((object)Reader.LocalName == (object)_id48_Aliases && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    string listValues = Reader.Value;
+                    string[] vals = listValues.Split(null);
+                    for (int i = 0; i < vals.Length; i++)
+                    {
+                        a_11 = (global::System.String[])EnsureArrayIndex(a_11, ca_11, typeof(global::System.String)); a_11[ca_11++] = vals[i];
+                    }
+                }
+                else if (!paramsRead[12] && ((object)Reader.LocalName == (object)_id49_PSName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@PSName = Reader.Value;
+                    paramsRead[12] = true;
+                }
+                else if (!paramsRead[13] && ((object)Reader.LocalName == (object)_id50_Position && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Position = CollapseWhitespace(Reader.Value);
+                    paramsRead[13] = true;
+                }
+                else if (!paramsRead[14] && ((object)Reader.LocalName == (object)_id52_Item && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@ValueFromPipelineByPropertyName = System.Xml.XmlConvert.ToBoolean(Reader.Value);
+                    o.@ValueFromPipelineByPropertyNameSpecified = true;
+                    paramsRead[14] = true;
+                }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":IsMandatory, :Aliases, :PSName, :Position, :ValueFromPipelineByPropertyName");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations34 = 0;
+            int readerCount34 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id55_AllowEmptyCollection && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@AllowEmptyCollection = Read1_Object(false, true);
+                        paramsRead[0] = true;
+                    }
+                    else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id56_AllowEmptyString && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@AllowEmptyString = Read1_Object(false, true);
+                        paramsRead[1] = true;
+                    }
+                    else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id57_AllowNull && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@AllowNull = Read1_Object(false, true);
+                        paramsRead[2] = true;
+                    }
+                    else if (!paramsRead[3] && ((object)Reader.LocalName == (object)_id58_ValidateNotNull && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateNotNull = Read1_Object(false, true);
+                        paramsRead[3] = true;
+                    }
+                    else if (!paramsRead[4] && ((object)Reader.LocalName == (object)_id59_ValidateNotNullOrEmpty && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateNotNullOrEmpty = Read1_Object(false, true);
+                        paramsRead[4] = true;
+                    }
+                    else if (!paramsRead[5] && ((object)Reader.LocalName == (object)_id60_ValidateCount && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateCount = Read4_Item(false, true);
+                        paramsRead[5] = true;
+                    }
+                    else if (!paramsRead[6] && ((object)Reader.LocalName == (object)_id61_ValidateLength && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateLength = Read5_Item(false, true);
+                        paramsRead[6] = true;
+                    }
+                    else if (!paramsRead[7] && ((object)Reader.LocalName == (object)_id62_ValidateRange && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateRange = Read6_Item(false, true);
+                        paramsRead[7] = true;
+                    }
+                    else if (((object)Reader.LocalName == (object)_id63_ValidateSet && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        if (!ReadNull())
+                        {
+                            global::System.String[] a_8_0 = null;
+                            int ca_8_0 = 0;
+                            if ((Reader.IsEmptyElement))
+                            {
+                                Reader.Skip();
+                            }
+                            else
+                            {
+                                Reader.ReadStartElement();
+                                Reader.MoveToContent();
+                                int whileIterations35 = 0;
+                                int readerCount35 = ReaderCount;
+                                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                                {
+                                    if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                    {
+                                        if (((object)Reader.LocalName == (object)_id64_AllowedValue && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                        {
+                                            {
+                                                a_8_0 = (global::System.String[])EnsureArrayIndex(a_8_0, ca_8_0, typeof(global::System.String)); a_8_0[ca_8_0++] = Reader.ReadElementString();
+                                            }
+                                        }
+                                        else
+                                        {
+                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
+                                    }
+                                    Reader.MoveToContent();
+                                    CheckReaderCount(ref whileIterations35, ref readerCount35);
+                                }
+                                ReadEndElement();
+                            }
+                            o.@ValidateSet = (global::System.String[])ShrinkArray(a_8_0, ca_8_0, typeof(global::System.String), false);
+                        }
+                    }
+                    else if (!paramsRead[9] && ((object)Reader.LocalName == (object)_id65_Obsolete && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Obsolete = Read7_ObsoleteAttributeMetadata(false, true);
+                        paramsRead[9] = true;
+                    }
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
+                    }
+                }
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations34, ref readerCount34);
+            }
+            o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption Read18_QueryOption(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id20_QueryOption && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption();
+            bool[] paramsRead = new bool[3];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id100_OptionName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@OptionName = Reader.Value;
+                    paramsRead[2] = true;
+                }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":OptionName");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations36 = 0;
+            int readerCount36 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id92_Type && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Type = Read2_TypeMetadata(false, true);
+                        paramsRead[0] = true;
+                    }
+                    else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id11_CmdletParameterMetadata && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@CmdletParameterMetadata = Read11_Item(false, true);
+                        paramsRead[1] = true;
+                    }
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
+                    }
+                }
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations36, ref readerCount36);
+            }
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter Read11_Item(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id12_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id13_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read12_Item(isNullable, false);
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter();
+            global::System.String[] a_8 = null;
+            int ca_8 = 0;
+            global::System.String[] a_11 = null;
+            int ca_11 = 0;
+            global::System.String[] a_16 = null;
+            int ca_16 = 0;
+            bool[] paramsRead = new bool[17];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[10] && ((object)Reader.LocalName == (object)_id47_IsMandatory && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@IsMandatory = System.Xml.XmlConvert.ToBoolean(Reader.Value);
+                    o.@IsMandatorySpecified = true;
+                    paramsRead[10] = true;
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter();
-                global::System.String[] a_8 = null;
-                int ca_8 = 0;
-                global::System.String[] a_11 = null;
-                int ca_11 = 0;
-                global::System.String[] a_16 = null;
-                int ca_16 = 0;
-                bool[] paramsRead = new bool[17];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[10] && ((object) Reader.LocalName == (object)id47_IsMandatory && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@IsMandatory = System.Xml.XmlConvert.ToBoolean(Reader.Value);
-                        o.@IsMandatorySpecified = true;
-                        paramsRead[10] = true;
-                    }
-                    else if (((object) Reader.LocalName == (object)id48_Aliases && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        string listValues = Reader.Value;
-                        string[] vals = listValues.Split(null);
-                        for (int i = 0; i < vals.Length; i++) {
-                            a_11 = (global::System.String[])EnsureArrayIndex(a_11, ca_11, typeof(global::System.String));a_11[ca_11++] = vals[i];
-                        }
-                    }
-                    else if (!paramsRead[12] && ((object) Reader.LocalName == (object)id49_PSName && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@PSName = Reader.Value;
-                        paramsRead[12] = true;
-                    }
-                    else if (!paramsRead[13] && ((object) Reader.LocalName == (object)id50_Position && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Position = CollapseWhitespace(Reader.Value);
-                        paramsRead[13] = true;
-                    }
-                    else if (!paramsRead[14] && ((object) Reader.LocalName == (object)id51_ValueFromPipeline && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@ValueFromPipeline = System.Xml.XmlConvert.ToBoolean(Reader.Value);
-                        o.@ValueFromPipelineSpecified = true;
-                        paramsRead[14] = true;
-                    }
-                    else if (!paramsRead[15] && ((object) Reader.LocalName == (object)id52_Item && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@ValueFromPipelineByPropertyName = System.Xml.XmlConvert.ToBoolean(Reader.Value);
-                        o.@ValueFromPipelineByPropertyNameSpecified = true;
-                        paramsRead[15] = true;
-                    }
-                    else if (((object) Reader.LocalName == (object)id53_CmdletParameterSets && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        string listValues = Reader.Value;
-                        string[] vals = listValues.Split(null);
-                        for (int i = 0; i < vals.Length; i++) {
-                            a_16 = (global::System.String[])EnsureArrayIndex(a_16, ca_16, typeof(global::System.String));a_16[ca_16++] = vals[i];
-                        }
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":IsMandatory, :Aliases, :PSName, :Position, :ValueFromPipeline, :ValueFromPipelineByPropertyName, :CmdletParameterSets");
+                else if (((object)Reader.LocalName == (object)_id48_Aliases && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    string listValues = Reader.Value;
+                    string[] vals = listValues.Split(null);
+                    for (int i = 0; i < vals.Length; i++)
+                    {
+                        a_11 = (global::System.String[])EnsureArrayIndex(a_11, ca_11, typeof(global::System.String)); a_11[ca_11++] = vals[i];
                     }
                 }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
-                    o.@CmdletParameterSets = (global::System.String[])ShrinkArray(a_16, ca_16, typeof(global::System.String), true);
-                    return o;
+                else if (!paramsRead[12] && ((object)Reader.LocalName == (object)_id49_PSName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@PSName = Reader.Value;
+                    paramsRead[12] = true;
                 }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations37 = 0;
-                int readerCount37 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id55_AllowEmptyCollection && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@AllowEmptyCollection = Read1_Object(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id56_AllowEmptyString && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@AllowEmptyString = Read1_Object(false, true);
-                            paramsRead[1] = true;
-                        }
-                        else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id57_AllowNull && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@AllowNull = Read1_Object(false, true);
-                            paramsRead[2] = true;
-                        }
-                        else if (!paramsRead[3] && ((object) Reader.LocalName == (object)id58_ValidateNotNull && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateNotNull = Read1_Object(false, true);
-                            paramsRead[3] = true;
-                        }
-                        else if (!paramsRead[4] && ((object) Reader.LocalName == (object)id59_ValidateNotNullOrEmpty && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateNotNullOrEmpty = Read1_Object(false, true);
-                            paramsRead[4] = true;
-                        }
-                        else if (!paramsRead[5] && ((object) Reader.LocalName == (object)id60_ValidateCount && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateCount = Read4_Item(false, true);
-                            paramsRead[5] = true;
-                        }
-                        else if (!paramsRead[6] && ((object) Reader.LocalName == (object)id61_ValidateLength && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateLength = Read5_Item(false, true);
-                            paramsRead[6] = true;
-                        }
-                        else if (!paramsRead[7] && ((object) Reader.LocalName == (object)id62_ValidateRange && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateRange = Read6_Item(false, true);
-                            paramsRead[7] = true;
-                        }
-                        else if (((object) Reader.LocalName == (object)id63_ValidateSet && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            if (!ReadNull()) {
-                                global::System.String[] a_8_0 = null;
-                                int ca_8_0 = 0;
-                                if ((Reader.IsEmptyElement)) {
-                                    Reader.Skip();
-                                }
-                                else {
-                                    Reader.ReadStartElement();
-                                    Reader.MoveToContent();
-                                    int whileIterations38 = 0;
-                                    int readerCount38 = ReaderCount;
-                                    while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                        if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                            if (((object) Reader.LocalName == (object)id64_AllowedValue && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                                {
-                                                    a_8_0 = (global::System.String[])EnsureArrayIndex(a_8_0, ca_8_0, typeof(global::System.String));a_8_0[ca_8_0++] = Reader.ReadElementString();
-                                                }
-                                            }
-                                            else {
-                                                UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
-                                            }
-                                        }
-                                        else {
-                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
-                                        }
-                                        Reader.MoveToContent();
-                                        CheckReaderCount(ref whileIterations38, ref readerCount38);
-                                    }
-                                ReadEndElement();
-                                }
-                                o.@ValidateSet = (global::System.String[])ShrinkArray(a_8_0, ca_8_0, typeof(global::System.String), false);
-                            }
-                        }
-                        else if (!paramsRead[9] && ((object) Reader.LocalName == (object)id65_Obsolete && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Obsolete = Read7_ObsoleteAttributeMetadata(false, true);
-                            paramsRead[9] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations37, ref readerCount37);
+                else if (!paramsRead[13] && ((object)Reader.LocalName == (object)_id50_Position && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Position = CollapseWhitespace(Reader.Value);
+                    paramsRead[13] = true;
                 }
+                else if (!paramsRead[14] && ((object)Reader.LocalName == (object)_id51_ValueFromPipeline && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@ValueFromPipeline = System.Xml.XmlConvert.ToBoolean(Reader.Value);
+                    o.@ValueFromPipelineSpecified = true;
+                    paramsRead[14] = true;
+                }
+                else if (!paramsRead[15] && ((object)Reader.LocalName == (object)_id52_Item && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@ValueFromPipelineByPropertyName = System.Xml.XmlConvert.ToBoolean(Reader.Value);
+                    o.@ValueFromPipelineByPropertyNameSpecified = true;
+                    paramsRead[15] = true;
+                }
+                else if (((object)Reader.LocalName == (object)_id53_CmdletParameterSets && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    string listValues = Reader.Value;
+                    string[] vals = listValues.Split(null);
+                    for (int i = 0; i < vals.Length; i++)
+                    {
+                        a_16 = (global::System.String[])EnsureArrayIndex(a_16, ca_16, typeof(global::System.String)); a_16[ca_16++] = vals[i];
+                    }
+                }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":IsMandatory, :Aliases, :PSName, :Position, :ValueFromPipeline, :ValueFromPipelineByPropertyName, :CmdletParameterSets");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
                 o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
                 o.@CmdletParameterSets = (global::System.String[])ShrinkArray(a_16, ca_16, typeof(global::System.String), true);
-                ReadEndElement();
                 return o;
             }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.Association Read17_Association(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id9_Association && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-                }
-                else
-                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
-                }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.Association o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.Association();
-                bool[] paramsRead = new bool[4];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[1] && ((object) Reader.LocalName == (object)id9_Association && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Association1 = Reader.Value;
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations37 = 0;
+            int readerCount37 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id55_AllowEmptyCollection && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@AllowEmptyCollection = Read1_Object(false, true);
+                        paramsRead[0] = true;
+                    }
+                    else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id56_AllowEmptyString && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@AllowEmptyString = Read1_Object(false, true);
                         paramsRead[1] = true;
                     }
-                    else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id101_SourceRole && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@SourceRole = Reader.Value;
+                    else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id57_AllowNull && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@AllowNull = Read1_Object(false, true);
                         paramsRead[2] = true;
                     }
-                    else if (!paramsRead[3] && ((object) Reader.LocalName == (object)id102_ResultRole && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@ResultRole = Reader.Value;
+                    else if (!paramsRead[3] && ((object)Reader.LocalName == (object)_id58_ValidateNotNull && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateNotNull = Read1_Object(false, true);
                         paramsRead[3] = true;
                     }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":Association, :SourceRole, :ResultRole");
+                    else if (!paramsRead[4] && ((object)Reader.LocalName == (object)_id59_ValidateNotNullOrEmpty && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateNotNullOrEmpty = Read1_Object(false, true);
+                        paramsRead[4] = true;
+                    }
+                    else if (!paramsRead[5] && ((object)Reader.LocalName == (object)_id60_ValidateCount && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateCount = Read4_Item(false, true);
+                        paramsRead[5] = true;
+                    }
+                    else if (!paramsRead[6] && ((object)Reader.LocalName == (object)_id61_ValidateLength && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateLength = Read5_Item(false, true);
+                        paramsRead[6] = true;
+                    }
+                    else if (!paramsRead[7] && ((object)Reader.LocalName == (object)_id62_ValidateRange && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateRange = Read6_Item(false, true);
+                        paramsRead[7] = true;
+                    }
+                    else if (((object)Reader.LocalName == (object)_id63_ValidateSet && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        if (!ReadNull())
+                        {
+                            global::System.String[] a_8_0 = null;
+                            int ca_8_0 = 0;
+                            if ((Reader.IsEmptyElement))
+                            {
+                                Reader.Skip();
+                            }
+                            else
+                            {
+                                Reader.ReadStartElement();
+                                Reader.MoveToContent();
+                                int whileIterations38 = 0;
+                                int readerCount38 = ReaderCount;
+                                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                                {
+                                    if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                    {
+                                        if (((object)Reader.LocalName == (object)_id64_AllowedValue && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                        {
+                                            {
+                                                a_8_0 = (global::System.String[])EnsureArrayIndex(a_8_0, ca_8_0, typeof(global::System.String)); a_8_0[ca_8_0++] = Reader.ReadElementString();
+                                            }
+                                        }
+                                        else
+                                        {
+                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
+                                    }
+                                    Reader.MoveToContent();
+                                    CheckReaderCount(ref whileIterations38, ref readerCount38);
+                                }
+                                ReadEndElement();
+                            }
+                            o.@ValidateSet = (global::System.String[])ShrinkArray(a_8_0, ca_8_0, typeof(global::System.String), false);
+                        }
+                    }
+                    else if (!paramsRead[9] && ((object)Reader.LocalName == (object)_id65_Obsolete && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Obsolete = Read7_ObsoleteAttributeMetadata(false, true);
+                        paramsRead[9] = true;
+                    }
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                     }
                 }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                 }
-                Reader.ReadStartElement();
                 Reader.MoveToContent();
-                int whileIterations39 = 0;
-                int readerCount39 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id103_AssociatedInstance && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@AssociatedInstance = Read16_AssociationAssociatedInstance(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AssociatedInstance");
-                        }
+                CheckReaderCount(ref whileIterations37, ref readerCount37);
+            }
+            o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
+            o.@CmdletParameterSets = (global::System.String[])ShrinkArray(a_16, ca_16, typeof(global::System.String), true);
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.Association Read17_Association(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id9_Association && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.Association o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.Association();
+            bool[] paramsRead = new bool[4];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id9_Association && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Association1 = Reader.Value;
+                    paramsRead[1] = true;
+                }
+                else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id101_SourceRole && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@SourceRole = Reader.Value;
+                    paramsRead[2] = true;
+                }
+                else if (!paramsRead[3] && ((object)Reader.LocalName == (object)_id102_ResultRole && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@ResultRole = Reader.Value;
+                    paramsRead[3] = true;
+                }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":Association, :SourceRole, :ResultRole");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations39 = 0;
+            int readerCount39 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id103_AssociatedInstance && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@AssociatedInstance = Read16_AssociationAssociatedInstance(false, true);
+                        paramsRead[0] = true;
                     }
-                    else {
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AssociatedInstance");
                     }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations39, ref readerCount39);
                 }
-                ReadEndElement();
-                return o;
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AssociatedInstance");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations39, ref readerCount39);
             }
+            ReadEndElement();
+            return o;
+        }
 
-            global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance Read16_AssociationAssociatedInstance(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id4_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance Read16_AssociationAssociatedInstance(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance();
+            bool[] paramsRead = new bool[2];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o);
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance();
-                bool[] paramsRead = new bool[2];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o);
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations40 = 0;
+            int readerCount40 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id92_Type && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Type = Read2_TypeMetadata(false, true);
+                        paramsRead[0] = true;
                     }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations40 = 0;
-                int readerCount40 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id92_Type && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Type = Read2_TypeMetadata(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id11_CmdletParameterMetadata && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@CmdletParameterMetadata = Read12_Item(false, true);
-                            paramsRead[1] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
-                        }
+                    else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id11_CmdletParameterMetadata && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@CmdletParameterMetadata = Read12_Item(false, true);
+                        paramsRead[1] = true;
                     }
-                    else {
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
                     }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations40, ref readerCount40);
                 }
-                ReadEndElement();
-                return o;
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations40, ref readerCount40);
             }
+            ReadEndElement();
+            return o;
+        }
 
-            global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata Read15_PropertyMetadata(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id7_PropertyMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata Read15_PropertyMetadata(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id7_PropertyMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata();
+            global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[] a_1 = null;
+            int ca_1 = 0;
+            global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[] choice_a_1 = null;
+            int cchoice_a_1 = 0;
+            bool[] paramsRead = new bool[3];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id104_PropertyName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@PropertyName = Reader.Value;
+                    paramsRead[2] = true;
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata();
-                global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[] a_1 = null;
-                int ca_1 = 0;
-                global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[] choice_a_1 = null;
-                int cchoice_a_1 = 0;
-                bool[] paramsRead = new bool[3];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[2] && ((object) Reader.LocalName == (object)id104_PropertyName && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@PropertyName = Reader.Value;
-                        paramsRead[2] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":PropertyName");
-                    }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":PropertyName");
                 }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    o.@Items = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[])ShrinkArray(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery), true);
-                    o.@ItemsElementName = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[])ShrinkArray(choice_a_1, cchoice_a_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType), true);
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations41 = 0;
-                int readerCount41 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id92_Type && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Type = Read2_TypeMetadata(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (((object) Reader.LocalName == (object)id105_MaxValueQuery && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[])EnsureArrayIndex(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery));a_1[ca_1++] = Read14_PropertyQuery(false, true);
-                            choice_a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[])EnsureArrayIndex(choice_a_1, cchoice_a_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType));choice_a_1[cchoice_a_1++] = global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MaxValueQuery;
-                        }
-                        else if (((object) Reader.LocalName == (object)id106_RegularQuery && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[])EnsureArrayIndex(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery));a_1[ca_1++] = Read13_WildcardablePropertyQuery(false, true);
-                            choice_a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[])EnsureArrayIndex(choice_a_1, cchoice_a_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType));choice_a_1[cchoice_a_1++] = global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@RegularQuery;
-                        }
-                        else if (((object) Reader.LocalName == (object)id107_ExcludeQuery && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[])EnsureArrayIndex(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery));a_1[ca_1++] = Read13_WildcardablePropertyQuery(false, true);
-                            choice_a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[])EnsureArrayIndex(choice_a_1, cchoice_a_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType));choice_a_1[cchoice_a_1++] = global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@ExcludeQuery;
-                        }
-                        else if (((object) Reader.LocalName == (object)id108_MinValueQuery && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[])EnsureArrayIndex(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery));a_1[ca_1++] = Read14_PropertyQuery(false, true);
-                            choice_a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[])EnsureArrayIndex(choice_a_1, cchoice_a_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType));choice_a_1[cchoice_a_1++] = global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MinValueQuery;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:MaxValueQuery, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:RegularQuery, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ExcludeQuery, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:MinValueQuery");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:MaxValueQuery, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:RegularQuery, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ExcludeQuery, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:MinValueQuery");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations41, ref readerCount41);
-                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
                 o.@Items = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[])ShrinkArray(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery), true);
                 o.@ItemsElementName = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[])ShrinkArray(choice_a_1, cchoice_a_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType), true);
-                ReadEndElement();
                 return o;
             }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery Read14_PropertyQuery(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id35_PropertyQuery && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations41 = 0;
+            int readerCount41 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id92_Type && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Type = Read2_TypeMetadata(false, true);
+                        paramsRead[0] = true;
+                    }
+                    else if (((object)Reader.LocalName == (object)_id105_MaxValueQuery && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[])EnsureArrayIndex(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)); a_1[ca_1++] = Read14_PropertyQuery(false, true);
+                        choice_a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[])EnsureArrayIndex(choice_a_1, cchoice_a_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType)); choice_a_1[cchoice_a_1++] = global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MaxValueQuery;
+                    }
+                    else if (((object)Reader.LocalName == (object)_id106_RegularQuery && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[])EnsureArrayIndex(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)); a_1[ca_1++] = Read13_WildcardablePropertyQuery(false, true);
+                        choice_a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[])EnsureArrayIndex(choice_a_1, cchoice_a_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType)); choice_a_1[cchoice_a_1++] = global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@RegularQuery;
+                    }
+                    else if (((object)Reader.LocalName == (object)_id107_ExcludeQuery && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[])EnsureArrayIndex(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)); a_1[ca_1++] = Read13_WildcardablePropertyQuery(false, true);
+                        choice_a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[])EnsureArrayIndex(choice_a_1, cchoice_a_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType)); choice_a_1[cchoice_a_1++] = global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@ExcludeQuery;
+                    }
+                    else if (((object)Reader.LocalName == (object)_id108_MinValueQuery && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[])EnsureArrayIndex(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)); a_1[ca_1++] = Read14_PropertyQuery(false, true);
+                        choice_a_1 = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[])EnsureArrayIndex(choice_a_1, cchoice_a_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType)); choice_a_1[cchoice_a_1++] = global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType.@MinValueQuery;
+                    }
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:MaxValueQuery, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:RegularQuery, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ExcludeQuery, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:MinValueQuery");
+                    }
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id36_WildcardablePropertyQuery && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:MaxValueQuery, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:RegularQuery, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ExcludeQuery, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:MinValueQuery");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations41, ref readerCount41);
+            }
+            o.@Items = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery[])ShrinkArray(a_1, ca_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery), true);
+            o.@ItemsElementName = (global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType[])ShrinkArray(choice_a_1, cchoice_a_1, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType), true);
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery Read14_PropertyQuery(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id35_PropertyQuery && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id36_WildcardablePropertyQuery && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read13_WildcardablePropertyQuery(isNullable, false);
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery();
+            bool[] paramsRead = new bool[1];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o);
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery();
-                bool[] paramsRead = new bool[1];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o);
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations42 = 0;
-                int readerCount42 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id11_CmdletParameterMetadata && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@CmdletParameterMetadata = Read12_Item(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations42, ref readerCount42);
-                }
-                ReadEndElement();
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
                 return o;
             }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata Read10_CmdletParameterMetadata(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id11_CmdletParameterMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations42 = 0;
+            int readerCount42 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id11_CmdletParameterMetadata && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@CmdletParameterMetadata = Read12_Item(false, true);
+                        paramsRead[0] = true;
+                    }
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
+                    }
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id12_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations42, ref readerCount42);
+            }
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata Read10_CmdletParameterMetadata(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id11_CmdletParameterMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id12_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read11_Item(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id13_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id13_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read12_Item(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id18_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id18_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read9_Item(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id19_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id19_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read8_Item(isNullable, false);
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata();
+            global::System.String[] a_8 = null;
+            int ca_8 = 0;
+            global::System.String[] a_11 = null;
+            int ca_11 = 0;
+            bool[] paramsRead = new bool[14];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[10] && ((object)Reader.LocalName == (object)_id47_IsMandatory && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@IsMandatory = System.Xml.XmlConvert.ToBoolean(Reader.Value);
+                    o.@IsMandatorySpecified = true;
+                    paramsRead[10] = true;
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata();
-                global::System.String[] a_8 = null;
-                int ca_8 = 0;
-                global::System.String[] a_11 = null;
-                int ca_11 = 0;
-                bool[] paramsRead = new bool[14];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[10] && ((object) Reader.LocalName == (object)id47_IsMandatory && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@IsMandatory = System.Xml.XmlConvert.ToBoolean(Reader.Value);
-                        o.@IsMandatorySpecified = true;
-                        paramsRead[10] = true;
-                    }
-                    else if (((object) Reader.LocalName == (object)id48_Aliases && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        string listValues = Reader.Value;
-                        string[] vals = listValues.Split(null);
-                        for (int i = 0; i < vals.Length; i++) {
-                            a_11 = (global::System.String[])EnsureArrayIndex(a_11, ca_11, typeof(global::System.String));a_11[ca_11++] = vals[i];
-                        }
-                    }
-                    else if (!paramsRead[12] && ((object) Reader.LocalName == (object)id49_PSName && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@PSName = Reader.Value;
-                        paramsRead[12] = true;
-                    }
-                    else if (!paramsRead[13] && ((object) Reader.LocalName == (object)id50_Position && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Position = CollapseWhitespace(Reader.Value);
-                        paramsRead[13] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":IsMandatory, :Aliases, :PSName, :Position");
+                else if (((object)Reader.LocalName == (object)_id48_Aliases && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    string listValues = Reader.Value;
+                    string[] vals = listValues.Split(null);
+                    for (int i = 0; i < vals.Length; i++)
+                    {
+                        a_11 = (global::System.String[])EnsureArrayIndex(a_11, ca_11, typeof(global::System.String)); a_11[ca_11++] = vals[i];
                     }
                 }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
-                    return o;
+                else if (!paramsRead[12] && ((object)Reader.LocalName == (object)_id49_PSName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@PSName = Reader.Value;
+                    paramsRead[12] = true;
                 }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations43 = 0;
-                int readerCount43 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id55_AllowEmptyCollection && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@AllowEmptyCollection = Read1_Object(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id56_AllowEmptyString && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@AllowEmptyString = Read1_Object(false, true);
-                            paramsRead[1] = true;
-                        }
-                        else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id57_AllowNull && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@AllowNull = Read1_Object(false, true);
-                            paramsRead[2] = true;
-                        }
-                        else if (!paramsRead[3] && ((object) Reader.LocalName == (object)id58_ValidateNotNull && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateNotNull = Read1_Object(false, true);
-                            paramsRead[3] = true;
-                        }
-                        else if (!paramsRead[4] && ((object) Reader.LocalName == (object)id59_ValidateNotNullOrEmpty && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateNotNullOrEmpty = Read1_Object(false, true);
-                            paramsRead[4] = true;
-                        }
-                        else if (!paramsRead[5] && ((object) Reader.LocalName == (object)id60_ValidateCount && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateCount = Read4_Item(false, true);
-                            paramsRead[5] = true;
-                        }
-                        else if (!paramsRead[6] && ((object) Reader.LocalName == (object)id61_ValidateLength && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateLength = Read5_Item(false, true);
-                            paramsRead[6] = true;
-                        }
-                        else if (!paramsRead[7] && ((object) Reader.LocalName == (object)id62_ValidateRange && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ValidateRange = Read6_Item(false, true);
-                            paramsRead[7] = true;
-                        }
-                        else if (((object) Reader.LocalName == (object)id63_ValidateSet && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            if (!ReadNull()) {
-                                global::System.String[] a_8_0 = null;
-                                int ca_8_0 = 0;
-                                if ((Reader.IsEmptyElement)) {
-                                    Reader.Skip();
-                                }
-                                else {
-                                    Reader.ReadStartElement();
-                                    Reader.MoveToContent();
-                                    int whileIterations44 = 0;
-                                    int readerCount44 = ReaderCount;
-                                    while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                        if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                            if (((object) Reader.LocalName == (object)id64_AllowedValue && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                                {
-                                                    a_8_0 = (global::System.String[])EnsureArrayIndex(a_8_0, ca_8_0, typeof(global::System.String));a_8_0[ca_8_0++] = Reader.ReadElementString();
-                                                }
-                                            }
-                                            else {
-                                                UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
-                                            }
-                                        }
-                                        else {
-                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
-                                        }
-                                        Reader.MoveToContent();
-                                        CheckReaderCount(ref whileIterations44, ref readerCount44);
-                                    }
-                                ReadEndElement();
-                                }
-                                o.@ValidateSet = (global::System.String[])ShrinkArray(a_8_0, ca_8_0, typeof(global::System.String), false);
-                            }
-                        }
-                        else if (!paramsRead[9] && ((object) Reader.LocalName == (object)id65_Obsolete && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Obsolete = Read7_ObsoleteAttributeMetadata(false, true);
-                            paramsRead[9] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations43, ref readerCount43);
+                else if (!paramsRead[13] && ((object)Reader.LocalName == (object)_id50_Position && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Position = CollapseWhitespace(Reader.Value);
+                    paramsRead[13] = true;
                 }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":IsMandatory, :Aliases, :PSName, :Position");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
                 o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
-                ReadEndElement();
                 return o;
             }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters Read19_GetCmdletParameters(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id6_GetCmdletParameters && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-                }
-                else
-                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
-                }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters();
-                global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[] a_0 = null;
-                int ca_0 = 0;
-                global::Microsoft.PowerShell.Cmdletization.Xml.Association[] a_1 = null;
-                int ca_1 = 0;
-                global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[] a_2 = null;
-                int ca_2 = 0;
-                bool[] paramsRead = new bool[4];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[3] && ((object) Reader.LocalName == (object)id99_DefaultCmdletParameterSet && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@DefaultCmdletParameterSet = Reader.Value;
-                        paramsRead[3] = true;
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations43 = 0;
+            int readerCount43 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id55_AllowEmptyCollection && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@AllowEmptyCollection = Read1_Object(false, true);
+                        paramsRead[0] = true;
                     }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":DefaultCmdletParameterSet");
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations45 = 0;
-                int readerCount45 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (((object) Reader.LocalName == (object)id109_QueryableProperties && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            if (!ReadNull()) {
-                                global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[] a_0_0 = null;
-                                int ca_0_0 = 0;
-                                if ((Reader.IsEmptyElement)) {
-                                    Reader.Skip();
-                                }
-                                else {
-                                    Reader.ReadStartElement();
-                                    Reader.MoveToContent();
-                                    int whileIterations46 = 0;
-                                    int readerCount46 = ReaderCount;
-                                    while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                        if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                            if (((object) Reader.LocalName == (object)id71_Property && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                                a_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])EnsureArrayIndex(a_0_0, ca_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata));a_0_0[ca_0_0++] = Read15_PropertyMetadata(false, true);
-                                            }
-                                            else {
-                                                UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Property");
-                                            }
-                                        }
-                                        else {
-                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Property");
-                                        }
-                                        Reader.MoveToContent();
-                                        CheckReaderCount(ref whileIterations46, ref readerCount46);
-                                    }
-                                ReadEndElement();
-                                }
-                                o.@QueryableProperties = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])ShrinkArray(a_0_0, ca_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata), false);
-                            }
-                        }
-                        else if (((object) Reader.LocalName == (object)id110_QueryableAssociations && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            if (!ReadNull()) {
-                                global::Microsoft.PowerShell.Cmdletization.Xml.Association[] a_1_0 = null;
-                                int ca_1_0 = 0;
-                                if ((Reader.IsEmptyElement)) {
-                                    Reader.Skip();
-                                }
-                                else {
-                                    Reader.ReadStartElement();
-                                    Reader.MoveToContent();
-                                    int whileIterations47 = 0;
-                                    int readerCount47 = ReaderCount;
-                                    while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                        if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                            if (((object) Reader.LocalName == (object)id9_Association && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                                a_1_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.Association[])EnsureArrayIndex(a_1_0, ca_1_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association));a_1_0[ca_1_0++] = Read17_Association(false, true);
-                                            }
-                                            else {
-                                                UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Association");
-                                            }
-                                        }
-                                        else {
-                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Association");
-                                        }
-                                        Reader.MoveToContent();
-                                        CheckReaderCount(ref whileIterations47, ref readerCount47);
-                                    }
-                                ReadEndElement();
-                                }
-                                o.@QueryableAssociations = (global::Microsoft.PowerShell.Cmdletization.Xml.Association[])ShrinkArray(a_1_0, ca_1_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association), false);
-                            }
-                        }
-                        else if (((object) Reader.LocalName == (object)id111_QueryOptions && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            if (!ReadNull()) {
-                                global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[] a_2_0 = null;
-                                int ca_2_0 = 0;
-                                if ((Reader.IsEmptyElement)) {
-                                    Reader.Skip();
-                                }
-                                else {
-                                    Reader.ReadStartElement();
-                                    Reader.MoveToContent();
-                                    int whileIterations48 = 0;
-                                    int readerCount48 = ReaderCount;
-                                    while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                        if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                            if (((object) Reader.LocalName == (object)id74_Option && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                                a_2_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])EnsureArrayIndex(a_2_0, ca_2_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption));a_2_0[ca_2_0++] = Read18_QueryOption(false, true);
-                                            }
-                                            else {
-                                                UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Option");
-                                            }
-                                        }
-                                        else {
-                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Option");
-                                        }
-                                        Reader.MoveToContent();
-                                        CheckReaderCount(ref whileIterations48, ref readerCount48);
-                                    }
-                                ReadEndElement();
-                                }
-                                o.@QueryOptions = (global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])ShrinkArray(a_2_0, ca_2_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption), false);
-                            }
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:QueryableProperties, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:QueryableAssociations, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:QueryOptions");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:QueryableProperties, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:QueryableAssociations, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:QueryOptions");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations45, ref readerCount45);
-                }
-                ReadEndElement();
-                return o;
-            }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata Read45_Item(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id25_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-                }
-                else
-                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
-                }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata();
-                global::System.String[] a_3 = null;
-                int ca_3 = 0;
-                bool[] paramsRead = new bool[7];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[1] && ((object) Reader.LocalName == (object)id96_Verb && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Verb = Reader.Value;
+                    else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id56_AllowEmptyString && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@AllowEmptyString = Read1_Object(false, true);
                         paramsRead[1] = true;
                     }
-                    else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id97_Noun && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Noun = Reader.Value;
+                    else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id57_AllowNull && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@AllowNull = Read1_Object(false, true);
                         paramsRead[2] = true;
                     }
-                    else if (((object) Reader.LocalName == (object)id48_Aliases && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        string listValues = Reader.Value;
-                        string[] vals = listValues.Split(null);
-                        for (int i = 0; i < vals.Length; i++) {
-                            a_3 = (global::System.String[])EnsureArrayIndex(a_3, ca_3, typeof(global::System.String));a_3[ca_3++] = vals[i];
-                        }
+                    else if (!paramsRead[3] && ((object)Reader.LocalName == (object)_id58_ValidateNotNull && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateNotNull = Read1_Object(false, true);
+                        paramsRead[3] = true;
                     }
-                    else if (!paramsRead[4] && ((object) Reader.LocalName == (object)id23_ConfirmImpact && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@ConfirmImpact = Read20_ConfirmImpact(Reader.Value);
-                        o.@ConfirmImpactSpecified = true;
+                    else if (!paramsRead[4] && ((object)Reader.LocalName == (object)_id59_ValidateNotNullOrEmpty && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateNotNullOrEmpty = Read1_Object(false, true);
                         paramsRead[4] = true;
                     }
-                    else if (!paramsRead[5] && ((object) Reader.LocalName == (object)id98_HelpUri && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@HelpUri = CollapseWhitespace(Reader.Value);
+                    else if (!paramsRead[5] && ((object)Reader.LocalName == (object)_id60_ValidateCount && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateCount = Read4_Item(false, true);
                         paramsRead[5] = true;
                     }
-                    else if (!paramsRead[6] && ((object) Reader.LocalName == (object)id99_DefaultCmdletParameterSet && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@DefaultCmdletParameterSet = Reader.Value;
+                    else if (!paramsRead[6] && ((object)Reader.LocalName == (object)_id61_ValidateLength && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateLength = Read5_Item(false, true);
                         paramsRead[6] = true;
                     }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":Verb, :Noun, :Aliases, :ConfirmImpact, :HelpUri, :DefaultCmdletParameterSet");
+                    else if (!paramsRead[7] && ((object)Reader.LocalName == (object)_id62_ValidateRange && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ValidateRange = Read6_Item(false, true);
+                        paramsRead[7] = true;
+                    }
+                    else if (((object)Reader.LocalName == (object)_id63_ValidateSet && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        if (!ReadNull())
+                        {
+                            global::System.String[] a_8_0 = null;
+                            int ca_8_0 = 0;
+                            if ((Reader.IsEmptyElement))
+                            {
+                                Reader.Skip();
+                            }
+                            else
+                            {
+                                Reader.ReadStartElement();
+                                Reader.MoveToContent();
+                                int whileIterations44 = 0;
+                                int readerCount44 = ReaderCount;
+                                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                                {
+                                    if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                    {
+                                        if (((object)Reader.LocalName == (object)_id64_AllowedValue && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                        {
+                                            {
+                                                a_8_0 = (global::System.String[])EnsureArrayIndex(a_8_0, ca_8_0, typeof(global::System.String)); a_8_0[ca_8_0++] = Reader.ReadElementString();
+                                            }
+                                        }
+                                        else
+                                        {
+                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowedValue");
+                                    }
+                                    Reader.MoveToContent();
+                                    CheckReaderCount(ref whileIterations44, ref readerCount44);
+                                }
+                                ReadEndElement();
+                            }
+                            o.@ValidateSet = (global::System.String[])ShrinkArray(a_8_0, ca_8_0, typeof(global::System.String), false);
+                        }
+                    }
+                    else if (!paramsRead[9] && ((object)Reader.LocalName == (object)_id65_Obsolete && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Obsolete = Read7_ObsoleteAttributeMetadata(false, true);
+                        paramsRead[9] = true;
+                    }
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                     }
                 }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
-                    return o;
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyCollection, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowEmptyString, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:AllowNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNull, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateNotNullOrEmpty, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateCount, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateLength, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateRange, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ValidateSet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                 }
-                Reader.ReadStartElement();
                 Reader.MoveToContent();
-                int whileIterations49 = 0;
-                int readerCount49 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id65_Obsolete && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Obsolete = Read7_ObsoleteAttributeMetadata(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations49, ref readerCount49);
+                CheckReaderCount(ref whileIterations43, ref readerCount43);
+            }
+            o.@Aliases = (global::System.String[])ShrinkArray(a_11, ca_11, typeof(global::System.String), true);
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters Read19_GetCmdletParameters(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id6_GetCmdletParameters && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
-                o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
-                ReadEndElement();
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters();
+            global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[] a_0 = null;
+            int ca_0 = 0;
+            global::Microsoft.PowerShell.Cmdletization.Xml.Association[] a_1 = null;
+            int ca_1 = 0;
+            global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[] a_2 = null;
+            int ca_2 = 0;
+            bool[] paramsRead = new bool[4];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[3] && ((object)Reader.LocalName == (object)_id99_DefaultCmdletParameterSet && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@DefaultCmdletParameterSet = Reader.Value;
+                    paramsRead[3] = true;
+                }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":DefaultCmdletParameterSet");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
                 return o;
             }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata Read21_CommonCmdletMetadata(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id22_CommonCmdletMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations45 = 0;
+            int readerCount45 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (((object)Reader.LocalName == (object)_id109_QueryableProperties && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        if (!ReadNull())
+                        {
+                            global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[] a_0_0 = null;
+                            int ca_0_0 = 0;
+                            if ((Reader.IsEmptyElement))
+                            {
+                                Reader.Skip();
+                            }
+                            else
+                            {
+                                Reader.ReadStartElement();
+                                Reader.MoveToContent();
+                                int whileIterations46 = 0;
+                                int readerCount46 = ReaderCount;
+                                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                                {
+                                    if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                    {
+                                        if (((object)Reader.LocalName == (object)_id71_Property && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                        {
+                                            a_0_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])EnsureArrayIndex(a_0_0, ca_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata)); a_0_0[ca_0_0++] = Read15_PropertyMetadata(false, true);
+                                        }
+                                        else
+                                        {
+                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Property");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Property");
+                                    }
+                                    Reader.MoveToContent();
+                                    CheckReaderCount(ref whileIterations46, ref readerCount46);
+                                }
+                                ReadEndElement();
+                            }
+                            o.@QueryableProperties = (global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata[])ShrinkArray(a_0_0, ca_0_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata), false);
+                        }
+                    }
+                    else if (((object)Reader.LocalName == (object)_id110_QueryableAssociations && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        if (!ReadNull())
+                        {
+                            global::Microsoft.PowerShell.Cmdletization.Xml.Association[] a_1_0 = null;
+                            int ca_1_0 = 0;
+                            if ((Reader.IsEmptyElement))
+                            {
+                                Reader.Skip();
+                            }
+                            else
+                            {
+                                Reader.ReadStartElement();
+                                Reader.MoveToContent();
+                                int whileIterations47 = 0;
+                                int readerCount47 = ReaderCount;
+                                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                                {
+                                    if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                    {
+                                        if (((object)Reader.LocalName == (object)_id9_Association && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                        {
+                                            a_1_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.Association[])EnsureArrayIndex(a_1_0, ca_1_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association)); a_1_0[ca_1_0++] = Read17_Association(false, true);
+                                        }
+                                        else
+                                        {
+                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Association");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Association");
+                                    }
+                                    Reader.MoveToContent();
+                                    CheckReaderCount(ref whileIterations47, ref readerCount47);
+                                }
+                                ReadEndElement();
+                            }
+                            o.@QueryableAssociations = (global::Microsoft.PowerShell.Cmdletization.Xml.Association[])ShrinkArray(a_1_0, ca_1_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association), false);
+                        }
+                    }
+                    else if (((object)Reader.LocalName == (object)_id111_QueryOptions && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        if (!ReadNull())
+                        {
+                            global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[] a_2_0 = null;
+                            int ca_2_0 = 0;
+                            if ((Reader.IsEmptyElement))
+                            {
+                                Reader.Skip();
+                            }
+                            else
+                            {
+                                Reader.ReadStartElement();
+                                Reader.MoveToContent();
+                                int whileIterations48 = 0;
+                                int readerCount48 = ReaderCount;
+                                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                                {
+                                    if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                    {
+                                        if (((object)Reader.LocalName == (object)_id74_Option && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                        {
+                                            a_2_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])EnsureArrayIndex(a_2_0, ca_2_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption)); a_2_0[ca_2_0++] = Read18_QueryOption(false, true);
+                                        }
+                                        else
+                                        {
+                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Option");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Option");
+                                    }
+                                    Reader.MoveToContent();
+                                    CheckReaderCount(ref whileIterations48, ref readerCount48);
+                                }
+                                ReadEndElement();
+                            }
+                            o.@QueryOptions = (global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption[])ShrinkArray(a_2_0, ca_2_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption), false);
+                        }
+                    }
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:QueryableProperties, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:QueryableAssociations, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:QueryOptions");
+                    }
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id25_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:QueryableProperties, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:QueryableAssociations, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:QueryOptions");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations45, ref readerCount45);
+            }
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata Read45_Item(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id25_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata();
+            global::System.String[] a_3 = null;
+            int ca_3 = 0;
+            bool[] paramsRead = new bool[7];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id96_Verb && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Verb = Reader.Value;
+                    paramsRead[1] = true;
+                }
+                else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id97_Noun && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Noun = Reader.Value;
+                    paramsRead[2] = true;
+                }
+                else if (((object)Reader.LocalName == (object)_id48_Aliases && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    string listValues = Reader.Value;
+                    string[] vals = listValues.Split(null);
+                    for (int i = 0; i < vals.Length; i++)
+                    {
+                        a_3 = (global::System.String[])EnsureArrayIndex(a_3, ca_3, typeof(global::System.String)); a_3[ca_3++] = vals[i];
+                    }
+                }
+                else if (!paramsRead[4] && ((object)Reader.LocalName == (object)_id23_ConfirmImpact && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@ConfirmImpact = Read20_ConfirmImpact(Reader.Value);
+                    o.@ConfirmImpactSpecified = true;
+                    paramsRead[4] = true;
+                }
+                else if (!paramsRead[5] && ((object)Reader.LocalName == (object)_id98_HelpUri && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@HelpUri = CollapseWhitespace(Reader.Value);
+                    paramsRead[5] = true;
+                }
+                else if (!paramsRead[6] && ((object)Reader.LocalName == (object)_id99_DefaultCmdletParameterSet && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@DefaultCmdletParameterSet = Reader.Value;
+                    paramsRead[6] = true;
+                }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":Verb, :Noun, :Aliases, :ConfirmImpact, :HelpUri, :DefaultCmdletParameterSet");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations49 = 0;
+            int readerCount49 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id65_Obsolete && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Obsolete = Read7_ObsoleteAttributeMetadata(false, true);
+                        paramsRead[0] = true;
+                    }
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
+                    }
+                }
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations49, ref readerCount49);
+            }
+            o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata Read21_CommonCmdletMetadata(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id22_CommonCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id25_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read45_Item(isNullable, false);
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata();
+            global::System.String[] a_3 = null;
+            int ca_3 = 0;
+            bool[] paramsRead = new bool[6];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id96_Verb && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Verb = Reader.Value;
+                    paramsRead[1] = true;
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata();
-                global::System.String[] a_3 = null;
-                int ca_3 = 0;
-                bool[] paramsRead = new bool[6];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[1] && ((object) Reader.LocalName == (object)id96_Verb && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Verb = Reader.Value;
-                        paramsRead[1] = true;
-                    }
-                    else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id97_Noun && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Noun = Reader.Value;
-                        paramsRead[2] = true;
-                    }
-                    else if (((object) Reader.LocalName == (object)id48_Aliases && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        string listValues = Reader.Value;
-                        string[] vals = listValues.Split(null);
-                        for (int i = 0; i < vals.Length; i++) {
-                            a_3 = (global::System.String[])EnsureArrayIndex(a_3, ca_3, typeof(global::System.String));a_3[ca_3++] = vals[i];
-                        }
-                    }
-                    else if (!paramsRead[4] && ((object) Reader.LocalName == (object)id23_ConfirmImpact && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@ConfirmImpact = Read20_ConfirmImpact(Reader.Value);
-                        o.@ConfirmImpactSpecified = true;
-                        paramsRead[4] = true;
-                    }
-                    else if (!paramsRead[5] && ((object) Reader.LocalName == (object)id98_HelpUri && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@HelpUri = CollapseWhitespace(Reader.Value);
-                        paramsRead[5] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":Verb, :Noun, :Aliases, :ConfirmImpact, :HelpUri");
+                else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id97_Noun && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Noun = Reader.Value;
+                    paramsRead[2] = true;
+                }
+                else if (((object)Reader.LocalName == (object)_id48_Aliases && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    string listValues = Reader.Value;
+                    string[] vals = listValues.Split(null);
+                    for (int i = 0; i < vals.Length; i++)
+                    {
+                        a_3 = (global::System.String[])EnsureArrayIndex(a_3, ca_3, typeof(global::System.String)); a_3[ca_3++] = vals[i];
                     }
                 }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
-                    return o;
+                else if (!paramsRead[4] && ((object)Reader.LocalName == (object)_id23_ConfirmImpact && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@ConfirmImpact = Read20_ConfirmImpact(Reader.Value);
+                    o.@ConfirmImpactSpecified = true;
+                    paramsRead[4] = true;
                 }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations50 = 0;
-                int readerCount50 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id65_Obsolete && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Obsolete = Read7_ObsoleteAttributeMetadata(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
-                        }
+                else if (!paramsRead[5] && ((object)Reader.LocalName == (object)_id98_HelpUri && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@HelpUri = CollapseWhitespace(Reader.Value);
+                    paramsRead[5] = true;
+                }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":Verb, :Noun, :Aliases, :ConfirmImpact, :HelpUri");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations50 = 0;
+            int readerCount50 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id65_Obsolete && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Obsolete = Read7_ObsoleteAttributeMetadata(false, true);
+                        paramsRead[0] = true;
                     }
-                    else {
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                     }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations50, ref readerCount50);
-                }
-                o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
-                ReadEndElement();
-                return o;
-            }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata Read22_GetCmdletMetadata(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id21_GetCmdletMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
                 }
                 else
-                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Obsolete");
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata();
-                bool[] paramsRead = new bool[2];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o);
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
                 Reader.MoveToContent();
-                int whileIterations51 = 0;
-                int readerCount51 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id84_CmdletMetadata && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@CmdletMetadata = Read21_CommonCmdletMetadata(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id6_GetCmdletParameters && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@GetCmdletParameters = Read19_GetCmdletParameters(false, true);
-                            paramsRead[1] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations51, ref readerCount51);
-                }
-                ReadEndElement();
-                return o;
+                CheckReaderCount(ref whileIterations50, ref readerCount50);
             }
+            o.@Aliases = (global::System.String[])ShrinkArray(a_3, ca_3, typeof(global::System.String), true);
+            ReadEndElement();
+            return o;
+        }
 
-            global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata Read30_InstanceMethodMetadata(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id33_InstanceMethodMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata Read22_GetCmdletMetadata(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id21_GetCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata();
+            bool[] paramsRead = new bool[2];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o);
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata();
-                global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[] a_2 = null;
-                int ca_2 = 0;
-                bool[] paramsRead = new bool[3];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[1] && ((object) Reader.LocalName == (object)id86_MethodName && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@MethodName = Reader.Value;
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations51 = 0;
+            int readerCount51 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id84_CmdletMetadata && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@CmdletMetadata = Read21_CommonCmdletMetadata(false, true);
+                        paramsRead[0] = true;
+                    }
+                    else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id6_GetCmdletParameters && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@GetCmdletParameters = Read19_GetCmdletParameters(false, true);
                         paramsRead[1] = true;
                     }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":MethodName");
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters");
                     }
                 }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters");
                 }
-                Reader.ReadStartElement();
                 Reader.MoveToContent();
-                int whileIterations52 = 0;
-                int readerCount52 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id88_ReturnValue && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ReturnValue = Read24_Item(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (((object) Reader.LocalName == (object)id89_Parameters && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            if (!ReadNull()) {
-                                global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[] a_2_0 = null;
-                                int ca_2_0 = 0;
-                                if ((Reader.IsEmptyElement)) {
-                                    Reader.Skip();
-                                }
-                                else {
-                                    Reader.ReadStartElement();
-                                    Reader.MoveToContent();
-                                    int whileIterations53 = 0;
-                                    int readerCount53 = ReaderCount;
-                                    while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                        if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                            if (((object) Reader.LocalName == (object)id76_Parameter && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                                a_2_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])EnsureArrayIndex(a_2_0, ca_2_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata));a_2_0[ca_2_0++] = Read25_Item(false, true);
-                                            }
-                                            else {
-                                                UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
-                                            }
-                                        }
-                                        else {
-                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
-                                        }
-                                        Reader.MoveToContent();
-                                        CheckReaderCount(ref whileIterations53, ref readerCount53);
-                                    }
-                                ReadEndElement();
-                                }
-                                o.@Parameters = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])ShrinkArray(a_2_0, ca_2_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata), false);
-                            }
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ReturnValue, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameters");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ReturnValue, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameters");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations52, ref readerCount52);
+                CheckReaderCount(ref whileIterations51, ref readerCount51);
+            }
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata Read30_InstanceMethodMetadata(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id33_InstanceMethodMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
-                ReadEndElement();
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata();
+            global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[] a_2 = null;
+            int ca_2 = 0;
+            bool[] paramsRead = new bool[3];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id86_MethodName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@MethodName = Reader.Value;
+                    paramsRead[1] = true;
+                }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":MethodName");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
                 return o;
             }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata Read29_CommonMethodMetadata(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id26_CommonMethodMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations52 = 0;
+            int readerCount52 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id88_ReturnValue && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ReturnValue = Read24_Item(false, true);
+                        paramsRead[0] = true;
+                    }
+                    else if (((object)Reader.LocalName == (object)_id89_Parameters && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        if (!ReadNull())
+                        {
+                            global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[] a_2_0 = null;
+                            int ca_2_0 = 0;
+                            if ((Reader.IsEmptyElement))
+                            {
+                                Reader.Skip();
+                            }
+                            else
+                            {
+                                Reader.ReadStartElement();
+                                Reader.MoveToContent();
+                                int whileIterations53 = 0;
+                                int readerCount53 = ReaderCount;
+                                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                                {
+                                    if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                    {
+                                        if (((object)Reader.LocalName == (object)_id76_Parameter && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                        {
+                                            a_2_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])EnsureArrayIndex(a_2_0, ca_2_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)); a_2_0[ca_2_0++] = Read25_Item(false, true);
+                                        }
+                                        else
+                                        {
+                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameter");
+                                    }
+                                    Reader.MoveToContent();
+                                    CheckReaderCount(ref whileIterations53, ref readerCount53);
+                                }
+                                ReadEndElement();
+                            }
+                            o.@Parameters = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata[])ShrinkArray(a_2_0, ca_2_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata), false);
+                        }
+                    }
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ReturnValue, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameters");
+                    }
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id33_InstanceMethodMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ReturnValue, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Parameters");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations52, ref readerCount52);
+            }
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata Read29_CommonMethodMetadata(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id26_CommonMethodMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id33_InstanceMethodMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read30_InstanceMethodMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id27_StaticMethodMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id27_StaticMethodMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read28_StaticMethodMetadata(isNullable, false);
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata();
+            bool[] paramsRead = new bool[2];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id86_MethodName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@MethodName = Reader.Value;
+                    paramsRead[1] = true;
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata();
-                bool[] paramsRead = new bool[2];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[1] && ((object) Reader.LocalName == (object)id86_MethodName && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@MethodName = Reader.Value;
-                        paramsRead[1] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":MethodName");
-                    }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":MethodName");
                 }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations54 = 0;
-                int readerCount54 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id88_ReturnValue && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@ReturnValue = Read24_Item(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ReturnValue");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ReturnValue");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations54, ref readerCount54);
-                }
-                ReadEndElement();
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
                 return o;
             }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata Read26_CommonMethodParameterMetadata(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id28_CommonMethodParameterMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations54 = 0;
+            int readerCount54 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id88_ReturnValue && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@ReturnValue = Read24_Item(false, true);
+                        paramsRead[0] = true;
+                    }
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ReturnValue");
+                    }
                 }
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id29_StaticMethodParameterMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:ReturnValue");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations54, ref readerCount54);
+            }
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata Read26_CommonMethodParameterMetadata(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id28_CommonMethodParameterMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id29_StaticMethodParameterMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read27_StaticMethodParameterMetadata(isNullable, false);
-                else if (((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id31_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item))
+                else if (((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id31_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
                     return Read25_Item(isNullable, false);
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata();
+            bool[] paramsRead = new bool[3];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id90_ParameterName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@ParameterName = Reader.Value;
+                    paramsRead[1] = true;
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata();
-                bool[] paramsRead = new bool[3];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[1] && ((object) Reader.LocalName == (object)id90_ParameterName && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@ParameterName = Reader.Value;
-                        paramsRead[1] = true;
-                    }
-                    else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id91_DefaultValue && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@DefaultValue = Reader.Value;
-                        paramsRead[2] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":ParameterName, :DefaultValue");
-                    }
+                else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id91_DefaultValue && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@DefaultValue = Reader.Value;
+                    paramsRead[2] = true;
                 }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":ParameterName, :DefaultValue");
                 }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations55 = 0;
-                int readerCount55 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id92_Type && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Type = Read2_TypeMetadata(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type");
-                        }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations55 = 0;
+            int readerCount55 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id92_Type && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Type = Read2_TypeMetadata(false, true);
+                        paramsRead[0] = true;
                     }
-                    else {
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type");
                     }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations55, ref readerCount55);
                 }
-                ReadEndElement();
-                return o;
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations55, ref readerCount55);
             }
+            ReadEndElement();
+            return o;
+        }
 
-            global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata Read31_InstanceCmdletMetadata(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id34_InstanceCmdletMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata Read31_InstanceCmdletMetadata(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id34_InstanceCmdletMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata();
+            bool[] paramsRead = new bool[3];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o);
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata();
-                bool[] paramsRead = new bool[3];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o);
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations56 = 0;
+            int readerCount56 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id84_CmdletMetadata && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@CmdletMetadata = Read21_CommonCmdletMetadata(false, true);
+                        paramsRead[0] = true;
                     }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations56 = 0;
-                int readerCount56 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id84_CmdletMetadata && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@CmdletMetadata = Read21_CommonCmdletMetadata(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id85_Method && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Method = Read30_InstanceMethodMetadata(false, true);
-                            paramsRead[1] = true;
-                        }
-                        else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id6_GetCmdletParameters && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@GetCmdletParameters = Read19_GetCmdletParameters(false, true);
-                            paramsRead[2] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Method, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters");
-                        }
+                    else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id85_Method && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Method = Read30_InstanceMethodMetadata(false, true);
+                        paramsRead[1] = true;
                     }
-                    else {
+                    else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id6_GetCmdletParameters && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@GetCmdletParameters = Read19_GetCmdletParameters(false, true);
+                        paramsRead[2] = true;
+                    }
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Method, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters");
                     }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations56, ref readerCount56);
                 }
-                ReadEndElement();
-                return o;
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletMetadata, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Method, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations56, ref readerCount56);
             }
+            ReadEndElement();
+            return o;
+        }
 
-            global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata Read36_ClassMetadata(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id3_ClassMetadata && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata Read36_ClassMetadata(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id3_ClassMetadata && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata();
+            global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[] a_3 = null;
+            int ca_3 = 0;
+            global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[] a_4 = null;
+            int ca_4 = 0;
+            bool[] paramsRead = new bool[8];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[5] && ((object)Reader.LocalName == (object)_id112_CmdletAdapter && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@CmdletAdapter = Reader.Value;
+                    paramsRead[5] = true;
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata();
-                global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[] a_3 = null;
-                int ca_3 = 0;
-                global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[] a_4 = null;
-                int ca_4 = 0;
-                bool[] paramsRead = new bool[8];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[5] && ((object) Reader.LocalName == (object)id112_CmdletAdapter && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@CmdletAdapter = Reader.Value;
-                        paramsRead[5] = true;
-                    }
-                    else if (!paramsRead[6] && ((object) Reader.LocalName == (object)id113_ClassName && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@ClassName = Reader.Value;
-                        paramsRead[6] = true;
-                    }
-                    else if (!paramsRead[7] && ((object) Reader.LocalName == (object)id114_ClassVersion && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@ClassVersion = Reader.Value;
-                        paramsRead[7] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":CmdletAdapter, :ClassName, :ClassVersion");
-                    }
+                else if (!paramsRead[6] && ((object)Reader.LocalName == (object)_id113_ClassName && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@ClassName = Reader.Value;
+                    paramsRead[6] = true;
                 }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
+                else if (!paramsRead[7] && ((object)Reader.LocalName == (object)_id114_ClassVersion && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@ClassVersion = Reader.Value;
+                    paramsRead[7] = true;
                 }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations57 = 0;
-                int readerCount57 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id115_Version && (object) Reader.NamespaceURI == (object)id2_Item)) {
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":CmdletAdapter, :ClassName, :ClassVersion");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations57 = 0;
+            int readerCount57 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id115_Version && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        {
+                            o.@Version = Reader.ReadElementString();
+                        }
+                        paramsRead[0] = true;
+                    }
+                    else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id116_DefaultNoun && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        {
+                            o.@DefaultNoun = Reader.ReadElementString();
+                        }
+                        paramsRead[1] = true;
+                    }
+                    else if (!paramsRead[2] && ((object)Reader.LocalName == (object)_id117_InstanceCmdlets && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@InstanceCmdlets = Read32_ClassMetadataInstanceCmdlets(false, true);
+                        paramsRead[2] = true;
+                    }
+                    else if (((object)Reader.LocalName == (object)_id118_StaticCmdlets && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        if (!ReadNull())
+                        {
+                            global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[] a_3_0 = null;
+                            int ca_3_0 = 0;
+                            if ((Reader.IsEmptyElement))
                             {
-                                o.@Version = Reader.ReadElementString();
+                                Reader.Skip();
                             }
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id116_DefaultNoun && (object) Reader.NamespaceURI == (object)id2_Item)) {
+                            else
                             {
-                                o.@DefaultNoun = Reader.ReadElementString();
-                            }
-                            paramsRead[1] = true;
-                        }
-                        else if (!paramsRead[2] && ((object) Reader.LocalName == (object)id117_InstanceCmdlets && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@InstanceCmdlets = Read32_ClassMetadataInstanceCmdlets(false, true);
-                            paramsRead[2] = true;
-                        }
-                        else if (((object) Reader.LocalName == (object)id118_StaticCmdlets && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            if (!ReadNull()) {
-                                global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[] a_3_0 = null;
-                                int ca_3_0 = 0;
-                                if ((Reader.IsEmptyElement)) {
-                                    Reader.Skip();
-                                }
-                                else {
-                                    Reader.ReadStartElement();
-                                    Reader.MoveToContent();
-                                    int whileIterations58 = 0;
-                                    int readerCount58 = ReaderCount;
-                                    while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                        if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                            if (((object) Reader.LocalName == (object)id79_Cmdlet && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                                a_3_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])EnsureArrayIndex(a_3_0, ca_3_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata));a_3_0[ca_3_0++] = Read34_StaticCmdletMetadata(false, true);
-                                            }
-                                            else {
-                                                UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Cmdlet");
-                                            }
+                                Reader.ReadStartElement();
+                                Reader.MoveToContent();
+                                int whileIterations58 = 0;
+                                int readerCount58 = ReaderCount;
+                                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                                {
+                                    if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                    {
+                                        if (((object)Reader.LocalName == (object)_id79_Cmdlet && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                        {
+                                            a_3_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])EnsureArrayIndex(a_3_0, ca_3_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata)); a_3_0[ca_3_0++] = Read34_StaticCmdletMetadata(false, true);
                                         }
-                                        else {
+                                        else
+                                        {
                                             UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Cmdlet");
                                         }
-                                        Reader.MoveToContent();
-                                        CheckReaderCount(ref whileIterations58, ref readerCount58);
                                     }
-                                ReadEndElement();
-                                }
-                                o.@StaticCmdlets = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])ShrinkArray(a_3_0, ca_3_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata), false);
-                            }
-                        }
-                        else if (((object) Reader.LocalName == (object)id119_CmdletAdapterPrivateData && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            if (!ReadNull()) {
-                                global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[] a_4_0 = null;
-                                int ca_4_0 = 0;
-                                if ((Reader.IsEmptyElement)) {
-                                    Reader.Skip();
-                                }
-                                else {
-                                    Reader.ReadStartElement();
+                                    else
+                                    {
+                                        UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Cmdlet");
+                                    }
                                     Reader.MoveToContent();
-                                    int whileIterations59 = 0;
-                                    int readerCount59 = ReaderCount;
-                                    while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                        if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                            if (((object) Reader.LocalName == (object)id81_Data && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                                a_4_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])EnsureArrayIndex(a_4_0, ca_4_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData));a_4_0[ca_4_0++] = Read35_ClassMetadataData(false, true);
-                                            }
-                                            else {
-                                                UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Data");
-                                            }
+                                    CheckReaderCount(ref whileIterations58, ref readerCount58);
+                                }
+                                ReadEndElement();
+                            }
+                            o.@StaticCmdlets = (global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata[])ShrinkArray(a_3_0, ca_3_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata), false);
+                        }
+                    }
+                    else if (((object)Reader.LocalName == (object)_id119_CmdletAdapterPrivateData && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        if (!ReadNull())
+                        {
+                            global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[] a_4_0 = null;
+                            int ca_4_0 = 0;
+                            if ((Reader.IsEmptyElement))
+                            {
+                                Reader.Skip();
+                            }
+                            else
+                            {
+                                Reader.ReadStartElement();
+                                Reader.MoveToContent();
+                                int whileIterations59 = 0;
+                                int readerCount59 = ReaderCount;
+                                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                                {
+                                    if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                    {
+                                        if (((object)Reader.LocalName == (object)_id81_Data && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                        {
+                                            a_4_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])EnsureArrayIndex(a_4_0, ca_4_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData)); a_4_0[ca_4_0++] = Read35_ClassMetadataData(false, true);
                                         }
-                                        else {
+                                        else
+                                        {
                                             UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Data");
                                         }
-                                        Reader.MoveToContent();
-                                        CheckReaderCount(ref whileIterations59, ref readerCount59);
                                     }
-                                ReadEndElement();
+                                    else
+                                    {
+                                        UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Data");
+                                    }
+                                    Reader.MoveToContent();
+                                    CheckReaderCount(ref whileIterations59, ref readerCount59);
                                 }
-                                o.@CmdletAdapterPrivateData = (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])ShrinkArray(a_4_0, ca_4_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData), false);
+                                ReadEndElement();
                             }
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Version, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:DefaultNoun, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:InstanceCmdlets, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:StaticCmdlets, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletAdapterPrivateData");
+                            o.@CmdletAdapterPrivateData = (global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData[])ShrinkArray(a_4_0, ca_4_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData), false);
                         }
                     }
-                    else {
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Version, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:DefaultNoun, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:InstanceCmdlets, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:StaticCmdlets, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletAdapterPrivateData");
                     }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations57, ref readerCount57);
                 }
-                ReadEndElement();
-                return o;
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Version, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:DefaultNoun, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:InstanceCmdlets, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:StaticCmdlets, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletAdapterPrivateData");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations57, ref readerCount57);
             }
+            ReadEndElement();
+            return o;
+        }
 
-            global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets Read32_ClassMetadataInstanceCmdlets(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id4_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets Read32_ClassMetadataInstanceCmdlets(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets();
+            global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[] a_2 = null;
+            int ca_2 = 0;
+            bool[] paramsRead = new bool[3];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o);
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets();
-                global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[] a_2 = null;
-                int ca_2 = 0;
-                bool[] paramsRead = new bool[3];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o);
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                o.@Cmdlet = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])ShrinkArray(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata), true);
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations60 = 0;
+            int readerCount60 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id6_GetCmdletParameters && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@GetCmdletParameters = Read19_GetCmdletParameters(false, true);
+                        paramsRead[0] = true;
                     }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    o.@Cmdlet = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])ShrinkArray(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata), true);
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations60 = 0;
-                int readerCount60 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id6_GetCmdletParameters && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@GetCmdletParameters = Read19_GetCmdletParameters(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id120_GetCmdlet && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@GetCmdlet = Read22_GetCmdletMetadata(false, true);
-                            paramsRead[1] = true;
-                        }
-                        else if (((object) Reader.LocalName == (object)id79_Cmdlet && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            a_2 = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])EnsureArrayIndex(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata));a_2[ca_2++] = Read31_InstanceCmdletMetadata(false, true);
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdlet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Cmdlet");
-                        }
+                    else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id120_GetCmdlet && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@GetCmdlet = Read22_GetCmdletMetadata(false, true);
+                        paramsRead[1] = true;
                     }
-                    else {
+                    else if (((object)Reader.LocalName == (object)_id79_Cmdlet && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        a_2 = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])EnsureArrayIndex(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata)); a_2[ca_2++] = Read31_InstanceCmdletMetadata(false, true);
+                    }
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdlet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Cmdlet");
                     }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations60, ref readerCount60);
                 }
-                o.@Cmdlet = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])ShrinkArray(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata), true);
-                ReadEndElement();
-                return o;
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdlet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Cmdlet");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations60, ref readerCount60);
             }
+            o.@Cmdlet = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])ShrinkArray(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata), true);
+            ReadEndElement();
+            return o;
+        }
 
-            global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets Read40_ClassMetadataInstanceCmdlets(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id5_ClassMetadataInstanceCmdlets && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets Read40_ClassMetadataInstanceCmdlets(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id5_ClassMetadataInstanceCmdlets && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets();
+            global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[] a_2 = null;
+            int ca_2 = 0;
+            bool[] paramsRead = new bool[3];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o);
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets();
-                global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[] a_2 = null;
-                int ca_2 = 0;
-                bool[] paramsRead = new bool[3];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o);
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                o.@Cmdlet = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])ShrinkArray(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata), true);
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations61 = 0;
+            int readerCount61 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id6_GetCmdletParameters && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@GetCmdletParameters = Read19_GetCmdletParameters(false, true);
+                        paramsRead[0] = true;
                     }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    o.@Cmdlet = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])ShrinkArray(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata), true);
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations61 = 0;
-                int readerCount61 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id6_GetCmdletParameters && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@GetCmdletParameters = Read19_GetCmdletParameters(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id120_GetCmdlet && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@GetCmdlet = Read22_GetCmdletMetadata(false, true);
-                            paramsRead[1] = true;
-                        }
-                        else if (((object) Reader.LocalName == (object)id79_Cmdlet && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            a_2 = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])EnsureArrayIndex(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata));a_2[ca_2++] = Read31_InstanceCmdletMetadata(false, true);
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdlet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Cmdlet");
-                        }
+                    else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id120_GetCmdlet && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@GetCmdlet = Read22_GetCmdletMetadata(false, true);
+                        paramsRead[1] = true;
                     }
-                    else {
+                    else if (((object)Reader.LocalName == (object)_id79_Cmdlet && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        a_2 = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])EnsureArrayIndex(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata)); a_2[ca_2++] = Read31_InstanceCmdletMetadata(false, true);
+                    }
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdlet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Cmdlet");
                     }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations61, ref readerCount61);
                 }
-                o.@Cmdlet = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])ShrinkArray(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata), true);
-                ReadEndElement();
-                return o;
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdletParameters, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:GetCmdlet, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Cmdlet");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations61, ref readerCount61);
             }
+            o.@Cmdlet = (global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata[])ShrinkArray(a_2, ca_2, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata), true);
+            ReadEndElement();
+            return o;
+        }
 
-            global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance Read41_AssociationAssociatedInstance(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id10_AssociationAssociatedInstance && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance Read41_AssociationAssociatedInstance(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id10_AssociationAssociatedInstance && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance();
+            bool[] paramsRead = new bool[2];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o);
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance();
-                bool[] paramsRead = new bool[2];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o);
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations62 = 0;
+            int readerCount62 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id92_Type && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Type = Read2_TypeMetadata(false, true);
+                        paramsRead[0] = true;
                     }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations62 = 0;
-                int readerCount62 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id92_Type && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Type = Read2_TypeMetadata(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id11_CmdletParameterMetadata && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@CmdletParameterMetadata = Read12_Item(false, true);
-                            paramsRead[1] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
-                        }
+                    else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id11_CmdletParameterMetadata && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@CmdletParameterMetadata = Read12_Item(false, true);
+                        paramsRead[1] = true;
                     }
-                    else {
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
                     }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations62, ref readerCount62);
                 }
-                ReadEndElement();
-                return o;
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletParameterMetadata");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations62, ref readerCount62);
             }
+            ReadEndElement();
+            return o;
+        }
 
-            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount Read42_Item(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id14_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount Read42_Item(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id14_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount();
+            bool[] paramsRead = new bool[2];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id67_Min && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Min = CollapseWhitespace(Reader.Value);
+                    paramsRead[0] = true;
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount();
-                bool[] paramsRead = new bool[2];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[0] && ((object) Reader.LocalName == (object)id67_Min && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Min = CollapseWhitespace(Reader.Value);
+                else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id68_Max && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Max = CollapseWhitespace(Reader.Value);
+                    paramsRead[1] = true;
+                }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":Min, :Max");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations63 = 0;
+            int readerCount63 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    UnknownNode((object)o, @"");
+                }
+                else
+                {
+                    UnknownNode((object)o, @"");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations63, ref readerCount63);
+            }
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength Read43_Item(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id15_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength();
+            bool[] paramsRead = new bool[2];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id67_Min && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Min = CollapseWhitespace(Reader.Value);
+                    paramsRead[0] = true;
+                }
+                else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id68_Max && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Max = CollapseWhitespace(Reader.Value);
+                    paramsRead[1] = true;
+                }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":Min, :Max");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations64 = 0;
+            int readerCount64 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    UnknownNode((object)o, @"");
+                }
+                else
+                {
+                    UnknownNode((object)o, @"");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations64, ref readerCount64);
+            }
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange Read44_Item(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id16_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange();
+            bool[] paramsRead = new bool[2];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id67_Min && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Min = CollapseWhitespace(Reader.Value);
+                    paramsRead[0] = true;
+                }
+                else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id68_Max && (object)Reader.NamespaceURI == (object)_id4_Item))
+                {
+                    o.@Max = CollapseWhitespace(Reader.Value);
+                    paramsRead[1] = true;
+                }
+                else if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o, @":Min, :Max");
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations65 = 0;
+            int readerCount65 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    UnknownNode((object)o, @"");
+                }
+                else
+                {
+                    UnknownNode((object)o, @"");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations65, ref readerCount65);
+            }
+            ReadEndElement();
+            return o;
+        }
+
+        private global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue Read46_Item(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id32_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
+                }
+                else
+                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue();
+            bool[] paramsRead = new bool[2];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o);
+                }
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
+                return o;
+            }
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations66 = 0;
+            int readerCount66 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id92_Type && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Type = Read2_TypeMetadata(false, true);
                         paramsRead[0] = true;
                     }
-                    else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id68_Max && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Max = CollapseWhitespace(Reader.Value);
+                    else if (!paramsRead[1] && ((object)Reader.LocalName == (object)_id30_CmdletOutputMetadata && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@CmdletOutputMetadata = Read23_CmdletOutputMetadata(false, true);
                         paramsRead[1] = true;
                     }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":Min, :Max");
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations63 = 0;
-                int readerCount63 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        UnknownNode((object)o, @"");
-                    }
-                    else {
-                        UnknownNode((object)o, @"");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations63, ref readerCount63);
-                }
-                ReadEndElement();
-                return o;
-            }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength Read43_Item(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id15_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-                }
-                else
-                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
-                }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength();
-                bool[] paramsRead = new bool[2];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[0] && ((object) Reader.LocalName == (object)id67_Min && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Min = CollapseWhitespace(Reader.Value);
-                        paramsRead[0] = true;
-                    }
-                    else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id68_Max && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Max = CollapseWhitespace(Reader.Value);
-                        paramsRead[1] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":Min, :Max");
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations64 = 0;
-                int readerCount64 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        UnknownNode((object)o, @"");
-                    }
-                    else {
-                        UnknownNode((object)o, @"");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations64, ref readerCount64);
-                }
-                ReadEndElement();
-                return o;
-            }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange Read44_Item(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id16_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-                }
-                else
-                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
-                }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange();
-                bool[] paramsRead = new bool[2];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!paramsRead[0] && ((object) Reader.LocalName == (object)id67_Min && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Min = CollapseWhitespace(Reader.Value);
-                        paramsRead[0] = true;
-                    }
-                    else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id68_Max && (object) Reader.NamespaceURI == (object)id4_Item)) {
-                        o.@Max = CollapseWhitespace(Reader.Value);
-                        paramsRead[1] = true;
-                    }
-                    else if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o, @":Min, :Max");
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations65 = 0;
-                int readerCount65 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        UnknownNode((object)o, @"");
-                    }
-                    else {
-                        UnknownNode((object)o, @"");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations65, ref readerCount65);
-                }
-                ReadEndElement();
-                return o;
-            }
-
-            global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue Read46_Item(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id32_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
-                }
-                else
-                    throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
-                }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue();
-                bool[] paramsRead = new bool[2];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o);
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations66 = 0;
-                int readerCount66 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id92_Type && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Type = Read2_TypeMetadata(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (!paramsRead[1] && ((object) Reader.LocalName == (object)id30_CmdletOutputMetadata && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@CmdletOutputMetadata = Read23_CmdletOutputMetadata(false, true);
-                            paramsRead[1] = true;
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
-                        }
-                    }
-                    else {
+                    else
+                    {
                         UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
                     }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations66, ref readerCount66);
                 }
-                ReadEndElement();
-                return o;
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Type, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:CmdletOutputMetadata");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations66, ref readerCount66);
             }
+            ReadEndElement();
+            return o;
+        }
 
-            global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata Read39_PowerShellMetadata(bool isNullable, bool checkType) {
-                System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
-                bool isNull = false;
-                if (isNullable) isNull = ReadNull();
-                if (checkType) {
-                if (xsiType == null || ((object) ((System.Xml.XmlQualifiedName)xsiType).Name == (object)id4_Item && (object) ((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)id2_Item)) {
+        private global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata Read39_PowerShellMetadata(bool isNullable, bool checkType)
+        {
+            System.Xml.XmlQualifiedName xsiType = checkType ? GetXsiType() : null;
+            bool isNull = false;
+            if (isNullable) isNull = ReadNull();
+            if (checkType)
+            {
+                if (xsiType == null || ((object)((System.Xml.XmlQualifiedName)xsiType).Name == (object)_id4_Item && (object)((System.Xml.XmlQualifiedName)xsiType).Namespace == (object)_id2_Item))
+                {
                 }
                 else
                     throw CreateUnknownTypeException((System.Xml.XmlQualifiedName)xsiType);
+            }
+            if (isNull) return null;
+            global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata o;
+            o = new global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata();
+            global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[] a_1 = null;
+            int ca_1 = 0;
+            bool[] paramsRead = new bool[2];
+            while (Reader.MoveToNextAttribute())
+            {
+                if (!IsXmlnsAttribute(Reader.Name))
+                {
+                    UnknownNode((object)o);
                 }
-                if (isNull) return null;
-                global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata o;
-                o = new global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata();
-                global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[] a_1 = null;
-                int ca_1 = 0;
-                bool[] paramsRead = new bool[2];
-                while (Reader.MoveToNextAttribute()) {
-                    if (!IsXmlnsAttribute(Reader.Name)) {
-                        UnknownNode((object)o);
-                    }
-                }
-                Reader.MoveToElement();
-                if (Reader.IsEmptyElement) {
-                    Reader.Skip();
-                    return o;
-                }
-                Reader.ReadStartElement();
-                Reader.MoveToContent();
-                int whileIterations67 = 0;
-                int readerCount67 = ReaderCount;
-                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                    if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                        if (!paramsRead[0] && ((object) Reader.LocalName == (object)id121_Class && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            o.@Class = Read36_ClassMetadata(false, true);
-                            paramsRead[0] = true;
-                        }
-                        else if (((object) Reader.LocalName == (object)id122_Enums && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                            if (!ReadNull()) {
-                                global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[] a_1_0 = null;
-                                int ca_1_0 = 0;
-                                if ((Reader.IsEmptyElement)) {
-                                    Reader.Skip();
-                                }
-                                else {
-                                    Reader.ReadStartElement();
-                                    Reader.MoveToContent();
-                                    int whileIterations68 = 0;
-                                    int readerCount68 = ReaderCount;
-                                    while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None) {
-                                        if (Reader.NodeType == System.Xml.XmlNodeType.Element) {
-                                            if (((object) Reader.LocalName == (object)id83_Enum && (object) Reader.NamespaceURI == (object)id2_Item)) {
-                                                a_1_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])EnsureArrayIndex(a_1_0, ca_1_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum));a_1_0[ca_1_0++] = Read38_EnumMetadataEnum(false, true);
-                                            }
-                                            else {
-                                                UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Enum");
-                                            }
-                                        }
-                                        else {
-                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Enum");
-                                        }
-                                        Reader.MoveToContent();
-                                        CheckReaderCount(ref whileIterations68, ref readerCount68);
-                                    }
-                                ReadEndElement();
-                                }
-                                o.@Enums = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])ShrinkArray(a_1_0, ca_1_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum), false);
-                            }
-                        }
-                        else {
-                            UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Class, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Enums");
-                        }
-                    }
-                    else {
-                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Class, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Enums");
-                    }
-                    Reader.MoveToContent();
-                    CheckReaderCount(ref whileIterations67, ref readerCount67);
-                }
-                ReadEndElement();
+            }
+            Reader.MoveToElement();
+            if (Reader.IsEmptyElement)
+            {
+                Reader.Skip();
                 return o;
             }
-
-            protected override void InitCallbacks() {
-            }
-
-            string id72_ArrayOfAssociation;
-            string id46_AllowGlobbing;
-            string id6_GetCmdletParameters;
-            string id25_Item;
-            string id62_ValidateRange;
-            string id118_StaticCmdlets;
-            string id58_ValidateNotNull;
-            string id17_ObsoleteAttributeMetadata;
-            string id49_PSName;
-            string id116_DefaultNoun;
-            string id38_ClassMetadataData;
-            string id114_ClassVersion;
-            string id66_Message;
-            string id65_Obsolete;
-            string id51_ValueFromPipeline;
-            string id108_MinValueQuery;
-            string id119_CmdletAdapterPrivateData;
-            string id21_GetCmdletMetadata;
-            string id120_GetCmdlet;
-            string id67_Min;
-            string id56_AllowEmptyString;
-            string id30_CmdletOutputMetadata;
-            string id106_RegularQuery;
-            string id74_Option;
-            string id75_Item;
-            string id23_ConfirmImpact;
-            string id117_InstanceCmdlets;
-            string id83_Enum;
-            string id40_EnumMetadataEnumValue;
-            string id111_QueryOptions;
-            string id34_InstanceCmdletMetadata;
-            string id60_ValidateCount;
-            string id45_BitwiseFlags;
-            string id81_Data;
-            string id31_Item;
-            string id1_PowerShellMetadata;
-            string id98_HelpUri;
-            string id91_DefaultValue;
-            string id4_Item;
-            string id32_Item;
-            string id43_EnumName;
-            string id122_Enums;
-            string id82_ArrayOfEnumMetadataEnum;
-            string id14_Item;
-            string id48_Aliases;
-            string id115_Version;
-            string id11_CmdletParameterMetadata;
-            string id70_ArrayOfPropertyMetadata;
-            string id9_Association;
-            string id102_ResultRole;
-            string id29_StaticMethodParameterMetadata;
-            string id97_Noun;
-            string id47_IsMandatory;
-            string id35_PropertyQuery;
-            string id54_ErrorOnNoMatch;
-            string id3_ClassMetadata;
-            string id77_Item;
-            string id2_Item;
-            string id22_CommonCmdletMetadata;
-            string id37_ItemsChoiceType;
-            string id36_WildcardablePropertyQuery;
-            string id113_ClassName;
-            string id64_AllowedValue;
-            string id52_Item;
-            string id55_AllowEmptyCollection;
-            string id13_Item;
-            string id76_Parameter;
-            string id19_Item;
-            string id105_MaxValueQuery;
-            string id101_SourceRole;
-            string id5_ClassMetadataInstanceCmdlets;
-            string id112_CmdletAdapter;
-            string id10_AssociationAssociatedInstance;
-            string id93_ErrorCode;
-            string id41_Name;
-            string id68_Max;
-            string id50_Position;
-            string id100_OptionName;
-            string id84_CmdletMetadata;
-            string id87_CmdletParameterSet;
-            string id104_PropertyName;
-            string id28_CommonMethodParameterMetadata;
-            string id107_ExcludeQuery;
-            string id92_Type;
-            string id33_InstanceMethodMetadata;
-            string id63_ValidateSet;
-            string id53_CmdletParameterSets;
-            string id15_Item;
-            string id109_QueryableProperties;
-            string id57_AllowNull;
-            string id80_ArrayOfClassMetadataData;
-            string id99_DefaultCmdletParameterSet;
-            string id20_QueryOption;
-            string id89_Parameters;
-            string id90_ParameterName;
-            string id61_ValidateLength;
-            string id78_ArrayOfStaticCmdletMetadata;
-            string id16_Item;
-            string id39_EnumMetadataEnum;
-            string id7_PropertyMetadata;
-            string id110_QueryableAssociations;
-            string id86_MethodName;
-            string id8_TypeMetadata;
-            string id71_Property;
-            string id27_StaticMethodMetadata;
-            string id94_PSType;
-            string id44_UnderlyingType;
-            string id103_AssociatedInstance;
-            string id79_Cmdlet;
-            string id18_Item;
-            string id85_Method;
-            string id95_ETSType;
-            string id26_CommonMethodMetadata;
-            string id88_ReturnValue;
-            string id69_ArrayOfString;
-            string id24_StaticCmdletMetadata;
-            string id59_ValidateNotNullOrEmpty;
-            string id96_Verb;
-            string id121_Class;
-            string id73_ArrayOfQueryOption;
-            string id12_Item;
-            string id42_Value;
-
-            protected override void InitIDs() {
-                id72_ArrayOfAssociation = Reader.NameTable.Add(@"ArrayOfAssociation");
-                id46_AllowGlobbing = Reader.NameTable.Add(@"AllowGlobbing");
-                id6_GetCmdletParameters = Reader.NameTable.Add(@"GetCmdletParameters");
-                id25_Item = Reader.NameTable.Add(@"StaticCmdletMetadataCmdletMetadata");
-                id62_ValidateRange = Reader.NameTable.Add(@"ValidateRange");
-                id118_StaticCmdlets = Reader.NameTable.Add(@"StaticCmdlets");
-                id58_ValidateNotNull = Reader.NameTable.Add(@"ValidateNotNull");
-                id17_ObsoleteAttributeMetadata = Reader.NameTable.Add(@"ObsoleteAttributeMetadata");
-                id49_PSName = Reader.NameTable.Add(@"PSName");
-                id116_DefaultNoun = Reader.NameTable.Add(@"DefaultNoun");
-                id38_ClassMetadataData = Reader.NameTable.Add(@"ClassMetadataData");
-                id114_ClassVersion = Reader.NameTable.Add(@"ClassVersion");
-                id66_Message = Reader.NameTable.Add(@"Message");
-                id65_Obsolete = Reader.NameTable.Add(@"Obsolete");
-                id51_ValueFromPipeline = Reader.NameTable.Add(@"ValueFromPipeline");
-                id108_MinValueQuery = Reader.NameTable.Add(@"MinValueQuery");
-                id119_CmdletAdapterPrivateData = Reader.NameTable.Add(@"CmdletAdapterPrivateData");
-                id21_GetCmdletMetadata = Reader.NameTable.Add(@"GetCmdletMetadata");
-                id120_GetCmdlet = Reader.NameTable.Add(@"GetCmdlet");
-                id67_Min = Reader.NameTable.Add(@"Min");
-                id56_AllowEmptyString = Reader.NameTable.Add(@"AllowEmptyString");
-                id30_CmdletOutputMetadata = Reader.NameTable.Add(@"CmdletOutputMetadata");
-                id106_RegularQuery = Reader.NameTable.Add(@"RegularQuery");
-                id74_Option = Reader.NameTable.Add(@"Option");
-                id75_Item = Reader.NameTable.Add(@"ArrayOfStaticMethodParameterMetadata");
-                id23_ConfirmImpact = Reader.NameTable.Add(@"ConfirmImpact");
-                id117_InstanceCmdlets = Reader.NameTable.Add(@"InstanceCmdlets");
-                id83_Enum = Reader.NameTable.Add(@"Enum");
-                id40_EnumMetadataEnumValue = Reader.NameTable.Add(@"EnumMetadataEnumValue");
-                id111_QueryOptions = Reader.NameTable.Add(@"QueryOptions");
-                id34_InstanceCmdletMetadata = Reader.NameTable.Add(@"InstanceCmdletMetadata");
-                id60_ValidateCount = Reader.NameTable.Add(@"ValidateCount");
-                id45_BitwiseFlags = Reader.NameTable.Add(@"BitwiseFlags");
-                id81_Data = Reader.NameTable.Add(@"Data");
-                id31_Item = Reader.NameTable.Add(@"InstanceMethodParameterMetadata");
-                id1_PowerShellMetadata = Reader.NameTable.Add(@"PowerShellMetadata");
-                id98_HelpUri = Reader.NameTable.Add(@"HelpUri");
-                id91_DefaultValue = Reader.NameTable.Add(@"DefaultValue");
-                id4_Item = Reader.NameTable.Add(@"");
-                id32_Item = Reader.NameTable.Add(@"CommonMethodMetadataReturnValue");
-                id43_EnumName = Reader.NameTable.Add(@"EnumName");
-                id122_Enums = Reader.NameTable.Add(@"Enums");
-                id82_ArrayOfEnumMetadataEnum = Reader.NameTable.Add(@"ArrayOfEnumMetadataEnum");
-                id14_Item = Reader.NameTable.Add(@"CmdletParameterMetadataValidateCount");
-                id48_Aliases = Reader.NameTable.Add(@"Aliases");
-                id115_Version = Reader.NameTable.Add(@"Version");
-                id11_CmdletParameterMetadata = Reader.NameTable.Add(@"CmdletParameterMetadata");
-                id70_ArrayOfPropertyMetadata = Reader.NameTable.Add(@"ArrayOfPropertyMetadata");
-                id9_Association = Reader.NameTable.Add(@"Association");
-                id102_ResultRole = Reader.NameTable.Add(@"ResultRole");
-                id29_StaticMethodParameterMetadata = Reader.NameTable.Add(@"StaticMethodParameterMetadata");
-                id97_Noun = Reader.NameTable.Add(@"Noun");
-                id47_IsMandatory = Reader.NameTable.Add(@"IsMandatory");
-                id35_PropertyQuery = Reader.NameTable.Add(@"PropertyQuery");
-                id54_ErrorOnNoMatch = Reader.NameTable.Add(@"ErrorOnNoMatch");
-                id3_ClassMetadata = Reader.NameTable.Add(@"ClassMetadata");
-                id77_Item = Reader.NameTable.Add(@"ArrayOfInstanceMethodParameterMetadata");
-                id2_Item = Reader.NameTable.Add(@"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
-                id22_CommonCmdletMetadata = Reader.NameTable.Add(@"CommonCmdletMetadata");
-                id37_ItemsChoiceType = Reader.NameTable.Add(@"ItemsChoiceType");
-                id36_WildcardablePropertyQuery = Reader.NameTable.Add(@"WildcardablePropertyQuery");
-                id113_ClassName = Reader.NameTable.Add(@"ClassName");
-                id64_AllowedValue = Reader.NameTable.Add(@"AllowedValue");
-                id52_Item = Reader.NameTable.Add(@"ValueFromPipelineByPropertyName");
-                id55_AllowEmptyCollection = Reader.NameTable.Add(@"AllowEmptyCollection");
-                id13_Item = Reader.NameTable.Add(@"CmdletParameterMetadataForGetCmdletFilteringParameter");
-                id76_Parameter = Reader.NameTable.Add(@"Parameter");
-                id19_Item = Reader.NameTable.Add(@"CmdletParameterMetadataForStaticMethodParameter");
-                id105_MaxValueQuery = Reader.NameTable.Add(@"MaxValueQuery");
-                id101_SourceRole = Reader.NameTable.Add(@"SourceRole");
-                id5_ClassMetadataInstanceCmdlets = Reader.NameTable.Add(@"ClassMetadataInstanceCmdlets");
-                id112_CmdletAdapter = Reader.NameTable.Add(@"CmdletAdapter");
-                id10_AssociationAssociatedInstance = Reader.NameTable.Add(@"AssociationAssociatedInstance");
-                id93_ErrorCode = Reader.NameTable.Add(@"ErrorCode");
-                id41_Name = Reader.NameTable.Add(@"Name");
-                id68_Max = Reader.NameTable.Add(@"Max");
-                id50_Position = Reader.NameTable.Add(@"Position");
-                id100_OptionName = Reader.NameTable.Add(@"OptionName");
-                id84_CmdletMetadata = Reader.NameTable.Add(@"CmdletMetadata");
-                id87_CmdletParameterSet = Reader.NameTable.Add(@"CmdletParameterSet");
-                id104_PropertyName = Reader.NameTable.Add(@"PropertyName");
-                id28_CommonMethodParameterMetadata = Reader.NameTable.Add(@"CommonMethodParameterMetadata");
-                id107_ExcludeQuery = Reader.NameTable.Add(@"ExcludeQuery");
-                id92_Type = Reader.NameTable.Add(@"Type");
-                id33_InstanceMethodMetadata = Reader.NameTable.Add(@"InstanceMethodMetadata");
-                id63_ValidateSet = Reader.NameTable.Add(@"ValidateSet");
-                id53_CmdletParameterSets = Reader.NameTable.Add(@"CmdletParameterSets");
-                id15_Item = Reader.NameTable.Add(@"CmdletParameterMetadataValidateLength");
-                id109_QueryableProperties = Reader.NameTable.Add(@"QueryableProperties");
-                id57_AllowNull = Reader.NameTable.Add(@"AllowNull");
-                id80_ArrayOfClassMetadataData = Reader.NameTable.Add(@"ArrayOfClassMetadataData");
-                id99_DefaultCmdletParameterSet = Reader.NameTable.Add(@"DefaultCmdletParameterSet");
-                id20_QueryOption = Reader.NameTable.Add(@"QueryOption");
-                id89_Parameters = Reader.NameTable.Add(@"Parameters");
-                id90_ParameterName = Reader.NameTable.Add(@"ParameterName");
-                id61_ValidateLength = Reader.NameTable.Add(@"ValidateLength");
-                id78_ArrayOfStaticCmdletMetadata = Reader.NameTable.Add(@"ArrayOfStaticCmdletMetadata");
-                id16_Item = Reader.NameTable.Add(@"CmdletParameterMetadataValidateRange");
-                id39_EnumMetadataEnum = Reader.NameTable.Add(@"EnumMetadataEnum");
-                id7_PropertyMetadata = Reader.NameTable.Add(@"PropertyMetadata");
-                id110_QueryableAssociations = Reader.NameTable.Add(@"QueryableAssociations");
-                id86_MethodName = Reader.NameTable.Add(@"MethodName");
-                id8_TypeMetadata = Reader.NameTable.Add(@"TypeMetadata");
-                id71_Property = Reader.NameTable.Add(@"Property");
-                id27_StaticMethodMetadata = Reader.NameTable.Add(@"StaticMethodMetadata");
-                id94_PSType = Reader.NameTable.Add(@"PSType");
-                id44_UnderlyingType = Reader.NameTable.Add(@"UnderlyingType");
-                id103_AssociatedInstance = Reader.NameTable.Add(@"AssociatedInstance");
-                id79_Cmdlet = Reader.NameTable.Add(@"Cmdlet");
-                id18_Item = Reader.NameTable.Add(@"CmdletParameterMetadataForInstanceMethodParameter");
-                id85_Method = Reader.NameTable.Add(@"Method");
-                id95_ETSType = Reader.NameTable.Add(@"ETSType");
-                id26_CommonMethodMetadata = Reader.NameTable.Add(@"CommonMethodMetadata");
-                id88_ReturnValue = Reader.NameTable.Add(@"ReturnValue");
-                id69_ArrayOfString = Reader.NameTable.Add(@"ArrayOfString");
-                id24_StaticCmdletMetadata = Reader.NameTable.Add(@"StaticCmdletMetadata");
-                id59_ValidateNotNullOrEmpty = Reader.NameTable.Add(@"ValidateNotNullOrEmpty");
-                id96_Verb = Reader.NameTable.Add(@"Verb");
-                id121_Class = Reader.NameTable.Add(@"Class");
-                id73_ArrayOfQueryOption = Reader.NameTable.Add(@"ArrayOfQueryOption");
-                id12_Item = Reader.NameTable.Add(@"CmdletParameterMetadataForGetCmdletParameter");
-                id42_Value = Reader.NameTable.Add(@"Value");
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal abstract class XmlSerializer1 : System.Xml.Serialization.XmlSerializer {
-            protected override System.Xml.Serialization.XmlSerializationReader CreateReader() {
-                return new XmlSerializationReader1();
-            }
-            protected override System.Xml.Serialization.XmlSerializationWriter CreateWriter() {
-                return new XmlSerializationWriter1();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class PowerShellMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"PowerShellMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write50_PowerShellMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read50_PowerShellMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class ClassMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"ClassMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write51_ClassMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read51_ClassMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class ClassMetadataInstanceCmdletsSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"ClassMetadataInstanceCmdlets", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write52_ClassMetadataInstanceCmdlets(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read52_ClassMetadataInstanceCmdlets();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class GetCmdletParametersSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"GetCmdletParameters", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write53_GetCmdletParameters(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read53_GetCmdletParameters();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class PropertyMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"PropertyMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write54_PropertyMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read54_PropertyMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class TypeMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"TypeMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write55_TypeMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read55_TypeMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class AssociationSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"Association", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write56_Association(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read56_Association();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class AssociationAssociatedInstanceSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"AssociationAssociatedInstance", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write57_AssociationAssociatedInstance(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read57_AssociationAssociatedInstance();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class CmdletParameterMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"CmdletParameterMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write58_CmdletParameterMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read58_CmdletParameterMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class CmdletParameterMetadataForGetCmdletParameterSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"CmdletParameterMetadataForGetCmdletParameter", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write59_Item(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read59_Item();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class CmdletParameterMetadataForGetCmdletFilteringParameterSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"CmdletParameterMetadataForGetCmdletFilteringParameter", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write60_Item(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read60_Item();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class CmdletParameterMetadataValidateCountSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"CmdletParameterMetadataValidateCount", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write61_Item(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read61_Item();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class CmdletParameterMetadataValidateLengthSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"CmdletParameterMetadataValidateLength", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write62_Item(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read62_Item();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class CmdletParameterMetadataValidateRangeSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"CmdletParameterMetadataValidateRange", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write63_Item(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read63_Item();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class ObsoleteAttributeMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"ObsoleteAttributeMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write64_ObsoleteAttributeMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read64_ObsoleteAttributeMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class CmdletParameterMetadataForInstanceMethodParameterSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"CmdletParameterMetadataForInstanceMethodParameter", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write65_Item(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read65_Item();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class CmdletParameterMetadataForStaticMethodParameterSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"CmdletParameterMetadataForStaticMethodParameter", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write66_Item(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read66_Item();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class QueryOptionSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"QueryOption", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write67_QueryOption(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read67_QueryOption();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class GetCmdletMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"GetCmdletMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write68_GetCmdletMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read68_GetCmdletMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class CommonCmdletMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"CommonCmdletMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write69_CommonCmdletMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read69_CommonCmdletMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class ConfirmImpactSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"ConfirmImpact", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write70_ConfirmImpact(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read70_ConfirmImpact();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class StaticCmdletMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"StaticCmdletMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write71_StaticCmdletMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read71_StaticCmdletMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class StaticCmdletMetadataCmdletMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"StaticCmdletMetadataCmdletMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write72_Item(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read72_Item();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class CommonMethodMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"CommonMethodMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write73_CommonMethodMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read73_CommonMethodMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class StaticMethodMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"StaticMethodMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write74_StaticMethodMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read74_StaticMethodMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class CommonMethodParameterMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"CommonMethodParameterMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write75_CommonMethodParameterMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read75_CommonMethodParameterMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class StaticMethodParameterMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"StaticMethodParameterMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write76_StaticMethodParameterMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read76_StaticMethodParameterMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class CmdletOutputMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"CmdletOutputMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write77_CmdletOutputMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read77_CmdletOutputMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class InstanceMethodParameterMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"InstanceMethodParameterMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write78_Item(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read78_Item();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class CommonMethodMetadataReturnValueSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"CommonMethodMetadataReturnValue", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write79_Item(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read79_Item();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class InstanceMethodMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"InstanceMethodMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write80_InstanceMethodMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read80_InstanceMethodMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class InstanceCmdletMetadataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"InstanceCmdletMetadata", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write81_InstanceCmdletMetadata(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read81_InstanceCmdletMetadata();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class PropertyQuerySerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"PropertyQuery", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write82_PropertyQuery(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read82_PropertyQuery();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class WildcardablePropertyQuerySerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"WildcardablePropertyQuery", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write83_WildcardablePropertyQuery(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read83_WildcardablePropertyQuery();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class ItemsChoiceTypeSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"ItemsChoiceType", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write84_ItemsChoiceType(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read84_ItemsChoiceType();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class ClassMetadataDataSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"ClassMetadataData", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write85_ClassMetadataData(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read85_ClassMetadataData();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class EnumMetadataEnumSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"EnumMetadataEnum", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write86_EnumMetadataEnum(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read86_EnumMetadataEnum();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal sealed class EnumMetadataEnumValueSerializer : XmlSerializer1 {
-
-            public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader) {
-                return xmlReader.IsStartElement(@"EnumMetadataEnumValue", @"");
-            }
-
-            protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer) {
-                ((XmlSerializationWriter1)writer).Write87_EnumMetadataEnumValue(objectToSerialize);
-            }
-
-            protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader) {
-                return ((XmlSerializationReader1)reader).Read87_EnumMetadataEnumValue();
-            }
-        }
-
-[System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
-        internal class XmlSerializerContract : global::System.Xml.Serialization.XmlSerializerImplementation {
-            public override global::System.Xml.Serialization.XmlSerializationReader Reader { get { return new XmlSerializationReader1(); } }
-            public override global::System.Xml.Serialization.XmlSerializationWriter Writer { get { return new XmlSerializationWriter1(); } }
-            System.Collections.Hashtable readMethods = null;
-            public override System.Collections.Hashtable ReadMethods {
-                get {
-                    if (readMethods == null) {
-                        System.Collections.Hashtable _tmp = new System.Collections.Hashtable();
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata:http://schemas.microsoft.com/cmdlets-over-objects/2009/11::False:"] = @"Read50_PowerShellMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata::"] = @"Read51_ClassMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets::"] = @"Read52_ClassMetadataInstanceCmdlets";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters::"] = @"Read53_GetCmdletParameters";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata::"] = @"Read54_PropertyMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata::"] = @"Read55_TypeMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.Association::"] = @"Read56_Association";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance::"] = @"Read57_AssociationAssociatedInstance";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata::"] = @"Read58_CmdletParameterMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter::"] = @"Read59_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter::"] = @"Read60_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount::"] = @"Read61_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength::"] = @"Read62_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange::"] = @"Read63_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata::"] = @"Read64_ObsoleteAttributeMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter::"] = @"Read65_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter::"] = @"Read66_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.QueryOption::"] = @"Read67_QueryOption";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata::"] = @"Read68_GetCmdletMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata::"] = @"Read69_CommonCmdletMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact::"] = @"Read70_ConfirmImpact";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata::"] = @"Read71_StaticCmdletMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata::"] = @"Read72_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata::"] = @"Read73_CommonMethodMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata::"] = @"Read74_StaticMethodMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata::"] = @"Read75_CommonMethodParameterMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata::"] = @"Read76_StaticMethodParameterMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata::"] = @"Read77_CmdletOutputMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata::"] = @"Read78_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue::"] = @"Read79_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata::"] = @"Read80_InstanceMethodMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata::"] = @"Read81_InstanceCmdletMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery::"] = @"Read82_PropertyQuery";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery::"] = @"Read83_WildcardablePropertyQuery";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType::"] = @"Read84_ItemsChoiceType";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData::"] = @"Read85_ClassMetadataData";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum::"] = @"Read86_EnumMetadataEnum";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue::"] = @"Read87_EnumMetadataEnumValue";
-                        if (readMethods == null) readMethods = _tmp;
+            Reader.ReadStartElement();
+            Reader.MoveToContent();
+            int whileIterations67 = 0;
+            int readerCount67 = ReaderCount;
+            while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+            {
+                if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                {
+                    if (!paramsRead[0] && ((object)Reader.LocalName == (object)_id121_Class && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        o.@Class = Read36_ClassMetadata(false, true);
+                        paramsRead[0] = true;
                     }
-                    return readMethods;
-                }
-            }
-            System.Collections.Hashtable writeMethods = null;
-            public override System.Collections.Hashtable WriteMethods {
-                get {
-                    if (writeMethods == null) {
-                        System.Collections.Hashtable _tmp = new System.Collections.Hashtable();
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata:http://schemas.microsoft.com/cmdlets-over-objects/2009/11::False:"] = @"Write50_PowerShellMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata::"] = @"Write51_ClassMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets::"] = @"Write52_ClassMetadataInstanceCmdlets";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters::"] = @"Write53_GetCmdletParameters";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata::"] = @"Write54_PropertyMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata::"] = @"Write55_TypeMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.Association::"] = @"Write56_Association";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance::"] = @"Write57_AssociationAssociatedInstance";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata::"] = @"Write58_CmdletParameterMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter::"] = @"Write59_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter::"] = @"Write60_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount::"] = @"Write61_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength::"] = @"Write62_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange::"] = @"Write63_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata::"] = @"Write64_ObsoleteAttributeMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter::"] = @"Write65_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter::"] = @"Write66_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.QueryOption::"] = @"Write67_QueryOption";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata::"] = @"Write68_GetCmdletMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata::"] = @"Write69_CommonCmdletMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact::"] = @"Write70_ConfirmImpact";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata::"] = @"Write71_StaticCmdletMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata::"] = @"Write72_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata::"] = @"Write73_CommonMethodMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata::"] = @"Write74_StaticMethodMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata::"] = @"Write75_CommonMethodParameterMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata::"] = @"Write76_StaticMethodParameterMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata::"] = @"Write77_CmdletOutputMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata::"] = @"Write78_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue::"] = @"Write79_Item";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata::"] = @"Write80_InstanceMethodMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata::"] = @"Write81_InstanceCmdletMetadata";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery::"] = @"Write82_PropertyQuery";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery::"] = @"Write83_WildcardablePropertyQuery";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType::"] = @"Write84_ItemsChoiceType";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData::"] = @"Write85_ClassMetadataData";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum::"] = @"Write86_EnumMetadataEnum";
-                        _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue::"] = @"Write87_EnumMetadataEnumValue";
-                        if (writeMethods == null) writeMethods = _tmp;
+                    else if (((object)Reader.LocalName == (object)_id122_Enums && (object)Reader.NamespaceURI == (object)_id2_Item))
+                    {
+                        if (!ReadNull())
+                        {
+                            global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[] a_1_0 = null;
+                            int ca_1_0 = 0;
+                            if ((Reader.IsEmptyElement))
+                            {
+                                Reader.Skip();
+                            }
+                            else
+                            {
+                                Reader.ReadStartElement();
+                                Reader.MoveToContent();
+                                int whileIterations68 = 0;
+                                int readerCount68 = ReaderCount;
+                                while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && Reader.NodeType != System.Xml.XmlNodeType.None)
+                                {
+                                    if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+                                    {
+                                        if (((object)Reader.LocalName == (object)_id83_Enum && (object)Reader.NamespaceURI == (object)_id2_Item))
+                                        {
+                                            a_1_0 = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])EnsureArrayIndex(a_1_0, ca_1_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum)); a_1_0[ca_1_0++] = Read38_EnumMetadataEnum(false, true);
+                                        }
+                                        else
+                                        {
+                                            UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Enum");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        UnknownNode(null, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Enum");
+                                    }
+                                    Reader.MoveToContent();
+                                    CheckReaderCount(ref whileIterations68, ref readerCount68);
+                                }
+                                ReadEndElement();
+                            }
+                            o.@Enums = (global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum[])ShrinkArray(a_1_0, ca_1_0, typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum), false);
+                        }
                     }
-                    return writeMethods;
-                }
-            }
-            System.Collections.Hashtable typedSerializers = null;
-            public override System.Collections.Hashtable TypedSerializers {
-                get {
-                    if (typedSerializers == null) {
-                        System.Collections.Hashtable _tmp = new System.Collections.Hashtable();
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance::", new AssociationAssociatedInstanceSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.Association::", new AssociationSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets::", new ClassMetadataInstanceCmdletsSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata:http://schemas.microsoft.com/cmdlets-over-objects/2009/11::False:", new PowerShellMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue::", new EnumMetadataEnumValueSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata::", new StaticCmdletMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType::", new ItemsChoiceTypeSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery::", new PropertyQuerySerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata::", new CmdletParameterMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata::", new CommonMethodParameterMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata::", new StaticMethodMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata::", new ObsoleteAttributeMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata::", new InstanceCmdletMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue::", new CommonMethodMetadataReturnValueSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata::", new PropertyMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter::", new CmdletParameterMetadataForGetCmdletParameterSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata::", new CmdletOutputMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum::", new EnumMetadataEnumSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.QueryOption::", new QueryOptionSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata::", new InstanceMethodParameterMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange::", new CmdletParameterMetadataValidateRangeSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData::", new ClassMetadataDataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact::", new ConfirmImpactSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata::", new StaticCmdletMetadataCmdletMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata::", new GetCmdletMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength::", new CmdletParameterMetadataValidateLengthSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata::", new InstanceMethodMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata::", new CommonMethodMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount::", new CmdletParameterMetadataValidateCountSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters::", new GetCmdletParametersSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter::", new CmdletParameterMetadataForInstanceMethodParameterSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata::", new CommonCmdletMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata::", new TypeMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter::", new CmdletParameterMetadataForGetCmdletFilteringParameterSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata::", new StaticMethodParameterMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter::", new CmdletParameterMetadataForStaticMethodParameterSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata::", new ClassMetadataSerializer());
-                        _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery::", new WildcardablePropertyQuerySerializer());
-                        if (typedSerializers == null) typedSerializers = _tmp;
+                    else
+                    {
+                        UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Class, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Enums");
                     }
-                    return typedSerializers;
                 }
+                else
+                {
+                    UnknownNode((object)o, @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Class, http://schemas.microsoft.com/cmdlets-over-objects/2009/11:Enums");
+                }
+                Reader.MoveToContent();
+                CheckReaderCount(ref whileIterations67, ref readerCount67);
             }
-            public override System.Boolean CanSerialize(System.Type type) {
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum)) return true;
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue)) return true;
-                return false;
-            }
-            public override System.Xml.Serialization.XmlSerializer GetSerializer(System.Type type) {
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata)) return new PowerShellMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata)) return new ClassMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets)) return new ClassMetadataInstanceCmdletsSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters)) return new GetCmdletParametersSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata)) return new PropertyMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata)) return new TypeMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association)) return new AssociationSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance)) return new AssociationAssociatedInstanceSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata)) return new CmdletParameterMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter)) return new CmdletParameterMetadataForGetCmdletParameterSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)) return new CmdletParameterMetadataForGetCmdletFilteringParameterSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount)) return new CmdletParameterMetadataValidateCountSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength)) return new CmdletParameterMetadataValidateLengthSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)) return new CmdletParameterMetadataValidateRangeSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)) return new ObsoleteAttributeMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter)) return new CmdletParameterMetadataForInstanceMethodParameterSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter)) return new CmdletParameterMetadataForStaticMethodParameterSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption)) return new QueryOptionSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata)) return new GetCmdletMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata)) return new CommonCmdletMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact)) return new ConfirmImpactSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata)) return new StaticCmdletMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata)) return new StaticCmdletMetadataCmdletMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata)) return new CommonMethodMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata)) return new StaticMethodMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata)) return new CommonMethodParameterMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)) return new StaticMethodParameterMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata)) return new CmdletOutputMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)) return new InstanceMethodParameterMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue)) return new CommonMethodMetadataReturnValueSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata)) return new InstanceMethodMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata)) return new InstanceCmdletMetadataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)) return new PropertyQuerySerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)) return new WildcardablePropertyQuerySerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType)) return new ItemsChoiceTypeSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData)) return new ClassMetadataDataSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum)) return new EnumMetadataEnumSerializer();
-                if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue)) return new EnumMetadataEnumValueSerializer();
-                return null;
-            }
+            ReadEndElement();
+            return o;
+        }
+
+        protected override void InitCallbacks()
+        {
+        }
+
+        private string _id72_ArrayOfAssociation;
+        private string _id46_AllowGlobbing;
+        private string _id6_GetCmdletParameters;
+        private string _id25_Item;
+        private string _id62_ValidateRange;
+        private string _id118_StaticCmdlets;
+        private string _id58_ValidateNotNull;
+        private string _id17_ObsoleteAttributeMetadata;
+        private string _id49_PSName;
+        private string _id116_DefaultNoun;
+        private string _id38_ClassMetadataData;
+        private string _id114_ClassVersion;
+        private string _id66_Message;
+        private string _id65_Obsolete;
+        private string _id51_ValueFromPipeline;
+        private string _id108_MinValueQuery;
+        private string _id119_CmdletAdapterPrivateData;
+        private string _id21_GetCmdletMetadata;
+        private string _id120_GetCmdlet;
+        private string _id67_Min;
+        private string _id56_AllowEmptyString;
+        private string _id30_CmdletOutputMetadata;
+        private string _id106_RegularQuery;
+        private string _id74_Option;
+        private string _id75_Item;
+        private string _id23_ConfirmImpact;
+        private string _id117_InstanceCmdlets;
+        private string _id83_Enum;
+        private string _id40_EnumMetadataEnumValue;
+        private string _id111_QueryOptions;
+        private string _id34_InstanceCmdletMetadata;
+        private string _id60_ValidateCount;
+        private string _id45_BitwiseFlags;
+        private string _id81_Data;
+        private string _id31_Item;
+        private string _id1_PowerShellMetadata;
+        private string _id98_HelpUri;
+        private string _id91_DefaultValue;
+        private string _id4_Item;
+        private string _id32_Item;
+        private string _id43_EnumName;
+        private string _id122_Enums;
+        private string _id82_ArrayOfEnumMetadataEnum;
+        private string _id14_Item;
+        private string _id48_Aliases;
+        private string _id115_Version;
+        private string _id11_CmdletParameterMetadata;
+        private string _id70_ArrayOfPropertyMetadata;
+        private string _id9_Association;
+        private string _id102_ResultRole;
+        private string _id29_StaticMethodParameterMetadata;
+        private string _id97_Noun;
+        private string _id47_IsMandatory;
+        private string _id35_PropertyQuery;
+        private string _id54_ErrorOnNoMatch;
+        private string _id3_ClassMetadata;
+        private string _id77_Item;
+        private string _id2_Item;
+        private string _id22_CommonCmdletMetadata;
+        private string _id37_ItemsChoiceType;
+        private string _id36_WildcardablePropertyQuery;
+        private string _id113_ClassName;
+        private string _id64_AllowedValue;
+        private string _id52_Item;
+        private string _id55_AllowEmptyCollection;
+        private string _id13_Item;
+        private string _id76_Parameter;
+        private string _id19_Item;
+        private string _id105_MaxValueQuery;
+        private string _id101_SourceRole;
+        private string _id5_ClassMetadataInstanceCmdlets;
+        private string _id112_CmdletAdapter;
+        private string _id10_AssociationAssociatedInstance;
+        private string _id93_ErrorCode;
+        private string _id41_Name;
+        private string _id68_Max;
+        private string _id50_Position;
+        private string _id100_OptionName;
+        private string _id84_CmdletMetadata;
+        private string _id87_CmdletParameterSet;
+        private string _id104_PropertyName;
+        private string _id28_CommonMethodParameterMetadata;
+        private string _id107_ExcludeQuery;
+        private string _id92_Type;
+        private string _id33_InstanceMethodMetadata;
+        private string _id63_ValidateSet;
+        private string _id53_CmdletParameterSets;
+        private string _id15_Item;
+        private string _id109_QueryableProperties;
+        private string _id57_AllowNull;
+        private string _id80_ArrayOfClassMetadataData;
+        private string _id99_DefaultCmdletParameterSet;
+        private string _id20_QueryOption;
+        private string _id89_Parameters;
+        private string _id90_ParameterName;
+        private string _id61_ValidateLength;
+        private string _id78_ArrayOfStaticCmdletMetadata;
+        private string _id16_Item;
+        private string _id39_EnumMetadataEnum;
+        private string _id7_PropertyMetadata;
+        private string _id110_QueryableAssociations;
+        private string _id86_MethodName;
+        private string _id8_TypeMetadata;
+        private string _id71_Property;
+        private string _id27_StaticMethodMetadata;
+        private string _id94_PSType;
+        private string _id44_UnderlyingType;
+        private string _id103_AssociatedInstance;
+        private string _id79_Cmdlet;
+        private string _id18_Item;
+        private string _id85_Method;
+        private string _id95_ETSType;
+        private string _id26_CommonMethodMetadata;
+        private string _id88_ReturnValue;
+        private string _id69_ArrayOfString;
+        private string _id24_StaticCmdletMetadata;
+        private string _id59_ValidateNotNullOrEmpty;
+        private string _id96_Verb;
+        private string _id121_Class;
+        private string _id73_ArrayOfQueryOption;
+        private string _id12_Item;
+        private string _id42_Value;
+
+        protected override void InitIDs()
+        {
+            _id72_ArrayOfAssociation = Reader.NameTable.Add(@"ArrayOfAssociation");
+            _id46_AllowGlobbing = Reader.NameTable.Add(@"AllowGlobbing");
+            _id6_GetCmdletParameters = Reader.NameTable.Add(@"GetCmdletParameters");
+            _id25_Item = Reader.NameTable.Add(@"StaticCmdletMetadataCmdletMetadata");
+            _id62_ValidateRange = Reader.NameTable.Add(@"ValidateRange");
+            _id118_StaticCmdlets = Reader.NameTable.Add(@"StaticCmdlets");
+            _id58_ValidateNotNull = Reader.NameTable.Add(@"ValidateNotNull");
+            _id17_ObsoleteAttributeMetadata = Reader.NameTable.Add(@"ObsoleteAttributeMetadata");
+            _id49_PSName = Reader.NameTable.Add(@"PSName");
+            _id116_DefaultNoun = Reader.NameTable.Add(@"DefaultNoun");
+            _id38_ClassMetadataData = Reader.NameTable.Add(@"ClassMetadataData");
+            _id114_ClassVersion = Reader.NameTable.Add(@"ClassVersion");
+            _id66_Message = Reader.NameTable.Add(@"Message");
+            _id65_Obsolete = Reader.NameTable.Add(@"Obsolete");
+            _id51_ValueFromPipeline = Reader.NameTable.Add(@"ValueFromPipeline");
+            _id108_MinValueQuery = Reader.NameTable.Add(@"MinValueQuery");
+            _id119_CmdletAdapterPrivateData = Reader.NameTable.Add(@"CmdletAdapterPrivateData");
+            _id21_GetCmdletMetadata = Reader.NameTable.Add(@"GetCmdletMetadata");
+            _id120_GetCmdlet = Reader.NameTable.Add(@"GetCmdlet");
+            _id67_Min = Reader.NameTable.Add(@"Min");
+            _id56_AllowEmptyString = Reader.NameTable.Add(@"AllowEmptyString");
+            _id30_CmdletOutputMetadata = Reader.NameTable.Add(@"CmdletOutputMetadata");
+            _id106_RegularQuery = Reader.NameTable.Add(@"RegularQuery");
+            _id74_Option = Reader.NameTable.Add(@"Option");
+            _id75_Item = Reader.NameTable.Add(@"ArrayOfStaticMethodParameterMetadata");
+            _id23_ConfirmImpact = Reader.NameTable.Add(@"ConfirmImpact");
+            _id117_InstanceCmdlets = Reader.NameTable.Add(@"InstanceCmdlets");
+            _id83_Enum = Reader.NameTable.Add(@"Enum");
+            _id40_EnumMetadataEnumValue = Reader.NameTable.Add(@"EnumMetadataEnumValue");
+            _id111_QueryOptions = Reader.NameTable.Add(@"QueryOptions");
+            _id34_InstanceCmdletMetadata = Reader.NameTable.Add(@"InstanceCmdletMetadata");
+            _id60_ValidateCount = Reader.NameTable.Add(@"ValidateCount");
+            _id45_BitwiseFlags = Reader.NameTable.Add(@"BitwiseFlags");
+            _id81_Data = Reader.NameTable.Add(@"Data");
+            _id31_Item = Reader.NameTable.Add(@"InstanceMethodParameterMetadata");
+            _id1_PowerShellMetadata = Reader.NameTable.Add(@"PowerShellMetadata");
+            _id98_HelpUri = Reader.NameTable.Add(@"HelpUri");
+            _id91_DefaultValue = Reader.NameTable.Add(@"DefaultValue");
+            _id4_Item = Reader.NameTable.Add(@"");
+            _id32_Item = Reader.NameTable.Add(@"CommonMethodMetadataReturnValue");
+            _id43_EnumName = Reader.NameTable.Add(@"EnumName");
+            _id122_Enums = Reader.NameTable.Add(@"Enums");
+            _id82_ArrayOfEnumMetadataEnum = Reader.NameTable.Add(@"ArrayOfEnumMetadataEnum");
+            _id14_Item = Reader.NameTable.Add(@"CmdletParameterMetadataValidateCount");
+            _id48_Aliases = Reader.NameTable.Add(@"Aliases");
+            _id115_Version = Reader.NameTable.Add(@"Version");
+            _id11_CmdletParameterMetadata = Reader.NameTable.Add(@"CmdletParameterMetadata");
+            _id70_ArrayOfPropertyMetadata = Reader.NameTable.Add(@"ArrayOfPropertyMetadata");
+            _id9_Association = Reader.NameTable.Add(@"Association");
+            _id102_ResultRole = Reader.NameTable.Add(@"ResultRole");
+            _id29_StaticMethodParameterMetadata = Reader.NameTable.Add(@"StaticMethodParameterMetadata");
+            _id97_Noun = Reader.NameTable.Add(@"Noun");
+            _id47_IsMandatory = Reader.NameTable.Add(@"IsMandatory");
+            _id35_PropertyQuery = Reader.NameTable.Add(@"PropertyQuery");
+            _id54_ErrorOnNoMatch = Reader.NameTable.Add(@"ErrorOnNoMatch");
+            _id3_ClassMetadata = Reader.NameTable.Add(@"ClassMetadata");
+            _id77_Item = Reader.NameTable.Add(@"ArrayOfInstanceMethodParameterMetadata");
+            _id2_Item = Reader.NameTable.Add(@"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+            _id22_CommonCmdletMetadata = Reader.NameTable.Add(@"CommonCmdletMetadata");
+            _id37_ItemsChoiceType = Reader.NameTable.Add(@"ItemsChoiceType");
+            _id36_WildcardablePropertyQuery = Reader.NameTable.Add(@"WildcardablePropertyQuery");
+            _id113_ClassName = Reader.NameTable.Add(@"ClassName");
+            _id64_AllowedValue = Reader.NameTable.Add(@"AllowedValue");
+            _id52_Item = Reader.NameTable.Add(@"ValueFromPipelineByPropertyName");
+            _id55_AllowEmptyCollection = Reader.NameTable.Add(@"AllowEmptyCollection");
+            _id13_Item = Reader.NameTable.Add(@"CmdletParameterMetadataForGetCmdletFilteringParameter");
+            _id76_Parameter = Reader.NameTable.Add(@"Parameter");
+            _id19_Item = Reader.NameTable.Add(@"CmdletParameterMetadataForStaticMethodParameter");
+            _id105_MaxValueQuery = Reader.NameTable.Add(@"MaxValueQuery");
+            _id101_SourceRole = Reader.NameTable.Add(@"SourceRole");
+            _id5_ClassMetadataInstanceCmdlets = Reader.NameTable.Add(@"ClassMetadataInstanceCmdlets");
+            _id112_CmdletAdapter = Reader.NameTable.Add(@"CmdletAdapter");
+            _id10_AssociationAssociatedInstance = Reader.NameTable.Add(@"AssociationAssociatedInstance");
+            _id93_ErrorCode = Reader.NameTable.Add(@"ErrorCode");
+            _id41_Name = Reader.NameTable.Add(@"Name");
+            _id68_Max = Reader.NameTable.Add(@"Max");
+            _id50_Position = Reader.NameTable.Add(@"Position");
+            _id100_OptionName = Reader.NameTable.Add(@"OptionName");
+            _id84_CmdletMetadata = Reader.NameTable.Add(@"CmdletMetadata");
+            _id87_CmdletParameterSet = Reader.NameTable.Add(@"CmdletParameterSet");
+            _id104_PropertyName = Reader.NameTable.Add(@"PropertyName");
+            _id28_CommonMethodParameterMetadata = Reader.NameTable.Add(@"CommonMethodParameterMetadata");
+            _id107_ExcludeQuery = Reader.NameTable.Add(@"ExcludeQuery");
+            _id92_Type = Reader.NameTable.Add(@"Type");
+            _id33_InstanceMethodMetadata = Reader.NameTable.Add(@"InstanceMethodMetadata");
+            _id63_ValidateSet = Reader.NameTable.Add(@"ValidateSet");
+            _id53_CmdletParameterSets = Reader.NameTable.Add(@"CmdletParameterSets");
+            _id15_Item = Reader.NameTable.Add(@"CmdletParameterMetadataValidateLength");
+            _id109_QueryableProperties = Reader.NameTable.Add(@"QueryableProperties");
+            _id57_AllowNull = Reader.NameTable.Add(@"AllowNull");
+            _id80_ArrayOfClassMetadataData = Reader.NameTable.Add(@"ArrayOfClassMetadataData");
+            _id99_DefaultCmdletParameterSet = Reader.NameTable.Add(@"DefaultCmdletParameterSet");
+            _id20_QueryOption = Reader.NameTable.Add(@"QueryOption");
+            _id89_Parameters = Reader.NameTable.Add(@"Parameters");
+            _id90_ParameterName = Reader.NameTable.Add(@"ParameterName");
+            _id61_ValidateLength = Reader.NameTable.Add(@"ValidateLength");
+            _id78_ArrayOfStaticCmdletMetadata = Reader.NameTable.Add(@"ArrayOfStaticCmdletMetadata");
+            _id16_Item = Reader.NameTable.Add(@"CmdletParameterMetadataValidateRange");
+            _id39_EnumMetadataEnum = Reader.NameTable.Add(@"EnumMetadataEnum");
+            _id7_PropertyMetadata = Reader.NameTable.Add(@"PropertyMetadata");
+            _id110_QueryableAssociations = Reader.NameTable.Add(@"QueryableAssociations");
+            _id86_MethodName = Reader.NameTable.Add(@"MethodName");
+            _id8_TypeMetadata = Reader.NameTable.Add(@"TypeMetadata");
+            _id71_Property = Reader.NameTable.Add(@"Property");
+            _id27_StaticMethodMetadata = Reader.NameTable.Add(@"StaticMethodMetadata");
+            _id94_PSType = Reader.NameTable.Add(@"PSType");
+            _id44_UnderlyingType = Reader.NameTable.Add(@"UnderlyingType");
+            _id103_AssociatedInstance = Reader.NameTable.Add(@"AssociatedInstance");
+            _id79_Cmdlet = Reader.NameTable.Add(@"Cmdlet");
+            _id18_Item = Reader.NameTable.Add(@"CmdletParameterMetadataForInstanceMethodParameter");
+            _id85_Method = Reader.NameTable.Add(@"Method");
+            _id95_ETSType = Reader.NameTable.Add(@"ETSType");
+            _id26_CommonMethodMetadata = Reader.NameTable.Add(@"CommonMethodMetadata");
+            _id88_ReturnValue = Reader.NameTable.Add(@"ReturnValue");
+            _id69_ArrayOfString = Reader.NameTable.Add(@"ArrayOfString");
+            _id24_StaticCmdletMetadata = Reader.NameTable.Add(@"StaticCmdletMetadata");
+            _id59_ValidateNotNullOrEmpty = Reader.NameTable.Add(@"ValidateNotNullOrEmpty");
+            _id96_Verb = Reader.NameTable.Add(@"Verb");
+            _id121_Class = Reader.NameTable.Add(@"Class");
+            _id73_ArrayOfQueryOption = Reader.NameTable.Add(@"ArrayOfQueryOption");
+            _id12_Item = Reader.NameTable.Add(@"CmdletParameterMetadataForGetCmdletParameter");
+            _id42_Value = Reader.NameTable.Add(@"Value");
         }
     }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal abstract class XmlSerializer1 : System.Xml.Serialization.XmlSerializer
+    {
+        protected override System.Xml.Serialization.XmlSerializationReader CreateReader()
+        {
+            return new XmlSerializationReader1();
+        }
+        protected override System.Xml.Serialization.XmlSerializationWriter CreateWriter()
+        {
+            return new XmlSerializationWriter1();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class PowerShellMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"PowerShellMetadata", @"http://schemas.microsoft.com/cmdlets-over-objects/2009/11");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write50_PowerShellMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read50_PowerShellMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class ClassMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"ClassMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write51_ClassMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read51_ClassMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class ClassMetadataInstanceCmdletsSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"ClassMetadataInstanceCmdlets", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write52_ClassMetadataInstanceCmdlets(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read52_ClassMetadataInstanceCmdlets();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class GetCmdletParametersSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"GetCmdletParameters", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write53_GetCmdletParameters(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read53_GetCmdletParameters();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class PropertyMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"PropertyMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write54_PropertyMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read54_PropertyMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class TypeMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"TypeMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write55_TypeMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read55_TypeMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class AssociationSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"Association", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write56_Association(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read56_Association();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class AssociationAssociatedInstanceSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"AssociationAssociatedInstance", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write57_AssociationAssociatedInstance(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read57_AssociationAssociatedInstance();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class CmdletParameterMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"CmdletParameterMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write58_CmdletParameterMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read58_CmdletParameterMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class CmdletParameterMetadataForGetCmdletParameterSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"CmdletParameterMetadataForGetCmdletParameter", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write59_Item(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read59_Item();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class CmdletParameterMetadataForGetCmdletFilteringParameterSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"CmdletParameterMetadataForGetCmdletFilteringParameter", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write60_Item(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read60_Item();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class CmdletParameterMetadataValidateCountSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"CmdletParameterMetadataValidateCount", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write61_Item(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read61_Item();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class CmdletParameterMetadataValidateLengthSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"CmdletParameterMetadataValidateLength", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write62_Item(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read62_Item();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class CmdletParameterMetadataValidateRangeSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"CmdletParameterMetadataValidateRange", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write63_Item(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read63_Item();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class ObsoleteAttributeMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"ObsoleteAttributeMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write64_ObsoleteAttributeMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read64_ObsoleteAttributeMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class CmdletParameterMetadataForInstanceMethodParameterSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"CmdletParameterMetadataForInstanceMethodParameter", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write65_Item(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read65_Item();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class CmdletParameterMetadataForStaticMethodParameterSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"CmdletParameterMetadataForStaticMethodParameter", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write66_Item(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read66_Item();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class QueryOptionSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"QueryOption", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write67_QueryOption(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read67_QueryOption();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class GetCmdletMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"GetCmdletMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write68_GetCmdletMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read68_GetCmdletMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class CommonCmdletMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"CommonCmdletMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write69_CommonCmdletMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read69_CommonCmdletMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class ConfirmImpactSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"ConfirmImpact", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write70_ConfirmImpact(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read70_ConfirmImpact();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class StaticCmdletMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"StaticCmdletMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write71_StaticCmdletMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read71_StaticCmdletMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class StaticCmdletMetadataCmdletMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"StaticCmdletMetadataCmdletMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write72_Item(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read72_Item();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class CommonMethodMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"CommonMethodMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write73_CommonMethodMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read73_CommonMethodMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class StaticMethodMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"StaticMethodMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write74_StaticMethodMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read74_StaticMethodMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class CommonMethodParameterMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"CommonMethodParameterMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write75_CommonMethodParameterMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read75_CommonMethodParameterMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class StaticMethodParameterMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"StaticMethodParameterMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write76_StaticMethodParameterMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read76_StaticMethodParameterMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class CmdletOutputMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"CmdletOutputMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write77_CmdletOutputMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read77_CmdletOutputMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class InstanceMethodParameterMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"InstanceMethodParameterMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write78_Item(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read78_Item();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class CommonMethodMetadataReturnValueSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"CommonMethodMetadataReturnValue", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write79_Item(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read79_Item();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class InstanceMethodMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"InstanceMethodMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write80_InstanceMethodMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read80_InstanceMethodMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class InstanceCmdletMetadataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"InstanceCmdletMetadata", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write81_InstanceCmdletMetadata(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read81_InstanceCmdletMetadata();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class PropertyQuerySerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"PropertyQuery", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write82_PropertyQuery(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read82_PropertyQuery();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class WildcardablePropertyQuerySerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"WildcardablePropertyQuery", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write83_WildcardablePropertyQuery(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read83_WildcardablePropertyQuery();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class ItemsChoiceTypeSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"ItemsChoiceType", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write84_ItemsChoiceType(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read84_ItemsChoiceType();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class ClassMetadataDataSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"ClassMetadataData", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write85_ClassMetadataData(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read85_ClassMetadataData();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class EnumMetadataEnumSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"EnumMetadataEnum", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write86_EnumMetadataEnum(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read86_EnumMetadataEnum();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal sealed class EnumMetadataEnumValueSerializer : XmlSerializer1
+    {
+        public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
+        {
+            return xmlReader.IsStartElement(@"EnumMetadataEnumValue", @"");
+        }
+
+        protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
+        {
+            ((XmlSerializationWriter1)writer).Write87_EnumMetadataEnumValue(objectToSerialize);
+        }
+
+        protected override object Deserialize(System.Xml.Serialization.XmlSerializationReader reader)
+        {
+            return ((XmlSerializationReader1)reader).Read87_EnumMetadataEnumValue();
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("sgen", "4.0")]
+    internal class XmlSerializerContract : global::System.Xml.Serialization.XmlSerializerImplementation
+    {
+        public override global::System.Xml.Serialization.XmlSerializationReader Reader { get { return new XmlSerializationReader1(); } }
+        public override global::System.Xml.Serialization.XmlSerializationWriter Writer { get { return new XmlSerializationWriter1(); } }
+        private System.Collections.Hashtable _readMethods = null;
+        public override System.Collections.Hashtable ReadMethods
+        {
+            get
+            {
+                if (_readMethods == null)
+                {
+                    System.Collections.Hashtable _tmp = new System.Collections.Hashtable();
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata:http://schemas.microsoft.com/cmdlets-over-objects/2009/11::False:"] = @"Read50_PowerShellMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata::"] = @"Read51_ClassMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets::"] = @"Read52_ClassMetadataInstanceCmdlets";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters::"] = @"Read53_GetCmdletParameters";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata::"] = @"Read54_PropertyMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata::"] = @"Read55_TypeMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.Association::"] = @"Read56_Association";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance::"] = @"Read57_AssociationAssociatedInstance";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata::"] = @"Read58_CmdletParameterMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter::"] = @"Read59_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter::"] = @"Read60_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount::"] = @"Read61_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength::"] = @"Read62_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange::"] = @"Read63_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata::"] = @"Read64_ObsoleteAttributeMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter::"] = @"Read65_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter::"] = @"Read66_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.QueryOption::"] = @"Read67_QueryOption";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata::"] = @"Read68_GetCmdletMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata::"] = @"Read69_CommonCmdletMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact::"] = @"Read70_ConfirmImpact";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata::"] = @"Read71_StaticCmdletMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata::"] = @"Read72_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata::"] = @"Read73_CommonMethodMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata::"] = @"Read74_StaticMethodMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata::"] = @"Read75_CommonMethodParameterMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata::"] = @"Read76_StaticMethodParameterMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata::"] = @"Read77_CmdletOutputMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata::"] = @"Read78_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue::"] = @"Read79_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata::"] = @"Read80_InstanceMethodMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata::"] = @"Read81_InstanceCmdletMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery::"] = @"Read82_PropertyQuery";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery::"] = @"Read83_WildcardablePropertyQuery";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType::"] = @"Read84_ItemsChoiceType";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData::"] = @"Read85_ClassMetadataData";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum::"] = @"Read86_EnumMetadataEnum";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue::"] = @"Read87_EnumMetadataEnumValue";
+                    if (_readMethods == null) _readMethods = _tmp;
+                }
+                return _readMethods;
+            }
+        }
+        private System.Collections.Hashtable _writeMethods = null;
+        public override System.Collections.Hashtable WriteMethods
+        {
+            get
+            {
+                if (_writeMethods == null)
+                {
+                    System.Collections.Hashtable _tmp = new System.Collections.Hashtable();
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata:http://schemas.microsoft.com/cmdlets-over-objects/2009/11::False:"] = @"Write50_PowerShellMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata::"] = @"Write51_ClassMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets::"] = @"Write52_ClassMetadataInstanceCmdlets";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters::"] = @"Write53_GetCmdletParameters";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata::"] = @"Write54_PropertyMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata::"] = @"Write55_TypeMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.Association::"] = @"Write56_Association";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance::"] = @"Write57_AssociationAssociatedInstance";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata::"] = @"Write58_CmdletParameterMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter::"] = @"Write59_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter::"] = @"Write60_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount::"] = @"Write61_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength::"] = @"Write62_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange::"] = @"Write63_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata::"] = @"Write64_ObsoleteAttributeMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter::"] = @"Write65_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter::"] = @"Write66_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.QueryOption::"] = @"Write67_QueryOption";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata::"] = @"Write68_GetCmdletMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata::"] = @"Write69_CommonCmdletMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact::"] = @"Write70_ConfirmImpact";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata::"] = @"Write71_StaticCmdletMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata::"] = @"Write72_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata::"] = @"Write73_CommonMethodMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata::"] = @"Write74_StaticMethodMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata::"] = @"Write75_CommonMethodParameterMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata::"] = @"Write76_StaticMethodParameterMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata::"] = @"Write77_CmdletOutputMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata::"] = @"Write78_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue::"] = @"Write79_Item";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata::"] = @"Write80_InstanceMethodMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata::"] = @"Write81_InstanceCmdletMetadata";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery::"] = @"Write82_PropertyQuery";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery::"] = @"Write83_WildcardablePropertyQuery";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType::"] = @"Write84_ItemsChoiceType";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData::"] = @"Write85_ClassMetadataData";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum::"] = @"Write86_EnumMetadataEnum";
+                    _tmp[@"Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue::"] = @"Write87_EnumMetadataEnumValue";
+                    if (_writeMethods == null) _writeMethods = _tmp;
+                }
+                return _writeMethods;
+            }
+        }
+        private System.Collections.Hashtable _typedSerializers = null;
+        public override System.Collections.Hashtable TypedSerializers
+        {
+            get
+            {
+                if (_typedSerializers == null)
+                {
+                    System.Collections.Hashtable _tmp = new System.Collections.Hashtable();
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance::", new AssociationAssociatedInstanceSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.Association::", new AssociationSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets::", new ClassMetadataInstanceCmdletsSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata:http://schemas.microsoft.com/cmdlets-over-objects/2009/11::False:", new PowerShellMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue::", new EnumMetadataEnumValueSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata::", new StaticCmdletMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType::", new ItemsChoiceTypeSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery::", new PropertyQuerySerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata::", new CmdletParameterMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata::", new CommonMethodParameterMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata::", new StaticMethodMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata::", new ObsoleteAttributeMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata::", new InstanceCmdletMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue::", new CommonMethodMetadataReturnValueSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata::", new PropertyMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter::", new CmdletParameterMetadataForGetCmdletParameterSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata::", new CmdletOutputMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum::", new EnumMetadataEnumSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.QueryOption::", new QueryOptionSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata::", new InstanceMethodParameterMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange::", new CmdletParameterMetadataValidateRangeSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData::", new ClassMetadataDataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact::", new ConfirmImpactSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata::", new StaticCmdletMetadataCmdletMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata::", new GetCmdletMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength::", new CmdletParameterMetadataValidateLengthSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata::", new InstanceMethodMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata::", new CommonMethodMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount::", new CmdletParameterMetadataValidateCountSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters::", new GetCmdletParametersSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter::", new CmdletParameterMetadataForInstanceMethodParameterSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata::", new CommonCmdletMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata::", new TypeMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter::", new CmdletParameterMetadataForGetCmdletFilteringParameterSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata::", new StaticMethodParameterMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter::", new CmdletParameterMetadataForStaticMethodParameterSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata::", new ClassMetadataSerializer());
+                    _tmp.Add(@"Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery::", new WildcardablePropertyQuerySerializer());
+                    if (_typedSerializers == null) _typedSerializers = _tmp;
+                }
+                return _typedSerializers;
+            }
+        }
+        public override System.Boolean CanSerialize(System.Type type)
+        {
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum)) return true;
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue)) return true;
+            return false;
+        }
+        public override System.Xml.Serialization.XmlSerializer GetSerializer(System.Type type)
+        {
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PowerShellMetadata)) return new PowerShellMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadata)) return new ClassMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataInstanceCmdlets)) return new ClassMetadataInstanceCmdletsSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletParameters)) return new GetCmdletParametersSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyMetadata)) return new PropertyMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.TypeMetadata)) return new TypeMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.Association)) return new AssociationSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.AssociationAssociatedInstance)) return new AssociationAssociatedInstanceSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadata)) return new CmdletParameterMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletParameter)) return new CmdletParameterMetadataForGetCmdletParameterSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForGetCmdletFilteringParameter)) return new CmdletParameterMetadataForGetCmdletFilteringParameterSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateCount)) return new CmdletParameterMetadataValidateCountSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateLength)) return new CmdletParameterMetadataValidateLengthSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataValidateRange)) return new CmdletParameterMetadataValidateRangeSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ObsoleteAttributeMetadata)) return new ObsoleteAttributeMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForInstanceMethodParameter)) return new CmdletParameterMetadataForInstanceMethodParameterSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletParameterMetadataForStaticMethodParameter)) return new CmdletParameterMetadataForStaticMethodParameterSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.QueryOption)) return new QueryOptionSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.GetCmdletMetadata)) return new GetCmdletMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonCmdletMetadata)) return new CommonCmdletMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact)) return new ConfirmImpactSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadata)) return new StaticCmdletMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticCmdletMetadataCmdletMetadata)) return new StaticCmdletMetadataCmdletMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadata)) return new CommonMethodMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodMetadata)) return new StaticMethodMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodParameterMetadata)) return new CommonMethodParameterMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.StaticMethodParameterMetadata)) return new StaticMethodParameterMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CmdletOutputMetadata)) return new CmdletOutputMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodParameterMetadata)) return new InstanceMethodParameterMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.CommonMethodMetadataReturnValue)) return new CommonMethodMetadataReturnValueSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceMethodMetadata)) return new InstanceMethodMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.InstanceCmdletMetadata)) return new InstanceCmdletMetadataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.PropertyQuery)) return new PropertyQuerySerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.WildcardablePropertyQuery)) return new WildcardablePropertyQuerySerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType)) return new ItemsChoiceTypeSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.ClassMetadataData)) return new ClassMetadataDataSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnum)) return new EnumMetadataEnumSerializer();
+            if (type == typeof(global::Microsoft.PowerShell.Cmdletization.Xml.EnumMetadataEnumValue)) return new EnumMetadataEnumValueSerializer();
+            return null;
+        }
+    }
+}
 

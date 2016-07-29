@@ -11,7 +11,7 @@ using System.Management.Automation.Remoting;
 using System.Collections.ObjectModel;
 
 namespace System.Management.Automation.Runspaces.Internal
-{    
+{
     /// <summary>
     /// PowerShell client side proxy base which handles invocation
     /// of powershell on a remote machine
@@ -21,7 +21,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Tracer
 
         [TraceSourceAttribute("CRPS", "ClientRemotePowerShell")]
-        static private PSTraceSource tracer = PSTraceSource.GetTracer("CRPS", "ClientRemotePowerShellBase");
+        static private PSTraceSource s_tracer = PSTraceSource.GetTracer("CRPS", "ClientRemotePowerShellBase");
 
         #endregion Tracer
 
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 return outputstream;
             }
-            set 
+            set
             {
                 outputstream = value;
             }
@@ -181,7 +181,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             // If we are in robust connection retry mode then auto-disconnect this command
             // rather than try to stop it.
-            PSConnectionRetryStatus retryStatus = this.connectionRetryStatus;
+            PSConnectionRetryStatus retryStatus = _connectionRetryStatus;
             if ((retryStatus == PSConnectionRetryStatus.NetworkFailureDetected ||
                  retryStatus == PSConnectionRetryStatus.ConnectionRetryAttempt) &&
                 this.runspacePool.RunspacePoolStateInfo.State == RunspacePoolState.Opened)
@@ -265,7 +265,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 new EventHandler<RemoteDataEventArgs<Exception>>(HandleBrokenNotificationFromRunspacePool);
             dataStructureHandler.ConnectCompleted += new EventHandler<RemoteDataEventArgs<Exception>>(HandleConnectCompleted);
             dataStructureHandler.ReconnectCompleted += new EventHandler<RemoteDataEventArgs<Exception>>(HandleConnectCompleted);
-            dataStructureHandler.RobustConnectionNotification += 
+            dataStructureHandler.RobustConnectionNotification +=
                 new EventHandler<ConnectionStatusEventArgs>(HandleRobustConnectionNotification);
             dataStructureHandler.CloseCompleted +=
                 new EventHandler<EventArgs>(HandleCloseCompleted);
@@ -276,7 +276,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         internal void Clear()
         {
-            initialized = false; 
+            initialized = false;
         }
 
         /// <summary>
@@ -351,7 +351,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         internal PSConnectionRetryStatus ConnectionRetryStatus
         {
-            get { return this.connectionRetryStatus; }
+            get { return _connectionRetryStatus; }
         }
 
         #endregion Internal Methods/Properties
@@ -367,9 +367,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="eventArgs">arguments describing this event</param>
         private void HandleErrorReceived(object sender, RemoteDataEventArgs<ErrorRecord> eventArgs)
         {
-            using (tracer.TraceEventHandlers())
+            using (s_tracer.TraceEventHandlers())
             {
-
                 shell.SetHadErrors(true);
                 errorstream.Write(eventArgs.Data);
             }
@@ -384,7 +383,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="eventArgs">arguments describing this event</param>
         private void HandleOutputReceived(object sender, RemoteDataEventArgs<object> eventArgs)
         {
-            using (tracer.TraceEventHandlers())
+            using (s_tracer.TraceEventHandlers())
             {
                 object data = eventArgs.Data;
 
@@ -408,7 +407,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void HandleInvocationStateInfoReceived(object sender,
             RemoteDataEventArgs<PSInvocationStateInfo> eventArgs)
         {
-            using (tracer.TraceEventHandlers())
+            using (s_tracer.TraceEventHandlers())
             {
                 PSInvocationStateInfo stateInfo = eventArgs.Data;
 
@@ -433,7 +432,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     if (stateInfo.State == PSInvocationState.Failed)
                     {
                         PSRemotingTransportException remotingTransportException = stateInfo.Reason as PSRemotingTransportException;
-                        terminateSession = (remotingTransportException != null) && 
+                        terminateSession = (remotingTransportException != null) &&
                                            (remotingTransportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_TARGETSESSION_DOESNOTEXIST);
                     }
 
@@ -441,7 +440,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     // then the collections need to be closed as 
                     // well, else the enumerator will block
                     UnblockCollections();
-                        
+
                     if (stopCalled || terminateSession)
                     {
                         // Reset stop called flag.
@@ -450,7 +449,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         // if a Stop method has been called, then powershell
                         // would have already raised a Stopping event, after
                         // which only a Stopped should be raised
-                        stateInfoQueue.Enqueue(new PSInvocationStateInfo(PSInvocationState.Stopped,
+                        _stateInfoQueue.Enqueue(new PSInvocationStateInfo(PSInvocationState.Stopped,
                             stateInfo.Reason));
 
                         // If the stop call failed due to network problems then close the runspace
@@ -459,7 +458,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     }
                     else
                     {
-                        stateInfoQueue.Enqueue(stateInfo);
+                        _stateInfoQueue.Enqueue(stateInfo);
                     }
                     // calling close async only after making sure all the internal members are prepared
                     // to handle close complete.
@@ -521,7 +520,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void HandleInformationalMessageReceived(object sender,
             RemoteDataEventArgs<InformationalMessage> eventArgs)
         {
-            using (tracer.TraceEventHandlers())
+            using (s_tracer.TraceEventHandlers())
             {
                 InformationalMessage infoMessage = eventArgs.Data;
 
@@ -547,7 +546,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
                     case RemotingDataType.PowerShellProgress:
                         {
-                            ProgressRecord progress = (ProgressRecord)LanguagePrimitives.ConvertTo(infoMessage.Message, 
+                            ProgressRecord progress = (ProgressRecord)LanguagePrimitives.ConvertTo(infoMessage.Message,
                                 typeof(ProgressRecord), System.Globalization.CultureInfo.InvariantCulture);
                             informationalBuffers.AddProgress(progress);
                         }
@@ -555,10 +554,9 @@ namespace System.Management.Automation.Runspaces.Internal
 
                     case RemotingDataType.PowerShellInformationStream:
                         {
-                            informationalBuffers.AddInformation((InformationRecord) infoMessage.Message);
+                            informationalBuffers.AddInformation((InformationRecord)infoMessage.Message);
                         }
                         break;
-
                 }
             }
         }
@@ -570,9 +568,9 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="eventArgs"></param>
         private void HandleHostCallReceived(object sender, RemoteDataEventArgs<RemoteHostCall> eventArgs)
         {
-            using (tracer.TraceEventHandlers())
+            using (s_tracer.TraceEventHandlers())
             {
-                Collection<RemoteHostCall> prerequisiteCalls = 
+                Collection<RemoteHostCall> prerequisiteCalls =
                     eventArgs.Data.PerformSecurityChecksOnHostMessage(computerName);
 
                 if (HostCallReceived != null)
@@ -582,7 +580,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     {
                         foreach (RemoteHostCall hostcall in prerequisiteCalls)
                         {
-                            RemoteDataEventArgs<RemoteHostCall> args = 
+                            RemoteDataEventArgs<RemoteHostCall> args =
                                 new RemoteDataEventArgs<RemoteHostCall>(hostcall);
 
                             HostCallReceived.SafeInvoke(this, args);
@@ -614,7 +612,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="e">Event arugments.</param>
-        void HandleConnectCompleted(object sender, RemoteDataEventArgs<Exception> e)
+        private void HandleConnectCompleted(object sender, RemoteDataEventArgs<Exception> e)
         {
             // After initial connect/reconnect set state to "Running".  Later events
             // will update state to appropriate command execution state.
@@ -641,7 +639,7 @@ namespace System.Management.Automation.Runspaces.Internal
             // otherwise may have race conditions in Server.OutOfProcessMediator 
             dataStructureHandler.RaiseRemoveAssociationEvent();
 
-            if (stateInfoQueue.Count == 0)
+            if (_stateInfoQueue.Count == 0)
             {
                 // If shell state is not finished on client side and queue is empty
                 // then set state to stopped unless the current state is Disconnected
@@ -661,9 +659,9 @@ namespace System.Management.Automation.Runspaces.Internal
             else
             {
                 // Apply queued state changes.
-                while (stateInfoQueue.Count > 0)
+                while (_stateInfoQueue.Count > 0)
                 {
-                    PSInvocationStateInfo stateInfo = stateInfoQueue.Dequeue();
+                    PSInvocationStateInfo stateInfo = _stateInfoQueue.Dequeue();
                     SetStateInfo(stateInfo);
                 }
             }
@@ -713,7 +711,7 @@ namespace System.Management.Automation.Runspaces.Internal
             // then the collections need to be closed as 
             // well, else the enumerator will block
             UnblockCollections();
-            
+
             // Since this is a terminal state..close the transport manager.
             dataStructureHandler.RaiseRemoveAssociationEvent();
 
@@ -762,13 +760,12 @@ namespace System.Management.Automation.Runspaces.Internal
             }
             else
             {
-                SetStateInfo(new PSInvocationStateInfo(PSInvocationState.Failed, 
+                SetStateInfo(new PSInvocationStateInfo(PSInvocationState.Failed,
                 eventArgs.Data));
             }
 
             // Not calling dataStructureHandler.CloseConnection() as this must
             // have already been called by RunspacePool.Close()
-
         }
 
         /// <summary>
@@ -778,7 +775,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void HandleRobustConnectionNotification(
-            object sender, 
+            object sender,
             ConnectionStatusEventArgs e)
         {
             // Create event arguments and warnings/errors for this robust connection notification.
@@ -795,7 +792,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         StringUtil.Format(RemotingErrorIdStrings.RCNetworkFailureDetected,
                         this.computerName, maxRetryConnectionTimeMinutes));
 
-                    connectionRetryStatusArgs = 
+                    connectionRetryStatusArgs =
                         new PSConnectionRetryStatusEventArgs(PSConnectionRetryStatus.NetworkFailureDetected,
                             this.computerName, maxRetryConnectionTimeMSecs, warningRecord);
                     break;
@@ -805,7 +802,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         PSConnectionRetryStatusEventArgs.FQIDConnectionRetryAttempt,
                         StringUtil.Format(RemotingErrorIdStrings.RCConnectionRetryAttempt, this.computerName));
 
-                    connectionRetryStatusArgs = 
+                    connectionRetryStatusArgs =
                         new PSConnectionRetryStatusEventArgs(PSConnectionRetryStatus.ConnectionRetryAttempt,
                             this.computerName, maxRetryConnectionTimeMSecs, warningRecord);
                     break;
@@ -815,7 +812,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         PSConnectionRetryStatusEventArgs.FQIDConnectionRetrySucceeded,
                         StringUtil.Format(RemotingErrorIdStrings.RCReconnectSucceeded, this.computerName));
 
-                    connectionRetryStatusArgs = 
+                    connectionRetryStatusArgs =
                         new PSConnectionRetryStatusEventArgs(PSConnectionRetryStatus.ConnectionRetrySucceeded,
                             this.computerName, maxRetryConnectionTimeMinutes, warningRecord);
                     break;
@@ -837,7 +834,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         PSConnectionRetryStatusEventArgs.FQIDAutoDisconnectSucceeded,
                         StringUtil.Format(RemotingErrorIdStrings.RCAutoDisconnected, this.computerName));
 
-                    connectionRetryStatusArgs = 
+                    connectionRetryStatusArgs =
                         new PSConnectionRetryStatusEventArgs(PSConnectionRetryStatus.AutoDisconnectSucceeded,
                             this.computerName, maxRetryConnectionTimeMinutes, warningRecord);
                     break;
@@ -847,7 +844,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         string msg = StringUtil.Format(RemotingErrorIdStrings.RCInternalError, this.computerName);
                         RuntimeException reason = new RuntimeException(msg);
                         errorRecord = new ErrorRecord(reason,
-                            PSConnectionRetryStatusEventArgs.FQIDNetworkOrDisconnectFailed, 
+                            PSConnectionRetryStatusEventArgs.FQIDNetworkOrDisconnectFailed,
                             ErrorCategory.InvalidOperation, this);
 
                         connectionRetryStatusArgs =
@@ -863,7 +860,7 @@ namespace System.Management.Automation.Runspaces.Internal
             }
 
             // Update connection status.
-            this.connectionRetryStatus = connectionRetryStatusArgs.Notification;
+            _connectionRetryStatus = connectionRetryStatusArgs.Notification;
 
             if (warningRecord != null)
             {
@@ -933,9 +930,9 @@ namespace System.Management.Automation.Runspaces.Internal
         /// datastructure handler. We cannot send the state back to the upper layers until
         /// close is completed from the datastructure/transport layer.
         /// </summary>
-        private Queue<PSInvocationStateInfo> stateInfoQueue = new Queue<PSInvocationStateInfo>();
+        private Queue<PSInvocationStateInfo> _stateInfoQueue = new Queue<PSInvocationStateInfo>();
 
-        private PSConnectionRetryStatus connectionRetryStatus = PSConnectionRetryStatus.None;
+        private PSConnectionRetryStatus _connectionRetryStatus = PSConnectionRetryStatus.None;
 
         #endregion Protected Members
 

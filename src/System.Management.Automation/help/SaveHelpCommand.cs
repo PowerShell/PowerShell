@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Management.Automation;
@@ -32,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-        private bool alreadyCheckedOncePerDayPerModule = false;
+        private bool _alreadyCheckedOncePerDayPerModule = false;
 
         #region Parameters
 
@@ -71,10 +72,10 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _path = value;
-                isLiteralPath = true;
+                _isLiteralPath = true;
             }
         }
-        bool isLiteralPath = false;
+        private bool _isLiteralPath = false;
 
         /// <summary>
         /// Specifies the modules to update
@@ -86,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         [ArgumentToModuleTransformationAttribute()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public PSModuleInfo[] Module { get; set; }
-        
+
         /// <summary>
         /// Specifies the Module Specifications to update
         /// </summary>
@@ -146,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
                 base.Process(moduleInfos);
             }
             finally
-            {              
+            {
                 ProgressRecord progress = new ProgressRecord(activityId, HelpDisplayStrings.SaveProgressActivityForModule, HelpDisplayStrings.UpdateProgressInstalling);
 
                 progress.PercentComplete = 100;
@@ -225,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (isLiteralPath)
+                    if (_isLiteralPath)
                     {
                         string destinationPath = GetUnresolvedProviderPathFromPSPath(destPath);
                         if (!Directory.Exists(destinationPath))
@@ -289,18 +290,18 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // constructing the helpinfo object from previous update help log xml..
                     // no need to resolve the uri's in this case.
-                    currentHelpInfo = _helpSystem.CreateHelpInfo(xml, module.ModuleName, module.ModuleGuid, 
-                                                                 currentCulture: null, pathOverride: null, verbose: false, 
-                                                                 shouldResolveUri:false, ignoreValidationException: false);
+                    currentHelpInfo = _helpSystem.CreateHelpInfo(xml, module.ModuleName, module.ModuleGuid,
+                                                                 currentCulture: null, pathOverride: null, verbose: false,
+                                                                 shouldResolveUri: false, ignoreValidationException: false);
                 }
 
                 // Don't update too frequently
-                if (!alreadyCheckedOncePerDayPerModule && !CheckOncePerDayPerModule(module.ModuleName, path, module.GetHelpInfoName(), DateTime.UtcNow, _force))
+                if (!_alreadyCheckedOncePerDayPerModule && !CheckOncePerDayPerModule(module.ModuleName, path, module.GetHelpInfoName(), DateTime.UtcNow, _force))
                 {
                     return true;
                 }
 
-                alreadyCheckedOncePerDayPerModule = true;
+                _alreadyCheckedOncePerDayPerModule = true;
 
                 // Form the actual HelpInfo.xml uri
                 helpInfoUri = _helpSystem.GetHelpInfoUri(module, null).ResolvedUri;
@@ -444,7 +445,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 int elemtCount = iListArg.Count;
                 int targetIndex = 0;
-                var target = Array.CreateInstance(typeof (object), elemtCount);
+                var target = Array.CreateInstance(typeof(object), elemtCount);
 
                 foreach (object elemt in iListArg)
                 {

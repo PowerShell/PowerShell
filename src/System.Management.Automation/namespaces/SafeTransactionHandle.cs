@@ -2,6 +2,7 @@
 //    Copyright (C) Microsoft.  All rights reserved.
 //
 #pragma warning disable 1634, 1691
+
 namespace Microsoft.PowerShell.Commands.Internal
 {
     using System;
@@ -56,7 +57,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             {
                 throw new NotSupportedException(RegistryProviderStrings.NotSupported_KernelTransactions);
             }
-            
+
             IntPtr ktmTxHandle;
             int hr = ktmInterface.GetHandle(out ktmTxHandle);
             HandleError(hr);

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Xml;
 using System.Diagnostics.CodeAnalysis; // for fxcop
 
@@ -31,11 +32,11 @@ namespace System.Management.Automation
             _fullHelpObject = mamlNode.PSObject;
             this.Errors = mamlNode.Errors;
 
-            this._fullHelpObject.TypeNames.Clear();
-            this._fullHelpObject.TypeNames.Add(string.Format(Globalization.CultureInfo.InvariantCulture,
+            _fullHelpObject.TypeNames.Clear();
+            _fullHelpObject.TypeNames.Add(string.Format(Globalization.CultureInfo.InvariantCulture,
                 "GeneralHelpInfo#{0}", Name));
-            this._fullHelpObject.TypeNames.Add("GeneralHelpInfo");
-            this._fullHelpObject.TypeNames.Add("HelpInfo");
+            _fullHelpObject.TypeNames.Add("GeneralHelpInfo");
+            _fullHelpObject.TypeNames.Add("HelpInfo");
         }
 
         #region Basic Help Properties

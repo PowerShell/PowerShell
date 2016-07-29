@@ -8,15 +8,16 @@ using System;
 using System.Runtime.InteropServices;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
 
-namespace System.Management.Automation.ComInterop {
-
+namespace System.Management.Automation.ComInterop
+{
     [
     ComImport,
     InterfaceType(ComInterfaceType.InterfaceIsIDispatch),
     Guid("00020400-0000-0000-C000-000000000046")
     ]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces")]
-    internal interface IDispatchForReflection {
+    internal interface IDispatchForReflection
+    {
     }
 
     [
@@ -24,8 +25,8 @@ namespace System.Management.Automation.ComInterop {
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("00020400-0000-0000-C000-000000000046"),
     ]
-    internal interface IDispatch {
-
+    internal interface IDispatch
+    {
         [PreserveSig]
         int TryGetTypeInfoCount(out uint pctinfo);
 
@@ -58,12 +59,13 @@ namespace System.Management.Automation.ComInterop {
     /// <summary>
     /// Layout of the IDispatch vtable
     /// </summary>
-    internal enum IDispatchMethodIndices {
+    internal enum IDispatchMethodIndices
+    {
         IUnknown_QueryInterface,
         IUnknown_AddRef,
         IUnknown_Release,
 
-        IDispatch_GetTypeInfoCount ,
+        IDispatch_GetTypeInfoCount,
         IDispatch_GetTypeInfo,
         IDispatch_GetIDsOfNames,
         IDispatch_Invoke
@@ -74,10 +76,10 @@ namespace System.Management.Automation.ComInterop {
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("B196B283-BAB4-101A-B69C-00AA00341D07")
     ]
-    internal interface IProvideClassInfo {
+    internal interface IProvideClassInfo
+    {
         void GetClassInfo(out IntPtr info);
     }
-
 }
 
 #endif

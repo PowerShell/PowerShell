@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
@@ -10,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command to remove a property from an item.
     /// </summary>
-    [Cmdlet (VerbsCommon.Remove, "ItemProperty", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
+    [Cmdlet(VerbsCommon.Remove, "ItemProperty", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113374")]
     public class RemoveItemPropertyCommand : ItemPropertyCommandBase
     {
@@ -20,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the path parameter to the command
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
-                   Mandatory = true, ValueFromPipeline=true, ValueFromPipelineByPropertyName = true)]
+                   Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
             get
@@ -38,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the literal path parameter to the command
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
-                   Mandatory = true, ValueFromPipeline=false, ValueFromPipelineByPropertyName = true)]
+                   Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath")]
         public string[] LiteralPath
         {
@@ -58,24 +59,24 @@ namespace Microsoft.PowerShell.Commands
         /// The name of the property to create on the item
         /// </summary>
         ///
-        [Parameter(Mandatory=true, Position = 1, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Mandatory = true, Position = 1, ValueFromPipelineByPropertyName = true)]
         [Alias("PSProperty")]
         public string[] Name
         {
             get
             {
-                return property;
+                return _property;
             } // get
 
             set
             {
                 if (value == null)
                 {
-                    property = new string[0];
+                    _property = new string[0];
                 }
                 else
                 {
-                    property = value;
+                    _property = value;
                 }
             }
         } // Property
@@ -136,15 +137,15 @@ namespace Microsoft.PowerShell.Commands
             }
             return InvokeProvider.Property.RemovePropertyDynamicParameters(".", propertyName, context);
         } // GetDynamicParameters
-        
+
         #endregion Parameters
 
         #region parameter data
-        
+
         /// <summary>
         /// The property to be created.
         /// </summary>
-        private string[] property = new string[0];
+        private string[] _property = new string[0];
 
         #endregion parameter data
 
@@ -153,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Removes the property from the item
         /// </summary>
-        protected override void ProcessRecord ()
+        protected override void ProcessRecord()
         {
             foreach (string path in Path)
             {
@@ -195,7 +196,6 @@ namespace Microsoft.PowerShell.Commands
                                 pathNotFound));
                         continue;
                     }
-
                 }
             }
         } // ProcessRecord
@@ -203,5 +203,4 @@ namespace Microsoft.PowerShell.Commands
 
 
     } // RemoveItemPropertyCommand
-
 } // namespace Microsoft.PowerShell.Commands

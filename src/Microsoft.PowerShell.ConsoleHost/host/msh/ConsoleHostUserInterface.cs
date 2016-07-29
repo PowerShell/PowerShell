@@ -33,12 +33,12 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Command completion implementation object
         /// </summary>
-        private PowerShell commandCompletionPowerShell;
+        private PowerShell _commandCompletionPowerShell;
 
         /// <summary>
         /// This is a test hook for programmatically reading and writing ConsoleHost I/O.
         /// </summary>
-        private static PSHostUserInterface _h = null;
+        private static PSHostUserInterface s_h = null;
 
         /// <summary>
         /// Return true if the console supports a VT100 like virtual terminal
@@ -58,11 +58,11 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(parent != null, "parent may not be null");
 
-            this.parent = parent;
-            this.rawui = new ConsoleHostRawUserInterface(this);
+            _parent = parent;
+            _rawui = new ConsoleHostRawUserInterface(this);
 
 #if UNIX
-            this._supportsVirtualTerminal = true;
+            _supportsVirtualTerminal = true;
 #else
             try
             {
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell
                 // This might throw - not sure how exactly (no console), but if it does, we shouldn't fail to start.
                 var handle = ConsoleControl.GetActiveScreenBufferHandle();
                 var m = ConsoleControl.GetMode(handle);
-                if (ConsoleControl.NativeMethods.SetConsoleMode(handle.DangerousGetHandle(), (uint) (m | ConsoleControl.ConsoleModes.VirtualTerminal)))
+                if (ConsoleControl.NativeMethods.SetConsoleMode(handle.DangerousGetHandle(), (uint)(m | ConsoleControl.ConsoleModes.VirtualTerminal)))
                 {
                     // We only know if vt100 is supported if the previous call actually set the new flag, older
                     // systems ignore the setting.
@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell
             }
 #endif
 
-            isInteractiveTestToolListening = false;
+            _isInteractiveTestToolListening = false;
         }
 
         /// <summary>
@@ -99,11 +99,11 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                Dbg.Assert(this.rawui != null, "rawui should have been created by ctor");
+                Dbg.Assert(_rawui != null, "rawui should have been created by ctor");
 
                 // no locking because this is read-only, and allocated in the ctor.
 
-                return rawui;
+                return _rawui;
             }
         }
 
@@ -140,8 +140,8 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                return this.commandCompletionPowerShell != null &&
-                       this.commandCompletionPowerShell.InvocationStateInfo.State == PSInvocationState.Running;
+                return _commandCompletionPowerShell != null &&
+                       _commandCompletionPowerShell.InvocationStateInfo.State == PSInvocationState.Running;
             }
         }
 
@@ -163,11 +163,11 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                return noPrompt;
+                return _noPrompt;
             }
             set
             {
-                noPrompt = value;
+                _noPrompt = value;
             }
         }
 
@@ -193,7 +193,7 @@ namespace Microsoft.PowerShell
 
         public override string ReadLine()
         {
-            HandleThrowOnReadAndPrompt();          
+            HandleThrowOnReadAndPrompt();
 
             // call our internal version such that it does not end input on a tab
             ReadLineResult unused;
@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell
             // we lock here so that multiple threads won't interleave the various reads and writes here.
 
             object result = null;
-            lock (instanceLock)
+            lock (_instanceLock)
             {
                 result = ReadLineSafe(true, printToken);
             }
@@ -337,10 +337,10 @@ namespace Microsoft.PowerShell
                 {
                     isModeChanged = false;
                 }
-                rawui.ClearKeyCache();
+                _rawui.ClearKeyCache();
 #endif
 
-                Coordinates originalCursorPos = rawui.CursorPosition;
+                Coordinates originalCursorPos = _rawui.CursorPosition;
 
                 do
                 {
@@ -495,8 +495,8 @@ namespace Microsoft.PowerShell
                 "Calling WritePrintToken with printToken being null or empty");
             Dbg.Assert(printToken.Length == 1,
                 "Calling WritePrintToken with printToken's Length being " + printToken.Length);
-            Size consoleBufferSize = rawui.BufferSize;
-            Coordinates currentCursorPosition = rawui.CursorPosition;
+            Size consoleBufferSize = _rawui.BufferSize;
+            Coordinates currentCursorPosition = _rawui.CursorPosition;
 
             // if the cursor is currently at the lower right corner, this write will cause the screen buffer to
             // scroll up. So, it is necessary to adjust the original cursor position one row up.
@@ -533,7 +533,7 @@ namespace Microsoft.PowerShell
 
         private void WriteBackSpace(Coordinates originalCursorPosition)
         {
-            Coordinates cursorPosition = rawui.CursorPosition;
+            Coordinates cursorPosition = _rawui.CursorPosition;
             if (cursorPosition == originalCursorPosition)
             {
                 // at originalCursorPosition, don't move
@@ -547,7 +547,7 @@ namespace Microsoft.PowerShell
                     return;
                 }
                 // BufferSize.Width is 1 larger than cursor position
-                cursorPosition.X = rawui.BufferSize.Width - 1;
+                cursorPosition.X = _rawui.BufferSize.Width - 1;
                 cursorPosition.Y--;
                 BlankAtCursor(cursorPosition);
             }
@@ -567,9 +567,9 @@ namespace Microsoft.PowerShell
         /// <param name="cursorPosition">Position to blank out</param>
         private void BlankAtCursor(Coordinates cursorPosition)
         {
-            rawui.CursorPosition = cursorPosition;
+            _rawui.CursorPosition = cursorPosition;
             WriteToConsole(" ", true);
-            rawui.CursorPosition = cursorPosition;
+            _rawui.CursorPosition = cursorPosition;
         }
 
 
@@ -610,7 +610,6 @@ namespace Microsoft.PowerShell
 
         internal void WriteToConsole(string value, bool transcribeResult)
         {
-
 #if !UNIX
             ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
 
@@ -640,7 +639,7 @@ namespace Microsoft.PowerShell
             Console.Out.Write(value);
 #endif
 
-            if (isInteractiveTestToolListening && Console.IsOutputRedirected)
+            if (_isInteractiveTestToolListening && Console.IsOutputRedirected)
             {
                 Console.Out.Write(value);
             }
@@ -721,15 +720,15 @@ namespace Microsoft.PowerShell
             }
 
             // If the test hook is set, write to it and continue.
-            if (_h != null) _h.Write(value);
+            if (s_h != null) s_h.Write(value);
 
-            TextWriter writer = Console.IsOutputRedirected ? Console.Out : parent.ConsoleTextWriter;
+            TextWriter writer = Console.IsOutputRedirected ? Console.Out : _parent.ConsoleTextWriter;
 
-            if (parent.IsRunningAsync)
+            if (_parent.IsRunningAsync)
             {
-                Dbg.Assert(writer == parent.OutputSerializer.textWriter, "writers should be the same");
+                Dbg.Assert(writer == _parent.OutputSerializer.textWriter, "writers should be the same");
 
-                parent.OutputSerializer.Serialize(value);
+                _parent.OutputSerializer.Serialize(value);
             }
             else
             {
@@ -767,7 +766,7 @@ namespace Microsoft.PowerShell
         {
             // Sync access so that we don't race on color settings if called from multiple threads.
 
-            lock (instanceLock)
+            lock (_instanceLock)
             {
                 ConsoleColor fg = RawUI.ForegroundColor;
                 ConsoleColor bg = RawUI.BackgroundColor;
@@ -811,7 +810,7 @@ namespace Microsoft.PowerShell
         {
             // lock here so that the newline is written atomically with the value
 
-            lock (instanceLock)
+            lock (_instanceLock)
             {
                 this.Write(value);
                 this.Write(Crlf);
@@ -1044,7 +1043,6 @@ namespace Microsoft.PowerShell
 
                     inWs = false;
                     continue;
-
                 }
                 else if (text[wordEnd] == ' ')
                 {
@@ -1254,16 +1252,16 @@ namespace Microsoft.PowerShell
             message = HostUtilities.RemoveGuidFromMessage(message, out unused);
 
             //We should write debug to error stream only if debug is redirected.)
-            if (parent.ErrorFormat == Serialization.DataFormat.XML)
+            if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
-                parent.ErrorSerializer.Serialize(message, "debug");
+                _parent.ErrorSerializer.Serialize(message, "debug");
             }
             else
             {
                 // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...
                 WriteWrappedLine(
-                    debugForegroundColor,
-                    debugBackgroundColor,
+                    _debugForegroundColor,
+                    _debugBackgroundColor,
                     StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
             }
         }
@@ -1277,9 +1275,9 @@ namespace Microsoft.PowerShell
         public override void WriteInformation(InformationRecord record)
         {
             //We should write information to error stream only if redirected.)
-            if (parent.ErrorFormat == Serialization.DataFormat.XML)
+            if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
-                parent.ErrorSerializer.Serialize(record, "information");
+                _parent.ErrorSerializer.Serialize(record, "information");
             }
             else
             {
@@ -1316,15 +1314,15 @@ namespace Microsoft.PowerShell
             message = HostUtilities.RemoveGuidFromMessage(message, out unused);
 
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
-            if (parent.ErrorFormat == Serialization.DataFormat.XML)
+            if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
-                parent.ErrorSerializer.Serialize(message, "verbose");
+                _parent.ErrorSerializer.Serialize(message, "verbose");
             }
             else
             {
                 WriteWrappedLine(
-                    verboseForegroundColor,
-                    verboseBackgroundColor,
+                    _verboseForegroundColor,
+                    _verboseBackgroundColor,
                     StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
             }
         }
@@ -1359,9 +1357,9 @@ namespace Microsoft.PowerShell
             message = HostUtilities.RemoveGuidFromMessage(message, out unused);
 
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
-            if (parent.ErrorFormat == Serialization.DataFormat.XML)
+            if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
-                parent.ErrorSerializer.Serialize(message, "warning");
+                _parent.ErrorSerializer.Serialize(message, "warning");
             }
             else
             {
@@ -1390,20 +1388,20 @@ namespace Microsoft.PowerShell
                 string currentOperation = HostUtilities.RemoveIdentifierInfoFromMessage(record.CurrentOperation, out matchPattern);
                 if (matchPattern)
                 {
-                    record = new ProgressRecord(record) {CurrentOperation = currentOperation};
+                    record = new ProgressRecord(record) { CurrentOperation = currentOperation };
                 }
 
                 // We allow only one thread at a time to update the progress state.)
-                if (parent.ErrorFormat == Serialization.DataFormat.XML)
+                if (_parent.ErrorFormat == Serialization.DataFormat.XML)
                 {
                     PSObject obj = new PSObject();
                     obj.Properties.Add(new PSNoteProperty("SourceId", sourceId));
                     obj.Properties.Add(new PSNoteProperty("Record", record));
-                    parent.ErrorSerializer.Serialize(obj, "progress");
+                    _parent.ErrorSerializer.Serialize(obj, "progress");
                 }
                 else
                 {
-                    lock (instanceLock)
+                    lock (_instanceLock)
                     {
                         HandleIncomingProgressRecord(sourceId, record);
                     }
@@ -1422,114 +1420,133 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            TextWriter writer = (!Console.IsErrorRedirected || parent.IsInteractive)
-                ? parent.ConsoleTextWriter
+            TextWriter writer = (!Console.IsErrorRedirected || _parent.IsInteractive)
+                ? _parent.ConsoleTextWriter
                 : Console.Error;
 
-            if (parent.ErrorFormat == Serialization.DataFormat.XML)
+            if (_parent.ErrorFormat == Serialization.DataFormat.XML)
             {
-                Dbg.Assert(writer == parent.ErrorSerializer.textWriter, "writers should be the same");
+                Dbg.Assert(writer == _parent.ErrorSerializer.textWriter, "writers should be the same");
 
-                parent.ErrorSerializer.Serialize(value + Crlf);
+                _parent.ErrorSerializer.Serialize(value + Crlf);
             }
             else
             {
-                if (writer == parent.ConsoleTextWriter)
-                    WriteLine(errorForegroundColor, errorBackgroundColor, value);
+                if (writer == _parent.ConsoleTextWriter)
+                    WriteLine(_errorForegroundColor, _errorBackgroundColor, value);
                 else
                     Console.Error.Write(value + Crlf);
             }
         }
 
         // Error colors
-        private ConsoleColor errorForegroundColor = ConsoleColor.Red;
+        private ConsoleColor _errorForegroundColor = ConsoleColor.Red;
         public ConsoleColor ErrorForegroundColor
         {
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get { return errorForegroundColor; }
+            get
+            { return _errorForegroundColor; }
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set { errorForegroundColor = value; }
+            set
+            { _errorForegroundColor = value; }
         }
-        private ConsoleColor errorBackgroundColor = ConsoleColor.Black;
+        private ConsoleColor _errorBackgroundColor = ConsoleColor.Black;
         public ConsoleColor ErrorBackgroundColor
         {
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get { return errorBackgroundColor; }
+            get
+            { return _errorBackgroundColor; }
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set { errorBackgroundColor = value; }
+            set
+            { _errorBackgroundColor = value; }
         }
 
         // Warning colors
-        private ConsoleColor warningForegroundColor = ConsoleColor.Yellow;
+        private ConsoleColor _warningForegroundColor = ConsoleColor.Yellow;
         public ConsoleColor WarningForegroundColor
         {
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get { return warningForegroundColor; }
+            get
+            { return _warningForegroundColor; }
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set { warningForegroundColor = value; }
+            set
+            { _warningForegroundColor = value; }
         }
-        private ConsoleColor warningBackgroundColor = ConsoleColor.Black;
+        private ConsoleColor _warningBackgroundColor = ConsoleColor.Black;
         public ConsoleColor WarningBackgroundColor
         {
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get { return warningBackgroundColor; }
+            get
+            { return _warningBackgroundColor; }
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set { warningBackgroundColor = value; }
+            set
+            { _warningBackgroundColor = value; }
         }
 
         // Debug colors
-        private ConsoleColor debugForegroundColor = ConsoleColor.Yellow;
+        private ConsoleColor _debugForegroundColor = ConsoleColor.Yellow;
         public ConsoleColor DebugForegroundColor
         {
-
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get { return debugForegroundColor; }
+            get
+            { return _debugForegroundColor; }
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set { debugForegroundColor = value; }
+            set
+            { _debugForegroundColor = value; }
         }
-        private ConsoleColor debugBackgroundColor = ConsoleColor.Black;
+        private ConsoleColor _debugBackgroundColor = ConsoleColor.Black;
         public ConsoleColor DebugBackgroundColor
         {
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get { return debugBackgroundColor; }
+            get
+            { return _debugBackgroundColor; }
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set { debugBackgroundColor = value; }
+            set
+            { _debugBackgroundColor = value; }
         }
 
         // Verbose colors
-        private ConsoleColor verboseForegroundColor = ConsoleColor.Yellow;
+        private ConsoleColor _verboseForegroundColor = ConsoleColor.Yellow;
         public ConsoleColor VerboseForegroundColor
         {
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get { return verboseForegroundColor; }
+            get
+            { return _verboseForegroundColor; }
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set { verboseForegroundColor = value; }
+            set
+            { _verboseForegroundColor = value; }
         }
-        private ConsoleColor verboseBackgroundColor = ConsoleColor.Black;
+        private ConsoleColor _verboseBackgroundColor = ConsoleColor.Black;
         public ConsoleColor VerboseBackgroundColor
         {
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get { return verboseBackgroundColor; }
+            get
+            { return _verboseBackgroundColor; }
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set { verboseBackgroundColor = value; }
+            set
+            { _verboseBackgroundColor = value; }
         }
 
         // Progress colors
-        private ConsoleColor progressForegroundColor = ConsoleColor.Yellow;
+        private ConsoleColor _progressForegroundColor = ConsoleColor.Yellow;
         public ConsoleColor ProgressForegroundColor
         {
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get { return progressForegroundColor; }
+            get
+            { return _progressForegroundColor; }
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set { progressForegroundColor = value; }
+            set
+            { _progressForegroundColor = value; }
         }
-        private ConsoleColor progressBackgroundColor = ConsoleColor.DarkCyan;
+        private ConsoleColor _progressBackgroundColor = ConsoleColor.DarkCyan;
         public ConsoleColor ProgressBackgroundColor
         {
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get { return progressBackgroundColor; }
+            get
+            { return _progressBackgroundColor; }
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set { progressBackgroundColor = value; }
+            set
+            { _progressBackgroundColor = value; }
         }
 
         #endregion Line-oriented interaction
@@ -1552,7 +1569,7 @@ namespace Microsoft.PowerShell
             endedOnBreak = 3
         }
 
-        const int maxInputLineLength = 8192;
+        private const int maxInputLineLength = 8192;
 
         /// <summary>
         /// 
@@ -1612,7 +1629,7 @@ namespace Microsoft.PowerShell
             result = ReadLineResult.endedOnEnter;
 
             // If the test hook is set, read from it.
-            if (_h != null) return _h.ReadLine();
+            if (s_h != null) return s_h.ReadLine();
 
             string restOfLine = null;
 
@@ -1734,68 +1751,68 @@ namespace Microsoft.PowerShell
             try
             {
 
-            ConsoleKeyInfo keyInfo;
-            string s = "";
-            int index = 0;
-            int cursorLeft = Console.CursorLeft;
-            int cursorCurrent = cursorLeft;
-            bool insertMode = true;
-            Console.TreatControlCAsInput = true;
+                ConsoleKeyInfo keyInfo;
+                string s = "";
+                int index = 0;
+                int cursorLeft = Console.CursorLeft;
+                int cursorCurrent = cursorLeft;
+                bool insertMode = true;
+                Console.TreatControlCAsInput = true;
 #else
-            rawui.ClearKeyCache();
+            _rawui.ClearKeyCache();
             uint keyState = 0;
             string s = "";
 #endif
-            do
-            {
+                do
+                {
 #if UNIX
-                keyInfo = Console.ReadKey(true);
+                    keyInfo = Console.ReadKey(true);
 #else
                 s += ConsoleControl.ReadConsole(handle, initialContent, maxInputLineLength, endOnTab, out keyState);
                 Dbg.Assert(s != null, "s should never be null");
 #endif
 
 #if UNIX
-                // Handle Ctrl-C ending input
-                if (keyInfo.Key == ConsoleKey.C && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control))
+                    // Handle Ctrl-C ending input
+                    if (keyInfo.Key == ConsoleKey.C && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control))
 #else
                 if (s.Length == 0)
 #endif
-                {
-                    result = ReadLineResult.endedOnBreak;
-                    s = null;
-
-                    if (calledFromPipeline)
                     {
-                        // make sure that the pipeline that called us is stopped
+                        result = ReadLineResult.endedOnBreak;
+                        s = null;
 
-                        throw new PipelineStoppedException();
+                        if (calledFromPipeline)
+                        {
+                            // make sure that the pipeline that called us is stopped
+
+                            throw new PipelineStoppedException();
+                        }
+                        break;
                     }
-                    break;
-                }
 
 #if UNIX
-                if (keyInfo.Key == ConsoleKey.Enter)
+                    if (keyInfo.Key == ConsoleKey.Enter)
 #else
                 if (s.EndsWith(Crlf, StringComparison.CurrentCulture))
 #endif
-                {
-                    result = ReadLineResult.endedOnEnter;
+                    {
+                        result = ReadLineResult.endedOnEnter;
 #if UNIX
-                    // We're intercepting characters, so we need to echo the newline
-                    Console.Out.WriteLine();
+                        // We're intercepting characters, so we need to echo the newline
+                        Console.Out.WriteLine();
 #else
                     s = s.Remove(s.Length - Crlf.Length);
 #endif
-                    break;
-                }
+                        break;
+                    }
 
 #if UNIX
-                if (keyInfo.Key == ConsoleKey.Tab)
-                {
-                    // This is unsupported
-                    continue;
-                }
+                    if (keyInfo.Key == ConsoleKey.Tab)
+                    {
+                        // This is unsupported
+                        continue;
+                    }
 #else
                 int i = s.IndexOf(Tab, StringComparison.CurrentCulture);
 
@@ -1848,127 +1865,127 @@ namespace Microsoft.PowerShell
                 }
 #endif
 #if UNIX
-                if (keyInfo.Key == ConsoleKey.Backspace)
-                {
-                    if (index > 0)
+                    if (keyInfo.Key == ConsoleKey.Backspace)
                     {
-                        int length = s.Length;
-                        s = s.Remove(index - 1, 1);
-                        index--;
-                        cursorCurrent = Console.CursorLeft;
-                        Console.CursorLeft = cursorLeft;
-                        Console.Out.Write(s.PadRight(length));
-                        Console.CursorLeft = cursorCurrent - 1;
+                        if (index > 0)
+                        {
+                            int length = s.Length;
+                            s = s.Remove(index - 1, 1);
+                            index--;
+                            cursorCurrent = Console.CursorLeft;
+                            Console.CursorLeft = cursorLeft;
+                            Console.Out.Write(s.PadRight(length));
+                            Console.CursorLeft = cursorCurrent - 1;
+                        }
+                        continue;
                     }
-                    continue;
-                }
 
-                if (keyInfo.Key == ConsoleKey.Delete
-                    || (keyInfo.Key == ConsoleKey.D && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
-                {
-                    if (index < s.Length)
+                    if (keyInfo.Key == ConsoleKey.Delete
+                        || (keyInfo.Key == ConsoleKey.D && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
                     {
-                        int length = s.Length;
+                        if (index < s.Length)
+                        {
+                            int length = s.Length;
+                            s = s.Remove(index, 1);
+                            cursorCurrent = Console.CursorLeft;
+                            Console.CursorLeft = cursorLeft;
+                            Console.Out.Write(s.PadRight(length));
+                            Console.CursorLeft = cursorCurrent;
+                        }
+                        continue;
+                    }
+
+                    if (keyInfo.Key == ConsoleKey.LeftArrow
+                        || (keyInfo.Key == ConsoleKey.B && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
+                    {
+                        if (Console.CursorLeft > cursorLeft)
+                        {
+                            Console.CursorLeft--;
+                            index--;
+                        }
+                        continue;
+                    }
+
+                    if (keyInfo.Key == ConsoleKey.RightArrow
+                        || (keyInfo.Key == ConsoleKey.F && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
+                    {
+                        if (Console.CursorLeft < cursorLeft + s.Length)
+                        {
+                            Console.CursorLeft++;
+                            index++;
+                        }
+                        continue;
+                    }
+
+                    if (keyInfo.Key == ConsoleKey.UpArrow
+                        || keyInfo.Key == ConsoleKey.DownArrow
+                        || keyInfo.Key == ConsoleKey.PageUp
+                        || keyInfo.Key == ConsoleKey.PageDown)
+                    {
+                        // Arrow/Page Up/down is unimplemented, so fail gracefully
+                        continue;
+                    }
+
+                    if (keyInfo.Key == ConsoleKey.Home
+                        || (keyInfo.Key == ConsoleKey.A && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
+                    {
+                        Console.CursorLeft = cursorLeft;
+                        index = 0;
+                        continue;
+                    }
+
+                    if (keyInfo.Key == ConsoleKey.End
+                        || (keyInfo.Key == ConsoleKey.E && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
+                    {
+                        Console.CursorLeft = cursorLeft + s.Length;
+                        index = s.Length;
+                        continue;
+                    }
+
+                    if (keyInfo.Key == ConsoleKey.Escape)
+                    {
+                        Console.CursorLeft = cursorLeft;
+                        index = s.Length;
+                        s = "";
+                        continue;
+                    }
+
+                    if (keyInfo.Key == ConsoleKey.Insert)
+                    {
+                        // Toggle insert/overwrite mode
+                        insertMode = !insertMode;
+                        continue;
+                    }
+
+                    if (Char.IsControl(keyInfo.KeyChar))
+                    {
+                        // blacklist control characters
+                        continue;
+                    }
+
+                    // Modify string
+                    if (!insertMode) // then overwrite mode
+                    {
                         s = s.Remove(index, 1);
-                        cursorCurrent = Console.CursorLeft;
-                        Console.CursorLeft = cursorLeft;
-                        Console.Out.Write(s.PadRight(length));
-                        Console.CursorLeft = cursorCurrent;
                     }
-                    continue;
-                }
+                    s = s.Insert(index, keyInfo.KeyChar.ToString());
+                    index++;
 
-                if (keyInfo.Key == ConsoleKey.LeftArrow
-                    || (keyInfo.Key == ConsoleKey.B && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
-                {
-                    if (Console.CursorLeft > cursorLeft)
-                    {
-                        Console.CursorLeft--;
-                        index--;
-                    }
-                    continue;
-                }
-
-                if (keyInfo.Key == ConsoleKey.RightArrow
-                    || (keyInfo.Key == ConsoleKey.F && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
-                {
-                    if (Console.CursorLeft < cursorLeft + s.Length)
-                    {
-                        Console.CursorLeft++;
-                        index++;
-                    }
-                    continue;
-                }
-
-                if (keyInfo.Key == ConsoleKey.UpArrow
-                    || keyInfo.Key == ConsoleKey.DownArrow
-                    || keyInfo.Key == ConsoleKey.PageUp
-                    || keyInfo.Key == ConsoleKey.PageDown)
-                {
-                    // Arrow/Page Up/down is unimplemented, so fail gracefully
-                    continue;
-                }
-
-                if (keyInfo.Key == ConsoleKey.Home
-                    || (keyInfo.Key == ConsoleKey.A && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
-                {
+                    // Redisplay string
+                    cursorCurrent = Console.CursorLeft;
                     Console.CursorLeft = cursorLeft;
-                    index = 0;
-                    continue;
-                }
-
-                if (keyInfo.Key == ConsoleKey.End
-                    || (keyInfo.Key == ConsoleKey.E && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
-                {
-                    Console.CursorLeft = cursorLeft + s.Length;
-                    index = s.Length;
-                    continue;
-                }
-
-                if (keyInfo.Key == ConsoleKey.Escape)
-                {
-                    Console.CursorLeft = cursorLeft;
-                    index = s.Length;
-                    s = "";
-                    continue;
-                }
-
-                if (keyInfo.Key == ConsoleKey.Insert)
-                {
-                    // Toggle insert/overwrite mode
-                    insertMode = !insertMode;
-                    continue;
-                }
-
-                if (Char.IsControl(keyInfo.KeyChar))
-                {
-                    // blacklist control characters
-                    continue;
-                }
-
-                // Modify string
-                if (!insertMode) // then overwrite mode
-                {
-                    s = s.Remove(index, 1);
-                }
-                s = s.Insert(index, keyInfo.KeyChar.ToString());
-                index++;
-
-                // Redisplay string
-                cursorCurrent = Console.CursorLeft;
-                Console.CursorLeft = cursorLeft;
-                Console.Out.Write(s);
-                Console.CursorLeft = cursorCurrent + 1;
+                    Console.Out.Write(s);
+                    Console.CursorLeft = cursorCurrent + 1;
 #endif
-            }
-            while (true);
+                }
+                while (true);
 
-            Dbg.Assert(
-                       (s == null && result == ReadLineResult.endedOnBreak)
-                       || (s != null && result != ReadLineResult.endedOnBreak),
-                       "s should only be null if input ended with a break");
+                Dbg.Assert(
+                           (s == null && result == ReadLineResult.endedOnBreak)
+                           || (s != null && result != ReadLineResult.endedOnBreak),
+                           "s should only be null if input ended with a break");
 
-            return s;
+                return s;
 #if UNIX
             }
             finally
@@ -2014,7 +2031,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="input">The string to process</param>
         /// <returns>The string with any \0 characters removed...</returns>
-        string RemoveNulls(string input)
+        private string RemoveNulls(string input)
         {
             if (input.IndexOf('\0') == -1)
                 return input;
@@ -2202,11 +2219,11 @@ namespace Microsoft.PowerShell
 
             // Since we did not transcribe any call to ReadLine, transcribe the results here.
 
-            if (parent.IsTranscribing)
+            if (_parent.IsTranscribing)
             {
                 // Reads always terminate with the enter key, so add that.
 
-                parent.WriteToTranscript(input + Crlf);
+                _parent.WriteToTranscript(input + Crlf);
             }
 
             return input;
@@ -2216,28 +2233,28 @@ namespace Microsoft.PowerShell
         private void SendLeftArrows(int length)
         {
             var inputs = new ConsoleControl.INPUT[length * 2];
-            for (int i=0; i < length; i++)
+            for (int i = 0; i < length; i++)
             {
                 var down = new ConsoleControl.INPUT();
-                down.Type = (UInt32) ConsoleControl.InputType.Keyboard;
+                down.Type = (UInt32)ConsoleControl.InputType.Keyboard;
                 down.Data.Keyboard = new ConsoleControl.KeyboardInput();
-                down.Data.Keyboard.Vk = (UInt16) ConsoleControl.VirtualKeyCode.Left;
+                down.Data.Keyboard.Vk = (UInt16)ConsoleControl.VirtualKeyCode.Left;
                 down.Data.Keyboard.Scan = 0;
                 down.Data.Keyboard.Flags = 0;
                 down.Data.Keyboard.Time = 0;
                 down.Data.Keyboard.ExtraInfo = IntPtr.Zero;
 
                 var up = new ConsoleControl.INPUT();
-                up.Type = (UInt32) ConsoleControl.InputType.Keyboard;
+                up.Type = (UInt32)ConsoleControl.InputType.Keyboard;
                 up.Data.Keyboard = new ConsoleControl.KeyboardInput();
-                up.Data.Keyboard.Vk = (UInt16) ConsoleControl.VirtualKeyCode.Left;
+                up.Data.Keyboard.Vk = (UInt16)ConsoleControl.VirtualKeyCode.Left;
                 up.Data.Keyboard.Scan = 0;
-                up.Data.Keyboard.Flags = (UInt32) ConsoleControl.KeyboardFlag.KeyUp;
+                up.Data.Keyboard.Flags = (UInt32)ConsoleControl.KeyboardFlag.KeyUp;
                 up.Data.Keyboard.Time = 0;
                 up.Data.Keyboard.ExtraInfo = IntPtr.Zero;
 
-                inputs[2*i] = down;
-                inputs[2*i + 1] = up;
+                inputs[2 * i] = down;
+                inputs[2 * i + 1] = up;
             }
 
             ConsoleControl.MimicKeyPress(inputs);
@@ -2248,7 +2265,7 @@ namespace Microsoft.PowerShell
         {
             try
             {
-                var runspace = this.parent.Runspace;
+                var runspace = _parent.Runspace;
                 var debugger = runspace.Debugger;
 
                 if ((debugger != null) && debugger.InBreakpoint)
@@ -2261,35 +2278,35 @@ namespace Microsoft.PowerShell
                     catch (PSInvalidOperationException)
                     { }
                 }
-                
+
                 if (runspace is LocalRunspace &&
                     runspace.ExecutionContext.EngineHostInterface.NestedPromptCount > 0)
                 {
-                    commandCompletionPowerShell = PowerShell.Create(RunspaceMode.CurrentRunspace);
+                    _commandCompletionPowerShell = PowerShell.Create(RunspaceMode.CurrentRunspace);
                 }
                 else
                 {
-                    commandCompletionPowerShell = PowerShell.Create();
-                    commandCompletionPowerShell.SetIsNested(parent.IsNested);
-                    commandCompletionPowerShell.Runspace = runspace;
+                    _commandCompletionPowerShell = PowerShell.Create();
+                    _commandCompletionPowerShell.SetIsNested(_parent.IsNested);
+                    _commandCompletionPowerShell.Runspace = runspace;
                 }
 
-                return CommandCompletion.CompleteInput(input, input.Length, null, commandCompletionPowerShell);
+                return CommandCompletion.CompleteInput(input, input.Length, null, _commandCompletionPowerShell);
             }
             finally
             {
-                commandCompletionPowerShell = null;
+                _commandCompletionPowerShell = null;
             }
         }
 
-        const string CustomReadlineCommand = "PSConsoleHostReadLine";
+        private const string CustomReadlineCommand = "PSConsoleHostReadLine";
         private bool TryInvokeUserDefinedReadLine(out string input)
         {
             // We're using GetCommands instead of GetCommand so we don't auto-load a module should the command exist, but isn't loaded.
             // The idea is that if someone hasn't defined the command (say because they started -noprofile), we shouldn't auto-load
             // this function.
 
-            var runspace = this.parent.LocalRunspace;
+            var runspace = _parent.LocalRunspace;
             if (runspace != null &&
                 runspace.Engine.Context.EngineIntrinsics.InvokeCommand.GetCommands(CustomReadlineCommand,
                     CommandTypes.Function | CommandTypes.Cmdlet, nameIsPattern: false).Any())
@@ -2329,9 +2346,9 @@ namespace Microsoft.PowerShell
 
         // used to serialize access to instance data
 
-        private object instanceLock = new object();
+        private object _instanceLock = new object();
 
-        private bool noPrompt;
+        private bool _noPrompt;
 
         //If this is true, class throws on read or prompt method which require
         //access to console.
@@ -2339,14 +2356,14 @@ namespace Microsoft.PowerShell
         {
             set
             {
-                throwOnReadAndPrompt = value;
+                _throwOnReadAndPrompt = value;
             }
         }
-        private bool throwOnReadAndPrompt;
+        private bool _throwOnReadAndPrompt;
 
         internal void HandleThrowOnReadAndPrompt()
         {
-            if (throwOnReadAndPrompt)
+            if (_throwOnReadAndPrompt)
             {
                 throw PSTraceSource.NewInvalidOperationException(ConsoleHostUserInterfaceStrings.ReadFailsOnNonInteractiveFlag);
             }
@@ -2354,17 +2371,16 @@ namespace Microsoft.PowerShell
 
         // this is a test hook for the ConsoleInteractiveTestTool, which sets this field to true.
 
-        private bool isInteractiveTestToolListening;
+        private bool _isInteractiveTestToolListening;
 
         // This instance data is "read-only" and need not have access serialized.
 
-        private ConsoleHostRawUserInterface rawui;
-        private ConsoleHost parent;
-        
+        private ConsoleHostRawUserInterface _rawui;
+        private ConsoleHost _parent;
+
         [TraceSourceAttribute("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console")]
         private static
-        PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console");
+        PSTraceSource s_tracer = PSTraceSource.GetTracer("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console");
     }
-
 }   // namespace 
 

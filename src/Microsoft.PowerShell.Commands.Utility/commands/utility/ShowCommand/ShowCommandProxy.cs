@@ -1,8 +1,8 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ShowCommandProxy.cs" company="Microsoft">
 //     Copyright © Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+
 namespace Microsoft.PowerShell.Commands
 {
     using System;
@@ -25,76 +25,76 @@ namespace Microsoft.PowerShell.Commands
     {
         private const string ShowCommandHelperName = "Microsoft.PowerShell.Commands.ShowCommandInternal.ShowCommandHelper";
 
-        private ShowCommandCommand cmdlet;
+        private ShowCommandCommand _cmdlet;
 
-        private GraphicalHostReflectionWrapper graphicalHostReflectionWrapper;
+        private GraphicalHostReflectionWrapper _graphicalHostReflectionWrapper;
 
         internal ShowCommandProxy(ShowCommandCommand cmdlet)
         {
-            this.cmdlet = cmdlet;
-            this.graphicalHostReflectionWrapper = GraphicalHostReflectionWrapper.GetGraphicalHostReflectionWrapper(cmdlet, ShowCommandProxy.ShowCommandHelperName);
+            _cmdlet = cmdlet;
+            _graphicalHostReflectionWrapper = GraphicalHostReflectionWrapper.GetGraphicalHostReflectionWrapper(cmdlet, ShowCommandProxy.ShowCommandHelperName);
         }
 
         internal void ShowAllModulesWindow(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands, bool noCommonParameter, bool passThrough)
         {
-            this.graphicalHostReflectionWrapper.CallMethod("ShowAllModulesWindow", this.cmdlet, importedModules, commands, noCommonParameter, this.cmdlet.Width, this.cmdlet.Height, passThrough);
+            _graphicalHostReflectionWrapper.CallMethod("ShowAllModulesWindow", _cmdlet, importedModules, commands, noCommonParameter, _cmdlet.Width, _cmdlet.Height, passThrough);
         }
 
         internal void ShowCommandWindow(object commandViewModelObj, bool passThrough)
         {
-            this.graphicalHostReflectionWrapper.CallMethod("ShowCommandWindow", this.cmdlet, commandViewModelObj, this.cmdlet.Width, this.cmdlet.Height, passThrough);
+            _graphicalHostReflectionWrapper.CallMethod("ShowCommandWindow", _cmdlet, commandViewModelObj, _cmdlet.Width, _cmdlet.Height, passThrough);
         }
 
         internal void CloseWindow()
         {
-            this.graphicalHostReflectionWrapper.CallMethod("CloseWindow");
+            _graphicalHostReflectionWrapper.CallMethod("CloseWindow");
         }
 
         internal string GetScript()
         {
-            return (string)this.graphicalHostReflectionWrapper.CallMethod("GetScript");
+            return (string)_graphicalHostReflectionWrapper.CallMethod("GetScript");
         }
 
         internal void ShowErrorString(string error)
         {
-            this.graphicalHostReflectionWrapper.CallMethod("ShowErrorString", error);
+            _graphicalHostReflectionWrapper.CallMethod("ShowErrorString", error);
         }
 
         internal bool SetPendingISECommand(string command)
         {
-            return (bool)this.graphicalHostReflectionWrapper.CallMethod("SetPendingISECommand", command);
+            return (bool)_graphicalHostReflectionWrapper.CallMethod("SetPendingISECommand", command);
         }
 
         internal object GetCommandViewModel(ShowCommandCommandInfo command, bool noCommonParameter, Dictionary<string, ShowCommandModuleInfo> importedModules, bool moduleQualify)
         {
-            return this.graphicalHostReflectionWrapper.CallStaticMethod("GetCommandViewModel", command, noCommonParameter, importedModules, moduleQualify);
+            return _graphicalHostReflectionWrapper.CallStaticMethod("GetCommandViewModel", command, noCommonParameter, importedModules, moduleQualify);
         }
 
         internal string GetShowCommandCommand(string commandName, bool includeAliasAndModules)
         {
-            return (string)this.graphicalHostReflectionWrapper.CallStaticMethod("GetShowCommandCommand", commandName, includeAliasAndModules);
+            return (string)_graphicalHostReflectionWrapper.CallStaticMethod("GetShowCommandCommand", commandName, includeAliasAndModules);
         }
 
         internal string GetShowAllModulesCommand()
         {
-            return (string)this.graphicalHostReflectionWrapper.CallStaticMethod("GetShowAllModulesCommand", false, true);
+            return (string)_graphicalHostReflectionWrapper.CallStaticMethod("GetShowAllModulesCommand", false, true);
         }
 
         internal Dictionary<String, ShowCommandModuleInfo> GetImportedModulesDictionary(object[] moduleObjects)
         {
-            return (Dictionary<String, ShowCommandModuleInfo>)this.graphicalHostReflectionWrapper.CallStaticMethod("GetImportedModulesDictionary", new object[] { moduleObjects });
+            return (Dictionary<String, ShowCommandModuleInfo>)_graphicalHostReflectionWrapper.CallStaticMethod("GetImportedModulesDictionary", new object[] { moduleObjects });
         }
 
         internal List<ShowCommandCommandInfo> GetCommandList(object[] commandObjects)
         {
-            return (List<ShowCommandCommandInfo>)this.graphicalHostReflectionWrapper.CallStaticMethod("GetCommandList", new object[] { commandObjects });
+            return (List<ShowCommandCommandInfo>)_graphicalHostReflectionWrapper.CallStaticMethod("GetCommandList", new object[] { commandObjects });
         }
 
         internal bool HasHostWindow
         {
             get
             {
-                return (bool)this.graphicalHostReflectionWrapper.GetPropertyValue("HasHostWindow");
+                return (bool)_graphicalHostReflectionWrapper.GetPropertyValue("HasHostWindow");
             }
         }
 
@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (AutoResetEvent)this.graphicalHostReflectionWrapper.GetPropertyValue("WindowClosed");
+                return (AutoResetEvent)_graphicalHostReflectionWrapper.GetPropertyValue("WindowClosed");
             }
         }
 
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (AutoResetEvent)this.graphicalHostReflectionWrapper.GetPropertyValue("HelpNeeded");
+                return (AutoResetEvent)_graphicalHostReflectionWrapper.GetPropertyValue("HelpNeeded");
             }
         }
 
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (AutoResetEvent)this.graphicalHostReflectionWrapper.GetPropertyValue("ImportModuleNeeded");
+                return (AutoResetEvent)_graphicalHostReflectionWrapper.GetPropertyValue("ImportModuleNeeded");
             }
         }
 
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (AutoResetEvent)this.graphicalHostReflectionWrapper.GetPropertyValue("WindowLoaded");
+                return (AutoResetEvent)_graphicalHostReflectionWrapper.GetPropertyValue("WindowLoaded");
             }
         }
 
@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (string)this.graphicalHostReflectionWrapper.GetPropertyValue("CommandNeedingHelp");
+                return (string)_graphicalHostReflectionWrapper.GetPropertyValue("CommandNeedingHelp");
             }
         }
 
@@ -143,46 +143,46 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (string)this.graphicalHostReflectionWrapper.GetPropertyValue("ParentModuleNeedingImportModule");
+                return (string)_graphicalHostReflectionWrapper.GetPropertyValue("ParentModuleNeedingImportModule");
             }
         }
 
         internal void DisplayHelp(Collection<PSObject> helpResults)
         {
-            this.graphicalHostReflectionWrapper.CallMethod("DisplayHelp", helpResults);
+            _graphicalHostReflectionWrapper.CallMethod("DisplayHelp", helpResults);
         }
 
 
         internal string GetImportModuleCommand(string module)
         {
-            return (string)this.graphicalHostReflectionWrapper.CallStaticMethod("GetImportModuleCommand", module, false, true);
+            return (string)_graphicalHostReflectionWrapper.CallStaticMethod("GetImportModuleCommand", module, false, true);
         }
 
         internal string GetHelpCommand(string command)
         {
-            return (string)this.graphicalHostReflectionWrapper.CallStaticMethod("GetHelpCommand", command);
+            return (string)_graphicalHostReflectionWrapper.CallStaticMethod("GetHelpCommand", command);
         }
 
         internal void ImportModuleDone(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands)
         {
-            this.graphicalHostReflectionWrapper.CallMethod("ImportModuleDone", importedModules, commands);
+            _graphicalHostReflectionWrapper.CallMethod("ImportModuleDone", importedModules, commands);
         }
 
         internal void ImportModuleFailed(Exception reason)
         {
-            this.graphicalHostReflectionWrapper.CallMethod("ImportModuleFailed", reason);
+            _graphicalHostReflectionWrapper.CallMethod("ImportModuleFailed", reason);
         }
 
         internal void ActivateWindow()
         {
-            this.graphicalHostReflectionWrapper.CallMethod("ActivateWindow");
+            _graphicalHostReflectionWrapper.CallMethod("ActivateWindow");
         }
 
         internal double ScreenWidth
         {
             get
             {
-                return (double)this.graphicalHostReflectionWrapper.GetStaticPropertyValue("ScreenWidth");
+                return (double)_graphicalHostReflectionWrapper.GetStaticPropertyValue("ScreenWidth");
             }
         }
 
@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (double)this.graphicalHostReflectionWrapper.GetStaticPropertyValue("ScreenHeight");
+                return (double)_graphicalHostReflectionWrapper.GetStaticPropertyValue("ScreenHeight");
             }
         }
     }

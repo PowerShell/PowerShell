@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Management.Automation;
 
@@ -23,14 +24,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return inputObject;
+                return _inputObject;
             }
             set
             {
-                inputObject = value;
+                _inputObject = value;
             }
         }
-        private PSObject inputObject = null;
+        private PSObject _inputObject = null;
 
         /// <summary>
         /// The event name to subscribe
@@ -40,14 +41,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return eventName;
+                return _eventName;
             }
             set
             {
-                eventName = value;
+                _eventName = value;
             }
         }
-        private string eventName = null;
+        private string _eventName = null;
 
         #endregion parameters
 
@@ -56,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override Object GetSourceObject()
         {
-            return inputObject;
+            return _inputObject;
         }
 
         /// <summary>
@@ -64,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override String GetSourceObjectEventName()
         {
-            return eventName;
+            return _eventName;
         }
     }
 }

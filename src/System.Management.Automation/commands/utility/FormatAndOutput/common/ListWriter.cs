@@ -14,21 +14,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal class ListWriter
     {
-
         /// <summary>
         /// labels already padded with blanks, separator characters, etc.
         /// </summary>
-         private string[] propertyLabels;
-        
+        private string[] _propertyLabels;
+
         /// <summary>
         /// display length of the property labels in the array (all the same length)
         /// </summary>
-        private int propertyLabelsDisplayLength = 0;
+        private int _propertyLabelsDisplayLength = 0;
 
         /// <summary>
         /// column width of the screen
         /// </summary>
-        private int columnWidth = 0;
+        private int _columnWidth = 0;
 
         /// <summary>
         /// 
@@ -36,17 +35,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="propertyNames">names of the properties to display</param>
         /// <param name="screenColumnWidth">column width of the screen</param>
         /// <param name="dc">instance of the DisplayCells helper object</param>
-        internal void Initialize (string[] propertyNames, int screenColumnWidth, DisplayCells dc)
+        internal void Initialize(string[] propertyNames, int screenColumnWidth, DisplayCells dc)
         {
-            columnWidth = screenColumnWidth;
+            _columnWidth = screenColumnWidth;
             if (propertyNames == null || propertyNames.Length == 0)
             {
                 // there is nothing to show
-                this.disabled = true;
+                _disabled = true;
                 return;
             }
 
-            this.disabled = false;
+            _disabled = false;
 
             Debug.Assert(propertyNames != null, "propertyNames is null");
             Debug.Assert(propertyNames.Length > 0, "propertyNames has zero length");
@@ -55,7 +54,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if ((screenColumnWidth - Separator.Length - MinFieldWidth - MinLabelWidth) < 0)
             {
                 // we do not have enough space for any meaningful display
-                this.disabled = true;
+                _disabled = true;
                 return;
             }
 
@@ -63,46 +62,46 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             int maxAllowableLabelLength = screenColumnWidth - Separator.Length - MinFieldWidth;
 
             // find out the max display length (cell count) of the property names
-            this.propertyLabelsDisplayLength = 0; // reset max
+            _propertyLabelsDisplayLength = 0; // reset max
 
             // cache the cell lengths for each property
             int[] propertyNameCellCounts = new int[propertyNames.Length];
-            for (int k=0; k<propertyNames.Length; k++)
+            for (int k = 0; k < propertyNames.Length; k++)
             {
                 Debug.Assert(propertyNames[k] != null, "propertyNames[k] is null");
                 propertyNameCellCounts[k] = dc.Length(propertyNames[k]);
-                if (propertyNameCellCounts[k] > this.propertyLabelsDisplayLength)
-                    this.propertyLabelsDisplayLength = propertyNameCellCounts[k];
+                if (propertyNameCellCounts[k] > _propertyLabelsDisplayLength)
+                    _propertyLabelsDisplayLength = propertyNameCellCounts[k];
             }
 
-            if (this.propertyLabelsDisplayLength > maxAllowableLabelLength)
+            if (_propertyLabelsDisplayLength > maxAllowableLabelLength)
             {
                 // need to truncate
-                this.propertyLabelsDisplayLength = maxAllowableLabelLength;
+                _propertyLabelsDisplayLength = maxAllowableLabelLength;
             }
 
-            this.propertyLabels = new string[propertyNames.Length];
+            _propertyLabels = new string[propertyNames.Length];
 
-            for (int k=0; k<propertyNames.Length; k++)
+            for (int k = 0; k < propertyNames.Length; k++)
             {
-                if (propertyNameCellCounts[k] < this.propertyLabelsDisplayLength)
+                if (propertyNameCellCounts[k] < _propertyLabelsDisplayLength)
                 {
                     // shorter than the max, add padding
-                    propertyLabels[k] = propertyNames[k] + new string(' ', this.propertyLabelsDisplayLength - propertyNameCellCounts[k]);
+                    _propertyLabels[k] = propertyNames[k] + new string(' ', _propertyLabelsDisplayLength - propertyNameCellCounts[k]);
                 }
-                else if (propertyNameCellCounts[k] > this.propertyLabelsDisplayLength)
+                else if (propertyNameCellCounts[k] > _propertyLabelsDisplayLength)
                 {
                     // longer than the max, clip
-                    propertyLabels[k] = propertyNames[k].Substring(0, dc.GetHeadSplitLength(propertyNames[k], this.propertyLabelsDisplayLength));
+                    _propertyLabels[k] = propertyNames[k].Substring(0, dc.GetHeadSplitLength(propertyNames[k], _propertyLabelsDisplayLength));
                 }
                 else
                 {
-                    propertyLabels[k] = propertyNames[k];
+                    _propertyLabels[k] = propertyNames[k];
                 }
 
-                propertyLabels[k] += Separator;
+                _propertyLabels[k] += Separator;
             }
-            this.propertyLabelsDisplayLength += Separator.Length;
+            _propertyLabelsDisplayLength += Separator.Length;
         }
 
         /// <summary>
@@ -110,24 +109,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="values">array with the values in form of formatted strings</param>
         /// <param name="lo">LineOutput interface to write to</param>
-        internal void WriteProperties (string[] values, LineOutput lo)
+        internal void WriteProperties(string[] values, LineOutput lo)
         {
-            if (this.disabled)
+            if (_disabled)
                 return;
 
             string[] valuesToPrint = null;
             if (values == null)
             {
                 // we have nothing, but we have to create an empty array
-                valuesToPrint = new string[this.propertyLabels.Length];
-                for (int k = 0; k < this.propertyLabels.Length; k++)
+                valuesToPrint = new string[_propertyLabels.Length];
+                for (int k = 0; k < _propertyLabels.Length; k++)
                     valuesToPrint[k] = "";
             }
-            else if (values.Length < this.propertyLabels.Length)
+            else if (values.Length < _propertyLabels.Length)
             {
                 // need to pad to the end of the array
-                valuesToPrint = new string[this.propertyLabels.Length];
-                for (int k = 0; k < this.propertyLabels.Length; k++)
+                valuesToPrint = new string[_propertyLabels.Length];
+                for (int k = 0; k < _propertyLabels.Length; k++)
                 {
                     if (k < values.Length)
                         valuesToPrint[k] = values[k];
@@ -135,11 +134,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         valuesToPrint[k] = "";
                 }
             }
-            else if (values.Length > this.propertyLabels.Length)
+            else if (values.Length > _propertyLabels.Length)
             {
                 // need to trim
-                valuesToPrint = new string[this.propertyLabels.Length];
-                for (int k = 0; k < this.propertyLabels.Length; k++)
+                valuesToPrint = new string[_propertyLabels.Length];
+                for (int k = 0; k < _propertyLabels.Length; k++)
                     valuesToPrint[k] = values[k];
             }
             else
@@ -150,9 +149,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             Debug.Assert(lo != null, "LineOutput is null");
 
-            for (int k=0; k<propertyLabels.Length; k++)
+            for (int k = 0; k < _propertyLabels.Length; k++)
             {
-                WriteProperty (k, valuesToPrint[k], lo);
+                WriteProperty(k, valuesToPrint[k], lo);
             }
         }
 
@@ -163,7 +162,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="k">index of property to write</param>
         /// <param name="propertyValue">string value of the property to write</param>
         /// <param name="lo">LineOutput interface to write to</param>
-        private void WriteProperty (int k, string propertyValue, LineOutput lo)
+        private void WriteProperty(int k, string propertyValue, LineOutput lo)
         {
             if (propertyValue == null)
                 propertyValue = "";
@@ -179,18 +178,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 string prependString = null;
 
                 if (i == 0)
-                    prependString = propertyLabels[k];
+                    prependString = _propertyLabels[k];
                 else
                 {
                     if (padding == null)
-                        padding = prependString = new string(' ', propertyLabelsDisplayLength);
+                        padding = prependString = new string(' ', _propertyLabelsDisplayLength);
 
                     prependString = padding;
                 }
 
-                WriteSingleLineHelper (prependString, lines[i], lo);
+                WriteSingleLineHelper(prependString, lines[i], lo);
             }
-
         }
 
         /// <summary>
@@ -200,19 +198,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="prependString">string to add to the left</param>
         /// <param name="line">line to print</param>
         /// <param name="lo">LineOuput to write to</param>
-        private void WriteSingleLineHelper (string prependString, string line, LineOutput lo)
+        private void WriteSingleLineHelper(string prependString, string line, LineOutput lo)
         {
             if (line == null)
                 line = "";
 
             // compute the width of the field for the value string (in screen cells)
-            int fieldCellCount = this.columnWidth - propertyLabelsDisplayLength;
+            int fieldCellCount = _columnWidth - _propertyLabelsDisplayLength;
 
             // split the lines 
             StringCollection sc = StringManipulationHelper.GenerateLines(lo.DisplayCells, line, fieldCellCount, fieldCellCount);
 
             // padding to use in the lines after the first
-            string padding = new string(' ', propertyLabelsDisplayLength);
+            string padding = new string(' ', _propertyLabelsDisplayLength);
 
             // display the string collection
             for (int k = 0; k < sc.Count; k++)
@@ -231,7 +229,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// set to true when the width of the screen is too small to do anything useful
         /// </summary>
-        private bool disabled = false;
+        private bool _disabled = false;
 
         private const string Separator = " : ";
 

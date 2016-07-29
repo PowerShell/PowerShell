@@ -34,31 +34,38 @@ namespace System.Management.Automation
     internal static class Utils
     {
         // From System.Web.Util.HashCodeCombiner
-        internal static int CombineHashCodes(int h1, int h2) {
+        internal static int CombineHashCodes(int h1, int h2)
+        {
             return unchecked(((h1 << 5) + h1) ^ h2);
         }
- 
-        internal static int CombineHashCodes(int h1, int h2, int h3) {
+
+        internal static int CombineHashCodes(int h1, int h2, int h3)
+        {
             return CombineHashCodes(CombineHashCodes(h1, h2), h3);
         }
- 
-        internal static int CombineHashCodes(int h1, int h2, int h3, int h4) {
+
+        internal static int CombineHashCodes(int h1, int h2, int h3, int h4)
+        {
             return CombineHashCodes(CombineHashCodes(h1, h2), CombineHashCodes(h3, h4));
         }
- 
-        internal static int CombineHashCodes(int h1, int h2, int h3, int h4, int h5) {
+
+        internal static int CombineHashCodes(int h1, int h2, int h3, int h4, int h5)
+        {
             return CombineHashCodes(CombineHashCodes(h1, h2, h3, h4), h5);
         }
- 
-        internal static int CombineHashCodes(int h1, int h2, int h3, int h4, int h5, int h6) {
+
+        internal static int CombineHashCodes(int h1, int h2, int h3, int h4, int h5, int h6)
+        {
             return CombineHashCodes(CombineHashCodes(h1, h2, h3, h4), CombineHashCodes(h5, h6));
         }
- 
-        internal static int CombineHashCodes(int h1, int h2, int h3, int h4, int h5, int h6, int h7) {
+
+        internal static int CombineHashCodes(int h1, int h2, int h3, int h4, int h5, int h6, int h7)
+        {
             return CombineHashCodes(CombineHashCodes(h1, h2, h3, h4), CombineHashCodes(h5, h6, h7));
         }
- 
-        internal static int CombineHashCodes(int h1, int h2, int h3, int h4, int h5, int h6, int h7, int h8) {
+
+        internal static int CombineHashCodes(int h1, int h2, int h3, int h4, int h5, int h6, int h7, int h8)
+        {
             return CombineHashCodes(CombineHashCodes(h1, h2, h3, h4), CombineHashCodes(h5, h6, h7, h8));
         }
 
@@ -66,7 +73,7 @@ namespace System.Management.Automation
         /// The existence of the following registry confirms that the host machine is a WinPE
         /// HKLM\System\CurrentControlSet\Control\MiniNT
         /// </summary>
-        internal static string WinPEIdentificationRegKey = @"System\CurrentControlSet\Control\MiniNT";  
+        internal static string WinPEIdentificationRegKey = @"System\CurrentControlSet\Control\MiniNT";
 
         /// <summary>
         /// Allowed PowerShell Editions
@@ -187,20 +194,20 @@ namespace System.Management.Automation
         {
             ExecutionContext ecFromTLS = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             if (ecFromTLS == null)
-            {                
+            {
                 return null;
             }
 
             return ecFromTLS.TypeTable;
         }
 
-        private static string _pshome = null;
+        private static string s_pshome = null;
 
         internal static string GetApplicationBaseFromRegistry(string shellId)
         {
-            bool wantPsHome = (object) shellId == (object) DefaultPowerShellShellID;
-            if (wantPsHome && _pshome != null)
-                return _pshome;
+            bool wantPsHome = (object)shellId == (object)DefaultPowerShellShellID;
+            if (wantPsHome && s_pshome != null)
+                return s_pshome;
 
             string engineKeyPath = RegistryStrings.MonadRootKeyPath + "\\" +
                 PSVersionInfo.RegistryVersionKey + "\\" + RegistryStrings.MonadEngineKey;
@@ -211,7 +218,7 @@ namespace System.Management.Automation
                 {
                     var result = engineKey.GetValue(RegistryStrings.MonadEngine_ApplicationBase) as string;
                     if (wantPsHome)
-                        Interlocked.CompareExchange(ref _pshome, null, result);
+                        Interlocked.CompareExchange(ref s_pshome, null, result);
 
                     return result;
                 }
@@ -273,11 +280,11 @@ namespace System.Management.Automation
 #endif
         }
 
-        private static string[] _productFolderDirectories;
+        private static string[] s_productFolderDirectories;
 
         private static string[] GetProductFolderDirectories()
         {
-            if (_productFolderDirectories == null)
+            if (s_productFolderDirectories == null)
             {
                 List<string> baseDirectories = new List<string>();
 
@@ -318,10 +325,10 @@ namespace System.Management.Automation
                     baseDirectories.Add(Path.Combine(progFileDir, "Json.Net"));
 #endif // CORECLR
                 }
-                Interlocked.CompareExchange(ref _productFolderDirectories, baseDirectories.ToArray(), null);
+                Interlocked.CompareExchange(ref s_productFolderDirectories, baseDirectories.ToArray(), null);
             }
 
-            return _productFolderDirectories;
+            return s_productFolderDirectories;
         }
 
         /// <summary>
@@ -385,7 +392,7 @@ namespace System.Management.Automation
             }
 #endif
             return false;
-        }  
+        }
 
 
         #region Versioning related methods
@@ -475,13 +482,13 @@ namespace System.Management.Automation
 
             foreach (Version compatibleVersion in PSVersionInfo.PSCompatibleVersions)
             {
-                if(checkVersion.Major == compatibleVersion.Major && checkVersion.Minor <= compatibleVersion.Minor)
+                if (checkVersion.Major == compatibleVersion.Major && checkVersion.Minor <= compatibleVersion.Minor)
                     return true;
             }
 
             return false;
         }
-        
+
         /// <summary>
         /// Checks whether current monad session supports edition specified
         /// by checkEdition.
@@ -521,7 +528,7 @@ namespace System.Management.Automation
             {
                 return false;
             }
-            
+
             // Construct a temporary version number with build number and revision number set to 0. 
             // This is done so as to re-use the version specifications in PSUtils.FrameworkRegistryInstallation          
             Version tempVersion = new Version(checkVersion.Major, checkVersion.Minor, 0, 0);
@@ -603,10 +610,10 @@ namespace System.Management.Automation
         // Retrieves group policy settings based on the preference order provided:
         // Dictionary<string, object> settings = GetGroupPolicySetting("Transcription", Registry.LocalMachine, Registry.CurrentUser);
 
-        internal static RegistryKey[] RegLocalMachine = new[] {Registry.LocalMachine};
-        internal static RegistryKey[] RegCurrentUser = new[] {Registry.CurrentUser};
-        internal static RegistryKey[] RegLocalMachineThenCurrentUser = new[] {Registry.LocalMachine, Registry.CurrentUser};
-        internal static RegistryKey[] RegCurrentUserThenLocalMachine = new[] {Registry.CurrentUser, Registry.LocalMachine};
+        internal static RegistryKey[] RegLocalMachine = new[] { Registry.LocalMachine };
+        internal static RegistryKey[] RegCurrentUser = new[] { Registry.CurrentUser };
+        internal static RegistryKey[] RegLocalMachineThenCurrentUser = new[] { Registry.LocalMachine, Registry.CurrentUser };
+        internal static RegistryKey[] RegCurrentUserThenLocalMachine = new[] { Registry.CurrentUser, Registry.LocalMachine };
 
         internal static Dictionary<string, object> GetGroupPolicySetting(string settingName, RegistryKey[] preferenceOrder)
         {
@@ -615,18 +622,18 @@ namespace System.Management.Automation
         }
 
         // We use a static to avoid creating "extra garbage."
-        private static Dictionary<string, object> _emptyDictionary = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        private static Dictionary<string, object> s_emptyDictionary = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         internal static Dictionary<string, object> GetGroupPolicySetting(string groupPolicyBase, string settingName, RegistryKey[] preferenceOrder)
         {
 #if UNIX
-            return _emptyDictionary;
+            return s_emptyDictionary;
 #else
-            lock (cachedGroupPolicySettings)
+            lock (s_cachedGroupPolicySettings)
             {
                 // Return cached information, if we have it
                 Dictionary<string, object> settings;
-                if ((cachedGroupPolicySettings.TryGetValue(settingName, out settings)) &&
+                if ((s_cachedGroupPolicySettings.TryGetValue(settingName, out settings)) &&
                     !InternalTestHooks.BypassGroupPolicyCaching)
                 {
                     return settings;
@@ -691,14 +698,14 @@ namespace System.Management.Automation
                 // Cache the data
                 if (!InternalTestHooks.BypassGroupPolicyCaching)
                 {
-                    cachedGroupPolicySettings[settingName] = settings;
+                    s_cachedGroupPolicySettings[settingName] = settings;
                 }
 
                 return settings;
             }
 #endif
         }
-        static ConcurrentDictionary<string, Dictionary<string, object>> cachedGroupPolicySettings =
+        private static ConcurrentDictionary<string, Dictionary<string, object>> s_cachedGroupPolicySettings =
             new ConcurrentDictionary<string, Dictionary<string, object>>();
 
         /// <summary>
@@ -874,7 +881,7 @@ namespace System.Management.Automation
             // first look in the loaded modules and then append the modules from gmo -Listavailable
             // Reason: gmo -li looks only the PSModulepath. There may be cases where a module
             // is imported directly from a path (that is not in PSModulePath).
-            List<PSModuleInfo> result = context.Modules.GetModules(new[]  { fullyQualifiedName }, false);
+            List<PSModuleInfo> result = context.Modules.GetModules(new[] { fullyQualifiedName }, false);
             CommandInfo commandInfo = new CmdletInfo("Get-Module", typeof(GetModuleCommand),
                                                      null, null, context);
             var getModuleCommand = new Runspaces.Command(commandInfo);
@@ -1048,8 +1055,8 @@ namespace System.Management.Automation
                 {
                     if ((findData.dwFileAttributes & NativeMethods.FileAttributes.Directory) != 0)
                     {
-                        if ( (! String.Equals(".", findData.cFileName, StringComparison.OrdinalIgnoreCase)) &&
-                            (! String.Equals("..", findData.cFileName, StringComparison.OrdinalIgnoreCase)))
+                        if ((!String.Equals(".", findData.cFileName, StringComparison.OrdinalIgnoreCase)) &&
+                            (!String.Equals("..", findData.cFileName, StringComparison.OrdinalIgnoreCase)))
                         {
                             directories.Add(directory + "\\" + findData.cFileName);
                         }
@@ -1379,7 +1386,7 @@ namespace System.Management.Automation
         // [System.Text.Encoding]::GetEncodings() | ? { $_.GetEncoding().GetPreamble() } |
         //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
         //     Format-Table -Auto
-        internal static Dictionary<String, FileSystemCmdletProviderEncoding> encodingMap = 
+        internal static Dictionary<String, FileSystemCmdletProviderEncoding> encodingMap =
             new Dictionary<string, FileSystemCmdletProviderEncoding>()
             {
                 { "255-254", FileSystemCmdletProviderEncoding.Unicode },
@@ -1475,14 +1482,14 @@ namespace System.Management.Automation
         internal static ReadOnlyCollection<T> EmptyReadOnlyCollection<T>()
         {
             return EmptyReadOnlyCollectionHolder<T>._instance;
-        } 
+        }
 
-        static class EmptyArrayHolder<T>
+        private static class EmptyArrayHolder<T>
         {
             internal static readonly T[] _instance = new T[0];
         }
 
-        static class EmptyReadOnlyCollectionHolder<T>
+        private static class EmptyReadOnlyCollectionHolder<T>
         {
             internal static readonly ReadOnlyCollection<T> _instance =
                 new ReadOnlyCollection<T>(EmptyArray<T>());
@@ -1490,29 +1497,29 @@ namespace System.Management.Automation
 
         static internal class Separators
         {
-            internal static readonly char[] Backslash = new char[] {'\\'};
-            internal static readonly char[] Directory = new char[] {'\\', '/'};
-            internal static readonly char[] DirectoryOrDrive = new char[] {'\\', '/', ':'};
+            internal static readonly char[] Backslash = new char[] { '\\' };
+            internal static readonly char[] Directory = new char[] { '\\', '/' };
+            internal static readonly char[] DirectoryOrDrive = new char[] { '\\', '/', ':' };
 
-            internal static readonly char[] Colon = new char[] {':'};
-            internal static readonly char[] Dot = new char[] {'.'};
-            internal static readonly char[] Pipe = new char[] {'|'};
-            internal static readonly char[] Comma = new char[] {','};
-            internal static readonly char[] Semicolon = new char[] {';'};
-            internal static readonly char[] StarOrQuestion = new char[] {'*', '?'};
-            internal static readonly char[] ColonOrBackslash = new char[] {'\\', ':'};
+            internal static readonly char[] Colon = new char[] { ':' };
+            internal static readonly char[] Dot = new char[] { '.' };
+            internal static readonly char[] Pipe = new char[] { '|' };
+            internal static readonly char[] Comma = new char[] { ',' };
+            internal static readonly char[] Semicolon = new char[] { ';' };
+            internal static readonly char[] StarOrQuestion = new char[] { '*', '?' };
+            internal static readonly char[] ColonOrBackslash = new char[] { '\\', ':' };
 
-            internal static readonly char[] QuoteChars = new char[] {'\'', '"'};
-            internal static readonly char[] Space = new char[] {' '};
-            internal static readonly char[] QuotesSpaceOrTab = new char[] {' ', '\t', '\'', '"'};
-            internal static readonly char[] SpaceOrTab = new char[] {' ', '\t'};
-            internal static readonly char[] Newline = new char[] {'\n'};
-            internal static readonly char[] CrLf = new char[] {'\r', '\n'};
+            internal static readonly char[] QuoteChars = new char[] { '\'', '"' };
+            internal static readonly char[] Space = new char[] { ' ' };
+            internal static readonly char[] QuotesSpaceOrTab = new char[] { ' ', '\t', '\'', '"' };
+            internal static readonly char[] SpaceOrTab = new char[] { ' ', '\t' };
+            internal static readonly char[] Newline = new char[] { '\n' };
+            internal static readonly char[] CrLf = new char[] { '\r', '\n' };
 
             // (Copied from System.IO.Path so we can call TrimEnd in the same way that Directory.EnumerateFiles would on the search patterns).
             // Trim trailing white spaces, tabs etc but don't be aggressive in removing everything that has UnicodeCategory of trailing space.
             // String.WhitespaceChars will trim aggressively than what the underlying FS does (for ex, NTFS, FAT).    
-            internal static readonly char[] PathSearchTrimEnd = { (char) 0x9, (char) 0xA, (char) 0xB, (char) 0xC, (char) 0xD, (char) 0x20,   (char) 0x85, (char) 0xA0};
+            internal static readonly char[] PathSearchTrimEnd = { (char)0x9, (char)0xA, (char)0xB, (char)0xC, (char)0xD, (char)0x20, (char)0x85, (char)0xA0 };
         }
     }
 }
@@ -1530,14 +1537,14 @@ namespace System.Management.Automation.Internal
         // It's useful to test that we don't depend on the ScriptBlock and AST objects and can use a re-parsed version.
         internal static bool IgnoreScriptBlockCache;
 
-	    /// <summary>This member is used for internal test purposes.</summary>
-	    public static void SetTestHook(string property, bool value)
-	    {
-		    var fieldInfo = typeof(InternalTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
-		    if (fieldInfo != null)
-		    {
-			    fieldInfo.SetValue(null, value);
-		    }
-	    }
+        /// <summary>This member is used for internal test purposes.</summary>
+        public static void SetTestHook(string property, bool value)
+        {
+            var fieldInfo = typeof(InternalTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
+            if (fieldInfo != null)
+            {
+                fieldInfo.SetValue(null, value);
+            }
+        }
     }
 }

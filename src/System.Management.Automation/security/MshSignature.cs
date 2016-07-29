@@ -3,29 +3,29 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Security.Cryptography.X509Certificates;
 using System.ComponentModel;
 using System.IO;
 
-using DWORD  = System.UInt32;
+using DWORD = System.UInt32;
 
 
 namespace System.Management.Automation
 {
     internal static class Win32Errors
     {
-        internal const DWORD NO_ERROR                     = 0;
-        internal const DWORD E_FAIL                       = 0x80004005;
-        internal const DWORD TRUST_E_NOSIGNATURE          = 0x800b0100;
-        internal const DWORD TRUST_E_BAD_DIGEST           = 0x80096010;
-        internal const DWORD TRUST_E_PROVIDER_UNKNOWN     = 0x800b0001;
+        internal const DWORD NO_ERROR = 0;
+        internal const DWORD E_FAIL = 0x80004005;
+        internal const DWORD TRUST_E_NOSIGNATURE = 0x800b0100;
+        internal const DWORD TRUST_E_BAD_DIGEST = 0x80096010;
+        internal const DWORD TRUST_E_PROVIDER_UNKNOWN = 0x800b0001;
         internal const DWORD TRUST_E_SUBJECT_FORM_UNKNOWN = 0x800B0003;
-        internal const DWORD CERT_E_UNTRUSTEDROOT         = 0x800b0109;
-        internal const DWORD TRUST_E_EXPLICIT_DISTRUST    = 0x800B0111;
-        internal const DWORD CRYPT_E_BAD_MSG              = 0x8009200d;
-        internal const DWORD NTE_BAD_ALGID                = 0x80090008;
+        internal const DWORD CERT_E_UNTRUSTEDROOT = 0x800b0109;
+        internal const DWORD TRUST_E_EXPLICIT_DISTRUST = 0x800B0111;
+        internal const DWORD CRYPT_E_BAD_MSG = 0x8009200d;
+        internal const DWORD NTE_BAD_ALGID = 0x80090008;
     }
 
     /// <summary>
@@ -98,19 +98,19 @@ namespace System.Management.Automation
         /// </summary>
         Catalog = 2
     };
-  
+
     /// <summary>
     /// Represents a digital signature on a signed
     /// file.
     /// </summary>    
     public sealed class Signature
     {
-        private string path;
-        private SignatureStatus status = SignatureStatus.UnknownError;
-        private DWORD win32Error;
-        private X509Certificate2 signerCert;
-        private string statusMessage = String.Empty;
-        private X509Certificate2 timeStamperCert;
+        private string _path;
+        private SignatureStatus _status = SignatureStatus.UnknownError;
+        private DWORD _win32Error;
+        private X509Certificate2 _signerCert;
+        private string _statusMessage = String.Empty;
+        private X509Certificate2 _timeStamperCert;
         //private DateTime signedOn = new DateTime(0);
 
         // Three states:
@@ -129,7 +129,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return signerCert;
+                return _signerCert;
             }
         }
 
@@ -141,7 +141,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return timeStamperCert;
+                return _timeStamperCert;
             }
         }
 
@@ -152,10 +152,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return status;
+                return _status;
             }
         }
- 
+
         /// <summary>
         /// Gets the message corresponding to the status of the
         /// signature on the file.
@@ -164,7 +164,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return statusMessage;
+                return _statusMessage;
             }
         }
 
@@ -176,7 +176,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return path;
+                return _path;
             }
         }
 
@@ -295,18 +295,18 @@ namespace System.Management.Automation
                           DWORD error,
                           X509Certificate2 timestamper)
         {
-            path = filePath;
-            win32Error = error;
-            signerCert = signer;
-            timeStamperCert = timestamper;
+            _path = filePath;
+            _win32Error = error;
+            _signerCert = signer;
+            _timeStamperCert = timestamper;
             SignatureType = SignatureType.None;
 
             SignatureStatus isc =
                 GetSignatureStatusFromWin32Error(error);
 
-            status = isc;
+            _status = isc;
 
-            statusMessage = GetSignatureStatusMessage(isc,
+            _statusMessage = GetSignatureStatusMessage(isc,
                                                       error,
                                                       filePath);
         }
@@ -316,32 +316,32 @@ namespace System.Management.Automation
         {
             SignatureStatus isc = SignatureStatus.UnknownError;
 
-            switch(error)
+            switch (error)
             {
-            case Win32Errors.NO_ERROR:
-                isc = SignatureStatus.Valid;
-                break;
+                case Win32Errors.NO_ERROR:
+                    isc = SignatureStatus.Valid;
+                    break;
 
-            case Win32Errors.NTE_BAD_ALGID:
-                isc = SignatureStatus.Incompatible;
-                break;
+                case Win32Errors.NTE_BAD_ALGID:
+                    isc = SignatureStatus.Incompatible;
+                    break;
 
-            case Win32Errors.TRUST_E_NOSIGNATURE:
-                isc = SignatureStatus.NotSigned;
-                break;
+                case Win32Errors.TRUST_E_NOSIGNATURE:
+                    isc = SignatureStatus.NotSigned;
+                    break;
 
-            case Win32Errors.TRUST_E_BAD_DIGEST:
-            case Win32Errors.CRYPT_E_BAD_MSG:
-                isc = SignatureStatus.HashMismatch;
-                break;
+                case Win32Errors.TRUST_E_BAD_DIGEST:
+                case Win32Errors.CRYPT_E_BAD_MSG:
+                    isc = SignatureStatus.HashMismatch;
+                    break;
 
-            case Win32Errors.TRUST_E_PROVIDER_UNKNOWN:
-                isc = SignatureStatus.NotSupportedFileFormat;
-                break;
+                case Win32Errors.TRUST_E_PROVIDER_UNKNOWN:
+                    isc = SignatureStatus.NotSupportedFileFormat;
+                    break;
 
-            case Win32Errors.TRUST_E_EXPLICIT_DISTRUST:
-                isc = SignatureStatus.NotTrusted;
-                break;
+                case Win32Errors.TRUST_E_EXPLICIT_DISTRUST:
+                    isc = SignatureStatus.NotTrusted;
+                    break;
             }
 
             return isc;
@@ -357,56 +357,56 @@ namespace System.Management.Automation
 
             switch (status)
             {
-            case SignatureStatus.Valid:
-                resourceString = MshSignature.MshSignature_Valid;
-                break;
+                case SignatureStatus.Valid:
+                    resourceString = MshSignature.MshSignature_Valid;
+                    break;
 
-            case SignatureStatus.UnknownError:
-                int intError = SecuritySupport.GetIntFromDWORD(error);
-                Win32Exception e = new Win32Exception(intError);
-                message = e.Message;
-                break;
+                case SignatureStatus.UnknownError:
+                    int intError = SecuritySupport.GetIntFromDWORD(error);
+                    Win32Exception e = new Win32Exception(intError);
+                    message = e.Message;
+                    break;
 
-            case SignatureStatus.Incompatible:
-                if (error == Win32Errors.NTE_BAD_ALGID)
-                {
-                    resourceString = MshSignature.MshSignature_Incompatible_HashAlgorithm;
-                }
-                else
-                {
-                    resourceString = MshSignature.MshSignature_Incompatible;
-                }
-                arg = filePath;
-                break;
+                case SignatureStatus.Incompatible:
+                    if (error == Win32Errors.NTE_BAD_ALGID)
+                    {
+                        resourceString = MshSignature.MshSignature_Incompatible_HashAlgorithm;
+                    }
+                    else
+                    {
+                        resourceString = MshSignature.MshSignature_Incompatible;
+                    }
+                    arg = filePath;
+                    break;
 
-            case SignatureStatus.NotSigned:
-                resourceString = MshSignature.MshSignature_NotSigned;
-                arg = filePath;
-                break;
+                case SignatureStatus.NotSigned:
+                    resourceString = MshSignature.MshSignature_NotSigned;
+                    arg = filePath;
+                    break;
 
-            case SignatureStatus.HashMismatch:
-                resourceString = MshSignature.MshSignature_HashMismatch;
-                arg = filePath;
-                break;
+                case SignatureStatus.HashMismatch:
+                    resourceString = MshSignature.MshSignature_HashMismatch;
+                    arg = filePath;
+                    break;
 
-            case SignatureStatus.NotTrusted:
-                resourceString = MshSignature.MshSignature_NotTrusted;
-                arg = filePath;
-                break;
+                case SignatureStatus.NotTrusted:
+                    resourceString = MshSignature.MshSignature_NotTrusted;
+                    arg = filePath;
+                    break;
 
-            case SignatureStatus.NotSupportedFileFormat:
-                resourceString = MshSignature.MshSignature_NotSupportedFileFormat;
-                arg = System.IO.Path.GetExtension(filePath);
+                case SignatureStatus.NotSupportedFileFormat:
+                    resourceString = MshSignature.MshSignature_NotSupportedFileFormat;
+                    arg = System.IO.Path.GetExtension(filePath);
 
-                if (String.IsNullOrEmpty(arg))
-                {
-                    resourceString = MshSignature.MshSignature_NotSupportedFileFormat_NoExtension;
-                    arg = null;
-                }
-                break;
+                    if (String.IsNullOrEmpty(arg))
+                    {
+                        resourceString = MshSignature.MshSignature_NotSupportedFileFormat_NoExtension;
+                        arg = null;
+                    }
+                    break;
             }
 
-            if ( message == null )
+            if (message == null)
             {
                 if (arg == null)
                 {

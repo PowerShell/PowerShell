@@ -4,7 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Collections.ObjectModel;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Provider
@@ -260,7 +260,6 @@ namespace System.Management.Automation.Provider
         } // InitializeDefaultDrives
 
         #endregion Public methods
-
     } // DriveCmdletProvider
 
     #endregion DriveCmdletProvider

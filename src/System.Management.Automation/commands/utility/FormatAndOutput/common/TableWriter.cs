@@ -37,9 +37,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal ColumnInfo[] columnInfo = null;
         }
 
-        private ScreenInfo si;
+        private ScreenInfo _si;
 
-        internal static int ComputeWideViewBestItemsPerRowFit (int stringLen, int screenColumns)
+        internal static int ComputeWideViewBestItemsPerRowFit(int stringLen, int screenColumns)
         {
             if (stringLen <= 0 || screenColumns < 1)
                 return 1;
@@ -79,30 +79,30 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="columnWidths">array of specified column widths</param>
         /// <param name="alignment">array of alignment flags</param>
         /// <param name="suppressHeader">if true, suppress header printing</param>
-        internal void Initialize (int leftMarginIndent, int screenColumns, int[] columnWidths, int[] alignment, bool suppressHeader)
+        internal void Initialize(int leftMarginIndent, int screenColumns, int[] columnWidths, int[] alignment, bool suppressHeader)
         {
             //Console.WriteLine("         1         2         3         4         5         6         7");
             //Console.WriteLine("01234567890123456789012345678901234567890123456789012345678901234567890123456789");
-            
+
             if (leftMarginIndent < 0)
             {
                 leftMarginIndent = 0;
             }
-            if (screenColumns-leftMarginIndent < ScreenInfo.minimumScreenColumns)
+            if (screenColumns - leftMarginIndent < ScreenInfo.minimumScreenColumns)
             {
-                disabled = true;
+                _disabled = true;
                 return;
             }
-            startColumn = leftMarginIndent;
+            _startColumn = leftMarginIndent;
 
-            hideHeader = suppressHeader;
+            _hideHeader = suppressHeader;
 
             // make sure the column widths are correct; if not, take appropriate action
-            ColumnWidthManager manager = new ColumnWidthManager (screenColumns-leftMarginIndent, 
-                                                        ScreenInfo.minimumColumnWidth, 
+            ColumnWidthManager manager = new ColumnWidthManager(screenColumns - leftMarginIndent,
+                                                        ScreenInfo.minimumColumnWidth,
                                                         ScreenInfo.separatorCharacterCount);
 
-            manager.CalculateColumnWidths (columnWidths);
+            manager.CalculateColumnWidths(columnWidths);
 
             // if all the columns are hidden, just disable
             bool oneValid = false;
@@ -118,33 +118,33 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (!oneValid)
             {
-                this.disabled = true;
+                _disabled = true;
                 return;
             }
 
             // now set the run time data structures
-            si = new ScreenInfo();
-            si.screenColumns = screenColumns;
-            si.columnInfo = new ColumnInfo[columnWidths.Length];
+            _si = new ScreenInfo();
+            _si.screenColumns = screenColumns;
+            _si.columnInfo = new ColumnInfo[columnWidths.Length];
 
-            int startCol = startColumn;
+            int startCol = _startColumn;
             for (int k = 0; k < columnWidths.Length; k++)
             {
-                si.columnInfo[k] = new ColumnInfo();
-                si.columnInfo[k].startCol = startCol;
-                si.columnInfo[k].width = columnWidths[k];
-                si.columnInfo[k].alignment = alignment[k];
+                _si.columnInfo[k] = new ColumnInfo();
+                _si.columnInfo[k].startCol = startCol;
+                _si.columnInfo[k].width = columnWidths[k];
+                _si.columnInfo[k].alignment = alignment[k];
                 startCol += columnWidths[k] + ScreenInfo.separatorCharacterCount;
                 //Console.WriteLine("start = {0} width = {1}", si.columnInfo[k].startCol, si.columnInfo[k].width);
             }
         }
 
-        internal void GenerateHeader (string[] values, LineOutput lo)
+        internal void GenerateHeader(string[] values, LineOutput lo)
         {
-            if (this.disabled)
+            if (_disabled)
                 return;
 
-            if (this.hideHeader)
+            if (_hideHeader)
                 return;
 
             // generate the row with the header labels
@@ -153,17 +153,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // generate an array of "--" as header markers below
             // the column header labels
             string[] breakLine = new string[values.Length];
-            for (int k=0; k< si.columnInfo.Length; k++)
+            for (int k = 0; k < _si.columnInfo.Length; k++)
             {
                 // the column can be hidden
-                if (si.columnInfo[k].width <= 0)
+                if (_si.columnInfo[k].width <= 0)
                 {
                     breakLine[k] = "";
                     continue;
                 }
                 // the title can be larger than the width
-                int count = si.columnInfo[k].width;
-                if (!string.IsNullOrEmpty (values[k]))
+                int count = _si.columnInfo[k].width;
+                if (!string.IsNullOrEmpty(values[k]))
                 {
                     int labelDisplayCells = lo.DisplayCells.Length(values[k]);
                     if (labelDisplayCells < count)
@@ -179,18 +179,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal void GenerateRow(string[] values, LineOutput lo, bool multiLine, int[] alignment, DisplayCells dc)
         {
-            if (this.disabled)
+            if (_disabled)
                 return;
 
             // build the current row aligment settings
-            int cols = si.columnInfo.Length;
+            int cols = _si.columnInfo.Length;
             int[] currentAlignment = new int[cols];
 
             if (alignment == null)
             {
                 for (int i = 0; i < cols; i++)
                 {
-                    currentAlignment[i] = si.columnInfo[i].alignment;
+                    currentAlignment[i] = _si.columnInfo[i].alignment;
                 }
             }
             else
@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 for (int i = 0; i < cols; i++)
                 {
                     if (alignment[i] == TextAlignment.Undefined)
-                        currentAlignment[i] = si.columnInfo[i].alignment;
+                        currentAlignment[i] = _si.columnInfo[i].alignment;
                     else
                         currentAlignment[i] = alignment[i];
                 }
@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 for (int k = 0; k < lines.Length; k++)
                 {
-                    lo.WriteLine (lines[k]);
+                    lo.WriteLine(lines[k]);
                 }
             }
             else
@@ -223,11 +223,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private string[] GenerateTableRow(string[] values, int[] alignment, DisplayCells ds)
         {
             // select the active columns (skip hidden ones)
-            int[] validColumnArray = new int[si.columnInfo.Length];
+            int[] validColumnArray = new int[_si.columnInfo.Length];
             int validColumnCount = 0;
-            for (int k = 0; k < si.columnInfo.Length; k++)
+            for (int k = 0; k < _si.columnInfo.Length; k++)
             {
-                if (si.columnInfo[k].width > 0)
+                if (_si.columnInfo[k].width > 0)
                 {
                     validColumnArray[validColumnCount++] = k;
                 }
@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             for (int k = 0; k < scArray.Length; k++)
             {
                 // obtain a set of tokens for each field
-                scArray[k] = GenerateMultiLineRowField (values[validColumnArray[k]], validColumnArray[k], 
+                scArray[k] = GenerateMultiLineRowField(values[validColumnArray[k]], validColumnArray[k],
                                                                         alignment[validColumnArray[k]], ds);
 
                 // NOTE: the following padding operations assume that we 
@@ -251,17 +251,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // skipping the first ones, add a separator for catenation
                     for (int j = 0; j < scArray[k].Count; j++)
                     {
-                        scArray[k][j] = new string (' ', ScreenInfo.separatorCharacterCount) + scArray[k][j];
+                        scArray[k][j] = new string(' ', ScreenInfo.separatorCharacterCount) + scArray[k][j];
                     }
                 }
                 else
                 {
                     // add indentation padding if needed
-                    if (this.startColumn > 0)
+                    if (_startColumn > 0)
                     {
                         for (int j = 0; j < scArray[k].Count; j++)
                         {
-                            scArray[k][j] = new string (' ', this.startColumn) + scArray[k][j];
+                            scArray[k][j] = new string(' ', _startColumn) + scArray[k][j];
                         }
                     }
                 }
@@ -279,47 +279,47 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // add padding for the colums that are shorter
             for (int col = 0; col < scArray.Length; col++)
             {
-                int paddingBlanks = si.columnInfo[validColumnArray[col]].width;
+                int paddingBlanks = _si.columnInfo[validColumnArray[col]].width;
                 if (col > 0)
                     paddingBlanks += ScreenInfo.separatorCharacterCount;
                 else
                 {
-                    paddingBlanks += this.startColumn;
+                    paddingBlanks += _startColumn;
                 }
                 int paddingEntries = screenRows - scArray[col].Count;
                 if (paddingEntries > 0)
                 {
                     for (int j = 0; j < paddingEntries; j++)
                     {
-                        scArray[col].Add (new string (' ', paddingBlanks));
+                        scArray[col].Add(new string(' ', paddingBlanks));
                     }
                 }
             }
 
             // finally, build an array of strings
             string[] rows = new string[screenRows];
-            for (int row = 0; row < rows.Length; row++ )
+            for (int row = 0; row < rows.Length; row++)
             {
-                StringBuilder sb = new StringBuilder ();
+                StringBuilder sb = new StringBuilder();
                 // for a give row, walk the columns
                 for (int col = 0; col < scArray.Length; col++)
                 {
-                    sb.Append (scArray[col][row]);
+                    sb.Append(scArray[col][row]);
                 }
-                rows[row] = sb.ToString ();
+                rows[row] = sb.ToString();
             }
             return rows;
         }
 
-        private StringCollection GenerateMultiLineRowField (string val, int k, int aligment, DisplayCells dc)
+        private StringCollection GenerateMultiLineRowField(string val, int k, int aligment, DisplayCells dc)
         {
             StringCollection sc = StringManipulationHelper.GenerateLines(dc, val,
-                                        si.columnInfo[k].width, si.columnInfo[k].width);
+                                        _si.columnInfo[k].width, _si.columnInfo[k].width);
             // if length is shorter, do some padding
             for (int col = 0; col < sc.Count; col++)
             {
-                if (dc.Length(sc[col]) < si.columnInfo[k].width)
-                    sc[col] = GenerateRowField (sc[col], si.columnInfo[k].width, aligment, dc);
+                if (dc.Length(sc[col]) < _si.columnInfo[k].width)
+                    sc[col] = GenerateRowField(sc[col], _si.columnInfo[k].width, aligment, dc);
             }
             return sc;
         }
@@ -329,9 +329,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             StringBuilder sb = new StringBuilder();
 
-            for (int k=0; k< si.columnInfo.Length; k++)
+            for (int k = 0; k < _si.columnInfo.Length; k++)
             {
-                if (si.columnInfo[k].width <= 0)
+                if (_si.columnInfo[k].width <= 0)
                 {
                     // skip columns that are not at least a single character wide
                     continue;
@@ -347,21 +347,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 else
                 {
                     // add indentation padding if needed
-                    if (this.startColumn > 0)
+                    if (_startColumn > 0)
                     {
-                        sb.Append(new string(' ', this.startColumn));
+                        sb.Append(new string(' ', _startColumn));
                     }
                 }
-                sb.Append(GenerateRowField(values[k], si.columnInfo[k].width, alignment[k], dc));
+                sb.Append(GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc));
             }
             return sb.ToString();
         }
 
- 
-        private static string GenerateRowField (string val, int width, int alignment, DisplayCells dc)
+
+        private static string GenerateRowField(string val, int width, int alignment, DisplayCells dc)
         {
             // make sure the string does not have any embedded <CR> in it
-            string s = StringManipulationHelper.TruncateAtNewLine (val);
+            string s = StringManipulationHelper.TruncateAtNewLine(val);
 
             if (s == null)
                 s = "";
@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             int padLeft = padCount / 2;
                             int padRight = padCount - padLeft;
 
-                            s = new string (' ', padLeft) + s + new string (' ', padRight);
+                            s = new string(' ', padLeft) + s + new string(' ', padRight);
                         }
                         break;
 
@@ -508,12 +508,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private const string ellipsis = "...";
 
-        private bool disabled = false;
+        private bool _disabled = false;
 
-        private bool hideHeader = false;
+        private bool _hideHeader = false;
 
-        private int startColumn = 0;
-
+        private int _startColumn = 0;
     }
- 
 }

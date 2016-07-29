@@ -8,10 +8,9 @@ using System.Text;
 using System.Globalization;
 
 // interfaces for host interaction
+
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
-
-
     /// <summary>
     /// Base class providing support for string manipulation.
     /// This class is a tear off class provided by the LineOutput class
@@ -24,7 +23,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal class DisplayCells
     {
-        internal virtual int Length(string str) 
+        internal virtual int Length(string str)
         {
             return Length(str, 0);
         }
@@ -143,19 +142,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// objects before any processing
         /// </summary>
         internal virtual bool RequiresBuffering { get { return false; } }
-        
+
         /// <summary>
         /// delegate the implementor of ExecuteBufferPlayBack should
         /// call to cause the playback to happen when ready to execute
         /// </summary>
-        internal delegate void DoPlayBackCall ();
+        internal delegate void DoPlayBackCall();
 
 
         /// <summary>
         /// if RequiresBuffering = true, this call will be made to 
         /// start the playback
         /// </summary>
-        internal virtual void ExecuteBufferPlayBack (DoPlayBackCall playback ) { }
+        internal virtual void ExecuteBufferPlayBack(DoPlayBackCall playback) { }
 
         /// 
         /// <summary>
@@ -167,14 +166,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// The number of rows the current device has
         /// </summary>
         internal abstract int RowNumber { get; }
-    
+
         /// <summary>
         /// Write a line to the output device.
         /// </summary>
         /// <param name="s"> 
         ///     string to be written to the device
         /// </param>
-        internal abstract void WriteLine (string s);
+        internal abstract void WriteLine(string s);
 
         internal WriteStreamType WriteStream
         {
@@ -205,11 +204,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <value></value>
         internal virtual DisplayCells DisplayCells
         {
-            get 
+            get
             {
                 CheckStopProcessing();
                 // just return the default singelton implementation
-                return _displayCellsDefault; 
+                return _displayCellsDefault;
             }
         }
 
@@ -219,7 +218,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// implementation by overriding
         /// </summary>
         protected static DisplayCells _displayCellsDefault = new DisplayCells();
-
     }
 
     /// <summary>
@@ -230,28 +228,28 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal class WriteLineHelper
     {
         #region callbacks
-        
+
         /// <summary>
         /// delegate definition
         /// </summary>
         /// <param name="s">string to write</param>
-        internal delegate void WriteCallback (string s);
+        internal delegate void WriteCallback(string s);
 
         /// <summary>
         /// instance of the delegate previously defined
         /// for line that has EXACTLY this.ncols characters
         /// </summary>
-        private WriteCallback writeCall = null;
+        private WriteCallback _writeCall = null;
 
         /// <summary>
         /// instance of the delegate previously defined
         /// for generic line, less that this.ncols characters
         /// </summary>
-        private WriteCallback writeLineCall = null;
+        private WriteCallback _writeLineCall = null;
 
         #endregion
 
-        private bool lineWrap;
+        private bool _lineWrap;
 
         /// <summary>
         /// construct an instance, given the two callbacks
@@ -265,14 +263,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal WriteLineHelper(bool lineWrap, WriteCallback wlc, WriteCallback wc, DisplayCells displayCells)
         {
             if (wlc == null)
-                throw PSTraceSource.NewArgumentNullException ("wlc");
+                throw PSTraceSource.NewArgumentNullException("wlc");
             if (displayCells == null)
                 throw PSTraceSource.NewArgumentNullException("displayCells");
 
-            this._displayCells = displayCells;
-            this.writeLineCall = wlc;
-            this.writeCall = (wc != null) ? wc : wlc;
-            this.lineWrap = lineWrap;
+            _displayCells = displayCells;
+            _writeLineCall = wlc;
+            _writeCall = (wc != null) ? wc : wlc;
+            _lineWrap = lineWrap;
         }
 
         /// <summary>
@@ -280,9 +278,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="s">string to process</param>
         /// <param name="cols">width of the device</param>
-        internal void WriteLine (string s, int cols)
+        internal void WriteLine(string s, int cols)
         {
-            WriteLineInternal (s, cols);
+            WriteLineInternal(s, cols);
         }
 
         /// <summary>
@@ -290,18 +288,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="val">string to process</param>
         /// <param name="cols">width of the device</param>
-        private void WriteLineInternal (string val, int cols)
+        private void WriteLineInternal(string val, int cols)
         {
-            if (string.IsNullOrEmpty (val))
+            if (string.IsNullOrEmpty(val))
             {
-                this.writeLineCall (val);
+                _writeLineCall(val);
                 return;
             }
 
             // If the output is being redirected, then we don't break val
-            if (!lineWrap)
+            if (!_lineWrap)
             {
-                this.writeCall(val);
+                _writeCall(val);
                 return;
             }
 
@@ -312,19 +310,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             for (int k = 0; k < lines.Length; k++)
             {
                 // compute the display length of the string
-                int displayLength = this._displayCells.Length(lines[k]);
+                int displayLength = _displayCells.Length(lines[k]);
 
                 if (displayLength < cols)
                 {
                     // NOTE: this is the case where where System.Console.WriteLine() would work just fine
-                    this.writeLineCall(lines[k]);
+                    _writeLineCall(lines[k]);
                     continue;
                 }
 
                 if (displayLength == cols)
                 {
                     // NOTE: this is the corner case where System.Console.WriteLine() cannot be called
-                    this.writeCall (lines[k]);
+                    _writeCall(lines[k]);
                     continue;
                 }
 
@@ -335,15 +333,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     // the string is still too long to fit, write the first cols characters
                     // and go back for more wraparound
-                    int splitLen = this._displayCells.GetHeadSplitLength(s, cols);
+                    int splitLen = _displayCells.GetHeadSplitLength(s, cols);
                     WriteLineInternal(s.Substring(0, splitLen), cols);
 
                     // chop off the first fieldWidth characters, already printed
                     s = s.Substring(splitLen);
-                    if (this._displayCells.Length(s) <= cols)
+                    if (_displayCells.Length(s) <= cols)
                     {
                         // if we fit, print the tail of the string and we are done
-                        WriteLineInternal (s, cols);
+                        WriteLineInternal(s, cols);
                         break;
                     }
                 }
@@ -351,7 +349,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         private DisplayCells _displayCells;
-
     }
 
     /// <summary>
@@ -360,51 +357,51 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal class TextWriterLineOutput : LineOutput
     {
-#region ILineOutput methods
+        #region ILineOutput methods
 
         /// <summary>
         /// get the columns on the screen
         /// for files, it is settable at creation time
         /// </summary>
-        internal override int ColumnNumber 
-        { 
-            get 
+        internal override int ColumnNumber
+        {
+            get
             {
                 CheckStopProcessing();
-                return columns; 
-            } 
+                return _columns;
+            }
         }
 
         /// <summary>
         /// get the # of rows on the screen: for files
         /// we return -1, meaning infinite
         /// </summary>
-        internal override int RowNumber 
-        { 
-            get 
+        internal override int RowNumber
+        {
+            get
             {
                 CheckStopProcessing();
-                return -1; 
-            } 
+                return -1;
+            }
         }
 
         /// <summary>
         /// write a line by delegating to the writer underneath
         /// </summary>
         /// <param name="s"></param>
-        internal override void WriteLine (string s)
+        internal override void WriteLine(string s)
         {
             CheckStopProcessing();
-            if (suppressNewline)
+            if (_suppressNewline)
             {
-                this.writer.Write(s);
+                _writer.Write(s);
             }
             else
             {
-                this.writer.WriteLine(s);
+                _writer.WriteLine(s);
             }
         }
-#endregion
+        #endregion
 
         /// <summary>
         /// initialization of the object. It must be called before
@@ -412,10 +409,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="writer">TextWriter to write to</param>
         /// <param name="columns">max columns widths for the text</param>
-        internal TextWriterLineOutput (TextWriter writer, int columns)
+        internal TextWriterLineOutput(TextWriter writer, int columns)
         {
-            this.writer = writer;
-            this.columns = columns;
+            _writer = writer;
+            _columns = columns;
         }
 
         /// <summary>
@@ -428,16 +425,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal TextWriterLineOutput(TextWriter writer, int columns, bool suppressNewline)
             : this(writer, columns)
         {
-            this.suppressNewline = suppressNewline;
+            _suppressNewline = suppressNewline;
         }
 
-        private int columns = 0;
+        private int _columns = 0;
 
-        private TextWriter writer = null;
+        private TextWriter _writer = null;
 
-        private bool suppressNewline = false;
+        private bool _suppressNewline = false;
     }
-    
+
     /// <summary>
     /// TextWriter to generate data for the Monad pipeline in a streaming fashion:
     /// the provided callback will be called each time a line is written
@@ -445,8 +442,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal class StreamingTextWriter : TextWriter
     {
         #region tracer
-        [TraceSource ("StreamingTextWriter", "StreamingTextWriter")]
-        private static PSTraceSource tracer = PSTraceSource.GetTracer ("StreamingTextWriter", "StreamingTextWriter");
+        [TraceSource("StreamingTextWriter", "StreamingTextWriter")]
+        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("StreamingTextWriter", "StreamingTextWriter");
         #endregion tracer
 
         /// <summary>
@@ -454,28 +451,28 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="writeCall">delegate to write to</param>
         /// <param name="culture">culture for this TextWriter</param>
-        internal StreamingTextWriter (WriteLineCallback writeCall, CultureInfo culture)
+        internal StreamingTextWriter(WriteLineCallback writeCall, CultureInfo culture)
             : base(culture)
         {
             if (writeCall == null)
-                throw PSTraceSource.NewArgumentNullException ("writeCall");
+                throw PSTraceSource.NewArgumentNullException("writeCall");
 
-            this.writeCall = writeCall;
+            _writeCall = writeCall;
         }
 
         #region TextWriter overrides
 
-        public override Encoding Encoding { get { return new UnicodeEncoding (); } }
+        public override Encoding Encoding { get { return new UnicodeEncoding(); } }
 
-        public override void WriteLine (string s)
+        public override void WriteLine(string s)
         {
-            this.writeCall (s);
+            _writeCall(s);
         }
 
 #if CORECLR // TextWriter.Write(char value) is abstract method in CORE CLR
         public override void Write(char c)
         {
-            this.writeCall(char.ToString(c));
+            _writeCall(char.ToString(c));
         }
 #endif
         #endregion
@@ -484,12 +481,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// delegate definition
         /// </summary>
         /// <param name="s">string to write</param>
-        internal delegate void WriteLineCallback (string s);
+        internal delegate void WriteLineCallback(string s);
 
         /// <summary>
         /// instance of the delegate previously defined
         /// </summary>
-        private WriteLineCallback writeCall = null;
+        private WriteLineCallback _writeCall = null;
     }
-
 }

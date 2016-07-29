@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections;
 using System.Xml;
 
@@ -38,20 +39,20 @@ namespace System.Management.Automation
         {
             get
             {
-                    if (_fullHelpObject == null)
-                        return "";
+                if (_fullHelpObject == null)
+                    return "";
 
-                    if (_fullHelpObject.Properties["Name"] == null)
-                        return "";
+                if (_fullHelpObject.Properties["Name"] == null)
+                    return "";
 
-                    if (_fullHelpObject.Properties["Name"].Value == null)
-                        return "";
+                if (_fullHelpObject.Properties["Name"].Value == null)
+                    return "";
 
-                    string name = _fullHelpObject.Properties["Name"].Value.ToString();
-                    if (name == null)
-                        return "";
+                string name = _fullHelpObject.Properties["Name"].Value.ToString();
+                if (name == null)
+                    return "";
 
-                    return name.Trim();
+                return name.Trim();
             }
         }
 

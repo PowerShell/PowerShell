@@ -1,9 +1,10 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.ObjectModel;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -41,11 +42,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("cmdlet");
             }
 
-            this.cmdlet = cmdlet;
-            this.sessionState = cmdlet.Context.EngineSessionState;
+            _cmdlet = cmdlet;
+            _sessionState = cmdlet.Context.EngineSessionState;
         } // ChildItemCmdletProviderIntrinsics internal
 
-       /// <summary>
+        /// <summary>
         /// Constructs a facade over the "real" session state API
         /// </summary>
         ///
@@ -64,7 +65,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("sessionState");
             }
 
-            this.sessionState = sessionState;
+            _sessionState = sessionState;
         } // ChildItemCmdletProviderIntrinsics internal
         #endregion Constructors
 
@@ -120,12 +121,12 @@ namespace System.Management.Automation
         public Collection<PSObject> Get(string path, bool recurse)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetChildItems(new string[] { path }, recurse, uint.MaxValue, false, false);
+            return _sessionState.GetChildItems(new string[] { path }, recurse, uint.MaxValue, false, false);
         } // GetChildItems
 
         /// <summary>
@@ -189,12 +190,12 @@ namespace System.Management.Automation
         public Collection<PSObject> Get(string[] path, bool recurse, uint depth, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetChildItems(path, recurse, depth, force, literalPath);
+            return _sessionState.GetChildItems(path, recurse, depth, force, literalPath);
         }
 
         /// <summary>
@@ -254,7 +255,7 @@ namespace System.Management.Automation
         public Collection<PSObject> Get(string[] path, bool recurse, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -315,18 +316,18 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal void Get(
-            string path, 
-            bool recurse, 
+            string path,
+            bool recurse,
             uint depth,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.GetChildItems(path, recurse, depth, context);
+            _sessionState.GetChildItems(path, recurse, depth, context);
         } // GetChildItems
 
         /// <summary>
@@ -374,19 +375,19 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal object GetChildItemsDynamicParameters(
-            string path, 
-            bool recurse, 
+            string path,
+            bool recurse,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetChildItemsDynamicParameters(path, recurse, context);
+            return _sessionState.GetChildItemsDynamicParameters(path, recurse, context);
         } // GetChildItemsDynamicParameters
-        
+
 
         #endregion GetChildItems
 
@@ -444,19 +445,19 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         public Collection<string> GetNames(
-            string path, 
-            ReturnContainers returnContainers, 
+            string path,
+            ReturnContainers returnContainers,
             bool recurse)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetChildNames(new string[] { path }, returnContainers, recurse, uint.MaxValue, false, false);
+            return _sessionState.GetChildNames(new string[] { path }, returnContainers, recurse, uint.MaxValue, false, false);
         } // GetChildNames
-        
+
         /// <summary>
         /// Gets the child names of the container at the given path.
         /// </summary>
@@ -525,10 +526,10 @@ namespace System.Management.Automation
             bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
-            return sessionState.GetChildNames(path, returnContainers, recurse, uint.MaxValue, force, literalPath);
+            return _sessionState.GetChildNames(path, returnContainers, recurse, uint.MaxValue, force, literalPath);
         }
 
         /// <summary>
@@ -604,10 +605,10 @@ namespace System.Management.Automation
             bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
-            return sessionState.GetChildNames(path, returnContainers, recurse, depth, force, literalPath);
+            return _sessionState.GetChildNames(path, returnContainers, recurse, depth, force, literalPath);
         }
 
         /// <summary>
@@ -669,19 +670,19 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal void GetNames(
-            string path, 
-            ReturnContainers returnContainers, 
+            string path,
+            ReturnContainers returnContainers,
             bool recurse,
             uint depth,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.GetChildNames(path, returnContainers, recurse, depth, context);
+            _sessionState.GetChildNames(path, returnContainers, recurse, depth, context);
         } // GetChildNames
 
         /// <summary>
@@ -723,16 +724,16 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal object GetChildNamesDynamicParameters(
-            string path, 
+            string path,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetChildNamesDynamicParameters(path, context);
+            return _sessionState.GetChildNamesDynamicParameters(path, context);
         } // GetChildNamesDynamicParameters
 
         #endregion GetChildNames
@@ -780,12 +781,12 @@ namespace System.Management.Automation
         public bool HasChild(string path)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.HasChildItems(path, false, false);
+            return _sessionState.HasChildItems(path, false, false);
         } // HasChildItems
 
         /// <summary>
@@ -837,12 +838,12 @@ namespace System.Management.Automation
         public bool HasChild(string path, bool force, bool literalPath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.HasChildItems(path, force, literalPath);
+            return _sessionState.HasChildItems(path, force, literalPath);
         }
 
         /// <summary>
@@ -888,16 +889,16 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal bool HasChild(
-            string path, 
+            string path,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.HasChildItems(path, context);
+            return _sessionState.HasChildItems(path, context);
         } // HasChildItems
 
 
@@ -907,8 +908,8 @@ namespace System.Management.Automation
 
         #region private data
 
-        private Cmdlet cmdlet;
-        private SessionStateInternal sessionState;
+        private Cmdlet _cmdlet;
+        private SessionStateInternal _sessionState;
 
         #endregion private data
     } // ChildItemCmdletProviderIntrinsics

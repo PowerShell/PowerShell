@@ -373,10 +373,10 @@ namespace System.Management.Automation.Host
         /// </summary>
         internal bool ShouldSetThreadUILanguageToZero
         {
-            get { return shouldSetThreadUILanguageToZero; }
-            set { shouldSetThreadUILanguageToZero = value; }
+            get { return _shouldSetThreadUILanguageToZero; }
+            set { _shouldSetThreadUILanguageToZero = value; }
         }
-        private bool shouldSetThreadUILanguageToZero;
+        private bool _shouldSetThreadUILanguageToZero;
 
         /// <summary>
         /// This property enables and disables the host debugger if debugging is supported.

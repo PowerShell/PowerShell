@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public partial class HtmlWebResponseObject : WebResponseObject, IDisposable
     {
-        #region Properties
+#region Properties
 
         /// <summary>
         /// gets or protected sets the Content property
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
 
         // The flag that indicates the html is parsed
         private bool _htmlParsed = false;
- 
+
         /// <summary>
         /// gets the ParsedHtml property
         /// </summary>
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private WebCmdletElementCollection _scripts;
-        
+
         /// <summary>
         /// gets the Scripts property
         /// </summary>
@@ -220,18 +220,18 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        #endregion Properties
-        
-        #region Private Fields
+#endregion Properties
+
+#region Private Fields
 
         private static Regex _tagRegex;
         private static Regex _attribsRegex;
         private static Regex _attribNameValueRegex;
 
-        #endregion Private Fields
+#endregion Private Fields
 
-        #region Methods
-        
+#region Methods
+
         // The "onreadystatechange" event handler
         private void ReadyStateChanged(IHTMLEventObj obj)
         {
@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // The IHTMLDocument events cannot be handled in STA ApartmentState, so we use a worker thread to load the document
                 ThreadPool.QueueUserWorkItem(new WaitCallback(LoadDocumentInMtaThread));
-                
+
                 // Wait for the worker thread to finish loading the document. In the meantime, we check the Ctrl-C every 500ms 
                 bool wait = true;
                 while (wait)
@@ -470,7 +470,7 @@ namespace Microsoft.PowerShell.Commands
                 this.Content = string.Empty;
             }
         }
-        #endregion Methods
+#endregion Methods
 
         /// <summary>
         /// Dispose the the instance of the class.

@@ -17,7 +17,7 @@ namespace System.Management.Automation
         internal readonly COM.INVOKEKIND InvokeKind;
 
         internal ComMethodInformation(bool hasvarargs, bool hasoptional, ParameterInformation[] arguments, Type returnType, int dispId, COM.INVOKEKIND invokekind)
-            :base(hasvarargs, hasoptional, arguments)
+            : base(hasvarargs, hasoptional, arguments)
         {
             this.ReturnType = returnType;
             this.DispId = dispId;
@@ -30,17 +30,17 @@ namespace System.Management.Automation
     /// </summary>
     internal class ComMethod
     {
-        private Collection<int> methods = new Collection<int>();
-        private COM.ITypeInfo typeInfo;
-        private string name;
+        private Collection<int> _methods = new Collection<int>();
+        private COM.ITypeInfo _typeInfo;
+        private string _name;
 
         /// <summary>
         /// Initializes new instance of ComMethod class.
         /// </summary>
         internal ComMethod(COM.ITypeInfo typeinfo, string name)
         {
-            this.typeInfo = typeinfo;
-            this.name = name;                
+            _typeInfo = typeinfo;
+            _name = name;
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return name;
+                return _name;
             }
         }
 
@@ -60,7 +60,7 @@ namespace System.Management.Automation
         /// <param name="index">index of funcdesc for method in type information.</param>
         internal void AddFuncDesc(int index)
         {
-            methods.Add(index);
+            _methods.Add(index);
         }
 
 
@@ -68,24 +68,24 @@ namespace System.Management.Automation
         /// Returns the different method overloads signatures.
         /// </summary>
         /// <returns></returns>
-        internal  Collection<String> MethodDefinitions()
+        internal Collection<String> MethodDefinitions()
         {
             Collection<String> result = new Collection<string>();
 
-            
-            foreach (int index in methods)
+
+            foreach (int index in _methods)
             {
                 IntPtr pFuncDesc;
 
-                typeInfo.GetFuncDesc(index, out pFuncDesc);
+                _typeInfo.GetFuncDesc(index, out pFuncDesc);
                 COM.FUNCDESC funcdesc = ClrFacade.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
 
-                string signature = ComUtil.GetMethodSignatureFromFuncDesc(typeInfo, funcdesc, false);
-                result.Add(signature);                 
+                string signature = ComUtil.GetMethodSignatureFromFuncDesc(_typeInfo, funcdesc, false);
+                result.Add(signature);
 
-                typeInfo.ReleaseFuncDesc(pFuncDesc);
+                _typeInfo.ReleaseFuncDesc(pFuncDesc);
             }
-            
+
             return result;
         }
 
@@ -99,8 +99,8 @@ namespace System.Management.Automation
         {
             try
             {
-                object [] newarguments;
-                var methods = ComUtil.GetMethodInformationArray(this.typeInfo, this.methods, false);
+                object[] newarguments;
+                var methods = ComUtil.GetMethodInformationArray(_typeInfo, _methods, false);
                 var bestMethod = (ComMethodInformation)Adapter.GetBestMethodAndArguments(Name, methods, arguments, out newarguments);
 
                 object returnValue = ComInvoker.Invoke(method.baseObject as IDispatch,
@@ -116,7 +116,7 @@ namespace System.Management.Automation
             {
                 //First check if this is a severe exception.
                 CommandProcessorBase.CheckForSevereException(te.InnerException);
-                
+
                 var innerCom = te.InnerException as COMException;
                 if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {

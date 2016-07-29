@@ -14,6 +14,7 @@ using System.Collections;
 //
 // Now define the set of commands for manipulating modules.
 //
+
 namespace Microsoft.PowerShell.Commands
 {
     #region Test-ModuleManifest
@@ -33,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _path; }
             set { _path = value; }
         }
-        string _path;
+        private string _path;
 
         /// <summary>
         /// Implements the record processing for this cmdlet
@@ -141,10 +142,10 @@ namespace Microsoft.PowerShell.Commands
                         {
                             foreach (ModuleSpecification nestedModule in nestedModules)
                             {
-                                if (!IsValidFilePath(nestedModule.Name, module, true) 
-                                    && !IsValidFilePath(nestedModule.Name + StringLiterals.DependentWorkflowAssemblyExtension, module, true) 
-                                    && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellNgenAssemblyExtension, module, true) 
-                                    && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellModuleFileExtension, module, true) 
+                                if (!IsValidFilePath(nestedModule.Name, module, true)
+                                    && !IsValidFilePath(nestedModule.Name + StringLiterals.DependentWorkflowAssemblyExtension, module, true)
+                                    && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellNgenAssemblyExtension, module, true)
+                                    && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellModuleFileExtension, module, true)
                                     && !IsValidGacAssembly(nestedModule.Name))
                                 {
                                     // The nested module could be dependencies. We compare if it can be loaded by loadmanifest
@@ -224,8 +225,8 @@ namespace Microsoft.PowerShell.Commands
                             // The CompatiblePSEditions module manifest key is supported only on PowerShell version '5.1' or higher.
                             // Ensure that PowerShellVersion module manifest key value is '5.1' or higher.
                             //
-                            var minimumRequiredPowerShellVersion = new Version(5,1);
-                            if((module.PowerShellVersion == null) || module.PowerShellVersion < minimumRequiredPowerShellVersion)
+                            var minimumRequiredPowerShellVersion = new Version(5, 1);
+                            if ((module.PowerShellVersion == null) || module.PowerShellVersion < minimumRequiredPowerShellVersion)
                             {
                                 string errorMsg = StringUtil.Format(Modules.InvalidPowerShellVersionInModuleManifest, filePath);
                                 var errorRecord = new ErrorRecord(new ArgumentException(errorMsg), "Modules_InvalidPowerShellVersionInModuleManifest", ErrorCategory.InvalidArgument, _path);
@@ -305,7 +306,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return false;
                 }
-
             }
             catch (Exception exception)
             {
@@ -323,7 +323,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="assemblyName"></param>
         /// <returns></returns>
-        private bool IsValidGacAssembly (string assemblyName)
+        private bool IsValidGacAssembly(string assemblyName)
         {
             string gacPath = System.Environment.GetEnvironmentVariable("windir") + "\\Microsoft.NET\\assembly";
             string assemblyFile = assemblyName;
@@ -356,5 +356,4 @@ namespace Microsoft.PowerShell.Commands
     }
 
     #endregion
-
 } // Microsoft.PowerShell.Commands

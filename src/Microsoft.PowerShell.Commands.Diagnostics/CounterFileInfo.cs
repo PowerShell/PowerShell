@@ -6,55 +6,50 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Diagnostics;             
+using System.Diagnostics;
 using System.ComponentModel;
- 
+
 namespace Microsoft.PowerShell.Commands.GetCounter
 {
-
- 
-  public class CounterFileInfo
-  {
-    internal CounterFileInfo(DateTime oldestRecord,
-        DateTime newestRecord,
-        UInt32 sampleCount)
+    public class CounterFileInfo
     {
-        
-        _oldestRecord = oldestRecord;
-        _newestRecord = newestRecord;
-        _sampleCount = sampleCount;        
-    }   
-
-    internal CounterFileInfo(){}
-                        
-    public DateTime OldestRecord
-    {
-        get
+        internal CounterFileInfo(DateTime oldestRecord,
+            DateTime newestRecord,
+            UInt32 sampleCount)
         {
-            return _oldestRecord;
-        }        
-    }
-    private DateTime _oldestRecord = DateTime.MinValue;
-
-    public DateTime NewestRecord
-    {
-        get
-        {
-            return _newestRecord;
+            _oldestRecord = oldestRecord;
+            _newestRecord = newestRecord;
+            _sampleCount = sampleCount;
         }
-    }
-    private DateTime _newestRecord = DateTime.MaxValue; 
-        
-    public UInt32 SampleCount
-    {
-        get
+
+        internal CounterFileInfo() { }
+
+        public DateTime OldestRecord
         {
-            return _sampleCount;
+            get
+            {
+                return _oldestRecord;
+            }
         }
+        private DateTime _oldestRecord = DateTime.MinValue;
+
+        public DateTime NewestRecord
+        {
+            get
+            {
+                return _newestRecord;
+            }
+        }
+        private DateTime _newestRecord = DateTime.MaxValue;
+
+        public UInt32 SampleCount
+        {
+            get
+            {
+                return _sampleCount;
+            }
+        }
+        private UInt32 _sampleCount = 0;
     }
-    private UInt32 _sampleCount = 0;
-    
-  }
-  
 }
 

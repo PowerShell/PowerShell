@@ -1,6 +1,7 @@
 ﻿/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Net;
 using System.IO;
 using System.Text;
@@ -19,7 +20,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="response"></param>
         public BasicHtmlWebResponseObject(WebResponse response)
-            : this(response, null) { }
+            : this(response, null)
+        { }
 
         /// <summary>
         /// Constructor for HtmlWebResponseObject with memory stream

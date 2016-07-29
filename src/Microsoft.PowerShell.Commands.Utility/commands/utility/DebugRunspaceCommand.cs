@@ -120,15 +120,15 @@ namespace Microsoft.PowerShell.Commands
 
                 switch (ParameterSetName)
                 {
-	                case DebugRunspaceCommand.NameParameterSet:
+                    case DebugRunspaceCommand.NameParameterSet:
                         runspaces = GetRunspaceUtils.GetRunspacesByName(new string[] { Name });
                         break;
 
-	                case DebugRunspaceCommand.IdParameterSet:
+                    case DebugRunspaceCommand.IdParameterSet:
                         runspaces = GetRunspaceUtils.GetRunspacesById(new int[] { Id });
                         break;
 
-	                case DebugRunspaceCommand.InstanceIdParameterSet:
+                    case DebugRunspaceCommand.InstanceIdParameterSet:
                         runspaces = GetRunspaceUtils.GetRunspacesByInstanceId(new Guid[] { InstanceId });
                         break;
                 }
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
                             this)
                         );
                 }
-				
+
                 if (runspaces.Count == 1)
                 {
                     _runspace = runspaces[0];
@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell.Commands
                 // Blocking call.  Send runspace/command output to host UI while debugging and wait for runspace/command completion.
                 WaitAndReceiveRunspaceOutput();
             }
-            finally 
+            finally
             {
                 RestoreRunspace(_runspace);
             }
@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Make sure host debugger has debugging turned on.
                 _debugger.SetDebugMode(DebugModes.LocalScript | DebugModes.RemoteScript);
-                
+
                 // Set up host script debugger to debug the runspace.
                 _debugger.DebugRunspace(_runspace);
 
@@ -338,14 +338,14 @@ namespace Microsoft.PowerShell.Commands
             _runningPowerShell = _runspace.GetCurrentBasePowerShell();
             if (_runningPowerShell != null)
             {
-               if (_runningPowerShell.OutputBuffer != null)
-               {
-                   _runningPowerShell.OutputBuffer.DataAdding += HandlePowerShellOutputBufferDataAdding;
-               }
-               if (_runningPowerShell.ErrorBuffer != null)
-               {
-                   _runningPowerShell.ErrorBuffer.DataAdding += HandlePowerShellErrorBufferDataAdding;
-               }
+                if (_runningPowerShell.OutputBuffer != null)
+                {
+                    _runningPowerShell.OutputBuffer.DataAdding += HandlePowerShellOutputBufferDataAdding;
+                }
+                if (_runningPowerShell.ErrorBuffer != null)
+                {
+                    _runningPowerShell.ErrorBuffer.DataAdding += HandlePowerShellErrorBufferDataAdding;
+                }
             }
             else
             {
@@ -416,7 +416,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _debugBlockingCollection.Complete();
             }
-            else if ((e.RunspaceAvailability == RunspaceAvailability.Busy) && 
+            else if ((e.RunspaceAvailability == RunspaceAvailability.Busy) &&
                      ((prevAvailability == RunspaceAvailability.Available) || (prevAvailability == RunspaceAvailability.None)))
             {
                 _newRunningScriptEvent.Set();

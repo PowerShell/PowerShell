@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using System.Collections;
@@ -27,7 +28,7 @@ namespace System.Management.Automation
     /// always be available. 
     /// 
     /// </summary>
-    internal class EventLogLogProvider: LogProvider
+    internal class EventLogLogProvider : LogProvider
     {
         /// <summary>
         /// Constructor. 
@@ -45,7 +46,7 @@ namespace System.Management.Automation
 
         internal string SetupEventSource(string shellId)
         {
-            string source; 
+            string source;
 
             // In case shellId == null, use the "Default" source.
             if (String.IsNullOrEmpty(shellId))
@@ -63,7 +64,7 @@ namespace System.Management.Automation
 
                 // There may be a situation where ShellId ends with a '.'. 
                 // In that case, use the default source. 
-                if(String.IsNullOrEmpty(source))
+                if (String.IsNullOrEmpty(source))
                     source = "Default";
             }
 
@@ -80,7 +81,7 @@ namespace System.Management.Automation
         /// This represent a handle to EventLog
         /// </summary>
         private EventLog _eventLog;
-        private ResourceManager _resourceManager; 
+        private ResourceManager _resourceManager;
 
         #region Log Provider Api
 
@@ -194,7 +195,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static int GetEngineLifecycleEventId(EngineState engineState)
         {
-            switch(engineState)
+            switch (engineState)
             {
                 case EngineState.None:
                     return _invalidEventId;
@@ -330,7 +331,7 @@ namespace System.Management.Automation
             }
         }
 
-        const int MaxLength = 16000;
+        private const int MaxLength = 16000;
 
         private List<String> GroupMessages(List<String> messages)
         {
@@ -410,7 +411,7 @@ namespace System.Management.Automation
                 mapArgs["ErrorCategory"] = icer.ErrorRecord.CategoryInfo.Category;
                 mapArgs["ErrorId"] = icer.ErrorRecord.FullyQualifiedErrorId;
 
-                if (   icer.ErrorRecord.ErrorDetails != null
+                if (icer.ErrorRecord.ErrorDetails != null
                     && !String.IsNullOrEmpty(icer.ErrorRecord.ErrorDetails.Message))
                 {
                     mapArgs["ErrorMessage"] = icer.ErrorRecord.ErrorDetails.Message;
@@ -670,7 +671,7 @@ namespace System.Management.Automation
                 }
 
                 message.Append(messageTemplate.Substring(cursor, startIndex - cursor));
-                cursor = startIndex; 
+                cursor = startIndex;
 
                 string placeHolder = messageTemplate.Substring(startIndex + 1, endIndex - startIndex - 1);
 

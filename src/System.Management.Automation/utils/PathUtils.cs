@@ -318,42 +318,42 @@ namespace System.Management.Automation
         {
             string msg = StringUtil.Format(PathUtilsStrings.OutFile_ReadWriteFileNotFileSystemProvider, providerId);
 
-            ErrorRecord errorRecord = new ErrorRecord (
+            ErrorRecord errorRecord = new ErrorRecord(
                 PSTraceSource.NewInvalidOperationException(),
                 "ReadWriteFileNotFileSystemProvider",
                 ErrorCategory.InvalidArgument,
                 null);
 
-            errorRecord.ErrorDetails = new ErrorDetails (msg);
-            cmdlet.ThrowTerminatingError (errorRecord);
+            errorRecord.ErrorDetails = new ErrorDetails(msg);
+            cmdlet.ThrowTerminatingError(errorRecord);
         }
 
         internal static void ReportMultipleFilesNotSupported(Cmdlet cmdlet)
         {
             string msg = StringUtil.Format(PathUtilsStrings.OutFile_MultipleFilesNotSupported);
 
-            ErrorRecord errorRecord = new ErrorRecord (
+            ErrorRecord errorRecord = new ErrorRecord(
                 PSTraceSource.NewInvalidOperationException(),
                 "ReadWriteMultipleFilesNotSupported",
                 ErrorCategory.InvalidArgument,
                 null);
 
-            errorRecord.ErrorDetails = new ErrorDetails (msg);
-            cmdlet.ThrowTerminatingError (errorRecord);
+            errorRecord.ErrorDetails = new ErrorDetails(msg);
+            cmdlet.ThrowTerminatingError(errorRecord);
         }
 
         internal static void ReportWildcardingFailure(Cmdlet cmdlet, string filePath)
         {
             string msg = StringUtil.Format(PathUtilsStrings.OutFile_DidNotResolveFile, filePath);
 
-            ErrorRecord errorRecord = new ErrorRecord (
+            ErrorRecord errorRecord = new ErrorRecord(
                 new FileNotFoundException(),
                 "FileOpenFailure",
                 ErrorCategory.OpenError,
                 filePath);
 
-            errorRecord.ErrorDetails = new ErrorDetails (msg);
-            cmdlet.ThrowTerminatingError (errorRecord);
+            errorRecord.ErrorDetails = new ErrorDetails(msg);
+            cmdlet.ThrowTerminatingError(errorRecord);
         }
 
         internal static DirectoryInfo CreateModuleDirectory(PSCmdlet cmdlet, string moduleNameOrPath, bool force)
@@ -438,7 +438,6 @@ namespace System.Management.Automation
             Directory.CreateDirectory(moduleDirectory.FullName);
             return new DirectoryInfo(moduleDirectory.FullName);
         }
-
     }
 
     internal static class EncodingConversion
@@ -459,8 +458,8 @@ namespace System.Management.Automation
         /// it throws if the encoding does not match the known ones
         /// </summary>
         /// <returns>a System.Text.Encoding object (null if no encoding specified)</returns>
-        internal static Encoding Convert (Cmdlet cmdlet, string encoding)
-        { 
+        internal static Encoding Convert(Cmdlet cmdlet, string encoding)
+        {
             if (string.IsNullOrEmpty(encoding))
             {
                 // no parameter passed, default to Unicode (OS preferred)
@@ -475,22 +474,22 @@ namespace System.Management.Automation
                 return System.Text.Encoding.Unicode;
 
             // these are the encodings the CLR supports
-            if (string.Equals (encoding, Unicode, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(encoding, Unicode, StringComparison.OrdinalIgnoreCase))
                 return System.Text.Encoding.Unicode;
 
-            if (string.Equals (encoding, BigEndianUnicode, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(encoding, BigEndianUnicode, StringComparison.OrdinalIgnoreCase))
                 return System.Text.Encoding.BigEndianUnicode;
 
-            if (string.Equals (encoding, Utf8, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(encoding, Utf8, StringComparison.OrdinalIgnoreCase))
                 return System.Text.Encoding.UTF8;
 
             if (string.Equals(encoding, Ascii, StringComparison.OrdinalIgnoreCase))
                 return System.Text.Encoding.ASCII;
 
-            if (string.Equals (encoding, Utf7, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(encoding, Utf7, StringComparison.OrdinalIgnoreCase))
                 return System.Text.Encoding.UTF7;
 
-            if (string.Equals (encoding, Utf32, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(encoding, Utf32, StringComparison.OrdinalIgnoreCase))
                 return System.Text.Encoding.UTF32;
 
             if (string.Equals(encoding, Default, StringComparison.OrdinalIgnoreCase))
@@ -508,13 +507,13 @@ namespace System.Management.Automation
             string msg = StringUtil.Format(PathUtilsStrings.OutFile_WriteToFileEncodingUnknown,
                 encoding, validEncodingValues);
 
-            ErrorRecord errorRecord = new ErrorRecord (
+            ErrorRecord errorRecord = new ErrorRecord(
                 PSTraceSource.NewArgumentException("Encoding"),
                 "WriteToFileEncodingUnknown",
                 ErrorCategory.InvalidArgument,
                 null);
 
-            errorRecord.ErrorDetails = new ErrorDetails (msg);
+            errorRecord.ErrorDetails = new ErrorDetails(msg);
             cmdlet.ThrowTerminatingError(errorRecord);
 
             return null;

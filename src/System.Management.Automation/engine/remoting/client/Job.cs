@@ -158,7 +158,7 @@ namespace System.Management.Automation
             )
         )
         {
-            currState = currentState;
+            _currState = currentState;
         }
 
         /// <summary>
@@ -175,7 +175,7 @@ namespace System.Management.Automation
             )
         )
         {
-            currState = currentState;
+            _currState = currentState;
         }
 
         #region ISerializable Members
@@ -210,7 +210,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return currState;
+                return _currState;
             }
         }
 
@@ -218,7 +218,7 @@ namespace System.Management.Automation
         /// State of job when exception was thrown.
         /// </summary>
         [NonSerialized]
-        private JobState currState = 0;
+        private JobState _currState = 0;
     }
 
     /// <summary>
@@ -457,9 +457,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Default constructor
         /// </summary>
-        protected Job() 
+        protected Job()
         {
-            sessionId = System.Threading.Interlocked.Increment(ref _jobIdSeed);
+            _sessionId = System.Threading.Interlocked.Increment(ref s_jobIdSeed);
         }
 
         /// <summary>
@@ -467,10 +467,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="command">Command invoked by this job object</param>
         protected Job(string command)
-            :this()
+            : this()
         {
-            this.command = command;
-            name = AutoGenerateJobName();
+            _command = command;
+            _name = AutoGenerateJobName();
         }
 
         /// <summary>
@@ -479,11 +479,11 @@ namespace System.Management.Automation
         /// <param name="command">Command invoked by this job object</param>
         /// <param name="name">Friendly name for the job object</param>
         protected Job(string command, string name)
-            :this(command)
+            : this(command)
         {
             if (!String.IsNullOrEmpty(name))
             {
-                this.name = name;
+                _name = name;
             }
         }
 
@@ -494,9 +494,9 @@ namespace System.Management.Automation
         /// <param name="name">Friendly name for the job object</param>
         /// <param name="childJobs">Child jobs of this job object</param>
         protected Job(string command, string name, IList<Job> childJobs)
-            :this(command, name)
+            : this(command, name)
         {
-            this.childJobs = childJobs;
+            _childJobs = childJobs;
         }
 
         /// <summary>
@@ -511,23 +511,23 @@ namespace System.Management.Automation
         {
             if (token == null)
                 throw PSTraceSource.NewArgumentNullException("token", RemotingErrorIdStrings.JobIdentifierNull);
-            if (token.Id > _jobIdSeed)
+            if (token.Id > s_jobIdSeed)
             {
                 throw PSTraceSource.NewArgumentException("token", RemotingErrorIdStrings.JobIdNotYetAssigned, token.Id);
             }
 
-            this.command = command;
+            _command = command;
 
-            sessionId = token.Id;
-            guid = token.InstanceId;
+            _sessionId = token.Id;
+            _guid = token.InstanceId;
 
             if (!String.IsNullOrEmpty(name))
             {
-                this.name = name;
+                _name = name;
             }
             else
             {
-                this.name = AutoGenerateJobName();
+                _name = AutoGenerateJobName();
             }
         }
 
@@ -540,9 +540,9 @@ namespace System.Management.Automation
         /// <remarks>The InstanceId may need to be set to maintain job identity across
         /// instances of the process.</remarks>
         protected Job(string command, string name, Guid instanceId)
-            :this(command, name)
+            : this(command, name)
         {
-            guid = instanceId;
+            _guid = instanceId;
         }
 
         static internal string GetCommandTextFromInvocationInfo(InvocationInfo invocationInfo)
@@ -555,8 +555,8 @@ namespace System.Management.Automation
             IScriptExtent scriptExtent = invocationInfo.ScriptPosition;
             if ((scriptExtent != null) && (scriptExtent.StartScriptPosition != null) && !string.IsNullOrWhiteSpace(scriptExtent.StartScriptPosition.Line))
             {
-                Dbg.Assert(scriptExtent.StartScriptPosition.ColumnNumber >  0, "Column numbers start at 1");
-                Dbg.Assert(scriptExtent.StartScriptPosition.ColumnNumber <=  scriptExtent.StartScriptPosition.Line.Length, "Column numbers are not greater than the length of a line");
+                Dbg.Assert(scriptExtent.StartScriptPosition.ColumnNumber > 0, "Column numbers start at 1");
+                Dbg.Assert(scriptExtent.StartScriptPosition.ColumnNumber <= scriptExtent.StartScriptPosition.Line.Length, "Column numbers are not greater than the length of a line");
                 return scriptExtent.StartScriptPosition.Line.Substring(scriptExtent.StartScriptPosition.ColumnNumber - 1).Trim();
             }
 
@@ -567,37 +567,37 @@ namespace System.Management.Automation
 
         #region Private Members
 
-        private readonly string command;
-        private JobStateInfo stateInfo = new JobStateInfo(JobState.NotStarted);
-        private ManualResetEvent finished = new ManualResetEvent(false);
-        
-        private Guid guid = Guid.NewGuid();
-        private readonly int sessionId;
-        private string name;
-        private IList<Job> childJobs;
+        private readonly string _command;
+        private JobStateInfo _stateInfo = new JobStateInfo(JobState.NotStarted);
+        private ManualResetEvent _finished = new ManualResetEvent(false);
+
+        private Guid _guid = Guid.NewGuid();
+        private readonly int _sessionId;
+        private string _name;
+        private IList<Job> _childJobs;
         internal readonly object syncObject = new object();   // object used for synchronization
         //ISSUE: Should Result be public property
-        private PSDataCollection<PSStreamObject> results = new PSDataCollection<PSStreamObject>();
-        bool resultsOwner = true;
-        private PSDataCollection<ErrorRecord> error = new PSDataCollection<ErrorRecord>();
-        bool errorOwner = true;
-        private PSDataCollection<ProgressRecord> progress = new PSDataCollection<ProgressRecord>();
-        bool progressOwner = true;
-        private PSDataCollection<VerboseRecord> verbose = new PSDataCollection<VerboseRecord>();
-        bool verboseOwner = true;
-        private PSDataCollection<WarningRecord> warning = new PSDataCollection<WarningRecord>();
-        bool warningOwner = true;
-        private PSDataCollection<DebugRecord> debug = new PSDataCollection<DebugRecord>();
-        bool debugOwner = true;
-        private PSDataCollection<InformationRecord> information = new PSDataCollection<InformationRecord>();
-        bool informationOwner = true;
-        private PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
-        bool outputOwner = true;
+        private PSDataCollection<PSStreamObject> _results = new PSDataCollection<PSStreamObject>();
+        private bool _resultsOwner = true;
+        private PSDataCollection<ErrorRecord> _error = new PSDataCollection<ErrorRecord>();
+        private bool _errorOwner = true;
+        private PSDataCollection<ProgressRecord> _progress = new PSDataCollection<ProgressRecord>();
+        private bool _progressOwner = true;
+        private PSDataCollection<VerboseRecord> _verbose = new PSDataCollection<VerboseRecord>();
+        private bool _verboseOwner = true;
+        private PSDataCollection<WarningRecord> _warning = new PSDataCollection<WarningRecord>();
+        private bool _warningOwner = true;
+        private PSDataCollection<DebugRecord> _debug = new PSDataCollection<DebugRecord>();
+        private bool _debugOwner = true;
+        private PSDataCollection<InformationRecord> _information = new PSDataCollection<InformationRecord>();
+        private bool _informationOwner = true;
+        private PSDataCollection<PSObject> _output = new PSDataCollection<PSObject>();
+        private bool _outputOwner = true;
 
         /// <summary>
         /// Static variable which is incremented to generate id
         /// </summary>
-        static int _jobIdSeed = 0;
+        private static int s_jobIdSeed = 0;
 
         private DateTime? _beginTime = null;
         private DateTime? _endTime = null;
@@ -610,11 +610,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Command Invoked by this Job
         /// </summary>
-        public string Command 
+        public string Command
         {
             get
             {
-                return command;
+                return _command;
             }
         }
 
@@ -625,7 +625,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return stateInfo;
+                return _stateInfo;
             }
         }
 
@@ -640,9 +640,9 @@ namespace System.Management.Automation
             {
                 lock (this.syncObject)
                 {
-                    if (finished != null)
+                    if (_finished != null)
                     {
-                        return finished;
+                        return _finished;
                     }
                     else
                     {
@@ -664,7 +664,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return guid;
+                return _guid;
             }
         }
 
@@ -676,7 +676,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return sessionId;
+                return _sessionId;
             }
         }
 
@@ -687,12 +687,12 @@ namespace System.Management.Automation
         {
             get
             {
-                return name;
+                return _name;
             }
             set
             {
                 AssertNotDisposed();
-                name = value;
+                _name = value;
             }
         }
 
@@ -703,17 +703,17 @@ namespace System.Management.Automation
         {
             get
             {
-                if (childJobs == null)
+                if (_childJobs == null)
                 {
                     lock (syncObject)
                     {
-                        if (childJobs == null)
+                        if (_childJobs == null)
                         {
-                            childJobs = new List<Job>();
+                            _childJobs = new List<Job>();
                         }
                     }
                 }
-                return childJobs;
+                return _childJobs;
             }
         }
 
@@ -726,7 +726,7 @@ namespace System.Management.Automation
         /// Indicates that more data is available in this
         /// result object for reading. 
         /// </summary>
-        public abstract bool HasMoreData { get;}
+        public abstract bool HasMoreData { get; }
 
         /// <summary>
         /// Time job was started.
@@ -769,7 +769,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return results;
+                return _results;
             }
             set
             {
@@ -780,8 +780,8 @@ namespace System.Management.Automation
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
-                    resultsOwner = false;
-                    results = value;
+                    _resultsOwner = false;
+                    _results = value;
                 }
             }
         }
@@ -800,23 +800,23 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.suppressOutputForwarding;
+                return _suppressOutputForwarding;
             }
             set
             {
-                this.suppressOutputForwarding = value;
+                _suppressOutputForwarding = value;
             }
         }
-        private bool suppressOutputForwarding;
+        private bool _suppressOutputForwarding;
 
         internal virtual void WriteObject(object outputObject)
         {
             PSObject pso = (outputObject == null) ? null : PSObject.AsPSObject(outputObject);
             this.Output.Add(pso);
 
-            if (!this.suppressOutputForwarding)
+            if (!_suppressOutputForwarding)
             {
-                this.Results.Add(new PSStreamObject(PSStreamObjectType.Output,pso));
+                this.Results.Add(new PSStreamObject(PSStreamObjectType.Output, pso));
             }
         }
 
@@ -828,14 +828,14 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.propagateThrows;
+                return _propagateThrows;
             }
             set
             {
-                this.propagateThrows = value;
+                _propagateThrows = value;
             }
         }
-        private bool propagateThrows;
+        private bool _propagateThrows;
 
         private void WriteError(Cmdlet cmdlet, ErrorRecord errorRecord)
         {
@@ -854,7 +854,7 @@ namespace System.Management.Automation
         {
             RuntimeException runtimeException = errorRecord.Exception as RuntimeException;
             if (runtimeException == null)
-            return null;
+                return null;
 
             RemoteException remoteException = runtimeException as RemoteException;
             if (remoteException == null)
@@ -862,9 +862,9 @@ namespace System.Management.Automation
 
             PSPropertyInfo wasThrownFromThrow =
                 remoteException.SerializedRemoteException.Properties["WasThrownFromThrowStatement"];
-            if (wasThrownFromThrow == null || !((bool) wasThrownFromThrow.Value))
+            if (wasThrownFromThrow == null || !((bool)wasThrownFromThrow.Value))
                 return null;
-            
+
             runtimeException.WasThrownFromThrowStatement = true;
             return runtimeException;
         }
@@ -905,7 +905,7 @@ namespace System.Management.Automation
         internal virtual void WriteVerbose(string message)
         {
             this.Verbose.Add(new VerboseRecord(message));
-            this.Results.Add(new PSStreamObject(PSStreamObjectType.Verbose, message) );
+            this.Results.Add(new PSStreamObject(PSStreamObjectType.Verbose, message));
         }
 
         internal virtual void WriteDebug(string message)
@@ -916,9 +916,9 @@ namespace System.Management.Automation
 
         internal virtual void WriteProgress(ProgressRecord progressRecord)
         {
-            if ((progressRecord.ParentActivityId == (-1)) && (this.parentActivityId != null))
+            if ((progressRecord.ParentActivityId == (-1)) && (_parentActivityId != null))
             {
-                progressRecord = new ProgressRecord(progressRecord) {ParentActivityId = this.parentActivityId.Value};
+                progressRecord = new ProgressRecord(progressRecord) { ParentActivityId = _parentActivityId.Value };
             }
 
             Progress.Add(progressRecord);
@@ -931,11 +931,11 @@ namespace System.Management.Automation
             Results.Add(new PSStreamObject(PSStreamObjectType.Information, informationRecord));
         }
 
-        private Lazy<int> parentActivityId;
+        private Lazy<int> _parentActivityId;
         internal void SetParentActivityIdGetter(Func<int> parentActivityIdGetter)
         {
             Dbg.Assert(parentActivityIdGetter != null, "Caller should verify parentActivityIdGetter != null");
-            this.parentActivityId = new Lazy<int>(parentActivityIdGetter);
+            _parentActivityId = new Lazy<int>(parentActivityIdGetter);
         }
 
         internal bool ShouldContinue(string query, string caption)
@@ -958,7 +958,7 @@ namespace System.Management.Automation
             string caption)
         {
             InvokeCmdletMethodAndIgnoreResults(
-                    delegate(Cmdlet cmdlet)
+                    delegate (Cmdlet cmdlet)
                     {
                         ShouldProcessReason throwAwayProcessReason;
                         cmdlet.ShouldProcess(
@@ -985,7 +985,7 @@ namespace System.Management.Automation
                     caption,
                     out closureSafeShouldProcessReason),
                 out exceptionThrownOnCmdletThread);
-            
+
             shouldProcessReason = closureSafeShouldProcessReason;
             return methodResult;
         }
@@ -994,11 +994,11 @@ namespace System.Management.Automation
         {
             object resultsLock = new object();
             CmdletMethodInvoker<object> methodInvoker = new CmdletMethodInvoker<object>
-                                                       {
-                                                           Action = delegate(Cmdlet cmdlet) { invokeCmdletMethod(cmdlet); return null; },
-                                                           Finished = null,
-                                                           SyncObject = resultsLock
-                                                       };
+            {
+                Action = delegate (Cmdlet cmdlet) { invokeCmdletMethod(cmdlet); return null; },
+                Finished = null,
+                SyncObject = resultsLock
+            };
             Results.Add(new PSStreamObject(PSStreamObjectType.BlockingError, methodInvoker));
         }
 
@@ -1012,7 +1012,7 @@ namespace System.Management.Automation
             using (var gotResultEvent = new ManualResetEventSlim(false))
             {
                 EventHandler<JobStateEventArgs> stateChangedEventHandler =
-                    delegate(object sender, JobStateEventArgs eventArgs)
+                    delegate (object sender, JobStateEventArgs eventArgs)
                         {
                             if (IsFinishedState(eventArgs.JobStateInfo.State) || eventArgs.JobStateInfo.State == JobState.Stopping)
                             {
@@ -1035,11 +1035,11 @@ namespace System.Management.Automation
 
                         // addition to results column happens here
                         CmdletMethodInvoker<T> methodInvoker = new CmdletMethodInvoker<T>
-                                                                   {
-                                                                       Action = invokeCmdletMethodAndReturnResult,
-                                                                       Finished = gotResultEvent,
-                                                                       SyncObject = resultsLock
-                                                                   };
+                        {
+                            Action = invokeCmdletMethodAndReturnResult,
+                            Finished = gotResultEvent,
+                            SyncObject = resultsLock
+                        };
                         PSStreamObjectType objectType = PSStreamObjectType.ShouldMethod;
 
                         if (typeof(T) == typeof(object))
@@ -1075,7 +1075,7 @@ namespace System.Management.Automation
 
         internal virtual void ForwardAvailableResultsToCmdlet(Cmdlet cmdlet)
         {
-            foreach(PSStreamObject obj in Results.ReadAll())
+            foreach (PSStreamObject obj in Results.ReadAll())
             {
                 obj.WriteStreamObject(cmdlet);
             }
@@ -1103,7 +1103,6 @@ namespace System.Management.Automation
         /// </summary>
         protected virtual void DoUnloadJobStreams()
         {
-            
         }
 
         /// <summary>
@@ -1123,8 +1122,8 @@ namespace System.Management.Automation
             {
                 DoLoadJobStreams();
             }
-            catch(Exception e)
-            {                
+            catch (Exception e)
+            {
                 // third party call-out for platform API
                 // Therefore it is fine to eat the exception
                 // here
@@ -1143,7 +1142,7 @@ namespace System.Management.Automation
         {
             if (!_jobStreamsLoaded) return;
 
-            lock(syncObject)
+            lock (syncObject)
             {
                 if (!_jobStreamsLoaded) return;
                 _jobStreamsLoaded = false;
@@ -1153,7 +1152,7 @@ namespace System.Management.Automation
             {
                 DoUnloadJobStreams();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 // third party call-out for platform API
                 // Therefore it is fine to eat the exception
@@ -1181,7 +1180,7 @@ namespace System.Management.Automation
             get
             {
                 LoadJobStreams(); // for delayed loading
-                return output;
+                return _output;
             }
             set
             {
@@ -1192,8 +1191,8 @@ namespace System.Management.Automation
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
-                    outputOwner = false;
-                    output = value;
+                    _outputOwner = false;
+                    _output = value;
                     _jobStreamsLoaded = true;
                 }
             }
@@ -1215,7 +1214,7 @@ namespace System.Management.Automation
             get
             {
                 LoadJobStreams(); // for delayed loading
-                return error;
+                return _error;
             }
             set
             {
@@ -1226,8 +1225,8 @@ namespace System.Management.Automation
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
-                    errorOwner = false;
-                    error = value;
+                    _errorOwner = false;
+                    _error = value;
                     _jobStreamsLoaded = true;
                 }
             }
@@ -1249,7 +1248,7 @@ namespace System.Management.Automation
             get
             {
                 LoadJobStreams(); // for delayed loading
-                return progress;
+                return _progress;
             }
             set
             {
@@ -1260,8 +1259,8 @@ namespace System.Management.Automation
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
-                    progressOwner = false;
-                    progress = value;
+                    _progressOwner = false;
+                    _progress = value;
                     _jobStreamsLoaded = true;
                 }
             }
@@ -1280,7 +1279,7 @@ namespace System.Management.Automation
             get
             {
                 LoadJobStreams(); // for delayed loading
-                return verbose;
+                return _verbose;
             }
             set
             {
@@ -1291,8 +1290,8 @@ namespace System.Management.Automation
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
-                    verboseOwner = false;
-                    verbose = value;
+                    _verboseOwner = false;
+                    _verbose = value;
                     _jobStreamsLoaded = true;
                 }
             }
@@ -1314,7 +1313,7 @@ namespace System.Management.Automation
             get
             {
                 LoadJobStreams(); // for delayed loading
-                return debug;
+                return _debug;
             }
             set
             {
@@ -1325,8 +1324,8 @@ namespace System.Management.Automation
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
-                    debugOwner = false;
-                    debug = value;
+                    _debugOwner = false;
+                    _debug = value;
                 }
             }
         }
@@ -1347,7 +1346,7 @@ namespace System.Management.Automation
             get
             {
                 LoadJobStreams(); // for delayed loading
-                return warning;
+                return _warning;
             }
             set
             {
@@ -1358,8 +1357,8 @@ namespace System.Management.Automation
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
-                    warningOwner = false;
-                    warning = value;
+                    _warningOwner = false;
+                    _warning = value;
                     _jobStreamsLoaded = true;
                 }
             }
@@ -1381,7 +1380,7 @@ namespace System.Management.Automation
             get
             {
                 LoadJobStreams(); // for delayed loading
-                return information;
+                return _information;
             }
             set
             {
@@ -1392,8 +1391,8 @@ namespace System.Management.Automation
                 lock (syncObject)
                 {
                     AssertChangesAreAccepted();
-                    informationOwner = false;
-                    information = value;
+                    _informationOwner = false;
+                    _information = value;
                     _jobStreamsLoaded = true;
                 }
             }
@@ -1402,7 +1401,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Indicates a location where this job is running
         /// </summary>
-        public abstract String Location { get;}
+        public abstract String Location { get; }
 
         #endregion results
 
@@ -1468,11 +1467,11 @@ namespace System.Management.Automation
                 AssertNotDisposed();
 
                 bool alldone = false;
-                JobStateInfo previousState = this.stateInfo;
+                JobStateInfo previousState = _stateInfo;
 
                 lock (syncObject)
                 {
-                    stateInfo = new JobStateInfo(state, reason);
+                    _stateInfo = new JobStateInfo(state, reason);
 
                     if (state == JobState.Running)
                     {
@@ -1512,13 +1511,13 @@ namespace System.Management.Automation
                     }
                 }
 
-                #pragma warning disable 56500
+#pragma warning disable 56500
                 //Exception rasied in the eventhandler are not error in job.
                 //silently ignore them.
                 try
                 {
                     tracer.WriteMessage("Job", "SetJobState", Guid.Empty, this, "Invoking StateChanged event", null);
-                    StateChanged.SafeInvoke(this, new JobStateEventArgs(stateInfo.Clone(), previousState));
+                    StateChanged.SafeInvoke(this, new JobStateEventArgs(_stateInfo.Clone(), previousState));
                 }
                 catch (Exception exception) // ignore non-severe exceptions
                 {
@@ -1534,9 +1533,9 @@ namespace System.Management.Automation
                 {
                     lock (syncObject)
                     {
-                        if (finished != null)
+                        if (_finished != null)
                         {
-                            finished.Set();
+                            _finished.Set();
                         }
                     }
                 }
@@ -1596,7 +1595,7 @@ namespace System.Management.Automation
                 return (IsFinishedState(state) || state == JobState.Disconnected || state == JobState.Suspended);
             }
         }
-                             
+
         /// <summary>
         /// Checks if the current instance can accept changes like
         /// changing one of the properties like Output, Error etc.
@@ -1631,7 +1630,7 @@ namespace System.Management.Automation
         /// localizable</remarks>
         protected String AutoGenerateJobName()
         {
-            return "Job" + sessionId.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
+            return "Job" + _sessionId.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
         }
 
         /// <summary>
@@ -1643,25 +1642,25 @@ namespace System.Management.Automation
         /// </exception>
         internal void AssertNotDisposed()
         {
-            if (isDisposed)
+            if (_isDisposed)
             {
                 throw PSTraceSource.NewObjectDisposedException("PSJob");
             }
         }
-        
+
         /// <summary>
         /// A helper method to close all the streams.
         /// </summary>
         internal void CloseAllStreams()
         {
-            if (resultsOwner) results.Complete();
-            if (outputOwner) output.Complete();
-            if (errorOwner) error.Complete();
-            if (progressOwner) progress.Complete();
-            if (verboseOwner) verbose.Complete();
-            if (warningOwner) warning.Complete();
-            if (debugOwner) debug.Complete();
-            if (informationOwner) information.Complete();
+            if (_resultsOwner) _results.Complete();
+            if (_outputOwner) _output.Complete();
+            if (_errorOwner) _error.Complete();
+            if (_progressOwner) _progress.Complete();
+            if (_verboseOwner) _verbose.Complete();
+            if (_warningOwner) _warning.Complete();
+            if (_debugOwner) _debug.Complete();
+            if (_informationOwner) _information.Complete();
         }
 
         /// <summary>
@@ -1710,35 +1709,35 @@ namespace System.Management.Automation
         {
             if (disposing)
             {
-                if (!isDisposed)
+                if (!_isDisposed)
                 {
                     CloseAllStreams();
 
                     // release the WaitHandle
                     lock (syncObject)
                     {
-                        if (null != finished)
+                        if (null != _finished)
                         {
-                            finished.Dispose();
-                            finished = null;
+                            _finished.Dispose();
+                            _finished = null;
                         }
                     }
 
                     // Only dispose the collections if we've created them...
-                    if (resultsOwner) results.Dispose();
-                    if (outputOwner) output.Dispose();
-                    if (errorOwner) error.Dispose();
-                    if (debugOwner) debug.Dispose();
-                    if (informationOwner) information.Dispose();
-                    if (verboseOwner) verbose.Dispose();
-                    if (warningOwner) warning.Dispose();
-                    if (progressOwner) progress.Dispose();
+                    if (_resultsOwner) _results.Dispose();
+                    if (_outputOwner) _output.Dispose();
+                    if (_errorOwner) _error.Dispose();
+                    if (_debugOwner) _debug.Dispose();
+                    if (_informationOwner) _information.Dispose();
+                    if (_verboseOwner) _verbose.Dispose();
+                    if (_warningOwner) _warning.Dispose();
+                    if (_progressOwner) _progress.Dispose();
 
-                    isDisposed = true;
+                    _isDisposed = true;
                 }
             }
         }
-        private bool isDisposed;
+        private bool _isDisposed;
 
         #endregion IDisposable Members
 
@@ -1780,7 +1779,6 @@ namespace System.Management.Automation
         }
 
         #endregion
-
     } //Job
 
     /// <summary>
@@ -1811,7 +1809,8 @@ namespace System.Management.Automation
         internal PSRemotingJob(String[] computerNames,
                         List<IThrottleOperation> computerNameHelpers, String remoteCommand, string name)
             :
-            this(computerNames, computerNameHelpers, remoteCommand, 0, name) { }
+            this(computerNames, computerNameHelpers, remoteCommand, 0, name)
+        { }
 
         /// <summary>
         /// Internal constructor for initializing job using
@@ -1828,7 +1827,8 @@ namespace System.Management.Automation
         internal PSRemotingJob(PSSession[] remoteRunspaceInfos,
                         List<IThrottleOperation> runspaceHelpers, String remoteCommand, string name)
             :
-            this(remoteRunspaceInfos, runspaceHelpers, remoteCommand, 0, name) { }
+            this(remoteRunspaceInfos, runspaceHelpers, remoteCommand, 0, name)
+        { }
 
 
         /// <summary>
@@ -1847,14 +1847,14 @@ namespace System.Management.Automation
         internal PSRemotingJob(String[] computerNames,
                         List<IThrottleOperation> computerNameHelpers, String remoteCommand,
                             int throttleLimit, string name)
-            :base(remoteCommand,name)
+            : base(remoteCommand, name)
         {
             // Create child jobs for each object in the list
             foreach (ExecutionCmdletHelperComputerName helper in computerNameHelpers)
             {
                 //Create Child Job and Register for its StateChanged Event
-                PSRemotingChildJob childJob = new PSRemotingChildJob(remoteCommand, 
-                                            helper, throttleManager);
+                PSRemotingChildJob childJob = new PSRemotingChildJob(remoteCommand,
+                                            helper, _throttleManager);
                 childJob.StateChanged += new EventHandler<JobStateEventArgs>(HandleChildJobStateChanged);
                 childJob.JobUnblocked += new EventHandler(HandleJobUnblocked);
 
@@ -1880,7 +1880,7 @@ namespace System.Management.Automation
         internal PSRemotingJob(PSSession[] remoteRunspaceInfos,
                         List<IThrottleOperation> runspaceHelpers, String remoteCommand,
                         int throttleLimit, string name)
-            :base(remoteCommand, name)
+            : base(remoteCommand, name)
         {
             // Create chiild jobs for each object in the list
             for (int i = 0; i < remoteRunspaceInfos.Length; i++)
@@ -1888,8 +1888,8 @@ namespace System.Management.Automation
                 ExecutionCmdletHelperRunspace helper = (ExecutionCmdletHelperRunspace)runspaceHelpers[i];
 
                 //Create Child Job object and Register for its state changed event
-                PSRemotingChildJob job = new PSRemotingChildJob(remoteCommand, 
-                                helper, throttleManager);
+                PSRemotingChildJob job = new PSRemotingChildJob(remoteCommand,
+                                helper, _throttleManager);
                 job.StateChanged += new EventHandler<JobStateEventArgs>(HandleChildJobStateChanged);
                 job.JobUnblocked += new EventHandler(HandleJobUnblocked);
 
@@ -1909,7 +1909,7 @@ namespace System.Management.Automation
         /// <param name="throttleLimit">Throttle limit value.</param>
         /// <param name="name">Job name.</param>
         /// <param name="aggregateResults">Aggregate results.</param>
-        internal PSRemotingJob(List<IThrottleOperation> helpers, 
+        internal PSRemotingJob(List<IThrottleOperation> helpers,
                                int throttleLimit, string name, bool aggregateResults)
             : base(string.Empty, name)
         {
@@ -1918,7 +1918,7 @@ namespace System.Management.Automation
             // ExecutionCmdletHelperRunspace object and ThrottleManager.
             foreach (ExecutionCmdletHelper helper in helpers)
             {
-                PSRemotingChildJob job = new PSRemotingChildJob(helper, this.throttleManager, aggregateResults);
+                PSRemotingChildJob job = new PSRemotingChildJob(helper, _throttleManager, aggregateResults);
                 job.StateChanged += new EventHandler<JobStateEventArgs>(HandleChildJobStateChanged);
                 job.JobUnblocked += new EventHandler(HandleJobUnblocked);
 
@@ -1933,9 +1933,9 @@ namespace System.Management.Automation
             SetJobState(JobState.Disconnected);
 
             // Submit the disconnected operation helpers to the throttle manager
-            this.throttleManager.ThrottleLimit = throttleLimit;
-            this.throttleManager.SubmitOperations(helpers);
-            this.throttleManager.EndSubmitOperations();
+            _throttleManager.ThrottleLimit = throttleLimit;
+            _throttleManager.SubmitOperations(helpers);
+            _throttleManager.EndSubmitOperations();
         }
 
         /// <summary>
@@ -1946,7 +1946,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initialization common to both constructors
         /// </summary>
-        void CommonInit(int throttleLimit, List<IThrottleOperation> helpers)
+        private void CommonInit(int throttleLimit, List<IThrottleOperation> helpers)
         {
             //Since no results are produced by any streams. We should
             //close all the streams
@@ -1956,14 +1956,14 @@ namespace System.Management.Automation
             SetJobState(JobState.Running);
 
             // submit operations to the throttle manager
-            throttleManager.ThrottleLimit = throttleLimit;
-            throttleManager.SubmitOperations(helpers);
-            throttleManager.EndSubmitOperations();
+            _throttleManager.ThrottleLimit = throttleLimit;
+            _throttleManager.SubmitOperations(helpers);
+            _throttleManager.EndSubmitOperations();
         }
         #endregion Internal Constructors
 
         #region internal methods
-        
+
         /// <summary>
         /// Get entity result for the specified computer
         /// </summary>
@@ -1978,7 +1978,7 @@ namespace System.Management.Automation
             {
                 PSRemotingChildJob child = j as PSRemotingChildJob;
                 if (j == null) continue;
-                if (String.Equals(child.Runspace.ConnectionInfo.ComputerName, computerName, 
+                if (String.Equals(child.Runspace.ConnectionInfo.ComputerName, computerName,
                                 StringComparison.OrdinalIgnoreCase))
                 {
                     returnJobList.Add(child);
@@ -2093,7 +2093,7 @@ namespace System.Management.Automation
                 using (ManualResetEvent connectResult = new ManualResetEvent(false))
                 {
                     EventHandler<EventArgs> throttleCompleteEventHandler =
-                            delegate(object sender, EventArgs eventArgs)
+                            delegate (object sender, EventArgs eventArgs)
                             {
                                 connectResult.Set();
                             };
@@ -2120,12 +2120,12 @@ namespace System.Management.Automation
         /// </summary>
         private class ConnectJobOperation : IThrottleOperation
         {
-            private PSRemotingChildJob psRemoteChildJob;
+            private PSRemotingChildJob _psRemoteChildJob;
 
             internal ConnectJobOperation(PSRemotingChildJob job)
             {
-                this.psRemoteChildJob = job;
-                this.psRemoteChildJob.StateChanged += ChildJobStateChangedHandler;
+                _psRemoteChildJob = job;
+                _psRemoteChildJob.StateChanged += ChildJobStateChangedHandler;
             }
 
             internal override void StartOperation()
@@ -2134,16 +2134,16 @@ namespace System.Management.Automation
 
                 try
                 {
-                    this.psRemoteChildJob.ConnectAsync();
+                    _psRemoteChildJob.ConnectAsync();
                 }
                 catch (InvalidJobStateException e)
                 {
                     startedSuccessfully = false;
 
-                    string msg = StringUtil.Format(RemotingErrorIdStrings.JobConnectFailed, this.psRemoteChildJob.Name);
+                    string msg = StringUtil.Format(RemotingErrorIdStrings.JobConnectFailed, _psRemoteChildJob.Name);
                     Exception reason = new RuntimeException(msg, e);
-                    ErrorRecord errorRecord = new ErrorRecord(reason, "PSJobConnectFailed", ErrorCategory.InvalidOperation, this.psRemoteChildJob);
-                    this.psRemoteChildJob.WriteError(errorRecord);
+                    ErrorRecord errorRecord = new ErrorRecord(reason, "PSJobConnectFailed", ErrorCategory.InvalidOperation, _psRemoteChildJob);
+                    _psRemoteChildJob.WriteError(errorRecord);
                 }
 
                 if (!startedSuccessfully)
@@ -2185,7 +2185,7 @@ namespace System.Management.Automation
 
             private void RemoveEventCallback()
             {
-                this.psRemoteChildJob.StateChanged -= ChildJobStateChangedHandler;
+                _psRemoteChildJob.StateChanged -= ChildJobStateChangedHandler;
             }
         }
 
@@ -2237,28 +2237,28 @@ namespace System.Management.Automation
         /// </summary>
         internal void InternalStopJob()
         {
-            if (isDisposed || _stopIsCalled || IsFinishedState(JobStateInfo.State))
+            if (_isDisposed || _stopIsCalled || IsFinishedState(JobStateInfo.State))
             {
                 return;
             }
 
             lock (_syncObject)
             {
-                if (isDisposed || _stopIsCalled || IsFinishedState(JobStateInfo.State))
+                if (_isDisposed || _stopIsCalled || IsFinishedState(JobStateInfo.State))
                 {
                     return;
                 }
                 _stopIsCalled = true;
             }
 
-            throttleManager.StopAllOperations();
+            _throttleManager.StopAllOperations();
 
-            Finished.WaitOne();   
+            Finished.WaitOne();
         }
 
         #endregion
 
-        private bool moreData = true;
+        private bool _moreData = true;
         /// <summary>
         /// indicates if more data is available
         /// </summary>
@@ -2273,7 +2273,7 @@ namespace System.Management.Automation
                 // will remain so until the async result 
                 // object has completed execution. 
 
-                if (moreData && IsFinishedState(JobStateInfo.State))
+                if (_moreData && IsFinishedState(JobStateInfo.State))
                 {
                     bool atleastOneChildHasMoreData = false;
 
@@ -2286,14 +2286,14 @@ namespace System.Management.Automation
                         }
                     }
 
-                    moreData = atleastOneChildHasMoreData;
+                    _moreData = atleastOneChildHasMoreData;
                 }
 
-                return moreData;
+                return _moreData;
             }
-        }        
-        
-        
+        }
+
+
         private bool _stopIsCalled = false;
         /// <summary>
         /// Stop Job 
@@ -2338,8 +2338,8 @@ namespace System.Management.Automation
 
             InternalStopJob();
         }
-                        
-        string statusMessage;
+
+        private string _statusMessage;
         /// <summary>
         /// Message indicating status of the job
         /// </summary>
@@ -2347,7 +2347,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return statusMessage;
+                return _statusMessage;
             }
         }
 
@@ -2359,10 +2359,10 @@ namespace System.Management.Automation
         /// </summary>
         internal bool HideComputerName
         {
-            get { return hideComputerName; }
+            get { return _hideComputerName; }
             set
             {
-                hideComputerName = value;
+                _hideComputerName = value;
                 foreach (Job job in this.ChildJobs)
                 {
                     PSRemotingChildJob rJob = job as PSRemotingChildJob;
@@ -2373,7 +2373,7 @@ namespace System.Management.Automation
                 }
             }
         }
-        private bool hideComputerName = true;
+        private bool _hideComputerName = true;
 
         //ISSUE: Implement StatusMessage
         /// <summary>
@@ -2383,7 +2383,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         private void SetStatusMessage()
         {
-            statusMessage = "test";
+            _statusMessage = "test";
             //        bool localErrors = false; // if local errors are present
             //        bool setFinished = false;    // if finished needs to be set
 
@@ -2427,20 +2427,20 @@ namespace System.Management.Automation
         #region finish logic
 
         //This variable is set to true if atleast one child job failed.
-        bool atleastOneChildJobFailed = false;
+        private bool _atleastOneChildJobFailed = false;
 
         // count of number of child jobs which have finished
-        private int finishedChildJobsCount = 0;
+        private int _finishedChildJobsCount = 0;
 
         // count of number of child jobs which are blocked
-        private int blockedChildJobsCount = 0;
+        private int _blockedChildJobsCount = 0;
 
         // count of child jobs that are in disconnected state.
-        private int disconnectedChildJobsCount = 0;
+        private int _disconnectedChildJobsCount = 0;
 
         // count of child jobs that are in Debug halted state.
-        private int debugChildJobsCount = 0;
-       
+        private int _debugChildJobsCount = 0;
+
         /// <summary>
         /// Handles the StateChanged event from each of the child job objects
         /// </summary>
@@ -2456,7 +2456,7 @@ namespace System.Management.Automation
                 // increment count of blocked child jobs
                 lock (_syncObject)
                 {
-                    blockedChildJobsCount++;
+                    _blockedChildJobsCount++;
                 }
 
                 // if any of the child job is blocked, we set state to blocked
@@ -2467,7 +2467,7 @@ namespace System.Management.Automation
             // Handle transition of child job to Debug halt state.
             if (e.JobStateInfo.State == JobState.AtBreakpoint)
             {
-                lock (_syncObject) { debugChildJobsCount++; }
+                lock (_syncObject) { _debugChildJobsCount++; }
 
                 // If any child jobs are Debug halted, we set state to Debug.
                 SetJobState(JobState.AtBreakpoint);
@@ -2479,8 +2479,8 @@ namespace System.Management.Automation
                 (e.PreviousJobStateInfo.State == JobState.AtBreakpoint))
             {
                 int totalDebugCount;
-                lock (_syncObject) { totalDebugCount = --debugChildJobsCount; }
-                
+                lock (_syncObject) { totalDebugCount = --_debugChildJobsCount; }
+
                 if (totalDebugCount == 0)
                 {
                     SetJobState(JobState.Running);
@@ -2496,16 +2496,16 @@ namespace System.Management.Automation
             if (e.JobStateInfo.State == JobState.Failed)
             {
                 //If any of the child job failed, we set status to failed
-                atleastOneChildJobFailed = true;
+                _atleastOneChildJobFailed = true;
             }
 
             bool allChildJobsFinished = false;
             lock (_syncObject)
             {
-                finishedChildJobsCount++;
+                _finishedChildJobsCount++;
 
                 //We are done
-                if (finishedChildJobsCount + disconnectedChildJobsCount 
+                if (_finishedChildJobsCount + _disconnectedChildJobsCount
                     == ChildJobs.Count)
                 {
                     allChildJobsFinished = true;
@@ -2516,11 +2516,11 @@ namespace System.Management.Automation
                 //if any child job failed, set status to failed
                 //If stop was called set, status to stopped
                 //else completed
-                if (disconnectedChildJobsCount > 0)
+                if (_disconnectedChildJobsCount > 0)
                 {
                     SetJobState(JobState.Disconnected);
                 }
-                else if (atleastOneChildJobFailed)
+                else if (_atleastOneChildJobFailed)
                 {
                     SetJobState(JobState.Failed);
                 }
@@ -2546,27 +2546,27 @@ namespace System.Management.Automation
             {
                 return;
             }
-            
+
             // Do all logic inside a lock to ensure it is atomic against
             // multiple job thread state changes.
             lock (_syncObject)
             {
                 if (newState == JobState.Disconnected)
                 {
-                    ++(this.disconnectedChildJobsCount);
+                    ++(_disconnectedChildJobsCount);
 
                     // If previous state was Blocked then we need to decrement the count
                     // since it is now Disconnected.
                     if (prevState == JobState.Blocked)
                     {
-                        --this.blockedChildJobsCount;
+                        --_blockedChildJobsCount;
                     }
 
                     // If all unfinished and unblocked child jobs are disconnected then this
                     // parent job becomes disconnected.
-                    if ((this.disconnectedChildJobsCount +
-                         this.finishedChildJobsCount +
-                         this.blockedChildJobsCount) == ChildJobs.Count)
+                    if ((_disconnectedChildJobsCount +
+                         _finishedChildJobsCount +
+                         _blockedChildJobsCount) == ChildJobs.Count)
                     {
                         SetJobState(JobState.Disconnected, null);
                     }
@@ -2575,7 +2575,7 @@ namespace System.Management.Automation
                 {
                     if (prevState == JobState.Disconnected)
                     {
-                        --(this.disconnectedChildJobsCount);
+                        --(_disconnectedChildJobsCount);
                     }
 
                     if ((newState == JobState.Running) && (JobStateInfo.State == JobState.Disconnected))
@@ -2600,19 +2600,19 @@ namespace System.Management.Automation
         {
             if (disposing)
             {
-                if (isDisposed)
+                if (_isDisposed)
                 {
                     return;
                 }
 
                 lock (_syncObject)
                 {
-                    if (isDisposed)
+                    if (_isDisposed)
                     {
                         return;
                     }
 
-                    isDisposed = true;
+                    _isDisposed = true;
                 }
 
                 try
@@ -2625,7 +2625,7 @@ namespace System.Management.Automation
                     {
                         job.Dispose();
                     }
-                    throttleManager.Dispose();
+                    _throttleManager.Dispose();
                 }
                 finally
                 {
@@ -2633,8 +2633,8 @@ namespace System.Management.Automation
                 }
             }
         }
-        
-        private bool isDisposed = false;
+
+        private bool _isDisposed = false;
 
         private String ConstructLocation()
         {
@@ -2658,7 +2658,7 @@ namespace System.Management.Automation
         /// </summary>
         public override string Location
         {
-            get 
+            get
             {
                 return ConstructLocation();
             }
@@ -2708,9 +2708,9 @@ namespace System.Management.Automation
 
             lock (_syncObject)
             {
-                blockedChildJobsCount--;
+                _blockedChildJobsCount--;
 
-                if (blockedChildJobsCount == 0)
+                if (_blockedChildJobsCount == 0)
                 {
                     unblockjob = true;
                 }
@@ -2724,10 +2724,10 @@ namespace System.Management.Automation
 
         #region Private Members
 
-        private ThrottleManager throttleManager = new ThrottleManager();
-                
+        private ThrottleManager _throttleManager = new ThrottleManager();
+
         private readonly object _syncObject = new object();           // sync object      
-        
+
         #endregion Private Members
     }
 
@@ -2827,12 +2827,12 @@ namespace System.Management.Automation
             UsesResultsCollection = true;
             Dbg.Assert(helper.Pipeline is RemotePipeline, "Pipeline passed should be a remote pipeline");
 
-            this.helper = helper;
-            this.remoteRunspace = helper.Pipeline.Runspace;
-            this.remotePipeline = helper.Pipeline as RemotePipeline;
-            this.throttleManager = throttleManager;
+            _helper = helper;
+            _remoteRunspace = helper.Pipeline.Runspace;
+            _remotePipeline = helper.Pipeline as RemotePipeline;
+            _throttleManager = throttleManager;
 
-            RemoteRunspace remoteRS = remoteRunspace as RemoteRunspace;
+            RemoteRunspace remoteRS = _remoteRunspace as RemoteRunspace;
             if ((null != remoteRS) && (remoteRS.RunspaceStateInfo.State == RunspaceState.BeforeOpen))
             {
                 remoteRS.URIRedirectionReported += HandleURIDirectionReported;
@@ -2840,7 +2840,7 @@ namespace System.Management.Automation
 
             AggregateResultsFromHelper(helper);
 
-            remoteRunspace.AvailabilityChanged += HandleRunspaceAvailabilityChanged;
+            _remoteRunspace.AvailabilityChanged += HandleRunspaceAvailabilityChanged;
 
             RegisterThrottleComplete(throttleManager);
         }
@@ -2861,10 +2861,10 @@ namespace System.Management.Automation
             Dbg.Assert((helper.Pipeline is RemotePipeline), "Helper pipeline object should be a remote pipeline");
             Dbg.Assert((helper.Pipeline.PipelineStateInfo.State == PipelineState.Disconnected), "Remote pipeline object must be in Disconnected state.");
 
-            this.helper = helper;
-            this.remotePipeline = helper.Pipeline as RemotePipeline;
-            this.remoteRunspace = helper.Pipeline.Runspace;
-            this.throttleManager = throttleManager;
+            _helper = helper;
+            _remotePipeline = helper.Pipeline as RemotePipeline;
+            _remoteRunspace = helper.Pipeline.Runspace;
+            _throttleManager = throttleManager;
 
             if (aggregateResults)
             {
@@ -2872,12 +2872,12 @@ namespace System.Management.Automation
             }
             else
             {
-                this.remotePipeline.StateChanged += new EventHandler<PipelineStateEventArgs>(HandlePipelineStateChanged);
-                this.remotePipeline.Output.DataReady += new EventHandler(HandleOutputReady);
-                this.remotePipeline.Error.DataReady += new EventHandler(HandleErrorReady);
+                _remotePipeline.StateChanged += new EventHandler<PipelineStateEventArgs>(HandlePipelineStateChanged);
+                _remotePipeline.Output.DataReady += new EventHandler(HandleOutputReady);
+                _remotePipeline.Error.DataReady += new EventHandler(HandleErrorReady);
             }
 
-            remoteRunspace.AvailabilityChanged += HandleRunspaceAvailabilityChanged;
+            _remoteRunspace.AvailabilityChanged += HandleRunspaceAvailabilityChanged;
 
             IThrottleOperation operation = helper as IThrottleOperation;
             operation.OperationComplete += new EventHandler<OperationStateEventArgs>(HandleOperationComplete);
@@ -2890,7 +2890,6 @@ namespace System.Management.Automation
         /// </summary>
         protected PSRemotingChildJob()
         {
-
         }
 
         #endregion Internal Constructor
@@ -2907,7 +2906,7 @@ namespace System.Management.Automation
                 throw new InvalidJobStateException(JobStateInfo.State);
             }
 
-            this.remotePipeline.ConnectAsync();
+            _remotePipeline.ConnectAsync();
         }
 
         /// <summary>
@@ -2916,7 +2915,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void RemoveJobAggregation()
         {
-            RemoveAggreateCallbacksFromHelper(helper);
+            RemoveAggreateCallbacksFromHelper(_helper);
         }
 
         #endregion
@@ -2929,22 +2928,22 @@ namespace System.Management.Automation
         /// </summary>
         public override void StopJob()
         {
-            if (isDisposed || stopIsCalled || IsFinishedState(JobStateInfo.State))
+            if (_isDisposed || _stopIsCalled || IsFinishedState(JobStateInfo.State))
             {
                 return;
             }
 
             lock (SyncObject)
             {
-                if (isDisposed || stopIsCalled || IsFinishedState(JobStateInfo.State))
+                if (_isDisposed || _stopIsCalled || IsFinishedState(JobStateInfo.State))
                 {
                     return;
                 }
 
-                stopIsCalled = true;
+                _stopIsCalled = true;
             }
 
-            throttleManager.StopOperation(helper);
+            _throttleManager.StopOperation(_helper);
 
             // if IgnoreStop is set, then StopOperation will
             // return immediately, but StopJob should only
@@ -2990,7 +2989,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (remoteRunspace != null) ? remoteRunspace.ConnectionInfo.ComputerName : string.Empty;
+                return (_remoteRunspace != null) ? _remoteRunspace.ConnectionInfo.ComputerName : string.Empty;
             }
         }
 
@@ -3001,11 +3000,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return remoteRunspace;
+                return _remoteRunspace;
             }
         }
 
-        private Runspace remoteRunspace;
+        private Runspace _remoteRunspace;
 
         /// <summary>
         /// helper associated with this entity
@@ -3014,7 +3013,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return helper;
+                return _helper;
             }
         }
 
@@ -3026,10 +3025,10 @@ namespace System.Management.Automation
         /// </summary>
         internal bool HideComputerName
         {
-            get { return hideComputerName; }
+            get { return _hideComputerName; }
             set
             {
-                hideComputerName = value;
+                _hideComputerName = value;
                 foreach (Job job in this.ChildJobs)
                 {
                     PSRemotingChildJob rJob = job as PSRemotingChildJob;
@@ -3040,7 +3039,7 @@ namespace System.Management.Automation
                 }
             }
         }
-        private bool hideComputerName = true;
+        private bool _hideComputerName = true;
 
         /// <summary>
         /// Property that indicates this disconnected child job was
@@ -3048,7 +3047,7 @@ namespace System.Management.Automation
         /// </summary>
         internal bool DisconnectedAndBlocked
         {
-            get { return this.disconnectedBlocked; }
+            get { return _disconnectedBlocked; }
         }
 
         /// <summary>
@@ -3060,7 +3059,7 @@ namespace System.Management.Automation
         {
             get
             {
-                RemoteRunspace remoteRS = this.remoteRunspace as RemoteRunspace;
+                RemoteRunspace remoteRS = _remoteRunspace as RemoteRunspace;
                 return (remoteRS != null) ? remoteRS.CanDisconnect : false;
             }
         }
@@ -3081,9 +3080,9 @@ namespace System.Management.Automation
                     lock (this.SyncObject)
                     {
                         if ((_jobDebugger == null) &&
-                            (this.remoteRunspace.Debugger != null))
+                            (_remoteRunspace.Debugger != null))
                         {
-                            _jobDebugger = new RemotingJobDebugger(this.remoteRunspace.Debugger, this.remoteRunspace, this.Name);
+                            _jobDebugger = new RemotingJobDebugger(_remoteRunspace.Debugger, _remoteRunspace, this.Name);
                         }
                     }
                 }
@@ -3147,7 +3146,7 @@ namespace System.Management.Automation
                     // Ex: Invoke-Command localhost,blah { gps } | select PSComputerName should work.
                     if (dataObject.Properties[RemotingConstants.ShowComputerNameNoteProperty] == null)
                     {
-                        PSNoteProperty showComputerNameNP = new PSNoteProperty(RemotingConstants.ShowComputerNameNoteProperty, !hideComputerName);                            
+                        PSNoteProperty showComputerNameNP = new PSNoteProperty(RemotingConstants.ShowComputerNameNoteProperty, !_hideComputerName);
                         dataObject.Properties.Add(showComputerNameNP);
                     }
                 }
@@ -3265,24 +3264,24 @@ namespace System.Management.Automation
         /// <param name="e"></param>
         protected virtual void HandlePipelineStateChanged(object sender, PipelineStateEventArgs e)
         {
-            if ((null != remoteRunspace) && (e.PipelineStateInfo.State != PipelineState.Running))
+            if ((null != _remoteRunspace) && (e.PipelineStateInfo.State != PipelineState.Running))
             {
                 // since we got state changed event..we dont need to listen on
                 // URI redirections anymore
-                ((RemoteRunspace)remoteRunspace).URIRedirectionReported -= HandleURIDirectionReported;
+                ((RemoteRunspace)_remoteRunspace).URIRedirectionReported -= HandleURIDirectionReported;
 
                 // We monitor runspace RemoteDebug availability only while
                 // this pipeline is running.
-                ((RemoteRunspace)remoteRunspace).AvailabilityChanged -= HandleRunspaceAvailabilityChangedForInvoke;
+                ((RemoteRunspace)_remoteRunspace).AvailabilityChanged -= HandleRunspaceAvailabilityChangedForInvoke;
             }
 
             PipelineState state = e.PipelineStateInfo.State;
             switch (state)
             {
                 case PipelineState.Running:
-                    if (this.disconnectedBlocked)
+                    if (_disconnectedBlocked)
                     {
-                        this.disconnectedBlocked = false;
+                        _disconnectedBlocked = false;
                         SetJobState(JobState.Blocked);
                     }
                     else
@@ -3292,7 +3291,7 @@ namespace System.Management.Automation
                     break;
 
                 case PipelineState.Disconnected:
-                    this.disconnectedBlocked = (JobStateInfo.State == JobState.Blocked);
+                    _disconnectedBlocked = (JobStateInfo.State == JobState.Blocked);
                     SetJobState(JobState.Disconnected);
                     break;
             }
@@ -3344,7 +3343,7 @@ namespace System.Management.Automation
 
             DeterminedAndSetJobState(helper);
         }
-        bool doFinishCalled = false;
+        private bool _doFinishCalled = false;
 
         /// <summary>
         /// This method marks the completion state for Job. Also if job failed, it processes the 
@@ -3352,18 +3351,18 @@ namespace System.Management.Automation
         /// </summary>
         protected virtual void DoFinish()
         {
-            if (doFinishCalled == true)
+            if (_doFinishCalled == true)
                 return;
 
             lock (SyncObject)
             {
-                if (doFinishCalled == true)
+                if (_doFinishCalled == true)
                     return;
 
-                doFinishCalled = true;
+                _doFinishCalled = true;
             }
 
-            DeterminedAndSetJobState(helper);
+            DeterminedAndSetJobState(_helper);
 
             DoCleanupOnFinished();
         }
@@ -3371,7 +3370,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This is the pretty formated error record associated with the reason of failure.
         /// </summary>
-        ErrorRecord failureErrorRecord;
+        private ErrorRecord _failureErrorRecord;
 
         /// <summary>
         /// This is the pretty formated error record associated with the reason of failure.
@@ -3381,7 +3380,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return failureErrorRecord;
+                return _failureErrorRecord;
             }
         }
 
@@ -3446,7 +3445,7 @@ namespace System.Management.Automation
                 PSRemotingTransportException transException =
                             failureException as PSRemotingTransportException;
 
-                string fullyQualifiedErrorId = 
+                string fullyQualifiedErrorId =
                     System.Management.Automation.Remoting.Client.WSManTransportManagerUtils.GetFQEIDFromTransportError(
                         (transException != null) ? transException.ErrorCode : 0,
                         "PSSessionStateBroken");
@@ -3483,13 +3482,12 @@ namespace System.Management.Automation
                 {
                     failureException = new RuntimeException(
                         PSRemotingErrorInvariants.FormatResourceString(
-                            RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState, 
+                            RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState,
                             runspace.RunspaceStateInfo.State));
                 }
                 failureErrorRecord = new ErrorRecord(failureException, targetObject,
                                 fullyQualifiedErrorId, ErrorCategory.OpenError,
                                 null, null, null, null, null, errorDetails, null);
-
             } // if (runspace...
             else if (pipeline.PipelineStateInfo.State == PipelineState.Failed)
             {
@@ -3523,7 +3521,6 @@ namespace System.Management.Automation
                     OriginInfo originInfo = new OriginInfo(computerName, runspaceId);
 
                     failureErrorRecord = new RemotingErrorRecord(errorRecord, originInfo);
-
                 } // if (exception != null...
             } // if (pipeline...                                
         }
@@ -3538,17 +3535,17 @@ namespace System.Management.Automation
         {
             if (disposing)
             {
-                if (isDisposed)
+                if (_isDisposed)
                 {
                     return;
                 }
                 lock (SyncObject)
                 {
-                    if (isDisposed)
+                    if (_isDisposed)
                     {
                         return;
                     }
-                    isDisposed = true;
+                    _isDisposed = true;
                 }
 
                 try
@@ -3562,9 +3559,9 @@ namespace System.Management.Automation
             }
         }
 
-        private bool isDisposed = false;
+        private bool _isDisposed = false;
 
-        private bool cleanupDone = false;
+        private bool _cleanupDone = false;
 
         /// <summary>
         /// Cleanup after state changes to finished
@@ -3572,25 +3569,25 @@ namespace System.Management.Automation
         protected virtual void DoCleanupOnFinished()
         {
             bool doCleanup = false;
-            if (cleanupDone == false)
+            if (_cleanupDone == false)
             {
                 lock (SyncObject)
                 {
-                    if (cleanupDone == false)
+                    if (_cleanupDone == false)
                     {
-                        cleanupDone = true;
+                        _cleanupDone = true;
                         doCleanup = true;
                     }
                 }
             }
             if (!doCleanup) return;
 
-            StopAggregateResultsFromHelper(helper);
-            remoteRunspace.AvailabilityChanged -= HandleRunspaceAvailabilityChanged;
-            IThrottleOperation operation = helper as IThrottleOperation;
+            StopAggregateResultsFromHelper(_helper);
+            _remoteRunspace.AvailabilityChanged -= HandleRunspaceAvailabilityChanged;
+            IThrottleOperation operation = _helper as IThrottleOperation;
             operation.OperationComplete -= new EventHandler<OperationStateEventArgs>(HandleOperationComplete);
-            UnregisterThrottleComplete(throttleManager);
-            throttleManager = null;
+            UnregisterThrottleComplete(_throttleManager);
+            _throttleManager = null;
         }
 
         /// <summary>
@@ -3609,15 +3606,15 @@ namespace System.Management.Automation
 
             // Register handler for method executor object stream. 
             Dbg.Assert(pipeline is RemotePipeline, "pipeline is RemotePipeline");
-            RemotePipeline remotePipeline = pipeline as RemotePipeline;            
+            RemotePipeline remotePipeline = pipeline as RemotePipeline;
             remotePipeline.MethodExecutorStream.DataReady += new EventHandler(HandleHostCalls);
-            remotePipeline.PowerShell.Streams.Progress.DataAdded += 
+            remotePipeline.PowerShell.Streams.Progress.DataAdded +=
                 new EventHandler<DataAddedEventArgs>(HandleProgressAdded);
-            remotePipeline.PowerShell.Streams.Warning.DataAdded += 
+            remotePipeline.PowerShell.Streams.Warning.DataAdded +=
                 new EventHandler<DataAddedEventArgs>(HandleWarningAdded);
-            remotePipeline.PowerShell.Streams.Verbose.DataAdded += 
+            remotePipeline.PowerShell.Streams.Verbose.DataAdded +=
                 new EventHandler<DataAddedEventArgs>(HandleVerboseAdded);
-            remotePipeline.PowerShell.Streams.Debug.DataAdded += 
+            remotePipeline.PowerShell.Streams.Debug.DataAdded +=
                 new EventHandler<DataAddedEventArgs>(HandleDebugAdded);
             remotePipeline.PowerShell.Streams.Information.DataAdded +=
                 new EventHandler<DataAddedEventArgs>(HandleInformationAdded);
@@ -3657,7 +3654,7 @@ namespace System.Management.Automation
         private void HandleDebugAdded(object sender, DataAddedEventArgs eventArgs)
         {
             int index = eventArgs.Index;
-            PowerShell powershell = GetPipelinePowerShell(remotePipeline, eventArgs.PowerShellInstanceId);
+            PowerShell powershell = GetPipelinePowerShell(_remotePipeline, eventArgs.PowerShellInstanceId);
 
             if (powershell != null)
             {
@@ -3674,7 +3671,7 @@ namespace System.Management.Automation
         private void HandleVerboseAdded(object sender, DataAddedEventArgs eventArgs)
         {
             int index = eventArgs.Index;
-            PowerShell powershell = GetPipelinePowerShell(remotePipeline, eventArgs.PowerShellInstanceId);
+            PowerShell powershell = GetPipelinePowerShell(_remotePipeline, eventArgs.PowerShellInstanceId);
 
             if (powershell != null)
             {
@@ -3691,7 +3688,7 @@ namespace System.Management.Automation
         private void HandleWarningAdded(object sender, DataAddedEventArgs eventArgs)
         {
             int index = eventArgs.Index;
-            PowerShell powershell = GetPipelinePowerShell(remotePipeline, eventArgs.PowerShellInstanceId);
+            PowerShell powershell = GetPipelinePowerShell(_remotePipeline, eventArgs.PowerShellInstanceId);
 
             if (powershell != null)
             {
@@ -3710,7 +3707,7 @@ namespace System.Management.Automation
         private void HandleProgressAdded(object sender, DataAddedEventArgs eventArgs)
         {
             int index = eventArgs.Index;
-            PowerShell powershell = GetPipelinePowerShell(remotePipeline, eventArgs.PowerShellInstanceId);
+            PowerShell powershell = GetPipelinePowerShell(_remotePipeline, eventArgs.PowerShellInstanceId);
 
             if (powershell != null)
             {
@@ -3727,7 +3724,7 @@ namespace System.Management.Automation
         private void HandleInformationAdded(object sender, DataAddedEventArgs eventArgs)
         {
             int index = eventArgs.Index;
-            PowerShell powershell = GetPipelinePowerShell(remotePipeline, eventArgs.PowerShellInstanceId);
+            PowerShell powershell = GetPipelinePowerShell(_remotePipeline, eventArgs.PowerShellInstanceId);
 
             if (powershell != null)
             {
@@ -3832,7 +3829,7 @@ namespace System.Management.Automation
         {
             Exception failureException;
             //Process the reason in case of failure.
-            ProcessJobFailure(helper, out failureException, out failureErrorRecord);
+            ProcessJobFailure(helper, out failureException, out _failureErrorRecord);
 
             if (failureException != null)
             {
@@ -3893,9 +3890,9 @@ namespace System.Management.Automation
         internal PowerShell GetPowerShell()
         {
             PowerShell ps = null;
-            if (this.remotePipeline != null)
+            if (_remotePipeline != null)
             {
-                ps = this.remotePipeline.PowerShell;   
+                ps = _remotePipeline.PowerShell;
             }
 
             return ps;
@@ -3935,16 +3932,16 @@ namespace System.Management.Automation
         #region Private Members
 
         //helper associated with this job object
-        private ExecutionCmdletHelper helper = null;
-        private RemotePipeline remotePipeline = null;
+        private ExecutionCmdletHelper _helper = null;
+        private RemotePipeline _remotePipeline = null;
 
         //object used for synchronization
         protected object SyncObject = new object();
 
-        private ThrottleManager throttleManager;
-        private bool stopIsCalled = false;
+        private ThrottleManager _throttleManager;
+        private bool _stopIsCalled = false;
 
-        private bool disconnectedBlocked = false;
+        private bool _disconnectedBlocked = false;
 
         private volatile Debugger _jobDebugger;
 
@@ -4083,10 +4080,10 @@ namespace System.Management.Automation
         /// <param name="host">host</param>
         /// <param name="path">Current path</param>
         public override void SetParent(
-            Debugger parent, 
-            IEnumerable<Breakpoint> breakPoints, 
-            DebuggerResumeAction? startAction, 
-            PSHost host, 
+            Debugger parent,
+            IEnumerable<Breakpoint> breakPoints,
+            DebuggerResumeAction? startAction,
+            PSHost host,
             PathInfo path)
         {
             // For now always enable step mode debugging.
@@ -4145,7 +4142,7 @@ namespace System.Management.Automation
 
         #region Private methods
 
-        void HandleDebuggerStop(object sender, DebuggerStopEventArgs e)
+        private void HandleDebuggerStop(object sender, DebuggerStopEventArgs e)
         {
             Pipeline remoteRunningCmd = null;
             try
@@ -4220,12 +4217,12 @@ namespace System.Management.Automation
     {
         #region Private Members
 
-        private List<ExecutionCmdletHelper> helpers = new List<ExecutionCmdletHelper>();
-        private ThrottleManager throttleManager;
-        private Dictionary<Guid, PowerShell> powershells = new Dictionary<Guid, PowerShell>();
+        private List<ExecutionCmdletHelper> _helpers = new List<ExecutionCmdletHelper>();
+        private ThrottleManager _throttleManager;
+        private Dictionary<Guid, PowerShell> _powershells = new Dictionary<Guid, PowerShell>();
 
-        private int pipelineFinishedCount;
-        private int pipelineDisconnectedCount;
+        private int _pipelineFinishedCount;
+        private int _pipelineDisconnectedCount;
 
         #endregion Private Members
 
@@ -4242,8 +4239,8 @@ namespace System.Management.Automation
             UsesResultsCollection = true;
             Results.AddRef();
 
-            this.throttleManager = throttleManager;
-            RegisterThrottleComplete(this.throttleManager);
+            _throttleManager = throttleManager;
+            RegisterThrottleComplete(_throttleManager);
 
             foreach (IThrottleOperation operation in operations)
             {
@@ -4260,12 +4257,12 @@ namespace System.Management.Automation
                         remoteRS.URIRedirectionReported += HandleURIDirectionReported;
                     }
                 }
-                helpers.Add(helper);
+                _helpers.Add(helper);
                 AggregateResultsFromHelper(helper);
 
                 Dbg.Assert(helper.Pipeline is RemotePipeline, "Only remote pipeline can be used in InvokeExpressionSyncJob");
                 RemotePipeline pipeline = helper.Pipeline as RemotePipeline;
-                powershells.Add(pipeline.PowerShell.InstanceId, pipeline.PowerShell);
+                _powershells.Add(pipeline.PowerShell.InstanceId, pipeline.PowerShell);
             }
         }
 
@@ -4273,7 +4270,7 @@ namespace System.Management.Automation
 
         #region Protected Methods
 
-        private bool cleanupDone = false;
+        private bool _cleanupDone = false;
 
         /// <summary>
         /// Clean up once job is finished
@@ -4281,13 +4278,13 @@ namespace System.Management.Automation
         protected override void DoCleanupOnFinished()
         {
             bool doCleanup = false;
-            if (cleanupDone == false)
+            if (_cleanupDone == false)
             {
                 lock (SyncObject)
                 {
-                    if (cleanupDone == false)
+                    if (_cleanupDone == false)
                     {
-                        cleanupDone = true;
+                        _cleanupDone = true;
                         doCleanup = true;
                     }
                 }
@@ -4295,7 +4292,7 @@ namespace System.Management.Automation
 
             if (!doCleanup) return;
 
-            foreach (ExecutionCmdletHelper helper in helpers)
+            foreach (ExecutionCmdletHelper helper in _helpers)
             {
                 // cleanup remote runspace related handlers
                 RemoteRunspace remoteRS = helper.PipelineRunspace as RemoteRunspace;
@@ -4308,7 +4305,7 @@ namespace System.Management.Automation
                 StopAggregateResultsFromHelper(helper);
             }
 
-            UnregisterThrottleComplete(throttleManager);
+            UnregisterThrottleComplete(_throttleManager);
             //throttleManager = null;
 
             Results.DecrementRef();
@@ -4389,16 +4386,16 @@ namespace System.Management.Automation
                     case PipelineState.Completed:
                     case PipelineState.Failed:
                     case PipelineState.Stopped:
-                        pipelineFinishedCount += 1;
+                        _pipelineFinishedCount += 1;
                         break;
 
                     case PipelineState.Disconnected:
-                        pipelineDisconnectedCount += 1;
+                        _pipelineDisconnectedCount += 1;
                         break;
                 }
 
-                setJobStateToDisconnected = ((pipelineFinishedCount + pipelineDisconnectedCount) == this.helpers.Count &&
-                                              pipelineDisconnectedCount > 0);
+                setJobStateToDisconnected = ((_pipelineFinishedCount + _pipelineDisconnectedCount) == _helpers.Count &&
+                                              _pipelineDisconnectedCount > 0);
             }
 
             if (setJobStateToDisconnected)
@@ -4414,10 +4411,10 @@ namespace System.Management.Automation
         /// </summary>
         public override void StopJob()
         {
-            throttleManager.StopAllOperations();
+            _throttleManager.StopAllOperations();
         }
 
-        private bool doFinishCalled = false;
+        private bool _doFinishCalled = false;
 
         /// <summary>
         /// This method marks the completion state for Job. Also if job failed, it processes the 
@@ -4425,23 +4422,23 @@ namespace System.Management.Automation
         /// </summary>
         protected override void DoFinish()
         {
-            if (doFinishCalled == true)
+            if (_doFinishCalled == true)
                 return;
 
             lock (SyncObject)
             {
-                if (doFinishCalled == true)
+                if (_doFinishCalled == true)
                     return;
 
-                doFinishCalled = true;
+                _doFinishCalled = true;
             }
 
-            foreach (ExecutionCmdletHelper helper in helpers)
+            foreach (ExecutionCmdletHelper helper in _helpers)
             {
                 DeterminedAndSetJobState(helper);
             }
 
-            if (helpers.Count == 0 && this.JobStateInfo.State == JobState.NotStarted)
+            if (_helpers.Count == 0 && this.JobStateInfo.State == JobState.NotStarted)
             {
                 SetJobState(JobState.Completed);
             }
@@ -4458,7 +4455,7 @@ namespace System.Management.Automation
         {
             PowerShell powershell = null;
 
-            powershells.TryGetValue(instanceId, out powershell);
+            _powershells.TryGetValue(instanceId, out powershell);
 
             return powershell;
         }
@@ -4502,8 +4499,8 @@ namespace System.Management.Automation
         internal void StartOperations(List<IThrottleOperation> operations)
         {
             // submit operations to the throttle manager
-            throttleManager.SubmitOperations(operations);
-            throttleManager.EndSubmitOperations();
+            _throttleManager.SubmitOperations(operations);
+            _throttleManager.EndSubmitOperations();
         }
 
         /// <summary>
@@ -4524,7 +4521,7 @@ namespace System.Management.Automation
         internal Collection<PowerShell> GetPowerShells()
         {
             Collection<PowerShell> powershellsToReturn = new Collection<PowerShell>();
-            foreach (PowerShell ps in this.powershells.Values)
+            foreach (PowerShell ps in _powershells.Values)
             {
                 powershellsToReturn.Add(ps);
             }
@@ -4539,7 +4536,7 @@ namespace System.Management.Automation
         internal PSRemotingJob CreateDisconnectedRemotingJob()
         {
             List<IThrottleOperation> disconnectedJobHelpers = new List<IThrottleOperation>();
-            foreach (var helper in this.helpers)
+            foreach (var helper in _helpers)
             {
                 if (helper.Pipeline.PipelineStateInfo.State == PipelineState.Disconnected)
                 {
@@ -4560,7 +4557,6 @@ namespace System.Management.Automation
         }
 
         #endregion Internal Methods
-
     }
 
     #region OutputProcessingState class

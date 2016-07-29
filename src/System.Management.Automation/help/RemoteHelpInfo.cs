@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections.ObjectModel;
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -14,10 +15,10 @@ namespace System.Management.Automation
     /// </summary>
     internal class RemoteHelpInfo : BaseCommandHelpInfo
     {
-        private PSObject deserializedRemoteHelp;
+        private PSObject _deserializedRemoteHelp;
 
         internal RemoteHelpInfo(
-            ExecutionContext context, 
+            ExecutionContext context,
             RemoteRunspace remoteRunspace,
             string localCommandName,
             string remoteHelpTopic,
@@ -47,20 +48,20 @@ namespace System.Management.Automation
                     throw new Microsoft.PowerShell.Commands.HelpNotFoundException(remoteHelpTopic);
                 }
 
-                Dbg.Assert(helpResults.Count == 1, "Remote help should return exactly one result");                
-                this.deserializedRemoteHelp = helpResults[0];
-                this.deserializedRemoteHelp.Methods.Remove("ToString");
+                Dbg.Assert(helpResults.Count == 1, "Remote help should return exactly one result");
+                _deserializedRemoteHelp = helpResults[0];
+                _deserializedRemoteHelp.Methods.Remove("ToString");
                 // Win8: bug9457: Remote proxy command's name can be changed locally using -Prefix
                 // parameter of the Import-PSSession cmdlet. To give better user expereience for
                 // get-help (on par with get-command), it was decided to use the local command name
                 // for the help content.
-                PSPropertyInfo nameInfo = this.deserializedRemoteHelp.Properties["Name"];
-                if (nameInfo!= null)
+                PSPropertyInfo nameInfo = _deserializedRemoteHelp.Properties["Name"];
+                if (nameInfo != null)
                 {
                     nameInfo.Value = localCommandName;
                 }
                 PSObject commandDetails = this.Details;
-                if (commandDetails != null) 
+                if (commandDetails != null)
                 {
                     nameInfo = commandDetails.Properties["Name"];
                     if (nameInfo != null)
@@ -72,21 +73,20 @@ namespace System.Management.Automation
                         commandDetails.InstanceMembers.Add(new PSNoteProperty("Name", localCommandName));
                     }
                 }
-
             }
         }
 
         internal override PSObject FullHelp
         {
-            get 
+            get
             {
-                return this.deserializedRemoteHelp; 
+                return _deserializedRemoteHelp;
             }
         }
 
         private string GetHelpProperty(string propertyName)
         {
-            PSPropertyInfo property = this.deserializedRemoteHelp.Properties[propertyName];
+            PSPropertyInfo property = _deserializedRemoteHelp.Properties[propertyName];
             if (property == null)
             {
                 return null;

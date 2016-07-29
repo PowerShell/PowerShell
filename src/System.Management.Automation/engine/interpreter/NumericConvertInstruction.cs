@@ -19,11 +19,14 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace System.Management.Automation.Interpreter {
-    internal abstract class NumericConvertInstruction : Instruction {
+namespace System.Management.Automation.Interpreter
+{
+    internal abstract class NumericConvertInstruction : Instruction
+    {
         internal readonly TypeCode _from, _to;
 
-        protected NumericConvertInstruction(TypeCode from, TypeCode to) {
+        protected NumericConvertInstruction(TypeCode from, TypeCode to)
+        {
             _from = from;
             _to = to;
         }
@@ -31,25 +34,31 @@ namespace System.Management.Automation.Interpreter {
         public override int ConsumedStack { get { return 1; } }
         public override int ProducedStack { get { return 1; } }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return InstructionName + "(" + _from + "->" + _to + ")";
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
-        internal sealed class Unchecked : NumericConvertInstruction {
+        internal sealed class Unchecked : NumericConvertInstruction
+        {
             public override string InstructionName { get { return "UncheckedConvert"; } }
 
             public Unchecked(TypeCode from, TypeCode to)
-                : base(from, to) {
+                : base(from, to)
+            {
             }
 
-            public override int Run(InterpretedFrame frame) {
+            public override int Run(InterpretedFrame frame)
+            {
                 frame.Push(Convert(frame.Pop()));
                 return +1;
             }
 
-            private object Convert(object obj) {
-                switch (_from) {
+            private object Convert(object obj)
+            {
+                switch (_from)
+                {
                     case TypeCode.Byte: return ConvertInt32((Byte)obj);
                     case TypeCode.SByte: return ConvertInt32((SByte)obj);
                     case TypeCode.Int16: return ConvertInt32((Int16)obj);
@@ -65,9 +74,12 @@ namespace System.Management.Automation.Interpreter {
                 }
             }
 
-            private object ConvertInt32(int obj) {
-                unchecked {
-                    switch (_to) {
+            private object ConvertInt32(int obj)
+            {
+                unchecked
+                {
+                    switch (_to)
+                    {
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;
@@ -84,9 +96,12 @@ namespace System.Management.Automation.Interpreter {
                 }
             }
 
-            private object ConvertInt64(Int64 obj) {
-                unchecked {
-                    switch (_to) {
+            private object ConvertInt64(Int64 obj)
+            {
+                unchecked
+                {
+                    switch (_to)
+                    {
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;
@@ -103,9 +118,12 @@ namespace System.Management.Automation.Interpreter {
                 }
             }
 
-            private object ConvertUInt64(UInt64 obj) {
-                unchecked {
-                    switch (_to) {
+            private object ConvertUInt64(UInt64 obj)
+            {
+                unchecked
+                {
+                    switch (_to)
+                    {
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;
@@ -122,9 +140,12 @@ namespace System.Management.Automation.Interpreter {
                 }
             }
 
-            private object ConvertDouble(Double obj) {
-                unchecked {
-                    switch (_to) {
+            private object ConvertDouble(Double obj)
+            {
+                unchecked
+                {
+                    switch (_to)
+                    {
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;
@@ -143,20 +164,25 @@ namespace System.Management.Automation.Interpreter {
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
-        internal sealed class Checked : NumericConvertInstruction {
+        internal sealed class Checked : NumericConvertInstruction
+        {
             public override string InstructionName { get { return "CheckedConvert"; } }
 
             public Checked(TypeCode from, TypeCode to)
-                : base(from, to) {
+                : base(from, to)
+            {
             }
 
-            public override int Run(InterpretedFrame frame) {
+            public override int Run(InterpretedFrame frame)
+            {
                 frame.Push(Convert(frame.Pop()));
                 return +1;
             }
 
-            private object Convert(object obj) {
-                switch (_from) {
+            private object Convert(object obj)
+            {
+                switch (_from)
+                {
                     case TypeCode.Byte: return ConvertInt32((Byte)obj);
                     case TypeCode.SByte: return ConvertInt32((SByte)obj);
                     case TypeCode.Int16: return ConvertInt32((Int16)obj);
@@ -172,9 +198,12 @@ namespace System.Management.Automation.Interpreter {
                 }
             }
 
-            private object ConvertInt32(int obj) {
-                checked {
-                    switch (_to) {
+            private object ConvertInt32(int obj)
+            {
+                checked
+                {
+                    switch (_to)
+                    {
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;
@@ -191,9 +220,12 @@ namespace System.Management.Automation.Interpreter {
                 }
             }
 
-            private object ConvertInt64(Int64 obj) {
-                checked {
-                    switch (_to) {
+            private object ConvertInt64(Int64 obj)
+            {
+                checked
+                {
+                    switch (_to)
+                    {
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;
@@ -210,9 +242,12 @@ namespace System.Management.Automation.Interpreter {
                 }
             }
 
-            private object ConvertUInt64(UInt64 obj) {
-                checked {
-                    switch (_to) {
+            private object ConvertUInt64(UInt64 obj)
+            {
+                checked
+                {
+                    switch (_to)
+                    {
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;
@@ -229,9 +264,12 @@ namespace System.Management.Automation.Interpreter {
                 }
             }
 
-            private object ConvertDouble(Double obj) {
-                checked {
-                    switch (_to) {
+            private object ConvertDouble(Double obj)
+            {
+                checked
+                {
+                    switch (_to)
+                    {
                         case TypeCode.Byte: return (Byte)obj;
                         case TypeCode.SByte: return (SByte)obj;
                         case TypeCode.Int16: return (Int16)obj;

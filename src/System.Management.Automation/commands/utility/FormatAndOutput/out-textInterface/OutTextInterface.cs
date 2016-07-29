@@ -12,13 +12,12 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
-
     /// <summary>
     /// implementation for the out-lineoutput command
     /// it provides a wrapper for the OutCommandInner class,
     /// which is the general purpose output command
     /// </summary>
-    [Cmdlet ("Out", "LineOutput")]
+    [Cmdlet("Out", "LineOutput")]
     public class OutLineOutputCommand : FrontEndCommandBase
     {
         /// <summary>
@@ -28,69 +27,69 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, Position = 0)]
         public object LineOutput
         {
-            get { return lineOutput; }
-            set { lineOutput = value; }
+            get { return _lineOutput; }
+            set { _lineOutput = value; }
         }
 
-        private object lineOutput = null;
+        private object _lineOutput = null;
 
 
         /// <summary>
         /// set inner command
         /// </summary>
-        public OutLineOutputCommand ()
+        public OutLineOutputCommand()
         {
-            this.implementation = new OutCommandInner ();
+            this.implementation = new OutCommandInner();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        protected override void BeginProcessing ()
+        protected override void BeginProcessing()
         {
-            if (this.lineOutput == null)
+            if (_lineOutput == null)
             {
-                ProcessNullLineOutput ();
+                ProcessNullLineOutput();
             }
 
-            LineOutput lo = this.lineOutput as LineOutput;
+            LineOutput lo = _lineOutput as LineOutput;
             if (lo == null)
             {
-                ProcessWrongTypeLineOutput (this.lineOutput);
+                ProcessWrongTypeLineOutput(_lineOutput);
             }
             ((OutCommandInner)this.implementation).LineOutput = lo;
 
-            base.BeginProcessing ();
+            base.BeginProcessing();
         }
 
-        private void ProcessNullLineOutput ()
+        private void ProcessNullLineOutput()
         {
             string msg = StringUtil.Format(FormatAndOut_out_xxx.OutLineOutput_NullLineOutputParameter);
 
-            ErrorRecord errorRecord = new ErrorRecord (
+            ErrorRecord errorRecord = new ErrorRecord(
                 PSTraceSource.NewArgumentNullException("LineOutput"),
                 "OutLineOutputNullLineOutputParameter",
                 ErrorCategory.InvalidArgument,
                 null);
 
-            errorRecord.ErrorDetails = new ErrorDetails (msg);
-            this.ThrowTerminatingError (errorRecord);
+            errorRecord.ErrorDetails = new ErrorDetails(msg);
+            this.ThrowTerminatingError(errorRecord);
         }
 
-        private void ProcessWrongTypeLineOutput (object obj)
+        private void ProcessWrongTypeLineOutput(object obj)
         {
             string msg = StringUtil.Format(FormatAndOut_out_xxx.OutLineOutput_InvalidLineOutputParameterType,
                 obj.GetType().FullName,
                 typeof(LineOutput).FullName);
 
-            ErrorRecord errorRecord = new ErrorRecord (
-                new InvalidCastException (),
+            ErrorRecord errorRecord = new ErrorRecord(
+                new InvalidCastException(),
                 "OutLineOutputInvalidLineOutputParameterType",
                 ErrorCategory.InvalidArgument,
                 null);
 
-            errorRecord.ErrorDetails = new ErrorDetails (msg);
-            this.ThrowTerminatingError (errorRecord);
+            errorRecord.ErrorDetails = new ErrorDetails(msg);
+            this.ThrowTerminatingError(errorRecord);
         }
     }
 }

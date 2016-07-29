@@ -20,7 +20,7 @@ using System.Management.Automation.Internal.Host;
 using System.Threading;
 using System.Management.Automation.Internal;
 using Dbg = System.Management.Automation.Diagnostics;
-    
+
 
 
 namespace System.Management.Automation
@@ -53,10 +53,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return commonParameters.Value;
+                return s_commonParameters.Value;
             }
         }
-        static Lazy<HashSet<string>> commonParameters = new Lazy<HashSet<string>>(
+        private static Lazy<HashSet<string>> s_commonParameters = new Lazy<HashSet<string>>(
             () =>
             {
                 return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
@@ -75,10 +75,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return optionalCommonParameters.Value;
+                return s_optionalCommonParameters.Value;
             }
         }
-        static Lazy<HashSet<string>> optionalCommonParameters = new Lazy<HashSet<string>>(
+        private static Lazy<HashSet<string>> s_optionalCommonParameters = new Lazy<HashSet<string>>(
             () =>
             {
                 return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
@@ -104,9 +104,9 @@ namespace System.Management.Automation
         {
             get
             {
-                using(PSTransactionManager.GetEngineProtectionScope())
+                using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    return this.IsStopping; 
+                    return this.IsStopping;
                 }
             }
         }
@@ -149,10 +149,10 @@ namespace System.Management.Automation
         {
             MshCommandRuntime mshRuntime = this.CommandRuntime as MshCommandRuntime;
 
-            if(mshRuntime != null)
+            if (mshRuntime != null)
             {
-                if(mshRuntime.UseTransaction &&
-                   (! this.Context.TransactionManager.HasTransaction))
+                if (mshRuntime.UseTransaction &&
+                   (!this.Context.TransactionManager.HasTransaction))
                 {
                     string error = TransactionStrings.NoTransactionStarted;
 
@@ -219,7 +219,7 @@ namespace System.Management.Automation
         #endregion internal_members
 
         #region ctor
-        
+
         /// <summary>
         /// Initializes the new instance of Cmdlet class.
         /// </summary>
@@ -303,7 +303,7 @@ namespace System.Management.Automation
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    return commandRuntime; 
+                    return commandRuntime;
                 }
             }
             set
@@ -1577,7 +1577,7 @@ namespace System.Management.Automation
                 if (commandRuntime != null)
                 {
                     ICommandRuntime2 runtime2 = commandRuntime as ICommandRuntime2;
-                    if(runtime2 != null)
+                    if (runtime2 != null)
                     {
                         return runtime2.ShouldContinue(query, caption, hasSecurityImpact, ref yesToAll, ref noToAll);
                     }
@@ -1603,7 +1603,7 @@ namespace System.Management.Automation
             if (this is PSCmdlet)
             {
                 string msg = CommandBaseStrings.CannotInvokePSCmdletsDirectly;
-                
+
                 throw new System.InvalidOperationException(msg);
             }
 
@@ -1663,7 +1663,7 @@ namespace System.Management.Automation
                 if (commandRuntime != null)
                     return commandRuntime.TransactionAvailable();
                 else
-                    #pragma warning suppress 56503
+#pragma warning suppress 56503
                     throw new System.NotImplementedException("TransactionAvailable");
             }
         }
@@ -1677,7 +1677,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if(commandRuntime != null)
+                if (commandRuntime != null)
                     return commandRuntime.CurrentPSTransaction;
                 else
                     // We want to throw in this situation, and want to use a
@@ -1730,7 +1730,7 @@ namespace System.Management.Automation
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if(errorRecord == null)
+                if (errorRecord == null)
                     throw new ArgumentNullException("errorRecord");
 
                 if (commandRuntime != null)

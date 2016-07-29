@@ -10,7 +10,6 @@ using COM = System.Runtime.InteropServices.ComTypes;
 
 namespace System.Management.Automation
 {
-      
     /// <summary>
     /// A Wrapper class for COM object's Type Information
     /// </summary>
@@ -19,10 +18,10 @@ namespace System.Management.Automation
         /// <summary>
         ///  Member variables.
         /// </summary>
-        private Dictionary<String,ComProperty> properties = null;
-        private Dictionary<String, ComMethod> methods = null;
-        private COM.ITypeInfo typeinfo = null;
-        private Guid guid = Guid.Empty;
+        private Dictionary<String, ComProperty> _properties = null;
+        private Dictionary<String, ComMethod> _methods = null;
+        private COM.ITypeInfo _typeinfo = null;
+        private Guid _guid = Guid.Empty;
 
 
         /// <summary>
@@ -31,11 +30,11 @@ namespace System.Management.Automation
         /// <param name="info">ITypeInfo object being wrapped by this object</param>
         internal ComTypeInfo(COM.ITypeInfo info)
         {
-            typeinfo = info;
-            properties = new Dictionary<String, ComProperty>(StringComparer.OrdinalIgnoreCase);
-            methods = new Dictionary<String, ComMethod>(StringComparer.OrdinalIgnoreCase);
+            _typeinfo = info;
+            _properties = new Dictionary<String, ComProperty>(StringComparer.OrdinalIgnoreCase);
+            _methods = new Dictionary<String, ComMethod>(StringComparer.OrdinalIgnoreCase);
 
-            if (typeinfo != null)
+            if (_typeinfo != null)
             {
                 Initialize();
             }
@@ -49,7 +48,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return properties;
+                return _properties;
             }
         }
 
@@ -60,7 +59,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return methods;
+                return _methods;
             }
         }
 
@@ -73,7 +72,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return guid.ToString();
+                return _guid.ToString();
             }
         }
 
@@ -82,16 +81,16 @@ namespace System.Management.Automation
         /// </summary>
         private void Initialize()
         {
-            if (typeinfo != null)
+            if (_typeinfo != null)
             {
-                COM.TYPEATTR typeattr = GetTypeAttr(typeinfo);   
-       
+                COM.TYPEATTR typeattr = GetTypeAttr(_typeinfo);
+
                 //Initialize the type information guid
-                guid = typeattr.guid;
+                _guid = typeattr.guid;
 
                 for (int i = 0; i < typeattr.cFuncs; i++)
                 {
-                    COM.FUNCDESC funcdesc  = GetFuncDesc(typeinfo, i);
+                    COM.FUNCDESC funcdesc = GetFuncDesc(_typeinfo, i);
                     if ((funcdesc.wFuncFlags & 0x1) == 0x1)
                     {
                         // http://msdn.microsoft.com/en-us/library/ee488948.aspx
@@ -104,7 +103,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    String strName = ComUtil.GetNameFromFuncDesc(typeinfo, funcdesc);
+                    String strName = ComUtil.GetNameFromFuncDesc(_typeinfo, funcdesc);
 
                     switch (funcdesc.invkind)
                     {
@@ -118,7 +117,6 @@ namespace System.Management.Automation
                             AddMethod(strName, i);
                             break;
                     }
-
                 }
             }
         }
@@ -159,29 +157,29 @@ namespace System.Management.Automation
             return result;
         }
 
-    
+
         private void AddProperty(string strName, COM.FUNCDESC funcdesc, int index)
         {
             ComProperty prop;
-            if (!properties.TryGetValue(strName, out prop))
+            if (!_properties.TryGetValue(strName, out prop))
             {
-                prop = new ComProperty(typeinfo, strName);
-                properties[strName] = prop;
+                prop = new ComProperty(_typeinfo, strName);
+                _properties[strName] = prop;
             }
 
             if (prop != null)
             {
                 prop.UpdateFuncDesc(funcdesc, index);
-            }          
+            }
         }
 
-        private void AddMethod(string strName,int index)
+        private void AddMethod(string strName, int index)
         {
             ComMethod method;
-            if (!methods.TryGetValue(strName, out method))
+            if (!_methods.TryGetValue(strName, out method))
             {
-                method = new ComMethod(typeinfo, strName);
-                methods[strName] = method;
+                method = new ComMethod(_typeinfo, strName);
+                _methods[strName] = method;
             }
 
             if (method != null)
@@ -237,7 +235,7 @@ namespace System.Management.Automation
             {
                 // We need the typeinfo for Dispatch Interface
                 typeinfo.GetRefTypeOfImplType(-1, out href);
-                typeinfo.GetRefTypeInfo(href, out dispinfo);                
+                typeinfo.GetRefTypeInfo(href, out dispinfo);
             }
             catch (COMException ce)
             {
@@ -277,7 +275,7 @@ namespace System.Management.Automation
                 // Is this interface IDispatch compatible interface?
                 if (typeattr.typekind == COM.TYPEKIND.TKIND_DISPATCH)
                 {
-                    return interfaceinfo;                   
+                    return interfaceinfo;
                 }
 
                 //Nope. Is this a dual interface
@@ -291,11 +289,9 @@ namespace System.Management.Automation
                         return interfaceinfo;
                     }
                 }
-                
             }
             return null;
         }
-
     }
 }
 

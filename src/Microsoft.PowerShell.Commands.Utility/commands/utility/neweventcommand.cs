@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
@@ -24,14 +25,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return sourceIdentifier;
+                return _sourceIdentifier;
             }
             set
             {
-                sourceIdentifier = value;
+                _sourceIdentifier = value;
             }
         }
-        private string sourceIdentifier = null;
+        private string _sourceIdentifier = null;
 
         /// <summary>
         /// Data relating to this event
@@ -42,14 +43,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return sender;
+                return _sender;
             }
             set
             {
-                sender = value;
+                _sender = value;
             }
         }
-        private PSObject sender = null;
+        private PSObject _sender = null;
 
         /// <summary>
         /// Data relating to this event
@@ -60,17 +61,17 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return eventArguments;
+                return _eventArguments;
             }
             set
             {
-                if (eventArguments != null)
+                if (_eventArguments != null)
                 {
-                    eventArguments = value;
+                    _eventArguments = value;
                 }
             }
         }
-        private PSObject[] eventArguments = new PSObject[0];
+        private PSObject[] _eventArguments = new PSObject[0];
 
         /// <summary>
         /// Data relating to this event
@@ -80,14 +81,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return messageData;
+                return _messageData;
             }
             set
             {
-                messageData = value;
+                _messageData = value;
             }
         }
-        private PSObject messageData = null;
+        private PSObject _messageData = null;
 
         #endregion parameters
 
@@ -100,11 +101,11 @@ namespace Microsoft.PowerShell.Commands
             object[] baseEventArgs = null;
 
             // Get the BaseObject from the event arguments
-            if (eventArguments != null)
+            if (_eventArguments != null)
             {
-                baseEventArgs = new object[eventArguments.Length];
+                baseEventArgs = new object[_eventArguments.Length];
                 int loopCounter = 0;
-                foreach (PSObject eventArg in eventArguments)
+                foreach (PSObject eventArg in _eventArguments)
                 {
                     if (eventArg != null)
                         baseEventArgs[loopCounter] = eventArg.BaseObject;
@@ -114,10 +115,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             Object messageSender = null;
-            if (sender != null) { messageSender = sender.BaseObject; }
+            if (_sender != null) { messageSender = _sender.BaseObject; }
 
             // And then generate the event
-            WriteObject(Events.GenerateEvent(sourceIdentifier, messageSender, baseEventArgs, messageData, true, false));
+            WriteObject(Events.GenerateEvent(_sourceIdentifier, messageSender, baseEventArgs, _messageData, true, false));
         }
     }
 }

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Management.Automation.Help;
 using System.Collections.Generic;
 
@@ -127,13 +128,13 @@ namespace System.Management.Automation
             }
 
             // copy parameters from maml2 that are not present in maml1
-            for(int index = 0; index < maml2items.Count; index++)
+            for (int index = 0; index < maml2items.Count; index++)
             {
                 PSObject m2paramObj = PSObject.AsPSObject(maml2items[index]);
                 string param2Name = "";
                 PSPropertyInfo m2propertyInfo = m2paramObj.Properties["Name"];
 
-                if(null != m2propertyInfo)
+                if (null != m2propertyInfo)
                 {
                     if (!LanguagePrimitives.TryConvertTo<string>(m2propertyInfo.Value, out param2Name))
                     {
@@ -175,7 +176,7 @@ namespace System.Management.Automation
             else if (maml1items.Count >= 2)
             {
                 propertyInfo1.Value = maml1items.ToArray();
-            }            
+            }
         }
 
         /// <summary>
@@ -196,7 +197,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            for (int i = 0 ; i < path.Length ; ++i)
+            for (int i = 0; i < path.Length; ++i)
             {
                 string propertyName = path[i];
                 PSPropertyInfo propertyInfo = psObject.Properties[propertyName];
@@ -210,7 +211,7 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                psObject = (PSObject) propertyInfo.Value;
+                psObject = (PSObject)propertyInfo.Value;
             }
 
             // We will never reach this line but the compiler needs some reassurance.
@@ -295,7 +296,7 @@ namespace System.Management.Automation
             }
 
             // Walk the path and extend it if necessary.
-            for (int i = 0 ; i < path.Length ; ++i)
+            for (int i = 0; i < path.Length; ++i)
             {
                 string propertyName = path[i];
                 PSPropertyInfo propertyInfo = psObject.Properties[propertyName];
@@ -322,7 +323,7 @@ namespace System.Management.Automation
                 }
 
                 // Now move one step further along the path.
-                psObject = (PSObject) propertyInfo.Value;
+                psObject = (PSObject)propertyInfo.Value;
             }
         }
     }

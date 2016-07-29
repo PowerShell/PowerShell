@@ -57,15 +57,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return moduleName;
+                return _moduleName;
             }
             set
             {
-                moduleName = value;
+                _moduleName = value;
             }
         }
 
-        private string moduleName;
+        private string _moduleName;
 
         /// <summary>
         /// Property that sets force parameter.
@@ -75,14 +75,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return new SwitchParameter(force);
+                return new SwitchParameter(_force);
             }
             set
             {
-                force = value.IsPresent;
+                _force = value.IsPresent;
             }
         }
-        private bool force;
+        private bool _force;
 
         /// <summary>
         /// Encoding optional flag
@@ -93,14 +93,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return encoding.GetType().Name;
+                return _encoding.GetType().Name;
             }
             set
             {
-                encoding = EncodingConversion.Convert(this, value);
+                _encoding = EncodingConversion.Convert(this, value);
             }
         }
-        private Encoding encoding = System.Text.Encoding.UTF8;
+        private Encoding _encoding = System.Text.Encoding.UTF8;
 
         #endregion Parameters
 
@@ -139,8 +139,8 @@ namespace Microsoft.PowerShell.Commands
                 string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Module", "FullyQualifiedModule");
                 ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(error);
-            } 
-            
+            }
+
             DirectoryInfo directory = PathUtils.CreateModuleDirectory(this, this.OutputModule, this.Force.IsPresent);
 
             // Creating a temporary directory where files will be created.
@@ -155,17 +155,17 @@ namespace Microsoft.PowerShell.Commands
             List<string> generatedFiles = GenerateProxyModule(
                 tempDirectory,
                 Path.GetFileName(directory.FullName),
-                this.encoding,
-                this.force,
+                _encoding,
+                _force,
                 listOfCommandMetadata,
                 alias2resolvedCommandName,
                 listOfFormatData
                 );
 
             ScriptBlock script = this.Context.Engine.ParseScriptBlock(copyItemScript, false);
-            script.Invoke(new object[] { tempDirectory, directory});
+            script.Invoke(new object[] { tempDirectory, directory });
 
-            this.DisplayDirectory(new List<string> {directory.FullName});
+            this.DisplayDirectory(new List<string> { directory.FullName });
         }
 
         #endregion Methods
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands
         private PSModuleInfo CreateModule(string manifestFile)
         {
             ScriptBlock script = this.Context.Engine.ParseScriptBlock(importModuleScript, false);
-            Collection<PSObject> results = script.Invoke(manifestFile, this.Session, this.Prefix, this.disableNameChecking);
+            Collection<PSObject> results = script.Invoke(manifestFile, this.Session, this.Prefix, _disableNameChecking);
             Dbg.Assert(results != null, "Import-Module should always succeed");
             Dbg.Assert(results.Count == 1, "Import-Module should always succeed");
             Dbg.Assert(results[0].BaseObject is PSModuleInfo, "Import-Module should always succeed");
@@ -279,11 +279,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter DisableNameChecking
         {
-            get { return this.disableNameChecking; }
-            set { this.disableNameChecking = value; }
+            get { return _disableNameChecking; }
+            set { _disableNameChecking = value; }
         }
 
-        private bool disableNameChecking;
+        private bool _disableNameChecking;
 
         #endregion
 
@@ -347,10 +347,10 @@ namespace Microsoft.PowerShell.Commands
         internal ImplicitRemotingCommandBase()
         {
             this.CommandName = new string[] { "*" };
-            this.commandParameterSpecified = false;
+            _commandParameterSpecified = false;
 
             this.FormatTypeName = new string[] { "*" };
-            this.formatTypeNamesSpecified = false;
+            _formatTypeNamesSpecified = false;
         }
 
         #endregion
@@ -369,19 +369,19 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return this.commandNameParameter;
+                return _commandNameParameter;
             }
             set
             {
-                this.commandNameParameter = value;
-                this.commandParameterSpecified = true;
-                this.commandNamePatterns = SessionStateUtilities.CreateWildcardsFromStrings(
-                    this.commandNameParameter,
+                _commandNameParameter = value;
+                _commandParameterSpecified = true;
+                _commandNamePatterns = SessionStateUtilities.CreateWildcardsFromStrings(
+                    _commandNameParameter,
                     WildcardOptions.CultureInvariant | WildcardOptions.IgnoreCase);
             }
         }
-        private string[] commandNameParameter;
-        private Collection<WildcardPattern> commandNamePatterns; // initialized to default value in the constructor
+        private string[] _commandNameParameter;
+        private Collection<WildcardPattern> _commandNamePatterns; // initialized to default value in the constructor
 
         /// <summary>
         /// Allows shadowing and/or overwriting of existing local/client commands
@@ -391,14 +391,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return this.allowClobber;
+                return _allowClobber;
             }
             set
             {
-                this.allowClobber = value;
+                _allowClobber = value;
             }
         }
-        private SwitchParameter allowClobber = new SwitchParameter(false); // no clobber by default
+        private SwitchParameter _allowClobber = new SwitchParameter(false); // no clobber by default
 
         /// <summary>
         /// The parameter that all additional arguments get bound to. These arguments are used
@@ -413,15 +413,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return commandArgs;
+                return _commandArgs;
             }
             set
             {
-                this.commandArgs = value;
-                this.commandParameterSpecified = true;
+                _commandArgs = value;
+                _commandParameterSpecified = true;
             }
         }
-        private object[] commandArgs;
+        private object[] _commandArgs;
 
         /// <summary>
         /// Gets or sets the type of the command to get
@@ -432,16 +432,16 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return commandType;
+                return _commandType;
             }
             set
             {
-                this.commandType = value;
-                this.commandParameterSpecified = true;
+                _commandType = value;
+                _commandParameterSpecified = true;
             }
         }
 
-        private CommandTypes commandType = CommandTypes.All & (~(CommandTypes.Application | CommandTypes.Script | CommandTypes.ExternalScript));
+        private CommandTypes _commandType = CommandTypes.All & (~(CommandTypes.Application | CommandTypes.Script | CommandTypes.ExternalScript));
 
         /// <summary>
         /// Gets or sets the PSSnapin parameter to the cmdlet
@@ -455,7 +455,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return PSSnapins;
+                return _PSSnapins;
             }
 
             set
@@ -464,12 +464,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = new string[0];
                 }
-                this.PSSnapins = value;
-                this.commandParameterSpecified = true;
+                _PSSnapins = value;
+                _commandParameterSpecified = true;
                 IsModuleSpecified = true;
             }
         }
-        private string[] PSSnapins = new string[0];
+        private string[] _PSSnapins = new string[0];
         internal bool IsModuleSpecified = false;
         /// <summary>
         /// Gets or sets the FullyQualifiedModule parameter to the cmdlet
@@ -488,16 +488,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value != null)
                 {
-                    this._moduleSpecifications = value;
+                    _moduleSpecifications = value;
                 }
-                this.commandParameterSpecified = true;
+                _commandParameterSpecified = true;
                 IsFullyQualifiedModuleSpecified = true;
             }
         }
         private ModuleSpecification[] _moduleSpecifications = new ModuleSpecification[0];
         internal bool IsFullyQualifiedModuleSpecified = false;
 
-        private bool commandParameterSpecified; // initialized to default value in the constructor
+        private bool _commandParameterSpecified; // initialized to default value in the constructor
 
         #endregion related to Get-Command
 
@@ -512,20 +512,20 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return this.formatTypeNameParameter;
+                return _formatTypeNameParameter;
             }
             set
             {
-                this.formatTypeNameParameter = value;
-                this.formatTypeNamesSpecified = true;
-                this.formatTypeNamePatterns = SessionStateUtilities.CreateWildcardsFromStrings(
-                    this.formatTypeNameParameter,
+                _formatTypeNameParameter = value;
+                _formatTypeNamesSpecified = true;
+                _formatTypeNamePatterns = SessionStateUtilities.CreateWildcardsFromStrings(
+                    _formatTypeNameParameter,
                     WildcardOptions.CultureInvariant | WildcardOptions.IgnoreCase);
             }
         }
-        private string[] formatTypeNameParameter; // initialized to default value in the constructor
-        private Collection<WildcardPattern> formatTypeNamePatterns;
-        private bool formatTypeNamesSpecified; // initialized to default value in the constructor
+        private string[] _formatTypeNameParameter; // initialized to default value in the constructor
+        private Collection<WildcardPattern> _formatTypeNamePatterns;
+        private bool _formatTypeNamesSpecified; // initialized to default value in the constructor
 
         #endregion
 
@@ -536,11 +536,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal string Prefix
         {
-            set { prefix = value; }
-            get { return prefix; }
+            set { _prefix = value; }
+            get { return _prefix; }
         }
 
-        private string prefix = string.Empty;
+        private string _prefix = string.Empty;
 
         /// <summary>
         /// Gets or sets the certificate with which to sign the format file and psm1 file.
@@ -550,15 +550,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return certificate;
+                return _certificate;
             }
 
             set
             {
-                certificate = value;
+                _certificate = value;
             }
         }
-        private X509Certificate2 certificate;
+        private X509Certificate2 _certificate;
 
         #endregion
 
@@ -573,14 +573,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return remoteRunspaceInfo;
+                return _remoteRunspaceInfo;
             }
             set
             {
-                remoteRunspaceInfo = value;
+                _remoteRunspaceInfo = value;
             }
         }
-        private PSSession remoteRunspaceInfo;
+        private PSSession _remoteRunspaceInfo;
 
         #endregion Parameters
 
@@ -846,12 +846,12 @@ namespace Microsoft.PowerShell.Commands
             return errorRecord;
         }
 
-        private List<string> commandsSkippedBecauseOfShadowing = new List<string>();
+        private List<string> _commandsSkippedBecauseOfShadowing = new List<string>();
         private void ReportSkippedCommands()
         {
-            if (this.commandsSkippedBecauseOfShadowing.Count != 0)
+            if (_commandsSkippedBecauseOfShadowing.Count != 0)
             {
-                string skippedCommands = string.Join(", ", this.commandsSkippedBecauseOfShadowing.ToArray());
+                string skippedCommands = string.Join(", ", _commandsSkippedBecauseOfShadowing.ToArray());
                 ErrorRecord errorRecord = this.GetErrorCommandSkippedBecauseOfShadowing(skippedCommands.ToString());
                 this.WriteWarning(errorRecord.ErrorDetails.Message);
             }
@@ -863,7 +863,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsCommandNameMatchingParameters(string commandName)
         {
-            if (SessionStateUtilities.MatchesAnyWildcardPattern(commandName, this.commandNamePatterns, false))
+            if (SessionStateUtilities.MatchesAnyWildcardPattern(commandName, _commandNamePatterns, false))
             {
                 return true;
             }
@@ -871,20 +871,20 @@ namespace Microsoft.PowerShell.Commands
             string nameWithoutExtension = Path.GetFileNameWithoutExtension(commandName);
             if (!nameWithoutExtension.Equals(commandName, StringComparison.OrdinalIgnoreCase))
             {
-                return SessionStateUtilities.MatchesAnyWildcardPattern(nameWithoutExtension, this.commandNamePatterns, false);
+                return SessionStateUtilities.MatchesAnyWildcardPattern(nameWithoutExtension, _commandNamePatterns, false);
             }
 
             return false;
         }
 
-        private Dictionary<string, object> existingCommands;
+        private Dictionary<string, object> _existingCommands;
         private Dictionary<string, object> ExistingCommands
         {
             get
             {
-                if (existingCommands == null)
+                if (_existingCommands == null)
                 {
-                    existingCommands = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+                    _existingCommands = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
                     CommandSearcher searcher = new CommandSearcher(
                         "*",
                         SearchResolutionOptions.CommandNameIsPattern | SearchResolutionOptions.ResolveAliasPatterns | SearchResolutionOptions.ResolveFunctionPatterns,
@@ -892,10 +892,10 @@ namespace Microsoft.PowerShell.Commands
                         this.Context);
                     foreach (CommandInfo commandInfo in searcher)
                     {
-                        existingCommands[commandInfo.Name] = null;
+                        _existingCommands[commandInfo.Name] = null;
                     }
                 }
-                return existingCommands;
+                return _existingCommands;
             }
         }
 
@@ -934,7 +934,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (IsShadowingExistingCommands(commandName))
             {
-                this.commandsSkippedBecauseOfShadowing.Add(commandName);
+                _commandsSkippedBecauseOfShadowing.Add(commandName);
                 return false;
             }
             else
@@ -952,7 +952,7 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 // try to get the list from server's application private data
-                if (commandSkipListFromServer == null)
+                if (_commandSkipListFromServer == null)
                 {
                     string[] serverDeclaredListOfCommandsToSkip;
                     if (PSPrimitiveDictionary.TryPathGet(
@@ -961,36 +961,36 @@ namespace Microsoft.PowerShell.Commands
                             ImplicitRemotingKey,
                             ImplicitRemotingCommandsToSkipKey))
                     {
-                        commandSkipListFromServer = new List<string>();
+                        _commandSkipListFromServer = new List<string>();
                         if (serverDeclaredListOfCommandsToSkip != null)
                         {
-                            commandSkipListFromServer.AddRange(serverDeclaredListOfCommandsToSkip);
+                            _commandSkipListFromServer.AddRange(serverDeclaredListOfCommandsToSkip);
                         }
                     }
                 }
 
                 // fallback to the default list that hardcodes ...
-                if (commandSkipListFromServer == null)
+                if (_commandSkipListFromServer == null)
                 {
-                    commandSkipListFromServer = new List<string>();
+                    _commandSkipListFromServer = new List<string>();
 
                     // ... A) 5 commands used (some required some not) by implicit remoting
-                    commandSkipListFromServer.Add("Get-Command");
-                    commandSkipListFromServer.Add("Get-FormatData");
-                    commandSkipListFromServer.Add("Get-Help");
-                    commandSkipListFromServer.Add("Select-Object");
-                    commandSkipListFromServer.Add("Measure-Object");
+                    _commandSkipListFromServer.Add("Get-Command");
+                    _commandSkipListFromServer.Add("Get-FormatData");
+                    _commandSkipListFromServer.Add("Get-Help");
+                    _commandSkipListFromServer.Add("Select-Object");
+                    _commandSkipListFromServer.Add("Measure-Object");
 
                     // ... B) 2 commands required for 1:1 remoting
-                    commandSkipListFromServer.Add("Exit-PSSession");
-                    commandSkipListFromServer.Add("Out-Default");
+                    _commandSkipListFromServer.Add("Exit-PSSession");
+                    _commandSkipListFromServer.Add("Out-Default");
                 }
 
-                return commandSkipListFromServer;
+                return _commandSkipListFromServer;
             }
         }
 
-        private List<string> commandSkipListFromServer;
+        private List<string> _commandSkipListFromServer;
 
         private bool IsCommandSkippedByServerDeclaration(string commandName)
         {
@@ -1082,7 +1082,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (itemRehydrator == null)
             {
-                itemRehydrator = delegate(PSObject pso) { return ConvertTo<T>(commandName, pso); };
+                itemRehydrator = delegate (PSObject pso) { return ConvertTo<T>(commandName, pso); };
             }
 
             List<T> result = null;
@@ -1109,7 +1109,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (valueRehydrator == null)
             {
-                valueRehydrator = delegate(PSObject pso) { return ConvertTo<V>(commandName, pso); };
+                valueRehydrator = delegate (PSObject pso) { return ConvertTo<V>(commandName, pso); };
             }
 
             Dictionary<K, V> result = new Dictionary<K, V>();
@@ -1491,7 +1491,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsTypeNameMatchingParameters(string name)
         {
-            return SessionStateUtilities.MatchesAnyWildcardPattern(name, this.formatTypeNamePatterns, false);
+            return SessionStateUtilities.MatchesAnyWildcardPattern(name, _formatTypeNamePatterns, false);
         }
 
         private bool IsSafeTypeDefinition(ExtendedTypeDefinition typeDefinition)
@@ -1523,11 +1523,11 @@ namespace Microsoft.PowerShell.Commands
 
         #region Helpers for executing remote commands
 
-        private bool assumeMeasureObjectIsAvailable = true;
+        private bool _assumeMeasureObjectIsAvailable = true;
 
         private int CountRemoteObjects(PowerShell powerShell)
         {
-            if (!assumeMeasureObjectIsAvailable)
+            if (!_assumeMeasureObjectIsAvailable)
             {
                 return -1;
             }
@@ -1544,14 +1544,14 @@ namespace Microsoft.PowerShell.Commands
 
                 if ((measurements == null) || (measurements.Count != 1))
                 {
-                    assumeMeasureObjectIsAvailable = false;
+                    _assumeMeasureObjectIsAvailable = false;
                     return -1;
                 }
 
                 PSPropertyInfo countProperty = measurements[0].Properties["Count"];
                 if (countProperty == null)
                 {
-                    assumeMeasureObjectIsAvailable = false;
+                    _assumeMeasureObjectIsAvailable = false;
                     return -1;
                 }
 
@@ -1562,14 +1562,14 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    assumeMeasureObjectIsAvailable = false;
+                    _assumeMeasureObjectIsAvailable = false;
                     return -1;
                 }
             }
             catch (RuntimeException)
             {
                 // just return -1 if remote Measure-Object invocation fails for any reason
-                assumeMeasureObjectIsAvailable = false;
+                _assumeMeasureObjectIsAvailable = false;
                 return -1;
             }
         }
@@ -1614,14 +1614,14 @@ namespace Microsoft.PowerShell.Commands
             powerShell.AddParameter("TypeName", this.FormatTypeName);
 
             // For remote PS version 5.1 and greater, we need to include the new -PowerShellVersion parameter
-            RemoteRunspace remoteRunspace = this.remoteRunspaceInfo.Runspace as RemoteRunspace;
+            RemoteRunspace remoteRunspace = _remoteRunspaceInfo.Runspace as RemoteRunspace;
             if ((remoteRunspace != null) && (remoteRunspace.ServerVersion != null) &&
-                (remoteRunspace.ServerVersion >= new Version(5,1)))
+                (remoteRunspace.ServerVersion >= new Version(5, 1)))
             {
                 powerShell.AddParameter("PowerShellVersion", PSVersionInfo.PSVersion);
             }
 
-            powerShell.Runspace = this.remoteRunspaceInfo.Runspace;
+            powerShell.Runspace = _remoteRunspaceInfo.Runspace;
 
             return powerShell;
         }
@@ -1633,7 +1633,7 @@ namespace Microsoft.PowerShell.Commands
         internal List<ExtendedTypeDefinition> GetRemoteFormatData()
         {
             if ((this.FormatTypeName == null) || (this.FormatTypeName.Length == 0) ||
-                (this.commandParameterSpecified && !this.formatTypeNamesSpecified))
+                (_commandParameterSpecified && !_formatTypeNamesSpecified))
             {
                 return new List<ExtendedTypeDefinition>();
             }
@@ -1671,7 +1671,7 @@ namespace Microsoft.PowerShell.Commands
                         this.DuplicatePowerShellStreams(powerShell);
                         powerShell.EndInvoke(asyncResult);
 
-                        if ((numberOfReceivedObjects == 0) && (this.formatTypeNamesSpecified))
+                        if ((numberOfReceivedObjects == 0) && (_formatTypeNamesSpecified))
                         {
                             this.ThrowTerminatingError(this.GetErrorNoResultsFromRemoteEnd("Get-FormatData"));
                         }
@@ -1711,7 +1711,7 @@ namespace Microsoft.PowerShell.Commands
             }
             powerShell.AddParameter("ArgumentList", this.ArgumentList);
 
-            powerShell.Runspace = this.remoteRunspaceInfo.Runspace;
+            powerShell.Runspace = _remoteRunspaceInfo.Runspace;
             powerShell.RemotePowerShell.HostCallReceived += new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
             return powerShell;
         }
@@ -1737,7 +1737,7 @@ namespace Microsoft.PowerShell.Commands
 
             alias2resolvedCommandName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             if ((this.CommandName == null) || (this.CommandName.Length == 0) ||
-                (!this.commandParameterSpecified && this.formatTypeNamesSpecified))
+                (!_commandParameterSpecified && _formatTypeNamesSpecified))
             {
                 return new List<CommandMetadata>();
             }
@@ -1794,7 +1794,7 @@ namespace Microsoft.PowerShell.Commands
                         this.DuplicatePowerShellStreams(powerShell);
                         powerShell.EndInvoke(asyncResult);
 
-                        if ((numberOfReceivedObjects == 0) && (this.commandParameterSpecified))
+                        if ((numberOfReceivedObjects == 0) && (_commandParameterSpecified))
                         {
                             this.ThrowTerminatingError(this.GetErrorNoResultsFromRemoteEnd("Get-Command"));
                         }
@@ -1817,7 +1817,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Reporting progress
 
-        private DateTime lastTimeProgressWasWritten = DateTime.UtcNow;
+        private DateTime _lastTimeProgressWasWritten = DateTime.UtcNow;
 
         private void WriteProgress(string statusDescription, int? percentComplete, int? secondsRemaining)
         {
@@ -1834,13 +1834,13 @@ namespace Microsoft.PowerShell.Commands
 
             if (recordType == ProgressRecordType.Processing)
             {
-                TimeSpan timeSinceProgressWasWrittenLast = DateTime.UtcNow - lastTimeProgressWasWritten;
+                TimeSpan timeSinceProgressWasWrittenLast = DateTime.UtcNow - _lastTimeProgressWasWritten;
                 if (timeSinceProgressWasWrittenLast < TimeSpan.FromMilliseconds(200))
                 {
                     return;
                 }
             }
-            lastTimeProgressWasWritten = DateTime.UtcNow;
+            _lastTimeProgressWasWritten = DateTime.UtcNow;
 
             string activityDescription = StringUtil.Format(ImplicitRemotingStrings.ProgressActivity);
             ProgressRecord progressRecord = new ProgressRecord(
@@ -1885,13 +1885,13 @@ namespace Microsoft.PowerShell.Commands
 
         #region Generating a proxy module
 
-        private Guid moduleGuid = Guid.NewGuid();
+        private Guid _moduleGuid = Guid.NewGuid();
 
         internal Guid ModuleGuid
         {
             get
             {
-                return moduleGuid;
+                return _moduleGuid;
             }
         }
 
@@ -1915,7 +1915,7 @@ namespace Microsoft.PowerShell.Commands
             Dictionary<string, string> alias2resolvedCommandName,
             List<ExtendedTypeDefinition> listOfFormatData)
         {
-            if (this.commandsSkippedBecauseOfShadowing.Count != 0)
+            if (_commandsSkippedBecauseOfShadowing.Count != 0)
             {
                 this.ReportSkippedCommands();
 
@@ -1955,9 +1955,9 @@ namespace Microsoft.PowerShell.Commands
 
         #region Constructor and shared private data
 
-        private PSSession remoteRunspaceInfo;
-        private Guid moduleGuid;
-        private InvocationInfo invocationInfo;
+        private PSSession _remoteRunspaceInfo;
+        private Guid _moduleGuid;
+        private InvocationInfo _invocationInfo;
 
         internal ImplicitRemotingCodeGenerator(
             PSSession remoteRunspaceInfo,
@@ -1968,9 +1968,9 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(moduleGuid != null, "Caller should validate moduleGuid != null");
             Dbg.Assert(invocationInfo != null, "Caller should validate invocationInfo != null");
 
-            this.remoteRunspaceInfo = remoteRunspaceInfo;
-            this.moduleGuid = moduleGuid;
-            this.invocationInfo = invocationInfo;
+            _remoteRunspaceInfo = remoteRunspaceInfo;
+            _moduleGuid = moduleGuid;
+            _invocationInfo = invocationInfo;
         }
 
         #endregion
@@ -1983,20 +1983,20 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Connection URI associated with the remote runspace</returns>
         private string GetConnectionString()
         {
-            WSManConnectionInfo connectionInfo = this.remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
+            WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
             if (connectionInfo != null)
             {
                 return connectionInfo.ConnectionUri.ToString();
             }
-            
-            VMConnectionInfo vmConnectionInfo = this.remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
+
+            VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
             if (vmConnectionInfo != null)
             {
                 return vmConnectionInfo.ComputerName;
             }
 
-            ContainerConnectionInfo containerConnectionInfo = this.remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;                
-            if (containerConnectionInfo != null)                
+            ContainerConnectionInfo containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
+            if (containerConnectionInfo != null)
             {
                 return containerConnectionInfo.ComputerName;
             }
@@ -2008,7 +2008,7 @@ namespace Microsoft.PowerShell.Commands
                 Uri.IsWellFormedUriString(connectionString, UriKind.Absolute),
                 "GetConnectionString() should return only well formed uri strings");
              */
-            return null;    
+            return null;
         }
 
         private string EscapeFunctionNameForRemoteHelp(string name)
@@ -2070,7 +2070,7 @@ namespace Microsoft.PowerShell.Commands
 
             writer.Write(
                 ManifestTemplate,
-                CodeGeneration.EscapeSingleQuotedStringContent(this.moduleGuid.ToString()),
+                CodeGeneration.EscapeSingleQuotedStringContent(_moduleGuid.ToString()),
                 CodeGeneration.EscapeSingleQuotedStringContent(StringUtil.Format(ImplicitRemotingStrings.ProxyModuleDescription, this.GetConnectionString())),
                 CodeGeneration.EscapeSingleQuotedStringContent(Path.GetFileName(psm1fileName)),
                 CodeGeneration.EscapeSingleQuotedStringContent(Path.GetFileName(formatPs1xmlFileName)));
@@ -2095,8 +2095,8 @@ namespace Microsoft.PowerShell.Commands
                 TopCommentTemplate,
                 CodeGeneration.EscapeBlockCommentContent(StringUtil.Format(ImplicitRemotingStrings.ModuleHeaderTitle)),
                 CodeGeneration.EscapeBlockCommentContent(StringUtil.Format(ImplicitRemotingStrings.ModuleHeaderDate, DateTime.Now.ToString(CultureInfo.CurrentCulture))),
-                CodeGeneration.EscapeBlockCommentContent(StringUtil.Format(ImplicitRemotingStrings.ModuleHeaderCommand, this.invocationInfo.MyCommand.Name)),
-                CodeGeneration.EscapeBlockCommentContent(StringUtil.Format(ImplicitRemotingStrings.ModuleHeaderCommandLine, this.invocationInfo.Line)));
+                CodeGeneration.EscapeBlockCommentContent(StringUtil.Format(ImplicitRemotingStrings.ModuleHeaderCommand, _invocationInfo.MyCommand.Name)),
+                CodeGeneration.EscapeBlockCommentContent(StringUtil.Format(ImplicitRemotingStrings.ModuleHeaderCommandLine, _invocationInfo.Line)));
         }
 
         private const string HeaderTemplate = @"
@@ -2267,7 +2267,7 @@ function Get-PSImplicitRemotingSessionOption
 
         private PSPrimitiveDictionary GetApplicationArguments()
         {
-            RemoteRunspace remoteRunspace = remoteRunspaceInfo.Runspace as RemoteRunspace;
+            RemoteRunspace remoteRunspace = _remoteRunspaceInfo.Runspace as RemoteRunspace;
 
             Dbg.Assert(remoteRunspace != null, "PSSessionInfo should refer to a *remote* runspace");
             Dbg.Assert(remoteRunspace.RunspacePool != null, "All remote runspaces are implemented using a runspace pool");
@@ -2280,7 +2280,7 @@ function Get-PSImplicitRemotingSessionOption
         {
             StringBuilder result = new StringBuilder("& $script:NewPSSessionOption ");
 
-            RunspaceConnectionInfo runspaceConnectionInfo = this.remoteRunspaceInfo.Runspace.ConnectionInfo as RunspaceConnectionInfo;
+            RunspaceConnectionInfo runspaceConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as RunspaceConnectionInfo;
             if (runspaceConnectionInfo != null)
             {
                 result.AppendFormat(null, "-Culture '{0}' ", CodeGeneration.EscapeSingleQuotedStringContent(runspaceConnectionInfo.Culture.ToString()));
@@ -2292,7 +2292,7 @@ function Get-PSImplicitRemotingSessionOption
                 result.AppendFormat(null, "-OperationTimeOut {0} ", runspaceConnectionInfo.OperationTimeout);
             }
 
-            WSManConnectionInfo wsmanConnectionInfo = this.remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
+            WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
             if (wsmanConnectionInfo != null)
             {
                 if (!wsmanConnectionInfo.UseCompression) { result.Append("-NoCompression "); }
@@ -2368,7 +2368,7 @@ function Get-PSImplicitRemotingSessionOption
                     /* 0 */ CodeGeneration.EscapeSingleQuotedStringContent(StringUtil.Format(ImplicitRemotingStrings.CredentialRequestTitle)),
                     /* 1 */ CodeGeneration.EscapeSingleQuotedStringContent(StringUtil.Format(ImplicitRemotingStrings.ProxyCredentialRequestBody, this.GetConnectionString())),
                     /* 2 */ CodeGeneration.EscapeSingleQuotedStringContent(wsmanConnectionInfo.ProxyCredential.UserName),
-                    /* 3 */ CodeGeneration.EscapeSingleQuotedStringContent(this.remoteRunspaceInfo.ComputerName + @"\httpproxy"));
+                    /* 3 */ CodeGeneration.EscapeSingleQuotedStringContent(_remoteRunspaceInfo.ComputerName + @"\httpproxy"));
             }
         }
 
@@ -2446,7 +2446,7 @@ function Get-PSImplicitRemotingSession
 
             string hashString;
             PSPrimitiveDictionary.TryPathGet(
-                this.remoteRunspaceInfo.ApplicationPrivateData,
+                _remoteRunspaceInfo.ApplicationPrivateData,
                 out hashString,
                 ImplicitRemotingCommandBase.ImplicitRemotingKey,
                 ImplicitRemotingCommandBase.ImplicitRemotingHashKey);
@@ -2454,7 +2454,7 @@ function Get-PSImplicitRemotingSession
 
             writer.Write(
                 HelperFunctionsGetImplicitRunspaceTemplate,
-                /* 0 */ this.remoteRunspaceInfo.InstanceId,
+                /* 0 */ _remoteRunspaceInfo.InstanceId,
                 /* 1 */ CodeGeneration.EscapeSingleQuotedStringContent(StringUtil.Format(ImplicitRemotingStrings.CreateNewRunspaceMessageTemplate)),
                 /* 2 */ this.GenerateNewRunspaceExpression(),
                 /* 3 */ CodeGeneration.EscapeSingleQuotedStringContent(StringUtil.Format(ImplicitRemotingStrings.ErrorNoRunspaceForThisModule)),
@@ -2476,9 +2476,9 @@ function Get-PSImplicitRemotingSession
         {
             StringBuilder result = new StringBuilder();
 
-            if (this.invocationInfo.BoundParameters.ContainsKey("Module"))
+            if (_invocationInfo.BoundParameters.ContainsKey("Module"))
             {
-                string[] moduleNames = (string[]) this.invocationInfo.BoundParameters["Module"];
+                string[] moduleNames = (string[])_invocationInfo.BoundParameters["Module"];
                 foreach (string moduleName in moduleNames)
                 {
                     result.AppendFormat(
@@ -2540,7 +2540,7 @@ function Get-PSImplicitRemotingSession
 
         private string GenerateNewRunspaceExpression()
         {
-            VMConnectionInfo vmConnectionInfo = this.remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
+            VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
             if (vmConnectionInfo != null)
             {
                 string vmConfigurationName = vmConnectionInfo.ConfigurationName;
@@ -2553,7 +2553,7 @@ function Get-PSImplicitRemotingSession
             }
             else
             {
-                ContainerConnectionInfo containerConnectionInfo = this.remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
+                ContainerConnectionInfo containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
                 if (containerConnectionInfo != null)
                 {
                     string containerConfigurationName = containerConnectionInfo.ContainerProc.ConfigurationName;
@@ -2570,7 +2570,7 @@ function Get-PSImplicitRemotingSession
                         CultureInfo.InvariantCulture,
                         NewRunspaceTemplate,
                         /* 0 */ this.GenerateConnectionStringForNewRunspace(),
-                        /* 1 */ CodeGeneration.EscapeSingleQuotedStringContent(this.remoteRunspaceInfo.ConfigurationName),
+                        /* 1 */ CodeGeneration.EscapeSingleQuotedStringContent(_remoteRunspaceInfo.ConfigurationName),
                         /* 2 */ this.GenerateCredentialParameter(),
                         /* 3 */ this.GenerateCertificateThumbprintParameter(),
                         /* 4 */ this.GenerateAuthenticationMechanismParameter(),
@@ -2583,7 +2583,7 @@ function Get-PSImplicitRemotingSession
                     -ApplicationName '{1}' {2} {3} ";
         private const string VMIdParameterTemplate = @"-VMId '{0}' ";
         private const string ContainerIdParameterTemplate = @"-ContainerId '{0}' ";
-                    
+
         /// <summary>
         /// This is needed to work with Default Port DCR change from WSMan. See BUG
         /// 542726. If http/https is specified in the connectionURI and no port is
@@ -2597,10 +2597,10 @@ function Get-PSImplicitRemotingSession
         {
             string connectionString = null;
 
-            WSManConnectionInfo connectionInfo = this.remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
+            WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
             if (null == connectionInfo)
             {
-                VMConnectionInfo vmConnectionInfo = this.remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
+                VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
                 if (vmConnectionInfo != null)
                 {
                     return string.Format(CultureInfo.InvariantCulture,
@@ -2608,7 +2608,7 @@ function Get-PSImplicitRemotingSession
                         CodeGeneration.EscapeSingleQuotedStringContent(vmConnectionInfo.VMGuid.ToString()));
                 }
 
-                ContainerConnectionInfo containerConnectionInfo = this.remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
+                ContainerConnectionInfo containerConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as ContainerConnectionInfo;
                 if (containerConnectionInfo != null)
                 {
                     return string.Format(CultureInfo.InvariantCulture,
@@ -2643,7 +2643,7 @@ function Get-PSImplicitRemotingSession
 
         private string GenerateAllowRedirectionParameter()
         {
-            WSManConnectionInfo wsmanConnectionInfo = this.remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
+            WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
             if (wsmanConnectionInfo == null)
             {
                 return string.Empty;
@@ -2665,12 +2665,12 @@ function Get-PSImplicitRemotingSession
         {
             // comment in newrunspacecommand.cs says that -CertificateThumbprint
             // and AuthenticationMechanism are mutually exclusive
-            if (this.remoteRunspaceInfo.Runspace.ConnectionInfo.CertificateThumbprint != null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo.CertificateThumbprint != null)
             {
                 return string.Empty;
             }
 
-            WSManConnectionInfo wsmanConnectionInfo = this.remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
+            WSManConnectionInfo wsmanConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
             if (wsmanConnectionInfo == null)
             {
                 return string.Empty;
@@ -2691,7 +2691,7 @@ function Get-PSImplicitRemotingSession
 
         private string GenerateCredentialParameter()
         {
-            if (this.remoteRunspaceInfo.Runspace.ConnectionInfo.Credential == null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo.Credential == null)
             {
                 return string.Empty;
             }
@@ -2702,8 +2702,8 @@ function Get-PSImplicitRemotingSession
                     CredentialParameterTemplate,
                     /* 0 */ CodeGeneration.EscapeSingleQuotedStringContent(StringUtil.Format(ImplicitRemotingStrings.CredentialRequestTitle)),
                     /* 1 */ CodeGeneration.EscapeSingleQuotedStringContent(StringUtil.Format(ImplicitRemotingStrings.CredentialRequestBody, this.GetConnectionString())),
-                    /* 2 */ CodeGeneration.EscapeSingleQuotedStringContent(this.remoteRunspaceInfo.Runspace.ConnectionInfo.Credential.UserName),
-                    /* 3 */ CodeGeneration.EscapeSingleQuotedStringContent(this.remoteRunspaceInfo.ComputerName));
+                    /* 2 */ CodeGeneration.EscapeSingleQuotedStringContent(_remoteRunspaceInfo.Runspace.ConnectionInfo.Credential.UserName),
+                    /* 3 */ CodeGeneration.EscapeSingleQuotedStringContent(_remoteRunspaceInfo.ComputerName));
             }
         }
 
@@ -2711,7 +2711,7 @@ function Get-PSImplicitRemotingSession
 
         private string GenerateCertificateThumbprintParameter()
         {
-            if (this.remoteRunspaceInfo.Runspace.ConnectionInfo.CertificateThumbprint == null)
+            if (_remoteRunspaceInfo.Runspace.ConnectionInfo.CertificateThumbprint == null)
             {
                 return string.Empty;
             }
@@ -2720,7 +2720,7 @@ function Get-PSImplicitRemotingSession
                 return string.Format(
                     CultureInfo.InvariantCulture,
                     CertificateThumbprintParameterTemplate,
-                    CodeGeneration.EscapeSingleQuotedStringContent(this.remoteRunspaceInfo.Runspace.ConnectionInfo.CertificateThumbprint));
+                    CodeGeneration.EscapeSingleQuotedStringContent(_remoteRunspaceInfo.Runspace.ConnectionInfo.CertificateThumbprint));
             }
         }
 
@@ -3051,7 +3051,7 @@ function Get-PSImplicitRemotingClientSideParameters
             X509Certificate2 certificate)
         {
             List<string> result = new List<string>();
-            
+
             Dbg.Assert(moduleRootDirectory != null, "Caller should validate moduleRootDirectory != null");
             Dbg.Assert(Directory.Exists(moduleRootDirectory.FullName), "Caller should validate moduleRootDirectory exists");
             Dbg.Assert(encoding != null, "Caller should validate encoding != null");
@@ -3122,7 +3122,7 @@ function Get-PSImplicitRemotingClientSideParameters
                         string message = StringUtil.Format(ImplicitRemotingStrings.InvalidSigningOperation, currentFile);
                         throw new PSInvalidOperationException(message, e);
                     }
-                 }
+                }
             }
 
             result.Add(baseName + ".psd1");
@@ -3143,7 +3143,7 @@ function Get-PSImplicitRemotingClientSideParameters
             {
                 string applicationArgumentsFile = Path.Combine(moduleRootDirectory.FullName, "ApplicationArguments.xml");
                 result.Add(applicationArgumentsFile);
-                
+
                 using (XmlWriter xw = XmlTextWriter.Create(applicationArgumentsFile))
                 {
                     Serializer serializer = new Serializer(xw);
@@ -3155,5 +3155,4 @@ function Get-PSImplicitRemotingClientSideParameters
             return result;
         }
     }
-
 }

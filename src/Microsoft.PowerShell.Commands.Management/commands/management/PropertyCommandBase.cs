@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
@@ -13,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     public class ItemPropertyCommandBase : CoreCommandWithCredentialsBase
     {
         #region Parameters
-        
+
         /// <summary>
         /// Gets or sets the filter parameter
         /// </summary>
@@ -30,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
                 base.Filter = value;
             } // set
         } // Filter
-        
+
         /// <summary>
         /// Gets or sets the include property
         /// </summary>
@@ -67,15 +68,12 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         #region parameter data
-        
+
         /// <summary>
         /// The path to the item
         /// </summary>
         internal string[] paths = new string[0];
 
         #endregion parameter data
-
-
     } // ItemPropertyCommandBase
-
 } // namespace Microsoft.PowerShell.Commands

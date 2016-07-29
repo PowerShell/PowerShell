@@ -18,11 +18,10 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
 using System.Management.Automation.Security;
 using System.Runtime.InteropServices;
-using DWORD  = System.UInt32;
+using DWORD = System.UInt32;
 
 namespace System.Management.Automation
 {
-
     /// <summary>
     /// Defines the possible status when validating integrity of catalog   
     /// </summary>
@@ -47,7 +46,7 @@ namespace System.Management.Automation
         /// <summary>
         /// status of catalog 
         /// </summary>
-        public CatalogValidationStatus Status { get; set; }        
+        public CatalogValidationStatus Status { get; set; }
 
         /// <summary>
         /// Hash Algorithm used to calculate the hashes of files in Catalog 
@@ -57,12 +56,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Dictionary mapping files relative paths to their hash values found from Catalog 
         /// </summary>
-        public Dictionary<String, String> CatalogItems { get; set;}
+        public Dictionary<String, String> CatalogItems { get; set; }
 
         /// <summary>
         /// Dictionary mapping files relative paths to their hash values 
         /// </summary>
-        public Dictionary<String, String> PathItems { get; set;}
+        public Dictionary<String, String> PathItems { get; set; }
 
         /// <summary>
         /// Signature for the catalog 
@@ -75,7 +74,6 @@ namespace System.Management.Automation
     /// </summary>
     internal static class CatalogHelper
     {
-        
         // Catalog Version is (0X100 = 256) for Catalog Version 1
         private static int catalogVersion1 = 256;
 
@@ -84,7 +82,7 @@ namespace System.Management.Automation
 
         // Hash Algorithms supported by Windows Catalog 
         private static string HashAlgorithmSHA1 = "SHA1";
-        private static string HashAlgorithmSHA256 = "SHA256";  
+        private static string HashAlgorithmSHA256 = "SHA256";
         private static PSCmdlet _cmdlet = null;
 
         /// <summary>
@@ -95,21 +93,21 @@ namespace System.Management.Automation
         private static int GetCatalogVersion(IntPtr catalogHandle)
         {
             int catalogVersion = -1;
-        
-            IntPtr catalogData = NativeMethods.CryptCATStoreFromHandle(catalogHandle);                            
+
+            IntPtr catalogData = NativeMethods.CryptCATStoreFromHandle(catalogHandle);
             NativeMethods.CRYPTCATSTORE catalogInfo = ClrFacade.PtrToStructure<NativeMethods.CRYPTCATSTORE>(catalogData);
-                
+
             if (catalogInfo.dwPublicVersion == catalogVersion2)
-            {                  
+            {
                 catalogVersion = 2;
             }
             // One Windows 7 this API sent version information as decimal 1 not hex (0X100 = 256)
             // so we are checking for that value as well. Reason we are not checking for version 2 above in
             // this scenario because catalog verion 2 is not supported on win7. 
             else if ((catalogInfo.dwPublicVersion == catalogVersion1) || (catalogInfo.dwPublicVersion == 1))
-            {                
+            {
                 catalogVersion = 1;
-            }          
+            }
             else
             {
                 // catalog version we don't understand 
@@ -118,9 +116,9 @@ namespace System.Management.Automation
                                       catalogVersion2.ToString("X")));
 
                 ErrorRecord errorRecord = new ErrorRecord(exception, "UnKnownCatalogVersion", ErrorCategory.InvalidOperation, null);
-                _cmdlet.ThrowTerminatingError(errorRecord);                
+                _cmdlet.ThrowTerminatingError(errorRecord);
             }
-          return catalogVersion;
+            return catalogVersion;
         }
 
         /// <summary>
@@ -168,36 +166,36 @@ namespace System.Management.Automation
         /// <param name="hashAlgorithm"> hash method used to generate hashes for the Catalog </param>        
         /// <returns> HashSet for the relative Path for files in Catalog </returns>
         internal static string GenerateCDFFile(Collection<string> Path, string catalogFilePath, string cdfFilePath, int catalogVersion, string hashAlgorithm)
-        {                       
+        {
             HashSet<string> relativePaths = new HashSet<string>();
 
             string cdfHeaderContent = string.Empty;
             string cdfFilesContent = string.Empty;
             int catAttributeCount = 0;
-            
+
             // First create header and files section for the catalog then write in file 
-            cdfHeaderContent += "[CatalogHeader]" + Environment.NewLine;            
-            cdfHeaderContent += @"Name=" + catalogFilePath + Environment.NewLine;            
-            cdfHeaderContent += "CatalogVersion=" + catalogVersion + Environment.NewLine;            
-            cdfHeaderContent += "HashAlgorithms=" + hashAlgorithm + Environment.NewLine;                
+            cdfHeaderContent += "[CatalogHeader]" + Environment.NewLine;
+            cdfHeaderContent += @"Name=" + catalogFilePath + Environment.NewLine;
+            cdfHeaderContent += "CatalogVersion=" + catalogVersion + Environment.NewLine;
+            cdfHeaderContent += "HashAlgorithms=" + hashAlgorithm + Environment.NewLine;
             cdfFilesContent += "[CatalogFiles]" + Environment.NewLine;
 
             foreach (string catalogFile in Path)
             {
                 if (System.IO.Directory.Exists(catalogFile))
-                {                      
+                {
                     var directoryItems = Directory.EnumerateFiles(catalogFile, "*.*", SearchOption.AllDirectories);
                     foreach (string fileItem in directoryItems)
                     {
-                        ProcessFileToBeAddedInCatalogDefinitionFile(new FileInfo(fileItem), new DirectoryInfo(catalogFile), ref relativePaths, ref cdfHeaderContent, ref cdfFilesContent, ref catAttributeCount);               
+                        ProcessFileToBeAddedInCatalogDefinitionFile(new FileInfo(fileItem), new DirectoryInfo(catalogFile), ref relativePaths, ref cdfHeaderContent, ref cdfFilesContent, ref catAttributeCount);
                     }
                 }
                 else if (System.IO.File.Exists(catalogFile))
                 {
-                    ProcessFileToBeAddedInCatalogDefinitionFile(new FileInfo(catalogFile), null, ref relativePaths, ref cdfHeaderContent, ref cdfFilesContent, ref catAttributeCount);                  
+                    ProcessFileToBeAddedInCatalogDefinitionFile(new FileInfo(catalogFile), null, ref relativePaths, ref cdfHeaderContent, ref cdfFilesContent, ref catAttributeCount);
                 }
             }
-                        
+
             using (System.IO.StreamWriter fileWriter = new System.IO.StreamWriter(new FileStream(cdfFilePath, FileMode.Create)))
             {
                 fileWriter.WriteLine(cdfHeaderContent);
@@ -224,20 +222,20 @@ namespace System.Management.Automation
             if (dirInfo != null)
             {
                 //Relative path of the file is the path inside the containing folder excluding folder Name 
-                relativePath = fileToHash.FullName.Substring(dirInfo.FullName.Length).TrimStart('\\');                
+                relativePath = fileToHash.FullName.Substring(dirInfo.FullName.Length).TrimStart('\\');
             }
             else
             {
-                relativePath = fileToHash.Name;                
+                relativePath = fileToHash.Name;
             }
-                
+
             if (!relativePaths.Contains(relativePath))
             {
                 relativePaths.Add(relativePath);
                 if (fileToHash.Length != 0)
-                {                                        
+                {
                     cdfFilesContent += "<HASH>" + fileToHash.FullName + "=" + fileToHash.FullName + Environment.NewLine;
-                    cdfFilesContent += "<HASH>" + fileToHash.FullName + "ATTR1=0x10010001:FilePath:" + relativePath + Environment.NewLine;                 
+                    cdfFilesContent += "<HASH>" + fileToHash.FullName + "ATTR1=0x10010001:FilePath:" + relativePath + Environment.NewLine;
                 }
                 else
                 {
@@ -270,7 +268,7 @@ namespace System.Management.Automation
             if (resultCDF != IntPtr.Zero)
             {
                 // First navigate all catalog level attributes entries first, they represent zero size files 
-                IntPtr catalogAttr = IntPtr.Zero;                
+                IntPtr catalogAttr = IntPtr.Zero;
                 do
                 {
                     catalogAttr = NativeMethods.CryptCATCDFEnumCatAttributes(resultCDF, catalogAttr, catOpenCallBack);
@@ -278,7 +276,7 @@ namespace System.Management.Automation
                     if (catalogAttr != IntPtr.Zero)
                     {
                         string filePath = ProcessFilePathAttributeInCatalog(catalogAttr);
-                        _cmdlet.WriteVerbose(StringUtil.Format(CatalogStrings.AddFileToCatalog, filePath, filePath));                                                                      
+                        _cmdlet.WriteVerbose(StringUtil.Format(CatalogStrings.AddFileToCatalog, filePath, filePath));
                     }
                 } while (catalogAttr != IntPtr.Zero);
 
@@ -296,7 +294,6 @@ namespace System.Management.Automation
 
                         if (!String.IsNullOrEmpty(fileName))
                         {
-
                             IntPtr memberAttr = IntPtr.Zero;
                             string fileRelativePath = String.Empty;
                             do
@@ -314,15 +311,15 @@ namespace System.Management.Automation
                                         string itemName = fileName.Substring(6);
                                         _cmdlet.WriteVerbose(StringUtil.Format(CatalogStrings.AddFileToCatalog, itemName, fileRelativePath));
                                         break;
-                                    }                                    
+                                    }
                                 }
                             } while (memberAttr != IntPtr.Zero);
                         }
-                    } while (fileName != null);                   
+                    } while (fileName != null);
                 }
                 finally
                 {
-                    NativeMethods.CryptCATCDFClose(resultCDF);                    
+                    NativeMethods.CryptCATCDFClose(resultCDF);
                 }
             }
             else
@@ -348,7 +345,7 @@ namespace System.Management.Automation
             string hashAlgorithm = GetCatalogHashAlgorithm(catalogVersion);
 
             if (!String.IsNullOrEmpty(hashAlgorithm))
-            {                                
+            {
                 // Generate Path for Catalog Defintion File 
                 string cdfFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName());
                 cdfFilePath = cdfFilePath + ".cdf";
@@ -388,7 +385,7 @@ namespace System.Management.Automation
             string relativePath = string.Empty;
 
             NativeMethods.CRYPTCATATTRIBUTE currentMemberAttr = ClrFacade.PtrToStructure<NativeMethods.CRYPTCATATTRIBUTE>(memberAttrInfo);
-            
+
             // check if this is the attribute we are looking for 
             // catalog generated other way not using New-FileCatalog can have attributes we don't understand 
             if (currentMemberAttr.pwszReferenceTag.Equals("FilePath", StringComparison.OrdinalIgnoreCase))
@@ -403,7 +400,7 @@ namespace System.Management.Automation
 
             return relativePath;
         }
-     
+
         /// <summary>
         /// Make a hash for the file 
         /// </summary>
@@ -413,7 +410,7 @@ namespace System.Management.Automation
         /// <returns> HashValue for the file </returns>
         internal static string CalculateFileHash(string filePath, string hashAlgorithm)
         {
-            string hashValue = string.Empty;            
+            string hashValue = string.Empty;
             IntPtr catAdmin = IntPtr.Zero;
 
             // To get handle to the hash algorithm to be used to calculate hashes 
@@ -428,7 +425,7 @@ namespace System.Management.Automation
             IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
 
             // Open the file that is to be hashed for reading and get its handle            
-            IntPtr fileHandle = NativeMethods.CreateFile(filePath, GENERIC_READ, 0, 0 , OPEN_EXISTING, 0, IntPtr.Zero);
+            IntPtr fileHandle = NativeMethods.CreateFile(filePath, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, IntPtr.Zero);
             if (fileHandle != INVALID_HANDLE_VALUE)
             {
                 try
@@ -453,11 +450,10 @@ namespace System.Management.Automation
                             ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToCreateFileHash, filePath)), "UnableToCreateFileHash", ErrorCategory.InvalidOperation, null);
                             _cmdlet.ThrowTerminatingError(errorRecord);
                         }
-                        
+
                         byte[] hashBytes = new byte[size];
                         Marshal.Copy(hashBuffer, hashBytes, 0, size);
                         hashValue = BitConverter.ToString(hashBytes).Replace("-", "");
-
                     }
                     finally
                     {
@@ -481,7 +477,7 @@ namespace System.Management.Automation
             }
             return hashValue;
         }
-        
+
         /// <summary>
         /// Make list of hashes for given Catalog File 
         /// </summary>
@@ -489,13 +485,13 @@ namespace System.Management.Automation
         /// <param name="excludedPatterns"></param>        
         /// <param name="catalogVersion"> The version of input catalog we read from catalog meta data after opening it.</param>
         /// <returns> Dictionary mapping files relative paths to HashValues </returns>
-        internal static Dictionary<String, String> GetHashesFromCatalog(string catalogFilePath, WildcardPattern[] excludedPatterns,out int catalogVersion)
+        internal static Dictionary<String, String> GetHashesFromCatalog(string catalogFilePath, WildcardPattern[] excludedPatterns, out int catalogVersion)
         {
             IntPtr resultCatalog = NativeMethods.CryptCATOpen(catalogFilePath, 0, IntPtr.Zero, 1, 0);
             IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
             Dictionary<String, String> catalogHashes = new Dictionary<String, String>(StringComparer.CurrentCultureIgnoreCase);
             catalogVersion = 0;
-            
+
             if (resultCatalog != INVALID_HANDLE_VALUE)
             {
                 try
@@ -530,11 +526,11 @@ namespace System.Management.Automation
                         {
                             NativeMethods.CRYPTCATMEMBER currentMember = ClrFacade.PtrToStructure<NativeMethods.CRYPTCATMEMBER>(memberInfo);
                             NativeMethods.SIP_INDIRECT_DATA pIndirectData = ClrFacade.PtrToStructure<NativeMethods.SIP_INDIRECT_DATA>(currentMember.pIndirectData);
-                            
+
                             // For Catalog version 2 CryptoAPI puts hashes of file attributes(relative path in our case) in Catalog as well
                             // We validate those along with file hashes so we are skipping duplicate entries 
                             if (!((catalogVersion == 2) && (pIndirectData.DigestAlgorithm.pszObjId.Equals(new Oid("SHA1").Value, StringComparison.OrdinalIgnoreCase))))
-                                {
+                            {
                                 string relativePath = String.Empty;
                                 IntPtr memberAttrInfo = IntPtr.Zero;
                                 do
@@ -561,10 +557,10 @@ namespace System.Management.Automation
                                     _cmdlet.ThrowTerminatingError(errorRecord);
                                 }
 
-                                ProcessCatalogFile(relativePath, currentMember.pwszReferenceTag, excludedPatterns, ref catalogHashes);                                                           
+                                ProcessCatalogFile(relativePath, currentMember.pwszReferenceTag, excludedPatterns, ref catalogHashes);
                             }
                         }
-                    } while (memberInfo != IntPtr.Zero);                    
+                    } while (memberInfo != IntPtr.Zero);
                 }
                 finally
                 {
@@ -572,7 +568,7 @@ namespace System.Management.Automation
                 }
             }
             else
-            {                
+            {
                 ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToOpenCatalogFile, catalogFilePath)), "UnableToOpenCatalogFile", ErrorCategory.InvalidOperation, null);
                 _cmdlet.ThrowTerminatingError(errorRecord);
             }
@@ -591,7 +587,7 @@ namespace System.Management.Automation
         {
             // Found the attribute we are looking for 
             _cmdlet.WriteVerbose(StringUtil.Format(CatalogStrings.FoundFileHashInCatlogItem, relativePath, fileHash));
-            
+
             // Only add the file for validation if it does not meet exclusion criteria 
             if (!CheckExcludedCriteria((new FileInfo(relativePath)).Name, excludedPatterns))
             {
@@ -616,7 +612,7 @@ namespace System.Management.Automation
         internal static void ProcessPathFile(FileInfo fileToHash, DirectoryInfo dirInfo, string hashAlgorithm, WildcardPattern[] excludedPatterns, ref Dictionary<String, String> fileHashes)
         {
             string relativePath = string.Empty;
-            string exclude = string.Empty; 
+            string exclude = string.Empty;
 
             if (dirInfo != null)
             {
@@ -627,16 +623,16 @@ namespace System.Management.Automation
             else
             {
                 relativePath = fileToHash.Name;
-                exclude = relativePath; 
+                exclude = relativePath;
             }
 
-            if (!CheckExcludedCriteria(exclude, excludedPatterns))            
+            if (!CheckExcludedCriteria(exclude, excludedPatterns))
             {
                 string fileHash = string.Empty;
-                 
-                if(fileToHash.Length != 0)
+
+                if (fileToHash.Length != 0)
                 {
-                   fileHash = CalculateFileHash(fileToHash.FullName, hashAlgorithm);
+                    fileHash = CalculateFileHash(fileToHash.FullName, hashAlgorithm);
                 }
 
                 if (!fileHashes.ContainsKey(relativePath))
@@ -654,7 +650,7 @@ namespace System.Management.Automation
             {
                 // Verbose about skipping file from path
                 _cmdlet.WriteVerbose(StringUtil.Format(CatalogStrings.SkipValidationOfPathFile, relativePath));
-            }                                   
+            }
         }
 
         /// <summary>
@@ -674,20 +670,20 @@ namespace System.Management.Automation
             foreach (string folderPath in folderPaths)
             {
                 if (System.IO.Directory.Exists(folderPath))
-                {                    
+                {
                     var directoryItems = Directory.EnumerateFiles(folderPath, "*.*", SearchOption.AllDirectories);
-                    foreach (string fileItem in directoryItems)                    
-                    {                                               
+                    foreach (string fileItem in directoryItems)
+                    {
                         // if its the catalog file we are validating we will skip it 
                         if (String.Equals(fileItem, catalogFilePath, StringComparison.OrdinalIgnoreCase))
                             continue;
 
-                        ProcessPathFile(new FileInfo(fileItem), new DirectoryInfo(folderPath), hashAlgorithm, excludedPatterns, ref fileHashes);                                                
+                        ProcessPathFile(new FileInfo(fileItem), new DirectoryInfo(folderPath), hashAlgorithm, excludedPatterns, ref fileHashes);
                     }
                 }
                 else if (System.IO.File.Exists(folderPath))
-                {                    
-                    ProcessPathFile(new FileInfo(folderPath), null , hashAlgorithm, excludedPatterns, ref fileHashes);                    
+                {
+                    ProcessPathFile(new FileInfo(folderPath), null, hashAlgorithm, excludedPatterns, ref fileHashes);
                 }
             }
             return fileHashes;
@@ -712,14 +708,14 @@ namespace System.Management.Automation
             // Find entires those are not in both list lists. These should be empty lists for success 
             // Hashes in Catalog should be exact similar to the ones from folder             
             List<string> relativePathsNotInFolder = relativePathsFromFolder.Except(relativePathsFromCatalog, StringComparer.CurrentCultureIgnoreCase).ToList();
-            List<string> relativePathsNotInCatalog = relativePathsFromCatalog.Except(relativePathsFromFolder, StringComparer.CurrentCultureIgnoreCase).ToList();                 
+            List<string> relativePathsNotInCatalog = relativePathsFromCatalog.Except(relativePathsFromFolder, StringComparer.CurrentCultureIgnoreCase).ToList();
 
             //Found extra hashes in Folder
             if ((relativePathsNotInFolder.Count != 0) || (relativePathsNotInCatalog.Count != 0))
             {
                 Status = false;
             }
-            
+
             foreach (KeyValuePair<String, String> item in catalogItems)
             {
                 string catalogHashValue = (string)catalogItems[item.Key];
@@ -773,7 +769,7 @@ namespace System.Management.Automation
                 catalog.Signature = SignatureHelper.GetSignature(catalogFilePath, null);
                 return catalog;
             }
-            return null;                           
+            return null;
         }
 
         /// <summary>
@@ -793,14 +789,14 @@ namespace System.Management.Automation
                         return true;
                     }
                 }
-            }                                                      
+            }
             return false;
         }
         /// <summary>
         /// Call back when error is  thrown by catalog API's 
         /// </summary>        
         private static void ParseErrorCallback(DWORD dwErrorArea, DWORD dwLocalError, string pwszLine)
-        {                    
+        {
             switch (dwErrorArea)
             {
                 case NativeConstants.CRYPTCAT_E_AREA_HEADER: break;
@@ -811,7 +807,7 @@ namespace System.Management.Automation
             switch (dwLocalError)
             {
                 case NativeConstants.CRYPTCAT_E_CDF_MEMBER_FILE_PATH:
-                    {                        
+                    {
                         ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToFindFileNameOrPathForCatalogMember, pwszLine)), "UnableToFindFileNameOrPathForCatalogMember", ErrorCategory.InvalidOperation, null);
                         _cmdlet.ThrowTerminatingError(errorRecord);
                         break;
@@ -825,7 +821,7 @@ namespace System.Management.Automation
                 case NativeConstants.CRYPTCAT_E_CDF_MEMBER_FILENOTFOUND:
                     {
                         ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToFindFileToHash, pwszLine)), "UnableToFindFileToHash", ErrorCategory.InvalidOperation, null);
-                        _cmdlet.ThrowTerminatingError(errorRecord);                        
+                        _cmdlet.ThrowTerminatingError(errorRecord);
                         break;
                     }
                 case NativeConstants.CRYPTCAT_E_CDF_BAD_GUID_CONV: break;
@@ -833,7 +829,7 @@ namespace System.Management.Automation
                 case NativeConstants.CRYPTCAT_E_CDF_ATTR_TOOFEWVALUES: break;
                 case NativeConstants.CRYPTCAT_E_CDF_UNSUPPORTED: break;
                 case NativeConstants.CRYPTCAT_E_CDF_DUPLICATE:
-                    {                        
+                    {
                         ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.FoundDuplicateFileMemberInCatalog, pwszLine)), "FoundDuplicateFileMemberInCatalog", ErrorCategory.InvalidOperation, null);
                         _cmdlet.ThrowTerminatingError(errorRecord);
                         break;

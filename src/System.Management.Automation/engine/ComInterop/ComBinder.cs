@@ -21,26 +21,28 @@ using System.Linq;
 
 [assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "System.Dynamic")]
 
-namespace System.Management.Automation.ComInterop {
-
+namespace System.Management.Automation.ComInterop
+{
     /// <summary>
     /// Provides helper methods to bind COM objects dynamically.
     /// </summary>
-    internal static class ComBinder {
-
+    internal static class ComBinder
+    {
         /// <summary>
         /// Determines if an object is a COM object.
         /// </summary>
         /// <param name="value">The object to test.</param>
         /// <returns>true if the object is a COM object, false otherwise.</returns>
-        public static bool IsComObject(object value) {
+        public static bool IsComObject(object value)
+        {
             return
                 (value != null) &&
-                (! WinRTHelper.IsWinRTType(value.GetType())) &&
+                (!WinRTHelper.IsWinRTType(value.GetType())) &&
                 ComObject.IsComObject(value);
         }
 
-        public static bool CanComBind(object value) {
+        public static bool CanComBind(object value)
+        {
             return IsComObject(value) || value is IPseudoComObject;
         }
 
@@ -52,19 +54,23 @@ namespace System.Management.Automation.ComInterop {
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
         /// <param name="delayInvocation">true if member evaluation may be delayed.</param>
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
-        public static bool TryBindGetMember(GetMemberBinder binder, DynamicMetaObject instance, out DynamicMetaObject result, bool delayInvocation) {
-
-            if (TryGetMetaObject(ref instance)) {
+        public static bool TryBindGetMember(GetMemberBinder binder, DynamicMetaObject instance, out DynamicMetaObject result, bool delayInvocation)
+        {
+            if (TryGetMetaObject(ref instance))
+            {
                 var comGetMember = new ComGetMemberBinder(binder, delayInvocation);
                 result = instance.BindGetMember(comGetMember);
-                if (result.Expression.Type.IsValueType) {
+                if (result.Expression.Type.IsValueType)
+                {
                     result = new DynamicMetaObject(
                         Expression.Convert(result.Expression, typeof(object)),
                         result.Restrictions
                     );
                 }
                 return true;
-            } else {
+            }
+            else
+            {
                 result = null;
                 return false;
             }
@@ -77,7 +83,8 @@ namespace System.Management.Automation.ComInterop {
         /// <param name="instance">The target of the dynamic operation. </param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
-        public static bool TryBindGetMember(GetMemberBinder binder, DynamicMetaObject instance, out DynamicMetaObject result) {
+        public static bool TryBindGetMember(GetMemberBinder binder, DynamicMetaObject instance, out DynamicMetaObject result)
+        {
             return TryBindGetMember(binder, instance, out result, false);
         }
 
@@ -89,13 +96,16 @@ namespace System.Management.Automation.ComInterop {
         /// <param name="value">The <see cref="DynamicMetaObject"/> representing the value for the set member operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
-        public static bool TryBindSetMember(SetMemberBinder binder, DynamicMetaObject instance, DynamicMetaObject value, out DynamicMetaObject result) {
-
-            if (TryGetMetaObject(ref instance)) {
+        public static bool TryBindSetMember(SetMemberBinder binder, DynamicMetaObject instance, DynamicMetaObject value, out DynamicMetaObject result)
+        {
+            if (TryGetMetaObject(ref instance))
+            {
                 result = instance.BindSetMember(binder, value);
                 result = new DynamicMetaObject(result.Expression, result.Restrictions.Merge(value.PSGetMethodArgumentRestriction()));
                 return true;
-            } else {
+            }
+            else
+            {
                 result = null;
                 return false;
             }
@@ -109,12 +119,15 @@ namespace System.Management.Automation.ComInterop {
         /// <param name="args">An array of <see cref="DynamicMetaObject"/> instances - arguments to the invoke member operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
-        public static bool TryBindInvoke(InvokeBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result) {
-            
-            if (TryGetMetaObjectInvoke(ref instance)) {
+        public static bool TryBindInvoke(InvokeBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
+        {
+            if (TryGetMetaObjectInvoke(ref instance))
+            {
                 result = instance.BindInvoke(binder, args);
                 return true;
-            } else {
+            }
+            else
+            {
                 result = null;
                 return false;
             }
@@ -131,7 +144,8 @@ namespace System.Management.Automation.ComInterop {
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
         public static bool TryBindInvokeMember(InvokeMemberBinder binder, bool isSetProperty, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
         {
-            if (TryGetMetaObject(ref instance)) {
+            if (TryGetMetaObject(ref instance))
+            {
                 var comInvokeMember = new ComInvokeMemberBinder(binder, isSetProperty);
                 result = instance.BindInvokeMember(comInvokeMember, args);
 
@@ -152,7 +166,9 @@ namespace System.Management.Automation.ComInterop {
                 }
 
                 return true;
-            } else {
+            }
+            else
+            {
                 result = null;
                 return false;
             }
@@ -166,12 +182,15 @@ namespace System.Management.Automation.ComInterop {
         /// <param name="args">An array of <see cref="DynamicMetaObject"/> instances - arguments to the invoke member operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
-        public static bool TryBindGetIndex(GetIndexBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result) {
-
-            if (TryGetMetaObjectInvoke(ref instance)) {
+        public static bool TryBindGetIndex(GetIndexBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, out DynamicMetaObject result)
+        {
+            if (TryGetMetaObjectInvoke(ref instance))
+            {
                 result = instance.BindGetIndex(binder, args);
                 return true;
-            } else {
+            }
+            else
+            {
                 result = null;
                 return false;
             }
@@ -186,14 +205,17 @@ namespace System.Management.Automation.ComInterop {
         /// <param name="value">The <see cref="DynamicMetaObject"/> representing the value for the set index operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
-        public static bool TryBindSetIndex(SetIndexBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, DynamicMetaObject value, out DynamicMetaObject result) {
-
-            if (TryGetMetaObjectInvoke(ref instance)) {
+        public static bool TryBindSetIndex(SetIndexBinder binder, DynamicMetaObject instance, DynamicMetaObject[] args, DynamicMetaObject value, out DynamicMetaObject result)
+        {
+            if (TryGetMetaObjectInvoke(ref instance))
+            {
                 result = instance.BindSetIndex(binder, args, value);
                 result = new DynamicMetaObject(result.Expression, result.Restrictions.Merge(value.PSGetMethodArgumentRestriction()));
 
                 return true;
-            } else {
+            }
+            else
+            {
                 result = null;
                 return false;
             }
@@ -206,13 +228,14 @@ namespace System.Management.Automation.ComInterop {
         /// <param name="instance">The target of the dynamic operation.</param>
         /// <param name="result">The new <see cref="DynamicMetaObject"/> representing the result of the binding.</param>
         /// <returns>true if operation was bound successfully; otherwise, false.</returns>
-        public static bool TryConvert(ConvertBinder binder, DynamicMetaObject instance, out DynamicMetaObject result) {
-
-            if (IsComObject(instance.Value)) {
-
+        public static bool TryConvert(ConvertBinder binder, DynamicMetaObject instance, out DynamicMetaObject result)
+        {
+            if (IsComObject(instance.Value))
+            {
                 // Converting a COM object to any interface is always considered possible - it will result in 
                 // a QueryInterface at runtime
-                if (binder.Type.IsInterface) {
+                if (binder.Type.IsInterface)
+                {
                     result = new DynamicMetaObject(
                         Expression.Convert(
                             instance.Expression,
@@ -239,8 +262,8 @@ namespace System.Management.Automation.ComInterop {
         /// </summary>
         /// <param name="value">The object for which member names are requested.</param>
         /// <returns>The collection of member names.</returns>
-        public static IEnumerable<string> GetDynamicMemberNames(object value) {
-
+        public static IEnumerable<string> GetDynamicMemberNames(object value)
+        {
             return ComObject.ObjectToComObject(value).GetMemberNames(false);
         }
 
@@ -251,8 +274,8 @@ namespace System.Management.Automation.ComInterop {
         /// <param name="value">The object for which member names are requested.</param>
         /// <returns>The collection of member names.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal static IList<string> GetDynamicDataMemberNames(object value) {
-
+        internal static IList<string> GetDynamicDataMemberNames(object value)
+        {
             return ComObject.ObjectToComObject(value).GetMemberNames(true);
         }
 
@@ -265,20 +288,22 @@ namespace System.Management.Automation.ComInterop {
         /// <returns>The collection of pairs that represent data member's names and their data.</returns>
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal static IList<KeyValuePair<string, object>> GetDynamicDataMembers(object value, IEnumerable<string> names) {
-
-
+        internal static IList<KeyValuePair<string, object>> GetDynamicDataMembers(object value, IEnumerable<string> names)
+        {
             return ComObject.ObjectToComObject(value).GetMembers(names);
         }
 
-        private static bool TryGetMetaObject(ref DynamicMetaObject instance) {
+        private static bool TryGetMetaObject(ref DynamicMetaObject instance)
+        {
             // If we're already a COM MO don't make a new one
             // (we do this to prevent recursion if we call Fallback from COM)
-            if (instance is ComUnwrappedMetaObject) {
+            if (instance is ComUnwrappedMetaObject)
+            {
                 return false;
             }
 
-            if (IsComObject(instance.Value)) {
+            if (IsComObject(instance.Value))
+            {
                 instance = new ComMetaObject(instance.Expression, instance.Restrictions, instance.Value);
                 return true;
             }
@@ -286,14 +311,17 @@ namespace System.Management.Automation.ComInterop {
             return false;
         }
 
-        private static bool TryGetMetaObjectInvoke(ref DynamicMetaObject instance) {
+        private static bool TryGetMetaObjectInvoke(ref DynamicMetaObject instance)
+        {
             // If we're already a COM MO don't make a new one
             // (we do this to prevent recursion if we call Fallback from COM)
-            if (TryGetMetaObject(ref instance)) {
+            if (TryGetMetaObject(ref instance))
+            {
                 return true;
             }
 
-            if (instance.Value is IPseudoComObject) {
+            if (instance.Value is IPseudoComObject)
+            {
                 instance = ((IPseudoComObject)instance.Value).GetMetaObject(instance.Expression);
                 return true;
             }
@@ -304,25 +332,30 @@ namespace System.Management.Automation.ComInterop {
         /// <summary>
         /// Special binder that indicates special semantics for COM GetMember operation.
         /// </summary>
-        internal class ComGetMemberBinder : GetMemberBinder {
+        internal class ComGetMemberBinder : GetMemberBinder
+        {
             private readonly GetMemberBinder _originalBinder;
             internal bool _CanReturnCallables;
 
             internal ComGetMemberBinder(GetMemberBinder originalBinder, bool CanReturnCallables) :
-                base(originalBinder.Name, originalBinder.IgnoreCase) {
+                base(originalBinder.Name, originalBinder.IgnoreCase)
+            {
                 _originalBinder = originalBinder;
                 _CanReturnCallables = CanReturnCallables;
             }
 
-            public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject errorSuggestion) {
+            public override DynamicMetaObject FallbackGetMember(DynamicMetaObject target, DynamicMetaObject errorSuggestion)
+            {
                 return _originalBinder.FallbackGetMember(target, errorSuggestion);
             }
 
-            public override int GetHashCode() {
+            public override int GetHashCode()
+            {
                 return _originalBinder.GetHashCode() ^ (_CanReturnCallables ? 1 : 0);
             }
 
-            public override bool Equals(object obj) {
+            public override bool Equals(object obj)
+            {
                 ComGetMemberBinder other = obj as ComGetMemberBinder;
                 return other != null &&
                     _CanReturnCallables == other._CanReturnCallables &&

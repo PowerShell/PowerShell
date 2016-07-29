@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -219,7 +220,7 @@ namespace System.Management.Automation.Remoting
         internal virtual bool AllowPushRunspace
         {
             get { return (_serverDriverRemoteHost != null) ? _serverDriverRemoteHost.AllowPushRunspace : false; }
-            set { if (_serverDriverRemoteHost != null) {_serverDriverRemoteHost.AllowPushRunspace = value; } }
+            set { if (_serverDriverRemoteHost != null) { _serverDriverRemoteHost.AllowPushRunspace = value; } }
         }
 
         #endregion

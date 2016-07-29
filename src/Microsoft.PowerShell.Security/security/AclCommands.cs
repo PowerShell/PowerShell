@@ -9,7 +9,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Management.Automation;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 using System.Management.Automation.Security;
 using System.Security.AccessControl;
 using System.Security.Principal;
@@ -28,7 +28,6 @@ using System.Reflection;
 
 namespace Microsoft.PowerShell.Commands
 {
-
     /// <summary>
     /// Defines the base class from which all Security Descriptor commands
     /// are derived.
@@ -44,12 +43,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return filter;
+                return _filter;
             }
 
             set
             {
-                filter = value;
+                _filter = value;
             }
         }
 
@@ -62,12 +61,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return include;
+                return _include;
             }
 
             set
             {
-                include = value;
+                _include = value;
             }
         }
 
@@ -80,12 +79,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return exclude;
+                return _exclude;
             }
 
             set
             {
-                exclude = value;
+                _exclude = value;
             }
         }
 
@@ -121,8 +120,8 @@ namespace Microsoft.PowerShell.Commands
         /// of security descriptor
         /// </summary>
         static internal void AddBrokeredProperties(
-            Collection<PSObject> results, 
-            bool audit, 
+            Collection<PSObject> results,
+            bool audit,
             bool allCentralAccessPolicies)
         {
             foreach (PSObject result in results)
@@ -186,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public static string GetPath(PSObject instance)
         {
-            if(instance == null)
+            if (instance == null)
             {
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
@@ -194,11 +193,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 // These are guaranteed to not be null, but even checking
                 // them for null causes a presharp warning
-                #pragma warning disable 56506
+#pragma warning disable 56506
 
                 //Get path
                 return instance.Properties["PSPath"].Value.ToString();
-                #pragma warning enable 56506
+#pragma warning enable 56506
             }
         }
 
@@ -213,13 +212,13 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public static string GetOwner(PSObject instance)
         {
-            if(instance == null)
+            if (instance == null)
             {
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if(sd  == null)
+            if (sd == null)
             {
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
@@ -253,13 +252,13 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public static string GetGroup(PSObject instance)
         {
-            if(instance == null)
+            if (instance == null)
             {
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if(sd  == null)
+            if (sd == null)
             {
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
@@ -292,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public static AuthorizationRuleCollection GetAccess(PSObject instance)
         {
-            if(instance == null)
+            if (instance == null)
             {
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
@@ -330,7 +329,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public static AuthorizationRuleCollection GetAudit(PSObject instance)
         {
-            if(instance == null)
+            if (instance == null)
             {
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
@@ -415,7 +414,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     pAce += ace.AceSize;
                 }
-                IntPtr pSid = pAce + Marshal.SizeOf(new NativeMethods.SYSTEM_AUDIT_ACE()) - 
+                IntPtr pSid = pAce + Marshal.SizeOf(new NativeMethods.SYSTEM_AUDIT_ACE()) -
                     Marshal.SizeOf(new uint());
                 bool ret = NativeMethods.IsValidSid(pSid);
                 if (!ret)
@@ -582,13 +581,13 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public static string GetSddl(PSObject instance)
         {
-            if(instance == null)
+            if (instance == null)
             {
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
-            if(sd  == null)
+            if (sd == null)
             {
                 throw PSTraceSource.NewArgumentNullException("instance");
             }
@@ -602,24 +601,24 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The filter to be used to when globbing to get the item.
         /// </summary>
-        private string filter;
+        private string _filter;
 
         /// <summary>
         /// The glob string used to determine which items are included.
         /// </summary>
-        private string[] include = new string[0];
+        private string[] _include = new string[0];
 
         /// <summary>
         /// The glob string used to determine which items are excluded.
         /// </summary>
-        private string[] exclude = new string[0];
+        private string[] _exclude = new string[0];
     }
 
     /// <summary>
     /// Defines the implementation of the 'get-acl' cmdlet.
     /// This cmdlet gets the security descriptor of an item at the specified path.  
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Acl", SupportsTransactions =  true, DefaultParameterSetName="ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113305")]
+    [Cmdlet(VerbsCommon.Get, "Acl", SupportsTransactions = true, DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113305")]
     public sealed class GetAclCommand : SecurityDescriptorCommandsBase
     {
         /// <summary>
@@ -629,33 +628,33 @@ namespace Microsoft.PowerShell.Commands
         public GetAclCommand()
         {
             //Default for path is the current location
-            path = new string[] { "." };
+            _path = new string[] { "." };
         }
         #region parameters
 
-        private string[] path;
+        private string[] _path;
 
         /// <summary>
         /// Gets or sets the path of the item for which to obtain the
         /// security descriptor.  Default is the current location.
         /// </summary>
-        [Parameter(Position = 0, ValueFromPipeline=true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
+        [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
         [ValidateNotNullOrEmpty()]
         public string[] Path
         {
             get
             {
-                return path;
+                return _path;
             }
 
             set
             {
-                path = value;
+                _path = value;
             }
         }
 
-        private PSObject inputObject = null;
-		
+        private PSObject _inputObject = null;
+
         /// <summary>
         /// InputObject Parameter
         /// Gets or sets the inputObject for which to obtain the security descriptor
@@ -665,12 +664,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return inputObject;
+                return _inputObject;
             }
 
             set
             {
-                inputObject = value;
+                _inputObject = value;
             }
         }
 
@@ -686,16 +685,16 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return path;
+                return _path;
             }
 
             set
             {
-                path = value;
-                isLiteralPath = true;
+                _path = value;
+                _isLiteralPath = true;
             }
         }
-        private bool isLiteralPath = false;
+        private bool _isLiteralPath = false;
 
         /// <summary>
         /// Gets or sets the audit flag of the command.  This flag 
@@ -706,15 +705,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return audit;
+                return _audit;
             }
 
             set
             {
-                audit = value;
+                _audit = value;
             }
         }
-        SwitchParameter audit;
+        private SwitchParameter _audit;
 
 #if CORECLR
         /// <summary>
@@ -744,7 +743,7 @@ namespace Microsoft.PowerShell.Commands
                 allCentralAccessPolicies = value;
             }
         }
-        SwitchParameter allCentralAccessPolicies;
+        private SwitchParameter allCentralAccessPolicies;
 #endif
 
         #endregion
@@ -761,14 +760,14 @@ namespace Microsoft.PowerShell.Commands
                 AccessControlSections.Owner |
                 AccessControlSections.Group |
                 AccessControlSections.Access;
-            if (audit)
+            if (_audit)
             {
                 sections |= AccessControlSections.Audit;
             }
 
-            if (inputObject != null)
+            if (_inputObject != null)
             {
-                PSMethodInfo methodInfo = inputObject.Methods["GetSecurityDescriptor"];
+                PSMethodInfo methodInfo = _inputObject.Methods["GetSecurityDescriptor"];
 
                 if (methodInfo != null)
                 {
@@ -821,7 +820,7 @@ namespace Microsoft.PowerShell.Commands
                     string currentPath = null;
                     try
                     {
-                        if (isLiteralPath)
+                        if (_isLiteralPath)
                         {
                             pathsToProcess.Add(SessionState.Path.GetUnresolvedProviderPathFromPSPath(p));
                         }
@@ -842,7 +841,7 @@ namespace Microsoft.PowerShell.Commands
                             CmdletProviderContext context = new CmdletProviderContext(this.Context);
                             context.SuppressWildcardExpansion = true;
 
-                            if (!InvokeProvider.Item.Exists(rp, false, isLiteralPath))
+                            if (!InvokeProvider.Item.Exists(rp, false, _isLiteralPath))
                             {
                                 ErrorRecord er =
                                     SecurityUtils.CreatePathNotFoundErrorRecord(
@@ -860,8 +859,8 @@ namespace Microsoft.PowerShell.Commands
                             if (sd != null)
                             {
                                 AddBrokeredProperties(
-                                    sd, 
-                                    audit, 
+                                    sd,
+                                    _audit,
                                     AllCentralAccessPolicies);
                                 WriteObject(sd, true);
                             }
@@ -898,11 +897,11 @@ namespace Microsoft.PowerShell.Commands
     /// Defines the implementation of the 'set-acl' cmdlet.
     /// This cmdlet sets the security descriptor of an item at the specified path.  
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "Acl", SupportsShouldProcess = true, SupportsTransactions =  true, DefaultParameterSetName="ByPath",
+    [Cmdlet(VerbsCommon.Set, "Acl", SupportsShouldProcess = true, SupportsTransactions = true, DefaultParameterSetName = "ByPath",
             HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113389")]
     public sealed class SetAclCommand : SecurityDescriptorCommandsBase
     {
-        private string[] path;
+        private string[] _path;
 
         /// <summary>
         /// Gets or sets the path of the item for which to set the
@@ -913,16 +912,16 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return path;
+                return _path;
             }
 
             set
             {
-                path = value;
+                _path = value;
             }
         }
 
-        private PSObject inputObject = null;
+        private PSObject _inputObject = null;
 
         /// <summary>
         /// InputObject Parameter
@@ -933,15 +932,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return inputObject;
+                return _inputObject;
             }
 
             set
             {
-                inputObject = value;
+                _inputObject = value;
             }
         }
-		
+
         /// <summary>
         /// Gets or sets the literal path of the item for which to set the
         /// security descriptor.
@@ -953,18 +952,18 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return path;
+                return _path;
             }
 
             set
             {
-                path = value;
-                isLiteralPath = true;
+                _path = value;
+                _isLiteralPath = true;
             }
         }
-        private bool isLiteralPath = false;
+        private bool _isLiteralPath = false;
 
-        private object securityDescriptor;
+        private object _securityDescriptor;
 
         /// <summary>
         /// Gets or sets the security descriptor object to be
@@ -977,12 +976,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return securityDescriptor;
+                return _securityDescriptor;
             }
 
             set
             {
-                securityDescriptor = PSObject.Base(value);
+                _securityDescriptor = PSObject.Base(value);
             }
         }
 
@@ -1018,7 +1017,7 @@ namespace Microsoft.PowerShell.Commands
         }
 #endif
 
-        SwitchParameter clearCentralAccessPolicy;
+        private SwitchParameter _clearCentralAccessPolicy;
 
         /// <summary>
         /// Clears the central access policy applied on the target item(s).
@@ -1029,16 +1028,16 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return clearCentralAccessPolicy;
+                return _clearCentralAccessPolicy;
             }
 
             set
             {
-                clearCentralAccessPolicy = value;
+                _clearCentralAccessPolicy = value;
             }
         }
 
-        SwitchParameter passthru;
+        private SwitchParameter _passthru;
 
         /// <summary>
         /// Gets or sets the Passthru flag for the operation.
@@ -1050,12 +1049,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return passthru;
+                return _passthru;
             }
 
             set
             {
-                passthru = value;
+                _passthru = value;
             }
         }
 
@@ -1244,7 +1243,7 @@ namespace Microsoft.PowerShell.Commands
         /// by calling NativeMethods.CloseHandle.
         /// </summary>
         private IntPtr GetTokenWithEnabledPrivilege(
-            string privilege, 
+            string privilege,
             NativeMethods.TOKEN_PRIVILEGE previousState)
         {
             IntPtr pToken = IntPtr.Zero;
@@ -1323,15 +1322,15 @@ namespace Microsoft.PowerShell.Commands
         /// Access Control List (ACL).
         protected override void ProcessRecord()
         {
-            ObjectSecurity aclObjectSecurity = securityDescriptor as ObjectSecurity;
+            ObjectSecurity aclObjectSecurity = _securityDescriptor as ObjectSecurity;
 
-            if (inputObject != null)
+            if (_inputObject != null)
             {
-                PSMethodInfo methodInfo = inputObject.Methods["SetSecurityDescriptor"];
+                PSMethodInfo methodInfo = _inputObject.Methods["SetSecurityDescriptor"];
 
                 if (methodInfo != null)
                 {
-                    CommonSecurityDescriptor aclCommonSD = securityDescriptor as CommonSecurityDescriptor;
+                    CommonSecurityDescriptor aclCommonSD = _securityDescriptor as CommonSecurityDescriptor;
                     string sddl;
 
                     if (aclObjectSecurity != null)
@@ -1473,7 +1472,7 @@ namespace Microsoft.PowerShell.Commands
 
                         CmdletProviderContext context = this.CmdletProviderContext;
                         context.PassThru = Passthru;
-                        if (isLiteralPath)
+                        if (_isLiteralPath)
                         {
                             ProviderInfo Provider = null;
                             PSDriveInfo Drive = null;

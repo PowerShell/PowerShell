@@ -1,5 +1,4 @@
 //-----------------------------------------------------------------------
-// <copyright file="DscResourceInfo.cs" company="Microsoft Corporation">
 //     Copyright (C) 2013 Microsoft Corporation
 // </copyright>
 //-----------------------------------------------------------------------
@@ -41,7 +40,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Contains a DSC resource information
     /// </summary>
-    public class DscResourceInfo 
+    public class DscResourceInfo
     {
         /// <summary>
         /// Initializes a new instance of the DscResourceInfo class
@@ -51,15 +50,15 @@ namespace System.Management.Automation
         /// <param name="path">Path of the DscResource.</param>
         /// <param name="parentPath">ParentPath of the DscResource.</param>
         /// <param name="context">The execution context for the DscResource.</param>
-        internal DscResourceInfo(string name, string friendlyName, string path, string parentPath, ExecutionContext context) 
+        internal DscResourceInfo(string name, string friendlyName, string path, string parentPath, ExecutionContext context)
         {
-            this.Name = name;            
+            this.Name = name;
             this.FriendlyName = friendlyName;
             this.Path = path;
             this.ParentPath = parentPath;
-            this.Properties = new ReadOnlyCollection<DscResourcePropertyInfo>(new List<DscResourcePropertyInfo>());            
+            this.Properties = new ReadOnlyCollection<DscResourcePropertyInfo>(new List<DscResourcePropertyInfo>());
         }
-                
+
         /// <summary>
         /// Name of the DSC Resource.
         /// </summary>
@@ -110,15 +109,15 @@ namespace System.Management.Automation
         /// <param name="properties">Updated properties</param>
         public void UpdateProperties(IList<DscResourcePropertyInfo> properties)
         {
-            if(properties != null)
+            if (properties != null)
                 this.Properties = new ReadOnlyCollection<DscResourcePropertyInfo>(properties);
         }
 
         /// <summary>
         /// Module in which the DscResource is implemented in.
         /// </summary>
-        public PSModuleInfo Module { get ; internal set; }
-                        
+        public PSModuleInfo Module { get; internal set; }
+
         /// <summary>
         /// Gets the help file path for the cmdlet.
         /// </summary>
@@ -126,15 +125,14 @@ namespace System.Management.Automation
         {
             get
             {
-                return helpFilePath;
+                return _helpFilePath;
             }
             internal set
             {
-                helpFilePath = value;
+                _helpFilePath = value;
             }
         } // HelpFile
-        private string helpFilePath = String.Empty;
-
+        private string _helpFilePath = String.Empty;
     }
 
 
@@ -173,7 +171,7 @@ namespace System.Management.Automation
 
         internal void UpdateValues(IList<string> values)
         {
-            if(values != null)
+            if (values != null)
                 this.Values = new ReadOnlyCollection<string>(values);
         }
     }

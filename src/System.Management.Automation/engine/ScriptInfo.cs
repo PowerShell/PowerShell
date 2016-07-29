@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation.Runspaces;
 using System.Collections.ObjectModel;
@@ -60,7 +61,7 @@ namespace System.Management.Automation
         /// </summary>
         internal override CommandInfo CreateGetCommandCopy(object[] argumentList)
         {
-            ScriptInfo copy = new ScriptInfo(this) {IsGetCommandCopy = true, Arguments = argumentList};
+            ScriptInfo copy = new ScriptInfo(this) { IsGetCommandCopy = true, Arguments = argumentList };
             return copy;
         }
 
@@ -68,7 +69,7 @@ namespace System.Management.Automation
 
         internal override HelpCategory HelpCategory
         {
-            get { return HelpCategory.ScriptCommand;  }
+            get { return HelpCategory.ScriptCommand; }
         }
 
         /// <summary>
@@ -127,6 +128,6 @@ namespace System.Management.Automation
                         new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
             }
         }
-        CommandMetadata _commandMetadata;
+        private CommandMetadata _commandMetadata;
     } // ScriptInfo
 } // namespace System.Management.Automation

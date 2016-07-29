@@ -13,8 +13,8 @@ namespace Microsoft.PowerShell
     /// This class provides an entry point which is called by minishell's main
     /// to transfer control to Msh console host implementation.
     /// </summary>
-    
-    public static 
+
+    public static
     class ConsoleShell
     {
 #if CORECLR

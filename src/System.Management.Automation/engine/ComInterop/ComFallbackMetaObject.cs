@@ -15,7 +15,8 @@ using System.Diagnostics;
 
 //using Microsoft.Scripting.Utils;
 
-namespace System.Management.Automation.ComInterop {
+namespace System.Management.Automation.ComInterop
+{
     //
     // ComFallbackMetaObject just delegates everything to the binder.
     //
@@ -24,32 +25,40 @@ namespace System.Management.Automation.ComInterop {
     //
     // Also: we don't need to implement these for any operations other than those
     // supported by ComBinder
-    internal class ComFallbackMetaObject : DynamicMetaObject {
+    internal class ComFallbackMetaObject : DynamicMetaObject
+    {
         internal ComFallbackMetaObject(Expression expression, BindingRestrictions restrictions, object arg)
-            : base(expression, restrictions, arg) {
+            : base(expression, restrictions, arg)
+        {
         }
 
-        public override DynamicMetaObject BindGetIndex(GetIndexBinder binder, DynamicMetaObject[] indexes) {
+        public override DynamicMetaObject BindGetIndex(GetIndexBinder binder, DynamicMetaObject[] indexes)
+        {
             return binder.FallbackGetIndex(UnwrapSelf(), indexes);
         }
 
-        public override DynamicMetaObject BindSetIndex(SetIndexBinder binder, DynamicMetaObject[] indexes, DynamicMetaObject value) {
+        public override DynamicMetaObject BindSetIndex(SetIndexBinder binder, DynamicMetaObject[] indexes, DynamicMetaObject value)
+        {
             return binder.FallbackSetIndex(UnwrapSelf(), indexes, value);
         }
 
-        public override DynamicMetaObject BindGetMember(GetMemberBinder binder) {
+        public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
+        {
             return binder.FallbackGetMember(UnwrapSelf());
         }
 
-        public override DynamicMetaObject BindInvokeMember(InvokeMemberBinder binder, DynamicMetaObject[] args) {
+        public override DynamicMetaObject BindInvokeMember(InvokeMemberBinder binder, DynamicMetaObject[] args)
+        {
             return binder.FallbackInvokeMember(UnwrapSelf(), args);
         }
 
-        public override DynamicMetaObject BindSetMember(SetMemberBinder binder, DynamicMetaObject value) {
+        public override DynamicMetaObject BindSetMember(SetMemberBinder binder, DynamicMetaObject value)
+        {
             return binder.FallbackSetMember(UnwrapSelf(), value);
         }
 
-        protected virtual ComUnwrappedMetaObject UnwrapSelf() {
+        protected virtual ComUnwrappedMetaObject UnwrapSelf()
+        {
             return new ComUnwrappedMetaObject(
                 ComObject.RcwFromComObject(Expression),
                 Restrictions.Merge(ComBinderHelpers.GetTypeRestrictionForDynamicMetaObject(this)),
@@ -60,9 +69,11 @@ namespace System.Management.Automation.ComInterop {
 
     // This type exists as a signal type, so ComBinder knows not to try to bind
     // again when we're trying to fall back
-    internal sealed class ComUnwrappedMetaObject : DynamicMetaObject {
+    internal sealed class ComUnwrappedMetaObject : DynamicMetaObject
+    {
         internal ComUnwrappedMetaObject(Expression expression, BindingRestrictions restrictions, object value)
-            : base(expression, restrictions, value) {
+            : base(expression, restrictions, value)
+        {
         }
     }
 }

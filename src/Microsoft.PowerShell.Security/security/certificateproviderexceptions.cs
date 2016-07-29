@@ -4,7 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 
 using System;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 using System.Runtime.Serialization;
 using System.Reflection;
 
@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a new instance of the CertificateProviderItemNotFoundException
         /// class with the default message.
         /// </summary>
-        public CertificateProviderItemNotFoundException () : base()
+        public CertificateProviderItemNotFoundException() : base()
         {
         }
 
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         /// The inner exception to be included in the exception.
         /// </param>
         internal CertificateProviderItemNotFoundException(Exception innerException)
-            : base (innerException.Message, innerException) 
+            : base(innerException.Message, innerException)
         {
         }
     }
@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
         /// The inner exception to be included in the exception.
         /// </param>
         internal CertificateNotFoundException(Exception innerException)
-            : base (innerException.Message, innerException) 
+            : base(innerException.Message, innerException)
         {
         }
     }
@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
         /// The inner exception to be included in the exception.
         /// </param>
         internal CertificateStoreNotFoundException(Exception innerException)
-            : base (innerException.Message, innerException) 
+            : base(innerException.Message, innerException)
         {
         }
     }
@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
         /// The inner exception to be included in the exception.
         /// </param>
         internal CertificateStoreLocationNotFoundException(Exception innerException)
-            : base (innerException.Message, innerException) 
+            : base(innerException.Message, innerException)
         {
         }
     }

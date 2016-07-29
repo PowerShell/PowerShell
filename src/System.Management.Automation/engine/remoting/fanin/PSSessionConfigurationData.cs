@@ -52,7 +52,7 @@ namespace System.Management.Automation.Remoting
             }
             internal set
             {
-                _privateData = value;               
+                _privateData = value;
             }
         }
 
@@ -62,7 +62,6 @@ namespace System.Management.Automation.Remoting
 
         private PSSessionConfigurationData()
         {
-            
         }
 
         internal static string Unescape(string s)
@@ -85,16 +84,16 @@ namespace System.Management.Automation.Remoting
             configurationData = Unescape(configurationData);
 
             XmlReaderSettings readerSettings = new XmlReaderSettings
-                                                   {
-                                                       CheckCharacters = false,
-                                                       IgnoreComments = true,
-                                                       IgnoreProcessingInstructions = true,
-                                                       MaxCharactersInDocument = 10000,
+            {
+                CheckCharacters = false,
+                IgnoreComments = true,
+                IgnoreProcessingInstructions = true,
+                MaxCharactersInDocument = 10000,
 #if !CORECLR // No XmlReaderSettings.XmlResolver in CoreCLR
-                                                       XmlResolver = null,
+                XmlResolver = null,
 #endif
-                                                       ConformanceLevel = ConformanceLevel.Fragment
-                                                   };
+                ConformanceLevel = ConformanceLevel.Fragment
+            };
 
             using (XmlReader reader = XmlReader.Create(new StringReader(configurationData), readerSettings))
             {
@@ -237,6 +236,5 @@ namespace System.Management.Automation.Remoting
         private const string ValueToken = "Value";
 
         #endregion Private Members
-
     }
 }

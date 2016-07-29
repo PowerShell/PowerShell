@@ -29,7 +29,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        public PSVariable(string name) 
+        public PSVariable(string name)
             : this(name, null, ScopedItemOptions.None, (Collection<Attribute>)null)
         {
         }
@@ -49,7 +49,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        public PSVariable(string name, object value) 
+        public PSVariable(string name, object value)
             : this(name, value, ScopedItemOptions.None, (Collection<Attribute>)null)
         {
         }
@@ -74,7 +74,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        public PSVariable(string name, object value, ScopedItemOptions options) 
+        public PSVariable(string name, object value, ScopedItemOptions options)
             : this(name, value, options, (Collection<Attribute>)null)
         {
         }
@@ -103,10 +103,10 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        internal PSVariable(string name, object value, ScopedItemOptions options, string description) 
+        internal PSVariable(string name, object value, ScopedItemOptions options, string description)
             : this(name, value, options, (Collection<Attribute>)null)
         {
-            this.description = description;
+            _description = description;
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace System.Management.Automation
             string description)
                 : this(name, value, options, attributes)
         {
-            this.description = description;
+            _description = description;
         }
 
 
@@ -181,9 +181,9 @@ namespace System.Management.Automation
         /// throws an exception.
         /// </exception>
         public PSVariable(
-            string name, 
-            object value, 
-            ScopedItemOptions options, 
+            string name,
+            object value,
+            ScopedItemOptions options,
             Collection<Attribute> attributes)
         {
             if (String.IsNullOrEmpty(name))
@@ -191,9 +191,9 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("name");
             }
 
-            this.name = name;
+            _name = name;
 
-            this.attributes = new PSVariableAttributeCollection(this);
+            _attributes = new PSVariableAttributeCollection(this);
 
             // Note, it is OK to set the value before setting the attributes
             // because each attribute will be validated as it is set.
@@ -204,12 +204,12 @@ namespace System.Management.Automation
             {
                 foreach (Attribute attribute in attributes)
                 {
-                    this.attributes.Add(attribute);
+                    _attributes.Add(attribute);
                 }
             }
-           
+
             // Set the options after setting the initial value.
-            this.options = options;
+            _options = options;
 
             if (IsAllScope)
             {
@@ -223,7 +223,7 @@ namespace System.Management.Automation
         // the derived class isn't fully constructed yet.
         internal PSVariable(string name, bool dummy)
         {
-            this.name = name;
+            _name = name;
         }
 
         #endregion ctor
@@ -235,10 +235,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return name;
+                return _name;
             }
         }
-        private string name = String.Empty;
+        private string _name = String.Empty;
 
         /// <summary>
         /// Gets or sets the description of the variable.
@@ -247,14 +247,14 @@ namespace System.Management.Automation
         {
             get
             {
-                return description;
+                return _description;
             }
             set
             {
-                description = value;
+                _description = value;
             }
         }
-        private string description = String.Empty;
+        private string _description = String.Empty;
 
 
         internal void DebuggerCheckVariableRead()
@@ -296,7 +296,7 @@ namespace System.Management.Automation
             get
             {
                 DebuggerCheckVariableRead();
-                return this._value;
+                return _value;
             }
 
             set
@@ -323,7 +323,7 @@ namespace System.Management.Automation
         {
             get { return _module; }
         }
-        PSModuleInfo _module;
+        private PSModuleInfo _module;
         internal void SetModule(PSModuleInfo module)
         {
             _module = module;
@@ -354,7 +354,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return options;
+                return _options;
             }
 
             set
@@ -372,7 +372,7 @@ namespace System.Management.Automation
             {
                 SessionStateUnauthorizedAccessException e =
                     new SessionStateUnauthorizedAccessException(
-                            name,
+                            _name,
                             SessionStateCategory.Variable,
                             "VariableNotWritable",
                             SessionStateStrings.VariableNotWritable);
@@ -391,7 +391,7 @@ namespace System.Management.Automation
 
                 SessionStateUnauthorizedAccessException e =
                     new SessionStateUnauthorizedAccessException(
-                            name,
+                            _name,
                             SessionStateCategory.Variable,
                             "VariableCannotBeMadeConstant",
                             SessionStateStrings.VariableCannotBeMadeConstant);
@@ -410,7 +410,7 @@ namespace System.Management.Automation
 
                 SessionStateUnauthorizedAccessException e =
                     new SessionStateUnauthorizedAccessException(
-                            name,
+                            _name,
                             SessionStateCategory.Variable,
                             "VariableAllScopeOptionCannotBeRemoved",
                             SessionStateStrings.VariableAllScopeOptionCannotBeRemoved);
@@ -418,9 +418,9 @@ namespace System.Management.Automation
                 throw e;
             }
 
-            options = newOptions;
+            _options = newOptions;
         }
-        private ScopedItemOptions options = ScopedItemOptions.None;
+        private ScopedItemOptions _options = ScopedItemOptions.None;
 
         /// <summary>
         /// Gets the collection that contains the attributes for the variable.
@@ -434,14 +434,14 @@ namespace System.Management.Automation
         {
             get
             {
-                if (attributes == null)
+                if (_attributes == null)
                 {
-                    attributes = new PSVariableAttributeCollection(this);
+                    _attributes = new PSVariableAttributeCollection(this);
                 }
-                return attributes;
+                return _attributes;
             }
         }
-        private PSVariableAttributeCollection attributes;
+        private PSVariableAttributeCollection _attributes;
 
 
         /// <summary>
@@ -462,7 +462,7 @@ namespace System.Management.Automation
         /// </exception>
         public virtual bool IsValidValue(object value)
         {
-            return IsValidValue(attributes, value);
+            return IsValidValue(_attributes, value);
         }
 
         internal static bool IsValidValue(IEnumerable<Attribute> attributes, object value)
@@ -565,7 +565,6 @@ namespace System.Management.Automation
                     attribute as ArgumentTransformationAttribute;
                 if (transformationAttribute != null)
                 {
-
                     result = transformationAttribute.Transform(engine, result);
                 }
             }
@@ -582,7 +581,7 @@ namespace System.Management.Automation
         {
             foreach (Attribute attribute in attributes)
             {
-                this.attributes.AddAttributeNoCheck(attribute);
+                _attributes.AddAttributeNoCheck(attribute);
             }
         }
 
@@ -597,7 +596,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (options & ScopedItemOptions.Constant) != 0;
+                return (_options & ScopedItemOptions.Constant) != 0;
             }
         } // IsConstant
 
@@ -610,10 +609,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return (options & ScopedItemOptions.ReadOnly) != 0;
+                return (_options & ScopedItemOptions.ReadOnly) != 0;
             }
         } // IsReadOnly
-        
+
         /// <summary>
         /// Returns true if the PSVariable is private (only visible in the
         /// current scope), false otherwise.
@@ -623,7 +622,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (options & ScopedItemOptions.Private) != 0;
+                return (_options & ScopedItemOptions.Private) != 0;
             }
         } // IsPrivate
 
@@ -636,7 +635,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (options & ScopedItemOptions.AllScope) != 0;
+                return (_options & ScopedItemOptions.AllScope) != 0;
             }
         } // IsAllScope
 
@@ -658,14 +657,14 @@ namespace System.Management.Automation
                 // If set to true, clean up the variable...
                 if (value)
                 {
-                    options = ScopedItemOptions.None;
+                    _options = ScopedItemOptions.None;
                     _value = null;
                     _wasRemoved = true;
-                    attributes = null;
+                    _attributes = null;
                 }
             }
         }
-        bool _wasRemoved;
+        private bool _wasRemoved;
 
         internal SessionStateInternal SessionState
         {
@@ -703,11 +702,11 @@ namespace System.Management.Automation
         {
             // Check to see if the variable is writable
 
-            if ((options & (ScopedItemOptions.ReadOnly | ScopedItemOptions.Constant)) != ScopedItemOptions.None)
+            if ((_options & (ScopedItemOptions.ReadOnly | ScopedItemOptions.Constant)) != ScopedItemOptions.None)
             {
                 SessionStateUnauthorizedAccessException e =
                     new SessionStateUnauthorizedAccessException(
-                            name,
+                            _name,
                             SessionStateCategory.Variable,
                             "VariableNotWritable",
                             SessionStateStrings.VariableNotWritable);
@@ -717,9 +716,9 @@ namespace System.Management.Automation
 
             // Now perform all ArgumentTransformations that are needed
             object transformedValue = value;
-            if (attributes != null && attributes.Count > 0)
+            if (_attributes != null && _attributes.Count > 0)
             {
-                transformedValue = TransformValue(this.attributes, value);
+                transformedValue = TransformValue(_attributes, value);
 
                 // Next check to make sure the value is valid
 
@@ -729,7 +728,7 @@ namespace System.Management.Automation
                         "ValidateSetFailure",
                         null,
                         Metadata.InvalidValueFailure,
-                        name,
+                        _name,
                         ((transformedValue != null) ? transformedValue.ToString() : "$null"));
 
                     throw e;
@@ -742,7 +741,7 @@ namespace System.Management.Automation
             }
 
             // Set the value before triggering any write breakpoints
-            this._value = transformedValue;
+            _value = transformedValue;
 
             DebuggerCheckVariableWrite();
         }
@@ -753,7 +752,7 @@ namespace System.Management.Automation
             {
                 newValue = CopyMutableValues(newValue);
             }
-            this._value = newValue;            
+            _value = newValue;
         }
 
         virtual internal void SetValueRaw(object newValue, bool preserveValueTypeSemantics)
@@ -774,9 +773,9 @@ namespace System.Management.Automation
         {
             if (!this.IsConstant)
             {
-                if (this._value != null)
+                if (_value != null)
                 {
-                    this._value = PSObject.AsPSObject(_value);
+                    _value = PSObject.AsPSObject(_value);
                 }
             }
         }
@@ -828,8 +827,8 @@ namespace System.Management.Automation
         public LocalVariable(string name, MutableTuple tuple, int tupleSlot)
             : base(name, false)
         {
-            this._tuple = tuple;
-            this._tupleSlot = tupleSlot;
+            _tuple = tuple;
+            _tupleSlot = tupleSlot;
         }
 
         public override ScopedItemOptions Options
@@ -916,12 +915,12 @@ namespace System.Management.Automation
         {
             get
             {
-                if (description == null)
+                if (_description == null)
                 {
-                    description =
+                    _description =
                         SessionStateStrings.DollarNullDescription;
                 }
-                return description;
+                return _description;
             }
 
             set
@@ -929,7 +928,7 @@ namespace System.Management.Automation
                 // Do nothing
             }
         }
-        private string description;
+        private string _description;
 
         /// <summary>
         /// Gets the scope options for $null which is always None.
@@ -958,29 +957,29 @@ namespace System.Management.Automation
         /// <summary>
         /// There are no constraints on the item.
         /// </summary>
-        None        = 0,
+        None = 0,
 
         /// <summary>
         /// The item is readonly. It can be removed but cannot be changed.
         /// </summary>
-        ReadOnly    = 0x1,
+        ReadOnly = 0x1,
 
         /// <summary>
         /// The item cannot be removed or changed.
         /// This flag can only be set a variable creation.
         /// </summary>
-        Constant    = 0x2,
+        Constant = 0x2,
 
         /// <summary>
         /// The item is private to the scope it was created in and
         /// cannot be seen from child scopes.
         /// </summary>
-        Private     = 0x4,
+        Private = 0x4,
 
         /// <summary>
         /// The item is propagated to each new child scope created.
         /// </summary>
-        AllScope    = 0x8,
+        AllScope = 0x8,
 
         /// <summary>
         /// The option is not specified by the user
