@@ -30,13 +30,18 @@ namespace NativeMsh
             _Reserved_  HANDLE hFile,
             _In_        DWORD dwFlags);
 
-        virtual DWORD WINAPI GetModuleFileNameA(
+        virtual DWORD WINAPI GetModuleFileNameW(
             _In_opt_  HMODULE hModule,
-            _Out_     LPSTR lpFilename,
+            _Out_     PWSTR lpFilename,
             _In_      DWORD nSize);
 
-        virtual HMODULE WINAPI GetModuleHandleA(
-            _In_opt_  LPCSTR lpModuleName);
+        virtual HMODULE WINAPI GetModuleHandleW(
+            _In_opt_  PCWSTR lpModuleName);
+
+        virtual BOOL WINAPI GetModuleHandleExW(
+            _In_      DWORD dwFlags,
+            _In_opt_  PCWSTR lpModuleName,
+            _Out_     HMODULE *phModule);
 
         virtual FARPROC WINAPI GetProcAddress(
             _In_  HMODULE hModule,
@@ -46,10 +51,9 @@ namespace NativeMsh
             _In_  HMODULE hModule);
 
         // File Manipulation Wrappers
-        virtual errno_t fopen_s(
-            FILE** file,
-            const char *filename,
-            const char *mode);
+        virtual FILE* _wfopen(
+            const wchar_t *filename,
+            const wchar_t *mode);
 
         virtual int fclose(
             FILE *stream);

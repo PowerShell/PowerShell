@@ -1059,37 +1059,23 @@ namespace Microsoft.PowerShell.Commands
         private static PortableExecutableReference ObjectImplementationAssemblyReference =
             MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location);
 
-         private static PortableExecutableReference MscorlibAssemblyReference =
-            MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("mscorlib")).Location);
+        private static PortableExecutableReference ObjectDeclaredAssemblyReference =
+            MetadataReference.CreateFromFile(System.IO.Path.Combine(FrameworkFolder, "System.Runtime.dll"));
 
-        // This assembly should be System.Runtime.dll
-        private static PortableExecutableReference SystemRuntimeAssemblyReference =
-            MetadataReference.CreateFromFile(ClrFacade.GetAssemblies(typeof(object).FullName).First().Location);
-
-        // SecureString is defined in a separate assembly.
+        // CoreCLR RC2 bits don't have SecureString. We are using a separate assembly with SecureString implementation.
         // This fact is an implementation detail and should not require the user to specify one more assembly, 
         // if they want to use SecureString in Add-Type -TypeDefinition.
         // So this assembly should be in the default assemblies list to provide the best experience.
+        //
+        // TODO: This reference should be removed, if we take CoreCLR version that has SecureString implementation.
         private static PortableExecutableReference SecureStringAssemblyReference =
             MetadataReference.CreateFromFile(typeof(System.Security.SecureString).GetTypeInfo().Assembly.Location);
 
-
-        // These assemlbies are always automatically added to ReferencedAssemblies.
-        private static PortableExecutableReference[] autoReferencedAssemblies = new PortableExecutableReference[]
+        private static MetadataReference[] defaultAssemblies = new MetadataReference[]
         {
-            MscorlibAssemblyReference,
-            SystemRuntimeAssemblyReference,
-            SecureStringAssemblyReference,
-            ObjectImplementationAssemblyReference
-        };
-
-        // These assemlbies are used, when ReferencedAssemblies parameter is not specified.
-        private static PortableExecutableReference[] defaultAssemblies = new PortableExecutableReference[]
-        {
-            MscorlibAssemblyReference,
-            SystemRuntimeAssemblyReference,
-            SecureStringAssemblyReference,
             ObjectImplementationAssemblyReference,
+            ObjectDeclaredAssemblyReference,
+            SecureStringAssemblyReference,
             MetadataReference.CreateFromFile(typeof(PSObject).GetTypeInfo().Assembly.Location)
         };
 
@@ -1161,7 +1147,7 @@ namespace Microsoft.PowerShell.Commands
             // First try by strong name
             try
             {
-                loadedAssembly = Assembly.Load(new AssemblyName(assemblyName));
+                loadedAssembly = System.Reflection.Assembly.Load(new AssemblyName(assemblyName));
             }
             // Generates a FileNotFoundException if you can't load the strong type.
             // So we'll try from the short name.
@@ -1231,8 +1217,9 @@ namespace Microsoft.PowerShell.Commands
             if (referencedAssembliesSpecified)
             {
                 var tempReferences = ReferencedAssemblies.Select(a => MetadataReference.CreateFromFile(ResolveReferencedAssembly(a))).ToList();
-                tempReferences.AddRange(autoReferencedAssemblies);
-
+                tempReferences.Add(ObjectImplementationAssemblyReference);
+                tempReferences.Add(ObjectDeclaredAssemblyReference);
+                tempReferences.Add(SecureStringAssemblyReference);
                 references = tempReferences.ToArray();
             }
 
@@ -1944,7 +1931,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach(string path in paths)
                 {
-                    generatedTypes.AddRange(ClrFacade.LoadFrom(path).GetTypes());
+                    generatedTypes.AddRange(System.Reflection.Assembly.LoadFrom(path).GetTypes());
                 }
             }
             // Load the assembly by name
@@ -2062,7 +2049,7 @@ namespace Microsoft.PowerShell.Commands
             // First try by strong name
             try
             {
-                loadedAssembly = Assembly.Load(assemblyName);
+                loadedAssembly = System.Reflection.Assembly.Load(assemblyName);
             }
             // Generates a FileNotFoundException if you can't load the strong type.
             // So we'll try from the short name.
@@ -2074,7 +2061,7 @@ namespace Microsoft.PowerShell.Commands
             // Next, try an exact match
             if (StrongNames.Value.ContainsKey(assemblyName))
             {
-                return Assembly.Load(StrongNames.Value[assemblyName]);
+                return System.Reflection.Assembly.Load(StrongNames.Value[assemblyName]);
             }
 
             // If the assembly name doesn't contain wildcards, return null. The caller generates an error here.
@@ -2117,7 +2104,7 @@ namespace Microsoft.PowerShell.Commands
                 return null;
 
             // Otherwise, load the assembly.
-            return Assembly.Load(matchedStrongName);
+            return System.Reflection.Assembly.Load(matchedStrongName);
         }
 
         private static ConcurrentDictionary<string, string> InitializeStrongNameDictionary()

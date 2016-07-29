@@ -17,17 +17,14 @@ namespace Microsoft.PowerShell.Commands
             WebResponseObject output;
             if (WebResponseHelper.IsText(response))
             {
-                output = new BasicHtmlWebResponseObject(response, responseStream);
-
-                // TODO: This code needs to be enable after the dependency on mshtml is resolved.
-                //if (useBasicParsing)
-                //{
-                //    output = new BasicHtmlWebResponseObject(response, responseStream);
-                //}
-                //else
-                //{
-                //    output = new HtmlWebResponseObject(response, responseStream, executionContext);
-                //}
+                if (useBasicParsing)
+                {
+                    output = new BasicHtmlWebResponseObject(response, responseStream);
+                }
+                else
+                {
+                    output = new HtmlWebResponseObject(response, responseStream, executionContext);
+                }
             }
             else
             {

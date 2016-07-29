@@ -1321,8 +1321,6 @@ namespace System.Management.Automation
                             }
                         }
 
-                        // TODO: this causes AppVeyor builds to fail due to invalid XML being output
-#if !CORECLR
                         // Close the progress pane that may have popped up from analyzing UNC paths.
                         if (context.CurrentCommandProcessor != null)
                         {
@@ -1330,7 +1328,6 @@ namespace System.Management.Automation
                             analysisProgress.RecordType = ProgressRecordType.Completed;
                             context.CurrentCommandProcessor.CommandRuntime.WriteProgress(analysisProgress);
                         }
-#endif
                     }
                 }
             }
@@ -1518,7 +1515,8 @@ namespace System.Management.Automation
         /// </summary>
         /// 
         /// <returns>
-        /// The contents of the PATH environment variable split on System.IO.Path.PathSeparator.
+        /// The contents of the PATH environment variable split using a semi-colon
+        /// as a delimiter.
         /// </returns>
         /// 
         /// <remarks>
@@ -1551,7 +1549,7 @@ namespace System.Management.Automation
 
                 if (pathCacheKey != null)
                 {
-                    string[] tokenizedPath = pathCacheKey.Split(new char[] { System.IO.Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] tokenizedPath = pathCacheKey.Split(Utils.Separators.Semicolon, StringSplitOptions.RemoveEmptyEntries);
                     cachedPath = new Collection<string>();
 
                     foreach (string directory in tokenizedPath)
@@ -1642,7 +1640,7 @@ namespace System.Management.Automation
             lock (lockObject)
             {
                 cachedPathExtCollection = pathExt != null
-                    ? pathExt.Split(new char[] { System.IO.Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries)
+                    ? pathExt.Split(Utils.Separators.Semicolon, StringSplitOptions.RemoveEmptyEntries)
                     : Utils.EmptyArray<string>();
                 cachedPathExtCollectionWithPs1 = new string[cachedPathExtCollection.Length + 1];
                 cachedPathExtCollectionWithPs1[0] = StringLiterals.PowerShellScriptFileExtension;
@@ -1907,7 +1905,6 @@ namespace System.Management.Automation
         {
             string result = null;
 
-#if !UNIX
             try
             {
                 RegistryKey shellKey = Registry.LocalMachine.OpenSubKey(Utils.GetRegistryConfigurationPath(shellID));
@@ -1933,7 +1930,6 @@ namespace System.Management.Automation
             catch (ArgumentException)
             {
             }
-#endif
 
             return result;
         }

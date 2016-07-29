@@ -1307,8 +1307,9 @@ namespace Microsoft.PowerShell.Workflow
                         AddParameter("Depth", 10).
                         AddParameter("Path", tempPath).Invoke();
 
-                    throw new Exception("Bug MSFT:246456 detected. Please capture " + tempPath + ", open a new issue " +
-                        "at https://github.com/PowerShell/PowerShell/issues/new and attach the file.");
+                    throw new Exception("Bug MSFT:246456 detected. Please capture " + tempPath + ", attach it to " +
+                        "https://microsoft.visualstudio.com/DefaultCollection/WSSC/_workItems#id=246456&_a=edit, and " +
+                        "then reassign the bug to leeholm.");
                 }
                 else
                 {

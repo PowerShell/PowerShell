@@ -148,7 +148,7 @@ namespace System.Management.Automation
             {
                 if (unmanagedMemory != IntPtr.Zero)
                 {
-                    Marshal.ZeroFreeCoTaskMemUnicode(unmanagedMemory);
+                    ZeroFreeCoTaskMemUnicode(unmanagedMemory);
                 }
             }
             return passwordInClearText;
@@ -214,6 +214,19 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Needed to pair with the  SecureStringToCoTaskMemUnicode method which is member of 
+        /// 'SecureStringMarshal' on CORE CLR, and member of 'Marshal' on Full CLR.
+        /// </summary>
+        internal static void ZeroFreeCoTaskMemUnicode(IntPtr unmanagedStr)
+        {
+#if CORECLR
+            SecureStringMarshal.ZeroFreeCoTaskMemUnicode(unmanagedStr);
+#else
+            Marshal.ZeroFreeCoTaskMemUnicode(unmanagedStr);
+#endif
+        }
+
+        /// <summary>
         /// Facade for SecureStringToCoTaskMemUnicode
         /// </summary>
         internal static IntPtr SecureStringToCoTaskMemUnicode(SecureString s)
@@ -228,6 +241,7 @@ namespace System.Management.Automation
         #endregion Marshal
 
         #region Assembly
+        
         /// <summary>
         /// Facade for AssemblyName.GetAssemblyName(string)
         /// </summary>
@@ -311,7 +325,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentNullException("assemblyShortName");
             }
-
+            
             return PSAssemblyLoadContext.ProbeAssemblyFileForMetadataAnalysis(assemblyShortName, additionalSearchPath);
         }
 
@@ -340,15 +354,20 @@ namespace System.Management.Automation
             PSAssemblyLoadContext.AssemblyLoad += handler;
         }
 
+        private static volatile PowerShellAssemblyLoadContext _psLoadContext;
         private static PowerShellAssemblyLoadContext PSAssemblyLoadContext
         {
             get
             {
-                if (PowerShellAssemblyLoadContext.Instance == null)
+                if (_psLoadContext == null)
                 {
-                    throw new InvalidOperationException(ParserStrings.LoadContextNotInitialized);
+                    _psLoadContext = AssemblyLoadContext.Default as PowerShellAssemblyLoadContext;
+                    if (_psLoadContext == null)
+                    {
+                        throw new InvalidOperationException(ParserStrings.InvalidAssemblyLoadContextInUse);
+                    }
                 }
-                return PowerShellAssemblyLoadContext.Instance;
+                return _psLoadContext;
             }
         }
 #endif
@@ -517,6 +536,27 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Facade for Directory.GetParent(string)
+        /// </summary>
+        internal static DirectoryInfo GetParent(string path)
+        {
+#if CORECLR
+            // Implementation copied from .NET source code.
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentNullException("path");
+
+            string fullPath = Path.GetFullPath(path);
+
+            string s = Path.GetDirectoryName(fullPath);
+            if (s == null)
+                return null;
+            return new DirectoryInfo(s);
+#else
+            return Directory.GetParent(path);
+#endif
+        }
+
+        /// <summary>
         /// Facade for ManagementDateTimeConverter.ToDmtfDateTime(DateTime)
         /// </summary>
         internal static string ToDmtfDateTime(DateTime date)
@@ -656,7 +696,7 @@ namespace System.Management.Automation
         internal static void SetProfileOptimizationRoot(string directoryPath)
         {
 #if CORECLR
-            PSAssemblyLoadContext.SetProfileOptimizationRootImpl(directoryPath); 
+            System.Runtime.Loader.AssemblyLoadContext.Default.SetProfileOptimizationRoot(directoryPath);
 #else
             System.Runtime.ProfileOptimization.SetProfileRoot(directoryPath);
 #endif
@@ -669,7 +709,7 @@ namespace System.Management.Automation
         internal static void StartProfileOptimization(string profile)
         {
 #if CORECLR
-            PSAssemblyLoadContext.StartProfileOptimizationImpl(profile); 
+            System.Runtime.Loader.AssemblyLoadContext.Default.StartProfileOptimization(profile);
 #else
             System.Runtime.ProfileOptimization.StartProfile(profile);
 #endif

@@ -3956,12 +3956,7 @@ namespace Microsoft.PowerShell.Activities
                     {
                         try
                         {
-                            var psvar = runspace.SessionStateProxy.PSVariable.Get(name);
-                            if (psvar == null || (psvar.Options & ScopedItemOptions.ReadOnly) == 0)
-                            {
-                                // don't try to overwrite read-only variables values
-                                runspace.SessionStateProxy.PSVariable.Set(name, value);
-                            }
+                            runspace.SessionStateProxy.PSVariable.Set(name, value);
                         }
                         catch (PSNotSupportedException)
                         {

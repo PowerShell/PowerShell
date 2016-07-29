@@ -180,22 +180,13 @@ namespace Microsoft.PowerShell
 
             try
             {
-                string profileDir;
-                if (Platform.IsWindows)
-                {
-                    profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +
-                        @"\Microsoft\Windows\PowerShell";
+                var profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +
+                                 @"\Microsoft\Windows\PowerShell";
 
-                    if (!Directory.Exists(profileDir))
-                    {
-                        Directory.CreateDirectory(profileDir);
-                    }
-                }
-                else
+                if (!Directory.Exists(profileDir))
                 {
-                    profileDir = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
+                    Directory.CreateDirectory(profileDir);
                 }
-
                 ClrFacade.SetProfileOptimizationRoot(profileDir);
             }
             catch
@@ -270,6 +261,7 @@ namespace Microsoft.PowerShell
                             : "StartupProfileData-NonInteractive");
                     exitCode = theConsoleHost.Run(cpp, !string.IsNullOrEmpty(preStartWarning));
                 }
+
             }
             finally
             {
@@ -286,32 +278,10 @@ namespace Microsoft.PowerShell
 
 
 
-#if UNIX
         /// <summary>
-        ///
+        /// 
         /// The break handler for the program.  Dispatches a break event to the current Executor.
-        ///
-        /// </summary>
-        private static void MyBreakHandler(object sender, ConsoleCancelEventArgs args)
-        {
-            // Set the Cancel property to true to prevent the process from terminating.
-            args.Cancel = true;
-            switch (args.SpecialKey)
-            {
-                case ConsoleSpecialKey.ControlC:
-                    SpinUpBreakHandlerThread(false);
-                    return;
-                case ConsoleSpecialKey.ControlBreak:
-                    // Break into script debugger.
-                    BreakIntoDebugger();
-                    return;
-            }
-        }
-#else
-        /// <summary>
-        ///
-        /// The break handler for the program.  Dispatches a break event to the current Executor.
-        ///
+        /// 
         /// </summary>
         /// <param name="signal"></param>
         /// <returns></returns>
@@ -347,7 +317,6 @@ namespace Microsoft.PowerShell
                     return false;
             }
         }
-#endif
 
         private static bool BreakIntoDebugger()
         {
@@ -466,10 +435,8 @@ namespace Microsoft.PowerShell
             // call the console APIs directly, instead of ui.rawui.FlushInputHandle, as ui may be finalized
             // already if this thread is lagging behind the main thread.
 
-#if !UNIX
             ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             ConsoleControl.FlushConsoleInputBuffer(handle);
-#endif
 
             ConsoleHost.SingletonInstance.breakHandlerThread = null;
         }
@@ -1064,12 +1031,8 @@ namespace Microsoft.PowerShell
 
         private void BindBreakHandler()
         {
-#if UNIX
-            Console.CancelKeyPress += new ConsoleCancelEventHandler(MyBreakHandler);
-#else
             breakHandlerGcHandle = GCHandle.Alloc(new ConsoleControl.BreakHandler(MyBreakHandler));
             ConsoleControl.AddBreakHandler((ConsoleControl.BreakHandler)breakHandlerGcHandle.Target);
-#endif
         }
 
 #if !CORECLR // Not used on NanoServer: CurrentDomain.UnhandledException not supported on CoreCLR
@@ -1123,11 +1086,9 @@ namespace Microsoft.PowerShell
         {
             if (!isDisposed)
             {
-#if !UNIX
                 Dbg.Assert(breakHandlerGcHandle != null, "break handler should be set");
                 ConsoleControl.RemoveBreakHandler();
                 breakHandlerGcHandle.Free();
-#endif
 
                 if (isDisposingNotFinalizing)
                 {
@@ -1570,7 +1531,7 @@ namespace Microsoft.PowerShell
                     {
                         // Create and open Runspace with PSReadline.
                         defaultImportModulesList = DefaultInitialSessionState.Modules;
-                        DefaultInitialSessionState.ImportPSModule(new[] { "PSReadLine" });
+                        DefaultInitialSessionState.ImportPSModule(new[] { "PSReadline" });
                         consoleRunspace = RunspaceFactory.CreateRunspace(this, DefaultInitialSessionState);
                         try
                         {
@@ -2872,9 +2833,7 @@ namespace Microsoft.PowerShell
             /// </summary>
             private RunspaceRef runspaceRef;
 
-#if !UNIX
         private GCHandle breakHandlerGcHandle;
-#endif
         private System.Threading.Thread breakHandlerThread;
         private bool isDisposed;
         internal ConsoleHostUserInterface ui;

@@ -9,12 +9,10 @@
     Localization
         Many of the tests below looking-up timezones by Name do not support localization.
         That is, the current tests use us english versions of StandardName and DaylighName for tests.
-
+        
         ref: https://msdn.microsoft.com/en-us/library/windows/desktop/ms725481.aspx
            [snippet] Both StandardName and DaylightName are localized according to the current user default UI language.
 #>
-
-if ($IsWindows) {
 
 function Assert-ListsSame
 {
@@ -28,200 +26,232 @@ function Assert-ListsSame
     }
 }
 
-Describe "Get-Timezone test case no switches" -Tags "CI" {
+Describe "Get-Timezone test case no switches" -tags 'BVT' {
     It "Call without ListAvailable switch returns current TimeZoneInfo" {
-        $observed = (Get-TimeZone).Id
-        $expected = ([System.TimeZoneInfo]::Local).Id
-        $observed -eq $expected | Should Be $true
-    }
+        $result = Remotely { 
+            $observed = (Get-TimeZone).Id 
+            $expected = ([System.TimeZoneInfo]::Local).Id
+            return $observed -eq $expected
+        }
+        $result | Should Be $true
+    } 
 }
 
-Describe "Get-Timezone test cases" -Tags "CI" {
+Describe "Get-Timezone test cases" -tags 'Innerloop','RI' {
 
     It "Call without ListAvailable switch returns an object of type TimeZoneInfo" {
-        $result = (Get-TimeZone).GetType().Name
+        $result = Remotely { (Get-TimeZone).GetType().Name }
         $result | Should Be "TimeZoneInfo"
-    }
+    } 
 
     It "Call WITH ListAvailable switch returns ArrayList of TimeZoneInfo objects where the list is greater than 0 item" {
-        $list = Get-TimeZone -ListAvailable
-        $list.Count -gt 0 | Should Be $true
-
-        $list.GetType().Name | Should Be "Object[]"
-        $list[0].GetType().Name | Should Be "TimeZoneInfo"
-    }
+        $result = Remotely { 
+            $list = Get-TimeZone -ListAvailable
+            $observedListType = $list.GetType().Name 
+            $observedItemType = $list[0].GetType().Name 
+            return @($observedListType,$observedItemType,$list.Count > 0)
+        }
+        $result | Should Be @("Object[]","TimeZoneInfo",$true)
+    } 
 
     It "Call with ListAvailable switch returns a list containing TimeZoneInfo.Local" {
-        $observedIdList = Get-TimeZone -ListAvailable | select -ExpandProperty Id
-        $oneExpectedId = ([System.TimeZoneInfo]::Local).Id
-        $observedIdList -contains $oneExpectedId | Should Be $true
-    }
+        $result = Remotely { 
+            $observedIdList = Get-TimeZone -ListAvailable | select -ExpandProperty Id
+            $oneExpectedId = ([System.TimeZoneInfo]::Local).Id
+            $observedIdList  -contains $oneExpectedId
+        }
+        $result | Should Be $true
+    } 
 
     It "Call with ListAvailable switch returns a list containing one returned by Get-TimeZone" {
-        $observedIdList = Get-TimeZone -ListAvailable | select -ExpandProperty Id
-        $oneExpectedId = (Get-TimeZone).Id
-        $observedIdList -contains $oneExpectedId | Should Be $true
+        $result = Remotely { 
+            $observedIdList = Get-TimeZone -ListAvailable | select -ExpandProperty Id
+            $oneExpectedId = (Get-TimeZone).Id
+            $observedIdList -contains $oneExpectedId
+        }
+        $result | Should Be $true
     }
-
+    
     It "Call Get-TimeZone using ID param and single item" {
-        (Get-TimeZone -Id "Cape Verde Standard Time").Id -eq "Cape Verde Standard Time" | Should Be $true
-    }
-
+        $result = Remotely { (Get-TimeZone -Id "Cape Verde Standard Time").Id -eq "Cape Verde Standard Time" }
+        $result | Should Be $true
+    }  
+    
     It "Call Get-TimeZone using ID param and multiple items" {
         $idList = @("Cape Verde Standard Time","Morocco Standard Time","Azores Standard Time")
-        $result = (Get-TimeZone -Id $idList).Id
-        Assert-ListsSame $result $idList
-    }
-
+        $result = Remotely { 
+            param([string[]] $idList)
+            (Get-TimeZone -Id $idList).Id
+        } -ArgumentList (,$idList)
+        Assert-ListsSame $result $idList 
+    } 
+    
     It "Call Get-TimeZone using ID param and multiple items, where first and third are invalid ids - expect error" {
-        $null = Get-TimeZone -Id @("Cape Verde Standard","Morocco Standard Time","Azores Standard") `
-                             -ErrorVariable errVar -ErrorAction SilentlyContinue
-        $errVar.Count -eq 2 | Should Be $true
-        $errVar[0].FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.GetTimeZoneCommand"
-    }
-
+        $result = Remotely { Get-TimeZone -Id @("Cape Verde Standard","Morocco Standard Time","Azores Standard") }
+        $result.GetError().FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.GetTimeZoneCommand"
+    }  
+    
     It "Call Get-TimeZone using ID param and multiple items, one is wild card but error action ignore works as expected" {
-        $result = Get-TimeZone -Id @("Cape Verde Standard Time","Morocco Standard Time","*","Azores Standard Time") `
-                               -ErrorAction SilentlyContinue | % Id
+        $result = Remotely { (Get-TimeZone -Id @("Cape Verde Standard Time","Morocco Standard Time","*","Azores Standard Time") -ErrorAction SilentlyContinue).Id }
         $expectedIdList = @("Cape Verde Standard Time","Morocco Standard Time","Azores Standard Time")
         Assert-ListsSame $expectedIdList $result
-    }
-
+    } 
+    
     It "Call Get-TimeZone using Name param and singe item" {
-        $timezoneList = Get-TimeZone -ListAvailable
-        $timezoneName = $timezoneList[0].StandardName
-        $observed = Get-TimeZone -Name $timezoneName
-        $observed.StandardName -eq $timezoneName | Should Be $true
-    }
+        $result = Remotely { 
+            $timezoneList = Get-TimeZone -ListAvailable
+            $timezoneName = $timezoneList[0].StandardName
+            $observed = Get-TimeZone -Name $timezoneName
+            $observed.StandardName -eq $timezoneName
+        }
+        $result | Should Be $true
+    } 
 
     It "Call Get-TimeZone using Name param with wild card" {
-        $result = (Get-TimeZone -Name "Pacific*").Id
+        $result = Remotely { (Get-TimeZone -Name "Pacific*").Id }
         $expectedIdList = @("Pacific Standard Time (Mexico)","Pacific Standard Time","Pacific SA Standard Time")
-        Assert-ListsSame $expectedIdList $result
-    }
-
+        Assert-ListsSame $expectedIdList $result 
+    }  
+    
     It "Verify that alias 'gtz' exists" {
-        (Get-Alias -Name "gtz").Name | Should Be "gtz"
-    }
+        $result = Remotely { (Get-Alias -Name "gtz").Name }
+        $result | Should Be "gtz"
+    }       
 
     It "Call Get-TimeZone Name parameter from pipeline by value " {
-        $result = ("Pacific*" | Get-TimeZone).Id
+        $result = Remotely { ("Pacific*" | Get-TimeZone).Id }
         $expectedIdList = @("Pacific Standard Time (Mexico)","Pacific Standard Time","Pacific SA Standard Time")
-        Assert-ListsSame $expectedIdList $result
-    }
+        Assert-ListsSame $expectedIdList $result 
+    }                     
 
     It "Call Get-TimeZone Id parameter from pipeline by ByPropertyName" {
-        $timezoneList = Get-TimeZone -ListAvailable
-        $timezone = $timezoneList[0]
-        $observed = $timezone | Get-TimeZone
-        $observed.StandardName -eq $timezone.StandardName | Should Be $true
+        $result = Remotely { 
+            $timezoneList = Get-TimeZone -ListAvailable
+            $timezone = $timezoneList[0]
+            $observed = $timezone | Get-TimeZone
+            $observed.StandardName -eq $timezone.StandardName
+        }
+        $result | Should Be $true
     }
 }
 
-Describe "Set-Timezone test case: call by single Id" -Tags "CI" {
+Describe "Set-Timezone test case: call by single Id" -tags 'BVT' {
     $originalTimeZoneId
     BeforeAll {
-        $originalTimeZoneId = (Get-TimeZone).Id
+        $originalTimeZoneId = Remotely { (Get-TimeZone).Id }
     }
     AfterAll {
-        Set-TimeZone -ID $originalTimeZoneId
+        Remotely { param($tz) Set-TimeZone -ID $tz } -ArgumentList $originalTimeZoneId
     }
 
     It "Call Set-TimeZone by Id" {
-        $origTimeZoneID = (Get-TimeZone).Id
-        $timezoneList = Get-TimeZone -ListAvailable
-        $testTimezone = $null
-        foreach($timezone in $timezoneList)
-        {
-            if ($timezone.Id -ne $origTimeZoneID)
+        $result = Remotely { 
+            $origTimeZoneID = (Get-TimeZone).Id
+            $timezoneList = Get-TimeZone -ListAvailable
+            $testTimezone = $null
+            foreach($timezone in $timezoneList)
             {
-               $testTimezone = $timezone
-               break
+                if ($timezone.Id -ne $origTimeZoneID)
+                {
+                    $testTimezone = $timezone 
+                    break
+                }
             }
+            Set-TimeZone -Id $testTimezone.Id
+            $observed = Get-TimeZone
+            $testTimezone.Id -eq $observed.Id
         }
-        Set-TimeZone -Id $testTimezone.Id
-        $observed = Get-TimeZone
-        $testTimezone.Id -eq $observed.Id | Should Be $true
+        $result| Should Be $true
     }
 }
 
-Describe "Set-Timezone test cases" -Tags "Feature" {
+Describe "Set-Timezone test cases" -tags 'Innerloop','RI' {
     $originalTimeZoneId
     BeforeAll {
-        $originalTimeZoneId = (Get-TimeZone).Id
+        $originalTimeZoneId = Remotely { (Get-TimeZone).Id }
     }
     AfterAll {
-        Set-TimeZone -ID $originalTimeZoneId
+        Remotely { param($tz) Set-TimeZone -ID $tz } -ArgumentList $originalTimeZoneId
     }
 
+
+
     It "Call Set-TimeZone with invalid Id" {
-        $exception = $null
-        try { Set-TimeZone -Id "zzInvalidID" } catch { $exception = $_ }
-        $exception.FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
+        $result = Remotely {  Set-TimeZone -Id "zzInvalidID" }
+        $result.GetError().FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
     }
 
     It "Call Set-TimeZone by Name" {
-        $origTimeZoneName = (Get-TimeZone).StandardName
-        $timezoneList = Get-TimeZone -ListAvailable
-        $testTimezone = $null
-        foreach($timezone in $timezoneList)
-        {
-            if ($timezone.StandardName -ne $origTimeZoneName)
+        $result = Remotely { 
+            $origTimeZoneName = (Get-TimeZone).StandardName
+            $timezoneList = Get-TimeZone -ListAvailable
+            $testTimezone = $null
+            foreach($timezone in $timezoneList)
             {
-                $testTimezone = $timezone
-                break
+                if ($timezone.StandardName -ne $origTimeZoneName)
+                {
+                    $testTimezone = $timezone 
+                    break
+                }
             }
+                
+            Set-TimeZone -Name $testTimezone.StandardName
+            $observed = Get-TimeZone
+            $testTimezone.StandardName -eq $observed.StandardName
         }
-        Set-TimeZone -Name $testTimezone.StandardName
-        $observed = Get-TimeZone
-        $testTimezone.StandardName -eq $observed.StandardName | Should Be $true
+        $result | Should Be $true
     }
 
-    It "Call Set-TimeZone with invalid Name" {
-        $exception = $null
-        try { Set-TimeZone -Name "zzINVALID_Name" } catch { $exception = $_ }
-        $exception.FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
+        It "Call Set-TimeZone with invalid Name" {
+        $result = Remotely { Set-TimeZone -Name "zzINVALID_Name" }
+        $result.GetError().FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
     }
 
     It "Verify that alias 'stz' exists" {
-        (Get-Alias -Name "stz").Name | Should Be "stz"
+        $result = Remotely { (Get-Alias -Name "stz").Name }
+        $result | Should Be "stz"
     }
 
     It "Call Set-TimeZone from pipeline input object of type TimeZoneInfo" {
-        $origTimeZoneID = (Get-TimeZone).Id
-        $timezoneList = Get-TimeZone -ListAvailable
-        $testTimezone = $null
-        foreach($timezone in $timezoneList)
-        {
-            if ($timezone.Id -ne $origTimeZoneID)
+        $result = Remotely { 
+            $origTimeZoneID = (Get-TimeZone).Id
+            $timezoneList = Get-TimeZone -ListAvailable
+            $testTimezone = $null
+            foreach($timezone in $timezoneList)
             {
-                $testTimezone = $timezone
-                break
+                if ($timezone.Id -ne $origTimeZoneID)
+                {
+                    $testTimezone = $timezone 
+                    break
+                }
             }
+                
+            $testTimezone | Set-TimeZone
+            $observed = Get-TimeZone
+            $observed.ID -eq $testTimezone.Id 
         }
-
-        $testTimezone | Set-TimeZone
-        $observed = Get-TimeZone
-        $observed.ID -eq $testTimezone.Id | Should Be $true
+        $result | Should Be $true
     }
 
     It "Call Set-TimeZone from pipeline input object of type TimeZoneInfo, verify supports whatif" {
-        $origTimeZoneID = (Get-TimeZone).Id
-        $timezoneList = Get-TimeZone -ListAvailable
-        $testTimezone = $null
-        foreach($timezone in $timezoneList)
-        {
-            if ($timezone.Id -ne $origTimeZoneID)
+        $result = Remotely { 
+            $origTimeZoneID = (Get-TimeZone).Id
+            $timezoneList = Get-TimeZone -ListAvailable
+            $testTimezone = $null
+            foreach($timezone in $timezoneList)
             {
-                $testTimezone = $timezone
-                break
+                if ($timezone.Id -ne $origTimeZoneID)
+                {
+                    $testTimezone = $timezone 
+                    break
+                }
             }
+                
+            Set-TimeZone -Id $testTimezone.Id -WhatIf > $null
+            $observed = Get-TimeZone
+            $observed.Id -eq $origTimeZoneID 
         }
-
-        Set-TimeZone -Id $testTimezone.Id -WhatIf > $null
-        $observed = Get-TimeZone
-        $observed.Id -eq $origTimeZoneID | Should Be $true
+        $result.GetError() | Should BeNullOrEmpty
+        $result | Should Be $true
     }
-}
-
 }

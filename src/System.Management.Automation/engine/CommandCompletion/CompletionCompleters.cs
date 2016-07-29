@@ -4324,9 +4324,8 @@ namespace System.Management.Automation
                             {
                                 var sessionStateInternal = executionContext.EngineSessionState;
                                 completionText = sessionStateInternal.NormalizeRelativePath(path, sessionStateInternal.CurrentLocation.ProviderPath);
-                                string parentDirectory = ".." + Path.DirectorySeparatorChar;
-                                if (!completionText.StartsWith(parentDirectory, StringComparison.Ordinal))
-                                    completionText = Path.Combine(".", completionText);
+                                if (!completionText.StartsWith("..\\", StringComparison.Ordinal))
+                                    completionText = ".\\" + completionText;
                             }
                             catch (Exception e)
                             {
@@ -4464,9 +4463,6 @@ namespace System.Management.Automation
 
         internal static List<string> GetFileShares(string machine, bool ignoreHidden)
         {
-#if UNIX
-            return new List<string>();
-#else
             IntPtr shBuf;
             uint numEntries;
             uint totalEntries;
@@ -4492,7 +4488,6 @@ namespace System.Management.Automation
                 }
             }
             return shares;
-#endif
         }
 
         private static bool CheckFileExtension(string path, HashSet<string> extension)
@@ -5905,32 +5900,21 @@ namespace System.Management.Automation
         /// <param name="namespace">The namespace</param>
         private static void HandleNamespace(Dictionary<string, TypeCompletionMapping> entryCache, string @namespace)
         {
-            if (string.IsNullOrEmpty(@namespace))
+            if (!string.IsNullOrEmpty(@namespace))
             {
-                return;
-            }
-
-            int dotIndex = 0;
-            while (dotIndex != -1)
-            {
-                dotIndex = @namespace.IndexOf('.', dotIndex + 1);
-                string subNamespace = dotIndex != -1
-                                        ? @namespace.Substring(0, dotIndex)
-                                        : @namespace;
-
                 TypeCompletionMapping entry;
-                if (!entryCache.TryGetValue(subNamespace, out entry))
+                if (!entryCache.TryGetValue(@namespace, out entry))
                 {
                     entry = new TypeCompletionMapping
                     {
-                        Key = subNamespace,
-                        Completions = { new NamespaceCompletion { Namespace = subNamespace } }
+                        Key = @namespace,
+                        Completions = { new NamespaceCompletion { Namespace = @namespace } }
                     };
-                    entryCache.Add(subNamespace, entry);
+                    entryCache.Add(@namespace, entry);
                 }
                 else if (!entry.Completions.OfType<NamespaceCompletion>().Any())
                 {
-                    entry.Completions.Add(new NamespaceCompletion { Namespace = subNamespace });
+                    entry.Completions.Add(new NamespaceCompletion { Namespace = @namespace });
                 }
             }
         }

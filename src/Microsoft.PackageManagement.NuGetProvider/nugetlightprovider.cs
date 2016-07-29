@@ -11,8 +11,6 @@ namespace Microsoft.PackageManagement.NuGetProvider
     using System.Reflection;
     using System.Management.Automation;
 
-    using SemanticVersion = Microsoft.PackageManagement.Provider.Utility.SemanticVersion;
-
     /// <summary>
     /// A Package provider to the PackageManagement Platform.
     ///

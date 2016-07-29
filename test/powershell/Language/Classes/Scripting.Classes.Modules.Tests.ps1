@@ -1,36 +1,36 @@
-﻿Describe 'PSModuleInfo.GetExportedTypeDefinitions()' -Tags "CI" {
+﻿Describe 'PSModuleInfo.GetExportedTypeDefinitions()' {
     It "doesn't throw for any module" {
         $discard = Get-Module -ListAvailable | % { $_.GetExportedTypeDefinitions() }
         $true | Should Be $true # we only verify that we didn't throw. This line contains a dummy Should to make pester happy.
     }
 }
 
-Describe 'use of a module from two runspaces' -Tags "CI" {
+Describe 'use of a module from two runspaces' {
     function New-TestModule {
         param(
             [string]$Name, 
             [string]$Content
         )
         
-        Setup -Dir $Name
+        mkdir -Force "TestDrive:\$Name" > $null    
         $manifestParams = @{
             Path = "TestDrive:\$Name\$Name.psd1"
         }
         
         if ($Content) {
-            Set-Content -Path "${TestDrive}\$Name\$Name.psm1" -Value $Content
+            Set-Content -Path TestDrive:\$Name\$Name.psm1 -Value $Content
             $manifestParams['RootModule'] = "$Name.psm1"
         }
         
         New-ModuleManifest @manifestParams
 
-        $resolvedTestDrivePath = Split-Path ((get-childitem TestDrive:\)[0].FullName)
-        if (-not ($env:PSMODULEPATH -like "*$resolvedTestDrivePath*")) {
-            $env:PSMODULEPATH += ";$resolvedTestDrivePath"
+        $resolvedTestDrivePath = Split-Path ((ls TestDrive:\)[0].FullName)
+        if (-not ($env:PSModulePath -like "*$resolvedTestDrivePath*")) {
+            $env:PSModulePath += ";$resolvedTestDrivePath"
         }
     }
 
-    $originalPSMODULEPATH = $env:PSMODULEPATH
+    $originalPSModulePath = $env:PSModulePath
     try {
         
         New-TestModule -Name 'Random' -Content @'
@@ -68,7 +68,7 @@ Import-Module Random
         }
 
     } finally {
-        $env:PSMODULEPATH = $originalPSMODULEPATH
+        $env:PSModulePath = $originalPSModulePath
     }
 
 }

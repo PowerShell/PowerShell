@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
     protected override void BeginProcessing()
     {
 
-        _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
+        _resourceMgr = new ResourceManager("GetEventResources", Assembly.GetExecutingAssembly());
 
         //
         // Determine the OS version: this cmdlet requires Windows 7

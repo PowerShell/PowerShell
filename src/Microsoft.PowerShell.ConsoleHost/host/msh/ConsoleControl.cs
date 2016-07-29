@@ -1,4 +1,3 @@
-#if !UNIX
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -3608,4 +3607,4 @@ namespace Microsoft.PowerShell
         private static PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleControl", "Console control methods");
     }
 }   // namespace 
-#endif
+

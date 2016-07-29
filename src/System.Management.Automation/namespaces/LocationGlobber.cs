@@ -1571,33 +1571,6 @@ namespace System.Management.Automation
         } // IsProviderQualifiedPath
 
         /// <summary>
-        /// Determines if the given path is absolute while on a single root filesystem.
-        /// </summary>
-        ///
-        /// <remarks>
-        /// Porting notes: absolute paths on non-Windows filesystems start with a '/' (no "C:" drive
-        /// prefix, the slash is the prefix). We compare against both '/' and '\' (default and
-        /// alternate path separator) in order for PowerShell to be slash agnostic.
-        /// </remarks>
-        ///
-        /// <param name="path">
-        /// The path used in the determination
-        /// </param>
-        ///
-        /// <returns>
-        /// Returns true if we're on a single root filesystem and the path is absolute.
-        /// </returns>
-        internal static bool IsSingleFileSystemAbsolutePath(string path)
-        {
-#if UNIX
-            return path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal)
-                || path.StartsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal);
-#else
-            return false;
-#endif
-        } // IsSingleFileSystemAbsolutePath
-
-        /// <summary>
         /// Determines if the given path is relative or absolute
         /// </summary>
         /// 
@@ -1634,22 +1607,13 @@ namespace System.Management.Automation
                     break;
                 }
 
-                // compare both to \ and / here
-                if (path.StartsWith(@".\", StringComparison.Ordinal) ||
-                    path.StartsWith(@"./", StringComparison.Ordinal))
+                if (path.StartsWith(@".\", StringComparison.Ordinal))
                 {
                     // The .\ prefix basically escapes anything that follows
                     // so treat it as a relative path no matter what comes
                     // after it.
 
                     result = false;
-                    break;
-                }
-
-                // check if we're on a single root filesystem and it's an absolute path
-                if (IsSingleFileSystemAbsolutePath(path))
-                {
-                    result = true;
                     break;
                 }
 
@@ -1737,14 +1701,6 @@ namespace System.Management.Automation
                     // after it.
 
                     result = false;
-                    break;
-                }
-
-                // check if we're on a single root filesystem and it's an absolute path
-                if (IsSingleFileSystemAbsolutePath(path))
-                {
-                    driveName = StringLiterals.DefaultPathSeparatorString;
-                    result = true;
                     break;
                 }
 
@@ -2060,20 +2016,7 @@ namespace System.Management.Automation
                 // Now hack off the drive component of the path
                 if (!isPathForCurrentDrive)
                 {
-                    // This functionality needs to respect if a drive uses a colon to separate the path
-                    //
-                    // what happens here is this:
-                    // - path is assumed to be drive root relative, so on Windows it would start with a
-                    //   \
-                    // - on Linux, there is no difference between drive root relative, and absolute, they
-                    //   are both the same, so we have to preserve the drive here in order to make
-                    //   sure the path will continue being drive root relative
-                    if (workingDriveForPath.VolumeSeparatedByColon)
-                    {
-                        // this is the default behavior for all windows drives, and all non-filesystem
-                        // drives on non-windows
-                        path = path.Substring(driveName.Length + 1);
-                    }
+                    path = path.Substring(driveName.Length + 1);
                 }
             }
             else
@@ -2280,10 +2223,6 @@ namespace System.Management.Automation
                      path[0] == monadRelativePathSeparatorForwardslash)
             {
                 // The root relative path was given so empty the current working path.
-
-                // Porting notes: This can happen on non-Windows, because the assumption
-                // is that for file paths a path that is already relative to the drive
-                // root is the same thing as an absolute path (both start with /).
 
                 driveRootRelativeWorkingPath = String.Empty;
 
@@ -3153,12 +3092,6 @@ namespace System.Management.Automation
                         }
                     }
 
-                    // Porting note: if the volume is not separated by a colon (non-Windows filesystems), don't add it.
-                    if (!drive.VolumeSeparatedByColon)
-                    {
-                        formatString = "{0}{1}";
-                    }
-
                     string resolvedPath =
                         String.Format(
                             System.Globalization.CultureInfo.InvariantCulture,
@@ -3326,53 +3259,35 @@ namespace System.Management.Automation
             string result = path;
             bool treatAsRelative = true;
 
-            if (drive.VolumeSeparatedByColon)
+            // Ensure the drive name is the same as the portion of the path before
+            // :. If not add the drive name and colon as if it was a relative path
+
+            int index = path.IndexOf(':');
+
+            if (index != -1)
             {
-                // Ensure the drive name is the same as the portion of the path before
-                // :. If not add the drive name and colon as if it was a relative path
-
-                int index = path.IndexOf(':');
-
-                if (index != -1)
+                if (drive.Hidden)
                 {
-                    if (drive.Hidden)
+                    treatAsRelative = false;
+                }
+                else
+                {
+                    string possibleDriveName = path.Substring(0, index);
+                    if (String.Equals(possibleDriveName, drive.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         treatAsRelative = false;
                     }
-                    else
-                    {
-                        string possibleDriveName = path.Substring(0, index);
-                        if (String.Equals(possibleDriveName, drive.Name, StringComparison.OrdinalIgnoreCase))
-                        {
-                            treatAsRelative = false;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (IsAbsolutePath(path))
-                {
-                    treatAsRelative = false;
                 }
             }
 
             if (treatAsRelative)
             {
-                string formatString;
-                if (drive.VolumeSeparatedByColon)
-                {
-                    formatString = "{0}:" + StringLiterals.DefaultPathSeparator + "{1}";
-                    if (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
-                    {
-                        formatString = "{0}:{1}";
-                    }
-                }
-                else
-                {
-                    formatString = "{0}{1}";
-                }
+                string formatString = "{0}:" + StringLiterals.DefaultPathSeparator + "{1}";
 
+                if (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                {
+                    formatString = "{0}:{1}";
+                }
                 result =
                     String.Format(
                         System.Globalization.CultureInfo.InvariantCulture,

@@ -27,13 +27,9 @@ namespace Microsoft.PackageManagement.Internal.Utility.Platform {
         /// </returns>
         public static bool IsElevated {
             get {
-#if UNIX
-                return string.Equals(System.Environment.GetEnvironmentVariable("SUDO_UID"), "1000");
-#else
                 var id = WindowsIdentity.GetCurrent();
                 var principal = new WindowsPrincipal(id);
                 return principal.IsInRole(WindowsBuiltInRole.Administrator);
-#endif
             }
         }
     }

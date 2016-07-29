@@ -1,8 +1,7 @@
-#if !UNIX
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -1597,5 +1596,3 @@ namespace System.Management.Automation.Tracing
     }
     //pragma warning restore 16001,16003
 }
-
-#endif

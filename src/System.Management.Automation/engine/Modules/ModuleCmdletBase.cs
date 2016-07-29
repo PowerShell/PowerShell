@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands
                 string qualifiedPath = Path.Combine(path, fileBaseName);
 
                 // Load the latest valid version if it is a multi-version module directory
-                module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
+                module = LoadUsingMultiVersionModuleBase(qualifiedPath, options, out found);
 
                 if (!found)
                 {
@@ -432,11 +432,10 @@ namespace Microsoft.PowerShell.Commands
         /// Loads the latest valid version if moduleBase is a multi-versioned module directory
         /// </summary>
         /// <param name="moduleBase">module directory path</param>
-        /// <param name="manifestProcessingFlags">The flag that indicate manifest processing option</param>
         /// <param name="importModuleOptions">The set of options that are used while importing a module</param>
         /// <param name="found">True if a module was found</param>
         /// <returns></returns>
-        internal PSModuleInfo LoadUsingMultiVersionModuleBase(string moduleBase, ManifestProcessingFlags manifestProcessingFlags, ImportModuleOptions importModuleOptions, out bool found)
+        internal PSModuleInfo LoadUsingMultiVersionModuleBase(string moduleBase, ImportModuleOptions importModuleOptions, out bool found)
         {
             PSModuleInfo foundModule = null;
             found = false;
@@ -466,7 +465,9 @@ namespace Microsoft.PowerShell.Commands
                                                             null,
                                                             this.BasePrefix, /*SessionState*/ null,
                                                             importModuleOptions,
-                                                            manifestProcessingFlags,
+                                                            ManifestProcessingFlags.LoadElements |
+                                                            ManifestProcessingFlags.WriteErrors |
+                                                            ManifestProcessingFlags.NullOnFirstError,
                                                             out found);
                         if (found)
                         {
@@ -1193,10 +1194,10 @@ namespace Microsoft.PowerShell.Commands
                         if (!ModuleUtils.IsModuleInVersionSubdirectory(file, out directoryVersion)
                             || directoryVersion == module.Version)
                         {
-                        availableModules.Add(module);
+                            availableModules.Add(module);
+                        }
                     }
                 }
-            }
             }
 
             ClearAnalysisCaches();
@@ -1817,7 +1818,7 @@ namespace Microsoft.PowerShell.Commands
                 DirectoryInfo parent = null;
                 try
                 {
-                    parent = Directory.GetParent(moduleManifestPath);
+                    parent = ClrFacade.GetParent(moduleManifestPath);
                 }
                 catch (IOException)
                 {
@@ -6894,6 +6895,7 @@ namespace Microsoft.PowerShell.Commands
             InitialSessionState iss = InitialSessionState.Create();
             List<string> detectedCmdlets = null;
             List<Tuple<string, string>> detectedAliases = null;
+            PSSnapInException warning;
             Assembly assembly = null;
             Exception error = null;
             bool importSuccessful = false;
@@ -6951,9 +6953,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     PSSnapInInfo snapin = null;
 
-#if !CORECLR
-                    // Avoid trying to load SnapIns with Import-Module
-                    PSSnapInException warning;
                     try
                     {
                         if (importingModule)
@@ -6966,7 +6965,6 @@ namespace Microsoft.PowerShell.Commands
                         //BUGBUG - brucepay - probably want to have a verbose message here...
                         ;
                     }
-#endif
 
                     if (snapin != null)
                     {

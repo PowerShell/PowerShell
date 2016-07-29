@@ -38,15 +38,7 @@ namespace System.Management.Automation
 
             this.TimeGenerated = DateTime.Now;
             this.Tags = new List<string>();
-            if (Platform.IsWindows)
-            {
-                this.User = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-            }
-            else
-            {
-                this.User = Platform.NonWindowsGetUserName();
-            }
-            // Porting note: PsUtils.GetHostName() already handles platform specifics
+            this.User = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
             this.Computer = PsUtils.GetHostName();
             this.ProcessId = (uint) System.Diagnostics.Process.GetCurrentProcess().Id;
             this.NativeThreadId = PsUtils.GetNativeThreadId();

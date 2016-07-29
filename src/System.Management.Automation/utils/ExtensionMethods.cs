@@ -130,9 +130,7 @@ namespace System.Management.Automation
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool IsComObject(this Type type)
         {
-#if UNIX
-            return false;
-#elif CORECLR // Type.IsComObject(Type) is not in CoreCLR
+#if CORECLR // Type.IsComObject(Type) is not in CoreCLR
             return ComObjectType.IsAssignableFrom(type);
 #else
             return type.IsCOMObject;

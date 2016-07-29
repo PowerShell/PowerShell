@@ -87,7 +87,7 @@ namespace Microsoft.WSMan.Management
         private FileStream _fs;
         private StreamReader _sr;
 
-        private static ResourceManager g_resourceMgr = new ResourceManager("Microsoft.WSMan.Management.resources.WsManResources", typeof(WSManHelper).GetTypeInfo().Assembly);
+        private static ResourceManager g_resourceMgr = new ResourceManager("WsManResources", typeof(WSManHelper).GetTypeInfo().Assembly);
 
 
         //
@@ -135,16 +135,20 @@ namespace Microsoft.WSMan.Management
 
         internal WSManHelper()
         {
+
+            _resourceMgr = new ResourceManager("WsManResources", this.GetType().GetTypeInfo().Assembly);
         }
 
         internal WSManHelper(PSCmdlet cmdlet)
         {
             cmdletname = cmdlet;
+            _resourceMgr = new ResourceManager("WsManResources", this.GetType().GetTypeInfo().Assembly);
         }
 
         internal WSManHelper(NavigationCmdletProvider provider)
         {
             _provider = provider;
+            _resourceMgr = new ResourceManager("WsManResources", this.GetType().GetTypeInfo().Assembly);
         }
 
         internal static void ThrowIfNotAdministrator()
@@ -160,13 +164,14 @@ namespace Microsoft.WSMan.Management
         
         internal string GetResourceMsgFromResourcetext(string rscname)
         {
-            return g_resourceMgr.GetString(rscname);
+            return _resourceMgr.GetString(rscname);
         }
 
         static internal string FormatResourceMsgFromResourcetextS(string rscname,
             params object[] args)
         {
-            return FormatResourceMsgFromResourcetextS(g_resourceMgr, rscname, args);
+            ResourceManager resourceManager = new ResourceManager("WsManResources", typeof(WSManHelper).GetTypeInfo().Assembly);
+            return FormatResourceMsgFromResourcetextS(resourceManager, rscname, args);
         }
 
         internal string FormatResourceMsgFromResourcetext(string resourceName,

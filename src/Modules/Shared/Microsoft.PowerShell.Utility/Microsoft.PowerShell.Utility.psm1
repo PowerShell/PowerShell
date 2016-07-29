@@ -587,7 +587,7 @@ function ConvertFrom-SddlString
     Begin
     {
         # On CoreCLR CryptoKeyRights and ActiveDirectoryRights are not supported.
-        if ($PSEdition -eq "PowerShellCore" -and ($Type -eq "CryptoKeyRights" -or $Type -eq "ActiveDirectoryRights"))
+        if ($PSEdition -eq "Core" -and ($Type -eq "CryptoKeyRights" -or $Type -eq "ActiveDirectoryRights"))
         {
             $errorId = "TypeNotSupported"
             $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
@@ -622,7 +622,7 @@ function ConvertFrom-SddlString
         {
             param($AccessMask, $Type)
 
-            if ($PSEdition -eq "PowerShellCore")
+            if ($PSEdition -eq "Core")
             {
                 ## All the types of access rights understood by .NET Core
                 $rightTypes = [Ordered] @{

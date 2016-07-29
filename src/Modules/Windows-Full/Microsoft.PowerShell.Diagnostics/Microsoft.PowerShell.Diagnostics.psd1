@@ -10,7 +10,7 @@ AliasesToExport = @()
 FunctionsToExport = @()
 CmdletsToExport="Get-WinEvent", "Get-Counter", "Import-Counter", "Export-Counter", "New-WinEvent"
 NestedModules="Microsoft.PowerShell.Commands.Diagnostics.dll"
-TypesToProcess="GetEvent.types.ps1xml"
-FormatsToProcess="Event.format.ps1xml","Diagnostics.format.ps1xml" 
+TypesToProcess="..\..\GetEvent.types.ps1xml"
+FormatsToProcess="..\..\Event.format.ps1xml","..\..\Diagnostics.format.ps1xml" 
 HelpInfoURI = 'http://go.microsoft.com/fwlink/?linkid=390783'
 }

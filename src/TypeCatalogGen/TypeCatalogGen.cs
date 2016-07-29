@@ -14,7 +14,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -91,16 +90,7 @@ Usage: TypeCatalogGen.exe <{0}> <{1}>
                         }
 
                         string fullName = GetTypeFullName(metadataReader, typeDefinition);
-
-                        // Only add unique types
-                        if (!typeNameToAssemblyMap.ContainsKey(fullName))
-                        {
-                            typeNameToAssemblyMap.Add(fullName, strongAssemblyName);
-                        }
-                        else
-                        {
-                            Debug.WriteLine($"Not adding duplicate key {fullName}!");
-                        }
+                        typeNameToAssemblyMap.Add(fullName, strongAssemblyName);
                     }
                 }
             }
@@ -128,19 +118,19 @@ Usage: TypeCatalogGen.exe <{0}> <{1}>
             switch (hashAlgorithm)
             {
                 case AssemblyHashAlgorithm.Sha1:
-                    hashImpl = SHA1.Create();
+                    hashImpl = HashAlgorithm.Create("SHA1");
                     break;
                 case AssemblyHashAlgorithm.MD5:
-                    hashImpl = MD5.Create();
+                    hashImpl = HashAlgorithm.Create("MD5");
                     break;
                 case AssemblyHashAlgorithm.Sha256:
-                    hashImpl = SHA256.Create();
+                    hashImpl = HashAlgorithm.Create("SHA256");
                     break;
                 case AssemblyHashAlgorithm.Sha384:
-                    hashImpl = SHA384.Create();
+                    hashImpl = HashAlgorithm.Create("SHA384");
                     break;
                 case AssemblyHashAlgorithm.Sha512:
-                    hashImpl = SHA512.Create();
+                    hashImpl = HashAlgorithm.Create("SHA512");
                     break;
                 default:
                     throw new NotSupportedException();
@@ -284,11 +274,10 @@ Usage: TypeCatalogGen.exe <{0}> <{1}>
 // catalog based on the reference assemblies of .NET Core.
 //
 using System.Collections.Generic;
-using System.Runtime.Loader;
 
 namespace System.Management.Automation
 {{
-    internal partial class PowerShellAssemblyLoadContext : AssemblyLoadContext
+    internal partial class PowerShellAssemblyLoadContext
     {{
         private Dictionary<string, string> InitializeTypeCatalog()
         {{

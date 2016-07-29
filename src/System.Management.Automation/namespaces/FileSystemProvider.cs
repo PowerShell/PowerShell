@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // -Persist switch parameter is supported only for Network paths.
-            if (drive.Persist && !PathIsNetworkPath(drive.Root))
+            if (drive.Persist && !NativeMethods.PathIsNetworkPath(drive.Root))
             {
                 ErrorRecord er = new ErrorRecord(new NotSupportedException(FileSystemProviderStrings.PersistNotSupported), "DriveRootNotNetworkPath", ErrorCategory.InvalidArgument, drive);
                 ThrowTerminatingError(er);
@@ -488,19 +488,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="drive">The PSDrive infor that would be used to create a new PS drive.</param>
         private void MapNetworkDrive(PSDriveInfo drive)
-        {
-            // Porting note: mapped network drives are only supported on Windows
-            if (Platform.IsWindows)
-            {
-                WinMapNetworkDrive(drive);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
-        }
-
-        private void WinMapNetworkDrive(PSDriveInfo drive)
         {
             if (drive != null && !string.IsNullOrEmpty(drive.Root))
             {
@@ -591,7 +578,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private bool IsNetworkMappedDrive(PSDriveInfo drive)
         {
-            bool shouldMapNetworkDrive = (drive != null && !string.IsNullOrEmpty(drive.Root) && PathIsNetworkPath(drive.Root)) &&
+            bool shouldMapNetworkDrive = (drive != null && !string.IsNullOrEmpty(drive.Root) && NativeMethods.PathIsNetworkPath(drive.Root)) &&
                                          (drive.Persist || (drive.Credential != null && !drive.Credential.Equals(PSCredential.Empty)));
 
             return shouldMapNetworkDrive;
@@ -606,15 +593,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>PSDrive info.
         /// </returns>
         protected override PSDriveInfo RemoveDrive(PSDriveInfo drive)
-        {
-#if UNIX
-            return drive;
-#else
-            return WinRemoveDrive(drive);
-#endif
-        }
-
-        private PSDriveInfo WinRemoveDrive(PSDriveInfo drive)
         {
             if (IsNetworkMappedDrive(drive))
             {
@@ -681,15 +659,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal static string GetUNCForNetworkDrive(string driveName)
         {
-#if UNIX
-            return driveName;
-#else
-            return WinGetUNCForNetworkDrive(driveName);
-#endif
-        }
-
-        private static string WinGetUNCForNetworkDrive(string driveName)
-        {
             string uncPath = null;
             if (!string.IsNullOrEmpty(driveName) && driveName.Length == 1)
             {
@@ -738,15 +707,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="driveName"></param>
         /// <returns></returns>
         internal static string GetSubstitutedPathForNetworkDosDevice(string driveName)
-        {
-#if UNIX
-            throw new PlatformNotSupportedException();
-#else
-            return WinGetSubstitutedPathForNetworkDosDevice(driveName);
-#endif
-        }
-
-        private static string WinGetSubstitutedPathForNetworkDosDevice(string driveName)
         {
             string associatedPath = null;
             if (!string.IsNullOrEmpty(driveName) && driveName.Length == 1)
@@ -882,50 +842,39 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
 
-                    // cover everything by the try-catch block, because some of the 
-                    // DriveInfo properties may throw exceptions
+                    string newDriveName = newDrive.Name.Substring(0, 1);
+
+                    string description = String.Empty;
+                    string root = newDrive.Name;
+                    string displayRoot = null;
+
+                    if (newDrive.DriveType == DriveType.Fixed)
+                    {
+                        try
+                        {
+                            description = newDrive.VolumeLabel;
+                        }
+                        // trying to read the volume label may cause an
+                        // IOException or SecurityException. Just default
+                        // to an empty description.
+                        catch (IOException)
+                        {
+                        }
+                        catch (System.Security.SecurityException)
+                        {
+                        }
+                        catch (System.UnauthorizedAccessException)
+                        {
+                        }
+                    }
+
+                    if (newDrive.DriveType == DriveType.Network)
+                    {
+                        displayRoot = GetRootPathForNetworkDriveOrDosDevice(newDrive);
+                    }
+
                     try
                     {
-                        string newDriveName = newDrive.Name.Substring(0, 1);
-
-                        string description = String.Empty;
-                        string root = newDrive.Name;
-                        string displayRoot = null;
-
-                        if (newDrive.DriveType == DriveType.Fixed)
-                        {
-                            try
-                            {
-                                description = newDrive.VolumeLabel;
-                            }
-                            // trying to read the volume label may cause an
-                            // IOException or SecurityException. Just default
-                            // to an empty description.
-                            catch (IOException)
-                            {
-                            }
-                            catch (System.Security.SecurityException)
-                            {
-                            }
-                            catch (System.UnauthorizedAccessException)
-                            {
-                            }
-                        }
-
-                        if (newDrive.DriveType == DriveType.Network)
-                        {
-                            // Platform notes: This is important because certain mount
-                            // points on non-Windows are enumerated as drives by .NET, but
-                            // the platform itself then has no real network drive support
-                            // as required by this context. Solution: check for network
-                            // drive support before using it.
-#if UNIX
-                            continue;
-#else
-                            displayRoot = GetRootPathForNetworkDriveOrDosDevice(newDrive);
-#endif
-                        }
-
                         if (newDrive.DriveType == DriveType.Fixed)
                         {
                             if (!newDrive.RootDirectory.Exists)
@@ -935,29 +884,6 @@ namespace Microsoft.PowerShell.Commands
 
                             root = newDrive.RootDirectory.FullName;
                         }
-
-#if UNIX
-                        // Porting notes: On platforms with single root filesystems, only
-                        // add the filesystem with the root "/" to the initial drive list,
-                        // otherwise path handling will not work correctly because there
-                        // is no : available to separate the filesystems from each other
-                        if (root != StringLiterals.DefaultPathSeparatorString)
-                            continue;
-#endif
-
-                        // Porting notes: On non-windows platforms .net can report two
-                        // drives with the same root, make sure to only add one of those
-                        bool skipDuplicate = false;
-                        foreach (PSDriveInfo driveInfo in results)
-                        {
-                            if (driveInfo.Root == root)
-                            {
-                                skipDuplicate = true;
-                                break;
-                            }
-                        }
-                        if (skipDuplicate)
-                            continue;
 
                         // Create a new VirtualDrive for each logical drive
                         PSDriveInfo newPSDriveInfo =
@@ -980,18 +906,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             newPSDriveInfo.IsAutoMounted = true;
                         }
-
-                        // Porting notes: on the non-Windows platforms, the drive never
-                        // uses : as a separator between drive and path
-                        if (!Platform.IsWindows)
-                        {
-                            newPSDriveInfo.VolumeSeparatedByColon = false;
-                        }
-
                         results.Add(newPSDriveInfo);
                     }
-                    // If there are issues accessing properties of the DriveInfo, do
-                    // not add the drive
+                    // If we can't access the root itself, don't add the drive
                     catch (IOException)
                     {
                     }
@@ -1322,18 +1239,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldProcess(resource, action))
             {
-                System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
-
-#if UNIX
-                invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
-                invokeProcess.StartInfo.Arguments = path;
-                invokeProcess.Start();
-#elif CORECLR
-                throw new PlatformNotSupportedException();
-#else
-                invokeProcess.StartInfo.FileName = path;
-                invokeProcess.Start();
-#endif
+                System.Diagnostics.Process.Start(path);
             }
         } // InvokeDefaultAction
 
@@ -1507,13 +1413,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     DirectoryInfo directory = new DirectoryInfo(path);
 
-                    if (!Platform.IsWindows && Platform.NonWindowsIsSymLink(directory))
-                    {
-                        // For Linux, treat symlink to directories like a file
-                        WriteItemObject(directory, path, false);
-                        return;
-                    }
-
                     // Enumerate the directory
                     Dir(directory, recurse, depth, nameOnly, returnContainers);
                 }
@@ -1641,10 +1540,7 @@ namespace Microsoft.PowerShell.Commands
                 // Write out the items
                 foreach (IEnumerable<FileSystemInfo> childList in target)
                 {
-                    // On some systems, this is already sorted.  For consistency, always sort again.
-                    IEnumerable<FileSystemInfo> sortedChildList = childList.OrderBy(c => c.Name, StringComparer.CurrentCultureIgnoreCase);
-
-                    foreach(FileSystemInfo filesystemInfo in sortedChildList)
+                    foreach(FileSystemInfo filesystemInfo in childList)
                     {
                         // Making sure to obey the StopProcessing.
                         if (Stopping)
@@ -1827,10 +1723,7 @@ namespace Microsoft.PowerShell.Commands
             mode[3] = (fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden ? 'h' : '-';
             mode[4] = (fileInfo.Attributes & FileAttributes.System) == FileAttributes.System ? 's' : '-';
             // Mark the last bit as a "l" if it's a reparsepoint (symbolic link or junction)
-            // Porting note: these need to be handled specially
-            bool isReparsePoint = InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(fileInfo);
-            bool isHardLink = InternalSymbolicLinkLinkCodeMethods.IsHardLink(fileInfo);
-            mode[5] = isReparsePoint || isHardLink ? 'l' : '-';
+            mode[5] = (fileInfo.Attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint ? 'l' : '-';
 
             return new string(mode);
         }
@@ -2124,14 +2017,9 @@ namespace Microsoft.PowerShell.Commands
 
                     bool exists = false;
 
-                    // It is legal to create symbolic links to non-existing targets on
-                    // both Windows and Linux. It is not legal to create hard links to
-                    // non-existing targets on either Windows or Linux.
                     try
                     {
-                        exists = (itemType == ItemType.SymbolicLink)
-                            ? true // pretend it exists if we're making a symbolic link
-                            : CheckItemExists(strTargetPath, out isDirectory);
+                        exists = CheckItemExists(strTargetPath, out isDirectory);
                     }
                     catch (Exception e)
                     {
@@ -2214,25 +2102,12 @@ namespace Microsoft.PowerShell.Commands
 
                     if(itemType == ItemType.SymbolicLink)
                     {
-                        if (Platform.IsWindows)
-                        {
-                            success = WinCreateSymbolicLink(path,strTargetPath,isDirectory);
-                        }
-                        else
-                        {
-                            success = Platform.NonWindowsCreateSymbolicLink(path,strTargetPath);
-                        }
+                        int created = NativeMethods.CreateSymbolicLink(path, strTargetPath, (isDirectory ? 1 : 0));
+                        success = (created == 1) ? true : false;
                     }
                     else if(itemType == ItemType.HardLink)
                     {
-                        if (Platform.IsWindows)
-                        {
-                            success = WinCreateHardLink(path,strTargetPath);
-                        }
-                        else
-                        {
-                            success = Platform.NonWindowsCreateHardLink(path,strTargetPath);
-                        }
+                        success = NativeMethods.CreateHardLink(path, strTargetPath, IntPtr.Zero);
                     }
 
                     if (!success)
@@ -2375,7 +2250,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        bool junctionCreated = WinCreateJunction(path, strTargetPath);
+                        bool junctionCreated = InternalSymbolicLinkLinkCodeMethods.CreateJunction(path, strTargetPath);
 
                         if (junctionCreated)
                         {
@@ -2420,25 +2295,6 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException("type", FileSystemProviderStrings.UnknownType);
             }
         } // NewItem
-
-        private static bool WinCreateSymbolicLink(string path, string strTargetPath, bool isDirectory)
-        {
-            int created = NativeMethods.CreateSymbolicLink(path, strTargetPath, (isDirectory ? 1 : 0));
-            bool success = (created == 1) ? true : false;
-            return success;
-        }
-
-        private static bool WinCreateHardLink(string path, string strTargetPath)
-        {
-            bool success = NativeMethods.CreateHardLink(path, strTargetPath, IntPtr.Zero);
-            return success;
-        }
-
-        private static bool WinCreateJunction(string path, string strTargetPath)
-        {
-            bool junctionCreated = InternalSymbolicLinkLinkCodeMethods.CreateJunction(path, strTargetPath);
-            return junctionCreated;
-        }
 
         /// <summary>
         /// Checks if the item exists and throws exception on access. 
@@ -2857,7 +2713,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             //if this is a reparse point and force is not specified then warn user but dont remove the directory.
-            if (Platform.IsWindows && ((directory.Attributes & FileAttributes.ReparsePoint) != 0) && !Force)
+            if (((directory.Attributes & FileAttributes.ReparsePoint) != 0) && !Force)
             {
                 String error = StringUtil.Format(FileSystemProviderStrings.DirectoryReparsePoint, directory.FullName);
                 Exception e = new IOException(error);
@@ -4767,16 +4623,9 @@ namespace Microsoft.PowerShell.Commands
             return parentPath;
         } // GetParentPath
 
-        // Note: we don't use IO.Path.IsPathRooted as this deals with "invalid" i.e. unnormalized paths
         private static bool IsAbsolutePath(string path)
         {
             bool result = false;
-
-            // check if we're on a single root filesystem and it's an absolute path
-            if (LocationGlobber.IsSingleFileSystemAbsolutePath(path))
-            {
-                return true;
-            }
 
             // Find the drive separator
             int index = path.IndexOf(':');
@@ -6962,51 +6811,6 @@ namespace Microsoft.PowerShell.Commands
 
         internal static int SafeGetFileAttributes(string path)
         {
-#if UNIX
-            System.IO.FileAttributes attr = System.IO.File.GetAttributes(path);
-
-            int result = 0;
-            if ((attr & FileAttributes.Archive) == FileAttributes.Archive)
-                result |= 0x20;
-            if ((attr & FileAttributes.Compressed) == FileAttributes.Compressed)
-                result |= 0x800;
-            if ((attr & FileAttributes.Device) == FileAttributes.Device)
-                result |= 0x40;
-            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-                result |= 0x10;
-            if ((attr & FileAttributes.Encrypted) == FileAttributes.Encrypted)
-                result |= 0x4000;
-            if ((attr & FileAttributes.Hidden) == FileAttributes.Hidden)
-                result |= 0x2;
-            if ((attr & FileAttributes.IntegrityStream) == FileAttributes.IntegrityStream)
-                result |= 0x8000;
-            if ((attr & FileAttributes.Normal) == FileAttributes.Normal)
-                result |= 0x80;
-            if ((attr & FileAttributes.NoScrubData) == FileAttributes.NoScrubData)
-                result |= 0x20000;
-            if ((attr & FileAttributes.NotContentIndexed) == FileAttributes.NotContentIndexed)
-                result |= 0x2000;
-            if ((attr & FileAttributes.Offline) == FileAttributes.Offline)
-                result |= 0x1000;
-            if ((attr & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                result |= 0x1;
-            if ((attr & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
-                result |= 0x400;
-            if ((attr & FileAttributes.SparseFile) == FileAttributes.SparseFile)
-                result |= 0x200;
-            if ((attr & FileAttributes.System) == FileAttributes.System)
-                result |= 0x4;
-            if ((attr & FileAttributes.Temporary) == FileAttributes.Temporary)
-                result |= 0x100;
-
-            return result;
-#else
-            return WinSafeGetFileAttributes(path);
-#endif
-        }
-
-        internal static int WinSafeGetFileAttributes(string path)
-        {
             int result = Utils.NativeMethods.GetFileAttributes(path);
             if (result == -1)
             {
@@ -7054,26 +6858,6 @@ namespace Microsoft.PowerShell.Commands
                     throw new PSInvalidOperationException(message);
                 }
             }
-        }
-
-        /// <summary>
-        /// The API 'PathIsNetworkPath' is not available in CoreSystem. 
-        /// This implementation is based on the 'PathIsNetworkPath' API.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        internal static bool PathIsNetworkPath(string path)
-        {
-#if UNIX
-            return false;
-#else
-            return WinPathIsNetworkPath(path);
-#endif
-        }
-
-        internal static bool WinPathIsNetworkPath(string path)
-        {
-            return NativeMethods.PathIsNetworkPath(path); // call the native method
         }
 
         static class NativeMethods
@@ -7785,7 +7569,7 @@ namespace Microsoft.PowerShell.Commands
         private bool wait;
 
         /// <summary>
-        /// When the Raw switch is present, we don't do any breaks on newlines,
+        /// When the –Raw switch is present, we don’t do any breaks on newlines,
         /// and only emit one object to the pipeline: all of the content.
         /// </summary>
         [Parameter]
@@ -8066,17 +7850,15 @@ namespace Microsoft.PowerShell.Commands
 
             if (fileSysInfo != null)
             {
-                if (Platform.IsWindows)
+                using (SafeFileHandle handle = OpenReparsePoint(fileSysInfo.FullName, FileDesiredAccess.GenericRead))
                 {
-                    using (SafeFileHandle handle = OpenReparsePoint(fileSysInfo.FullName, FileDesiredAccess.GenericRead))
-                    {
-                        string linkTarget = InternalGetTarget(handle);
+                    string linkTarget = InternalGetTarget(handle);
 
-                        if (linkTarget != null)
-                            return (new string[] { linkTarget });
-                    }
+                    if (linkTarget != null)
+                        return (new string[] { linkTarget });
                 }
 
+                //return InternalGetTarget(fileSysInfo.FullName).ToArray();
                 return InternalGetTarget(fileSysInfo.FullName);
             }
             else
@@ -8094,7 +7876,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (fileSysInfo != null)
             {
-                return InternalGetLinkType(fileSysInfo);
+                return InternalGetLinkType(fileSysInfo.FullName);
             }
             else
                 return null;            
@@ -8103,15 +7885,6 @@ namespace Microsoft.PowerShell.Commands
         private static List<string> InternalGetTarget(string filePath)
         {
             var links = new List<string>();
-            if (!Platform.IsWindows)
-            {
-                string link = Platform.NonWindowsInternalGetTarget(filePath);
-                if (!String.IsNullOrEmpty(link))
-                {
-                    links.Add(link);
-                }
-                return links;
-            }
 
 #if !CORECLR //FindFirstFileName, FindNextFileName and FindClose are not available on Core Clr 
             UInt32 linkStringLength = 0;
@@ -8175,26 +7948,9 @@ namespace Microsoft.PowerShell.Commands
             return links;
         }
 
-        private static string InternalGetLinkType(FileSystemInfo fileInfo)
-        {
-            if (Platform.IsWindows)
-            {
-                return WinInternalGetLinkType(fileInfo.FullName);
-            }
-            else
-            {
-                return Platform.NonWindowsInternalGetLinkType(fileInfo);
-            }
-        }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        private static string WinInternalGetLinkType(string filePath)
+        private static string InternalGetLinkType(string filePath)
         {
-            if (!Platform.IsWindows)
-            {
-                throw new PlatformNotSupportedException();
-            }
-
             using (SafeFileHandle handle = OpenReparsePoint(filePath, FileDesiredAccess.GenericRead))
             {
                 int outBufferSize = ClrFacade.SizeOf<REPARSE_DATA_BUFFER_SYMBOLICLINK>();
@@ -8252,75 +8008,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal static bool IsHardLink(FileSystemInfo fileInfo)
-        {
-            if (Platform.IsWindows)
-                return WinIsHardLink(fileInfo);
-            else
-                return Platform.NonWindowsIsHardLink(fileInfo);
-        }
-
-        internal static bool IsReparsePoint(FileSystemInfo fileInfo)
-        {
-            if (Platform.IsWindows)
-            {
-                // Note that this class also has a enum called FileAttributes, so use fully qualified name
-                return (fileInfo.Attributes & System.IO.FileAttributes.ReparsePoint) 
-                       == System.IO.FileAttributes.ReparsePoint;
-            }
-            else
-            {
-                return Platform.NonWindowsIsSymLink(fileInfo);
-            }
-        }
-
-        internal static bool WinIsHardLink(FileSystemInfo fileInfo)
-        {
-            bool isHardLink = false;
-
-            // only check for hard link if the item is not directory
-            if (!((fileInfo.Attributes & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory))
-            {
-                IntPtr nativeHandle = InternalSymbolicLinkLinkCodeMethods.CreateFile(
-                    fileInfo.FullName,
-                    InternalSymbolicLinkLinkCodeMethods.FileDesiredAccess.GenericRead,
-                    InternalSymbolicLinkLinkCodeMethods.FileShareMode.Read,
-                    IntPtr.Zero,
-                    InternalSymbolicLinkLinkCodeMethods.FileCreationDisposition.OpenExisting,
-                    InternalSymbolicLinkLinkCodeMethods.FileAttributes.Normal,
-                    IntPtr.Zero);
-
-                using (SafeFileHandle handle = new SafeFileHandle(nativeHandle, true))
-                {
-                    bool success = false;
-
-                    try
-                    {
-                        handle.DangerousAddRef(ref success);
-                        IntPtr dangerousHandle = handle.DangerousGetHandle();
-                        isHardLink = InternalSymbolicLinkLinkCodeMethods.IsHardLink(ref dangerousHandle);
-                    }
-                    finally
-                    {
-                        if (success)
-                            handle.DangerousRelease();
-                    }
-                }
-            }
-
-            return isHardLink;
-        }
-
-        internal static bool IsHardLink(ref IntPtr handle)
-        {
-            if (Platform.IsWindows)
-                return WinIsHardLink(ref handle);
-            else
-                return Platform.NonWindowsIsHardLink(ref handle);
-        }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        internal static bool WinIsHardLink(ref IntPtr handle)
+        internal static bool IsHardLink(ref IntPtr handle)
         {   
             BY_HANDLE_FILE_INFORMATION handleInfo;            
             bool succeeded = InternalSymbolicLinkLinkCodeMethods.GetFileInformationByHandle(handle, out handleInfo);
@@ -8339,20 +8028,8 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
         
-        private static string InternalGetTarget(SafeFileHandle handle)
-        {
-            if (Platform.IsWindows)
-            {
-                return WinInternalGetTarget(handle);
-            }
-            else
-            {
-                return Platform.NonWindowsInternalGetTarget(handle);
-            }
-        }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        private static string WinInternalGetTarget(SafeFileHandle handle)
+        private static string InternalGetTarget(SafeFileHandle handle)
         {
             int outBufferSize = ClrFacade.SizeOf<REPARSE_DATA_BUFFER_SYMBOLICLINK>();
 
@@ -8417,22 +8094,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal static bool CreateJunction(string path, string target)
-        {
-            // this is a purely Windows specific feature, no feature flag
-            // used for that reason
-            if (Platform.IsWindows)
-            {
-                return WinCreateJunction(path,target);
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        private static bool WinCreateJunction(string path, string target)
+        internal static bool CreateJunction(string path, string target)
         {
             if (!String.IsNullOrEmpty(path))
             {
@@ -8505,20 +8168,6 @@ namespace Microsoft.PowerShell.Commands
 
             if (!String.IsNullOrEmpty(junctionPath))
             {
-                if (!Platform.IsWindows)
-                {
-                   // For non-Windows platform, treat it as a file.  Just delete it.
-                   try
-                   {
-                       File.Delete(junctionPath);
-                       return true;
-                   }
-                   catch
-                   {
-                       return false;
-                   }
-                }
-
                 using (SafeHandle handle = OpenReparsePoint(junctionPath, FileDesiredAccess.GenericWrite))
                 {
                     bool success = false;
@@ -8532,24 +8181,10 @@ namespace Microsoft.PowerShell.Commands
                         IntPtr dangerousHandle = handle.DangerousGetHandle();
                         int bytesReturned;
                         
-                        // Do a FSCTL_GET_REPARSE_POINT first because the ReparseTag could be 
-                        // IO_REPARSE_TAG_MOUNT_POINT or IO_REPARSE_TAG_SYMLINK.
-                        // Using the wrong one results in mismatched-tag error.
-
                         REPARSE_GUID_DATA_BUFFER junctionData = new REPARSE_GUID_DATA_BUFFER();
-                        ClrFacade.StructureToPtr<REPARSE_GUID_DATA_BUFFER>(junctionData, outBuffer, false);
-
-                        result = DeviceIoControl(dangerousHandle, FSCTL_GET_REPARSE_POINT, IntPtr.Zero, 0, 
-                            outBuffer, inOutBufferSize, out bytesReturned, IntPtr.Zero);
-                        if (!result)
-                        {
-                            int lastError = Marshal.GetLastWin32Error();
-                            throw new Win32Exception(lastError);
-                        }
-
-                        junctionData = ClrFacade.PtrToStructure<REPARSE_GUID_DATA_BUFFER>(outBuffer);                     
                         junctionData.ReparseDataLength = 0;
                         junctionData.DataBuffer = new char[MAX_REPARSE_SIZE];
+                        junctionData.ReparseTag = IO_REPARSE_TAG_MOUNT_POINT;
 
                         ClrFacade.StructureToPtr<REPARSE_GUID_DATA_BUFFER>(junctionData, inBuffer, false);
 
@@ -8584,15 +8219,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private static SafeFileHandle OpenReparsePoint(string reparsePoint, FileDesiredAccess accessMode)
-        {
-#if UNIX
-            throw new PlatformNotSupportedException();
-#else
-            return WinOpenReparsePoint(reparsePoint,accessMode);
-#endif
-        }
-
-        private static SafeFileHandle WinOpenReparsePoint(string reparsePoint, FileDesiredAccess accessMode)
         {
             IntPtr nativeHandle = CreateFile(reparsePoint, accessMode,
                 FileShareMode.Read | FileShareMode.Write | FileShareMode.Delete,

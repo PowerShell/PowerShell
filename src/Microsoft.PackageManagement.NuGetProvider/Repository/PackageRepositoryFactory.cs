@@ -19,12 +19,6 @@
                 throw new ArgumentNullException("packageSource");
             }
 
-            // we cannot call new uri on file path on linux because it will error out
-            if (System.IO.Directory.Exists(packageSource))
-            {
-                return new LocalPackageRepository(packageSource, request);
-            }
-
             Uri uri = new Uri(packageSource);
 
             if (uri.IsFile)

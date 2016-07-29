@@ -533,12 +533,8 @@ namespace System.Management.Automation.Remoting
             SyncObject = new object();
 
             // All PowerShell instances will start with the named pipe
-            // and listner created and running.
-            if (Platform.IsWindows)
-            {
-                IPCNamedPipeServerEnabled = true;
-            }
-
+            // and listener created and running.
+            IPCNamedPipeServerEnabled = true;
             CreateIPCNamedPipeServerSingleton();
 #if !CORECLR // There is only one AppDomain per application in CoreCLR, which would be the default
             CreateAppDomainUnloadHandler();

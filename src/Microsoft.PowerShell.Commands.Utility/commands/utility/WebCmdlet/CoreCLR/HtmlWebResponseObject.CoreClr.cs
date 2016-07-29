@@ -60,13 +60,6 @@ namespace Microsoft.PowerShell.Commands
             this.RawContent = raw.ToString();
         }
 
-        /// <summary>
-        /// Dispose the the instance of the class.
-        /// </summary>
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-        }
         #endregion
     }
 }

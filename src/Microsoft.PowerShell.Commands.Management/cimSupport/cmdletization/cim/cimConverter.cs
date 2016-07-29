@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Cim
                 }
                 finally
                 {
-                    Marshal.ZeroFreeCoTaskMemUnicode(plainTextString);
+                    ClrFacade.ZeroFreeCoTaskMemUnicode(plainTextString);
                 }
             }
 

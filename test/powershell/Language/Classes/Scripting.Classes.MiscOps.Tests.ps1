@@ -1,4 +1,4 @@
-Describe 'Misc Test' -Tags "CI" {
+Describe 'Misc Test' -Tags "innerloop", "DRT" {
     
     Context 'Where' {
         class C1 {    

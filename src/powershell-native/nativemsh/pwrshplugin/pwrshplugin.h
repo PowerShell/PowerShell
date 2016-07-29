@@ -714,7 +714,7 @@ private:
                     break;
                 }
 
-                exitCode = powerShellClrHost->LaunchClr(wszMonadVersion, wszTempCLRVersion, "PwrshPlugin");
+                exitCode = powerShellClrHost->LaunchClr(wszMonadVersion, wszTempCLRVersion);
                 if (EXIT_CODE_SUCCESS != exitCode)
                 {
                     PWSTR msg = NULL;
@@ -1091,7 +1091,6 @@ public:
     }
 };
 
-extern "C"
 void WINAPI PerformWSManPluginReportCompletion()
 {
     // Now report the plugin completion, to indicate that plugin is ready to shutdown.

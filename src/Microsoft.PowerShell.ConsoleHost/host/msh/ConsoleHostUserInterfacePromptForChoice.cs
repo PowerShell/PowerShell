@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell
             Dictionary<int, bool> defaultChoiceKeys, 
             bool shouldEmulateForMultipleChoiceSelection)
         {
-            System.Management.Automation.Diagnostics.Assert(defaultChoiceKeys != null, "defaultChoiceKeys cannot be null.");
+            Diagnostics.Assert(defaultChoiceKeys != null, "defaultChoiceKeys cannot be null.");
 
             ConsoleColor fg = RawUI.ForegroundColor;
             ConsoleColor bg = RawUI.BackgroundColor;

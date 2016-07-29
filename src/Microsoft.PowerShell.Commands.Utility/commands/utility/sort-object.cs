@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
             set { DescendingOrder = value; }
         }
         /// <summary>
-        /// This param specifies if only unique objects are filtered.
+        /// 
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Remove duplicates.
+        /// Remove Duplicated from <paramref name="sortedList"/>
         /// </summary>
         private static void RemoveDuplicates(OrderByProperty orderByProperty)
         {

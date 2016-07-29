@@ -12,14 +12,15 @@
 #  limitations under the License.
 #
 # ------------------ PackageManagement Test  -----------------------------------
+ipmo "$PSScriptRoot\utility.psm1"
 $InternalGallery = "https://dtlgalleryint.cloudapp.net/api/v2/"
 $InternalGallery2 = "http://dtlgalleryint.cloudapp.net/api/v2/"
 $InternalSource = 'OneGetTestSource'
 $InternalSource2 = 'OneGetTestSource2'
 $ProviderFolder = "$env:ProgramFiles\PackageManagement\ProviderAssemblies"
+$destination = "$env:tmp\installpp"
 
 #make sure the package repository exists
-<# Cannot run these yet since powershellget not working yet
 $a=Get-PackageSource -ForceBootstrap| select Name, Location, ProviderName
     
 $found = $false
@@ -36,14 +37,13 @@ foreach ($item in $a)
 
 Register-PackageSource -Name $InternalSource -Location $InternalGallery -ProviderName 'PowerShellGet' -Trusted -ForceBootstrap -ErrorAction SilentlyContinue
 Register-PackageSource -Name $InternalSource2 -Location $InternalGallery2 -ProviderName 'PowerShellGet' -ForceBootstrap -ErrorAction SilentlyContinue
-#>
 
 # ------------------------------------------------------------------------------
 # Actual Tests:
 
-Describe "install-packageprovider" -Tags "Feature" {
-
-    <#
+Describe "install-packageprovider" -Tags @('BVT', 'DRT') {
+    # make sure that packagemanagement is loaded
+    import-packagemanagement
     BeforeEach {
 
         $m= Get-InstalledModule -Name myalbum -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
@@ -52,9 +52,15 @@ Describe "install-packageprovider" -Tags "Feature" {
             Remove-Item -Path $m.InstalledLocation -Recurse -force -ErrorAction SilentlyContinue -WarningAction SilentlyContinue -Verbose
         }
     }
-    #>
 
-    It "install-packageprovider, Expect succeed" -Pending {
+    AfterAll {
+        #make sure we are using the latest Nuget provider
+        Install-PackageProvider -name nuget -force   
+    }
+
+    It "install-packageprovider, Expect succeed" {      
+         #avoid popup for installing nuget-any.exe
+        Find-PackageProvider -force
         $a = (install-PackageProvider -name gistprovider -force -source $InternalSource).name 
         $a -contains "gistprovider" | should be $true "gistprovider"
 
@@ -79,7 +85,7 @@ Describe "install-packageprovider" -Tags "Feature" {
     }
             
 
-    It "install-packageprovider from bootstrap web site, Expect succeed" -Skip {
+    It "install-packageprovider from bootstrap web site, Expect succeed" {
         $a = (Install-PackageProvider -Name nuget -RequiredVersion 2.8.5.127 -Force).name 
         $a | should match "nuget"
 
@@ -90,7 +96,7 @@ Describe "install-packageprovider" -Tags "Feature" {
         $nugetBootstrapped.Links[0].Relationship | should match "installationmedia"
     }
     
-    It "find | install-packageprovider -name array, Expect succeed" -Pending {
+    It "find | install-packageprovider -name array, Expect succeed" {
         $names=@("gistprovider", "TSDProvider")
 
         #
@@ -99,7 +105,23 @@ Describe "install-packageprovider" -Tags "Feature" {
         $a -contains "TSDProvider" | should be $true
     }
 
-    It "find | install-packageprovider nuget should imported and installed, Expect succeed" -Skip {
+    It "Install zip packages" {
+        try {
+            $env:BootstrapProviderTestfeedUrl = "https://onegetblob.blob.core.windows.net/test/providers.nuget.testfeed.swidtag"
+
+            $installed = Install-PackageProvider nuget -force
+
+            $installed.Name -contains "nuget" | should be $true
+            $installed.Name -contains "packagelist" | should be $true
+
+            (Test-Path $env:ProgramFiles\PackageManagement\ProviderAssemblies\nuget\*\en-us\*.resources*) | should be $true
+        }
+        finally {
+            $env:BootstrapProviderTestfeedUrl = ""
+        }
+    }
+
+    It "find | install-packageprovider nuget should imported and installed, Expect succeed" {
        
         $a = Find-PackageProvider -name NuGet -RequiredVersion 2.8.5.202 | install-PackageProvider -force 
         $a.Name | Should match "NuGet"
@@ -107,20 +129,20 @@ Describe "install-packageprovider" -Tags "Feature" {
         
     }
 
-    It "find | install-packageprovider nuget should imported and installed, Expect succeed" -Skip {       
+    It "find | install-packageprovider nuget should imported and installed, Expect succeed" {       
        
         $a = install-PackageProvider -name NuGet  -force
         $a | ?{ $_.name -eq "NuGet" } | should not BeNullOrEmpty
         $a | ?{ $_.Version -gt "2.8.5.202"  } | should not BeNullOrEmpty       
     }
 
-    It "install-packageprovider myalbum should imported and installed, Expect succeed" -Pending {
+    It "find | install-packageprovider myalbum should imported and installed, Expect succeed" {
        
         $a = Install-PackageProvider -name MyAlbum -Source $InternalSource  -force
         $a | ?{ $_.name -eq "MyAlbum" } | should not BeNullOrEmpty          
     }
 
-    It "find | install-packageprovider myalbum should imported and installed, Expect succeed" -Pending {
+    It "find | install-packageprovider myalbum should imported and installed, Expect succeed" {
        
         $a = Find-PackageProvider -name MyAlbum -Source $InternalSource -RequiredVersion 0.1.2 | install-PackageProvider -force
         $a | ?{ $_.name -eq "MyAlbum" } | should not BeNullOrEmpty
@@ -128,8 +150,11 @@ Describe "install-packageprovider" -Tags "Feature" {
     }
  }
 
-<# Don't need this test since we are not boostraping
-Describe "install-packageprovider with local source" -Tags "Feature" {
+
+
+Describe "install-packageprovider with local source" -Tags @('BVT', 'DRT') {
+    # make sure that packagemanagement is loaded
+    import-packagemanagement
 
     BeforeAll{
         if( test-path $destination ) {
@@ -240,12 +265,20 @@ Describe "install-packageprovider with local source" -Tags "Feature" {
 
     }
  }
-#>
 
-Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
-    $destination = Join-Path $TestDrive "installpp"
+Describe "Install-Save-Package with multiple sources" -Tags @('BVT', 'DRT'){
+	# make sure packagemanagement is loaded
+	import-packagemanagement
+    BeforeAll{
+        #make sure we are using the latest Nuget provider
+        install-PackageProvider -name nuget -force
+    }
+    AfterAll{
+        #make sure we are using the latest Nuget provider
+        Install-PackageProvider -name nuget -force   
+    }
 
-    It "install-package with array of registered sources with a single provider, Expect succeed" -Pending {
+    It "install-package with array of registered sources with a single provider, Expect succeed" {
 
         #powershellget is the provider selected
         $x= install-package TSDProvider -force -Source @($InternalSource, $InternalSource2)      
@@ -263,17 +296,17 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
         $x= install-package jquery -force -Source @('foooobarrrr', 'https://www.nuget.org/api/v2')  -ProviderName @('PowershellGet', 'NuGet')    
                 
         $x | ?{ $_.name -eq "jquery" } | should not BeNullOrEmpty
-        #$x | ?{ $_.Source -eq "https://www.nuget.org/api/v2" } | should not BeNullOrEmpty
+        $x | ?{ $_.Source -eq "https://www.nuget.org/api/v2" } | should not BeNullOrEmpty
     }
 
-    It "install-save-package matches with multiple providers with single source, Expect succeed" -Pending {
+    It "install-save-package matches with multiple providers with single source, Expect succeed" {
 
         try
         {
             Register-PackageSource -Name foo -Location $InternalGallery -ProviderName 'PowerShellGet' -Trusted  -ErrorAction SilentlyContinue
             Register-PackageSource -Name bar -Location $InternalGallery -ProviderName 'NuGet'  -ErrorAction SilentlyContinue
             if (test-path "$destination") {
-                Remove-Item $destination -force -Recurse
+                rm $destination -force -Recurse
             }
 
          
@@ -291,7 +324,7 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
         
             (test-path "$destination\TSDProvider*") | should be $true
             if (test-path "$destination\TSDProvider*") {
-                Remove-Item $destination\TSDProvider* -force -Recurse
+                rm $destination\TSDProvider* -force -Recurse
             }
         }
         finally
@@ -302,7 +335,7 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
         }
     }
 
-    It "install-save-package does not match with any providers with single source, Expect fail" -Pending {
+    It "install-save-package does not match with any providers with single source, Expect fail" {
 
         try
         {
@@ -328,7 +361,7 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
         }
     }
 
-    It "install-save-package when the multiple providers find a package but no providers specified, Expect fail" -Pending {
+    It "install-save-package when the multiple providers find a package but no providers specified, Expect fail" {
 
         try
         {
@@ -354,15 +387,14 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
         }
     }
     
-    # Skip as we don't have chocolatey anymore
-    It "install-save-package with multiple names, providers, Expect succeed" -Skip {   
+    It "install-save-package with multiple names, providers, Expect succeed" {   
                     
        try {
           
             Register-PackageSource -Name foobar -Location http://www.nuget.org/api/v2 -ProviderName 'NuGet'  -ErrorAction SilentlyContinue
 
             if (test-path "$destination") {
-                Remove-Item $destination -force -Recurse
+                rm $destination -force -Recurse
             }
 
          
@@ -379,7 +411,7 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
         
             (test-path "$destination\jquery*") | should be $true
             if (test-path "$destination\jquery*") {
-                Remove-Item $destination\jquery* -force -Recurse
+                rm $destination\jquery* -force -Recurse
             }
         }
         finally
@@ -389,8 +421,7 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
      
     }
     
-    # Skip as no chocolatey
-    It "install-save-package with multiple names, providers and sources, Expect succeed" -Skip {   
+    It "install-save-package with multiple names, providers and sources, Expect succeed" {   
              
                  
         # Contoso and Contososerver can be found from $InternalGallery - No ambiguity.
@@ -398,7 +429,7 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
         
 
         if (test-path "$destination") {
-            Remove-Item $destination -force -Recurse
+            rm $destination -force -Recurse
         }
 
          
@@ -417,14 +448,14 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
         
         (test-path "$destination\Contoso*") | should be $true
         if (test-path "$destination\Contoso*") {
-            Remove-Item $destination\Contoso* -force -Recurse
+            rm $destination\Contoso* -force -Recurse
         }
 
     }
 
-    It "save-package with array of registered sources, Expect succeed" -Pending {
+    It "save-package with array of registered sources, Expect succeed" {
         if (test-path "$destination") {
-            Remove-Item $destination -force -Recurse
+            rm $destination -force -Recurse
         }
 
         $x= save-package TSDProvider -force -Source @($InternalSource, $InternalSource2) -path $destination  -ProviderName @('PowershellGet', 'NuGet')   
@@ -433,13 +464,13 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
 
         (test-path "$destination\TSDProvider*") | should be $true
         if (test-path "$destination\TSDProvider*") {
-            Remove-Item $destination\TSDProvider* -force -Recurse
+            rm $destination\TSDProvider* -force -Recurse
         }
     }
 
-    It "save-package with array of sources, Expect succeed" -Skip {
+    It "save-package with array of sources, Expect succeed" {
         if (test-path "$destination") {
-            Remove-Item $destination -force -Recurse
+            rm $destination -force -Recurse
         }
 
         $x= save-package jquery -force -Source @('fffffbbbbb', 'https://www.nuget.org/api/v2') -path $destination   -ProviderName @('Nuget', 'Chocolatey')     
@@ -449,11 +480,11 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
         
         (test-path "$destination\jquery*") | should be $true
         if (test-path "$destination\jquery*") {
-            Remove-Item $destination\jquery* -force -Recurse
+            rm $destination\jquery* -force -Recurse
         }
     }
 }
- Describe "install-packageprovider with Whatif" -Tags "Feature" {
+ Describe "install-packageprovider with Whatif" -Tags @('BVT', 'DRT'){
     # make sure that packagemanagement is loaded
     #import-packagemanagement
 
@@ -468,8 +499,12 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
             Remove-Item $tempFile -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
         }
     }
+    AfterAll{
+        #make sure we are using the latest Nuget provider
+        Install-PackageProvider -name nuget -force   
+    }
 
-     It "install-packageprovider -name nuget with whatif, Expect succeed" -Skip {
+     It "install-packageprovider -name nuget with whatif, Expect succeed" {
        
        if($PSCulture -eq 'en-US'){
 
@@ -489,7 +524,7 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
         }
     }
 
-    It "install-packageprovider -name gistprovider with whatif, Expect succeed" -Pending {
+    It "install-packageprovider -name gistprovider with whatif, Expect succeed" {
        
        if($PSCulture -eq 'en-US'){
         # Start Transcript
@@ -509,19 +544,28 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
     }
 }
 
-Describe "install-packageprovider with Scope" -Tags "Feature" {
-    # PENDING a lot of these tests because jobs are broken on OPS
-
+Describe "install-packageprovider with Scope" -Tags @('BVT', 'DRT'){
     BeforeAll {
-        if ($IsWindows)
-        {
-            $userName = "smartguy"
-            $password = "password%1"
-            #net user $userName /delete | Out-Null
-            net user $userName $password /add
-            $secesurestring = ConvertTo-SecureString $password -AsPlainText -Force
-            $credential = new-object -typename System.Management.Automation.PSCredential -argumentlist $userName, $secesurestring
-        }
+        import-packagemanagement
+        $userName = "smartguy"
+        $password = "password%1"
+        #net user $userName /delete | Out-Null
+        net user $userName $password /add
+        $secesurestring = ConvertTo-SecureString $password -AsPlainText -Force
+        $credential = new-object -typename System.Management.Automation.PSCredential -argumentlist $userName, $secesurestring
+    }
+
+    AfterAll {
+         # Delete the user profile
+         net user $userName /delete | Out-Null        
+        <#$userProfilePath = (Get-WmiObject -Class Win32_UserProfile | Where-Object {$_.LocalPath -match $userName})
+
+        if($path -and (Test-Path $userProfilePath.LocalPath)) {
+            Remove-Item $path -Force -Recurse -ErrorAction SilentlyContinue -verbose
+        }#>
+
+        #make sure we are using the latest Nuget provider
+        Install-PackageProvider -name nuget -force       
     }
     
     AfterEach {
@@ -532,18 +576,17 @@ Describe "install-packageprovider with Scope" -Tags "Feature" {
             Remove-Item -Path $m.InstalledLocation -Recurse -force -ErrorAction SilentlyContinue -WarningAction SilentlyContinue -Verbose
         }
     }
-
-    It "install-packageprovider without scope in a non-admin console, expect fail" -Pending {
+    It "install-packageprovider without scope in a non-admin console, expect fail" {
        
         $Error.Clear()
                       
-        $job=Start-Job -ScriptBlock { Install-PackageProvider -Name gistprovider  -force -requiredVersion 2.8.5.127} -Credential $credential
+        $job=Start-Job -ScriptBlock { Install-PackageProvider -Name nuget  -force -requiredVersion 2.8.5.127} -Credential $credential
 
         Receive-Job -Wait -Job $job -ErrorVariable theError 2>&1
         $theError.FullyQualifiedErrorId | should be "InstallRequiresCurrentUserScopeParameterForNonAdminUser,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     } 
         
-    It "install-packageprovider without scope in a non-admin console, expect fail" -Pending {
+    It "install-packageprovider without scope in a non-admin console, expect fail" {
        
         $Error.Clear()
                       
@@ -553,7 +596,7 @@ Describe "install-packageprovider with Scope" -Tags "Feature" {
         $theError.FullyQualifiedErrorId | should be "InstallRequiresCurrentUserScopeParameterForNonAdminUser,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     } 
 
-    It "install-packageprovider with AllUsers scope in a non-admin console, expect fail" -Pending {
+    It "install-packageprovider with AllUsers scope in a non-admin console, expect fail" {
         $Error.Clear()
                       
         $job=Start-Job -ScriptBlock { Install-PackageProvider -Name gistprovider -force -scope AllUsers} -Credential $credential
@@ -563,7 +606,7 @@ Describe "install-packageprovider with Scope" -Tags "Feature" {
 
     } 
 
-    It "install-packageprovider CurrentUser scope in a non-admin console, expect succeed" -Pending {
+    It "install-packageprovider CurrentUser scope in a non-admin console, expect succeed" {
     $Error.Clear()
 
     $job=Start-Job -ScriptBlock {
@@ -589,7 +632,7 @@ Describe "install-packageprovider with Scope" -Tags "Feature" {
     $a | ?{ $_.name -eq "tsdprovider" } | should not BeNullOrEmpty 
     }
 
-    It "find and install-packageprovider without scope in a non-admin console, expect fail" -Pending {
+    It "find and install-packageprovider without scope in a non-admin console, expect fail" {
         $Error.Clear()
                       
         $job=Start-Job -ScriptBlock { Find-PackageProvider -Name gistprovider | Install-PackageProvider -force} -Credential $credential
@@ -599,7 +642,7 @@ Describe "install-packageprovider with Scope" -Tags "Feature" {
 
     } 
     
-    It "find and install-packageprovider CurrentUser scope in a non-admin console, expect succeed" -Pending {
+    It "find and install-packageprovider CurrentUser scope in a non-admin console, expect succeed" {
         $Error.Clear()
                       
         $job=Start-Job -ScriptBlock { Find-PackageProvider -Name tsdprovider | Install-PackageProvider -force -scope CurrentUser} -Credential $credential
@@ -608,8 +651,9 @@ Describe "install-packageprovider with Scope" -Tags "Feature" {
         $a | ?{ $_.name -eq "tsdprovider" } | should not BeNullOrEmpty
     } 
 }
-Describe "install-PackageProvider with Versions" -Tags "Feature" {
+Describe "install-PackageProvider with Versions" -Tags @('BVT', 'DRT') {
     # make sure that packagemanagement is loaded
+    import-packagemanagement
     <# Nuget
     2.8.5.127
     2.8.5.122
@@ -617,8 +661,11 @@ Describe "install-PackageProvider with Versions" -Tags "Feature" {
     2.8.5.101
     2.8.5.24#>
 
-    It "EXPECTED: success 'install, import, and get nuget package provider'" -Pending {
-        # Have to change from using nuget to gist when we enable this test
+    AfterAll{
+        #make sure we are using the latest Nuget provider
+        Install-PackageProvider -name nuget -force   
+    }
+    It "EXPECTED: success 'install, import, and get nuget package provider'" {
         (install-packageprovider -name Nuget -requiredVersion 2.8.5.122 -force).Version.ToString() | should match "2.8.5.122"
         
         $x = powershell {(import-packageprovider -name nuget -requiredVersion  2.8.5.122 -force > $null); get-packageprovider -name nuget}
@@ -626,7 +673,7 @@ Describe "install-PackageProvider with Versions" -Tags "Feature" {
         $x | ?{ $_.Version.ToString() -eq "2.8.5.122" } | should not BeNullOrEmpty   
     }
     
-    It "Install, import, and get a powershell package provider-required version" -Pending {
+    It "Install, import, and get a powershell package provider-required version" {
         $a = (install-PackageProvider -name gistprovider -force -requiredversion 1.5 -source $InternalSource) 
         $a.Name -contains "gistprovider" | should be $true
         $a.Version -contains "1.5" | should be $true
@@ -637,17 +684,15 @@ Describe "install-PackageProvider with Versions" -Tags "Feature" {
         $x | ?{ $_.Version.ToString() -eq "1.5.0.0" } | should not BeNullOrEmpty  
     }
 
-    It "EXPECTED: success 'install a provider with MinimumVersion and MaximumVersion'" -Pending {
-        # Have to change from using nuget to gist when we enable this test
+    It "EXPECTED: success 'install a provider with MinimumVersion and MaximumVersion'" {
         (install-packageprovider -name nuget -MinimumVersion 2.8.5.101 -MaximumVersion 2.8.5.123 -force).Version.ToString() | should match "2.8.5.122"
     }
     
-    It "EXPECTED: success 'install a provider with MaximumVersion'" -Pending {
-        # Have to change from using nuget to gist when we enable this test
+    It "EXPECTED: success 'install a provider with MaximumVersion'" {
         (install-packageprovider -name nuget -MaximumVersion 2.8.5.122 -force).Version.ToString() | should match "2.8.5.122"
     }
     
-    It "EXPECTED: success 'install a provider with MaximumVersion'" -Pending {
+    It "EXPECTED: success 'install a provider with MaximumVersion'" {
         $a = (install-packageprovider -name gistprovider -force -Source $InternalGallery).Version.ToString() 
         $b = (install-packageprovider -name gistprovider -MinimumVersion 0.6 -force -Source $InternalSource).Version.ToString() 
 
@@ -656,9 +701,11 @@ Describe "install-PackageProvider with Versions" -Tags "Feature" {
 }    
 
 
-Describe "Get-package with mulitiple providers" -Tags "Feature" {
+Describe "Get-package with mulitiple providers" -Tags @('BVT', 'DRT'){
+    # make sure that packagemanagement is loaded
+    import-packagemanagement
 
-    It "Get-package with multiple providers" -Pending {
+    It "Get-package with multiple providers" {
 
         $a = Install-package -Name TSDProvider -Source $InternalSource -ProviderName PowerShellGet -Force
         $b = install-package -name TSDProvider  -Source $InternalGallery -ProviderName NuGet -Force
@@ -677,28 +724,30 @@ Describe "Get-package with mulitiple providers" -Tags "Feature" {
 
 }
 
-Describe "install-packageprovider Error Cases" -Tags "Feature" {
+Describe "install-packageprovider Error Cases" -Tags @('BVT', 'DRT') {
+    # make sure that packagemanagement is loaded
+    import-packagemanagement
 
   AfterAll {
         Unregister-PackageSource -Name OneGetTestSource -Verbose -ErrorAction SilentlyContinue
         Unregister-PackageSource -Name OneGetTestSource2 -Verbose -ErrorAction SilentlyContinue
+        #make sure we are using the latest Nuget provider
+        Install-PackageProvider -name nuget -force  
    }
   BeforeAll {
-        <#
-        #commented out as powershellget is not working yet
         #make sure we are using the latest Nuget provider
+        Install-PackageProvider -name nuget -force  
         Register-PackageSource -Name $InternalSource -Location $InternalGallery -ProviderName 'PowerShellGet' -Trusted -ForceBootstrap -ErrorAction SilentlyContinue
         Register-PackageSource -Name $InternalSource2 -Location $InternalGallery2 -ProviderName 'PowerShellGet' -ForceBootstrap -ErrorAction SilentlyContinue
-        #>
    }
 
-    It "install-packageprovider -name with wildcards, Expect error" -Pending {
+    It "install-packageprovider -name with wildcards, Expect error" {
         $Error.Clear()
         install-PackageProvider -name gist* -force -source $InternalGallery -warningaction:silentlycontinue -ErrorVariable wildcardError -ErrorAction SilentlyContinue        
         $wildcardError.FullyQualifiedErrorId| should be "WildCardCharsAreNotSupported,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     }
 
-    It "install-packageprovider - EXPECTED:  returns an error when multiples sources contain the same package provider" -Pending {
+    It "install-packageprovider - EXPECTED:  returns an error when multiples sources contain the same package provider" {
         $Error.Clear()
         $providers = find-packageprovider -name gistprovider
         $providers | ?{ $_.Source -match $InternalSource } | should not BeNullOrEmpty
@@ -708,7 +757,7 @@ Describe "install-packageprovider Error Cases" -Tags "Feature" {
         $theError.FullyQualifiedErrorId| should BeNullOrEmpty
     }
 
-    It "install-package - EXPECTED:  returns an error when multiples sources contain the same package provider" -Pending {
+    It "install-package - EXPECTED:  returns an error when multiples sources contain the same package provider" {
         $Error.Clear()
         $providers = find-package -name gistprovider 
         $providers | ?{ $_.Source -match $InternalSource } | should not BeNullOrEmpty
@@ -718,7 +767,7 @@ Describe "install-packageprovider Error Cases" -Tags "Feature" {
         $theError2.FullyQualifiedErrorId| should BeNullOrEmpty
     }
 
-    It "save-package - EXPECTED:  returns an error when multiples sources contain the same package provider" -Pending {
+    It "save-package - EXPECTED:  returns an error when multiples sources contain the same package provider" {
         $Error.Clear()
         $providers = find-package -name gistprovider 
         $providers | ?{ $_.Source -match $InternalSource } | should not BeNullOrEmpty
@@ -735,45 +784,45 @@ Describe "install-packageprovider Error Cases" -Tags "Feature" {
 
     It "EXPECTED:  returns an error when inputing a bad version format" {
         $Error.Clear()
-        install-packageprovider -name nuget -RequiredVersion BOGUSVERSION  -warningaction:silentlycontinue -ea silentlycontinue
-        $ERROR[0].FullyQualifiedErrorId | should be "InvalidVersion,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
+        $msg =  powershell 'install-packageprovider -name nuget -RequiredVersion BOGUSVERSION  -warningaction:silentlycontinue -ea silentlycontinue; $ERROR[0].FullyQualifiedErrorId'
+        $msg | should be "InvalidVersion,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     }
 
 
   It "EXPECTED:  returns an error when asking for a provider that does not exist" {
         $Error.Clear()
-        install-packageprovider -name NOT_EXISTS -Scope CurrentUser -warningaction:silentlycontinue -ea silentlycontinue
-        $ERROR[0].FullyQualifiedErrorId | should be "NoMatchFoundForProvider,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
+        $msg =  powershell 'install-packageprovider -name NOT_EXISTS  -warningaction:silentlycontinue -ea silentlycontinue; $ERROR[0].FullyQualifiedErrorId'
+        $msg | should be "NoMatchFoundForProvider,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     }
  
 
    It "EXPECTED:  returns an error when asking for a provider with RequiredVersoin and MinimumVersion" {
         $Error.Clear()
-        install-packageprovider -name NOT_EXISTS -Scope CurrentUser -RequiredVersion 1.0 -MinimumVersion 2.0  -warningaction:silentlycontinue -ea silentlycontinue
-        $ERROR[0].FullyQualifiedErrorId | should be "VersionRangeAndRequiredVersionCannotBeSpecifiedTogether,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
+        $msg = powershell 'install-packageprovider -name NOT_EXISTS -RequiredVersion 1.0 -MinimumVersion 2.0  -warningaction:silentlycontinue -ea silentlycontinue; $ERROR[0].FullyQualifiedErrorId'
+        $msg | should be "VersionRangeAndRequiredVersionCannotBeSpecifiedTogether,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     }
 
    It "EXPECTED:  returns an error when asking for a provider with RequiredVersoin and MaximumVersion" {
         $Error.Clear()
-        install-packageprovider -name NOT_EXISTS -Scope CurrentUser -RequiredVersion 1.0 -MaximumVersion 2.0  -warningaction:silentlycontinue -ea silentlycontinue
-        $ERROR[0].FullyQualifiedErrorId | should be "VersionRangeAndRequiredVersionCannotBeSpecifiedTogether,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
+        $msg = powershell 'install-packageprovider -name NOT_EXISTS -RequiredVersion 1.0 -MaximumVersion 2.0  -warningaction:silentlycontinue -ea silentlycontinue;$ERROR[0].FullyQualifiedErrorId'
+        $msg | should be "VersionRangeAndRequiredVersionCannotBeSpecifiedTogether,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     }
 
    It "EXPECTED:  returns an error when asking for a provider with a MinimumVersion greater than MaximumVersion" {
         $Error.Clear()
-        install-packageprovider -name nuget -Scope CurrentUser -MaximumVersion 1.0 -MinimumVersion 2.0 -warningaction:silentlycontinue -ea silentlycontinue
-        $ERROR[0].FullyQualifiedErrorId | should be "NoMatchFoundForProvider,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
+        $msg = powershell 'install-packageprovider -name nuget -MaximumVersion 1.0 -MinimumVersion 2.0 -warningaction:silentlycontinue -ea silentlycontinue;$ERROR[0].FullyQualifiedErrorId'
+        $msg | should be "NoMatchFoundForProvider,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     }
 
    It "EXPECTED:  returns an error when asking for a provider with MinimumVersion that does not exist" {
         $Error.Clear()
-        install-packageprovider -name gistprovider -MinimumVersion 20.2 -warningaction:silentlycontinue -Scope CurrentUser -ea silentlycontinue
-        $ERROR[0].FullyQualifiedErrorId | should be "NoMatchFoundForProvider,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
+        $msg = powershell 'install-packageprovider -name gistprovider -MinimumVersion 20.2 -warningaction:silentlycontinue -ea silentlycontinue;$ERROR[0].FullyQualifiedErrorId'
+        $msg | should be "NoMatchFoundForProvider,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     }
 
    It "EXPECTED:  returns an error when asking for a provider with MaximumVersion that does not exist" {
         $Error.Clear()
-        install-packageprovider -name gistprovider -Scope CurrentUser -MaximumVersion 0.1 -warningaction:silentlycontinue -ea silentlycontinue
-        $ERROR[0].FullyQualifiedErrorId | should be "NoMatchFoundForProvider,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
+        $msg = powershell 'install-packageprovider -name gistprovider -MaximumVersion 0.1 -warningaction:silentlycontinue -ea silentlycontinue;$ERROR[0].FullyQualifiedErrorId'
+        $msg | should be "NoMatchFoundForProvider,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     }        
 }

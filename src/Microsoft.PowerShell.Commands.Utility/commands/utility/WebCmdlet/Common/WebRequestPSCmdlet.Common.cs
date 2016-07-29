@@ -12,9 +12,7 @@ using System.Collections;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-#if !CORECLR
 using mshtml;
-#endif
 using Microsoft.Win32;
 
 namespace Microsoft.PowerShell.Commands
@@ -465,12 +463,9 @@ namespace Microsoft.PowerShell.Commands
         /// needed if an HtmlDocument will be created shortly.</param>
         protected bool VerifyInternetExplorerAvailable(bool checkComObject)
         {
-            // TODO: Remove this code once the dependecy on mshtml has been resolved.
-#if CORECLR
-            return false;
-#else
             bool isInternetExplorerConfigurationComplete = false;
-            // Check for IE for both PS Full and PS Core on windows.
+
+#if !LINUX  // Check for IE for both PS Full and PS Core on windows.
             // The registry key DisableFirstRunCustomize can exits at one of the following path.
             // IE uses the same decending orider (as mentioned) to check for the presence of this key.
             // If the value of DisableFirstRunCustomize key is set to greater than zero then Run first
@@ -524,12 +519,15 @@ namespace Microsoft.PowerShell.Commands
                     isInternetExplorerConfigurationComplete = false;
                 }
             }
+#endif
 
+#if !CORECLR
             // Throw exception in PS Full only
             if (!isInternetExplorerConfigurationComplete)
                 throw new NotSupportedException(WebCmdletStrings.IEDomNotSupported);
-            return isInternetExplorerConfigurationComplete;
 #endif
+
+            return isInternetExplorerConfigurationComplete;
         }
 
         private Uri PrepareUri(Uri uri)

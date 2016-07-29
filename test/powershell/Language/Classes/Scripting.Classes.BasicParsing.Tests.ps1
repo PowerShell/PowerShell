@@ -3,7 +3,7 @@
 #
 Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1 -force
 
-Describe 'Positive Parse Properties Tests' -Tags "CI" {
+Describe 'Positive Parse Properties Tests' -Tags "innerloop", "DRT" {
     It 'PositiveParsePropertiesTest' {
         # Just a bunch of random basic things here
         # This test doesn't need to check anything, if there are
@@ -248,7 +248,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
         [A]::new().h.GetType().Name | Should Be 'OrderedDictionary'
     }
 }
-Describe 'Negative Parsing Tests' -Tags "CI" {
+Describe 'Negative Parsing Tests' -Tags "innerloop", "DRT" {
     ShouldBeParseError 'class' MissingNameAfterKeyword 5
     ShouldBeParseError 'class foo' MissingTypeBody 9
     ShouldBeParseError 'class foo {' MissingEndCurlyBrace 10
@@ -309,7 +309,7 @@ Describe 'Negative Parsing Tests' -Tags "CI" {
     ShouldBeParseError 'class C : B' MissingTypeBody 11
 }
 
-Describe 'Negative methods Tests' -Tags "CI" {
+Describe 'Negative methods Tests' -Tags "innerloop", "DRT" {    
     ShouldBeParseError 'class foo { f() { param($x) } }' ParamBlockNotAllowedInMethod 18
     ShouldBeParseError 'class foo { f() { dynamicparam {} } }' NamedBlockNotAllowedInMethod 18
     ShouldBeParseError 'class foo { f() { begin {} } }' NamedBlockNotAllowedInMethod 18
@@ -320,13 +320,13 @@ Describe 'Negative methods Tests' -Tags "CI" {
     ShouldBeParseError 'class foo { [void] bar($a, [string][int]$b, $c) {} }' MultipleTypeConstraintsOnMethodParam 35
 }
 
-Describe 'Negative Assignment Tests' -Tags "CI" {
+Describe 'Negative Assignment Tests' -Tags "innerloop", "DRT" {    
     ShouldBeParseError 'class foo { [string ]$path; f() { $path="" } }' MissingThis 34
     ShouldBeParseError 'class foo { [string ]$path; f() { [string] $path="" } }' MissingThis 43
     ShouldBeParseError 'class foo { [string ]$path; f() { [int] [string] $path="" } }' MissingThis 49
 }
 
-Describe 'Negative Assignment Tests' -Tags "CI" {
+Describe 'Negative Assignment Tests' -Tags "innerloop", "DRT" { 
     ShouldBeParseError '[DscResource()]class C { [bool] Test() { return $false } [C] Get() { return $this } Set() {} }' DscResourceMissingKeyProperty 0
 
     # Test method
@@ -350,7 +350,7 @@ Describe 'Negative Assignment Tests' -Tags "CI" {
     ShouldBeParseError '[DscResource()]class C { [DscProperty(Key)][string]$Key; [bool] Test() { return $false } [C] Get() { return $this } Set() {} C($a) { } }' DscResourceMissingDefaultConstructor 0
 }
     
-Describe 'Negative DscResources Tests' -Tags "CI" {
+Describe 'Negative DscResources Tests' -Tags "innerloop", "DRT" { 
         # Usage errors
         ShouldBeParseError '[Flags()]class C{}' AttributeNotAllowedOnDeclaration 0
         ShouldBeParseError 'class C { [Flags()]$field; }' AttributeNotAllowedOnDeclaration 10
@@ -367,42 +367,32 @@ Describe 'Negative DscResources Tests' -Tags "CI" {
         ShouldBeParseError 'class C{ [ValidateScript({})]$p; }' ParameterAttributeArgumentNeedsToBeConstant 25
 }
 
-Describe 'Negative ClassAttributes Tests' -Tags "CI" {
-    [System.Management.Automation.Cmdlet("Get", "Thing")]class C{}
-    $t = [C].GetCustomAttributes($false)
-
-    It "Should have one attribute" {$t.Count | should be 1}
-    It "Should have instance of CmdletAttribute" {$t[0].GetType().FullName | should be System.Management.Automation.CmdletAttribute }
+Describe 'Negative ClassAttributes Tests' -Tags "innerloop", "DRT" { 
     
-    [System.Management.Automation.CmdletAttribute]$c = $t[0]
-    It "Verb should be Get" {$c.VerbName | should be 'Get'}
-    It "Noun should be Thing" {$c.NounName | should be 'Thing'}        
+        [System.Management.Automation.Cmdlet("Get", "Thing")]class C{}
+        $t = [C].GetCustomAttributes($false)
 
-    [System.Management.Automation.Cmdlet("Get", "Thing", SupportsShouldProcess = $true, SupportsPaging = $true)]class C2{}
-    $t = [C2].GetCustomAttributes($false)
-    It "Should have one attribute" { $t.Count | should be 1 }
-    It "Should have instance of CmdletAttribute" { $t[0].GetType().FullName | should be System.Management.Automation.CmdletAttribute }
-    [System.Management.Automation.CmdletAttribute]$c = $t[0]
-    It "Verb should be Get" {$c.VerbName | should be 'Get'}
-    It "Noun should be Thing" {$c.NounName | should be 'Thing'} 
-    
-    It  "SupportsShouldProcess should be $true" { $c.ConfirmImpact | should be $true }
-    It  "SupportsPaging should be `$true" { $c.SupportsPaging | should be $true }
-    Context "Support ConfirmImpact as an attribute" {
-        It  "ConfirmImpact should be high" -pending { 
-            [System.Management.Automation.Cmdlet("Get", "Thing", ConfirmImpact = 'High', SupportsPaging = $true)]class C3{}
-            $t = [C3].GetCustomAttributes($false)
-            It "Should have one attribute" { $t.Count | should be 1 }
-            It "Should have instance of CmdletAttribute" { $t[0].GetType().FullName | should be System.Management.Automation.CmdletAttribute }
-            [System.Management.Automation.CmdletAttribute]$c = $t[0]
-            $c.ConfirmImpact | should be 'High'
-            
-        }
-    }
+        It "Should have one attribute" {$t.Count | should be 1}
+        It "Should have instance of CmdletAttribute" {$t[0].GetType().FullName | should be System.Management.Automation.CmdletAttribute }
+        
+        [System.Management.Automation.CmdletAttribute]$c = $t[0]
+        It "Verb should be Get" {$c.VerbName | should be 'Get'}
+        It "Noun should be Thing" {$c.NounName | should be 'Thing'}        
+
+        [System.Management.Automation.Cmdlet("Get", "Thing", ConfirmImpact = 'High', SupportsPaging = $true)]class C2{}
+        $t = [C2].GetCustomAttributes($false)
+        It "Should have one attribute" { $t.Count | should be 1 }
+        It "Should have instance of CmdletAttribute" { $t[0].GetType().FullName | should be System.Management.Automation.CmdletAttribute }
+        [System.Management.Automation.CmdletAttribute]$c = $t[0]
+        It "Verb should be Get" {$c.VerbName | should be 'Get'}
+        It "Noun should be Thing" {$c.NounName | should be 'Thing'} 
+        
+        It  "ConfirmImpact should be high" { $c.ConfirmImpact | should be 'High' }
+        It  "SupportsPaging should be `$true" { $c.SupportsPaging | should be $true }
 }
     
 
-Describe 'Property Attributes Test' -Tags "CI" {
+Describe 'Property Attributes Test' -Tags "innerloop", "DRT" {
         class C { [ValidateSet('a', 'b')]$p; }
 
         $t = [C].GetProperty('p').GetCustomAttributes($false)
@@ -413,7 +403,7 @@ Describe 'Property Attributes Test' -Tags "CI" {
         It "second value should be b" { $v.ValidValues[1] -eq 'b' }
     }
 
-Describe 'Method Attributes Test' -Tags "CI" {
+Describe 'Method Attributes Test' -Tags "innerloop", "DRT" {
         class C { [Obsolete("aaa")][int]f() { return 1 } } 
 
         $t = [C].GetMethod('f').GetCustomAttributes($false)
@@ -421,7 +411,7 @@ Describe 'Method Attributes Test' -Tags "CI" {
         It "Attribute type should be ObsoleteAttribute" { $t[0].GetType().FullName | should be System.ObsoleteAttribute } 
     }
 
-Describe 'Positive SelfClass Type As Parameter Test' -Tags "CI" {
+Describe 'Positive SelfClass Type As Parameter Test' -Tags "innerloop", "DRT" {    
         class Point
         {
             Point($x, $y) { $this.x = $x; $this.y = $y }
@@ -453,7 +443,7 @@ Describe 'Positive SelfClass Type As Parameter Test' -Tags "CI" {
         }         
     }
 
-Describe 'PositiveReturnSelfClassTypeFromMemberFunction Test' -Tags "CI" {
+Describe 'PositiveReturnSelfClassTypeFromMemberFunction Test' -Tags "innerloop", "DRT" {
         class ReturnObjectFromMemberFunctionTest
         {
             [ReturnObjectFromMemberFunctionTest] CreateInstance()
@@ -470,9 +460,8 @@ Describe 'PositiveReturnSelfClassTypeFromMemberFunction Test' -Tags "CI" {
         It "CreateInstance works" { $z.SayHello() | should be 'Hello1' } 
     }
 
-Describe 'TestMultipleArguments Test' -Tags "CI" {
-        if ( $IsCoreCLR ) { $maxCount = 14 } else { $maxCount = 16 }
-        for ($i = 0; $i -lt $maxCount; $i++)
+Describe 'TestMultipleArguments Test' -Tags "innerloop", "DRT" {    
+        for ($i = 0; $i -lt 16; $i++)
         {
             $properties = $(for ($j = 0; $j -le $i; $j++) {
                 "        [int]`$Prop$j"
@@ -525,7 +514,7 @@ $ctorAssignments
             Invoke-Expression $class
         }
     }
-Describe 'Scopes Test' -Tags "CI" {
+Describe 'Scopes Test' -Tags "innerloop", "DRT" {     
         class C1
         {
             static C1() {
@@ -543,7 +532,7 @@ Describe 'Scopes Test' -Tags "CI" {
         }
     }
 
-Describe 'Check PS Class Assembly Test' -Tags "CI" {
+Describe 'Check PS Class Assembly Test' -Tags "innerloop", "DRT" {
         class C1 {}
         $assem = [C1].Assembly
         $attrs = @($assem.GetCustomAttributes($true))
@@ -551,7 +540,7 @@ Describe 'Check PS Class Assembly Test' -Tags "CI" {
         It "Expected a DynamicClassImplementationAssembly attribute" { $expectedAttr.Length | should be 1}
     }
 
-Describe 'ScriptScopeAccessFromClassMethod' -Tags "CI" {
+Describe 'ScriptScopeAccessFromClassMethod' -Tags "innerloop", "DRT" { 
         Import-Module "$PSScriptRoot\MSFT_778492.psm1"
         try
         {
@@ -564,7 +553,7 @@ Describe 'ScriptScopeAccessFromClassMethod' -Tags "CI" {
         }
     }
 
-Describe 'Hidden Members Test ' -Tags "CI" {
+Describe 'Hidden Members Test ' -Tags "innerloop", "DRT" {
         class C1
         {
             [int]$visibleX
@@ -598,13 +587,13 @@ Describe 'Hidden Members Test ' -Tags "CI" {
         It "Tab completion should not return a hidden member" { $completions.CompletionMatches.Count | should be 0 }        
     }
 
-Describe 'BaseMethodCall Test ' -Tags "CI" {
+Describe 'BaseMethodCall Test ' -Tags "innerloop", "DRT" {
         It "Derived class method call" {"abc".ToString() | should be "abc" }        
         # call [object] ToString() method as a base class method.
         It "Base class method call" {([object]"abc").ToString() | should be "System.String" }        
     }
 
-Describe 'Scoped Types Test' -Tags "CI" {
+Describe 'Scoped Types Test' -Tags "innerloop", "DRT" {
         class C1 { [string] GetContext() { return "Test scope" } }
 
         filter f1
@@ -632,7 +621,7 @@ Describe 'Scoped Types Test' -Tags "CI" {
         It "'new-object C1' in nested scope (in pipeline)" { (1 | f2 | f1 | f2) | should be "f2 scope" }
     }
 
-Describe 'ParameterOfClassTypeInModule Test' -Tags "CI" {
+Describe 'ParameterOfClassTypeInModule Test' -Tags "innerloop", "DRT" {    
         try
         {
             $sb = [scriptblock]::Create(@'
@@ -649,7 +638,7 @@ function test-it([EE]$ee){$ee}
         }
     }
 
-Describe 'Type building' -Tags "CI" {
+Describe 'Type building' -Tags "DRT" {
     It 'should build the type only once for scriptblock' {
         $a = $null
         1..10 | % {
@@ -671,9 +660,9 @@ Describe 'Type building' -Tags "CI" {
     }
 }
 
-Describe 'RuntimeType created for TypeDefinitionAst' -Tags "CI" {
+Describe 'RuntimeType created for TypeDefinitionAst' {
     
-    It 'can make cast to the right RuntimeType in two different contexts' -pending {
+    It 'can make cast to the right RuntimeType in two different contexts' {
         
         $ssfe = [System.Management.Automation.Runspaces.SessionStateFunctionEntry]::new("foo", @'
 class Base
@@ -689,7 +678,7 @@ class Derived : Base
 [Derived]::new().foo()
 '@)
 
-        $iss = [System.Management.Automation.Runspaces.initialsessionstate]::CreateDefault2()
+        $iss = [System.Management.Automation.Runspaces.initialsessionstate]::CreateDefault()
         $iss.Commands.Add($ssfe)
 
         $ps = [powershell]::Create($iss)
@@ -707,7 +696,7 @@ class Derived : Base
     }
 }
 
-Describe 'TypeTable lookups' -Tags "CI" {
+Describe 'TypeTable lookups' {
     
     Context 'Call methods from a different thread' {
         $b = [powershell]::Create().AddScript(
@@ -733,7 +722,7 @@ class B
     }
 }
 
-Describe 'Protected method access' -Tags "CI" {
+Describe 'Protected method access' {
 
     Add-Type @'
 namespace Foo
@@ -745,7 +734,7 @@ namespace Foo
 }
 '@
 
-     It 'doesn''t allow protected methods access outside of inheritance chain' -pending {
+     It 'doesn''t allow protected methods access outside of inheritance chain' {
         $a = [scriptblock]::Create(@'
 class A
 { 
@@ -816,7 +805,7 @@ return [A]::new()
     }
 }
 
-Describe 'variable analysis' -Tags "CI" {
+Describe 'variable analysis' {
     It 'can specify type construct on the local variables' {
         class A { [string] getFoo() { return 'foo'} }
 

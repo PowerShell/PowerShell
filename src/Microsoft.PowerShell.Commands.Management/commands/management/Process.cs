@@ -866,9 +866,6 @@ namespace Microsoft.PowerShell.Commands
         private static string RetrieveProcessUserName(Process process, Cmdlet cmdlet)
         {
             string userName = null;
-#if UNIX
-            userName = Platform.NonWindowsGetUserFromPid(process.Id);
-#else
             IntPtr tokenUserInfo = IntPtr.Zero;
             IntPtr processTokenHandler = IntPtr.Zero;
 
@@ -958,7 +955,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-#endif
             return userName;
         }
 
@@ -1366,7 +1362,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    if (Platform.IsWindows && !Force)
+                    if (!Force)
                     {
                         // Check if the process is owned by current user
                         if (!IsProcessOwnedByCurrentUser(process))
@@ -2005,9 +2001,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private SwitchParameter _UseNewEnvironment;
 
-        private StreamWriter OutputWriter;
-        private StreamWriter ErrorWriter;
-
         #endregion
 
         #region overrides
@@ -2101,10 +2094,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 //LoadUserProfile.
-                if (Platform.IsWindows)
-                {
-                    startInfo.LoadUserProfile = _loaduserprofile;
-                }
+                startInfo.LoadUserProfile = _loaduserprofile;
 
                 if (_credential != null)
                 {
@@ -2196,30 +2186,8 @@ namespace Microsoft.PowerShell.Commands
             }
 #endif
             //Starts the Process
-            Process process;
-            if (Platform.IsWindows)
-            {
-                process = start(startInfo);
-            }
-            else
-            {
-                process = new Process();
-                process.StartInfo = startInfo;
-                SetupInputOutputRedirection(process);
-                process.Start();
-                if (process.StartInfo.RedirectStandardOutput)
-                {
-                    process.BeginOutputReadLine();
-                }
-                if (process.StartInfo.RedirectStandardError)
-                {
-                    process.BeginErrorReadLine();
-                }
-                if (process.StartInfo.RedirectStandardInput)
-                {
-                    WriteToStandardInput(process);
-                }
-            }
+            Process process = start(startInfo);
+
             //Wait and Passthru Implementation.
 
             if (_passthru.IsPresent)
@@ -2242,27 +2210,20 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!process.HasExited)
                     {
-                        if (Platform.IsWindows)
+                        waithandle = new ManualResetEvent(false);
+                        
+                        // Create and start the job object
+                        ProcessCollection jobObject = new ProcessCollection();
+                        if (jobObject.AssignProcessToJobObject(process))
                         {
-                            waithandle = new ManualResetEvent(false);
-
-                            // Create and start the job object
-                            ProcessCollection jobObject = new ProcessCollection();
-                            if (jobObject.AssignProcessToJobObject(process))
-                            {
-                                // Wait for the job object to finish
-                                jobObject.WaitOne(waithandle);
-                            }
-                        else if (!process.HasExited)
-                            {
-                                // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
-                                process.Exited += new EventHandler(myProcess_Exited);
-                                process.EnableRaisingEvents = true;
-                                process.WaitForExit();
-                            }
+                            // Wait for the job object to finish
+                            jobObject.WaitOne(waithandle);
                         }
-                        else
+                        else if (!process.HasExited)
                         {
+                            // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
+                            process.Exited += new EventHandler(myProcess_Exited);
+                            process.EnableRaisingEvents = true;
                             process.WaitForExit();
                         }
                     }
@@ -2319,104 +2280,6 @@ namespace Microsoft.PowerShell.Commands
                     processEnvironment.Add(entry.Key.ToString(), entry.Value.ToString());
                 }
             }
-        }
-
-        private void StdOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
-        {
-            if (!String.IsNullOrEmpty(outLine.Data))
-            {
-                OutputWriter.WriteLine(outLine.Data);
-                OutputWriter.Flush();
-            }
-        }
-
-        private void StdErrorHandler(object sendingProcess, DataReceivedEventArgs outLine)
-        {
-            if (!String.IsNullOrEmpty(outLine.Data))
-            {
-                ErrorWriter.WriteLine(outLine.Data);
-                ErrorWriter.Flush();
-            }
-        }
-
-        private void ExitHandler(object sendingProcess, System.EventArgs e)
-        {
-            // To avoid a race condition with Std*Handler, let's wait a bit before closing the streams
-            // System.Timer is not supported in CoreCLR, so let's spawn a new thread to do the wait
-            
-            Thread delayedStreamClosing = new Thread(StreamClosing);
-            delayedStreamClosing.Start();
-        }
-            
-        private void StreamClosing()
-        {
-            Thread.Sleep(1000);
-
-            if (OutputWriter != null)
-            {
-                OutputWriter.Dispose();
-            }
-            if (ErrorWriter != null)
-            {
-                ErrorWriter.Dispose();
-            }
-        }
-
-        private void SetupInputOutputRedirection(Process p)
-        {
-            if (_redirectstandardinput != null)
-            {
-                p.StartInfo.RedirectStandardInput = true;
-                _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
-            }
-            else
-            {
-                p.StartInfo.RedirectStandardInput = false;
-            }
-
-            if (_redirectstandardoutput != null)
-            {
-                p.StartInfo.RedirectStandardOutput = true;
-                _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
-                p.OutputDataReceived += new DataReceivedEventHandler(StdOutputHandler);
-
-                // Can't do StreamWriter(string) in coreCLR
-                OutputWriter = new StreamWriter(new FileStream(_redirectstandardoutput, FileMode.Create));
-            }
-            else
-            {
-                p.StartInfo.RedirectStandardOutput = false;
-                OutputWriter = null;
-            }
-
-            if (_redirectstandarderror != null)
-            {
-                p.StartInfo.RedirectStandardError = true;
-                _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
-                p.ErrorDataReceived += new DataReceivedEventHandler(StdErrorHandler);
-
-                // Can't do StreamWriter(string) in coreCLR
-                ErrorWriter = new StreamWriter(new FileStream(_redirectstandarderror, FileMode.Create));
-            }
-            else
-            {
-                p.StartInfo.RedirectStandardError = false;
-                ErrorWriter = null;
-            }
-
-            p.EnableRaisingEvents = true;
-            p.Exited += new EventHandler(ExitHandler);
-        }
-
-        private void WriteToStandardInput(Process p)
-        {
-            StreamWriter writer = p.StandardInput;
-            using (StreamReader reader = new StreamReader(new FileStream(_redirectstandardinput, FileMode.Open)))
-            {
-                string line = reader.ReadToEnd();
-                writer.WriteLine(line);
-            }
-            writer.Dispose();
         }
 
         private Process StartWithCreateProcess(ProcessStartInfo startinfo)
@@ -2578,7 +2441,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (password != IntPtr.Zero)
                         {
-                            Marshal.ZeroFreeCoTaskMemUnicode(password);
+                            ClrFacade.ZeroFreeCoTaskMemUnicode(password);
                         }
                     }
                 }//end of if

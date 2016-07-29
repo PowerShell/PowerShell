@@ -302,20 +302,6 @@ namespace System.Management.Automation
 #endif
 
         /// <summary>
-        /// Gets or sets if the drive-root relative paths on drives of this provider
-        ///  are separated by a colon or not.
-        ///
-        /// This is true for all PSDrives on all platforms, except for filesystems on
-        /// non-windows platforms
-        /// </summary>
-        public bool VolumeSeparatedByColon
-        {
-            get { return volumeSeparatedByColon; }
-            internal set { volumeSeparatedByColon = value; }
-        }
-        private bool volumeSeparatedByColon = true;
-
-        /// <summary>
         /// Constructs an instance of the class using an existing reference
         /// as a template.
         /// </summary>
@@ -350,7 +336,6 @@ namespace System.Management.Automation
             this.helpFile = providerInfo.helpFile;
             this.pssnapin = providerInfo.pssnapin;
             this.sessionState = providerInfo.sessionState;
-            this.volumeSeparatedByColon = providerInfo.volumeSeparatedByColon;
         }
 
         /// <summary>
@@ -496,13 +481,6 @@ namespace System.Management.Automation
                     null);
 
             hiddenDrive.Hidden = true;
-
-            // TODO:PSL
-            // this is probably not right here
-            if (implementingType == typeof(Microsoft.PowerShell.Commands.FileSystemProvider) && !Platform.IsWindows)
-            {
-                volumeSeparatedByColon = false;
-            }
         }
 
 #if SUPPORTS_CMDLETPROVIDER_FILE

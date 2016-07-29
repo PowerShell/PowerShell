@@ -299,58 +299,6 @@ namespace System.Management.Automation
         }
         private string displayRoot = null;
 
-        /// <summary>
-        /// Gets or sets if the drive-root relative paths on this drive are separated by a
-        /// colon or not.
-        ///
-        /// This is true for all PSDrives on all platforms, except for filesystems on
-        /// non-Windows platforms.
-        ///
-        /// This is not a path separator in the sense of separating paths in a single
-        /// string.
-        ///
-        /// The biggest difference in filesystem handling between PS internally, and Unix
-        /// style systems is, that paths on Windows separate the drive letter from the
-        /// actual path by a colon. The second difference is, that a path that starts with
-        /// a \ or / on Windows is considered to be a relative path (drive-relative in
-        /// that case) where a similar path on a Unix style filesystem would be
-        /// root-relative, which is basically drive-relative for the filesystem, as there
-        /// is only one filesystem drive.
-        ///
-        /// This property indicates, that a path can be checked for that drive-relativity
-        /// by checking for a colon. The main reason for this can be seen in all the
-        /// places that use this property, where PowerShell's code checks/splits/string
-        /// manipulates paths according to the colon character. This happens in many
-        /// places.
-        ///
-        /// The idea here was to introduce a property that allows a code to query if a
-        /// PSDrive expects colon to be such a separator or not. I talked to Jim back then
-        /// about the problem, and this seemed to be a reasonable solution, given that
-        /// there is no other way to know for a PSDrive if paths can be qualified only in
-        /// a certain windows way on all platforms, or need special treatment on platforms
-        /// where colon does not exist as drive separator (regular filesystems on Unix
-        /// platforms are the only exception).
-        ///
-        /// Globally this property can also be only true for one single PSDrive, because
-        /// if there is no drive separator, there is also no drive, and because there is
-        /// no drive there is no way to match against multiple such drives.
-        ///
-        /// Additional data:
-        /// It seems that on single rooted filesystems, only the default
-        /// drive of "/" needs to set this VolumeSeparatedByColon to false
-        /// otherwise, creating new drives from the filesystem should actually
-        /// have this set to true as all the drives will have <string>: except
-        /// for "/"
-        ///
-        /// </summary>
-        public bool VolumeSeparatedByColon
-        {
-            get { return _volumeSeparatedByColon; }
-            internal set { _volumeSeparatedByColon = value; }
-        }
-        private bool _volumeSeparatedByColon = true;
-
-
         #region ctor
 
         /// <summary>

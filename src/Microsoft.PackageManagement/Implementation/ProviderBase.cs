@@ -81,7 +81,6 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
         /// <param name="providerPath"></param>
         public void SetSwidTag(string providerPath)
         {
-#if !UNIX
             if (!string.IsNullOrWhiteSpace(providerPath))
             {
                 // check whether there is swidtag attached to the provider path
@@ -93,7 +92,6 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
                     SetSwidTag(new XDocument(new XDeclaration("1.0", "UTF-8", "yes"), swid));
                 }
             }
-#endif
         }
 
         public IEnumerable<string> SupportedFileExtensions {

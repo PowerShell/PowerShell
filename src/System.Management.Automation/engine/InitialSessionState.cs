@@ -60,10 +60,7 @@ namespace System.Management.Automation.Runspaces
                 var unused0 = RunspaceInit.OutputEncodingDescription;
 
                 // Amsi initialize can also be a little slow
-                if (Platform.IsWindows)
-                {
-                    AmsiUtils.Init();
-                }
+                AmsiUtils.Init();
 
                 // This will init some tables and could load some assemblies.
                 var unused1 = TypeAccelerators.builtinTypeAccelerators;
@@ -1676,9 +1673,19 @@ namespace System.Management.Automation.Runspaces
             return iss;
         }
 
-        // Porting note: moved to Platform so we have one list to maintain
-        private static string[] PSCoreFormatFileNames = Platform.FormatFileNames.ToArray();
-
+        private static string[] PSCoreFormatFileNames = {
+                                                            "Certificate.format.ps1xml",
+                                                            "Diagnostics.Format.ps1xml",
+                                                            "DotNetTypes.format.ps1xml",
+                                                            "Event.Format.ps1xml",
+                                                            "FileSystem.format.ps1xml",
+                                                            "Help.format.ps1xml",
+                                                            "HelpV3.format.ps1xml",
+                                                            "PowerShellCore.format.ps1xml",
+                                                            "PowerShellTrace.format.ps1xml",
+                                                            "Registry.format.ps1xml",
+                                                            "WSMan.Format.ps1xml"
+                                                        };
         private static void IncludePowerShellCoreFormats(InitialSessionState iss)
         {
             string psHome = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
@@ -1778,14 +1785,25 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            // Porting note: copy so it can be modified
-            List<string> allowedFormats = new List<string>(Platform.FormatFileNames);
+            List<string> allowedFormats = new List<string>
+                                              {
+                                                  "Certificate.Format.ps1xml",
+												  "Event.format.ps1xml",
+                                                  "Diagnostics.format.ps1xml",
+                                                  "DotNetTypes.Format.ps1xml",
+                                                  "FileSystem.Format.ps1xml",
+                                                  "Help.Format.ps1xml",
+                                                  "HelpV3.format.ps1xml",
+                                                  "PowerShellCore.format.ps1xml",
+                                                  "PowerShellTrace.format.ps1xml",
+                                                  "Registry.format.ps1xml",
+                                                  "WSMan.format.ps1xml"
+                                              };
             RemoveDisallowedEntries(
                 iss.Formats,
                 allowedFormats,
                 formatEntry => IO.Path.GetFileName(formatEntry.FileName));
 
-            // Porting note: type files were deprecated
             List<string> allowedTypes = new List<string>();
             allowedTypes.AddRange(DefaultTypeFiles);
             RemoveDisallowedEntries(
@@ -1853,14 +1871,25 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            // Porting note: copy so it can be modified
-            List<string> allowedFormats = new List<string>(Platform.FormatFileNames);
+            List<string> allowedFormats = new List<string>
+                                              {
+                                                  "Certificate.Format.ps1xml",
+												  "Event.format.ps1xml",
+                                                  "Diagnostics.format.ps1xml",
+                                                  "DotNetTypes.Format.ps1xml",
+                                                  "FileSystem.Format.ps1xml",
+                                                  "Help.Format.ps1xml",
+                                                  "HelpV3.format.ps1xml",
+                                                  "PowerShellCore.format.ps1xml",
+                                                  "PowerShellTrace.format.ps1xml",
+                                                  "Registry.format.ps1xml",
+                                                  "WSMan.format.ps1xml"
+                                              };
             RemoveDisallowedEntries(
                 iss.Formats,
                 allowedFormats,
                 formatEntry => IO.Path.GetFileName(formatEntry.FileName));
 
-            // Porting note: type files were deprecated
             List<string> allowedTypes = new List<string>();
             allowedTypes.AddRange(DefaultTypeFiles);
             RemoveDisallowedEntries(
@@ -4256,7 +4285,6 @@ namespace System.Management.Automation.Runspaces
             return coreSnapin;
         }
 
-        // WARNING: THIS CODE IS COMPLETELY DUPLICATED IN RunspaceConfigForSingleShell
         internal PSSnapInInfo ImportPSSnapIn(PSSnapInInfo psSnapInInfo, out PSSnapInException warning)
         {
             // See if the snapin is already loaded. If has been then there will be an entry in the
@@ -4719,32 +4747,6 @@ End
         private static string ImportSystemModulesText = @"";
 
         /// <summary>
-        /// This is the default function to use for clear-host. On Windows it rewrites the
-        /// host, and on Linux, it delegates to the native binary, 'clear'.
-        /// </summary>
-        internal static string GetClearHostFunctionText()
-        {
-            if (Platform.IsWindows)
-            {
-                return @"
-$RawUI = $Host.UI.RawUI
-$RawUI.CursorPosition = @{X=0;Y=0}
-$RawUI.SetBufferContents(
-    @{Top = -1; Bottom = -1; Right = -1; Left = -1},
-    @{Character = ' '; ForegroundColor = $rawui.ForegroundColor; BackgroundColor = $rawui.BackgroundColor})
-# .Link
-# http://go.microsoft.com/fwlink/?LinkID=225747
-# .ExternalHelp System.Management.Automation.dll-help.xml
-";
-            }
-            else
-            {
-                // Porting note: non-Windows platforms use `clear`
-                return "& (Get-Command -CommandType Application clear | Select-Object -First 1).Definition";
-            }
-        }
-
-        /// <summary>
         /// This is the default function to use for man/help. It uses
         /// splatting to pass in the parameters.
         /// </summary>
@@ -5101,32 +5103,6 @@ end
                 RemotingErrorIdStrings.PSSessionAppName,
                 ScopedItemOptions.None),
             // End: Variables which control remoting behavior
-
-            #region Platform
-            new SessionStateVariableEntry(
-                SpecialVariables.IsLinux,
-                Platform.IsLinux,
-                String.Empty,
-                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-
-            new SessionStateVariableEntry(
-                SpecialVariables.IsOSX,
-                Platform.IsOSX,
-                String.Empty,
-                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-
-            new SessionStateVariableEntry(
-                SpecialVariables.IsWindows,
-                Platform.IsWindows,
-                String.Empty,
-                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-
-            new SessionStateVariableEntry(
-                SpecialVariables.IsCoreCLR,
-                Platform.IsCoreCLR,
-                String.Empty,
-                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-            #endregion
         };
 
         /// <summary>
@@ -5147,6 +5123,8 @@ end
                         "Where-Object",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("?",
                         "Where-Object",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("ac",
+                        "Add-Content",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("clc",
                         "Clear-Content",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("cli",
@@ -5155,18 +5133,26 @@ end
                         "Clear-ItemProperty",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("clv",
                         "Clear-Variable",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("compare",
+                        "Compare-Object",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("cpi",
                         "Copy-Item",       "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("cpp",
+                        "Copy-ItemProperty",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("cvpa",
                         "Convert-Path",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("dbp",
                         "Disable-PSBreakpoint", "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("diff",
+                        "Compare-Object",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("ebp",
                         "Enable-PSBreakpoint", "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("epal",
                         "Export-Alias",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("epcsv",
                         "Export-Csv",      "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("fc",
+                        "Format-Custom",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("fl",
                         "Format-List",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("ft",
@@ -5276,9 +5262,15 @@ end
                         "Set-Item",        "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("sl",
                         "Set-Location",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("sleep",
+                        "Start-Sleep",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("sort",
+                        "Sort-Object",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("sp",
                         "Set-ItemProperty",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("saps",
+                        "Start-Process",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("start",
                         "Start-Process",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("spps",
                         "Stop-Process",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
@@ -5286,65 +5278,10 @@ end
                         "Stop-Service",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("sv",
                         "Set-Variable",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-// Porting note: #if !UNIX is used to disable alises for cmdlets which conflict with Linux / OS X
-#if !UNIX
-                    // ac is a native command on OS X
-                    new SessionStateAliasEntry("ac",
-                        "Add-Content",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("compare",
-                        "Compare-Object",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("cpp",
-                        "Copy-ItemProperty",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("diff",
-                        "Compare-Object",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("sleep",
-                        "Start-Sleep",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("sort",
-                        "Sort-Object",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("start",
-                        "Start-Process",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("tee",
                         "Tee-Object",      "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("write",
                         "Write-Output",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    // These were traqnsferred from the "transferred from the profile" section
-                    new SessionStateAliasEntry("cat",
-                        "Get-Content",     "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("cp",
-                        "Copy-Item",       "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ls",
-                        "Get-ChildItem",   "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("man",
-                        "help",            "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("mount",
-                        "New-PSDrive",    "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("mv",
-                        "Move-Item",       "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ps",
-                        "Get-Process",     "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rm",
-                        "Remove-Item",     "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rmdir",
-                        "Remove-Item",     "", ScopedItemOptions.AllScope),
-#endif
-                    // Bash built-ins we purposefully keep even if they override native commands
-                    new SessionStateAliasEntry("cd",
-                        "Set-Location",    "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("dir",
-                        "Get-ChildItem",   "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("echo",
-                        "Write-Output",    "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("fc",
-                        "Format-Custom",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("kill",
-                        "Stop-Process",    "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("pwd",
-                        "Get-Location",    "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("type",
-                        "Get-Content",     "", ScopedItemOptions.AllScope),
-                    // Native commands we keep because the functions act correctly on Linux
-                    new SessionStateAliasEntry("clear",
-                        "Clear-Host",      "", ScopedItemOptions.AllScope),
 //#if !CORECLR is used to disable aliases for cmdlets which are not available on OneCore
 #if !CORECLR
                     new SessionStateAliasEntry("asnp",
@@ -5381,18 +5318,46 @@ end
                         "Out-Printer",     "", ScopedItemOptions.AllScope),
 #endif
                     // Aliases transferred from the profile
+                    new SessionStateAliasEntry("cat",
+                        "Get-Content",     "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("cd",
+                        "Set-Location",    "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("clear",
+                        "Clear-Host",      "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("cp",
+                        "Copy-Item",       "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("h",
                         "Get-History",     "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("history",
                         "Get-History",     "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("kill",
+                        "Stop-Process",    "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("ls",
+                        "Get-ChildItem",   "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("man",
+                        "help",            "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("mount",
+                        "New-PSDrive",    "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("md",
                         "mkdir",          "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("mv",
+                        "Move-Item",       "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("popd",
                         "Pop-Location",    "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("ps",
+                        "Get-Process",     "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("pushd",
                         "Push-Location",   "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("pwd",
+                        "Get-Location",    "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("r",
                         "Invoke-History",  "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("rm",
+                        "Remove-Item",     "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("rmdir",
+                        "Remove-Item",     "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("echo",
+                        "Write-Output",    "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("cls",
                         "Clear-Host",      "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("chdir",
@@ -5401,6 +5366,8 @@ end
                         "Copy-Item",       "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("del",
                         "Remove-Item",     "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("dir",
+                        "Get-ChildItem",   "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("erase",
                         "Remove-Item",     "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("move",
@@ -5411,6 +5378,8 @@ end
                         "Rename-Item",     "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("set",
                         "Set-Variable",    "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("type",
+                        "Get-Content",     "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("icm",
                         "Invoke-Command",  "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("clhy",
@@ -5472,30 +5441,40 @@ end
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
 
+        internal const string DefaultClearHostFunctionText = @"
+$RawUI = $Host.UI.RawUI
+$RawUI.CursorPosition = @{X=0;Y=0}
+$RawUI.SetBufferContents(
+    @{Top = -1; Bottom = -1; Right = -1; Left = -1},
+    @{Character = ' '; ForegroundColor = $rawui.ForegroundColor; BackgroundColor = $rawui.BackgroundColor})
+# .Link
+# http://go.microsoft.com/fwlink/?LinkID=225747
+# .ExternalHelp System.Management.Automation.dll-help.xml
+";
+// Workaround for OS bug 7844078 = 'More.com problem with UTF8 on Nano'
+#if CORECLR
         internal const string DefaultMoreFunctionText = @"
 param([string[]]$paths)
-# Nano needs to use Unicode, but Windows and Linux need the default
-$OutputEncoding = if ($IsWindows -and $IsCoreCLR) {
-    [System.Text.Encoding]::Unicode
-} else {
-    [System.Console]::OutputEncoding
-}
-
-# Respect PAGER, use more on Windows, and use less on Linux
-if (Test-Path env:PAGER) {
-    $moreCommand = (Get-Command -CommandType Application $env:PAGER | Select-Object -First 1).Definition
-} elseif ($IsWindows) {
-    $moreCommand = (Get-Command -CommandType Application more | Select-Object -First 1).Definition
-} else {
-    $moreCommand = (Get-Command -CommandType Application less | Select-Object -First 1).Definition
-}
-
+$OutputEncoding = [System.Text.Encoding]::Unicode
 if($paths) {
-    foreach ($file in $paths) {
-        Get-Content $file | & $moreCommand
+    foreach ($file in $paths)
+    {
+        Get-Content $file | more.com
     }
-} else { $input | & $moreCommand }
+} else { $input | more.com }
 ";
+#else
+        internal const string DefaultMoreFunctionText = @"
+param([string[]]$paths)
+$OutputEncoding = [System.Console]::OutputEncoding
+if($paths) {
+    foreach ($file in $paths)
+    {
+        Get-Content $file | more.com
+    }
+} else { $input | more.com }
+";
+#endif
 
         internal const string DefaultSetDriveFunctionText = "Set-Location $MyInvocation.MyCommand.Name";
         internal static ScriptBlock SetDriveScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock(DefaultSetDriveFunctionText, isProductCode: true);
@@ -5503,21 +5482,16 @@ if($paths) {
         internal static SessionStateFunctionEntry[] BuiltInFunctions = new SessionStateFunctionEntry[]
         {
             // Functions.  Only the name and definitions are used
+
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("prompt", DefaultPromptFunctionText, isProductCode: true), 
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("TabExpansion2", TabExpansionFunctionText, isProductCode: true),
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Clear-Host", GetClearHostFunctionText(), isProductCode: true),
-            // Porting note: we keep more because the function acts correctly on Linux
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Clear-Host", DefaultClearHostFunctionText, isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("more", DefaultMoreFunctionText, isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText(), isProductCode: true),
-            // Porting note: we remove mkdir on Linux because it is a conflict
-            #if !UNIX
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("mkdir", GetMkdirFunctionText(), isProductCode: true),
-            #endif
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Get-Verb", GetGetVerbText(), isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("oss", GetOSTFunctionText(), isProductCode: true),
 
-            // Porting note: we remove the drive functions from Linux because they make no sense
-            #if !UNIX
             // Default drives
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("A:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("B:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
@@ -5545,7 +5519,6 @@ if($paths) {
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("X:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Y:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Z:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
-            #endif
 
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location ..", isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\", isProductCode: true),
@@ -5673,7 +5646,6 @@ if($paths) {
 
             try
             {
-                // WARNING: DUPLICATE CODE see RunspaceConfigForSingleShell
                 assembly = Assembly.Load(new AssemblyName(psSnapInInfo.AssemblyName));
             }
             catch (BadImageFormatException e)
@@ -5697,7 +5669,6 @@ if($paths) {
             try
             {
                 AssemblyName assemblyName = ClrFacade.GetAssemblyName(psSnapInInfo.AbsoluteModulePath);
-
                 if (!string.Equals(assemblyName.FullName, psSnapInInfo.AssemblyName, StringComparison.OrdinalIgnoreCase))
                 {
                     string message = StringUtil.Format(ConsoleInfoErrorStrings.PSSnapInAssemblyNameMismatch, psSnapInInfo.AbsoluteModulePath, psSnapInInfo.AssemblyName);

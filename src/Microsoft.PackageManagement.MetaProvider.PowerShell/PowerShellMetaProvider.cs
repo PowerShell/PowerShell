@@ -134,8 +134,6 @@ namespace Microsoft.PackageManagement.MetaProvider.PowerShell.Internal {
                     if (_baseFolder == null || !Directory.Exists(_baseFolder)) {
                         throw new Exception(Resources.Messages.CantFindBasePowerShellModuleFolder);
                     }
-
-                    _baseFolder = Path.Combine(_baseFolder, "Modules", "PackageManagement");
                 }
                 return _baseFolder;
             }

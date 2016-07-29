@@ -1,6 +1,5 @@
-$powershellexe = (get-process -id $PID).mainmodule.filename
 
-Describe "Clone array" -Tags "CI" {
+Describe "Clone array" -Tags DRT {
     It "Cast in target expr" {
         (([int[]](42)).clone()) | Should Be 42
         (([int[]](1..5)).clone()).Length | Should Be 5
@@ -16,7 +15,7 @@ Describe "Clone array" -Tags "CI" {
     }
 }
 
-Describe "Set fields through PSMemberInfo" -Tags "CI" {
+Describe "Set fields through PSMemberInfo" -Tags DRT {
     Add-Type @"
     public struct AStruct { public string s; }
 "@
@@ -34,12 +33,12 @@ Describe "Set fields through PSMemberInfo" -Tags "CI" {
     }
 }
 
-Describe "MSFT:3309783" -Tags "CI" {
+Describe "MSFT:3309783" -Tags DRT {
 
     It "Run in another process" {
         # For a reliable test, we must run this in a new process because an earlier binding in this process
         # could mask the bug/fix.
-        & $powershellexe -noprofile -command "[psobject] | % FullName" | Should Be System.Management.Automation.PSObject
+        powershell -noprofile -command "[psobject] | % FullName" | Should Be System.Management.Automation.PSObject
     }
 
     It "Run in current process" {
@@ -63,7 +62,7 @@ Describe "MSFT:3309783" -Tags "CI" {
     }
 }
 
-Describe "ScriptBlockAst.GetScriptBlock throws on error" -Tags "CI" {
+Describe "ScriptBlockAst.GetScriptBlock throws on error" -Tags DRT {
 
     $e = $null
 
@@ -81,7 +80,7 @@ Describe "ScriptBlockAst.GetScriptBlock throws on error" -Tags "CI" {
     }
 }
 
-Describe "Hashtable key property syntax" -Tags "CI" {
+Describe "Hashtable key property syntax" -Tags DRT {
     $script = @'
     # First create a hashtable wrapped in PSObject
     $hash = New-Object hashtable
@@ -102,11 +101,11 @@ Describe "Hashtable key property syntax" -Tags "CI" {
     It "In different process" {
         # So also run in a fresh process
         $bytes = [System.Text.Encoding]::Unicode.GetBytes($script)
-        & $powershellexe -noprofile -encodedCommand ([Convert]::ToBase64String($bytes)) | Should Be Hello
+        powershell -noprofile -encodedCommand ([Convert]::ToBase64String($bytes)) | Should Be Hello
     }
 }
 
-Describe "Assign automatic variables" -Tags "CI" {
+Describe "Assign automatic variables" -Tags DRT {
     
     $autos = '_', 'args', 'this', 'input', 'pscmdlet', 'psboundparameters', 'myinvocation', 'psscriptroot', 'pscommandpath'
 
@@ -142,7 +141,7 @@ Describe "Assign automatic variables" -Tags "CI" {
     }
 }
 
-Describe "Attribute error position" -Tags "CI" {
+Describe "Attribute error position" -Tags DRT {
     It "Ambiguous overloads" {
         try
         {
@@ -162,7 +161,7 @@ Describe "Attribute error position" -Tags "CI" {
     }
 }
 
-Describe "Multiple alias attributes" -Tags "CI" {
+Describe "Multiple alias attributes" -Tags DRT {
     It "basic test" {
         function foo {
             param(
@@ -179,7 +178,7 @@ Describe "Multiple alias attributes" -Tags "CI" {
     }
 }
 
-Describe "Members of System.Type" -Tags "CI" {
+Describe "Members of System.Type" -Tags DRT {
     It "Members in public classes derived from System.Type should be found" {
         class MyType : System.Collections.IEnumerable
         {

@@ -4,7 +4,7 @@
 
 Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
 
-Describe 'Classes inheritance syntax' -Tags "CI" {
+Describe 'Classes inheritance syntax' -Tags "DRT" {
 
     It 'Base types' {
         class C1 {}
@@ -27,16 +27,16 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         class C7 : C6 { C7() : base() {} }
     }
 
-    It 'inheritance syntax allows newlines in various places' {
+    It 'inheritance syntax allows newlines in varius places' {
         class C {}
-        class C2a:C,system.IDisposable{ [void] Dispose() { }}
+        class C2a:C,system.ICloneable{ [object] Clone() {return $null}}
         class C2b 
             : 
             C
             , 
-            system.IDisposable 
+            system.ICloneable 
             { 
-                [void] Dispose() {}
+                [object] Clone() {return $null}
                 C2b()
                 :   # there are extra spaces here
                 base
@@ -46,8 +46,8 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
                 }
             }
 
-        [C2a].GetInterface("System.IDisposable") | Should Not Be $null
-        [C2b].GetInterface("System.IDisposable") | Should Not Be $null
+        [C2a].GetInterface("System.ICloneable") | Should Not Be $null
+        [C2b].GetInterface("System.ICloneable") | Should Not Be $null
     }
 
     It 'can subclass .NET type' {
@@ -81,7 +81,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
     }
 }
 
-Describe 'Classes inheritance syntax errors' -Tags "CI" {
+Describe 'Classes inheritance syntax errors' -Tags "DRT" { 
     ShouldBeParseError "class A : NonExistingClass {}" TypeNotFound 10
     ShouldBeParseError "class A : {}" TypeNameExpected 9
     ShouldBeParseError "class A {}; class B : A, {}" TypeNameExpected 24
@@ -90,7 +90,7 @@ Describe 'Classes inheritance syntax errors' -Tags "CI" {
 
     ShouldBeParseError "class A {}; class B : A, NonExistingInterface {}" TypeNotFound 25
     ShouldBeParseError "class A {} ; class B {}; class C : A, B {}" InterfaceNameExpected 38 -SkipAndCheckRuntimeError
-    ShouldBeParseError "class A{} ; class B : A, System.IDisposable[] {}" SubtypeArray 25 -SkipAndCheckRuntimeError
+    ShouldBeParseError "class A{} ; class B : A, System.ICloneable[] {}" SubtypeArray 25 -SkipAndCheckRuntimeError
     ShouldBeParseError "class A {}; class B : A, NonExistingInterface {}" TypeNotFound 25
 
     # base should be accepted only on instance ctors
@@ -118,7 +118,7 @@ Describe 'Classes inheritance syntax errors' -Tags "CI" {
     ShouldBeParseError "class A : C {}; class B : A {}; class C : B {}" TypeNotFound 10 -SkipAndCheckRuntimeError
 }
 
-Describe 'Classes methods with inheritance' -Tags "CI" {
+Describe 'Classes methods with inheritance' -Tags "DRT" {
 
     Context 'Method calls' {
 
@@ -367,7 +367,7 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
 }
 
 
-Describe 'Classes inheritance ctors syntax errors' -Tags "CI" {
+Describe 'Classes inheritance ctors syntax errors' -Tags "DRT" {
     
     #DotNet.Interface.NotImplemented
     ShouldBeParseError "class MyComparable : system.IComparable {}" TypeCreationError 0 -SkipAndCheckRuntimeError
@@ -382,7 +382,7 @@ Describe 'Classes inheritance ctors syntax errors' -Tags "CI" {
     ShouldBeParseError 'class A { A([int]$a) {} }; class B : A {}' BaseClassNoDefaultCtor 27 -SkipAndCheckRuntimeError
 }
 
-Describe 'Classes inheritance ctors' -Tags "CI" {
+Describe 'Classes inheritance ctors' -Tags "DRT" {
     
     It 'can call base ctor' {
         class A { 
@@ -508,7 +508,7 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
     }
 }
 
-Describe 'Type creation' -Tags "CI" {
+Describe 'Type creation' {
     It 'can call super-class methods sequentially' {
         $sb = [scriptblock]::Create(@'
 class Base

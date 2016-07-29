@@ -12,6 +12,8 @@
 #  limitations under the License.
 #
 # ------------------ PackageManagement Test  ----------------------------------------------
+ipmo "$PSScriptRoot\utility.psm1"
+
 
 # ------------------------------------------------------------------------------
 # Actual Tests:
@@ -24,17 +26,36 @@ $workingMaximumVersions = {"2.0", "2.5", "3.0"};
 $packageNames = @("Azurecontrib", "AWSSDK", "TestLib");
 $minimumVersions = @("1.0", "1.3", "1.5");
 $maximumVersions = @("1.8", "2.1", "2.3");
+$destination = "$env:tmp\nugettests"
+$relativetestpath = "$env:tmp\relativepathtestnuget"
+$dependenciesSource = "$env:temp\PackageManagementDependencies"
 $dtlgallery = "https://dtlgalleryint.cloudapp.net/api/v2/"
 $providerName ="Microsoft-Windows-PowerShell"
 $vstsFeed = "https://powershellgettest.pkgs.visualstudio.com/DefaultCollection/_packaging/psgettestfeed/nuget/v2"
 $vstsFeedWithSlash = "https://powershellgettest.pkgs.visualstudio.com/DefaultCollection/_packaging/psgettestfeed/nuget/v2/"
-#$proxyPath = "$env:tmp\ProxyConsoleProgram\Microsoft.HttpForwarder.Console.exe"
+$proxyPath = "$env:tmp\ProxyConsoleProgram\Microsoft.HttpForwarder.Console.exe"
 $password = ConvertTo-SecureString "4bwvgxrbzvlxc7xgv22eehlix3enmrdwblrxkirnrc3uak23naoa" -AsPlainText -Force
 $vstsCredential = New-Object System.Management.Automation.PSCredential "quoct", $password
+
+Get-ChildItem -Path $dependenciesSource -Recurse -Include *.nupkg | % { $_.IsReadOnly = $false }
+if( test-path $destination ) {
+    rmdir -recurse -force $destination -ea silentlycontinue
+}
+mkdir $destination -ea silentlycontinue
 
 $pkgSources = @("NUGETTEST101", "NUGETTEST202", "NUGETTEST303");
 
 $nuget = "nuget"
+
+# set to this feed to bootstrap the testing version
+$env:BootstrapProviderTestfeedUrl = "https://onegetblob.blob.core.windows.net/test/providers.zippedtest.nuget.testfeed.swidtag"
+
+#bootstrap
+Install-PackageProvider -Name $nuget -Force
+
+$nugetVersion = (Get-PackageProvider $nuget).Version
+
+"Nuget version is $nugetVersion"
 
 # returns true if the test for the current nuget version should be skipped or not
 # Example: if we want to skip test for any nuget version below 2.8.5.205, we will use
@@ -52,43 +73,63 @@ function SkipVersion([version]$minVersion,[version]$maxVersion) {
     return $true
 }
 
-Describe "Find, Get, Save, and Install-Package with Culture" -Tags "Feature" {
+Describe "Installing NuGet packages from the public feed" {
+    try {
+        $env:BootstrapProviderTestfeedUrl = [string]::Empty
 
-    <#
+        $currentPublicFeedVersion = [version]"2.8.5.205"
+
+        $nugetFromPublicFeed = Install-PackageProvider -Name $nuget -Force
+        ($nugetFromPublicFeed.Version -eq $currentPublicFeedVersion) | should be $true
+    }
+    finally {
+        $env:BootstrapProviderTestfeedUrl = "https://onegetblob.blob.core.windows.net/test/providers.nuget.testfeed.swidtag"
+
+        $currentTestFeedVersion = [version]"2.8.5.206"
+
+        $nugetFromTestFeed = Install-PackageProvider -Name $nuget -Force
+        ($nugetFromTestFeed.Version -eq $currentTestFeedVersion) | should be $true
+    }
+}
+
+Describe "Find, Get, Save, and Install-Package with Culture" -Tags @('BVT', 'DRT'){
+    # make sure that packagemanagement is loaded
+    import-packagemanagement
+
     (get-packageprovider -name "OneGetTest" -list).name | should match "OneGetTest"
     $x = PowerShell '(Import-PackageProvider -name OneGetTest -RequiredVersion 9.9 -WarningAction SilentlyContinue -force ).Name'
     $x | should match "OneGetTest"
-    #>
+
  
-    it "EXPECTED: Find a package should not show Culture" -Skip {
+    it "EXPECTED: Find a package should not show Culture" {
     
         $packages = Find-Package -ProviderName OneGetTest -DisplayCulture
         $packages.Culture | Should Not BeNullOrEmpty
         $packages.Name | Should Not BeNullOrEmpty
 	}
 
-    it "EXPECTED: Find a package with a DisplayCulture" -Skip {
+    it "EXPECTED: Find a package with a DisplayCulture" {
     
         $packages = Find-Package -DisplayCulture
         $packages.Culture | Should Not BeNullOrEmpty
         $packages.Name | Should Not BeNullOrEmpty
 	}
 
-    it "EXPECTED: Get a package should not show Culture" -Skip {
+    it "EXPECTED: Get a package should not show Culture" {
     
         $packages = Get-Package -DisplayCulture -ProviderName OneGetTest
         $packages.Culture | Should Not BeNullOrEmpty
         $packages.Name | Should Not BeNullOrEmpty
 	}
 
-    it "EXPECTED: Install a package with a DisplayCulture" -Skip {
+    it "EXPECTED: Install a package with a DisplayCulture" {
     
         $packages = install-Package -ProviderName OneGetTest -name jquery -force -DisplayCulture
         $packages.Culture | Should Not BeNullOrEmpty
         $packages.Name | Should Not BeNullOrEmpty
 	}
 
-    it "EXPECTED: Save a package with a DisplayCulture" -Skip {
+    it "EXPECTED: Save a package with a DisplayCulture" {
     
         $packages = save-Package -ProviderName OneGetTest -name jquery -DisplayCulture -path $destination
         $packages.Culture | Should Not BeNullOrEmpty
@@ -96,11 +137,13 @@ Describe "Find, Get, Save, and Install-Package with Culture" -Tags "Feature" {
 	}
 }
 
-Describe "Event Test" -Tags "Feature" {
+Describe "Event Test" -Tags @('BVT', 'DRT'){
+    # make sure that packagemanagement is loaded
+    import-packagemanagement
  
-    it "EXPECTED: install a package should raise event" -Skip:(-not $IsWindows) {
+    it "EXPECTED: install a package should raise event" {
      
-        Install-Package EntityFramework -ProviderName nuget -requiredVersion 6.1.3  -Destination $TestDrive -source 'http://www.nuget.org/api/v2/' -force
+        Install-Package EntityFramework -ProviderName nuget -requiredVersion 6.1.3  -Destination $env:tmp -source 'http://www.nuget.org/api/v2/' -force
         
         $retryCount= 5
         while($retryCount -gt 0)
@@ -111,7 +154,7 @@ Describe "Event Test" -Tags "Feature" {
             {
                 if($events)
                 {
-                    $events[0].Message | Should Match "Package=EntityFramework"  
+                    $events[0].Message | Should Match "Package=jQuery"  
                     break
                 }
             }
@@ -143,7 +186,7 @@ Describe "Event Test" -Tags "Feature" {
                
 	}
 
-    it "EXPECTED: install a package should report destination" -Skip {
+    it "EXPECTED: install a package should report destination" {
      
         Import-PackageProvider OneGetTest -Force
         Install-Package Bla -ProviderName OneGetTest -Force
@@ -190,10 +233,10 @@ Describe "Event Test" -Tags "Feature" {
                
 	}
 
-    it "EXPECTED: uninstall a package should raise event" -Skip:(-not $IsWindows) {
+    it "EXPECTED: uninstall a package should raise event" {
      
-        Install-Package EntityFramework -ProviderName nuget -requiredVersion 6.1.3  -Destination $TestDrive -source 'http://www.nuget.org/api/v2/' -force 
-        UnInstall-Package EntityFramework -ProviderName nuget -Destination $TestDrive
+        Install-Package EntityFramework -ProviderName nuget -requiredVersion 6.1.3  -Destination $env:tmp -source 'http://www.nuget.org/api/v2/' -force 
+        UnInstall-Package EntityFramework -ProviderName nuget -Destination $env:tmp       
 
         $retryCount= 5
         while($retryCount -gt 0)
@@ -204,7 +247,7 @@ Describe "Event Test" -Tags "Feature" {
             {
                 if($events)
                 {
-                    $events[0].Message | Should Match "Package=EntityFramework"  
+                    $events[0].Message | Should Match "Package=jQuery"  
                     break
                 }
             }
@@ -236,9 +279,9 @@ Describe "Event Test" -Tags "Feature" {
                
 	}
 
-    it "EXPECTED: save a package should raise event" -Skip:(-not $IsWindows) {
+    it "EXPECTED: save a package should raise event" {
      
-        save-Package EntityFramework -ProviderName nuget -path $TestDrive -requiredVersion 6.1.3 -source 'http://www.nuget.org/api/v2/' -force
+        save-Package EntityFramework -ProviderName nuget -path $env:tmp -requiredVersion 6.1.3 -source 'http://www.nuget.org/api/v2/' -force
 
         $retryCount= 5
         while($retryCount -gt 0)
@@ -249,7 +292,7 @@ Describe "Event Test" -Tags "Feature" {
             {
                 if($events)
                 {
-                    $events[0].Message | Should Match "Package=EntityFramework"  
+                    $events[0].Message | Should Match "Package=jQuery"  
                     break
                 }
             }
@@ -281,12 +324,16 @@ Describe "Event Test" -Tags "Feature" {
 	}
 }
 
-Describe "Find-Package" -Tags @('Feature','SLOW'){
-    it "EXPECTED: Find a package with a location created via new-psdrive" -Skip:(-not $IsWindows) {
+Describe "Find-Package" -Tags @('BVT', 'DRT'){
+    # make sure that packagemanagement is loaded
+    import-packagemanagement
+
+    it "EXPECTED: Find a package with a location created via new-psdrive" {
+
         $Error.Clear()
-        New-PSDrive -Name xx -PSProvider FileSystem -Root $TestDrive -warningaction:silentlycontinue -ea silentlycontinue > $null; find-package -name "fooobarrr" -provider nuget -source xx:\  -warningaction:silentlycontinue -ea silentlycontinue
-        $ERROR[0].FullyQualifiedErrorId | should  Not Be "SourceNotFound,Microsoft.PowerShell.PackageManagement.Cmdlets.FindPackage"
-        $ERROR[0].FullyQualifiedErrorId | should be "NoMatchFoundForCriteria,Microsoft.PowerShell.PackageManagement.Cmdlets.FindPackage"
+        $msg =  powershell 'New-PSDrive -Name xx -PSProvider FileSystem -Root $env:tmp -warningaction:silentlycontinue -ea silentlycontinue > $null; find-package -name "fooobarrr" -provider nuget -source xx:\  -warningaction:silentlycontinue -ea silentlycontinue;$ERROR[0].FullyQualifiedErrorId'
+        $msg | should  Not Be "SourceNotFound,Microsoft.PowerShell.PackageManagement.Cmdlets.FindPackage"
+        $msg | should be "NoMatchFoundForCriteria,Microsoft.PowerShell.PackageManagement.Cmdlets.FindPackage"
 	}
 
     It "EXPECTED: Finds 'Zlib' Package" {
@@ -332,7 +379,7 @@ Describe "Find-Package" -Tags @('Feature','SLOW'){
         (find-package -name "TestPackage" -provider $nuget -source $fwlink -forcebootstrap).name | should match "TestPackage"
     }
 
-    It "EXPECTED: Finds work with dependencies loop" -Skip {
+    It "EXPECTED: Finds work with dependencies loop" {
         (find-package -name "ModuleWithDependenciesLoop" -provider $nuget -source "$dependenciesSource\SimpleDependenciesLoop").name | should match "ModuleWithDependenciesLoop"
     }
 
@@ -357,7 +404,7 @@ Describe "Find-Package" -Tags @('Feature','SLOW'){
 
     }
 
-    It "EXPECTED: Finds package with Credential" -Pending {
+    It "EXPECTED: Finds package with Credential" {
         $credPackage = Find-Package Contoso -Credential $vstsCredential -Source $vstsFeed -ProviderName $Nuget
         $credPackage.Count | should be 1
         $credPackage.Name | should match "Contoso"
@@ -369,8 +416,8 @@ Describe "Find-Package" -Tags @('Feature','SLOW'){
     }
 
     It "EXPECTED: Cannot find unlisted package" {
-        find-package -provider $nuget -source $dtlgallery -name hellops -erroraction silentlycontinue
-        $Error[0].FullyQualifiedErrorId | should be "NoMatchFoundForCriteria,Microsoft.PowerShell.PackageManagement.Cmdlets.FindPackage"
+        $msg = powershell "find-package -provider $nuget -source $dtlgallery -name hellops -erroraction silentlycontinue; `$Error[0].FullyQualifiedErrorId"
+        $msg | should be "NoMatchFoundForCriteria,Microsoft.PowerShell.PackageManagement.Cmdlets.FindPackage"
     }
 
     It "EXPECTED: Cannot find unlisted package with all versions parameter" {
@@ -409,8 +456,8 @@ Describe "Find-Package" -Tags @('Feature','SLOW'){
 
     It "EXPECTED: Cannot find unlisted package with maximum versions" {
         # error out because all the versions below 0.6 are unlisted
-        find-package -provider $nuget -source $dtlgallery -name gistprovider -maximumversion 0.6 -erroraction silentlycontinue
-        $Error[0].FullyQualifiedErrorId | should be "NoMatchFoundForCriteria,Microsoft.PowerShell.PackageManagement.Cmdlets.FindPackage"
+        $msg = powershell "find-package -provider $nuget -source $dtlgallery -name gistprovider -maximumversion 0.6 -erroraction silentlycontinue; `$Error[0].FullyQualifiedErrorId"
+        $msg | should be "NoMatchFoundForCriteria,Microsoft.PowerShell.PackageManagement.Cmdlets.FindPackage"
     }
 
     It "EXPECTED: Cannot find unlisted package with minimum versions" {
@@ -476,19 +523,20 @@ Describe "Find-Package" -Tags @('Feature','SLOW'){
     }
 
     It "EXPECTED: -FAILS- Find-Package with wrong source should not error out about dynamic parameter" {
-        find-package -source WrongSource -name zlib -erroraction silentlycontinue -Contains PackageManagement
-        $Error[0].FullyQualifiedErrorId | should be "SourceNotFound,Microsoft.PowerShell.PackageManagement.Cmdlets.FindPackage"
+        $msg = powershell "find-package -source WrongSource -name zlib -erroraction silentlycontinue -Contains PackageManagement; `$Error[0].FullyQualifiedErrorId"
+        $msg | should be "SourceNotFound,Microsoft.PowerShell.PackageManagement.Cmdlets.FindPackage"
     }
 
     It "EXPECTED: -FAILS- Find-Package with wrong source and wrong dynamic parameter" {
-        find-package -source WrongSource -name zlib -erroraction silentlycontinue -WrongDynamicParameter PackageManagement
-        $Error[0].FullyQualifiedErrorId | should be "SourceNotFound,Microsoft.PowerShell.PackageManagement.Cmdlets.FindPackage"
+        $msg = powershell "find-package -source WrongSource -name zlib -erroraction silentlycontinue -WrongDynamicParameter PackageManagement; `$Error[0].FullyQualifiedErrorId"
+        $msg | should be "SourceNotFound,Microsoft.PowerShell.PackageManagement.Cmdlets.FindPackage"
     }
 }
 
-Describe Save-Package -Tags "Feature" {
+Describe Save-Package -Tags @('BVT', 'DRT'){
 	# make sure packagemanagement is loaded
-    $destination = $TestDrive
+	import-packagemanagement
+
 
     It "EXPECTED success: save-package path should be created with -force " {
         $dest = "$destination\NeverEverExists"
@@ -497,10 +545,10 @@ Describe Save-Package -Tags "Feature" {
         $package.Name | should be "TSDProvider"
         (test-path "$dest\TSDProvider*") | should be $true
         if (test-path "$dest\TSDProvider*") {
-            Remove-Item $dest\TSDProvider* -force
+            rm $dest\TSDProvider* -force
         }
         if (test-path "$dest") {
-            Remove-Item $dest -force
+            rm $dest -force
         }
     }
 
@@ -511,21 +559,21 @@ Describe Save-Package -Tags "Feature" {
         $package.Name | should be "TSDProvider"
         (test-path "$destination\TSDProvider*") | should be $true
         if (test-path "$destination\TSDProvider*") {
-            Remove-Item $destination\TSDProvider* -force
+            rm $destination\TSDProvider* -force
         }
     }
 
-    It "EXPECTED success: save-package -LiteralPath" -Pending:(!$IsWindows) {
+    It "EXPECTED success: save-package -LiteralPath" {
         $dest = "$destination\NeverEverExists"
         $package = save-package -LiteralPath $dest -ProviderName nuget -Source $dtlgallery -name TSDProvider -force
        
         $package.Name | should be "TSDProvider"
         (test-path "$dest\TSDProvider*") | should be $true
         if (test-path "$dest\TSDProvider*") {
-            Remove-Item $dest\TSDProvider* -force
+            rm $dest\TSDProvider* -force
         }
         if (test-path "$dest") {
-            Remove-Item $dest -force
+            rm $dest -force
         }
     }
 
@@ -535,20 +583,20 @@ Describe Save-Package -Tags "Feature" {
         $package.Name | should be "TSDProvider"
         (test-path "$destination\TSDProvider*") | should be $true
         if (test-path "$destination\TSDProvider*") {
-            Remove-Item $destination\TSDProvider* -force
+            rm $destination\TSDProvider* -force
         }
     }
 
     It "save-package -name with wildcards, Expect error" {
         $Error.Clear()
         $package =  save-package -path $destination -name DOESNOTEXIST* -warningaction:silentlycontinue -ErrorVariable wildcardError -ErrorAction SilentlyContinue        
-        $wildcardError.FullyQualifiedErrorId | should be "WildCardCharsAreNotSupported,Microsoft.PowerShell.PackageManagement.Cmdlets.SavePackage"
+        $wildcardError.FullyQualifiedErrorId| should be "WildCardCharsAreNotSupported,Microsoft.PowerShell.PackageManagement.Cmdlets.SavePackage"
     }
 
-	it "EXPECTED: Saves 'Zlib' Package To Packages Directory" -Pending {
+	it "EXPECTED: Saves 'Zlib' Package To Packages Directory" {
         $version = "1.2.8.8"
         $expectedPackages = @("zlib", "zlib.v120.windesktop.msvcstl.dyn.rt-dyn", "zlib.v140.windesktop.msvcstl.dyn.rt-dyn")
-        $newDestination = Join-Path $TestDrive "nugetinstallation"
+        $newDestination = "$env:tmp\nugetinstallation"
 		
         try {
             $packages = Save-Package -Name "zlib" -ProviderName $nuget -Source $source -RequiredVersion $version -ForceBootstrap -Path $destination
@@ -592,24 +640,23 @@ Describe Save-Package -Tags "Feature" {
             }
 
 		    if (Test-Path $destination\zlib*) {
-			    Remove-Item $destination\zlib*
+			    rm $destination\zlib*
 		    }
 
         }
     }
 
-    it "EXPECTED: Saves 'Zlib' Package to Packages Directory and install it without dependencies" -Pending {
+    it "EXPECTED: Saves 'Zlib' Package to Packages Directory and install it without dependencies" {
         $version = "1.2.8.8"
-        $newDestination = "$TestDrive\newdestination\nugetinstallation"
+        $newDestination = "$env:tmp\nugetinstallation"
 
         try {
 		    (save-package -name "zlib" -provider $nuget -source $source -Path $destination -RequiredVersion $version)
 		    (test-path $destination\zlib*) | should be $true
             remove-item $destination\zlib.v1* -force -Recurse -ErrorAction SilentlyContinue 
 
-            $Error.Clear()
-            install-package -name zlib -provider $nuget -source $destination -destination $newDestination -force -RequiredVersion $version -ErrorAction SilentlyContinue
-            $Error[0].FullyQualifiedErrorId | should match "UnableToFindDependencyPackage,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackage"
+            $msg = powershell "install-package -name zlib -provider $nuget -source $destination -destination $newDestination -force -RequiredVersion $version -ErrorAction SilentlyContinue; `$Error[0].FullyQualifiedErrorId"
+            $msg | should match "UnableToFindDependencyPackage,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackage"
             (Test-Path "$newDestination\zlib*") | should be $false
         }
         finally {
@@ -618,13 +665,13 @@ Describe Save-Package -Tags "Feature" {
             }
 
 		    if (Test-Path $destination\zlib*) {
-			    Remove-Item $destination\zlib*
+			    rm $destination\zlib*
 		    }
 
         }
     }
 
-    It "EXPECTED: Saves work with dependencies loop" -Skip {
+    It "EXPECTED: Saves work with dependencies loop" {
         try {
             $msg = powershell "save-package -name ModuleWithDependenciesLoop -provider $nuget -source `"$dependenciesSource\SimpleDependenciesLoop`" -path $destination -ErrorAction SilentlyContinue -WarningAction SilentlyContinue; `$Error[0].FullyQualifiedErrorId"
             $msg | should match "ProviderFailToDownloadFile,Microsoft.PowerShell.PackageManagement.Cmdlets.SavePackage"
@@ -632,7 +679,7 @@ Describe Save-Package -Tags "Feature" {
         }
         finally {
             if (Test-Path $destination\ModuleWithDependenciesLoop*) {
-                Remove-Item $destination\ModuleWithDependenciesLoop*
+                rm $destination\ModuleWithDependenciesLoop*
             }
         }
     }
@@ -644,12 +691,12 @@ Describe Save-Package -Tags "Feature" {
         }
         finally {
             if (Test-Path $destination\TestPackage*) {
-                Remove-Item $destination\TestPackage*
+                rm $destination\TestPackage*
             }
         }
     }
 
-    It "EXPECTED: Saves 'awssdk' package which has more than 200 versions" -Pending {
+    It "EXPECTED: Saves 'awssdk' package which has more than 200 versions" {
 		(save-package -name "awssdk" -provider $nuget -source $source -Path $destination)
 		(test-path $destination\awssdk*) | should be $true
 		if (Test-Path $destination\awssdk*) {
@@ -657,17 +704,16 @@ Describe Save-Package -Tags "Feature" {
 		}    
     }
 
-    It "EXPECTED: Saves package with Credential" -Pending {
-        #TODO: Need to fix this. Already opened an issue on GitHub
+    It "EXPECTED: Saves package with Credential" {
         Save-Package Contoso -Credential $vstsCredential -Source $vstsFeed -ProviderName $Nuget -Path $destination
         (Test-Path $destination\contoso*) | should be $true
 
         if (Test-Path $destination\contoso*) {
-            Remove-Item $destination\contoso*
+            rm $destination\contoso*
         }
     }
 
-	it "EXPECTED: Saves Various Packages With Various Version Parameters To Packages Directory" -Pending {
+	it "EXPECTED: Saves Various Packages With Various Version Parameters To Packages Directory" {
 		foreach ($x in $packageNames) {
 			foreach ($y in $minimumVersions) {
 				foreach ($z in $maximumVersions) {
@@ -681,11 +727,11 @@ Describe Save-Package -Tags "Feature" {
 		}
 	}
 
-	It "EXPECTED: Saves 'Zlib' Package After Having The Provider Piped" -Pending {
+	It "EXPECTED: Saves 'Zlib' Package After Having The Provider Piped" {
 	    (find-package -name "zlib" -provider $nuget -source $source | save-package -Path $destination)
 	    (Test-Path -Path $destination\zlib*) | should be $true
 	    if (Test-Path -Path $destination\zlib*) {
-		    Remove-Item $destination\zlib*
+		    rm $destination\zlib*
         }
     }
 
@@ -726,10 +772,10 @@ Describe Save-Package -Tags "Feature" {
     }
 }
 
-Describe "save-package with Whatif" -Tags "Feature" {
+Describe "save-package with Whatif" -Tags @('BVT', 'DRT'){
     # make sure that packagemanagement is loaded
     #import-packagemanagement
-    $tempDir = Join-Path $TestDrive "nugettesttempfolder"    
+    $tempDir = "$env:temp\nugettesttempfolder"    
 
     BeforeEach{
         $tempFile = [System.IO.Path]::GetTempFileName() 
@@ -737,7 +783,7 @@ Describe "save-package with Whatif" -Tags "Feature" {
 
         if (-not (Test-Path $tempDir))
         {
-            new-item -type directory $tempDir | Out-Null
+            md $tempDir | Out-Null
         }
     }
 
@@ -774,10 +820,9 @@ Describe "save-package with Whatif" -Tags "Feature" {
 }
 
 
-Describe "install-package with Whatif" -Tags "Feature" {
+Describe "install-package with Whatif" -Tags @('BVT', 'DRT'){
     # make sure that packagemanagement is loaded
     #import-packagemanagement
-    $installationPath = Join-Path $TestDrive "InstallationPath"
 
     BeforeEach{
         $tempFile = [System.IO.Path]::GetTempFileName() 
@@ -793,43 +838,50 @@ Describe "install-package with Whatif" -Tags "Feature" {
     }
 
      It "install-package -name nuget with whatif, Expect succeed" {
-
-        if($PSCulture -eq 'en-US'){
-            # Start Transcript
-            Start-Transcript -Path $tempFile
+       if($PSCulture -eq 'en-US'){
+        # Start Transcript
+        Start-Transcript -Path $tempFile
 		
-            install-Package -name jquery -force -source $source -ProviderName NuGet -destination $installationPath -warningaction:silentlycontinue -ErrorAction SilentlyContinue -whatif  
+        install-Package -name jquery -force -source $source -ProviderName NuGet -destination c:\foof -warningaction:silentlycontinue -ErrorAction SilentlyContinue -whatif  
 
-            # Stop Transcript and get content of transcript file
-            Stop-Transcript
-            $transcriptContent = Get-Content $tempFile
+        # Stop Transcript and get content of transcript file
+        Stop-Transcript
+        $transcriptContent = Get-Content $tempFile
 
-            $transcriptContent | where { $_.Contains( $whatif ) } | should be $true
-            Test-Path $installationPath | should be $false
+        $transcriptContent | where { $_.Contains( $whatif ) } | should be $true
+        Test-Path C:\foof | should be $false
 
-            Remove-Item $whatif -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+
+        Remove-Item $whatif -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
         }
     }
 
      It "install-package -name nuget with whatif where package has a dependencies, Expect succeed" {
         {install-Package -name zlib -source https://www.nuget.org/api/v2/ `
-            -ProviderName NuGet -destination $installationPath -whatif} | should not throw
+            -ProviderName NuGet -destination c:\foof -whatif} | should not throw
     }
 }
 
-Describe "install-package with Scope" -tags "Feature" {
+Describe "install-package with Scope" -Tags @('BVT', 'DRT'){
+    BeforeAll {
+        import-packagemanagement
+        $userName = "smartguy"
+        $password = "password%1"
+        net user $userName $password /add
+        $secesurestring = ConvertTo-SecureString $password -AsPlainText -Force
+        $credential = new-object -typename System.Management.Automation.PSCredential -argumentlist $userName, $secesurestring
+    }
+
+    AfterAll {
+         # Delete the user profile
+         net user $userName /delete | Out-Null        
+    }
 
      it "EXPECTED Success: Get and Install-Package without Scope without destination" {
             
-        if ($IsWindows)
-        {
-            $ProgramFiles = [System.Environment]::GetEnvironmentVariable("ProgramFiles")
-            $UserInstalledLocation = "$($ProgramFiles)\Nuget\Packages"
-        }
-        else
-        {
-            $UserInstalledLocation = "$HOME\.local\share\PackageManagement\NuGet\Packages"
-        }
+        $ProgramFiles = [Environment]::GetFolderPath("ProgramFiles")
+        $UserInstalledLocation = "$($ProgramFiles)\Nuget\Packages"
+
         
         if (Test-Path $UserInstalledLocation) {
                 Remove-Item -Recurse -Force -Path $UserInstalledLocation -ErrorAction SilentlyContinue
@@ -848,15 +900,9 @@ Describe "install-package with Scope" -tags "Feature" {
 
     it "EXPECTED Success: Get and Install-Package AllUsers Scope Without destination" {
             
-        if ($IsWindows)
-        {
-            $ProgramFiles = [System.Environment]::GetEnvironmentVariable("ProgramFiles")
-            $UserInstalledLocation = "$($ProgramFiles)\Nuget\Packages"
-        }
-        else
-        {
-            $UserInstalledLocation = "$HOME\.local\share\PackageManagement\NuGet\Packages"
-        }
+        $ProgramFiles = [Environment]::GetFolderPath("ProgramFiles")
+        $UserInstalledLocation = "$($ProgramFiles)\Nuget\Packages"
+
         
         if (Test-Path $UserInstalledLocation) {
                 Remove-Item -Recurse -Force -Path $UserInstalledLocation -ErrorAction SilentlyContinue
@@ -875,15 +921,9 @@ Describe "install-package with Scope" -tags "Feature" {
 
     it "EXPECTED Success: Get and Install-Package -Scope CurrentUser with destination" {
             
-        if ($IsWindows)
-        {
-            $userProfile = [System.Environment]::GetEnvironmentVariable("LocalApplicationData")
-            $UserInstalledLocation = "$($userProfile)\PackageManagement\Nuget\Packages"
-        }
-        else
-        {
-            $UserInstalledLocation = "$HOME\.local\share\PackageManagement\NuGet\Packages"
-        }
+        $userProfile = [Environment]::GetFolderPath("LocalApplicationData")
+        $UserInstalledLocation = "$($userProfile)\PackageManagement\Nuget\Packages"
+
         
         if (Test-Path $UserInstalledLocation) {
                 Remove-Item -Recurse -Force -Path $UserInstalledLocation -ErrorAction SilentlyContinue
@@ -900,9 +940,7 @@ Describe "install-package with Scope" -tags "Feature" {
         (Test-Path "$UserInstalledLocation\GistProvider*") | should be $true
 	}
         
-    # Start job not working yet
-
-    It "install-package CurrentUser scope in a non-admin console, expect succeed" -Pending {
+    It "install-package CurrentUser scope in a non-admin console, expect succeed" {
         $Error.Clear()                             
         $job=Start-Job -ScriptBlock {Param ([Parameter(Mandatory = $True)] [string]$dtlgallery) install-package -ProviderName nuget  -source $dtlgallery -name  gistprovider -RequiredVersion 0.6 -force -scope CurrentUser} -Credential $credential -ArgumentList $dtlgallery
 
@@ -910,7 +948,7 @@ Describe "install-package with Scope" -tags "Feature" {
         $a.Name | should match 'gistprovider'
     } 
 
-    It "install-package without scope in a non-admin console, expect fail" -Pending {
+    It "install-package without scope in a non-admin console, expect fail" {
        
         $Error.Clear()
                       
@@ -922,21 +960,22 @@ Describe "install-package with Scope" -tags "Feature" {
         $theError.FullyQualifiedErrorId | should be "InstallRequiresCurrentUserScopeParameterForNonAdminUser,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackage"
     } 
 
-    It "install-package with AllUsers scope in a non-admin console, expect fail" -Pending {
+    It "install-package with AllUsers scope in a non-admin console, expect fail" {
         $Error.Clear()
                       
         $job=Start-Job -ScriptBlock {install-package -ProviderName nuget  -source  http://nuget.org/api/v2 -name  jquery -force -scope AllUsers} -Credential $credential
 
         Receive-Job -Wait -Job $job -ErrorVariable theError2 2>&1
         $theError2.FullyQualifiedErrorId | should be "InstallRequiresCurrentUserScopeParameterForNonAdminUser,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackage"
-    }
+
+    } 
 }
 
-Describe Install-Package -Tags "Feature" {
-    $destination = Join-Path $TestDrive "NugetPackages"
-    $relativetestpath = Join-Path $TestDrive "RelativeTestPath"
+Describe Install-Package -Tags @('BVT', 'DRT'){
+	# make sure packagemanagement is loaded
+	import-packagemanagement
  
-	it "EXPECTED: Installs 'Zlib' Package To Packages Directory" -Pending {
+	it "EXPECTED: Installs 'Zlib' Package To Packages Directory" {
         $version = "1.2.8.8"
 		(install-package -name "zlib" -provider $nuget -source $source -destination $destination -force -RequiredVersion $version)
 		(test-path $destination\zlib.1.2*) | should be $true
@@ -948,7 +987,7 @@ Describe Install-Package -Tags "Feature" {
 		}
     }
 
-    It "EXPECTED: Install package with credential" -Pending {
+    It "EXPECTED: Install package with credential" {
         try {
             Install-Package -Name Contoso -Provider $nuget -Source $vstsFeed -Credential $vstsCredential -Destination $destination -Force
             Test-Path $destination\Contoso* | should be $true
@@ -960,7 +999,7 @@ Describe Install-Package -Tags "Feature" {
         }
     }
 
-    It "install-package -name with wildcards, Expect error" {
+    It "install-packageprovider -name with wildcards, Expect error" {
         $Error.Clear()
         install-Package -name gist* -force -source $source -warningaction:silentlycontinue -ErrorVariable wildcardError -ErrorAction SilentlyContinue        
         $wildcardError.FullyQualifiedErrorId| should be "WildCardCharsAreNotSupported,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackage"
@@ -979,13 +1018,13 @@ Describe Install-Package -Tags "Feature" {
         }
     }
 
-    it "EXPECTED: Fails to install a module with simple dependencies loop" -Skip {
+    it "EXPECTED: Fails to install a module with simple dependencies loop" {
          $msg = powershell "Install-Package ModuleWithDependenciesLoop -ProviderName nuget -Source `"$dependenciesSource\SimpleDependenciesLoop`" -Destination $destination -ErrorAction SilentlyContinue; `$Error[0].FullyQualifiedErrorId"
          $msg | should be "DependencyLoopDetected,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackage"
 
     }
 
-    it "EXPECTED: Fails to install a module with a big dependencies loop" -Skip {
+    it "EXPECTED: Fails to install a module with a big dependencies loop" {
         $msg = powershell "Install-Package ModuleA -ProviderName nuget -source `"$dependenciesSource\BigDependenciesLoop`" -Destination $destination -ErrorAction SilentlyContinue;`$Error[0].FullyQualifiedErrorId"
         $msg | should be "DependencyLoopDetected,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackage"
     }
@@ -1056,7 +1095,7 @@ Describe Install-Package -Tags "Feature" {
         }
     }
 
-	it "EXPECTED: Installs 'awssdk' Package which has more than 200 versions To Packages Directory" -Pending {
+	it "EXPECTED: Installs 'awssdk' Package which has more than 200 versions To Packages Directory" {
 		(install-package -name "awssdk" -provider $nuget -source $source -destination $destination -maximumversion 2.3 -force)
 		(test-path $destination\awssdk*) | should be $true
 		if (Test-Path $destination\awssdk*) {
@@ -1064,7 +1103,7 @@ Describe Install-Package -Tags "Feature" {
 		}
     }
 
-	it "EXPECTED: Installs Various Packages With Various Version Parameters To Packages Directory" -Pending {
+	it "EXPECTED: Installs Various Packages With Various Version Parameters To Packages Directory" {
 		foreach ($x in $packageNames) {
 			foreach ($y in $minimumVersions) {
 				foreach ($z in $maximumVersions) {
@@ -1078,7 +1117,7 @@ Describe Install-Package -Tags "Feature" {
 		}
     }
 
-	It "EXPECTED: Installs 'Zlib' Package After Having The Provider Piped" -Pending {
+	It "EXPECTED: Installs 'Zlib' Package After Having The Provider Piped" {
 	    (find-package -name "zlib" -provider $nuget -source $source | install-package -destination $destination -force)
 	    (Test-Path -Path $destination\zlib*) | should be $true
 	    if (Test-Path -Path $destination\zlib*) {
@@ -1115,8 +1154,9 @@ Describe Install-Package -Tags "Feature" {
 	}
 }
 
-Describe Get-Package -Tags "Feature" {
-    $destination = Join-Path $TestDrive "NuGetPackages"
+Describe Get-Package -Tags @('BVT', 'DRT'){
+	# make sure packagemanagement is loaded
+	import-packagemanagement
 
 	it "EXPECTED: Gets The 'Adept.NugetRunner' Package After Installing" {
 		(install-package -name "adept.nugetrunner" -provider $nuget -source $source -destination $destination -force)
@@ -1167,8 +1207,9 @@ Describe Get-Package -Tags "Feature" {
     }
 }
 
-Describe Uninstall-Package -Tags "Feature" {
-    $destination = Join-Path $TestDrive "NuGetPackages"
+Describe Uninstall-Package -Tags @('BVT', 'DRT'){
+	# make sure packagemanagement is loaded
+	import-packagemanagement
 
 	it "EXPECTED: Uninstalls The Right version of 'Jquery'" {
 
@@ -1266,8 +1307,8 @@ Describe Uninstall-Package -Tags "Feature" {
         Uninstall-Package -Name $packageName -Provider $nuget -AllVersions -Destination $destination
         
         # Get-Package must not return any packages - since we just uninstalled allversions of the package
-        Get-Package -Name "adept.nugetrunner" -Provider $nuget -Destination $destination -AllVersions -warningaction:silentlycontinue -ea silentlycontinue
-        $ERROR[0].FullyQualifiedErrorId | should be "NoMatchFound,Microsoft.PowerShell.PackageManagement.Cmdlets.GetPackage"
+        $msg = powershell 'Get-Package -Name "adept.nugetrunner" -Provider $nuget -Destination $destination -AllVersions -warningaction:silentlycontinue -ea silentlycontinue; $ERROR[0].FullyQualifiedErrorId'
+        $msg | should be "NoMatchFound,Microsoft.PowerShell.PackageManagement.Cmdlets.GetPackage"
         
 		if (Test-Path $destination\adept.nugetrunner*) {
 			(Remove-Item -Recurse -Force -Path $destination\adept.nugetrunner*)
@@ -1277,23 +1318,25 @@ Describe Uninstall-Package -Tags "Feature" {
     It "uninstall-package -name with wildcards, Expect error" {
         $Error.Clear()
         $package =  uninstall-package -name packagemanagement* -warningaction:silentlycontinue -ErrorVariable wildcardError -ErrorAction SilentlyContinue        
-        $wildcardError.FullyQualifiedErrorId | should be "WildCardCharsAreNotSupported,Microsoft.PowerShell.PackageManagement.Cmdlets.UninstallPackage"
+        $wildcardError.FullyQualifiedErrorId| should be "WildCardCharsAreNotSupported,Microsoft.PowerShell.PackageManagement.Cmdlets.UninstallPackage"
     }
 
     It "uninstall-package -name with whitespaces only, Expect error" {
         $Error.Clear()
         $package =  uninstall-package -name " " -warningaction:silentlycontinue -ErrorVariable wildcardError -ErrorAction SilentlyContinue        
-        $wildcardError.FullyQualifiedErrorId | should be "WhitespacesAreNotSupported,Microsoft.PowerShell.PackageManagement.Cmdlets.UninstallPackage"
+        $wildcardError.FullyQualifiedErrorId| should be "WhitespacesAreNotSupported,Microsoft.PowerShell.PackageManagement.Cmdlets.UninstallPackage"
     }
 }
 
-Describe Get-PackageProvider -Tags "Feature" {
+Describe Get-PackageProvider -Tags @('BVT', 'DRT'){
+	# make sure that packagemanagement is loaded
+    import-packagemanagement
 
-	it "EXPECTED: Gets The 'Nuget' Package Provider" -Skip {
+	it "EXPECTED: Gets The 'Nuget' Package Provider" {
     	(get-packageprovider -name $nuget -force).name | should be $nuget
     }
 
-    it "EXPECTED: Should not raise pending reboot operations" -Skip {
+    it "EXPECTED: Should not raise pending reboot operations" {
         $count = (get-itemproperty "hklm:\system\currentcontrolset\control\session manager").PendingFileRenameOperations.Count
         $providers = powershell "get-packageprovider"
         $countAfter = (get-itemproperty "hklm:\system\currentcontrolset\control\session manager").PendingFileRenameOperations.Count
@@ -1301,8 +1344,9 @@ Describe Get-PackageProvider -Tags "Feature" {
     }
 }
 
-Describe Get-PackageSource -Tags "Feature" {
-    $destination = Join-Path $TestDrive "NuGetPackages"
+Describe Get-PackageSource -Tags @('BVT', 'DRT'){
+	# make sure that packagemanagement is loaded
+    import-packagemanagement
 
     BeforeAll{
          #make sure the package repository exists
@@ -1314,9 +1358,10 @@ Describe Get-PackageSource -Tags "Feature" {
         UnRegister-PackageSource -Name 'NugetTemp2' -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
     }
 
-    It "find-install-get-package Expect succeed" {      
-        find-package jquery -source NugetTemp2 -provider nuget | install-package -destination $destination -force
-        (Test-Path $destination\jQuery*) | should be $true
+    It "find-install-get-package Expect succeed" {
+      
+        find-package jquery | install-package -destination $destination -force -ForceBootstrap
+        (Test-Path $destination\jquery*) | should be $true
         $a=get-package -Destination $destination -Name jquery
         $a | where { $_.Name -eq 'jQuery'  } | should be $true
     }
@@ -1346,10 +1391,12 @@ Describe Get-PackageSource -Tags "Feature" {
     }
 }
 
-Describe Register-PackageSource -Tags "Feature" {
-    $Destination = Join-Path $TestDrive "NUgettest"
+Describe Register-PackageSource -Tags @('BVT', 'DRT'){
+    # make sure that packagemanagement is loaded
+    import-packagemanagement
 
-	it "EXPECTED: Register a package source with a location created via new-psdrive" -Skip {
+
+	it "EXPECTED: Register a package source with a location created via new-psdrive" {
 	    New-PSDrive -Name xx -PSProvider FileSystem -Root $destination	
         (register-packagesource -name "psdriveTest" -provider $nuget -location xx:\).name | should be "psdriveTest"
 		(unregister-packagesource -name "psdriveTest" -provider $nuget)
@@ -1368,7 +1415,7 @@ Describe Register-PackageSource -Tags "Feature" {
         }
 	}
 
-    it "EXPECTED: Registers a package source that requires a credential with skipvalidate" -Pending {
+    it "EXPECTED: Registers a package source that requires a credential with skipvalidate" {
         (register-packagesource -name "psgettestfeed" -provider $nuget -location $vstsFeed -SKipValidate)
         try {
             (Find-Package -Source "psgettestfeed" -Name ContosoClient -Credential $vstsCredential).Name | should be "ContosoClient"
@@ -1382,7 +1429,7 @@ Describe Register-PackageSource -Tags "Feature" {
     }
 
 
-    it "EXPECTED: Registers a package source that requires a credential" -Pending {
+    it "EXPECTED: Registers a package source that requires a credential" {
         (register-packagesource -name "psgettestfeed" -provider $nuget -location $vstsFeed -Credential $vstsCredential)
         try {
             (Find-Package -Source "psgettestfeed" -Name ContosoClient -Credential $vstsCredential).Name | should be "ContosoClient"
@@ -1395,12 +1442,11 @@ Describe Register-PackageSource -Tags "Feature" {
         }
     }
 
-    it "EXPECTED: PackageSource persists" -Skip {
+    it "EXPECTED: PackageSource persists" {
         $persist = "persistsource"
         $pssource = "http://www.powershellgallery.com/api/v2/"
         $redirectedOutput = "$env:tmp\nugettests\redirectedOutput.txt"
         $redirectedError = "$env:tmp\nugettests\redirectedError.txt"
-
         try {
             Start-Process powershell -ArgumentList "register-packagesource -name $persist -location $pssource -provider $nuget" -wait
             Start-Process powershell -ArgumentList "get-packagesource -name $persist -provider $nuget" -wait -RedirectStandardOutput $redirectedOutput -RedirectStandardError $redirectedError
@@ -1437,8 +1483,8 @@ Describe Register-PackageSource -Tags "Feature" {
     }
 
     it "EXPECTED: Registers an invalid package source" {
-		register-packagesource -name `"BingProvider`" -provider $nuget -location `"http://www.example.com/`" -erroraction silentlycontinue
-        $Error[0].FullyQualifiedErrorId | should be 'SourceLocationNotValid,Microsoft.PowerShell.PackageManagement.Cmdlets.RegisterPackageSource'
+		$msg = powershell "register-packagesource -name `"BingProvider`" -provider $nuget -location `"http://www.example.com/`" -erroraction silentlycontinue; `$Error[0].FullyQualifiedErrorId"
+        $msg | should be 'SourceLocationNotValid,Microsoft.PowerShell.PackageManagement.Cmdlets.RegisterPackageSource'
     }
 
 	it "EXPECTED: Registers Multiple Package Sources" {
@@ -1454,7 +1500,9 @@ Describe Register-PackageSource -Tags "Feature" {
     }
 }
 
-Describe Unregister-PackageSource -Tags "Feature" {
+Describe Unregister-PackageSource -Tags @('BVT', 'DRT'){
+    # make sure that packagemanagement is loaded
+    import-packagemanagement
 
 	it "EXPECTED: Unregisters The 'NugetTest.org' Package Source" {
 		(register-packagesource -name "nugettest.org" -provider $nuget -location $source)
@@ -1476,7 +1524,9 @@ Describe Unregister-PackageSource -Tags "Feature" {
     }
 }
 
-Describe Set-PackageSource -Tags "Feature" {
+Describe Set-PackageSource -Tags @('BVT', 'DRT'){
+    # make sure that packagemanagement is loaded
+    import-packagemanagement
 
 	it "EXPECTED: Sets The 'NugetTest' Package Source to 'NugetTest2'" {
 		(register-packagesource -name "nugettest" -provider $nuget -location "https://www.nuget.org/api/v2")
@@ -1484,7 +1534,7 @@ Describe Set-PackageSource -Tags "Feature" {
 		(unregister-packagesource -name "nugettest2" -provider $nuget)
     }
 
-    it "EXPECTED: Set a package source that requires a credential" -Pending {
+    it "EXPECTED: Set a package source that requires a credential" {
         (register-packagesource -name "psgettestfeed" -provider $nuget -location $vstsFeed -Credential $vstsCredential)
         try {
             (Set-PackageSource -Name "psgettestfeed" -provider $nuget -NewName "psgettestfeed2" -Credential $vstsCredential)
@@ -1518,25 +1568,29 @@ Describe Set-PackageSource -Tags "Feature" {
     }
 }
 
-Describe Check-ForCorrectError -Tags "Feature" {
+Describe Check-ForCorrectError -Tags @('BVT', 'DRT'){  
+    # make sure that packagemanagement is loaded
+    import-packagemanagement
 
     it "EXPECTED: returns a correct error for find-package with dynamic parameter when package source is wrong" {
         $Error.Clear()
-        find-package -provider $nuget -source http://wrongsource/api/v2 -FilterOnTag tag -ea silentlycontinue
-        $Error[0].FullyQualifiedErrorId | should be "SourceNotFound,Microsoft.PowerShell.PackageManagement.Cmdlets.FindPackage"
+        $msg = powershell "find-package -provider $nuget -source http://wrongsource/api/v2 -FilterOnTag tag -ea silentlycontinue; `$Error[0].FullyQualifiedErrorId"
+        $msg | should be "SourceNotFound,Microsoft.PowerShell.PackageManagement.Cmdlets.FindPackage"
     }
 
     it "EXPECTED: returns a correct error for install-package with dynamic parameter when package source is wrong" {
         $Error.Clear()
-        install-package -provider $nuget -source http://wrongsource/api/v2 zlib -Destination C:\destination -ea silentlycontinue
-        $Error[0].FullyQualifiedErrorId | should be "SourceNotFound,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackage"
+        $msg = powershell "install-package -provider $nuget -source http://wrongsource/api/v2 zlib -Destination C:\destination -ea silentlycontinue; `$Error[0].FullyQualifiedErrorId"
+        $msg | should be "SourceNotFound,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackage"
     }
 
 }
 
-Describe Test-Proxy -Tags "Feature" {
+Describe Test-Proxy -Tags @('BVT', 'DRT') {
+    # make sure that packagemanagent is loaded
+    import-packagemanagement
 
-    It "EXPECTED: Register package source using proxy" -Skip {
+    It "EXPECTED: Register package source using proxy" {
         try {
             $processId = (Start-Process $proxyPath -PassThru).Id
 		    (register-packagesource -name "nugettest7" -provider $nuget -location "https://www.nuget.org/api/v2" -Proxy http://localhost:8080).Name | should be "nugettest7"
@@ -1549,7 +1603,7 @@ Describe Test-Proxy -Tags "Feature" {
         }
     }
 
-    It "EXPECTED: Cannot register using wrong proxy" -Skip {
+    It "EXPECTED: Cannot register using wrong proxy" {
         try {
             $processId = (Start-Process $proxyPath -PassThru).Id
 		    $packageSource = register-packagesource -name "nugettest7" -provider $nuget -location "https://www.nuget.org/api/v2" -Proxy http://localhost:8060 -ErrorAction SilentlyContinue
@@ -1561,7 +1615,7 @@ Describe Test-Proxy -Tags "Feature" {
         }
     }
 
-    It "EXPECTED: Set package source using proxy" -Skip {
+    It "EXPECTED: Set package source using proxy" {
         try {
             $processId = (Start-Process $proxyPath -PassThru).Id
 		    (register-packagesource -name "nugettest7" -provider $nuget -location "https://www.nuget.org/api/v2" -Proxy http://localhost:8080).Name | should be "nugettest7"
@@ -1573,7 +1627,7 @@ Describe Test-Proxy -Tags "Feature" {
         }
     }
 
-    It "EXPECTED: Cannot set package source using wrong proxy" -Skip {
+    It "EXPECTED: Cannot set package source using wrong proxy" {
         try {
             $processId = (Start-Process $proxyPath -PassThru).Id
 		    (register-packagesource -name "nugettest7" -provider $nuget -location "https://www.nuget.org/api/v2" -Proxy http://localhost:8080).Name | should be "nugettest7"
@@ -1586,7 +1640,7 @@ Describe Test-Proxy -Tags "Feature" {
         }
     }
     
-    It "EXPECTED: cannot connect using the wrong proxy" -Skip {
+    It "EXPECTED: cannot connect using the wrong proxy" {
         try {
             $processId = (Start-Process $proxyPath -PassThru).Id
             $packages = Find-Package -Provider NuGet -Proxy http://localhost:8060 -ErrorAction SilentlyContinue
@@ -1597,7 +1651,7 @@ Describe Test-Proxy -Tags "Feature" {
         }
     }
 
-    It "EXPECTED: cannot connect if the server is not on the list allowed by proxy" -Skip {
+    It "EXPECTED: cannot connect if the server is not on the list allowed by proxy" {
         try {
             $processId = (Start-Process $proxyPath -PassThru).Id
             $packages = Find-Package -Provider NuGet -Proxy http://localhost:8080 -Source $dtlgallery -ErrorAction SilentlyContinue
@@ -1608,7 +1662,7 @@ Describe Test-Proxy -Tags "Feature" {
         }
     }
 
-    It "EXPECTED: find packages using the correct proxy" -Skip {
+    It "EXPECTED: find packages using the correct proxy" {
         try {
             $processId = (Start-Process $proxyPath -PassThru).Id
             $jquery = Find-Package -Provider NuGet -Proxy http://localhost:8080 -Source $source -Name jquery

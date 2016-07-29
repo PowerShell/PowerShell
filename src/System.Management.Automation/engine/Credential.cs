@@ -9,7 +9,6 @@ using System.Net;
 using System.Security;
 using SafeString=System.String;
 using System.Runtime.Serialization;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.PowerShell;
 
@@ -287,7 +286,7 @@ namespace System.Management.Automation
                     {
                         if (unmanagedPtr != IntPtr.Zero)
                         {
-                            Marshal.ZeroFreeCoTaskMemUnicode(unmanagedPtr);
+                            ClrFacade.ZeroFreeCoTaskMemUnicode(unmanagedPtr);
                         }
                     }
 #else

@@ -165,10 +165,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     retVal = ResolveAssemblyNameInLoadedAssemblies(assemblyName, false);
                 }
                 // NOTE: we cache the result (both for success and failure)
-
-                // Porting note: this won't be hit in normal usage, but can be hit with bad build setup
-                Diagnostics.Assert(retVal != null, "AssemblyName resolution failed, a resource file might be broken");
-
                 _assemblyReferences.Add(assemblyName, retVal);
                 return retVal;
             }

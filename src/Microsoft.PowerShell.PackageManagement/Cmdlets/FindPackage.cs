@@ -57,12 +57,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             return true;
         }
 
-        protected override void ProcessPackage(PackageProvider provider, IEnumerable<string> searchKey, SoftwareIdentity package)
-        {
-            ProcessPackage(provider, searchKey, package, IncludeDependencies ? new HashSet<string>() : null);
-        }
-
-        private void ProcessPackage(PackageProvider provider, IEnumerable<string> searchKey, SoftwareIdentity package, HashSet<string> processedDependencies) {
+        protected override void ProcessPackage(PackageProvider provider, IEnumerable<string> searchKey, SoftwareIdentity package) {
 
             try {
 
@@ -76,24 +71,14 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                     foreach (var dep in package.Dependencies) {
                         // note: future work may be needed if the package sources currently selected by the user don't
                         // contain the dependencies.
+                        var dependendcies = PackageManagementService.FindPackageByCanonicalId(dep, this);
+                        var depPkg = dependendcies.OrderByDescending(pp => pp, SoftwareIdentityVersionComparer.Instance).FirstOrDefault();
 
-                        // this dep is not processed yet
-                        if (!processedDependencies.Contains(dep))
-                        {
-                            var dependendcies = PackageManagementService.FindPackageByCanonicalId(dep, this);
-                            var depPkg = dependendcies.OrderByDescending(pp => pp, SoftwareIdentityVersionComparer.Instance).FirstOrDefault();
-
-                            processedDependencies.Add(dep);
-
-                            if (depPkg == null)
-                            {
-                                missingDependencies.Add(dep);
-                                Warning(Constants.Messages.UnableToFindDependencyPackage, dep);
-                            }
-                            else
-                            {
-                                ProcessPackage(depPkg.Provider, searchKey.Select(each => each + depPkg.Name).ToArray(), depPkg, processedDependencies);
-                            }
+                        if (depPkg == null) {
+                            missingDependencies.Add(dep);
+                            Warning(Constants.Messages.UnableToFindDependencyPackage, dep);
+                        } else {
+                            ProcessPackage(depPkg.Provider, searchKey.Select(each => each + depPkg.Name).ToArray(), depPkg);
                         }
                     }
                     if (missingDependencies.Any()) {

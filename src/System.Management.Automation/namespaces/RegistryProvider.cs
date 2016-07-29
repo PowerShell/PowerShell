@@ -135,8 +135,6 @@ namespace Microsoft.PowerShell.Commands
         protected override Collection<PSDriveInfo> InitializeDefaultDrives() 
         {
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
-
-#if !UNIX
             drives.Add(
                 new PSDriveInfo(
                     "HKLM",
@@ -152,7 +150,6 @@ namespace Microsoft.PowerShell.Commands
                     "HKEY_CURRENT_USER",
                     RegistryProviderStrings.HKCUDriveDescription,
                     null));
-#endif
 
             return drives;
         } // InitializeDefaultDrives
@@ -3885,7 +3882,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!String.IsNullOrEmpty(path))
             {
-                result = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+                result = path.Replace('/', '\\');
 
                 // Remove relative path tokens
                 if (HasRelativePathTokens(path))

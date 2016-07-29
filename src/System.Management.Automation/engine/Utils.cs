@@ -71,7 +71,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Allowed PowerShell Editions
         /// </summary>
-        internal static string[] AllowedEditionValues = { "WindowsPowerShell", "PowerShellCore" };
+        internal static string[] AllowedEditionValues = { "Desktop", "Core" };
 
         /// <summary>
         /// helper fn to check byte[] arg for null.
@@ -170,7 +170,7 @@ namespace System.Management.Automation
             {
                 if (p != IntPtr.Zero)
                 {
-                    Marshal.ZeroFreeCoTaskMemUnicode(p);
+                    ClrFacade.ZeroFreeCoTaskMemUnicode(p);
                 }
             }
 
@@ -196,7 +196,16 @@ namespace System.Management.Automation
 
         private static string _pshome = null;
 
-        internal static string GetApplicationBaseFromRegistry(string shellId)
+        /// <summary>
+        /// Gets the application base for current monad version
+        /// </summary>
+        /// <returns>
+        /// applicationbase path for current monad version installation
+        /// </returns>
+        /// <exception cref="SecurityException">
+        /// if caller doesn't have permission to read the key
+        /// </exception>
+        internal static string GetApplicationBase(string shellId)
         {
             bool wantPsHome = (object) shellId == (object) DefaultPowerShellShellID;
             if (wantPsHome && _pshome != null)
@@ -216,33 +225,6 @@ namespace System.Management.Automation
                     return result;
                 }
             }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Gets the application base for current monad version
-        /// </summary>
-        /// <returns>
-        /// applicationbase path for current monad version installation
-        /// </returns>
-        /// <exception cref="SecurityException">
-        /// if caller doesn't have permission to read the key
-        /// </exception>
-        internal static string GetApplicationBase(string shellId)
-        {
-            // TODO: #1184 will resolve this work-around
-            // The application base cannot be resolved from the registry for side-by-side versions
-            // of PowerShell.
-#if !CORECLR
-            // try to get the path from the registry first
-            string result = GetApplicationBaseFromRegistry(shellId);
-            if (result != null)
-            {
-                return result;
-            }
-#endif
-
 
 #if CORECLR // Use the location of SMA.dll as the application base
             // Assembly.GetEntryAssembly is not in CoreCLR. GAC is not in CoreCLR.
@@ -298,24 +280,16 @@ namespace System.Management.Automation
                 }
 
                 // And built-in modules
-                string progFileDir;
-                // TODO: #1184 will resolve this work-around
-                // Side-by-side versions of PowerShell use modules from their application base, not
-                // the system installation path.
-#if CORECLR
-                progFileDir = Path.Combine(appBase, "Modules");
-#else
-                progFileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell", "Modules");
-#endif
-
+                string progFileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell", "Modules");
                 if (!string.IsNullOrEmpty(progFileDir))
                 {
                     baseDirectories.Add(Path.Combine(progFileDir, "PackageManagement"));
                     baseDirectories.Add(Path.Combine(progFileDir, "PowerShellGet"));
                     baseDirectories.Add(Path.Combine(progFileDir, "Pester"));
-                    baseDirectories.Add(Path.Combine(progFileDir, "PSReadLine"));
 #if CORECLR
                     baseDirectories.Add(Path.Combine(progFileDir, "Json.Net"));
+#else
+                    baseDirectories.Add(Path.Combine(progFileDir, "PSReadline"));
 #endif // CORECLR
                 }
                 Interlocked.CompareExchange(ref _productFolderDirectories, baseDirectories.ToArray(), null);
@@ -362,7 +336,6 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsWinPEHost()
         {
-#if !UNIX
             RegistryKey winPEKey = null;
 
             try
@@ -383,7 +356,7 @@ namespace System.Management.Automation
                     winPEKey.Dispose();
                 }
             }
-#endif
+
             return false;
         }  
 
@@ -573,8 +546,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// Profile uses this to control profile loading.
         /// </remarks>
-        internal static string ProductNameForDirectory =
-            Platform.IsWindows ? "WindowsPowerShell" : Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
+        internal static string ProductNameForDirectory = "WindowsPowerShell";
 
         /// <summary>
         /// The name of the subdirectory that contains packages.
@@ -584,7 +556,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The partial path to the DSC module directory
         /// </summary>
-        internal static string DscModuleDirectory = Path.Combine("WindowsPowerShell", "Modules");
+        internal static string DscModuleDirectory = "WindowsPowerShell\\Modules";
 
         internal static string GetRegistryConfigurationPrefix()
         {
@@ -614,14 +586,8 @@ namespace System.Management.Automation
             return GetGroupPolicySetting(groupPolicyBase, settingName, preferenceOrder);
         }
 
-        // We use a static to avoid creating "extra garbage."
-        private static Dictionary<string, object> _emptyDictionary = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-
         internal static Dictionary<string, object> GetGroupPolicySetting(string groupPolicyBase, string settingName, RegistryKey[] preferenceOrder)
         {
-#if UNIX
-            return _emptyDictionary;
-#else
             lock (cachedGroupPolicySettings)
             {
                 // Return cached information, if we have it
@@ -696,7 +662,6 @@ namespace System.Management.Automation
 
                 return settings;
             }
-#endif
         }
         static ConcurrentDictionary<string, Dictionary<string, object>> cachedGroupPolicySettings =
             new ConcurrentDictionary<string, Dictionary<string, object>>();
@@ -924,20 +889,10 @@ namespace System.Management.Automation
 
         internal static bool IsAdministrator()
         {
-            // Porting note: only Windows supports the SecurityPrincipal API of .NET. Due to
-            // advanced privilege models, the correct approach on Unix is to assume the user has
-            // permissions, attempt the task, and error gracefully if the task fails due to
-            // permissions. To fit into PowerShell's existing model of pre-emptively checking
-            // permissions (which cannot be assumed on Unix), we "assume" the user is an
-            // administrator by returning true, thus nullifying this check on Unix.
-#if UNIX
-            return true;
-#else
             System.Security.Principal.WindowsIdentity currentIdentity = System.Security.Principal.WindowsIdentity.GetCurrent();
             System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(currentIdentity);
 
             return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
-#endif
         }
 
         internal static bool NativeItemExists(string path)
@@ -959,10 +914,6 @@ namespace System.Management.Automation
                 isDirectory = false;
                 return false;
             }
-#if UNIX
-            isDirectory = Platform.NonWindowsIsDirectory(path);
-            return Platform.NonWindowsIsFile(path);
-#else
 
             if (IsReservedDeviceName(path))
             {
@@ -996,7 +947,6 @@ namespace System.Management.Automation
                 ((int)NativeMethods.FileAttributes.Directory);
 
             return true;
-#endif
         }
 
         // This is done through P/Invoke since we pay 13% performance degradation
@@ -1096,12 +1046,8 @@ namespace System.Management.Automation
 
         internal static bool PathIsUnc(string path)
         {
-#if UNIX
-            return false;
-#else
             Uri uri;
             return !string.IsNullOrEmpty(path) && Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
-#endif
         }
 
         internal class NativeMethods

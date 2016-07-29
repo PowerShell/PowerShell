@@ -14,7 +14,7 @@
 namespace NativeMsh 
 {
     HMODULE WINAPI WinSystemCallFacade::LoadLibraryExW(
-        _In_        LPCWSTR lpFileName,
+        _In_        LPCTSTR lpFileName,
         _Reserved_  HANDLE hFile,
         _In_        DWORD dwFlags)
     {
@@ -24,20 +24,28 @@ namespace NativeMsh
 #pragma prefast(push)
 #pragma prefast (disable: 26006) // Possibly incorrect single element annotation on string buffer - This is a thin wrapper around a system call, so it's behavior is not controllable.
 
-    DWORD WINAPI WinSystemCallFacade::GetModuleFileNameA(
+    DWORD WINAPI WinSystemCallFacade::GetModuleFileNameW(
         _In_opt_ HMODULE hModule,
-        _Out_    LPSTR lpFilename, // _Out_writes_to_(nSize, return +1) OR __out_ecount_part(nSize, return + 1)? __out_ecount(nSize)
+        _Out_    LPTSTR lpFilename, // _Out_writes_to_(nSize, return +1) OR __out_ecount_part(nSize, return + 1)? __out_ecount(nSize)
         _In_     DWORD nSize)
     {
-        return ::GetModuleFileNameA(hModule, lpFilename, nSize);
+        return ::GetModuleFileNameW(hModule, lpFilename, nSize);
     }
 
 #pragma prefast(pop)
 
-    HMODULE WINAPI WinSystemCallFacade::GetModuleHandleA(
-        _In_opt_  LPCSTR lpModuleName)
+    HMODULE WINAPI WinSystemCallFacade::GetModuleHandleW(
+        _In_opt_  LPCTSTR lpModuleName)
     {
-        return ::GetModuleHandleA(lpModuleName);
+        return ::GetModuleHandleW(lpModuleName);
+    }
+
+    BOOL WINAPI WinSystemCallFacade::GetModuleHandleExW(
+        _In_      DWORD dwFlags,
+        _In_opt_  LPCTSTR lpModuleName,
+        _Out_     HMODULE *phModule)
+    {
+        return ::GetModuleHandleExW(dwFlags, lpModuleName, phModule);
     }
 
     FARPROC WINAPI WinSystemCallFacade::GetProcAddress(
@@ -53,12 +61,11 @@ namespace NativeMsh
         return ::FreeLibrary(hModule);
     }
 
-    errno_t WinSystemCallFacade::fopen_s(
-        FILE** file,
-        const char *filename,
-        const char *mode)
+    FILE* WinSystemCallFacade::_wfopen(
+        const wchar_t *filename,
+        const wchar_t *mode)
     {
-        return ::fopen_s(file, filename, mode);
+        return ::_wfopen(filename, mode);
     }
 
     int WinSystemCallFacade::fclose(

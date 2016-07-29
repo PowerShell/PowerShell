@@ -1,6 +1,4 @@
-﻿#if !UNIX
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -8,8 +6,6 @@ using System.Management.Automation;
 using Microsoft.PackageManagement.Provider.Utility;
 using System.Reflection;
 using System.Globalization;
-
-using SemanticVersion = Microsoft.PackageManagement.Provider.Utility.SemanticVersion;
 
 namespace Microsoft.PackageManagement.PackageSourceListProvider
 {
@@ -140,7 +136,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                     }
                     else
                     {
-                        throw new ArgumentException(string.Format("'{0}' is not referencd but not defined in the file '{1}'", dep.Name, package.FilePath));
+                        throw new FileFormatException(string.Format("'{0}' is not referencd but not defined in the file '{1}'", dep.Name, package.FilePath));
                     }
 
                 }
@@ -347,9 +343,9 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
 
                     if (!uri.IsFile)
                     {
-                        if (uri.Scheme != "https")
+                        if (uri.Scheme != Uri.UriSchemeHttps)
                         {
-                            throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.Messages.UriSchemeNotSupported, uri.Scheme, "https"));
+                            throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.Messages.UriSchemeNotSupported, uri.Scheme, Uri.UriSchemeHttps));
                         }
                     }
 
@@ -494,5 +490,3 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
         }
     } 
 }
-
-#endif

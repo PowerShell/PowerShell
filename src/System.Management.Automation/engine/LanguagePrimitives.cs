@@ -480,14 +480,12 @@ namespace System.Management.Automation
         {
             return null;
         }
-
 #if !CORECLR
         static IEnumerable DataTableEnumerable(object obj)
         {
             return (((DataTable)obj).Rows);
         }
 #endif
-
         static IEnumerable TypicalEnumerable(object obj)
         {
             IEnumerable e = (IEnumerable)obj;
@@ -530,7 +528,6 @@ namespace System.Management.Automation
                 return LanguagePrimitives.DataTableEnumerable;
             }
 #endif
-
             // Don't treat IDictionary or XmlNode as enumerable...
             if (typeof(IEnumerable).IsAssignableFrom(objectType)
                 && !typeof(IDictionary).IsAssignableFrom(objectType)

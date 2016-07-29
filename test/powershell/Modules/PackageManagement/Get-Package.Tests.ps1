@@ -12,23 +12,32 @@
 #  limitations under the License.
 #
 # ------------------ PackageManagement Test  ----------------------------------------------
+ipmo "$PSScriptRoot\utility.psm1"
+
 $nuget = "nuget"
 $source = "http://www.nuget.org/api/v2/"
+$destination = "$env:tmp\GetPackageTests"
+
+# Bootstrap the provider
+Get-PackageProvider -Name $nuget -Force
 # ------------------------------------------------------------------------------
 
 # Actual Tests:
 
-Describe "Get-package" -Tags "Feature" {
+Describe "Get-package" -Tags @('BVT', 'DRT'){
     # make sure that packagemanagement is loaded
-    It "EXPECTED: Get-package accepts array of strings for -providername parameter" -Skip {
+    import-packagemanagement
+
+    It "EXPECTED: Get-package accepts array of strings for -providername parameter" {
         $x = (get-package -providername Programs,Msi)
     }
 }
 
-Describe "Get-package with version parameter  - valid scenarios" -Tags "Feature" {
-    $destination = Join-Path $TestDrive GetPackageTests
+Describe "Get-package with version parameter  - valid scenarios" -Tags @('BVT', 'DRT'){
+    # make sure that packagemanagement is loaded
+    import-packagemanagement
 
-    It "Get-package supports -AllVersions parameter" -Skip {
+    It "Get-package supports -AllVersions parameter" {
         $outputWithAllVersions = (Get-Package -providername Programs,Msi -AllVersions)
         $outputWithoutAllVersions = (Get-Package -providername Programs,Msi)
         $outputWithAllVersions.count -ge $outputWithoutAllVersions.count | should be $true
@@ -64,19 +73,21 @@ Describe "Get-package with version parameter  - valid scenarios" -Tags "Feature"
     }    
 }
 
-Describe "Get-package with version parameter - Error scenarios" -Tags "Feature" {
+Describe "Get-package with version parameter - Error scenarios" -Tags @('BVT', 'DRT'){
+    # make sure that packagemanagement is loaded
+    import-packagemanagement
 
     It "Get-package -AllVersions -- Cannot be used with other version parameters" {
         $Error.Clear()
-        Get-Package -AllVersions -RequiredVersion 1.0 -MinimumVersion 2.0  -warningaction:silentlycontinue -ea silentlycontinue
-        $ERROR[0].FullyQualifiedErrorId | should be "AllVersionsCannotBeUsedWithOtherVersionParameters,Microsoft.PowerShell.PackageManagement.Cmdlets.GetPackage"
+        $msg = powershell 'Get-Package -AllVersions -RequiredVersion 1.0 -MinimumVersion 2.0  -warningaction:silentlycontinue -ea silentlycontinue; $ERROR[0].FullyQualifiedErrorId'
+        $msg | should be "AllVersionsCannotBeUsedWithOtherVersionParameters,Microsoft.PowerShell.PackageManagement.Cmdlets.GetPackage"
 
     }
 
     It "Get-package -RequiredVersion -- Cannot be used with Min/Max version parameters" {
         $Error.Clear()
-        Get-Package -RequiredVersion 1.0 -MinimumVersion 2.0 -MaximumVersion 3.0 -warningaction:silentlycontinue -ea silentlycontinue
-        $ERROR[0].FullyQualifiedErrorId | should be "VersionRangeAndRequiredVersionCannotBeSpecifiedTogether,Microsoft.PowerShell.PackageManagement.Cmdlets.GetPackage"
+        $msg = powershell 'Get-Package -RequiredVersion 1.0 -MinimumVersion 2.0 -MaximumVersion 3.0 -warningaction:silentlycontinue -ea silentlycontinue; $ERROR[0].FullyQualifiedErrorId'
+        $msg | should be "VersionRangeAndRequiredVersionCannotBeSpecifiedTogether,Microsoft.PowerShell.PackageManagement.Cmdlets.GetPackage"
 
     }
 }

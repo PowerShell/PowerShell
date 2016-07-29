@@ -1,5 +1,5 @@
 
-Describe "Type accelerators" -Tags "CI" {
+Describe "Type accelerators" -Tags "DRT" {
     $TypeAcceleratorsType = [psobject].Assembly.GetType("System.Management.Automation.TypeAccelerators")
 
     $TypeAccelerators = $TypeAcceleratorsType::Get
@@ -11,8 +11,7 @@ Describe "Type accelerators" -Tags "CI" {
     }
 
     It "Can query type accelerators" {
-        if ( $IsCoreCLR ) { $count = 80 } else { $count = 82 }
-        $TypeAccelerators.Count -gt $count | Should Be $true
+        $TypeAccelerators.Count -gt 82 | Should Be $true
         $TypeAccelerators['xml'] | Should Be ([System.Xml.XmlDocument])
         $TypeAccelerators['AllowNull'] | Should Be ([System.Management.Automation.AllowNullAttribute])
     }

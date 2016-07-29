@@ -102,30 +102,14 @@ namespace Microsoft.PowerShell
                 location.X = 0;
                 location.Y = Math.Min(location.Y + 2, bufSize.Height);
 
-#if UNIX
-                // replace the saved region in the screen buffer with our progress display
-                location = rawui.CursorPosition;
-
-                //set the cursor position back to the beginning of the region to overwrite write-progress
-                //if the cursor is at the bottom, back it up to overwrite the previous write progress
-                if (location.Y >= rawui.BufferSize.Height - rows)
-                {
-                    Console.Out.Write('\n');
-                    if (location.Y >= rows)
-                    {
-                        location.Y -= rows;
-                    }
-                }
-
-                rawui.CursorPosition = location;
-#else
                 // Save off the current contents of the screen buffer in the region that we will occupy
+
                 savedRegion =
                     rawui.GetBufferContents(
                         new Rectangle(location.X, location.Y, location.X + cols - 1, location.Y + rows - 1));
-#endif
 
                 // replace the saved region in the screen buffer with our progress display
+
                 rawui.SetBufferContents(location, tempProgressRegion);
             }
         }

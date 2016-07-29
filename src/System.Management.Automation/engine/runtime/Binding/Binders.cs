@@ -554,7 +554,6 @@ namespace System.Management.Automation.Language
             {
                 return (errorSuggestion ?? NullResult(target)).WriteToDebugLog(this);
             }
-
 #if !CORECLR
             // In CORECLR System.Data.DataTable does not have the DataRowCollection IEnumerable, so disabling code.
             if (targetValue is DataTable)
@@ -584,7 +583,6 @@ namespace System.Management.Automation.Language
                     GetRestrictions(target))).WriteToDebugLog(this);
             }
 #endif
-
             if (IsComObject(targetValue))
             {
                 // Pretend that all com objects are enumerable, even if they aren't.  We do this because it's technically impossible
@@ -672,23 +670,13 @@ namespace System.Management.Automation.Language
             return (result == DynamicMetaObjectExtensions.FakeError) ? null : result;
         }
 
-        // This is to reduce the runtime overhead of the feature query
-        private static readonly TypeInfo ComObjectTypeInfo = GetComObjectType();
-
-        private static TypeInfo GetComObjectType()
-        {
-#if UNIX
-            return null;
-#else
-            return typeof(object).GetTypeInfo().Assembly.GetType("System.__ComObject").GetTypeInfo();
-#endif
-        }
+        private static readonly TypeInfo ComObjectTypeInfo = typeof(object).GetTypeInfo().Assembly.GetType("System.__ComObject").GetTypeInfo();
 
         internal static bool IsComObject(object obj)
         {
             // we can't use System.Runtime.InteropServices.Marshal.IsComObject(obj) since it doesn't work in partial trust
             obj = PSObject.Base(obj);
-            return obj != null && ComObjectTypeInfo != null && ComObjectTypeInfo.IsAssignableFrom(obj.GetType().GetTypeInfo());
+            return obj != null && ComObjectTypeInfo.IsAssignableFrom(obj.GetType().GetTypeInfo());
         }
 
         private static IEnumerator AutomationNullRule(CallSite site, object obj)

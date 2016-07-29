@@ -8,10 +8,9 @@
 // ----------------------------------------------------------------------
 
 #include "pwrshplugin.h"
-// [Porting note] SQM is for Telemetry in Windows. Temporarily disabled.
-//#include <winsqm.h>
-//#include "common/WindowsSqmDataID.h"
-//#include "common/winrmsqm.h"
+#include <winsqm.h>
+#include "common/WindowsSqmDataID.h"
+#include "common/winrmsqm.h"
 
 #if !CORECLR
 #include <muiload.h>
@@ -20,12 +19,11 @@
 HINSTANCE g_hResourceInstance = 0; // TODO: Where is this freed? FreeMUILibrary for nonCoreClr and FreeLibrary for CoreCLR
 LPCWSTR g_MAIN_BINARY_NAME = L"pwrshplugin.dll";
 
-// [Porting note] SQM is for Telemetry in Windows. Temporarily disabled.
-// typedef VOID (NTAPI *PFN_WinSqmSetDWORD)(
-//                 __in_opt                HSESSION                    hSession,
-//                 __in                    DWORD                       dwDatapointId,
-//                 __in                    DWORD                       dwDatapointValue
-//                 );
+typedef VOID (NTAPI *PFN_WinSqmSetDWORD)(
+                __in_opt                HSESSION                    hSession,
+                __in                    DWORD                       dwDatapointId,
+                __in                    DWORD                       dwDatapointValue
+                );
 
 // gets the error message from the resources section of the current module.
 // the caller should free pwszErrorMessage using LocalFree().
@@ -186,7 +184,6 @@ static PwrshCommon sPwrshCommon;
 // pwszRuntimeVersion and pRuntimeVersionLength represents the size of pwszRuntimeVersion.
 // returns: 0 on success, non-zero on failure.
 _Success_(return == 0) //EXIT_CODE_SUCCESS
-extern "C"
 unsigned int GetCLRVersionForPSVersion(int iPSMajorVersion, 
                                int iPSMinorVersion,
                                size_t runtimeVersionLength,
@@ -324,7 +321,6 @@ DWORD ReportOperationComplete(WSMAN_PLUGIN_REQUEST *requestDetails, DWORD errorC
 // initialized more than once within the same process, but only once per 
 // applicationIdentification.
 // -----------------------------------------------------------------------------
-extern "C"
 DWORD WINAPI WSManPluginStartup(
     __in DWORD flags,
     __in PCWSTR applicationIdentification,
@@ -355,24 +351,22 @@ DWORD WINAPI WSManPluginStartup(
 
         // Using global SQM session
         // WinSQMSetDWORD is not available on Vista
+        HMODULE hModule;
+        PFN_WinSqmSetDWORD pfnWinSqmSetDWORD;
 
-        // [Porting note] SQM is for Telemetry in Windows. Temporarily disabled.
-        // HMODULE hModule;
-        // PFN_WinSqmSetDWORD pfnWinSqmSetDWORD;
-
-        // hModule = GetModuleHandleW(L"ntdll");
-        // if (hModule)
-        // {
-        //     pfnWinSqmSetDWORD = (PFN_WinSqmSetDWORD) GetProcAddress(hModule, "WinSqmSetDWORD");
-        //     if (pfnWinSqmSetDWORD)
-        //     {
-        //         pfnWinSqmSetDWORD(
-        //             NULL,
-        //             DATAID_WINRMREMOTEENABLED, 
-        //             WINRM_SQM_DATA_REMOTEENABLED
-        //             );
-        //     }
-        // }
+        hModule = GetModuleHandleW(L"ntdll");
+        if (hModule)
+        {
+            pfnWinSqmSetDWORD = (PFN_WinSqmSetDWORD) GetProcAddress(hModule, "WinSqmSetDWORD");
+            if (pfnWinSqmSetDWORD)
+            {
+                pfnWinSqmSetDWORD(
+                    NULL,
+                    DATAID_WINRMREMOTEENABLED, 
+                    WINRM_SQM_DATA_REMOTEENABLED
+                    );
+            }
+        }
 
         return NO_ERROR;
     }
@@ -408,7 +402,6 @@ DWORD WINAPI WSManPluginStartup(
 // reason: If this is a system shutdown this will be WSMAN_PLUGIN_SHUTDOWN_SYSTEM.  
 // For WSMan service shutdown this will be WSMAN_PLUGIN_SHUTDOWN_SERVICE.  For an IIS host
 //shutdown this will be WSMAN_PLUGIN_SHUTDOWN_IISHOST.
-extern "C"
 DWORD WINAPI WSManPluginShutdown(
     __in PVOID pluginContext,
     __in DWORD flags,
@@ -456,7 +449,6 @@ DWORD WINAPI WSManPluginShutdown(
 // requestDetails the plug-in needs to call WSManPluginOperationComplete.
 // The shell is active until this time.
 // -----------------------------------------------------------------------------
-extern "C"
 VOID WINAPI WSManPluginShell(
     __in PVOID pluginContext,
     __in WSMAN_PLUGIN_REQUEST *requestDetails,
@@ -532,7 +524,6 @@ VOID WINAPI WSManPluginShell(
 // corresponding release function has been called. Failure to follow the contract
 // will result in errors being generated.
 // -----------------------------------------------------------------------------
-extern "C"
 VOID WINAPI WSManPluginReleaseShellContext(__in PVOID shellContext)
 {
     if ((NULL == shellContext))
@@ -565,7 +556,6 @@ VOID WINAPI WSManPluginReleaseShellContext(__in PVOID shellContext)
 // requestDetails the plug-in needs to call WSManPluginOperationComplete.
 // The command is active until this time.
 // -----------------------------------------------------------------------------
-extern "C"
 VOID WINAPI WSManPluginCommand(
     __in WSMAN_PLUGIN_REQUEST *requestDetails,
     __in DWORD flags,
@@ -599,7 +589,6 @@ VOID WINAPI WSManPluginCommand(
 // corresponding release function has been called. Failure to follow the contract
 // will result in errors being generated.
 // ---------------------------------------------------------------------------------
-extern "C"
 VOID WINAPI WSManPluginReleaseCommandContext(
     __in PVOID shellContext,
     __in PVOID commandContext
@@ -631,7 +620,6 @@ VOID WINAPI WSManPluginReleaseCommandContext(
 // For each piece of data the plug-in calls WSManPluginResultComplete to 
 // acknowledge receipt and to allow the next piece of data to be delivered.
 // -----------------------------------------------------------------------------
-extern "C"
 VOID WINAPI WSManPluginSend(
      __in WSMAN_PLUGIN_REQUEST *requestDetails,
     __in DWORD flags,
@@ -671,7 +659,6 @@ VOID WINAPI WSManPluginSend(
 // WSManPluginResultComplete.  The operation is marked as active until this 
 // time.
 // -----------------------------------------------------------------------------
-extern "C"
 VOID WINAPI WSManPluginReceive(
     __in WSMAN_PLUGIN_REQUEST *requestDetails,
     __in DWORD flags,
@@ -707,7 +694,6 @@ VOID WINAPI WSManPluginReceive(
 // of this callback may be many completion calls for the Signal, Receive, Command
 // and Shell operations.
 // -----------------------------------------------------------------------------
-extern "C"
 VOID WINAPI WSManPluginSignal(
                            __in WSMAN_PLUGIN_REQUEST *requestDetails,
                            __in DWORD flags,
@@ -733,7 +719,7 @@ VOID WINAPI WSManPluginSignal(
     }
 }
 
-extern "C"
+
 VOID WINAPI WSManPluginConnect(
     __in WSMAN_PLUGIN_REQUEST *requestDetails,
     __in DWORD flags,

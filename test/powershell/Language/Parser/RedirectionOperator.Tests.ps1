@@ -1,14 +1,7 @@
-Describe "Redirection operator now supports encoding changes" -Tags "CI" {
+Describe "Redirection operator now supports encoding changes" {
     BeforeAll {
         $asciiString = "abc"
-
-        if ( $IsWindows ) {
-             $asciiCR = "`r`n"
-        }
-        else {
-            $asciiCR = [string][char]10
-        }
-
+        $asciiCR = "`r`n"
 
         # If out-file -encoding happens to have a default, be sure to 
         # save it away

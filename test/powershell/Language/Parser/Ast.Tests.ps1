@@ -1,5 +1,5 @@
 using Namespace System.Management.Automation.Language
-Describe "The SafeGetValue method on AST returns safe values" -Tags "CI" {
+Describe "The SafeGetValue method on AST returns safe values" -Tags "DRT" {
     It "A hashtable is returned from a HashtableAst" {
         $HashtableAstType = [HashtableAst]
         $HtAst = { 

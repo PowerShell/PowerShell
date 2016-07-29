@@ -156,20 +156,6 @@ namespace System.Management.Automation
         internal const string PSModuleAutoLoading = "PSModuleAutoLoadingPreference";
         internal static VariablePath PSModuleAutoLoadingPreferenceVarPath = new VariablePath("global:" + PSModuleAutoLoading);
 
-        #region Platform Variables
-        internal const string IsLinux = "IsLinux";
-        internal static VariablePath IsLinuxPath = new VariablePath("IsLinux");
-
-        internal const string IsOSX = "IsOSX";
-        internal static VariablePath IsOSXPath = new VariablePath("IsOSX");
-
-        internal const string IsWindows = "IsWindows";
-        internal static VariablePath IsWindowsPath = new VariablePath("IsWindows");
-
-        internal const string IsCoreCLR = "IsCoreCLR";
-        internal static VariablePath IsCoreCLRPath = new VariablePath("IsCoreCLR");
-
-        #endregion
         #region Preference Variables
 
         internal const string DebugPreference = "DebugPreference";

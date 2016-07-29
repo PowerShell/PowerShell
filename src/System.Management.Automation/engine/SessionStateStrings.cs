@@ -26,25 +26,17 @@ namespace System.Management.Automation
 
         /// <summary>
         /// The default path separator used by the base implementation of the providers.
-        ///
-        /// Porting note: IO.Path.DirectorySeparatorChar is correct for all platforms. On Windows,
-        /// it is '\', and on Linux, it is '/', as expected.
         /// </summary>
         /// 
-        internal static readonly char DefaultPathSeparator = System.IO.Path.DirectorySeparatorChar;
-        internal static readonly string DefaultPathSeparatorString = DefaultPathSeparator.ToString();
+        internal const char DefaultPathSeparator = '\\';
+        internal const string DefaultPathSeparatorString = "\\";
 
         /// <summary>
         /// The alternate path separator used by the base implementation of the providers.
-        ///
-        /// Porting note: we do not use .NET's AlternatePathSeparatorChar here because it correctly
-        /// states that both the default and alternate are '/' on Linux. However, for PowerShell to
-        /// be "slash agnostic", we need to use the assumption that a '\' is the alternate path
-        /// separator on Linux.
         /// </summary>
         /// 
-        internal static readonly char AlternatePathSeparator = Platform.IsWindows ? '/' : '\\';
-        internal static readonly string AlternatePathSeparatorString = AlternatePathSeparator.ToString();
+        internal const char AlternatePathSeparator = '/';
+        internal const string AlternatePathSeparatorString = "/";
 
         /// <summary>
         /// The default path prefix for remote paths. This is to mimic

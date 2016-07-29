@@ -1,4 +1,4 @@
-Describe 'Exceptions flow for classes' -Tags "CI" {
+Describe 'Exceptions flow for classes' -Tags "DRT" {
     
     $canaryHashtable = @{}
 
@@ -224,7 +224,7 @@ $canaryHashtable['canary'] += 100
     }
 }
 
-Describe "Exception error position" -Tags "CI" {
+Describe "Exception error position" -Tags "DRT" {
     class MSFT_3090412
     {
         static f1() { [MSFT_3090412]::bar = 42 }
@@ -270,7 +270,7 @@ Describe "Exception error position" -Tags "CI" {
     }
 }
 
-Describe "Exception from initializer" -Tags "CI" {
+Describe "Exception from initializer" -Tags "DRT" {
     class MSFT_6397334a
     {
         [int]$a = "zz"

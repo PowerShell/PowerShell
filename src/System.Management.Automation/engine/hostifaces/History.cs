@@ -1233,8 +1233,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteObject(results, true);
                     }
-                pipeline.RemoveFromInvokeHistoryEntryList(entry);
-            }
+                    pipeline.RemoveFromInvokeHistoryEntryList(entry);
+                }
                 finally
                 {
                     ps.Streams.Debug.DataAdded -= debugAdded;

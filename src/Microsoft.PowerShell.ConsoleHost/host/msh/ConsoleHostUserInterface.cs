@@ -14,9 +14,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
 using System.Security;
 using Dbg = System.Management.Automation.Diagnostics;
-#if !UNIX
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
-#endif
 
 namespace Microsoft.PowerShell
 {
@@ -61,15 +59,13 @@ namespace Microsoft.PowerShell
             this.parent = parent;
             this.rawui = new ConsoleHostRawUserInterface(this);
 
-#if UNIX
-            this._supportsVirtualTerminal = true;
-#else
             try
             {
                 // Turn on virtual terminal if possible.
 
                 // This might throw - not sure how exactly (no console), but if it does, we shouldn't fail to start.
                 var handle = ConsoleControl.GetActiveScreenBufferHandle();
+
                 var m = ConsoleControl.GetMode(handle);
                 if (ConsoleControl.NativeMethods.SetConsoleMode(handle.DangerousGetHandle(), (uint) (m | ConsoleControl.ConsoleModes.VirtualTerminal)))
                 {
@@ -82,7 +78,6 @@ namespace Microsoft.PowerShell
             catch
             {
             }
-#endif
 
             isInteractiveTestToolListening = false;
         }
@@ -238,7 +233,7 @@ namespace Microsoft.PowerShell
                 result = ReadLineSafe(true, printToken);
             }
             SecureString secureResult = result as SecureString;
-            System.Management.Automation.Diagnostics.Assert(secureResult != null, "ReadLineSafe did not return a SecureString");
+            Diagnostics.Assert(secureResult != null, "ReadLineSafe did not return a SecureString");
 
             return secureResult;
         }
@@ -251,10 +246,6 @@ namespace Microsoft.PowerShell
         /// It also manages the cursor as keys are entered and "backspaced". However, it is possible that
         /// while this method is running, the console buffer contents could change. Then, its cursor mgmt
         /// will likely be messed up.
-        ///
-        /// Secondary implementation for Unix based on Console.ReadKey(), where
-        /// the advantage is portability through abstraction. Does not support
-        /// arrow key movement, but supports backspace.
         /// 
         /// </summary>
         ///<param name="isSecureString">
@@ -297,21 +288,13 @@ namespace Microsoft.PowerShell
                 null;
             SecureString secureResult = new SecureString();
             StringBuilder result = new StringBuilder();
-#if UNIX
-            bool treatControlCAsInput = Console.TreatControlCAsInput;
-#else
             ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             ConsoleControl.ConsoleModes originalMode = ConsoleControl.GetMode(handle);
             bool isModeChanged = true; // assume ConsoleMode is changed so that if ReadLineSetMode
             // fails to return the value correctly, the original mode is
             // restored.
-#endif
-
             try
             {
-#if UNIX
-                Console.TreatControlCAsInput = true;
-#else
                 // Ensure that we're in the proper line-input mode.
 
                 ConsoleControl.ConsoleModes desiredMode =
@@ -338,7 +321,6 @@ namespace Microsoft.PowerShell
                     isModeChanged = false;
                 }
                 rawui.ClearKeyCache();
-#endif
 
                 Coordinates originalCursorPos = rawui.CursorPosition;
 
@@ -349,39 +331,22 @@ namespace Microsoft.PowerShell
                     // end up having a immutable string holding the
                     // secret in memory.
                     //
-#if UNIX
-                    ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-#else
                     uint unused = 0;
                     string key = ConsoleControl.ReadConsole(handle, string.Empty, 1, false, out unused);
-#endif
 
-#if UNIX
-                    // Handle Ctrl-C ending input
-                    if (keyInfo.Key == ConsoleKey.C && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control))
-#else
                     if (string.IsNullOrEmpty(key) || (char)3 == key[0])
-#endif
                     {
                         PipelineStoppedException e = new PipelineStoppedException();
                         throw e;
                     }
-#if UNIX
-                    if (keyInfo.Key == ConsoleKey.Enter)
-#else
                     if ((char)13 == key[0])
-#endif
                     {
                         //
                         // we are done if user presses ENTER key
                         //
                         break;
                     }
-#if UNIX
-                    if (keyInfo.Key == ConsoleKey.Backspace)
-#else
                     if ((char)8 == key[0])
-#endif
                     {
                         //
                         // for backspace, remove last char appended
@@ -397,13 +362,6 @@ namespace Microsoft.PowerShell
                             WriteBackSpace(originalCursorPos);
                         }
                     }
-#if UNIX
-                    else if (Char.IsControl(keyInfo.KeyChar))
-                    {
-                        // blacklist control characters
-                        continue;
-                    }
-#endif
                     else
                     {
                         //
@@ -411,19 +369,11 @@ namespace Microsoft.PowerShell
                         //
                         if (isSecureString)
                         {
-#if UNIX
-                            secureResult.AppendChar(keyInfo.KeyChar);
-#else
                             secureResult.AppendChar(key[0]);
-#endif
                         }
                         else
                         {
-#if UNIX
-                            result.Append(keyInfo.KeyChar);
-#else
                             result.Append(key);
-#endif
                         }
                         if (!string.IsNullOrEmpty(printTokenString))
                         {
@@ -433,23 +383,12 @@ namespace Microsoft.PowerShell
                 }
                 while (true);
             }
-#if UNIX
-            catch (InvalidOperationException)
-            {
-                // ReadKey() failed so we stop
-                throw new PipelineStoppedException();
-            }
-#endif
             finally
             {
-#if UNIX
-                Console.TreatControlCAsInput = treatControlCAsInput;
-#else
                 if (isModeChanged)
                 {
                     ConsoleControl.SetMode(handle, originalMode);
                 }
-#endif
             }
             WriteLineToConsole();
             PostRead(result.ToString());
@@ -462,7 +401,6 @@ namespace Microsoft.PowerShell
                 return result;
             }
         }
-
 
         /// <summary>
         ///
@@ -573,7 +511,7 @@ namespace Microsoft.PowerShell
         }
 
 
-#if !UNIX
+
         /// <summary>
         /// 
         /// If <paramref name="m"/> is set on <paramref name="flagToUnset"/>, unset it and return true;
@@ -593,6 +531,7 @@ namespace Microsoft.PowerShell
         /// false otherwise
         /// 
         /// </returns>
+
         private static bool shouldUnsetMode(
             ConsoleControl.ConsoleModes flagToUnset,
             ref ConsoleControl.ConsoleModes m)
@@ -604,14 +543,11 @@ namespace Microsoft.PowerShell
             }
             return false;
         }
-#endif
 
         #region WriteToConsole
 
         internal void WriteToConsole(string value, bool transcribeResult)
         {
-
-#if !UNIX
             ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
 
             // Ensure that we're in the proper line-output mode.  We don't lock here as it does not matter if we
@@ -628,17 +564,12 @@ namespace Microsoft.PowerShell
                 m |= desiredMode;
                 ConsoleControl.SetMode(handle, m);
             }
-#endif
 
             PreWrite();
 
             // This is atomic, so we don't lock here...
 
-#if !UNIX
             ConsoleControl.WriteConsole(handle, value);
-#else
-            Console.Out.Write(value);
-#endif
 
             if (isInteractiveTestToolListening && Console.IsOutputRedirected)
             {
@@ -1539,9 +1470,9 @@ namespace Microsoft.PowerShell
 
 
 
-        // We use System.Environment.NewLine because we are platform-agnostic
+        // We don't use System.Environment.NewLine because we are very platform specific with our use of the win32 console APIs
 
-        internal static string Crlf = System.Environment.NewLine;
+        internal const string Crlf = "\x000D\x000A";
         private const string Tab = "\x0009";
 
         internal enum ReadLineResult
@@ -1688,11 +1619,10 @@ namespace Microsoft.PowerShell
 
         private string ReadLineFromConsole(bool endOnTab, string initialContent, bool calledFromPipeline, ref string restOfLine, ref ReadLineResult result)
         {
+            ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             PreRead();
             // Ensure that we're in the proper line-input mode.
 
-#if !UNIX
-            ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             ConsoleControl.ConsoleModes m = ConsoleControl.GetMode(handle);
 
             const ConsoleControl.ConsoleModes desiredMode =
@@ -1706,7 +1636,6 @@ namespace Microsoft.PowerShell
                 m |= desiredMode;
                 ConsoleControl.SetMode(handle, m);
             }
-#endif
 
             // If more characters are typed than you asked, then the next call to ReadConsole will return the 
             // additional characters beyond those you requested.
@@ -1723,44 +1652,18 @@ namespace Microsoft.PowerShell
             // If input is terminated with a break key (Ctrl-C, Ctrl-Break, Close, etc.), then the buffer will be 
             // the empty string.
 
-#if UNIX
-            // For Unix systems, we implement a basic readline loop around Console.ReadKey(), that
-            // supports backspace, arrow keys, Ctrl-C, and Ctrl-D. This readline is only used for
-            // interactive prompts (like Read-Host), otherwise it is assumed that PSReadLine is
-            // available. Therefore this explicitly does not support history or tab completion.
-
-            bool treatControlCAsInput = Console.TreatControlCAsInput;
-
-            try
-            {
-
-            ConsoleKeyInfo keyInfo;
-            string s = "";
-            int index = 0;
-            int cursorLeft = Console.CursorLeft;
-            int cursorCurrent = cursorLeft;
-            bool insertMode = true;
-            Console.TreatControlCAsInput = true;
-#else
-            rawui.ClearKeyCache();
             uint keyState = 0;
+
+            rawui.ClearKeyCache();
+
             string s = "";
-#endif
             do
             {
-#if UNIX
-                keyInfo = Console.ReadKey(true);
-#else
                 s += ConsoleControl.ReadConsole(handle, initialContent, maxInputLineLength, endOnTab, out keyState);
-                Dbg.Assert(s != null, "s should never be null");
-#endif
 
-#if UNIX
-                // Handle Ctrl-C ending input
-                if (keyInfo.Key == ConsoleKey.C && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control))
-#else
+                Dbg.Assert(s != null, "s should never be null");
+
                 if (s.Length == 0)
-#endif
                 {
                     result = ReadLineResult.endedOnBreak;
                     s = null;
@@ -1774,29 +1677,13 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
-#if UNIX
-                if (keyInfo.Key == ConsoleKey.Enter)
-#else
                 if (s.EndsWith(Crlf, StringComparison.CurrentCulture))
-#endif
                 {
                     result = ReadLineResult.endedOnEnter;
-#if UNIX
-                    // We're intercepting characters, so we need to echo the newline
-                    Console.Out.WriteLine();
-#else
                     s = s.Remove(s.Length - Crlf.Length);
-#endif
                     break;
                 }
 
-#if UNIX
-                if (keyInfo.Key == ConsoleKey.Tab)
-                {
-                    // This is unsupported
-                    continue;
-                }
-#else
                 int i = s.IndexOf(Tab, StringComparison.CurrentCulture);
 
                 if (endOnTab && i != -1)
@@ -1846,139 +1733,17 @@ namespace Microsoft.PowerShell
 
                     break;
                 }
-#endif
-#if UNIX
-                if (keyInfo.Key == ConsoleKey.Backspace)
-                {
-                    if (index > 0)
-                    {
-                        int length = s.Length;
-                        s = s.Remove(index - 1, 1);
-                        index--;
-                        cursorCurrent = Console.CursorLeft;
-                        Console.CursorLeft = cursorLeft;
-                        Console.Out.Write(s.PadRight(length));
-                        Console.CursorLeft = cursorCurrent - 1;
-                    }
-                    continue;
-                }
-
-                if (keyInfo.Key == ConsoleKey.Delete
-                    || (keyInfo.Key == ConsoleKey.D && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
-                {
-                    if (index < s.Length)
-                    {
-                        int length = s.Length;
-                        s = s.Remove(index, 1);
-                        cursorCurrent = Console.CursorLeft;
-                        Console.CursorLeft = cursorLeft;
-                        Console.Out.Write(s.PadRight(length));
-                        Console.CursorLeft = cursorCurrent;
-                    }
-                    continue;
-                }
-
-                if (keyInfo.Key == ConsoleKey.LeftArrow
-                    || (keyInfo.Key == ConsoleKey.B && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
-                {
-                    if (Console.CursorLeft > cursorLeft)
-                    {
-                        Console.CursorLeft--;
-                        index--;
-                    }
-                    continue;
-                }
-
-                if (keyInfo.Key == ConsoleKey.RightArrow
-                    || (keyInfo.Key == ConsoleKey.F && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
-                {
-                    if (Console.CursorLeft < cursorLeft + s.Length)
-                    {
-                        Console.CursorLeft++;
-                        index++;
-                    }
-                    continue;
-                }
-
-                if (keyInfo.Key == ConsoleKey.UpArrow
-                    || keyInfo.Key == ConsoleKey.DownArrow
-                    || keyInfo.Key == ConsoleKey.PageUp
-                    || keyInfo.Key == ConsoleKey.PageDown)
-                {
-                    // Arrow/Page Up/down is unimplemented, so fail gracefully
-                    continue;
-                }
-
-                if (keyInfo.Key == ConsoleKey.Home
-                    || (keyInfo.Key == ConsoleKey.A && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
-                {
-                    Console.CursorLeft = cursorLeft;
-                    index = 0;
-                    continue;
-                }
-
-                if (keyInfo.Key == ConsoleKey.End
-                    || (keyInfo.Key == ConsoleKey.E && keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)))
-                {
-                    Console.CursorLeft = cursorLeft + s.Length;
-                    index = s.Length;
-                    continue;
-                }
-
-                if (keyInfo.Key == ConsoleKey.Escape)
-                {
-                    Console.CursorLeft = cursorLeft;
-                    index = s.Length;
-                    s = "";
-                    continue;
-                }
-
-                if (keyInfo.Key == ConsoleKey.Insert)
-                {
-                    // Toggle insert/overwrite mode
-                    insertMode = !insertMode;
-                    continue;
-                }
-
-                if (Char.IsControl(keyInfo.KeyChar))
-                {
-                    // blacklist control characters
-                    continue;
-                }
-
-                // Modify string
-                if (!insertMode) // then overwrite mode
-                {
-                    s = s.Remove(index, 1);
-                }
-                s = s.Insert(index, keyInfo.KeyChar.ToString());
-                index++;
-
-                // Redisplay string
-                cursorCurrent = Console.CursorLeft;
-                Console.CursorLeft = cursorLeft;
-                Console.Out.Write(s);
-                Console.CursorLeft = cursorCurrent + 1;
-#endif
             }
             while (true);
 
             Dbg.Assert(
-                       (s == null && result == ReadLineResult.endedOnBreak)
-                       || (s != null && result != ReadLineResult.endedOnBreak),
-                       "s should only be null if input ended with a break");
+                    (s == null && result == ReadLineResult.endedOnBreak)
+                || (s != null && result != ReadLineResult.endedOnBreak),
+                "s should only be null if input ended with a break");
 
             return s;
-#if UNIX
-            }
-            finally
-            {
-                Console.TreatControlCAsInput = treatControlCAsInput;
-            }
-#endif
         }
 
-#if !UNIX
         /// <summary>
         /// Get the character at the cursor when the user types 'tab' in the middle of line.
         /// </summary>
@@ -2006,7 +1771,6 @@ namespace Microsoft.PowerShell
             Dbg.Assert(false, "the character at the cursor should be retrieved, never gets to here");
             return '\0';
         }
-#endif
 
 
         /// <summary>
@@ -2047,15 +1811,13 @@ namespace Microsoft.PowerShell
         /// </returns>
         internal string ReadLineWithTabCompletion(Executor exec)
         {
-            string input = null;
-            string lastInput = "";
-
-            ReadLineResult rlResult = ReadLineResult.endedOnEnter;
-
-#if !UNIX
             ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
 
+            string input = null;
+            string lastInput = "";
             string lastCompletion = "";
+
+            ReadLineResult rlResult = ReadLineResult.endedOnEnter;
             Size screenBufferSize = RawUI.BufferSize;
 
             // Save the cursor position at the end of the prompt string so that we can restore it later to write the
@@ -2065,7 +1827,6 @@ namespace Microsoft.PowerShell
 
             CommandCompletion commandCompletion = null;
             string completionInput = null;
-#endif
 
             do
             {
@@ -2076,6 +1837,9 @@ namespace Microsoft.PowerShell
 
                 input = ReadLine(true, lastInput, out rlResult, false, false);
 
+                Coordinates endOfInputCursorPos = RawUI.CursorPosition;
+                string completedInput = null;
+
                 if (input == null)
                 {
                     break;
@@ -2085,13 +1849,6 @@ namespace Microsoft.PowerShell
                 {
                     break;
                 }
-
-#if UNIX // Portable code only ends on enter (or no input), so tab is not processed
-                throw new PlatformNotSupportedException("This readline state is unsupported in portable code!");
-#else
-
-                Coordinates endOfInputCursorPos = RawUI.CursorPosition;
-                string completedInput = null;
 
                 if (rlResult == ReadLineResult.endedOnTab || rlResult == ReadLineResult.endedOnShiftTab)
                 {
@@ -2196,7 +1953,6 @@ namespace Microsoft.PowerShell
 
                     lastInput = completedInput;
                 }
-#endif
             }
             while (true);
 
@@ -2212,7 +1968,6 @@ namespace Microsoft.PowerShell
             return input;
         }
 
-#if !UNIX
         private void SendLeftArrows(int length)
         {
             var inputs = new ConsoleControl.INPUT[length * 2];
@@ -2242,7 +1997,6 @@ namespace Microsoft.PowerShell
 
             ConsoleControl.MimicKeyPress(inputs);
         }
-#endif
 
         private CommandCompletion GetNewCompletionResults(string input)
         {

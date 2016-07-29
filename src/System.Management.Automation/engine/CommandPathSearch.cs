@@ -50,33 +50,21 @@ namespace System.Management.Automation
             ExecutionContext context,
             Collection<string> acceptableCommandNames)
         {
-            string[] commandPatterns;
             if (acceptableCommandNames != null)
             {
                 // The name passed in is not a pattern. To minimize enumerating the file system, we
                 // turn the command name into a pattern and then match against extensions in PATHEXT.
                 // The old code would enumerate the file system many more times, once per possible extension.
-                if (Platform.IsWindows)
-                {
-                    commandPatterns = new [] { commandName + ".*" };
-                }
-                else
-                {
-                    // Porting note: on non-Windows platforms, we want to always allow just 'commandName'
-                    // as an acceptable command name. However, we also want to allow commands to be
-                    // called with the .ps1 extension, so that 'script.ps1' can be called by 'script'.
-                    commandPatterns = new [] { commandName + ".ps1", commandName };
-                }
+                commandName = commandName + ".*";
                 this.postProcessEnumeratedFiles = CheckAgainstAcceptableCommandNames;
                 this.acceptableCommandNames = acceptableCommandNames;
             }
             else
             {
-                commandPatterns = new [] { commandName };
                 postProcessEnumeratedFiles = JustCheckExtensions;
             }
-
-            Init(commandPatterns, lookupPaths, context);
+            
+            Init(new [] { commandName }, lookupPaths, context);
             this.orderedPathExt = CommandDiscovery.PathExtensionsWithPs1Prepended;
         }
 
@@ -473,10 +461,8 @@ namespace System.Management.Automation
         {
             var baseNames = fileNames.Select(Path.GetFileName).ToArray();
 
-            // Result must be ordered by PATHEXT order of precedence.
-            // acceptableCommandNames is in this order, so 
-
-            // Porting note: allow files with executable bit on non-Windows platforms
+            // Result must be ordered by PATHEXT order of precdence.
+            // accpetableCommandNames is in this order, so 
 
             Collection<string> result = null;
             if (baseNames.Length > 0)
@@ -485,8 +471,7 @@ namespace System.Management.Automation
                 {
                     for (int i = 0; i < baseNames.Length; i++)
                     {
-                        if (name.Equals(baseNames[i], StringComparison.OrdinalIgnoreCase)
-                            || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(name)))
+                        if (name.Equals(baseNames[i], StringComparison.OrdinalIgnoreCase))
                         {
                             if (result == null)
                                 result = new Collection<string>();
@@ -502,18 +487,14 @@ namespace System.Management.Automation
 
         private IEnumerable<string> JustCheckExtensions(string[] fileNames)
         {
-            // Warning: pretty duplicated code
-            // Result must be ordered by PATHEXT order of precedence.
-
-            // Porting note: allow files with executable bit on non-Windows platforms
+            // Result must be ordered by PATHEXT order of precdence.
 
             Collection<string> result = null;
             foreach (var allowedExt in orderedPathExt)
             {
                 foreach (var fileName in fileNames)
                 {
-                    if (fileName.EndsWith(allowedExt, StringComparison.OrdinalIgnoreCase)
-                        || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(fileName)))
+                    if (fileName.EndsWith(allowedExt, StringComparison.OrdinalIgnoreCase))
                     {
                         if (result == null)
                             result = new Collection<string>();

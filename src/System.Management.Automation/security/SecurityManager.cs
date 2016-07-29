@@ -117,13 +117,12 @@ namespace Microsoft.PowerShell
             string path = script.Path;
             string reasonMessage;
 
-            // path is assumed to be fully qualified here
-            if (path.IndexOf(System.IO.Path.DirectorySeparatorChar) < 0)
+            if (path.IndexOf('\\') < 0)
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            if (path.LastIndexOf(System.IO.Path.DirectorySeparatorChar) == (path.Length - 1))
+            if (path.LastIndexOf('\\') == (path.Length - 1))
             {
                 throw PSTraceSource.NewArgumentException("path");
             }
