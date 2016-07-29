@@ -71,7 +71,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Allowed PowerShell Editions
         /// </summary>
-        internal static string[] AllowedEditionValues = { "WindowsPowerShell", "PowerShellCore" };
+        internal static string[] AllowedEditionValues = { "Desktop", "Core" };
 
         /// <summary>
         /// helper fn to check byte[] arg for null.

@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [ValidateSet("WindowsPowerShell", "PowerShellCore")]
+        [ValidateSet("Desktop", "Core")]
         [SuppressMessage("Microsoft.Performance",
             "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] CompatiblePSEditions

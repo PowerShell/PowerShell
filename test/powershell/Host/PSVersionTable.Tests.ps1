@@ -20,6 +20,6 @@ Describe "PSVersionTable" -Tags "CI" {
     }
 
     It "Should have the correct edition" -Skip:(!$IsCoreCLR) {
-	$PSVersionTable["PSEdition"] | Should Be "PowerShellCore"
+	$PSVersionTable["PSEdition"] | Should Be "Core"
     }
 }

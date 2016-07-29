@@ -464,7 +464,7 @@ function GetResolvedPathHelper
 
 function Add-CompressionAssemblies {
     
-    if ($PSEdition -eq "WindowsPowerShell")
+    if ($PSEdition -eq "Desktop")
     {
         Add-Type -AssemblyName System.IO.Compression
         Add-Type -AssemblyName System.IO.Compression.FileSystem
