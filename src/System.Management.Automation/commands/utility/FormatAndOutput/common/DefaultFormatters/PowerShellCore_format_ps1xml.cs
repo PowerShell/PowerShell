@@ -720,7 +720,7 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
-                                    if ($_.FullyQualifiedErrorId -ne ""NativeCommandErrorMessage"" -and $ErrorView -ne ""CategoryView"")
+                                    if (($_.FullyQualifiedErrorId -ne ""NativeCommandErrorMessage"" -and $_.FullyQualifiedErrorId -ne ""NativeCommandError"") -and $ErrorView -ne ""CategoryView"")
                                     {
                                         $myinv = $_.InvocationInfo
                                         if ($myinv -and $myinv.MyCommand)
@@ -767,7 +767,7 @@ namespace System.Management.Automation.Runspaces
                                     }
                                 ")
                         .AddScriptBlockExpressionBinding(@"
-                                   if ($_.FullyQualifiedErrorId -eq ""NativeCommandErrorMessage"") {
+                                   if ($_.FullyQualifiedErrorId -eq ""NativeCommandErrorMessage"" -or $_.FullyQualifiedErrorId -eq ""NativeCommandError"") {
                                         $_.Exception.Message   
                                    }
                                    else

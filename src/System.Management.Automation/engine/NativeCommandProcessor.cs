@@ -1880,17 +1880,11 @@ namespace System.Management.Automation
                 //
                 // Wrap the rest of the output in ErrorRecords with the "NativeCommandErrorMessage" error ID
                 //
-                char[] buffer = new char[4096];
-
-                int read = 0;
-
-                while ((read = _streamReader.Read(buffer, 0, buffer.Length)) != 0)
+                while ((line = _streamReader.ReadLine()) != null)
                 {
-                    StringBuilder errorMessage = new StringBuilder().Append(buffer, 0, read);
-
                     AddObjectToWriter(
                         new ErrorRecord(
-                            new RemoteException(errorMessage.ToString()),
+                            new RemoteException(line),
                             "NativeCommandErrorMessage",
                             ErrorCategory.NotSpecified,
                             null),
