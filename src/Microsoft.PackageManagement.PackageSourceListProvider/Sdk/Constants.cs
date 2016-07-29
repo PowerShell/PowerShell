@@ -18,7 +18,13 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
         /// Config file storing the info as a result of registering a package source
         /// </summary>
         public static readonly string SettingsFileName = "PSL.config";
-      
+
+        /// <summary>
+        /// Sample JSON file containing open powershell entry
+        /// </summary>
+        public static readonly string JSONFileName = "PSL.json";
+        public static readonly string CatFileName = "PSL.cat";
+
         internal static class MediaType
         {
             public const string MsiPackage = "msi";
@@ -79,7 +85,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
             public const string ProviderSwidtagUnavailable = "MSG:ProviderSwidtagUnavailable";
             public const string RemoveEnvironmentVariableRequiresElevation = "MSG:RemoveEnvironmentVariableRequiresElevation";
             public const string SchemeNotSupported = "MSG:SchemeNotSupported";
-            public const string SourceLocationNotValid = "MSG:SourceLocationNotValid";
+            public const string SourceLocationNotValid = "MSG:SourceLocationNotValid_Location";         
             public const string UnableToCopyFileTo = "MSG:UnableToCopyFileTo";
             public const string UnableToCreateShortcutTargetDoesNotExist = "MSG:UnableToCreateShortcutTargetDoesNotExist";
             public const string UnableToDownload = "MSG:UnableToDownload";

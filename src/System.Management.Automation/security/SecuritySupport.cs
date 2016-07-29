@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell
     }
 }
 
-namespace System.Management.Automation
+namespace System.Management.Automation.Internal
 {
     /// <summary>
     /// The SAFER policy associated with this file
@@ -118,7 +118,10 @@ namespace System.Management.Automation
         Disallowed = 2
     }
 
-    internal static class SecuritySupport
+    /// <summary>
+    /// Security Support APIs
+    /// </summary>
+    public static class SecuritySupport
     {
         #region execution policy
 
@@ -414,7 +417,12 @@ namespace System.Management.Automation
             }
         }
 
-        internal static bool IsProductBinary(string file)
+        /// <summary>
+        /// Returns true if file has product binary signature
+        /// </summary>
+        /// <param name="file">Name of file to check</param>
+        /// <returns>True when file has product binary signature</returns>
+        public static bool IsProductBinary(string file)
         {
             if(String.IsNullOrEmpty(file) || (! IO.File.Exists(file)))
             {

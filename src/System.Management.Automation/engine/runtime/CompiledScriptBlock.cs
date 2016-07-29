@@ -1828,7 +1828,7 @@ namespace System.Management.Automation
 
             if (_scriptBlock.HasBeginBlock)
             {
-                RunClause(_runOptimized ? _scriptBlock.BeginBlock : _scriptBlock.UnoptimizedBeginBlock, AutomationNull.Value, _input.GetEnumerator());
+                RunClause(_runOptimized ? _scriptBlock.BeginBlock : _scriptBlock.UnoptimizedBeginBlock, AutomationNull.Value, _input);
             }
         }
 
@@ -1851,7 +1851,7 @@ namespace System.Management.Automation
             }
             if (_scriptBlock.HasProcessBlock)
             {
-                RunClause(_runOptimized ? _scriptBlock.ProcessBlock : _scriptBlock.UnoptimizedProcessBlock, dollarUnder, _input.GetEnumerator());
+                RunClause(_runOptimized ? _scriptBlock.ProcessBlock : _scriptBlock.UnoptimizedProcessBlock, dollarUnder, _input);
                 _input.Clear();
             }
         }
@@ -1865,7 +1865,7 @@ namespace System.Management.Automation
 
             if (_scriptBlock.HasEndBlock)
             {
-                RunClause(_runOptimized ? _scriptBlock.EndBlock : _scriptBlock.UnoptimizedEndBlock, AutomationNull.Value, _input.ToArray().GetEnumerator());
+                RunClause(_runOptimized ? _scriptBlock.EndBlock : _scriptBlock.UnoptimizedEndBlock, AutomationNull.Value, _input.ToArray());
             }
         }
 

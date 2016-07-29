@@ -11085,6 +11085,9 @@ namespace System.Management.Automation.Internal
         List<WorkflowInfo> CompileWorkflows(ScriptBlockAst ast, PSModuleInfo definingModule, InitialSessionState initialSessionState, out ParseException parsingErrors);
 
         /// <summary/>
+        List<WorkflowInfo> CompileWorkflows(ScriptBlockAst ast, PSModuleInfo definingModule, InitialSessionState initialSessionState, PSLanguageMode? languageMode, out ParseException parsingErrors);
+
+        /// <summary/>
         List<WorkflowInfo> CompileWorkflows(ScriptBlockAst ast, PSModuleInfo definingModule, string rootWorkflowName);
 
         /// <summary/>

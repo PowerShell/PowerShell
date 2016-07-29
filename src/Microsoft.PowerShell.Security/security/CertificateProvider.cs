@@ -3545,7 +3545,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (DownLevelHelper.NativeFilteringSupported())
             {
-                Collection<string> ekuCollection = System.Management.Automation.SecuritySupport.GetCertEKU(cert);
+                Collection<string> ekuCollection = System.Management.Automation.Internal.SecuritySupport.GetCertEKU(cert);
             
                 foreach (string oidString in ekuCollection)
                 {

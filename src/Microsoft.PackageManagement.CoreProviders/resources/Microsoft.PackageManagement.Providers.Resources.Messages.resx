@@ -121,6 +121,16 @@
     <value>Fail to extract and copy to '{0}'.</value>
     <comment>0 - The directory we are copying to</comment>
   </data>
+  <data name="FailToDeleteExistingFolder" xml:space="preserve">
+    <value>Cannot delete existing provider folder '{0}'.</value>
+  </data>
+  <data name="FailToExtract" xml:space="preserve">
+    <value>Cannot extract from '{0}' to '{1}'</value>
+  </data>
+  <data name="FailToInstallZipFolder" xml:space="preserve">
+    <value>Fail to extract zip package '{0}': '{1}'</value>
+    <comment>0 - package path, 1 - exception message</comment>
+  </data>
   <data name="FindingPackage" xml:space="preserve">
     <value>Finding the package '{0}'.</value>
     <comment>0 - package name</comment>

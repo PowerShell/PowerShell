@@ -25,9 +25,13 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
     using File = System.IO.File;
     using System.Threading.Tasks;
     using Microsoft.PackageManagement.Provider.Utility;
+    using System.Security.Cryptography;
+    using System.Linq;
+    using ErrorCategory = PackageManagement.Internal.ErrorCategory;
 
-    public class WebDownloader {
-   
+    public class WebDownloader
+    {
+
         /// <summary>
         /// Download data from remote via uri query.
         /// </summary>
@@ -44,11 +48,11 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
             // try downloading for 3 times
             int remainingTry = 3;
             long totalDownloaded = 0;
-          
+
             CancellationTokenSource cts;
-            Stream input = null;           
-            FileStream output = null;           
-         
+            Stream input = null;
+            FileStream output = null;
+
             while (remainingTry > 0)
             {
                 // if user cancel the request, no need to do anything
@@ -67,24 +71,27 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                     // decrease try by 1
                     remainingTry -= 1;
 
-                    var httpClient = request.Client;                   
+                    var httpClient = request.Client;
 
                     httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "text/html; charset=iso-8859-1");
 
                     input = await httpClient.GetStreamAsync(query);
 
-                                        
+
                     // buffer size of 64 KB, this seems to be preferable buffer size, not too small and not too big
                     byte[] bytes = new byte[1024 * 64];
                     output = File.Open(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
 
                     int current = 0;
-                      
+
                     // here we read content that we got from the http response stream into the bytes array
                     current = await input.ReadAsync(bytes, 0, bytes.Length, cts.Token);
 
+                    int progressPercentage = progressTracker.StartPercent;
                     // report initial progress
-                    request.Progress(progressTracker.ProgressID, progressTracker.StartPercent, Resources.Messages.BytesRead, current);
+                    request.Progress(progressTracker.ProgressID, progressPercentage, Resources.Messages.BytesRead, current);
+
+                    int i = progressTracker.StartPercent;
 
                     while (current > 0)
                     {
@@ -92,10 +99,10 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
 
                         // here we write out the bytes array into the file
                         await output.WriteAsync(bytes, 0, current, cts.Token);
-                          
+
                         // report the progress
-                        request.Progress(progressTracker.ProgressID, progressTracker.StartPercent, Resources.Messages.BytesRead, totalDownloaded);
-                     
+                        request.Progress(progressTracker.ProgressID, progressPercentage<progressTracker.EndPercent?progressPercentage++:progressTracker.EndPercent, Resources.Messages.BytesRead, totalDownloaded);
+
                         // continue reading from the stream
                         current = await input.ReadAsync(bytes, 0, bytes.Length, cts.Token);
                     }
@@ -113,7 +120,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                     if (request.IsCanceled)
                     {
                         return 0;
-                    }                  
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -164,7 +171,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                 {
                     throw new ArgumentNullException("destination");
                 }
-    
+
                 // make sure that the parent folder is created first.
                 var folder = Path.GetDirectoryName(destination);
                 if (!Directory.Exists(folder))
@@ -177,12 +184,11 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                     destination.TryHardToDelete();
                 }
 
-
+                
                 if (progressTracker == null)
                 {
                     progressTracker = new ProgressTracker(request.StartProgress(0, Resources.Messages.DownloadingPackage, queryUrl));
-                }
-
+                } 
 
                 Uri uri;
 
@@ -204,8 +210,8 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                             input.CopyTo(output);
 
                         }
-                    } 
-                    
+                    }
+
                     request.CompleteProgress(progressTracker.ProgressID, true);
                 }
                 else
@@ -216,14 +222,14 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
 
                 if (File.Exists(destination))
                 {
-                    request.Verbose(Resources.Messages.CompletedDownload, queryUrl);
+                    request.Verbose(Resources.Messages.CompletedDownload, queryUrl);                    
                     return destination;
                 }
                 else
                 {
                     request.Error(Internal.ErrorCategory.InvalidOperation, Resources.Messages.FailedToDownload, Constants.ProviderName, queryUrl, destination);
                     return null;
-                }
+                }                
             }
             catch (Exception ex)
             {
@@ -233,10 +239,65 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
             }
         }
 
-        internal static bool PerformSecurityScan(string fileFullPath)
+        internal static bool VerifyHash(string fileFullPath,PackageJson package, PackageSourceListRequest request)
         {
-            //TODO need to do security scan before running install
-            return true;
+            //skip in case the skip switch is specified
+            if (request.SkipHashValidation.Value)
+            {
+                request.Verbose(Resources.Messages.SkipHashValidation);
+                return true;                   
+            }
+            PackageHash packageHash = package.Hash;
+            if (packageHash==null || string.IsNullOrWhiteSpace(packageHash.algorithm) || string.IsNullOrWhiteSpace(packageHash.hashCode))
+            {
+                request.WriteError(ErrorCategory.InvalidArgument, Constants.ProviderName, Resources.Messages.HashNotSpecified, package.Name);
+                return false;
+            }
+            try
+            {
+                HashAlgorithm hashAlgorithm = null;
+                switch (packageHash.algorithm.ToLowerInvariant())
+                {
+                    case "sha256":
+                        hashAlgorithm = SHA256.Create();
+                        break;
+
+                    case "md5":
+                        hashAlgorithm = MD5.Create();
+                        break;
+
+                    case "sha512":
+                        hashAlgorithm = SHA512.Create();
+                        break;                    
+                    default:
+                        request.WriteError(ErrorCategory.InvalidArgument, Constants.ProviderName, Resources.Messages.InvalidHashAlgorithm, packageHash.algorithm);
+                        return false;
+                }
+
+                using (FileStream stream = File.OpenRead(fileFullPath))
+                {
+                    // compute the hash
+                    byte[] computedHash = hashAlgorithm.ComputeHash(stream);
+                    // convert the original hash we got from json
+                    byte[] hashFromJSON = Convert.FromBase64String(package.Hash.hashCode);
+                    if (!Enumerable.SequenceEqual(computedHash, hashFromJSON))
+                    {
+                        request.WriteError(ErrorCategory.InvalidOperation, Constants.ProviderName, Resources.Messages.HashVerificationFailed, package.Name, package.Source);
+                        return false;
+                    }
+                    else
+                    {
+                        request.Verbose(Resources.Messages.HashValidationSuccessfull);
+                    }
+                }
+            }
+            catch
+            {
+                request.WriteError(ErrorCategory.InvalidOperation, Constants.ProviderName, Resources.Messages.HashVerificationFailed, package.Name, package.Source);
+                return false;
+            }
+            
+           return true;
         }
     }
 }

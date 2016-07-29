@@ -180,6 +180,11 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                             {
                                 item.Common = common;
                                 item.FilePath = packageSpecPath;
+
+                                if (string.IsNullOrWhiteSpace(item.Version))
+                                {
+                                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.Messages.VersionNotFound, item.Name));
+                                }
                             }
 
                             item.PackageSource = packageSource;
@@ -201,6 +206,11 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                         else
                         {
                             convertedPackage.Common = new CommonDefinition();
+
+                            if (String.IsNullOrWhiteSpace(convertedPackage.Version))
+                            {
+                                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.Messages.VersionNotFound, convertedPackage.Name, packageSpecPath));
+                            }
                         }
 
                         convertedPackage.FilePath = packageSpecPath;
@@ -249,6 +259,13 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
         public List<string> installationOption { get; set; }
     }
 
+    public class PackageHash
+    {
+        public string algorithm { get; set; }
+        public string hashCode { get; set; }
+
+    }
+
     public class CommonDefinition
     {
         public string Name { get; set; }
@@ -285,15 +302,19 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
         private string _destination;
         private List<Dependencies> _dependencies;
         private List<PackageJson> _dependencyObjects;
-        private OSRequirement _osRequirement;
+        private OSRequirement _osRequirement;        
         private string _type;
         private string _isTrustedSource;
         private bool _isPackageProvider;
         private string _installArguments;
         private string _unInstallAdditionalArguments;
+        private string _source;
 
         public CommonDefinition Common { get; set; }
         public string Version { get; set; }
+
+
+        public PackageHash Hash { get; set; }
 
         public SemanticVersion SemVer
         {
@@ -306,7 +327,36 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                 return null;
             }
         }
-        public string Source { get; set; }
+        public string Source
+        {
+            get
+            {
+                return _source;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    Uri uri;
+
+                    // check whether source is http instead of https
+                    if (!Uri.TryCreate(value, UriKind.Absolute, out uri))
+                    {
+                        throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.Messages.UnsuportedUriFormat, Constants.ProviderName, value));
+                    }
+
+                    if (!uri.IsFile)
+                    {
+                        if (uri.Scheme != "https")
+                        {
+                            throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.Messages.UriSchemeNotSupported, uri.Scheme, "https"));
+                        }
+                    }
+
+                    _source = value;
+                }
+            }
+        }
 
         public string Name
         {

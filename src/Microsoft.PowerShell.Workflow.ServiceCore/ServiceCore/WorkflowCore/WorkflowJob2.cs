@@ -1205,6 +1205,8 @@ namespace Microsoft.PowerShell.Workflow
 
         internal bool? IsSuspendable = null;
 
+        internal PSLanguageMode? SourceLanguageMode { get; set; }
+
         #endregion Internal Accessors
 
         #region Internal Methods

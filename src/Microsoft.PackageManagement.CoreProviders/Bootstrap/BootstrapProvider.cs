@@ -32,7 +32,6 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
     using Directory = System.IO.Directory;
     using ErrorCategory = PackageManagement.Internal.ErrorCategory;
     using File = System.IO.File;
-    using System.IO.Compression;
 
     public class BootstrapProvider {
         private static readonly Dictionary<string, string[]> _features = new Dictionary<string, string[]> {
@@ -324,125 +323,10 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                             return false;
                     }
 
-                case Iso19770_2.MediaType.NuGetPackage:
-                    return InstallNugetPackage(provider, link, fastPath, request);
-
                 default:
                     request.Warning("Provider '{0}' with link '{1}' has unknown media type '{2}'.", provider.Name, link.HRef, link.MediaType);
                     return false;
             }
-        }
-
-        private bool InstallNugetPackage(Package provider, Link link, string fastPath, BootstrapRequest request)
-        {
-            // download the nuget package
-            string downloadedNupkg = request.DownloadAndValidateFile(provider._swidtag);
-
-            if (downloadedNupkg != null)
-            {
-                // extracted folder
-                string extractedFolder = String.Concat(FilesystemExtensions.GenerateTemporaryFileOrDirectoryNameInTempDirectory());
-
-                try
-                {
-                    //unzip the file
-                    ZipFile.ExtractToDirectory(downloadedNupkg, extractedFolder);
-
-                    if (Directory.Exists(extractedFolder))
-                    {
-                        string versionFolder = Path.Combine(request.DestinationPath(request), provider.Name, provider.Version);
-                        // tool folder is where we find things like nuget.exe
-                        string toolFolder = Path.Combine(extractedFolder, "tools");
-                        string libFolder = Path.Combine(extractedFolder, "lib");
-
-                        // create the directory version folder if not exist
-                        if (!Directory.Exists(versionFolder))
-                        {
-                            Directory.CreateDirectory(versionFolder);
-                        }
-
-                        // copy the tools directory
-                        if (Directory.Exists(toolFolder))
-                        {
-                            string destinationToolFolder = Path.Combine(versionFolder, "tools");
-
-                            if (!Directory.Exists(destinationToolFolder))
-                            {
-                                Directory.CreateDirectory(destinationToolFolder);
-                            }
-
-                            foreach (string child in Directory.EnumerateFiles(toolFolder))
-                            {
-                                try
-                                {
-                                    // try copy and overwrite
-                                    File.Copy(child, Path.Combine(destinationToolFolder, Path.GetFileName(child)), true);
-                                }
-                                catch (Exception e)
-                                {
-                                    request.Debug(e.StackTrace);
-                                    if (!(e is UnauthorizedAccessException || e is IOException))
-                                    {
-                                        // something wrong, delete the version folder
-                                        versionFolder.TryHardToDelete();
-                                        return false;
-                                    }
-
-                                    // otherwise this means the file is just being used. so just moves on to copy other files
-                                }
-                            }
-                        }
-
-                        // copy files from lib
-                        if (Directory.Exists(libFolder))
-                        {
-                            // check that the lib folder has at most 1 dll
-                            if (Directory.EnumerateFiles(libFolder).Count(file => String.Equals(Path.GetExtension(file), ".dll", StringComparison.OrdinalIgnoreCase)) > 1)
-                            {
-                                request.Warning(String.Format(CultureInfo.CurrentCulture, Resources.Messages.MoreThanOneDllExists, provider.Name));
-                                return false;
-                            }
-
-                            foreach (string child in Directory.EnumerateFiles(libFolder))
-                            {
-                                try
-                                {
-                                    File.Copy(child, Path.Combine(versionFolder, Path.GetFileName(child)), true);
-                                }
-                                catch (Exception e)
-                                {
-                                    request.Debug(e.StackTrace);
-                                    if (!(e is UnauthorizedAccessException || e is IOException))
-                                    {
-                                        // something wrong, delete the version folder
-                                        versionFolder.TryHardToDelete();
-                                        return false;
-                                    }
-
-                                    // otherwise this means the file is just being used. so just moves on to copy other files
-                                }
-                            }
-                        }
-
-                        // target file name is the assembly provider
-                        string targetFile = Path.Combine(versionFolder, Path.GetFileName(link.Attributes[Iso19770_2.Discovery.TargetFilename]));
-
-                        if (File.Exists(targetFile))
-                        {
-                            request.Verbose(Resources.Messages.InstalledPackage, provider.Name, targetFile);
-                            request.YieldFromSwidtag(provider, fastPath);
-                            return true;
-                        }
-                    }
-                }
-                finally
-                {
-                    downloadedNupkg.TryHardToDelete();
-                    extractedFolder.TryHardToDelete();
-                }
-            }
-
-            return false;
         }
 
         private bool InstallPackageFile(Package provider, string fastPath, BootstrapRequest request) {
@@ -522,7 +406,6 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                 return false;
             }
 
-                        
             string targetFilename = fastPath;
             string file = fastPath;
 
@@ -532,7 +415,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                 targetFilename = link.Attributes[Iso19770_2.Discovery.TargetFilename];
 
                 // download the file
-                file = request.DownloadAndValidateFile(provider._swidtag);              
+                file = request.DownloadAndValidateFile(provider._swidtag);
 
             }
 
@@ -551,22 +434,23 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
             //... providername\version\.dll
             var versionFolder = Path.Combine(request.DestinationPath(request), provider.Name, provider.Version);
 
-            if (!Directory.Exists(versionFolder)) {
-                //we create it
+            // if version folder exists, remove it
+            if (Directory.Exists(versionFolder))
+            {
+                RemoveDirectory(versionFolder);
+            }
+
+            // create the directory if we successfully deleted it
+            if (!Directory.Exists(versionFolder))
+            {
                 Directory.CreateDirectory(versionFolder);
             }
 
             var targetFile = Path.Combine(versionFolder, targetFilename);
-                           
+
             if (file != null) {
                 try
                 {
-                    // looks good! let's keep it
-                    if (File.Exists(targetFile)) {
-                        request.Debug("Removing old file '{0}'", targetFile);
-                        targetFile.TryHardToDelete();
-                    }
-
                     // is that file still there?
                     if (File.Exists(targetFile)) {
                         request.Error(ErrorCategory.InvalidOperation, fastPath, Constants.Messages.UnableToRemoveFile, targetFile);
@@ -575,7 +459,16 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
 
                     request.Debug("Copying file '{0}' to '{1}'", file, targetFile);
                     try {
-                        File.Copy(file, targetFile);
+                        if (File.Exists(file))
+                        {
+                            // if this is a file
+                            File.Copy(file, targetFile);
+                        }
+                        else if (Directory.Exists(file))
+                        {
+                            // if this is a directory, copy items over
+                            CopyDirectory(file, versionFolder);
+                        }
                     }
                     catch (Exception ex) {
                         request.Debug(ex.StackTrace);
@@ -599,9 +492,59 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                         file.TryHardToDelete();
                     }
                 }
-            }
+            }            
 
             return false;
+        }
+
+        private void RemoveDirectory(string directoryFolder)
+        {
+            // remove all files
+            foreach (var fileToBeRemoved in Directory.EnumerateFiles(directoryFolder))
+            {
+                fileToBeRemoved.TryHardToDelete();
+            }
+
+            // remove all subdirectories
+            foreach (var folderToBeRemoved in Directory.EnumerateDirectories(directoryFolder))
+            {
+                RemoveDirectory(folderToBeRemoved);
+            }
+
+            try
+            {
+                // now try to remove the directory
+                Directory.Delete(directoryFolder);
+            }
+            catch { }
+        }
+
+        private void CopyDirectory(string sourceFolder, string destinationFolder)
+        {
+            // check that source and destination folders exist
+            if (!sourceFolder.DirectoryExists() || !destinationFolder.DirectoryExists())
+            {
+                return;
+            }
+
+            // copy the files over
+            foreach (var file in Directory.EnumerateFiles(sourceFolder))
+            {
+                File.Copy(file, Path.Combine(destinationFolder, Path.GetFileName(file)), true);
+            }
+
+            // copy the directories over
+            foreach (var directory in Directory.EnumerateDirectories(sourceFolder))
+            {
+                var destinationDirName = Path.Combine(destinationFolder, Path.GetFileName(directory));
+
+                if (!Directory.Exists(destinationDirName))
+                {
+                    Directory.CreateDirectory(destinationDirName);
+                }
+
+                CopyDirectory(directory, destinationDirName);
+            }
         }
 
         private void InstallPackageFromFile(string fastPath, BootstrapRequest request)

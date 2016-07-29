@@ -29,6 +29,9 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
     using PackageManagement.Internal.Utility.Collections;
     using PackageManagement.Internal.Utility.Extensions;
     using ErrorCategory = PackageManagement.Internal.ErrorCategory;
+    using System.IO.Compression;
+    using File = System.IO.File;
+    using Directory = System.IO.Directory;
 
     public abstract class BootstrapRequest : Request {
         internal Uri[] _urls
@@ -202,6 +205,51 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
         }
 
         /// <summary>
+        /// Extract zipped package and return the unzipped folder
+        /// </summary>
+        /// <param name="zippedPackagePath"></param>
+        /// <returns></returns>
+        private string ExtractZipPackage(string zippedPackagePath)
+        {
+            if (zippedPackagePath != null && zippedPackagePath.FileExists())
+            {
+                // extracted folder
+                string extractedFolder = FilesystemExtensions.GenerateTemporaryFileOrDirectoryNameInTempDirectory();
+
+                try
+                {
+                    //unzip the file
+                    ZipFile.ExtractToDirectory(zippedPackagePath, extractedFolder);
+
+                    // extraction fails
+                    if (!Directory.Exists(extractedFolder))
+                    {
+                        Verbose(string.Format(CultureInfo.CurrentCulture, Resources.Messages.FailToExtract, zippedPackagePath, extractedFolder));
+                        return string.Empty;
+                    }
+
+                    // the zipped folder
+                    var zippedDirectory = Directory.EnumerateDirectories(extractedFolder).FirstOrDefault();
+
+                    if (!string.IsNullOrWhiteSpace(zippedDirectory) && Directory.Exists(zippedDirectory))
+                    {
+                        return zippedDirectory;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Verbose(string.Format(CultureInfo.CurrentCulture, Resources.Messages.FailToInstallZipFolder, zippedPackagePath, ex.Message));
+                    Debug(ex.StackTrace);
+
+                    // remove the extracted folder
+                    extractedFolder.TryHardToDelete();
+                }
+            }
+
+            return string.Empty;
+        }
+
+        /// <summary>
         /// Helper function to retry downloading a file.
         /// downloadFileFunction is the main function that is used to download the file when given a uri
         /// numberOfTry is how many times we can try to download it
@@ -257,7 +305,22 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                     link.HRef);
 
                 // got a valid file!
-                if (file != null && file.FileExists()) {                    
+                if (file != null && file.FileExists()) {
+                    // if file is zip, unpack it and return the unpacked folder
+                    if (link.MediaType == Iso19770_2.MediaType.ZipPackage)
+                    {
+                        try
+                        {
+                            // let's extract the zipped file
+                            return ExtractZipPackage(file);
+                        }
+                        finally
+                        {
+                            // delete the zipped file
+                            file.TryHardToDelete();
+                        }
+                    }
+
                     return file;
                 }
             }

@@ -3777,7 +3777,7 @@ namespace Microsoft.PowerShell.Commands
                 if (workflowsToProcess != null && workflowsToProcess.Count > 0)
                 {
                     // In ConstrainedLanguage, XAML workflows are not supported (even from a trusted FullLanguage state),
-                    // since we can't prevent tampering.
+                    // unless they are signed in-box OS binaries.
                     if ((SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) ||
                         (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
                     {
@@ -3785,14 +3785,29 @@ namespace Microsoft.PowerShell.Commands
                         // in full-language mode.
                         if (! SystemPolicy.XamlWorkflowSupported)
                         {
-                            throw new NotSupportedException(Modules.XamlWorkflowsNotSupported);
+                            foreach (string workflowPath in ResolveWorkflowFiles(moduleBase, workflowsToProcess))
+                            {
+                                if (!SecuritySupport.IsProductBinary(workflowPath))
+                                {
+                                    throw new NotSupportedException(Modules.XamlWorkflowsNotSupported);
+                                }
+                            }
                         }
                     }
 
                     SessionStateInternal oldSessionStateWF = Context.EngineSessionState;
+                    PSLanguageMode? savedLanguageMode = null;
                     try
                     {
                         Context.EngineSessionState = ss.Internal;
+
+                        // Always run workflow import script as trusted since only signed in-box files can be imported
+                        // on locked down machines.
+                        if (Context.LanguageMode != PSLanguageMode.FullLanguage)
+                        {
+                            savedLanguageMode = Context.LanguageMode;
+                            Context.LanguageMode = PSLanguageMode.FullLanguage;
+                        }
 
                         if (dependentWorkflows != null && dependentWorkflows.Count > 0)
                         {
@@ -3811,7 +3826,7 @@ namespace Microsoft.PowerShell.Commands
                         else
                         {
                             ScriptBlock importWorkflow = ScriptBlock.Create(Context,
-                                    "param($files, $dependentFiles) Microsoft.PowerShell.Workflow.ServiceCore\\Import-PSWorkflow -Path \"$files\" -Force:$"+BaseForce
+                                    "param($files, $dependentFiles) Microsoft.PowerShell.Workflow.ServiceCore\\Import-PSWorkflow -Path \"$files\" -Force:$" + BaseForce
                                 );
 
                             foreach (string workflowPath in ResolveWorkflowFiles(moduleBase, workflowsToProcess))
@@ -3830,6 +3845,11 @@ namespace Microsoft.PowerShell.Commands
                     finally
                     {
                         Context.EngineSessionState = oldSessionStateWF;
+
+                        if (savedLanguageMode != null)
+                        {
+                            Context.LanguageMode = savedLanguageMode.Value;
+                        }
                     }
                 }
             }

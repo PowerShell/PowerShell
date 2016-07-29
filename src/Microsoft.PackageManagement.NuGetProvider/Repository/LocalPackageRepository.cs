@@ -240,7 +240,17 @@
                 var partialManifestNameMatches = GetPackageFiles(partialManifestName).Where(
                     path => FileNameMatchesPattern(packageId, version, path));
 
-                return filesMatchingFullName.Concat(partialNameMatches).Concat(partialManifestNameMatches);
+                filesMatchingFullName = filesMatchingFullName.Concat(partialNameMatches).Concat(partialManifestNameMatches);
+            }
+
+            // cannot find matching files, we should try to search for just packageid.nupkg
+            if (filesMatchingFullName.Count() == 0)
+            {
+                // exclude version
+                var packageWithoutVersionName = FileUtility.MakePackageFileName(true, packageId, null, NuGetConstant.PackageExtension);
+                var packageWithoutVersionManifest = Path.ChangeExtension(packageWithoutVersionName, NuGetConstant.ManifestExtension);
+
+                return GetPackageFiles(packageWithoutVersionName).Concat(GetPackageFiles(packageWithoutVersionManifest));
             }
 
             return filesMatchingFullName;

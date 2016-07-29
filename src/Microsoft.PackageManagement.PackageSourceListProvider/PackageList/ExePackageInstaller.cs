@@ -44,10 +44,8 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                 request.Verbose("Package: '{0}'", exePackage);
 
                 // validate the file
-                if (!WebDownloader.PerformSecurityScan(exePackage))
-                {
-                    //TODO Security Scan work
-                    request.WriteError(ErrorCategory.InvalidOperation, Constants.ProviderName, "The package download from '{0}' failed in the security scan.", package.Source);
+                if (!WebDownloader.VerifyHash(exePackage,package, request))
+                {                    
                     return false;
                 }
 

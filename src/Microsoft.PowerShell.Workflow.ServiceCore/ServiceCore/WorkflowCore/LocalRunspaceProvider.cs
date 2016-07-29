@@ -80,23 +80,29 @@ namespace Microsoft.PowerShell.Workflow
             return EndGetRunspace(asyncResult);
         }
 
-        private Runspace AssignRunspaceIfPossible()
+        private Runspace AssignRunspaceIfPossible(PSLanguageMode? sourceLanguageMode = null)
         {
             Runspace runspace = null;
+            PSLanguageMode languageMode = (sourceLanguageMode != null) ? sourceLanguageMode.Value :
+                (_languageMode != null) ? _languageMode.Value : GetSystemLanguageMode();
             lock (_runspaceCache.TimerServicingSyncObject)
             {
+                // Retrieve or create a local runspace having the same language mode as the source, if provided.
                 foreach (Item<Runspace> item in _runspaceCache.Cast<Item<Runspace>>().Where(item => !item.Busy))
                 {
-                    item.Idle = false;
-                    item.Busy = true;
-                    runspace = item.Value;
-                    break;
+                    if (item.Value.SessionStateProxy.LanguageMode == languageMode)
+                    {
+                        item.Idle = false;
+                        item.Busy = true;
+                        runspace = item.Value;
+                        break;
+                    }
                 }
 
                 if ((runspace == null || runspace.RunspaceStateInfo.State != RunspaceState.Opened) &&
                     (_maxRunspaces == MaxRunspacesPossible || _runspaceCache.Cache.Count < _maxRunspaces))
                 {
-                    runspace = CreateLocalActivityRunspace(_languageMode);
+                    runspace = CreateLocalActivityRunspace(languageMode);
                     
                     runspace.Open();
                     _tracer.WriteMessage("New local runspace created");
@@ -108,6 +114,11 @@ namespace Microsoft.PowerShell.Workflow
             return runspace;
         }
 
+        private static PSLanguageMode GetSystemLanguageMode()
+        {
+            return (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) ?
+                PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
+        }
 
         private void TraceThreadPoolInfo(string message)
         {
@@ -208,7 +219,23 @@ namespace Microsoft.PowerShell.Workflow
 
             LocalRunspaceAsyncResult asyncResult = new LocalRunspaceAsyncResult(state, callback, Guid.Empty);
 
-            Runspace runspace = AssignRunspaceIfPossible();
+            // Get the source language mode from the activity arguments if available and pass to runspace fetching.
+            PSLanguageMode? sourceLanguageMode = null;
+            RunCommandsArguments args = state as RunCommandsArguments;
+            if (args != null)
+            {
+                PSWorkflowRuntime wfRuntime = args.WorkflowHost as PSWorkflowRuntime;
+                if (wfRuntime != null)
+                {
+                    PSWorkflowJob wfJob = wfRuntime.JobManager.GetJob(args.PSActivityContext.JobInstanceId);
+                    if (wfJob != null)
+                    {
+                        sourceLanguageMode = wfJob.SourceLanguageMode;
+                    }
+                }
+            }
+
+            Runspace runspace = AssignRunspaceIfPossible(sourceLanguageMode);
             if (runspace != null)
             {
                 asyncResult.Runspace = runspace;
