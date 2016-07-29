@@ -16,9 +16,8 @@ namespace TypeCatalogParser
             // These are packages that are not part of .NET Core and must be excluded
             string[] excludedPackages = {
                 "Microsoft.Management.Infrastructure",
-                "Microsoft.Management.Infrastructure.Native"
-                // We need to exclude Newtonsoft.Json once the ALC story is figured out
-                // "Newtonsoft.Json"
+                "Microsoft.Management.Infrastructure.Native",
+                "Microsoft.mshtml"
             };
 
             // The TypeCatalogGen project takes this as input
