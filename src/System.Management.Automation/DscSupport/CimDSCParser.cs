@@ -452,7 +452,17 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         internal void ValidateInstanceText(string classText)
         {
             uint offset = 0;
-            byte[] bytes = System.Text.Encoding.Unicode.GetBytes(classText);
+            byte[] bytes = null;
+
+            if (Platform.IsLinux)
+            {
+                bytes = System.Text.Encoding.UTF8.GetBytes(classText);
+            }
+            else
+            {
+                bytes = System.Text.Encoding.Unicode.GetBytes(classText);
+            }
+
             deserializer.DeserializeInstances(bytes, ref offset, onClassNeeded, null);
         }
 
@@ -629,75 +639,120 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         public static void Initialize(Collection<Exception> errors, List<string> modulePathList)
         {
             tracer.WriteLine("Initializing DSC class cache force={0}");
-#if CORECLR
-            var systemResourceRoot = Path.Combine(SystemDirectory, "Configuration");
-#else
-            var systemResourceRoot = Path.Combine(Environment.SystemDirectory, "Configuration");
-#endif
-            var programFilesDirectory = Environment.GetEnvironmentVariable("ProgramFiles");
-            Debug.Assert(programFilesDirectory != null, "Program Files environment variable does not exist!");
-            var customResourceRoot = Path.Combine(programFilesDirectory, "WindowsPowerShell\\Configuration");
-            Debug.Assert(Directory.Exists(customResourceRoot), "%ProgramFiles%\\WindowsPowerShell\\Configuration Directory does not exist");
-            var allResourceRoots = new string[] { systemResourceRoot, customResourceRoot };
-            //
-            // Load the base schema files.
-            //
-            ClearCache();
-            var resourceBaseFile = Path.Combine(systemResourceRoot, "BaseRegistration\\BaseResource.Schema.mof");
-            ImportClasses(resourceBaseFile, DefaultModuleInfoForResource, errors);
 
-            var metaConfigFile = Path.Combine(systemResourceRoot, "BaseRegistration\\MSFT_DSCMetaConfiguration.mof");
-            ImportClasses(metaConfigFile, DefaultModuleInfoForResource, errors);
-
-            var metaConfigExtensionFile = Path.Combine(systemResourceRoot, "BaseRegistration\\MSFT_MetaConfigurationExtensionClasses.Schema.mof");
-            ImportClasses(metaConfigExtensionFile, DefaultModuleInfoForMetaConfigResource, errors);
-
-            //
-            // Load all of the system resource schema files, searching
-            //
-            string resources;
-            foreach (var resourceRoot in allResourceRoots)
+            if (System.Management.Automation.Platform.IsLinux)
             {
-                resources = Path.Combine(resourceRoot, "Schema");
-                if (!Directory.Exists(resources))
+                //
+                // Load the base schema files.
+                //
+                ClearCache();
+                var dscConfigurationDirectory = Environment.GetEnvironmentVariable("DSC_HOME");
+                if (dscConfigurationDirectory == null)
                 {
-                    continue;
+                    dscConfigurationDirectory = "/etc/opt/omi/conf/dsc/configuration";
                 }
-                foreach (var schemaFile in Directory.EnumerateDirectories(resources).SelectMany(d => Directory.EnumerateFiles(d, "*.schema.mof")))
-                {
-                    ImportClasses(schemaFile, DefaultModuleInfoForResource, errors);
-                }
-            }
 
-            // Load Regular and DSC PS modules
-            bool isInboxResource = false;
-            List<string> modulePaths = new List<string>();
-            if (modulePathList == null || modulePathList.Count == 0)
-            {
-#if CORECLR
-                modulePaths.Add(Path.Combine(SystemDirectory, InboxDscResourceModulePath));
-#else
-                modulePaths.Add(Path.Combine(Environment.SystemDirectory, InboxDscResourceModulePath));
-#endif
-                isInboxResource = true;
-            }
-            else
-            {
-                foreach (string moduleFolderPath in modulePathList)
+                Debug.Assert(Directory.Exists(dscConfigurationDirectory), dscConfigurationDirectory + " does not exist.");
+
+                var resourceBaseFile = Path.Combine(dscConfigurationDirectory, "baseregistration/baseresource.schema.mof");
+                ImportClasses(resourceBaseFile, DefaultModuleInfoForResource, errors);
+
+                var metaConfigFile = Path.Combine(dscConfigurationDirectory, "baseregistration/MSFT_DSCMetaConfiguration.mof");
+                ImportClasses(metaConfigFile, DefaultModuleInfoForResource, errors);
+
+                var allResourceRoots = new string[] { dscConfigurationDirectory };
+
+                //
+                // Load all of the system resource schema files, searching
+                //
+                string resources;
+                foreach (var resourceRoot in allResourceRoots)
                 {
-                    if (!Directory.Exists(moduleFolderPath))
+                    resources = Path.Combine(resourceRoot, "schema");
+                    if (!Directory.Exists(resources))
                     {
                         continue;
                     }
-
-                    foreach (string moduleDir in Directory.EnumerateDirectories(moduleFolderPath))
+                    foreach (var schemaFile in Directory.EnumerateDirectories(resources).SelectMany(d => Directory.EnumerateFiles(d, "*.schema.mof")))
                     {
-                        modulePaths.Add(moduleDir);
+                        ImportClasses(schemaFile, DefaultModuleInfoForResource, errors);
                     }
                 }
-            }
 
-            LoadDSCResourceIntoCache(errors, modulePaths, isInboxResource);
+                // Linux DSC Modules are installed to the dscConfigurationDirectory, so no need to load them.
+            }
+            else
+            {
+#if CORECLR
+                var systemResourceRoot = Path.Combine(SystemDirectory, "Configuration");
+#else
+                var systemResourceRoot = Path.Combine(Environment.SystemDirectory, "Configuration");
+#endif
+                var programFilesDirectory = Environment.GetEnvironmentVariable("ProgramFiles");
+                Debug.Assert(programFilesDirectory != null, "Program Files environment variable does not exist!");
+                var customResourceRoot = Path.Combine(programFilesDirectory, "WindowsPowerShell\\Configuration");
+                Debug.Assert(Directory.Exists(customResourceRoot), "%ProgramFiles%\\WindowsPowerShell\\Configuration Directory does not exist");
+                var allResourceRoots = new string[] { systemResourceRoot, customResourceRoot };
+                //
+                // Load the base schema files.
+                //
+                ClearCache();
+                var resourceBaseFile = Path.Combine(systemResourceRoot, "BaseRegistration\\BaseResource.Schema.mof");
+                ImportClasses(resourceBaseFile, DefaultModuleInfoForResource, errors);
+
+                var metaConfigFile = Path.Combine(systemResourceRoot, "BaseRegistration\\MSFT_DSCMetaConfiguration.mof");
+                ImportClasses(metaConfigFile, DefaultModuleInfoForResource, errors);
+
+                var metaConfigExtensionFile = Path.Combine(systemResourceRoot, "BaseRegistration\\MSFT_MetaConfigurationExtensionClasses.Schema.mof");
+                ImportClasses(metaConfigExtensionFile, DefaultModuleInfoForMetaConfigResource, errors);
+
+                //
+                // Load all of the system resource schema files, searching
+                //
+                string resources;
+                foreach (var resourceRoot in allResourceRoots)
+                {
+                    resources = Path.Combine(resourceRoot, "Schema");
+                    if (!Directory.Exists(resources))
+                    {
+                        continue;
+                    }
+                    foreach (var schemaFile in Directory.EnumerateDirectories(resources).SelectMany(d => Directory.EnumerateFiles(d, "*.schema.mof")))
+                    {
+                        ImportClasses(schemaFile, DefaultModuleInfoForResource, errors);
+                    }
+                }
+
+                // Load Regular and DSC PS modules
+                bool isInboxResource = false;
+                List<string> modulePaths = new List<string>();
+                if (modulePathList == null || modulePathList.Count == 0)
+                {
+#if CORECLR
+                    modulePaths.Add(Path.Combine(SystemDirectory, InboxDscResourceModulePath));
+#else
+                    modulePaths.Add(Path.Combine(Environment.SystemDirectory, InboxDscResourceModulePath));
+#endif
+                    isInboxResource = true;
+                }
+                else
+                {
+                    foreach (string moduleFolderPath in modulePathList)
+                    {
+                        if (!Directory.Exists(moduleFolderPath))
+                        {
+                            continue;
+                        }
+
+                        foreach (string moduleDir in Directory.EnumerateDirectories(moduleFolderPath))
+                        {
+                            modulePaths.Add(moduleDir);
+                        }
+                    }
+                }
+
+                LoadDSCResourceIntoCache(errors, modulePaths, isInboxResource);
+            }
         }
 
         /// <summary>

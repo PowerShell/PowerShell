@@ -574,6 +574,17 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static bool IsRunningOnProcessorArchitectureARM()
         {
+#if CORECLR
+            Architecture arch = RuntimeInformation.OSArchitecture;
+            if (arch == Architecture.Arm || arch == Architecture.Arm64)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+#else
             // Important:
             // this functiona has a clone in Workflow.ServiceCore in admin\monad\src\m3p\product\ServiceCore\WorkflowCore\WorkflowRuntimeCompilation.cs
             // if you are making any changes specific to this function then update the clone as well.
@@ -581,6 +592,7 @@ namespace System.Management.Automation
             var sysInfo = new NativeMethods.SYSTEM_INFO();
             NativeMethods.GetSystemInfo(ref sysInfo);
             return sysInfo.wProcessorArchitecture == NativeMethods.PROCESSOR_ARCHITECTURE_ARM;
+#endif
         }
 
         internal static string GetHostName()
