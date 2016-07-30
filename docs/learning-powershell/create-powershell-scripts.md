@@ -6,7 +6,7 @@ This would begin by opening your favorite text editor and pasting in the followi
 
 ``` PowerShell
 # Script to return current IPv4 addresses on a Linux or MacOS host
-$ipInfo = ifconfig | select-string 'inet'
+$ipInfo = ifconfig | Select-String 'inet'
 $ipInfo = [regex]::matches($ipInfo,"addr:\b(?:\d{1,3}\.){3}\d{1,3}\b") | ForEach-Object value
 foreach ($ip in $ipInfo) {
     $ip.replace('addr:','')
@@ -45,7 +45,7 @@ If you would like to author one script that will return the IP address across Li
 ```PowerShell
 # Script to return current IPv4 addresses for Linux, MacOS, or Windows
 $IP = if ($IsLinux -or $IsOSX) {
-    $ipInfo = ifconfig | select-string 'inet'
+    $ipInfo = ifconfig | Select-String 'inet'
     $ipInfo = [regex]::matches($ipInfo,"addr:\b(?:\d{1,3}\.){3}\d{1,3}\b") | ForEach-Object value
     foreach ($ip in $ipInfo) {
         $ip.replace('addr:','')
