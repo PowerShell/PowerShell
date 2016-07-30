@@ -17,7 +17,7 @@ Then save the file to something memorable, such as .\NetIP.ps1.
 In the future when you need to get the IP addresses for the node, you can simplify this task by executing the script.
 
 ``` PowerShell
-PS>.\NetIP.ps1
+PS> .\NetIP.ps1
 10.0.0.1
 127.0.0.1
 ```
@@ -32,7 +32,7 @@ Note: If you are using Windows, make sure you set the PowerShell's execution pol
 See [Running PowerShell Scripts Is as Easy as 1-2-3](run-ps) for more details.
 
 ```PowerShell
-PS C:\NetIP.ps1
+PS C:\> NetIP.ps1
 127.0.0.1
 10.0.0.1
 ```
