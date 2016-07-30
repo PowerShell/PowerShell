@@ -1,4 +1,4 @@
-How to Create and Run PowerShell scripts
+How to Create and Run PowerShell Scripts
 ====
 
 You can combine a series of commands in a text file and save it with the file extension '.ps1', and the file will become a PowerShell script.
