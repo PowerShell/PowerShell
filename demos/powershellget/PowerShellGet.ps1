@@ -65,12 +65,6 @@ Get-InstalledScript
 # List available PS repositories
 Get-PSRepository
 
-# Publish script to the PS Gallery
-Publish-Script -Path C:\Demo.ps1 -NuGetApiKey 1234 -Repository PSGallery -WhatIf
-
-# Publish module to PS Gallery
-Publish-Module -Name Demo -RequiredVersion 0.1 -NuGetApiKey 1234 -Repository PSGallery -WhatIf
-
 # Register a new private feed
 Register-PSRepository -Name "myPrivateGallery" –SourceLocation "https://www.myget.org/F/powershellgetdemo/api/v2" -PublishLocation "https://www.myget.org/F/powershellgetdemo/api/v2/Packages" -InstallationPolicy Trusted
 

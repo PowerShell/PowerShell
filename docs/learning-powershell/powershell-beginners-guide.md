@@ -213,7 +213,7 @@ PS /> Get-Help -Name Get-Process
 
 It displays the examples how to use the Get-Process cmdlet.
 ```PowerShell
-PS />Get-Help -Name Get-Process -Examples
+PS />Get-Help -Name Get-Process -Examples**
 ```
 
 If you use **-Full** parameter, for example, `Get-Help -Name Get-Process -Full`, it will display more technical information.
@@ -259,6 +259,17 @@ Mode                LastWriteTime       Length  Name
 -a----        5/16/2016   1:15 PM        32972  test.log
 
 ```
+
+Working with Objects
+----
+When cmdlets are executed in PowerShell, the output is an Object, as opposed to just text.
+This provides the ability to store a lot of information 
+
+Discovering available Methods
+----
+
+PowerShell Functions
+----
 
 
 Recommended Training and Reading
