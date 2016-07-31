@@ -21,7 +21,7 @@ At the end of this exercise, you should be able to launch the PowerShell session
 - Get PowerShell by installing package
  * [PowerShell on Linux][inst-linux]
  * [PowerShell on OS X][inst-linux]
- * PowerShell on Windows
+ * [PowerShell on Windows][inst-win]
 
   For this tutorial, you do not need to install PowerShell if you are running on Windows.
   You can launch PowerShell console by pressing Windows key, typing PowerShell, and clicking on Windows PowerShell.
