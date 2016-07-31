@@ -20,10 +20,10 @@ You can download and install a PowerShell package for any of the following platf
 
 | Platform     | Releases           | How to Install                 |
 |--------------|--------------------|--------------------------------|
-| Windows      | [.msi][rl-windows] | [How to Install][in-windows] |
-| Ubuntu 14.04 | [.deb][rl-ubuntu]  | [How to Install][in-ubuntu]  |
-| CentOS 7     | [.rpm][rl-centos]  | [How to Install][in-centos]  |
-| OS X 10.11   | [.pkg][rl-osx]     | [How to Install][in-osx]     |
+| Windows      | [.msi][rl-windows] | [Instructions][in-windows] |
+| Ubuntu 14.04 | [.deb][rl-ubuntu]  | [Instructions][in-ubuntu]  |
+| CentOS 7     | [.rpm][rl-centos]  | [Instructions][in-centos]  |
+| OS X 10.11   | [.pkg][rl-osx]     | [Instructions][in-osx]     |
 
 [rl-windows]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.7/PowerShell_6.0.0.7.msi
 [rl-ubuntu]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.7/powershell_6.0.0-alpha.7-1_amd64.deb
