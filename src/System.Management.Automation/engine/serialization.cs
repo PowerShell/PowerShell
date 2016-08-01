@@ -2465,6 +2465,24 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Writes SemanticVersion
+        /// </summary>
+        /// <param name="serializer">The serializer to which the object is serialized.</param>
+        /// <param name="streamName"></param>
+        /// <param name="property">name of property. pass null for item</param>
+        /// <param name="source">Version to write</param>
+        /// <param name="entry">serialization information about source</param>
+        internal static void WriteSemanticVersion(InternalSerializer serializer, string streamName, string property, object source, TypeSerializationInfo entry)
+        {
+            Dbg.Assert(serializer != null, "caller should have validated the information");
+            Dbg.Assert(source != null, "caller should have validated the information");
+            Dbg.Assert(source is SemanticVersion, "Caller should verify that typeof(source) is Version");
+            Dbg.Assert(entry != null, "caller should have validated the information");
+
+            WriteRawString(serializer, streamName, property, Convert.ToString(source, CultureInfo.InvariantCulture), entry);
+        }
+
+        /// <summary>
         /// Serialize scriptblock as item or property
         /// </summary>
         /// <param name="serializer">The serializer to which the object is serialized.</param>
@@ -4210,6 +4228,29 @@ namespace System.Management.Automation
             throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(Version).FullName);
         }
 
+        internal static object DeserializeSemanticVersion(InternalDeserializer deserializer)
+        {
+            Dbg.Assert(deserializer != null, "Caller should validate the parameter");
+            Exception recognizedException = null;
+            try
+            {
+                return new SemanticVersion(deserializer._reader.ReadElementContentAsString());
+            }
+            catch (ArgumentException e)
+            {
+                recognizedException = e;
+            }
+            catch (FormatException e)
+            {
+                recognizedException = e;
+            }
+            catch (OverflowException e)
+            {
+                recognizedException = e;
+            }
+            throw deserializer.NewXmlException(Serialization.InvalidPrimitiveType, recognizedException, typeof(Version).FullName);
+        }
+
         internal static object DeserializeInt16(InternalDeserializer deserializer)
         {
             Dbg.Assert(deserializer != null, "Caller should validate the parameter");
@@ -5149,6 +5190,13 @@ namespace System.Management.Automation
                                       SerializationStrings.VersionTag,
                                       InternalSerializer.WriteVersion,
                                       InternalDeserializer.DeserializeVersion),
+
+            new TypeSerializationInfo(typeof(SemanticVersion),
+                                      SerializationStrings.SemanticVersionTag,
+                                      SerializationStrings.SemanticVersionTag,
+                                      InternalSerializer.WriteSemanticVersion,
+                                      InternalDeserializer.DeserializeSemanticVersion),
+
             s_xdInfo,
 
             new TypeSerializationInfo(typeof(ProgressRecord),
@@ -5162,7 +5210,7 @@ namespace System.Management.Automation
                                       SerializationStrings.SecureStringTag,
                                       InternalSerializer.WriteSecureString,
                                       InternalDeserializer.DeserializeSecureString),
-};
+        };
 
         /// <summary>
         /// Hashtable of knowntypes. 

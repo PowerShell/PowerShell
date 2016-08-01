@@ -236,6 +236,11 @@ namespace System.Management.Automation
         internal const string VersionTag = "Version";
 
         /// <summary>
+        /// Element tag for SemanticVersion property
+        /// </summary>
+        internal const string SemanticVersionTag = "SemanticVersion";
+
+        /// <summary>
         /// Element tag for XmlDocument
         /// </summary>
         internal const string XmlDocumentTag = "XD";
