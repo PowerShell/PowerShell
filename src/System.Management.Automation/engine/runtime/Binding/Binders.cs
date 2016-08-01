@@ -1820,7 +1820,7 @@ namespace System.Management.Automation.Language
     internal class PSVariableAssignmentBinder : DynamicMetaObjectBinder
     {
         private static readonly PSVariableAssignmentBinder s_binder = new PSVariableAssignmentBinder();
-        private static int s_mutableValueWithInstanceMemberVersion;
+        internal static int s_mutableValueWithInstanceMemberVersion;
 
         internal static PSVariableAssignmentBinder Get()
         {

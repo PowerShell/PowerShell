@@ -2449,7 +2449,7 @@ namespace System.Management.Automation
             return InvokeScript(Name, _script, this.instance, arguments);
         }
 
-        private static object InvokeScript(string methodName, ScriptBlock script, object @this, object[] arguments)
+        internal static object InvokeScript(string methodName, ScriptBlock script, object @this, object[] arguments)
         {
             try
             {

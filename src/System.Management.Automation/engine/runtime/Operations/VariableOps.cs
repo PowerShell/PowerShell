@@ -15,7 +15,7 @@ namespace System.Management.Automation
 
     internal static class VariableOps
     {
-        private static object SetVariableValue(VariablePath variablePath, object value, ExecutionContext executionContext, AttributeBaseAst[] attributeAsts)
+        internal static object SetVariableValue(VariablePath variablePath, object value, ExecutionContext executionContext, AttributeBaseAst[] attributeAsts)
         {
             SessionStateInternal sessionState = executionContext.EngineSessionState;
             CommandOrigin origin = sessionState.CurrentScope.ScopeOrigin;
@@ -118,7 +118,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        private static object GetAutomaticVariableValue(int tupleIndex, ExecutionContext executionContext, VariableExpressionAst varAst)
+        internal static object GetAutomaticVariableValue(int tupleIndex, ExecutionContext executionContext, VariableExpressionAst varAst)
         {
             Diagnostics.Assert(tupleIndex < SpecialVariables.AutomaticVariableTypes.Length, "caller to verify a valid tuple index is used");
 
@@ -177,7 +177,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static PSReference GetVariableAsRef(VariablePath variablePath, ExecutionContext executionContext, Type staticType)
+        internal static PSReference GetVariableAsRef(VariablePath variablePath, ExecutionContext executionContext, Type staticType)
         {
             Diagnostics.Assert(variablePath.IsVariable, "calller to verify varpath is a variable.");
 
@@ -251,7 +251,7 @@ namespace System.Management.Automation
             public object Value { get; set; }
         }
 
-        private static object GetUsingValue(MutableTuple tuple, string usingExpressionKey, int index, ExecutionContext context)
+        internal static object GetUsingValue(MutableTuple tuple, string usingExpressionKey, int index, ExecutionContext context)
         {
             UsingResult result = GetUsingValueFromTuple(tuple, usingExpressionKey, index);
             if (result != null)

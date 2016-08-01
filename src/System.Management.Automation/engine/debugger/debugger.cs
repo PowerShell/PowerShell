@@ -899,7 +899,7 @@ namespace System.Management.Automation
 
         // Called from generated code on entering the script function, called once for each dynamicparam, begin, or end
         // block, and once for each object written to the pipeline.  Also called when entering a trap.
-        private void EnterScriptFunction(FunctionContext functionContext)
+        internal void EnterScriptFunction(FunctionContext functionContext)
         {
             Diagnostics.Assert(functionContext._executionContext == _context, "Wrong debugger is being used.");
 

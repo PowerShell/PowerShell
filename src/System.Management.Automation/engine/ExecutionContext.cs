@@ -54,7 +54,7 @@ namespace System.Management.Automation
         {
             get { return _debugger; }
         }
-        private ScriptDebugger _debugger;
+        internal ScriptDebugger _debugger;
 
         internal int _debuggingMode;
 
