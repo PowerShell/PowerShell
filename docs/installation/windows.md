@@ -7,6 +7,10 @@ or a released package from our GitHub [releases][] page. The MSI file looks like
 
 Once downloaded, double-click the installer and follow the prompts.
 
+There is a shortcut placed in the Start Menu upon installation.
+
+> By default the package is installed to `$env:ProgramFiles\PowerShell\`
+
 ###APPX/WSA:
 Additionally, we provide APPX/WSA packages (that are compatible with Nano Server and works on Win10 x64 and above systems), 
 but these must be self-signed prior to install. 
