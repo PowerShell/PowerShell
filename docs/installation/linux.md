@@ -11,9 +11,9 @@ Once the package is installed, run `powershell` from a terminal.
 [releases]: https://github.com/PowerShell/PowerShell/releases/latest
 [xdg-bds]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 
-[Ubuntu14.04]: ./linux.md#Ubuntu-14.04
-[CentOS7.1]: ./linux.md#CentOS-7
-[OSX10.11]: ./linux.md#OS-X-10.11
+[Ubuntu14.04]:./linux.md#ubuntu-1404
+[CentOS7.1]:./linux.md#centos-7
+[OSX10.11]: ./linux.md#os-x-1011
 
 Ubuntu 14.04
 ============
