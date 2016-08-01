@@ -1,7 +1,5 @@
-﻿Describe "MetadataTests2 (admin\monad\tests\monad\src\engine\core\MetadataTests2.cs)" {
+﻿Describe "MetadataTests2 (admin\monad\tests\monad\src\engine\core\MetadataTests2.cs)" -Tags "CI" {
     BeforeAll {
-        $functionDefinitionFile = Join-Path -Path $TestDrive -ChildPath "functionDefinition.ps1"  
-        $functionDefinition = @'
         function Test-Validateargumentsattribute 
         {
             param (
@@ -26,29 +24,10 @@
                 } 
             }
         }
-'@
-
-        $functionDefinition > $functionDefinitionFile 
-
-        $PowerShell = [powershell]::Create()
-        function ExecuteCommand {
-            param ([string]$command)
-            try {
-                $PowerShell.AddScript(". $functionDefinitionFile").Invoke()
-                $PowerShell.AddScript($command).Invoke()
-            }
-            finally {
-                $PowerShell.Commands.Clear()
-            }
-        }      
     }
 
-    AfterEach {
-        $PowerShell.Commands.Clear()
-    }
-
-    It "Vrerify that ValidateArgumentsAttribute allows an argument though if Validate returns true.(line 367)" {
-        $results = ExecuteCommand "Test-Validateargumentsattribute valid"
+    It "Vrerify that ValidateArgumentsAttribute allows an argument though if Validate returns true" {
+        $results = Test-Validateargumentsattribute valid
         $results |Should Be "valid"
     }
 }
