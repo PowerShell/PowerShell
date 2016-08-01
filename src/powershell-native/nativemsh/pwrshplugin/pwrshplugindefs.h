@@ -115,6 +115,9 @@ typedef void (WINAPI *WSManPluginSignalFuncPtr)(
     __in_opt PVOID commandContext,
     __in PCWSTR code);
 
+typedef void (WINAPI *WSManPluginOperationShutdownFuncPtr)(
+    __in PVOID pluginContext);
+
 typedef struct _PwrshPluginWkr_Ptrs
 {
     ShutdownPluginFuncPtr shutdownPluginFuncPtr;
@@ -126,6 +129,7 @@ typedef struct _PwrshPluginWkr_Ptrs
     WSManPluginReceiveFuncPtr wsManPluginReceiveFuncPtr;
     WSManPluginSignalFuncPtr wsManPluginSignalFuncPtr;
     WSManPluginConnectFuncPtr wsManPluginConnectFuncPtr;
+    WSManPluginOperationShutdownFuncPtr wsmanPluingOperationShutdownFuncPtr; // This ptr is not used in this environment, but is required to keep the memory layout identical between unmanaged and managed code.
 } PwrshPluginWkr_Ptrs;
 
 class PlugInException
