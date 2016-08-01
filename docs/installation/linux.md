@@ -1,7 +1,7 @@
 Package installation instructions
 =================================
 
-Supports [Ubuntu 14.04](Ubuntu14.04), [CentOS 7.1](CentOS7.1), and [OS X 10.11](OSX10.11).
+Supports [Ubuntu 14.04][Ubuntu14.04], [CentOS 7.1][CentOS7.1], and [OS X 10.11][OSX10.11].
 All packages are available on our GitHub [releases][] page.
 
 Once the package is installed, run `powershell` from a terminal.
@@ -13,7 +13,7 @@ Once the package is installed, run `powershell` from a terminal.
 
 [Ubuntu14.04]:./linux.md#ubuntu-1404
 [CentOS7.1]:./linux.md#centos-7
-[OSX10.11]: ./linux.md#os-x-1011
+[OSX10.11]:./linux.md#os-x-1011
 
 Ubuntu 14.04
 ============
