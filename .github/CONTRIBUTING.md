@@ -179,7 +179,7 @@ please follow the [PowerShell Request for Comments (RFC)](https://github.com/Pow
 Common Engineering Practices
 ----------------------------
 
-Other than the guidelines for ([coding](../docs/coding-guidelines.md),
+Other than the guidelines for ([coding](../docs/dev-process/coding-guidelines.md),
 the [RFC process](https://github.com/PowerShell/PowerShell-RFC) for design,
 [documentation](#contributing-to-documentation) and [testing](../docs/testing-guidelines/testing-guidelines.md)) discussed above,
 we encourage contributors to follow these common engineering practices:
