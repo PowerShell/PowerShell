@@ -75,14 +75,14 @@ a user simply creates a pull request in order to "request" that the changes be t
 Additional references:
 * GitHub's guide on [forking](https://guides.github.com/activities/forking/)
 * GitHub's guide on [Contributing to Open Source](https://guides.github.com/activities/contributing-to-open-source/#pull-request)
-* GitHub's guide on [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/) 
+* GitHub's guide on [Understanding the GitHub Flow](https://guides.github.com/introduction/flow/)
 
 
 ### Lifecycle of a pull request
 
 #### Pull request submission
 
-**Always create a pull request to the `master` branch of this repository**. 
+**Always create a pull request to the `master` branch of this repository**.
 
 ![Github-PR-dev.png](Images/Github-PR-dev.png)
 
@@ -108,13 +108,13 @@ Additional references:
     ```
     Unreleased
     ----------
-    
+
     * `Update-Item` now supports `-FriendlyName`.
     ```
     Please use the present tense and imperative mood when describing your changes:
-    
+
       * Instead of "Adding support for Windows Server 2012 R2", write "Add support for Windows Server 2012 R2".
-    
+
       * Instead of "Fixed for server connection issue", write "Fix server connection issue".
 
     This form is akin to giving commands to the code base,
@@ -122,12 +122,12 @@ Additional references:
     It is also used in the [Git commit messages](#common-engineering-practices).
 
     Also, if change is related to a specific resource, please prefix the description with the resource name:
-    
+
       * Instead of "New,parameter 'ConnectionCredential' in New-SqlConnection",
         write "New-SqlConnection: added parameter 'ConnectionCredential'".
 
 #### Pull Request - Automatic Checks
-    
+
 * If this is your first contribution to PowerShell,
   you may be asked to sign a [Contribution Licensing Agreement][CLA] (CLA)
   before your changes will be accepted.
@@ -139,7 +139,7 @@ Additional references:
   our [CI system (Travis CI and AppVeyor)][ci-system]
   will run a suite of tests and automatically update the status of the pull request.
 
-#### Pull Request / Code Review
+#### Pull Request - Code Review
 
 * After a successful test pass,
   the area maintainers will do a code review,
@@ -179,7 +179,7 @@ please follow the [PowerShell Request for Comments (RFC)](https://github.com/Pow
 Common Engineering Practices
 ----------------------------
 
-Other than the guidelines for ([coding](../docs/coding-guidelines/coding-guidelines.md), 
+Other than the guidelines for ([coding](../docs/dev-process/coding-guidelines.md),
 the [RFC process](https://github.com/PowerShell/PowerShell-RFC) for design,
 [documentation](#contributing-to-documentation) and [testing](../docs/testing-guidelines/testing-guidelines.md)) discussed above,
 we encourage contributors to follow these common engineering practices:
@@ -263,8 +263,8 @@ This a one-time requirement for the PowerShell project.
 Signing the CLA process is simple and can be done in less than a minute.
 You don't have to do this up-front.
 You can simply clone, fork, and submit your pull request as usual.
-When your pull request is created, it is classified by a CLA bot. 
-If the change is trivial, it's classified as `cla-required`. 
+When your pull request is created, it is classified by a CLA bot.
+If the change is trivial, it's classified as `cla-required`.
 Once you sign a CLA, all your existing and future pull requests will be labeled as `cla-signed`.
 
 [testing-guidelines]: ../docs/testing-guidelines/testing-guidelines.md

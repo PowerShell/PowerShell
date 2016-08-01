@@ -7,7 +7,7 @@ We recommend that you open a PowerShell console/session and type along with the 
 
 Launch PowerShell Console/Session
 ---
-First you need to launch a PowerShell session by following the [Installing PowerShell Guide](./learning-powershell.md#installing-powershell).
+First you need to launch a PowerShell session by following the [Installing PowerShell Guide](./README.md#installing-powershell).
 
 
 Getting Familiar with PowerShell Commands
@@ -20,7 +20,7 @@ In this section, you will learn how to
 - find syntax of PowerShell cmdlets
 - and more
 
-As mentioned above, PowerShell commands are designed to have Verb-Noun structure, for instance Get-Process, Set-Location, Clear-Host, etc. 
+As mentioned above, PowerShell commands are designed to have Verb-Noun structure, for instance Get-Process, Set-Location, Clear-Host, etc.
 Let’s exercise some of the basic PowerShell commands, also known as **cmdlets**.
 
 Please note that we will use the PowerShell prompt sign **PS />** as it appears on Linux in the following examples.
@@ -213,7 +213,7 @@ PS /> Get-Help -Name Get-Process
 
 It displays the examples how to use the Get-Process cmdlet.
 ```PowerShell
-PS />**Get-Help -Name Get-Process -Examples**
+PS />Get-Help -Name Get-Process -Examples
 ```
 
 If you use **-Full** parameter, for example, `Get-Help -Name Get-Process -Full`, it will display more technical information.
