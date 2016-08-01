@@ -360,7 +360,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Structure definition to match the native one.
-        /// NOTE: The layout of this structure must be IDENTICAL between here and WSManPluginEntryDelegates in pwrshplugin.h!
+        /// NOTE: The layout of this structure must be IDENTICAL between here and PwrshPluginWkr_Ptrs in pwrshplugindefs.h!
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
         internal class WSManPluginEntryDelegatesInternal
